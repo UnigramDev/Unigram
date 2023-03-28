@@ -1348,7 +1348,23 @@ namespace Telegram.ViewModels
 
         public async void MessageServiceExecute(MessageViewModel message)
         {
-            if (message.Content is MessageHeaderDate)
+            if (message.Content is MessageChatUpgradeFrom chatUpgradeFrom)
+            {
+                var response = await ClientService.SendAsync(new CreateBasicGroupChat(chatUpgradeFrom.BasicGroupId, false));
+                if (response is Chat migratedChat)
+                {
+                    NavigationService.NavigateToChat(migratedChat);
+                }
+            }
+            if (message.Content is MessageChatUpgradeTo chatUpgradeTo)
+            {
+                var response = await ClientService.SendAsync(new CreateSupergroupChat(chatUpgradeTo.SupergroupId, false));
+                if (response is Chat migratedChat)
+                {
+                    NavigationService.NavigateToChat(migratedChat);
+                }
+            }
+            else if (message.Content is MessageHeaderDate)
             {
                 var date = Converter.DateTime(message.Date);
 

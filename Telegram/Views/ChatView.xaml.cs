@@ -4409,7 +4409,11 @@ namespace Telegram.Views
         {
             Identity.ClearStatus();
 
-            if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
+            if (group.UpgradedToSupergroupId != 0)
+            {
+                ShowAction(Strings.OpenSupergroup, true);
+            }
+            else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
             {
                 ShowAction(Strings.DeleteThisGroup, true);
 

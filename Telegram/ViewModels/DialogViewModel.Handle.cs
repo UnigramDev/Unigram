@@ -627,7 +627,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateMessageContent update)
         {
-            if (update.ChatId == _chat?.Id || update.ChatId == _migratedChat?.Id)
+            if (update.ChatId == _chat?.Id)
             {
                 Handle(update.MessageId, message =>
                 {

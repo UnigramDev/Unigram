@@ -3267,6 +3267,12 @@ about Telegram?</value>
   <data name="GroupTypeHeader" xml:space="preserve">
     <value>Group type</value>
   </data>
+  <data name="GroupUpgradedFrom" xml:space="preserve">
+    <value>Group upgraded to supergroup. Tap here to view older history.</value>
+  </data>
+  <data name="GroupUpgradedTo" xml:space="preserve">
+    <value>Group upgraded to supergroup.</value>
+  </data>
   <data name="GroupUserAddLimit" xml:space="preserve">
     <value>Unable to join this group because it has too many members.</value>
   </data>
@@ -4309,6 +4315,9 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
   </data>
   <data name="OpenProfile" xml:space="preserve">
     <value>Open Profile</value>
+  </data>
+  <data name="OpenSupergroup" xml:space="preserve">
+    <value>Open Supergroup</value>
   </data>
   <data name="OpenTelegram" xml:space="preserve">
     <value>Open Telegram</value>

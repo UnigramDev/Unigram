@@ -606,17 +606,7 @@ namespace Telegram.Views
             }
             else if (content is MessageService service)
             {
-                if (args.Item is MessageViewModel viewModel && (viewModel.Content is MessageChatUpgradeFrom || viewModel.Content is MessageChatUpgradeTo))
-                {
-                    service.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    service.Visibility = Visibility.Visible;
-                }
-
                 service.UpdateMessage(args.Item as MessageViewModel);
-
                 args.Handled = true;
             }
         }

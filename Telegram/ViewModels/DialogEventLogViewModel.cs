@@ -175,7 +175,7 @@ namespace Telegram.ViewModels
         {
             using (await _loadMoreLock.WaitAsync())
             {
-                var chat = _migratedChat ?? _chat;
+                var chat = _chat;
                 if (chat == null)
                 {
                     return;

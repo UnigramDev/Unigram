@@ -144,13 +144,6 @@ namespace Telegram.ViewModels
             }
         }
 
-        protected Chat _migratedChat;
-        public Chat MigratedChat
-        {
-            get => _migratedChat;
-            set => Set(ref _migratedChat, value);
-        }
-
         protected Chat _linkedChat;
         public Chat LinkedChat
         {
@@ -501,7 +494,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var chat = _migratedChat ?? _chat;
+            var chat = _chat;
             if (chat == null)
             {
                 return;
@@ -509,7 +502,7 @@ namespace Telegram.ViewModels
 
             using (await _loadMoreLock.WaitAsync())
             {
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || (_chat?.Id != chat.Id && _migratedChat?.Id != chat.Id) || Items.Count < 1 || IsLastSliceLoaded == true)
+                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat?.Id != chat.Id || Items.Count < 1 || IsLastSliceLoaded == true)
                 {
                     return;
                 }
@@ -563,7 +556,7 @@ namespace Telegram.ViewModels
 
                 if (response is Messages messages)
                 {
-                    if (_chat?.Id != chat.Id && _migratedChat?.Id != chat.Id)
+                    if (_chat?.Id != chat.Id)
                     {
                         _isLoadingNextSlice = false;
                         IsLoading = false;
@@ -575,15 +568,6 @@ namespace Telegram.ViewModels
                     if (replied.Count > 0)
                     {
                         await ProcessMessagesAsync(chat, replied);
-
-                        if (replied.Count > 0 && replied[0].Content is MessageChatUpgradeFrom chatUpgradeFrom)
-                        {
-                            var chatUpgradeTo = await PrepareMigratedAsync(chatUpgradeFrom.BasicGroupId);
-                            if (chatUpgradeTo != null)
-                            {
-                                replied[0] = chatUpgradeTo;
-                            }
-                        }
 
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                         Items.RawInsertRange(0, replied, true, out bool empty);
@@ -782,41 +766,6 @@ namespace Telegram.ViewModels
             {
                 Items.Insert(0, _messageFactory.Create(this, new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
             }
-        }
-
-        private async Task<MessageViewModel> PrepareMigratedAsync(long basicGroupId)
-        {
-            //if (_migratedChat != null)
-            //{
-            //    return null;
-            //}
-
-            var chat = _chat;
-            if (chat == null)
-            {
-                return null;
-            }
-
-            var supergroup = ClientService.GetSupergroup(chat);
-            if (supergroup == null)
-            {
-                return null;
-            }
-
-            var response = await ClientService.SendAsync(new CreateBasicGroupChat(basicGroupId, false));
-            if (response is Chat migrated)
-            {
-                var messages = await ClientService.SendAsync(new GetChatHistory(migrated.Id, 0, 0, 1, false)) as Messages;
-                if (messages != null && messages.MessagesValue.Count > 0)
-                {
-                    MigratedChat = migrated;
-                    IsLastSliceLoaded = false;
-
-                    return _messageFactory.Create(this, messages.MessagesValue[0]);
-                }
-            }
-
-            return null;
         }
 
         public async void PreviousSlice()
@@ -1203,15 +1152,6 @@ namespace Telegram.ViewModels
                         {
                             alignment = VerticalAlignment.Bottom;
                             pixel = null;
-                        }
-                    }
-
-                    if (replied.Count > 0 && replied[0].Content is MessageChatUpgradeFrom chatUpgradeFrom)
-                    {
-                        var chatUpgradeTo = await PrepareMigratedAsync(chatUpgradeFrom.BasicGroupId);
-                        if (chatUpgradeTo != null)
-                        {
-                            replied[0] = chatUpgradeTo;
                         }
                     }
 
@@ -3310,7 +3250,15 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
+                if (group.UpgradedToSupergroupId != 0)
+                {
+                    var response = await ClientService.SendAsync(new CreateSupergroupChat(group.UpgradedToSupergroupId, false));
+                    if (response is Chat migratedChat)
+                    {
+                        NavigationService.NavigateToChat(migratedChat);
+                    }
+                }
+                else if (group.Status is ChatMemberStatusLeft or ChatMemberStatusBanned)
                 {
                     // Delete and exit
                     DeleteChat();

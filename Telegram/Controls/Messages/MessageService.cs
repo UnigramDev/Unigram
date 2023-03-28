@@ -1174,14 +1174,12 @@ namespace Telegram.Controls.Messages
 
         private static (string, IList<TextEntity>) UpdateChatUpgradeFrom(MessageViewModel message, MessageChatUpgradeFrom chatUpgradeFrom, bool active)
         {
-            return (string.Empty, null);
-            return (Strings.ActionMigrateFromGroup, null);
+            return (Strings.GroupUpgradedFrom, null);
         }
 
         private static (string, IList<TextEntity>) UpdateChatUpgradeTo(MessageViewModel message, MessageChatUpgradeTo chatUpgradeTo, bool active)
         {
-            return (string.Empty, null);
-            return (Strings.ActionMigrateFromGroup, null);
+            return (Strings.GroupUpgradedTo, null);
         }
 
         private static (string, IList<TextEntity>) UpdateContactRegistered(MessageViewModel message, MessageContactRegistered contactRegistered, bool active)
