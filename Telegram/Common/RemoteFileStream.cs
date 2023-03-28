@@ -96,6 +96,11 @@ namespace Telegram.Common
 
         public void Dispose()
         {
+            if (_disposed)
+            {
+                return;
+            }
+
             _disposed = true;
 
             if (_source.Wait())
@@ -159,6 +164,8 @@ namespace Telegram.Common
 
         private long _bufferSize = 256 * 1024;
 
+        private bool _disposed;
+
         public RemoteVideoSource(IClientService clientService, File file, int duration)
         {
             _event = new ManualResetEvent(false);
@@ -174,7 +181,15 @@ namespace Telegram.Common
             }
         }
 
-        public bool Wait() => _readLock.Wait(0);
+        public bool Wait()
+        {
+            if (_disposed)
+            {
+                return false;
+            }
+
+            return _readLock.Wait(0);
+        }
 
         public void SeekCallback(long offset)
         {
@@ -257,13 +272,21 @@ namespace Telegram.Common
 
         public void Dispose()
         {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+
             //Logs.Logger.Debug($"Disposing the stream");
+            EventAggregator.Default.Unsubscribe(this);
 
             _canceled = true;
             _clientService.Send(new CancelDownloadFile(_file.Id, false));
 
-            _event.Dispose();
-            _readLock.Dispose();
+            //_event.Dispose();
+            //_readLock.Dispose();
         }
     }
 
