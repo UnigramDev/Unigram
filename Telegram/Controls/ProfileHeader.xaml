@@ -109,19 +109,22 @@
 
                 <!-- Channel -->
                 <controls:BadgeButton x:Name="Edit"
-                                      Glyph="&#xE713;"
+                                      Content="{CustomResource ChannelEdit}"
                                       Click="{x:Bind ViewModel.Edit}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
+                                      Glyph="&#xE713;"
                                       Grid.Column="2" />
                 <controls:BadgeButton x:Name="Join"
-                                      Glyph="&#xE99B;"
+                                      Content="{CustomResource VoipGroupJoin}"
                                       Click="{x:Bind ViewModel.Join}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
+                                      Glyph="&#xE99B;"
                                       Grid.Column="2" /> 
                 <controls:BadgeButton x:Name="Leave"
-                                      Glyph="&#xE999;"
+                                      Content="{CustomResource VoipGroupLeave}"
                                       Click="{x:Bind ViewModel.Delete}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
+                                      Glyph="&#xE999;"
                                       Grid.Column="2" />
 
 

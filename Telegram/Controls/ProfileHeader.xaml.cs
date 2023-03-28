@@ -314,9 +314,6 @@ namespace Telegram.Controls
             //Restricted.Visibility = Visibility.Collapsed;
             //Members.Visibility = Visibility.Collapsed;
 
-            Edit.Glyph = Icons.Edit;
-            Edit.Content = Strings.ChannelEdit;
-
             if (chat.Permissions.CanChangeInfo || group.Status is ChatMemberStatusCreator || group.Status is ChatMemberStatusAdministrator)
             {
                 Edit.Visibility = Visibility.Visible;
@@ -438,9 +435,6 @@ namespace Telegram.Controls
                     Leave.Visibility = Visibility.Visible;
                 }
             }
-
-            Edit.Glyph = Icons.Edit;
-            Edit.Content = Edit.Content = Strings.ChannelEdit; //group.IsChannel ? Strings.ManageChannelMenu : Strings.ManageGroupMenu;
 
             OpenChat.Content = group.IsChannel
                 ? Strings.VoipGroupOpenChannel
