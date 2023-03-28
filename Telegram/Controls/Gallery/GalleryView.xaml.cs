@@ -368,19 +368,8 @@ namespace Telegram.Controls.Gallery
         {
             _closing = closing;
 
-            if (_closing != null && IsConstrainedToRootBounds)
-            {
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
-            }
-
-            parameter.Items.CollectionChanged -= OnCollectionChanged;
-            parameter.Items.CollectionChanged += OnCollectionChanged;
-            parameter.Aggregator.Subscribe<UpdateDeleteMessages>(this, Handle)
-                .Subscribe<UpdateMessageContent>(Handle);
 
             Load(parameter);
-
-            PrepareNext(0, true);
 
             RoutedEventHandler handler = null;
             handler = new RoutedEventHandler(async (s, args) =>
@@ -389,6 +378,16 @@ namespace Telegram.Controls.Gallery
                 {
                     return;
                 }
+
+                if (_closing != null && IsConstrainedToRootBounds)
+                {
+                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+                }
+
+                parameter.Items.CollectionChanged -= OnCollectionChanged;
+                parameter.Items.CollectionChanged += OnCollectionChanged;
+
+                PrepareNext(0, true);
 
                 var applicationView = ApplicationView.GetForCurrentView();
 
@@ -812,11 +811,8 @@ namespace Telegram.Controls.Gallery
             DataContext = parameter;
             Bindings.Update();
 
-            if (ViewModel != null)
-            {
-                ViewModel.Aggregator.Subscribe<UpdateDeleteMessages>(this, Handle)
+            ViewModel?.Aggregator.Subscribe<UpdateDeleteMessages>(this, Handle)
                     .Subscribe<UpdateDeleteMessages>(Handle);
-            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
