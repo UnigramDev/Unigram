@@ -122,6 +122,11 @@ namespace Telegram.Views.Premium.Popups
                     titleValue = Strings.PremiumPreviewProfileBadge;
                     subtitleValue = Strings.PremiumPreviewProfileBadgeDescription;
                     break;
+                case PremiumFeatureRealTimeChatTranslation:
+                    //iconValue = Icons.PremiumFilled24;
+                    titleValue = Strings.PremiumPreviewTranslations;
+                    subtitleValue = Strings.PremiumPreviewTranslationsDescription;
+                    break;
                 case PremiumFeatureUniqueReactions:
                     iconValue = Icons.HeartFilled24;
                     titleValue = Strings.PremiumPreviewReactions2;

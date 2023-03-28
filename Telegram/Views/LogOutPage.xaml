@@ -9,9 +9,10 @@
                   IsNavigationRoot="True">
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <ScrollViewer VerticalScrollBarVisibility="Auto"
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
-            <StackPanel>
+            <controls:SettingsPanel>
                 <controls:HeaderedControl Header="{CustomResource AlternativeOptions}">
                     <controls:BadgeButton x:Name="AddAccount"
                                           x:Load="False"
@@ -54,7 +55,7 @@
                                           Glyph="&#xF3B1;"
                                           Click="{x:Bind ViewModel.Logout}" />
                 </controls:HeaderedControl>
-            </StackPanel>
+            </controls:SettingsPanel>
         </ScrollViewer>
     </Grid>
 </local:HostedPage>

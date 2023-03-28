@@ -133,7 +133,7 @@ namespace Telegram.ViewModels.Authorization
                 else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
                     NavigationService.GoBack();
-                    NavigationService.Frame.ForwardStack.Clear();
+                    //NavigationService.Frame.ForwardStack.Clear();
 
                     await ShowPopupAsync(error.Message, Strings.CodeExpired, Strings.OK);
                 }
@@ -147,7 +147,7 @@ namespace Telegram.ViewModels.Authorization
                 else if (error.TypeEquals(ErrorType.LASTNAME_INVALID))
                 {
                     NavigationService.GoBack();
-                    NavigationService.Frame.ForwardStack.Clear();
+                    //NavigationService.Frame.ForwardStack.Clear();
 
                     await ShowPopupAsync(error.Message, Strings.InvalidLastName, Strings.OK);
                 }

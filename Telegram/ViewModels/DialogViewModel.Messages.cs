@@ -222,7 +222,7 @@ namespace Telegram.ViewModels
             DeleteMessages(chat, messages);
         }
 
-        public bool CanDeleteSelectedMessages =>  SelectedItems.Count > 0 && SelectedItems.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
+        public bool CanDeleteSelectedMessages => SelectedItems.Count > 0 && SelectedItems.Values.All(x => x.CanBeDeletedForAllUsers || x.CanBeDeletedOnlyForSelf);
 
         #endregion
 

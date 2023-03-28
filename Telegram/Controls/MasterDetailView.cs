@@ -452,22 +452,19 @@ namespace Telegram.Controls
             var visual1 = ElementCompositionPreview.GetElementVisual(DetailHeaderBackground);
             var visual2 = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
 
-            visual2.CenterPoint = new System.Numerics.Vector3(0, -16, 0);
-            visual1.Scale = System.Numerics.Vector3.One;
-
-            var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroller);
-
             // min out: 0.583
             // max out: 1
 
             // min in:  1
             // max in:  1.714
 
-            var expOut = "max(0.583, 1 - ((-scrollViewer.Translation.Y / 32) * 0.417))";
+            var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scroller);
+
+            var expOut = "clamp(1 - ((-scrollViewer.Translation.Y / 32) * 0.417), 0.583, 1)";
             var slideOut = visual1.Compositor.CreateExpressionAnimation($"vector3({expOut}, {expOut}, 1)");
             slideOut.SetReferenceParameter("scrollViewer", properties);
 
-            var expIn = "max(1, 1.357 - ((-scrollViewer.Translation.Y / 32) * 0.357))";
+            var expIn = "clamp(1.357 - ((-scrollViewer.Translation.Y / 32) * 0.357), 1, 1.357)";
             var slideIn = visual1.Compositor.CreateExpressionAnimation($"vector3({expIn}, {expIn}, 1)");
             slideIn.SetReferenceParameter("scrollViewer", properties);
 

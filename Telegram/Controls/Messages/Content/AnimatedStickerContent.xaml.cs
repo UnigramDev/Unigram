@@ -75,8 +75,17 @@ namespace Telegram.Controls.Messages.Content
             {
                 Width = Player.Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Height = Player.Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                Player.FitzModifier = (FitzModifier)(animatedEmoji.AnimatedEmoji.FitzpatrickType - 1);
                 Player.IsFlipped = false;
+                Player.FitzModifier = animatedEmoji.AnimatedEmoji.FitzpatrickType switch
+                {
+                    1 => FitzModifier.Type12,
+                    2 => FitzModifier.Type12,
+                    3 => FitzModifier.Type3,
+                    4 => FitzModifier.Type4,
+                    5 => FitzModifier.Type5,
+                    6 => FitzModifier.Type6,
+                    _ => FitzModifier.None
+                };
 
                 var sound = animatedEmoji.AnimatedEmoji.Sound;
                 if (sound != null && sound.Local.CanBeDownloaded && !sound.Local.IsDownloadingActive)
