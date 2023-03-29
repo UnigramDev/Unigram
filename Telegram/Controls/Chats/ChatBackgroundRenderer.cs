@@ -190,10 +190,10 @@ namespace Telegram.Controls.Chats
                     }
                     else
                     {
-                        var parentSize = new Vector2(sender.SizeInPixels.Width, sender.SizeInPixels.Height);
+                        var parentSize = sender.Size.ToVector2();
                         var bitmapSize = _bitmap.Size.ToVector2();
 
-                        using var scale = new ScaleEffect { Source = _bitmap, BorderMode = EffectBorderMode.Hard, Scale = new Vector2(parentSize.X / bitmapSize.X, parentSize.Y / bitmapSize.Y) };
+                        using var scale = new ScaleEffect { Source = _bitmap, BorderMode = EffectBorderMode.Hard, Scale = new Vector2(MathF.Ceiling(parentSize.X / bitmapSize.X), MathF.Ceiling(parentSize.Y / bitmapSize.Y)) };
                         using var scale2 = new ScaleEffect { Source = _pattern, BorderMode = EffectBorderMode.Hard, Scale = new Vector2(0.5f, 0.5f) };
                         using var tint = new TintEffect { Source = scale2, Color = Color.FromArgb(_intensity, 00, 00, 00) };
                         using var border = new BorderEffect { Source = tint, ExtendX = CanvasEdgeBehavior.Wrap, ExtendY = CanvasEdgeBehavior.Wrap };
@@ -299,28 +299,6 @@ namespace Telegram.Controls.Chats
         protected override void SourceChanged()
         {
             //throw new NotImplementedException();
-        }
-
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            _layoutRoot?.Measure(new Size(availableSize.Width, availableSize.Height));
-            _canvas?.Measure(new Size(availableSize.Width, availableSize.Height));
-
-            return new Size(0, 0);
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            _layoutRoot?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
-            _canvas?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
-
-            if (_canvas != null)
-            {
-                _canvas.MaxWidth = finalSize.Width;
-                _canvas.MaxHeight = finalSize.Height;
-            }
-
-            return finalSize;
         }
 
         private Vector2[][] _easing;
