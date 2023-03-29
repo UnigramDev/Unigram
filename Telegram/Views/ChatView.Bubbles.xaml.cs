@@ -552,6 +552,8 @@ namespace Telegram.Views
                 return;
             }
 
+            _updateThemeTask?.TrySetResult(true);
+
             content.Tag = message;
 
             if (args.ItemContainer is ChatListViewItem selector)

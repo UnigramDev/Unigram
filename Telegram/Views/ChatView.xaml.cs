@@ -16,6 +16,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Common.Chats;
 using Telegram.Controls;
@@ -507,15 +508,71 @@ namespace Telegram.Views
             }
         }
 
+        private SynchronizedCollection<MessageViewModel> _messages = new();
+
+        public class SynchronizedCollection<T> : MvxObservableCollection<T>
+        {
+            private System.Collections.ObjectModel.ObservableCollection<T> _source;
+
+            public void UpdateSource(System.Collections.ObjectModel.ObservableCollection<T> source)
+            {
+                if (_source != null)
+                {
+                    _source.CollectionChanged -= OnCollectionChanged;
+                }
+
+                _source = source;
+
+                if (_source != null)
+                {
+                    _source.CollectionChanged += OnCollectionChanged;
+
+                    ReplaceWith(_source);
+                }
+                else
+                {
+                    Clear();
+                }
+            }
+
+            private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+            {
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+                        InsertRange(e.NewStartingIndex, e.NewItems);
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        RemoveRange(e.OldStartingIndex, e.OldItems.Count);
+                        break;
+                }
+            }
+        }
+
         private void OnMessageSliceLoaded(object sender, EventArgs e)
         {
             if (sender is DialogViewModel viewModel)
             {
                 viewModel.MessageSliceLoaded -= OnMessageSliceLoaded;
+
+                if (viewModel.Settings.Diagnostics.SynchronizeItemsSource)
+                {
+                    _messages.UpdateSource(viewModel.Items);
+                }
             }
 
             _updateThemeTask?.TrySetResult(true);
             Bindings.Update();
+            //_updateThemeTask?.TrySetResult(true);
+
+            if (ViewModel.Settings.Diagnostics.SynchronizeItemsSource)
+            {
+                Messages.ItemsSource = _messages;
+            }
+            else
+            {
+                Bindings.Update();
+            }
 
             Cleanup(ref _cleanup);
         }

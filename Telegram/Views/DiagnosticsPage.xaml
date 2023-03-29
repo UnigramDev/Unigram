@@ -20,6 +20,10 @@
                               Content="Use Test DC"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox IsChecked="{x:Bind ViewModel.SynchronizeItemsSource, Mode=TwoWay}"
+                              Content="Synchronize items source"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind ViewModel.Minithumbnails, Mode=TwoWay}"
                               Content="Minithumbnails"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

@@ -13,6 +13,7 @@
 // Project Lead - Stuart Lodge, @slodge, me@slodge.com
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -27,7 +28,7 @@ namespace Telegram.Collections
         : ObservableCollection<T>
         , IList<T>
     {
-        protected struct SuppressEventsDisposable : IDisposable
+        protected readonly struct SuppressEventsDisposable : IDisposable
         {
             private readonly MvxObservableCollection<T> _collection;
 
@@ -121,7 +122,7 @@ namespace Telegram.Collections
         /// </summary>
         /// <param name="items">The collection from which the items are copied.</param>
         /// <exception cref="ArgumentNullException">The items list is null.</exception>
-        public void InsertRange(int index, IEnumerable<T> items)
+        public void InsertRange(int index, IList items)
         {
             if (items == null)
             {
@@ -130,13 +131,13 @@ namespace Telegram.Collections
 
             using (SuppressEvents())
             {
-                foreach (var item in items)
+                foreach (T item in items)
                 {
                     Insert(index, item);
                 }
             }
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, changedItems: items.ToList(), startingIndex: index));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, changedItems: items, startingIndex: index));
         }
 
         /// <summary>

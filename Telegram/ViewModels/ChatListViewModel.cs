@@ -629,7 +629,7 @@ namespace Telegram.ViewModels
             private readonly IClientService _clientService;
             private readonly IEventAggregator _aggregator;
 
-            private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+            private readonly DisposableMutex _loadMoreLock = new();
 
             private readonly ChatListViewModel _viewModel;
 

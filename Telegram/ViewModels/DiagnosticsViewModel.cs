@@ -131,6 +131,16 @@ namespace Telegram.ViewModels
         public MvxObservableCollection<DiagnosticsOption> Options { get; private set; }
         public MvxObservableCollection<DiagnosticsTag> Tags { get; private set; }
 
+        public bool SynchronizeItemsSource
+        {
+            get => Settings.Diagnostics.SynchronizeItemsSource;
+            set
+            {
+                Settings.Diagnostics.SynchronizeItemsSource = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool Minithumbnails
         {
             get => Settings.Diagnostics.Minithumbnails;
