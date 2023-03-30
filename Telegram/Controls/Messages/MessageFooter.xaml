@@ -27,23 +27,13 @@
                             CornerRadius="{TemplateBinding CornerRadius}"
                             Padding="{TemplateBinding Padding}">
                         <TextBlock x:Name="Label"
+                                   FontFamily="Segoe UI, ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"
                                    TextWrapping="NoWrap"
                                    TextTrimming="CharacterEllipsis"
                                    Style="{StaticResource CaptionTextBlockStyle}">
                             <ToolTipService.ToolTip>
                                 <ToolTip x:Name="ToolTip" />
                             </ToolTipService.ToolTip>
-                            <Run x:Name="PinnedGlyph"
-                                 FontSize="10"
-                                 FontFamily="{StaticResource TelegramThemeFontFamily}" /><Run x:Name="RepliesGlyph"
-                                                                                              FontSize="10"
-                                                                                              FontFamily="{StaticResource TelegramThemeFontFamily}" /><Run x:Name="RepliesLabel" /><Run x:Name="ViewsGlyph"
-                                                                                                                                                                                        FontSize="10"
-                                                                                                                                                                                        FontFamily="{StaticResource TelegramThemeFontFamily}" /><Run x:Name="ViewsLabel"
-                                                                                                                                                                                                                                                     FontFamily="{ThemeResource EmojiThemeFontFamily}" /><Run x:Name="EditedLabel"
-                                                                                                                                                                                                                                                                                                              FontStyle="Italic" /><Run x:Name="DateLabel" /><Run x:Name="StateLabel"
-                                                                                                                                                                                                                                                                                                                                                                  FontSize="10"
-                                                                                                                                                                                                                                                                                                                                                                  FontFamily="{StaticResource TelegramThemeFontFamily}" />
                         </TextBlock>
                     </Border>
                 </ControlTemplate>

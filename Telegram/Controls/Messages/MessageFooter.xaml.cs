@@ -15,7 +15,6 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
@@ -25,6 +24,14 @@ namespace Telegram.Controls.Messages
     {
         private MessageTicksState _ticksState;
         private long _ticksHash;
+
+        private string _pinnedGlyph;
+        private string _repliesLabel;
+        private string _viewsLabel;
+        private string _editedLabel;
+        private string _authorLabel;
+        private string _dateLabel;
+        private string _stateLabel;
 
         private MessageViewModel _message;
 
@@ -64,28 +71,12 @@ namespace Telegram.Controls.Messages
 
         private TextBlock Label;
         private ToolTip ToolTip;
-        private Run PinnedGlyph;
-        private Run RepliesGlyph;
-        private Run RepliesLabel;
-        private Run ViewsGlyph;
-        private Run ViewsLabel;
-        private Run EditedLabel;
-        private Run DateLabel;
-        private Run StateLabel;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
         {
             Label = GetTemplateChild(nameof(Label)) as TextBlock;
             ToolTip = GetTemplateChild(nameof(ToolTip)) as ToolTip;
-            PinnedGlyph = GetTemplateChild(nameof(PinnedGlyph)) as Run;
-            RepliesGlyph = GetTemplateChild(nameof(RepliesGlyph)) as Run;
-            RepliesLabel = GetTemplateChild(nameof(RepliesLabel)) as Run;
-            ViewsGlyph = GetTemplateChild(nameof(ViewsGlyph)) as Run;
-            ViewsLabel = GetTemplateChild(nameof(ViewsLabel)) as Run;
-            EditedLabel = GetTemplateChild(nameof(EditedLabel)) as Run;
-            DateLabel = GetTemplateChild(nameof(DateLabel)) as Run;
-            StateLabel = GetTemplateChild(nameof(StateLabel)) as Run;
 
             ToolTip.Opened += ToolTip_Opened;
 
@@ -99,6 +90,14 @@ namespace Telegram.Controls.Messages
 
         #endregion
 
+        private void UpdateLabel()
+        {
+            if (Label != null)
+            {
+                Label.Text = _pinnedGlyph + _repliesLabel + _viewsLabel + _editedLabel + _authorLabel + _dateLabel + _stateLabel;
+            }
+        }
+
         public void UpdateMessage(MessageViewModel message)
         {
             _message = message;
@@ -109,21 +108,22 @@ namespace Telegram.Controls.Messages
             }
 
             UpdateMessageState(message);
-            UpdateMessageDate(message);
-            UpdateMessageEdited(message);
-            UpdateMessageIsPinned(message);
-            //ConvertInteractionInfo(message);
+            UpdateMessageDateImpl(message);
+            UpdateMessageEditedImpl(message);
+            UpdateMessageIsPinnedImpl(message);
+            //UpdateMessageInteractionInfoInternal(message);
+            UpdateLabel();
         }
 
-        private void UpdateMessageDate(MessageViewModel message)
+        private void UpdateMessageDateImpl(MessageViewModel message)
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
             {
-                DateLabel.Text = Converter.Date(sendAtDate.SendDate);
+                _dateLabel = Converter.Date(sendAtDate.SendDate);
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
-                DateLabel.Text = string.Empty;
+                _dateLabel = string.Empty;
             }
             else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport)
             {
@@ -131,26 +131,33 @@ namespace Telegram.Controls.Messages
                 var date = Converter.ShortDate.Format(original);
                 var time = Converter.ShortTime.Format(original);
 
-                DateLabel.Text = string.Format("{0}, {1} {2} {3}", date, time, "Imported", Converter.Date(message.Date));
+                _dateLabel = string.Format("{0}, {1} {2} {3}", date, time, "Imported", Converter.Date(message.Date));
             }
             else if (message.Date > 0)
             {
-                DateLabel.Text = Converter.Date(message.Date);
+                _dateLabel = Converter.Date(message.Date);
             }
             else
             {
-                DateLabel.Text = string.Empty;
+                _dateLabel = string.Empty;
             }
         }
 
         public void Mockup(bool outgoing, DateTime date)
         {
-            DateLabel.Text = Converter.ShortTime.Format(date);
-            StateLabel.Text = outgoing ? "\u00A0\u00A0\uE603" : string.Empty;
+            _dateLabel = Converter.ShortTime.Format(date);
+            _stateLabel = outgoing ? "\u00A0\uE603" : string.Empty;
+            UpdateLabel();
             UpdateTicks(outgoing, outgoing ? true : null);
         }
 
         public void UpdateMessageInteractionInfo(MessageViewModel message)
+        {
+            UpdateMessageInteractionInfoInternal(message);
+            UpdateLabel();
+        }
+
+        private void UpdateMessageInteractionInfoInternal(MessageViewModel message)
         {
             if (message == null || !_templateApplied)
             {
@@ -159,37 +166,43 @@ namespace Telegram.Controls.Messages
 
             if (message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 && !message.IsChannelPost)
             {
-                RepliesGlyph.Text = "\uE93E\u00A0\u00A0";
-                RepliesLabel.Text = $"{message.InteractionInfo.ReplyInfo.ReplyCount}   ";
+                _repliesLabel = $"\uEA02\u00A0" + message.InteractionInfo.ReplyInfo.ReplyCount + "\u00A0";
             }
             else
             {
-                RepliesGlyph.Text = string.Empty;
-                RepliesLabel.Text = string.Empty;
-            }
-
-            var views = string.Empty;
-
-            if (message.InteractionInfo?.ViewCount > 0)
-            {
-                views = Converter.ShortNumber(message.InteractionInfo.ViewCount);
-                views += "   ";
+                _repliesLabel = string.Empty;
             }
 
             if (message.IsChannelPost && !string.IsNullOrEmpty(message.AuthorSignature))
             {
-                views += $"{message.AuthorSignature}, ";
+                _authorLabel = $"{message.AuthorSignature}, ";
             }
             else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel && !string.IsNullOrEmpty(fromChannel.AuthorSignature))
             {
-                views += $"{fromChannel.AuthorSignature}, ";
+                _authorLabel = $"{fromChannel.AuthorSignature}, ";
+            }
+            else
+            {
+                _authorLabel = string.Empty;
             }
 
-            ViewsGlyph.Text = message.InteractionInfo?.ViewCount > 0 ? "\uE607\u00A0\u00A0" : string.Empty;
-            ViewsLabel.Text = views;
+            if (message.InteractionInfo?.ViewCount > 0)
+            {
+                _viewsLabel = "\uEA03\u00A0" + Converter.ShortNumber(message.InteractionInfo.ViewCount) + "\u00A0";
+            }
+            else
+            {
+                _viewsLabel = string.Empty;
+            }
         }
 
         public void UpdateMessageEdited(MessageViewModel message)
+        {
+            UpdateMessageEditedImpl(message);
+            UpdateLabel();
+        }
+
+        public void UpdateMessageEditedImpl(MessageViewModel message)
         {
             if (message == null || !_templateApplied)
             {
@@ -209,10 +222,16 @@ namespace Telegram.Controls.Messages
                 bot = senderUser.Type is UserTypeBot;
             }
 
-            EditedLabel.Text = message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard ? $"{Strings.EditedMessage}\u00A0\u2009" : string.Empty;
+            _editedLabel = message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard ? $"{Strings.EditedMessage}\u00A0\u2009" : string.Empty;
         }
 
         public void UpdateMessageIsPinned(MessageViewModel message)
+        {
+            UpdateMessageIsPinnedImpl(message);
+            UpdateLabel();
+        }
+
+        private void UpdateMessageIsPinnedImpl(MessageViewModel message)
         {
             if (message == null || !_templateApplied)
             {
@@ -221,11 +240,11 @@ namespace Telegram.Controls.Messages
 
             if (message.IsPinned)
             {
-                PinnedGlyph.Text = "\uE93F\u00A0\u00A0\u00A0";
+                _pinnedGlyph = "\uEA05\u00A0";
             }
             else
             {
-                PinnedGlyph.Text = string.Empty;
+                _pinnedGlyph = string.Empty;
             }
         }
 
@@ -236,7 +255,9 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            StateLabel.Text = UpdateStateIcon(message);
+            _stateLabel = UpdateStateIcon(message);
+
+            UpdateLabel();
         }
 
         private string UpdateStateIcon(MessageViewModel message)
@@ -260,7 +281,7 @@ namespace Telegram.Controls.Messages
                     _ticksHash = messageHash;
 
                     // TODO: 
-                    return "\u00A0\u00A0failed"; // Failed
+                    return "\u00A0failed"; // Failed
                 }
                 else if (message.SendingState is MessageSendingStatePending)
                 {
@@ -269,7 +290,7 @@ namespace Telegram.Controls.Messages
                     _ticksState = MessageTicksState.Pending;
                     _ticksHash = messageHash;
 
-                    return "\u00A0\u00A0\uE600"; // Pending
+                    return "\u00A0\uEA06"; // Pending
                 }
                 else if (message.Id <= maxId)
                 {
@@ -278,7 +299,7 @@ namespace Telegram.Controls.Messages
                     _ticksState = MessageTicksState.Read;
                     _ticksHash = messageHash;
 
-                    return _container != null ? "\u00A0\u00A0\uE603" : "\u00A0\u00A0\uE601"; // Read
+                    return "\u00A0\uEA07"; // Read
                 }
 
                 UpdateTicks(true, false, _ticksState == MessageTicksState.Pending && _ticksHash == messageHash);
@@ -286,7 +307,7 @@ namespace Telegram.Controls.Messages
                 _ticksState = MessageTicksState.Sent;
                 _ticksHash = messageHash;
 
-                return _container != null ? "\u00A0\u00A0\uE603" : "\u00A0\u00A0\uE602"; // Unread
+                return "\u00A0\uEA07"; // Unread
             }
 
             UpdateTicks(false, null);
