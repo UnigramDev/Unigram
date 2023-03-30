@@ -215,7 +215,9 @@
                               Content="{CustomResource ReplaceEmoji}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <controls:BadgeButton Content="{CustomResource DistanceUnits}">
+                    <controls:BadgeButton Content="{CustomResource DistanceUnits}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEA01;">
                         <controls:BadgeButton.Badge>
                             <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.DistanceUnitOptions}"
                                                        SelectedIndex="{x:Bind ViewModel.DistanceUnit, Mode=TwoWay}"
