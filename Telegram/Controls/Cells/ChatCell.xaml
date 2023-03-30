@@ -144,16 +144,9 @@
                                       Margin="4,0,0,0"
                                       Grid.Column="3" />
 
-                            <FontIcon x:Name="StateIcon"
-                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                      Foreground="{ThemeResource ChatLastMessageStateBrush}"
-                                      FontSize="10"
-                                      Height="10"
-                                      Width="18"
-                                      Margin="0,3,4,0"
-                                      Grid.Column="1" />
                             <TextBlock x:Name="TimeLabel"
                                        Text="11:10"
+                                       FontFamily="Segoe UI, ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"
                                        Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
                                        Margin="0,0,0,1"

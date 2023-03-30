@@ -53,6 +53,9 @@ namespace Telegram.Controls.Cells
 
         private Message _message;
 
+        private string _dateLabel;
+        private string _stateLabel;
+
         private IClientService _clientService;
 
         private Visual _onlineBadge;
@@ -113,7 +116,6 @@ namespace Telegram.Controls.Cells
         private TextBlock TitleLabel;
         private IdentityIcon Identity;
         private FontIcon MutedIcon;
-        private FontIcon StateIcon;
         private TextBlock TimeLabel;
         private Border MinithumbnailPanel;
         private TextBlock BriefInfo;
@@ -150,7 +152,6 @@ namespace Telegram.Controls.Cells
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
             Identity = GetTemplateChild(nameof(Identity)) as IdentityIcon;
             MutedIcon = GetTemplateChild(nameof(MutedIcon)) as FontIcon;
-            StateIcon = GetTemplateChild(nameof(StateIcon)) as FontIcon;
             TimeLabel = GetTemplateChild(nameof(TimeLabel)) as TextBlock;
             MinithumbnailPanel = GetTemplateChild(nameof(MinithumbnailPanel)) as Border;
             BriefInfo = GetTemplateChild(nameof(BriefInfo)) as TextBlock;
@@ -234,8 +235,8 @@ namespace Telegram.Controls.Cells
 
             DraftLabel.Text = string.Empty;
             FromLabel.Text = UpdateFromLabel(chat, message);
-            TimeLabel.Text = UpdateTimeLabel(message);
-            StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
+            _dateLabel = UpdateTimeLabel(message);
+            _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
 
             UpdateBriefLabel(UpdateBriefLabel(chat, message, true, false));
             UpdateMinithumbnail(chat, chat.DraftMessage == null ? message : null);
@@ -265,8 +266,9 @@ namespace Telegram.Controls.Cells
                 PinnedIcon.Visibility = Visibility.Collapsed;
 
                 DraftLabel.Text = string.Empty;
+                _dateLabel = string.Empty;
+                _stateLabel = string.Empty;
                 TimeLabel.Text = string.Empty;
-                StateIcon.Glyph = string.Empty;
 
                 MutedIcon.Visibility = Visibility.Collapsed;
 
@@ -458,8 +460,10 @@ namespace Telegram.Controls.Cells
 
             DraftLabel.Text = UpdateDraftLabel(chat);
             FromLabel.Text = UpdateFromLabel(chat, position);
-            TimeLabel.Text = UpdateTimeLabel(chat, position);
-            StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
+            _dateLabel = UpdateTimeLabel(chat, position);
+            _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
+
+            TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
 
             UpdateBriefLabel(UpdateBriefLabel(chat, position));
             UpdateMinithumbnail(chat, chat.DraftMessage == null ? chat.LastMessage : null);
@@ -497,7 +501,8 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            StateIcon.Glyph = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
+            _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
+            TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
         }
 
         public void UpdateChatIsMarkedAsUnread(Chat chat)
@@ -1483,7 +1488,7 @@ namespace Telegram.Controls.Cells
                     }
                     else if (message.SendingState is MessageSendingStatePending)
                     {
-                        return "\uE600"; // Pending
+                        return "\uEA06"; // Pending
                     }
 
                     UpdateTicks(null);
@@ -1506,20 +1511,20 @@ namespace Telegram.Controls.Cells
                     UpdateTicks(null);
 
                     _ticksState = MessageTicksState.Pending;
-                    return "\uE600"; // Pending
+                    return "\uEA06"; // Pending
                 }
                 else if (message.Id <= maxId)
                 {
                     UpdateTicks(true, _ticksState == MessageTicksState.Sent);
 
                     _ticksState = MessageTicksState.Read;
-                    return _container != null ? "\uE603" : "\uE601"; // Read
+                    return "\uEA07"; // Read
                 }
 
                 UpdateTicks(false, _ticksState == MessageTicksState.Pending);
 
                 _ticksState = MessageTicksState.Sent;
-                return _container != null ? "\uE603" : "\uE602"; // Unread
+                return "\uEA07"; // Unread
             }
 
             UpdateTicks(null);
@@ -1722,8 +1727,10 @@ namespace Telegram.Controls.Cells
             DraftLabel.Text = string.Empty;
             FromLabel.Text = from;
             BriefLabel.Inlines.Add(new Run { Text = message });
-            TimeLabel.Text = Converter.ShortTime.Format(date);
-            StateIcon.Glyph = sent ? "\uE601" : string.Empty;
+            _dateLabel = Converter.ShortTime.Format(date);
+            _stateLabel = sent ? "\uE601" : string.Empty;
+
+            TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
 
             if (_container != null)
             {
@@ -2084,8 +2091,11 @@ namespace Telegram.Controls.Cells
             container.Children.InsertAtTop(visual2);
             container.Children.InsertAtTop(visual1);
             container.Size = new Vector2(width, height);
+            container.AnchorPoint = new Vector2(0, 0);
+            container.Offset = new Vector3(0, 3, 0);
+            container.RelativeOffsetAdjustment = new Vector3(0, 0, 0);
 
-            ElementCompositionPreview.SetElementChildVisual(StateIcon, container);
+            ElementCompositionPreview.SetElementChildVisual(TimeLabel, container);
 
             _line11 = line11;
             _line12 = line12;
@@ -2222,35 +2232,33 @@ namespace Telegram.Controls.Cells
             var TitleLabel = Children[1];
             var Identity = Children[2];
             var MutedIcon = Children[3];
-            var StateIcon = Children[4];
-            var TimeLabel = Children[5];
+            var TimeLabel = Children[4];
 
-            var MinithumbnailPanel = Children[6];
-            var BriefInfo = Children[7];
+            var MinithumbnailPanel = Children[5];
+            var BriefInfo = Children[6];
 
             var shift = 0;
             var CustomEmoji = default(CustomEmojiCanvas);
 
-            if (Children[8] is CustomEmojiCanvas)
+            if (Children[7] is CustomEmojiCanvas)
             {
                 shift++;
-                CustomEmoji = Children[8] as CustomEmojiCanvas;
+                CustomEmoji = Children[7] as CustomEmojiCanvas;
             }
 
-            var ChatActionIndicator = Children[8 + shift];
-            var TypingLabel = Children[9 + shift];
-            var PinnedIcon = Children[10 + shift];
-            var UnreadMentionsBadge = Children[11 + shift];
-            var UnreadBadge = Children[12 + shift];
+            var ChatActionIndicator = Children[7 + shift];
+            var TypingLabel = Children[8 + shift];
+            var PinnedIcon = Children[9 + shift];
+            var UnreadMentionsBadge = Children[10 + shift];
+            var UnreadBadge = Children[11 + shift];
 
             TimeLabel.Measure(availableSize);
-            StateIcon.Measure(availableSize);
             TypeIcon.Measure(availableSize);
             Identity.Measure(availableSize);
             MutedIcon.Measure(availableSize);
 
             var line1Left = 12 + TypeIcon.DesiredSize.Width;
-            var line1Right = availableSize.Width - 12 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
+            var line1Right = availableSize.Width - 12 - TimeLabel.DesiredSize.Width;
 
             var titleWidth = Math.Max(0, line1Right - (line1Left + Identity.DesiredSize.Width + MutedIcon.DesiredSize.Width));
 
@@ -2275,9 +2283,9 @@ namespace Telegram.Controls.Cells
             CustomEmoji?.Measure(new Size(briefWidth, availableSize.Height));
             TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
 
-            if (Children.Count > 15)
+            if (Children.Count > 12)
             {
-                Children[15].Measure(availableSize);
+                Children[12].Measure(availableSize);
             }
 
             return base.MeasureOverride(availableSize);
@@ -2291,26 +2299,25 @@ namespace Telegram.Controls.Cells
             var TitleLabel = Children[1];
             var Identity = Children[2];
             var MutedIcon = Children[3];
-            var StateIcon = Children[4];
-            var TimeLabel = Children[5];
+            var TimeLabel = Children[4];
 
-            var MinithumbnailPanel = Children[6];
-            var BriefInfo = Children[7];
+            var MinithumbnailPanel = Children[5];
+            var BriefInfo = Children[6];
 
             var shift = 0;
             var CustomEmoji = default(CustomEmojiCanvas);
 
-            if (Children[8] is CustomEmojiCanvas)
+            if (Children[7] is CustomEmojiCanvas)
             {
                 shift++;
-                CustomEmoji = Children[8] as CustomEmojiCanvas;
+                CustomEmoji = Children[7] as CustomEmojiCanvas;
             }
 
-            var ChatActionIndicator = Children[8 + shift];
-            var TypingLabel = Children[9 + shift];
-            var PinnedIcon = Children[10 + shift];
-            var UnreadMentionsBadge = Children[11 + shift];
-            var UnreadBadge = Children[12 + shift];
+            var ChatActionIndicator = Children[7 + shift];
+            var TypingLabel = Children[8 + shift];
+            var PinnedIcon = Children[9 + shift];
+            var UnreadMentionsBadge = Children[10 + shift];
+            var UnreadBadge = Children[11 + shift];
 
             var rect = new Rect();
             var min = 12;
@@ -2321,12 +2328,6 @@ namespace Telegram.Controls.Cells
             rect.Height = TimeLabel.DesiredSize.Height;
             TimeLabel.Arrange(rect);
 
-            rect.X = Math.Max(min, finalSize.Width - 8 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width);
-            rect.Y = 13;
-            rect.Width = StateIcon.DesiredSize.Width;
-            rect.Height = StateIcon.DesiredSize.Height;
-            StateIcon.Arrange(rect);
-
             rect.X = min;
             rect.Y = 13;
             rect.Width = TypeIcon.DesiredSize.Width;
@@ -2334,7 +2335,7 @@ namespace Telegram.Controls.Cells
             TypeIcon.Arrange(rect);
 
             var line1Left = min + TypeIcon.DesiredSize.Width;
-            var line1Right = finalSize.Width - 8 - TimeLabel.DesiredSize.Width - StateIcon.DesiredSize.Width;
+            var line1Right = finalSize.Width - 8 - TimeLabel.DesiredSize.Width;
 
             double titleWidth;
             if (line1Left + TitleLabel.DesiredSize.Width + Identity.DesiredSize.Width + MutedIcon.DesiredSize.Width > line1Right)
@@ -2429,9 +2430,9 @@ namespace Telegram.Controls.Cells
             rect.Height = TypingLabel.DesiredSize.Height;
             TypingLabel.Arrange(rect);
 
-            if (Children.Count > 15)
+            if (Children.Count > 12)
             {
-                Children[15].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+                Children[12].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
             }
 
             return finalSize;
