@@ -403,7 +403,7 @@ namespace Telegram.ViewModels
                 BeginOnUIThread(() =>
                 {
                     var field = ListField;
-                    if (field == null || field.ItemsSource != Items)
+                    if (field == null)
                     {
                         return;
                     }

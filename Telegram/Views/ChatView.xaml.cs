@@ -140,6 +140,11 @@ namespace Telegram.Views
             Messages.ViewVisibleMessages = ViewVisibleMessages;
             Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
+            if (ViewModel.Settings.Diagnostics.SynchronizeItemsSource)
+            {
+                Messages.ItemsSource = _messages;
+            }
+
             InitializeAutomation();
             InitializeStickers();
 
@@ -500,15 +505,11 @@ namespace Telegram.Views
                     return;
                 }
 
-                _cleanup = ViewModel.Items;
                 Cleanup(ref _cleanup);
-
-                //_viewModel = null;
-                //DataContext = new object();
             }
         }
 
-        private SynchronizedCollection<MessageViewModel> _messages = new();
+        private readonly SynchronizedCollection<MessageViewModel> _messages = new();
 
         public class SynchronizedCollection<T> : MvxObservableCollection<T>
         {
@@ -545,6 +546,9 @@ namespace Telegram.Views
                     case NotifyCollectionChangedAction.Remove:
                         RemoveRange(e.OldStartingIndex, e.OldItems.Count);
                         break;
+                    case NotifyCollectionChangedAction.Reset:
+                        SwitchTo(_source);
+                        break;
                 }
             }
         }
@@ -559,21 +563,16 @@ namespace Telegram.Views
                 {
                     _messages.UpdateSource(viewModel.Items);
                 }
+
+                if (!ViewModel.Settings.Diagnostics.SynchronizeItemsSource)
+                {
+                    Messages.ItemsSource = viewModel.Items;
+                }
             }
 
-            _updateThemeTask?.TrySetResult(true);
-            Bindings.Update();
             //_updateThemeTask?.TrySetResult(true);
 
-            if (ViewModel.Settings.Diagnostics.SynchronizeItemsSource)
-            {
-                Messages.ItemsSource = _messages;
-            }
-            else
-            {
-                Bindings.Update();
-            }
-
+            Bindings.Update();
             Cleanup(ref _cleanup);
         }
 
