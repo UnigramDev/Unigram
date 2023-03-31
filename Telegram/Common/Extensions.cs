@@ -637,9 +637,7 @@ namespace Telegram.Common
             return defaultValue;
         }
 
-
-
-        public static async void BeginOnUIThread(this DependencyObject element, Action action)
+        public static void BeginOnUIThread(this DependencyObject element, Action action)
         {
             try
             {
@@ -649,7 +647,7 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    await element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, new Windows.UI.Core.DispatchedHandler(action));
+                    _ = element.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, new DispatchedHandler(action));
                 }
             }
             catch
