@@ -1098,7 +1098,7 @@ namespace Telegram.Controls.Messages
             var entities = active ? new List<TextEntity>() : null;
 
             var chat = message.GetChat();
-            if (chat.Type is ChatTypeSecret)
+            if (chat?.Type is ChatTypeSecret)
             {
                 if (chatSetMessageAutoDeleteTime.MessageAutoDeleteTime != 0)
                 {

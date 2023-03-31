@@ -108,7 +108,7 @@ namespace Telegram.ViewModels
                 {
                     if (_isPersonal)
                     {
-                        var confirm = await ShowPopupAsync(string.Format(Strings.SetUserPhotoAlertMessage, user.FirstName), Strings.AppName, Strings.SuggestPhotoShort, Strings.Cancel);
+                        var confirm = await ShowPopupAsync(string.Format(Strings.SetUserPhotoAlertMessage, user.FirstName, user.FirstName), Strings.AppName, Strings.SuggestPhotoShort, Strings.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
                             ClientService.Send(new SetUserPersonalProfilePhoto(user.Id, inputPhoto));

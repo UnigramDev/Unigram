@@ -449,6 +449,11 @@ namespace Telegram.Controls
 
         private void SetScrollingHost(ScrollViewer scroller)
         {
+            if (scroller == null)
+            {
+                return;
+            }
+
             var visual1 = ElementCompositionPreview.GetElementVisual(DetailHeaderBackground);
             var visual2 = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
 
