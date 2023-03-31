@@ -27,7 +27,7 @@ namespace Telegram.Views.Settings
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.Enable(e.ClickedItem as ProxyViewModel);
+            ViewModel.Enable(e.ClickedItem as ConnectionViewModel);
         }
 
         #region Context menu
