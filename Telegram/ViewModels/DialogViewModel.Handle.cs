@@ -414,14 +414,8 @@ namespace Telegram.ViewModels
                         return;
                     }
 
-                    for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
-                    {
-                        var container = field.ContainerFromIndex(i) as SelectorItem;
-                        if (container == null)
-                        {
-                            continue;
-                        }
-
+                    foreach (SelectorItem container in panel.Children)
+                    { 
                         var message = field.ItemFromContainer(container) as MessageViewModel;
                         if (message == null || !message.IsOutgoing)
                         {
@@ -1110,21 +1104,15 @@ namespace Telegram.ViewModels
 
         private void HandleForCachedItems(Action<MessageBubble> action)
         {
-            var field = ListField?.ItemsStack;
-            if (field == null)
+            var panel = ListField?.ItemsStack;
+            if (panel == null)
             {
                 return;
             }
 
-            for (int i = field.FirstCacheIndex; i <= field.LastCacheIndex; i++)
+            foreach (SelectorItem container in panel.Children)
             {
-                var container = ListField.ContainerFromIndex(i) as SelectorItem;
-                if (container == null)
-                {
-                    return;
-                }
-
-                var content = container.ContentTemplateRoot as FrameworkElement;
+                var content = container.ContentTemplateRoot;
                 if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
                 {
                     action(bubble);

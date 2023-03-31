@@ -47,6 +47,8 @@ namespace Telegram.Controls
         private bool _ignoreSpoilers = false;
         private bool _ignoreLayoutUpdated = true;
 
+        private bool _layoutUpdatedSubscribed;
+
         private TextHighlighter _spoiler;
 
         private RichTextBlock TextBlock;
@@ -114,16 +116,7 @@ namespace Telegram.Controls
 
             _spoiler = null;
 
-            _positions.Clear();
-
-            if (TextBlock != null)
-            {
-                _ignoreLayoutUpdated = false;
-                TextBlock.LayoutUpdated -= OnLayoutUpdated;
-                TextBlock.Blocks.Clear();
-            }
-
-            UnloadObject(ref CustomEmoji);
+            Cleanup();
         }
 
         public void Cleanup()
@@ -133,7 +126,12 @@ namespace Telegram.Controls
             if (TextBlock != null)
             {
                 _ignoreLayoutUpdated = true;
-                TextBlock.LayoutUpdated -= OnLayoutUpdated;
+
+                if (_layoutUpdatedSubscribed)
+                {
+                    _layoutUpdatedSubscribed = false;
+                    TextBlock.LayoutUpdated -= OnLayoutUpdated;
+                }
             }
 
             UnloadObject(ref CustomEmoji);
@@ -179,7 +177,7 @@ namespace Telegram.Controls
 
         public void SetQuery(string query)
         {
-            if (TextBlock != null && TextBlock.IsLoaded && _formattedText != null)
+            if (_formattedText != null && TextBlock != null && TextBlock.IsLoaded)
             {
                 TextBlock.TextHighlighters.Clear();
 
@@ -481,7 +479,11 @@ namespace Telegram.Controls
                 }
             }
 
-            TextBlock.LayoutUpdated -= OnLayoutUpdated;
+            if (_layoutUpdatedSubscribed)
+            {
+                _layoutUpdatedSubscribed = false;
+                TextBlock.LayoutUpdated -= OnLayoutUpdated;
+            }
 
             if (emojis.Count > 0)
             {
@@ -494,6 +496,7 @@ namespace Telegram.Controls
                 }
 
                 _ignoreLayoutUpdated = false;
+                _layoutUpdatedSubscribed = true;
                 TextBlock.LayoutUpdated += OnLayoutUpdated;
             }
             else if (CustomEmoji != null)
@@ -516,7 +519,12 @@ namespace Telegram.Controls
             }
             else
             {
-                TextBlock.LayoutUpdated -= OnLayoutUpdated;
+                if (_layoutUpdatedSubscribed)
+                {
+                    _layoutUpdatedSubscribed = false;
+                    TextBlock.LayoutUpdated -= OnLayoutUpdated;
+                }
+
                 UnloadObject(ref CustomEmoji);
             }
         }
@@ -545,7 +553,12 @@ namespace Telegram.Controls
 
             if (positions.Count < 1)
             {
-                TextBlock.LayoutUpdated -= OnLayoutUpdated;
+                if (_layoutUpdatedSubscribed)
+                {
+                    _layoutUpdatedSubscribed = false;
+                    TextBlock.LayoutUpdated -= OnLayoutUpdated;
+                }
+
                 UnloadObject(ref CustomEmoji);
             }
             else

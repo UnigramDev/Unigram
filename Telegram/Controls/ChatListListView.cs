@@ -80,14 +80,8 @@ namespace Telegram.Controls
                 return;
             }
 
-            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
-            {
-                var container = ContainerFromIndex(i) as SelectorItem;
-                if (container == null)
-                {
-                    continue;
-                }
-
+            foreach (SelectorItem container in panel.Children)
+            { 
                 var content = container.ContentTemplateRoot as ChatCell;
                 if (content != null)
                 {

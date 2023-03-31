@@ -152,16 +152,26 @@ namespace Telegram.Controls.Messages
         private bool _light;
         private bool _tinted;
 
+        private string _currentState;
+
         public void ToLightState()
         {
-            _light = true;
-            VisualStateManager.GoToState(this, "LightState", false);
+            if (_currentState != "LightState")
+            {
+                _light = true;
+                _currentState = "LightState";
+                VisualStateManager.GoToState(this, "LightState", false);
+            }
         }
 
         public void ToNormalState()
         {
-            _light = false;
-            VisualStateManager.GoToState(this, _tinted ? "TintedState" : "NormalState", false);
+            if (_currentState != (_tinted ? "TintedState" : "NormalState"))
+            {
+                _light = false;
+                _currentState = _tinted ? "TintedState" : "NormalState";
+                VisualStateManager.GoToState(this, _tinted ? "TintedState" : "NormalState", false);
+            }
         }
 
         #region Overrides

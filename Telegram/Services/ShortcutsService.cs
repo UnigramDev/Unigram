@@ -607,8 +607,6 @@ namespace Telegram.Services
         {
             Modifiers = modifiers;
             Key = key;
-
-            Components = GetComponents();
         }
 
         public override bool Equals(object obj)
@@ -632,7 +630,7 @@ namespace Telegram.Services
         {
             var builder = new StringBuilder();
 
-            foreach (var key in Components)
+            foreach (var key in GetComponents())
             {
                 if (builder.Length > 0)
                 {

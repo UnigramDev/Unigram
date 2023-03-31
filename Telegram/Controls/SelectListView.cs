@@ -6,6 +6,7 @@
 //
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Controls
 {
@@ -39,14 +40,8 @@ namespace Telegram.Controls
                 return;
             }
 
-            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
-            {
-                var container = ContainerFromIndex(i) as ListViewItem;
-                if (container == null)
-                {
-                    continue;
-                }
-
+            foreach (SelectorItem container in panel.Children)
+            { 
                 var content = container.ContentTemplateRoot;
                 if (content != null)
                 {

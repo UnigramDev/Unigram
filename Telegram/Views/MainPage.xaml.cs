@@ -1935,6 +1935,7 @@ namespace Telegram.Views
 
             FindName(nameof(DialogsSearchPanel));
             DialogsPanel.Visibility = Visibility.Visible;
+            DialogsSearchPanel.Visibility = Visibility.Visible;
 
             var chats = ElementCompositionPreview.GetElementVisual(DialogsPanel);
             var panel = ElementCompositionPreview.GetElementVisual(DialogsSearchPanel);
@@ -1944,11 +1945,8 @@ namespace Telegram.Views
             var batch = panel.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                if (show)
-                {
-                    _searchCollapsed = false;
-                    DialogsPanel.Visibility = Visibility.Collapsed;
-                }
+                DialogsPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
+                DialogsSearchPanel.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
             };
 
             var scale1 = panel.Compositor.CreateVector3KeyFrameAnimation();
@@ -2069,7 +2067,11 @@ namespace Telegram.Views
             //DialogsPanel.Visibility = Visibility.Visible;
             ShowHideSearch(false);
 
-            FocusTarget.Focus(FocusState.Programmatic);
+            if (SearchField.FocusState != FocusState.Unfocused)
+            {
+                FocusTarget.Focus(FocusState.Programmatic);
+            }
+
             SearchField.Text = string.Empty;
             ComposeButton.Visibility = Visibility.Visible;
 

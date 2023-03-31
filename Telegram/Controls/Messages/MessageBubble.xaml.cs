@@ -101,7 +101,6 @@ namespace Telegram.Controls.Messages
             PhotoColumn = GetTemplateChild(nameof(PhotoColumn)) as ColumnDefinition;
             ContentPanel = GetTemplateChild(nameof(ContentPanel)) as Grid;
             Header = GetTemplateChild(nameof(Header)) as Grid;
-            ForwardLabel = GetTemplateChild(nameof(ForwardLabel)) as TextBlock;
             Panel = GetTemplateChild(nameof(Panel)) as MessageBubblePanel;
             Message = GetTemplateChild(nameof(Message)) as FormattedTextBlock;
             Media = GetTemplateChild(nameof(Media)) as Border;
@@ -990,7 +989,10 @@ namespace Telegram.Controls.Messages
                 HeaderPanel.Visibility = Visibility.Visible;
                 Header.Visibility = Visibility.Visible;
 
-                ForwardLabel.Margin = new Thickness(0, -2, 0, 2);
+                if (ForwardLabel != null)
+                {
+                    ForwardLabel.Margin = new Thickness(0, -2, 0, 2);
+                }
             }
             else
             {
@@ -1009,8 +1011,12 @@ namespace Telegram.Controls.Messages
                     HeaderPanel.Visibility = Visibility.Collapsed;
                 }
 
-                Header.Visibility = (message.ReplyToMessageId != 0 && message.ReplyToMessageState != ReplyToMessageState.Hidden) || ForwardLabel.Inlines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
-                ForwardLabel.Margin = new Thickness(0, 0, 0, 2);
+                Header.Visibility = (message.ReplyToMessageId != 0 && message.ReplyToMessageState != ReplyToMessageState.Hidden) || ForwardLabel?.Inlines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+
+                if (ForwardLabel != null)
+                {
+                    ForwardLabel.Margin = new Thickness(0, 0, 0, 2);
+                }
             }
         }
 
@@ -1253,8 +1259,15 @@ namespace Telegram.Controls.Messages
             {
                 Reactions.UpdateMessageReactions(null);
 
-                LoadObject(ref MediaReactions, nameof(MediaReactions));
-                MediaReactions.UpdateMessageReactions(message, animate);
+                if (message.InteractionInfo?.Reactions.Count > 0)
+                {
+                    LoadObject(ref MediaReactions, nameof(MediaReactions));
+                    MediaReactions.UpdateMessageReactions(message, animate);
+                }
+                else
+                {
+                    UnloadObject(ref MediaReactions);
+                }
             }
             else
             {
@@ -1791,13 +1804,16 @@ namespace Telegram.Controls.Messages
             }
         }
 
+        private string _currentState = "Normal";
+
         private void FooterToLightMedia(bool isOut)
         {
-            VisualStateManager.GoToState(this, "LightState" + (isOut ? "Out" : string.Empty), false);
-
-            if (Reply != null)
+            if (_currentState != "LightState" + (isOut ? "Out" : string.Empty))
             {
-                Reply.ToLightState();
+                _currentState = "LightState" + (isOut ? "Out" : string.Empty);
+
+                VisualStateManager.GoToState(this, "LightState" + (isOut ? "Out" : string.Empty), false);
+                Reply?.ToLightState();
             }
 
             if (BackgroundPanel != null)
@@ -1808,31 +1824,34 @@ namespace Telegram.Controls.Messages
 
         private void FooterToMedia()
         {
-            VisualStateManager.GoToState(this, "MediaState", false);
-
-            if (Reply != null)
+            if (_currentState != "MediaState")
             {
-                Reply.ToNormalState();
+                _currentState = "MediaState";
+
+                VisualStateManager.GoToState(this, "MediaState", false);
+                Reply?.ToNormalState();
             }
         }
 
         private void FooterToHidden()
         {
-            VisualStateManager.GoToState(this, "HiddenState", false);
-
-            if (Reply != null)
+            if (_currentState != "HiddenState")
             {
-                Reply.ToNormalState();
+                _currentState = "HiddenState";
+
+                VisualStateManager.GoToState(this, "HiddenState", false);
+                Reply?.ToNormalState();
             }
         }
 
         private void FooterToNormal()
         {
-            VisualStateManager.GoToState(this, "Normal", false);
-
-            if (Reply != null)
+            if (_currentState != "Normal")
             {
-                Reply.ToNormalState();
+                _currentState = "Normal";
+
+                VisualStateManager.GoToState(this, "Normal", false);
+                Reply?.ToNormalState();
             }
         }
 

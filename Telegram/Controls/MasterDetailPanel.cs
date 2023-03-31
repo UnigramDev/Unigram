@@ -46,11 +46,15 @@ namespace Telegram.Controls
             get => _allowCompact;
             set
             {
-                if (_allowCompact != value)
+                if (ActualWidth >= columnMinimalWidthLeft + columnMinimalWidthMain && dialogsWidthRatio == 0 && _allowCompact != value)
                 {
                     _allowCompact = value;
                     InvalidateMeasure();
                     InvalidateArrange();
+                }
+                else
+                {
+                    _allowCompact = value;
                 }
             }
         }

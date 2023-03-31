@@ -41,7 +41,7 @@ namespace Telegram.Controls.Messages
         public async void UpdateMessageReactions(MessageViewModel message, bool animate = false)
         {
             var reactions = message?.InteractionInfo?.Reactions;
-            if (reactions == null || message?.ChatId != _chatId || message?.Id != _messageId)
+            if (reactions == null || reactions.Count == 0 || message?.ChatId != _chatId || message?.Id != _messageId)
             {
                 _prevValue = null;
 
@@ -51,7 +51,7 @@ namespace Telegram.Controls.Messages
                 Children.Clear();
             }
 
-            if (reactions != null)
+            if (reactions?.Count > 0)
             {
                 List<long> missingCustomEmoji = null;
                 List<string> missingEmoji = null;
@@ -184,7 +184,6 @@ namespace Telegram.Controls.Messages
         }
 
         delegate bool TryGetValue<TKey, T>(TKey key, out T value);
-        delegate void SetReaction<T>(MessageViewModel message, MessageReaction item, T reaction);
 
         private void UpdateButton<T, TValue>(IDictionary<T, WeakReference> cache, T key, MessageViewModel message, object value, Func<ReactionType, bool> animate)
         {
