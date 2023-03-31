@@ -55,8 +55,8 @@ namespace Telegram.Controls.Chats
             double ratioY = 50 / _currentSize.Y;
             double ratio = Math.Max(ratioX, ratioY);
 
-            var width = (int)(_currentSize.X * ratio);
-            var height = (int)(_currentSize.Y * ratio);
+            var width = 50; //(int)(_currentSize.X * ratio);
+            var height = 50; // (int)(_currentSize.Y * ratio);
 
             CreateAdditionalResources(device);
 
