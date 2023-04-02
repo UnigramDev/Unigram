@@ -891,6 +891,16 @@ namespace Telegram.Controls.Gallery
                 ScrollingHost.Zoom(keyCode is 187 || args.VirtualKey is VirtualKey.Add);
                 args.Handled = true;
             }
+            else if (args.VirtualKey is VirtualKey.Up && _mediaPlayer?.Source != null)
+            {
+                _mediaPlayer.Volume = Math.Clamp(_mediaPlayer.Volume + 0.1, 0, 1);
+                args.Handled = true;
+            }
+            else if (args.VirtualKey is VirtualKey.Down && _mediaPlayer?.Source != null)
+            {
+                _mediaPlayer.Volume = Math.Clamp(_mediaPlayer.Volume - 0.1, 0, 1);
+                args.Handled = true;
+            }
         }
 
         private void LayoutRoot_ViewChanging(object sender, CarouselViewChangingEventArgs e)
