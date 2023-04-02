@@ -62,12 +62,13 @@ namespace Telegram.Controls.Chats
 
             bool needsCreate = _bitmap == null;
             needsCreate |= _bitmap?.Size.Width != width || _bitmap?.Size.Height != height;
+            needsCreate |= _bitmap?.Dpi != _currentDpi;
             needsCreate |= _bitmap?.Device != device;
             needsCreate &= _currentSize.X > 0 && _currentSize.Y > 0;
 
             if (needsCreate)
             {
-                var bitmap = CreateTarget(device, width, height);
+                var bitmap = CreateTarget(device, width, height, dpi: _currentDpi);
 
                 if (_backgroundFill is BackgroundFillGradient or BackgroundFillSolid)
                 {
@@ -80,7 +81,7 @@ namespace Telegram.Controls.Chats
                 else if (_backgroundFill is BackgroundFillFreeformGradient && _easing != null)
                 {
                     var index = Math.Max(0, _index - 1);
-                    bitmap.SetPixelBytes(GenerateGradient(width, height, _colors, _easing[index]));
+                    bitmap.SetPixelBytes(GenerateGradient(bitmap.SizeInPixels.Width, bitmap.SizeInPixels.Height, _colors, _easing[index]));
                 }
 
                 return bitmap;
@@ -175,13 +176,11 @@ namespace Telegram.Controls.Chats
                             Source = border,
                             ColorMatrix = new Matrix5x4
                             {
-#pragma warning disable format
-                                M11 = 1, M12 = 0, M13 = 0, M14 = 0,
-                                M21 = 0, M22 = 1, M23 = 0, M24 = 0,
-                                M31 = 0, M32 = 0, M33 = 1, M34 = 0,
-                                M41 = 0, M42 = 0, M43 = 0, M44 =-1,
-                                M51 = 0, M52 = 0, M53 = 0, M54 = 1
-#pragma warning restore format
+                                M11 = 1,
+                                M22 = 1,
+                                M33 = 1,
+                                M44 = -1,
+                                M54 = 1
                             }
                         };
 
@@ -193,7 +192,7 @@ namespace Telegram.Controls.Chats
                         var parentSize = sender.Size.ToVector2();
                         var bitmapSize = _bitmap.Size.ToVector2();
 
-                        using var scale = new ScaleEffect { Source = _bitmap, BorderMode = EffectBorderMode.Hard, Scale = new Vector2(MathF.Ceiling(parentSize.X / bitmapSize.X), MathF.Ceiling(parentSize.Y / bitmapSize.Y)) };
+                        using var scale = new ScaleEffect { Source = _bitmap, BorderMode = EffectBorderMode.Hard, Scale = new Vector2(parentSize.X / bitmapSize.X, parentSize.Y / bitmapSize.Y) };
                         using var scale2 = new ScaleEffect { Source = _pattern, BorderMode = EffectBorderMode.Hard, Scale = new Vector2(0.5f, 0.5f) };
                         using var tint = new TintEffect { Source = scale2, Color = Color.FromArgb(_intensity, 00, 00, 00) };
                         using var border = new BorderEffect { Source = tint, ExtendX = CanvasEdgeBehavior.Wrap, ExtendY = CanvasEdgeBehavior.Wrap };
@@ -256,8 +255,8 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            var width = (int)_bitmap.SizeInPixels.Width;
-            var height = (int)_bitmap.SizeInPixels.Height;
+            var width = _bitmap.SizeInPixels.Width;
+            var height = _bitmap.SizeInPixels.Height;
 
             if (_backgroundFill is BackgroundFillGradient or BackgroundFillSolid)
             {
@@ -517,7 +516,7 @@ namespace Telegram.Controls.Chats
             return result;
         }
 
-        public static unsafe byte[] GenerateGradient(int width, int height, Color[] colors, Vector2[] positions)
+        public static unsafe byte[] GenerateGradient(uint width, uint height, Color[] colors, Vector2[] positions)
         {
             var imageData = new byte[width * height * 4];
 
