@@ -153,14 +153,15 @@ namespace Telegram.Controls
         {
             lock (_drawFrameLock)
             {
-                if (_active == (e.WindowActivationState != CoreWindowActivationState.Deactivated))
+                var active = e.WindowActivationState != CoreWindowActivationState.Deactivated || !_isLoopingEnabled;
+                if (active == _active)
                 {
                     return;
                 }
 
-                _active = e.WindowActivationState != CoreWindowActivationState.Deactivated;
+                _active = active;
 
-                if (e.WindowActivationState != CoreWindowActivationState.Deactivated)
+                if (active)
                 {
                     OnSourceChanged();
                 }
