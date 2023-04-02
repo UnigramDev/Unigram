@@ -114,6 +114,8 @@ namespace Telegram.ViewModels
 
         public override async Task LoadEventLogSliceAsync(string query = "")
         {
+            NotifyMessageSliceLoaded();
+
             using (await _loadMoreLock.WaitAsync())
             {
                 var chat = _chat;

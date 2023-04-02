@@ -913,7 +913,7 @@ namespace Telegram.ViewModels
         // This is to notify the view to update bindings
         public event EventHandler MessageSliceLoaded;
 
-        private void NotifyMessageSliceLoaded()
+        protected void NotifyMessageSliceLoaded()
         {
             MessageSliceLoaded?.Invoke(this, EventArgs.Empty);
             MessageSliceLoaded = null;
