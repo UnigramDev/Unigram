@@ -75,6 +75,8 @@
                 <controls:HeaderedControl Footer="{CustomResource UndoAllCustom}">
                     <controls:BadgeButton Content="{CustomResource ResetAllNotifications}"
                                           Foreground="{ThemeResource DangerButtonBackground}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEA09;"
                                           Click="{x:Bind ViewModel.Reset}" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>

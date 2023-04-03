@@ -37,12 +37,12 @@ namespace Telegram.Controls
             {
                 if (args.ItemIndex == 0)
                 {
-                    content.CornerRadius = new CornerRadius(4, 4, 0, 0);
+                    content.CornerRadius = new CornerRadius(CornerRadius.TopLeft, CornerRadius.TopRight, 0, 0);
                     content.BorderThickness = new Thickness(1);
                 }
                 else if (ItemsSource is IList list && args.ItemIndex == list.Count - 1)
                 {
-                    content.CornerRadius = new CornerRadius(0, 0, 4, 4);
+                    content.CornerRadius = new CornerRadius(0, 0, CornerRadius.BottomRight, CornerRadius.BottomLeft);
                     content.BorderThickness = new Thickness(1, 0, 1, 1);
                 }
                 else

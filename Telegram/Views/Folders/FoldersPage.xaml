@@ -16,29 +16,15 @@
                           VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
                 <controls:SettingsPanel>
-                    <Grid Margin="24,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition MaxWidth="1000" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <controls:LottieView IsLoopingEnabled="False"
-                                             IsCachingEnabled="False"
-                                             Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"
-                                             Width="140"
-                                             Height="140"
-                                             Margin="0,24,0,0" />
-                        <TextBlock Text="{CustomResource CreateNewFilterInfo}"
-                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                   TextAlignment="Center"
-                                   Margin="0,16,0,8"
-                                   Grid.Row="1" />
-                    </Grid>
+                    <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"
+                                             Text="{CustomResource CreateNewFilterInfo}" />
 
                     <controls:HeaderedControl Header="{CustomResource Filters}">
+                        <controls:HeaderedControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </controls:HeaderedControl.ItemsPanel>
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
                                             ItemsSource="{x:Bind ViewModel.Items}"
                                             ElementPrepared="Items_ElementPrepared">
@@ -55,6 +41,7 @@
                                               Click="{x:Bind ViewModel.Create}"
                                               Visibility="{x:Bind ViewModel.CanCreateNew, Mode=OneWay}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              BorderThickness="0,1,0,0"
                                               IsChevronVisible="True"
                                               Glyph="&#xE98A;" />
                     </controls:HeaderedControl>

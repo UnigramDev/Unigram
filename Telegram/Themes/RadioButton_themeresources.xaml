@@ -16,7 +16,7 @@
         <Setter Property="BorderBrush"
                 Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="Padding"
-                Value="8,6,0,0" />
+                Value="16,6,0,0" />
         <Setter Property="HorizontalAlignment"
                 Value="Stretch" />
         <Setter Property="VerticalAlignment"
@@ -45,7 +45,7 @@
                           BorderBrush="{TemplateBinding BorderBrush}"
                           BorderThickness="{TemplateBinding BorderThickness}"
                           CornerRadius="{TemplateBinding CornerRadius}"
-                          Padding="12,6">
+                          Padding="20,6,12,6">
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">

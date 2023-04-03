@@ -28,18 +28,20 @@
 
                 <controls:LottieView30Fps x:Name="Player"
                                           AutoPlay="False"
-                                          Width="48"
-                                          Height="48"
-                                          Margin="0,0,12,0"
+                                          FrameSize="36,36"
+                                          DecodeFrameType="Logical"
+                                          Width="36"
+                                          Height="36"
+                                          Margin="0,0,8,0"
                                           VerticalAlignment="Top"
                                           Grid.RowSpan="2" />
 
                 <TextBlock VerticalAlignment="Bottom"
-                           Style="{StaticResource BaseTextBlockStyle}"
+                           Style="{StaticResource BodyTextBlockStyle}"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"
                            Grid.Column="1" />
-                <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
                            VerticalAlignment="Top"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"
@@ -72,18 +74,18 @@
                 <controls:AnimationView30Fps x:Name="Player"
                                              AutoPlay="False"
                                              IsCachingEnabled="True"
-                                             Width="48"
-                                             Height="48"
-                                             Margin="0,0,12,0"
+                                             Width="36"
+                                             Height="36"
+                                             Margin="0,0,8,0"
                                              VerticalAlignment="Top"
                                              Grid.RowSpan="2" />
 
                 <TextBlock VerticalAlignment="Bottom"
-                           Style="{StaticResource BaseTextBlockStyle}"
+                           Style="{StaticResource BodyTextBlockStyle}"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"
                            Grid.Column="1" />
-                <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
                            VerticalAlignment="Top"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"
@@ -113,18 +115,18 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Image Width="48"
-                       Height="48"
-                       Margin="0,0,12,0"
+                <Image Width="36"
+                       Height="36"
+                       Margin="0,0,8,0"
                        VerticalAlignment="Top"
                        Grid.RowSpan="2" />
 
                 <TextBlock VerticalAlignment="Bottom"
-                           Style="{StaticResource BaseTextBlockStyle}"
+                           Style="{StaticResource BodyTextBlockStyle}"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"
                            Grid.Column="1" />
-                <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
                            VerticalAlignment="Top"
                            TextWrapping="NoWrap"
                            TextTrimming="CharacterEllipsis"

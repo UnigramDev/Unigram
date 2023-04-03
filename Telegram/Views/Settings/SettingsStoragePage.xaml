@@ -20,7 +20,8 @@
     </Page.Transitions>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <controls:TableListView ItemsSource="{x:Bind ViewModel.Statistics.ByChat, Mode=OneWay}"
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Statistics.ByChat, Mode=OneWay}"
                                 ItemClick="ListView_ItemClick"
                                 IsItemClickEnabled="True"
                                 SelectionMode="None"

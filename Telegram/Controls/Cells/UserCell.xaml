@@ -23,7 +23,7 @@
                              IsEnabled="False"
                              Width="36"
                              Height="36"
-                             Margin="0,0,12,0"
+                             Margin="0,0,8,0"
                              Grid.RowSpan="2" />
 
     <Grid x:Name="TitlePanel"

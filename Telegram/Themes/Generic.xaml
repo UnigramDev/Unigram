@@ -932,7 +932,47 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:SettingsHeadline">
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="Padding"
+                Value="0,16,0,0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SettingsHeadline">
+                    <Grid Padding="{TemplateBinding Padding}"
+                          Margin="24,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="1000" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <local:LottieView Source="{TemplateBinding Source}"
+                                          IsLoopingEnabled="{TemplateBinding IsLoopingEnabled}"
+                                          IsCachingEnabled="False"
+                                          DecodeFrameType="Logical"
+                                          FrameSize="140,140"
+                                          Width="140"
+                                          Height="140" />
+                        <TextBlock x:Name="Headline"
+                                   x:Load="False"
+                                   common:TextBlockHelper.Markdown="{TemplateBinding Text}"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   TextAlignment="Center"
+                                   Margin="12,16,12,0"
+                                   Grid.Row="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:TableListView">
+        <Setter Property="CornerRadius"
+                Value="4" />
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="TabNavigation"

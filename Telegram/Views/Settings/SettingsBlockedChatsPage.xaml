@@ -23,26 +23,18 @@
                                 IsItemClickEnabled="True"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
+                                CornerRadius="0,0,4,4"
                                 SelectionMode="None">
             <ListView.Header>
-                <controls:SettingsPanel>
-                    <Grid Margin="24,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition MaxWidth="1000" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <controls:LottieView Source="ms-appx:///Assets/Animations/BlockedChats.tgs"
-                                             IsLoopingEnabled="False"
-                                             IsCachingEnabled="False"
-                                             Width="140"
-                                             Height="140"
-                                             Margin="0,16,0,0" />
-                    </Grid>
+                <controls:SettingsPanel IsHeader="True">
+                    <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/BlockedChats.tgs" />
 
-                    <controls:HeaderedControl>
+                    <controls:HeaderedControl CornerRadius="4,4,0,0"
+                                              BorderThickness="1,1,1,0">
                         <controls:BadgeButton Content="{CustomResource BlockUser}"
                                               Click="{x:Bind ViewModel.Block}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Foreground="{ThemeResource DangerButtonBackground}"
                                               Glyph="&#xE98B;" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>

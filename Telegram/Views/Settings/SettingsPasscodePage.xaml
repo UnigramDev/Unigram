@@ -21,18 +21,7 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <controls:SettingsPanel>
-                <Grid Margin="24,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition MaxWidth="1000" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <controls:LottieView Source="ms-appx:///Assets/Animations/Passcode.tgs"
-                                         IsLoopingEnabled="True"
-                                         IsCachingEnabled="False"
-                                         Width="140"
-                                         Height="140"
-                                         Margin="0,16,0,0" />
-                </Grid>
+                <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/Passcode.tgs" />
 
                 <controls:HeaderedControl Footer="{CustomResource ChangePasscodeInfo}">
                     <controls:BadgeButton Click="{x:Bind ViewModel.Toggle}"

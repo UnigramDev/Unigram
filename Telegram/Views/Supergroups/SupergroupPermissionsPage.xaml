@@ -183,8 +183,11 @@
                              Margin="24,16,24,0" />
 
                     <controls:HeaderedControl x:Name="AddNew"
-                                              Margin="0,-16,0,-16"
-                                              Visibility="Collapsed">
+                                              Header="{CustomResource NotificationsExceptions}"
+                                              Margin="0,-16,0,-32"
+                                              Visibility="Collapsed"
+                                              CornerRadius="4,4,0,0"
+                                              BorderThickness="1,1,1,0">
                         <controls:BadgeButton Content="{CustomResource ChannelAddException}"
                                               Command="{x:Bind ViewModel.AddCommand}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"

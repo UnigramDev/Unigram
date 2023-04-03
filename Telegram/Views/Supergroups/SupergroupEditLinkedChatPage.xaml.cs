@@ -4,8 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Common;
-using Telegram.Controls;
+using Microsoft.UI.Xaml.Controls;
+using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Supergroups;
@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Supergroups
 {
+    // TODO: Convert to TableListView
     public sealed partial class SupergroupEditLinkedChatPage : HostedPage, ISupergroupDelegate
     {
         public SupergroupEditLinkedChatViewModel ViewModel => DataContext as SupergroupEditLinkedChatViewModel;
@@ -24,41 +25,24 @@ namespace Telegram.Views.Supergroups
             Title = Strings.Discussion;
         }
 
-        private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
+        private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
         {
             var button = args.Element as Button;
-            var content = button.Content as Grid;
+            var content = button.Content as UserCell;
 
             var chat = button.DataContext as Chat;
 
-            var title = content.Children[1] as TextBlock;
-            title.Text = ViewModel.ClientService.GetTitle(chat);
+            content.UpdateLinkedChat(ViewModel.ClientService, sender, args);
 
-            if (ViewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
-            {
-                var subtitle = content.Children[2] as TextBlock;
-                if (supergroup.HasActiveUsername(out string username))
-                {
-                    subtitle.Text = $"@{username}";
-                }
-                else
-                {
-                    subtitle.Text = Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroup.MemberCount);
-                }
-            }
-
-            var photo = content.Children[0] as ProfilePicture;
-            photo.SetChat(ViewModel.ClientService, chat, 36);
-
-            button.Command = ViewModel.LinkCommand;
             button.CommandParameter = chat;
+            button.Command = ViewModel.LinkCommand;
         }
 
         #region Delegate
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
-            TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.DiscussionChannelGroupSetHelp2, chat.Title));
+            Headline.Text = string.Format(Strings.DiscussionChannelGroupSetHelp2, chat.Title);
 
             Create.Visibility = group.HasLinkedChat ? Visibility.Collapsed : Visibility.Visible;
             Unlink.Visibility = group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
@@ -72,12 +56,12 @@ namespace Telegram.Views.Supergroups
             {
                 if (group.IsChannel)
                 {
-                    TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.DiscussionChannelGroupSetHelp2, linkedChat.Title));
+                    Headline.Text = string.Format(Strings.DiscussionChannelGroupSetHelp2, linkedChat.Title);
                     LayoutRoot.Footer = Strings.DiscussionChannelHelp2;
                 }
                 else
                 {
-                    TextBlockHelper.SetMarkdown(Headline, string.Format(Strings.DiscussionGroupHelp, linkedChat.Title));
+                    Headline.Text = string.Format(Strings.DiscussionGroupHelp, linkedChat.Title);
                     LayoutRoot.Footer = Strings.DiscussionChannelHelp2;
                 }
 

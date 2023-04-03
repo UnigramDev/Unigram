@@ -31,37 +31,27 @@
                           VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
                 <controls:SettingsPanel>
-                    <Grid Margin="24,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition MaxWidth="1000" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <controls:LottieView IsLoopingEnabled="False"
-                                             IsCachingEnabled="False"
-                                             Source="ms-appx:///Assets/Animations/ChatListNewFolder.tgs"
-                                             Width="140"
-                                             Height="140"
-                                             Margin="0,24,0,0" />
-                    </Grid>
-
+                    <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListNewFolder.tgs" />
+                    
                     <Grid>
                         <controls:HeaderedControl Header="{CustomResource FilterNameHint}">
                             <TextBox x:Name="TitleField"
                                      Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                      Style="{StaticResource NoDeleteTextBoxStyle}"
-                                     Padding="12,11,6,12" />
+                                     Padding="58,11,6,12"
+                                     Height="44" />
                         </controls:HeaderedControl>
 
                         <controls:AnimatedGlyphButton x:Name="EmojiButton"
                                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                       Glyph="{x:Bind ConvertEmoji(ViewModel.Icon), Mode=OneWay}"
                                                       Click="Emoji_Click"
-                                                      Width="46"
-                                                      Height="42"
-                                                      HorizontalAlignment="Right"
+                                                      Width="60"
+                                                      Height="46"
+                                                      HorizontalAlignment="Left"
                                                       VerticalAlignment="Bottom"
-                                                      Margin="0,0,24,0"
+                                                      Margin="24,0,24,0"
                                                       Grid.Column="1">
                             <FlyoutBase.AttachedFlyout>
                                 <Flyout>
@@ -111,9 +101,16 @@
 
                     <controls:HeaderedControl Header="{CustomResource FilterInclude}"
                                               Footer="{CustomResource FilterIncludeInfo}">
+                        <controls:HeaderedControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </controls:HeaderedControl.ItemsPanel>
                         <controls:BadgeButton Click="{x:Bind ViewModel.AddIncluded}"
                                               Content="{CustomResource FilterAddChats}"
-                                              Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
+                                              Style="{StaticResource LargeBadgeButtonStyle}"
+                                              BorderThickness="0"
+                                              Glyph="&#xEA08;" />
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
                                             ItemsSource="{x:Bind ViewModel.Include}"
                                             ElementPrepared="OnElementPrepared">
@@ -121,6 +118,7 @@
                                 <DataTemplate>
                                     <cells:UserCell Background="{ThemeResource SettingsItemBackground}"
                                                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                    BorderThickness="0,1,0,0"
                                                     ContextRequested="Include_ContextRequested" />
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>
@@ -129,9 +127,16 @@
 
                     <controls:HeaderedControl Header="{CustomResource FilterExclude}"
                                               Footer="{CustomResource FilterExcludeInfo}">
+                        <controls:HeaderedControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </controls:HeaderedControl.ItemsPanel>
                         <controls:BadgeButton Click="{x:Bind ViewModel.AddExcluded}"
                                               Content="{CustomResource FilterAddChats}"
-                                              Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
+                                              Style="{StaticResource LargeBadgeButtonStyle}"
+                                              BorderThickness="0"
+                                              Glyph="&#xEA08;" />
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
                                             ItemsSource="{x:Bind ViewModel.Exclude}"
                                             ElementPrepared="OnElementPrepared">
@@ -139,6 +144,7 @@
                                 <DataTemplate>
                                     <cells:UserCell Background="{ThemeResource SettingsItemBackground}"
                                                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                    BorderThickness="0,1,0,0"
                                                     ContextRequested="Exclude_ContextRequested" />
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>

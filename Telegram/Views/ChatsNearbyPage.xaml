@@ -44,31 +44,12 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <microsoft:ItemsRepeaterScrollHost>
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
+            <ScrollViewer x:Name="ScrollingHost"
+                          VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
-                <StackPanel Margin="0,0,0,32">
-                    <Grid Margin="24,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition MaxWidth="1000" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <controls:LottieView Source="ms-appx:///Assets/Animations/Compass.tgs"
-                                             IsLoopingEnabled="False"
-                                             IsCachingEnabled="False"
-                                             Width="140"
-                                             Height="140"
-                                             Margin="0,16,0,0" />
-                        <TextBlock Text="{CustomResource PeopleNearbyInfo}"
-                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                   TextAlignment="Center"
-                                   Margin="12,16,12,8"
-                                   Grid.Row="1" />
-                    </Grid>
-
+                <controls:SettingsPanel>
+                    <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/Compass.tgs"
+                                             Text="{CustomResource PeopleNearbyInfo}" />
 
                     <controls:HeaderedControl Header="{CustomResource PeopleNearbyHeader}">
 
@@ -89,7 +70,7 @@
                                               Visibility="{x:Bind ViewModel.LoadMoreVisibility, Mode=OneWay}"
                                               Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
                     </controls:HeaderedControl>
-                    
+
                     <controls:HeaderedControl Header="{CustomResource ChatsNearbyHeader}">
                         <!--<controls:BadgeButton
                             Content="{CustomResource NearbyCreateGroup}"
@@ -101,7 +82,7 @@
                                                  ItemTemplate="{StaticResource ChatTemplate}"
                                                  ElementPrepared="OnElementPrepared" />
                     </controls:HeaderedControl>
-                </StackPanel>
+                </controls:SettingsPanel>
             </ScrollViewer>
         </microsoft:ItemsRepeaterScrollHost>
     </Grid>

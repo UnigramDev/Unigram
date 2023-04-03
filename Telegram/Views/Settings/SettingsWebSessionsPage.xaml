@@ -27,8 +27,10 @@
                 <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl Footer="{CustomResource ClearOtherWebSessionsHelp}">
                         <controls:BadgeButton Content="{CustomResource TerminateAllWebSessions}"
-                                              Foreground="Red"
-                                              Click="{x:Bind ViewModel.TerminateOthers}" />
+                                              Click="{x:Bind ViewModel.TerminateOthers}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Foreground="{ThemeResource DangerButtonBackground}"
+                                              Glyph="&#xE98B;" />
                     </controls:HeaderedControl>
 
                     <TextBlock Text="{CustomResource OtherWebSessions}"

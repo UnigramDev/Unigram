@@ -80,7 +80,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="56" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
@@ -90,8 +90,8 @@
                         </Grid.RowDefinitions>
                         <TextBlock FontSize="{TemplateBinding FontSize}"
                                    HorizontalAlignment="Left"
-                                   VerticalAlignment="Center"
-                                   Margin="12,0,0,0"
+                                   VerticalAlignment="Top"
+                                   Margin="20,11,0,0"
                                    AutomationProperties.AccessibilityView="Raw"
                                    Text="{TemplateBinding Glyph}"
                                    FontFamily="{TemplateBinding FontFamily}" />
@@ -130,148 +130,6 @@
                                    Margin="-6,0,6,0"
                                    Grid.Column="2"
                                    Grid.RowSpan="2" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="IconSubtitleBadgeButtonStyle"
-           TargetType="controls:BadgeButton">
-        <Setter Property="Background"
-                Value="Transparent" />
-        <!--<Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}"/>-->
-        <Setter Property="BorderBrush"
-                Value="{ThemeResource TelegramSeparatorMediumBrush}" />
-        <Setter Property="BorderThickness"
-                Value="0" />
-        <Setter Property="Padding"
-                Value="12,0,0,0" />
-        <Setter Property="HorizontalContentAlignment"
-                Value="Stretch" />
-        <Setter Property="HorizontalAlignment"
-                Value="Stretch" />
-        <Setter Property="VerticalAlignment"
-                Value="Stretch" />
-        <Setter Property="FontFamily"
-                Value="{StaticResource SymbolThemeFontFamily}" />
-        <Setter Property="FontSize"
-                Value="{StaticResource GlyphMediumFontSize}" />
-        <Setter Property="FontWeight"
-                Value="Normal" />
-        <Setter Property="UseSystemFocusVisuals"
-                Value="True" />
-        <Setter Property="Width"
-                Value="Auto" />
-        <Setter Property="Height"
-                Value="Auto" />
-        <Setter Property="BadgeTemplate">
-            <Setter.Value>
-                <DataTemplate>
-                    <TextBlock Text="{Binding}"
-                               TextTrimming="CharacterEllipsis" />
-                </DataTemplate>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="controls:BadgeButton">
-                    <Grid Background="{TemplateBinding Background}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                       Storyboard.TargetName="RootGrid">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                    <VisualState.Setters>
-                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
-                                                Value="PointerOver" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                       Storyboard.TargetName="RootGrid">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                    <VisualState.Setters>
-                                        <Setter Target="Icon.(muxc:AnimatedIcon.State)"
-                                                Value="Pressed" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Disabled">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                       Storyboard.TargetName="ContentPresenter">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="48" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Border x:Name="RootGrid"
-                                CornerRadius="4"
-                                Margin="4,2"
-                                Grid.ColumnSpan="2"
-                                Grid.RowSpan="2" />
-
-                        <muxc:AnimatedIcon x:Name="Icon"
-                                           muxc:AnimatedIcon.State="Normal"
-                                           Source="{TemplateBinding IconSource}"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           AutomationProperties.AccessibilityView="Raw"
-                                           Width="20"
-                                           Height="20" />
-
-                        <ContentPresenter x:Name="ContentPresenter"
-                                          FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                          FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                          AutomationProperties.AccessibilityView="Raw"
-                                          BorderBrush="{TemplateBinding BorderBrush}"
-                                          BorderThickness="{TemplateBinding BorderThickness}"
-                                          ContentTransitions="{TemplateBinding ContentTransitions}"
-                                          Content="{TemplateBinding Badge}"
-                                          ContentTemplate="{TemplateBinding BadgeTemplate}"
-                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          Padding="0,9,12,10"
-                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Grid.Column="1" />
-
-                        <ContentControl x:Name="BadgePresenter"
-                                        FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                        FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                        Content="{TemplateBinding Content}"
-                                        Visibility="{TemplateBinding BadgeVisibility}"
-                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                        Padding="0,-10,12,10"
-                                        IsTabStop="False"
-                                        Grid.Column="1"
-                                        Grid.Row="1">
-                            <ContentControl.ContentTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}"
-                                               Style="{StaticResource CaptionTextBlockStyle}"
-                                               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                                </DataTemplate>
-                            </ContentControl.ContentTemplate>
-                        </ContentControl>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -347,7 +205,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="56" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
@@ -358,7 +216,7 @@
                         <TextBlock FontSize="{TemplateBinding FontSize}"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Center"
-                                   Margin="12 0 0 0"
+                                   Margin="20,0,0,0"
                                    AutomationProperties.AccessibilityView="Raw"
                                    Text="{TemplateBinding Glyph}"
                                    FontFamily="{TemplateBinding FontFamily}" />
@@ -541,123 +399,6 @@
         </Setter>
     </Style>
 
-    <Style x:Key="ImageSubbadgeBadgeButtonStyle"
-           TargetType="controls:BadgeButtonWithImage">
-        <Setter Property="Background"
-                Value="{ThemeResource SettingsItemBackground}" />
-        <Setter Property="BorderBrush"
-                Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-        <Setter Property="BorderThickness"
-                Value="0" />
-        <Setter Property="Padding"
-                Value="12,0,0,0" />
-        <Setter Property="HorizontalContentAlignment"
-                Value="Stretch" />
-        <Setter Property="HorizontalAlignment"
-                Value="Stretch" />
-        <Setter Property="VerticalAlignment"
-                Value="Stretch" />
-        <Setter Property="FontFamily"
-                Value="{StaticResource SymbolThemeFontFamily}" />
-        <Setter Property="FontWeight"
-                Value="Normal" />
-        <Setter Property="FontSize"
-                Value="{StaticResource GlyphMediumFontSize}" />
-        <Setter Property="UseSystemFocusVisuals"
-                Value="True" />
-        <Setter Property="Width"
-                Value="Auto" />
-        <Setter Property="Height"
-                Value="Auto" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="controls:BadgeButtonWithImage">
-                    <Grid x:Name="RootGrid"
-                          Background="{TemplateBinding Background}"
-                          BorderBrush="{TemplateBinding BorderBrush}"
-                          BorderThickness="{TemplateBinding BorderThickness}"
-                          CornerRadius="{TemplateBinding CornerRadius}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                       Storyboard.TargetName="RootGrid">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SettingsItemBackgroundPointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                       Storyboard.TargetName="RootGrid">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SettingsItemBackgroundPressed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Disabled">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                       Storyboard.TargetName="ContentPresenter">
-                                            <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="52" />
-                        </Grid.ColumnDefinitions>
-                        <Image Source="{TemplateBinding ImageSource}"
-                               Width="40"
-                               Height="40"
-                               Margin="0,0,12,0"
-                               Grid.Column="1" />
-
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <ContentPresenter x:Name="ContentPresenter"
-                                              FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                              FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                              AutomationProperties.AccessibilityView="Raw"
-                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              Content="{TemplateBinding Content}"
-                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              Padding="12,11,12,12"
-                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                            <ContentControl x:Name="BadgePresenter"
-                                            FontSize="{ThemeResource ControlContentThemeFontSize}"
-                                            FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                            Content="{TemplateBinding Badge}"
-                                            Visibility="{TemplateBinding BadgeVisibility}"
-                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                            Padding="12,-12,12,12"
-                                            IsTabStop="False"
-                                            Grid.Row="1">
-                                <ContentControl.ContentTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding}"
-                                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                                    </DataTemplate>
-                                </ContentControl.ContentTemplate>
-                            </ContentControl>
-                        </Grid>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style x:Key="SubtitleBadgeButtonStyle"
            TargetType="controls:BadgeButton">
         <Setter Property="Background"
@@ -830,7 +571,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="56" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
@@ -838,7 +579,7 @@
                         <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Center"
-                                   Margin="12,0,0,0"
+                                   Margin="20,0,0,0"
                                    AutomationProperties.AccessibilityView="Raw"
                                    Text="{TemplateBinding Glyph}"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}" />
@@ -958,13 +699,14 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="56" />
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock FontSize="18"
-                                   HorizontalAlignment="Center"
+                                   Margin="16,0,0,0"
+                                   HorizontalAlignment="Left"
                                    VerticalAlignment="Center"
                                    AutomationProperties.AccessibilityView="Raw"
                                    Text="{TemplateBinding Glyph}"

@@ -132,14 +132,14 @@
                 <controls:HeaderedControl Background="{ThemeResource SettingsItemBackground}">
                     <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="56" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Center"
-                                   Margin="12,0,0,0"
+                                   Margin="20,0,0,0"
                                    AutomationProperties.AccessibilityView="Raw"
                                    Text="&#xE9EB;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}" />
@@ -161,14 +161,14 @@
                     </Grid>
                     <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="56" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
                                    HorizontalAlignment="Left"
                                    VerticalAlignment="Center"
-                                   Margin="12,0,0,0"
+                                   Margin="20,0,0,0"
                                    AutomationProperties.AccessibilityView="Raw"
                                    Text="&#xE9E8;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}" />

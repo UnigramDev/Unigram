@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using Telegram.Common;
 using Telegram.Converters;
@@ -660,5 +661,35 @@ namespace Telegram.Controls.Cells
 
             Grid.SetRowSpan(TitlePanel, 2);
         }
+
+
+
+
+        #region Repeater :(
+
+        public void UpdateLinkedChat(IClientService clientService, ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
+        {
+            var button = args.Element as Button;
+            var chat = button.DataContext as Chat;
+
+            TitleLabel.Text = clientService.GetTitle(chat);
+
+            if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
+            {
+                if (supergroup.HasActiveUsername(out string username))
+                {
+                    SubtitleLabel.Text = $"@{username}";
+                }
+                else
+                {
+                    SubtitleLabel.Text = Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroup.MemberCount);
+                }
+            }
+
+            Photo.SetChat(clientService, chat, 36);
+            Identity.SetStatus(clientService, chat);
+        }
+
+        #endregion
     }
 }

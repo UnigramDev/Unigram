@@ -37,6 +37,7 @@ namespace Telegram.Views.Folders
             button.Click += Edit_Click;
             button.CommandParameter = filter;
             button.ChevronGlyph = args.Index < ViewModel.ClientService.Options.ChatFilterCountMax ? Icons.ChevronRight : Icons.LockClosed;
+            button.BorderThickness = new Thickness(0, args.Index == 0 ? 0 : 1, 0, 0);
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)

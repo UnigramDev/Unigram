@@ -108,7 +108,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <StackPanel Margin="0,0,0,32">
+                <controls:SettingsPanel IsFooter="True">
                     <TextBlock x:Name="UsernamesFooter"
                                x:Load="{x:Bind ConvertHeaderLoad(ViewModel.Items.Count), Mode=OneWay}"
                                Text="{CustomResource UsernamesChannelHelp}"
@@ -133,7 +133,7 @@
                                   Content="{CustomResource RestrictSavingContent}"
                                   Style="{StaticResource SettingsCheckBoxStyle}" />
                     </controls:HeaderedControl>
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Footer>
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
