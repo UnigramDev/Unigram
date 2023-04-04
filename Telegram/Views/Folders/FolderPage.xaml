@@ -32,7 +32,7 @@
                           VerticalScrollMode="Auto">
                 <controls:SettingsPanel>
                     <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListNewFolder.tgs" />
-                    
+
                     <Grid>
                         <controls:HeaderedControl Header="{CustomResource FilterNameHint}">
                             <TextBox x:Name="TitleField"
@@ -108,7 +108,7 @@
                         </controls:HeaderedControl.ItemsPanel>
                         <controls:BadgeButton Click="{x:Bind ViewModel.AddIncluded}"
                                               Content="{CustomResource FilterAddChats}"
-                                              Style="{StaticResource LargeBadgeButtonStyle}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
                                               BorderThickness="0"
                                               Glyph="&#xEA08;" />
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
@@ -134,7 +134,7 @@
                         </controls:HeaderedControl.ItemsPanel>
                         <controls:BadgeButton Click="{x:Bind ViewModel.AddExcluded}"
                                               Content="{CustomResource FilterAddChats}"
-                                              Style="{StaticResource LargeBadgeButtonStyle}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
                                               BorderThickness="0"
                                               Glyph="&#xEA08;" />
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
