@@ -57,6 +57,11 @@ namespace Telegram.Navigation
             //should be called to initialize and set new SynchronizationContext
             //if (!WindowWrapper.ActiveWrappers.Any())
             // handle window
+
+            // Hook up the default Back handler
+            // WARNING: this is used by Xbox (and some Windows users)
+            SystemNavigationManager.GetForCurrentView().BackRequested += BackHandler;
+
             CreateWindowWrapper(args.Window);
             ViewService.OnWindowCreated();
             base.OnWindowCreated(args);
