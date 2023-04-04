@@ -3293,14 +3293,7 @@ namespace Telegram.Views
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (e.NewSize.Width >= 500 && ManageCount.OverflowVisibility == Visibility.Collapsed)
-            {
-                ManageCount.OverflowVisibility = Visibility.Visible;
-            }
-            else if (e.NewSize.Width < 500 && ManageCount.OverflowVisibility == Visibility.Visible)
-            {
-                ManageCount.OverflowVisibility = Visibility.Collapsed;
-            }
+
         }
 
         private void ContentPanel_SizeChanged(object sender, SizeChangedEventArgs e)

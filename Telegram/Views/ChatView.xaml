@@ -1487,12 +1487,12 @@
                                   Glyph="&#xE711;"
                                   Click="{x:Bind ViewModel.UnselectMessages}" />
 
-            <controls:NumericTextBlock x:Name="ManageCount"
-                                       Text="{x:Bind ConvertSelection(ViewModel.SelectedCount), Mode=OneWay}"
-                                       TextStyle="{StaticResource BaseTextBlockStyle}"
-                                       VerticalAlignment="Center"
-                                       Margin="0,-2,0,0"
-                                       Grid.Column="1" />
+            <controls:AnimatedTextBlock x:Name="ManageCount"
+                                        Text="{x:Bind ConvertSelection(ViewModel.SelectedCount), Mode=OneWay}"
+                                        TextStyle="{StaticResource BaseTextBlockStyle}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,-2,0,0"
+                                        Grid.Column="1" />
 
             <controls:GlyphButton x:Name="ButtonForward"
                                   Glyph="&#xE72D;"

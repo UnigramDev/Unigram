@@ -479,15 +479,15 @@
                                    Height="96" />
                         </Grid>
 
-                        <local:NumericTextBlock x:Name="Count"
-                                                x:Load="False"
-                                                Foreground="{ThemeResource MessageReactionForegroundBrush}"
-                                                TextStyle="{StaticResource CaptionTextBlockStyle}"
-                                                VerticalAlignment="Center"
-                                                AutomationProperties.AccessibilityView="Raw"
-                                                IsTabStop="False"
-                                                Margin="0,1,8,2"
-                                                Grid.Column="1" />
+                        <local:AnimatedTextBlock x:Name="Count"
+                                                 x:Load="False"
+                                                 Foreground="{ThemeResource MessageReactionForegroundBrush}"
+                                                 TextStyle="{StaticResource CaptionTextBlockStyle}"
+                                                 VerticalAlignment="Center"
+                                                 AutomationProperties.AccessibilityView="Raw"
+                                                 IsTabStop="False"
+                                                 Margin="0,1,8,2"
+                                                 Grid.Column="1" />
 
                         <local:RecentUserHeads x:Name="RecentChoosers"
                                                x:Load="False"
@@ -6346,25 +6346,30 @@
                 Value="4" />
     </Style>
 
-    <Style TargetType="local:NumericTextBlock">
+    <Style TargetType="local:AnimatedTextBlock">
+        <Setter Property="HorizontalAlignment"
+                Value="Left" />
+        <Setter Property="TextStyle"
+                Value="{StaticResource BodyTextBlockStyle}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:NumericTextBlock">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock x:Name="BeforePart"
-                                   Visibility="{TemplateBinding OverflowVisibility}" />
-                        <Grid x:Name="LayoutRoot"
-                              Grid.Column="1" />
-                        <TextBlock x:Name="AfterPart"
-                                   Visibility="{TemplateBinding OverflowVisibility}"
+                <ControlTemplate TargetType="local:AnimatedTextBlock">
+                    <local:AnimatedTextBlockPresenter>
+                        <TextBlock x:Name="PrefixPart"
+                                   x:Load="False"
+                                   Style="{TemplateBinding TextStyle}" />
+                        <TextBlock x:Name="SuffixPart"
+                                   x:Load="False"
+                                   Style="{TemplateBinding TextStyle}"
                                    Grid.Column="2" />
-                    </Grid>
+                        <TextBlock x:Name="PrevPart"
+                                   x:Load="False"
+                                   Style="{TemplateBinding TextStyle}"
+                                   Grid.ColumnSpan="2" />
+                        <TextBlock x:Name="NextPart"
+                                   Style="{TemplateBinding TextStyle}"
+                                   Grid.Column="1" />
+                    </local:AnimatedTextBlockPresenter>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

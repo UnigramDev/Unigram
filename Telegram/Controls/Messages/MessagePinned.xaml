@@ -76,12 +76,12 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <StackPanel Orientation="Horizontal">
-                <controls:NumericTextBlock x:Name="TitleLabel"
-                                           Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                                           TextStyle="{StaticResource ReplyBodyTextBlockStyle}"
-                                           VerticalAlignment="Top"
-                                           IsTabStop="False"
-                                           FontSize="12" />
+                <controls:AnimatedTextBlock x:Name="TitleLabel"
+                                            Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                            TextStyle="{StaticResource ReplyBodyTextBlockStyle}"
+                                            VerticalAlignment="Top"
+                                            IsTabStop="False"
+                                            FontSize="12" />
             </StackPanel>
 
             <Grid Grid.Row="1">

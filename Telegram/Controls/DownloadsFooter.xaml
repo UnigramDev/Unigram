@@ -46,11 +46,11 @@
         <local:DownloadsIndicator x:Name="Icon"
                                   Width="40" />
 
-        <local:NumericTextBlock x:Name="Count"
-                                TextStyle="{StaticResource BaseTextBlockStyle}"
-                                VerticalAlignment="Center"
-                                Margin="0,0,12,0"
-                                Grid.Column="1" />
+        <local:AnimatedTextBlock x:Name="Count"
+                                 TextStyle="{StaticResource BaseTextBlockStyle}"
+                                 VerticalAlignment="Center"
+                                 Margin="0,0,12,0"
+                                 Grid.Column="1" />
 
         <TextBlock x:Name="Size"
                    Style="{StaticResource InfoBodyTextBlockStyle}"

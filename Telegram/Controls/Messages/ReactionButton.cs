@@ -28,7 +28,7 @@ namespace Telegram.Controls.Messages
         private Image Presenter;
         private CustomEmojiIcon Icon;
         private Popup Overlay;
-        private NumericTextBlock Count;
+        private AnimatedTextBlock Count;
         private RecentUserHeads RecentChoosers;
 
         public ReactionButton()
@@ -154,7 +154,7 @@ namespace Telegram.Controls.Messages
 
             if (interaction.TotalCount > interaction.RecentSenderIds.Count)
             {
-                Count ??= GetTemplateChild(nameof(Count)) as NumericTextBlock;
+                Count ??= GetTemplateChild(nameof(Count)) as AnimatedTextBlock;
                 Count.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
                 Count.Text = Converter.ShortNumber(interaction.TotalCount);
