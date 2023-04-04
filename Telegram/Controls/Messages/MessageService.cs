@@ -1174,7 +1174,7 @@ namespace Telegram.Controls.Messages
 
         private static (string, IList<TextEntity>) UpdateChatUpgradeFrom(MessageViewModel message, MessageChatUpgradeFrom chatUpgradeFrom, bool active)
         {
-            return (Strings.GroupUpgradedFrom, null);
+            return (active ? Strings.GroupUpgradedFrom : Strings.GroupUpgradedTo, null);
         }
 
         private static (string, IList<TextEntity>) UpdateChatUpgradeTo(MessageViewModel message, MessageChatUpgradeTo chatUpgradeTo, bool active)
