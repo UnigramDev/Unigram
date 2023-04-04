@@ -532,7 +532,6 @@ namespace Telegram.Views
                 if (_source != null)
                 {
                     _source.CollectionChanged += OnCollectionChanged;
-
                     ReplaceWith(_source);
                 }
                 else
@@ -552,7 +551,7 @@ namespace Telegram.Views
                         RemoveRange(e.OldStartingIndex, e.OldItems.Count);
                         break;
                     case NotifyCollectionChangedAction.Reset:
-                        SwitchTo(_source);
+                        ReplaceWith(_source);
                         break;
                 }
             }
