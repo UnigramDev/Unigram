@@ -42,8 +42,6 @@ namespace Telegram.Navigation.Services
 
         void Refresh();
 
-        void Refresh(object param);
-
 
 
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
@@ -481,7 +479,6 @@ namespace Telegram.Navigation.Services
         }
 
         public void Refresh() { FrameFacade.Refresh(); }
-        public void Refresh(object param) { FrameFacade.Refresh(param); }
 
         public void GoBack(NavigationState state = null, NavigationTransitionInfo infoOverride = null)
         {
