@@ -2283,9 +2283,9 @@ namespace Telegram.Controls.Cells
             CustomEmoji?.Measure(new Size(briefWidth, availableSize.Height));
             TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
 
-            if (Children.Count > 12)
+            if (Children.Count > 12 + shift)
             {
-                Children[12].Measure(availableSize);
+                Children[12 + shift].Measure(availableSize);
             }
 
             return base.MeasureOverride(availableSize);
@@ -2430,9 +2430,9 @@ namespace Telegram.Controls.Cells
             rect.Height = TypingLabel.DesiredSize.Height;
             TypingLabel.Arrange(rect);
 
-            if (Children.Count > 12)
+            if (Children.Count > 12 + shift)
             {
-                Children[12].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+                Children[12 + shift].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
             }
 
             return finalSize;
