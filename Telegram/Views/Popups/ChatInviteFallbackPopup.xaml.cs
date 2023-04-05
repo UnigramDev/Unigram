@@ -24,43 +24,36 @@ namespace Telegram.Views.Popups
             _clientService = clientService;
             _inviteLink = GetInviteLink(chat);
 
-            string title;
             string message;
-            string primary;
-            string secondary;
 
             if (_inviteLink != null)
             {
-                title = Strings.ChannelInviteViaLink;
+                Title = Strings.ChannelInviteViaLink;
                 message = users.Count == 1
                     ? string.Format(Strings.InviteChannelRestrictedUsersOne, users[0].FullName())
                     : Locale.Declension(Strings.R.InviteChannelRestrictedUsers, users.Count);
 
-                primary = Strings.SendInviteLink;
-                secondary = Strings.ActionSkip;
+                PrimaryButtonText = Strings.SendInviteLink;
+                SecondaryButtonText = Strings.ActionSkip;
+
+                ScrollingHost.SelectionMode = ListViewSelectionMode.Multiple;
+                ScrollingHost.SelectAll();
             }
             else
             {
-                title = Strings.ChannelInviteViaLinkRestricted;
+                Title = Strings.ChannelInviteViaLinkRestricted;
                 message = users.Count == 1
                     ? string.Format(Strings.InviteChannelRestrictedUsers2One, users[0].FullName())
                     : Locale.Declension(Strings.R.InviteChannelRestrictedUsers2, users.Count);
 
-                primary = Strings.Close;
-                secondary = null;
+                PrimaryButtonText = Strings.Close;
+                SecondaryButtonText = null;
+
+                ScrollingHost.SelectionMode = ListViewSelectionMode.None;
             }
 
-            Title = title;
             ScrollingHost.ItemsSource = users;
-            ScrollingHost.SelectionMode = _inviteLink != null
-                ? ListViewSelectionMode.Multiple
-                : ListViewSelectionMode.None;
-            ScrollingHost.SelectAll();
-
             TextBlockHelper.SetMarkdown(MessageLabel, message);
-
-            PrimaryButtonText = primary;
-            SecondaryButtonText = secondary;
         }
 
         private ChatInviteLink GetInviteLink(Chat chat)
