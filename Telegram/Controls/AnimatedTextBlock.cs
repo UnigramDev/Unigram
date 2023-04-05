@@ -112,34 +112,14 @@ namespace Telegram.Controls
 
             if (prevLength > 0 || nextLength > 0)
             {
-                var prefix = newValue.Substring(0, prefixLength);
-                var nextValue = newValue.Substring(j, nextLength);
-                var prevValue = oldValue.Substring(j, prevLength);
-                var suffix = newValue.Substring(suffixLength);
-
-                // TODO: TextBlock seems to trim leading spaces SOME TIMES
-                // We still rely not to have more than a space in between words.
-                if (prefix.EndsWith(' '))
-                {
-                    prefix = prefix.Substring(0, prefix.Length - 1);
-                    prevValue = $" {prevValue}";
-                    nextValue = $" {nextValue}";
-                }
-
-                if (nextValue.EndsWith(' '))
-                {
-                    nextValue = nextValue.Substring(0, nextValue.Length - 1);
-                    suffix = $" {suffix}";
-                }
-                else if (prevValue.EndsWith(' '))
-                {
-                    prevValue = prevValue.Substring(0, prevValue.Length - 1);
-                    suffix = $" {suffix}";
-                }
-                //
+                var prefix = prefixLength > 0 ? newValue.Substring(0, prefixLength) + "\u200B" : string.Empty;
+                var nextValue = nextLength > 0 ? newValue.Substring(j, nextLength) + "\u200B" : string.Empty;
+                var prevValue = prevLength > 0 ? oldValue.Substring(j, prevLength) + "\u200B" : string.Empty;
+                var suffix = suffixLength > 0 ? newValue.Substring(suffixLength) : string.Empty;
 
                 if (prefix.Length > 0 || suffix.Length > 0)
                 {
+                    SizeChanged -= OnSizeChanged;
                     SizeChanged += OnSizeChanged;
                 }
 
