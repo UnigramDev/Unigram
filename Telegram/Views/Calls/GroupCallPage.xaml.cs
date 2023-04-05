@@ -130,17 +130,9 @@ namespace Telegram.Views.Calls
             //ViewportAspect.Constraint = new Size(16, 9);
         }
 
+        public DispatcherQueue DispatcherQueue => _dispatcherQueue;
+
         public void VideoInfoAdded(GroupCallParticipant participant, GroupCallParticipantVideoInfo[] videoInfos)
-        {
-            this.BeginOnUIThread(() => VideoInfoAddedInternal(participant, videoInfos));
-        }
-
-        public void VideoInfoRemoved(GroupCallParticipant participant, string[] endpointIds)
-        {
-            this.BeginOnUIThread(() => VideoInfoRemovedInternal(participant, endpointIds));
-        }
-
-        public void VideoInfoAddedInternal(GroupCallParticipant participant, GroupCallParticipantVideoInfo[] videoInfos)
         {
             foreach (var item in videoInfos)
             {
@@ -172,7 +164,7 @@ namespace Telegram.Views.Calls
             _debouncerTimer.Start();
         }
 
-        public void VideoInfoRemovedInternal(GroupCallParticipant participant, string[] endpointIds)
+        public void VideoInfoRemoved(GroupCallParticipant participant, string[] endpointIds)
         {
             foreach (var item in endpointIds)
             {
@@ -1751,26 +1743,23 @@ namespace Telegram.Views.Calls
 
         public void UpdateGroupCallParticipant(GroupCallParticipant participant)
         {
-            this.BeginOnUIThread(() =>
+            foreach (var videoInfo in participant.GetVideoInfo())
             {
-                foreach (var videoInfo in participant.GetVideoInfo())
+                if (_gridCells.TryGetValue(videoInfo.EndpointId, out var cell))
                 {
-                    if (_gridCells.TryGetValue(videoInfo.EndpointId, out var cell))
-                    {
-                        cell.UpdateGroupCallParticipant(_clientService, participant, videoInfo);
-                    }
+                    cell.UpdateGroupCallParticipant(_clientService, participant, videoInfo);
                 }
+            }
 
-                var container = ScrollingHost.ContainerFromItem(participant) as SelectorItem;
-                var content = container?.ContentTemplateRoot as Grid;
+            var container = ScrollingHost.ContainerFromItem(participant) as SelectorItem;
+            var content = container?.ContentTemplateRoot as Grid;
 
-                if (content == null)
-                {
-                    return;
-                }
+            if (content == null)
+            {
+                return;
+            }
 
-                UpdateGroupCallParticipant(container, content, participant, false);
-            });
+            UpdateGroupCallParticipant(container, content, participant, false);
         }
 
         private void UpdateGroupCallParticipant(SelectorItem container, Grid content, GroupCallParticipant participant, bool containerContentChanging)

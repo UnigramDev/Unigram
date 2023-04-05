@@ -5,10 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Common;
@@ -55,8 +53,6 @@ namespace Telegram.Collections
         public void Dispose()
         {
             _aggregator.Unsubscribe(this);
-            _handlers.Clear();
-
             Delegate = null;
         }
 
@@ -87,38 +83,53 @@ namespace Telegram.Collections
         {
             if (_groupCall.Id == update.GroupCallId)
             {
-                if (update.Participant.Order.Length > 0)
+                TryEnqueue(() =>
                 {
-                    var nextIndex = NextIndexOf(update.Participant, out var updated, out int prevIndex);
-                    if (nextIndex >= 0)
+                    if (update.Participant.Order.Length > 0)
                     {
-                        if (prevIndex >= 0)
+                        var nextIndex = NextIndexOf(update.Participant, out var updated, out int prevIndex);
+                        if (nextIndex >= 0)
                         {
-                            RemoveAt(prevIndex);
-                        }
+                            if (prevIndex >= 0)
+                            {
+                                RemoveAt(prevIndex);
+                            }
 
-                        _audioSources[update.Participant.IsCurrentUser ? 0 : update.Participant.AudioSourceId] = update.Participant;
-                        Insert(Math.Min(Count, nextIndex), update.Participant);
-                    }
-                    else if (updated != null)
-                    {
-                        Delegate?.UpdateGroupCallParticipant(updated);
-                    }
-                }
-                else
-                {
-                    var already = this.FirstOrDefault(x => x.ParticipantId.AreTheSame(update.Participant.ParticipantId));
-                    if (already != null)
-                    {
-                        if (already.HasVideoInfo())
+                            _audioSources[update.Participant.IsCurrentUser ? 0 : update.Participant.AudioSourceId] = update.Participant;
+                            Insert(Math.Min(Count, nextIndex), update.Participant);
+                        }
+                        else if (updated != null)
                         {
-                            Delegate?.VideoInfoRemoved(already, already.ScreenSharingVideoInfo?.EndpointId, already.VideoInfo?.EndpointId);
+                            Delegate?.UpdateGroupCallParticipant(updated);
                         }
-
-                        _audioSources.Remove(update.Participant.IsCurrentUser ? 0 : update.Participant.AudioSourceId);
-                        Remove(already);
                     }
-                }
+                    else
+                    {
+                        var already = this.FirstOrDefault(x => x.ParticipantId.AreTheSame(update.Participant.ParticipantId));
+                        if (already != null)
+                        {
+                            if (already.HasVideoInfo())
+                            {
+                                Delegate?.VideoInfoRemoved(already, already.ScreenSharingVideoInfo?.EndpointId, already.VideoInfo?.EndpointId);
+                            }
+
+                            _audioSources.Remove(update.Participant.IsCurrentUser ? 0 : update.Participant.AudioSourceId);
+                            Remove(already);
+                        }
+                    }
+                });
+            }
+        }
+
+        private void TryEnqueue(DispatcherQueueHandler callback)
+        {
+            if (Delegate?.DispatcherQueue == null || Delegate.DispatcherQueue.HasThreadAccess)
+            {
+                callback();
+            }
+            else
+            {
+                Delegate.DispatcherQueue.TryEnqueue(callback);
             }
         }
 
@@ -225,12 +236,19 @@ namespace Telegram.Collections
 
         public void LoadVideoInfo()
         {
-            foreach (var participant in this)
+            if (Delegate?.DispatcherQueue == null || Delegate.DispatcherQueue.HasThreadAccess)
             {
-                if (participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null)
+                foreach (var participant in this)
                 {
-                    Delegate?.VideoInfoAdded(participant, new[] { participant.ScreenSharingVideoInfo, participant.VideoInfo });
+                    if (participant.ScreenSharingVideoInfo != null || participant.VideoInfo != null)
+                    {
+                        Delegate?.VideoInfoAdded(participant, new[] { participant.ScreenSharingVideoInfo, participant.VideoInfo });
+                    }
                 }
+            }
+            else
+            {
+                Delegate.DispatcherQueue.TryEnqueue(LoadVideoInfo);
             }
         }
 
@@ -255,65 +273,5 @@ namespace Telegram.Collections
         }
 
         public bool HasMoreItems => !_groupCall.LoadedAllParticipants;
-
-        #region Dispatcher queue
-
-        private readonly ConcurrentDictionary<DispatcherQueue, NotifyCollectionChangedEventHandler> _handlers
-            = new ConcurrentDictionary<DispatcherQueue, NotifyCollectionChangedEventHandler>();
-
-        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            foreach (var dispatcher in _handlers)
-            {
-                dispatcher.Key.TryEnqueue(() =>
-                {
-                    try
-                    {
-                        dispatcher.Value?.Invoke(this, e);
-                    }
-                    catch { }
-                });
-            }
-        }
-
-        public override event NotifyCollectionChangedEventHandler CollectionChanged
-        {
-            add
-            {
-                var dispatcher = DispatcherQueue.GetForCurrentThread();
-                if (dispatcher == null)
-                {
-                    return;
-                }
-
-                if (_handlers.TryGetValue(dispatcher, out NotifyCollectionChangedEventHandler handlers))
-                {
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
-                    handlers += value;
-#pragma warning restore IDE0059 // Unnecessary assignment of a value
-                }
-                else
-                {
-                    _handlers[dispatcher] = value;
-                }
-            }
-            remove
-            {
-                var dispatcher = DispatcherQueue.GetForCurrentThread();
-                if (dispatcher == null)
-                {
-                    return;
-                }
-
-                if (_handlers.TryGetValue(dispatcher, out NotifyCollectionChangedEventHandler handlers))
-                {
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
-                    handlers -= value;
-#pragma warning restore IDE0059 // Unnecessary assignment of a value
-                }
-            }
-        }
-
-        #endregion
     }
 }
