@@ -3636,6 +3636,8 @@ namespace Telegram.ViewModels
             UpdateSeparatorOnRemove(next, previous, index);
         }
 
+        // TODO: Support MoveItem to optimize UpdateMessageSendSucceeded
+
         private static MessageViewModel UpdateSeparatorOnInsert(MessageViewModel item, MessageViewModel next)
         {
             if (item != null && next != null)

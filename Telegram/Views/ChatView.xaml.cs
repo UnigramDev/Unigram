@@ -550,6 +550,9 @@ namespace Telegram.Views
                     case NotifyCollectionChangedAction.Remove:
                         RemoveRange(e.OldStartingIndex, e.OldItems.Count);
                         break;
+                    case NotifyCollectionChangedAction.Move:
+                        Move(e.OldStartingIndex, e.NewStartingIndex);
+                        break;
                     case NotifyCollectionChangedAction.Reset:
                         ReplaceWith(_source);
                         break;

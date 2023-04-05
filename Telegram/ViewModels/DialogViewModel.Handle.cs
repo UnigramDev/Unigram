@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Messages;
 using Telegram.Controls.Messages.Content;
@@ -564,6 +565,7 @@ namespace Telegram.ViewModels
                                         {
                                             invalidated = false;
 
+                                            _groupedMessages.TryRemove(message.MediaAlbumId, out _);
                                             Items.RemoveAt(i);
                                             i--;
                                         }
@@ -684,7 +686,10 @@ namespace Telegram.ViewModels
                             voiceNote.IsListened = true;
                             break;
                     }
-                }, (bubble, message) => bubble.UpdateMessageContentOpened(message));
+
+                    return true;
+                },
+                (bubble, message) => bubble.UpdateMessageContentOpened(message));
             }
         }
 
@@ -697,6 +702,7 @@ namespace Telegram.ViewModels
                 Handle(update.MessageId, message =>
                 {
                     message.ContainsUnreadMention = false;
+                    return false;
                 });
 
                 BeginOnUIThread(() => Delegate?.UpdateChatUnreadMentionCount(_chat, update.UnreadMentionCount));
@@ -712,7 +718,9 @@ namespace Telegram.ViewModels
                 Handle(update.MessageId, message =>
                 {
                     message.UnreadReactions = update.UnreadReactions;
-                }, (bubble, message) =>
+                    return true;
+                },
+                (bubble, message) =>
                 {
                     Delegate?.ViewVisibleMessages(false);
                 });
@@ -729,7 +737,9 @@ namespace Telegram.ViewModels
                 {
                     message.EditDate = update.EditDate;
                     message.ReplyMarkup = update.ReplyMarkup;
-                }, (bubble, message) => bubble.UpdateMessageEdited(message));
+                    return true;
+                },
+                (bubble, message) => bubble.UpdateMessageEdited(message));
             }
         }
 
@@ -740,7 +750,9 @@ namespace Telegram.ViewModels
                 Handle(update.MessageId, message =>
                 {
                     message.InteractionInfo = update.InteractionInfo;
-                }, (bubble, message) => bubble.UpdateMessageInteractionInfo(message));
+                    return true;
+                },
+                (bubble, message) => bubble.UpdateMessageInteractionInfo(message));
             }
         }
 
@@ -767,7 +779,9 @@ namespace Telegram.ViewModels
                     Handle(update.MessageId, message =>
                     {
                         message.IsPinned = update.IsPinned;
-                    }, (bubble, message) => bubble.UpdateMessageIsPinned(message));
+                        return true;
+                    },
+                    (bubble, message) => bubble.UpdateMessageIsPinned(message));
                 }
             }
         }
@@ -779,7 +793,9 @@ namespace Telegram.ViewModels
                 Handle(update.OldMessageId, message =>
                 {
                     message.Replace(update.Message);
-                }, (bubble, message) => bubble.UpdateMessage(message));
+                    return true;
+                },
+                (bubble, message) => bubble.UpdateMessage(message));
             }
         }
 
@@ -787,14 +803,13 @@ namespace Telegram.ViewModels
         {
             if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
             {
-                //Handle(new UpdateDeleteMessages(update.Message.ChatId, new[] { update.Message.Id }, true, true));
-                //Handle(new UpdateNewMessage(update.Message));
-
                 Handle(update.OldMessageId, message =>
                 {
                     message.Replace(update.Message);
                     message.GeneratedContentUnread = true;
-                }, (bubble, message) =>
+                    return MoveMessageInOrder(Items, message);
+                },
+                (bubble, message) =>
                 {
                     bubble.UpdateMessage(message);
                     Delegate?.ViewVisibleMessages(false);
@@ -822,7 +837,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel> action = null)
+        private void Handle(long messageId, Func<MessageViewModel, bool> update, Action<MessageBubble, MessageViewModel> action = null)
         {
             var field = ListField;
             if (field == null)
@@ -860,7 +875,7 @@ namespace Telegram.ViewModels
                                     break;
                                 }
 
-                                var container = field.ContainerFromItem(message) as ListViewItem;
+                                var container = field.ContainerFromItem(message) as SelectorItem;
                                 if (container == null)
                                 {
                                     //break;
@@ -882,23 +897,24 @@ namespace Telegram.ViewModels
 
                         if (message.Id == messageId)
                         {
-                            update?.Invoke(message);
-
-                            if (action == null)
+                            if (update == null || update(message))
                             {
-                                return;
-                            }
+                                if (action == null)
+                                {
+                                    return;
+                                }
 
-                            var container = field.ContainerFromItem(message) as ListViewItem;
-                            if (container == null)
-                            {
-                                return;
-                            }
+                                var container = field.ContainerFromItem(message) as SelectorItem;
+                                if (container == null)
+                                {
+                                    return;
+                                }
 
-                            var content = container.ContentTemplateRoot as FrameworkElement;
-                            if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
-                            {
-                                action(bubble, message);
+                                var content = container.ContentTemplateRoot as FrameworkElement;
+                                if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
+                                {
+                                    action(bubble, message);
+                                }
                             }
                         }
                     }
@@ -1095,6 +1111,54 @@ namespace Telegram.ViewModels
             }
 
             return position;
+        }
+
+        public static bool MoveMessageInOrder(MvxObservableCollection<MessageViewModel> messages, MessageViewModel message)
+        {
+            var position = -1;
+            var original = -1;
+
+            if (messages.Count == 0)
+            {
+                position = 0;
+            }
+
+            for (var i = messages.Count - 1; i >= 0; i--)
+            {
+                if (messages[i].Id == 0)
+                {
+                    if (messages[i].Date < message.Date && position == -1)
+                    {
+                        position = i + 1;
+                        break;
+                    }
+
+                    continue;
+                }
+
+                if (messages[i].Id == message.Id)
+                {
+                    original = i;
+                    break;
+                }
+                if (messages[i].Id < message.Id && position == -1)
+                {
+                    position = i + 1;
+                    //break;
+                }
+            }
+
+            if (position != -1 && original != -1 && position != original)
+            {
+                // InsertRemoveAt does exactly the same as Move,
+                // but explicitly uses Insert and RemoveAt methods as they're
+                // overridden by MessagesCollection to update attach & date header
+
+                messages.InsertRemoveAt(message, position, original);
+                return false;
+            }
+
+            return true;
         }
 
         public void UpdateQuery(string query)
