@@ -90,10 +90,7 @@ namespace Telegram.Common
 
         public static string Declension(string key, long count, bool format)
         {
-            if (_currentRules == null)
-            {
-                _currentRules = _allRules["en"];
-            }
+            _currentRules ??= _allRules["en"];
 
             if (format)
             {
@@ -103,6 +100,21 @@ namespace Telegram.Common
             {
                 return LocaleService.Current.GetString(key, _currentRules.QuantityForNumber(count));
             }
+        }
+
+        public static string Declension(string key, long count, params object[] args)
+        {
+            _currentRules ??= _allRules["en"];
+
+            var newArgs = new string[args.Length + 1];
+            newArgs[0] = count.ToString("N0");
+
+            if (args.Length > 0)
+            {
+                Array.Copy(args, 0, newArgs, 1, args.Length);
+            }
+
+            return string.Format(LocaleService.Current.GetString(key, _currentRules.QuantityForNumber(count)), newArgs);
         }
 
         public static CurrencyNumberFormatter GetCurrencyFormatter(string currency)

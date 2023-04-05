@@ -647,21 +647,36 @@ namespace Telegram.ViewModels
             }
             else
             {
-                var selected = await SharePopup.PickChatAsync(Strings.SelectContact);
-                var user = ClientService.GetUser(selected);
+                var header = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
+                    ? Strings.AddSubscriber
+                    : Strings.AddMember;
 
-                if (user == null)
+                var selected = await SharePopup.PickUsersAsync(ClientService, header);
+                if (selected == null || selected.Count == 0)
                 {
                     return;
                 }
 
-                var confirm = await ShowPopupAsync(string.Format(Strings.AddToTheGroup, user.FullName()), Strings.AppName, Strings.OK, Strings.Cancel);
+                string title = Locale.Declension(Strings.R.AddManyMembersAlertTitle, selected.Count);
+                string message;
+
+                if (selected.Count <= 5)
+                {
+                    var names = string.Join(", ", selected.Select(x => x.FullName()));
+                    message = string.Format(Strings.AddMembersAlertNamesText, names, chat.Title);
+                }
+                else
+                {
+                    message = Locale.Declension(Strings.R.AddManyMembersAlertNamesText, selected.Count, chat.Title);
+                }
+
+                var confirm = await ShowPopupAsync(message, title, Strings.Add, Strings.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
                 }
 
-                var response = await ClientService.SendAsync(new AddChatMember(chat.Id, user.Id, (int)ClientService.Options.ForwardedMessageCountMax));
+                var response = await ClientService.SendAsync(new AddChatMembers(chat.Id, selected.Select(x => x.Id).ToArray()));
                 if (response is Error error)
                 {
 

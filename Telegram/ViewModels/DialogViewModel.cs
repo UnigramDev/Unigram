@@ -2827,17 +2827,28 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup)
             {
-                var selected = await SharePopup.PickUsersAsync(ClientService, Strings.SelectContact);
+                var header = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
+                    ? Strings.AddSubscriber
+                    : Strings.AddMember;
+
+                var selected = await SharePopup.PickUsersAsync(ClientService, header);
                 if (selected == null || selected.Count == 0)
                 {
                     return;
                 }
 
-                var userIds = selected.Select(x => x.Id).ToArray();
-                var count = Locale.Declension(Strings.R.Users, selected.Count);
+                string title = Locale.Declension(Strings.R.AddManyMembersAlertTitle, selected.Count);
+                string message;
 
-                var title = string.Format(Strings.AddMembersAlertTitle, count);
-                var message = string.Format(Strings.AddMembersAlertCountText, count, chat.Title);
+                if (selected.Count <= 5)
+                {
+                    var names = string.Join(", ", selected.Select(x => x.FullName()));
+                    message = string.Format(Strings.AddMembersAlertNamesText, names, chat.Title);
+                }
+                else
+                { 
+                    message = Locale.Declension(Strings.R.AddManyMembersAlertNamesText, selected.Count, chat.Title);
+                }
 
                 var confirm = await ShowPopupAsync(message, title, Strings.Add, Strings.Cancel);
                 if (confirm != ContentDialogResult.Primary)
@@ -2845,7 +2856,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                var response = await ClientService.SendAsync(new AddChatMembers(chat.Id, userIds));
+                var response = await ClientService.SendAsync(new AddChatMembers(chat.Id, selected.Select(x => x.Id).ToArray()));
                 if (response is Error error)
                 {
 

@@ -651,6 +651,18 @@ to: {1}</value>
   <data name="AddExceptions" xml:space="preserve">
     <value>Add exceptions</value>
   </data>
+  <data name="AddManyMembersAlertNamesText_one" xml:space="preserve">
+    <value>Are you sure you want to add member to **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertNamesText_other" xml:space="preserve">
+    <value>Are you sure you want to add {0} members to **{1}**?</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_one" xml:space="preserve">
+    <value>Add member</value>
+  </data>
+  <data name="AddManyMembersAlertTitle_other" xml:space="preserve">
+    <value>Add {0} members</value>
+  </data>
   <data name="AddMasks" xml:space="preserve">
     <value>Add Masks</value>
   </data>
@@ -658,6 +670,9 @@ to: {1}</value>
     <value>Add Members</value>
   </data>
   <data name="AddMembersAlertCountText" xml:space="preserve">
+    <value>Are you sure you want to add {0} to **{1}**?</value>
+  </data>
+  <data name="AddMembersAlertNamesText" xml:space="preserve">
     <value>Are you sure you want to add {0} to **{1}**?</value>
   </data>
   <data name="AddMembersAlertTitle" xml:space="preserve">

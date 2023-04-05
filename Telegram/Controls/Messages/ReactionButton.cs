@@ -150,7 +150,7 @@ namespace Telegram.Controls.Messages
         private void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)
         {
             IsChecked = interaction.IsChosen;
-            AutomationProperties.SetName(this, string.Format(Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, false), interaction.TotalCount, interaction.Type));
+            AutomationProperties.SetName(this, Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, interaction.Type));
 
             if (interaction.TotalCount > interaction.RecentSenderIds.Count)
             {

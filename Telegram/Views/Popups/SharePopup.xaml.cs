@@ -132,6 +132,7 @@ namespace Telegram.Views.Popups
         {
             var dialog = GetForCurrentView();
             dialog.ViewModel.Title = title;
+            dialog.PrimaryButtonText = Strings.OK;
 
             var confirm = await dialog.PickAsync(selected, SearchChatsType.Private);
             if (confirm != ContentDialogResult.Primary)
