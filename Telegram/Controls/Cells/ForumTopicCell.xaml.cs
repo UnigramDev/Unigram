@@ -438,7 +438,7 @@ namespace Telegram.Controls.Cells
         private void UpdateMinithumbnail(ForumTopic topic, Message message)
         {
             var thumbnail = message?.GetMinithumbnail(false);
-            if (thumbnail != null && SettingsService.Current.Diagnostics.Minithumbnails)
+            if (thumbnail != null)
             {
                 double ratioX = (double)16 / thumbnail.Width;
                 double ratioY = (double)16 / thumbnail.Height;
@@ -457,6 +457,8 @@ namespace Telegram.Controls.Cells
 
                 Minithumbnail.Source = bitmap;
                 MinithumbnailPanel.Visibility = Visibility.Visible;
+
+                MinithumbnailPanel.CornerRadius = new CornerRadius(message.Content is MessageVideoNote ? 8 : 2);
             }
             else
             {

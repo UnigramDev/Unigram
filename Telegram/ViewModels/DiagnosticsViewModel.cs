@@ -141,16 +141,6 @@ namespace Telegram.ViewModels
             }
         }
 
-        public bool Minithumbnails
-        {
-            get => Settings.Diagnostics.Minithumbnails;
-            set
-            {
-                Settings.Diagnostics.Minithumbnails = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool CopyFormattedCode
         {
             get => Settings.Diagnostics.CopyFormattedCode;

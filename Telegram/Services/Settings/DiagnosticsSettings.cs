@@ -36,13 +36,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _copyFormattedCode, "CopyFormattedCode", value);
         }
 
-        private bool? _minithumbnails;
-        public bool Minithumbnails
-        {
-            get => _minithumbnails ??= GetValueOrDefault("Minithumbnails", true);
-            set => AddOrUpdateValue(ref _minithumbnails, "Minithumbnails", value);
-        }
-
         private bool? _allowRightToLeft;
         public bool AllowRightToLeft
         {
