@@ -25,8 +25,6 @@
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="Secret">
                                     <VisualState.Setters>
-                                        <Setter Target="TypeIcon.Foreground"
-                                                Value="{ThemeResource TelegramSecretChatForegroundBrush}" />
                                         <Setter Target="TitleLabel.Foreground"
                                                 Value="{ThemeResource TelegramSecretChatForegroundBrush}" />
                                     </VisualState.Setters>

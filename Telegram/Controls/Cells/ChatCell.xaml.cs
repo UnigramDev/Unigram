@@ -124,7 +124,6 @@ namespace Telegram.Controls.Cells
         private Border UnreadMentionsBadge;
         private InfoBadge UnreadBadge;
         private Rectangle DropVisual;
-        private TextBlock FailedLabel;
         private TextBlock UnreadMentionsLabel;
         private Run FromLabel;
         private Run DraftLabel;
@@ -159,7 +158,6 @@ namespace Telegram.Controls.Cells
             UnreadMentionsBadge = GetTemplateChild(nameof(UnreadMentionsBadge)) as Border;
             UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as InfoBadge;
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
-            FailedLabel = GetTemplateChild(nameof(FailedLabel)) as TextBlock;
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
             FromLabel = GetTemplateChild(nameof(FromLabel)) as Run;
             DraftLabel = GetTemplateChild(nameof(DraftLabel)) as Run;
@@ -235,6 +233,8 @@ namespace Telegram.Controls.Cells
             FromLabel.Text = UpdateFromLabel(chat, message);
             _dateLabel = UpdateTimeLabel(message);
             _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
+
+            TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
 
             UpdateBriefLabel(UpdateBriefLabel(chat, message, true, false));
             UpdateMinithumbnail(chat, chat.DraftMessage == null ? message : null);
