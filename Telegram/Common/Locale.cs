@@ -106,7 +106,7 @@ namespace Telegram.Common
         {
             _currentRules ??= _allRules["en"];
 
-            var newArgs = new string[args.Length + 1];
+            var newArgs = new object[args.Length + 1];
             newArgs[0] = count.ToString("N0");
 
             if (args.Length > 0)
