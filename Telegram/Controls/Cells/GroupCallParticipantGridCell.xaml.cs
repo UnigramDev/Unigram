@@ -80,11 +80,6 @@ namespace Telegram.Controls.Cells
             return mode == ParticipantsGridMode.Compact || list ? Stretch.Fill : Stretch.UniformToFill;
         }
 
-        public bool IsMirrored(ParticipantsGridMode mode, bool list)
-        {
-            return _participant.IsCurrentUser;
-        }
-
         public GroupCallParticipant Participant => _participant;
         public MessageSender ParticipantId => _participant.ParticipantId;
 

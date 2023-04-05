@@ -2282,7 +2282,7 @@ namespace Telegram.Views.Calls
                     if (future != null)
                     {
                         future.Stretch = child.GetStretch(_mode, list);
-                        future.IsMirrored = child.IsMirrored(_mode, list);
+                        future.IsMirrored = participant.IsCurrentUser && participant.ScreenSharingVideoInfo?.EndpointId != child.EndpointId;
                         tokens[child.EndpointId] = future;
                     }
                     else
