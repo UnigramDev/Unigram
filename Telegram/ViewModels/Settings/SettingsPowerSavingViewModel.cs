@@ -226,6 +226,16 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
+        public bool AreCallsAnimated
+        {
+            get => PowerSavingPolicy.AreCallsAnimated;
+            set
+            {
+                PowerSavingPolicy.AreCallsAnimated = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool AreMaterialsEnabled
         {
             get => PowerSavingPolicy.AreMaterialsEnabled;

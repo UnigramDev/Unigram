@@ -4956,7 +4956,11 @@ namespace Telegram.Views
                 {
                     amplitude = f3;
                 }
-                view.Invalidate();
+
+                if (PowerSavingPolicy.AreCallsAnimated)
+                {
+                    view.Invalidate();
+                }
             }
             float f7 = (amplitude * 0.2f) + 0.8f;
             if (showWaves || wavesEnter != 0.0f)
@@ -4987,7 +4991,11 @@ namespace Telegram.Views
                             buttonDrawable.Update(amplitude, 1.0f);
                             buttonDrawable.Draw(canvas, x, y);
                         }
-                        view.Invalidate();
+
+                        if (PowerSavingPolicy.AreCallsAnimated)
+                        {
+                            view.Invalidate();
+                        }
                         //canvas.restore();
                     }
                 }
@@ -5017,7 +5025,11 @@ namespace Telegram.Views
                     buttonDrawable.Update(amplitude, 1.0f);
                     buttonDrawable.Draw(canvas, x, y);
                 }
-                view.Invalidate();
+
+                if (PowerSavingPolicy.AreCallsAnimated)
+                {
+                    view.Invalidate();
+                }
                 //canvas.restore();
             }
         }
@@ -5054,7 +5066,11 @@ namespace Telegram.Views
             }
             animateToAmplitude = f2;
             animateAmplitudeDiff = (f2 - amplitude) / 150.0f;
-            view.Invalidate();
+
+            if (PowerSavingPolicy.AreCallsAnimated)
+            {
+                view.Invalidate();
+            }
         }
     }
 

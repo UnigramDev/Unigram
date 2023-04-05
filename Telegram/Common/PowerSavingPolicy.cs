@@ -235,6 +235,16 @@ namespace Telegram.Common
             }
         }
 
+        public static bool AreCallsAnimated
+        {
+            get => SettingsService.Current.AreCallsAnimated && !m_isPowerSavingMode;
+            set
+            {
+                SettingsService.Current.AreCallsAnimated = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private static void RaisePropertyChanged()
         {
 

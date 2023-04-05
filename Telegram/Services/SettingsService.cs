@@ -51,7 +51,6 @@ namespace Telegram.Services
         DiagnosticsSettings Diagnostics { get; }
 
         long UserId { get; set; }
-        long PushReceiverId { get; set; }
 
         string FilesDirectory { get; set; }
 
@@ -357,26 +356,6 @@ namespace Telegram.Services
             }
         }
 
-        private long? _pushReceiverId;
-        public long PushReceiverId
-        {
-            get
-            {
-                if (_pushReceiverId == null)
-                {
-                    _pushReceiverId = GetValueOrDefault(_own, "PushReceiverId", 0L);
-                }
-
-                return _pushReceiverId ?? 0L;
-            }
-            set
-            {
-                _pushReceiverId = value;
-                AddOrUpdateValue(_local, $"PushReceiverId{value}", Session);
-                AddOrUpdateValue(_own, "PushReceiverId", value);
-            }
-        }
-
         private static int? _distanceUnits;
         public DistanceUnits DistanceUnits
         {
@@ -410,6 +389,13 @@ namespace Telegram.Services
         {
             get => _areSmoothTransitionsEnabled ??= GetValueOrDefault(_local, "AreSmoothTransitionsEnabled", true);
             set => AddOrUpdateValue(ref _areSmoothTransitionsEnabled, _local, "AreSmoothTransitionsEnabled", value);
+        }
+
+        private static bool? _areCallsAnimated;
+        public bool AreCallsAnimated
+        {
+            get => _areCallsAnimated ??= GetValueOrDefault(_local, "AreCallsAnimated", true);
+            set => AddOrUpdateValue(ref _areCallsAnimated, _local, "AreCallsAnimated", value);
         }
 
         private static bool? _areMaterialsEnabled;

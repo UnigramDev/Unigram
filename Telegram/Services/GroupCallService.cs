@@ -23,7 +23,6 @@ using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.Core;
 using Windows.Data.Json;
 using Windows.Devices.Enumeration;
-using Windows.Foundation;
 using Windows.Graphics.Capture;
 using Windows.System.Display;
 using Windows.UI.ViewManagement;
@@ -609,10 +608,12 @@ namespace Telegram.Services
             _screenCapturer = new VoipScreenCapture(item);
             _screenCapturer.FatalErrorOccurred += OnFatalErrorOccurred;
 
-            _screenDebouncer = new EventDebouncer<bool>(500,
-                handler => _screenCapturer.Paused += new TypedEventHandler<VoipScreenCapture, bool>(handler),
-                handler => _screenCapturer.Paused -= new TypedEventHandler<VoipScreenCapture, bool>(handler), true);
-            _screenDebouncer.Invoked += OnPaused;
+            // TODO: currently Paused is triggered when frames are dropped as well.
+            // This can happen because of high resource usage or even optimization (no changes on the screen => no frames available)
+            //_screenDebouncer = new EventDebouncer<bool>(500,
+            //    handler => _screenCapturer.Paused += new TypedEventHandler<VoipScreenCapture, bool>(handler),
+            //    handler => _screenCapturer.Paused -= new TypedEventHandler<VoipScreenCapture, bool>(handler), true);
+            //_screenDebouncer.Invoked += OnPaused;
 
             var descriptor = new VoipGroupDescriptor
             {

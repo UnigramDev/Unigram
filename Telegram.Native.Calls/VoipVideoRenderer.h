@@ -55,7 +55,7 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
 	CanvasBitmap m_bitmapU{ nullptr };
 	CanvasBitmap m_bitmapV{ nullptr };
 
-	VoipVideoRenderer(CanvasControl canvas, /*Stretch stretch = Stretch::UniformToFill,*/ bool flip = false, bool enableBlur = true) {
+	VoipVideoRenderer(CanvasControl canvas, /*Stretch stretch = Stretch::UniformToFill,*/ bool flip = false, bool enableBlur = false) {
 		m_canvasControl = std::make_shared<CanvasControl>(canvas);
 		m_readyToDraw = canvas.ReadyToDraw();
 		//m_stretch = stretch;

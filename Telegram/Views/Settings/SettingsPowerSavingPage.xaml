@@ -150,6 +150,10 @@
                               Content="{CustomResource LiteOptionsAutoplayGifs}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox IsChecked="{x:Bind ViewModel.AreCallsAnimated, Mode=TwoWay}"
+                              Content="{CustomResource LiteOptionsCalls}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind ViewModel.AreMaterialsEnabled, Mode=TwoWay}"
                               Content="{CustomResource LiteOptionsTransparencyEffects}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

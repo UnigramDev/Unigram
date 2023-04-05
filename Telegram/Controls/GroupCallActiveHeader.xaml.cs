@@ -86,19 +86,22 @@ namespace Telegram.Controls
         private void CanvasControl_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
 #if ENABLE_CALLS
-            if (_drawable == null)
+            if (PowerSavingPolicy.AreCallsAnimated)
             {
-                _drawable ??= new FragmentContextViewWavesDrawable(args.DrawingSession);
-                _drawable.addParent(sender);
-            }
+                if (_drawable == null)
+                {
+                    _drawable ??= new FragmentContextViewWavesDrawable(args.DrawingSession);
+                    _drawable.addParent(sender);
+                }
 
-            if (_service?.Manager != null)
-            {
-                _drawable.setState(_service.IsMuted ? 1 : 0);
-                _drawable.draw(0, 40, (float)sender.Size.Width, 40, args.DrawingSession, sender, 2);
-            }
+                if (_service?.Manager != null)
+                {
+                    _drawable.setState(_service.IsMuted ? 1 : 0);
+                    _drawable.draw(0, 40, (float)sender.Size.Width, 40, args.DrawingSession, sender, 2);
+                }
 
-            sender.Invalidate();
+                sender.Invalidate();
+            }
 #endif
         }
 

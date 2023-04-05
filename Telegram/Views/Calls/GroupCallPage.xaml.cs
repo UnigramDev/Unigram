@@ -555,7 +555,7 @@ namespace Telegram.Views.Calls
 
             TransformList(prevSize, nextSize, prev, mode);
 
-            if (animated)
+            if (PowerSavingPolicy.AreCallsAnimated && animated)
             {
                 if (prev == ParticipantsGridMode.Compact || mode == ParticipantsGridMode.Compact)
                 {
@@ -1353,14 +1353,17 @@ namespace Telegram.Views.Calls
             {
                 case ButtonColors.Disabled:
                     _drawable.SetColors(0xff57A4FE, 0xffF05459, 0xff766EE9);
+                    AudioCanvas.Invalidate();
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x76, 0x6E, 0xE9) };
                     break;
                 case ButtonColors.Unmute:
                     _drawable.SetColors(0xFF0078ff, 0xFF33c659);
+                    AudioCanvas.Invalidate();
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x33, 0xc6, 0x59) };
                     break;
                 case ButtonColors.Mute:
                     _drawable.SetColors(0xFF59c7f8, 0xFF0078ff);
+                    AudioCanvas.Invalidate();
                     Settings.Background = new SolidColorBrush { Color = Color.FromArgb(0x66, 0x00, 0x78, 0xff) };
                     break;
             }
@@ -2602,7 +2605,10 @@ namespace Telegram.Views.Calls
                 }
             }
 
-            view.Invalidate();
+            if (PowerSavingPolicy.AreCallsAnimated)
+            {
+                view.Invalidate();
+            }
         }
     }
 
@@ -2797,7 +2803,7 @@ namespace Telegram.Views.Calls
                         prev = new Rect(point, new Size(0, 0));
                     }
 
-                    if (animate || _prevPinned != pinned)
+                    if (PowerSavingPolicy.AreCallsAnimated && (animate || _prevPinned != pinned))
                     {
                         if (prev.X != point.X || prev.Y != point.Y)
                         {
