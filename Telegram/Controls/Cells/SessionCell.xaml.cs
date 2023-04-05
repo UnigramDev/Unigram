@@ -32,6 +32,10 @@ namespace Telegram.Controls.Cells
                 GlyphBackground.Background = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x79, 0xFF));
 
                 // TODO: show loading skeleton
+
+                Name.Text = "\u200B";
+                Title.Text = "\u200B";
+                Subtitle.Text = "\u200B";
                 return;
             }
 
