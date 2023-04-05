@@ -160,11 +160,6 @@ namespace Telegram.ViewModels.Settings
             for (int i = 0; i < value.ByChat.Count; i++)
             {
                 var chat = value.ByChat[i];
-                if (chat.ChatId == 0)
-                {
-                    value.ByChat.RemoveAt(i);
-                    i--;
-                }
 
                 result.Count += chat.Count;
                 result.Size += chat.Size;
@@ -198,7 +193,7 @@ namespace Telegram.ViewModels.Settings
                     already.Size += type.Size;
                 }
 
-                if (chat.ByFileType.IsEmpty())
+                if (chat.ChatId == 0 || chat.ByFileType.IsEmpty())
                 {
                     value.ByChat.Remove(chat);
                     i--;
