@@ -86,7 +86,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (user.EmojiStatus != null && (!chatList || user.Id != clientService.Options.MyId))
+            if (clientService.IsPremiumAvailable && user.EmojiStatus != null && (!chatList || user.Id != clientService.Options.MyId))
             {
                 LoadObject(ref Status, nameof(Status));
                 Status.SetCustomEmoji(clientService, user.EmojiStatus.CustomEmojiId);
