@@ -191,10 +191,7 @@ namespace Telegram.Common
 
         private async void UseActivatedArgs(IActivatedEventArgs args, INavigationService service)
         {
-            if (service == null)
-            {
-                service = WindowContext.Current.NavigationServices.FirstOrDefault();
-            }
+            service ??= WindowContext.Current.NavigationServices.FirstOrDefault();
 
             if (service == null || args == null)
             {
@@ -411,10 +408,7 @@ namespace Telegram.Common
             Dispatcher.Dispatch(() =>
             {
                 var root = NavigationServices.FirstOrDefault(x => x.SessionId == session.Id && x.FrameFacade.FrameId == $"{session.Id}") as TLRootNavigationService;
-                if (root != null)
-                {
-                    root.Handle(update);
-                }
+                root?.Handle(update);
             });
         }
 

@@ -148,10 +148,9 @@ namespace Telegram.Controls
 
         private void OnSelectedChanged(DependencyObject sender, DependencyProperty dp)
         {
-            var content = ContentTemplateRoot as ChatCell;
-            if (content != null)
+            if (ContentTemplateRoot is ChatCell content)
             {
-                content.UpdateViewState(_list.ItemFromContainer(this) as Chat, _list._viewState == MasterDetailState.Compact, false);
+                content?.UpdateViewState(_list.ItemFromContainer(this) as Chat, _list._viewState == MasterDetailState.Compact, false);
             }
         }
     }

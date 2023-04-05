@@ -82,10 +82,7 @@ namespace Telegram.ViewModels.Settings
             get
             {
                 var exclude = Settings.DoNotTranslate;
-                if (exclude == null)
-                {
-                    exclude = new[] { Settings.LanguagePackId };
-                }
+                exclude ??= new[] { Settings.LanguagePackId };
 
                 if (exclude.Length == 1)
                 {
@@ -113,10 +110,7 @@ namespace Telegram.ViewModels.Settings
         public async void ChangeDoNotTranslate()
         {
             var exclude = Settings.DoNotTranslate;
-            if (exclude == null)
-            {
-                exclude = new[] { Settings.LanguagePackId };
-            }
+            exclude ??= new[] { Settings.LanguagePackId };
 
             var popup = new DoNotTranslatePopup(_officialLanguages, exclude);
 

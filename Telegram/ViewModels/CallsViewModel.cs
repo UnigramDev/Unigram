@@ -176,18 +176,7 @@ namespace Telegram.ViewModels
         }
 
         private string _displayType;
-        public string DisplayType
-        {
-            get
-            {
-                if (_displayType == null)
-                {
-                    _displayType = GetDisplayType();
-                }
-
-                return _displayType;
-            }
-        }
+        public string DisplayType => _displayType ??= GetDisplayType();
 
         public Message Message => Items.FirstOrDefault();
 

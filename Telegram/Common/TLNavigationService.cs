@@ -351,10 +351,9 @@ namespace Telegram.Common
         public async void NavigateToChat(long chatId, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
             var chat = _clientService.GetChat(chatId);
-            if (chat == null)
-            {
-                chat = await _clientService.SendAsync(new GetChat(chatId)) as Chat;
-            }
+
+            // TODO: this should never happen
+            chat ??= await _clientService.SendAsync(new GetChat(chatId)) as Chat;
 
             if (chat == null)
             {

@@ -397,14 +397,8 @@ namespace Telegram.ViewModels
                 ChatPermissions o = permissionChanged.OldPermissions;
                 ChatPermissions n = permissionChanged.NewPermissions;
 
-                if (o == null)
-                {
-                    o = new ChatPermissions();
-                }
-                if (n == null)
-                {
-                    n = new ChatPermissions();
-                }
+                o ??= new ChatPermissions();
+                n ??= new ChatPermissions();
 
                 var rights = new StringBuilder(Strings.EventLogDefaultPermissions);
                 var added = false;
@@ -595,14 +589,8 @@ namespace Telegram.ViewModels
                         var str = Strings.EventLogRestrictedUntil;
                         rights = new StringBuilder(string.Format(str, GetUserName(whoUser, entities, str.IndexOf("{0}")), bannedDuration));
                         var added = false;
-                        if (o == null)
-                        {
-                            o = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true));
-                        }
-                        if (n == null)
-                        {
-                            n = new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true));
-                        }
+                        o ??= new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true));
+                        n ??= new ChatMemberStatusRestricted(true, 0, new ChatPermissions(true, true, true, true, true, true, true, true, true, true, true, true, true, true));
 
                         void AppendChange(bool value, string label)
                         {
@@ -730,14 +718,8 @@ namespace Telegram.ViewModels
                     newTitle = newAdmin.CustomTitle;
                 }
 
-                if (o == null)
-                {
-                    o = new ChatAdministratorRights();
-                }
-                if (n == null)
-                {
-                    n = new ChatAdministratorRights();
-                }
+                o ??= new ChatAdministratorRights();
+                n ??= new ChatAdministratorRights();
 
                 if (!string.Equals(oldTitle, newTitle))
                 {

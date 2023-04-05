@@ -79,15 +79,6 @@ namespace Telegram.Common
 
 
 
-        public static void Reset(this INavigationService service)
-        {
-            var cacheSize = service.Frame.CacheSize;
-            service.Frame.CacheSize = 0;
-            service.Refresh();
-            service.ClearBackStack();
-            service.Frame.CacheSize = cacheSize;
-        }
-
         public static void RemoveSkip(this INavigationService service, int count)
         {
             while (service.Frame.BackStackDepth > count)

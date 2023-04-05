@@ -208,9 +208,9 @@ namespace Telegram.ViewModels.Drawers
             {
                 await search.LoadMoreItemsAsync(0);
             }
-            else if (collection != null)
+            else
             {
-                collection.Reset();
+                collection?.Reset();
             }
         }
 

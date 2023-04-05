@@ -825,10 +825,7 @@ namespace Telegram.Controls.Gallery
         {
             _unloaded = true;
 
-            if (ViewModel != null)
-            {
-                ViewModel.Aggregator.Unsubscribe(this);
-            }
+            ViewModel?.Aggregator.Unsubscribe(this);
 
             DataContext = null;
             Bindings.StopTracking();

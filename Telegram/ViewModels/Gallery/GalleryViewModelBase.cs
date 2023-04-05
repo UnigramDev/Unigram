@@ -210,10 +210,7 @@ namespace Telegram.ViewModels.Gallery
             }
 
             var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
-            if (service != null)
-            {
-                service.NavigateToChat(message.ChatId, message: message.Id);
-            }
+            service?.NavigateToChat(message.ChatId, message: message.Id);
         }
 
         public virtual async void Forward()

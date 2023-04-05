@@ -704,10 +704,7 @@ namespace Telegram.Services
                 _items = null;
             }
 
-            if (_mapping != null)
-            {
-                _mapping.Clear();
-            }
+            _mapping?.Clear();
         }
 
         private void Create(PlaybackItem item, IMediaPlaybackSource source)

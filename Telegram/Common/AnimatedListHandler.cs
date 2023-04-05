@@ -285,10 +285,7 @@ namespace Telegram.Common
                 if (item is SelectorItem container && container.ContentTemplateRoot is FrameworkElement final)
                 {
                     var lottie = final.FindName("Player") as IPlayerView;
-                    if (lottie != null)
-                    {
-                        lottie.Unload();
-                    }
+                    lottie?.Unload();
                 }
             }
 

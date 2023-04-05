@@ -344,10 +344,7 @@ namespace Telegram.Services
                 {
                     lock (CreationLock)
                     {
-                        if (_defaultInstance == null)
-                        {
-                            _defaultInstance = new EventAggregator();
-                        }
+                        _defaultInstance ??= new EventAggregator();
                     }
                 }
 
@@ -422,10 +419,7 @@ namespace Telegram.Services
 
                 Dictionary<Type, List<WeakActionAndToken>> recipients;
 
-                if (_recipientsStrictAction == null)
-                {
-                    _recipientsStrictAction = new Dictionary<Type, List<WeakActionAndToken>>();
-                }
+                _recipientsStrictAction ??= new Dictionary<Type, List<WeakActionAndToken>>();
 
                 recipients = _recipientsStrictAction;
 
@@ -951,7 +945,7 @@ namespace Telegram.Services
         /// parameter to true if the action is using closures. See
         /// http://galasoft.ch/s/mvvmweakaction. </param>
         public WeakAction(Action action, bool keepTargetAlive = false)
-            : this(action == null ? null : action.Target, action, keepTargetAlive)
+            : this(action?.Target, action, keepTargetAlive)
         {
         }
 
@@ -1196,7 +1190,7 @@ namespace Telegram.Services
         /// parameter to true if the action is using closures. See
         /// http://galasoft.ch/s/mvvmweakaction. </param>
         public WeakAction(UpdateHandler<T> action, bool keepTargetAlive = false)
-            : this(action == null ? null : action.Target, action, keepTargetAlive)
+            : this(action?.Target, action, keepTargetAlive)
         {
         }
 

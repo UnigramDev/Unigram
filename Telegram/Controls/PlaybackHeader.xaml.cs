@@ -406,10 +406,7 @@ namespace Telegram.Controls
             if (message.Content is MessageAudio)
             {
                 var flyout = FlyoutBase.GetAttachedFlyout(ViewButton);
-                if (flyout != null)
-                {
-                    flyout.ShowAt(ViewButton);
-                }
+                flyout?.ShowAt(ViewButton);
             }
             else
             {
@@ -529,10 +526,7 @@ namespace Telegram.Controls
             }
 
             var flyout = FlyoutBase.GetAttachedFlyout(ViewButton);
-            if (flyout != null)
-            {
-                flyout.Hide();
-            }
+            flyout?.Hide();
         }
     }
 }

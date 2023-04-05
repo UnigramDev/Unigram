@@ -692,10 +692,7 @@ namespace Telegram.Charts
                 for (int i = 0; i < nl; i++)
                 {
                     PieChartViewData line = lines[i];
-                    if (line.animator != null)
-                    {
-                        line.animator.Cancel();
-                    }
+                    line.animator?.Cancel();
 
                     float animateTo;
                     if (sum == 0)

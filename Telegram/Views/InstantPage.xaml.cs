@@ -168,10 +168,7 @@ namespace Telegram.Views
                     }
                 }
 
-                if (firstElement == null)
-                {
-                    firstElement = element;
-                }
+                firstElement ??= element;
 
                 previousBlock = block;
                 previousElement = element;
@@ -1598,10 +1595,7 @@ namespace Telegram.Views
         public async void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
         {
             var content = target.Tag as GalleryContent;
-            if (content == null)
-            {
-                content = ViewModel.Gallery.Items.FirstOrDefault();
-            }
+            content ??= ViewModel.Gallery.Items.FirstOrDefault();
 
             ViewModel.Gallery.SelectedItem = content;
             ViewModel.Gallery.FirstItem = content;

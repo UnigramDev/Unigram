@@ -28,10 +28,7 @@ namespace Telegram.Controls
 
         private void ThemeChanged()
         {
-            if (IconSource != null)
-            {
-                IconSource.SetColorProperty("Foreground", ActualTheme == ElementTheme.Light ? Colors.Black : Colors.White);
-            }
+            IconSource?.SetColorProperty("Foreground", ActualTheme == ElementTheme.Light ? Colors.Black : Colors.White);
         }
     }
 }

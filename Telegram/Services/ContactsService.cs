@@ -107,10 +107,7 @@ namespace Telegram.Services
                     return;
                 }
 
-                if (_syncToken == null)
-                {
-                    _syncToken = new CancellationTokenSource();
-                }
+                _syncToken ??= new CancellationTokenSource();
 
                 using (await _syncLock.WaitAsync(_syncToken.Token))
                 {
@@ -131,10 +128,7 @@ namespace Telegram.Services
         {
             try
             {
-                if (_syncToken == null)
-                {
-                    _syncToken = new CancellationTokenSource();
-                }
+                _syncToken ??= new CancellationTokenSource();
 
                 using (await _syncLock.WaitAsync(_syncToken.Token))
                 {
@@ -224,10 +218,7 @@ namespace Telegram.Services
         {
             try
             {
-                if (_syncToken == null)
-                {
-                    _syncToken = new CancellationTokenSource();
-                }
+                _syncToken ??= new CancellationTokenSource();
 
                 using (await _syncLock.WaitAsync(_syncToken.Token))
                 {
@@ -309,10 +300,7 @@ namespace Telegram.Services
                 var user = _clientService.GetUser(item);
 
                 var contact = await contactList.GetContactFromRemoteIdAsync("u" + user.Id);
-                if (contact == null)
-                {
-                    contact = new Contact();
-                }
+                contact ??= new Contact();
 
                 if (user.ProfilePhoto != null && user.ProfilePhoto.Small.Local.IsDownloadingCompleted)
                 {

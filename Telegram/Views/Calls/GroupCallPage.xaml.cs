@@ -2059,10 +2059,7 @@ namespace Telegram.Views.Calls
             if (_mode == ParticipantsGridMode.Compact)
             {
                 var scrollingHost = ScrollingHost.GetScrollViewer();
-                if (scrollingHost != null)
-                {
-                    scrollingHost.ChangeView(null, 0, null, false);
-                }
+                scrollingHost?.ChangeView(null, 0, null, false);
             }
         }
 
@@ -2543,10 +2540,7 @@ namespace Telegram.Views.Calls
             _tinyWaveDrawable.Update(_amplitude, 1.0f);
             _buttonWaveDrawable.Update(_amplitude, 0.4f);
 
-            if (_target == null)
-            {
-                _target = new CanvasRenderTarget(canvas, 300, 300);
-            }
+            _target ??= new CanvasRenderTarget(canvas, 300, 300);
 
             using (var session = _target.CreateDrawingSession())
             {

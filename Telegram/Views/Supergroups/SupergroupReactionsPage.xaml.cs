@@ -72,10 +72,7 @@ namespace Telegram.Views.Supergroups
             if (sender is FrameworkElement element)
             {
                 var player = element.FindName("Player") as LottieView;
-                if (player != null)
-                {
-                    player.Play();
-                }
+                player?.Play();
             }
         }
 

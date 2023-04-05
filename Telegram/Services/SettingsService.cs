@@ -205,18 +205,7 @@ namespace Telegram.Services
     public class SettingsService : SettingsServiceBase, ISettingsService
     {
         private static SettingsService _current;
-        public static SettingsService Current
-        {
-            get
-            {
-                if (_current == null)
-                {
-                    _current = new SettingsService();
-                }
-
-                return _current;
-            }
-        }
+        public static SettingsService Current => _current ??= new SettingsService();
 
         private readonly int _session;
         private readonly ApplicationDataContainer _local;
@@ -758,15 +747,8 @@ namespace Telegram.Services
         {
             _container.Values.Clear();
 
-            if (_own != null)
-            {
-                _own.Values.Clear();
-            }
-
-            if (_local != null)
-            {
-                _local.Values.Remove($"User{UserId}");
-            }
+            _own?.Values.Clear();
+            _local?.Values.Remove($"User{UserId}");
         }
     }
 

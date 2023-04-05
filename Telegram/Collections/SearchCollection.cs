@@ -61,10 +61,7 @@ namespace Telegram.Collections
 
         public async void Update(TSource source)
         {
-            if (_token != null)
-            {
-                _token.Cancel();
-            }
+            _token?.Cancel();
 
             if (source is ISupportIncrementalLoading incremental && incremental.HasMoreItems)
             {
@@ -108,11 +105,7 @@ namespace Telegram.Collections
                 using (await _mutex.WaitAsync())
                 {
                     _initialized = true;
-
-                    if (_token != null)
-                    {
-                        _token.Cancel();
-                    }
+                    _token?.Cancel();
 
                     var token = _token = new CancellationTokenSource();
                     var result = await _incrementalSource?.LoadMoreItemsAsync(count);

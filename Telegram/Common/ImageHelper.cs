@@ -217,10 +217,7 @@ namespace Telegram.Common
 
         public static async Task<StorageFile> CropAsync(StorageFile sourceFile, StorageFile file, Rect cropRectangle, int min = 1280, int max = 0, double quality = 0.77, BitmapRotation rotation = BitmapRotation.None, BitmapFlip flip = BitmapFlip.None)
         {
-            if (file == null)
-            {
-                file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
-            }
+            file ??= await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
 
             using (var fileStream = await OpenReadAsync(sourceFile))
             using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))

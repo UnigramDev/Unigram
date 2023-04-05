@@ -1836,10 +1836,8 @@ namespace Telegram.Controls.Messages
                 for (int a = 0; a < uids.Count; a++)
                 {
                     User user = null;
-                    if (user == null)
-                    {
-                        user = clientService.GetUser(uids[a]);
-                    }
+                    user ??= clientService.GetUser(uids[a]);
+
                     if (user != null)
                     {
                         var name = user.FullName();
@@ -1851,10 +1849,7 @@ namespace Telegram.Controls.Messages
                         start = index + names.Length;
                         names.Append(name);
 
-                        if (entities != null)
-                        {
-                            entities.Add(new TextEntity(start, name.Length, new TextEntityTypeMentionName(user.Id)));
-                        }
+                        entities?.Add(new TextEntity(start, name.Length, new TextEntityTypeMentionName(user.Id)));
                     }
                 }
 

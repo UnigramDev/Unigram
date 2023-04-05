@@ -225,10 +225,7 @@ namespace Telegram.Charts
             legendShowing = true;
             AnimateLegend(true);
             MoveLegend(offset);
-            if (dateSelectionListener != null)
-            {
-                dateSelectionListener.OnDateSelected(GetSelectedDate());
-            }
+            dateSelectionListener?.OnDateSelected(GetSelectedDate());
             Invalidate();
         }
 
@@ -385,10 +382,7 @@ namespace Telegram.Charts
             if (max > 0 && max != animatedToPickerMaxHeight)
             {
                 animatedToPickerMaxHeight = max;
-                if (pickerAnimator != null)
-                {
-                    pickerAnimator.Cancel();
-                }
+                pickerAnimator?.Cancel();
 
                 pickerAnimator = CreateAnimator(pickerMaxHeight, animatedToPickerMaxHeight, new AnimatorUpdateListener(animation =>
                 {

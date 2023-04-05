@@ -147,10 +147,7 @@ namespace Telegram.Entities
                 catch { }
             }
 
-            if (_bitmap == null)
-            {
-                _bitmap = new BitmapImage();
-            }
+            _bitmap ??= new BitmapImage();
 
             if (_editState is BitmapEditState editState && !editState.IsEmpty)
             {

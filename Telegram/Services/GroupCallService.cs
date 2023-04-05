@@ -340,10 +340,7 @@ namespace Telegram.Services
 
             alias ??= chat.VideoChat.DefaultParticipantId;
 
-            if (alias == null)
-            {
-                alias = await PickAliasAsync(chat, false);
-            }
+            alias ??= await PickAliasAsync(chat, false);
 
             var response = await ClientService.SendAsync(new GetGroupCall(groupCallId));
             if (response is GroupCall groupCall)
@@ -997,16 +994,13 @@ namespace Telegram.Services
                     _call = update.GroupCall;
 
                     var lifetime = _lifetime;
-                    if (lifetime != null)
+                    lifetime?.Dispatcher.Dispatch(() =>
                     {
-                        lifetime.Dispatcher.Dispatch(() =>
+                        if (lifetime.Window.Content is GroupCallPage callPage)
                         {
-                            if (lifetime.Window.Content is GroupCallPage callPage)
-                            {
-                                callPage.Update(update.GroupCall, _currentUser);
-                            }
-                        });
-                    }
+                            callPage.Update(update.GroupCall, _currentUser);
+                        }
+                    });
 
                     if (update.GroupCall.NeedRejoin || _isScheduled != (update.GroupCall.ScheduledStartDate > 0))
                     {
@@ -1098,16 +1092,13 @@ namespace Telegram.Services
                 _currentUser = update.Participant;
 
                 var lifetime = _lifetime;
-                if (lifetime != null)
+                lifetime?.Dispatcher.Dispatch(() =>
                 {
-                    lifetime.Dispatcher.Dispatch(() =>
+                    if (lifetime.Window.Content is GroupCallPage callPage)
                     {
-                        if (lifetime.Window.Content is GroupCallPage callPage)
-                        {
-                            callPage.Update(_call, update.Participant);
-                        }
-                    });
-                }
+                        callPage.Update(_call, update.Participant);
+                    }
+                });
             }
 
             var manager = _manager;

@@ -528,10 +528,7 @@ namespace Telegram.Views
             StateLabel.Text = text;
 
             var peer = FrameworkElementAutomationPeer.FromElement(StateLabel);
-            if (peer != null)
-            {
-                peer.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
-            }
+            peer?.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
 
             try
             {
@@ -2285,10 +2282,7 @@ namespace Telegram.Views
             button.IconSource = entry.Icon;
 
             var icon = button.Descendants<Microsoft.UI.Xaml.Controls.AnimatedIcon>().FirstOrDefault() as UIElement;
-            if (icon != null)
-            {
-                icon.InvalidateMeasure();
-            }
+            icon?.InvalidateMeasure();
 
             if (entry.Parent == null)
             {
@@ -2409,10 +2403,7 @@ namespace Telegram.Views
         private void Arrow_Click(object sender, RoutedEventArgs e)
         {
             var scrollViewer = ChatsList.GetScrollViewer();
-            if (scrollViewer != null)
-            {
-                scrollViewer.ChangeView(null, 0, null);
-            }
+            scrollViewer?.ChangeView(null, 0, null);
         }
 
         private void Proxy_Click(object sender, RoutedEventArgs e)
@@ -2468,10 +2459,7 @@ namespace Telegram.Views
             var element = sender as FrameworkElement;
             var filter = ChatFilters?.ItemFromContainer(sender) as ChatFilterViewModel;
 
-            if (filter == null)
-            {
-                filter = ChatFiltersSide.ItemFromContainer(sender) as ChatFilterViewModel;
-            }
+            filter ??= ChatFiltersSide.ItemFromContainer(sender) as ChatFilterViewModel;
 
             if (filter.IsNavigationItem)
             {
@@ -3041,10 +3029,7 @@ namespace Telegram.Views
             else
             {
                 var scrollingHost = ChatsList.GetScrollViewer();
-                if (scrollingHost != null)
-                {
-                    scrollingHost.ChangeView(null, 0, null);
-                }
+                scrollingHost?.ChangeView(null, 0, null);
             }
         }
 

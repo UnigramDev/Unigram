@@ -371,20 +371,8 @@ namespace Telegram.Common
         private int? _messageFontSize;
         public int MessageFontSize
         {
-            get
-            {
-                if (_messageFontSize == null)
-                {
-                    _messageFontSize = (int)GetValueOrDefault("MessageFontSize", 14d);
-                }
-
-                return _messageFontSize ?? 14;
-            }
-            set
-            {
-                _messageFontSize = value;
-                AddOrUpdateValue("MessageFontSize", (double)value);
-            }
+            get => _messageFontSize ??= (int)GetValueOrDefault("MessageFontSize", 14d);
+            set => AddOrUpdateValue("MessageFontSize", (double)(_messageFontSize = value));
         }
 
         public bool AddOrUpdateValue(string key, object value)

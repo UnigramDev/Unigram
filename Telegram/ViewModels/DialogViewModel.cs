@@ -700,10 +700,7 @@ namespace Telegram.ViewModels
             }
 
             var fullInfo = ClientService.GetUserFull(user.Id);
-            if (fullInfo == null)
-            {
-                fullInfo = await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
-            }
+            fullInfo ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
 
             if (fullInfo != null && fullInfo.BotInfo?.Description.Length > 0)
             {
@@ -1557,10 +1554,7 @@ namespace Telegram.ViewModels
             }
 
             var chat = ClientService.GetChat((long)parameter);
-            if (chat == null)
-            {
-                chat = await ClientService.SendAsync(new GetChat((long)parameter)) as Chat;
-            }
+            chat ??= await ClientService.SendAsync(new GetChat((long)parameter)) as Chat;
 
             if (chat == null)
             {
@@ -2251,10 +2245,7 @@ namespace Telegram.ViewModels
                 formattedText = new FormattedText(text, entities);
             }
 
-            if (options == null)
-            {
-                options = await PickMessageSendOptionsAsync();
-            }
+            options ??= await PickMessageSendOptionsAsync();
 
             if (options == null)
             {

@@ -59,10 +59,7 @@ namespace Telegram.Views.Premium.Popups
                 var container = ScrollingHost.ContainerFromItem(e.AddedItems[0]) as SelectorItem;
 
                 var content = container?.ContentTemplateRoot as PremiumFeatureCell;
-                if (content != null)
-                {
-                    content.PlayAnimation();
-                }
+                content?.PlayAnimation();
 
                 _clientService.Send(new ViewPremiumFeature(e.AddedItems[0] as PremiumFeature));
             }
@@ -72,10 +69,7 @@ namespace Telegram.Views.Premium.Popups
                 var container = ScrollingHost.ContainerFromItem(e.RemovedItems[0]) as SelectorItem;
 
                 var content = container?.ContentTemplateRoot as PremiumFeatureCell;
-                if (content != null)
-                {
-                    content.StopAnimation();
-                }
+                content?.StopAnimation();
             }
         }
 

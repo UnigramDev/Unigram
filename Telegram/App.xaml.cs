@@ -220,10 +220,7 @@ namespace Telegram
         private void HandleActivated(bool active)
         {
             var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
-            if (aggregator != null)
-            {
-                aggregator.Publish(new UpdateWindowActivated(active));
-            }
+            aggregator?.Publish(new UpdateWindowActivated(active));
 
             var clientService = TLContainer.Current.Resolve<IClientService>();
             if (clientService != null)

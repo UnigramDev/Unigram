@@ -94,10 +94,7 @@ namespace Telegram.Controls
                 _strokes = value?.ToList() ?? new List<SmoothPathBuilder>();
                 _history.Clear();
 
-                if (_canvas != null)
-                {
-                    _canvas.Invalidate();
-                }
+                _canvas?.Invalidate();
             }
         }
 

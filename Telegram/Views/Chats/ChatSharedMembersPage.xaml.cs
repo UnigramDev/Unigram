@@ -158,11 +158,9 @@ namespace Telegram.Views.Chats
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as UserCell;
-            if (content != null)
+            else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
             {
-                content.UpdateChatSharedMembers(ViewModel.ClientService, args, OnContainerContentChanging);
+                content?.UpdateChatSharedMembers(ViewModel.ClientService, args, OnContainerContentChanging);
             }
         }
 

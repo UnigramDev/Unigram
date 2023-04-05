@@ -78,10 +78,7 @@ namespace Telegram.ViewModels
         protected virtual void BeginOnUIThread(Windows.System.DispatcherQueueHandler action, Action fallback = null)
         {
             var dispatcher = Dispatcher;
-            if (dispatcher == null)
-            {
-                dispatcher = WindowContext.Default()?.Dispatcher;
-            }
+            dispatcher ??= WindowContext.Default()?.Dispatcher;
 
             if (dispatcher != null)
             {

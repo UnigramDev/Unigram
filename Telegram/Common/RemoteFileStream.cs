@@ -74,10 +74,7 @@ namespace Telegram.Common
                     var path = _file.Local.Path;
                     if (path.Length > 0 && !_source.IsCanceled && (_fileStream == null || _filePath != path))
                     {
-                        if (_fileStream != null)
-                        {
-                            _fileStream.Dispose();
-                        }
+                        _fileStream?.Dispose();
 
                         var file = await _clientService.GetFileAsync(_file, false);
 

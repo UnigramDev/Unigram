@@ -61,10 +61,7 @@ namespace Telegram.Controls.Chats
 
         public void ScrollToBottom()
         {
-            if (ScrollingHost != null)
-            {
-                ScrollingHost.ChangeView(null, ScrollingHost.ScrollableHeight, null);
-            }
+            ScrollingHost?.ChangeView(null, ScrollingHost.ScrollableHeight, null);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -292,10 +289,7 @@ namespace Telegram.Controls.Chats
             if (highlight)
             {
                 var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault();
-                if (bubble != null)
-                {
-                    bubble.Highlight();
-                }
+                bubble?.Highlight();
             }
 
             if (scrollViewer.VerticalOffset < scrollViewer.ScrollableHeight || position.Y < scrollViewer.ScrollableHeight)

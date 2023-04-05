@@ -124,9 +124,9 @@ namespace Telegram.Controls
                 {
                     current.Undo.Invoke(current.Chats);
                 }
-                else if (current.Action != null)
+                else
                 {
-                    current.Action.Invoke(current.Chats);
+                    current.Action?.Invoke(current.Chats);
                 }
             }
 

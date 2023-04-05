@@ -34,39 +34,15 @@ namespace Telegram.Services.Settings
         private byte[] _hash;
         public byte[] Hash
         {
-            get
-            {
-                if (_hash == null)
-                {
-                    _hash = Convert.FromBase64String(GetValueOrDefault("Hash", string.Empty));
-                }
-
-                return _hash ?? new byte[0];
-            }
-            set
-            {
-                _hash = value;
-                AddOrUpdateValue("Hash", Convert.ToBase64String(value));
-            }
+            get => _hash ??= Convert.FromBase64String(GetValueOrDefault("Hash", string.Empty));
+            set => AddOrUpdateValue("Hash", Convert.ToBase64String(_hash = value));
         }
 
         private byte[] _salt;
         public byte[] Salt
         {
-            get
-            {
-                if (_salt == null)
-                {
-                    _salt = Convert.FromBase64String(GetValueOrDefault("Salt", string.Empty));
-                }
-
-                return _salt ?? new byte[0];
-            }
-            set
-            {
-                _salt = value;
-                AddOrUpdateValue("Salt", Convert.ToBase64String(value));
-            }
+            get => _salt ??= Convert.FromBase64String(GetValueOrDefault("Salt", string.Empty));
+            set => AddOrUpdateValue("Salt", Convert.ToBase64String(_salt = value));
         }
 
         private bool? _isSimple;

@@ -140,15 +140,8 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                if (_parent == null)
-                {
-                    _parent = this.Ancestors<LazoListViewItem>().FirstOrDefault();
-                }
-
-                if (_parent != null)
-                {
-                    _parent.PointerPressed(e);
-                }
+                _parent ??= this.Ancestors<LazoListViewItem>().FirstOrDefault();
+                _parent?.PointerPressed(e);
             }
         }
 
@@ -158,15 +151,8 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                if (_parent == null)
-                {
-                    _parent = this.Ancestors<LazoListViewItem>().FirstOrDefault();
-                }
-
-                if (_parent != null)
-                {
-                    _parent.PointerEntered(e);
-                }
+                _parent ??= this.Ancestors<LazoListViewItem>().FirstOrDefault();
+                _parent?.PointerEntered(e);
             }
         }
 
@@ -176,15 +162,8 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                if (_parent == null)
-                {
-                    _parent = this.Ancestors<LazoListViewItem>().FirstOrDefault();
-                }
-
-                if (_parent != null)
-                {
-                    _parent.PointerMoved(e);
-                }
+                _parent ??= this.Ancestors<LazoListViewItem>().FirstOrDefault();
+                _parent?.PointerMoved(e);
             }
         }
 
@@ -194,15 +173,8 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                if (_parent == null)
-                {
-                    _parent = this.Ancestors<LazoListViewItem>().FirstOrDefault();
-                }
-
-                if (_parent != null)
-                {
-                    _parent.PointerReleased(e);
-                }
+                _parent ??= this.Ancestors<LazoListViewItem>().FirstOrDefault();
+                _parent?.PointerReleased(e);
             }
         }
 
@@ -212,15 +184,8 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                if (_parent == null)
-                {
-                    _parent = this.Ancestors<LazoListViewItem>().FirstOrDefault();
-                }
-
-                if (_parent != null)
-                {
-                    _parent.PointerCanceled(e);
-                }
+                _parent ??= this.Ancestors<LazoListViewItem>().FirstOrDefault();
+                _parent?.PointerCanceled(e);
             }
         }
 

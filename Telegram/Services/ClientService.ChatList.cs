@@ -26,10 +26,7 @@ namespace Telegram.Services
             foreach (var position in chat.Positions)
             {
                 var chatList = _chatList[position.List.ToId()];
-                if (chatList != null)
-                {
-                    chatList.Remove(new OrderedChat(chat.Id, position));
-                }
+                chatList?.Remove(new OrderedChat(chat.Id, position));
             }
 
             chat.Positions = positions;
@@ -37,10 +34,7 @@ namespace Telegram.Services
             foreach (var position in chat.Positions)
             {
                 var chatList = _chatList[position.List.ToId()];
-                if (chatList != null)
-                {
-                    chatList.Add(new OrderedChat(chat.Id, position));
-                }
+                chatList?.Add(new OrderedChat(chat.Id, position));
             }
 
             //Monitor.Exit(chat);

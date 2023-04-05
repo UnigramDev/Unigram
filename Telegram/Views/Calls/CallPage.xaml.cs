@@ -312,10 +312,7 @@ namespace Telegram.Views.Calls
             }
 
             var capturer = _service.Capturer;
-            if (capturer != null)
-            {
-                capturer.SetOutput(null);
-            }
+            capturer?.SetOutput(null);
         }
 
         private void OnMutedChanged(object sender, EventArgs e)

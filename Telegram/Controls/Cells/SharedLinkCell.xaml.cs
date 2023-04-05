@@ -121,10 +121,7 @@ namespace Telegram.Controls.Cells
 
                                 var uri = new Uri(url);
                                 title = uri.Host;
-                                if (title == null)
-                                {
-                                    title = link;
-                                }
+                                title ??= link;
                                 int index;
                                 if (title != null && (index = title.LastIndexOf('.')) >= 0)
                                 {
@@ -233,10 +230,7 @@ namespace Telegram.Controls.Cells
                 var link = links[i];
                 if (MessageHelper.TryCreateUri(link, out Uri uri))
                 {
-                    if (Photo.Source == null)
-                    {
-                        Photo.Source = PlaceholderHelper.GetNameForChat(uri.Host, 96, uri.GetHashCode());
-                    }
+                    Photo.Source ??= PlaceholderHelper.GetNameForChat(uri.Host, 96, uri.GetHashCode());
 
                     var textBlock = new RichTextBlock { TextWrapping = TextWrapping.NoWrap, TextTrimming = TextTrimming.CharacterEllipsis, IsTextSelectionEnabled = false };
                     var paragraph = new Paragraph();

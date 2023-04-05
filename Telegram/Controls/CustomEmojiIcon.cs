@@ -191,10 +191,7 @@ namespace Telegram.Controls
                 }
             }
 
-            if (brush != null)
-            {
-                brush.Dispose();
-            }
+            brush?.Dispose();
 
             if (_loopCount == 2 && !_isLoopingEnabled)
             {

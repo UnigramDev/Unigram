@@ -302,11 +302,7 @@ namespace Telegram.Services
                 foreach (var item in items)
                 {
                     item.Parent = this;
-
-                    if (item.Icon == null)
-                    {
-                        item.Icon = icon;
-                    }
+                    item.Icon ??= icon;
                 }
             }
         }
@@ -323,11 +319,7 @@ namespace Telegram.Services
                 foreach (var item in items)
                 {
                     item.Parent = this;
-
-                    if (item.Icon == null)
-                    {
-                        item.Icon = icon;
-                    }
+                    item.Icon ??= icon;
                 }
             }
         }

@@ -168,10 +168,7 @@ namespace Telegram.Controls
                 AnimationsRoot.Deactivate();
                 UnloadObject(AnimationsRoot);
 
-                if (viewModel != null)
-                {
-                    viewModel.Search(string.Empty);
-                }
+                viewModel?.Search(string.Empty);
             }
             else if (index == 2 && StickersRoot != null)
             {
@@ -180,10 +177,7 @@ namespace Telegram.Controls
                 StickersRoot.Deactivate();
                 UnloadObject(StickersRoot);
 
-                if (viewModel != null)
-                {
-                    viewModel.Search(string.Empty, false);
-                }
+                viewModel?.Search(string.Empty, false);
             }
         }
 

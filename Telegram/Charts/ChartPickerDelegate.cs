@@ -122,15 +122,8 @@ namespace Telegram.Charts
 
             public void uncapture()
             {
-                if (a != null)
-                {
-                    a.Cancel();
-                }
-
-                if (jumpToAnimator != null)
-                {
-                    jumpToAnimator.Cancel();
-                }
+                a?.Cancel();
+                jumpToAnimator?.Cancel();
             }
         }
 
@@ -157,10 +150,7 @@ namespace Telegram.Charts
                     capturedStates[0].lastMovingX = x;
                     capturedStates[0].captured();
 
-                    if (moveToAnimator != null)
-                    {
-                        moveToAnimator.Cancel();
-                    }
+                    moveToAnimator?.Cancel();
                     return true;
                 }
 
@@ -177,11 +167,7 @@ namespace Telegram.Charts
                     capturedStates[0].lastMovingX = x;
                     capturedStates[0].captured();
 
-                    if (moveToAnimator != null)
-                    {
-                        moveToAnimator.Cancel();
-                    }
-
+                    moveToAnimator?.Cancel();
                     return true;
                 }
 
@@ -194,11 +180,8 @@ namespace Telegram.Charts
                     capturedStates[0].capturedX = x;
                     capturedStates[0].lastMovingX = x;
                     capturedStates[0].captured();
-                    if (moveToAnimator != null)
-                    {
-                        moveToAnimator.Cancel();
-                    }
 
+                    moveToAnimator?.Cancel();
                     return true;
                 }
 
@@ -239,11 +222,8 @@ namespace Telegram.Charts
                     capturedStates[1].capturedX = x;
                     capturedStates[1].lastMovingX = x;
                     capturedStates[1].captured();
-                    if (moveToAnimator != null)
-                    {
-                        moveToAnimator.Cancel();
-                    }
 
+                    moveToAnimator?.Cancel();
                     return true;
                 }
 
@@ -259,11 +239,8 @@ namespace Telegram.Charts
                     capturedStates[1].capturedX = x;
                     capturedStates[1].lastMovingX = x;
                     capturedStates[1].captured();
-                    if (moveToAnimator != null)
-                    {
-                        moveToAnimator.Cancel();
-                    }
 
+                    moveToAnimator?.Cancel();
                     return true;
                 }
             }
@@ -399,12 +376,9 @@ namespace Telegram.Charts
                     return true;
                 }
 
-                if (capturedStates[0] != null)
-                {
-                    capturedStates[0].uncapture();
-                }
-
+                capturedStates[0]?.uncapture();
                 capturedStates[0] = null;
+
                 if (capturedStates[1] != null)
                 {
                     capturedStates[0] = capturedStates[1];
@@ -413,11 +387,7 @@ namespace Telegram.Charts
             }
             else
             {
-                if (capturedStates[1] != null)
-                {
-                    capturedStates[1].uncapture();
-                }
-
+                capturedStates[1]?.uncapture();
                 capturedStates[1] = null;
             }
             return false;
@@ -425,15 +395,8 @@ namespace Telegram.Charts
 
         public void Uncapture()
         {
-            if (capturedStates[0] != null)
-            {
-                capturedStates[0].uncapture();
-            }
-
-            if (capturedStates[1] != null)
-            {
-                capturedStates[1].uncapture();
-            }
+            capturedStates[0]?.uncapture();
+            capturedStates[1]?.uncapture();
 
             capturedStates[0] = null;
             capturedStates[1] = null;

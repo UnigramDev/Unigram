@@ -316,10 +316,7 @@ namespace Telegram.Views.Host
         private async void InitializeUser(IClientService clientService)
         {
             var user = clientService.GetUser(clientService.Options.MyId);
-            if (user == null)
-            {
-                user = await clientService.SendAsync(new GetMe()) as User;
-            }
+            user ??= await clientService.SendAsync(new GetMe()) as User;
 
             if (user == null)
             {
@@ -639,10 +636,7 @@ namespace Telegram.Views.Host
             Navigation.IsPaneOpen = false;
 
             var scroll = NavigationViewList.GetScrollViewer();
-            if (scroll != null)
-            {
-                scroll.ChangeView(null, 0, null, true);
-            }
+            scroll?.ChangeView(null, 0, null, true);
         }
 
         #region Exposed

@@ -171,7 +171,7 @@ namespace Telegram.ViewModels.Chats
 
         public async void Search(string query, MessageSender from, SearchMessagesFilter filter)
         {
-            bool FromEquals(MessageSender x, MessageSender y)
+            static bool FromEquals(MessageSender x, MessageSender y)
             {
                 if (x is MessageSenderUser userX && y is MessageSenderUser userY)
                 {

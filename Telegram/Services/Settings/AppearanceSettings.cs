@@ -295,38 +295,17 @@ namespace Telegram.Services.Settings
         private TelegramTheme? _requestedTheme;
         public TelegramTheme RequestedTheme
         {
-            get
-            {
-                if (_requestedTheme == null)
-                {
-                    _requestedTheme = (TelegramTheme)GetValueOrDefault(_container, "Theme", (int)GetSystemTheme());
-                }
-
-                return _requestedTheme ?? GetSystemTheme();
-            }
-            set
-            {
-                _requestedTheme = value;
-                AddOrUpdateValue(_container, "Theme", (int)value);
-            }
+            get => _requestedTheme ??= (TelegramTheme)GetValueOrDefault(_container, "Theme", (int)GetSystemTheme());
+            set => AddOrUpdateValue(_container, "Theme", (int)(_requestedTheme = value));
         }
 
         private NightMode? _nightMode;
         public NightMode NightMode
         {
-            get
-            {
-                if (_nightMode == null)
-                {
-                    _nightMode = (NightMode)GetValueOrDefault(_container, "NightMode", (int)NightMode.Disabled);
-                }
-
-                return _nightMode ?? NightMode.Disabled;
-            }
+            get => _nightMode ??= (NightMode)GetValueOrDefault(_container, "NightMode", (int)NightMode.Disabled);
             set
             {
-                _nightMode = value;
-                AddOrUpdateValue(_container, "NightMode", (int)value);
+                AddOrUpdateValue(_container, "NightMode", (int)(_nightMode = value));
                 UpdateTimer();
             }
         }
@@ -341,20 +320,8 @@ namespace Telegram.Services.Settings
         private bool? _isLocationBased;
         public bool IsLocationBased
         {
-            get
-            {
-                if (_isLocationBased == null)
-                {
-                    _isLocationBased = GetValueOrDefault(_container, "IsLocationBased", false);
-                }
-
-                return _isLocationBased ?? false;
-            }
-            set
-            {
-                _isLocationBased = value;
-                AddOrUpdateValue(_container, "IsLocationBased", value);
-            }
+            get => _isLocationBased ??= GetValueOrDefault(_container, "IsLocationBased", false);
+            set => AddOrUpdateValue(_container, "IsLocationBased", _isLocationBased = value);
         }
 
         private TimeSpan? _from;
@@ -404,15 +371,7 @@ namespace Telegram.Services.Settings
         private Location _location;
         public Location Location
         {
-            get
-            {
-                if (_location == null)
-                {
-                    _location = new Location { Latitude = GetValueOrDefault("Latitude", 0d), Longitude = GetValueOrDefault("Longitude", 0d) };
-                }
-
-                return _location ?? new Location();
-            }
+            get => _location ??= new Location { Latitude = GetValueOrDefault("Latitude", 0d), Longitude = GetValueOrDefault("Longitude", 0d) };
             set
             {
                 _location = value;
@@ -424,39 +383,8 @@ namespace Telegram.Services.Settings
         private string _town;
         public string Town
         {
-            get
-            {
-                if (_town == null)
-                {
-                    _town = GetValueOrDefault("Town", string.Empty);
-                }
-
-                return _town;
-            }
-            set
-            {
-                _town = value;
-                AddOrUpdateValue("Town", value);
-            }
-        }
-
-        private float? _threshold;
-        public float Threshold
-        {
-            get
-            {
-                if (_threshold == null)
-                {
-                    _threshold = GetValueOrDefault("Threshold", 0.25f);
-                }
-
-                return _threshold ?? 0.25f;
-            }
-            set
-            {
-                _threshold = value;
-                AddOrUpdateValue("Threshold", value);
-            }
+            get => _town ??= GetValueOrDefault("Town", string.Empty);
+            set => AddOrUpdateValue("Town", _town = value);
         }
 
         public bool? CheckNightModeConditions()
@@ -717,20 +645,8 @@ namespace Telegram.Services.Settings
         private string _custom;
         public string Custom
         {
-            get
-            {
-                if (_custom == null)
-                {
-                    _custom = GetValueOrDefault(_container, $"ThemeCustom{_prefix}", string.Empty);
-                }
-
-                return _custom ?? string.Empty;
-            }
-            set
-            {
-                _custom = value ?? string.Empty;
-                AddOrUpdateValue(_container, $"ThemeCustom{_prefix}", value);
-            }
+            get => _custom ??= GetValueOrDefault(_container, $"ThemeCustom{_prefix}", string.Empty);
+            set => AddOrUpdateValue(_container, $"ThemeCustom{_prefix}", _custom = value);
         }
     }
 }

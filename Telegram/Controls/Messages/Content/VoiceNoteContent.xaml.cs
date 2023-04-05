@@ -118,10 +118,7 @@ namespace Telegram.Controls.Messages.Content
         {
             if (result != null)
             {
-                if (RecognizedText == null)
-                {
-                    RecognizedText = GetTemplateChild(nameof(RecognizedText)) as TextBlock;
-                }
+                RecognizedText ??= GetTemplateChild(nameof(RecognizedText)) as TextBlock;
 
                 if (result is SpeechRecognitionResultError)
                 {

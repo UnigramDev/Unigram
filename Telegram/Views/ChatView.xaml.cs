@@ -660,10 +660,7 @@ namespace Telegram.Views
                 return;
 
                 var owner = _measurement;
-                if (owner == null)
-                {
-                    owner = _measurement = new MessageBubble();
-                }
+                owner ??= _measurement = new MessageBubble();
 
                 owner.UpdateMessage(args.OldItems[0] as MessageViewModel);
                 owner.Measure(new Size(ActualWidth, ActualHeight));
@@ -3626,10 +3623,7 @@ namespace Telegram.Views
             if (Theme.Current.Update(ActualTheme, theme))
             {
                 var background = ActualTheme == ElementTheme.Light ? theme?.LightSettings.Background : theme?.DarkSettings.Background;
-                if (background == null)
-                {
-                    background = ViewModel.ClientService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
-                }
+                background ??= ViewModel.ClientService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
 
                 if (_loadedThemeTask != null)
                 {
@@ -3643,10 +3637,7 @@ namespace Telegram.Views
 
         public void UpdateChatPermissions(Chat chat)
         {
-            if (ListInline != null)
-            {
-                ListInline.UpdateChatPermissions(chat);
-            }
+            ListInline?.UpdateChatPermissions(chat);
 
             StickersPanel.UpdateChatPermissions(ViewModel.ClientService, chat);
         }

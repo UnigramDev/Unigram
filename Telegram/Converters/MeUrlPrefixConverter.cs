@@ -19,10 +19,7 @@ namespace Telegram.Converters
 
         public static string Convert(IClientService clientService, string value, bool shorty = false)
         {
-            if (value == null)
-            {
-                value = string.Empty;
-            }
+            value ??= string.Empty;
 
             var linkPrefix = "https://t.me/"; // config.MeUrlPrefix;
 

@@ -623,10 +623,7 @@ namespace Telegram.Services
                 //auto notifier = ToastNotificationManager::CreateToastNotifier(L"App");
                 ToastNotifier notifier = await ToastNotificationManager.GetDefault().GetToastNotifierForToastCollectionIdAsync(account);
 
-                if (notifier == null)
-                {
-                    notifier = ToastNotificationManager.CreateToastNotifier("App");
-                }
+                notifier ??= ToastNotificationManager.CreateToastNotifier("App");
 
                 var document = new XmlDocument();
                 document.LoadXml(xml);
@@ -756,10 +753,7 @@ namespace Telegram.Services
             try
             {
                 var collectionHistory = await ToastNotificationManager.GetDefault().GetHistoryForToastCollectionIdAsync($"{_sessionService.Id}");
-                if (collectionHistory == null)
-                {
-                    collectionHistory = ToastNotificationManager.History;
-                }
+                collectionHistory ??= ToastNotificationManager.History;
 
                 return collectionHistory;
             }

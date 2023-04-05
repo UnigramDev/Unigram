@@ -269,10 +269,7 @@ namespace Telegram.Views.Chats
             ScrollingHost.ItemsPanelRoot.SizeChanged -= ItemsPanelRoot_SizeChanged;
 
             var scrollingHost = ScrollingHost.GetScrollViewer();
-            if (scrollingHost != null)
-            {
-                scrollingHost.ChangeView(null, ViewModel.VerticalOffset, null, true);
-            }
+            scrollingHost?.ChangeView(null, ViewModel.VerticalOffset, null, true);
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)

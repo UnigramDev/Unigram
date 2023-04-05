@@ -210,10 +210,7 @@ namespace Telegram.ViewModels.Supergroups
                 if (ClientService.TryGetSupergroup(linkedChat, out Supergroup linkedSupergroup))
                 {
                     var linkedFullInfo = ClientService.GetSupergroupFull(linkedChat);
-                    if (linkedFullInfo == null)
-                    {
-                        linkedFullInfo = await ClientService.SendAsync(new GetSupergroupFullInfo(linkedSupergroup.Id)) as SupergroupFullInfo;
-                    }
+                    linkedFullInfo ??= await ClientService.SendAsync(new GetSupergroupFullInfo(linkedSupergroup.Id)) as SupergroupFullInfo;
 
                     if (linkedSupergroup == null)
                     {

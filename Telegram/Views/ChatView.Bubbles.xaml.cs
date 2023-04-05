@@ -443,10 +443,7 @@ namespace Telegram.Views
 
             foreach (var item in next)
             {
-                if (item.Value != null)
-                {
-                    item.Value.Play();
-                }
+                item.Value?.Play();
 
                 _prev[item.Key] = new WeakReference(item.Value);
             }

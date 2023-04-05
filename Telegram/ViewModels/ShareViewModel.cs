@@ -57,10 +57,7 @@ namespace Telegram.ViewModels
                 {
                     var myId = ClientService.Options.MyId;
                     var self = list.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == myId);
-                    if (self == null)
-                    {
-                        self = await ClientService.SendAsync(new CreatePrivateChat(myId, false)) as Chat;
-                    }
+                    self ??= await ClientService.SendAsync(new CreatePrivateChat(myId, false)) as Chat;
 
                     if (self != null)
                     {
@@ -437,10 +434,7 @@ namespace Telegram.ViewModels
                     response = await ClientService.SendAsync(new SendBotStartMessage(_inviteBot.Id, chat.Id, _inviteToken));
 
                     var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
-                    if (service != null)
-                    {
-                        service.NavigateToChat(chat, accessToken: _inviteToken);
-                    }
+                    service?.NavigateToChat(chat, accessToken: _inviteToken);
                 }
             }
             else if (_switchInline != null && _switchInlineBot != null)
@@ -452,10 +446,7 @@ namespace Telegram.ViewModels
                 }
 
                 var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
-                if (service != null)
-                {
-                    service.NavigateToChat(chat, state: NavigationState.GetSwitchQuery(_switchInline.Query, _switchInlineBot.Id));
-                }
+                service?.NavigateToChat(chat, state: NavigationState.GetSwitchQuery(_switchInline.Query, _switchInlineBot.Id));
             }
             else if (_package != null)
             {
@@ -468,10 +459,7 @@ namespace Telegram.ViewModels
                 App.DataPackages[chat.Id] = _package;
 
                 var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
-                if (service != null)
-                {
-                    service.NavigateToChat(chat);
-                }
+                service?.NavigateToChat(chat);
             }
             else if (_groupCall != null)
             {

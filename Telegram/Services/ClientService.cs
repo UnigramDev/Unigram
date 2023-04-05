@@ -722,10 +722,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                 try
                 {
                     var folder = await GetFilesFolderAsync(true);
-                    if (folder == null)
-                    {
-                        folder = ApplicationData.Current.LocalFolder;
-                    }
+                    folder ??= ApplicationData.Current.LocalFolder;
 
                     if (IsRelativePath(ApplicationData.Current.LocalFolder.Path, file.Local.Path, out string relativeLocal))
                     {
@@ -755,10 +752,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             try
             {
                 var folder = await GetFilesFolderAsync(true);
-                if (folder == null)
-                {
-                    folder = ApplicationData.Current.LocalFolder;
-                }
+                folder ??= ApplicationData.Current.LocalFolder;
 
                 if (IsRelativePath(ApplicationData.Current.LocalFolder.Path, path, out string relativeLocal))
                 {

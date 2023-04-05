@@ -145,11 +145,7 @@ namespace Telegram.Controls.Messages
             }
 
             args.DrawImage(_bitmap, new Rect(0, 0, sender.Size.Width, sender.Size.Height));
-
-            if (brush != null)
-            {
-                brush.Dispose();
-            }
+            brush?.Dispose();
 
             if (outdated != null)
             {

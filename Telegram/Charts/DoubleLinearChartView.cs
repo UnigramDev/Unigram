@@ -463,10 +463,7 @@ namespace Telegram.Charts
             if (max > 0 && max != animatedToPickerMaxHeight)
             {
                 animatedToPickerMaxHeight = max;
-                if (pickerAnimator != null)
-                {
-                    pickerAnimator.Cancel();
-                }
+                pickerAnimator?.Cancel();
 
                 pickerAnimator = CreateAnimator(pickerMaxHeight, animatedToPickerMaxHeight, new AnimatorUpdateListener(animation =>
                 {

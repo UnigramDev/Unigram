@@ -205,13 +205,10 @@ namespace Telegram.ViewModels.Chats
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = ClientService.GetUser(chat);
-
                 var cached = ClientService.GetUserFull(chat);
-                if (cached == null)
-                {
-                    // This should really rarely happen
-                    cached = await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
-                }
+
+                // This should really rarely happen
+                cached ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
 
                 if (cached.GroupInCommonCount > 0)
                 {

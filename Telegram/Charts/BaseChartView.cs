@@ -1522,10 +1522,7 @@ namespace Telegram.Charts
             legendShowing = true;
             AnimateLegend(true);
             MoveLegend(offset);
-            if (dateSelectionListener != null)
-            {
-                dateSelectionListener.OnDateSelected(GetSelectedDate());
-            }
+            dateSelectionListener?.OnDateSelected(GetSelectedDate());
             Invalidate();
         }
 
@@ -1701,10 +1698,7 @@ namespace Telegram.Charts
                 pickerMaxHeight = pickerMinHeight = 0;
                 horizontalLines.Clear();
 
-                if (maxValueAnimator != null)
-                {
-                    maxValueAnimator.Cancel();
-                }
+                maxValueAnimator?.Cancel();
 
                 if (alphaAnimator != null)
                 {
@@ -1816,10 +1810,7 @@ namespace Telegram.Charts
 
             startXIndex = chartData.FindStartIndex(Math.Max(pickerDelegate.pickerStart, 0f));
             endXIndex = chartData.FindEndIndex(startXIndex, Math.Min(pickerDelegate.pickerEnd, 1f));
-            if (chartHeaderView != null)
-            {
-                chartHeaderView.setDates(chartData.x[startXIndex], chartData.x[endXIndex]);
-            }
+            chartHeaderView?.setDates(chartData.x[startXIndex], chartData.x[endXIndex]);
             UpdateLineSignature();
         }
 
@@ -1996,10 +1987,7 @@ namespace Telegram.Charts
             if ((min != int.MaxValue && min != animatedToPickerMinHeight) || (max > 0 && max != animatedToPickerMaxHeight))
             {
                 animatedToPickerMaxHeight = max;
-                if (pickerAnimator != null)
-                {
-                    pickerAnimator.Cancel();
-                }
+                pickerAnimator?.Cancel();
 
                 AnimatorSet animatorSet = new AnimatorSet();
                 animatorSet.PlayTogether(
