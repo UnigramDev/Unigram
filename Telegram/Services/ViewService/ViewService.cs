@@ -52,8 +52,12 @@ namespace Telegram.Services.ViewService
 
     public sealed class ViewService : IViewService
     {
+        private static readonly TaskCompletionSource<bool> _mainWindowCreated = new();
+
         internal static void OnWindowCreated()
         {
+            _mainWindowCreated.TrySetResult(true);
+
             var view = CoreApplication.GetCurrentView();
             if (!view.IsMain && !view.IsHosted)
             {
@@ -81,6 +85,8 @@ namespace Telegram.Services.ViewService
 
             if (IsSupported)
             {
+                await _mainWindowCreated.Task;
+
                 var newView = CoreApplication.CreateNewView();
                 var dispatcher = new DispatcherContext(newView.DispatcherQueue);
 
@@ -168,6 +174,7 @@ namespace Telegram.Services.ViewService
                 //    }
                 //    catch { }
                 //}
+                await _mainWindowCreated.Task;
 
                 var newView = CoreApplication.CreateNewView();
                 var dispatcher = new DispatcherContext(newView.DispatcherQueue);
