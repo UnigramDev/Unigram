@@ -27,7 +27,7 @@ namespace Telegram.ViewModels.BasicGroups
             Items = new MvxObservableCollection<Chat>();
 
             AddCommand = new RelayCommand(AddExecute);
-            SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title) && Items.Count > 0);
+            SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
         }
 
@@ -59,8 +59,6 @@ namespace Telegram.ViewModels.BasicGroups
             {
                 Items.ReplaceWith(chats);
             }
-
-            SendCommand.RaiseCanExecuteChanged();
         }
 
         public RelayCommand SendCommand { get; }
