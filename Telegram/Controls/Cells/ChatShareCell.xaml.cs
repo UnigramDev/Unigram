@@ -8,6 +8,7 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -81,16 +82,14 @@ namespace Telegram.Controls.Cells
             {
                 if (chat.Type is ChatTypeSecret)
                 {
-                    TitleLabel.Foreground = TypeIcon.Foreground;
-                    TypeIcon.Visibility = Visibility.Visible;
+                    TitleLabel.Foreground = App.Current.Resources["TelegramSecretChatForegroundBrush"] as Brush;
+                    TitleLabel.Text = Icons.LockClosedFilled14 + "\u00A0" + clientService.GetTitle(chat);
                 }
                 else
                 {
                     TitleLabel.ClearValue(TextBlock.ForegroundProperty);
-                    TypeIcon.Visibility = Visibility.Collapsed;
+                    TitleLabel.Text = clientService.GetTitle(chat);
                 }
-
-                TitleLabel.Text = clientService.GetTitle(chat);
             }
             else if (args.Phase == 2)
             {

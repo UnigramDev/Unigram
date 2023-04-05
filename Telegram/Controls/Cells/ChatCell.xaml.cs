@@ -112,7 +112,6 @@ namespace Telegram.Controls.Cells
 
         private Grid PhotoPanel;
         private ChatCellPanel LayoutRoot;
-        private TextBlock TypeIcon;
         private TextBlock TitleLabel;
         private IdentityIcon Identity;
         private FontIcon MutedIcon;
@@ -148,7 +147,6 @@ namespace Telegram.Controls.Cells
         {
             PhotoPanel = GetTemplateChild(nameof(PhotoPanel)) as Grid;
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as ChatCellPanel;
-            TypeIcon = GetTemplateChild(nameof(TypeIcon)) as TextBlock;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
             Identity = GetTemplateChild(nameof(Identity)) as IdentityIcon;
             MutedIcon = GetTemplateChild(nameof(MutedIcon)) as FontIcon;
@@ -260,8 +258,6 @@ namespace Telegram.Controls.Cells
                 TitleLabel.Text = Strings.ArchivedChats;
                 Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0, 96);
 
-                TypeIcon.Text = string.Empty;
-                TypeIcon.Visibility = Visibility.Collapsed;
                 UnreadMentionsBadge.Visibility = Visibility.Collapsed;
                 PinnedIcon.Visibility = Visibility.Collapsed;
 
@@ -541,7 +537,14 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            TitleLabel.Text = _clientService.GetTitle(chat);
+            if (chat.Type is ChatTypeSecret)
+            {
+                TitleLabel.Text = Icons.LockClosedFilled14 + "\u00A0" + _clientService.GetTitle(chat);
+            }
+            else
+            {
+                TitleLabel.Text = _clientService.GetTitle(chat);
+            }
         }
 
         public void UpdateChatPhoto(Chat chat)
@@ -585,10 +588,6 @@ namespace Telegram.Controls.Cells
 
         private void UpdateChatType(Chat chat)
         {
-            var type = UpdateType(chat);
-            TypeIcon.Text = type ?? string.Empty;
-            TypeIcon.Visibility = type == null ? Visibility.Collapsed : Visibility.Visible;
-
             Identity.SetStatus(_clientService, chat);
         }
 
@@ -1564,37 +1563,6 @@ namespace Telegram.Controls.Cells
             return Converter.DateExtended(message.Date);
         }
 
-        private string UpdateType(Chat chat)
-        {
-            if (chat.Type is ChatTypeSupergroup supergroup)
-            {
-                return supergroup.IsChannel ? Icons.MegaphoneFilled16 : Icons.PeopleFilled16;
-            }
-            else if (chat.Type is ChatTypeBasicGroup)
-            {
-                return Icons.PeopleFilled16;
-            }
-            else if (chat.Type is ChatTypeSecret)
-            {
-                return Icons.LockClosedFilled16;
-            }
-            else if (chat.Type is ChatTypePrivate privata && _clientService != null)
-            {
-                if (_clientService.IsRepliesChat(chat))
-                {
-                    return null;
-                }
-
-                var user = _clientService.GetUser(privata.UserId);
-                if (user != null && user.Type is UserTypeBot)
-                {
-                    return Icons.BotFilled;
-                }
-            }
-
-            return null;
-        }
-
         private void ToolTip_Opened(object sender, RoutedEventArgs e)
         {
             var tooltip = sender as ToolTip;
@@ -1710,9 +1678,6 @@ namespace Telegram.Controls.Cells
 
             TitleLabel.Text = title;
             Photo.Source = type is ChatTypeSupergroup ? PlaceholderHelper.GetNameForChat(title, 48, color) : PlaceholderHelper.GetNameForUser(title, 48, color);
-            //UpdateChatType(chat);
-            TypeIcon.Text = type is ChatTypeSupergroup ? Icons.People : string.Empty;
-            TypeIcon.Visibility = type is ChatTypeSupergroup ? Visibility.Visible : Visibility.Collapsed;
 
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
             VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
@@ -2228,36 +2193,34 @@ namespace Telegram.Controls.Cells
     {
         protected override Size MeasureOverride(Size availableSize)
         {
-            var TypeIcon = Children[0];
-            var TitleLabel = Children[1];
-            var Identity = Children[2];
-            var MutedIcon = Children[3];
-            var TimeLabel = Children[4];
+            var TitleLabel = Children[0];
+            var Identity = Children[1];
+            var MutedIcon = Children[2];
+            var TimeLabel = Children[3];
 
-            var MinithumbnailPanel = Children[5];
-            var BriefInfo = Children[6];
+            var MinithumbnailPanel = Children[4];
+            var BriefInfo = Children[5];
 
             var shift = 0;
             var CustomEmoji = default(CustomEmojiCanvas);
 
-            if (Children[7] is CustomEmojiCanvas)
+            if (Children[6] is CustomEmojiCanvas)
             {
                 shift++;
-                CustomEmoji = Children[7] as CustomEmojiCanvas;
+                CustomEmoji = Children[6] as CustomEmojiCanvas;
             }
 
-            var ChatActionIndicator = Children[7 + shift];
-            var TypingLabel = Children[8 + shift];
-            var PinnedIcon = Children[9 + shift];
-            var UnreadMentionsBadge = Children[10 + shift];
-            var UnreadBadge = Children[11 + shift];
+            var ChatActionIndicator = Children[6 + shift];
+            var TypingLabel = Children[7 + shift];
+            var PinnedIcon = Children[8 + shift];
+            var UnreadMentionsBadge = Children[9 + shift];
+            var UnreadBadge = Children[10 + shift];
 
             TimeLabel.Measure(availableSize);
-            TypeIcon.Measure(availableSize);
             Identity.Measure(availableSize);
             MutedIcon.Measure(availableSize);
 
-            var line1Left = 12 + TypeIcon.DesiredSize.Width;
+            var line1Left = 12;
             var line1Right = availableSize.Width - 12 - TimeLabel.DesiredSize.Width;
 
             var titleWidth = Math.Max(0, line1Right - (line1Left + Identity.DesiredSize.Width + MutedIcon.DesiredSize.Width));
@@ -2283,9 +2246,9 @@ namespace Telegram.Controls.Cells
             CustomEmoji?.Measure(new Size(briefWidth, availableSize.Height));
             TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
 
-            if (Children.Count > 12 + shift)
+            if (Children.Count > 11 + shift)
             {
-                Children[12 + shift].Measure(availableSize);
+                Children[11 + shift].Measure(availableSize);
             }
 
             return base.MeasureOverride(availableSize);
@@ -2295,29 +2258,28 @@ namespace Telegram.Controls.Cells
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var TypeIcon = Children[0];
-            var TitleLabel = Children[1];
-            var Identity = Children[2];
-            var MutedIcon = Children[3];
-            var TimeLabel = Children[4];
+            var TitleLabel = Children[0];
+            var Identity = Children[1];
+            var MutedIcon = Children[2];
+            var TimeLabel = Children[3];
 
-            var MinithumbnailPanel = Children[5];
-            var BriefInfo = Children[6];
+            var MinithumbnailPanel = Children[4];
+            var BriefInfo = Children[5];
 
             var shift = 0;
             var CustomEmoji = default(CustomEmojiCanvas);
 
-            if (Children[7] is CustomEmojiCanvas)
+            if (Children[6] is CustomEmojiCanvas)
             {
                 shift++;
-                CustomEmoji = Children[7] as CustomEmojiCanvas;
+                CustomEmoji = Children[6] as CustomEmojiCanvas;
             }
 
-            var ChatActionIndicator = Children[7 + shift];
-            var TypingLabel = Children[8 + shift];
-            var PinnedIcon = Children[9 + shift];
-            var UnreadMentionsBadge = Children[10 + shift];
-            var UnreadBadge = Children[11 + shift];
+            var ChatActionIndicator = Children[6 + shift];
+            var TypingLabel = Children[7 + shift];
+            var PinnedIcon = Children[8 + shift];
+            var UnreadMentionsBadge = Children[9 + shift];
+            var UnreadBadge = Children[10 + shift];
 
             var rect = new Rect();
             var min = 12;
@@ -2328,38 +2290,31 @@ namespace Telegram.Controls.Cells
             rect.Height = TimeLabel.DesiredSize.Height;
             TimeLabel.Arrange(rect);
 
-            rect.X = min;
-            rect.Y = 13;
-            rect.Width = TypeIcon.DesiredSize.Width;
-            rect.Height = TypeIcon.DesiredSize.Height;
-            TypeIcon.Arrange(rect);
-
-            var line1Left = min + TypeIcon.DesiredSize.Width;
             var line1Right = finalSize.Width - 8 - TimeLabel.DesiredSize.Width;
 
             double titleWidth;
-            if (line1Left + TitleLabel.DesiredSize.Width + Identity.DesiredSize.Width + MutedIcon.DesiredSize.Width > line1Right)
+            if (min + TitleLabel.DesiredSize.Width + Identity.DesiredSize.Width + MutedIcon.DesiredSize.Width > line1Right)
             {
-                titleWidth = Math.Max(0, line1Right - (line1Left + Identity.DesiredSize.Width + MutedIcon.DesiredSize.Width));
+                titleWidth = Math.Max(0, line1Right - (min + Identity.DesiredSize.Width + MutedIcon.DesiredSize.Width));
             }
             else
             {
                 titleWidth = TitleLabel.DesiredSize.Width;
             }
 
-            rect.X = min + TypeIcon.DesiredSize.Width;
+            rect.X = min;
             rect.Y = 12;
             rect.Width = titleWidth;
             rect.Height = TitleLabel.DesiredSize.Height;
             TitleLabel.Arrange(rect);
 
-            rect.X = min + TypeIcon.DesiredSize.Width + titleWidth;
+            rect.X = min + titleWidth;
             rect.Y = 14;
             rect.Width = Identity.DesiredSize.Width;
             rect.Height = Identity.DesiredSize.Height;
             Identity.Arrange(rect);
 
-            rect.X = min + TypeIcon.DesiredSize.Width + titleWidth + Identity.DesiredSize.Width;
+            rect.X = min + titleWidth + Identity.DesiredSize.Width;
             rect.Y = 14;
             rect.Width = MutedIcon.DesiredSize.Width;
             rect.Height = MutedIcon.DesiredSize.Height;
@@ -2430,9 +2385,9 @@ namespace Telegram.Controls.Cells
             rect.Height = TypingLabel.DesiredSize.Height;
             TypingLabel.Arrange(rect);
 
-            if (Children.Count > 12 + shift)
+            if (Children.Count > 11 + shift)
             {
-                Children[12 + shift].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+                Children[11 + shift].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
             }
 
             return finalSize;

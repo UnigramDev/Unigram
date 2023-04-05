@@ -48,29 +48,17 @@
           VerticalAlignment="Center"
           Grid.Column="1">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <TextBlock x:Name="TypeIcon"
-                   Text="&#xE984;"
-                   FontFamily="{StaticResource SymbolThemeFontFamily}"
-                   Foreground="{ThemeResource TelegramSecretChatForegroundBrush}"
-                   VerticalAlignment="Bottom"
-                   Visibility="Collapsed"
-                   FontSize="16"
-                   Margin="0,0,4,1" />
-
         <TextBlock x:Name="TitleLabel"
                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
                    TextWrapping="NoWrap"
-                   TextTrimming="CharacterEllipsis"
-                   Grid.Column="1" />
+                   TextTrimming="CharacterEllipsis" />
 
         <controls:IdentityIcon x:Name="Identity"
                                VerticalAlignment="Bottom"
                                Margin="4,0,0,2"
-                               Grid.Column="2" />
+                               Grid.Column="1" />
     </Grid>
-
 </Grid>

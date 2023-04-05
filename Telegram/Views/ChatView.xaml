@@ -407,20 +407,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock x:Name="TypeIcon"
-                                   Text="&#xE716;"
-                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                   Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                   VerticalAlignment="Bottom"
-                                   FontSize="16"
-                                   Margin="0,0,4,1" />
-
-                        <Grid HorizontalAlignment="Left"
-                              Grid.Column="1">
+                        <Grid HorizontalAlignment="Left">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
@@ -440,7 +427,6 @@
                         </Grid>
 
                         <Grid Visibility="{x:Bind ViewModel.LastSeen, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                              Grid.ColumnSpan="2"
                               Grid.Row="1">
                             <TextBlock x:Name="Subtitle"
                                        Text="{x:Bind ViewModel.Subtitle, Mode=OneWay}"

@@ -40,11 +40,11 @@ namespace Telegram.Common
                 switch (SettingsService.Current.Appearance.EmojiSet)
                 {
                     case "microsoft":
-                        this.Add("EmojiThemeFontFamily", new FontFamily($"XamlAutoFontFamily"));
+                        this.Add("EmojiThemeFontFamily", new FontFamily($"XamlAutoFontFamily, ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"));
                         break;
                     case "apple":
                     default:
-                        this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji"));
+                        this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji, ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"));
                         break;
                 }
 

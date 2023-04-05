@@ -117,14 +117,6 @@
                                              Height="64"
                                              Background="Transparent"
                                              Grid.Column="1">
-                            <TextBlock x:Name="TypeIcon"
-                                       Text="&#xE716;"
-                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                       Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                       VerticalAlignment="Bottom"
-                                       FontSize="16"
-                                       Margin="0,0,4,1"
-                                       Grid.Column="0" />
                             <TextBlock x:Name="TitleLabel"
                                        MaxLines="1"
                                        TextWrapping="NoWrap"

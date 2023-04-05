@@ -3573,9 +3573,6 @@ namespace Telegram.Views
             UpdateChatUnreadReactionCount(chat, chat.UnreadReactionCount);
             UpdateChatDefaultDisableNotification(chat, chat.DefaultDisableNotification);
 
-            TypeIcon.Text = chat.Type is ChatTypeSecret ? Icons.LockClosedFilled16 : string.Empty;
-            TypeIcon.Visibility = chat.Type is ChatTypeSecret ? Visibility.Visible : Visibility.Collapsed;
-
             ButtonScheduled.Visibility = chat.HasScheduledMessages && ViewModel.Type == DialogType.History ? Visibility.Visible : Visibility.Collapsed;
             ButtonTimer.Visibility = chat.Type is ChatTypeSecret ? Visibility.Visible : Visibility.Collapsed;
             ButtonSilent.Visibility = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Visibility.Visible : Visibility.Collapsed;
@@ -3692,6 +3689,10 @@ namespace Telegram.Views
             else if (ViewModel.Type == DialogType.ScheduledMessages)
             {
                 Title.Text = ViewModel.ClientService.IsSavedMessages(chat) ? Strings.Reminders : Strings.ScheduledMessages;
+            }
+            else if (chat.Type is ChatTypeSecret)
+            {
+                Title.Text = Icons.LockClosedFilled14 + "\u00A0" + ViewModel.ClientService.GetTitle(chat);
             }
             else
             {

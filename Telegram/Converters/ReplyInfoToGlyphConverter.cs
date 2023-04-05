@@ -82,10 +82,7 @@ namespace Telegram.Converters
         public const string HandRight = "\uE98B";
         public const string PlayCircle = "\uE9FC";
 
-        public const string PeopleFilled16 = "\uE983";
-        public const string MegaphoneFilled16 = "\uE982";
-        public const string LockClosedFilled16 = "\uE984";
-        public const string BotFilled = "\uE981";
+        public const string LockClosedFilled14 = "\uEA0C";
 
         public const string PersonQuestionMark = "\uE897";
         public const string QuestionCircle = "\uE9CE";
