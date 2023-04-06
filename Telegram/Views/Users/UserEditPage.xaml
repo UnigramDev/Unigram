@@ -18,8 +18,10 @@
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">
             <controls:SettingsPanel>
-                <controls:HeaderedControl Footer="{CustomResource RegisterText2}">
+                <controls:HeaderedControl x:Name="LayoutRoot"
+                                          Footer="{CustomResource RegisterText2}">
                     <Grid Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource SettingsItemBorderBrush}"
                           Padding="12,8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -39,14 +41,17 @@
                                                      Width="96" />
                         </Grid>
 
-                        <TextBox Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox x:Name="FirstName"
+                                 Text="{x:Bind ViewModel.FirstName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  PlaceholderText="{CustomResource FirstNameSmall}"
                                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                  MaxLength="{StaticResource ChannelTitleMaxLength}"
                                  VerticalAlignment="Bottom"
                                  Margin="0,0,0,2"
                                  Grid.Column="1" />
-                        <TextBox Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        <TextBox x:Name="LastName"
+                                 x:Load="False"
+                                 Text="{x:Bind ViewModel.LastName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                  PlaceholderText="{CustomResource LastNameSmall}"
                                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                  MaxLength="{StaticResource ChannelTitleMaxLength}"
@@ -55,14 +60,75 @@
                                  Grid.Column="1"
                                  Grid.Row="1" />
                     </Grid>
+                    <controls:BadgeButton x:Name="BotPhoto"
+                                          x:Load="False"
+                                          Content="{CustomResource ChatSetNewPhoto}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE9FE;">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"
+                                                Click="{x:Bind ViewModel.SetPhoto}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xEB9F;"
+                                                  Style="{StaticResource DefaultFontIconStyle}" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem Text="{CustomResource StickersName}"
+                                                Click="{x:Bind ViewModel.CreatePhoto}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xF4AA;"
+                                                  Style="{StaticResource DefaultFontIconStyle}" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </controls:BadgeButton>
+                    <TextBox x:Name="About"
+                             x:Load="False"
+                             Text="{x:Bind ViewModel.Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                             PlaceholderText="{CustomResource DescriptionOptionalPlaceholder}"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             Padding="12,11,6,12" />
+
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl x:Name="SharePhone">
+                <controls:HeaderedControl x:Name="UsernamePanel"
+                                          x:Load="False">
+                    <controls:BadgeButton x:Name="Username"
+                                          Click="{x:Bind ViewModel.ChangeUsername}"
+                                          Content="{CustomResource Username}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE168;" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl x:Name="BotPanel"
+                                          x:Load="False"
+                                          Footer="{CustomResource BotManageInfo}">
+                    <controls:BadgeButton Click="{x:Bind ViewModel.EditDescription}"
+                                          Content="{CustomResource BotEditIntro}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEA0A;" />
+                    <controls:BadgeButton Click="{x:Bind ViewModel.EditCommands}"
+                                          Content="{CustomResource BotEditCommands}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEA0B;" />
+                    <controls:BadgeButton Click="{x:Bind ViewModel.EditSettings}"
+                                          Content="{CustomResource BotChangeSettings}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE99A;" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl x:Name="SharePhonePanel"
+                                          x:Load="False">
                     <CheckBox x:Name="SharePhoneCheck"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl>
+                <controls:HeaderedControl x:Name="PhotoPanel"
+                                          x:Load="False">
                     <controls:BadgeButton x:Name="SuggestPhoto"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE9FE;">

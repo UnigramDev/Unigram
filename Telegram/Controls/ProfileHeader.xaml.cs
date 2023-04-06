@@ -624,6 +624,10 @@ namespace Telegram.Controls
                     {
                         if (user.Type is UserTypeBot bot)
                         {
+                            if (bot.CanBeEdited)
+                            {
+                                flyout.CreateFlyoutItem(ViewModel.Edit, Strings.Edit, new FontIcon { Glyph = Icons.Edit });
+                            }
                             if (bot.CanJoinGroups)
                             {
                                 flyout.CreateFlyoutItem(ViewModel.Invite, Strings.BotInvite, new FontIcon { Glyph = Icons.PersonAdd });

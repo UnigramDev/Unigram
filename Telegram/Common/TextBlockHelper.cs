@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -51,12 +50,12 @@ namespace Telegram.Common
                 markdown = Regex.Replace(markdown, "<a href=\"(.*?)\">(.*?)<\\/a>", "[$2]($1)");
             }
 
-            var formatted = Client.Execute(new ParseMarkdown(new FormattedText(markdown, new TextEntity[0]))) as FormattedText;
+            var entities = Client.Execute(new GetTextEntities(markdown)) as TextEntities;
+            var formatted = Client.Execute(new ParseMarkdown(new FormattedText(markdown, entities.Entities))) as FormattedText;
             var text = formatted.Text;
-            var entities = formatted.Entities;
             var previous = 0;
 
-            foreach (var entity in entities.OrderBy(x => x.Offset))
+            foreach (var entity in formatted.Entities)
             {
                 if (entity.Offset > previous)
                 {
@@ -83,6 +82,18 @@ namespace Telegram.Common
                     hyperlink.NavigateUri = new Uri(textUrl.Url);
                     hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
                     sender.Inlines.Add(hyperlink);
+                }
+                else if (entity.Type is TextEntityTypeMention)
+                {
+                    // TODO: this is wrong!
+                    var hyperlink = new Hyperlink();
+                    hyperlink.NavigateUri = new Uri("https://t.me/" + text.Substring(entity.Offset, entity.Length));
+                    hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                    sender.Inlines.Add(hyperlink);
+                }
+                else
+                {
+                    sender.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
                 }
 
                 previous = entity.Offset + entity.Length;

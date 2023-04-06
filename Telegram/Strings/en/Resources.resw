@@ -1273,6 +1273,15 @@ Please enable Unigram in the Startup Apps Settings.</value>
   <data name="Bot" xml:space="preserve">
     <value>bot</value>
   </data>
+  <data name="BotChangeSettings" xml:space="preserve">
+    <value>Change Bot Settings</value>
+  </data>
+  <data name="BotEditCommands" xml:space="preserve">
+    <value>Edit Commands</value>
+  </data>
+  <data name="BotEditIntro" xml:space="preserve">
+    <value>Edit Intro</value>
+  </data>
   <data name="BotHelp" xml:space="preserve">
     <value>Help</value>
   </data>
@@ -1281,6 +1290,12 @@ Please enable Unigram in the Startup Apps Settings.</value>
   </data>
   <data name="BotInvite" xml:space="preserve">
     <value>Add to Group</value>
+  </data>
+  <data name="BotManageInfo" xml:space="preserve">
+    <value>Use @BotFather to manage this bot.</value>
+  </data>
+  <data name="BotName" xml:space="preserve">
+    <value>Bot name</value>
   </data>
   <data name="BotOpenPageMessage" xml:space="preserve">
     <value>**{0}** would like to open its web app to proceed.

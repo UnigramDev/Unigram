@@ -10,6 +10,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Users
@@ -23,6 +24,8 @@ namespace Telegram.ViewModels.Users
         public IUserDelegate Delegate { get; set; }
 
         private readonly IProfilePhotoService _profilePhotoService;
+
+        private bool _discardChanges;
 
         public UserEditViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IProfilePhotoService profilePhotoService)
             : base(clientService, settingsService, aggregator)
@@ -58,6 +61,13 @@ namespace Telegram.ViewModels.Users
             }
         }
 
+        private string _description;
+        public string Description
+        {
+            get => _description;
+            set => Set(ref _description, value);
+        }
+
         private bool _sharePhoneNumber;
         public bool SharePhoneNumber
         {
@@ -86,6 +96,8 @@ namespace Telegram.ViewModels.Users
 
                 if (ClientService.TryGetUserFull(user.Id, out UserFullInfo userFull))
                 {
+                    Description = userFull.BotInfo?.ShortDescription ?? string.Empty;
+
                     Delegate?.UpdateUserFullInfo(null, user, userFull, false, false);
                 }
                 else
@@ -95,6 +107,36 @@ namespace Telegram.ViewModels.Users
             }
 
             return base.OnNavigatedToAsync(parameter, mode, state);
+        }
+
+        public override async void NavigatingFrom(NavigatingEventArgs args)
+        {
+            if (_discardChanges || args.NavigationMode != NavigationMode.Back)
+            {
+                return;
+            }
+
+            if (ClientService.TryGetUser(_userId, out User user) && ClientService.TryGetUserFull(user.Id, out UserFullInfo userFull))
+            {
+                if (user.Type is UserTypeBot userTypeBot && userTypeBot.CanBeEdited)
+                {
+                    if (user.FirstName != _firstName || userFull.BotInfo?.ShortDescription != _description)
+                    {
+                        args.Cancel = true;
+
+                        var confirm = await ShowPopupAsync(Strings.BotSettingsChangedAlert, Strings.UnsavedChanges, Strings.ApplyTheme, Strings.Discard);
+                        if (confirm == ContentDialogResult.Primary)
+                        {
+                            Send();
+                        }
+                        else
+                        {
+                            _discardChanges = true;
+                            NavigationService.GoBack();
+                        }
+                    }
+                }
+            }
         }
 
         public override void Subscribe()
@@ -123,6 +165,8 @@ namespace Telegram.ViewModels.Users
             {
                 BeginOnUIThread(() =>
                 {
+                    Description = update.UserFullInfo.BotInfo?.ShortDescription ?? string.Empty;
+
                     Delegate?.UpdateUserFullInfo(null, user, update.UserFullInfo, false, false);
                 });
             }
@@ -131,10 +175,27 @@ namespace Telegram.ViewModels.Users
         public RelayCommand SendCommand { get; }
         private void Send()
         {
+            _discardChanges = true;
+
             if (ClientService.TryGetUser(_userId, out User user) && ClientService.TryGetUserFull(user.Id, out UserFullInfo userFull))
             {
-                ClientService.Send(new AddContact(new Contact(user.PhoneNumber, _firstName, _lastName, string.Empty, user.Id),
-                    userFull.NeedPhoneNumberPrivacyException ? SharePhoneNumber : true));
+                if (user.Type is UserTypeBot userTypeBot && userTypeBot.CanBeEdited)
+                {
+                    if (user.FirstName != _firstName)
+                    {
+                        ClientService.Send(new SetBotName(user.Id, string.Empty, _firstName));
+                    }
+
+                    if (userFull.BotInfo?.ShortDescription != _description)
+                    {
+                        ClientService.Send(new SetBotInfoShortDescription(user.Id, string.Empty, _description));
+                    }
+                }
+                else
+                {
+                    ClientService.Send(new AddContact(new Contact(user.PhoneNumber, _firstName, _lastName, string.Empty, user.Id),
+                        !userFull.NeedPhoneNumberPrivacyException || SharePhoneNumber));
+                }
 
                 NavigationService.GoBack();
             }
@@ -180,10 +241,39 @@ namespace Telegram.ViewModels.Users
             if (ClientService.TryGetUser(_userId, out User user))
             {
                 var confirm = await ShowPopupAsync(string.Format(Strings.ResetToOriginalPhotoMessage, user.FirstName), Strings.ResetToOriginalPhotoTitle, Strings.Reset, Strings.Cancel);
-                if (confirm == Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
+                if (confirm == ContentDialogResult.Primary)
                 {
                     ClientService.Send(new SetUserPersonalProfilePhoto(user.Id, null));
                 }
+            }
+        }
+
+        public void ChangeUsername()
+        {
+            // TODO: edit bot usernames
+        }
+
+        public void EditCommands()
+        {
+            if (ClientService.TryGetUserFull(_userId, out UserFullInfo fullInfo) && fullInfo.BotInfo != null)
+            {
+                MessageHelper.OpenTelegramUrl(ClientService, NavigationService, fullInfo.BotInfo.EditCommandsLink);
+            }
+        }
+
+        public void EditDescription()
+        {
+            if (ClientService.TryGetUserFull(_userId, out UserFullInfo fullInfo) && fullInfo.BotInfo != null)
+            {
+                MessageHelper.OpenTelegramUrl(ClientService, NavigationService, fullInfo.BotInfo.EditDescriptionLink);
+            }
+        }
+
+        public void EditSettings()
+        {
+            if (ClientService.TryGetUserFull(_userId, out UserFullInfo fullInfo) && fullInfo.BotInfo != null)
+            {
+                MessageHelper.OpenTelegramUrl(ClientService, NavigationService, fullInfo.BotInfo.EditSettingsLink);
             }
         }
     }

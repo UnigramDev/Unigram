@@ -129,7 +129,11 @@ namespace Telegram.Services
 
             if (chatId.HasValue && _clientService.TryGetUser(chatId.Value, out User user))
             {
-                if (isPersonal)
+                if (user.Type is UserTypeBot userTypeBot && userTypeBot.CanBeEdited)
+                {
+                    _clientService.Send(new SetBotProfilePhoto(user.Id, inputPhoto));
+                }
+                else if (isPersonal)
                 {
                     var confirm = await MessagePopup.ShowAsync(string.Format(Strings.SetUserPhotoAlertMessage, user.FirstName), Strings.AppName, Strings.SuggestPhotoShort, Strings.Cancel);
                     if (confirm == ContentDialogResult.Primary)
