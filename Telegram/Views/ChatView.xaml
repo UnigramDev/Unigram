@@ -574,7 +574,6 @@
             <chats:ChatListView x:Name="Messages"
                                 Style="{StaticResource BubbleListViewStyle}"
                                 ItemContainerTransitions="{x:Null}"
-                                ItemsSource="{x:Bind ViewModel.Items}"
                                 ShowsScrollingPlaceholders="False"
                                 IsItemClickEnabled="False"
                                 IsSelectionEnabled="{x:Bind ViewModel.IsSelectionEnabled, Mode=TwoWay}"

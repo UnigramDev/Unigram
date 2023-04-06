@@ -18,7 +18,7 @@ namespace Telegram.ViewModels
         private readonly IPlaybackService _playbackService;
         private readonly WeakReference _delegate;
 
-        private WeakAction _updateSelection;
+        private Action _updateSelection;
 
         public MessageViewModel(IClientService clientService, IPlaybackService playbackService, IMessageDelegate delegato, Message message)
             : base(clientService, message)
@@ -29,25 +29,12 @@ namespace Telegram.ViewModels
 
         public void SelectionChanged()
         {
-            if (_updateSelection != null
-                && _updateSelection.IsAlive
-                && _updateSelection.Target != null)
-            {
-                _updateSelection.Execute();
-            }
+            _updateSelection?.Invoke();
         }
 
-        public void UpdateSelectionCallback(object target, Action action)
+        public void UpdateSelectionCallback(Action action)
         {
-            if (_updateSelection != null)
-            {
-                _updateSelection.MarkForDeletion();
-            }
-
-            if (target != null)
-            {
-                _updateSelection = new WeakAction(target, action);
-            }
+            _updateSelection = action;
         }
 
         public IPlaybackService PlaybackService => _playbackService;

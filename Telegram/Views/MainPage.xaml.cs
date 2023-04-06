@@ -1887,7 +1887,7 @@ namespace Telegram.Views
 
             SearchReset();
 
-            MasterDetail.NavigationService.GoBackAt(0);
+            _shouldGoBackWithDetail = false;
 
             for (int i = 0; i < ViewModel.Children.Count; i++)
             {
@@ -2479,7 +2479,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(ViewModel.MarkFilterAsRead, filter, Strings.MarkAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
                 flyout.CreateFlyoutItem(ViewModel.AddToFilter, filter, Strings.FilterAddChats, new FontIcon { Glyph = Icons.Add });
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(ViewModel.DeleteFilter, filter, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.DeleteFilter, filter, Strings.Remove, new FontIcon { Glyph = Icons.Delete });
             }
 
             flyout.ShowAt(element, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });

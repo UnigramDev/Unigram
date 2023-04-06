@@ -295,6 +295,7 @@
                                         <ColumnDefinition />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
+                                    <!-- TODO: Migrate to RecentUserHeads -->
                                     <StackPanel x:Name="RecentRepliers"
                                                 Orientation="Horizontal"
                                                 Height="28" />

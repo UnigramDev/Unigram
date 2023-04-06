@@ -54,7 +54,7 @@ namespace Telegram.Controls.Messages
                 bubble.UnregisterEvents();
             }
 
-            _message?.UpdateSelectionCallback(null, null);
+            _message?.UpdateSelectionCallback(null);
             _message = null;
 
             _parent = null;
@@ -202,7 +202,7 @@ namespace Telegram.Controls.Messages
 
             if (message != null && chat != null && _templateApplied)
             {
-                message.UpdateSelectionCallback(this, UpdateSelection);
+                message.UpdateSelectionCallback(UpdateSelection);
 
                 IsChecked = _isSelectionEnabled && message.Delegate.SelectedItems.ContainsKey(message.Id);
                 Presenter.IsHitTestVisible = !_isSelectionEnabled || IsAlbum;

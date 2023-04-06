@@ -44,7 +44,7 @@ namespace Telegram.Common
                         break;
                     case "apple":
                     default:
-                        this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji, ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"));
+                        this.Add("EmojiThemeFontFamily", new FontFamily($"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji, XamlAutoFontFamily, ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"));
                         break;
                 }
 

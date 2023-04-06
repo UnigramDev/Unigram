@@ -419,6 +419,8 @@ namespace Telegram.Controls
             }
         }
 
+        // TODO: properly implement measure and arrange overrides
+
         protected override Size MeasureOverride(Size availableSize)
         {
             var count = Math.Min(_maxCount, Math.Max(1, _items.Count));
