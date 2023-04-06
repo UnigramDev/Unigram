@@ -305,12 +305,12 @@ namespace Telegram.Collections
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, removedItems, start));
         }
 
-        public void InsertRemoveAt(T item, int newIndex, int oldIndex)
+        public void Move(int oldIndex, int newIndex, T item)
         {
             using (SuppressEvents())
             {
-                Insert(newIndex, item);
                 RemoveAt(oldIndex);
+                Insert(newIndex, item);
             }
 
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, item, newIndex, oldIndex));

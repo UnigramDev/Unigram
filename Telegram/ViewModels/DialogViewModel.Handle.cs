@@ -1073,11 +1073,11 @@ namespace Telegram.ViewModels
 
         public static int InsertMessageInOrder(IList<MessageViewModel> messages, MessageViewModel message)
         {
-            var position = -1;
+            var oldIndex = -1;
 
             if (messages.Count == 0)
             {
-                position = 0;
+                oldIndex = 0;
             }
 
             for (var i = messages.Count - 1; i >= 0; i--)
@@ -1086,7 +1086,7 @@ namespace Telegram.ViewModels
                 {
                     if (messages[i].Date < message.Date)
                     {
-                        position = i + 1;
+                        oldIndex = i + 1;
                         break;
                     }
 
@@ -1095,41 +1095,41 @@ namespace Telegram.ViewModels
 
                 if (messages[i].Id == message.Id)
                 {
-                    position = -1;
+                    oldIndex = -1;
                     break;
                 }
                 if (messages[i].Id < message.Id)
                 {
-                    position = i + 1;
+                    oldIndex = i + 1;
                     break;
                 }
             }
 
-            if (position != -1)
+            if (oldIndex != -1)
             {
-                messages.Insert(position, message);
+                messages.Insert(oldIndex, message);
             }
 
-            return position;
+            return oldIndex;
         }
 
         public static bool MoveMessageInOrder(MvxObservableCollection<MessageViewModel> messages, MessageViewModel message)
         {
-            var position = -1;
-            var original = -1;
+            var newIndex = -1;
+            var oldIndex = -1;
 
             if (messages.Count == 0)
             {
-                position = 0;
+                newIndex = 0;
             }
 
             for (var i = messages.Count - 1; i >= 0; i--)
             {
                 if (messages[i].Id == 0)
                 {
-                    if (messages[i].Date < message.Date && position == -1)
+                    if (messages[i].Date < message.Date && newIndex == -1)
                     {
-                        position = i + 1;
+                        newIndex = i;
                         break;
                     }
 
@@ -1138,23 +1138,18 @@ namespace Telegram.ViewModels
 
                 if (messages[i].Id == message.Id)
                 {
-                    original = i;
+                    oldIndex = i;
                     break;
                 }
-                if (messages[i].Id < message.Id && position == -1)
+                if (messages[i].Id < message.Id && newIndex == -1)
                 {
-                    position = i + 1;
-                    //break;
+                    newIndex = i;
                 }
             }
 
-            if (position != -1 && original != -1 && position != original)
+            if (newIndex != -1 && oldIndex != -1 && newIndex != oldIndex)
             {
-                // InsertRemoveAt does exactly the same as Move,
-                // but explicitly uses Insert and RemoveAt methods as they're
-                // overridden by MessagesCollection to update attach & date header
-
-                messages.InsertRemoveAt(message, position, original);
+                messages.Move(oldIndex, newIndex, message);
                 return false;
             }
 
