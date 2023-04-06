@@ -142,34 +142,47 @@
                                        Margin="0,0,0,1"
                                        Grid.Column="2" />
 
-                            <Border x:Name="MinithumbnailPanel"
-                                    Margin="0,0,6,0"
-                                    CornerRadius="2"
-                                    Height="16"
-                                    Grid.Column="2"
-                                    Grid.Row="1">
-                                <Image x:Name="Minithumbnail"
-                                       Stretch="UniformToFill"
-                                       Width="16"
-                                       Height="16" />
-                            </Border>
-
-                            <TextBlock x:Name="BriefInfo"
+                            <TextBlock x:Name="FromLabel"
                                        Style="{StaticResource BodyTextBlockStyle}"
                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                       Foreground="{ThemeResource ChatFromLabelBrush}"
                                        TextTrimming="CharacterEllipsis"
                                        TextWrapping="NoWrap"
                                        VerticalAlignment="Top"
-                                       MaxLines="1">
+                                       MaxLines="1" />
+
+                            <Border x:Name="MinithumbnailPanel"
+                                    Margin="0,0,6,0"
+                                    CornerRadius="2"
+                                    Width="18"
+                                    Height="18"
+                                    Grid.Column="2"
+                                    Grid.Row="1">
+                                <Border.Background>
+                                    <ImageBrush x:Name="Minithumbnail"
+                                                Stretch="UniformToFill"
+                                                AlignmentX="Center"
+                                                AlignmentY="Center" />
+                                </Border.Background>
+                                <!--<Image x:Name="Minithumbnail"
+                                       Stretch="UniformToFill"
+                                       Width="18"
+                                       Height="18" />-->
+                            </Border>
+
+                            <TextBlock x:Name="BriefLabel"
+                                       Style="{StaticResource InfoBodyTextBlockStyle}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       TextTrimming="CharacterEllipsis"
+                                       TextWrapping="NoWrap"
+                                       VerticalAlignment="Top"
+                                       MaxLines="1" />
                             <!--<ToolTipService.ToolTip>
                                 <ToolTip Opened="ToolTip_Opened" />
                             </ToolTipService.ToolTip>-->
-                            <Run x:Name="FromLabel"
-                                 Foreground="{ThemeResource ChatFromLabelBrush}" /><Run x:Name="DraftLabel"
-                                                                                        Foreground="{ThemeResource ChatDraftLabelBrush}" /><Span x:Name="BriefLabel"
-                                                                                                                                                 Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
-                            </TextBlock>
+                            <!--<Run x:Name="DraftLabel"
+                                 Foreground="{ThemeResource ChatDraftLabelBrush}" />-->
+
                             <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                                         x:Load="False" />
 

@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright Fela Ameghino 2015-2023
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -117,7 +117,6 @@ namespace Telegram.Controls.Cells
         private FontIcon MutedIcon;
         private TextBlock TimeLabel;
         private Border MinithumbnailPanel;
-        private TextBlock BriefInfo;
         private ChatActionIndicator ChatActionIndicator;
         private TextBlock TypingLabel;
         private Border PinnedIcon;
@@ -125,10 +124,9 @@ namespace Telegram.Controls.Cells
         private InfoBadge UnreadBadge;
         private Rectangle DropVisual;
         private TextBlock UnreadMentionsLabel;
-        private Run FromLabel;
-        private Run DraftLabel;
-        private Span BriefLabel;
-        private Image Minithumbnail;
+        private TextBlock FromLabel;
+        private TextBlock BriefLabel;
+        private ImageBrush Minithumbnail;
         private Rectangle SelectionOutline;
         private ProfilePicture Photo;
         private Border OnlineBadge;
@@ -151,7 +149,6 @@ namespace Telegram.Controls.Cells
             MutedIcon = GetTemplateChild(nameof(MutedIcon)) as FontIcon;
             TimeLabel = GetTemplateChild(nameof(TimeLabel)) as TextBlock;
             MinithumbnailPanel = GetTemplateChild(nameof(MinithumbnailPanel)) as Border;
-            BriefInfo = GetTemplateChild(nameof(BriefInfo)) as TextBlock;
             ChatActionIndicator = GetTemplateChild(nameof(ChatActionIndicator)) as ChatActionIndicator;
             TypingLabel = GetTemplateChild(nameof(TypingLabel)) as TextBlock;
             PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as Border;
@@ -159,19 +156,18 @@ namespace Telegram.Controls.Cells
             UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as InfoBadge;
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
-            FromLabel = GetTemplateChild(nameof(FromLabel)) as Run;
-            DraftLabel = GetTemplateChild(nameof(DraftLabel)) as Run;
-            BriefLabel = GetTemplateChild(nameof(BriefLabel)) as Span;
-            Minithumbnail = GetTemplateChild(nameof(Minithumbnail)) as Image;
+            FromLabel = GetTemplateChild(nameof(FromLabel)) as TextBlock;
+            BriefLabel = GetTemplateChild(nameof(BriefLabel)) as TextBlock;
+            Minithumbnail = GetTemplateChild(nameof(Minithumbnail)) as ImageBrush;
             SelectionOutline = GetTemplateChild(nameof(SelectionOutline)) as Rectangle;
             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
 
-            BriefInfo.SizeChanged += OnSizeChanged;
+            BriefLabel.SizeChanged += OnSizeChanged;
 
             var tooltip = new ToolTip();
             tooltip.Opened += ToolTip_Opened;
 
-            ToolTipService.SetToolTip(BriefInfo, tooltip);
+            ToolTipService.SetToolTip(BriefLabel, tooltip);
 
             _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
             _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
@@ -229,7 +225,6 @@ namespace Telegram.Controls.Cells
             UnreadBadge.Visibility = Visibility.Collapsed;
             UnreadMentionsBadge.Visibility = Visibility.Collapsed;
 
-            DraftLabel.Text = string.Empty;
             FromLabel.Text = UpdateFromLabel(chat, message);
             _dateLabel = UpdateTimeLabel(message);
             _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
@@ -261,7 +256,7 @@ namespace Telegram.Controls.Cells
                 UnreadMentionsBadge.Visibility = Visibility.Collapsed;
                 PinnedIcon.Visibility = Visibility.Collapsed;
 
-                DraftLabel.Text = string.Empty;
+                //DraftLabel.Text = string.Empty;
                 _dateLabel = string.Empty;
                 _stateLabel = string.Empty;
                 TimeLabel.Text = string.Empty;
@@ -284,7 +279,7 @@ namespace Telegram.Controls.Cells
                     CompactBadge.Value = UnreadBadge.Value;
                 }
 
-                BriefInfo.Inlines.Clear();
+                BriefLabel.Inlines.Clear();
 
                 foreach (var id in chats.ChatIds)
                 {
@@ -294,9 +289,9 @@ namespace Telegram.Controls.Cells
                         continue;
                     }
 
-                    if (BriefInfo.Inlines.Count > 0)
+                    if (BriefLabel.Inlines.Count > 0)
                     {
-                        BriefInfo.Inlines.Add(new Run { Text = ", " });
+                        BriefLabel.Inlines.Add(new Run { Text = ", " });
                     }
 
                     var run = new Run { Text = _clientService.GetTitle(chat) };
@@ -305,7 +300,7 @@ namespace Telegram.Controls.Cells
                         run.Foreground = new SolidColorBrush(ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black);
                     }
 
-                    BriefInfo.Inlines.Add(run);
+                    BriefLabel.Inlines.Add(run);
                 }
             }
         }
@@ -451,11 +446,10 @@ namespace Telegram.Controls.Cells
 
             position ??= chat.GetPosition(_chatList);
 
-            DraftLabel.Text = UpdateDraftLabel(chat);
-            FromLabel.Text = UpdateFromLabel(chat, position);
+            FromLabel.Text = UpdateFromLabel(chat, position, out bool draft);
+
             _dateLabel = UpdateTimeLabel(chat, position);
             _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
-
             TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
 
             UpdateBriefLabel(UpdateBriefLabel(chat, position));
@@ -567,16 +561,20 @@ namespace Telegram.Controls.Cells
                 ChatActionIndicator.UpdateAction(commonAction);
                 ChatActionIndicator.Visibility = Visibility.Visible;
                 TypingLabel.Visibility = Visibility.Visible;
-                BriefInfo.Visibility = Visibility.Collapsed;
-                Minithumbnail.Visibility = Visibility.Collapsed;
+                FromLabel.Visibility = Visibility.Collapsed;
+                BriefLabel.Visibility = Visibility.Collapsed;
+                MinithumbnailPanel.Visibility = Visibility.Collapsed;
             }
             else
             {
                 ChatActionIndicator.Visibility = Visibility.Collapsed;
                 ChatActionIndicator.UpdateAction(null);
                 TypingLabel.Visibility = Visibility.Collapsed;
-                BriefInfo.Visibility = Visibility.Visible;
-                Minithumbnail.Visibility = Visibility.Visible;
+                FromLabel.Visibility = Visibility.Visible;
+                BriefLabel.Visibility = Visibility.Visible;
+                MinithumbnailPanel.Visibility = Minithumbnail.ImageSource != null
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
             }
         }
 
@@ -917,7 +915,7 @@ namespace Telegram.Controls.Cells
             if (chat.Type is ChatTypePrivate && message == null)
             {
                 MinithumbnailPanel.Visibility = Visibility.Collapsed;
-                Minithumbnail.Source = null;
+                Minithumbnail.ImageSource = null;
 
                 return;
             }
@@ -934,10 +932,10 @@ namespace Telegram.Controls.Cells
 
                 var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
 
-                Minithumbnail.Source = bitmap;
+                Minithumbnail.ImageSource = bitmap;
                 MinithumbnailPanel.Visibility = Visibility.Visible;
 
-                MinithumbnailPanel.CornerRadius = new CornerRadius(message.Content is MessageVideoNote ? 8 : 2);
+                MinithumbnailPanel.CornerRadius = new CornerRadius(message.Content is MessageVideoNote ? 9 : 2);
 
                 using (var stream = new InMemoryRandomAccessStream())
                 {
@@ -948,7 +946,7 @@ namespace Telegram.Controls.Cells
             else
             {
                 MinithumbnailPanel.Visibility = Visibility.Collapsed;
-                Minithumbnail.Source = null;
+                Minithumbnail.ImageSource = null;
             }
         }
 
@@ -976,7 +974,7 @@ namespace Telegram.Controls.Cells
             }
             else
             {
-                BriefInfo.LayoutUpdated -= OnLayoutUpdated;
+                BriefLabel.LayoutUpdated -= OnLayoutUpdated;
 
                 if (CustomEmoji != null)
                 {
@@ -999,7 +997,7 @@ namespace Telegram.Controls.Cells
                 }
 
                 var rect = pointer.GetCharacterRect(LogicalDirection.Forward);
-                if (rect.X + 20 > BriefInfo.ActualWidth && BriefInfo.IsTextTrimmed)
+                if (rect.X + 20 > BriefLabel.ActualWidth && BriefLabel.IsTextTrimmed)
                 {
                     break;
                 }
@@ -1014,7 +1012,7 @@ namespace Telegram.Controls.Cells
 
             if (positions.Count < 1)
             {
-                BriefInfo.LayoutUpdated -= OnLayoutUpdated;
+                BriefLabel.LayoutUpdated -= OnLayoutUpdated;
 
                 if (CustomEmoji != null)
                 {
@@ -1112,7 +1110,7 @@ namespace Telegram.Controls.Cells
                     BriefLabel.Inlines.Add(new Run { Text = clean.Substring(previous) });
                 }
 
-                BriefInfo.LayoutUpdated -= OnLayoutUpdated;
+                BriefLabel.LayoutUpdated -= OnLayoutUpdated;
 
                 if (emoji.Count > 0)
                 {
@@ -1125,7 +1123,7 @@ namespace Telegram.Controls.Cells
                     }
 
                     _ignoreLayoutUpdated = false;
-                    BriefInfo.LayoutUpdated += OnLayoutUpdated;
+                    BriefLabel.LayoutUpdated += OnLayoutUpdated;
                 }
                 else if (CustomEmoji != null)
                 {
@@ -1136,7 +1134,7 @@ namespace Telegram.Controls.Cells
             }
             else if (CustomEmoji != null)
             {
-                BriefInfo.LayoutUpdated -= OnLayoutUpdated;
+                BriefLabel.LayoutUpdated -= OnLayoutUpdated;
 
                 XamlMarkupHelper.UnloadObject(CustomEmoji);
                 CustomEmoji = null;
@@ -1179,13 +1177,8 @@ namespace Telegram.Controls.Cells
             return new FormattedText(string.Empty, new TextEntity[0]);
         }
 
-        private FormattedText UpdateBriefLabel(Chat chat, Message value, bool showContent, bool draft)
+        private FormattedText UpdateBriefLabel(Chat chat, Message message, bool showContent, bool draft)
         {
-            //if (ViewModel.DraftMessage is DraftMessage draft && !string.IsNullOrWhiteSpace(draft.InputMessageText.ToString()))
-            //{
-            //    return draft.Message;
-            //}
-
             if (chat.DraftMessage != null && draft)
             {
                 switch (chat.DraftMessage.InputMessageText)
@@ -1195,62 +1188,162 @@ namespace Telegram.Controls.Cells
                 }
             }
 
-            //if (value is TLMessageEmpty messageEmpty)
-            //{
-            //    return string.Empty;
-            //}
-
-            //if (value is TLMessageService messageService)
-            //{
-            //    return string.Empty;
-            //}
-
             if (!showContent)
             {
-                return new FormattedText(Strings.Message, new TextEntity[0]);
+                return new FormattedText(Strings.Message, Array.Empty<TextEntity>());
             }
 
-            return value.Content switch
+            static FormattedText Text(string text)
             {
-                MessageAnimation animation => animation.Caption,
-                MessageAudio audio => audio.Caption,
-                MessageDocument document => document.Caption,
-                MessagePhoto photo => photo.Caption,
-                MessageVideo video => video.Caption,
-                MessageVoiceNote voiceNote => voiceNote.Caption,
-                MessageText text => text.Text,
-                MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, new TextEntity[0]),
-                MessageDice dice => new FormattedText(dice.Emoji, new TextEntity[0]),
-                MessageInvoice invoice => invoice.ExtendedMedia switch
+                return new FormattedText(text, Array.Empty<TextEntity>());
+            }
+
+            static FormattedText Text1(string text, FormattedText formatted, string fallback)
+            {
+                if (formatted?.Text.Length > 0)
                 {
-                    MessageExtendedMediaPreview preview => preview.Caption,
-                    MessageExtendedMediaPhoto photo => photo.Caption,
-                    MessageExtendedMediaVideo video => video.Caption,
-                    MessageExtendedMediaUnsupported unsupported => unsupported.Caption,
-                    _ => new FormattedText(string.Empty, new TextEntity[0])
-                },
-                _ => new FormattedText(string.Empty, new TextEntity[0]),
+                    var entities = new TextEntity[formatted.Entities.Count];
+
+                    for (int i = 0; i < formatted.Entities.Count; i++)
+                    {
+                        TextEntity entity = formatted.Entities[i];
+                        entities[i] = new TextEntity(entity.Offset + text.Length, entity.Length, entity.Type);
+                    }
+
+                    return new FormattedText(text + formatted.Text, entities);
+                }
+
+                return Text(text + fallback);
+            }
+
+            if (message.Content is MessageGame gameMedia)
+            {
+                return Text("\U0001F3AE " + gameMedia.Game.Title);
+            }
+            else if (message.Content is MessageVideoNote videoNote)
+            {
+                if (videoNote.VideoNote.Minithumbnail == null || videoNote.IsSecret)
+                {
+                    return Text("\U0001F4F9 " + Strings.AttachRound);
+                }
+
+                return Text(Strings.AttachRound);
+            }
+            else if (message.Content is MessageSticker sticker)
+            {
+                if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
+                {
+                    return Text(Strings.AttachSticker);
+                }
+
+                return Text($"{sticker.Sticker.Emoji} {Strings.AttachSticker}");
+            }
+            else if (message.Content is MessageVoiceNote voiceNote)
+            {
+                return Text1("\U0001F3A4 ", voiceNote.Caption, Strings.AttachAudio);
+            }
+            else if (message.Content is MessageVideo video)
+            {
+                if (video.Video.Minithumbnail == null || video.IsSecret)
+                {
+                    return Text1("\U0001F4F9 ", video.Caption, Strings.AttachVideo);
+                }
+
+                return Text1(string.Empty, video.Caption, Strings.AttachVideo);
+            }
+            else if (message.Content is MessageAnimation animation)
+            {
+                if (animation.Animation.Minithumbnail == null || animation.IsSecret)
+                {
+                    return Text1("\U0001F47E ", animation.Caption, Strings.AttachGif);
+                }
+
+                return Text1(string.Empty, animation.Caption, Strings.AttachGif);
+            }
+            else if (message.Content is MessageAudio audio)
+            {
+                var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
+                var title = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
+
+                if (performer == null || title == null)
+                {
+                    return Text1("\U0001F3B5 ", audio.Caption, Strings.AttachMusic);
+                }
+                else
+                {
+                    return Text1("\U0001F3B5 ", audio.Caption, $"{performer} - {title}");
+                }
+            }
+            else if (message.Content is MessageDocument document)
+            {
+                if (string.IsNullOrEmpty(document.Document.FileName))
+                {
+                    return Text1("\U0001F4CE ", document.Caption, Strings.AttachDocument);
+                }
+
+                return Text1("\U0001F4CE ", document.Caption, document.Document.FileName);
+            }
+            else if (message.Content is MessageInvoice invoice)
+            {
+                var caption = invoice.ExtendedMedia switch
+                {
+                    MessageExtendedMediaPreview extendedMediaPreview => extendedMediaPreview.Caption,
+                    MessageExtendedMediaPhoto extendedMediaPhoto => extendedMediaPhoto.Caption,
+                    MessageExtendedMediaVideo extendedMediaVideo => extendedMediaVideo.Caption,
+                    MessageExtendedMediaUnsupported extendedMediaUnsupported => extendedMediaUnsupported.Caption,
+                    _ => null
+                };
+
+                return Text1("\U0001F4CB ", caption, invoice.Title);
+            }
+            else if (message.Content is MessageContact)
+            {
+                return Text("\U0001F464 " + Strings.AttachContact);
+            }
+            else if (message.Content is MessageLocation location)
+            {
+                return Text("\U0001F4CD " + (location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation));
+            }
+            else if (message.Content is MessageVenue)
+            {
+                return Text("\U0001F4CD " + Strings.AttachLocation);
+            }
+            else if (message.Content is MessagePhoto photo)
+            {
+                if (photo.Photo.Minithumbnail == null || photo.IsSecret)
+                {
+                    return Text1("\U0001F5BC ", photo.Caption, Strings.AttachPhoto);
+                }
+
+                return Text1(string.Empty, photo.Caption, Strings.AttachPhoto);
+            }
+            else if (message.Content is MessagePoll poll)
+            {
+                return Text("\U0001F4CA " + poll.Poll.Question);
+            }
+            else if (message.Content is MessageCall call)
+            {
+                return Text("\U0001F4DE " + call.ToOutcomeText(message.IsOutgoing));
+            }
+            else if (message.Content is MessageUnsupported)
+            {
+                return Text(Strings.UnsupportedAttachment);
+            }
+
+            return message.Content switch
+            {
+                MessageText text => text.Text,
+                MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>()),
+                MessageDice dice => new FormattedText(dice.Emoji, Array.Empty<TextEntity>()),
+                _ => new FormattedText(string.Empty, Array.Empty<TextEntity>()),
             };
         }
 
-        private string UpdateDraftLabel(Chat chat)
-        {
-            if (chat.DraftMessage != null)
-            {
-                switch (chat.DraftMessage.InputMessageText)
-                {
-                    case InputMessageText:
-                        return string.Format("{0}: ", Strings.Draft);
-                }
-            }
-
-            return string.Empty;
-        }
-
-        private string UpdateFromLabel(Chat chat, ChatPosition position)
+        private string UpdateFromLabel(Chat chat, ChatPosition position, out bool draft)
         {
             if (position?.Source is ChatSourcePublicServiceAnnouncement psa && !string.IsNullOrEmpty(psa.Text))
             {
+                draft = false;
                 return string.Empty;
             }
             else if (chat.DraftMessage != null)
@@ -1258,16 +1351,19 @@ namespace Telegram.Controls.Cells
                 switch (chat.DraftMessage.InputMessageText)
                 {
                     case InputMessageText:
-                        return string.Empty;
+                        draft = true;
+                        return string.Format("{0}: \u200B​​​", Strings.Draft);
                 }
             }
 
             var message = chat.LastMessage;
             if (message == null)
             {
+                draft = false;
                 return string.Empty;
             }
 
+            draft = false;
             return UpdateFromLabel(chat, message);
         }
 
@@ -1278,61 +1374,65 @@ namespace Telegram.Controls.Cells
                 return MessageService.GetText(new ViewModels.MessageViewModel(_clientService, null, null, message));
             }
 
-            var format = "{0}: ";
+            var format = "{0}: \u200B";
             var result = string.Empty;
 
             if (ShowFrom(_clientService, chat, message, out User fromUser, out Chat fromChat))
             {
                 if (message.IsSaved(_clientService.Options.MyId))
                 {
-                    result = string.Format(format, _clientService.GetTitle(message.ForwardInfo));
+                    return string.Format(format, _clientService.GetTitle(message.ForwardInfo));
                 }
                 else if (message.IsOutgoing)
                 {
                     if (!(chat.Type is ChatTypePrivate priv && priv.UserId == fromUser?.Id) && !message.IsChannelPost)
                     {
-                        result = string.Format(format, Strings.FromYou);
+                        return string.Format(format, Strings.FromYou);
                     }
                 }
                 else if (fromUser != null)
                 {
                     if (!string.IsNullOrEmpty(fromUser.FirstName))
                     {
-                        result = string.Format(format, fromUser.FirstName.Trim());
+                        return string.Format(format, fromUser.FirstName.Trim());
                     }
                     else if (!string.IsNullOrEmpty(fromUser.LastName))
                     {
-                        result = string.Format(format, fromUser.LastName.Trim());
+                        return string.Format(format, fromUser.LastName.Trim());
                     }
                     else if (fromUser.Type is UserTypeDeleted)
                     {
-                        result = string.Format(format, Strings.HiddenName);
+                        return string.Format(format, Strings.HiddenName);
                     }
                     else
                     {
-                        result = string.Format(format, fromUser.Id);
+                        return string.Format(format, fromUser.Id);
                     }
                 }
                 else if (fromChat != null && fromChat.Id != chat.Id)
                 {
-                    result = string.Format(format, fromChat.Title);
+                    return string.Format(format, fromChat.Title);
                 }
+            }
+
+            return string.Empty;
+
+            static string GetCaption(string caption)
+            {
+                return string.IsNullOrEmpty(caption) ? string.Empty : ", \u200B";
             }
 
             if (message.Content is MessageGame gameMedia)
             {
-                return result + "\uD83C\uDFAE " + gameMedia.Game.Title;
+                return result + "\U0001F3AE " + gameMedia.Game.Title;
             }
-            if (message.Content is MessageExpiredVideo)
+            else if (message.Content is MessageVideoNote videoNote)
             {
-                return result + Strings.AttachVideoExpired;
-            }
-            else if (message.Content is MessageExpiredPhoto)
-            {
-                return result + Strings.AttachPhotoExpired;
-            }
-            else if (message.Content is MessageVideoNote)
-            {
+                if (videoNote.VideoNote.Minithumbnail == null || videoNote.IsSecret)
+                {
+                    return result + "\U0001F4F9 " + Strings.AttachRound;
+                }
+
                 return result + Strings.AttachRound;
             }
             else if (message.Content is MessageSticker sticker)
@@ -1344,19 +1444,32 @@ namespace Telegram.Controls.Cells
 
                 return result + $"{sticker.Sticker.Emoji} {Strings.AttachSticker}";
             }
-
-            static string GetCaption(string caption)
+            else if (message.Content is MessageVoiceNote voiceNote)
             {
-                return string.IsNullOrEmpty(caption) ? string.Empty : ", ";
-            }
+                if (voiceNote.Caption.Text.Length > 0)
+                {
+                    return result + "\U0001F3A4 ";
+                }
 
-            if (message.Content is MessageVoiceNote voiceNote)
-            {
-                return result + Strings.AttachAudio + GetCaption(voiceNote.Caption.Text);
+                return result + "\U0001F3A4 " + Strings.AttachAudio;
             }
             else if (message.Content is MessageVideo video)
             {
-                return result + (video.IsSecret ? Strings.AttachDestructingVideo : Strings.AttachVideo) + GetCaption(video.Caption.Text);
+                if (video.Video.Minithumbnail == null || video.IsSecret)
+                {
+                    if (video.Caption.Text.Length > 0)
+                    {
+                        return result + "\U0001F4F9 ";
+                    }
+
+                    return result + "\U0001F4F9 " + Strings.AttachVideo;
+                }
+                else if (video.Caption.Text.Length > 0)
+                {
+                    return result;
+                }
+
+                return result + Strings.AttachVideo;
             }
             else if (message.Content is MessageAnimation animation)
             {
@@ -1373,7 +1486,7 @@ namespace Telegram.Controls.Cells
                 }
                 else
                 {
-                    return $"{result}\uD83C\uDFB5 {performer} - {title}" + GetCaption(audio.Caption.Text);
+                    return result + $"\U0001F3B5 {performer} - {title}" + GetCaption(audio.Caption.Text);
                 }
             }
             else if (message.Content is MessageDocument document)
@@ -1383,28 +1496,28 @@ namespace Telegram.Controls.Cells
                     return result + Strings.AttachDocument + GetCaption(document.Caption.Text);
                 }
 
-                return result + document.Document.FileName + GetCaption(document.Caption.Text);
+                return result + "\U0001F4CE " + document.Document.FileName + GetCaption(document.Caption.Text);
             }
             else if (message.Content is MessageInvoice invoice)
             {
                 if (invoice.ExtendedMedia != null && invoice.HasCaption())
                 {
-                    return result;
+                    return result + "\U0001F4CB";
                 }
 
-                return result + invoice.Title;
+                return result + "\U0001F4CB " + invoice.Title;
             }
             else if (message.Content is MessageContact)
             {
-                return result + Strings.AttachContact;
+                return result + "\U0001F464 " + Strings.AttachContact;
             }
             else if (message.Content is MessageLocation location)
             {
-                return result + (location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation);
+                return result + "\U0001F4CD " + (location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation);
             }
             else if (message.Content is MessageVenue)
             {
-                return result + Strings.AttachLocation;
+                return result + "\U0001F4CD " + Strings.AttachLocation;
             }
             else if (message.Content is MessagePhoto photo)
             {
@@ -1412,7 +1525,7 @@ namespace Telegram.Controls.Cells
             }
             else if (message.Content is MessagePoll poll)
             {
-                return result + "\uD83D\uDCCA " + poll.Poll.Question;
+                return result + "\U0001F4CA " + poll.Poll.Question;
             }
             else if (message.Content is MessageCall call)
             {
@@ -1564,9 +1677,9 @@ namespace Telegram.Controls.Cells
             var tooltip = sender as ToolTip;
             if (tooltip != null)
             {
-                if (BriefInfo.IsTextTrimmed)
+                if (BriefLabel.IsTextTrimmed)
                 {
-                    tooltip.Content = BriefInfo.Text;
+                    tooltip.Content = FromLabel.Text + BriefLabel.Text;
                 }
                 else
                 {
@@ -1685,9 +1798,8 @@ namespace Telegram.Controls.Cells
             UnreadBadge.Value = unread;
             UnreadMentionsBadge.Visibility = Visibility.Collapsed;
 
-            DraftLabel.Text = string.Empty;
             FromLabel.Text = from;
-            BriefLabel.Inlines.Add(new Run { Text = message });
+            BriefLabel.Text = message;
             _dateLabel = Converter.ShortTime.Format(date);
             _stateLabel = sent ? "\uE601" : string.Empty;
 
@@ -2194,23 +2306,24 @@ namespace Telegram.Controls.Cells
             var MutedIcon = Children[2];
             var TimeLabel = Children[3];
 
-            var MinithumbnailPanel = Children[4];
-            var BriefInfo = Children[5];
+            var FromLabel = Children[4];
+            var MinithumbnailPanel = Children[5];
+            var BriefLabel = Children[6];
 
             var shift = 0;
             var CustomEmoji = default(CustomEmojiCanvas);
 
-            if (Children[6] is CustomEmojiCanvas)
+            if (Children[7] is CustomEmojiCanvas)
             {
                 shift++;
-                CustomEmoji = Children[6] as CustomEmojiCanvas;
+                CustomEmoji = Children[7] as CustomEmojiCanvas;
             }
 
-            var ChatActionIndicator = Children[6 + shift];
-            var TypingLabel = Children[7 + shift];
-            var PinnedIcon = Children[8 + shift];
-            var UnreadMentionsBadge = Children[9 + shift];
-            var UnreadBadge = Children[10 + shift];
+            var ChatActionIndicator = Children[7 + shift];
+            var TypingLabel = Children[8 + shift];
+            var PinnedIcon = Children[9 + shift];
+            var UnreadMentionsBadge = Children[10 + shift];
+            var UnreadBadge = Children[11 + shift];
 
             TimeLabel.Measure(availableSize);
             Identity.Measure(availableSize);
@@ -2238,13 +2351,14 @@ namespace Telegram.Controls.Cells
 
             var briefWidth = Math.Max(0, line2Right - line2Left);
 
-            BriefInfo.Measure(new Size(briefWidth, availableSize.Height));
+            FromLabel.Measure(new Size(briefWidth, availableSize.Height));
+            BriefLabel.Measure(new Size(briefWidth - FromLabel.DesiredSize.Width, availableSize.Height));
             CustomEmoji?.Measure(new Size(briefWidth, availableSize.Height));
             TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
 
-            if (Children.Count > 11 + shift)
+            if (Children.Count > 12 + shift)
             {
-                Children[11 + shift].Measure(availableSize);
+                Children[12 + shift].Measure(availableSize);
             }
 
             return base.MeasureOverride(availableSize);
@@ -2259,26 +2373,27 @@ namespace Telegram.Controls.Cells
             var MutedIcon = Children[2];
             var TimeLabel = Children[3];
 
-            var MinithumbnailPanel = Children[4];
-            var BriefInfo = Children[5];
+            var FromLabel = Children[4];
+            var MinithumbnailPanel = Children[5];
+            var BriefLabel = Children[6];
 
             var shift = 0;
             var CustomEmoji = default(CustomEmojiCanvas);
 
-            if (Children[6] is CustomEmojiCanvas)
+            if (Children[7] is CustomEmojiCanvas)
             {
                 shift++;
-                CustomEmoji = Children[6] as CustomEmojiCanvas;
+                CustomEmoji = Children[7] as CustomEmojiCanvas;
             }
 
-            var ChatActionIndicator = Children[6 + shift];
-            var TypingLabel = Children[7 + shift];
-            var PinnedIcon = Children[8 + shift];
-            var UnreadMentionsBadge = Children[9 + shift];
-            var UnreadBadge = Children[10 + shift];
+            var ChatActionIndicator = Children[7 + shift];
+            var TypingLabel = Children[8 + shift];
+            var PinnedIcon = Children[9 + shift];
+            var UnreadMentionsBadge = Children[10 + shift];
+            var UnreadBadge = Children[11 + shift];
 
             var rect = new Rect();
-            var min = 12;
+            var min = 12d;
 
             rect.X = Math.Max(min, finalSize.Width - 8 - TimeLabel.DesiredSize.Width);
             rect.Y = 13;
@@ -2318,12 +2433,6 @@ namespace Telegram.Controls.Cells
 
 
 
-            rect.X = min;
-            rect.Y = 36;
-            rect.Width = MinithumbnailPanel.DesiredSize.Width;
-            rect.Height = MinithumbnailPanel.DesiredSize.Height;
-            MinithumbnailPanel.Arrange(rect);
-
             rect.X = Math.Max(min, finalSize.Width - 8 - PinnedIcon.DesiredSize.Width);
             rect.Y = 34;
             rect.Width = PinnedIcon.DesiredSize.Width;
@@ -2344,16 +2453,26 @@ namespace Telegram.Controls.Cells
 
             var line2RightPadding = Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width);
 
-            var line2Left = min + MinithumbnailPanel.DesiredSize.Width;
+            var line2Left = min;
             var line2Right = finalSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
 
-            var briefWidth = Math.Max(0, line2Right - line2Left);
-
-            rect.X = min + MinithumbnailPanel.DesiredSize.Width;
+            rect.X = min;
             rect.Y = 34;
-            rect.Width = briefWidth;
-            rect.Height = BriefInfo.DesiredSize.Height;
-            BriefInfo.Arrange(rect);
+            rect.Width = FromLabel.DesiredSize.Width;
+            rect.Height = FromLabel.DesiredSize.Height;
+            FromLabel.Arrange(rect);
+
+            rect.X = min + FromLabel.DesiredSize.Width;
+            rect.Y = 34;
+            rect.Width = MinithumbnailPanel.DesiredSize.Width;
+            rect.Height = MinithumbnailPanel.DesiredSize.Height;
+            MinithumbnailPanel.Arrange(rect);
+
+            rect.X = min + FromLabel.DesiredSize.Width + MinithumbnailPanel.DesiredSize.Width;
+            rect.Y = 34;
+            rect.Width = BriefLabel.DesiredSize.Width;
+            rect.Height = BriefLabel.DesiredSize.Height;
+            BriefLabel.Arrange(rect);
 
             if (CustomEmoji != null)
             {
@@ -2381,9 +2500,9 @@ namespace Telegram.Controls.Cells
             rect.Height = TypingLabel.DesiredSize.Height;
             TypingLabel.Arrange(rect);
 
-            if (Children.Count > 11 + shift)
+            if (Children.Count > 12 + shift)
             {
-                Children[11 + shift].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
+                Children[12 + shift].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
             }
 
             return finalSize;
