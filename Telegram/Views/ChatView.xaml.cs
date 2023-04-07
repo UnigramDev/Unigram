@@ -509,11 +509,6 @@ namespace Telegram.Views
             }
         }
 
-        private int _created;
-        private int _recycled;
-        private int _ready;
-        private int _phased;
-
         private readonly SynchronizedCollection<MessageViewModel> _messages = new();
 
         public class SynchronizedCollection<T> : MvxObservableCollection<T>
@@ -562,16 +557,6 @@ namespace Telegram.Views
 
         private void OnMessageSliceLoaded(object sender, EventArgs e)
         {
-            if (_viewModel.Settings.VerbosityLevel > 1)
-            {
-                MainPage.SwitchWatch1 = System.Diagnostics.Stopwatch.StartNew();
-            }
-
-            _created = 0;
-            _recycled = 0;
-            _ready = 0;
-            _phased = 0;
-
             if (sender is DialogViewModel viewModel)
             {
                 viewModel.MessageSliceLoaded -= OnMessageSliceLoaded;
