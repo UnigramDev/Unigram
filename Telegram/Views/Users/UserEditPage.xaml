@@ -92,7 +92,6 @@
                              TextWrapping="Wrap"
                              AcceptsReturn="True"
                              Padding="12,11,6,12" />
-
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="UsernamePanel"
