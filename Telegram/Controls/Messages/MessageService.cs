@@ -11,6 +11,7 @@ using System.Text;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Services;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
@@ -107,6 +108,7 @@ namespace Telegram.Controls.Messages
                 MessageChatJoinByLink chatJoinByLink => UpdateChatJoinByLink(message, chatJoinByLink, active),
                 MessageChatJoinByRequest chatJoinByRequest => UpdateChatJoinByRequest(message, chatJoinByRequest, active),
                 MessageChatSetMessageAutoDeleteTime chatSetMessageAutoDeleteTime => UpdateChatSetMessageAutoDeleteTime(message, chatSetMessageAutoDeleteTime, active),
+                MessageChatShared chatShared => UpdateChatShared(message, chatShared, active),
                 MessageChatUpgradeFrom chatUpgradeFrom => UpdateChatUpgradeFrom(message, chatUpgradeFrom, active),
                 MessageChatUpgradeTo chatUpgradeTo => UpdateChatUpgradeTo(message, chatUpgradeTo, active),
                 MessageContactRegistered contactRegistered => UpdateContactRegistered(message, contactRegistered, active),
@@ -124,6 +126,7 @@ namespace Telegram.Controls.Messages
                 MessageScreenshotTaken screenshotTaken => UpdateScreenshotTaken(message, screenshotTaken, active),
                 MessageSuggestProfilePhoto suggestProfilePhoto => UpdateSuggestProfilePhoto(message, suggestProfilePhoto, active),
                 MessageSupergroupChatCreate supergroupChatCreate => UpdateSupergroupChatCreate(message, supergroupChatCreate, active),
+                MessageUserShared userShared => UpdateUserShared(message, userShared, active),
                 MessageVideoChatEnded videoChatEnded => UpdateVideoChatEnded(message, videoChatEnded, active),
                 MessageVideoChatScheduled videoChatScheduled => UpdateVideoChatScheduled(message, videoChatScheduled, active),
                 MessageVideoChatStarted videoChatStarted => UpdateVideoChatStarted(message, videoChatStarted, active),
@@ -204,20 +207,20 @@ namespace Telegram.Controls.Messages
             {
                 if (slowModeDelayChanged.NewSlowModeDelay < 60)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.EventLogToggledSlowmodeOn, string.Format(Strings.SlowmodeSeconds, slowModeDelayChanged.NewSlowModeDelay)), "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.EventLogToggledSlowmodeOn, string.Format(Strings.SlowmodeSeconds, slowModeDelayChanged.NewSlowModeDelay)), "un1", fromUser, entities);
                 }
                 else if (slowModeDelayChanged.NewSlowModeDelay < 60 * 60)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.EventLogToggledSlowmodeOn, string.Format(Strings.SlowmodeMinutes, slowModeDelayChanged.NewSlowModeDelay / 60)), "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.EventLogToggledSlowmodeOn, string.Format(Strings.SlowmodeMinutes, slowModeDelayChanged.NewSlowModeDelay / 60)), "un1", fromUser, entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(string.Format(Strings.EventLogToggledSlowmodeOn, string.Format(Strings.SlowmodeHours, slowModeDelayChanged.NewSlowModeDelay / 60 / 60)), "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.EventLogToggledSlowmodeOn, string.Format(Strings.SlowmodeHours, slowModeDelayChanged.NewSlowModeDelay / 60 / 60)), "un1", fromUser, entities);
                 }
             }
             else
             {
-                content = ReplaceWithLink(Strings.EventLogToggledSlowmodeOff, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogToggledSlowmodeOff, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -235,13 +238,13 @@ namespace Telegram.Controls.Messages
             {
                 content = ReplaceWithLink(string.Format(Strings.ActionReactionsChanged,
                     string.Join(", ", availableReactionsChanged.OldAvailableReactions),
-                    string.Join(", ", availableReactionsChanged.NewAvailableReactions)), "un1", fromUser, ref entities);
+                    string.Join(", ", availableReactionsChanged.NewAvailableReactions)), "un1", fromUser, entities);
             }
             else
             {
                 content = ReplaceWithLink(string.Format(Strings.ActionReactionsChanged,
                     string.Join(", ", availableReactionsChanged.OldAvailableReactions),
-                    string.Join(", ", availableReactionsChanged.NewAvailableReactions)), "un1", fromUser, ref entities);
+                    string.Join(", ", availableReactionsChanged.NewAvailableReactions)), "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -258,13 +261,13 @@ namespace Telegram.Controls.Messages
             {
                 content = ReplaceWithLink(message.IsChannelPost
                     ? Strings.ActionForwardsRestrictedChannel
-                    : Strings.ActionForwardsRestrictedGroup, "un1", fromUser, ref entities);
+                    : Strings.ActionForwardsRestrictedGroup, "un1", fromUser, entities);
             }
             else
             {
                 content = ReplaceWithLink(message.IsChannelPost
                     ? Strings.ActionForwardsEnabledChannel
-                    : Strings.ActionForwardsEnabledGroup, "un1", fromUser, ref entities);
+                    : Strings.ActionForwardsEnabledGroup, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -279,11 +282,11 @@ namespace Telegram.Controls.Messages
 
             if (signMessagesToggled.SignMessages)
             {
-                content = ReplaceWithLink(Strings.EventLogToggledSignaturesOn, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogToggledSignaturesOn, "un1", fromUser, entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.EventLogToggledSignaturesOff, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogToggledSignaturesOff, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -298,11 +301,11 @@ namespace Telegram.Controls.Messages
 
             if (stickerSetChanged.NewStickerSetId == 0)
             {
-                content = ReplaceWithLink(Strings.EventLogRemovedStickersSet, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogRemovedStickersSet, "un1", fromUser, entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.EventLogChangedStickersSet, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogChangedStickersSet, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -317,11 +320,11 @@ namespace Telegram.Controls.Messages
 
             if (invitesToggled.CanInviteUsers)
             {
-                content = ReplaceWithLink(Strings.EventLogToggledInvitesOn, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogToggledInvitesOn, "un1", fromUser, entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.EventLogToggledInvitesOff, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogToggledInvitesOff, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -336,11 +339,11 @@ namespace Telegram.Controls.Messages
 
             if (isAllHistoryAvailableToggled.IsAllHistoryAvailable)
             {
-                content = ReplaceWithLink(Strings.EventLogToggledInvitesHistoryOn, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogToggledInvitesHistoryOn, "un1", fromUser, entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.EventLogToggledInvitesHistoryOff, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogToggledInvitesHistoryOff, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -357,26 +360,26 @@ namespace Telegram.Controls.Messages
             {
                 if (linkedChatChanged.NewLinkedChatId != 0)
                 {
-                    content = ReplaceWithLink(Strings.EventLogChangedLinkedGroup, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", message.ClientService.GetChat(linkedChatChanged.NewLinkedChatId), ref entities);
+                    content = ReplaceWithLink(Strings.EventLogChangedLinkedGroup, "un1", fromUser, entities);
+                    content = ReplaceWithLink(content, "un2", message.ClientService.GetChat(linkedChatChanged.NewLinkedChatId), entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.EventLogRemovedLinkedGroup, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", message.ClientService.GetChat(linkedChatChanged.OldLinkedChatId), ref entities);
+                    content = ReplaceWithLink(Strings.EventLogRemovedLinkedGroup, "un1", fromUser, entities);
+                    content = ReplaceWithLink(content, "un2", message.ClientService.GetChat(linkedChatChanged.OldLinkedChatId), entities);
                 }
             }
             else
             {
                 if (linkedChatChanged.NewLinkedChatId != 0)
                 {
-                    content = ReplaceWithLink(Strings.EventLogChangedLinkedChannel, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", message.ClientService.GetChat(linkedChatChanged.NewLinkedChatId), ref entities);
+                    content = ReplaceWithLink(Strings.EventLogChangedLinkedChannel, "un1", fromUser, entities);
+                    content = ReplaceWithLink(content, "un2", message.ClientService.GetChat(linkedChatChanged.NewLinkedChatId), entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.EventLogRemovedLinkedChannel, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", message.ClientService.GetChat(linkedChatChanged.OldLinkedChatId), ref entities);
+                    content = ReplaceWithLink(Strings.EventLogRemovedLinkedChannel, "un1", fromUser, entities);
+                    content = ReplaceWithLink(content, "un2", message.ClientService.GetChat(linkedChatChanged.OldLinkedChatId), entities);
                 }
             }
 
@@ -392,11 +395,11 @@ namespace Telegram.Controls.Messages
 
             if (locationChanged.NewLocation != null)
             {
-                content = ReplaceWithLink(string.Format(Strings.EventLogChangedLocation, locationChanged.NewLocation.Address), "un1", fromUser, ref entities);
+                content = ReplaceWithLink(string.Format(Strings.EventLogChangedLocation, locationChanged.NewLocation.Address), "un1", fromUser, entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.EventLogRemovedLocation, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogRemovedLocation, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -409,7 +412,7 @@ namespace Telegram.Controls.Messages
 
             var fromUser = message.GetSender();
 
-            content = ReplaceWithLink(Strings.EventLogUnpinnedMessages, "un1", fromUser, ref entities);
+            content = ReplaceWithLink(Strings.EventLogUnpinnedMessages, "un1", fromUser, entities);
 
             return (content, entities);
         }
@@ -421,7 +424,7 @@ namespace Telegram.Controls.Messages
 
             var fromUser = message.GetSender();
 
-            content = ReplaceWithLink(Strings.EventLogDeletedMessages, "un1", fromUser, ref entities);
+            content = ReplaceWithLink(Strings.EventLogDeletedMessages, "un1", fromUser, entities);
 
             return (content, entities);
         }
@@ -435,11 +438,11 @@ namespace Telegram.Controls.Messages
 
             if (messageEdited.NewMessage.Content is MessageText)
             {
-                content = ReplaceWithLink(Strings.EventLogEditedMessages, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogEditedMessages, "un1", fromUser, entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.EventLogEditedCaption, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogEditedCaption, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -454,11 +457,11 @@ namespace Telegram.Controls.Messages
 
             if (messageAutoDeleteTimeChanged.NewMessageAutoDeleteTime > 0)
             {
-                content = ReplaceWithLink(string.Format(Strings.ActionTTLChanged, Locale.FormatTtl(messageAutoDeleteTimeChanged.NewMessageAutoDeleteTime)), "un1", fromUser, ref entities);
+                content = ReplaceWithLink(string.Format(Strings.ActionTTLChanged, Locale.FormatTtl(messageAutoDeleteTimeChanged.NewMessageAutoDeleteTime)), "un1", fromUser, entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.ActionTTLDisabled, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.ActionTTLDisabled, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -473,11 +476,11 @@ namespace Telegram.Controls.Messages
 
             if (message.IsChannelPost)
             {
-                content = ReplaceWithLink(Strings.EventLogEditedChannelDescription, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogEditedChannelDescription, "un1", fromUser, entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.EventLogEditedGroupDescription, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogEditedGroupDescription, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -489,7 +492,7 @@ namespace Telegram.Controls.Messages
             var entities = active ? new List<TextEntity>() : null;
 
             var fromUser = message.GetSender();
-            content = ReplaceWithLink(string.Format(Strings.ActionDeletedInviteLink, inviteLinkDeleted.InviteLink.InviteLink), "un1", fromUser, ref entities);
+            content = ReplaceWithLink(string.Format(Strings.ActionDeletedInviteLink, inviteLinkDeleted.InviteLink.InviteLink), "un1", fromUser, entities);
 
             return (content, entities);
         }
@@ -506,7 +509,7 @@ namespace Telegram.Controls.Messages
             //}
             //else
             {
-                content = ReplaceWithLink(string.Format(Strings.ActionEditedInviteLinkToSame, inviteLinkEdited.NewInviteLink.InviteLink), "un1", fromUser, ref entities);
+                content = ReplaceWithLink(string.Format(Strings.ActionEditedInviteLinkToSame, inviteLinkEdited.NewInviteLink.InviteLink), "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -518,7 +521,7 @@ namespace Telegram.Controls.Messages
             var entities = active ? new List<TextEntity>() : null;
 
             var fromUser = message.GetSender();
-            content = ReplaceWithLink(string.Format(Strings.ActionRevokedInviteLink, inviteLinkRevoked.InviteLink.InviteLink), "un1", fromUser, ref entities);
+            content = ReplaceWithLink(string.Format(Strings.ActionRevokedInviteLink, inviteLinkRevoked.InviteLink.InviteLink), "un1", fromUser, entities);
 
             return (content, entities);
         }
@@ -530,7 +533,7 @@ namespace Telegram.Controls.Messages
 
             var fromUser = message.GetSender();
 
-            content = ReplaceWithLink(Strings.EventLogPinnedMessages, "un1", fromUser, ref entities);
+            content = ReplaceWithLink(Strings.EventLogPinnedMessages, "un1", fromUser, entities);
 
             return (content, entities);
         }
@@ -544,11 +547,11 @@ namespace Telegram.Controls.Messages
 
             if (string.IsNullOrEmpty(usernameChanged.NewUsername))
             {
-                content = ReplaceWithLink(Strings.EventLogRemovedGroupLink, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogRemovedGroupLink, "un1", fromUser, entities);
             }
             else
             {
-                content = ReplaceWithLink(Strings.EventLogChangedGroupLink, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogChangedGroupLink, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -564,11 +567,11 @@ namespace Telegram.Controls.Messages
             var poll = pollStopped.Message.Content as MessagePoll;
             if (poll.Poll.Type is PollTypeRegular)
             {
-                content = ReplaceWithLink(Strings.EventLogStopPoll, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogStopPoll, "un1", fromUser, entities);
             }
             else if (poll.Poll.Type is PollTypeQuiz)
             {
-                content = ReplaceWithLink(Strings.EventLogStopQuiz, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(Strings.EventLogStopQuiz, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -583,11 +586,11 @@ namespace Telegram.Controls.Messages
             {
                 if (message.IsChannelPost)
                 {
-                    content = ReplaceWithLink(Strings.EventLogStartedLiveStream, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.EventLogStartedLiveStream, "un1", fromUser, entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.EventLogStartedVoiceChat, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.EventLogStartedVoiceChat, "un1", fromUser, entities);
                 }
             }
 
@@ -603,11 +606,11 @@ namespace Telegram.Controls.Messages
             {
                 if (message.IsChannelPost)
                 {
-                    content = ReplaceWithLink(Strings.EventLogEndedLiveStream, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.EventLogEndedLiveStream, "un1", fromUser, entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.EventLogEndedVoiceChat, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.EventLogEndedVoiceChat, "un1", fromUser, entities);
                 }
             }
 
@@ -623,11 +626,11 @@ namespace Telegram.Controls.Messages
             {
                 if (videoChatMuteNewParticipantsToggled.MuteNewParticipants)
                 {
-                    content = ReplaceWithLink(Strings.EventLogVoiceChatNotAllowedToSpeak, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.EventLogVoiceChatNotAllowedToSpeak, "un1", fromUser, entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.EventLogVoiceChatAllowedToSpeak, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.EventLogVoiceChatAllowedToSpeak, "un1", fromUser, entities);
                 }
             }
 
@@ -645,14 +648,14 @@ namespace Telegram.Controls.Messages
             {
                 if (videoChatParticipantIsMutedToggled.IsMuted)
                 {
-                    content = ReplaceWithLink(Strings.EventLogVoiceChatMuted, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.EventLogVoiceChatMuted, "un1", fromUser, entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.EventLogVoiceChatUnmuted, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.EventLogVoiceChatUnmuted, "un1", fromUser, entities);
                 }
 
-                content = ReplaceWithLink(content, "un2", whoUser, ref entities);
+                content = ReplaceWithLink(content, "un2", whoUser, entities);
             }
 
             return (content, entities);
@@ -667,8 +670,8 @@ namespace Telegram.Controls.Messages
 
             if (message.ClientService.TryGetUser(message.SenderId, out User fromUser))
             {
-                content = ReplaceWithLink(string.Format(Strings.ActionVolumeChanged, videoChatParticipantVolumeLevelChanged.VolumeLevel), "un1", fromUser, ref entities);
-                content = ReplaceWithLink(content, "un2", whoUser, ref entities);
+                content = ReplaceWithLink(string.Format(Strings.ActionVolumeChanged, videoChatParticipantVolumeLevelChanged.VolumeLevel), "un1", fromUser, entities);
+                content = ReplaceWithLink(content, "un2", whoUser, entities);
             }
 
             return (content, entities);
@@ -685,7 +688,7 @@ namespace Telegram.Controls.Messages
 
             content = ReplaceWithLink(isForumToggled.IsForum
                 ? Strings.EventLogSwitchToForum
-                : Strings.EventLogSwitchToGroup, "un1", fromUser, ref entities);
+                : Strings.EventLogSwitchToGroup, "un1", fromUser, entities);
 
             return (content, entities);
         }
@@ -697,8 +700,8 @@ namespace Telegram.Controls.Messages
 
             var fromUser = message.GetSender();
 
-            content = ReplaceWithLink(Strings.EventLogCreateTopic, "un1", fromUser, ref entities);
-            content = ReplaceWithLink(content, "un2", forumTopicCreated.TopicInfo, ref entities);
+            content = ReplaceWithLink(Strings.EventLogCreateTopic, "un1", fromUser, entities);
+            content = ReplaceWithLink(content, "un2", forumTopicCreated.TopicInfo, entities);
 
             return (content, entities);
         }
@@ -710,8 +713,8 @@ namespace Telegram.Controls.Messages
 
             var fromUser = message.GetSender();
 
-            content = ReplaceWithLink(Strings.EventLogDeleteTopic, "un1", fromUser, ref entities);
-            content = ReplaceWithLink(content, "un2", forumTopicDeleted.TopicInfo, ref entities);
+            content = ReplaceWithLink(Strings.EventLogDeleteTopic, "un1", fromUser, entities);
+            content = ReplaceWithLink(content, "un2", forumTopicDeleted.TopicInfo, entities);
 
             return (content, entities);
         }
@@ -724,9 +727,9 @@ namespace Telegram.Controls.Messages
 
             var fromUser = message.GetSender();
 
-            content = ReplaceWithLink(Strings.EventLogEditTopic, "un1", fromUser, ref entities);
-            content = ReplaceWithLink(content, "un2", forumTopicEdited.OldTopicInfo, ref entities);
-            content = ReplaceWithLink(content, "un3", forumTopicEdited.NewTopicInfo, ref entities);
+            content = ReplaceWithLink(Strings.EventLogEditTopic, "un1", fromUser, entities);
+            content = ReplaceWithLink(content, "un2", forumTopicEdited.OldTopicInfo, entities);
+            content = ReplaceWithLink(content, "un3", forumTopicEdited.NewTopicInfo, entities);
 
             return (content, entities);
         }
@@ -741,13 +744,13 @@ namespace Telegram.Controls.Messages
 
             if (forumTopicPinned.NewTopicInfo != null)
             {
-                content = ReplaceWithLink(Strings.EventLogPinTopic, "un1", fromUser, ref entities);
-                content = ReplaceWithLink(content, "un2", forumTopicPinned.NewTopicInfo, ref entities);
+                content = ReplaceWithLink(Strings.EventLogPinTopic, "un1", fromUser, entities);
+                content = ReplaceWithLink(content, "un2", forumTopicPinned.NewTopicInfo, entities);
             }
             else if (forumTopicPinned.OldTopicInfo != null)
             {
-                content = ReplaceWithLink(Strings.EventLogUnpinTopic, "un1", fromUser, ref entities);
-                content = ReplaceWithLink(content, "un2", forumTopicPinned.OldTopicInfo, ref entities);
+                content = ReplaceWithLink(Strings.EventLogUnpinTopic, "un1", fromUser, entities);
+                content = ReplaceWithLink(content, "un2", forumTopicPinned.OldTopicInfo, entities);
             }
 
             return (content, entities);
@@ -770,7 +773,7 @@ namespace Telegram.Controls.Messages
 
         //    //content = ReplaceWithLink(isForumToggled.IsForum
         //    //    ? Strings.EventLogSwitchToForum
-        //    //    : Strings.EventLogSwitchToGroup, "un1", fromUser, ref entities);
+        //    //    : Strings.EventLogSwitchToGroup, "un1", fromUser, entities);
 
         //    //return (content, entities);
         //}
@@ -788,7 +791,7 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                content = ReplaceWithLink(Strings.ActionCreateGroup, "un1", message.GetSender(), ref entities);
+                content = ReplaceWithLink(Strings.ActionCreateGroup, "un1", message.GetSender(), entities);
             }
 
             return (content, entities);
@@ -827,7 +830,7 @@ namespace Telegram.Controls.Messages
                         }
                         else
                         {
-                            content = ReplaceWithLink(Strings.EventLogChannelJoined, "un1", fromUser, ref entities);
+                            content = ReplaceWithLink(Strings.EventLogChannelJoined, "un1", fromUser, entities);
                         }
                     }
                     else
@@ -840,7 +843,7 @@ namespace Telegram.Controls.Messages
                             }
                             else
                             {
-                                content = ReplaceWithLink(Strings.ActionAddUserSelfMega, "un1", fromUser, ref entities);
+                                content = ReplaceWithLink(Strings.ActionAddUserSelfMega, "un1", fromUser, entities);
                             }
                         }
                         else if (message.IsOutgoing)
@@ -849,7 +852,7 @@ namespace Telegram.Controls.Messages
                         }
                         else
                         {
-                            content = ReplaceWithLink(Strings.ActionAddUserSelf, "un1", fromUser, ref entities);
+                            content = ReplaceWithLink(Strings.ActionAddUserSelf, "un1", fromUser, entities);
                         }
                     }
                 }
@@ -857,7 +860,7 @@ namespace Telegram.Controls.Messages
                 {
                     if (message.IsOutgoing)
                     {
-                        content = ReplaceWithLink(Strings.ActionYouAddUser, "un2", whoUser, ref entities);
+                        content = ReplaceWithLink(Strings.ActionYouAddUser, "un2", whoUser, entities);
                     }
                     else if (singleUserId == message.ClientService.Options.MyId)
                     {
@@ -867,22 +870,22 @@ namespace Telegram.Controls.Messages
                         {
                             if (supergroup.IsChannel)
                             {
-                                content = ReplaceWithLink(Strings.ChannelAddedBy, "un1", fromUser, ref entities);
+                                content = ReplaceWithLink(Strings.ChannelAddedBy, "un1", fromUser, entities);
                             }
                             else
                             {
-                                content = ReplaceWithLink(Strings.MegaAddedBy, "un1", fromUser, ref entities);
+                                content = ReplaceWithLink(Strings.MegaAddedBy, "un1", fromUser, entities);
                             }
                         }
                         else
                         {
-                            content = ReplaceWithLink(Strings.ActionAddUserYou, "un1", fromUser, ref entities);
+                            content = ReplaceWithLink(Strings.ActionAddUserYou, "un1", fromUser, entities);
                         }
                     }
                     else
                     {
-                        content = ReplaceWithLink(Strings.ActionAddUser, "un1", fromUser, ref entities);
-                        content = ReplaceWithLink(content, "un2", whoUser, ref entities);
+                        content = ReplaceWithLink(Strings.ActionAddUser, "un1", fromUser, entities);
+                        content = ReplaceWithLink(content, "un2", whoUser, entities);
                     }
                 }
             }
@@ -890,12 +893,12 @@ namespace Telegram.Controls.Messages
             {
                 if (message.IsOutgoing)
                 {
-                    content = ReplaceWithLink(Strings.ActionYouAddUser, "un2", chatAddMembers.MemberUserIds, message.ClientService, ref entities);
+                    content = ReplaceWithLink(Strings.ActionYouAddUser, "un2", chatAddMembers.MemberUserIds, message.ClientService, entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.ActionAddUser, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", chatAddMembers.MemberUserIds, message.ClientService, ref entities);
+                    content = ReplaceWithLink(Strings.ActionAddUser, "un1", fromUser, entities);
+                    content = ReplaceWithLink(content, "un2", chatAddMembers.MemberUserIds, message.ClientService, entities);
                 }
             }
 
@@ -924,8 +927,8 @@ namespace Telegram.Controls.Messages
                 else
                 {
                     content = chatChangePhoto.Photo.Animation != null
-                        ? ReplaceWithLink(Strings.ActionChangedVideo, "un1", message.GetSender(), ref entities)
-                        : ReplaceWithLink(Strings.ActionChangedPhoto, "un1", message.GetSender(), ref entities);
+                        ? ReplaceWithLink(Strings.ActionChangedVideo, "un1", message.GetSender(), entities)
+                        : ReplaceWithLink(Strings.ActionChangedPhoto, "un1", message.GetSender(), entities);
                 }
             }
 
@@ -949,7 +952,7 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.ActionChangedTitle.Replace("un2", chatChangeTitle.Title), "un1", message.GetSender(), ref entities);
+                    content = ReplaceWithLink(Strings.ActionChangedTitle.Replace("un2", chatChangeTitle.Title), "un1", message.GetSender(), entities);
                 }
             }
 
@@ -976,11 +979,11 @@ namespace Telegram.Controls.Messages
             {
                 if (string.IsNullOrEmpty(chatSetTheme.ThemeName))
                 {
-                    content = ReplaceWithLink(string.Format(Strings.ChatThemeDisabled, "un1"), "un1", message.GetSender(), ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.ChatThemeDisabled, "un1"), "un1", message.GetSender(), entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(string.Format(Strings.ChatThemeChangedTo, "un1", chatSetTheme.ThemeName), "un1", message.GetSender(), ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.ChatThemeChangedTo, "un1", chatSetTheme.ThemeName), "un1", message.GetSender(), entities);
                 }
             }
 
@@ -1004,11 +1007,11 @@ namespace Telegram.Controls.Messages
                 {
                     if (message.IsChannelPost)
                     {
-                        content = ReplaceWithLink(Strings.EventLogLeftChannel, "un1", fromUser, ref entities);
+                        content = ReplaceWithLink(Strings.EventLogLeftChannel, "un1", fromUser, entities);
                     }
                     else
                     {
-                        content = ReplaceWithLink(Strings.ActionLeftUser, "un1", fromUser, ref entities);
+                        content = ReplaceWithLink(Strings.ActionLeftUser, "un1", fromUser, entities);
                     }
                 }
             }
@@ -1017,16 +1020,16 @@ namespace Telegram.Controls.Messages
                 var whoUser = message.ClientService.GetUser(chatDeleteMember.UserId);
                 if (message.IsOutgoing)
                 {
-                    content = ReplaceWithLink(Strings.ActionYouKickUser, "un2", whoUser, ref entities);
+                    content = ReplaceWithLink(Strings.ActionYouKickUser, "un2", whoUser, entities);
                 }
                 else if (chatDeleteMember.UserId == message.ClientService.Options.MyId)
                 {
-                    content = ReplaceWithLink(Strings.ActionKickUserYou, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.ActionKickUserYou, "un1", fromUser, entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.ActionKickUser, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", whoUser, ref entities);
+                    content = ReplaceWithLink(Strings.ActionKickUser, "un1", fromUser, entities);
+                    content = ReplaceWithLink(content, "un2", whoUser, entities);
                 }
             }
 
@@ -1050,7 +1053,7 @@ namespace Telegram.Controls.Messages
                 }
                 else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
                 {
-                    content = ReplaceWithLink(Strings.ActionRemovedPhoto, "un1", senderUser, ref entities);
+                    content = ReplaceWithLink(Strings.ActionRemovedPhoto, "un1", senderUser, entities);
                 }
             }
 
@@ -1068,7 +1071,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
-                content = ReplaceWithLink(Strings.ActionInviteUser, "un1", senderUser, ref entities);
+                content = ReplaceWithLink(Strings.ActionInviteUser, "un1", senderUser, entities);
             }
 
             return (content, entities);
@@ -1086,7 +1089,7 @@ namespace Telegram.Controls.Messages
             //else
             if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
-                content = ReplaceWithLink(Strings.UserAcceptedToGroupAction, "un1", senderUser, ref entities);
+                content = ReplaceWithLink(Strings.UserAcceptedToGroupAction, "un1", senderUser, entities);
             }
 
             return (content, entities);
@@ -1108,7 +1111,7 @@ namespace Telegram.Controls.Messages
                     }
                     else
                     {
-                        content = ReplaceWithLink(string.Format(Strings.MessageLifetimeChanged, "un1", Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime)), "un1", message.GetSender(), ref entities);
+                        content = ReplaceWithLink(string.Format(Strings.MessageLifetimeChanged, "un1", Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime)), "un1", message.GetSender(), entities);
                     }
                 }
                 else
@@ -1119,7 +1122,7 @@ namespace Telegram.Controls.Messages
                     }
                     else
                     {
-                        content = ReplaceWithLink(string.Format(Strings.MessageLifetimeRemoved, "un1"), "un1", message.GetSender(), ref entities);
+                        content = ReplaceWithLink(string.Format(Strings.MessageLifetimeRemoved, "un1"), "un1", message.GetSender(), entities);
                     }
                 }
             }
@@ -1144,7 +1147,7 @@ namespace Telegram.Controls.Messages
                     }
                     else if (chatSetMessageAutoDeleteTime.FromUserId != 0)
                     {
-                        content = ReplaceWithLink(string.Format(Strings.AutoDeleteGlobalAction, "un1", Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime)), "un1", message.GetSender(), ref entities);
+                        content = ReplaceWithLink(string.Format(Strings.AutoDeleteGlobalAction, "un1", Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime)), "un1", message.GetSender(), entities);
                     }
                     else if (message.IsOutgoing)
                     {
@@ -1152,7 +1155,7 @@ namespace Telegram.Controls.Messages
                     }
                     else
                     {
-                        content = ReplaceWithLink(string.Format(Strings.ActionTTLChanged, Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime)), "un1", message.GetSender(), ref entities);
+                        content = ReplaceWithLink(string.Format(Strings.ActionTTLChanged, Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime)), "un1", message.GetSender(), entities);
                     }
                 }
                 else
@@ -1163,7 +1166,7 @@ namespace Telegram.Controls.Messages
                     }
                     else
                     {
-                        content = ReplaceWithLink(Strings.ActionTTLDisabled, "un1", message.GetSender(), ref entities);
+                        content = ReplaceWithLink(Strings.ActionTTLDisabled, "un1", message.GetSender(), entities);
                     }
                 }
             }
@@ -1231,17 +1234,17 @@ namespace Telegram.Controls.Messages
                 if (forumTopicEdited.EditIconCustomEmojiId && forumTopicEdited.Name.Length > 0)
                 {
                     content = string.Format(Strings.TopicWasRenamedToAction2, "un1", $"\U0001F4C3 {forumTopicEdited.Name}");
-                    content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(content, "un1", fromUser, entities);
                 }
                 else if (forumTopicEdited.EditIconCustomEmojiId)
                 {
                     content = string.Format(Strings.TopicWasIconChangedToAction, "un1", "\U0001F4C3");
-                    content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(content, "un1", fromUser, entities);
                 }
                 else
                 {
                     content = string.Format(Strings.TopicWasRenamedToAction, "un1", forumTopicEdited.Name);
-                    content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(content, "un1", fromUser, entities);
                 }
             }
 
@@ -1269,7 +1272,7 @@ namespace Telegram.Controls.Messages
                 content = string.Format(forumTopicIsClosedToggled.IsClosed
                     ? Strings.TopicClosed2
                     : Strings.TopicRestarted2, "un1");
-                content = ReplaceWithLink(content, "un1", fromUser, ref entities);
+                content = ReplaceWithLink(content, "un1", fromUser, entities);
             }
 
             return (content, entities);
@@ -1291,7 +1294,7 @@ namespace Telegram.Controls.Messages
                     }
                     else
                     {
-                        content = ReplaceWithLink(string.Format(Strings.ActionUserScored, Locale.Declension(Strings.R.Points, gameScore.Score)), "un1", senderUser, ref entities);
+                        content = ReplaceWithLink(string.Format(Strings.ActionUserScored, Locale.Declension(Strings.R.Points, gameScore.Score)), "un1", senderUser, entities);
                     }
                 }
             }
@@ -1305,11 +1308,11 @@ namespace Telegram.Controls.Messages
                     }
                     else
                     {
-                        content = ReplaceWithLink(string.Format(Strings.ActionUserScoredInGame, Locale.Declension(Strings.R.Points, gameScore.Score)), "un1", senderUser, ref entities);
+                        content = ReplaceWithLink(string.Format(Strings.ActionUserScoredInGame, Locale.Declension(Strings.R.Points, gameScore.Score)), "un1", senderUser, entities);
                     }
                 }
 
-                content = ReplaceWithLink(content, "un2", game, ref entities);
+                content = ReplaceWithLink(content, "un2", game, entities);
             }
 
             return (content, entities);
@@ -1322,15 +1325,17 @@ namespace Telegram.Controls.Messages
 
             if (message.SenderId is MessageSenderUser user && user.UserId == message.ClientService.Options.MyId)
             {
-                content = ReplaceWithLink(Strings.ActionGiftOutbound, "un2", giftedPremium, ref entities);
+                content = ReplaceWithLink(Strings.ActionGiftOutbound, "un2", giftedPremium, entities);
             }
             else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
-                content = ReplaceWithLink(Strings.ActionGiftInbound, "un1", senderUser, ref entities);
-                content = ReplaceWithLink(content, "un2", giftedPremium, ref entities);
+                content = ReplaceWithLink(Strings.ActionGiftInbound, "un1", senderUser, entities);
+                content = ReplaceWithLink(content, "un2", giftedPremium, entities);
             }
 
-            return (content, entities);
+            var formatted = Client.Execute(new ParseMarkdown(new FormattedText(content, (IList<TextEntity>)entities ?? Array.Empty<TextEntity>()))) as FormattedText;
+
+            return (formatted.Text, formatted.Entities);
         }
 
         private static (string, IList<TextEntity>) UpdateVideoChatEnded(MessageViewModel message, MessageVideoChatEnded videoChatEnded, bool active)
@@ -1344,7 +1349,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
-                content = ReplaceWithLink(string.Format(Strings.ActionGroupCallEndedBy, videoChatEnded.GetDuration()), "un1", senderUser, ref entities);
+                content = ReplaceWithLink(string.Format(Strings.ActionGroupCallEndedBy, videoChatEnded.GetDuration()), "un1", senderUser, entities);
             }
             else
             {
@@ -1388,12 +1393,12 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.ActionGroupCallStarted, "un1", senderUser, ref entities);
+                    content = ReplaceWithLink(Strings.ActionGroupCallStarted, "un1", senderUser, entities);
                 }
             }
             else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
-                content = ReplaceWithLink(Strings.ActionGroupCallStarted, "un1", senderChat, ref entities);
+                content = ReplaceWithLink(Strings.ActionGroupCallStarted, "un1", senderChat, entities);
             }
 
             return (content, entities);
@@ -1417,28 +1422,28 @@ namespace Telegram.Controls.Messages
                 var whoUser = message.ClientService.GetUser(singleUserId);
                 if (message.IsOutgoing)
                 {
-                    content = ReplaceWithLink(Strings.ActionGroupCallYouInvited, "un2", whoUser, ref entities);
+                    content = ReplaceWithLink(Strings.ActionGroupCallYouInvited, "un2", whoUser, entities);
                 }
                 else if (singleUserId == message.ClientService.Options.MyId)
                 {
-                    content = ReplaceWithLink(Strings.ActionGroupCallInvitedYou, "un1", fromUser, ref entities);
+                    content = ReplaceWithLink(Strings.ActionGroupCallInvitedYou, "un1", fromUser, entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.ActionGroupCallInvited, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", whoUser, ref entities);
+                    content = ReplaceWithLink(Strings.ActionGroupCallInvited, "un1", fromUser, entities);
+                    content = ReplaceWithLink(content, "un2", whoUser, entities);
                 }
             }
             else
             {
                 if (message.IsOutgoing)
                 {
-                    content = ReplaceWithLink(Strings.ActionGroupCallYouInvited, "un2", inviteVideoChatParticipants.UserIds, message.ClientService, ref entities);
+                    content = ReplaceWithLink(Strings.ActionGroupCallYouInvited, "un2", inviteVideoChatParticipants.UserIds, message.ClientService, entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.ActionGroupCallInvited, "un1", fromUser, ref entities);
-                    content = ReplaceWithLink(content, "un2", inviteVideoChatParticipants.UserIds, message.ClientService, ref entities);
+                    content = ReplaceWithLink(Strings.ActionGroupCallInvited, "un1", fromUser, entities);
+                    content = ReplaceWithLink(content, "un2", inviteVideoChatParticipants.UserIds, message.ClientService, entities);
                 }
             }
 
@@ -1460,16 +1465,16 @@ namespace Telegram.Controls.Messages
             {
                 if (traveler.Id == message.ClientService.Options.MyId)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.ActionUserWithinYouRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", watcher, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.ActionUserWithinYouRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", watcher, entities);
                 }
                 else if (watcher.Id == message.ClientService.Options.MyId)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.ActionUserWithinRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.ActionUserWithinRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(string.Format(Strings.ActionUserWithinOtherRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, ref entities);
-                    content = ReplaceWithLink(content, "un2", watcher, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.ActionUserWithinOtherRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, entities);
+                    content = ReplaceWithLink(content, "un2", watcher, entities);
                 }
             }
 
@@ -1577,79 +1582,79 @@ namespace Telegram.Controls.Messages
             var reply = message.ReplyToMessage;
             if (reply == null)
             {
-                content = ReplaceWithLink(Strings.ActionPinnedNoText, "un1", sender, ref entities);
+                content = ReplaceWithLink(Strings.ActionPinnedNoText, "un1", sender, entities);
             }
             else
             {
                 if (reply.Content is MessageAnimatedEmoji animatedEmoji)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.ActionPinnedText, animatedEmoji.Emoji), "un1", sender, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.ActionPinnedText, animatedEmoji.Emoji), "un1", sender, entities);
                 }
                 else if (reply.Content is MessageAudio)
                 {
-                    content = ReplaceWithLink(Strings.ActionPinnedMusic, "un1", sender, ref entities);
+                    content = ReplaceWithLink(Strings.ActionPinnedMusic, "un1", sender, entities);
                 }
                 else if (reply.Content is MessageVideo)
                 {
-                    content = ReplaceWithLink(Strings.ActionPinnedVideo, "un1", sender, ref entities);
+                    content = ReplaceWithLink(Strings.ActionPinnedVideo, "un1", sender, entities);
                 }
                 else if (reply.Content is MessageAnimation)
                 {
-                    content = ReplaceWithLink(Strings.ActionPinnedGif, "un1", sender, ref entities);
+                    content = ReplaceWithLink(Strings.ActionPinnedGif, "un1", sender, entities);
                 }
                 else if (reply.Content is MessageVoiceNote)
                 {
-                    content = ReplaceWithLink(Strings.ActionPinnedVoice, "un1", sender, ref entities);
+                    content = ReplaceWithLink(Strings.ActionPinnedVoice, "un1", sender, entities);
                 }
                 else if (reply.Content is MessageVideoNote)
                 {
-                    content = ReplaceWithLink(Strings.ActionPinnedRound, "un1", sender, ref entities);
+                    content = ReplaceWithLink(Strings.ActionPinnedRound, "un1", sender, entities);
                 }
                 else if (reply.Content is MessageSticker)
                 {
-                    content = ReplaceWithLink(Strings.ActionPinnedSticker, "un1", sender, ref entities);
+                    content = ReplaceWithLink(Strings.ActionPinnedSticker, "un1", sender, entities);
                 }
                 else if (reply.Content is MessageDocument)
                 {
-                    content = ReplaceWithLink(Strings.ActionPinnedFile, "un1", sender, ref entities);
+                    content = ReplaceWithLink(Strings.ActionPinnedFile, "un1", sender, entities);
                 }
                 else if (reply.Content is MessageLocation location)
                 {
                     if (location.LivePeriod > 0)
                     {
-                        content = ReplaceWithLink(Strings.ActionPinnedGeoLive, "un1", sender, ref entities);
+                        content = ReplaceWithLink(Strings.ActionPinnedGeoLive, "un1", sender, entities);
                     }
                     else
                     {
-                        content = ReplaceWithLink(Strings.ActionPinnedGeo, "un1", sender, ref entities);
+                        content = ReplaceWithLink(Strings.ActionPinnedGeo, "un1", sender, entities);
                     }
                 }
                 else if (reply.Content is MessageVenue)
                 {
-                    content = ReplaceWithLink(Strings.ActionPinnedGeo, "un1", sender, ref entities);
+                    content = ReplaceWithLink(Strings.ActionPinnedGeo, "un1", sender, entities);
                 }
                 else if (reply.Content is MessageContact)
                 {
-                    content = ReplaceWithLink(Strings.ActionPinnedContact, "un1", sender, ref entities);
+                    content = ReplaceWithLink(Strings.ActionPinnedContact, "un1", sender, entities);
                 }
                 else if (reply.Content is MessagePhoto)
                 {
-                    content = ReplaceWithLink(Strings.ActionPinnedPhoto, "un1", sender, ref entities);
+                    content = ReplaceWithLink(Strings.ActionPinnedPhoto, "un1", sender, entities);
                 }
                 else if (reply.Content is MessagePoll poll)
                 {
                     if (poll.Poll.Type is PollTypeRegular)
                     {
-                        content = ReplaceWithLink(Strings.ActionPinnedPoll, "un1", sender, ref entities);
+                        content = ReplaceWithLink(Strings.ActionPinnedPoll, "un1", sender, entities);
                     }
                     else if (poll.Poll.Type is PollTypeQuiz)
                     {
-                        content = ReplaceWithLink(Strings.ActionPinnedQuiz, "un1", sender, ref entities);
+                        content = ReplaceWithLink(Strings.ActionPinnedQuiz, "un1", sender, entities);
                     }
                 }
                 else if (reply.Content is MessageGame game)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.ActionPinnedGame, "\uD83C\uDFAE " + game.Game.Title), "un1", sender, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.ActionPinnedGame, "\uD83C\uDFAE " + game.Game.Title), "un1", sender, entities);
                 }
                 else if (reply.Content is MessageText text)
                 {
@@ -1659,11 +1664,11 @@ namespace Telegram.Controls.Messages
                         mess = mess.Substring(0, Math.Min(mess.Length, 20)) + "...";
                     }
 
-                    content = ReplaceWithLink(string.Format(Strings.ActionPinnedText, mess), "un1", sender, ref entities);
+                    content = ReplaceWithLink(string.Format(Strings.ActionPinnedText, mess), "un1", sender, entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(Strings.ActionPinnedNoText, "un1", sender, ref entities);
+                    content = ReplaceWithLink(Strings.ActionPinnedNoText, "un1", sender, entities);
                 }
             }
 
@@ -1681,7 +1686,7 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                content = ReplaceWithLink(Strings.ActionTakeScreenshoot, "un1", message.GetSender(), ref entities);
+                content = ReplaceWithLink(Strings.ActionTakeScreenshoot, "un1", message.GetSender(), entities);
             }
 
             return (content, entities);
@@ -1728,6 +1733,46 @@ namespace Telegram.Controls.Messages
             return (content, null);
         }
 
+        private static (string, IList<TextEntity>) UpdateChatShared(MessageViewModel message, MessageChatShared chatShared, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var chat = message.GetChat();
+            if (chat != null && message.ClientService.TryGetChat(chatShared.ChatId, out Chat sharedChat))
+            {
+                if (message.ClientService.TryGetSupergroup(sharedChat, out Supergroup supergroup) && supergroup.IsChannel)
+                {
+                    content = ReplaceWithLink(Strings.ActionRequestedPeerChannel, "un2", chat, entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.ActionRequestedPeerChat, "un2", chat, entities);
+                }
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateUserShared(MessageViewModel message, MessageUserShared userShared, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var chat = message.GetChat();
+            if (chat != null && message.ClientService.TryGetUser(userShared.UserId, out User sharedUser))
+            {
+                content = ReplaceWithLink(Strings.ActionRequestedPeer, "un1", sharedUser, entities);
+                content = ReplaceWithLink(content, "un2", chat, entities);
+            }
+            else if (chat != null)
+            {
+                content = ReplaceWithLink(Strings.ActionRequestedPeerUser, "un2", chat, entities);
+            }
+
+            return (content, entities);
+        }
+
         private static (string Text, IList<TextEntity> Entities) UpdateWebsiteConnected(MessageViewModel message, MessageWebsiteConnected websiteConnected, bool active)
         {
             var content = Strings.ActionBotAllowed;
@@ -1764,7 +1809,7 @@ namespace Telegram.Controls.Messages
 
 
 
-        public static string ReplaceWithLink(string source, string param, BaseObject obj, ref List<TextEntity> entities)
+        public static string ReplaceWithLink(string source, string param, BaseObject obj, IList<TextEntity> entities)
         {
             var start = source.IndexOf(param);
             if (start >= 0)
@@ -1789,7 +1834,7 @@ namespace Telegram.Controls.Messages
                 else if (obj is MessageGiftedPremium giftedPremium)
                 {
                     name = Locale.FormatCurrency(giftedPremium.Amount, giftedPremium.Currency);
-                    id = "tg-premium://";
+                    id = null;
                 }
                 else if (obj is ForumTopicInfo forumTopicInfo)
                 {
@@ -1805,7 +1850,7 @@ namespace Telegram.Controls.Messages
                 name = name.Replace('\n', ' ');
                 source = source.Replace(param, name);
 
-                if (entities != null)
+                if (entities != null && id != null)
                 {
                     if (obj is User mention)
                     {
@@ -1826,7 +1871,7 @@ namespace Telegram.Controls.Messages
             return source;
         }
 
-        private static string ReplaceWithLink(string source, string param, IList<long> uids, IClientService clientService, ref List<TextEntity> entities)
+        private static string ReplaceWithLink(string source, string param, IList<long> uids, IClientService clientService, IList<TextEntity> entities)
         {
             var index = 0;
             int start = index = source.IndexOf(param);

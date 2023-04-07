@@ -1187,6 +1187,7 @@ namespace Telegram.Common
                 case MessageChatJoinByLink:
                 case MessageChatJoinByRequest:
                 case MessageChatSetMessageAutoDeleteTime:
+                case MessageChatShared:
                 case MessageChatUpgradeFrom:
                 case MessageChatUpgradeTo:
                 case MessageContactRegistered:
@@ -1204,6 +1205,7 @@ namespace Telegram.Common
                 case MessageScreenshotTaken:
                 case MessageSuggestProfilePhoto:
                 case MessageSupergroupChatCreate:
+                case MessageUserShared:
                 case MessageVideoChatEnded:
                 case MessageVideoChatScheduled:
                 case MessageVideoChatStarted:
