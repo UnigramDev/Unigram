@@ -341,24 +341,24 @@ namespace Telegram.Views.Popups
 
         #region PickFiltersAsync
 
-        public static async Task<IList<ChatFilterElement>> AddExecute(bool include, IList<ChatFilterElement> target)
+        public static async Task<IList<ChatFolderElement>> AddExecute(bool include, IList<ChatFolderElement> target)
         {
-            //var target = new List<ChatFilterElement>();
+            //var target = new List<ChatFolderElement>();
 
-            var flags = new List<FilterFlag>();
+            var flags = new List<FolderFlag>();
             if (include)
             {
-                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeContacts });
-                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeNonContacts });
-                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeGroups });
-                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeChannels });
-                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeBots });
+                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeContacts });
+                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeNonContacts });
+                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeGroups });
+                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeChannels });
+                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeBots });
             }
             else
             {
-                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeMuted });
-                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeRead });
-                flags.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeArchived });
+                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeMuted });
+                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeRead });
+                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeArchived });
             }
 
             var header = new MultipleListView();
@@ -368,9 +368,9 @@ namespace Telegram.Views.Popups
             header.ItemContainerStyle = BootStrapper.Current.Resources["DefaultListViewItemStyle"] as Style;
             header.ContainerContentChanging += Header_ContainerContentChanging;
 
-            foreach (var filter in target.OfType<FilterFlag>())
+            foreach (var folder in target.OfType<FolderFlag>())
             {
-                var already = flags.FirstOrDefault(x => x.Flag == filter.Flag);
+                var already = flags.FirstOrDefault(x => x.Flag == folder.Flag);
                 if (already != null)
                 {
                     header.SelectedItems.Add(already);
@@ -405,7 +405,7 @@ namespace Telegram.Views.Popups
             dialog.PrimaryButtonText = Strings.OK;
             dialog.IsPrimaryButtonEnabled = true;
 
-            var confirm = await dialog.PickAsync(target.OfType<FilterChat>().Select(x => x.Chat.Id).ToArray(), SearchChatsType.All);
+            var confirm = await dialog.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), SearchChatsType.All);
             if (confirm != ContentDialogResult.Primary)
             {
                 return null;
@@ -413,9 +413,9 @@ namespace Telegram.Views.Popups
 
             target.Clear();
 
-            foreach (var filter in header.SelectedItems.OfType<FilterFlag>())
+            foreach (var folder in header.SelectedItems.OfType<FolderFlag>())
             {
-                target.Add(filter);
+                target.Add(folder);
             }
 
             foreach (var chat in dialog.ViewModel.SelectedItems)
@@ -425,7 +425,7 @@ namespace Telegram.Views.Popups
                     continue;
                 }
 
-                target.Add(new FilterChat { Chat = chat });
+                target.Add(new FolderChat { Chat = chat });
             }
 
             return target;
@@ -438,43 +438,43 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            var filter = args.Item as FilterFlag;
+            var folder = args.Item as FolderFlag;
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
 
             var title = content.Children[1] as TextBlock;
             //title.Text = Enum.GetName(typeof(ChatListFilterFlags), filter.Flag);
 
-            switch (filter.Flag)
+            switch (folder.Flag)
             {
-                case ChatListFilterFlags.IncludeContacts:
+                case ChatListFolderFlags.IncludeContacts:
                     title.Text = Strings.FilterContacts;
                     break;
-                case ChatListFilterFlags.IncludeNonContacts:
+                case ChatListFolderFlags.IncludeNonContacts:
                     title.Text = Strings.FilterNonContacts;
                     break;
-                case ChatListFilterFlags.IncludeGroups:
+                case ChatListFolderFlags.IncludeGroups:
                     title.Text = Strings.FilterGroups;
                     break;
-                case ChatListFilterFlags.IncludeChannels:
+                case ChatListFolderFlags.IncludeChannels:
                     title.Text = Strings.FilterChannels;
                     break;
-                case ChatListFilterFlags.IncludeBots:
+                case ChatListFolderFlags.IncludeBots:
                     title.Text = Strings.FilterBots;
                     break;
 
-                case ChatListFilterFlags.ExcludeMuted:
+                case ChatListFolderFlags.ExcludeMuted:
                     title.Text = Strings.FilterMuted;
                     break;
-                case ChatListFilterFlags.ExcludeRead:
+                case ChatListFolderFlags.ExcludeRead:
                     title.Text = Strings.FilterRead;
                     break;
-                case ChatListFilterFlags.ExcludeArchived:
+                case ChatListFolderFlags.ExcludeArchived:
                     title.Text = Strings.FilterArchived;
                     break;
             }
 
             var photo = content.Children[0] as ProfilePicture;
-            photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFilterIcon(filter.Flag), (int)filter.Flag, 36);
+            photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFolderIcon(folder.Flag), (int)folder.Flag, 36);
         }
 
         #endregion

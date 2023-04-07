@@ -227,7 +227,7 @@ namespace Telegram.Common
             {
                 NavigateToInviteLink(clientService, navigation, chatInvite.InviteLink);
             }
-            else if (internalLink is InternalLinkTypeFilterSettings)
+            else if (internalLink is InternalLinkTypeChatFolderSettings)
             {
                 navigation.Navigate(typeof(FoldersPage));
             }

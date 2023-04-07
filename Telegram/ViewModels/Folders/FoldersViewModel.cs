@@ -19,7 +19,7 @@ namespace Telegram.ViewModels.Folders
 {
     public class FoldersViewModel : TLViewModelBase
         , IHandle
-    //, IHandle<UpdateChatFilters>
+    //, IHandle<UpdateChatFolders>
     {
         public FoldersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -27,12 +27,12 @@ namespace Telegram.ViewModels.Folders
             UseLeftLayout = settingsService.IsLeftTabsEnabled;
             UseTopLayout = !settingsService.IsLeftTabsEnabled;
 
-            Items = new MvxObservableCollection<ChatFilterInfo>();
-            Recommended = new MvxObservableCollection<RecommendedChatFilter>();
+            Items = new MvxObservableCollection<ChatFolderInfo>();
+            Recommended = new MvxObservableCollection<RecommendedChatFolder>();
         }
 
-        public MvxObservableCollection<ChatFilterInfo> Items { get; private set; }
-        public MvxObservableCollection<RecommendedChatFilter> Recommended { get; private set; }
+        public MvxObservableCollection<ChatFolderInfo> Items { get; private set; }
+        public MvxObservableCollection<RecommendedChatFolder> Recommended { get; private set; }
 
         private bool _canCreateNew;
         public bool CanCreateNew
@@ -43,24 +43,24 @@ namespace Telegram.ViewModels.Folders
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            Items.ReplaceWith(ClientService.ChatFilters);
+            Items.ReplaceWith(ClientService.ChatFolders);
 
             if (ClientService.IsPremiumAvailable)
             {
-                var limit = await ClientService.SendAsync(new GetPremiumLimit(new PremiumLimitTypeChatFilterCount())) as PremiumLimit;
+                var limit = await ClientService.SendAsync(new GetPremiumLimit(new PremiumLimitTypeChatFolderCount())) as PremiumLimit;
                 CanCreateNew = Items.Count < limit.PremiumValue;
             }
             else
             {
-                CanCreateNew = Items.Count < ClientService.Options.ChatFilterCountMax;
+                CanCreateNew = Items.Count < ClientService.Options.ChatFolderCountMax;
             }
 
-            if (ClientService.Options.ChatFilterCountMax > Items.Count)
+            if (ClientService.Options.ChatFolderCountMax > Items.Count)
             {
-                var response = await ClientService.SendAsync(new GetRecommendedChatFilters());
-                if (response is RecommendedChatFilters filters)
+                var response = await ClientService.SendAsync(new GetRecommendedChatFolders());
+                if (response is RecommendedChatFolders folders)
                 {
-                    Recommended.ReplaceWith(filters.ChatFilters);
+                    Recommended.ReplaceWith(folders.ChatFolders);
                 }
             }
             else
@@ -68,7 +68,7 @@ namespace Telegram.ViewModels.Folders
                 Recommended.Clear();
             }
 
-            Aggregator.Subscribe<UpdateChatFilters>(this, Handle);
+            Aggregator.Subscribe<UpdateChatFolders>(this, Handle);
         }
 
         private bool _useLeftLayout;
@@ -84,7 +84,7 @@ namespace Telegram.ViewModels.Folders
 
                     RaisePropertyChanged(nameof(UseLeftLayout));
 
-                    Aggregator.Publish(new UpdateChatFiltersLayout());
+                    Aggregator.Publish(new UpdateChatFoldersLayout());
                 }
             }
         }
@@ -96,18 +96,18 @@ namespace Telegram.ViewModels.Folders
             set => Set(ref _useTopLayout, value);
         }
 
-        public void Handle(UpdateChatFilters update)
+        public void Handle(UpdateChatFolders update)
         {
             BeginOnUIThread(async () =>
             {
-                Items.ReplaceWith(update.ChatFilters);
+                Items.ReplaceWith(update.ChatFolders);
 
                 if (Items.Count < 10)
                 {
-                    var response = await ClientService.SendAsync(new GetRecommendedChatFilters());
-                    if (response is RecommendedChatFilters recommended)
+                    var response = await ClientService.SendAsync(new GetRecommendedChatFolders());
+                    if (response is RecommendedChatFolders recommended)
                     {
-                        Recommended.ReplaceWith(recommended.ChatFilters);
+                        Recommended.ReplaceWith(recommended.ChatFolders);
                     }
                 }
                 else
@@ -117,26 +117,26 @@ namespace Telegram.ViewModels.Folders
             });
         }
 
-        public void AddRecommended(RecommendedChatFilter filter)
+        public void AddRecommended(RecommendedChatFolder folder)
         {
-            Recommended.Remove(filter);
-            ClientService.Send(new CreateChatFilter(filter.Filter));
+            Recommended.Remove(folder);
+            ClientService.Send(new CreateChatFolder(folder.Folder));
         }
 
-        public void Edit(ChatFilterInfo filter)
+        public void Edit(ChatFolderInfo folder)
         {
-            var index = Items.IndexOf(filter);
-            if (index < ClientService.Options.ChatFilterCountMax)
+            var index = Items.IndexOf(folder);
+            if (index < ClientService.Options.ChatFolderCountMax)
             {
-                NavigationService.Navigate(typeof(FolderPage), filter.Id);
+                NavigationService.Navigate(typeof(FolderPage), folder.Id);
             }
             else
             {
-                NavigationService.ShowLimitReached(new PremiumLimitTypeChatFilterCount());
+                NavigationService.ShowLimitReached(new PremiumLimitTypeChatFolderCount());
             }
         }
 
-        public async void Delete(ChatFilterInfo filter)
+        public async void Delete(ChatFolderInfo folder)
         {
             var confirm = await ShowPopupAsync(Strings.FilterDeleteAlert, Strings.FilterDelete, Strings.Delete, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
@@ -144,18 +144,18 @@ namespace Telegram.ViewModels.Folders
                 return;
             }
 
-            ClientService.Send(new DeleteChatFilter(filter.Id));
+            ClientService.Send(new DeleteChatFolder(folder.Id, new long[0]));
         }
 
         public void Create()
         {
-            if (Items.Count < ClientService.Options.ChatFilterCountMax)
+            if (Items.Count < ClientService.Options.ChatFolderCountMax)
             {
                 NavigationService.Navigate(typeof(FolderPage));
             }
             else
             {
-                NavigationService.ShowLimitReached(new PremiumLimitTypeChatFilterCount());
+                NavigationService.ShowLimitReached(new PremiumLimitTypeChatFolderCount());
             }
         }
     }

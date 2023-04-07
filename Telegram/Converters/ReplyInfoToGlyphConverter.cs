@@ -269,99 +269,99 @@ namespace Telegram.Converters
 
         public const string ReactionFilled24 = "\uE9F1";
 
-        public static readonly ChatFilterIcon[] Filters = new ChatFilterIcon[]
+        public static readonly ChatFolderIcon2[] Folders = new ChatFolderIcon2[]
         {
-            ChatFilterIcon.Cat,
-            ChatFilterIcon.Book,
-            ChatFilterIcon.Money,
-            ChatFilterIcon.Game,
-            ChatFilterIcon.Light,
-            ChatFilterIcon.Like,
-            ChatFilterIcon.Note,
-            ChatFilterIcon.Palette,
-            ChatFilterIcon.Travel,
-            ChatFilterIcon.Sport,
-            ChatFilterIcon.Favorite,
-            ChatFilterIcon.Study,
-            ChatFilterIcon.Airplane,
-            ChatFilterIcon.Private,
-            ChatFilterIcon.Groups,
-            ChatFilterIcon.All,
-            ChatFilterIcon.Unread,
-            ChatFilterIcon.Bots,
-            ChatFilterIcon.Crown,
-            ChatFilterIcon.Flower,
-            ChatFilterIcon.Home,
-            ChatFilterIcon.Love,
-            ChatFilterIcon.Mask,
-            ChatFilterIcon.Party,
-            ChatFilterIcon.Trade,
-            ChatFilterIcon.Work,
-            ChatFilterIcon.Unmuted,
-            ChatFilterIcon.Channels,
-            ChatFilterIcon.Custom,
-            ChatFilterIcon.Setup
+            ChatFolderIcon2.Cat,
+            ChatFolderIcon2.Book,
+            ChatFolderIcon2.Money,
+            ChatFolderIcon2.Game,
+            ChatFolderIcon2.Light,
+            ChatFolderIcon2.Like,
+            ChatFolderIcon2.Note,
+            ChatFolderIcon2.Palette,
+            ChatFolderIcon2.Travel,
+            ChatFolderIcon2.Sport,
+            ChatFolderIcon2.Favorite,
+            ChatFolderIcon2.Study,
+            ChatFolderIcon2.Airplane,
+            ChatFolderIcon2.Private,
+            ChatFolderIcon2.Groups,
+            ChatFolderIcon2.All,
+            ChatFolderIcon2.Unread,
+            ChatFolderIcon2.Bots,
+            ChatFolderIcon2.Crown,
+            ChatFolderIcon2.Flower,
+            ChatFolderIcon2.Home,
+            ChatFolderIcon2.Love,
+            ChatFolderIcon2.Mask,
+            ChatFolderIcon2.Party,
+            ChatFolderIcon2.Trade,
+            ChatFolderIcon2.Work,
+            ChatFolderIcon2.Unmuted,
+            ChatFolderIcon2.Channels,
+            ChatFolderIcon2.Custom,
+            ChatFolderIcon2.Setup
         };
 
-        public static ChatFilterIcon ParseFilter(ChatFilter filter)
+        public static ChatFolderIcon2 ParseFolder(ChatFolder folder)
         {
-            var iconName = filter.IconName;
+            var iconName = folder.Icon.Name;
             if (string.IsNullOrEmpty(iconName))
             {
-                var text = Client.Execute(new GetChatFilterDefaultIconName(filter)) as Text;
+                var text = Client.Execute(new GetChatFolderDefaultIconName(folder)) as Text;
                 if (text != null)
                 {
                     iconName = text.TextValue;
                 }
             }
 
-            return ParseFilter(iconName);
+            return ParseFolder(iconName);
         }
 
-        public static ChatFilterIcon ParseFilter(string iconName)
+        public static ChatFolderIcon2 ParseFolder(string iconName)
         {
-            if (Enum.TryParse(iconName, out ChatFilterIcon result))
+            if (Enum.TryParse(iconName, out ChatFolderIcon2 result))
             {
                 return result;
             }
 
-            return ChatFilterIcon.Custom;
+            return ChatFolderIcon2.Custom;
         }
 
-        public static (string, string) FilterToGlyph(ChatFilterIcon icon)
+        public static (string, string) FolderToGlyph(ChatFolderIcon2 icon)
         {
             return icon switch
             {
-                ChatFilterIcon.Cat => ("\uE933", "\uE931"),
-                ChatFilterIcon.Crown => ("\uE935", "\uE934"),
-                ChatFilterIcon.Favorite => ("\uE937", "\uE936"),
-                ChatFilterIcon.Flower => ("\uE939", "\uE938"),
-                ChatFilterIcon.Game => ("\uE93B", "\uE93A"),
-                ChatFilterIcon.Home => ("\uE940", "\uE93C"),
-                ChatFilterIcon.Love => ("\uE942", "\uE941"),
-                ChatFilterIcon.Mask => ("\uE945", "\uE944"),
-                ChatFilterIcon.Party => ("\uE948", "\uE947"),
-                ChatFilterIcon.Sport => ("\uE94A", "\uE949"),
-                ChatFilterIcon.Study => ("\uE94C", "\uE94B"),
-                ChatFilterIcon.Trade => ("\uE94E", "\uE94D"),
-                ChatFilterIcon.Travel => ("\uE950", "\uE94F"),
-                ChatFilterIcon.Work => ("\uE952", "\uE951"),
-                ChatFilterIcon.All => ("\uE954", "\uE953"),
-                ChatFilterIcon.Unread => ("\uE9C1", "\uE9C0"),
-                ChatFilterIcon.Unmuted => ("\uE958", "\uE957"),
-                ChatFilterIcon.Bots => ("\uE95A", "\uE959"),
-                ChatFilterIcon.Channels => ("\uE95C", "\uE95B"),
-                ChatFilterIcon.Groups => ("\uE95E", "\uE95D"),
-                ChatFilterIcon.Private => ("\uE960", "\uE95F"),
-                ChatFilterIcon.Custom => ("\uE962", "\uE961"),
-                ChatFilterIcon.Book => ("\uE9CD", "\uE9CC"),
-                ChatFilterIcon.Money => ("\uE9CB", "\uE9CA"),
-                ChatFilterIcon.Light => ("\uE9C9", "\uE9C8"),
-                ChatFilterIcon.Like => ("\uE9C7", "\uE9C6"),
-                ChatFilterIcon.Note => ("\uE9C5", "\uE9C4"),
-                ChatFilterIcon.Palette => ("\uE9C3", "\uE9C2"),
-                ChatFilterIcon.Airplane => ("\uE9D1", "\uE9D1"),
-                ChatFilterIcon.Setup => ("\uE9D0", "\uE9CF"),
+                ChatFolderIcon2.Cat => ("\uE933", "\uE931"),
+                ChatFolderIcon2.Crown => ("\uE935", "\uE934"),
+                ChatFolderIcon2.Favorite => ("\uE937", "\uE936"),
+                ChatFolderIcon2.Flower => ("\uE939", "\uE938"),
+                ChatFolderIcon2.Game => ("\uE93B", "\uE93A"),
+                ChatFolderIcon2.Home => ("\uE940", "\uE93C"),
+                ChatFolderIcon2.Love => ("\uE942", "\uE941"),
+                ChatFolderIcon2.Mask => ("\uE945", "\uE944"),
+                ChatFolderIcon2.Party => ("\uE948", "\uE947"),
+                ChatFolderIcon2.Sport => ("\uE94A", "\uE949"),
+                ChatFolderIcon2.Study => ("\uE94C", "\uE94B"),
+                ChatFolderIcon2.Trade => ("\uE94E", "\uE94D"),
+                ChatFolderIcon2.Travel => ("\uE950", "\uE94F"),
+                ChatFolderIcon2.Work => ("\uE952", "\uE951"),
+                ChatFolderIcon2.All => ("\uE954", "\uE953"),
+                ChatFolderIcon2.Unread => ("\uE9C1", "\uE9C0"),
+                ChatFolderIcon2.Unmuted => ("\uE958", "\uE957"),
+                ChatFolderIcon2.Bots => ("\uE95A", "\uE959"),
+                ChatFolderIcon2.Channels => ("\uE95C", "\uE95B"),
+                ChatFolderIcon2.Groups => ("\uE95E", "\uE95D"),
+                ChatFolderIcon2.Private => ("\uE960", "\uE95F"),
+                ChatFolderIcon2.Custom => ("\uE962", "\uE961"),
+                ChatFolderIcon2.Book => ("\uE9CD", "\uE9CC"),
+                ChatFolderIcon2.Money => ("\uE9CB", "\uE9CA"),
+                ChatFolderIcon2.Light => ("\uE9C9", "\uE9C8"),
+                ChatFolderIcon2.Like => ("\uE9C7", "\uE9C6"),
+                ChatFolderIcon2.Note => ("\uE9C5", "\uE9C4"),
+                ChatFolderIcon2.Palette => ("\uE9C3", "\uE9C2"),
+                ChatFolderIcon2.Airplane => ("\uE9D1", "\uE9D1"),
+                ChatFolderIcon2.Setup => ("\uE9D0", "\uE9CF"),
                 _ => ("\uE962", "\uE961")
             };
         }

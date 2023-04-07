@@ -32,7 +32,7 @@ namespace Telegram.ViewModels
         //IHandle<UpdateServiceNotification>,
         //IHandle<UpdateUnreadMessageCount>,
         //IHandle<UpdateUnreadChatCount>,
-        //IHandle<UpdateChatFilters>,
+        //IHandle<UpdateChatFolders>,
         //IHandle<UpdateDeleteMessages>,
         //IHandle<UpdateAppVersion>,
         //IHandle<UpdateWindowActivated>,
@@ -66,20 +66,20 @@ namespace Telegram.ViewModels
             _playbackService = playbackService;
             _shortcutService = shortcutService;
 
-            Filters = new ChatFilterCollection();
-            NavigationItems = new List<IEnumerable<ChatFilterViewModel>>
+            Folders = new ChatFolderCollection();
+            NavigationItems = new List<IEnumerable<ChatFolderViewModel>>
             {
-                Filters,
-                new ChatFilterViewModel[]
+                Folders,
+                new ChatFolderViewModel[]
                 {
-                    new ChatFilterViewModel(int.MaxValue - 1, Strings.Contacts, "\uE95E", "\uE95D"),
-                    new ChatFilterViewModel(int.MaxValue - 2, Strings.Calls, "\uE991", "\uE990"),
-                    new ChatFilterViewModel(int.MaxValue - 3, Strings.Settings, "\uE98F", "\uE98E"),
+                    new ChatFolderViewModel(int.MaxValue - 1, Strings.Contacts, "\uE95E", "\uE95D"),
+                    new ChatFolderViewModel(int.MaxValue - 2, Strings.Calls, "\uE991", "\uE990"),
+                    new ChatFolderViewModel(int.MaxValue - 3, Strings.Settings, "\uE98F", "\uE98E"),
                 }
             };
 
-            ChatList chatList = ClientService.MainChatListPosition > 0 && ClientService.ChatFilters.Count > 0
-                ? new ChatListFilter(ClientService.ChatFilters[0].Id)
+            ChatList chatList = ClientService.MainChatListPosition > 0 && ClientService.ChatFolders.Count > 0
+                ? new ChatListFolder(ClientService.ChatFolders[0].Id)
                 : new ChatListMain();
 
             Chats = new ChatListViewModel(clientService, settingsService, aggregator, pushService, chatList);
@@ -201,11 +201,11 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateUnreadChatCount update)
         {
-            foreach (var filter in _filters)
+            foreach (var folder in _folders)
             {
-                if (filter.ChatList is ChatListFilter && filter.ChatList.ListEquals(update.ChatList))
+                if (folder.ChatList is ChatListFolder && folder.ChatList.ListEquals(update.ChatList))
                 {
-                    BeginOnUIThread(() => filter.UpdateCount(update));
+                    BeginOnUIThread(() => folder.UpdateCount(update));
                 }
             }
         }
@@ -240,57 +240,57 @@ namespace Telegram.ViewModels
             await ShowPopupAsync(popup);
         }
 
-        public void Handle(UpdateChatFilters update)
+        public void Handle(UpdateChatFolders update)
         {
-            BeginOnUIThread(() => UpdateChatFilters(update.ChatFilters, update.MainChatListPosition));
+            BeginOnUIThread(() => UpdateChatFolders(update.ChatFolders, update.MainChatListPosition));
         }
 
-        private void UpdateChatFilters(IList<ChatFilterInfo> chatFilters, int mainChatListPosition)
+        private void UpdateChatFolders(IList<ChatFolderInfo> chatFolders, int mainChatListPosition)
         {
-            if (chatFilters.Count > 0)
+            if (chatFolders.Count > 0)
             {
-                var selected = SelectedFilter?.ChatFilterId ?? Constants.ChatListMain;
+                var selected = SelectedFolder?.ChatFolderId ?? Constants.ChatListMain;
 
-                var filters = chatFilters.ToList();
-                var index = Math.Min(mainChatListPosition, filters.Count);
+                var folders = chatFolders.ToList();
+                var index = Math.Min(mainChatListPosition, folders.Count);
 
-                filters.Insert(index, new ChatFilterInfo { Id = Constants.ChatListMain, Title = Strings.FilterAllChats, IconName = "All" });
+                folders.Insert(index, new ChatFolderInfo { Id = Constants.ChatListMain, Title = Strings.FilterAllChats, Icon = new ChatFolderIcon("All") });
 
-                Merge(Filters, filters);
+                Merge(Folders, folders);
 
-                if (Chats.Items.ChatList is ChatListFilter already && already.ChatFilterId != selected)
+                if (Chats.Items.ChatList is ChatListFolder already && already.ChatFolderId != selected)
                 {
-                    SelectedFilter = Filters[0];
+                    SelectedFolder = Folders[0];
                 }
                 else
                 {
-                    RaisePropertyChanged(nameof(SelectedFilter));
+                    RaisePropertyChanged(nameof(SelectedFolder));
                 }
 
-                foreach (var filter in _filters)
+                foreach (var folder in _folders)
                 {
-                    if (filter.ChatList is ChatListMain)
+                    if (folder.ChatList is ChatListMain)
                     {
                         continue;
                     }
 
-                    var unreadCount = ClientService.GetUnreadCount(filter.ChatList);
+                    var unreadCount = ClientService.GetUnreadCount(folder.ChatList);
                     if (unreadCount == null)
                     {
                         continue;
                     }
 
-                    filter.UpdateCount(unreadCount.UnreadChatCount);
+                    folder.UpdateCount(unreadCount.UnreadChatCount);
                 }
             }
             else
             {
-                Filters.Clear();
-                SelectedFilter = ChatFilterViewModel.Main;
+                Folders.Clear();
+                SelectedFolder = ChatFolderViewModel.Main;
             }
         }
 
-        private void Merge(IList<ChatFilterViewModel> destination, IList<ChatFilterInfo> origin)
+        private void Merge(IList<ChatFolderViewModel> destination, IList<ChatFolderInfo> origin)
         {
             if (destination.Count > 0)
             {
@@ -301,7 +301,7 @@ namespace Telegram.ViewModels
 
                     for (int j = 0; j < origin.Count; j++)
                     {
-                        if (origin[j].Id == user.ChatFilterId)
+                        if (origin[j].Id == user.ChatFolderId)
                         {
                             index = j;
                             break;
@@ -317,14 +317,14 @@ namespace Telegram.ViewModels
 
                 for (int i = 0; i < origin.Count; i++)
                 {
-                    var filter = origin[i];
+                    var folder = origin[i];
                     var index = -1;
 
                     for (int j = 0; j < destination.Count; j++)
                     {
-                        if (destination[j].ChatFilterId == filter.Id)
+                        if (destination[j].ChatFolderId == folder.Id)
                         {
-                            destination[j].Update(filter);
+                            destination[j].Update(folder);
 
                             index = j;
                             break;
@@ -334,40 +334,40 @@ namespace Telegram.ViewModels
                     if (index > -1 && index != i)
                     {
                         destination.RemoveAt(index);
-                        destination.Insert(Math.Min(i, destination.Count), new ChatFilterViewModel(filter));
+                        destination.Insert(Math.Min(i, destination.Count), new ChatFolderViewModel(folder));
                     }
                     else if (index == -1)
                     {
-                        destination.Insert(Math.Min(i, destination.Count), new ChatFilterViewModel(filter));
+                        destination.Insert(Math.Min(i, destination.Count), new ChatFolderViewModel(folder));
                     }
                 }
             }
             else
             {
                 destination.Clear();
-                destination.AddRange(origin.Select(x => new ChatFilterViewModel(x)));
+                destination.AddRange(origin.Select(x => new ChatFolderViewModel(x)));
             }
         }
 
-        private ChatFilterCollection _filters;
-        public ChatFilterCollection Filters
+        private ChatFolderCollection _folders;
+        public ChatFolderCollection Folders
         {
-            get => _filters;
-            set => Set(ref _filters, value);
+            get => _folders;
+            set => Set(ref _folders, value);
         }
 
-        public List<IEnumerable<ChatFilterViewModel>> NavigationItems { get; private set; }
+        public List<IEnumerable<ChatFolderViewModel>> NavigationItems { get; private set; }
 
-        public ChatFilterViewModel SelectedFilter
+        public ChatFolderViewModel SelectedFolder
         {
             get
             {
-                if (Chats.Items.ChatList is ChatListFilter filter && _filters != null)
+                if (Chats.Items.ChatList is ChatListFolder folder && _folders != null)
                 {
-                    return _filters.FirstOrDefault(x => x.ChatFilterId == filter.ChatFilterId);
+                    return _folders.FirstOrDefault(x => x.ChatFolderId == folder.ChatFolderId);
                 }
 
-                return _filters?.FirstOrDefault(x => x.ChatList is ChatListMain);
+                return _folders?.FirstOrDefault(x => x.ChatList is ChatListMain);
             }
             set
             {
@@ -376,7 +376,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                Chats.SetFilter(value.ChatList);
+                Chats.SetFolder(value.ChatList);
                 RaisePropertyChanged();
             }
         }
@@ -390,7 +390,7 @@ namespace Telegram.ViewModels
             //Dispatch(() => Contacts.GetSelfAsync());
 
             UpdateAppVersion(_cloudUpdateService.NextUpdate);
-            UpdateChatFilters(ClientService.ChatFilters, ClientService.MainChatListPosition);
+            UpdateChatFolders(ClientService.ChatFolders, ClientService.MainChatListPosition);
 
             var unreadCount = ClientService.GetUnreadCount(new ChatListMain());
             UnreadCount = unreadCount.UnreadMessageCount.UnreadCount;
@@ -411,7 +411,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateUnreadMessageCount>(Handle)
                 .Subscribe<UpdateUnreadChatCount>(Handle)
                 .Subscribe<UpdateDeleteMessages>(Handle)
-                .Subscribe<UpdateChatFilters>(Handle)
+                .Subscribe<UpdateChatFolders>(Handle)
                 .Subscribe<UpdateAddChatMembersPrivacyForbidden>(Handle)
                 .Subscribe<UpdateAppVersion>(Handle)
                 .Subscribe<UpdateWindowActivated>(Handle);
@@ -466,27 +466,27 @@ namespace Telegram.ViewModels
             }
         }
 
-        public void EditFilter(ChatFilterViewModel filter)
+        public void EditFolder(ChatFolderViewModel folder)
         {
-            if (filter.ChatFilterId == Constants.ChatListMain)
+            if (folder.ChatFolderId == Constants.ChatListMain)
             {
                 NavigationService.Navigate(typeof(FoldersPage));
             }
             else
             {
-                NavigationService.Navigate(typeof(FolderPage), filter.ChatFilterId);
+                NavigationService.Navigate(typeof(FolderPage), folder.ChatFolderId);
             }
         }
 
-        public async void AddToFilter(ChatFilterViewModel filter)
+        public async void AddToFolder(ChatFolderViewModel folder)
         {
             var viewModel = TLContainer.Current.Resolve<FolderViewModel>();
-            await viewModel.NavigatedToAsync(filter.ChatFilterId, NavigationMode.New, null);
+            await viewModel.NavigatedToAsync(folder.ChatFolderId, NavigationMode.New, null);
             await viewModel.AddIncludeAsync();
             await viewModel.SendAsync();
         }
 
-        public async void MarkFilterAsRead(ChatFilterViewModel filter)
+        public async void MarkFolderAsRead(ChatFolderViewModel folder)
         {
             var confirm = await ShowPopupAsync(Strings.AreYouSure, Strings.AppName, Strings.MarkAsRead, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
@@ -494,7 +494,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var chats = await ClientService.GetChatListAsync(filter.ChatList, 0, int.MaxValue);
+            var chats = await ClientService.GetChatListAsync(folder.ChatList, 0, int.MaxValue);
             if (chats.TotalCount > chats.ChatIds.Count)
             {
                 // ???
@@ -512,7 +512,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void DeleteFilter(ChatFilterViewModel filter)
+        public async void DeleteFolder(ChatFolderViewModel folder)
         {
             var confirm = await ShowPopupAsync(Strings.FilterDeleteAlert, Strings.FilterDelete, Strings.Delete, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
@@ -520,27 +520,27 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            ClientService.Send(new DeleteChatFilter(filter.ChatFilterId));
+            ClientService.Send(new DeleteChatFolder(folder.ChatFolderId, new long[0]));
         }
     }
 
-    public class ChatFilterViewModel : BindableBase
+    public class ChatFolderViewModel : BindableBase
     {
-        public static ChatFilterViewModel Main => new ChatFilterViewModel(new ChatListMain())
+        public static ChatFolderViewModel Main => new ChatFolderViewModel(new ChatListMain())
         {
-            ChatFilterId = Constants.ChatListMain,
+            ChatFolderId = Constants.ChatListMain,
             Title = Strings.FilterAllChats
         };
 
-        public static ChatFilterViewModel Archive => new ChatFilterViewModel(new ChatListArchive())
+        public static ChatFolderViewModel Archive => new ChatFolderViewModel(new ChatListArchive())
         {
-            ChatFilterId = Constants.ChatListArchive,
+            ChatFolderId = Constants.ChatListArchive,
             Title = Strings.ArchivedChats
         };
 
         public bool IsNavigationItem { get; }
 
-        public ChatFilterViewModel(ChatFilterInfo info)
+        public ChatFolderViewModel(ChatFolderInfo info)
         {
             if (info.Id == Constants.ChatListMain)
             {
@@ -552,22 +552,22 @@ namespace Telegram.ViewModels
             }
             else
             {
-                ChatList = new ChatListFilter(info.Id);
+                ChatList = new ChatListFolder(info.Id);
             }
 
-            ChatFilterId = info.Id;
+            ChatFolderId = info.Id;
 
             _title = info.Title;
-            _icon = Icons.ParseFilter(info.IconName);
+            _icon = Icons.ParseFolder(info.Icon.Name);
 
-            var glyph = Icons.FilterToGlyph(_icon);
+            var glyph = Icons.FolderToGlyph(_icon);
             _iconGlyph = glyph.Item1;
             _filledIconGlyph = glyph.Item2;
         }
 
-        public ChatFilterViewModel(int id, string title, string glyph, string filledGlyph)
+        public ChatFolderViewModel(int id, string title, string glyph, string filledGlyph)
         {
-            ChatFilterId = id;
+            ChatFolderId = id;
             IsNavigationItem = true;
 
             Title = title;
@@ -575,24 +575,24 @@ namespace Telegram.ViewModels
             FilledIconGlyph = filledGlyph;
         }
 
-        private ChatFilterViewModel(ChatList list)
+        private ChatFolderViewModel(ChatList list)
         {
             ChatList = list;
         }
 
-        public void Update(ChatFilterInfo info)
+        public void Update(ChatFolderInfo info)
         {
             Title = info.Title;
-            Icon = Icons.ParseFilter(info.IconName);
+            Icon = Icons.ParseFolder(info.Icon.Name);
 
-            var glyph = Icons.FilterToGlyph(_icon);
+            var glyph = Icons.FolderToGlyph(_icon);
             IconGlyph = glyph.Item1;
             FilledIconGlyph = glyph.Item2;
         }
 
         public ChatList ChatList { get; }
 
-        public int ChatFilterId { get; set; }
+        public int ChatFolderId { get; set; }
 
         private string _title;
         public string Title
@@ -601,8 +601,8 @@ namespace Telegram.ViewModels
             set => Set(ref _title, value);
         }
 
-        private ChatFilterIcon _icon;
-        public ChatFilterIcon Icon
+        private ChatFolderIcon2 _icon;
+        public ChatFolderIcon2 Icon
         {
             get => _icon;
             set => Set(ref _icon, value);
@@ -657,7 +657,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public enum ChatFilterIcon
+    public enum ChatFolderIcon2
     {
         Custom,
         All,
@@ -691,14 +691,14 @@ namespace Telegram.ViewModels
         Setup
     }
 
-    public class ChatFilterCollection : ObservableCollection<ChatFilterViewModel>, IKeyIndexMapping
+    public class ChatFolderCollection : ObservableCollection<ChatFolderViewModel>, IKeyIndexMapping
     {
-        public ChatFilterCollection()
+        public ChatFolderCollection()
         {
 
         }
 
-        public ChatFilterCollection(IEnumerable<ChatFilterViewModel> source)
+        public ChatFolderCollection(IEnumerable<ChatFolderViewModel> source)
             : base(source)
         {
 
@@ -706,12 +706,12 @@ namespace Telegram.ViewModels
 
         public string KeyFromIndex(int index)
         {
-            return this[index].ChatFilterId.ToString();
+            return this[index].ChatFolderId.ToString();
         }
 
         public int IndexFromKey(string key)
         {
-            return IndexOf(this.FirstOrDefault(x => key == x.ChatFilterId.ToString()));
+            return IndexOf(this.FirstOrDefault(x => key == x.ChatFolderId.ToString()));
         }
     }
 }

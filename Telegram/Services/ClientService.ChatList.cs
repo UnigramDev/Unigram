@@ -66,15 +66,15 @@ namespace Telegram.Services
                         {
                             _haveFullChatList[index] = true;
                         }
-                        else if (error.Code == 400 && chatList is ChatListFilter chatListFilter)
+                        else if (error.Code == 400 && chatList is ChatListFolder chatListFolder)
                         {
-                            // TODO: this is a workaround to try to recover the chat filter.
+                            // TODO: this is a workaround to try to recover the chat folder.
                             // Figure out the exact error here.
 
-                            var filter = await SendAsync(new GetChatFilter(chatListFilter.ChatFilterId)) as ChatFilter;
-                            if (filter != null)
+                            var folder = await SendAsync(new GetChatFolder(chatListFolder.ChatFolderId)) as ChatFolder;
+                            if (folder != null)
                             {
-                                await SendAsync(new EditChatFilter(chatListFilter.ChatFilterId, filter));
+                                await SendAsync(new EditChatFolder(chatListFolder.ChatFolderId, folder));
                             }
                         }
                     }

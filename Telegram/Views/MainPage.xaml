@@ -298,19 +298,19 @@
                                      AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
                                      ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}" />
 
-            <controls:TopNavView x:Name="ChatFiltersSide"
+            <controls:TopNavView x:Name="ChatFoldersSide"
                                  ItemsSource="{x:Bind NavigationResults.View}"
-                                 SelectedItem="{x:Bind ConvertFilter(ViewModel.SelectedFilter), Mode=TwoWay, BindBack=ConvertFilterBack}"
+                                 SelectedItem="{x:Bind ConvertFolder(ViewModel.SelectedFolder), Mode=TwoWay, BindBack=ConvertFolderBack}"
                                  IsItemClickEnabled="True"
-                                 ItemClick="ChatFilter_ItemClick"
-                                 ItemContextRequested="ChatFilter_ContextRequested"
-                                 ChoosingGroupHeaderContainer="ChatFilters_ChoosingGroupHeaderContainer"
+                                 ItemClick="ChatFolders_ItemClick"
+                                 ItemContextRequested="ChatFolder_ContextRequested"
+                                 ChoosingGroupHeaderContainer="ChatFolders_ChoosingGroupHeaderContainer"
                                  Orientation="Vertical"
                                  AllowDrop="True"
                                  CanDragItems="True"
                                  CanReorderItems="False"
-                                 DragItemsStarting="ChatFilters_DragItemsStarting"
-                                 DragItemsCompleted="ChatFilters_DragItemsCompleted"
+                                 DragItemsStarting="ChatFolders_DragItemsStarting"
+                                 DragItemsCompleted="ChatFolders_DragItemsCompleted"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                  ScrollViewer.HorizontalScrollMode="Disabled"
                                  ScrollViewer.VerticalScrollBarVisibility="Hidden"
@@ -320,7 +320,7 @@
                                  Grid.Row="1">
                 <controls:TopNavView.ItemTemplate>
                     <DataTemplate>
-                        <cells:ChatFilterCell />
+                        <cells:ChatFolderCell />
                     </DataTemplate>
                 </controls:TopNavView.ItemTemplate>
                 <controls:TopNavView.ItemsPanel>
@@ -899,22 +899,22 @@
                                     <Border x:Name="ChatTabs"
                                             x:Load="False">
                                         <Grid x:Name="ChatTabsView">
-                                            <controls:TopNavView x:Name="ChatFilters"
-                                                                 ItemsSource="{x:Bind ViewModel.Filters}"
-                                                                 SelectedItem="{x:Bind ConvertFilter(ViewModel.SelectedFilter), Mode=TwoWay, BindBack=ConvertFilterBack}"
+                                            <controls:TopNavView x:Name="ChatFolders"
+                                                                 ItemsSource="{x:Bind ViewModel.Folders}"
+                                                                 SelectedItem="{x:Bind ConvertFolder(ViewModel.SelectedFolder), Mode=TwoWay, BindBack=ConvertFolderBack}"
                                                                  IsItemClickEnabled="True"
-                                                                 ItemClick="ChatFilter_ItemClick"
-                                                                 ItemContextRequested="ChatFilter_ContextRequested"
+                                                                 ItemClick="ChatFolders_ItemClick"
+                                                                 ItemContextRequested="ChatFolder_ContextRequested"
                                                                  AllowDrop="True"
                                                                  CanDragItems="True"
                                                                  CanReorderItems="False"
-                                                                 DragItemsStarting="ChatFilters_DragItemsStarting"
-                                                                 DragItemsCompleted="ChatFilters_DragItemsCompleted"
+                                                                 DragItemsStarting="ChatFolders_DragItemsStarting"
+                                                                 DragItemsCompleted="ChatFolders_DragItemsCompleted"
                                                                  ScrollViewer.IsHorizontalScrollChainingEnabled="False"
                                                                  Height="40"
                                                                  Margin="0,-8,0,0">
                                                 <controls:TopNavView.ItemTemplate>
-                                                    <DataTemplate x:DataType="viewModels:ChatFilterViewModel">
+                                                    <DataTemplate x:DataType="viewModels:ChatFolderViewModel">
                                                         <StackPanel Orientation="Horizontal">
                                                             <TextBlock Text="{x:Bind Title, Mode=OneWay}"
                                                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"

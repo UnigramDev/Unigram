@@ -75,13 +75,13 @@ namespace Telegram.Views
     //, IHandle<UpdateUnreadChatCount>
     //, //, IHandle<UpdateMessageContent>
     //, IHandle<UpdateSecretChat>
-    //, IHandle<UpdateChatFilters>
+    //, IHandle<UpdateChatFolders>
     //, IHandle<UpdateChatNotificationSettings>
     //, IHandle<UpdatePasscodeLock>
     //, IHandle<UpdateConnectionState>
     //, IHandle<UpdateOption>
     //, IHandle<UpdateCallDialog>
-    //, IHandle<UpdateChatFiltersLayout>
+    //, IHandle<UpdateChatFoldersLayout>
     //, IHandle<UpdateConfetti>
     {
         public MainViewModel ViewModel => DataContext as MainViewModel;
@@ -434,13 +434,13 @@ namespace Telegram.Views
             });
         }
 
-        public void Handle(UpdateChatFilters update)
+        public void Handle(UpdateChatFolders update)
         {
             this.BeginOnUIThread(() =>
             {
-                ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFilters.Count > 0);
-                ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFilters.Count > 0);
-                ShowHideArchive(ViewModel.SelectedFilter?.ChatList is ChatListMain or null);
+                ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFolders.Count > 0);
+                ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFolders.Count > 0);
+                ShowHideArchive(ViewModel.SelectedFolder?.ChatList is ChatListMain or null);
 
                 UpdatePaneToggleButtonVisibility();
             });
@@ -595,12 +595,12 @@ namespace Telegram.Views
             });
         }
 
-        public void Handle(UpdateChatFiltersLayout update)
+        public void Handle(UpdateChatFoldersLayout update)
         {
             this.BeginOnUIThread(() =>
             {
-                ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0);
-                ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0);
+                ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Folders.Count > 0);
+                ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Folders.Count > 0);
             });
         }
 
@@ -821,7 +821,7 @@ namespace Telegram.Views
             if (rpMasterTitlebar.SelectedIndex > 0)
             {
                 SetPivotIndex(0);
-                ViewModel.RaisePropertyChanged(nameof(ViewModel.SelectedFilter));
+                ViewModel.RaisePropertyChanged(nameof(ViewModel.SelectedFolder));
                 args.Handled = true;
             }
             else
@@ -833,9 +833,9 @@ namespace Telegram.Views
                     args.Handled = true;
                 }
                 else if (ViewModel.Chats.Items.ChatList is ChatListArchive
-                    || ViewModel.Filters.Count > 0 && !ViewModel.Chats.Items.ChatList.ListEquals(ViewModel.Filters[0].ChatList))
+                    || ViewModel.Folders.Count > 0 && !ViewModel.Chats.Items.ChatList.ListEquals(ViewModel.Folders[0].ChatList))
                 {
-                    UpdateFilter(ViewModel.Filters.Count > 0 ? ViewModel.Filters[0] : ChatFilterViewModel.Main);
+                    UpdateFolder(ViewModel.Folders.Count > 0 ? ViewModel.Folders[0] : ChatFolderViewModel.Main);
                     args.Handled = true;
                 }
             }
@@ -940,13 +940,13 @@ namespace Telegram.Views
                 .Subscribe<UpdateForumTopicInfo>(Handle)
                 //.Subscribe<UpdateMessageContent>(Handle)
                 .Subscribe<UpdateSecretChat>(Handle)
-                .Subscribe<UpdateChatFilters>(Handle)
+                .Subscribe<UpdateChatFolders>(Handle)
                 .Subscribe<UpdateChatNotificationSettings>(Handle)
                 .Subscribe<UpdatePasscodeLock>(Handle)
                 .Subscribe<UpdateConnectionState>(Handle)
                 .Subscribe<UpdateOption>(Handle)
                 .Subscribe<UpdateCallDialog>(Handle)
-                .Subscribe<UpdateChatFiltersLayout>(Handle)
+                .Subscribe<UpdateChatFoldersLayout>(Handle)
                 .Subscribe<UpdateConfetti>(Handle);
         }
 
@@ -1151,7 +1151,7 @@ namespace Telegram.Views
 
         private void ProcessFolderCommands(ShortcutCommand command, InputKeyDownEventArgs args)
         {
-            var folders = ViewModel.Filters;
+            var folders = ViewModel.Folders;
             if (folders.IsEmpty())
             {
                 return;
@@ -1187,7 +1187,7 @@ namespace Telegram.Views
                 var index = command - ShortcutCommand.ShowAllChats;
                 if (folders.Count > index)
                 {
-                    UpdateFilter(folders[index], false);
+                    UpdateFolder(folders[index], false);
                 }
             }
         }
@@ -1227,7 +1227,7 @@ namespace Telegram.Views
             }
             else if (command is >= ShortcutCommand.ChatPinned1 and <= ShortcutCommand.ChatPinned5)
             {
-                var folders = ViewModel.Filters;
+                var folders = ViewModel.Folders;
                 if (folders.Count > 0)
                 {
                     return;
@@ -1304,16 +1304,16 @@ namespace Telegram.Views
 
         public void ScrollFolder(int offset, bool navigate)
         {
-            var already = ViewModel.SelectedFilter;
+            var already = ViewModel.SelectedFolder;
             if (already == null)
             {
                 return;
             }
 
-            var index = ViewModel.Filters.IndexOf(already);
+            var index = ViewModel.Folders.IndexOf(already);
             if (offset == int.MaxValue)
             {
-                index = ViewModel.Filters.Count - 1;
+                index = ViewModel.Folders.Count - 1;
             }
             else if (offset == int.MinValue)
             {
@@ -1324,9 +1324,9 @@ namespace Telegram.Views
                 index += offset;
             }
 
-            if (index >= 0 && index < ViewModel.Filters.Count)
+            if (index >= 0 && index < ViewModel.Folders.Count)
             {
-                UpdateFilter(ViewModel.Filters[index], false);
+                UpdateFolder(ViewModel.Folders[index], false);
             }
         }
 
@@ -2424,31 +2424,31 @@ namespace Telegram.Views
             MasterDetail.NavigationService.Navigate(typeof(ChatsNearbyPage));
         }
 
-        private ChatFilterViewModel ConvertFilter(ChatFilterViewModel filter)
+        private ChatFolderViewModel ConvertFolder(ChatFolderViewModel folder)
         {
-            ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0 && filter.ChatList is not ChatListArchive);
-            ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Filters.Count > 0);
-            ShowHideArchive(filter?.ChatList is ChatListMain or null && ViewModel.Chats.Items.ChatList is not ChatListArchive);
+            ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Folders.Count > 0 && folder.ChatList is not ChatListArchive);
+            ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Folders.Count > 0);
+            ShowHideArchive(folder?.ChatList is ChatListMain or null && ViewModel.Chats.Items.ChatList is not ChatListArchive);
 
             UpdatePaneToggleButtonVisibility();
 
-            return filter;
+            return folder;
         }
 
-        private void ConvertFilterBack(object obj)
+        private void ConvertFolderBack(object obj)
         {
-            if (obj is ChatFilterViewModel filter && !filter.IsNavigationItem && ViewModel.Chats.Items.ChatList is not ChatListArchive)
+            if (obj is ChatFolderViewModel folder && !folder.IsNavigationItem && ViewModel.Chats.Items.ChatList is not ChatListArchive)
             {
-                UpdateFilter(filter);
+                UpdateFolder(folder);
             }
         }
 
         public void ArchivedChats_Click(object sender, RoutedEventArgs e)
         {
-            UpdateFilter(ChatFilterViewModel.Archive);
+            UpdateFolder(ChatFolderViewModel.Archive);
         }
 
-        private void ChatFilter_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private void ChatFolder_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var viewModel = ViewModel;
             if (viewModel == null)
@@ -2457,29 +2457,29 @@ namespace Telegram.Views
             }
 
             var element = sender as FrameworkElement;
-            var filter = ChatFilters?.ItemFromContainer(sender) as ChatFilterViewModel;
+            var folder = ChatFolders?.ItemFromContainer(sender) as ChatFolderViewModel;
 
-            filter ??= ChatFiltersSide.ItemFromContainer(sender) as ChatFilterViewModel;
+            folder ??= ChatFoldersSide.ItemFromContainer(sender) as ChatFolderViewModel;
 
-            if (filter.IsNavigationItem)
+            if (folder.IsNavigationItem)
             {
                 return;
             }
 
             var flyout = new MenuFlyout();
 
-            if (filter.ChatFilterId == Constants.ChatListMain)
+            if (folder.ChatFolderId == Constants.ChatListMain)
             {
-                flyout.CreateFlyoutItem(ViewModel.EditFilter, filter, Strings.FilterEditAll, new FontIcon { Glyph = Icons.Edit });
-                flyout.CreateFlyoutItem(ViewModel.MarkFilterAsRead, filter, Strings.MarkAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
+                flyout.CreateFlyoutItem(ViewModel.EditFolder, folder, Strings.FilterEditAll, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(ViewModel.MarkFolderAsRead, folder, Strings.MarkAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.EditFilter, filter, Strings.FilterEdit, new FontIcon { Glyph = Icons.Edit });
-                flyout.CreateFlyoutItem(ViewModel.MarkFilterAsRead, filter, Strings.MarkAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
-                flyout.CreateFlyoutItem(ViewModel.AddToFilter, filter, Strings.FilterAddChats, new FontIcon { Glyph = Icons.Add });
+                flyout.CreateFlyoutItem(ViewModel.EditFolder, folder, Strings.FilterEdit, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(ViewModel.MarkFolderAsRead, folder, Strings.MarkAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
+                flyout.CreateFlyoutItem(ViewModel.AddToFolder, folder, Strings.FilterAddChats, new FontIcon { Glyph = Icons.Add });
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(ViewModel.DeleteFilter, filter, Strings.Remove, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.DeleteFolder, folder, Strings.Remove, new FontIcon { Glyph = Icons.Delete });
             }
 
             flyout.ShowAt(element, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
@@ -2508,7 +2508,7 @@ namespace Telegram.Views
             //}
 
             flyout.CreateFlyoutItem(ToggleArchive, Strings.ArchiveMoveToMainMenu, new FontIcon { Glyph = Icons.Collapse });
-            flyout.CreateFlyoutItem(ViewModel.MarkFilterAsRead, ChatFilterViewModel.Archive, Strings.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
+            flyout.CreateFlyoutItem(ViewModel.MarkFolderAsRead, ChatFolderViewModel.Archive, Strings.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
 
             args.ShowAt(flyout, element);
         }
@@ -2670,18 +2670,18 @@ namespace Telegram.Views
             }
         }
 
-        private void UpdateFilter(ChatFilterViewModel filter, bool update = true)
+        private void UpdateFolder(ChatFolderViewModel folder, bool update = true)
         {
-            ViewModel.SelectedFilter = filter;
+            ViewModel.SelectedFolder = folder;
 
-            if (filter.ChatList is ChatListArchive)
+            if (folder.ChatList is ChatListArchive)
             {
                 _shouldGoBackWithDetail = false;
             }
 
             if (update)
             {
-                ConvertFilter(filter);
+                ConvertFolder(folder);
             }
 
             Search_LostFocus(null, null);
@@ -2693,11 +2693,11 @@ namespace Telegram.Views
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                ViewModel.SelectedFilter = filter;
+                ViewModel.SelectedFolder = folder;
 
                 if (update)
                 {
-                    ConvertFilter(filter);
+                    ConvertFolder(folder);
                 }
 
                 var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
@@ -2909,37 +2909,37 @@ namespace Telegram.Views
             });
         }
 
-        public static string GetFilterIcon(ChatListFilterFlags filter)
+        public static string GetFolderIcon(ChatListFolderFlags folder)
         {
-            if (filter == ChatListFilterFlags.ExcludeMuted)
+            if (folder == ChatListFolderFlags.ExcludeMuted)
             {
                 return Icons.Alert;
             }
-            else if (filter == ChatListFilterFlags.ExcludeRead)
+            else if (folder == ChatListFolderFlags.ExcludeRead)
             {
                 return Icons.MarkAsUnread; //FontFamily = App.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
             }
-            else if (filter == ChatListFilterFlags.ExcludeArchived)
+            else if (folder == ChatListFolderFlags.ExcludeArchived)
             {
                 return Icons.Archive;
             }
-            else if (filter == ChatListFilterFlags.IncludeContacts)
+            else if (folder == ChatListFolderFlags.IncludeContacts)
             {
                 return Icons.Person;
             }
-            else if (filter == ChatListFilterFlags.IncludeNonContacts)
+            else if (folder == ChatListFolderFlags.IncludeNonContacts)
             {
                 return Icons.PersonQuestionMark;
             }
-            else if (filter == ChatListFilterFlags.IncludeGroups)
+            else if (folder == ChatListFolderFlags.IncludeGroups)
             {
                 return Icons.People;
             }
-            else if (filter == ChatListFilterFlags.IncludeChannels)
+            else if (folder == ChatListFolderFlags.IncludeChannels)
             {
                 return Icons.Megaphone;
             }
-            else if (filter == ChatListFilterFlags.IncludeBots)
+            else if (folder == ChatListFolderFlags.IncludeBots)
             {
                 return Icons.Bot;
             }
@@ -2947,7 +2947,7 @@ namespace Telegram.Views
             return null;
         }
 
-        private void ChatFilters_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        private void ChatFolders_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
             var list = sender as TopNavView;
             if (list == null)
@@ -2955,7 +2955,7 @@ namespace Telegram.Views
                 return;
             }
 
-            if (e.Items.Count > 1 || (e.Items[0] is ChatFilterViewModel filter && filter.ChatList is ChatListMain && !_clientService.IsPremium))
+            if (e.Items.Count > 1 || (e.Items[0] is ChatFolderViewModel folder && folder.ChatList is ChatListMain && !_clientService.IsPremium))
             {
                 list.CanReorderItems = false;
                 e.Cancel = true;
@@ -2964,7 +2964,7 @@ namespace Telegram.Views
             {
                 var minimum = _clientService.IsPremium ? 2 : 3;
 
-                var items = ViewModel?.Filters;
+                var items = ViewModel?.Folders;
                 if (items == null || items.Count < minimum)
                 {
                     list.CanReorderItems = false;
@@ -2977,14 +2977,14 @@ namespace Telegram.Views
             }
         }
 
-        private void ChatFilters_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+        private void ChatFolders_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
         {
             sender.CanReorderItems = false;
 
-            if (args.DropResult == DataPackageOperation.Move && args.Items.Count == 1 && args.Items[0] is ChatFilterViewModel filter)
+            if (args.DropResult == DataPackageOperation.Move && args.Items.Count == 1 && args.Items[0] is ChatFolderViewModel folder)
             {
-                var items = ViewModel?.Filters;
-                var index = items.IndexOf(filter);
+                var items = ViewModel?.Folders;
+                var index = items.IndexOf(folder);
 
                 var compare = items[index > 0 ? index - 1 : index + 1];
                 if (compare.ChatList is ChatListMain && index > 0 && !_clientService.IsPremium)
@@ -2994,23 +2994,23 @@ namespace Telegram.Views
 
                 if (compare.ChatList is ChatListMain && !_clientService.IsPremium)
                 {
-                    ViewModel.Handle(new UpdateChatFilters(ViewModel.ClientService.ChatFilters, 0));
+                    ViewModel.Handle(new UpdateChatFolders(ViewModel.ClientService.ChatFolders, 0));
                 }
                 else
                 {
-                    var filters = items.Where(x => x.ChatList is ChatListFilter).Select(x => x.ChatFilterId).ToArray();
+                    var folders = items.Where(x => x.ChatList is ChatListFolder).Select(x => x.ChatFolderId).ToArray();
                     var main = _clientService.IsPremium ? items.IndexOf(items.FirstOrDefault(x => x.ChatList is ChatListMain)) : 0;
 
-                    ViewModel.ClientService.Send(new ReorderChatFilters(filters, main));
+                    ViewModel.ClientService.Send(new ReorderChatFolders(folders, main));
                 }
             }
         }
 
-        private void ChatFilter_ItemClick(object sender, ItemClickEventArgs e)
+        private void ChatFolders_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is ChatFilterViewModel chatFilter)
+            if (e.ClickedItem is ChatFolderViewModel folder)
             {
-                var index = int.MaxValue - chatFilter.ChatFilterId;
+                var index = int.MaxValue - folder.ChatFolderId;
                 if (index >= 0 && index <= 3)
                 {
                     SetPivotIndex(index);
@@ -3077,7 +3077,7 @@ namespace Telegram.Views
             Root.IsPaneOpen = true;
         }
 
-        private void ChatFilters_ChoosingGroupHeaderContainer(ListViewBase sender, ChoosingGroupHeaderContainerEventArgs args)
+        private void ChatFolders_ChoosingGroupHeaderContainer(ListViewBase sender, ChoosingGroupHeaderContainerEventArgs args)
         {
             args.GroupHeaderContainer = new ListViewHeaderItem
             {
@@ -3155,34 +3155,34 @@ namespace Telegram.Views
             flyout.CreateFlyoutItem(DialogArchive_Loaded, viewModel.ArchiveChat, chat, chat.Positions.Any(x => x.List is ChatListArchive) ? Strings.Unarchive : Strings.Archive, new FontIcon { Glyph = Icons.Archive });
             flyout.CreateFlyoutItem(DialogPin_Loaded, viewModel.PinChat, chat, position.IsPinned ? Strings.UnpinFromTop : Strings.PinToTop, new FontIcon { Glyph = position.IsPinned ? Icons.PinOff : Icons.Pin });
 
-            if (viewModel.Items.ChatList is ChatListFilter chatListFilter)
+            if (viewModel.Items.ChatList is ChatListFolder chatListFolder)
             {
-                flyout.CreateFlyoutItem(viewModel.RemoveFromFolder, (chatListFilter.ChatFilterId, chat), Strings.FilterRemoveFrom, new FontIcon { Glyph = Icons.FolderMove });
+                flyout.CreateFlyoutItem(viewModel.RemoveFromFolder, (chatListFolder.ChatFolderId, chat), Strings.FilterRemoveFrom, new FontIcon { Glyph = Icons.FolderMove });
             }
             else
             {
                 var response = await ViewModel.ClientService.SendAsync(new GetChatListsToAddChat(chat.Id)) as ChatLists;
                 if (response != null && response.ChatListsValue.Count > 0)
                 {
-                    var filters = ViewModel.ClientService.ChatFilters;
+                    var folders = ViewModel.ClientService.ChatFolders;
 
                     var item = new MenuFlyoutSubItem();
                     item.Text = Strings.FilterAddTo;
                     item.Icon = new FontIcon { Glyph = Icons.FolderAdd, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
 
-                    foreach (var chatList in response.ChatListsValue.OfType<ChatListFilter>())
+                    foreach (var chatList in response.ChatListsValue.OfType<ChatListFolder>())
                     {
-                        var filter = filters.FirstOrDefault(x => x.Id == chatList.ChatFilterId);
-                        if (filter != null)
+                        var folder = folders.FirstOrDefault(x => x.Id == chatList.ChatFolderId);
+                        if (folder != null)
                         {
-                            var icon = Icons.ParseFilter(filter.IconName);
-                            var glyph = Icons.FilterToGlyph(icon);
+                            var icon = Icons.ParseFolder(folder.Icon.Name);
+                            var glyph = Icons.FolderToGlyph(icon);
 
-                            item.CreateFlyoutItem(viewModel.AddToFolder, (filter.Id, chat), filter.Title, new FontIcon { Glyph = glyph.Item1 });
+                            item.CreateFlyoutItem(viewModel.AddToFolder, (folder.Id, chat), folder.Title, new FontIcon { Glyph = glyph.Item1 });
                         }
                     }
 
-                    if (filters.Count < 10 && item.Items.Count > 0)
+                    if (folders.Count < 10 && item.Items.Count > 0)
                     {
                         item.CreateFlyoutSeparator();
                         item.CreateFlyoutItem(viewModel.CreateFolder, chat, Strings.CreateNewFilter, new FontIcon { Glyph = Icons.Add });

@@ -75,11 +75,11 @@ namespace Telegram.Views.Premium.Popups
                     titleValue = Strings.CaptionsLimitTitle;
                     subtitleValue = Strings.CaptionsLimitSubtitle;
                     break;
-                case PremiumLimitTypeChatFilterChosenChatCount:
+                case PremiumLimitTypeChatFolderChosenChatCount:
                     titleValue = Strings.ChatPerFolderLimitTitle;
                     subtitleValue = Strings.ChatPerFolderLimitSubtitle;
                     break;
-                case PremiumLimitTypeChatFilterCount:
+                case PremiumLimitTypeChatFolderCount:
                     titleValue = Strings.FoldersLimitTitle;
                     subtitleValue = Strings.FoldersLimitSubtitle;
                     break;

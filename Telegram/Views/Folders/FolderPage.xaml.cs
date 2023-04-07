@@ -34,9 +34,9 @@ namespace Telegram.Views.Folders
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
             var content = args.Element as UserCell;
-            var element = content.DataContext as ChatFilterElement;
+            var element = content.DataContext as ChatFolderElement;
 
-            content.UpdateChatFilter(ViewModel.ClientService, element);
+            content.UpdateChatFolder(ViewModel.ClientService, element);
         }
 
         private void Include_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -50,7 +50,7 @@ namespace Telegram.Views.Folders
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var chat = element.DataContext as ChatFilterElement;
+            var chat = element.DataContext as ChatFolderElement;
 
             flyout.CreateFlyoutItem(viewModel.RemoveIncluded, chat, Strings.StickersRemove, new FontIcon { Glyph = Icons.Delete });
 
@@ -68,7 +68,7 @@ namespace Telegram.Views.Folders
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var chat = element.DataContext as ChatFilterElement;
+            var chat = element.DataContext as ChatFolderElement;
 
             flyout.CreateFlyoutItem(viewModel.RemoveExcluded, chat, Strings.StickersRemove, new FontIcon { Glyph = Icons.Delete });
 
@@ -77,7 +77,7 @@ namespace Telegram.Views.Folders
 
         private void Emoji_Click(object sender, RoutedEventArgs e)
         {
-            EmojiList.ItemsSource = Icons.Filters;
+            EmojiList.ItemsSource = Icons.Folders;
             EmojiList.SelectedItem = ViewModel.Icon;
 
             var flyout = FlyoutBase.GetAttachedFlyout(EmojiButton);
@@ -88,7 +88,7 @@ namespace Telegram.Views.Folders
         {
             FlyoutBase.GetAttachedFlyout(EmojiButton).Hide();
 
-            if (e.ClickedItem is ChatFilterIcon icon)
+            if (e.ClickedItem is ChatFolderIcon2 icon)
             {
                 ViewModel.SetIcon(icon);
             }
@@ -101,22 +101,22 @@ namespace Telegram.Views.Folders
                 return;
             }
 
-            if (args.ItemContainer.ContentTemplateRoot is FontIcon textBlock && args.Item is ChatFilterIcon icon)
+            if (args.ItemContainer.ContentTemplateRoot is FontIcon textBlock && args.Item is ChatFolderIcon2 icon)
             {
-                textBlock.Glyph = Icons.FilterToGlyph(icon).Item1;
+                textBlock.Glyph = Icons.FolderToGlyph(icon).Item1;
             }
         }
 
         #region Binding
 
-        private string ConvertTitle(ChatFilter filter)
+        private string ConvertTitle(ChatFolder folder)
         {
-            return filter == null ? Strings.FilterNew : filter.Title;
+            return folder == null ? Strings.FilterNew : folder.Title;
         }
 
-        private string ConvertEmoji(ChatFilterIcon icon)
+        private string ConvertEmoji(ChatFolderIcon2 icon)
         {
-            return Icons.FilterToGlyph(icon).Item1;
+            return Icons.FolderToGlyph(icon).Item1;
         }
 
         #endregion

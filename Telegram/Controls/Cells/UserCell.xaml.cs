@@ -607,48 +607,48 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        public void UpdateChatFilter(IClientService clientService, ChatFilterElement element)
+        public void UpdateChatFolder(IClientService clientService, ChatFolderElement element)
         {
             UpdateStyleNoSubtitle();
 
-            if (element is FilterChat chat)
+            if (element is FolderChat chat)
             {
                 TitleLabel.Text = clientService.GetTitle(chat.Chat);
                 Photo.SetChat(clientService, chat.Chat, 36);
                 Identity.SetStatus(clientService, chat.Chat);
             }
-            else if (element is FilterFlag flag)
+            else if (element is FolderFlag flag)
             {
                 switch (flag.Flag)
                 {
-                    case ChatListFilterFlags.IncludeContacts:
+                    case ChatListFolderFlags.IncludeContacts:
                         TitleLabel.Text = Strings.FilterContacts;
                         break;
-                    case ChatListFilterFlags.IncludeNonContacts:
+                    case ChatListFolderFlags.IncludeNonContacts:
                         TitleLabel.Text = Strings.FilterNonContacts;
                         break;
-                    case ChatListFilterFlags.IncludeGroups:
+                    case ChatListFolderFlags.IncludeGroups:
                         TitleLabel.Text = Strings.FilterGroups;
                         break;
-                    case ChatListFilterFlags.IncludeChannels:
+                    case ChatListFolderFlags.IncludeChannels:
                         TitleLabel.Text = Strings.FilterChannels;
                         break;
-                    case ChatListFilterFlags.IncludeBots:
+                    case ChatListFolderFlags.IncludeBots:
                         TitleLabel.Text = Strings.FilterBots;
                         break;
 
-                    case ChatListFilterFlags.ExcludeMuted:
+                    case ChatListFolderFlags.ExcludeMuted:
                         TitleLabel.Text = Strings.FilterMuted;
                         break;
-                    case ChatListFilterFlags.ExcludeRead:
+                    case ChatListFolderFlags.ExcludeRead:
                         TitleLabel.Text = Strings.FilterRead;
                         break;
-                    case ChatListFilterFlags.ExcludeArchived:
+                    case ChatListFolderFlags.ExcludeArchived:
                         TitleLabel.Text = Strings.FilterArchived;
                         break;
                 }
 
-                Photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFilterIcon(flag.Flag), (int)flag.Flag, 36);
+                Photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFolderIcon(flag.Flag), (int)flag.Flag, 36);
             }
         }
 

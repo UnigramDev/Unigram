@@ -13,11 +13,11 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class ChatFilterCell : UserControl
+    public sealed partial class ChatFolderCell : UserControl
     {
-        public ChatFilterViewModel ViewModel => DataContext as ChatFilterViewModel;
+        public ChatFolderViewModel ViewModel => DataContext as ChatFolderViewModel;
 
-        public ChatFilterCell()
+        public ChatFolderCell()
         {
             InitializeComponent();
             DataContextChanged += OnDataContextChanged;

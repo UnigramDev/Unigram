@@ -61,7 +61,7 @@ namespace Telegram.Services
 
         ReactionType DefaultReaction { get; }
 
-        IList<ChatFilterInfo> ChatFilters { get; }
+        IList<ChatFolderInfo> ChatFolders { get; }
         int MainChatListPosition { get; }
 
         IList<string> AnimationSearchEmojis { get; }
@@ -219,7 +219,7 @@ namespace Telegram.Services
 
         private ReactionType _defaultReaction;
 
-        private IList<ChatFilterInfo> _chatFilters = new ChatFilterInfo[0];
+        private IList<ChatFolderInfo> _chatFolders = new ChatFolderInfo[0];
         private int _mainChatListPosition = 0;
 
         private IList<string> _reactions = new List<string>();
@@ -625,7 +625,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             _installedMaskSets = null;
             _installedEmojiSets = null;
 
-            _chatFilters = new ChatFilterInfo[0];
+            _chatFolders = new ChatFolderInfo[0];
 
             _animationSearchParameters = null;
 
@@ -873,9 +873,9 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             {
                 return 1;
             }
-            else if (chatList is ChatListFilter filter)
+            else if (chatList is ChatListFolder folder)
             {
-                return filter.ChatFilterId;
+                return folder.ChatFolderId;
             }
 
             return -1;
@@ -907,7 +907,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public ReactionType DefaultReaction => _defaultReaction;
 
-        public IList<ChatFilterInfo> ChatFilters => _chatFilters;
+        public IList<ChatFolderInfo> ChatFolders => _chatFolders;
 
         public int MainChatListPosition => _mainChatListPosition;
 
@@ -1661,10 +1661,10 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     Monitor.Exit(value);
                 }
             }
-            else if (update is UpdateChatFilters updateChatFilters)
+            else if (update is UpdateChatFolders updateChatFolders)
             {
-                _chatFilters = updateChatFilters.ChatFilters.ToList();
-                _mainChatListPosition = updateChatFilters.MainChatListPosition;
+                _chatFolders = updateChatFolders.ChatFolders.ToList();
+                _mainChatListPosition = updateChatFolders.MainChatListPosition;
             }
             else if (update is UpdateChatHasScheduledMessages updateChatHasScheduledMessages)
             {

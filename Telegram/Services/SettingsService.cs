@@ -43,7 +43,6 @@ namespace Telegram.Services
         EmojiSettings Emoji { get; }
         AutoDownloadSettings AutoDownload { get; set; }
         AppearanceSettings Appearance { get; }
-        FiltersSettings Filters { get; }
         PasscodeLockSettings PasscodeLock { get; }
         PlaybackSettings Playback { get; }
         VoIPSettings VoIP { get; }
@@ -306,9 +305,6 @@ namespace Telegram.Services
 
         private static DiagnosticsSettings _diagnostics;
         public DiagnosticsSettings Diagnostics => _diagnostics ??= new DiagnosticsSettings();
-
-        private FiltersSettings _filters;
-        public FiltersSettings Filters => _filters ??= new FiltersSettings(_own);
 
         private static PasscodeLockSettings _passcodeLock;
         public PasscodeLockSettings PasscodeLock => _passcodeLock ??= new PasscodeLockSettings();

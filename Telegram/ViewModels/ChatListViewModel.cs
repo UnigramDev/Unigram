@@ -542,62 +542,62 @@ namespace Telegram.ViewModels
 
         #region Folder add
 
-        public async void AddToFolder((int ChatFilterId, Chat Chat) data)
+        public async void AddToFolder((int ChatFolderId, Chat Chat) data)
         {
-            var filter = await ClientService.SendAsync(new GetChatFilter(data.ChatFilterId)) as ChatFilter;
-            if (filter == null)
+            var folder = await ClientService.SendAsync(new GetChatFolder(data.ChatFolderId)) as ChatFolder;
+            if (folder == null)
             {
                 return;
             }
 
-            var total = filter.IncludedChatIds.Count + filter.PinnedChatIds.Count + 1;
+            var total = folder.IncludedChatIds.Count + folder.PinnedChatIds.Count + 1;
             if (total > 99)
             {
                 await ShowPopupAsync(Strings.FilterAddToAlertFullText, Strings.FilterAddToAlertFullTitle, Strings.OK);
                 return;
             }
 
-            if (filter.IncludedChatIds.Contains(data.Chat.Id))
+            if (folder.IncludedChatIds.Contains(data.Chat.Id))
             {
                 // Warn user about chat being already in the folder?
                 return;
             }
 
-            filter.ExcludedChatIds.Remove(data.Chat.Id);
-            filter.IncludedChatIds.Add(data.Chat.Id);
+            folder.ExcludedChatIds.Remove(data.Chat.Id);
+            folder.IncludedChatIds.Add(data.Chat.Id);
 
-            ClientService.Send(new EditChatFilter(data.ChatFilterId, filter));
+            ClientService.Send(new EditChatFolder(data.ChatFolderId, folder));
         }
 
         #endregion
 
         #region Folder remove
 
-        public async void RemoveFromFolder((int ChatFilterId, Chat Chat) data)
+        public async void RemoveFromFolder((int ChatFolderId, Chat Chat) data)
         {
-            var filter = await ClientService.SendAsync(new GetChatFilter(data.ChatFilterId)) as ChatFilter;
-            if (filter == null)
+            var folder = await ClientService.SendAsync(new GetChatFolder(data.ChatFolderId)) as ChatFolder;
+            if (folder == null)
             {
                 return;
             }
 
-            var total = filter.ExcludedChatIds.Count + 1;
+            var total = folder.ExcludedChatIds.Count + 1;
             if (total > 99)
             {
                 await ShowPopupAsync(Strings.FilterRemoveFromAlertFullText, Strings.AppName, Strings.OK);
                 return;
             }
 
-            if (filter.ExcludedChatIds.Contains(data.Chat.Id))
+            if (folder.ExcludedChatIds.Contains(data.Chat.Id))
             {
                 // Warn user about chat being already in the folder?
                 return;
             }
 
-            filter.IncludedChatIds.Remove(data.Chat.Id);
-            filter.ExcludedChatIds.Add(data.Chat.Id);
+            folder.IncludedChatIds.Remove(data.Chat.Id);
+            folder.ExcludedChatIds.Add(data.Chat.Id);
 
-            ClientService.Send(new EditChatFilter(data.ChatFilterId, filter));
+            ClientService.Send(new EditChatFolder(data.ChatFolderId, folder));
         }
 
         #endregion
@@ -611,7 +611,7 @@ namespace Telegram.ViewModels
 
         #endregion
 
-        public async void SetFilter(ChatList chatList)
+        public async void SetFolder(ChatList chatList)
         {
             await Items.ReloadAsync(chatList);
             //Aggregator.Unsubscribe(Items);
@@ -970,7 +970,7 @@ namespace Telegram.ViewModels
 namespace Telegram.Td.Api
 {
     [Flags]
-    public enum ChatListFilterFlags
+    public enum ChatListFolderFlags
     {
         IncludeContacts,
         IncludeNonContacts,

@@ -811,8 +811,6 @@ namespace Telegram.Controls.Cells
 
             var position = chat.GetPosition(chatList);
 
-            //UpdateViewState(chat, ChatFilterMode.None, false, false);
-
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
             UpdateChatType(chat);
