@@ -1323,7 +1323,7 @@ namespace Telegram.Controls.Cells
             }
             else if (message.Content is MessageCall call)
             {
-                return Text("\U0001F4DE " + call.ToOutcomeText(message.IsOutgoing));
+                return Text("\u260E " + call.ToOutcomeText(message.IsOutgoing));
             }
             else if (message.Content is MessageUnsupported)
             {
@@ -1375,7 +1375,6 @@ namespace Telegram.Controls.Cells
             }
 
             var format = "{0}: \u200B";
-            var result = string.Empty;
 
             if (ShowFrom(_clientService, chat, message, out User fromUser, out Chat fromChat))
             {
@@ -1416,127 +1415,6 @@ namespace Telegram.Controls.Cells
             }
 
             return string.Empty;
-
-            static string GetCaption(string caption)
-            {
-                return string.IsNullOrEmpty(caption) ? string.Empty : ", \u200B";
-            }
-
-            if (message.Content is MessageGame gameMedia)
-            {
-                return result + "\U0001F3AE " + gameMedia.Game.Title;
-            }
-            else if (message.Content is MessageVideoNote videoNote)
-            {
-                if (videoNote.VideoNote.Minithumbnail == null || videoNote.IsSecret)
-                {
-                    return result + "\U0001F4F9 " + Strings.AttachRound;
-                }
-
-                return result + Strings.AttachRound;
-            }
-            else if (message.Content is MessageSticker sticker)
-            {
-                if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
-                {
-                    return result + Strings.AttachSticker;
-                }
-
-                return result + $"{sticker.Sticker.Emoji} {Strings.AttachSticker}";
-            }
-            else if (message.Content is MessageVoiceNote voiceNote)
-            {
-                if (voiceNote.Caption.Text.Length > 0)
-                {
-                    return result + "\U0001F3A4 ";
-                }
-
-                return result + "\U0001F3A4 " + Strings.AttachAudio;
-            }
-            else if (message.Content is MessageVideo video)
-            {
-                if (video.Video.Minithumbnail == null || video.IsSecret)
-                {
-                    if (video.Caption.Text.Length > 0)
-                    {
-                        return result + "\U0001F4F9 ";
-                    }
-
-                    return result + "\U0001F4F9 " + Strings.AttachVideo;
-                }
-                else if (video.Caption.Text.Length > 0)
-                {
-                    return result;
-                }
-
-                return result + Strings.AttachVideo;
-            }
-            else if (message.Content is MessageAnimation animation)
-            {
-                return result + Strings.AttachGif + GetCaption(animation.Caption.Text);
-            }
-            else if (message.Content is MessageAudio audio)
-            {
-                var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
-                var title = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
-
-                if (performer == null || title == null)
-                {
-                    return result + Strings.AttachMusic + GetCaption(audio.Caption.Text);
-                }
-                else
-                {
-                    return result + $"\U0001F3B5 {performer} - {title}" + GetCaption(audio.Caption.Text);
-                }
-            }
-            else if (message.Content is MessageDocument document)
-            {
-                if (string.IsNullOrEmpty(document.Document.FileName))
-                {
-                    return result + Strings.AttachDocument + GetCaption(document.Caption.Text);
-                }
-
-                return result + "\U0001F4CE " + document.Document.FileName + GetCaption(document.Caption.Text);
-            }
-            else if (message.Content is MessageInvoice invoice)
-            {
-                if (invoice.ExtendedMedia != null && invoice.HasCaption())
-                {
-                    return result + "\U0001F4CB";
-                }
-
-                return result + "\U0001F4CB " + invoice.Title;
-            }
-            else if (message.Content is MessageContact)
-            {
-                return result + "\U0001F464 " + Strings.AttachContact;
-            }
-            else if (message.Content is MessageLocation location)
-            {
-                return result + "\U0001F4CD " + (location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation);
-            }
-            else if (message.Content is MessageVenue)
-            {
-                return result + "\U0001F4CD " + Strings.AttachLocation;
-            }
-            else if (message.Content is MessagePhoto photo)
-            {
-                return result + (photo.IsSecret ? Strings.AttachDestructingPhoto : Strings.AttachPhoto) + GetCaption(photo.Caption.Text);
-            }
-            else if (message.Content is MessagePoll poll)
-            {
-                return result + "\U0001F4CA " + poll.Poll.Question;
-            }
-            else if (message.Content is MessageCall call)
-            {
-                return result + call.ToOutcomeText(message.IsOutgoing);
-            }
-            else if (message.Content is MessageUnsupported)
-            {
-                return result + Strings.UnsupportedAttachment;
-            }
-
-            return result;
         }
 
         private bool ShowFrom(IClientService clientService, Chat chat, Message message, out User senderUser, out Chat senderChat)
@@ -2346,13 +2224,13 @@ namespace Telegram.Controls.Cells
 
             var line2RightPadding = Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width);
 
-            var line2Left = 12 + MinithumbnailPanel.DesiredSize.Width;
+            var line2Left = 12d;
             var line2Right = availableSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
 
             var briefWidth = Math.Max(0, line2Right - line2Left);
 
             FromLabel.Measure(new Size(briefWidth, availableSize.Height));
-            BriefLabel.Measure(new Size(briefWidth - FromLabel.DesiredSize.Width, availableSize.Height));
+            BriefLabel.Measure(new Size(briefWidth - FromLabel.DesiredSize.Width - MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
             CustomEmoji?.Measure(new Size(briefWidth, availableSize.Height));
             TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
 

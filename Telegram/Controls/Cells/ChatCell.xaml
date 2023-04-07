@@ -120,7 +120,7 @@
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"
                                        Style="{StaticResource BodyTextBlockStyle}"
-                                       FontFamily="{ThemeResource EmojiThemeFontFamily}" />
+                                       FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}" />
                             <controls:IdentityIcon x:Name="Identity"
                                                    VerticalAlignment="Bottom"
                                                    Margin="4,0,0,0"
