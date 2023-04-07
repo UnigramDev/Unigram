@@ -28,6 +28,7 @@
             <controls:SettingsPanel>
                 <controls:HeaderedControl>
                     <Grid Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource SettingsItemBorderBrush}"
                           Padding="12,8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -40,39 +41,6 @@
                                                      IsEnabled="False"
                                                      Height="96"
                                                      Width="96" />
-                            <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
-                                    CornerRadius="48"
-                                    Height="96"
-                                    Width="96" />
-
-                            <controls:GlyphButton Glyph="&#xE722;"
-                                                  AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                                                  Style="{StaticResource RoundGlyphButtonStyle}"
-                                                  HorizontalAlignment="Center"
-                                                  RequestedTheme="Dark"
-                                                  CornerRadius="48"
-                                                  Height="96"
-                                                  Width="96"
-                                                  FontSize="36">
-                                <Button.Flyout>
-                                    <MenuFlyout Placement="BottomEdgeAlignedLeft">
-                                        <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"
-                                                        Click="{x:Bind ViewModel.SetPhoto}">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xEB9F;"
-                                                          Style="{StaticResource DefaultFontIconStyle}" />
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem Text="{CustomResource StickersName}"
-                                                        Click="{x:Bind ViewModel.CreatePhoto}">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon Glyph="&#xF4AA;"
-                                                          Style="{StaticResource DefaultFontIconStyle}" />
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                    </MenuFlyout>
-                                </Button.Flyout>
-                            </controls:GlyphButton>
                         </Grid>
 
                         <TextBox x:Name="TitleLabel"
@@ -82,6 +50,28 @@
                                  VerticalAlignment="Center"
                                  Grid.Column="1" />
                     </Grid>
+                    <controls:BadgeButton Content="{CustomResource ChatSetNewPhoto}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE9FE;">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                <MenuFlyoutItem Text="{CustomResource ChoosePhotoOrVideo}"
+                                                Click="{x:Bind ViewModel.SetPhoto}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xEB9F;"
+                                                  Style="{StaticResource DefaultFontIconStyle}" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                                <MenuFlyoutItem Text="{CustomResource StickersName}"
+                                                Click="{x:Bind ViewModel.CreatePhoto}">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xF4AA;"
+                                                  Style="{StaticResource DefaultFontIconStyle}" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </controls:BadgeButton>
                     <TextBox x:Name="About"
                              Text="{x:Bind ViewModel.About, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              FontFamily="{ThemeResource EmojiThemeFontFamily}"
