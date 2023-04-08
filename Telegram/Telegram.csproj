@@ -621,6 +621,7 @@
     <Compile Include="ViewModels\Authorization\AuthorizationRecoveryViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationRegistrationViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationViewModel.cs" />
+    <Compile Include="ViewModels\Folders\FolderShareViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
     <Compile Include="ViewModels\TopicListViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
@@ -711,6 +712,9 @@
     </Compile>
     <Compile Include="Views\Chats\MessageStatisticsPage.xaml.cs">
       <DependentUpon>MessageStatisticsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Folders\FolderSharePage.xaml.cs">
+      <DependentUpon>FolderSharePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\SelectedItemsBinder.cs" />
     <Compile Include="Views\Payments\PaymentAddressPopup.xaml.cs">
@@ -1433,6 +1437,7 @@
     <Content Include="Assets\Animations\AuthorizationStateWaitFragment.tgs" />
     <Content Include="Assets\Animations\AutoDelete.tgs" />
     <Content Include="Assets\Animations\Premium.tgs" />
+    <Content Include="Assets\Animations\ShareFolder.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -2037,6 +2042,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Chats\MessageStatisticsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Folders\FolderSharePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

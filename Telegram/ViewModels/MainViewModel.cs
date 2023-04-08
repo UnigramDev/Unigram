@@ -558,7 +558,7 @@ namespace Telegram.ViewModels
             ChatFolderId = info.Id;
 
             _title = info.Title;
-            _icon = Icons.ParseFolder(info.Icon.Name);
+            _icon = Icons.ParseFolder(info.Icon);
 
             var glyph = Icons.FolderToGlyph(_icon);
             _iconGlyph = glyph.Item1;
@@ -583,7 +583,7 @@ namespace Telegram.ViewModels
         public void Update(ChatFolderInfo info)
         {
             Title = info.Title;
-            Icon = Icons.ParseFolder(info.Icon.Name);
+            Icon = Icons.ParseFolder(info.Icon);
 
             var glyph = Icons.FolderToGlyph(_icon);
             IconGlyph = glyph.Item1;

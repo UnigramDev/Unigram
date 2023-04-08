@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Converters;
@@ -31,7 +32,7 @@ namespace Telegram.Views.Folders
             TitleField.Focus(FocusState.Keyboard);
         }
 
-        private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
+        private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
         {
             var content = args.Element as UserCell;
             var element = content.DataContext as ChatFolderElement;
@@ -119,6 +120,42 @@ namespace Telegram.Views.Folders
             return Icons.FolderToGlyph(icon).Item1;
         }
 
+        private Visibility ConvertExcludeVisibility(int linksCount)
+        {
+            return linksCount > 0 ? Visibility.Collapsed : Visibility.Visible;
+        }
+
         #endregion
+
+        private void Link_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
+        {
+            var button = args.Element as Button;
+            var link = button.DataContext as ChatFolderInviteLink;
+
+            var content = button.Content as Grid;
+            var title = content.Children[1] as TextBlock;
+            var subtitle = content.Children[2] as TextBlock;
+
+            title.Text = string.IsNullOrEmpty(link.Name) ? link.InviteLink : link.Name;
+            subtitle.Text = Locale.Declension(Strings.R.FilterInviteChats, link.ChatIds.Count);
+        }
+
+        private void Link_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+
+        }
+
+        private void Share_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Link_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is ChatFolderInviteLink link)
+            {
+                ViewModel.OpenLink(link);
+            }
+        }
     }
 }

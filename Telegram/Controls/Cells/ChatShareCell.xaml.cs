@@ -188,6 +188,47 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        public void UpdateSharedChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var chat = args.Item as Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            args.ItemContainer.Tag = args.Item;
+            Tag = args.Item;
+
+            if (args.Phase == 0)
+            {
+                if (chat.Type is ChatTypeSecret)
+                {
+                    TitleLabel.Foreground = App.Current.Resources["TelegramSecretChatForegroundBrush"] as Brush;
+                    TitleLabel.Text = Icons.LockClosedFilled14 + "\u00A0" + clientService.GetTitle(chat);
+                }
+                else
+                {
+                    TitleLabel.ClearValue(TextBlock.ForegroundProperty);
+                    TitleLabel.Text = clientService.GetTitle(chat);
+                }
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
+
+                SelectionOutline.RadiusX = Photo.Shape == ProfilePictureShape.Ellipse ? 18 : 9;
+                SelectionOutline.RadiusY = Photo.Shape == ProfilePictureShape.Ellipse ? 18 : 9;
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
         #region Stroke
 
         private long _strokeToken;

@@ -305,22 +305,22 @@ namespace Telegram.Converters
 
         public static ChatFolderIcon2 ParseFolder(ChatFolder folder)
         {
-            var iconName = folder.Icon.Name;
-            if (string.IsNullOrEmpty(iconName))
+            var icon = folder.Icon;
+            if (string.IsNullOrEmpty(icon?.Name))
             {
-                var text = Client.Execute(new GetChatFolderDefaultIconName(folder)) as Text;
+                var text = Client.Execute(new GetChatFolderDefaultIconName(folder)) as ChatFolderIcon;
                 if (text != null)
                 {
-                    iconName = text.TextValue;
+                    icon = text;
                 }
             }
 
-            return ParseFolder(iconName);
+            return ParseFolder(icon);
         }
 
-        public static ChatFolderIcon2 ParseFolder(string iconName)
+        public static ChatFolderIcon2 ParseFolder(ChatFolderIcon icon)
         {
-            if (Enum.TryParse(iconName, out ChatFolderIcon2 result))
+            if (icon != null && Enum.TryParse(icon.Name, out ChatFolderIcon2 result))
             {
                 return result;
             }

@@ -14,6 +14,7 @@ using Telegram.Converters;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Folders;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml.Navigation;
 
@@ -26,6 +27,8 @@ namespace Telegram.ViewModels.Folders
         {
             Include = new MvxObservableCollection<ChatFolderElement>();
             Exclude = new MvxObservableCollection<ChatFolderElement>();
+
+            Links = new MvxObservableCollection<ChatFolderInviteLink>();
 
             Include.CollectionChanged += OnCollectionChanged;
             Exclude.CollectionChanged += OnCollectionChanged;
@@ -49,7 +52,7 @@ namespace Telegram.ViewModels.Folders
                 {
                     Id = id;
                     Folder = result;
-                    Folder = result;
+                    folder = result;
                 }
                 else
                 {
@@ -78,10 +81,12 @@ namespace Telegram.ViewModels.Folders
 
             _pinnedChatIds = folder.PinnedChatIds;
 
-            _iconPicked = !string.IsNullOrEmpty(folder.Icon.Name);
+            _iconPicked = !string.IsNullOrEmpty(folder.Icon?.Name);
 
             Title = folder.Title;
             Icon = Icons.ParseFolder(folder);
+
+            Links.Clear();
 
             Include.Clear();
             Exclude.Clear();
@@ -119,6 +124,7 @@ namespace Telegram.ViewModels.Folders
             }
 
             UpdateIcon();
+            UpdateLinks();
         }
 
         public int? Id { get; set; }
@@ -166,12 +172,24 @@ namespace Telegram.ViewModels.Folders
             Icon = Icons.ParseFolder(GetFolder());
         }
 
+        private async void UpdateLinks()
+        {
+            if (Id is int id)
+            {
+                var response = await ClientService.SendAsync(new GetChatFolderInviteLinks(id));
+                if (response is ChatFolderInviteLinks links)
+                {
+                    Links.ReplaceWith(links.InviteLinks);
+                }
+            }
+        }
+
         private IList<long> _pinnedChatIds;
 
         public MvxObservableCollection<ChatFolderElement> Include { get; private set; }
         public MvxObservableCollection<ChatFolderElement> Exclude { get; private set; }
 
-
+        public MvxObservableCollection<ChatFolderInviteLink> Links { get; private set; }
 
         public async void AddIncluded()
         {
@@ -344,6 +362,11 @@ namespace Telegram.ViewModels.Folders
             }
 
             return folder;
+        }
+
+        public void OpenLink(ChatFolderInviteLink link)
+        {
+            NavigationService.Navigate(typeof(FolderSharePage), Tuple.Create(Id.Value, link));
         }
     }
 

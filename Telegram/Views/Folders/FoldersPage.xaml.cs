@@ -30,13 +30,12 @@ namespace Telegram.Views.Folders
             var button = args.Element as BadgeButton;
             var folder = button.DataContext as ChatFolderInfo;
 
-            var icon = Icons.ParseFolder(folder.Icon.Name);
+            var icon = Icons.ParseFolder(folder.Icon);
 
             button.Glyph = Icons.FolderToGlyph(icon).Item1;
             button.Content = folder.Title;
-            button.Click += Edit_Click;
             button.CommandParameter = folder;
-            button.ChevronGlyph = args.Index < ViewModel.ClientService.Options.ChatFolderCountMax ? Icons.ChevronRight : Icons.LockClosed;
+            button.ChevronGlyph = args.Index > ViewModel.ClientService.Options.ChatFolderCountMax ? Icons.LockClosed : folder.HasMyInviteLinks ? Icons.Link : Icons.ChevronRight;
             button.BorderThickness = new Thickness(0, args.Index == 0 ? 0 : 1, 0, 0);
         }
 
@@ -62,7 +61,6 @@ namespace Telegram.Views.Folders
             button.Content = folder.Folder.Title;
             button.Badge = folder.Description;
 
-            add.Click += AddRecommended_Click;
             add.CommandParameter = folder;
         }
 

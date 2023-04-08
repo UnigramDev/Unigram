@@ -3175,7 +3175,7 @@ namespace Telegram.Views
                         var folder = folders.FirstOrDefault(x => x.Id == chatList.ChatFolderId);
                         if (folder != null)
                         {
-                            var icon = Icons.ParseFolder(folder.Icon.Name);
+                            var icon = Icons.ParseFolder(folder.Icon);
                             var glyph = Icons.FolderToGlyph(icon);
 
                             item.CreateFlyoutItem(viewModel.AddToFolder, (folder.Id, chat), folder.Title, new FontIcon { Glyph = glyph.Item1 });
