@@ -10,6 +10,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.Views.Settings.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -248,9 +249,9 @@ namespace Telegram.ViewModels.Users
             }
         }
 
-        public void ChangeUsername()
+        public async void ChangeUsername()
         {
-            // TODO: edit bot usernames
+            await NavigationService.ShowAsync(typeof(SettingsUsernamePopup), _userId);
         }
 
         public void EditCommands()
