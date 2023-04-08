@@ -15,12 +15,10 @@ namespace Telegram.Controls
         {
             base.OnApplyTemplate();
 
-            if (string.IsNullOrEmpty(Text))
+            if (Text.Length > 0)
             {
-                return;
+                GetTemplateChild("Headline");
             }
-
-            GetTemplateChild("Headline");
         }
 
         #region Text
@@ -32,7 +30,20 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register("Text", typeof(string), typeof(SettingsHeadline), new PropertyMetadata(string.Empty));
+            DependencyProperty.Register("Text", typeof(string), typeof(SettingsHeadline), new PropertyMetadata(string.Empty, OnTextChanged));
+
+        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((SettingsHeadline)d).OnTextChanged((string)e.NewValue);
+        }
+
+        private void OnTextChanged(string newValue)
+        {
+            if (newValue?.Length > 0)
+            {
+                GetTemplateChild("Headline");
+            }
+        }
 
         #endregion
 

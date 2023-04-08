@@ -3,6 +3,7 @@ using System.Numerics;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls
@@ -56,6 +57,19 @@ namespace Telegram.Controls
 
         #endregion
 
+        #region TextAlignment
+
+        public TextAlignment TextAlignment
+        {
+            get { return (TextAlignment)GetValue(TextAlignmentProperty); }
+            set { SetValue(TextAlignmentProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextAlignmentProperty =
+            DependencyProperty.Register("TextAlignment", typeof(TextAlignment), typeof(AnimatedTextBlock), new PropertyMetadata(TextAlignment.Left));
+
+        #endregion
+
         #region TextStyle
 
         public Style TextStyle
@@ -66,6 +80,19 @@ namespace Telegram.Controls
 
         public static readonly DependencyProperty TextStyleProperty =
             DependencyProperty.Register("TextStyle", typeof(Style), typeof(AnimatedTextBlock), new PropertyMetadata(null));
+
+        #endregion
+
+        #region
+
+        public TextWrapping TextWrapping
+        {
+            get { return (TextWrapping)GetValue(TextWrappingProperty); }
+            set { SetValue(TextWrappingProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextWrappingProperty =
+            DependencyProperty.Register("TextWrapping", typeof(TextWrapping), typeof(AnimatedTextBlock), new PropertyMetadata(TextWrapping.Wrap));
 
         #endregion
 
@@ -104,6 +131,18 @@ namespace Telegram.Controls
                 }
             }
 
+            // TODO: same should be done for j too
+            // What this does is to play the animation from the next space instead of right away
+            // Example use case is animating between "Select All" and "Deselect All"
+            if (TextWrapping == TextWrapping.WrapWholeWords && k > 0)
+            {
+                var next = newValue.IndexOf(' ', newValue.Length - k);
+                if (next >= newValue.Length - k)
+                {
+                    k = newValue.Length - next;
+                }
+            }
+
             var prefixLength = j;
             var suffixLength = newValue.Length - k;
 
@@ -112,16 +151,21 @@ namespace Telegram.Controls
 
             if (prevLength > 0 || nextLength > 0)
             {
-                var prefix = prefixLength > 0 ? newValue.Substring(0, prefixLength) + "\u200B" : string.Empty;
-                var nextValue = nextLength > 0 ? newValue.Substring(j, nextLength) + "\u200B" : string.Empty;
-                var prevValue = prevLength > 0 ? oldValue.Substring(j, prevLength) + "\u200B" : string.Empty;
-                var suffix = suffixLength > 0 ? newValue.Substring(suffixLength) : string.Empty;
+                var prefix = prefixLength > 0 ? newValue.Substring(0, prefixLength) : string.Empty;
+                var nextValue = nextLength > 0 ? newValue.Substring(j, nextLength) : string.Empty;
+                var prevValue = prevLength > 0 ? oldValue.Substring(j, prevLength) : string.Empty;
+                var suffix = k > 0 ? newValue.Substring(suffixLength) : string.Empty;
 
                 if (prefix.Length > 0 || suffix.Length > 0)
                 {
                     SizeChanged -= OnSizeChanged;
                     SizeChanged += OnSizeChanged;
                 }
+
+                prefix = prefix.Replace(" ", " \u200B");
+                nextValue = nextValue.Replace(" ", " \u200B");
+                prevValue = prevValue.Replace(" ", " \u200B");
+                suffix = suffix.Replace(" ", " \u200B");
 
                 ChangePartText(ref PrefixPart, nameof(PrefixPart), prefix);
                 ChangePartText(ref SuffixPart, nameof(SuffixPart), suffix);
@@ -179,7 +223,7 @@ namespace Telegram.Controls
             var newSize = e.NewSize.ToVector2();
             var oldSize = e.PreviousSize.ToVector2();
 
-            if (HorizontalAlignment == HorizontalAlignment.Left && SuffixPart != null)
+            if (TextAlignment == TextAlignment.Left && SuffixPart != null)
             {
                 var suffixVisual = ElementCompositionPreview.GetElementVisual(SuffixPart);
 
@@ -189,7 +233,7 @@ namespace Telegram.Controls
 
                 suffixVisual.StartAnimation("Translation.X", slide);
             }
-            else if (HorizontalAlignment == HorizontalAlignment.Right && PrefixPart != null)
+            else if (TextAlignment == TextAlignment.Right && PrefixPart != null)
             {
                 var prefixVisual = ElementCompositionPreview.GetElementVisual(PrefixPart);
 
@@ -201,6 +245,9 @@ namespace Telegram.Controls
             }
         }
 
+        private double _prefixRight;
+        private double _nextRight;
+
         protected override Size MeasureOverride(Size availableSize)
         {
             PrefixPart?.Measure(availableSize);
@@ -208,43 +255,58 @@ namespace Telegram.Controls
             PrevPart?.Measure(availableSize);
             NextPart?.Measure(availableSize);
 
-            var width = (PrefixPart?.DesiredSize.Width ?? 0)
-                + (SuffixPart?.DesiredSize.Width ?? 0)
-                + (NextPart?.DesiredSize.Width ?? 0);
-            var height = Math.Max(PrefixPart?.DesiredSize.Height ?? 0,
-                Math.Max(SuffixPart?.DesiredSize.Height ?? 0,
-                NextPart?.DesiredSize.Height ?? 0));
+            static double Width(TextBlock block, out double height)
+            {
+                if (block == null)
+                {
+                    height = 0;
+                    return 0;
+                }
+
+                // This is NOT optimal, but this control triggers a small amount of measures.
+                var rect = block.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
+                height = block.DesiredSize.Height;
+                return rect.Right;
+            }
+
+            _prefixRight = Width(PrefixPart, out double height1);
+            _nextRight = Width(NextPart, out double height2);
+
+            var width = Math.Round(_prefixRight + _nextRight + Width(SuffixPart, out double height3));
+            var height = Math.Max(height1, Math.Max(height2, height3));
 
             return new Size(width, height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var x = 0d;
-
-            if (PrefixPart != null)
-            {
-                PrefixPart.Arrange(new Rect(0, 0, PrefixPart.DesiredSize.Width, PrefixPart.DesiredSize.Height));
-                x += PrefixPart.DesiredSize.Width;
-            }
+            PrefixPart?.Arrange(new Rect(0, 0, PrefixPart.DesiredSize.Width, PrefixPart.DesiredSize.Height));
+            var width = PrefixPart?.DesiredSize.Width ?? 0;
 
             if (NextPart != null)
             {
-                NextPart.Arrange(new Rect(x, 0, NextPart.DesiredSize.Width, NextPart.DesiredSize.Height));
-
-                if (HorizontalAlignment == HorizontalAlignment.Right)
+                if (TextAlignment == TextAlignment.Right)
                 {
-                    PrevPart?.Arrange(new Rect(x + NextPart.DesiredSize.Width - PrevPart.DesiredSize.Width, 0, PrevPart.DesiredSize.Width, PrevPart.DesiredSize.Height));
+                    NextPart.Arrange(new Rect(width, 0, NextPart.DesiredSize.Width, NextPart.DesiredSize.Height));
+                    PrevPart?.Arrange(new Rect(width + NextPart.DesiredSize.Width - PrevPart.DesiredSize.Width, 0, PrevPart.DesiredSize.Width, PrevPart.DesiredSize.Height));
                 }
                 else
                 {
-                    PrevPart?.Arrange(new Rect(x, 0, PrevPart.DesiredSize.Width, PrevPart.DesiredSize.Height));
+                    NextPart.Arrange(new Rect(_prefixRight, 0, NextPart.DesiredSize.Width, NextPart.DesiredSize.Height));
+                    PrevPart?.Arrange(new Rect(_prefixRight, 0, PrevPart.DesiredSize.Width, PrevPart.DesiredSize.Height));
                 }
 
-                x += NextPart.DesiredSize.Width;
+                width += NextPart.DesiredSize.Width;
             }
 
-            SuffixPart?.Arrange(new Rect(x, 0, SuffixPart.DesiredSize.Width, SuffixPart.DesiredSize.Height));
+            if (TextAlignment == TextAlignment.Right)
+            {
+                SuffixPart?.Arrange(new Rect(width, 0, SuffixPart.DesiredSize.Width, SuffixPart.DesiredSize.Height));
+            }
+            else
+            {
+                SuffixPart?.Arrange(new Rect(_prefixRight + _nextRight, 0, SuffixPart.DesiredSize.Width, SuffixPart.DesiredSize.Height));
+            }
 
             return finalSize;
         }
