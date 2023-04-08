@@ -712,6 +712,7 @@
     <Compile Include="Views\Chats\MessageStatisticsPage.xaml.cs">
       <DependentUpon>MessageStatisticsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\SelectedItemsBinder.cs" />
     <Compile Include="Views\Payments\PaymentAddressPopup.xaml.cs">
       <DependentUpon>PaymentAddressPopup.xaml</DependentUpon>
     </Compile>
