@@ -39,17 +39,15 @@
                 <controls:HeaderedControl x:Name="UpdatePanel"
                                           x:Load="False"
                                           Footer="{x:Bind ViewModel.UpdateFooter, Mode=OneWay}">
-                    <controls:BadgeButton Content="{CustomResource UpdatesFrequency}">
-                        <controls:BadgeButton.Badge>
-                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.UpdateFrequencyOptions}"
-                                                       SelectedIndex="{x:Bind ViewModel.UpdateFrequency, Mode=TwoWay}"
-                                                       DisplayMemberPath="Text" />
-                        </controls:BadgeButton.Badge>
-                    </controls:BadgeButton>
+                    <CheckBox Content="{CustomResource InstallBetaUpdates}"
+                              IsChecked="{x:Bind ViewModel.InstallBetaUpdates, Mode=TwoWay}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <controls:BadgeButton Click="{x:Bind ViewModel.Update}"
                                           Content="{x:Bind ViewModel.UpdateText, Mode=OneWay}"
-                                          IsEnabled="{x:Bind ViewModel.IsUpdateEnabled, Mode=OneWay}" />
+                                          Glyph="{x:Bind ViewModel.UpdateGlyph, Mode=OneWay}"
+                                          IsEnabled="{x:Bind ViewModel.IsUpdateEnabled, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

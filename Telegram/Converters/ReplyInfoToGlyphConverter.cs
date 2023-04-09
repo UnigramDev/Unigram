@@ -13,6 +13,8 @@ namespace Telegram.Converters
 {
     public class Icons
     {
+        public const string ArrowSync = "\uE981";
+
         public const string LinkSide = "\uE9F8";
         public const string LinkSideBroken = "\uE9F7";
 

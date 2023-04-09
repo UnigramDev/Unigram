@@ -11624,6 +11624,17 @@ namespace Telegram
         }
         
         /// <summary>
+        /// Localized resource similar to "Install Beta Updates"
+        /// </summary>
+        public static string InstallBetaUpdates
+        {
+            get
+            {
+                return Resource.GetString("InstallBetaUpdates");
+            }
+        }
+        
+        /// <summary>
         /// Localized resource similar to "INSTANT VIEW"
         /// </summary>
         public static string InstantView

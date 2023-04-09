@@ -3374,6 +3374,9 @@ They can still join via an invite link as long as they are not on the Removed Us
   <data name="Info" xml:space="preserve">
     <value>Info</value>
   </data>
+  <data name="InstallBetaUpdates" xml:space="preserve">
+    <value>Install Beta Updates</value>
+  </data>
   <data name="InstantView" xml:space="preserve">
     <value>INSTANT VIEW</value>
   </data>

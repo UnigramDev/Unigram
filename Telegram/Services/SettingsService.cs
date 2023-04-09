@@ -102,7 +102,7 @@ namespace Telegram.Services
 
         string[] DoNotTranslate { get; set; }
 
-        string UpdateChannel { get; set; }
+        bool InstallBetaUpdates { get; set; }
 
         VoipDataSaving UseLessData { get; set; }
 
@@ -697,11 +697,11 @@ namespace Telegram.Services
             }
         }
 
-        private static string _updateChannel;
-        public string UpdateChannel
+        private static bool? _installBetaUpdates;
+        public bool InstallBetaUpdates
         {
-            get => _updateChannel ??= GetValueOrDefault<string>("UpdateChannel", "#update");
-            set => AddOrUpdateValue(ref _updateChannel, "UpdateChannel", value);
+            get => _installBetaUpdates ??= GetValueOrDefault("InstallBetaUpdates", true);
+            set => AddOrUpdateValue(ref _installBetaUpdates, "InstallBetaUpdates", value);
         }
 
         private int? _useLessData;

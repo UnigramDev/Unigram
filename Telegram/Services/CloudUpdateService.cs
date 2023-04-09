@@ -175,7 +175,7 @@ namespace Telegram.Services
                 return null;
             }
 
-            var updateChannel = SettingsService.Current.UpdateChannel;
+            var updateChannel = SettingsService.Current.InstallBetaUpdates ? "#beta" : "#update";
             var chatId = _chatId.Value;
 
             await _clientService.SendAsync(new OpenChat(chatId));
@@ -276,7 +276,7 @@ namespace Telegram.Services
                 return null;
             }
 
-            var updateChannel = SettingsService.Current.UpdateChannel;
+            var updateChannel = SettingsService.Current.InstallBetaUpdates ? "#beta" : "#update";
             var chatId = _chatId.Value;
 
             await _clientService.SendAsync(new OpenChat(chatId));
