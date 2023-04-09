@@ -53,8 +53,7 @@
     <ProjectGuid>c7232c9f-b812-4073-8185-d524b6425b71</ProjectGuid>
     <TargetPlatformVersion>10.0.22621.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <PackageCertificateKeyFile>Telegram_StoreKey.pfx</PackageCertificateKeyFile>
+    <DefaultLanguage>en</DefaultLanguage>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
@@ -65,7 +64,8 @@
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <EntryPointProjectUniqueName>..\Unigram\Telegram.csproj</EntryPointProjectUniqueName>
+    <EntryPointProjectUniqueName>..\Telegram\Telegram.csproj</EntryPointProjectUniqueName>
+    <PackageCertificateKeyFile>Telegram.Msix_TemporaryKey.pfx</PackageCertificateKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <AppxBundle>Always</AppxBundle>
@@ -107,6 +107,11 @@
     <AppxBundle>Always</AppxBundle>
     <DefaultLanguage>en</DefaultLanguage>
   </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+      powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -file "$(SolutionDir)UpdateManifest.ps1" -path "$(ProjectDir)..\Telegram.Msix" -config "$(ConfigurationName)" -mode "$(UapAppxPackageBuildMode)"
+    </PreBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
@@ -114,12 +119,14 @@
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Telegram_StoreKey.pfx" />
     <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Telegram.Stub\Telegram.Stub.csproj" />
     <ProjectReference Include="..\Telegram\Telegram.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Telegram.Msix_TemporaryKey.pfx" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
 </Project>

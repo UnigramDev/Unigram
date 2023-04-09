@@ -1,13 +1,11 @@
 param (
   [string]$path = $(throw "-path is required"),
   [string]$config = "DEBUG",
-  [string]$test = "false",
   [string]$mode = ""
 )
 
 Write-Output "Config: $config"
 Write-Output "Path: $path"
-Write-Output "Test: $test"
 Write-Output "Mode: $mode"
 
 $path = Resolve-Path $path
@@ -16,9 +14,6 @@ $path_manifest = "${path}\Package.appxmanifest"
 $config = $config.ToUpper()
 
 if ($config -eq "RELEASE") {
-    if ($test -eq "true") {
-        $config = "DEBUG"
-    }
     elseif ($mode -eq "SideloadOnly") {
         $config = "DIRECT"
     }
