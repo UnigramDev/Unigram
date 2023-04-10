@@ -604,8 +604,7 @@ namespace Telegram.Controls.Chats
 
             private bool _hasMore = true;
 
-            private string[] _emoji;
-            private int _emojiIndex;
+            private string _emoji;
 
             public EmojiCollection(IClientService clientService, string query, long chatId)
             {
@@ -638,9 +637,9 @@ namespace Telegram.Controls.Chats
                                 return index;
                             });
 
-                            _emoji = results.ToArray();
+                            _emoji = string.Join(" ", results);
 
-                            foreach (var emoji in _emoji)
+                            foreach (var emoji in results)
                             {
                                 Add(new EmojiData(emoji));
                                 count++;
@@ -648,9 +647,9 @@ namespace Telegram.Controls.Chats
                         }
                     }
 
-                    if (_emojiIndex < _emoji.Length)
+                    if (_emoji?.Length > 0)
                     {
-                        var response = await _clientService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji[_emojiIndex++], 1000, _chatId));
+                        var response = await _clientService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji, 1000, _chatId));
                         if (response is Stickers stickers)
                         {
                             foreach (var sticker in stickers.StickersValue)
@@ -661,7 +660,7 @@ namespace Telegram.Controls.Chats
                         }
                     }
 
-                    _hasMore = _emojiIndex < _emoji.Length;
+                    _hasMore = false;
                     return new LoadMoreItemsResult { Count = count };
                 });
             }
