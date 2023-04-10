@@ -6357,17 +6357,21 @@
                     <local:AnimatedTextBlockPresenter>
                         <TextBlock x:Name="PrefixPart"
                                    x:Load="False"
-                                   Style="{TemplateBinding TextStyle}" />
+                                   Style="{TemplateBinding TextStyle}"
+                                   Foreground="{TemplateBinding Foreground}" />
                         <TextBlock x:Name="SuffixPart"
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
+                                   Foreground="{TemplateBinding Foreground}"
                                    Grid.Column="2" />
                         <TextBlock x:Name="PrevPart"
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
+                                   Foreground="{TemplateBinding Foreground}"
                                    Grid.ColumnSpan="2" />
                         <TextBlock x:Name="NextPart"
                                    Style="{TemplateBinding TextStyle}"
+                                   Foreground="{TemplateBinding Foreground}"
                                    Grid.Column="1" />
                     </local:AnimatedTextBlockPresenter>
                 </ControlTemplate>

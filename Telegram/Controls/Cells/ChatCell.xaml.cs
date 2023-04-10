@@ -2225,10 +2225,10 @@ namespace Telegram.Controls.Cells
             var line2Left = 12d;
             var line2Right = availableSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
 
-            var briefWidth = Math.Max(0, line2Right - line2Left);
+            var briefWidth = Math.Max(0, line2Right - line2Left - MinithumbnailPanel.DesiredSize.Width);
 
             FromLabel.Measure(new Size(briefWidth, availableSize.Height));
-            BriefLabel.Measure(new Size(briefWidth - FromLabel.DesiredSize.Width - MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
+            BriefLabel.Measure(new Size(Math.Max(0, briefWidth - FromLabel.DesiredSize.Width), availableSize.Height));
             CustomEmoji?.Measure(new Size(briefWidth, availableSize.Height));
             TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
 

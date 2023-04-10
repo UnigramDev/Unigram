@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Converters;
@@ -13,7 +12,6 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
-using Telegram.Views.Popups;
 using Windows.ApplicationModel;
 using Windows.System;
 using Windows.UI.Xaml;
@@ -51,37 +49,29 @@ namespace Telegram.ViewModels.Settings
 
         #region Updates
 
-        public int UpdateFrequency
+        public bool InstallBetaUpdates
         {
-            get => Array.IndexOf(_updateFrequencyIndexer, Settings.UpdateChannel);
+            get => Settings.InstallBetaUpdates;
             set
             {
-                if (value >= 0 && value < _updateFrequencyIndexer.Length && Settings.UpdateChannel != _updateFrequencyIndexer[value])
-                {
-                    Settings.UpdateChannel = _updateFrequencyIndexer[value];
-                    RaisePropertyChanged();
-                    Update();
-                }
+                Settings.InstallBetaUpdates = value;
+                RaisePropertyChanged();
+                Update();
             }
         }
-
-        private readonly string[] _updateFrequencyIndexer = new[]
-        {
-            "#daily",
-            "#update"
-        };
-
-        public List<SettingsOptionItem<string>> UpdateFrequencyOptions { get; } = new()
-        {
-            new SettingsOptionItem<string>("#daily", Strings.Daily),
-            new SettingsOptionItem<string>("#update", Strings.Weekly),
-        };
 
         private bool _isUpdateEnabled = true;
         public bool IsUpdateEnabled
         {
             get => _isUpdateEnabled;
             set => Set(ref _isUpdateEnabled, value);
+        }
+
+        private string _updateGlyph;
+        public string UpdateGlyph
+        {
+            get => _updateGlyph;
+            set => Set(ref _updateGlyph, value);
         }
 
         private string _updateText;
@@ -114,6 +104,7 @@ namespace Telegram.ViewModels.Settings
             {
                 IsUpdateEnabled = true;
 
+                UpdateGlyph = Icons.ArrowSync;
                 UpdateText = Strings.CheckForUpdates;
                 UpdateFooter = Strings.CheckForUpdatesInfo;
             }
@@ -122,6 +113,7 @@ namespace Telegram.ViewModels.Settings
                 // Update is ready to be installed
                 IsUpdateEnabled = true;
 
+                UpdateGlyph = Icons.ArrowSync;
                 UpdateText = Strings.UpdateTelegram;
                 UpdateFooter = Strings.UpdateTelegramInfo;
             }
@@ -130,6 +122,7 @@ namespace Telegram.ViewModels.Settings
                 // Update is being downloaded
                 IsUpdateEnabled = false;
 
+                UpdateGlyph = Icons.ArrowSync;
                 UpdateText = string.Format("{0}... {1} / {2}", Strings.Downloading, FileSizeConverter.Convert(update.Document.Local.DownloadedSize, update.Document.Size), FileSizeConverter.Convert(update.Document.Size));
                 UpdateFooter = Strings.UpdateTelegramInfo;
             }
@@ -151,6 +144,7 @@ namespace Telegram.ViewModels.Settings
             {
                 IsUpdateEnabled = false;
 
+                UpdateGlyph = Icons.ArrowSync;
                 UpdateText = Strings.RetrievingInformation;
 
                 var ticks = Environment.TickCount;

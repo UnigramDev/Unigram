@@ -1,16 +1,12 @@
 param (
   [string]$path = $(throw "-path is required"),
   [string]$config = "DEBUG",
-  [string]$store = "true",
-  [string]$sign = "true"
+  [string]$mode = ""
 )
-
-#exit
 
 Write-Output "Config: $config"
 Write-Output "Path: $path"
-Write-Output "Store: $store"
-Write-Output "Sign: $sign"
+Write-Output "Mode: $mode"
 
 $path = Resolve-Path $path
 $path_manifest = "${path}\Package.appxmanifest"
@@ -18,16 +14,12 @@ $path_manifest = "${path}\Package.appxmanifest"
 $config = $config.ToUpper()
 
 if ($config -eq "RELEASE") {
-    if ($sign -eq "false" -and $store -eq "false") {
+    elseif ($mode -eq "SideloadOnly") {
         $config = "DIRECT"
     }
-    elseif ("store" -eq "false") {
-        $config = "DEBUG"
-    }
-
-    #$config = "DIRECT"
 }
 
+Write-Output "Manifest: $config"
 
 try {
     $out = Invoke-Command -ScriptBlock {git -C $path rev-list --count HEAD}
@@ -41,6 +33,9 @@ $rtn = 0
 if ([double]::TryParse($out, [ref]$rtn) -ne $true) {
     exit
 }
+
+#$out = "7447"
+#$rtn = 7447
 
 [xml]$document = Get-Content $path_manifest
 
