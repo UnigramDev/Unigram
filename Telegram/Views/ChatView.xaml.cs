@@ -565,8 +565,7 @@ namespace Telegram.Views
                 {
                     _messages.UpdateSource(viewModel.Items);
                 }
-
-                if (!ViewModel.Settings.Diagnostics.SynchronizeItemsSource)
+                else
                 {
                     Messages.ItemsSource = viewModel.Items;
                 }
