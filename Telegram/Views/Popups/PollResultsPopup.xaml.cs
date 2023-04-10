@@ -59,7 +59,7 @@ namespace Telegram.Views.Popups
             if (item is User user)
             {
                 var button = args.Element as Button;
-                var content = button.Content as UserCell;
+                var content = button.Content as ProfileCell;
 
                 content.UpdateUser(_clientService, user, 36);
                 button.Click += User_Click;

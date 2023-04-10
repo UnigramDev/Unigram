@@ -866,7 +866,7 @@
                                             </selectors:SearchTemplateSelector.HeaderTemplate>
                                             <selectors:SearchTemplateSelector.ChatTemplate>
                                                 <DataTemplate>
-                                                    <cells:UserCell />
+                                                    <cells:ProfileCell />
                                                 </DataTemplate>
                                             </selectors:SearchTemplateSelector.ChatTemplate>
                                             <selectors:SearchTemplateSelector.MessageTemplate>
@@ -1101,7 +1101,7 @@
                                       ContainerContentChanging="DialogsSearchListView_ContainerContentChanging">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
-                                        <cells:UserCell />
+                                        <cells:ProfileCell />
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                                 <ListView.ItemContainerTransitions>
@@ -1171,7 +1171,7 @@
                                           SelectionMode="None">
                                     <ListView.ItemTemplate>
                                         <DataTemplate>
-                                            <cells:UserCell />
+                                            <cells:ProfileCell />
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                     <ListView.Header>

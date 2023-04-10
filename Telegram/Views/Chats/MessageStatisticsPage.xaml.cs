@@ -64,7 +64,7 @@ namespace Telegram.Views.Chats
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
+            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
             {
                 content.UpdateMessageStatisticsSharer(ViewModel.ClientService, args, OnContainerContentChanging);
             }

@@ -23,9 +23,9 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class UserCell : Grid
+    public sealed partial class ProfileCell : Grid
     {
-        public UserCell()
+        public ProfileCell()
         {
             InitializeComponent();
         }
@@ -567,7 +567,7 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as UserCell;
+            var content = args.ItemContainer.ContentTemplateRoot as ProfileCell;
             var statistics = args.Item as StorageStatisticsByChat;
 
             //if (chat == null)

@@ -116,7 +116,7 @@
                                             ElementPrepared="OnElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <cells:UserCell Background="{ThemeResource SettingsItemBackground}"
+                                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
                                                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                                     BorderThickness="0,1,0,0"
                                                     ContextRequested="Include_ContextRequested" />
@@ -143,7 +143,7 @@
                                             ElementPrepared="OnElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <cells:UserCell Background="{ThemeResource SettingsItemBackground}"
+                                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
                                                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                                     BorderThickness="0,1,0,0"
                                                     ContextRequested="Exclude_ContextRequested" />

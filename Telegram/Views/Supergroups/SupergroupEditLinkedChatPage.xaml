@@ -13,7 +13,7 @@
         <DataTemplate x:Key="ChatTemplate">
             <Button Style="{StaticResource EmptyButtonStyle}"
                     BorderThickness="0,1,0,0">
-                <cells:UserCell />
+                <cells:ProfileCell />
             </Button>
         </DataTemplate>
     </Page.Resources>

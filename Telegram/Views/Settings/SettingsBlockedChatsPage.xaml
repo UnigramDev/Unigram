@@ -41,7 +41,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:UserCell BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    <cells:ProfileCell BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                     Background="{ThemeResource SettingsItemBackground}" />
                 </DataTemplate>
             </ListView.ItemTemplate>

@@ -287,6 +287,9 @@
     <Compile Include="Controls\Cells\ChatCell.xaml.cs">
       <DependentUpon>ChatCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\ProfileCell.xaml.cs">
+      <DependentUpon>ProfileCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\UsernameInfoCell.xaml.cs">
       <DependentUpon>UsernameInfoCell.xaml</DependentUpon>
     </Compile>
@@ -325,9 +328,6 @@
     </Compile>
     <Compile Include="Controls\Cells\SharedVoiceCell.xaml.cs">
       <DependentUpon>SharedVoiceCell.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Cells\UserCell.xaml.cs">
-      <DependentUpon>UserCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\WebSessionCell.xaml.cs">
       <DependentUpon>WebSessionCell.xaml</DependentUpon>
@@ -1665,6 +1665,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Cells\ProfileCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Cells\UsernameInfoCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1714,10 +1718,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Cells\SharedVoiceCell.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Cells\UserCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

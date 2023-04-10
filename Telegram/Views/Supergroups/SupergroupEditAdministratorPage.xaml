@@ -29,7 +29,7 @@
                       VerticalScrollMode="Auto">
             <controls:SettingsPanel>
                 <controls:HeaderedControl>
-                    <cells:UserCell x:Name="Cell"
+                    <cells:ProfileCell x:Name="Cell"
                                     Background="{ThemeResource SettingsItemBackground}"
                                     Click="{x:Bind ViewModel.OpenProfile}"
                                     Padding="12,8" />

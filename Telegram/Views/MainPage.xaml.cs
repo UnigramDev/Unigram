@@ -2204,7 +2204,7 @@ namespace Telegram.Views
             }
             if (args.Item is SearchResult result)
             {
-                var content = args.ItemContainer.ContentTemplateRoot as UserCell;
+                var content = args.ItemContainer.ContentTemplateRoot as ProfileCell;
                 if (content == null)
                 {
                     return;
@@ -2250,7 +2250,7 @@ namespace Telegram.Views
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as UserCell;
+            var content = args.ItemContainer.ContentTemplateRoot as ProfileCell;
             var user = args.Item as User;
 
             content.UpdateUser(ViewModel.ClientService, user, args, UsersListView_ContainerContentChanging);

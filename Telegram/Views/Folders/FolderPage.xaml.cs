@@ -34,7 +34,7 @@ namespace Telegram.Views.Folders
 
         private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
         {
-            var content = args.Element as UserCell;
+            var content = args.Element as ProfileCell;
             var element = content.DataContext as ChatFolderElement;
 
             content.UpdateChatFolder(ViewModel.ClientService, element);

@@ -28,7 +28,7 @@ namespace Telegram.Views.Supergroups
         private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
         {
             var button = args.Element as Button;
-            var content = button.Content as UserCell;
+            var content = button.Content as ProfileCell;
 
             var chat = button.DataContext as Chat;
 
