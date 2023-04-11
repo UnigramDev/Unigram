@@ -2146,7 +2146,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return false;
         }
 
-        public static bool TypeEquals(this Error error, ErrorType type)
+        public static bool MessageEquals(this Error error, ErrorType type)
         {
             if (error == null || error.Message == null)
             {

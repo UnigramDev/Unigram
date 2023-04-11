@@ -714,15 +714,15 @@ namespace Telegram.ViewModels
             var response = await ClientService.SendAsync(new SendMessage(chat.Id, _threadId, replyToMessageId, options, null, inputMessageContent));
             if (response is Error error)
             {
-                if (error.TypeEquals(ErrorType.PEER_FLOOD))
+                if (error.MessageEquals(ErrorType.PEER_FLOOD))
                 {
 
                 }
-                else if (error.TypeEquals(ErrorType.USER_BANNED_IN_CHANNEL))
+                else if (error.MessageEquals(ErrorType.USER_BANNED_IN_CHANNEL))
                 {
 
                 }
-                else if (error.TypeEquals(ErrorType.SCHEDULE_TOO_MUCH))
+                else if (error.MessageEquals(ErrorType.SCHEDULE_TOO_MUCH))
                 {
                     await ShowPopupAsync(Strings.MessageScheduledLimitReached, Strings.AppName, Strings.OK);
                 }

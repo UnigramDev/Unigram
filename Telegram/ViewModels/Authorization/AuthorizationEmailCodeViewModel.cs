@@ -108,11 +108,11 @@ namespace Telegram.ViewModels.Authorization
             {
                 IsLoading = false;
 
-                if (error.TypeEquals(ErrorType.EMAIL_VERIFY_EXPIRED))
+                if (error.MessageEquals(ErrorType.EMAIL_VERIFY_EXPIRED))
                 {
                     await ShowPopupAsync(Strings.CodeExpired, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 }
-                else if (error.TypeEquals(ErrorType.CODE_INVALID))
+                else if (error.MessageEquals(ErrorType.CODE_INVALID))
                 {
                     await ShowPopupAsync(Strings.InvalidCode, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 }

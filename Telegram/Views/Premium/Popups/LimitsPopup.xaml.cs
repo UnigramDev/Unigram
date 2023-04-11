@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls;
@@ -123,7 +124,7 @@ namespace Telegram.Views.Premium.Popups
             subtitle.Text = string.Format(subtitleValue, limit.PremiumValue);
             prevLimit.Text = limit.DefaultValue.ToString();
             nextLimit.Text = limit.PremiumValue.ToString();
-            nextPanel.Background = new SolidColorBrush(_gradient[args.ItemIndex]);
+            nextPanel.Background = new SolidColorBrush(_gradient[Math.Min(args.ItemIndex, _gradient.Length - 1)]);
         }
 
         private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)

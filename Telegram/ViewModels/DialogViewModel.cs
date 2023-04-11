@@ -2294,7 +2294,7 @@ namespace Telegram.ViewModels
                     }
                     else if (response is Error error)
                     {
-                        if (error.TypeEquals(ErrorType.MESSAGE_NOT_MODIFIED))
+                        if (error.MessageEquals(ErrorType.MESSAGE_NOT_MODIFIED))
                         {
                             ShowDraftMessage(chat);
                         }

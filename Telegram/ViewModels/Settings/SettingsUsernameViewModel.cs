@@ -225,19 +225,19 @@ namespace Telegram.ViewModels.Settings
             }
             else if (response is Error error)
             {
-                if (error.TypeEquals(ErrorType.USERNAME_INVALID))
+                if (error.MessageEquals(ErrorType.USERNAME_INVALID))
                 {
                     IsLoading = false;
                     IsAvailable = false;
                     ErrorMessage = Strings.UsernameInvalid;
                 }
-                else if (error.TypeEquals(ErrorType.USERNAME_OCCUPIED))
+                else if (error.MessageEquals(ErrorType.USERNAME_OCCUPIED))
                 {
                     IsLoading = false;
                     IsAvailable = false;
                     ErrorMessage = Strings.UsernameInUse;
                 }
-                else if (error.TypeEquals(ErrorType.USERNAME_NOT_OCCUPIED))
+                else if (error.MessageEquals(ErrorType.USERNAME_NOT_OCCUPIED))
                 {
                     IsLoading = false;
                     IsAvailable = true;
@@ -363,7 +363,7 @@ namespace Telegram.ViewModels.Settings
                 }
                 else if (error.CodeEquals(ErrorCode.BAD_REQUEST))
                 {
-                    if (error.TypeEquals(ErrorType.USERNAME_INVALID))
+                    if (error.MessageEquals(ErrorType.USERNAME_INVALID))
                     {
                         //this.HasError = true;
                         //this.Error = Strings.Additional.UsernameInvalid;
@@ -372,7 +372,7 @@ namespace Telegram.ViewModels.Settings
                         //    MessageBox.Show(Strings.Additional.UsernameInvalid, Strings.Additional.Error, 0);
                         //});
                     }
-                    else if (error.TypeEquals(ErrorType.USERNAME_OCCUPIED))
+                    else if (error.MessageEquals(ErrorType.USERNAME_OCCUPIED))
                     {
                         //this.HasError = true;
                         //this.Error = Strings.Additional.UsernameOccupied;
@@ -381,7 +381,7 @@ namespace Telegram.ViewModels.Settings
                         //    MessageBox.Show(Strings.Additional.UsernameOccupied, Strings.Additional.Error, 0);
                         //});
                     }
-                    else if (error.TypeEquals(ErrorType.USERNAME_NOT_MODIFIED))
+                    else if (error.MessageEquals(ErrorType.USERNAME_NOT_MODIFIED))
                     {
                         NavigationService.GoBack();
                     }

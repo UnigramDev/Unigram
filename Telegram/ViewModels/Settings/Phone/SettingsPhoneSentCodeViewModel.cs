@@ -126,23 +126,23 @@ namespace Telegram.ViewModels.Settings
             {
                 IsLoading = false;
 
-                if (error.TypeEquals(ErrorType.PHONE_NUMBER_OCCUPIED))
+                if (error.MessageEquals(ErrorType.PHONE_NUMBER_OCCUPIED))
                 {
                     //await new MessageDialog(Resources.PhoneCodeInvalidString, Resources.Error).ShowAsync();
                 }
-                else if (error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
+                else if (error.MessageEquals(ErrorType.PHONE_CODE_INVALID))
                 {
                     //await new MessageDialog(Resources.PhoneCodeInvalidString, Resources.Error).ShowAsync();
                 }
-                else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY))
+                else if (error.MessageEquals(ErrorType.PHONE_CODE_EMPTY))
                 {
                     //await new MessageDialog(Resources.PhoneCodeEmpty, Resources.Error).ShowAsync();
                 }
-                else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
+                else if (error.MessageEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
                     //await new MessageDialog(Resources.PhoneCodeExpiredString, Resources.Error).ShowAsync();
                 }
-                else if (error.TypeEquals(ErrorType.SESSION_PASSWORD_NEEDED))
+                else if (error.MessageEquals(ErrorType.SESSION_PASSWORD_NEEDED))
                 {
                     ////this.IsWorking = true;
                     //var password = await LegacyService.GetPasswordAsync();

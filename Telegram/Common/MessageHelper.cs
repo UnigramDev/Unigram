@@ -457,39 +457,34 @@ namespace Telegram.Common
             var state = clientService.GetAuthorizationState();
             if (state is AuthorizationStateWaitCode)
             {
-                var firstName = string.Empty;
-                var lastName = string.Empty;
-
                 if (clientService.Options.TryGetValue("x_firstname", out string firstValue))
                 {
-                    firstName = firstValue;
                 }
 
                 if (clientService.Options.TryGetValue("x_lastname", out string lastValue))
                 {
-                    lastName = lastValue;
                 }
 
                 var response = await clientService.SendAsync(new CheckAuthenticationCode(phoneCode));
                 if (response is Error error)
                 {
-                    if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
+                    if (error.MessageEquals(ErrorType.PHONE_NUMBER_INVALID))
                     {
                         await MessagePopup.ShowAsync(error.Message, Strings.InvalidPhoneNumber, Strings.OK);
                     }
-                    else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
+                    else if (error.MessageEquals(ErrorType.PHONE_CODE_EMPTY) || error.MessageEquals(ErrorType.PHONE_CODE_INVALID))
                     {
                         await MessagePopup.ShowAsync(error.Message, Strings.InvalidCode, Strings.OK);
                     }
-                    else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
+                    else if (error.MessageEquals(ErrorType.PHONE_CODE_EXPIRED))
                     {
                         await MessagePopup.ShowAsync(error.Message, Strings.CodeExpired, Strings.OK);
                     }
-                    else if (error.TypeEquals(ErrorType.FIRSTNAME_INVALID))
+                    else if (error.MessageEquals(ErrorType.FIRSTNAME_INVALID))
                     {
                         await MessagePopup.ShowAsync(error.Message, Strings.InvalidFirstName, Strings.OK);
                     }
-                    else if (error.TypeEquals(ErrorType.LASTNAME_INVALID))
+                    else if (error.MessageEquals(ErrorType.LASTNAME_INVALID))
                     {
                         await MessagePopup.ShowAsync(error.Message, Strings.InvalidLastName, Strings.OK);
                     }
@@ -705,11 +700,11 @@ namespace Telegram.Common
                     }
                     else if (import is Error error)
                     {
-                        if (error.TypeEquals(ErrorType.FLOOD_WAIT))
+                        if (error.MessageEquals(ErrorType.FLOOD_WAIT))
                         {
                             await MessagePopup.ShowAsync(Strings.FloodWait, Strings.AppName, Strings.OK);
                         }
-                        else if (error.TypeEquals(ErrorType.USERS_TOO_MUCH))
+                        else if (error.MessageEquals(ErrorType.USERS_TOO_MUCH))
                         {
                             await MessagePopup.ShowAsync(Strings.JoinToGroupErrorFull, Strings.AppName, Strings.OK);
                         }
@@ -722,7 +717,7 @@ namespace Telegram.Common
             }
             else if (response is Error error)
             {
-                if (error.TypeEquals(ErrorType.FLOOD_WAIT))
+                if (error.MessageEquals(ErrorType.FLOOD_WAIT))
                 {
                     await MessagePopup.ShowAsync(Strings.FloodWait, Strings.AppName, Strings.OK);
                 }
@@ -748,7 +743,26 @@ namespace Telegram.Common
                     {
                         if (info.ChatFolderInfo.Id == 0)
                         {
-                            clientService.Send(new AddChatFolderByInviteLink(link, chats));
+                            var import = await clientService.SendAsync(new AddChatFolderByInviteLink(link, chats));
+                            if (import is Error error)
+                            {
+                                if (error.MessageEquals(ErrorType.CHATLISTS_TOO_MUCH))
+                                {
+                                    navigation.ShowLimitReached(new PremiumLimitTypeShareableChatFolderCount());
+                                }
+                                else if (error.MessageEquals(ErrorType.FILTER_INCLUDE_TOO_MUCH))
+                                {
+                                    navigation.ShowLimitReached(new PremiumLimitTypeChatFolderChosenChatCount());
+                                }
+                                else if (error.MessageEquals(ErrorType.CHANNELS_TOO_MUCH))
+                                {
+                                    navigation.ShowLimitReached(new PremiumLimitTypeSupergroupCount());
+                                }
+                                else
+                                {
+                                    await MessagePopup.ShowAsync(Strings.FolderLinkExpiredAlert, Strings.AppName, Strings.OK);
+                                }
+                            }
                         }
                         else if (chats.Count > 0)
                         {
@@ -756,6 +770,10 @@ namespace Telegram.Common
                         }
                     }
                 }
+            }
+            else if (response is Error error)
+            {
+                await MessagePopup.ShowAsync(Strings.FolderLinkExpiredAlert, Strings.AppName, Strings.OK);
             }
         }
 

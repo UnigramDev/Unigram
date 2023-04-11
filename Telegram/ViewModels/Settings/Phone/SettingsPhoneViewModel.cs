@@ -99,7 +99,7 @@ namespace Telegram.ViewModels.Settings
             {
                 IsLoading = false;
 
-                if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
+                if (error.MessageEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
                     await ShowPopupAsync(Strings.PhoneNumberFlood, Strings.AppName, Strings.OK);
                 }

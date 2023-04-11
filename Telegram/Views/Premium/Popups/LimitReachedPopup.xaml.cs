@@ -63,11 +63,23 @@ namespace Telegram.Views.Premium.Popups
                         lockedValue = Strings.LimitReachedFoldersLocked;
                         premiumValue = Strings.LimitReachedFoldersPremium;
                         break;
+                    case PremiumLimitTypeShareableChatFolderCount:
+                        iconValue = Icons.FolderFilled;
+                        freeValue = Strings.LimitReachedSharedFolders;
+                        lockedValue = Strings.LimitReachedSharedFoldersLocked;
+                        premiumValue = Strings.LimitReachedSharedFoldersPremium;
+                        break;
                     case PremiumLimitTypeCreatedPublicChatCount:
                         iconValue = Icons.LinkFilled;
                         freeValue = Strings.LimitReachedPublicLinks;
                         lockedValue = Strings.LimitReachedPublicLinksLocked;
                         premiumValue = Strings.LimitReachedPublicLinksPremium;
+                        break;
+                    case PremiumLimitTypeChatFolderInviteLinkCount:
+                        iconValue = Icons.LinkFilled;
+                        freeValue = Strings.LimitReachedFolderLinks;
+                        lockedValue = Strings.LimitReachedFolderLinksLocked;
+                        premiumValue = Strings.LimitReachedFolderLinksPremium;
                         break;
                     case PremiumLimitTypePinnedArchivedChatCount:
                     case PremiumLimitTypePinnedChatCount:
