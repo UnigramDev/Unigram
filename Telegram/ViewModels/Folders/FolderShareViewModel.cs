@@ -110,7 +110,7 @@ namespace Telegram.ViewModels.Folders
 
         public void SelectAll()
         {
-            if (SelectedItems.Count == TotalCount)
+            if (SelectedItems.Count >= TotalCount)
             {
                 SelectedItems.Clear();
             }

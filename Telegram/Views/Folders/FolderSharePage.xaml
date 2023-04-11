@@ -10,11 +10,11 @@
                   mc:Ignorable="d">
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <ListView x:Name="ScrollingHost"
-                  ItemsSource="{x:Bind ViewModel.Items}"
-                  SelectionMode="Multiple"
-                  ChoosingItemContainer="OnChoosingItemContainer"
-                  ContainerContentChanging="OnContainerContentChanging">
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Items}"
+                                SelectionMode="Multiple"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging">
             <common:SelectedItemsBinder.Attached>
                 <common:SelectedItemsBinder SelectedItems="{x:Bind ViewModel.SelectedItems}" />
             </common:SelectedItemsBinder.Attached>
@@ -39,7 +39,7 @@
                                     BorderThickness="1"
                                     CornerRadius="4"
                                     Margin="12,12,12,8"
-                                    Grid.ColumnSpan="2"/>
+                                    Grid.ColumnSpan="2" />
 
                             <HyperlinkButton Content="{x:Bind ViewModel.InviteLink, Mode=OneWay}"
                                              HorizontalAlignment="Stretch"
@@ -79,10 +79,9 @@
                 </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem"
-                       BasedOn="{StaticResource MultipleListViewItemStyle}">
+                <Style TargetType="controls:MultipleListViewItem">
                     <Setter Property="Margin"
-                            Value="24,0" />
+                            Value="0" />
                     <Setter Property="Padding"
                             Value="0" />
                 </Style>
@@ -94,13 +93,13 @@
                                          Background="{ThemeResource SettingsItemBackground}"
                                          BorderBrush="{ThemeResource SettingsItemBorderBrush}"
                                          BorderThickness="1,0,1,1"
-                                         Padding="12,6"/>
+                                         Padding="12,6" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
                 <Border Height="32" />
             </ListView.Footer>
-        </ListView>
+        </controls:TableListView>
 
     </Grid>
 </local:HostedPage>

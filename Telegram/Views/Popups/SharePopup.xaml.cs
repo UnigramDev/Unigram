@@ -341,94 +341,125 @@ namespace Telegram.Views.Popups
 
         #region PickFiltersAsync
 
-        public static async Task<IList<ChatFolderElement>> AddExecute(bool include, IList<ChatFolderElement> target)
+        public static async Task<IList<ChatFolderElement>> AddExecute(bool include, bool allowFilters, IList<ChatFolderElement> target)
         {
-            //var target = new List<ChatFolderElement>();
-
-            var flags = new List<FolderFlag>();
-            if (include)
+            if (allowFilters)
             {
-                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeContacts });
-                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeNonContacts });
-                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeGroups });
-                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeChannels });
-                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeBots });
+                //var target = new List<ChatFolderElement>();
+
+                var flags = new List<FolderFlag>();
+                if (include)
+                {
+                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeContacts });
+                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeNonContacts });
+                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeGroups });
+                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeChannels });
+                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeBots });
+                }
+                else
+                {
+                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeMuted });
+                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeRead });
+                    flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeArchived });
+                }
+
+                var header = new MultipleListView();
+                header.SelectionMode = ListViewSelectionMode.Multiple;
+                header.ItemsSource = flags;
+                header.ItemTemplate = BootStrapper.Current.Resources["FolderPickerTemplate"] as DataTemplate;
+                header.ContainerContentChanging += Header_ContainerContentChanging;
+                header.ItemContainerTransitions = new Windows.UI.Xaml.Media.Animation.TransitionCollection();
+
+                foreach (var folder in target.OfType<FolderFlag>())
+                {
+                    var already = flags.FirstOrDefault(x => x.Flag == folder.Flag);
+                    if (already != null)
+                    {
+                        header.SelectedItems.Add(already);
+                    }
+                }
+
+                var panel = new StackPanel();
+                panel.Children.Add(new Border
+                {
+                    Child = new TextBlock
+                    {
+                        Text = Strings.FilterChatTypes,
+                        Padding = new Thickness(12, 16, 0, 8),
+                        Style = BootStrapper.Current.Resources["BaseTextBlockStyle"] as Style
+                    }
+                });
+                panel.Children.Add(header);
+                panel.Children.Add(new Border
+                {
+                    Child = new TextBlock
+                    {
+                        Text = Strings.FilterChats,
+                        Padding = new Thickness(12, 16, 0, 8),
+                        Style = BootStrapper.Current.Resources["BaseTextBlockStyle"] as Style
+                    }
+                });
+
+                var dialog = GetForCurrentView();
+                dialog.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
+                dialog.ViewModel.AllowEmptySelection = true;
+                dialog.Header = panel;
+                dialog.PrimaryButtonText = Strings.OK;
+                dialog.IsPrimaryButtonEnabled = true;
+
+                var confirm = await dialog.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), SearchChatsType.All);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return null;
+                }
+
+                target.Clear();
+
+                foreach (var folder in header.SelectedItems.OfType<FolderFlag>())
+                {
+                    target.Add(folder);
+                }
+
+                foreach (var chat in dialog.ViewModel.SelectedItems)
+                {
+                    if (chat == null)
+                    {
+                        continue;
+                    }
+
+                    target.Add(new FolderChat { Chat = chat });
+                }
+
+                return target;
             }
             else
             {
-                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeMuted });
-                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeRead });
-                flags.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeArchived });
-            }
+                var dialog = GetForCurrentView();
+                dialog.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
+                dialog.ViewModel.AllowEmptySelection = true;
+                dialog.PrimaryButtonText = Strings.OK;
+                dialog.IsPrimaryButtonEnabled = true;
 
-            var header = new MultipleListView();
-            header.SelectionMode = ListViewSelectionMode.Multiple;
-            header.ItemsSource = flags;
-            header.ItemTemplate = BootStrapper.Current.Resources["FolderPickerTemplate"] as DataTemplate;
-            header.ItemContainerStyle = BootStrapper.Current.Resources["DefaultListViewItemStyle"] as Style;
-            header.ContainerContentChanging += Header_ContainerContentChanging;
-
-            foreach (var folder in target.OfType<FolderFlag>())
-            {
-                var already = flags.FirstOrDefault(x => x.Flag == folder.Flag);
-                if (already != null)
+                var confirm = await dialog.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), SearchChatsType.All);
+                if (confirm != ContentDialogResult.Primary)
                 {
-                    header.SelectedItems.Add(already);
-                }
-            }
-
-            var panel = new StackPanel();
-            panel.Children.Add(new Border
-            {
-                Child = new TextBlock
-                {
-                    Text = Strings.FilterChatTypes,
-                    Padding = new Thickness(12, 16, 0, 8),
-                    Style = BootStrapper.Current.Resources["BaseTextBlockStyle"] as Style
-                }
-            });
-            panel.Children.Add(header);
-            panel.Children.Add(new Border
-            {
-                Child = new TextBlock
-                {
-                    Text = Strings.FilterChats,
-                    Padding = new Thickness(12, 16, 0, 8),
-                    Style = BootStrapper.Current.Resources["BaseTextBlockStyle"] as Style
-                }
-            });
-
-            var dialog = GetForCurrentView();
-            dialog.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
-            dialog.ViewModel.AllowEmptySelection = true;
-            dialog.Header = panel;
-            dialog.PrimaryButtonText = Strings.OK;
-            dialog.IsPrimaryButtonEnabled = true;
-
-            var confirm = await dialog.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), SearchChatsType.All);
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return null;
-            }
-
-            target.Clear();
-
-            foreach (var folder in header.SelectedItems.OfType<FolderFlag>())
-            {
-                target.Add(folder);
-            }
-
-            foreach (var chat in dialog.ViewModel.SelectedItems)
-            {
-                if (chat == null)
-                {
-                    continue;
+                    return null;
                 }
 
-                target.Add(new FolderChat { Chat = chat });
-            }
+                target.Clear();
 
-            return target;
+                foreach (var chat in dialog.ViewModel.SelectedItems)
+                {
+                    if (chat == null)
+                    {
+                        continue;
+                    }
+
+                    target.Add(new FolderChat { Chat = chat });
+                }
+
+                return target;
+            }
         }
 
         private static void Header_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -439,42 +470,10 @@ namespace Telegram.Views.Popups
             }
 
             var folder = args.Item as FolderFlag;
-            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+            var content = args.ItemContainer.ContentTemplateRoot as ChatShareCell;
 
-            var title = content.Children[1] as TextBlock;
-            //title.Text = Enum.GetName(typeof(ChatListFilterFlags), filter.Flag);
-
-            switch (folder.Flag)
-            {
-                case ChatListFolderFlags.IncludeContacts:
-                    title.Text = Strings.FilterContacts;
-                    break;
-                case ChatListFolderFlags.IncludeNonContacts:
-                    title.Text = Strings.FilterNonContacts;
-                    break;
-                case ChatListFolderFlags.IncludeGroups:
-                    title.Text = Strings.FilterGroups;
-                    break;
-                case ChatListFolderFlags.IncludeChannels:
-                    title.Text = Strings.FilterChannels;
-                    break;
-                case ChatListFolderFlags.IncludeBots:
-                    title.Text = Strings.FilterBots;
-                    break;
-
-                case ChatListFolderFlags.ExcludeMuted:
-                    title.Text = Strings.FilterMuted;
-                    break;
-                case ChatListFolderFlags.ExcludeRead:
-                    title.Text = Strings.FilterRead;
-                    break;
-                case ChatListFolderFlags.ExcludeArchived:
-                    title.Text = Strings.FilterArchived;
-                    break;
-            }
-
-            var photo = content.Children[0] as ProfilePicture;
-            photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFolderIcon(folder.Flag), (int)folder.Flag, 36);
+            content.UpdateState(args.ItemContainer.IsSelected, false);
+            content.UpdateChatFolder(folder);
         }
 
         #endregion

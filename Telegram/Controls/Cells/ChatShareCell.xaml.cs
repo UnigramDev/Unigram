@@ -11,6 +11,8 @@ using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Folders;
+using Telegram.Views;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -227,6 +229,43 @@ namespace Telegram.Controls.Cells
             }
 
             args.Handled = true;
+        }
+
+        public void UpdateChatFolder(FolderFlag folder)
+        {
+            Photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFolderIcon(folder.Flag), (int)folder.Flag, 36);
+
+            SelectionOutline.RadiusX = 18;
+            SelectionOutline.RadiusY = 18;
+
+            switch (folder.Flag)
+            {
+                case ChatListFolderFlags.IncludeContacts:
+                    TitleLabel.Text = Strings.FilterContacts;
+                    break;
+                case ChatListFolderFlags.IncludeNonContacts:
+                    TitleLabel.Text = Strings.FilterNonContacts;
+                    break;
+                case ChatListFolderFlags.IncludeGroups:
+                    TitleLabel.Text = Strings.FilterGroups;
+                    break;
+                case ChatListFolderFlags.IncludeChannels:
+                    TitleLabel.Text = Strings.FilterChannels;
+                    break;
+                case ChatListFolderFlags.IncludeBots:
+                    TitleLabel.Text = Strings.FilterBots;
+                    break;
+
+                case ChatListFolderFlags.ExcludeMuted:
+                    TitleLabel.Text = Strings.FilterMuted;
+                    break;
+                case ChatListFolderFlags.ExcludeRead:
+                    TitleLabel.Text = Strings.FilterRead;
+                    break;
+                case ChatListFolderFlags.ExcludeArchived:
+                    TitleLabel.Text = Strings.FilterArchived;
+                    break;
+            }
         }
 
         #region Stroke

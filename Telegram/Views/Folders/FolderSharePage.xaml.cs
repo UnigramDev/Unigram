@@ -67,7 +67,7 @@ namespace Telegram.Views.Folders
 
         private string ConvertSelectAll(int count)
         {
-            return count == ViewModel.TotalCount ? Strings.DeselectAll : Strings.SelectAll;
+            return count >= ViewModel.TotalCount ? Strings.DeselectAll : Strings.SelectAll;
         }
 
         #endregion
