@@ -33,7 +33,7 @@ namespace Telegram.Common
 
             if (e.NewValue is SelectedItemsBinder newValue)
             {
-                newValue.SubscribeToEvents(d as ListViewBase);
+                newValue.Attach(d as ListViewBase);
             }
         }
 
@@ -62,33 +62,41 @@ namespace Telegram.Common
                 oldValue.CollectionChanged += Context_CollectionChanged;
             }
 
-            UnsubscribeFromEvents();
-
-            Transfer(SelectedItems as IList, _listView.SelectedItems);
-
-            SubscribeToEvents(_listView);
+            if (_listView.IsLoaded)
+            {
+                Transfer(SelectedItems as IList, _listView.SelectedItems);
+            }
         }
 
         #endregion
 
         private ListViewBase _listView;
 
-        private void SelectedItems_CollectionChanged(object sender, SelectionChangedEventArgs e)
+        private void Attach(ListViewBase view)
+        {
+            _listView = view;
+            _listView.Loaded += OnLoaded;
+            _listView.Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Transfer(SelectedItems as IList, _listView.SelectedItems);
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             UnsubscribeFromEvents();
+        }
 
+        private void SelectedItems_CollectionChanged(object sender, SelectionChangedEventArgs e)
+        {
             Transfer(_listView.SelectedItems, SelectedItems as IList);
-
-            SubscribeToEvents(_listView);
         }
 
         private void Context_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            UnsubscribeFromEvents();
-
             Transfer(SelectedItems as IList, _listView.SelectedItems);
-
-            SubscribeToEvents(_listView);
         }
 
         protected void SubscribeToEvents(ListViewBase listView)
@@ -125,24 +133,44 @@ namespace Telegram.Common
             }
         }
 
-        public static void Transfer(IEnumerable source, IEnumerable target)
+        private void Transfer(IEnumerable source, IEnumerable target)
         {
-            if (source == null || target == null)
-                return;
+            UnsubscribeFromEvents();
 
-            if (target is IMvxObservableCollection collection)
+            if (source != null && target != null)
             {
-                collection.ReplaceWith(source);
-            }
-            else if (target is IList<object> list)
-            {
-                list.Clear();
-
-                foreach (var o in source)
+                if (target is IMvxObservableCollection collection)
                 {
-                    list.Add(o);
+                    collection.ReplaceWith(source);
+                }
+                else if (target is IList<object> list && source is IList last)
+                {
+                    try
+                    {
+                        for (int i = 0; i < list.Count; i++)
+                        {
+                            object o = list[i];
+
+                            if (last.Contains(o))
+                                continue;
+
+                            list.Remove(o);
+                            i--;
+                        }
+
+                        foreach (var o in source)
+                        {
+                            if (list.Contains(o))
+                                continue;
+
+                            list.Add(o);
+                        }
+                    }
+                    catch { }
                 }
             }
+
+            SubscribeToEvents(_listView);
         }
     }
 }

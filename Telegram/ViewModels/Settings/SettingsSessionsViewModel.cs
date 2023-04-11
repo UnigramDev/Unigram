@@ -25,7 +25,7 @@ namespace Telegram.ViewModels.Settings
         public SettingsSessionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<KeyedList<SessionsGroup, Session>>();
+            Items = new MvxObservableCollection<KeyedList<KeyedGroup, Session>>();
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -107,15 +107,15 @@ namespace Telegram.ViewModels.Settings
                 {
                     Items.ReplaceWith(new[]
                     {
-                        new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.LoginAttempts }, pending.OrderByDescending(x => x.LastActiveDate)),
-                        new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.OtherSessions, Footer = Strings.LoginAttemptsInfo }, results.OrderByDescending(x => x.LastActiveDate))
+                        new KeyedList<KeyedGroup, Session>(new KeyedGroup { Title = Strings.LoginAttempts }, pending.OrderByDescending(x => x.LastActiveDate)),
+                        new KeyedList<KeyedGroup, Session>(new KeyedGroup { Title = Strings.OtherSessions, Footer = Strings.LoginAttemptsInfo }, results.OrderByDescending(x => x.LastActiveDate))
                     });
                 }
                 else if (results.Count > 0)
                 {
                     Items.ReplaceWith(new[]
                     {
-                        new KeyedList<SessionsGroup, Session>(new SessionsGroup { Title = Strings.OtherSessions }, results.OrderByDescending(x => x.LastActiveDate))
+                        new KeyedList<KeyedGroup, Session>(new KeyedGroup { Title = Strings.OtherSessions }, results.OrderByDescending(x => x.LastActiveDate))
                     });
                 }
                 else
@@ -125,7 +125,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public MvxObservableCollection<KeyedList<SessionsGroup, Session>> Items { get; private set; }
+        public MvxObservableCollection<KeyedList<KeyedGroup, Session>> Items { get; private set; }
 
         private Session _current;
         public Session Current
@@ -229,7 +229,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class SessionsGroup
+    public class KeyedGroup
     {
         public string Title { get; set; }
         public string Footer { get; set; }

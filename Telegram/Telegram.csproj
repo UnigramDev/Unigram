@@ -621,6 +621,7 @@
     <Compile Include="ViewModels\Authorization\AuthorizationRecoveryViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationRegistrationViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationViewModel.cs" />
+    <Compile Include="ViewModels\Folders\AddFolderViewModel.cs" />
     <Compile Include="ViewModels\Folders\FolderShareViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
     <Compile Include="ViewModels\TopicListViewModel.cs" />
@@ -717,6 +718,9 @@
       <DependentUpon>FolderSharePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\SelectedItemsBinder.cs" />
+    <Compile Include="Views\Folders\Popups\AddFolderPopup.xaml.cs">
+      <DependentUpon>AddFolderPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Payments\PaymentAddressPopup.xaml.cs">
       <DependentUpon>PaymentAddressPopup.xaml</DependentUpon>
     </Compile>
@@ -2048,6 +2052,10 @@
     <Page Include="Views\Folders\FolderSharePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Folders\Popups\AddFolderPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Payments\PaymentAddressPopup.xaml">
       <Generator>MSBuild:Compile</Generator>

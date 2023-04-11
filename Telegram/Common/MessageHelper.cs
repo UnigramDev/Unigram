@@ -17,6 +17,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Telegram.Views.Folders;
+using Telegram.Views.Folders.Popups;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
@@ -226,6 +227,10 @@ namespace Telegram.Common
             else if (internalLink is InternalLinkTypeChatInvite chatInvite)
             {
                 NavigateToInviteLink(clientService, navigation, chatInvite.InviteLink);
+            }
+            else if (internalLink is InternalLinkTypeChatFolderInvite chatFolderInvite)
+            {
+                NavigateToChatFolderInviteLink(clientService, navigation, chatFolderInvite.InviteLink);
             }
             else if (internalLink is InternalLinkTypeChatFolderSettings)
             {
@@ -724,6 +729,32 @@ namespace Telegram.Common
                 else
                 {
                     await MessagePopup.ShowAsync(Strings.JoinToGroupErrorNotExist, Strings.AppName, Strings.OK);
+                }
+            }
+        }
+
+        public static async void NavigateToChatFolderInviteLink(IClientService clientService, INavigationService navigation, string link)
+        {
+            var response = await clientService.SendAsync(new CheckChatFolderInviteLink(link));
+            if (response is ChatFolderInviteLinkInfo info)
+            {
+                var tsc = new TaskCompletionSource<object>();
+
+                var confirm = await navigation.ShowAsync(typeof(AddFolderPopup), info, tsc);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var result = await tsc.Task;
+                    if (result is IList<long> chats)
+                    {
+                        if (info.ChatFolderInfo.Id == 0)
+                        {
+                            clientService.Send(new AddChatFolderByInviteLink(link, chats));
+                        }
+                        else if (chats.Count > 0)
+                        {
+                            clientService.Send(new AddChatFolderNewChats(info.ChatFolderInfo.Id, chats));
+                        }
+                    }
                 }
             }
         }
