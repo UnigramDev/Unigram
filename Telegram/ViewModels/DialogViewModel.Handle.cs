@@ -648,7 +648,7 @@ namespace Telegram.ViewModels
                     }
                     else
                     {
-                        bubble.UpdateMessageContent(message);
+                        bubble.UpdateMessageContent(message, _chat);
                         Delegate?.ViewVisibleMessages(false);
                     }
                 });
@@ -752,7 +752,7 @@ namespace Telegram.ViewModels
                     message.InteractionInfo = update.InteractionInfo;
                     return true;
                 },
-                (bubble, message) => bubble.UpdateMessageInteractionInfo(message));
+                (bubble, message) => bubble.UpdateMessageInteractionInfo(message, _chat));
             }
         }
 

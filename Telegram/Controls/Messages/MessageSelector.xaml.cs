@@ -198,9 +198,7 @@ namespace Telegram.Controls.Messages
 
             _message = message;
 
-            var chat = message?.GetChat();
-
-            if (message != null && chat != null && _templateApplied)
+            if (message != null && _templateApplied)
             {
                 message.UpdateSelectionCallback(UpdateSelection);
 
@@ -245,12 +243,13 @@ namespace Telegram.Controls.Messages
                     presenter.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled && (message.IsChannelPost || !message.IsOutgoing) ? 36 : 0, 0, 0));
 
                     var action = message.IsSaved || message.IsShareable;
+                    var chat = message?.GetChat();
 
                     if (message.IsService())
                     {
                         Padding = new Thickness(12, 0, 12, 0);
                     }
-                    else if (message.IsSaved || (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup) && !message.IsChannelPost)
+                    else if (message.IsSaved || (chat != null && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)) && !message.IsChannelPost)
                     {
                         if (message.IsOutgoing && !message.IsSaved)
                         {
@@ -376,10 +375,7 @@ namespace Telegram.Controls.Messages
         public void UpdateSelection()
         {
             var message = _message;
-
-            var chat = message?.GetChat();
-
-            if (message != null && chat != null && _templateApplied)
+            if (message != null && _templateApplied)
             {
                 bool selected;
                 if (message.Content is MessageAlbum album)
