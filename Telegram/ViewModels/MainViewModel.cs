@@ -512,15 +512,9 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void DeleteFolder(ChatFolderViewModel folder)
+        public void DeleteFolder(ChatFolderViewModel folder)
         {
-            var confirm = await ShowPopupAsync(Strings.FilterDeleteAlert, Strings.FilterDelete, Strings.Delete, Strings.Cancel);
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            ClientService.Send(new DeleteChatFolder(folder.ChatFolderId, new long[0]));
+            FoldersViewModel.Delete(ClientService, NavigationService, folder.Info);
         }
     }
 
@@ -555,6 +549,7 @@ namespace Telegram.ViewModels
                 ChatList = new ChatListFolder(info.Id);
             }
 
+            Info = info;
             ChatFolderId = info.Id;
 
             _title = info.Title;
@@ -593,6 +588,8 @@ namespace Telegram.ViewModels
         public ChatList ChatList { get; }
 
         public int ChatFolderId { get; set; }
+
+        public ChatFolderInfo Info { get; }
 
         private string _title;
         public string Title

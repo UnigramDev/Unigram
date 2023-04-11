@@ -4,14 +4,18 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.Views.Folders;
+using Telegram.Views.Folders.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -136,15 +140,42 @@ namespace Telegram.ViewModels.Folders
             }
         }
 
-        public async void Delete(ChatFolderInfo folder)
+        public void Delete(ChatFolderInfo info)
         {
-            var confirm = await ShowPopupAsync(Strings.FilterDeleteAlert, Strings.FilterDelete, Strings.Delete, Strings.Cancel);
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
+            Delete(ClientService, NavigationService, info);
+        }
 
-            ClientService.Send(new DeleteChatFolder(folder.Id, new long[0]));
+        public static async void Delete(IClientService clientService, INavigationService navigationService, ChatFolderInfo info)
+        {
+            var response = await clientService.SendAsync(new GetChatFolderChatsToLeave(info.Id));
+            if (response is Td.Api.Chats leave && leave.TotalCount > 0)
+            {
+                var responsee = await clientService.SendAsync(new GetChatFolder(info.Id));
+                if (responsee is ChatFolder folder)
+                {
+                    var tsc = new TaskCompletionSource<object>();
+
+                    var confirm = await navigationService.ShowAsync(typeof(RemoveFolderPopup), Tuple.Create(folder, leave), tsc);
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        var result = await tsc.Task;
+                        if (result is IList<long> chats)
+                        {
+                            clientService.Send(new DeleteChatFolder(info.Id, chats));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var confirm = await MessagePopup.ShowAsync(info.HasMyInviteLinks ? Strings.FilterDeleteAlertLinks : Strings.FilterDeleteAlert, Strings.FilterDelete, Strings.Delete, Strings.Cancel, true);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
+
+                clientService.Send(new DeleteChatFolder(info.Id, new long[0]));
+            }
         }
 
         public void Create()

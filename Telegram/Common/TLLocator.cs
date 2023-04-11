@@ -996,6 +996,13 @@ namespace Telegram.Views
                     _settingsService,
                     _eventAggregator);
             }
+            else if (type == typeof(Telegram.ViewModels.Folders.RemoveFolderViewModel))
+            {
+                return (T)(object)new Telegram.ViewModels.Folders.RemoveFolderViewModel(
+                    _clientService,
+                    _settingsService,
+                    _eventAggregator);
+            }
             else if (type == typeof(Telegram.ViewModels.DownloadsViewModel))
             {
                 return (T)(object)new Telegram.ViewModels.DownloadsViewModel(

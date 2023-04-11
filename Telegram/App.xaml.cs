@@ -530,6 +530,7 @@ namespace Telegram
                 Telegram.Views.Folders.FolderPage => TLContainer.Current.Resolve<Telegram.ViewModels.Folders.FolderViewModel>(sessionId),
                 Telegram.Views.Folders.ShareFolderPage => TLContainer.Current.Resolve<Telegram.ViewModels.Folders.ShareFolderViewModel>(sessionId),
                 Telegram.Views.Folders.Popups.AddFolderPopup => TLContainer.Current.Resolve<Telegram.ViewModels.Folders.AddFolderViewModel>(sessionId),
+                Telegram.Views.Folders.Popups.RemoveFolderPopup => TLContainer.Current.Resolve<Telegram.ViewModels.Folders.RemoveFolderViewModel>(sessionId),
                 //
                 Telegram.Views.Channels.ChannelCreateStep1Page => TLContainer.Current.Resolve<Telegram.ViewModels.Channels.ChannelCreateStep1ViewModel>(sessionId),
                 Telegram.Views.Channels.ChannelCreateStep2Page channelCreateStep2 => TLContainer.Current.Resolve<Telegram.ViewModels.Channels.ChannelCreateStep2ViewModel, Telegram.ViewModels.Delegates.ISupergroupEditDelegate>(channelCreateStep2, sessionId),

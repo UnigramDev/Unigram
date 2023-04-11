@@ -621,6 +621,7 @@
     <Compile Include="ViewModels\Authorization\AuthorizationRecoveryViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationRegistrationViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationViewModel.cs" />
+    <Compile Include="ViewModels\Folders\RemoveFolderViewModel.cs" />
     <Compile Include="ViewModels\Folders\AddFolderViewModel.cs" />
     <Compile Include="ViewModels\Folders\ShareFolderViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
@@ -715,6 +716,9 @@
       <DependentUpon>MessageStatisticsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\SelectedItemsBinder.cs" />
+    <Compile Include="Views\Folders\Popups\RemoveFolderPopup.xaml.cs">
+      <DependentUpon>RemoveFolderPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Folders\Popups\AddFolderPopup.xaml.cs">
       <DependentUpon>AddFolderPopup.xaml</DependentUpon>
     </Compile>
@@ -2048,6 +2052,10 @@
     <Page Include="Views\Chats\MessageStatisticsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Folders\Popups\RemoveFolderPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Folders\Popups\AddFolderPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
