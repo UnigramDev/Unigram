@@ -936,12 +936,11 @@
         <Setter Property="HorizontalAlignment"
                 Value="Stretch" />
         <Setter Property="Padding"
-                Value="0,16,0,0" />
+                Value="0,16,0,16" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SettingsHeadline">
-                    <Grid Padding="{TemplateBinding Padding}"
-                          Margin="24,0">
+                    <Grid Margin="24,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition MaxWidth="1000" />
                             <ColumnDefinition Width="Auto" />
@@ -956,13 +955,14 @@
                                           DecodeFrameType="Logical"
                                           FrameSize="140,140"
                                           Width="140"
-                                          Height="140" />
+                                          Height="140"
+                                          Margin="{TemplateBinding Padding}" />
                         <TextBlock x:Name="Headline"
                                    x:Load="False"
                                    common:TextBlockHelper.Markdown="{TemplateBinding Text}"
                                    Style="{StaticResource InfoCaptionTextBlockStyle}"
                                    TextAlignment="Center"
-                                   Margin="12,16,12,0"
+                                   Margin="12,0,12,0"
                                    Grid.Row="1" />
                     </Grid>
                 </ControlTemplate>

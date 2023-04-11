@@ -1,20 +1,39 @@
-﻿using Telegram.Common;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Folders;
 using Windows.UI.Xaml.Controls;
 
-namespace Telegram.Views.Folders
+namespace Telegram.Views.Folders.Popups
 {
-    public sealed partial class ShareFolderPage : HostedPage
+    public sealed partial class ShareFolderPopup : ContentPopup
     {
         public ShareFolderViewModel ViewModel => DataContext as ShareFolderViewModel;
 
-        public ShareFolderPage()
+        private readonly TaskCompletionSource<object> _task;
+
+        public ShareFolderPopup(TaskCompletionSource<object> task)
         {
             InitializeComponent();
+
+            _task = task;
+
             Title = Strings.FilterShare;
+
+            PrimaryButtonText = Strings.Save;
+            SecondaryButtonText = Strings.Cancel;
+        }
+
+        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            _task.SetResult(ViewModel.SelectedItems.Select(x => x.Id).ToList());
+        }
+
+        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
         }
 
         #region Recycle

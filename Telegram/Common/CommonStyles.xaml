@@ -2,9 +2,87 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="using:Telegram.Common"
                     xmlns:icons="using:Telegram.Assets.Icons"
+                    xmlns:common="using:Telegram.Common"
                     xmlns:controls="using:Telegram.Controls"
                     xmlns:media="using:Microsoft.UI.Xaml.Media"
                     xmlns:muxc="using:Microsoft.UI.Xaml.Controls">
+
+    <Style x:Key="PopupHeaderedControlStyle"
+           TargetType="controls:HeaderedControl">
+        <Setter Property="CornerRadius"
+                Value="4" />
+        <Setter Property="Padding"
+                Value="0,16,0,0" />
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness"
+                Value="1" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <controls:HeaderedControlPanel />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemPresenterStyle">
+            <Setter.Value>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="BorderBrush"
+                            Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:HeaderedControl">
+                    <Grid x:Name="ContentRoot"
+                          Padding="{TemplateBinding Padding}"
+                          Margin="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MaxWidth="1000" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="HeaderLabel"
+                                   Text="{TemplateBinding Header}"
+                                   Margin="12,0,0,8"
+                                   Style="{StaticResource BaseTextBlockStyle}"
+                                   Visibility="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}" />
+
+                        <!--<Border x:Name="ContentPanel"
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Grid.Column="1"
+                                Grid.Row="1">-->
+                        <Border x:Name="ContentPanel"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                Grid.Row="1">
+                            <ItemsPresenter x:Name="Presenter" />
+                        </Border>
+
+                        <TextBlock x:Name="FooterLabel"
+                                   common:TextBlockHelper.Markdown="{TemplateBinding Footer}"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                                   Margin="0,8,0,0"
+                                   Grid.Row="2" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 
     <Style x:Key="NoDeleteTextBoxStyle"
            TargetType="TextBox">

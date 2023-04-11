@@ -722,8 +722,8 @@
     <Compile Include="Views\Folders\Popups\AddFolderPopup.xaml.cs">
       <DependentUpon>AddFolderPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Folders\ShareFolderPage.xaml.cs">
-      <DependentUpon>ShareFolderPage.xaml</DependentUpon>
+    <Compile Include="Views\Folders\Popups\ShareFolderPopup.xaml.cs">
+      <DependentUpon>ShareFolderPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Payments\PaymentAddressPopup.xaml.cs">
       <DependentUpon>PaymentAddressPopup.xaml</DependentUpon>
@@ -2061,7 +2061,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Folders\ShareFolderPage.xaml">
+    <Page Include="Views\Folders\Popups\ShareFolderPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

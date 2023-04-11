@@ -14,8 +14,9 @@ using Telegram.Converters;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views.Folders;
+using Telegram.Views.Folders.Popups;
 using Telegram.Views.Popups;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Folders
@@ -364,9 +365,28 @@ namespace Telegram.ViewModels.Folders
             return folder;
         }
 
-        public void OpenLink(ChatFolderInviteLink link)
+        public async void OpenLink(ChatFolderInviteLink link)
         {
-            NavigationService.Navigate(typeof(ShareFolderPage), Tuple.Create(Id.Value, link));
+            var tsc = new TaskCompletionSource<object>();
+
+            var confirm = await NavigationService.ShowAsync(typeof(ShareFolderPopup), Tuple.Create(Id.Value, link), tsc);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var result = await tsc.Task;
+                if (result is IList<long> chats)
+                {
+                    if (link != null)
+                    {
+                        await ClientService.SendAsync(new EditChatFolderInviteLink(Id.Value, link.InviteLink, string.Empty, chats));
+                    }
+                    else
+                    {
+                        await ClientService.SendAsync(new CreateChatFolderInviteLink(Id.Value, string.Empty, chats));
+                    }
+
+                    UpdateLinks();
+                }
+            }
         }
 
         public async void CreateLink()

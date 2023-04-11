@@ -528,7 +528,7 @@ namespace Telegram
                 //
                 Telegram.Views.Folders.FoldersPage => TLContainer.Current.Resolve<Telegram.ViewModels.Folders.FoldersViewModel>(sessionId),
                 Telegram.Views.Folders.FolderPage => TLContainer.Current.Resolve<Telegram.ViewModels.Folders.FolderViewModel>(sessionId),
-                Telegram.Views.Folders.ShareFolderPage => TLContainer.Current.Resolve<Telegram.ViewModels.Folders.ShareFolderViewModel>(sessionId),
+                Telegram.Views.Folders.Popups.ShareFolderPopup => TLContainer.Current.Resolve<Telegram.ViewModels.Folders.ShareFolderViewModel>(sessionId),
                 Telegram.Views.Folders.Popups.AddFolderPopup => TLContainer.Current.Resolve<Telegram.ViewModels.Folders.AddFolderViewModel>(sessionId),
                 Telegram.Views.Folders.Popups.RemoveFolderPopup => TLContainer.Current.Resolve<Telegram.ViewModels.Folders.RemoveFolderViewModel>(sessionId),
                 //

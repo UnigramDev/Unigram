@@ -31,7 +31,7 @@
                           VerticalScrollBarVisibility="Auto"
                           VerticalScrollMode="Auto">
                 <controls:SettingsPanel>
-                    <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListNewFolder.tgs"/>
+                    <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListNewFolder.tgs" />
 
                     <Grid>
                         <controls:HeaderedControl Header="{CustomResource FilterNameHint}">
@@ -117,9 +117,9 @@
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
                                     <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                    BorderThickness="0,1,0,0"
-                                                    ContextRequested="Include_ContextRequested" />
+                                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                       BorderThickness="0,1,0,0"
+                                                       ContextRequested="Include_ContextRequested" />
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>
                         </muxc:ItemsRepeater>
@@ -144,9 +144,9 @@
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
                                     <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                    BorderThickness="0,1,0,0"
-                                                    ContextRequested="Exclude_ContextRequested" />
+                                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                       BorderThickness="0,1,0,0"
+                                                       ContextRequested="Exclude_ContextRequested" />
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>
                         </muxc:ItemsRepeater>
