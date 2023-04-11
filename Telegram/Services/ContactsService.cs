@@ -460,21 +460,24 @@ namespace Telegram.Services
 
             using (await _syncLock.WaitAsync())
             {
-                Debug.WriteLine("UNSYNCING CONTACTS");
-
-                var userDataAccount = await GetUserDataAccountAsync();
-                if (userDataAccount == null)
+                if (_clientService.Options.TryGetValue("x_user_data_account", out string _))
                 {
-                    return;
+                    Debug.WriteLine("UNSYNCING CONTACTS");
+
+                    var userDataAccount = await GetUserDataAccountAsync();
+                    if (userDataAccount == null)
+                    {
+                        return;
+                    }
+
+                    await userDataAccount.DeleteAsync();
+
+                    await _clientService.SendAsync(new Td.Api.SetOption("x_user_data_account", new Td.Api.OptionValueEmpty()));
+                    await _clientService.SendAsync(new Td.Api.SetOption("x_contact_list", new Td.Api.OptionValueEmpty()));
+                    await _clientService.SendAsync(new Td.Api.SetOption("x_annotation_list", new Td.Api.OptionValueEmpty()));
+
+                    Debug.WriteLine("UNSYNCED CONTACTS");
                 }
-
-                await userDataAccount.DeleteAsync();
-
-                await _clientService.SendAsync(new Telegram.Td.Api.SetOption("x_user_data_account", new Telegram.Td.Api.OptionValueEmpty()));
-                await _clientService.SendAsync(new Telegram.Td.Api.SetOption("x_contact_list", new Telegram.Td.Api.OptionValueEmpty()));
-                await _clientService.SendAsync(new Telegram.Td.Api.SetOption("x_annotation_list", new Telegram.Td.Api.OptionValueEmpty()));
-
-                Debug.WriteLine("UNSYNCED CONTACTS");
             }
         }
 

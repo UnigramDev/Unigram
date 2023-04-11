@@ -45,7 +45,6 @@ namespace Telegram.ViewModels
                 if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
                 {
                     Settings.IsContactsSyncEnabled = false;
-                    await _contactsService.RemoveAsync();
                 }
 
                 if (Settings.IsContactsSyncEnabled)
