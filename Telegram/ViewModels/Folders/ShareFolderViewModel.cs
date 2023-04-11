@@ -10,9 +10,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Folders
 {
-    public class FolderShareViewModel : TLViewModelBase
+    public class ShareFolderViewModel : TLViewModelBase
     {
-        public FolderShareViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        public ShareFolderViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
             SelectedItems.CollectionChanged += OnCollectionChanged;

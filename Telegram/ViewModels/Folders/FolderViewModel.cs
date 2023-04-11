@@ -366,7 +366,7 @@ namespace Telegram.ViewModels.Folders
 
         public void OpenLink(ChatFolderInviteLink link)
         {
-            NavigationService.Navigate(typeof(FolderSharePage), Tuple.Create(Id.Value, link));
+            NavigationService.Navigate(typeof(ShareFolderPage), Tuple.Create(Id.Value, link));
         }
     }
 

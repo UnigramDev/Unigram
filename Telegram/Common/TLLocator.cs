@@ -982,9 +982,9 @@ namespace Telegram.Views
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Telegram.ViewModels.Folders.FolderShareViewModel))
+            else if (type == typeof(Telegram.ViewModels.Folders.ShareFolderViewModel))
             {
-                return (T)(object)new Telegram.ViewModels.Folders.FolderShareViewModel(
+                return (T)(object)new Telegram.ViewModels.Folders.ShareFolderViewModel(
                     _clientService,
                     _settingsService,
                     _eventAggregator);

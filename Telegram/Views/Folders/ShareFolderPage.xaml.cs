@@ -7,11 +7,11 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Folders
 {
-    public sealed partial class FolderSharePage : HostedPage
+    public sealed partial class ShareFolderPage : HostedPage
     {
-        public FolderShareViewModel ViewModel => DataContext as FolderShareViewModel;
+        public ShareFolderViewModel ViewModel => DataContext as ShareFolderViewModel;
 
-        public FolderSharePage()
+        public ShareFolderPage()
         {
             InitializeComponent();
             Title = Strings.FilterShare;
