@@ -50,14 +50,28 @@ namespace Telegram.Views.Folders
 
         #region Binding
 
+        private bool ConvertInviteLinkLoad(string link)
+        {
+            return !string.IsNullOrEmpty(link);
+        }
+
         private string ConvertHeadline(string title, int count)
         {
+            if (count == 0)
+            {
+                return Strings.FilterInviteHeaderNo;
+            }
+
             return Locale.Declension(Strings.R.FilterInviteHeader, count, title);
         }
 
-        private string ConvertSelected(int count)
+        private string ConvertSelected(int count, string link)
         {
-            if (count == 0)
+            if (string.IsNullOrEmpty(link))
+            {
+                return Strings.FilterInviteHeaderChatsNo;
+            }
+            else if (count == 0)
             {
                 return Strings.FilterInviteHeaderChatsEmpty;
             }

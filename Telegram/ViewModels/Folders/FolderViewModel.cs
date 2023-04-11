@@ -368,6 +368,97 @@ namespace Telegram.ViewModels.Folders
         {
             NavigationService.Navigate(typeof(ShareFolderPage), Tuple.Create(Id.Value, link));
         }
+
+        public async void CreateLink()
+        {
+            if (string.IsNullOrEmpty(Title))
+            {
+                ShowPopup(Strings.FilterInviteErrorEmptyName, Strings.AppName, Strings.OK);
+                return;
+            }
+
+            if (Exclude.Any())
+            {
+                ShowPopup(Strings.FilterInviteErrorExcluded, Strings.AppName, Strings.OK);
+                return;
+            }
+
+            if (Include.Any(x => x is FolderFlag) || Include.IsEmpty())
+            {
+                ShowPopup(Strings.FilterInviteErrorTypes, Strings.AppName, Strings.OK);
+                return;
+            }
+
+            if (Id == null)
+            {
+                // TODO: IMHO folder should be created here
+                ShowPopup(Strings.FilterFinishCreating, Strings.AppName, Strings.OK);
+                return;
+            }
+
+            var shareableItems = new List<long>(Include.OfType<FolderChat>().Select(x => x.Chat.Id));
+
+            foreach (var item in Include.OfType<FolderChat>())
+            {
+                var chat = item.Chat;
+                if (chat.Permissions.CanInviteUsers)
+                {
+                    continue;
+                }
+                else if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    if (supergroup.CanInviteUsers())
+                    {
+                        continue;
+                    }
+                    else if (supergroup.HasActiveUsername() && !supergroup.JoinByRequest)
+                    {
+                        continue;
+                    }
+                }
+                else if (ClientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+                {
+                    if (basicGroup.CanInviteUsers())
+                    {
+                        continue;
+                    }
+                }
+
+                shareableItems.Remove(chat.Id);
+            }
+
+            if (shareableItems.Count > 0)
+            {
+                var response = await ClientService.SendAsync(new CreateChatFolderInviteLink(Id.Value, string.Empty, shareableItems));
+                if (response is ChatFolderInviteLink link)
+                {
+                    OpenLink(link);
+                }
+                else if (response is Error error)
+                {
+                    if (error.MessageEquals(ErrorType.USER_CHANNELS_TOO_MUCH))
+                    {
+                        ShowPopup(Strings.FolderLinkOtherAdminLimitError, Strings.AppName, Strings.OK);
+                    }
+                    else if (error.MessageEquals(ErrorType.CHANNELS_TOO_MUCH))
+                    {
+                        NavigationService.ShowLimitReached(new PremiumLimitTypeSupergroupCount());
+                    }
+                    else if (error.MessageEquals(ErrorType.INVITES_TOO_MUCH))
+                    {
+                        NavigationService.ShowLimitReached(new PremiumLimitTypeChatFolderInviteLinkCount());
+                    }
+                    else if (error.MessageEquals(ErrorType.CHATLISTS_TOO_MUCH))
+                    {
+                        NavigationService.ShowLimitReached(new PremiumLimitTypeShareableChatFolderCount());
+                    }
+                }
+            }
+            else
+            {
+                OpenLink(null);
+            }
+        }
     }
 
     public class ChatFolderElement

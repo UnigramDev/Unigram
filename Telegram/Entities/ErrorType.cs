@@ -46,6 +46,7 @@ namespace Telegram.Td.Api
         INVITE_SLUG_EXPIRED,
         FILTER_INCLUDE_TOO_MUCH,
         CHANNELS_TOO_MUCH,
+        USER_CHANNELS_TOO_MUCH,
         INVITES_TOO_MUCH,
         CHATLISTS_TOO_MUCH,
 

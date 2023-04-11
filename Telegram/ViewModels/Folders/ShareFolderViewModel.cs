@@ -27,7 +27,7 @@ namespace Telegram.ViewModels.Folders
         {
             if (parameter is Tuple<int, ChatFolderInviteLink> data)
             {
-                InviteLink = data.Item2.InviteLink;
+                InviteLink = data.Item2?.InviteLink;
 
                 var response = await ClientService.SendAsync(new GetChatFolder(data.Item1));
                 if (response is ChatFolder folder)

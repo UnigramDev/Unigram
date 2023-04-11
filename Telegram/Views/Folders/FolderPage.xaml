@@ -159,7 +159,7 @@
                                 <StackPanel />
                             </ItemsPanelTemplate>
                         </controls:HeaderedControl.ItemsPanel>
-                        <controls:BadgeButton Click="{x:Bind ViewModel.AddExcluded}"
+                        <controls:BadgeButton Click="{x:Bind ViewModel.CreateLink}"
                                               Content="{CustomResource CreateNewLink}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               BorderThickness="0"
