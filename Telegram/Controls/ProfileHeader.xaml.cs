@@ -220,9 +220,24 @@ namespace Telegram.Controls
 
             OpenChat.Content = Strings.VoipGroupOpenChat;
 
+
+            if (user.Type is UserTypeBot userTypeBot && userTypeBot.CanBeEdited)
+            {
+                Call.Visibility = Visibility.Collapsed;
+                VideoCall.Visibility = Visibility.Collapsed;
+
+                Edit.Visibility = Visibility.Visible;
+                Search.Visibility = Visibility.Visible;
+                Grid.SetColumn(Search, 2);
+                Grid.SetColumn(Edit, 1);
+            }
+            else
+            {
+                Edit.Visibility = Visibility.Collapsed;
+            }
+
             // Unused:
             Location.Visibility = Visibility.Collapsed;
-            Edit.Visibility = Visibility.Collapsed;
 
             Join.Visibility = Visibility.Collapsed;
             Leave.Visibility = Visibility.Collapsed;
@@ -248,15 +263,18 @@ namespace Telegram.Controls
                 Description.Visibility = string.IsNullOrEmpty(fullInfo.Bio.Text) ? Visibility.Collapsed : Visibility.Visible;
             }
 
-            //UserCommonChats.Badge = fullInfo.GroupInCommonCount;
-            //UserCommonChats.Visibility = fullInfo.GroupInCommonCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-            Call.Visibility = Visibility.Visible;
-            Call.Content = Strings.Call;
-            Call.Glyph = Icons.Phone;
-            VideoCall.Visibility = fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
-
-            Search.Visibility = fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Collapsed : Visibility.Visible;
-            Grid.SetColumn(Search, 2);
+            if (user.Type is UserTypeBot userTypeBot && userTypeBot.CanBeEdited)
+            {
+            }
+            else
+            {
+                Call.Visibility = Visibility.Visible;
+                Call.Content = Strings.Call;
+                Call.Glyph = Icons.Phone;
+                VideoCall.Visibility = fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
+                Search.Visibility = fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Collapsed : Visibility.Visible;
+                Grid.SetColumn(Search, 2);
+            }
         }
 
         public void UpdateUserStatus(Chat chat, User user)
@@ -624,10 +642,6 @@ namespace Telegram.Controls
                     {
                         if (user.Type is UserTypeBot bot)
                         {
-                            if (bot.CanBeEdited)
-                            {
-                                flyout.CreateFlyoutItem(ViewModel.Edit, Strings.Edit, new FontIcon { Glyph = Icons.Edit });
-                            }
                             if (bot.CanJoinGroups)
                             {
                                 flyout.CreateFlyoutItem(ViewModel.Invite, Strings.BotInvite, new FontIcon { Glyph = Icons.PersonAdd });
