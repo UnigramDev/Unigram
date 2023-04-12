@@ -34,20 +34,28 @@ namespace Telegram.ViewModels.Folders
                 {
                     Title = folder.Title;
 
-                    _shareableItems = new HashSet<long>(folder.IncludedChatIds);
+                    var ids = new List<long>(data.Item2?.ChatIds ?? Array.Empty<long>());
 
-                    var chats = ClientService.GetChats(folder.IncludedChatIds);
+                    foreach (var id in folder.IncludedChatIds)
+                    {
+                        if (ids.Contains(id))
+                        {
+                            continue;
+                        }
 
-                    var selected = new List<Chat>(chats);
+                        ids.Add(id);
+                    }
+
+                    _shareableItems = new HashSet<long>(ids);
+
+                    var chats = ClientService.GetChats(ids);
+
+                    var selected = new List<Chat>(ClientService.GetChats(data.Item2?.ChatIds ?? folder.IncludedChatIds));
                     var sorted = new List<Chat>(chats);
 
                     foreach (var chat in chats)
                     {
-                        if (chat.Permissions.CanInviteUsers)
-                        {
-                            continue;
-                        }
-                        else if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
+                        if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
                         {
                             if (supergroup.CanInviteUsers())
                             {

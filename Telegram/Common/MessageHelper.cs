@@ -766,7 +766,7 @@ namespace Telegram.Common
                         }
                         else if (chats.Count > 0)
                         {
-                            clientService.Send(new AddChatFolderNewChats(info.ChatFolderInfo.Id, chats));
+                            clientService.Send(new ProcessChatFolderNewChats(info.ChatFolderInfo.Id, chats));
                         }
                     }
                 }
