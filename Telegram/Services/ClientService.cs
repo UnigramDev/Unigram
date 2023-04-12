@@ -1628,6 +1628,13 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.AvailableReactions = chatAvailableReactions.AvailableReactions;
                 }
             }
+            else if (update is UpdateChatBackground chatBackground)
+            {
+                if (_chats.TryGetValue(chatBackground.ChatId, out Chat value))
+                {
+                    value.Background = chatBackground.Background;
+                }
+            }
             else if (update is UpdateChatHasProtectedContent updateChatHasProtectedContent)
             {
                 if (_chats.TryGetValue(updateChatHasProtectedContent.ChatId, out Chat value))

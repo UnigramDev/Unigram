@@ -1346,7 +1346,7 @@ namespace Telegram.ViewModels
 
         #region Service message
 
-        public async void MessageServiceExecute(MessageViewModel message)
+        public async void ExecuteServiceMessage(MessageViewModel message)
         {
             if (message.Content is MessageChatUpgradeFrom chatUpgradeFrom)
             {
@@ -1437,6 +1437,26 @@ namespace Telegram.ViewModels
                     if (confirm == ContentDialogResult.Primary)
                     {
                         await EditPhotoAsync(media);
+                    }
+                }
+            }
+            else if (message.Content is MessageChatSetBackground chatSetBackground)
+            {
+                if (chatSetBackground.OldBackgroundMessageId != 0)
+                {
+                    await LoadMessageSliceAsync(message.Id, chatSetBackground.OldBackgroundMessageId);
+                }
+                else if (message.IsOutgoing)
+                {
+                    ChangeTheme();
+                }
+                else
+                {
+                    var confirm = await ShowPopupAsync(new BackgroundPopup(chatSetBackground.Background.Background));
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        // TODO:
+                        //ClientService.Send(new SetChatBackground(Chat.Id, ))
                     }
                 }
             }

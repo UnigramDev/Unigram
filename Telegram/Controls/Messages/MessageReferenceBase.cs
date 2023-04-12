@@ -303,6 +303,7 @@ namespace Telegram.Controls.Messages
                 case MessageChatDeletePhoto:
                 case MessageChatJoinByLink:
                 case MessageChatJoinByRequest:
+                case MessageChatSetBackground:
                 case MessageChatSetMessageAutoDeleteTime:
                 case MessageChatUpgradeFrom:
                 case MessageChatUpgradeTo:

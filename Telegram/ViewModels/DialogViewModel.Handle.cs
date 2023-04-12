@@ -112,6 +112,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatTitle>(Handle)
                 .Subscribe<UpdateChatPhoto>(Handle)
                 .Subscribe<UpdateChatTheme>(Handle)
+                .Subscribe<UpdateChatBackground>(Handle)
                 .Subscribe<UpdateChatNotificationSettings>(Handle)
                 .Subscribe<UpdateChatOnlineMemberCount>(Handle)
                 .Subscribe<UpdateGroupCall>(Handle);
@@ -290,6 +291,14 @@ namespace Telegram.ViewModels
         }
 
         public void Handle(UpdateChatTheme update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatTheme(_chat));
+            }
+        }
+
+        public void Handle(UpdateChatBackground update)
         {
             if (update.ChatId == _chat?.Id)
             {

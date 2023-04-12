@@ -146,6 +146,10 @@ namespace Telegram.Services
             }
             else if (target is Chat chat)
             {
+                if (chat.Background != null)
+                {
+                    ProcessFiles(chat.Background);
+                }
                 if (chat.LastMessage != null)
                 {
                     ProcessFiles(chat.LastMessage);
@@ -153,6 +157,13 @@ namespace Telegram.Services
                 if (chat.Photo != null)
                 {
                     ProcessFiles(chat.Photo);
+                }
+            }
+            else if (target is ChatBackground chatBackground)
+            {
+                if (chatBackground.Background != null)
+                {
+                    ProcessFiles(chatBackground.Background);
                 }
             }
             else if (target is ChatEvent chatEvent)
@@ -610,6 +621,13 @@ namespace Telegram.Services
                 if (messageChatChangePhoto.Photo != null)
                 {
                     ProcessFiles(messageChatChangePhoto.Photo);
+                }
+            }
+            else if (target is MessageChatSetBackground messageChatSetBackground)
+            {
+                if (messageChatSetBackground.Background != null)
+                {
+                    ProcessFiles(messageChatSetBackground.Background);
                 }
             }
             else if (target is MessageDice messageDice)
@@ -1518,6 +1536,13 @@ namespace Telegram.Services
                 if (updateBasicGroupFullInfo.BasicGroupFullInfo != null)
                 {
                     ProcessFiles(updateBasicGroupFullInfo.BasicGroupFullInfo);
+                }
+            }
+            else if (target is UpdateChatBackground updateChatBackground)
+            {
+                if (updateChatBackground.Background != null)
+                {
+                    ProcessFiles(updateChatBackground.Background);
                 }
             }
             else if (target is UpdateChatLastMessage updateChatLastMessage)

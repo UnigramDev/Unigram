@@ -65,6 +65,8 @@ namespace Telegram.Common
 
         public ChatTheme ChatTheme => _lastTheme;
 
+        public ChatBackground ChatBackground => _lastChatBackground;
+
         public void Update(ElementTheme requested)
         {
             Update(requested == ElementTheme.Light
@@ -80,8 +82,9 @@ namespace Telegram.Common
         private long? _lastBackground;
 
         private ChatTheme _lastTheme;
+        private ChatBackground _lastChatBackground;
 
-        public bool Update(ElementTheme elementTheme, ChatTheme theme)
+        public bool Update(ElementTheme elementTheme, ChatTheme theme, ChatBackground background)
         {
             var updated = false;
             var requested = elementTheme == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light;
@@ -110,13 +113,17 @@ namespace Telegram.Common
                     ThemeOutgoing.Update(info.Parent, info.Values);
                     ThemeIncoming.Update(info.Parent, info.Values);
                 }
-                if (_lastBackground != settings.Background?.Id)
+
+                var nextBackground = background?.Background ?? settings.Background;
+                if (nextBackground?.Id != _lastBackground)
                 {
                     updated = true;
                 }
 
                 _lastAccent = settings.AccentColor;
-                _lastBackground = settings.Background?.Id;
+                _lastBackground = nextBackground?.Id;
+
+                _lastChatBackground = background;
             }
             else
             {
@@ -150,6 +157,8 @@ namespace Telegram.Common
 
                 _lastAccent = null;
                 _lastBackground = null;
+
+                _lastChatBackground = null;
             }
 
             return updated;

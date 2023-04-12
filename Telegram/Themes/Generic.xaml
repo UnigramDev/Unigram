@@ -788,7 +788,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="chats:ChatBackgroundRenderer">
-                    <Grid x:Name="LayoutRoot">
+                    <Grid x:Name="LayoutRoot"
+                          CornerRadius="{TemplateBinding CornerRadius}">
                         <Image x:Name="Canvas"
                                Stretch="UniformToFill"
                                AutomationProperties.AccessibilityView="Raw"

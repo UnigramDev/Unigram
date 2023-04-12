@@ -107,6 +107,7 @@ namespace Telegram.Controls.Messages
                 MessageChatDeletePhoto chatDeletePhoto => UpdateChatDeletePhoto(message, chatDeletePhoto, active),
                 MessageChatJoinByLink chatJoinByLink => UpdateChatJoinByLink(message, chatJoinByLink, active),
                 MessageChatJoinByRequest chatJoinByRequest => UpdateChatJoinByRequest(message, chatJoinByRequest, active),
+                MessageChatSetBackground chatSetBackground => UpdateChatSetBackground(message, chatSetBackground, active),
                 MessageChatSetMessageAutoDeleteTime chatSetMessageAutoDeleteTime => UpdateChatSetMessageAutoDeleteTime(message, chatSetMessageAutoDeleteTime, active),
                 MessageChatShared chatShared => UpdateChatShared(message, chatShared, active),
                 MessageChatUpgradeFrom chatUpgradeFrom => UpdateChatUpgradeFrom(message, chatUpgradeFrom, active),
@@ -1090,6 +1091,34 @@ namespace Telegram.Controls.Messages
             if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
                 content = ReplaceWithLink(Strings.UserAcceptedToGroupAction, "un1", senderUser, entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateChatSetBackground(MessageViewModel message, MessageChatSetBackground chatSetBackground, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (chatSetBackground.OldBackgroundMessageId != 0)
+            {
+                if (message.IsOutgoing)
+                {
+                    content = Strings.ActionSetSameWallpeprForThisChatSelf;
+                }
+                else if (message.ClientService.TryGetUser(message.SenderId, out User user))
+                {
+                    content = string.Format(Strings.ActionSetSameWallpeprForThisChat, user.FirstName);
+                }
+            }
+            else if (message.IsOutgoing)
+            {
+                content = Strings.ActionSetWallpeprForThisChatSelf;
+            }
+            else if (message.ClientService.TryGetUser(message.SenderId, out User user))
+            {
+                content = string.Format(Strings.ActionSetWallpeprForThisChat, user.FirstName);
             }
 
             return (content, entities);

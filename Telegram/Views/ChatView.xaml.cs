@@ -119,6 +119,7 @@ namespace Telegram.Views
             _typeToItemHashSetMapping.Add("FriendMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ServiceMessageBackgroundTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessageUnreadTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
 
@@ -126,6 +127,7 @@ namespace Telegram.Views
             _typeToTemplateMapping.Add("FriendMessageTemplate", Resources["FriendMessageTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ServiceMessageTemplate", Resources["ServiceMessageTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ServiceMessagePhotoTemplate", Resources["ServiceMessagePhotoTemplate"] as DataTemplate);
+            _typeToTemplateMapping.Add("ServiceMessageBackgroundTemplate", Resources["ServiceMessageBackgroundTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ServiceMessageUnreadTemplate", Resources["ServiceMessageUnreadTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("EmptyMessageTemplate", Resources["EmptyMessageTemplate"] as DataTemplate);
 
@@ -441,7 +443,7 @@ namespace Telegram.Views
                 && sourcePageType != typeof(ChatScheduledPage)
                 && sourcePageType != typeof(ChatThreadPage);
 
-            if (unallowed && Theme.Current.Update(ActualTheme, null))
+            if (unallowed && Theme.Current.Update(ActualTheme, null, null))
             {
                 var background = ViewModel.ClientService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
 
@@ -3331,7 +3333,7 @@ namespace Telegram.Views
                 return;
             }
 
-            ViewModel.MessageServiceExecute(message);
+            ViewModel.ExecuteServiceMessage(message);
         }
 
         private void Autocomplete_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
@@ -3604,9 +3606,10 @@ namespace Telegram.Views
             }
 
             var theme = ViewModel.ClientService.GetChatTheme(chat.ThemeName);
-            if (Theme.Current.Update(ActualTheme, theme))
+            if (Theme.Current.Update(ActualTheme, theme, chat.Background))
             {
-                var background = ActualTheme == ElementTheme.Light ? theme?.LightSettings.Background : theme?.DarkSettings.Background;
+                var background = chat.Background?.Background;
+                background ??= ActualTheme == ElementTheme.Light ? theme?.LightSettings.Background : theme?.DarkSettings.Background;
                 background ??= ViewModel.ClientService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
 
                 if (_loadedThemeTask != null)

@@ -97,7 +97,7 @@ namespace Telegram.Controls.Chats
         private void SyncBackgroundWithChatTheme(ref Background background, bool forDarkTheme)
         {
             // I'm not a big fan of this, but this is the easiest way to keep background in sync
-            var chat = forDarkTheme ? Theme.Current.ChatTheme?.DarkSettings.Background : Theme.Current.ChatTheme?.LightSettings.Background;
+            var chat = Theme.Current.ChatBackground?.Background ?? (forDarkTheme ? Theme.Current.ChatTheme?.DarkSettings.Background : Theme.Current.ChatTheme?.LightSettings.Background);
             if (chat != null)
             {
                 background = chat;
