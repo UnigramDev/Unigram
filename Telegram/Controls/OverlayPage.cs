@@ -503,7 +503,7 @@ namespace Telegram.Controls
             throw new NotImplementedException();
         }
 
-        public Task<ContentDialogResult> ShowAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)
+        public Task<ContentDialogResult> ShowPopupAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)
         {
             throw new NotImplementedException();
         }

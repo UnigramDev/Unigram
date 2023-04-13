@@ -21,9 +21,51 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
+    public class BackgroundInfo
+    {
+        public InputBackground Background { get; set; }
+        public BackgroundType Type { get; set; }
+        public bool ForDarkTheme { get; set; }
+        int DarkWhatever { get; set; }
+
+        public BackgroundInfo(InputBackground background, BackgroundType type, bool forDarkTheme)
+        {
+            Background = background;
+            Type = type;
+            ForDarkTheme = forDarkTheme;
+        }
+    }
+
+    public class BackgroundParameters
+    {
+        public string Slug { get; }
+
+        public Background Background { get; }
+
+        public long? ChatId { get; }
+
+        public long? MessageId { get; }
+
+        public BackgroundParameters(string slug, long? chatId = null)
+        {
+            Slug = slug;
+            ChatId = chatId;
+        }
+
+        public BackgroundParameters(Background background, long? chatId = null, long? messageId = null)
+        {
+            Background = background;
+            ChatId = chatId;
+            MessageId = messageId;
+        }
+    }
+
     public class BackgroundViewModel : TLViewModelBase, IDelegable<IBackgroundDelegate>
     {
         public IBackgroundDelegate Delegate { get; set; }
+
+        private long? _chatId;
+        private long? _messageId;
 
         private bool _batchUpdate;
 
@@ -31,20 +73,16 @@ namespace Telegram.ViewModels
             : base(clientService, settingsService, aggregator)
         {
             Patterns = new MvxObservableCollection<Document>();
-
-            ChangeRotationCommand = new RelayCommand(ChangeRotationExecute);
-
-            ShareCommand = new RelayCommand(ShareExecute);
-            DoneCommand = new RelayCommand(DoneExecute);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            Background background = parameter as Background;
+            BackgroundParameters data = parameter as BackgroundParameters;
+            Background background = data?.Background;
 
-            if (parameter is string data)
+            if (data?.Slug != null)
             {
-                var split = data.Split('#');
+                var split = data.Slug.Split('#');
                 if (split[0] == Constants.WallpaperLocalFileName)
                 {
                     var local = TdExtensions.GetLocalFile(System.IO.Path.Combine(ApplicationData.Current.TemporaryFolder.Path, Constants.WallpaperLocalFileName));
@@ -85,6 +123,9 @@ namespace Telegram.ViewModels
             }
 
             Item = background;
+
+            _chatId = data?.ChatId;
+            _messageId = data?.MessageId;
 
             _batchUpdate = true;
 
@@ -155,6 +196,10 @@ namespace Telegram.ViewModels
                 }
             }
         }
+
+        public string PrimaryButtonText => _chatId.HasValue
+            ? Strings.ApplyBackgroundForThisChat
+            : Strings.ApplyBackgroundForAllChats;
 
         public MvxObservableCollection<Document> Patterns { get; private set; }
 
@@ -390,14 +435,12 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand ChangeRotationCommand { get; }
-        private void ChangeRotationExecute()
+        public void ChangeRotation()
         {
             Rotation = (_rotation + 45) % 360;
         }
 
-        public RelayCommand ShareCommand { get; }
-        private async void ShareExecute()
+        public async void Share()
         {
             var background = _item;
             if (background == null)
@@ -412,33 +455,54 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand DoneCommand { get; }
-        private async void DoneExecute()
+        public async void Done()
+        {
+            var background = await GetBackgroundAsync();
+            if (background != null)
+            {
+                if (_chatId is long chatId)
+                {
+                    if (_messageId is long messageId)
+                    {
+                        ClientService.Send(new SetChatBackground(chatId, new InputBackgroundPrevious(messageId), background.Type, 0));
+                    }
+                    else
+                    {
+                        ClientService.Send(new SetChatBackground(chatId, background.Background, background.Type, 0));
+                    }
+                }
+                else
+                {
+                    ClientService.Send(new SetBackground(background.Background, background.Type, background.ForDarkTheme));
+                }
+            }
+        }
+
+        public async Task<BackgroundInfo> GetBackgroundAsync()
         {
             var background = _item;
             if (background == null)
             {
-                return;
+                return null;
             }
 
             var dark = Settings.Appearance.IsDarkTheme();
             var freeform = dark ? new[] { 0x1B2836, 0x121A22, 0x1B2836, 0x121A22 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
 
             // This is a new background and it has to be uploaded to Telegram servers
-            Task<BaseObject> task;
             if (background.Id == Constants.WallpaperLocalId)
             {
                 var item = await ApplicationData.Current.TemporaryFolder.GetFileAsync(Constants.WallpaperLocalFileName);
                 var generated = await item.ToGeneratedAsync(ConversionType.Copy, forceCopy: true);
 
-                task = ClientService.SendAsync(new SetBackground(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, false), dark));
+                return new BackgroundInfo(new InputBackgroundLocal(generated), new BackgroundTypeWallpaper(_isBlurEnabled, false), dark);
             }
             else
             {
                 var fill = GetFill();
                 if (background.Type is BackgroundTypeFill && fill is BackgroundFillFreeformGradient fillFreeform && fillFreeform.Colors.SequenceEqual(freeform))
                 {
-                    task = ClientService.SendAsync(new SetBackground(null, null, dark));
+                    return new BackgroundInfo(null, null, dark);
                 }
                 else
                 {
@@ -458,29 +522,16 @@ namespace Telegram.ViewModels
 
                     if (type == null)
                     {
-                        return;
+                        return null;
                     }
 
                     var input = background.Id == Constants.WallpaperLocalId || background.Id == Constants.WallpaperColorId
                         ? null
                         : new InputBackgroundRemote(background.Id);
 
-                    task = ClientService.SendAsync(new SetBackground(input, type, dark));
+                    return new BackgroundInfo(input, type, dark);
                 }
             }
-
-            var response = await task;
-            //if (response is Background)
-            //{
-            //    NavigationService.GoBack();
-            //}
-            //if (response is Error error)
-            //{
-            //    if (error.Code == 404)
-            //    {
-            //        NavigationService.GoBack();
-            //    }
-            //}
         }
     }
 

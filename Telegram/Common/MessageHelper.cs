@@ -15,6 +15,7 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Telegram.Views;
 using Telegram.Views.Folders;
 using Telegram.Views.Folders.Popups;
@@ -337,7 +338,7 @@ namespace Telegram.Common
 
         private static async void NavigateToBackground(IClientService clientService, INavigationService navigation, string slug)
         {
-            await new BackgroundPopup(slug).ShowQueuedAsync();
+            await navigation.ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(slug));
 
             //var response = await clientService.SendAsync(new SearchBackground(slug));
             //if (response is Background background)
@@ -735,7 +736,7 @@ namespace Telegram.Common
             {
                 var tsc = new TaskCompletionSource<object>();
 
-                var confirm = await navigation.ShowAsync(typeof(AddFolderPopup), info, tsc);
+                var confirm = await navigation.ShowPopupAsync(typeof(AddFolderPopup), info, tsc);
                 if (confirm == ContentDialogResult.Primary)
                 {
                     var result = await tsc.Task;

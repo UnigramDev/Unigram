@@ -1,4 +1,4 @@
-﻿<controls:ContentPopup x:Class="Telegram.Views.BackgroundPopup"
+﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.BackgroundPopup"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:local="using:Telegram.Views"
@@ -13,9 +13,8 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        Background="Black"
-                       PrimaryButtonCommand="{x:Bind ViewModel.DoneCommand}"
                        VerticalContentAlignment="Stretch"
-                       ContentMaxHeight="720">
+                       ContentMaxHeight="568">
 
     <ContentDialog.Resources>
         <ResourceDictionary>
@@ -596,7 +595,7 @@
     </local:HostedPage.Header>-->
 
     <Grid x:Name="LayoutRoot"
-          Margin="-24,0">
+          Margin="-24,0,-24,-24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -604,13 +603,8 @@
         </Grid.RowDefinitions>
         <chats:ChatBackgroundRenderer x:Name="Preview"
                                       Tag="{x:Bind ConvertBackground(ViewModel.Item), Mode=OneWay}"
-                                      Margin="0,-64,0,-80"
+                                      Margin="0,-24,0,0"
                                       Grid.RowSpan="3" />
-        <Border Background="{ThemeResource PopupAcrylicBackground}"
-                Margin="0,-64,0,0" />
-        <Border Background="{ThemeResource PopupAcrylicBackground}"
-                Margin="0,0,0,-80"
-                Grid.Row="2" />
 
         <Grid x:Name="ContentPanel"
               Grid.Row="1">
@@ -622,6 +616,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="0" />
                 <RowDefinition />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="0" />
@@ -684,7 +679,7 @@
                                 Margin="4,8,4,4"
                                 CornerRadius="20"
                                 Grid.Column="1">
-                            <controls:GlyphButton Command="{x:Bind ViewModel.ChangeRotationCommand}"
+                            <controls:GlyphButton Click="{x:Bind ViewModel.ChangeRotation}"
                                                   Glyph="&#xE72C;"
                                                   RenderTransformOrigin="0.5,0.5"
                                                   CornerRadius="20"
@@ -730,8 +725,10 @@
 
             <Grid x:Name="ColorPanel"
                   Background="{ThemeResource PopupAcrylicBackground}"
-                  Height="220"
-                  Grid.Row="4">
+                  Margin="0,0,0,-92"
+                  Padding="0,0,0,92"
+                  Height="312"
+                  Grid.Row="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="48" />
                     <RowDefinition />
@@ -833,8 +830,10 @@
 
             <Grid x:Name="PatternPanel"
                   Background="{ThemeResource PopupAcrylicBackground}"
-                  Height="220"
-                  Grid.Row="4">
+                  Margin="0,0,0,-92"
+                  Padding="0,0,0,92"
+                  Height="312"
+                  Grid.Row="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="48" />
                     <RowDefinition Height="Auto" />
@@ -882,6 +881,30 @@
                          GroupName="Background"
                          Visibility="Collapsed"
                          Grid.Row="3" />
+
+            <messages:MessageService Content="{x:Bind ViewModel.PrimaryButtonText}"
+                                     Click="Done_Click"
+                                     Foreground="#FFFFFF"
+                                     Padding="{ThemeResource ButtonPadding}"
+                                     BorderBrush="{ThemeResource ButtonBorderBrush}"
+                                     BorderThickness="{ThemeResource ButtonBorderThemeThickness}"
+                                     CornerRadius="{ThemeResource ControlCornerRadius}"
+                                     HorizontalAlignment="Stretch"
+                                     HorizontalContentAlignment="Center"
+                                     Height="36"
+                                     Margin="24,8,24,24"
+                                     Grid.Row="4" />
+
         </Grid>
+
+        <messages:MessageService Content="{CustomResource Cancel}"
+                                 Click="Cancel_Click"
+                                 Foreground="#FFFFFF"
+                                 FontSize="12"
+                                 HorizontalAlignment="Right"
+                                 HorizontalContentAlignment="Center"
+                                 VerticalAlignment="Top"
+                                 Margin="24,-8,24,0"
+                                 Grid.Row="1" />
     </Grid>
 </controls:ContentPopup>

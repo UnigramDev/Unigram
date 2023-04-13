@@ -66,7 +66,7 @@ namespace Telegram.Services
         {
             var tsc = new TaskCompletionSource<object>();
 
-            var confirm = await navigation.ShowAsync(typeof(CreateChatPhotoPopup), new CreateChatPhotoParameters(chatId, isPublic, isPersonal), tsc);
+            var confirm = await navigation.ShowPopupAsync(typeof(CreateChatPhotoPopup), new CreateChatPhotoParameters(chatId, isPublic, isPersonal), tsc);
             if (confirm != ContentDialogResult.Primary)
             {
                 return false;

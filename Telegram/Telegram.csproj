@@ -780,6 +780,9 @@
     <Compile Include="Views\Popups\ScheduleVideoChatPopup.xaml.cs">
       <DependentUpon>ScheduleVideoChatPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\BackgroundsPopup.xaml.cs">
+      <DependentUpon>BackgroundsPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\StickersPopup.xaml.cs">
       <DependentUpon>StickersPopup.xaml</DependentUpon>
     </Compile>
@@ -2135,6 +2138,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ScheduleVideoChatPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\BackgroundsPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

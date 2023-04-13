@@ -251,7 +251,7 @@ namespace Telegram.ViewModels.Users
 
         public async void ChangeUsername()
         {
-            await NavigationService.ShowAsync(typeof(SettingsUsernamePopup), _userId);
+            await ShowPopupAsync(typeof(SettingsUsernamePopup), _userId);
         }
 
         public void EditCommands()

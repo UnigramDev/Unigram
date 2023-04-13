@@ -34,6 +34,7 @@ namespace Telegram.Controls.Chats
 
         private BackgroundFill _backgroundFill;
 
+        private bool _thumbnail;
         private string _fileToken;
 
         public ChatBackgroundRenderer()
@@ -352,13 +353,15 @@ namespace Telegram.Controls.Chats
                     thumbnail = false;
                 }
 
+                _thumbnail = thumbnail;
+
                 if (file.Local.IsDownloadingCompleted)
                 {
                     _background = file;
                     _backgroundId = 0;
                     _vector = thumbnail is false && background.Document.MimeType == "application/x-tgwallpattern";
                 }
-                else
+                else if (clientService != null)
                 {
                     _background = null;
                     _backgroundId = file.Id;
@@ -388,13 +391,15 @@ namespace Telegram.Controls.Chats
                     thumbnail = false;
                 }
 
+                _thumbnail = thumbnail;
+
                 if (file.Local.IsDownloadingCompleted)
                 {
                     _background = file;
                     _backgroundId = 0;
                     _vector = thumbnail is false && background.Document.MimeType == "application/x-tgwallpattern";
                 }
-                else
+                else if (clientService != null)
                 {
                     _background = null;
                     _backgroundId = file.Id;
@@ -421,7 +426,7 @@ namespace Telegram.Controls.Chats
         {
             if (file.Id == _backgroundId && target is Background background)
             {
-                UpdateSource(null, background, !_vector);
+                UpdateSource(null, background, _thumbnail);
             }
         }
 

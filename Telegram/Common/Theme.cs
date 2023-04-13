@@ -88,6 +88,7 @@ namespace Telegram.Common
         {
             var updated = false;
             var requested = elementTheme == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light;
+            var nextBackground = background?.Background;
 
             var settings = requested == TelegramTheme.Light ? theme?.LightSettings : theme?.DarkSettings;
             if (settings != null)
@@ -114,16 +115,9 @@ namespace Telegram.Common
                     ThemeIncoming.Update(info.Parent, info.Values);
                 }
 
-                var nextBackground = background?.Background ?? settings.Background;
-                if (nextBackground?.Id != _lastBackground)
-                {
-                    updated = true;
-                }
+                nextBackground ??= settings.Background;
 
                 _lastAccent = settings.AccentColor;
-                _lastBackground = nextBackground?.Id;
-
-                _lastChatBackground = background;
             }
             else
             {
@@ -150,16 +144,17 @@ namespace Telegram.Common
                         ThemeIncoming.Update(requested);
                     }
                 }
-                if (_lastBackground != null)
-                {
-                    updated = true;
-                }
 
                 _lastAccent = null;
-                _lastBackground = null;
-
-                _lastChatBackground = null;
             }
+
+            if (nextBackground?.Id != _lastBackground)
+            {
+                updated = true;
+            }
+
+            _lastBackground = nextBackground?.Id;
+            _lastChatBackground = background;
 
             return updated;
         }

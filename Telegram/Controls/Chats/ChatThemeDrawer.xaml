@@ -28,7 +28,6 @@
 
         <GridView x:Name="ScrollingHost"
                   ContainerContentChanging="OnContainerContentChanging"
-                  SelectionChanged="OnSelectionChanged"
                   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                   ScrollViewer.HorizontalScrollMode="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Disabled"
@@ -77,7 +76,7 @@
                          Content="{CustomResource RestToDefaultBackground}"
                          Foreground="{ThemeResource DangerButtonBackground}"
                          HorizontalAlignment="Center"
-                         Margin="0,8,0,0"
+                         Margin="0,0,0,8"
                          Grid.Row="3" />
     </Grid>
 </UserControl>

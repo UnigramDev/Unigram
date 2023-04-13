@@ -1452,7 +1452,7 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    var confirm = await ShowPopupAsync(new BackgroundPopup(chatSetBackground.Background.Background));
+                    var confirm = await ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(chatSetBackground.Background.Background, message.ChatId, message.Id));
                     if (confirm == ContentDialogResult.Primary)
                     {
                         // TODO:

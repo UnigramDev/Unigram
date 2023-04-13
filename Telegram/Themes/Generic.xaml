@@ -666,7 +666,6 @@
             <Setter.Value>
                 <ControlTemplate TargetType="messages:MessageService">
                     <Grid x:Name="RootGrid"
-                          Margin="{TemplateBinding BorderThickness}"
                           CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -713,7 +712,9 @@
                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           Padding="{TemplateBinding Padding}"
                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Grid.Column="1" />
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          BackgroundSizing="InnerBorderEdge" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

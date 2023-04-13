@@ -7,43 +7,73 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Controls.Cells;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
+using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Chats
 {
+    public class ChatThemeChangedEventArgs : EventArgs
+    {
+        public ChatTheme Theme { get; }
+
+        public ChatThemeChangedEventArgs(ChatTheme theme)
+        {
+            Theme = theme;
+        }
+    }
+
+    public class ChatThemeSelectedEventArgs : EventArgs
+    {
+        public bool Applied { get; }
+
+        public ChatThemeSelectedEventArgs(bool applied)
+        {
+            Applied = applied;
+        }
+    }
+
     public sealed partial class ChatThemeDrawer : UserControl
     {
-        private readonly IClientService _clientService;
+        private readonly DialogViewModel _viewModel;
 
         private readonly ChatTheme _selectedTheme;
         private readonly ChatBackground _background;
 
-        private readonly Action<bool, ChatTheme, ChatBackground> _action;
-        private readonly Action<bool, ChatTheme, ChatBackground> _close;
+        public event EventHandler<ChatThemeChangedEventArgs> ThemeChanged;
+        public event EventHandler<ChatThemeSelectedEventArgs> ThemeSelected;
 
-        public ChatThemeDrawer(IClientService clientService, string selectedTheme, ChatBackground background, Action<bool, ChatTheme, ChatBackground> action, Action<bool, ChatTheme, ChatBackground> close)
+        public ChatThemeDrawer(DialogViewModel viewModel)
         {
             InitializeComponent();
 
-            _clientService = clientService;
-            _action = action;
-            _close = close;
+            _viewModel = viewModel;
 
-            var items = new List<ChatTheme>(clientService.GetChatThemes());
+            var chat = _viewModel.Chat;
+            var items = new List<ChatTheme>(viewModel.ClientService.GetChatThemes());
             items.Insert(0, new ChatTheme("\u274C", null, null));
 
-            _selectedTheme = string.IsNullOrEmpty(selectedTheme) ? items[0] : items.FirstOrDefault(x => x.Name == selectedTheme);
-            _background = background;
+            _selectedTheme = string.IsNullOrEmpty(chat.ThemeName) ? items[0] : items.FirstOrDefault(x => x.Name == chat.ThemeName);
+            _background = chat.Background;
 
             ScrollingHost.ItemsSource = items;
             ScrollingHost.SelectedItem = _selectedTheme;
+            ScrollingHost.SelectionChanged += OnSelectionChanged;
+
+            ApplyButton.Visibility = Visibility.Collapsed;
+
+            WallpaperButton.Visibility = Visibility.Visible;
+            WallpaperButton.Content = _background != null
+                ? Strings.ChooseANewWallpaper
+                : Strings.ChooseBackgroundFromGallery;
 
             RemoveButton.Content = Strings.RestToDefaultBackground;
-            RemoveButton.Visibility = background != null
+            RemoveButton.Visibility = chat.Background != null
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
@@ -59,13 +89,9 @@ namespace Telegram.Controls.Chats
             {
                 return;
             }
-
-            var theme = args.Item as ChatTheme;
-            var cell = args.ItemContainer.ContentTemplateRoot as ChatThemeCell;
-
-            if (cell != null && theme != null)
+            else if (args.ItemContainer.ContentTemplateRoot is ChatThemeCell content && args.Item is ChatTheme theme)
             {
-                cell.Update(_clientService, theme);
+                content.Update(theme);
             }
         }
 
@@ -73,7 +99,7 @@ namespace Telegram.Controls.Chats
         {
             if (ScrollingHost.SelectedItem is ChatTheme theme)
             {
-                _action(true, theme.LightSettings != null ? theme : null, _background);
+                ThemeChanged?.Invoke(this, new ChatThemeChangedEventArgs(theme.LightSettings != null ? theme : null));
 
                 if (theme == _selectedTheme)
                 {
@@ -96,11 +122,25 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e)
+        private async void Close_Click(object sender, RoutedEventArgs e)
         {
             if (ScrollingHost.SelectedItem is ChatTheme theme)
             {
-                _close(theme != _selectedTheme, theme.LightSettings != null ? theme : null, _background);
+                if (theme != _selectedTheme)
+                {
+                    var confirm = await _viewModel.ShowPopupAsync(Strings.SaveChangesAlertText, Strings.SaveChangesAlertTitle, Strings.ApplyTheme, Strings.Discard);
+                    if (confirm == ContentDialogResult.None)
+                    {
+                        return;
+                    }
+                    else if (confirm == ContentDialogResult.Primary)
+                    {
+                        Apply_Click(null, null);
+                        return;
+                    }
+                }
+
+                ThemeSelected?.Invoke(this, new ChatThemeSelectedEventArgs(false));
             }
         }
 
@@ -108,20 +148,28 @@ namespace Telegram.Controls.Chats
         {
             if (ScrollingHost.SelectedItem is ChatTheme theme)
             {
-                _action(theme != _selectedTheme, theme.LightSettings != null ? theme : null, _background);
+                _viewModel.ClientService.Send(new SetChatTheme(_viewModel.Chat.Id, theme.Name));
+                ThemeSelected?.Invoke(this, new ChatThemeSelectedEventArgs(true));
             }
         }
 
         private async void Wallpaper_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: implement
-            await MessagePopup.ShowAsync("Next beta, sorry.", Strings.AppName, Strings.OK);
+            var tsc = new TaskCompletionSource<object>();
+
+            var confirm = await _viewModel.ShowPopupAsync(typeof(BackgroundsPopup), _viewModel.Chat.Id, tsc);
+            var delayed = await tsc.Task;
+
+            if (delayed is bool close && close)
+            {
+                ThemeSelected?.Invoke(this, new ChatThemeSelectedEventArgs(true));
+            }
         }
 
-        private async void Remove_Click(object sender, RoutedEventArgs e)
+        private void Remove_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: implement
-            await MessagePopup.ShowAsync("Next beta, sorry.", Strings.AppName, Strings.OK);
+            _viewModel.ClientService.Send(new SetChatBackground(_viewModel.Chat.Id, null, null, 0));
+            ThemeSelected?.Invoke(this, new ChatThemeSelectedEventArgs(true));
         }
     }
 }

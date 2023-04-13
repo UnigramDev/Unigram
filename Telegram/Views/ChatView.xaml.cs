@@ -1736,40 +1736,28 @@ namespace Telegram.Views
                 return;
             }
 
-            var drawer = new ChatThemeDrawer(_viewModel.ClientService, _viewModel.Chat.ThemeName, _viewModel.Chat.Background, UpdateChatTheme, CloseChatTheme);
+            var drawer = new ChatThemeDrawer(_viewModel);
+            drawer.ThemeChanged += ChatThemeDrawer_ThemeChanged;
+            drawer.ThemeSelected += ChatThemeDrawer_ThemeSelected;
 
             TextRoot.Children.Add(drawer);
             ShowHideChatThemeDrawer(true, drawer);
         }
 
-        private void UpdateChatTheme(bool preview, ChatTheme theme, ChatBackground background)
+        private void ChatThemeDrawer_ThemeChanged(object sender, ChatThemeChangedEventArgs e)
         {
-            if (preview)
-            {
-                UpdateChatTheme(theme, background);
-            }
-            else
-            {
-                _viewModel.ClientService.Send(new SetChatTheme(_viewModel.Chat.Id, theme?.Name ?? string.Empty));
-            }
+            UpdateChatTheme(e.Theme);
         }
 
-        private async void CloseChatTheme(bool changes, ChatTheme theme, ChatBackground background)
+        private void ChatThemeDrawer_ThemeSelected(object sender, ChatThemeSelectedEventArgs e)
         {
-            if (changes)
+            if (sender is ChatThemeDrawer drawer)
             {
-                var confirm = await _viewModel.ShowPopupAsync(Strings.SaveChangesAlertText, Strings.SaveChangesAlertTitle, Strings.ApplyTheme, Strings.Discard);
-                if (confirm == ContentDialogResult.None)
-                {
-                    return;
-                }
-                else if (confirm == ContentDialogResult.Primary)
-                {
-                    UpdateChatTheme(false, theme, background);
-                }
-            }
+                drawer.ThemeChanged -= ChatThemeDrawer_ThemeChanged;
+                drawer.ThemeSelected -= ChatThemeDrawer_ThemeSelected;
 
-            ShowHideChatThemeDrawer(false, TextRoot.Children[1] as ChatThemeDrawer);
+                ShowHideChatThemeDrawer(false, drawer);
+            }
         }
 
         private async void ShowHideChatThemeDrawer(bool show, ChatThemeDrawer drawer)
@@ -1842,17 +1830,17 @@ namespace Telegram.Views
             var animClip2 = textArea.Compositor.CreateScalarKeyFrameAnimation();
             animClip2.InsertKeyFrame(0, show ? -44 : -44 + value);
             animClip2.InsertKeyFrame(1, show ? -44 + value : -44);
-            animClip2.Duration = Constants.SoftAnimation;
+            animClip2.Duration = Constants.FastAnimation;
 
             var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
             animClip3.InsertKeyFrame(0, new Vector2(0, show ? value : 0));
             animClip3.InsertKeyFrame(1, new Vector2(0, show ? 0 : value));
-            animClip3.Duration = Constants.SoftAnimation;
+            animClip3.Duration = Constants.FastAnimation;
 
             var anim1 = textArea.Compositor.CreateVector3KeyFrameAnimation();
             anim1.InsertKeyFrame(0, new Vector3(0, show ? value : 0, 0));
             anim1.InsertKeyFrame(1, new Vector3(0, show ? 0 : value, 0));
-            anim1.Duration = Constants.SoftAnimation;
+            anim1.Duration = Constants.FastAnimation;
 
             var fade1 = textArea.Compositor.CreateScalarKeyFrameAnimation();
             fade1.InsertKeyFrame(0, show ? 1 : 0);
@@ -3761,15 +3749,14 @@ namespace Telegram.Views
                 return;
             }
 
-            var theme = ViewModel.ClientService.GetChatTheme(chat.ThemeName);
-            UpdateChatTheme(theme, chat.Background);
+            UpdateChatTheme(ViewModel.ClientService.GetChatTheme(chat.ThemeName));
         }
 
-        private async void UpdateChatTheme(ChatTheme theme, ChatBackground background)
+        private async void UpdateChatTheme(ChatTheme theme)
         {
-            if (Theme.Current.Update(ActualTheme, theme, background))
+            if (Theme.Current.Update(ActualTheme, theme, _viewModel.Chat.Background))
             {
-                var current = background?.Background;
+                var current = _viewModel.Chat.Background?.Background;
                 current ??= ActualTheme == ElementTheme.Light ? theme?.LightSettings.Background : theme?.DarkSettings.Background;
                 current ??= ViewModel.ClientService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
 

@@ -126,7 +126,7 @@ namespace Telegram.ViewModels.Settings
         public RelayCommand<AutoDownloadType> AutoDownloadCommand { get; }
         public async void AutoDownloadExecute(AutoDownloadType type)
         {
-            await NavigationService.ShowAsync(typeof(SettingsDataAutoPopup), type);
+            await ShowPopupAsync(typeof(SettingsDataAutoPopup), type);
             RaisePropertyChanged(nameof(AutoDownload));
         }
 

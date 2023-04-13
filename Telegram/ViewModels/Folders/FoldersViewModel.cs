@@ -155,7 +155,7 @@ namespace Telegram.ViewModels.Folders
                 {
                     var tsc = new TaskCompletionSource<object>();
 
-                    var confirm = await navigationService.ShowAsync(typeof(RemoveFolderPopup), Tuple.Create(folder, leave), tsc);
+                    var confirm = await navigationService.ShowPopupAsync(typeof(RemoveFolderPopup), Tuple.Create(folder, leave), tsc);
                     if (confirm == ContentDialogResult.Primary)
                     {
                         var result = await tsc.Task;

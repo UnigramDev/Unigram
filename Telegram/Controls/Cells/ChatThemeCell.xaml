@@ -11,7 +11,7 @@
              d:DesignWidth="400"
              ActualThemeChanged="OnActualThemeChanged">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource SolidBackgroundFillColorBaseBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -39,10 +39,10 @@
                    TextAlignment="Center"
                    TextWrapping="Wrap"
                    FontWeight="SemiBold"
-                   FontSize="16"
+                   FontSize="14"
                    Visibility="Collapsed"
                    VerticalAlignment="Center"
-                   Margin="8"
+                   Margin="12,8"
                    Grid.RowSpan="2" />
 
         <TextBlock x:Name="Name"
