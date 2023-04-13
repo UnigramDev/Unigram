@@ -357,6 +357,9 @@
     <Compile Include="Controls\Chats\ChatSendButton.cs" />
     <Compile Include="Controls\Chats\ChatStickerButton.cs" />
     <Compile Include="Controls\Chats\ChatTextBox.cs" />
+    <Compile Include="Controls\Chats\ChatThemeDrawer.xaml.cs">
+      <DependentUpon>ChatThemeDrawer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ColorPicker.cs" />
     <Compile Include="Controls\ColorSlider.cs" />
     <Compile Include="Controls\ColorTextBox.cs" />
@@ -775,9 +778,6 @@
     </Compile>
     <Compile Include="Views\Popups\ScheduleVideoChatPopup.xaml.cs">
       <DependentUpon>ScheduleVideoChatPopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Popups\ChatThemePopup.xaml.cs">
-      <DependentUpon>ChatThemePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\StickersPopup.xaml.cs">
       <DependentUpon>StickersPopup.xaml</DependentUpon>
@@ -1749,6 +1749,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Chats\ChatThemeDrawer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\CountryBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2132,10 +2136,6 @@
     <Page Include="Views\Popups\ScheduleVideoChatPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Popups\ChatThemePopup.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\StickersPopup.xaml">
       <Generator>MSBuild:Compile</Generator>

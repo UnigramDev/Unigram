@@ -3145,21 +3145,9 @@ namespace Telegram.ViewModels
 
         #region Set theme
 
-        public async void ChangeTheme()
+        public void ChangeTheme()
         {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var dialog = new ChatThemePopup(ClientService, chat.ThemeName);
-
-            var confirm = await ShowPopupAsync(dialog);
-            if (confirm == ContentDialogResult.Primary)
-            {
-                ClientService.Send(new SetChatTheme(chat.Id, dialog.ThemeName));
-            }
+            Delegate?.ChangeTheme();
         }
 
         #endregion
