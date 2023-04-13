@@ -8,11 +8,13 @@ using LinqToVisualTree;
 using Microsoft.UI.Xaml.Controls;
 using System.Linq;
 using System.Numerics;
+using Telegram.Assets.Icons;
 using Telegram.Common;
 using Telegram.Controls.Messages.Content;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
@@ -24,7 +26,7 @@ namespace Telegram.Controls.Messages
 {
     public sealed partial class MessageSelector : CheckBox
     {
-        private AnimatedIcon Icon;
+        private Border Icon;
         private ContentPresenter Presenter;
 
         private bool _templateApplied;
@@ -67,8 +69,14 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            Icon = GetTemplateChild(nameof(Icon)) as AnimatedIcon;
+            var visual = GetVisual(Window.Current.Compositor, out var source, out _props);
+
+            _source = source;
+            _previous = visual;
+
+            Icon = GetTemplateChild(nameof(Icon)) as Border;
             ElementCompositionPreview.SetIsTranslationEnabled(Icon, true);
+            ElementCompositionPreview.SetElementChildVisual(Icon, visual?.RootVisual);
 
             RegisterPropertyChangedCallback(BackgroundProperty, OnBackgroundChanged);
             OnBackgroundChanged(this, BackgroundProperty);
@@ -94,10 +102,9 @@ namespace Telegram.Controls.Messages
 
         private void OnBackgroundChanged(DependencyObject sender, DependencyProperty dp)
         {
-            var icon = Icon?.Source as Assets.Icons.Select;
-            if (icon != null && Background is SolidColorBrush background)
+            if (_source != null && Background is SolidColorBrush background)
             {
-                icon.Background = background.Color;
+                _source.SetColorProperty("Color_FF0000", background.Color);
             }
         }
 
@@ -120,15 +127,14 @@ namespace Telegram.Controls.Messages
                 base.OnToggle();
 
                 CreateIcon();
+                UpdateIcon(IsChecked is true, true);
 
                 if (IsChecked is true)
                 {
-                    AnimatedIcon.SetState(Icon, "Checked");
                     message.Delegate.Select(message);
                 }
                 else
                 {
-                    AnimatedIcon.SetState(Icon, "Normal");
                     message.Delegate.Unselect(message);
                 }
             }
@@ -206,11 +212,10 @@ namespace Telegram.Controls.Messages
                 Presenter.IsHitTestVisible = !_isSelectionEnabled || IsAlbum;
 
                 CreateIcon();
+                UpdateIcon(IsChecked is true, false);
 
                 if (Icon != null)
                 {
-                    AnimatedIcon.SetState(Icon, IsChecked is true ? "Checked" : "Normal");
-
                     var icon = ElementCompositionPreview.GetElementVisual(Icon);
                     icon.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled ? 36 : 0, 0, 0));
                 }
@@ -329,7 +334,7 @@ namespace Telegram.Controls.Messages
 
                     if (Icon != null)
                     {
-                        AnimatedIcon.SetState(Icon, IsChecked is true ? "Checked" : "Normal");
+                        UpdateIcon(IsChecked is true, true);
 
                         var icon = ElementCompositionPreview.GetElementVisual(Icon);
                         icon.CenterPoint = new Vector3(12, 12, 0);
@@ -354,6 +359,8 @@ namespace Telegram.Controls.Messages
                 {
                     if (Icon != null)
                     {
+                        UpdateIcon(IsChecked is true, false);
+
                         var icon = ElementCompositionPreview.GetElementVisual(Icon);
                         icon.Properties.InsertVector3("Translation", new Vector3(value && !IsAlbumChild ? 36 : 0, 0, 0));
                         icon.Scale = value ? Vector3.One : Vector3.Zero;
@@ -391,10 +398,61 @@ namespace Telegram.Controls.Messages
                 Presenter.IsHitTestVisible = !_isSelectionEnabled || IsAlbum;
 
                 CreateIcon();
+                UpdateIcon(IsChecked is true, true);
+            }
+        }
 
-                if (Icon != null)
+
+        // This should be held in memory, or animation will stop
+        private CompositionPropertySet _props;
+
+        private IAnimatedVisual _previous;
+        private IAnimatedVisualSource2 _source;
+
+        private IAnimatedVisual GetVisual(Compositor compositor, out IAnimatedVisualSource2 source, out CompositionPropertySet properties)
+        {
+            source = new Select();
+
+            if (source == null)
+            {
+                properties = null;
+                return null;
+            }
+
+            var visual = source.TryCreateAnimatedVisual(compositor, out _);
+            if (visual == null)
+            {
+                properties = null;
+                return null;
+            }
+
+            properties = compositor.CreatePropertySet();
+            properties.InsertScalar("Progress", 1.0F);
+
+            var progressAnimation = compositor.CreateExpressionAnimation("_.Progress");
+            progressAnimation.SetReferenceParameter("_", properties);
+            visual.RootVisual.Properties.InsertScalar("Progress", 1.0F);
+            visual.RootVisual.Properties.StartAnimation("Progress", progressAnimation);
+
+            return visual;
+        }
+
+        private void UpdateIcon(bool selected, bool animate)
+        {
+            if (_props != null && _previous != null)
+            {
+                if (animate)
                 {
-                    AnimatedIcon.SetState(Icon, IsChecked is true ? "Checked" : "Normal");
+                    var linearEasing = _props.Compositor.CreateLinearEasingFunction();
+                    var animation = _props.Compositor.CreateScalarKeyFrameAnimation();
+                    animation.Duration = _previous.Duration;
+                    animation.InsertKeyFrame(1, selected ? 1 : 0, linearEasing);
+
+                    _props.StartAnimation("Progress", animation);
+                }
+                else
+                {
+                    _props.InsertScalar("Progress", selected ? 1.0F : 0.0F);
                 }
             }
         }
