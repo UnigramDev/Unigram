@@ -4216,19 +4216,19 @@ namespace Telegram.Views
 
             var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
             rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.BubbleRadius);
-            rect.Size = new Vector2(TextArea.ActualSize.X, 144);
+            rect.Size = new Vector2(TextArea.ActualSize.X, TextArea.ActualSize.Y + 48);
             rect.Offset = new Vector2(0, value);
 
             textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
 
             if (messages.Clip is InsetClip messagesClip)
             {
-                messagesClip.TopInset = value;
+                messagesClip.TopInset = -44 + value;
                 messagesClip.BottomInset = -96;
             }
             else
             {
-                messages.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, -96);
+                messages.Clip = textArea.Compositor.CreateInsetClip(0, -44 + value, 0, -96);
             }
 
             composer.Clip = textArea.Compositor.CreateInsetClip(0, 0, 0, value);
@@ -4267,8 +4267,8 @@ namespace Telegram.Views
             animClip.Duration = Constants.FastAnimation;
 
             var animClip2 = textArea.Compositor.CreateScalarKeyFrameAnimation();
-            animClip2.InsertKeyFrame(0, show ? 0 : 48);
-            animClip2.InsertKeyFrame(1, show ? 48 : 0);
+            animClip2.InsertKeyFrame(0, show ? -44 : -44 + 48);
+            animClip2.InsertKeyFrame(1, show ? -44 + 48 : -44);
             animClip2.Duration = Constants.FastAnimation;
 
             var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
@@ -4294,14 +4294,13 @@ namespace Telegram.Views
 
             batch.End();
 
-
             if (sendout)
             {
                 ContentPanel.Margin = new Thickness(0, 0, 0, -48);
             }
             else
             {
-                ContentPanel.Margin = new Thickness(0, -44, 0, 0);
+                ContentPanel.Margin = new Thickness(0, -48, 0, 0);
             }
 
             if (show)
