@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using Telegram.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using System.Collections.Specialized;
-using System.Collections;
-using Telegram.Collections;
 
 namespace Telegram.Common
 {
@@ -26,7 +26,7 @@ namespace Telegram.Common
 
         private static void OnSynchronizerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (e.OldValue is  SelectedItemsBinder oldValue)
+            if (e.OldValue is SelectedItemsBinder oldValue)
             {
                 oldValue.UnsubscribeFromEvents();
             }

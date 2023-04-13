@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;

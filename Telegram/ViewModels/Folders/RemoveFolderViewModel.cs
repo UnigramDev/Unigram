@@ -29,7 +29,7 @@ namespace Telegram.ViewModels.Folders
             if (parameter is Tuple<ChatFolder, Td.Api.Chats> tuple)
             {
                 Items.ReplaceWith(ClientService.GetChats(tuple.Item1.IncludedChatIds));
-                
+
                 foreach (var item in Items)
                 {
                     if (tuple.Item2.ChatIds.Contains(item.Id))

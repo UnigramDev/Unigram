@@ -2837,7 +2837,7 @@ namespace Telegram.ViewModels
                     message = string.Format(Strings.AddMembersAlertNamesText, names, chat.Title);
                 }
                 else
-                { 
+                {
                     message = Locale.Declension(Strings.R.AddManyMembersAlertNamesText, selected.Count, chat.Title);
                 }
 

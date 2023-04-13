@@ -81,7 +81,7 @@ namespace Telegram.Controls
             }
 
             foreach (SelectorItem container in panel.Children)
-            { 
+            {
                 var content = container.ContentTemplateRoot as ChatCell;
                 if (content != null)
                 {

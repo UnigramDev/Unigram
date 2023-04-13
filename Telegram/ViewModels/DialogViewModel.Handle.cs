@@ -425,7 +425,7 @@ namespace Telegram.ViewModels
                     }
 
                     foreach (SelectorItem container in panel.Children)
-                    { 
+                    {
                         var message = field.ItemFromContainer(container) as MessageViewModel;
                         if (message == null || !message.IsOutgoing)
                         {

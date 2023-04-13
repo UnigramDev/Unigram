@@ -1942,7 +1942,7 @@ namespace Telegram.Common
             //{
             //    return true;
             //}
-            
+
             return basicGroup.Status is ChatMemberStatusCreator || basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanInviteUsers;
         }
 
