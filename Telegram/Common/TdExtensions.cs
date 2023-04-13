@@ -1410,6 +1410,16 @@ namespace Telegram.Common
             return false;
         }
 
+        public static bool AreTheSame(this GroupCallParticipant sender, GroupCallParticipant compare)
+        {
+            if (sender.IsCurrentUser && compare.IsCurrentUser)
+            {
+                return true;
+            }
+
+            return sender.ParticipantId.AreTheSame(compare.ParticipantId);
+        }
+
         public static bool IsUser(this MessageSender sender, long userId)
         {
             return sender is MessageSenderUser user && user.UserId == userId;
