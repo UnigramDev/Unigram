@@ -104,7 +104,7 @@ namespace Telegram.Controls.Cells
                 iconSelected.StartAnimation("Opacity", fadeIn);
                 iconSelected.StartAnimation("Translation", spring);
 
-                fadeOut.Duration = TimeSpan.FromMilliseconds(150);
+                fadeOut.Duration = Constants.FastAnimation;
                 title.StartAnimation("Opacity", fadeOut);
             }
             else if (next == "Normal" && prev == "Selected")
@@ -128,7 +128,7 @@ namespace Telegram.Controls.Cells
                 iconSelected.StartAnimation("Translation", offset);
 
                 fadeIn.InsertKeyFrame(1, 0.8f);
-                fadeIn.Duration = TimeSpan.FromMilliseconds(150);
+                fadeIn.Duration = Constants.FastAnimation;
                 title.StartAnimation("Opacity", fadeIn);
             }
             else if (next == "Normal")

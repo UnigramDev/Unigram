@@ -182,22 +182,22 @@ namespace Telegram.Controls
                 var fadeOut = prevVisual.Compositor.CreateScalarKeyFrameAnimation();
                 fadeOut.InsertKeyFrame(0, 1);
                 fadeOut.InsertKeyFrame(1, 0, easing);
-                fadeOut.Duration = TimeSpan.FromMilliseconds(167);
+                fadeOut.Duration = Constants.FastAnimation;
 
                 var fadeIn = prevVisual.Compositor.CreateScalarKeyFrameAnimation();
                 fadeIn.InsertKeyFrame(0, 0);
                 fadeIn.InsertKeyFrame(1, 1, easing);
-                fadeIn.Duration = TimeSpan.FromMilliseconds(167);
+                fadeIn.Duration = Constants.FastAnimation;
 
                 var slideOut = prevVisual.Compositor.CreateScalarKeyFrameAnimation();
                 slideOut.InsertKeyFrame(0, 0);
                 slideOut.InsertKeyFrame(1, delta, easing);
-                slideOut.Duration = TimeSpan.FromMilliseconds(167);
+                slideOut.Duration = Constants.FastAnimation;
 
                 var slideIn = prevVisual.Compositor.CreateScalarKeyFrameAnimation();
                 slideIn.InsertKeyFrame(0, -delta);
                 slideIn.InsertKeyFrame(1, 0, easing);
-                slideIn.Duration = TimeSpan.FromMilliseconds(167);
+                slideIn.Duration = Constants.FastAnimation;
 
                 prevVisual.StartAnimation("Opacity", fadeOut);
                 nextVisual.StartAnimation("Opacity", fadeIn);

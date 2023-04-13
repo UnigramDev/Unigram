@@ -869,13 +869,13 @@ namespace Telegram.Controls.Cells
                 var offset0 = visual.Compositor.CreateVector3KeyFrameAnimation();
                 offset0.InsertKeyFrame(0, new Vector3(compact ? 0 : -x, 0, 0));
                 offset0.InsertKeyFrame(1, new Vector3(compact ? -x : 0, 0, 0));
-                //offset0.Duration = TimeSpan.FromMilliseconds(150);
+                //offset0.Duration = Constants.FastAnimation;
                 visual.StartAnimation("Translation", offset0);
 
                 var clip0 = visual.Compositor.CreateScalarKeyFrameAnimation();
                 clip0.InsertKeyFrame(0, compact ? -24 : x - 24);
                 clip0.InsertKeyFrame(1, compact ? x - 24 : -24);
-                //clip0.Duration = TimeSpan.FromMilliseconds(150);
+                //clip0.Duration = Constants.FastAnimation;
                 visual.Clip.StartAnimation("LeftInset", clip0);
             }
             else
@@ -898,7 +898,7 @@ namespace Telegram.Controls.Cells
                     var scale0 = visual.Compositor.CreateVector3KeyFrameAnimation();
                     scale0.InsertKeyFrame(0, compact ? Vector3.Zero : Vector3.One);
                     scale0.InsertKeyFrame(1, compact ? Vector3.One : Vector3.Zero);
-                    scale0.Duration = TimeSpan.FromMilliseconds(150);
+                    scale0.Duration = Constants.FastAnimation;
                     badge.StartAnimation("Scale", scale0);
                 }
                 else

@@ -247,14 +247,14 @@ namespace Telegram.Controls.Messages
             resize.InsertKeyFrame(1, new Vector2(width, 36));
             resize.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             resize.DelayTime = TimeSpan.FromMilliseconds(100);
-            resize.Duration = TimeSpan.FromMilliseconds(150);
+            resize.Duration = Constants.FastAnimation;
 
             var move = compositor.CreateVector2KeyFrameAnimation();
             move.InsertKeyFrame(0, new Vector2(width - 36, 40));
             move.InsertKeyFrame(1, new Vector2(0, 40));
             move.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             move.DelayTime = TimeSpan.FromMilliseconds(100);
-            move.Duration = TimeSpan.FromMilliseconds(150);
+            move.Duration = Constants.FastAnimation;
 
             var viewVisual = ElementCompositionPreview.GetElementVisual(view);
             viewVisual.Clip = compositor.CreateGeometricClip(clip);
@@ -390,7 +390,7 @@ namespace Telegram.Controls.Messages
             var resize = compositor.CreateVector2KeyFrameAnimation();
             resize.InsertKeyFrame(0, new Vector2(width, 36));
             resize.InsertKeyFrame(1, new Vector2(width, height));
-            resize.Duration = TimeSpan.FromMilliseconds(150);
+            resize.Duration = Constants.FastAnimation;
 
             clip.StartAnimation("Size", resize);
 
@@ -642,7 +642,7 @@ namespace Telegram.Controls.Messages
             scaleMedium.InsertKeyFrame(1, Vector3.One);
             scaleMedium.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             scaleMedium.DelayTime = TimeSpan.FromMilliseconds(100);
-            scaleMedium.Duration = TimeSpan.FromMilliseconds(150);
+            scaleMedium.Duration = Constants.FastAnimation;
 
             var scalePill = compositor.CreateSpringVector3Animation();
             scalePill.InitialValue = Vector3.Zero;
@@ -684,7 +684,7 @@ namespace Telegram.Controls.Messages
             resize.InsertKeyFrame(1, new Vector2(width, height + yy));
             resize.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             resize.DelayTime = TimeSpan.FromMilliseconds(100);
-            resize.Duration = TimeSpan.FromMilliseconds(150);
+            resize.Duration = Constants.FastAnimation;
 
             drawer.Clip = compositor.CreateGeometricClip(clip);
             visualPill.Clip = compositor.CreateGeometricClip(clip);
@@ -697,7 +697,7 @@ namespace Telegram.Controls.Messages
                 move.InsertKeyFrame(1, new Vector2());
                 move.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
                 move.DelayTime = TimeSpan.FromMilliseconds(100);
-                move.Duration = TimeSpan.FromMilliseconds(150);
+                move.Duration = Constants.FastAnimation;
 
                 clip.StartAnimation("Offset", move);
             }

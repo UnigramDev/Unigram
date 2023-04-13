@@ -4264,22 +4264,22 @@ namespace Telegram.Views
             var animClip = textArea.Compositor.CreateScalarKeyFrameAnimation();
             animClip.InsertKeyFrame(0, show ? 48 : 0);
             animClip.InsertKeyFrame(1, show ? 0 : 48);
-            animClip.Duration = TimeSpan.FromMilliseconds(150);
+            animClip.Duration = Constants.FastAnimation;
 
             var animClip2 = textArea.Compositor.CreateScalarKeyFrameAnimation();
             animClip2.InsertKeyFrame(0, show ? 0 : 48);
             animClip2.InsertKeyFrame(1, show ? 48 : 0);
-            animClip2.Duration = TimeSpan.FromMilliseconds(150);
+            animClip2.Duration = Constants.FastAnimation;
 
             var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
             animClip3.InsertKeyFrame(0, new Vector2(0, show ? 48 : 0));
             animClip3.InsertKeyFrame(1, new Vector2(0, show ? 0 : 48));
-            animClip3.Duration = TimeSpan.FromMilliseconds(150);
+            animClip3.Duration = Constants.FastAnimation;
 
             var anim1 = textArea.Compositor.CreateVector3KeyFrameAnimation();
             anim1.InsertKeyFrame(0, new Vector3(0, show ? 48 : 0, 0));
             anim1.InsertKeyFrame(1, new Vector3(0, show ? 0 : 48, 0));
-            anim1.Duration = TimeSpan.FromMilliseconds(150);
+            anim1.Duration = Constants.FastAnimation;
 
             rect.StartAnimation("Offset", animClip3);
 
@@ -4351,12 +4351,12 @@ namespace Telegram.Views
             var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(show ? 0 : 1, new Vector3(-40, 0, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
-            offset.Duration = TimeSpan.FromMilliseconds(150);
+            offset.Duration = Constants.FastAnimation;
 
             var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
             scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
-            scale.Duration = TimeSpan.FromMilliseconds(150);
+            scale.Duration = Constants.FastAnimation;
 
             var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(show ? 0 : 1, 0);
@@ -4407,7 +4407,7 @@ namespace Telegram.Views
             var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, ListAutocomplete.ActualSize.Y, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
-            offset.Duration = TimeSpan.FromMilliseconds(150);
+            offset.Duration = Constants.FastAnimation;
 
             list.StartAnimation("Translation", offset);
 
