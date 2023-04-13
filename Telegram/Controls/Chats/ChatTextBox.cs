@@ -717,7 +717,7 @@ namespace Telegram.Controls.Chats
         {
             if (ViewModel.Type == DialogType.ScheduledMessages && ViewModel.ComposerHeader?.EditingMessage == null)
             {
-                await ScheduleAsync();
+                await ScheduleAsync(false);
                 return;
             }
 
@@ -729,18 +729,26 @@ namespace Telegram.Controls.Chats
             await ViewModel.SendMessageAsync(text, options);
         }
 
-        public async Task ScheduleAsync()
+        public async Task ScheduleAsync(bool whenOnline)
         {
             Sending?.Invoke(this, EventArgs.Empty);
 
-            var options = await ViewModel.PickMessageSendOptionsAsync(true);
-            if (options == null)
+            MessageSendOptions options;
+
+            if (whenOnline)
             {
-                return;
+                options = new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendWhenOnline(), 0);
+            }
+            else
+            {
+                options = await ViewModel.PickMessageSendOptionsAsync(true);
             }
 
-            var text = GetFormattedText(true);
-            await ViewModel.SendMessageAsync(text, options);
+            if (options != null)
+            {
+                var text = GetFormattedText(true);
+                await ViewModel.SendMessageAsync(text, options);
+            }
         }
 
         protected override void OnGettingFormattedText()

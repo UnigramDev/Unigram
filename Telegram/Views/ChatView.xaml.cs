@@ -2021,7 +2021,13 @@ namespace Telegram.Views
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(async () => await TextField.SendAsync(true), Strings.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
-            flyout.CreateFlyoutItem(async () => await TextField.ScheduleAsync(), self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
+
+            if (ViewModel.ClientService.TryGetUser(chat, out Td.Api.User user) && user.Type is UserTypeRegular && user.Status is not UserStatusRecently && !self)
+            {
+                flyout.CreateFlyoutItem(async () => await TextField.ScheduleAsync(true), Strings.SendWhenOnline, new FontIcon { Glyph = Icons.PersonCircleOnline });
+            }
+
+            flyout.CreateFlyoutItem(async () => await TextField.ScheduleAsync(false), self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 
             flyout.ShowAt(sender, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
         }
