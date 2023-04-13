@@ -1897,7 +1897,7 @@ namespace Telegram.Views
 
             flyout.CreateFlyoutItem(ViewModel.SearchExecute, Strings.Search, new FontIcon { Glyph = Icons.Search }, Windows.System.VirtualKey.F);
 
-            if (user != null && !secret)
+            if (user != null && user.Type is not UserTypeDeleted && !secret)
             {
                 flyout.CreateFlyoutItem(ViewModel.ChangeTheme, Strings.ChangeColors, new FontIcon { Glyph = Icons.PaintBrush });
             }
@@ -1906,7 +1906,7 @@ namespace Telegram.Views
             {
                 flyout.CreateFlyoutItem(ViewModel.Report, Strings.ReportChat, new FontIcon { Glyph = Icons.ShieldError });
             }
-            if (user != null && user.Id != ViewModel.ClientService.Options.MyId)
+            if (user != null && user.Type is not UserTypeDeleted && user.Id != ViewModel.ClientService.Options.MyId)
             {
                 if (!user.IsContact && !LastSeenConverter.IsServiceUser(user) && !LastSeenConverter.IsSupportUser(user))
                 {
@@ -1935,7 +1935,7 @@ namespace Telegram.Views
                     flyout.CreateFlyoutItem(ViewModel.DeleteChat, Strings.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
                 }
             }
-            if ((user != null && user.Id != ViewModel.ClientService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
+            if ((user != null && user.Type is not UserTypeDeleted && user.Id != ViewModel.ClientService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
                 var muted = ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0;
                 var silent = chat.DefaultDisableNotification;
@@ -4529,6 +4529,10 @@ namespace Telegram.Views
             if (ViewModel.Type == DialogType.Pinned)
             {
                 ShowAction(Strings.UnpinAllMessages, true);
+            }
+            else if (user.Type is UserTypeDeleted)
+            {
+                ShowAction(Strings.DeleteThisChat, true);
             }
             else if (ViewModel.ClientService.IsRepliesChat(chat))
             {

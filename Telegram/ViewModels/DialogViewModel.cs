@@ -3219,7 +3219,11 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                if (ClientService.IsRepliesChat(chat))
+                if (user.Type is UserTypeDeleted)
+                {
+                    DeleteChat();
+                }
+                else if (ClientService.IsRepliesChat(chat))
                 {
                     ToggleMute();
                 }
