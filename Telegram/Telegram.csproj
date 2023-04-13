@@ -155,6 +155,7 @@
     <Compile Include="Assets\Icons\StickerToEmoji.cs" />
     <Compile Include="Assets\Icons\StickerToGif.cs" />
     <Compile Include="Assets\Icons\Sun.cs" />
+    <Compile Include="Assets\Icons\TeachingTipLinkCopied.cs" />
     <Compile Include="Assets\Icons\Unlock.cs" />
     <Compile Include="Assets\Icons\Username.cs" />
     <Compile Include="Assets\Icons\Profile.cs" />

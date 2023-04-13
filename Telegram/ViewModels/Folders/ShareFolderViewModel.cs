@@ -6,6 +6,7 @@ using Telegram.Common;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Popups;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Folders
@@ -27,7 +28,7 @@ namespace Telegram.ViewModels.Folders
         {
             if (parameter is Tuple<int, ChatFolderInviteLink> data)
             {
-                InviteLink = data.Item2?.InviteLink.Replace("https://", string.Empty);
+                InviteLink = data.Item2?.InviteLink;
 
                 var response = await ClientService.SendAsync(new GetChatFolder(data.Item1));
                 if (response is ChatFolder folder)
@@ -103,7 +104,7 @@ namespace Telegram.ViewModels.Folders
         private string _inviteLink;
         public string InviteLink
         {
-            get => _inviteLink;
+            get => _inviteLink.Replace("https://", string.Empty);
             set => Set(ref _inviteLink, value);
         }
 
@@ -136,6 +137,16 @@ namespace Telegram.ViewModels.Folders
 
                 SelectedItems.AddRange(temp);
             }
+        }
+
+        public void Copy()
+        {
+            MessageHelper.CopyText(_inviteLink);
+        }
+
+        public async void Share()
+        {
+            await SharePopup.GetForCurrentView().ShowAsync(new FormattedText(_inviteLink, Array.Empty<TextEntity>()));
         }
     }
 }

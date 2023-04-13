@@ -20,13 +20,12 @@
                               IsSourceGrouped="True" />
     </controls:ContentPopup.Resources>
 
-    <Grid Margin="0,0,0,-24">
+    <Grid Margin="-24,0,-24,-24">
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ItemsSource.View}"
                   SelectionMode="Multiple"
                   ChoosingItemContainer="OnChoosingItemContainer"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  Margin="-12,0">
+                  ContainerContentChanging="OnContainerContentChanging">
             <common:SelectedItemsBinder.Attached>
                 <common:SelectedItemsBinder SelectedItems="{x:Bind ViewModel.SelectedItems}" />
             </common:SelectedItemsBinder.Attached>
@@ -62,12 +61,12 @@
                                            Visibility="{Binding Key.Footer, Converter={StaticResource NullToVisibilityConverter}}"
                                            Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
                                            Style="{StaticResource CaptionTextBlockStyle}"
-                                           Margin="12,8,0,8" />
+                                           Margin="24,8,0,8" />
 
                                 <TextBlock Text="{Binding Key.Title}"
                                            Style="{StaticResource BaseTextBlockStyle}"
                                            FontWeight="SemiBold"
-                                           Margin="12,16,0,8" />
+                                           Margin="24,16,0,8" />
                             </StackPanel>
                         </DataTemplate>
                     </GroupStyle.HeaderTemplate>
@@ -78,12 +77,12 @@
                                         IsFooter="True">
                     <TextBlock common:TextBlockHelper.Markdown="{x:Bind ViewModel.Subtitle}"
                                Style="{StaticResource BodyTextBlockStyle}"
-                               Margin="12,0"
+                               Margin="24,0"
                                Grid.Row="1" />
 
                     <Grid x:Name="MissingHeader"
                           x:Load="{x:Bind ConvertTotalCount(ViewModel.TotalCount)}"
-                          Padding="12,0,0,0">
+                          Padding="24,0,12,0">
                         <controls:AnimatedTextBlock Text="{x:Bind ConvertSelected(ViewModel.SelectedCount), Mode=OneWay}"
                                                     TextStyle="{StaticResource BaseTextBlockStyle}"
                                                     VerticalAlignment="Bottom"
@@ -104,6 +103,8 @@
                 <Style TargetType="ListViewItem">
                     <Setter Property="CornerRadius"
                             Value="{ThemeResource ControlCornerRadius}" />
+                    <Setter Property="Margin"
+                            Value="12,0" />
                 </Style>
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
@@ -124,7 +125,6 @@
         </ListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                    ScrollingHost="{x:Bind ScrollingHost}"
-                                    Margin="-24,0" />
+                                    ScrollingHost="{x:Bind ScrollingHost}" />
     </Grid>
 </controls:ContentPopup>

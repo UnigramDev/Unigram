@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using Microsoft.UI.Xaml.Controls;
+using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Assets.Icons;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Folders;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Folders.Popups
@@ -105,5 +108,16 @@ namespace Telegram.Views.Folders.Popups
 
         #endregion
 
+        private void Share_Click(object sender, RoutedEventArgs e)
+        {
+            Hide();
+            ViewModel.Share();
+        }
+
+        private void Copy_Click(object sender, RoutedEventArgs e)
+        {
+            Window.Current.ShowTeachingTip(sender as FrameworkElement, Strings.LinkCopied, new TeachingTipLinkCopied(), TeachingTipPlacementMode.BottomRight);
+            ViewModel.Copy();
+        }
     }
 }
