@@ -48,11 +48,11 @@ namespace Telegram.Controls.Cells
         private void SetIsActive(bool value)
         {
             Badge.Style = BootStrapper.Current.Resources[value ? "AccentCaptionBorderStyle" : "InfoCaptionBorderStyle"] as Style;
-            SubtitleLabel.Style = BootStrapper.Current.Resources[value ? "AccentCaptionTextBlockStyle" : "InfoCaptionTextBlockStyle"] as Style;
+            SubtitleLabel.TextStyle = BootStrapper.Current.Resources[value ? "AccentCaptionTextBlockStyle" : "InfoCaptionTextBlockStyle"] as Style;
 
             SubtitleLabel.Text = value
-                ? Strings.UsernameLinkActive
-                : Strings.UsernameLinkInactive;
+                ? Strings.UsernameProfileLinkActive
+                : Strings.UsernameProfileLinkInactive;
             BadgeIcon.Text = value
                 ? Icons.LinkSide
                 : Icons.LinkSideBroken;
