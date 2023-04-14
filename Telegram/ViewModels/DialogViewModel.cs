@@ -999,6 +999,9 @@ namespace Telegram.ViewModels
                 Function func;
                 if (_topic != null)
                 {
+                    // TODO: Workaround, should be removed some day
+                    await ClientService.SendAsync(new GetMessage(chat.Id, _topic.Info.MessageThreadId));
+
                     func = new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, maxId, -25, 50);
                 }
                 else if (_threadId != 0)
