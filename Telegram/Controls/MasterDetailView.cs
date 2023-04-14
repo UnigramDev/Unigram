@@ -191,7 +191,7 @@ namespace Telegram.Controls
             var material = ElementCompositionPreview.GetElementVisual(MaterialPart);
             var bread = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
 
-            DetailHeaderBackground.Visibility = show == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
+            ShowHideDetailHeader(show == BackgroundKind.Material);
 
             if (animate)
             {
@@ -410,12 +410,12 @@ namespace Telegram.Controls
                         SetScrollingHost(scroll);
                     }
 
-                    DetailHeaderBackground.Visibility = Visibility.Visible;
+                    ShowHideDetailHeader(true);
                 }
                 else
                 {
                     _backStack.Clear();
-                    DetailHeaderBackground.Visibility = Visibility.Collapsed;
+                    ShowHideDetailHeader(false);
                 }
             }
             else
@@ -424,7 +424,7 @@ namespace Telegram.Controls
                 DetailFooter = null;
 
                 _backStack.Clear();
-                DetailHeaderBackground.Visibility = Visibility.Collapsed;
+                ShowHideDetailHeader(false);
             }
 
             if (AdaptivePanel == null)
@@ -433,6 +433,21 @@ namespace Telegram.Controls
             }
 
             OnViewStateChanged();
+        }
+
+        private void ShowHideDetailHeader(bool show)
+        {
+            var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
+            detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
+
+            if (detailVisual.Clip is InsetClip clip)
+            {
+                clip.TopInset = show ? 2 : 0;
+            }
+
+            DetailHeaderBackground.Visibility = show
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private void SetScrollingHost(object sender, RoutedEventArgs e)
