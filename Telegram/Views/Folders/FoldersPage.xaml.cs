@@ -35,8 +35,10 @@ namespace Telegram.Views.Folders
             button.Glyph = Icons.FolderToGlyph(icon).Item1;
             button.Content = folder.Title;
             button.CommandParameter = folder;
-            button.ChevronGlyph = args.Index > ViewModel.ClientService.Options.ChatFolderCountMax ? Icons.LockClosed : folder.HasMyInviteLinks ? Icons.Link : Icons.ChevronRight;
             button.BorderThickness = new Thickness(0, args.Index == 0 ? 0 : 1, 0, 0);
+
+            var chevron = button.Badge as TextBlock;
+            chevron.Text = args.Index > ViewModel.ClientService.Options.ChatFolderCountMax ? Icons.LockClosed : folder.HasMyInviteLinks ? Icons.Link : string.Empty;
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)

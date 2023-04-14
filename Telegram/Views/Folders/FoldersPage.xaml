@@ -34,7 +34,12 @@
                                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                                           IsChevronVisible="True"
                                                           ContextRequested="Item_ContextRequested"
-                                                          Click="Edit_Click" />
+                                                          Click="Edit_Click">
+                                        <controls:BadgeButton.Badge>
+                                            <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                       FontSize="20" />
+                                        </controls:BadgeButton.Badge>
+                                    </controls:BadgeButton>
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>
                         </muxc:ItemsRepeater>
