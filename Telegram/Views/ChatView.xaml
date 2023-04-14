@@ -266,7 +266,7 @@
                             HorizontalAlignment="Center"
                             Padding="12,4,12,4"
                             Margin="0,8,0,12">
-                        <TextBlock Text="{CustomResource ViewPhotoAction}"
+                        <TextBlock Text="{CustomResource ViewWallpaperAction}"
                                    Foreground="#FFFFFF"
                                    TextAlignment="Center"
                                    Style="{StaticResource CaptionTextBlockStyle}" />

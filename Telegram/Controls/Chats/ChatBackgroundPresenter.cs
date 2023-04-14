@@ -150,8 +150,7 @@ namespace Telegram.Controls.Chats
             }
             else if (prev.Type is BackgroundTypePattern prevPattern && next.Type is BackgroundTypePattern nextPattern)
             {
-                return prevPattern.IsMoving == nextPattern.IsMoving
-                    && prevPattern.IsInverted == nextPattern.IsInverted
+                return prevPattern.IsInverted == nextPattern.IsInverted
                     && prevPattern.Intensity == nextPattern.Intensity
                     && prev.Document?.DocumentValue.Id == next.Document?.DocumentValue.Id
                     && FillEquals(prevPattern.Fill, nextPattern.Fill);
@@ -159,7 +158,6 @@ namespace Telegram.Controls.Chats
             else if (prev.Type is BackgroundTypeWallpaper prevWallpaper && next.Type is BackgroundTypeWallpaper nextWallpaper)
             {
                 return prevWallpaper.IsBlurred == nextWallpaper.IsBlurred
-                    && prevWallpaper.IsMoving == nextWallpaper.IsMoving
                     && prev.Document?.DocumentValue.Id == next.Document?.DocumentValue.Id;
             }
 

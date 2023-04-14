@@ -64,6 +64,8 @@ namespace Telegram.ViewModels
     {
         public IBackgroundDelegate Delegate { get; set; }
 
+        private Background _background;
+
         private long? _chatId;
         private long? _messageId;
 
@@ -123,6 +125,8 @@ namespace Telegram.ViewModels
             }
 
             Item = background;
+
+            _background = background;
 
             _chatId = data?.ChatId;
             _messageId = data?.MessageId;
@@ -462,7 +466,7 @@ namespace Telegram.ViewModels
             {
                 if (_chatId is long chatId)
                 {
-                    if (_messageId is long messageId)
+                    if (_messageId is long messageId && background.Type.GetType() == _background?.Type.GetType())
                     {
                         ClientService.Send(new SetChatBackground(chatId, new InputBackgroundPrevious(messageId), background.Type, 0));
                     }
