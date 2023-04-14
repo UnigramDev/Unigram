@@ -18,9 +18,9 @@ While being in the Diagnostic settings, under `TDLib Logs` select `Verbosity lev
 
 ### Sending a log file to a user
 To send logs through the app you must disable them first:
-Navigate to the Diagnostics settings, select `Verbosity level` and set it to `Assert`.
+Navigate to the Diagnostics settings, select `Verbosity level` and set it to `Error`.
 
-![image](https://user-images.githubusercontent.com/88960956/232140939-ccfcd06f-cf00-4363-bf96-a4a70f9a93cc.png)
+![image](https://user-images.githubusercontent.com/88960956/232144724-66b405bd-2525-4506-bec8-8d18355f5759.png)
 
 You can now click on the item below (marked as `tdlib_log.txt`):
 
