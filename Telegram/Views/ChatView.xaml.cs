@@ -263,6 +263,11 @@ namespace Telegram.Views
             PinnedMessage.InitializeParent(Clipper);
 
             ButtonStickers.Source = ViewModel.Settings.Stickers.SelectedTab;
+
+            if (TextRoot.Children.Count > 1)
+            {
+                ShowHideChatThemeDrawer(false, TextRoot.Children[1] as ChatThemeDrawer);
+            }
         }
 
         private void InitializeAutomation()
@@ -1727,8 +1732,6 @@ namespace Telegram.Views
             Collapse_Click(null, null);
         }
 
-        #region Context menu
-
         public void ChangeTheme()
         {
             if (TextRoot.Children.Count > 1)
@@ -1757,11 +1760,23 @@ namespace Telegram.Views
                 drawer.ThemeSelected -= ChatThemeDrawer_ThemeSelected;
 
                 ShowHideChatThemeDrawer(false, drawer);
+
+                if (e.Applied)
+                {
+                    return;
+                }
+
+                UpdateChatTheme(_viewModel.Chat);
             }
         }
 
         private async void ShowHideChatThemeDrawer(bool show, ChatThemeDrawer drawer)
         {
+            if (TextRoot.Children.Count == 1)
+            {
+                return;
+            }
+
             //if ((show && ComposerHeader.Visibility == Visibility.Visible) || (!show && (ComposerHeader.Visibility == Visibility.Collapsed || _composerHeaderCollapsed)))
             //{
             //    return;
@@ -1866,6 +1881,8 @@ namespace Telegram.Views
 
             ContentPanel.Margin = new Thickness(0, -value, 0, 0);
         }
+
+        #region Context menu
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
