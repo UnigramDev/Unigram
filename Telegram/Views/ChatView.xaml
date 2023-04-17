@@ -456,7 +456,7 @@
                             <TextBlock x:Name="Title"
                                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
                                        Style="{StaticResource BaseTextBlockStyle}"
-                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"
                                        MaxLines="1" />
