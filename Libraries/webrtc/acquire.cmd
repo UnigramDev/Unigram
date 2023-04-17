@@ -1,5 +1,7 @@
 @echo off
 
+set PATCH_DIR=%~dp0
+
 echo.
 echo Downloading the depot_tools...
 curl https://storage.googleapis.com/chrome-infra/depot_tools.zip --output depot_tools.zip
@@ -45,26 +47,28 @@ call fetch --nohooks webrtc
 if errorlevel 1 goto :error
 
 echo.
-echo Changing to the branch-heads/5359 branch...
+echo Changing to the branch-heads/5615 branch...
 cd src
 if errorlevel 1 goto :error
 
-call git checkout branch-heads/5359
+call git checkout branch-heads/5615
 if errorlevel 1 goto :error
 
 echo.
 echo Instructing the tools to bring the bits from all the sub repositories to your dev box...
-call gclient sync -D -r branch-heads/5359
+call gclient sync -D -r branch-heads/5615
 if errorlevel 1 goto :error
 
 echo.
 echo Adding forked Telegram+UWP upstream
 call git remote add upstream https://github.com/FrayxRulez/webrtc-uwp.git
-call git checkout m108
-call git apply "build/m108.patch" --directory="C:\webrtc\src\build"
-call git apply "third_party/m108.patch" --directory="C:\webrtc\src\third_party"
-call git apply "third_party/libyuv/m108.patch" --directory="C:\webrtc\src\third_party\libyuv"
-call git apply "third_party/libvpx/source/libvpx/m108.patch" --directory="C:\webrtc\src\third_party\libvpx\source\libvpx"
+call git checkout m112
+pushd third_party
+call git apply "%PATCH_DIR%/third_party/m112.patch"
+pushd libyuv
+call git apply "%PATCH_DIR%/third_party/libyuv/m112.patch"
+pushd ..\libvpx\source\libvpx
+call git apply "%PATCH_DIR%/third_party/libvpx/source/libvpx/m112.patch"
 goto :exit
 
 :error
