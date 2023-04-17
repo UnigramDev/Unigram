@@ -51,6 +51,16 @@ namespace Telegram.Common
             }
 
             var entities = Client.Execute(new GetTextEntities(markdown)) as TextEntities;
+
+            for (int i = 0; i < entities.Entities.Count; i++)
+            {
+                if (entities.Entities[i].Type is TextEntityTypeUrl)
+                {
+                    entities.Entities.RemoveAt(i);
+                    i--;
+                }
+            }
+
             var formatted = Client.Execute(new ParseMarkdown(new FormattedText(markdown, entities.Entities))) as FormattedText;
             var text = formatted.Text;
             var previous = 0;
