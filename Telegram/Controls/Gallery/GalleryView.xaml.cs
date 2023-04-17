@@ -1012,6 +1012,10 @@ namespace Telegram.Controls.Gallery
                 out GalleryContentView target,
                 out GalleryContentView next);
 
+            previous.IsEnabled = false;
+            target.IsEnabled = true;
+            next.IsEnabled = false;
+
             var index = viewModel.SelectedIndex;
             if (index < 0 || viewModel.Items.IsEmpty())
             {
