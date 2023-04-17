@@ -22,6 +22,11 @@ namespace Telegram.ViewModels.Folders
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             RaisePropertyChanged(nameof(SelectedCount));
+
+            if (_bindButtonToSelection)
+            {
+                PrimaryButtonText = Locale.Declension(Strings.R.FolderLinkButtonJoinPlural, SelectedCount);
+            }
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -33,6 +38,7 @@ namespace Telegram.ViewModels.Folders
                     Title = Strings.FolderLinkTitleAdd;
                     Subtitle = string.Format(Strings.FolderLinkSubtitle, inviteLink.ChatFolderInfo.Title);
 
+                    _bindButtonToSelection = false;
                     PrimaryButtonText = string.Format(Strings.FolderLinkButtonAdd, inviteLink.ChatFolderInfo.Title);
                 }
                 else if (inviteLink.MissingChatIds.Count == 0)
@@ -40,6 +46,7 @@ namespace Telegram.ViewModels.Folders
                     Title = Strings.FolderLinkTitleAlready;
                     Subtitle = string.Format(Strings.FolderLinkSubtitleAlready, inviteLink.ChatFolderInfo.Title);
 
+                    _bindButtonToSelection = false;
                     PrimaryButtonText = Strings.OK;
                 }
                 else
@@ -47,7 +54,8 @@ namespace Telegram.ViewModels.Folders
                     Title = Strings.FolderLinkTitleAddChats;
                     Subtitle = Locale.Declension(Strings.R.FolderLinkSubtitleChats, inviteLink.MissingChatIds.Count, inviteLink.ChatFolderInfo.Title);
 
-                    PrimaryButtonText = Strings.FolderLinkButtonJoin;
+                    _bindButtonToSelection = true;
+                    PrimaryButtonText = Locale.Declension(Strings.R.FolderLinkButtonJoinPlural, inviteLink.MissingChatIds.Count);
                 }
 
                 var missing = ClientService.GetChats(inviteLink.MissingChatIds);
@@ -83,9 +91,11 @@ namespace Telegram.ViewModels.Folders
             return Task.CompletedTask;
         }
 
-        private HashSet<long> _joinedChats = new();
+        private readonly HashSet<long> _joinedChats = new();
 
         private HashSet<long> _shareableChats = new();
+
+        private bool _bindButtonToSelection;
 
         public MvxObservableCollection<KeyedList<KeyedGroup, Chat>> Items { get; private set; } = new();
 

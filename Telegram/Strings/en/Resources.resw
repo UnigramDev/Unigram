@@ -519,17 +519,17 @@ to: {1}</value>
   <data name="ActionsChartTitle" xml:space="preserve">
     <value>Actions</value>
   </data>
-  <data name="ActionSetSameWallpeprForThisChat" xml:space="preserve">
-    <value>{0} set a same background for this chat.</value>
+  <data name="ActionSetSameWallpaperForThisChat" xml:space="preserve">
+    <value>{0} set a same wallpaper for this chat.</value>
   </data>
-  <data name="ActionSetSameWallpeprForThisChatSelf" xml:space="preserve">
-    <value>You set a same background for this chat.</value>
+  <data name="ActionSetSameWallpaperForThisChatSelf" xml:space="preserve">
+    <value>You set the same wallpaper for the chat.</value>
   </data>
-  <data name="ActionSetWallpeprForThisChat" xml:space="preserve">
-    <value>{0} set a new background for this chat.</value>
+  <data name="ActionSetWallpaperForThisChat" xml:space="preserve">
+    <value>{0} set a new wallpaper for this chat.</value>
   </data>
-  <data name="ActionSetWallpeprForThisChatSelf" xml:space="preserve">
-    <value>You set a new background for this chat.</value>
+  <data name="ActionSetWallpaperForThisChatSelf" xml:space="preserve">
+    <value>You set a new wallpaper for this chat.</value>
   </data>
   <data name="ActionSkip" xml:space="preserve">
     <value>Skip</value>
@@ -1244,7 +1244,7 @@ Please enable Unigram in the Startup Apps Settings.</value>
     <value>Pattern</value>
   </data>
   <data name="BackgroundPreview" xml:space="preserve">
-    <value>Background Preview</value>
+    <value>Wallpaper</value>
   </data>
   <data name="BackgroundPreviewLine1" xml:space="preserve">
     <value>Hint: some background images look better with the blur effect.</value>
@@ -3081,7 +3081,7 @@ Duration: {1}</value>
     <value>Are you sure you want to remove this folder? Your chats will not be deleted.</value>
   </data>
   <data name="FilterDeleteAlertLinks" xml:space="preserve">
-    <value>Are you sure you want to delete this folder? This will also deactivate all the invite links used to share this folder.</value>
+    <value>Are you sure you want to delete this folder? This will also deactivate all the invite links created to share the folder.</value>
   </data>
   <data name="FilterDeleteItem" xml:space="preserve">
     <value>Delete folder</value>
@@ -3099,7 +3099,7 @@ Duration: {1}</value>
     <value>Choose chats or types of chats that will not appear in this folder.</value>
   </data>
   <data name="FilterFinishCreating" xml:space="preserve">
-    <value>Please, finish creating this folder to share it.</value>
+    <value>Please finish creating this folder to share it.</value>
   </data>
   <data name="FilterGroups" xml:space="preserve">
     <value>Groups</value>
@@ -3123,7 +3123,7 @@ Duration: {1}</value>
     <value>You can’t share folders with excluded chats.</value>
   </data>
   <data name="FilterInviteErrorTypes" xml:space="preserve">
-    <value>You can’t share folders with include chat types.</value>
+    <value>You can’t share folders which include or exclude specific chat types.</value>
   </data>
   <data name="FilterInviteHeader_one" xml:space="preserve">
     <value>Anyone with this link can add **{1}** folder and the **{0}** chat selected below.</value>
@@ -3206,7 +3206,10 @@ Duration: {1}</value>
   <data name="FolderLinkButtonAdd" xml:space="preserve">
     <value>Add {0}</value>
   </data>
-  <data name="FolderLinkButtonJoin" xml:space="preserve">
+  <data name="FolderLinkButtonJoinPlural_one" xml:space="preserve">
+    <value>Join chat</value>
+  </data>
+  <data name="FolderLinkButtonJoinPlural_other" xml:space="preserve">
     <value>Join chats</value>
   </data>
   <data name="FolderLinkButtonRemove" xml:space="preserve">
@@ -3243,22 +3246,22 @@ Duration: {1}</value>
     <value>One of the groups in this folder can’t be added because one of its admins has too many groups and channels.</value>
   </data>
   <data name="FolderLinkSubtitle" xml:space="preserve">
-    <value>Do you want to add a new chat folder **{0}** and join its group and channels?</value>
+    <value>Do you want to add the chat folder **{0}** and join its groups and channels?</value>
   </data>
   <data name="FolderLinkSubtitleAlready" xml:space="preserve">
     <value>You have already added the folder **{0}** and all its chats.</value>
   </data>
   <data name="FolderLinkSubtitleChats_one" xml:space="preserve">
-    <value>Do you want to join **{0} chat** and add them to the folder **{1}**?</value>
+    <value>Do you want to join **{0} chat** and add it to the folder **{1}**?</value>
   </data>
   <data name="FolderLinkSubtitleChats_other" xml:space="preserve">
     <value>Do you want to join **{0} chats** and add them to the folder **{1}**?</value>
   </data>
   <data name="FolderLinkSubtitleRemove" xml:space="preserve">
-    <value>Do you also want to quit the chats included in this folder?</value>
+    <value>Do you also want to leave the chats included in this folder?</value>
   </data>
   <data name="FolderLinkTitleAdd" xml:space="preserve">
-    <value>Add folder</value>
+    <value>Add Folder</value>
   </data>
   <data name="FolderLinkTitleAddChats" xml:space="preserve">
     <value>Add Chats to Folder</value>

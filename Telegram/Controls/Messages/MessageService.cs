@@ -1130,20 +1130,20 @@ namespace Telegram.Controls.Messages
             {
                 if (message.IsOutgoing)
                 {
-                    content = Strings.ActionSetSameWallpeprForThisChatSelf;
+                    content = Strings.ActionSetSameWallpaperForThisChatSelf;
                 }
                 else if (message.ClientService.TryGetUser(message.SenderId, out User user))
                 {
-                    content = string.Format(Strings.ActionSetSameWallpeprForThisChat, user.FirstName);
+                    content = string.Format(Strings.ActionSetSameWallpaperForThisChat, user.FirstName);
                 }
             }
             else if (message.IsOutgoing)
             {
-                content = Strings.ActionSetWallpeprForThisChatSelf;
+                content = Strings.ActionSetWallpaperForThisChatSelf;
             }
             else if (message.ClientService.TryGetUser(message.SenderId, out User user))
             {
-                content = string.Format(Strings.ActionSetWallpeprForThisChat, user.FirstName);
+                content = string.Format(Strings.ActionSetWallpaperForThisChat, user.FirstName);
             }
 
             return (content, entities);
