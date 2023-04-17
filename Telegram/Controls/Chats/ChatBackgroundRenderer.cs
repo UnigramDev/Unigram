@@ -239,7 +239,7 @@ namespace Telegram.Controls.Chats
 
                 _additionalResourcesLock.Release();
             }
-            else if (_pattern != null && _dark)
+            else if (_dark && _backgroundFill != null && _background != null)
             {
                 args.Clear(Colors.Black);
             }
