@@ -42,7 +42,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 		};
 		impl.initialInputDeviceId = string_to_unmanaged(descriptor.AudioInputId());
 		impl.initialOutputDeviceId = string_to_unmanaged(descriptor.AudioOutputId());
-		impl.initialEnableNoiseSuppression = descriptor.IsNoiseSuppressionEnabled();
+		impl.initialEnableNoiseSuppression = m_isNoiseSuppressionEnabled = descriptor.IsNoiseSuppressionEnabled();
 		impl.videoContentType = (tgcalls::VideoContentType)descriptor.VideoContentType();
 
 		if (auto videoCapture = descriptor.VideoCapture()) {
