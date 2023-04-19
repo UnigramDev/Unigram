@@ -3031,6 +3031,8 @@ namespace Telegram.Views
                 var scrollingHost = ChatsList.GetScrollViewer();
                 scrollingHost?.ChangeView(null, 0, null);
             }
+
+            ShowHideTopicList(false);
         }
 
         private void SearchFilters_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
