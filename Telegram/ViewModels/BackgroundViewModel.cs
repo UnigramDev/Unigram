@@ -60,6 +60,19 @@ namespace Telegram.ViewModels
         }
     }
 
+    public class PatternInfo
+    {
+        public long BackgroundId { get; }
+
+        public Document Document { get; }
+
+        public PatternInfo(long backgroundId, Document document)
+        {
+            BackgroundId = backgroundId;
+            Document = document;
+        }
+    }
+
     public class BackgroundViewModel : TLViewModelBase, IDelegable<IBackgroundDelegate>
     {
         public IBackgroundDelegate Delegate { get; set; }
@@ -74,7 +87,7 @@ namespace Telegram.ViewModels
         public BackgroundViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Patterns = new MvxObservableCollection<Document>();
+            Patterns = new MvxObservableCollection<PatternInfo>();
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -193,10 +206,10 @@ namespace Telegram.ViewModels
                                                                {
                                                                    return obj.Document.DocumentValue.Id;
                                                                }))
-                                                               .Select(x => x.Document);
+                                                               .Select(x => new PatternInfo(x.Id, x.Document));
 
-                    Patterns.ReplaceWith(new Document[] { null }.Union(patterns));
-                    SelectedPattern = patterns.FirstOrDefault(x => x?.DocumentValue.Id == background.Document?.DocumentValue.Id);
+                    Patterns.ReplaceWith(new PatternInfo[] { null }.Union(patterns));
+                    SelectedPattern = patterns.FirstOrDefault(x => x?.Document.DocumentValue.Id == background.Document?.DocumentValue.Id);
                 }
             }
         }
@@ -205,7 +218,7 @@ namespace Telegram.ViewModels
             ? Strings.ApplyBackgroundForThisChat
             : Strings.ApplyBackgroundForAllChats;
 
-        public MvxObservableCollection<Document> Patterns { get; private set; }
+        public MvxObservableCollection<PatternInfo> Patterns { get; private set; }
 
         private Background _item;
         public Background Item
@@ -361,23 +374,23 @@ namespace Telegram.ViewModels
             set => SetComponent(ref _intensity, value);
         }
 
-        private Document _selectedPattern;
-        public Document SelectedPattern
+        private PatternInfo _selectedPattern;
+        public PatternInfo SelectedPattern
         {
             get => _selectedPattern;
             set
             {
                 Set(ref _selectedPattern, value);
 
-                if (value?.DocumentValue.Id != _item.Document?.DocumentValue.Id && ((value != null && _item?.Type is BackgroundTypeFill) || _item?.Type is BackgroundTypePattern))
+                if (value?.Document.DocumentValue.Id != _item.Document?.DocumentValue.Id && ((value != null && _item?.Type is BackgroundTypeFill) || _item?.Type is BackgroundTypePattern))
                 {
                     if (value == null)
                     {
-                        Item = new Background(Item.Id, false, Item.IsDark, Item.Name, null, new BackgroundTypeFill(GetFill()));
+                        Item = new Background(0, false, Item.IsDark, Item.Name, null, new BackgroundTypeFill(GetFill()));
                     }
                     else
                     {
-                        Item = new Background(Item.Id, false, Item.IsDark, Item.Name, value, new BackgroundTypePattern(GetFill(), _intensity < 0 ? 100 + _intensity : _intensity, _intensity < 0, false));
+                        Item = new Background(value.BackgroundId, false, Item.IsDark, Item.Name, value.Document, new BackgroundTypePattern(GetFill(), _intensity < 0 ? 100 + _intensity : _intensity, _intensity < 0, false));
                     }
 
                     Delegate?.UpdateBackground(Item);
@@ -529,9 +542,9 @@ namespace Telegram.ViewModels
                         return null;
                     }
 
-                    var input = background.Id == Constants.WallpaperLocalId || background.Id == Constants.WallpaperColorId
-                        ? null
-                        : new InputBackgroundRemote(background.Id);
+                    var input = background.Document != null
+                        ? new InputBackgroundRemote(background.Id)
+                        : null;
 
                     return new BackgroundInfo(input, type, dark);
                 }

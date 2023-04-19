@@ -203,10 +203,10 @@ namespace Telegram.Views.Popups
                 return;
             }
 
-            var document = args.Item as Document;
+            var pattern = args.Item as PatternInfo;
             var content = args.ItemContainer.ContentTemplateRoot as ChatBackgroundRenderer;
 
-            var background = ViewModel.GetPattern(document);
+            var background = ViewModel.GetPattern(pattern?.Document);
 
             content.UpdateSource(ViewModel.ClientService, background, true);
         }
