@@ -84,20 +84,38 @@ namespace Telegram.ViewModels.Users
 
         private long _userId;
 
-        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is long userId && ClientService.TryGetUser(userId, out User user))
             {
                 _userId = userId;
 
-                FirstName = user.FirstName;
-                LastName = user.LastName;
+                if (user.Type is UserTypeBot)
+                {
+                    var response = await ClientService.SendAsync(new GetBotName(userId, string.Empty));
+                    if (response is Text text)
+                    {
+                        FirstName = text.TextValue;
+                    }
+                }
+                else
+                {
+                    FirstName = user.FirstName;
+                    LastName = user.LastName;
+                }
 
                 Delegate?.UpdateUser(null, user, false);
 
                 if (ClientService.TryGetUserFull(user.Id, out UserFullInfo userFull))
                 {
-                    Description = userFull.BotInfo?.ShortDescription ?? string.Empty;
+                    if (user.Type is UserTypeBot)
+                    {
+                        var response = await ClientService.SendAsync(new GetBotInfoShortDescription(userId, string.Empty));
+                        if (response is Text text)
+                        {
+                            Description = text.TextValue;
+                        }
+                    }
 
                     Delegate?.UpdateUserFullInfo(null, user, userFull, false, false);
                 }
@@ -106,8 +124,6 @@ namespace Telegram.ViewModels.Users
                     ClientService.Send(new GetUserFullInfo(user.Id));
                 }
             }
-
-            return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         public override async void NavigatingFrom(NavigatingEventArgs args)
