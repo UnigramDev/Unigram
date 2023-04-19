@@ -727,6 +727,10 @@ namespace Telegram.ViewModels
                     await ShowPopupAsync(Strings.MessageScheduledLimitReached, Strings.AppName, Strings.OK);
                 }
             }
+            else if (options.SchedulingState != null && Type != DialogType.ScheduledMessages)
+            {
+                NavigationService.NavigateToChat(chat, scheduled: true);
+            }
 
             return response;
         }
