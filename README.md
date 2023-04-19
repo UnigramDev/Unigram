@@ -20,7 +20,9 @@
 <br>
 
 ## Contributing
-Before reporting bugs, doing features requests or embarking pull requests, make sure you have already read our [contributing guidelines](/CONTRIBUTING.md). Build instructions can be found [here](/Documentation/Build-instructions.md).
+For reporting **bugs** or making **feature requests**/**suggestions**, please go to https://bugs.telegram.org/.
+
+For feature requests, make sure to have read our [contributing guidelines](/CONTRIBUTING.md) and [build instructions](Documentation/Build-instructions.md).
 
 <a name="changelog"></a>
 ## Changelog
