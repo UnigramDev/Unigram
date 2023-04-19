@@ -42,13 +42,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListViewHeaderItem">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition MaxWidth="1000" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <ContentPresenter />
-                                        </Grid>
+                                        <ContentPresenter />
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>

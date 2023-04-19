@@ -39,7 +39,8 @@
             </common:FluidGridView.Triggers>
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ItemsWrapGrid Orientation="Horizontal" />
+                    <ItemsWrapGrid Orientation="Horizontal"
+                                   MaxWidth="1008" />
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
             <GridView.Header>

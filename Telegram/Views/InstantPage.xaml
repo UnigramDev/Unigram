@@ -295,11 +295,8 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ListViewItem">
-                                <Grid Margin="24,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition MaxWidth="1000" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
+                                <Grid MaxWidth="1000"
+                                      Margin="24,0">
                                     <ContentPresenter />
                                 </Grid>
                             </ControlTemplate>

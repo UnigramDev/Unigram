@@ -110,7 +110,7 @@ namespace Telegram.Views.Settings
                 {
                     // There aren't any (recycled) ItemContainers available. So a new one
                     // needs to be created.
-                    var item = new ListViewItem();
+                    var item = new TableListViewItem();
                     item.ContentTemplate = _typeToTemplateMapping[typeName];
                     item.Style = sender.ItemContainerStyle;
                     item.Tag = typeName;

@@ -32,10 +32,6 @@
 
                 <Grid Visibility="{x:Bind ViewModel.CanBeEdited}"
                       Margin="0,4,0,2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition MaxWidth="1000" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />

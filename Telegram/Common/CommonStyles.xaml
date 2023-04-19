@@ -39,16 +39,13 @@
                 <ControlTemplate TargetType="controls:HeaderedControl">
                     <Grid x:Name="ContentRoot"
                           Padding="{TemplateBinding Padding}"
+                          MaxWidth="1000"
                           Margin="0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition MaxWidth="1000" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
                         <TextBlock x:Name="HeaderLabel"
                                    Text="{TemplateBinding Header}"
                                    Margin="12,0,0,8"
@@ -571,15 +568,12 @@
                 <ControlTemplate TargetType="controls:HeaderedControl">
                     <Grid x:Name="ContentRoot"
                           Padding="{TemplateBinding Padding}"
+                          MaxWidth="1000"
                           Margin="24,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition MaxWidth="1000" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
                         <TextBlock x:Name="HeaderLabel"
                                    Text="{TemplateBinding Header}"
                                    Margin="0,0,0,8"
