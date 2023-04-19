@@ -1,6 +1,6 @@
 ---
 name: PLEASE DO NOT CREATE ISSUES ON GITHUB
-about: Please check the  contribution section in the README for further details 
+about: Please check the  "Contributing" section in the README for further details 
 title: ''
 labels: ''
 assignees: ''
