@@ -790,7 +790,7 @@ namespace Telegram.Services
             }
         }
 
-        private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> levels)
+        private void OnAudioLevelsUpdated(VoipGroupManager sender, IList<VoipGroupParticipant> levels)
         {
             var call = _call;
             if (call == null)
@@ -809,13 +809,13 @@ namespace Telegram.Services
 
             foreach (var level in levels)
             {
-                if (level.Value.Key > speakingLevelThreshold && level.Value.Value)
+                if (level.Level > speakingLevelThreshold && level.IsSpeaking)
                 {
-                    validSpeakers[level.Key] = new SpeakingParticipant(timestamp, level.Value.Key);
+                    validSpeakers[level.AudioSource] = new SpeakingParticipant(timestamp, level.Level);
                 }
                 else
                 {
-                    silentParticipants.Add(level.Key);
+                    silentParticipants.Add(level.AudioSource);
                 }
             }
 
@@ -843,7 +843,7 @@ namespace Telegram.Services
 
             foreach (var item in levels)
             {
-                ClientService.Send(new SetGroupCallParticipantIsSpeaking(call.Id, item.Key, validSpeakers.ContainsKey(item.Key)));
+                ClientService.Send(new SetGroupCallParticipantIsSpeaking(call.Id, item.AudioSource, validSpeakers.ContainsKey(item.AudioSource)));
             }
 
             _speakingParticipants = validSpeakers;

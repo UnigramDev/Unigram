@@ -993,7 +993,7 @@ namespace Telegram.Views.Calls
             this.BeginOnUIThread(() => UpdateNetworkState(_service.Call, _service.CurrentUser, args.IsConnected));
         }
 
-        private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> levels)
+        private void OnAudioLevelsUpdated(VoipGroupManager sender, IList<VoipGroupParticipant> levels)
         {
             var participants = _service?.Participants;
             if (participants == null)
@@ -1005,18 +1005,18 @@ namespace Telegram.Views.Calls
 
             foreach (var level in levels)
             {
-                var value = level.Value.Key;
-                if (level.Key == 0 && sender.IsMuted)
+                var value = level.Level;
+                if (level.AudioSource == 0 && sender.IsMuted)
                 {
                     value = 0;
                 }
 
-                if (level.Key == 0)
+                if (level.AudioSource == 0)
                 {
-                    _drawable.SetAmplitude(value);
+                    _drawable.SetAmplitude(Math.Min(8500, value * 4000) / 8500);
                 }
 
-                if (participants.TryGetFromAudioSourceId(level.Key, out var participant))
+                if (participants.TryGetFromAudioSourceId(level.AudioSource, out var participant))
                 {
                     validLevels[participant] = value;
 
@@ -1027,7 +1027,7 @@ namespace Telegram.Views.Calls
                         const int cutoffTimeout = 3000;
                         const int silentTimeout = 2000;
 
-                        if (value > speakingLevelThreshold && level.Value.Value)
+                        if (value > speakingLevelThreshold && level.IsSpeaking)
                         {
                             _selectedTimestamp = Environment.TickCount;
                         }

@@ -36,7 +36,7 @@ namespace Telegram.Native.Calls
         void SetRequestedVideoChannels(Windows.Foundation.Collections.IVector<VoipVideoChannelInfo> descriptions);
 
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, GroupNetworkStateChangedEventArgs> NetworkStateUpdated;
-        event Windows.Foundation.TypedEventHandler<VoipGroupManager, Windows.Foundation.Collections.IMapView<Int32, Windows.Foundation.Collections.IKeyValuePair<Single, Boolean> > > AudioLevelsUpdated;
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, Windows.Foundation.Collections.IVector<VoipGroupParticipant > > AudioLevelsUpdated;
 
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, BroadcastTimeRequestedEventArgs> BroadcastTimeRequested;
         event Windows.Foundation.TypedEventHandler<VoipGroupManager, BroadcastPartRequestedEventArgs> BroadcastPartRequested;

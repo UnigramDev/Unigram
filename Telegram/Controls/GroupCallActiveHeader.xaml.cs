@@ -67,7 +67,7 @@ namespace Telegram.Controls
             }
         }
 
-        private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> args)
+        private void OnAudioLevelsUpdated(VoipGroupManager sender, IList<VoipGroupParticipant> args)
         {
             if (_drawable != null)
             {
@@ -75,10 +75,24 @@ namespace Telegram.Controls
 
                 foreach (var level in args)
                 {
-                    average = MathF.Max(average, level.Key == 0 && sender.IsMuted ? 0 : level.Value.Key);
+                    if (level.AudioSource == 0)
+                    {
+                        if (sender.IsMuted)
+                        {
+                            average = MathF.Max(average, 0);
+                        }
+                        else
+                        {
+                            average = MathF.Max(average, Math.Min(8500, level.Level * 4000) / 8500);
+                        }
+                    }
+                    else
+                    {
+                        average = MathF.Max(average, Math.Clamp(level.Level * 15f / 80f, 0, 1));
+                    }
                 }
 
-                _drawable.setAmplitude(MathF.Max(0, MathF.Log(average, short.MaxValue / 4000)));
+                _drawable.setAmplitude(average);
             }
 #endif
         }
