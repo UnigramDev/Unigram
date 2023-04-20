@@ -44,7 +44,7 @@ namespace Telegram.Controls.Chats
             DataContext = viewModel;
             Bindings.Update();
 
-            Field.Text = string.Empty;
+            Field.Text = viewModel?.Query ?? string.Empty;
             Field.From = null;
             Field.Filter = null;
             Field.State = ChatSearchState.Text;

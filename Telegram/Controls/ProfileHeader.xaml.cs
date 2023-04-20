@@ -874,7 +874,7 @@ namespace Telegram.Controls
             }
             else if (type is TextEntityTypeHashtag or TextEntityTypeCashtag)
             {
-
+                ViewModel.OpenSearch(data);
             }
             else if (type is TextEntityTypeMention)
             {

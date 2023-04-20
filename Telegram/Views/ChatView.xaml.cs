@@ -963,7 +963,7 @@ namespace Telegram.Views
 
         public void Search()
         {
-            ViewModel.SearchExecute();
+            ViewModel.SearchExecute(string.Empty);
         }
 
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
@@ -1900,7 +1900,7 @@ namespace Telegram.Views
             var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ClientService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId) : null;
 
-            flyout.CreateFlyoutItem(ViewModel.SearchExecute, Strings.Search, new FontIcon { Glyph = Icons.Search }, Windows.System.VirtualKey.F);
+            flyout.CreateFlyoutItem(Search, Strings.Search, new FontIcon { Glyph = Icons.Search }, VirtualKey.F);
 
             if (user != null && user.Type is not UserTypeDeleted && !secret)
             {

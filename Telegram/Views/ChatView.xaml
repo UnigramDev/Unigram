@@ -524,7 +524,7 @@
                                           Margin="0,0,-4,0"
                                           Grid.Column="1" />
 
-                    <controls:GlyphButton Click="{x:Bind ViewModel.SearchExecute}"
+                    <controls:GlyphButton Click="{x:Bind Search}"
                                           Style="{StaticResource HeaderGlyphButtonStyle}"
                                           Glyph="&#xE721;"
                                           AutomationProperties.Name="{CustomResource Search}"

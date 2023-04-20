@@ -393,8 +393,7 @@ namespace Telegram.ViewModels
 
         public void OpenHashtag(string hashtag)
         {
-            var search = Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this);
-            search.Search(hashtag, null, null);
+            Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this, hashtag);
         }
 
         public async void OpenUrl(string url, bool untrust)

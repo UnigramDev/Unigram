@@ -1578,10 +1578,10 @@ namespace Telegram.ViewModels
                 AccessToken = accessToken;
             }
 
-            if (state.TryGet("search", out bool search))
+            if (state.TryGet("search", out string search))
             {
                 state.Remove("search");
-                SearchExecute();
+                SearchExecute(search);
             }
 
 #pragma warning disable CS4014
@@ -2936,11 +2936,11 @@ namespace Telegram.ViewModels
 
         #region Search
 
-        public void SearchExecute()
+        public void SearchExecute(string query)
         {
             if (Search == null)
             {
-                Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this);
+                Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this, query);
             }
             else
             {
