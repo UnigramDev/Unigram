@@ -458,7 +458,10 @@ namespace Telegram.Services
                 {
                     if (pending.IsCreated && pending.IsReceived)
                     {
-                        SoundEffects.Play(update.Call.IsOutgoing ? SoundEffect.VoipRingback : SoundEffect.VoipIncoming);
+                        if (_systemCall == null || !update.Call.IsOutgoing)
+                        {
+                            SoundEffects.Play(update.Call.IsOutgoing ? SoundEffect.VoipRingback : SoundEffect.VoipIncoming);
+                        }
 
                         var user = ClientService.GetUser(update.Call.UserId);
                         if (user == null)
