@@ -9,7 +9,6 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -104,10 +103,18 @@ namespace Telegram
             UnhandledException += (s, args) =>
             {
                 args.Handled = args.Exception is not LayoutCycleException;
+                SettingsService.Current.Diagnostics.LastNavigatedPageType = FrameFacade.LastNavigatedPageType;
                 Client.Execute(new AddLogMessage(1, "Unhandled exception:\n" + args.Exception.ToString()));
             };
 
 #if !DEBUG
+            Microsoft.AppCenter.Crashes.Crashes.GetErrorAttachments = report =>
+            {
+                var lastPageType = SettingsService.Current.Diagnostics.LastNavigatedPageType;
+                SettingsService.Current.Diagnostics.LastNavigatedPageType = null;
+                return new[] { Microsoft.AppCenter.Crashes.ErrorAttachmentLog.AttachmentWithText(lastPageType, "page.txt") };
+            };
+
             Microsoft.AppCenter.AppCenter.Start(Constants.AppCenterId,
                 typeof(Microsoft.AppCenter.Analytics.Analytics),
                 typeof(Microsoft.AppCenter.Crashes.Crashes));
@@ -124,6 +131,25 @@ namespace Telegram
                 {
                     { "ActiveSessions", $"{count}" },
                 });
+
+            static void FatalErrorCallback(int verbosityLevel, string message)
+            {
+                if (verbosityLevel == 0)
+                {
+                    var next = DateTime.Now.ToTimestamp();
+                    var prev = SettingsService.Current.Diagnostics.LastUpdateTime;
+
+                    SettingsService.Current.Diagnostics.LastErrorMessage = message;
+                    SettingsService.Current.Diagnostics.LastErrorVersion = Package.Current.Id.Version.Build;
+                    SettingsService.Current.Diagnostics.LastErrorProperties = string.Join(';', new[]
+                    {
+                        $"CurrentVersion={Telegram.Controls.VersionLabel.GetVersion()}",
+                        $"LastUpdate={next - prev}s",
+                        $"UpdateCount={SettingsService.Current.Diagnostics.UpdateCount}",
+                        $"LastPageType={SettingsService.Current.Diagnostics.LastNavigatedPageType}"
+                    });
+                }
+            }
 
             Client.SetLogMessageCallback(0, FatalErrorCallback);
 
@@ -144,24 +170,6 @@ namespace Telegram
 
             EnteredBackground += OnEnteredBackground;
             LeavingBackground += OnLeavingBackground;
-        }
-
-        private void FatalErrorCallback(int verbosityLevel, string message)
-        {
-            if (verbosityLevel == 0)
-            {
-                var next = DateTime.Now.ToTimestamp();
-                var prev = SettingsService.Current.Diagnostics.LastUpdateTime;
-
-                SettingsService.Current.Diagnostics.LastErrorMessage = message;
-                SettingsService.Current.Diagnostics.LastErrorVersion = Package.Current.Id.Version.Build;
-                SettingsService.Current.Diagnostics.LastErrorProperties = string.Join(';', new[]
-                {
-                    $"CurrentVersion={VersionLabel.GetVersion()}",
-                    $"LastUpdate={next - prev}s",
-                    $"UpdateCount={SettingsService.Current.Diagnostics.UpdateCount}"
-                });
-            }
         }
 
         private void OnEnteredBackground(object sender, EnteredBackgroundEventArgs e)

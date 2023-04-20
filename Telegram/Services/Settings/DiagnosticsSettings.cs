@@ -56,6 +56,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _deviceName, "DeviceName", value);
         }
 
+        private string _lastNavigatedPageType;
+        public string LastNavigatedPageType
+        {
+            get => _lastNavigatedPageType ??= GetValueOrDefault("LastNavigatedPageType", string.Empty);
+            set => AddOrUpdateValue(ref _lastNavigatedPageType, "LastNavigatedPageType", value);
+        }
+
         private string _lastErrorMessage;
         public string LastErrorMessage
         {
