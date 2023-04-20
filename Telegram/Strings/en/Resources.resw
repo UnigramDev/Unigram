@@ -1792,6 +1792,9 @@ Minimum length is 5 characters.</value>
   <data name="ChatPerFolderLimitTitle" xml:space="preserve">
     <value>Chats per Folder</value>
   </data>
+  <data name="ChatQuickActions" xml:space="preserve">
+    <value>Swipe actions</value>
+  </data>
   <data name="ChatResetTheme" xml:space="preserve">
     <value>Reset Theme</value>
   </data>
@@ -4584,6 +4587,9 @@ Do not give this code to anyone.</value>
   <data name="OtherSessions" xml:space="preserve">
     <value>Active sessions</value>
   </data>
+  <data name="OtherSettings" xml:space="preserve">
+    <value>Other Settings</value>
+  </data>
   <data name="OtherWebSessions" xml:space="preserve">
     <value>Connected websites</value>
   </data>
@@ -6133,6 +6139,12 @@ and enter your phone number.</value>
   </data>
   <data name="SupportStatus" xml:space="preserve">
     <value>support</value>
+  </data>
+  <data name="SwipeReply" xml:space="preserve">
+    <value>Reply</value>
+  </data>
+  <data name="SwipeShare" xml:space="preserve">
+    <value>Share</value>
   </data>
   <data name="SyncContacts" xml:space="preserve">
     <value>Sync Contacts</value>

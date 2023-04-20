@@ -2857,6 +2857,11 @@ namespace Telegram
         public static string ChatPerFolderLimitTitle => Resource.GetString("ChatPerFolderLimitTitle");
         
         /// <summary>
+        /// Localized resource similar to "Swipe actions"
+        /// </summary>
+        public static string ChatQuickActions => Resource.GetString("ChatQuickActions");
+        
+        /// <summary>
         /// Localized resource similar to "Reset Theme"
         /// </summary>
         public static string ChatResetTheme => Resource.GetString("ChatResetTheme");
@@ -7096,6 +7101,11 @@ namespace Telegram
         public static string OtherSessions => Resource.GetString("OtherSessions");
         
         /// <summary>
+        /// Localized resource similar to "Other Settings"
+        /// </summary>
+        public static string OtherSettings => Resource.GetString("OtherSettings");
+        
+        /// <summary>
         /// Localized resource similar to "Connected websites"
         /// </summary>
         public static string OtherWebSessions => Resource.GetString("OtherWebSessions");
@@ -9546,6 +9556,16 @@ namespace Telegram
         /// Localized resource similar to "support"
         /// </summary>
         public static string SupportStatus => Resource.GetString("SupportStatus");
+        
+        /// <summary>
+        /// Localized resource similar to "Reply"
+        /// </summary>
+        public static string SwipeReply => Resource.GetString("SwipeReply");
+        
+        /// <summary>
+        /// Localized resource similar to "Share"
+        /// </summary>
+        public static string SwipeShare => Resource.GetString("SwipeShare");
         
         /// <summary>
         /// Localized resource similar to "Sync Contacts"

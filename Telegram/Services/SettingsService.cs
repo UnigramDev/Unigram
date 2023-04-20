@@ -86,6 +86,8 @@ namespace Telegram.Services
 
         DistanceUnits DistanceUnits { get; set; }
 
+        bool SwipeToShare { get; set; }
+        bool SwipeToReply { get; set; }
         bool FullScreenGallery { get; set; }
         bool DisableHighlightWords { get; set; }
 
@@ -482,6 +484,20 @@ namespace Telegram.Services
         {
             get => _isTranslateEnabled ??= GetValueOrDefault(_local, "IsTranslateEnabled", false);
             set => AddOrUpdateValue(ref _isTranslateEnabled, _local, "IsTranslateEnabled", value);
+        }
+
+        private static bool? _swipeToShare;
+        public bool SwipeToShare
+        {
+            get => _swipeToShare ??= GetValueOrDefault(_local, "SwipeToShare", true);
+            set => AddOrUpdateValue(ref _swipeToShare, _local, "SwipeToShare", value);
+        }
+
+        private static bool? _swipeToReply;
+        public bool SwipeToReply
+        {
+            get => _swipeToReply ??= GetValueOrDefault(_local, "SwipeToReply", true);
+            set => AddOrUpdateValue(ref _swipeToReply, _local, "SwipeToReply", value);
         }
 
         private static bool? _fullScreenGallery;

@@ -99,7 +99,7 @@ namespace Telegram.Controls.Chats
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (!_hasInitialLoadedEventFired)
+            if (!_hasInitialLoadedEventFired && (SettingsService.Current.SwipeToReply || SettingsService.Current.SwipeToShare))
             {
                 _visual = ElementCompositionPreview.GetElementVisual(_presenter);
 
@@ -217,7 +217,7 @@ namespace Telegram.Controls.Chats
         public void PrepareForItemOverride(MessageViewModel message)
         {
             _reply = CanReply();
-            _forward = CanForward();
+            _forward = CanShare();
 
             if (_tracker != null)
             {
@@ -240,7 +240,7 @@ namespace Telegram.Controls.Chats
 
         private bool CanReply()
         {
-            if (ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message)
+            if (SettingsService.Current.SwipeToReply && ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message)
             {
                 if (message.IsService())
                 {
@@ -271,9 +271,9 @@ namespace Telegram.Controls.Chats
             return false;
         }
 
-        private bool CanForward()
+        private bool CanShare()
         {
-            if (ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message)
+            if (SettingsService.Current.SwipeToShare && ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message)
             {
                 return message.CanBeForwarded;
             }
