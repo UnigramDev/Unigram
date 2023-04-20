@@ -516,13 +516,13 @@ namespace Telegram
             await RequestExtendedExecutionSessionAsync();
         }
 
-        public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
+        public override Task OnSuspendingAsync(object s, SuspendingEventArgs e)
         {
             Logs.Logger.Info(Logs.LogTarget.Lifecycle, "OnSuspendingAsync");
 
             TLContainer.Current.Passcode.CloseTime = DateTime.UtcNow;
 
-            return Task.CompletedTask;
+            return Task.WhenAll(TLContainer.Current.ResolveAll<IVoipService>().Select(x => x.DiscardAsync()));
         }
 
         public override INavigable ViewModelForPage(UIElement page, int sessionId)

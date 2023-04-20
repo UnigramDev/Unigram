@@ -55,6 +55,8 @@ namespace Telegram.Services
 
         void Start(long chatId, bool video);
 
+        Task DiscardAsync();
+
 #if ENABLE_CALLS
         VoipCaptureType CaptureType { get; }
         Task<VoipCaptureBase> ToggleCapturingAsync(VoipCaptureType type);
@@ -304,6 +306,16 @@ namespace Telegram.Services
                     await MessagePopup.ShowAsync(string.Format(Strings.CallNotAvailable, user.FullName()), Strings.AppName, Strings.OK);
                 }
             }
+        }
+
+        public Task DiscardAsync()
+        {
+            if (Call != null)
+            {
+                return ClientService.SendAsync(new DiscardCall(Call.Id, false, 0, false, 0));
+            }
+
+            return Task.CompletedTask;
         }
 
         private async Task InitializeSystemCallAsync(User user, bool outgoing)
