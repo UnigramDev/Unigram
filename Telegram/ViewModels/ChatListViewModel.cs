@@ -321,12 +321,12 @@ namespace Telegram.ViewModels
         public async void DeleteChat(Chat chat)
         {
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
-            var dialog = new DeleteChatPopup(ClientService, updated, Items.ChatList, false);
+            var popup = new DeleteChatPopup(ClientService, updated, Items.ChatList, false);
 
-            var confirm = await ShowPopupAsync(dialog);
+            var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
-                var check = dialog.IsChecked == true;
+                var check = popup.IsChecked == true;
 
                 _deletedChats[chat.Id] = true;
                 Items.Handle(chat.Id, 0);
@@ -349,25 +349,26 @@ namespace Telegram.ViewModels
                         return;
                     }
 
-                    if (delete.Type is ChatTypeSecret secret)
-                    {
-                        await ClientService.SendAsync(new CloseSecretChat(secret.SecretChatId));
-                    }
-                    else if (delete.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
+                    if (delete.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
                     {
                         await ClientService.SendAsync(new LeaveChat(delete.Id));
                     }
 
                     var user = ClientService.GetUser(delete);
-                    if (user != null && user.Type is UserTypeRegular)
+                    if (user?.Type is UserTypeRegular)
                     {
-                        ClientService.Send(new DeleteChatHistory(delete.Id, true, check));
+                        await ClientService.SendAsync(new DeleteChatHistory(delete.Id, true, check));
+
+                        if (delete.Type is ChatTypeSecret secret)
+                        {
+                            ClientService.Send(new CloseSecretChat(secret.SecretChatId));
+                        }
                     }
                     else
                     {
-                        if (delete.Type is ChatTypePrivate privata && check)
+                        if (user?.Type is UserTypeBot && check)
                         {
-                            await ClientService.SendAsync(new ToggleMessageSenderIsBlocked(new MessageSenderUser(privata.UserId), true));
+                            await ClientService.SendAsync(new ToggleMessageSenderIsBlocked(new MessageSenderUser(user.Id), true));
                         }
 
                         ClientService.Send(new DeleteChatHistory(delete.Id, true, false));
