@@ -291,6 +291,9 @@
     <Compile Include="Controls\Cells\ProfileCell.xaml.cs">
       <DependentUpon>ProfileCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\ProxyCell.xaml.cs">
+      <DependentUpon>ProxyCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\UsernameInfoCell.xaml.cs">
       <DependentUpon>UsernameInfoCell.xaml</DependentUpon>
     </Compile>
@@ -559,9 +562,6 @@
       <DependentUpon>ProfileHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProfilePicture.cs" />
-    <Compile Include="Controls\ProxyStatusControl.xaml.cs">
-      <DependentUpon>ProxyStatusControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\LottieView.cs" />
     <Compile Include="Controls\QrCode.cs" />
     <Compile Include="Controls\RecentUserHeads.cs" />
@@ -1681,6 +1681,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Cells\ProxyCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Cells\UsernameInfoCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1930,10 +1934,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\ProfileHeader.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\ProxyStatusControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
