@@ -2608,11 +2608,10 @@ namespace Telegram.Views
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
 
             var parent = ElementCompositionPreview.GetElementVisual(ChatsList);
-
             var chats = ElementCompositionPreview.GetElementVisual(element);
-            var panel = ElementCompositionPreview.GetElementVisual(ArchivedChatsPanel);
 
             parent.Clip = chats.Compositor.CreateInsetClip();
+            chats.StopAnimation("Offset");
 
             var batch = chats.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -2620,36 +2619,18 @@ namespace Telegram.Views
                 chats.Offset = new Vector3();
                 ChatsList.Margin = new Thickness();
 
-                if (show)
-                {
-                    _archiveCollapsed = false;
-                }
-                else
-                {
-                    ArchivedChatsPresenter.Visibility = Visibility.Collapsed;
-                }
+                ArchivedChatsPresenter.Visibility = _archiveCollapsed
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
             };
 
             var y = ArchivedChatsPresenter.ActualSize.Y;
 
             ChatsList.Margin = new Thickness(0, 0, 0, -y);
 
-            float y0, y1;
-
-            if (show)
-            {
-                y0 = -y;
-                y1 = 0;
-            }
-            else
-            {
-                y0 = 0;
-                y1 = -y;
-            }
-
             var offset0 = chats.Compositor.CreateVector3KeyFrameAnimation();
-            offset0.InsertKeyFrame(0, new Vector3(0, y0, 0));
-            offset0.InsertKeyFrame(1, new Vector3(0, y1, 0));
+            offset0.InsertKeyFrame(0, new Vector3(0, show ? -y : 0, 0));
+            offset0.InsertKeyFrame(1, new Vector3(0, show ? 0 : -y, 0));
             chats.StartAnimation("Offset", offset0);
 
             batch.End();
