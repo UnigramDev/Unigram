@@ -939,7 +939,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                if (switchInline.InCurrentChat && bot.HasActiveUsername(out string username))
+                if (switchInline.TargetChat is TargetChatCurrent && bot.HasActiveUsername(out string username))
                 {
                     SetText(string.Format("@{0} {1}", username, switchInline.Query), focus: true);
                     ResolveInlineBot(username, switchInline.Query);
