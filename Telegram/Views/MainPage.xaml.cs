@@ -2415,7 +2415,7 @@ namespace Telegram.Views
         {
             if (sender is ChatBackgroundPresenter presenter)
             {
-                presenter.Update(ViewModel.SessionId, ViewModel.ClientService, ViewModel.Aggregator);
+                presenter.Update(ViewModel.ClientService, ViewModel.Aggregator);
             }
         }
 

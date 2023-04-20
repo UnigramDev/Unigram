@@ -249,12 +249,12 @@ namespace Telegram.Views
             {
                 Header.Visibility = Visibility.Collapsed;
                 FindName("BackgroundPresenter");
-                BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ClientService, ViewModel.Aggregator);
+                BackgroundPresenter.Update(ViewModel.ClientService, ViewModel.Aggregator);
             }
             else if (!Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().IsMain)
             {
                 FindName("BackgroundPresenter");
-                BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ClientService, ViewModel.Aggregator);
+                BackgroundPresenter.Update(ViewModel.ClientService, ViewModel.Aggregator);
             }
 
             GroupCall.InitializeParent(ClipperOuter, ViewModel.ClientService);

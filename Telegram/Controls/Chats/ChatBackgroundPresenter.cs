@@ -76,7 +76,7 @@ namespace Telegram.Controls.Chats
             });
         }
 
-        public void Update(int session, IClientService clientService, IEventAggregator aggregator)
+        public void Update(IClientService clientService, IEventAggregator aggregator)
         {
             _clientService = clientService;
             _aggregator = aggregator;

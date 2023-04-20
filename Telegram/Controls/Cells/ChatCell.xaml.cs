@@ -1555,7 +1555,28 @@ namespace Telegram.Controls.Cells
             {
                 if (BriefLabel.IsTextTrimmed)
                 {
-                    tooltip.Content = FromLabel.Text + BriefLabel.Text;
+                    if (SettingsService.Current.Diagnostics.ChatPreviewToolTip)
+                    {
+                        var bubble = new MessageBubble();
+                        bubble.UpdateMessage(new ViewModels.MessageViewModel(_clientService, null, null, _chat.LastMessage));
+
+                        //var background = new ChatBackgroundPresenter();
+                        //background.Update(_clientService, null);
+                        //background.Margin = new Thickness(-8, -4, -8, -8);
+
+                        //var grid = new Grid();
+                        //grid.Children.Add(background);
+                        //grid.Children.Add(bubble);
+                        //grid.Padding = new Thickness(8, 4, 8, 8);
+
+                        tooltip.Content = bubble;
+                        tooltip.Padding = new Thickness();
+                        tooltip.CornerRadius = new CornerRadius(8);
+                    }
+                    else
+                    {
+                        tooltip.Content = FromLabel.Text + BriefLabel.Text;
+                    }
                 }
                 else
                 {

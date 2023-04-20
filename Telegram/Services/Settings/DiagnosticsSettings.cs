@@ -14,6 +14,13 @@ namespace Telegram.Services.Settings
         {
         }
 
+        private bool? _chatPreviewToolTip;
+        public bool ChatPreviewToolTip
+        {
+            get => _chatPreviewToolTip ??= GetValueOrDefault("ChatPreviewToolTip", false);
+            set => AddOrUpdateValue(ref _chatPreviewToolTip, "ChatPreviewToolTip", value);
+        }
+
         private bool? _synchronizeItemsSource;
         public bool SynchronizeItemsSource
         {

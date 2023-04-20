@@ -20,6 +20,10 @@
                               Content="Use Test DC"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox IsChecked="{x:Bind ViewModel.ChatPreviewToolTip, Mode=TwoWay}"
+                              Content="Chat preview tooltip"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind ViewModel.SynchronizeItemsSource, Mode=TwoWay}"
                               Content="Synchronize items source"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
