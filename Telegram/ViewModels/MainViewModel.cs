@@ -396,6 +396,15 @@ namespace Telegram.ViewModels
             UnreadCount = unreadCount.UnreadMessageCount.UnreadCount;
             UnreadMutedCount = unreadCount.UnreadMessageCount.UnreadCount - unreadCount.UnreadMessageCount.UnreadUnmutedCount;
 
+            if (_voipService.Call != null)
+            {
+                Aggregator.Publish(new UpdateCallDialog(_voipService.Call));
+            }
+            else if (_groupCallService.Call != null)
+            {
+                Aggregator.Publish(new UpdateCallDialog(_groupCallService.Call));
+            }
+
             if (mode == NavigationMode.New)
             {
                 Task.Run(() => _contactsService.JumpListAsync());
