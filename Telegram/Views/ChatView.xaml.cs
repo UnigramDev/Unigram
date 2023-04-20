@@ -2104,10 +2104,6 @@ namespace Telegram.Views
                     {
                         message = child.Message;
                     }
-                    else
-                    {
-                        message = album.Messages.FirstOrDefault() ?? message;
-                    }
                 }
             }
             else if (message.Content is MessageAlbum album && args.OriginalSource is DependencyObject originaSource)

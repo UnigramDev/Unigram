@@ -117,14 +117,14 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            //if (message != null && message.Media is TLMessageMediaGroup groupMedia)
-            //{
-            //    ExpandSelection(new[] { message });
-            //    MessagesDeleteExecute();
-            //    return;
-            //}
-
-            DeleteMessages(chat, new[] { message });
+            if (message.Content is MessageAlbum album)
+            {
+                DeleteMessages(chat, album.Messages);
+            }
+            else
+            {
+                DeleteMessages(chat, new[] { message });
+            }
 
             TextField?.Focus(FocusState.Programmatic);
         }
