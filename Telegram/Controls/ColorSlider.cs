@@ -281,10 +281,10 @@ namespace Telegram.Controls
 
             var factor = (location - leftLocation) / (rightLocation - leftLocation);
 
-            return interpolateColor(leftColor, rightColor, factor);
+            return InterpolateColor(leftColor, rightColor, factor);
         }
 
-        private Color interpolateColor(Color color1, Color color2, double factor)
+        private Color InterpolateColor(Color color1, Color color2, double factor)
         {
             factor = Math.Clamp(factor, 0, 1);
 
