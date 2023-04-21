@@ -3209,6 +3209,7 @@
                                       BorderBrush="{TemplateBinding BorderBrush}"
                                       BorderThickness="{TemplateBinding BorderThickness}"
                                       CornerRadius="{TemplateBinding CornerRadius}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       Padding="0"
                                       MinHeight="44"
                                       HorizontalAlignment="Stretch" />
