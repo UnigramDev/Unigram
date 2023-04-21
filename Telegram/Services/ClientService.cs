@@ -522,71 +522,14 @@ namespace Telegram.Services
             }
         }
 
-        private async void UpdateVersion()
+        private void UpdateVersion()
         {
-            if (_settings.Version is < SettingsService.CurrentVersion and > 0)
-            {
-                var response = await SendAsync(new CreatePrivateChat(777000, false));
-                if (response is Chat chat)
-                {
-                    ulong major = (SettingsService.CurrentVersion & 0xFFFF000000000000L) >> 48;
-                    ulong minor = (SettingsService.CurrentVersion & 0x0000FFFF00000000L) >> 32;
-
-                    var title = $"**What's new in Unigram {major}.{minor}:**";
-                    var message = title + Environment.NewLine + SettingsService.CurrentChangelog;
-
-                    var entities = Client.Execute(new GetTextEntities(message)) as TextEntities;
-                    var formattedText = new FormattedText(message, entities.Entities);
-                    formattedText = Client.Execute(new ParseMarkdown(formattedText)) as FormattedText;
-
-                    foreach (var entity in formattedText.Entities)
-                    {
-                        if (entity.Type is TextEntityTypeTextUrl or TextEntityTypeUrl)
-                        {
-                            await SendAsync(new GetWebPagePreview(formattedText));
-                            break;
-                        }
-                    }
-
-                    Send(new AddLocalMessage(chat.Id, new MessageSenderUser(777000), 0, false, new InputMessageText(formattedText, true, false)));
-                }
-            }
-
-            if (_settings.SystemVersion < 17763)
-            {
-                string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
-                ulong version = ulong.Parse(deviceFamilyVersion);
-                ulong build = (version & 0x00000000FFFF0000L) >> 16;
-
-                if (build < 17763)
-                {
-                    var response = await SendAsync(new CreatePrivateChat(777000, false));
-                    if (response is Chat chat)
-                    {
-                        var message = @"It seems that you're using an old version of Windows.
-Future Unigram releases will require Windows 10 October 2018 update to work properly.
-Read more about how to update your device [here](https://support.microsoft.com/help/4028685).";
-
-                        var formattedText = Client.Execute(new ParseMarkdown(new FormattedText(message, new TextEntity[0]))) as FormattedText;
-                        Send(new AddLocalMessage(chat.Id, new MessageSenderUser(777000), 0, false, new InputMessageText(formattedText, true, false)));
-                    }
-                }
-            }
+            ulong major = (_settings.Version & 0xFFFF000000000000L) >> 48;
+            ulong minor = (_settings.Version & 0x0000FFFF00000000L) >> 32;
+            ulong revision = (_settings.Version & 0x00000000FFFF0000L) >> 16;
 
             _settings.UpdateVersion();
-        }
-
-        private async void UpdateLanguagePackStrings(UpdateLanguagePackStrings update)
-        {
-            var response = await SendAsync(new CreatePrivateChat(777000, false));
-            if (response is Chat chat)
-            {
-                var title = $"New language pack strings for {update.LocalizationTarget}:";
-                var message = title + Environment.NewLine + string.Join(Environment.NewLine, update.Strings);
-                var formattedText = new FormattedText(message, new[] { new TextEntity { Offset = 0, Length = title.Length, Type = new TextEntityTypeBold() } });
-
-                Send(new AddLocalMessage(chat.Id, new MessageSenderUser(777000), 0, false, new InputMessageText(formattedText, true, false)));
-            }
+            Send(new AddApplicationChangelog($"{major}.{minor}.{revision}"));
         }
 
         public void CleanUp()
@@ -1893,10 +1836,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             else if (update is UpdateLanguagePackStrings updateLanguagePackStrings)
             {
                 _locale.Handle(updateLanguagePackStrings);
-
-#if DEBUG
-                UpdateLanguagePackStrings(updateLanguagePackStrings);
-#endif
             }
             else if (update is UpdateMessageContent updateMessageContent)
             {

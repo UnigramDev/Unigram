@@ -229,23 +229,13 @@ namespace Telegram.Services
         #region App version
 
         public const ulong CurrentVersion = (9UL << 48) | (6UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"SHAREABLE FOLDERS AND CUSTOM WALLPAPERS
-
-**Shareable Folders**
-• Share folders that include dozens of chats with friends or colleagues.
-• Anyone you invite can add the folder and join all its chats in one tap.
-• You can create multiple invite links to give different people access to different chats in the folder.
-
-**Custom Wallpapers**
-• Set a custom wallpaper for any 1-on-1 chat.
-• Your chat partner can apply the same wallpaper – or choose their own.";
 
         public int Session => _session;
 
         private ulong? _version;
         public ulong Version
         {
-            get => _version ??= GetValueOrDefault("LongVersion", 0UL);
+            get => _version ??= GetValueOrDefault("LongVersion", CurrentVersion);
             set => AddOrUpdateValue(ref _version, "LongVersion", value);
         }
 
