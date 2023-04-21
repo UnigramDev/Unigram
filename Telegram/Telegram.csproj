@@ -747,6 +747,9 @@
     <Compile Include="Views\Popups\ChatJoinRequestsPopup.xaml.cs">
       <DependentUpon>ChatJoinRequestsPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\ChooseStatusDurationPopup.xaml.cs">
+      <DependentUpon>ChooseStatusDurationPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\ChatTtlPopup.xaml.cs">
       <DependentUpon>ChatTtlPopup.xaml</DependentUpon>
     </Compile>
@@ -2094,6 +2097,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\ChatJoinRequestsPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ChooseStatusDurationPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

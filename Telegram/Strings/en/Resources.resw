@@ -5764,6 +5764,27 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SetEmojiStatus" xml:space="preserve">
     <value>Set Emoji Status</value>
   </data>
+  <data name="SetEmojiStatusUntil1Hour" xml:space="preserve">
+    <value>Set for 1 hour</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Days" xml:space="preserve">
+    <value>Set for 2 days</value>
+  </data>
+  <data name="SetEmojiStatusUntil2Hours" xml:space="preserve">
+    <value>Set for 2 hours</value>
+  </data>
+  <data name="SetEmojiStatusUntil8Hours" xml:space="preserve">
+    <value>Set for 8 hours</value>
+  </data>
+  <data name="SetEmojiStatusUntilButton" xml:space="preserve">
+    <value>Set Status</value>
+  </data>
+  <data name="SetEmojiStatusUntilOther" xml:space="preserve">
+    <value>Other…</value>
+  </data>
+  <data name="SetEmojiStatusUntilTitle" xml:space="preserve">
+    <value>Set status until…</value>
+  </data>
   <data name="SetPasscode" xml:space="preserve">
     <value>Set a Passcode</value>
   </data>
