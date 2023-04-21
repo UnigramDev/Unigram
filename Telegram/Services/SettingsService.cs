@@ -228,28 +228,17 @@ namespace Telegram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (9UL << 48) | (5UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"POWER SAVING AND MORE
+        public const ulong CurrentVersion = (9UL << 48) | (6UL << 32) | (0UL << 16);
+        public const string CurrentChangelog = @"SHAREABLE FOLDERS AND CUSTOM WALLPAPERS
 
-**Power Saving Mode**
-• One switch to disable all resource-intensive animations and autoplay for media, stickers and emoji.
-• Power saving mode turns on automatically based on battery charge.
+**Shareable Folders**
+• Share folders that include dozens of chats with friends or colleagues.
+• Anyone you invite can add the folder and join all its chats in one tap.
+• You can create multiple invite links to give different people access to different chats in the folder.
 
-**Granular Playback Speed**
-• Fully flexible playback speed settings for videos, voice and video messages.
-• Tap the “2X” button to quickly switch between 1-1.5-2x speed – or hold it to set any speed between 0.2-2.5x.
-
-**Read Time in Small Groups**
-• Read receipts in groups under 100 members now show the time when your messages were read. 
-
-**Improved Group Invites**
-• When inviting people to groups, you can quickly send invite links to anyone who doesn't allow adding them directly.
-• Invite links now show previews in chats.
-
-**And More**
-• Toggle dynamic pack order. Choose if you want recently used sticker packs to be displayed above the older ones in the panel.
-• Fully translatable bots. Bot descriptions and “What can this bot do?” sections can now be translated.
-• Improved folder support. Mark all messages in a folder as read and use folders when forwarding.";
+**Custom Wallpapers**
+• Set a custom wallpaper for any 1-on-1 chat.
+• Your chat partner can apply the same wallpaper – or choose their own.";
 
         public int Session => _session;
 
