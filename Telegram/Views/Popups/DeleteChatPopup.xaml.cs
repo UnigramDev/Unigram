@@ -40,7 +40,7 @@ namespace Telegram.Views.Popups
             var basicGroup = clientService.GetBasicGroup(chat);
             var supergroup = clientService.GetSupergroup(chat);
 
-            var deleteAll = user?.Id != clientService.Options.MyId && chat.CanBeDeletedForAllUsers;
+            var deleteAll = user != null && user.Id != clientService.Options.MyId && chat.CanBeDeletedForAllUsers;
             if (deleteAll)
             {
                 CheckBox.Visibility = Visibility.Visible;

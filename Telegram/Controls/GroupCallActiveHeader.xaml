@@ -40,7 +40,7 @@
                                             Glyph="&#xE610;"
                                             CheckedGlyph="&#xE720;"
                                             IsOneWay="True"
-                                            Width="40"
+                                            Width="48"
                                             Height="40" />
 
         <controls:GlyphButton Click="Dismiss_Click"

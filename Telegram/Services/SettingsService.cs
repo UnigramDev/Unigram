@@ -618,7 +618,7 @@ namespace Telegram.Services
                     _pencil = new Vector2(offset, thickness);
                 }
 
-                return _pencil ?? new Vector2(1f, 0.22f);
+                return _pencil ?? new Vector2(0f, 0.33f);
             }
             set
             {

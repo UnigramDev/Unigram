@@ -435,9 +435,9 @@ namespace Telegram.Navigation
         /// because the asunc operations are in a single, global deferral created when the suspension
         /// begins and completed automatically when the last viewmodel has been called (including this method).
         /// </summary>
-        public virtual Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
+        public virtual Task OnSuspendingAsync(object s, SuspendingEventArgs e)
         {
-            Logger.Info($"Virtual {nameof(SuspendingEventArgs)}:{e.SuspendingOperation} {nameof(prelaunchActivated)}:{prelaunchActivated}");
+            Logger.Info($"Virtual {nameof(SuspendingEventArgs)}:{e.SuspendingOperation}");
 
             return Task.CompletedTask;
         }
@@ -702,7 +702,7 @@ namespace Telegram.Navigation
                 //{
                 //    await _LifecycleLogic.AutoSuspendAllFramesAsync(sender, e, AutoExtendExecutionSession);
                 //}
-                await OnSuspendingAsync(sender, e, PrelaunchActivated);
+                await OnSuspendingAsync(sender, e);
             }
             finally
             {

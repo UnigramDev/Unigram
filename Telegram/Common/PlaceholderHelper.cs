@@ -272,6 +272,8 @@ namespace Telegram.Common
             var cache = $"{file.Remote.UniqueId}.cache.png";
             var relative = System.IO.Path.Combine("wallpapers", cache);
 
+            var delete = false;
+
             var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(relative) as StorageFile;
             if (item == null)
             {
@@ -296,8 +298,16 @@ namespace Telegram.Common
                     {
                         bitmap = await CanvasBitmap.LoadAsync(resourceCreator, stream);
                     }
-                    catch { }
+                    catch
+                    {
+                        delete = true;
+                    }
                 }
+            }
+
+            if (item != null && delete)
+            {
+                await item.DeleteAsync();
             }
 
             return bitmap;
