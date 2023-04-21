@@ -112,6 +112,20 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _lastUpdateTime, "LastUpdateTime", value);
         }
 
+        private long? _storageMaxTimeFromLastAccess;
+        public long StorageMaxTimeFromLastAccess
+        {
+            get => _storageMaxTimeFromLastAccess ??= GetValueOrDefault("StorageMaxTimeFromLastAccess", 0L);
+            set => AddOrUpdateValue(ref _storageMaxTimeFromLastAccess, "StorageMaxTimeFromLastAccess", value);
+        }
+
+        private bool? _useStorageOptimizer;
+        public bool UseStorageOptimizer
+        {
+            get => _useStorageOptimizer ??= GetValueOrDefault("UseStorageOptimizer", false);
+            set => AddOrUpdateValue(ref _useStorageOptimizer, "UseStorageOptimizer", value);
+        }
+
         public bool IsLastErrorDiskFull { get; set; }
     }
 }

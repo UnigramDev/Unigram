@@ -433,6 +433,7 @@ namespace Telegram.Services
                 _client.Send(new SetOption("online", new OptionValueBoolean(false)));
                 _client.Send(new SetOption("use_pfs", new OptionValueBoolean(true)));
                 _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
+                _client.Send(new SetOption("storage_max_time_from_last_access", new OptionValueInteger(SettingsService.Current.Diagnostics.StorageMaxTimeFromLastAccess)));
                 _client.Send(new SetTdlibParameters
                 {
                     DatabaseDirectory = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}"),
@@ -446,6 +447,7 @@ namespace Telegram.Services
                     SystemLanguageCode = _deviceInfoService.SystemLanguageCode,
                     DeviceModel = deviceModel,
                     UseTestDc = _settings.UseTestDC,
+                    EnableStorageOptimizer = SettingsService.Current.Diagnostics.UseStorageOptimizer
                 });
                 _client.Send(new GetApplicationConfig(), UpdateConfig);
             });
