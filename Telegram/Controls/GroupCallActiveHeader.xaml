@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="Telegram.Controls.GroupCallActiveHeader"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:Telegram.Controls"
+             xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="400">
+
+    <Grid Background="{ThemeResource SettingsItemBackground}"
+          Margin="0,0,12,8"
+          CornerRadius="8"
+          Height="40">
+        <xaml:CanvasControl x:Name="Canvas"
+                            Draw="CanvasControl_Draw"
+                            Height="88"
+                            VerticalAlignment="Top"
+                            IsHitTestVisible="False" />
+
+        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                BorderThickness="1"
+                CornerRadius="8" />
+
+        <HyperlinkButton Click="Title_Click"
+                         Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                         HorizontalAlignment="Stretch"
+                         VerticalAlignment="Stretch">
+            <Border>
+                <TextBlock x:Name="TitleInfo"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           TextAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Border>
+        </HyperlinkButton>
+
+        <controls:AnimatedGlyphToggleButton x:Name="Audio"
+                                            Click="Audio_Click"
+                                            Glyph="&#xE610;"
+                                            CheckedGlyph="&#xE720;"
+                                            IsOneWay="True"
+                                            Width="48"
+                                            Height="40" />
+
+        <controls:GlyphButton Click="Dismiss_Click"
+                              Glyph="&#xE711;"
+                              Height="40"
+                              Grid.Column="7"
+                              HorizontalAlignment="Right"
+                              AutomationProperties.Name="{CustomResource VoipGroupLeave}"
+                              ToolTipService.ToolTip="{CustomResource VoipGroupLeave}" />
+    </Grid>
+</UserControl>

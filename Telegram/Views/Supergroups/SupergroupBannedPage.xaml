@@ -1,0 +1,61 @@
+<local:HostedPage x:Class="Telegram.Views.Supergroups.SupergroupBannedPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:cells="using:Telegram.Controls.Cells"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Members}"
+                                ItemClick="ListView_ItemClick"
+                                IsItemClickEnabled="True"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                SelectionMode="None"
+                                Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Header>
+                <controls:SettingsPanel IsHeader="True">
+                    <TextBox x:Name="SearchField"
+                             Text="{x:Bind ViewModel.Members.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             PlaceholderText="{CustomResource Search}"
+                             PreventKeyboardDisplayOnProgrammaticFocus="True"
+                             HorizontalAlignment="Left"
+                             Width="280"
+                             Margin="24,16,24,0" />
+
+                    <controls:HeaderedControl x:Name="AddNewPanel"
+                                              Visibility="Collapsed">
+                        <controls:BadgeButton Content="{CustomResource ChannelBlockUser}"
+                                              Click="{x:Bind ViewModel.Add}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xF140;" />
+                    </controls:HeaderedControl>
+                </controls:SettingsPanel>
+            </ListView.Header>
+            <ListView.Footer>
+                <TextBlock x:Name="Footer"
+                           Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                           Style="{StaticResource CaptionTextBlockStyle}"
+                           Margin="24,8,24,32" />
+            </ListView.Footer>
+        </controls:TableListView>
+    </Grid>
+</local:HostedPage>

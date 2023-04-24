@@ -1,0 +1,224 @@
+﻿<local:HostedPage x:Class="Telegram.Views.Folders.FolderPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:cells="using:Telegram.Controls.Cells"
+                  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d"
+                  Loaded="OnLoaded"
+                  Title="{x:Bind ConvertTitle(ViewModel.Folder), Mode=OneWay}">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <local:HostedPage.Footer>
+        <Button Content="{CustomResource Done}"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Footer>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <muxc:ItemsRepeaterScrollHost>
+            <ScrollViewer x:Name="ScrollingHost"
+                          VerticalScrollBarVisibility="Auto"
+                          VerticalScrollMode="Auto">
+                <controls:SettingsPanel>
+                    <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListNewFolder.tgs" />
+
+                    <Grid>
+                        <controls:HeaderedControl Header="{CustomResource FilterNameHint}">
+                            <TextBox x:Name="TitleField"
+                                     Text="{x:Bind ViewModel.Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                     Style="{StaticResource NoDeleteTextBoxStyle}"
+                                     Padding="58,11,6,12"
+                                     Height="44" />
+                        </controls:HeaderedControl>
+
+                        <controls:AnimatedGlyphButton x:Name="EmojiButton"
+                                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                      Glyph="{x:Bind ConvertEmoji(ViewModel.Icon), Mode=OneWay}"
+                                                      Click="Emoji_Click"
+                                                      Width="60"
+                                                      Height="46"
+                                                      HorizontalAlignment="Left"
+                                                      VerticalAlignment="Bottom"
+                                                      Margin="24,0,24,0"
+                                                      Grid.Column="1">
+                            <FlyoutBase.AttachedFlyout>
+                                <Flyout>
+                                    <GridView x:Name="EmojiList"
+                                              ItemClick="EmojiList_ItemClick"
+                                              ContainerContentChanging="EmojiList_ContainerContentChanging"
+                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                              ScrollViewer.HorizontalScrollMode="Disabled"
+                                              SelectionMode="Single"
+                                              IsItemClickEnabled="True"
+                                              Margin="-8,-7,-12,-23"
+                                              Width="258">
+                                        <GridView.ItemTemplate>
+                                            <DataTemplate>
+                                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                          FontSize="20"
+                                                          Width="20"
+                                                          Height="20" />
+                                            </DataTemplate>
+                                        </GridView.ItemTemplate>
+                                        <GridView.ItemContainerStyle>
+                                            <Style TargetType="GridViewItem"
+                                                   BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                                                <Setter Property="FontFamily"
+                                                        Value="{StaticResource TelegramThemeFontFamily}" />
+                                                <Setter Property="FontSize"
+                                                        Value="16" />
+                                                <Setter Property="MinWidth"
+                                                        Value="0" />
+                                                <Setter Property="MinHeight"
+                                                        Value="0" />
+                                            </Style>
+                                        </GridView.ItemContainerStyle>
+                                        <GridView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <ItemsWrapGrid ItemWidth="43"
+                                                               ItemHeight="43"
+                                                               MaximumRowsOrColumns="6"
+                                                               Orientation="Horizontal" />
+                                            </ItemsPanelTemplate>
+                                        </GridView.ItemsPanel>
+                                    </GridView>
+                                </Flyout>
+                            </FlyoutBase.AttachedFlyout>
+                        </controls:AnimatedGlyphButton>
+                    </Grid>
+
+                    <controls:HeaderedControl Header="{CustomResource FilterInclude}"
+                                              Footer="{CustomResource FilterIncludeInfo}">
+                        <controls:HeaderedControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </controls:HeaderedControl.ItemsPanel>
+                        <controls:BadgeButton Click="{x:Bind ViewModel.AddIncluded}"
+                                              Content="{CustomResource FilterAddChats}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              BorderThickness="0"
+                                              Glyph="&#xEA08;" />
+                        <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
+                                            ItemsSource="{x:Bind ViewModel.Include}"
+                                            ElementPrepared="OnElementPrepared">
+                            <muxc:ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
+                                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                       BorderThickness="0,1,0,0"
+                                                       ContextRequested="Include_ContextRequested" />
+                                </DataTemplate>
+                            </muxc:ItemsRepeater.ItemTemplate>
+                        </muxc:ItemsRepeater>
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl Header="{CustomResource FilterExclude}"
+                                              Footer="{CustomResource FilterExcludeInfo}"
+                                              Visibility="{x:Bind ConvertExcludeVisibility(ViewModel.Links.Count), Mode=OneWay}">
+                        <controls:HeaderedControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </controls:HeaderedControl.ItemsPanel>
+                        <controls:BadgeButton Click="{x:Bind ViewModel.AddExcluded}"
+                                              Content="{CustomResource FilterAddChats}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              BorderThickness="0"
+                                              Glyph="&#xEA08;" />
+                        <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
+                                            ItemsSource="{x:Bind ViewModel.Exclude}"
+                                            ElementPrepared="OnElementPrepared">
+                            <muxc:ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
+                                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                       BorderThickness="0,1,0,0"
+                                                       ContextRequested="Exclude_ContextRequested" />
+                                </DataTemplate>
+                            </muxc:ItemsRepeater.ItemTemplate>
+                        </muxc:ItemsRepeater>
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl Header="{CustomResource InviteLinks}"
+                                              Footer="{CustomResource FilterInviteLinksHint}">
+                        <controls:HeaderedControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </controls:HeaderedControl.ItemsPanel>
+                        <controls:BadgeButton Click="{x:Bind ViewModel.CreateLink}"
+                                              Content="{CustomResource CreateNewLink}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              BorderThickness="0"
+                                              Glyph="&#xE9F8;" />
+                        <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
+                                            ItemsSource="{x:Bind ViewModel.Links}"
+                                            ElementPrepared="Link_ElementPrepared">
+                            <muxc:ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource EmptyButtonStyle}"
+                                            Click="Link_Click">
+                                        <Grid Background="{ThemeResource SettingsItemBackground}"
+                                              BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                              BorderThickness="0,1,0,0"
+                                              Padding="12,6"
+                                              ContextRequested="Link_ContextRequested">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <Border Style="{StaticResource AccentCaptionBorderStyle}"
+                                                    Width="36"
+                                                    Height="36"
+                                                    CornerRadius="18"
+                                                    Margin="0,0,12,0"
+                                                    Grid.RowSpan="2">
+                                                <TextBlock Text="&#xE9F8;"
+                                                           Foreground="#FFFFFF"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                           FontSize="20" />
+                                            </Border>
+                                            <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                       TextWrapping="NoWrap"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       VerticalAlignment="Bottom"
+                                                       Grid.Column="1" />
+
+                                            <TextBlock VerticalAlignment="Top"
+                                                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       TextWrapping="NoWrap"
+                                                       Grid.Column="1"
+                                                       Grid.Row="1"
+                                                       MaxLines="1" />
+                                        </Grid>
+                                    </Button>
+                                </DataTemplate>
+                            </muxc:ItemsRepeater.ItemTemplate>
+                        </muxc:ItemsRepeater>
+                    </controls:HeaderedControl>
+                </controls:SettingsPanel>
+            </ScrollViewer>
+        </muxc:ItemsRepeaterScrollHost>
+    </Grid>
+</local:HostedPage>

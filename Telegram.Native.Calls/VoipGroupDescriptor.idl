@@ -1,0 +1,18 @@
+import "Telegram.Native.Calls.idl";
+import "VoipVideoCapture.idl";
+
+namespace Telegram.Native.Calls
+{
+    [default_interface]
+    runtimeclass VoipGroupDescriptor 
+    {
+        VoipGroupDescriptor();
+
+        String AudioInputId;
+        String AudioOutputId;
+        VoipVideoContentType VideoContentType;
+        VoipCaptureBase VideoCapture;
+
+        Boolean IsNoiseSuppressionEnabled;
+    }
+}

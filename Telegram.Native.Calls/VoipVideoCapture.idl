@@ -1,0 +1,22 @@
+import "Telegram.Native.Calls.idl";
+
+namespace Telegram.Native.Calls
+{
+    [default_interface]
+    unsealed runtimeclass VoipCaptureBase : Windows.Foundation.IClosable
+    {
+        void SetState(VoipVideoState state);
+        void SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+        void SetOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas, Boolean enableBlur);
+    }
+
+
+    [default_interface]
+    runtimeclass VoipVideoCapture : VoipCaptureBase, Windows.Foundation.IClosable
+    {
+        VoipVideoCapture(String id);
+
+        void SwitchToDevice(String deviceId);
+        void SetPreferredAspectRatio(Single aspectRatio);
+    }
+} // namespace Telegram.Native.Calls

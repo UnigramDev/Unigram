@@ -1,0 +1,55 @@
+<local:HostedPage x:Class="Telegram.Views.Settings.SettingsAdvancedPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d"
+                  IsNavigationRoot="True">
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <!--<controls:HeaderedControl>
+                    <controls:BadgeButton
+                        Content="Shortcuts"
+                        Click="Shortcuts_Click"/>
+                </controls:HeaderedControl>-->
+
+                <controls:HeaderedControl>
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsAdaptiveWideEnabled, Mode=TwoWay}"
+                              Content="{CustomResource AdaptiveLayout}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
+                              Content="{CustomResource ConnectWithIPv6}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox x:Name="TraySwitch"
+                              x:Load="False"
+                              IsChecked="{x:Bind ViewModel.IsTrayVisible, Mode=TwoWay}"
+                              Content="{CustomResource ShowTrayIcon}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:StartupSwitch />
+
+                <controls:HeaderedControl x:Name="UpdatePanel"
+                                          x:Load="False"
+                                          Footer="{x:Bind ViewModel.UpdateFooter, Mode=OneWay}">
+                    <CheckBox Content="{CustomResource InstallBetaUpdates}"
+                              IsChecked="{x:Bind ViewModel.InstallBetaUpdates, Mode=TwoWay}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <controls:BadgeButton Click="{x:Bind ViewModel.Update}"
+                                          Content="{x:Bind ViewModel.UpdateText, Mode=OneWay}"
+                                          Glyph="{x:Bind ViewModel.UpdateGlyph, Mode=OneWay}"
+                                          IsEnabled="{x:Bind ViewModel.IsUpdateEnabled, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}" />
+                </controls:HeaderedControl>
+            </controls:SettingsPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

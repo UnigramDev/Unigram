@@ -1,0 +1,553 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.props')" />
+  <PropertyGroup Label="Globals">
+    <CppWinRTOptimized>true</CppWinRTOptimized>
+    <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
+    <CppWinRTGenerateWindowsMetadata>true</CppWinRTGenerateWindowsMetadata>
+    <MinimalCoreWin>true</MinimalCoreWin>
+    <ProjectGuid>{FDD3C45D-4CFF-4A90-8FEF-16CA70AB00BE}</ProjectGuid>
+    <ProjectName>Telegram.Native.Calls</ProjectName>
+    <RootNamespace>Telegram.Native.Calls</RootNamespace>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <WindowsTargetPlatformVersion Condition=" '$(WindowsTargetPlatformVersion)' == '' ">10.0.22621.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.18362.0</WindowsTargetPlatformMinVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
+    <PackageOutputPath>%(OutputPath)</PackageOutputPath>
+    <GenerateLibraryLayout>true</GenerateLibraryLayout>
+    <CppWinRTProjectLanguage>C++/WinRT</CppWinRTProjectLanguage>
+    <CppWinRTLibs>
+    </CppWinRTLibs>
+    <CppWinRTModernIDL>true</CppWinRTModernIDL>
+    <CppWinRTUsePrefixes>true</CppWinRTUsePrefixes>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '15.0'">v141</PlatformToolset>
+    <PlatformToolset Condition="'$(VisualStudioVersion)' == '16.0'">v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <GenerateManifest>false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="PropertySheets">
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="PropertySheets">
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
+      <WarningLevel>Level4</WarningLevel>
+      <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
+      <!-- /Zc:__cplusplus -->
+      <!--Temporarily disable cppwinrt heap enforcement to work around xaml compiler generated std::shared_ptr use -->
+      <AdditionalOptions Condition="'$(CppWinRTHeapEnforcement)'==''">/DWINRT_NO_MAKE_DETECTION %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
+      <PreprocessorDefinitions>_WINRT_DLL;WIN32_LEAN_AND_MEAN;WINRT_LEAN_AND_MEAN;_SILENCE_CXX17_RESULT_OF_DEPRECATION_WARNING;_SILENCE_ALL_CXX20_DEPRECATION_WARNINGS;_USE_MATH_DEFINES;TGCALLS_UWP_DESKTOP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\rnnoise\include;..\Libraries\tgcalls\tgcalls;..\Libraries\tgcalls;C:\webrtc\src;C:\webrtc\src\third_party\abseil-cpp;C:\webrtc\src\third_party\libyuv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\rnnoise\include;..\Libraries\tgcalls\tgcalls;..\Libraries\tgcalls;C:\webrtc\src;C:\webrtc\src\third_party\abseil-cpp;C:\webrtc\src\third_party\libyuv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsWinRT>
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsWinRT>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <!--<LanguageStandard>stdcpplatest</LanguageStandard>-->
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+      <ModuleDefinitionFile>VoipManager.def</ModuleDefinitionFile>
+      <AdditionalDependencies>ole32.lib;oleaut32.lib;Kernel32.lib;mfreadwrite.lib;mfplat.lib;mfuuid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+    <ClCompile>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">_DEBUG;USE_AURA=1;_HAS_EXCEPTIONS=0;__STD_C;_CRT_RAND_S;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_ATL_NO_OPENGL;_WINDOWS;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;PSAPI_VERSION=2;WIN32;_SECURE_ATL;_USING_V110_SDK71_;WINUWP;__WRL_NO_DEFAULT_LIB__;WINAPI_FAMILY=WINAPI_FAMILY_PC_APP;WIN10=_WIN32_WINNT_WIN10;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;NTDDI_VERSION=NTDDI_WIN10_RS2;_WIN32_WINNT=0x0A00;WINVER=0x0A00;_DEBUG;DYNAMIC_ANNOTATIONS_ENABLED=1;_HAS_ITERATOR_DEBUGGING=0;WEBRTC_ENABLE_PROTOBUF=1;WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE;RTC_ENABLE_VP9;HAVE_SCTP;WEBRTC_ARCH_ARM64;WEBRTC_HAS_NEON;WEBRTC_LIBRARY_IMPL;WEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=0;WEBRTC_WIN;ABSL_ALLOCATOR_NOTHROW=1;HAVE_SCTP;GOOGLE_PROTOBUF_NO_RTTI;GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">$(WebRTC_Root);$(WebRTC_Output)\$(Platform)\$(Configuration)\gen;$(WebRTC_Root)\third_party\abseil-cpp;$(WebRTC_Root)\third_party\libyuv\include;$(WebRTC_Root)\third_party\protobuf\src;$(WebRTC_Output)\$(Platform)\$(Configuration)\gen\protoc_out;$(WebRTC_Root)\third_party\protobuf\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">$(WebRTC_Output)\$(Platform)\$(Configuration)\obj;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+    <ClCompile>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">NDEBUG;USE_AURA=1;_HAS_EXCEPTIONS=0;__STD_C;_CRT_RAND_S;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;_ATL_NO_OPENGL;_WINDOWS;CERT_CHAIN_PARA_HAS_EXTRA_FIELDS;PSAPI_VERSION=2;WIN32;_SECURE_ATL;_USING_V110_SDK71_;WINUWP;__WRL_NO_DEFAULT_LIB__;WINAPI_FAMILY=WINAPI_FAMILY_PC_APP;WIN10=_WIN32_WINNT_WIN10;WIN32_LEAN_AND_MEAN;NOMINMAX;_UNICODE;UNICODE;NTDDI_VERSION=NTDDI_WIN10_RS2;_WIN32_WINNT=0x0A00;WINVER=0x0A00;NDEBUG;NVALGRIND;DYNAMIC_ANNOTATIONS_ENABLED=0;WEBRTC_ENABLE_PROTOBUF=1;WEBRTC_INCLUDE_INTERNAL_AUDIO_DEVICE;RTC_ENABLE_VP9;HAVE_SCTP;WEBRTC_ARCH_ARM64;WEBRTC_HAS_NEON;WEBRTC_LIBRARY_IMPL;WEBRTC_NON_STATIC_TRACE_EVENT_HANDLERS=0;WEBRTC_WIN;ABSL_ALLOCATOR_NOTHROW=1;HAVE_SCTP;GOOGLE_PROTOBUF_NO_RTTI;GOOGLE_PROTOBUF_NO_STATIC_INITIALIZER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">$(WebRTC_Root);$(WebRTC_Output)\$(Platform)\$(Configuration)\gen;$(WebRTC_Root)\third_party\abseil-cpp;$(WebRTC_Root)\third_party\libyuv\include;$(WebRTC_Root)\third_party\protobuf\src;$(WebRTC_Output)\$(Platform)\$(Configuration)\gen\protoc_out;$(WebRTC_Root)\third_party\protobuf\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">$(WebRTC_Output)\$(Platform)\$(Configuration)\obj;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries Condition="'$(Configuration)|$(Platform)'=='Release|x64'">libcmt</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\rnnoise\include;..\Libraries\tgcalls\tgcalls;..\Libraries\tgcalls;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\ChannelManager.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\FieldTrialsConfig.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartInternal.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartPersistentDecoder.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AVIOContextImpl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\utils\gzip.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\ContentNegotiation.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\ExternalSignalingConnection.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2Impl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2ReferenceImpl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\NativeNetworkingImpl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\ReflectorPort.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\ReflectorRelayPortFactory.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\Signaling.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\SignalingConnection.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\SignalingEncryption.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\SignalingSctpConnection.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\InstanceV2_4_0_0Impl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\Signaling_4_0_0.h" />
+    <ClInclude Include="BroadcastTimeRequestedEventArgs.h">
+      <DependentUpon>BroadcastTimeRequestedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPart.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\StreamingMediaContext.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\VideoStreamingPart.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\SctpDataChannelProviderInterfaceImpl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\TurnCustomizerImpl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpContext.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\AudioFrame.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\FakeVideoTrackSource.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupJoinPayload.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupJoinPayloadInternal.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\third-party\json11.hpp" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\FakeAudioDeviceModule.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\StaticThreads.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupInstanceCustomImpl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupNetworkManager.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\AudioDeviceHelper.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\group\GroupInstanceImpl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\CodecSelectHelper.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\CryptoHelper.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\EncryptedConnection.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\Instance.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\InstanceImpl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\LogSinkImpl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\Manager.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\MediaManager.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\Message.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\NetworkManager.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\PlatformContext.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\PlatformInterface.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\DesktopInterface.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\VideoCameraCapturer.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\VideoCapturerInterfaceImpl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\VideoCapturerTrackSource.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\Stats.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\ThreadLocalObject.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\VideoCaptureInterface.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\VideoCaptureInterfaceImpl.h" />
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\VideoCapturerInterface.h" />
+    <ClInclude Include="BroadcastPartRequestedEventArgs.h">
+      <DependentUpon>BroadcastPartRequestedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="GroupNetworkStateChangedEventArgs.h">
+      <DependentUpon>GroupNetworkStateChangedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="RemoteMediaStateUpdatedEventArgs.h">
+      <DependentUpon>RemoteMediaStateUpdatedEventArgs.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="rnnoise\include\rnnoise.h" />
+    <ClInclude Include="rnnoise\src\arch.h" />
+    <ClInclude Include="rnnoise\src\celt_lpc.h" />
+    <ClInclude Include="rnnoise\src\common.h" />
+    <ClInclude Include="rnnoise\src\kiss_fft.h" />
+    <ClInclude Include="rnnoise\src\opus_types.h" />
+    <ClInclude Include="rnnoise\src\pitch.h" />
+    <ClInclude Include="rnnoise\src\rnn.h" />
+    <ClInclude Include="rnnoise\src\rnn_data.h" />
+    <ClInclude Include="rnnoise\src\tansig_table.h" />
+    <ClInclude Include="rnnoise\src\_kiss_fft_guts.h" />
+    <ClInclude Include="VoipDescriptor.h">
+      <DependentUpon>VoipDescriptor.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="VoipGroupDescriptor.h">
+      <DependentUpon>VoipGroupDescriptor.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="VoipGroupManager.h">
+      <DependentUpon>VoipGroupManager.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="VoipManager.h">
+      <DependentUpon>VoipManager.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="SignalingDataEmittedEventArgs.h">
+      <DependentUpon>SignalingDataEmittedEventArgs.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="VoipScreenCapture.h">
+      <DependentUpon>VoipScreenCapture.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="VoipVideoCapture.h">
+      <DependentUpon>VoipVideoCapture.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="VoipVideoChannelInfo.h">
+      <DependentUpon>VoipVideoChannelInfo.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="VoipVideoRenderer.h" />
+    <ClInclude Include="VoipVideoRendererToken.h">
+      <DependentUpon>VoipVideoRendererToken.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\ChannelManager.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\FieldTrialsConfig.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartInternal.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPartPersistentDecoder.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\AVIOContextImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\utils\gzip.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\ContentNegotiation.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\ExternalSignalingConnection.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2Impl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\InstanceV2ReferenceImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\NativeNetworkingImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\ReflectorPort.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\ReflectorRelayPortFactory.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\Signaling.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\SignalingConnection.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\SignalingEncryption.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\SignalingSctpConnection.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\InstanceV2_4_0_0Impl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2_4_0_0\Signaling_4_0_0.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="BroadcastTimeRequestedEventArgs.cpp">
+      <DependentUpon>BroadcastTimeRequestedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\AudioStreamingPart.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\StreamingMediaContext.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\VideoStreamingPart.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\SctpDataChannelProviderInterfaceImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\TurnCustomizerImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\platform\uwp\UwpScreenCapturer.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\FakeVideoTrackSource.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\GroupJoinPayloadInternal.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\third-party\json11.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\FakeAudioDeviceModule.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\StaticThreads.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\GroupInstanceCustomImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\group\GroupNetworkManager.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\AudioDeviceHelper.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\CodecSelectHelper.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\CryptoHelper.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\EncryptedConnection.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\Instance.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\InstanceImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\LogSinkImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\Manager.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\MediaManager.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\Message.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\NetworkManager.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\DesktopInterface.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\VideoCameraCapturer.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\VideoCapturerInterfaceImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\platform\tdesktop\VideoCapturerTrackSource.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\ThreadLocalObject.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\VideoCaptureInterface.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\VideoCaptureInterfaceImpl.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="BroadcastPartRequestedEventArgs.cpp">
+      <DependentUpon>BroadcastPartRequestedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="GroupNetworkStateChangedEventArgs.cpp">
+      <DependentUpon>GroupNetworkStateChangedEventArgs.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="RemoteMediaStateUpdatedEventArgs.cpp">
+      <DependentUpon>RemoteMediaStateUpdatedEventArgs.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\celt_lpc.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\denoise.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\kiss_fft.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\pitch.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\rnn.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\rnn_data.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="rnnoise\src\rnn_reader.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SignalingDataEmittedEventArgs.cpp">
+      <DependentUpon>SignalingDataEmittedEventArgs.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="VoipDescriptor.cpp">
+      <DependentUpon>VoipDescriptor.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="VoipGroupDescriptor.cpp">
+      <DependentUpon>VoipGroupDescriptor.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="VoipGroupManager.cpp">
+      <DependentUpon>VoipGroupManager.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="VoipManager.cpp">
+      <DependentUpon>VoipManager.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="VoipScreenCapture.cpp">
+      <DependentUpon>VoipScreenCapture.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="VoipVideoCapture.cpp">
+      <DependentUpon>VoipVideoCapture.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="VoipVideoChannelInfo.cpp">
+      <DependentUpon>VoipVideoChannelInfo.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="VoipVideoRendererToken.cpp">
+      <DependentUpon>VoipVideoRendererToken.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="BroadcastPartRequestedEventArgs.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="BroadcastTimeRequestedEventArgs.idl" />
+    <Midl Include="GroupNetworkStateChangedEventArgs.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="RemoteMediaStateUpdatedEventArgs.idl" />
+    <Midl Include="SignalingDataEmittedEventArgs.idl" />
+    <Midl Include="Telegram.Native.Calls.idl" />
+    <Midl Include="VoipDescriptor.idl" />
+    <Midl Include="VoipGroupDescriptor.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="VoipGroupManager.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="VoipManager.idl" />
+    <Midl Include="VoipScreenCapture.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="VoipVideoCapture.idl" />
+    <Midl Include="VoipVideoChannelInfo.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="VoipVideoRendererToken.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VoipManager.def" />
+    <None Include="packages.config" />
+    <None Include="PropertySheet.props" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VoipManager.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets" Condition="Exists('..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets')" />
+    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.targets')" />
+    <Import Project="..\packages\Telegram.Td.UWP.1.8.14\build\native\Telegram.Td.UWP.targets" Condition="Exists('..\packages\Telegram.Td.UWP.1.8.14\build\native\Telegram.Td.UWP.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+    <Error Condition="!Exists('..\packages\Telegram.Td.UWP.1.8.14\build\native\Telegram.Td.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Telegram.Td.UWP.1.8.14\build\native\Telegram.Td.UWP.targets'))" />
+  </Target>
+</Project>

@@ -1,0 +1,26 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.ChatTtlPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Popups"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       Title="Self-Destruct Timer"
+                       PrimaryButtonText="OK"
+                       SecondaryButtonText="Cancel"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <Grid>
+        <ComboBox x:Name="FieldSeconds"
+                  HorizontalAlignment="Stretch"
+                  Margin="0,12,0,0">
+            <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="local:SettingsOptionItem">
+                    <TextBlock Text="{x:Bind Text}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+    </Grid>
+</controls:ContentPopup>

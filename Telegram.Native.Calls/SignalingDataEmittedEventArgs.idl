@@ -1,0 +1,8 @@
+namespace Telegram.Native.Calls
+{
+    [default_interface]
+    runtimeclass SignalingDataEmittedEventArgs
+    {
+        Windows.Foundation.Collections.IVector<byte> Data{ get; };
+    }
+} // namespace Telegram.Native.Calls

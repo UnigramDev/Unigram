@@ -1,0 +1,13 @@
+namespace Telegram.Native
+{
+    delegate void TelegramGameProxyDelegate(Boolean withMyScore);
+
+    [allowforweb]
+    [default_interface]
+    runtimeclass TelegramGameProxy
+    {
+        TelegramGameProxy(TelegramGameProxyDelegate delegato);
+
+        void PostEvent(String eventName, String eventData);
+    }
+} // namespace Telegram.Native

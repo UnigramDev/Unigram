@@ -1,0 +1,159 @@
+<ResourceDictionary x:Class="Telegram.Themes.Messages"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:Telegram.Themes"
+                    xmlns:cells="using:Telegram.Controls.Cells"
+                    xmlns:common="using:Telegram.Common"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:selectors="using:Telegram.Selectors"
+                    xmlns:viewmodels="using:Telegram.ViewModels"
+                    xmlns:td="using:Telegram.Td.Api"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    mc:Ignorable="d">
+
+    <DataTemplate x:Key="FolderPickerTemplate">
+        <cells:ChatShareCell SelectionStroke="{ThemeResource ContentDialogBackground}"
+                             Stroke="{ThemeResource ChatLastMessageStateBrush}" />
+    </DataTemplate>
+
+    <DataTemplate x:Key="StickerSetItemTemplate"
+                  x:DataType="td:StickerSetInfo">
+        <Grid Padding="12,6"
+              Background="{ThemeResource SettingsItemBackground}"
+              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Image Width="48"
+                   Height="48"
+                   Margin="0,0,12,0"
+                   VerticalAlignment="Top"
+                   Grid.RowSpan="2" />
+
+            <TextBlock VerticalAlignment="Bottom"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       TextWrapping="NoWrap"
+                       TextTrimming="CharacterEllipsis"
+                       Grid.Column="1" />
+            <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                       VerticalAlignment="Top"
+                       TextWrapping="NoWrap"
+                       TextTrimming="CharacterEllipsis"
+                       Grid.Column="1"
+                       Grid.Row="1" />
+        </Grid>
+    </DataTemplate>
+
+    <selectors:AutocompleteTemplateSelector x:Name="AutocompleteTemplate">
+        <selectors:AutocompleteTemplateSelector.MentionTemplate>
+            <DataTemplate>
+                <Grid Padding="12,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <controls:ProfilePicture IsEnabled="False"
+                                             Width="32"
+                                             Height="32"
+                                             Margin="0,0,12,0"
+                                             Grid.RowSpan="2" />
+                    <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               VerticalAlignment="Center"
+                               Grid.Column="1">
+                        <Run /><Run Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                    </TextBlock>
+                </Grid>
+            </DataTemplate>
+        </selectors:AutocompleteTemplateSelector.MentionTemplate>
+        <selectors:AutocompleteTemplateSelector.CommandTemplate>
+            <DataTemplate>
+                <Grid Padding="12,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <controls:ProfilePicture IsEnabled="False"
+                                             Width="32"
+                                             Height="32"
+                                             Margin="0,0,12,0"
+                                             Grid.RowSpan="2" />
+                    <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               VerticalAlignment="Center"
+                               Grid.Column="1">
+                        <Run /><Run Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+                    </TextBlock>
+                </Grid>
+            </DataTemplate>
+        </selectors:AutocompleteTemplateSelector.CommandTemplate>
+        <selectors:AutocompleteTemplateSelector.ItemTemplate>
+            <DataTemplate>
+                <Grid Padding="12,6">
+                    <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               VerticalAlignment="Center" />
+                </Grid>
+            </DataTemplate>
+        </selectors:AutocompleteTemplateSelector.ItemTemplate>
+        <selectors:AutocompleteTemplateSelector.StickerTemplate>
+            <DataTemplate>
+                <Grid Padding="4"
+                      Width="72"
+                      Height="72">
+                    <Border>
+                        <Image />
+                    </Border>
+                </Grid>
+            </DataTemplate>
+        </selectors:AutocompleteTemplateSelector.StickerTemplate>
+        <selectors:AutocompleteTemplateSelector.AnimatedStickerTemplate>
+            <DataTemplate>
+                <Grid Padding="4"
+                      Width="72"
+                      Height="72">
+                    <controls:LottieView30Fps x:Name="Player"
+                                              AutoPlay="False" />
+                </Grid>
+            </DataTemplate>
+        </selectors:AutocompleteTemplateSelector.AnimatedStickerTemplate>
+        <selectors:AutocompleteTemplateSelector.VideoStickerTemplate>
+            <DataTemplate>
+                <Grid Padding="4"
+                      Width="72"
+                      Height="72">
+                    <controls:AnimationView30Fps x:Name="Player"
+                                                 AutoPlay="False"
+                                                 IsCachingEnabled="True" />
+                </Grid>
+            </DataTemplate>
+        </selectors:AutocompleteTemplateSelector.VideoStickerTemplate>
+        <selectors:AutocompleteTemplateSelector.EmojiTemplate>
+            <DataTemplate x:DataType="common:EmojiData">
+                <!--<Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Border Width="32" Height="32" Margin="0,0,12,0">
+                        <TextBlock Text="{x:Bind Value}" FontFamily="{ThemeResource EmojiThemeFontFamily}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="{x:Bind Value}" VerticalAlignment="Center" Grid.Column="1"/>
+                </Grid>-->
+                <Border Width="40"
+                        Height="40">
+                    <TextBlock Text="{x:Bind Value}"
+                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               FontSize="20"
+                               TextAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Border>
+            </DataTemplate>
+        </selectors:AutocompleteTemplateSelector.EmojiTemplate>
+    </selectors:AutocompleteTemplateSelector>
+
+</ResourceDictionary>

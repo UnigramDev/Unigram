@@ -1,0 +1,184 @@
+<local:HostedPage x:Class="Telegram.Views.Settings.SettingsPrivacyAndSecurityPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  d:DesignHeight="2000"
+                  mc:Ignorable="d"
+                  IsNavigationRoot="True">
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <controls:HeaderedControl>
+                    <controls:BadgeButton Content="{CustomResource BlockedUsers}"
+                                          Badge="{x:Bind ViewModel.BlockedUsers, Mode=OneWay}"
+                                          Glyph="&#xE98B;"
+                                          Click="{x:Bind ViewModel.OpenBlockedUsers}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True" />
+
+                    <controls:BadgeButton Content="{CustomResource Passcode}"
+                                          Badge="{x:Bind ConvertOnOff(ViewModel.HasPasscode), Mode=OneWay}"
+                                          Glyph="&#xE72E;"
+                                          Click="{x:Bind ViewModel.Passcode}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True" />
+
+                    <controls:BadgeButton Content="{CustomResource TwoStepVerification}"
+                                          Badge="{x:Bind ConvertOnOff(ViewModel.HasPassword), Mode=OneWay}"
+                                          Glyph="&#xE192;"
+                                          Click="{x:Bind ViewModel.Password}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True" />
+
+                    <controls:BadgeButton Content="{CustomResource AutoDeleteMessages}"
+                                          Badge="{x:Bind ConvertTtl(ViewModel.DefaultTtl), Mode=OneWay}"
+                                          Glyph="&#xE916;"
+                                          Click="{x:Bind ViewModel.OpenAutoDelete}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True" />
+
+                    <controls:BadgeButton x:Name="ChangeEmail"
+                                          x:Load="{x:Bind ViewModel.HasEmailAddress, Mode=OneWay}"
+                                          Content="{CustomResource EmailLogin}"
+                                          Glyph="&#xE9F2;"
+                                          Click="{x:Bind ViewModel.ChangeEmail}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource PrivacyTitle}"
+                                          Footer="{CustomResource GroupsAndChannelsHelp}">
+                    <controls:BadgeButton Content="{CustomResource PrivacyPhone}"
+                                          Badge="{x:Bind ViewModel.ShowPhoneRules.Badge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenShowPhone}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xF61B;" />
+
+                    <controls:BadgeButton Content="{CustomResource PrivacyLastSeen}"
+                                          Badge="{x:Bind ViewModel.ShowStatusRules.Badge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenStatusTimestamp}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xE9A8;" />
+
+                    <controls:BadgeButton Content="{CustomResource PrivacyProfilePhoto}"
+                                          Badge="{x:Bind ViewModel.ShowPhotoRules.Badge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenProfilePhoto}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xE9A9;" />
+
+                    <controls:BadgeButton Content="{CustomResource PrivacyForwards}"
+                                          Badge="{x:Bind ViewModel.ShowForwardedRules.Badge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenForwards}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xE72D;" />
+
+                    <controls:BadgeButton Content="{CustomResource Calls}"
+                                          Badge="{x:Bind ViewModel.AllowCallsRules.Badge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenPhoneCall}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xE717;" />
+
+                    <controls:BadgeButton Content="{CustomResource GroupsAndChannels}"
+                                          Badge="{x:Bind ViewModel.AllowChatInvitesRules.Badge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenChatInvite}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xE716;" />
+
+                    <controls:BadgeButton x:Name="PrivacyVoiceMessages"
+                                          x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
+                                          Content="{CustomResource PrivacyVoiceMessages}"
+                                          Badge="{x:Bind ViewModel.AllowPrivateVoiceAndVideoNoteMessages.Badge, Mode=OneWay}"
+                                          ChevronGlyph="{x:Bind ConvertVoiceMessagesChevron(ViewModel.IsPremium), Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenVoiceMessages}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xE720;" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource NewChatsFromNonContacts}"
+                                          Footer="{CustomResource ArchiveAndMuteInfo}">
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsArchiveAndMuteEnabled, Mode=TwoWay}"
+                              Content="{CustomResource ArchiveAndMute}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource PrivacyAdvanced}"
+                                          Footer="{CustomResource DeleteAccountHelp}">
+                    <controls:BadgeButton Content="{CustomResource PrivacyDeleteCloudDrafts}"
+                                          Click="{x:Bind ViewModel.ClearDrafts}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
+                                          Glyph="&#xE74D;" />
+
+                    <controls:BadgeButton Content="{CustomResource DeleteAccountIfAwayFor2}">
+                        <controls:BadgeButton.Badge>
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.AccountTtlOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.AccountTtl, Mode=TwoWay}"
+                                                       DisplayMemberPath="Text" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource PrivacyBots}"
+                                          Footer="{CustomResource PrivacyBotsInfo}">
+                    <controls:BadgeButton Click="{x:Bind ViewModel.ClearPayments}"
+                                          Content="{CustomResource PrivacyPaymentsClear}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
+                                          Glyph="&#xE74D;" />
+
+                    <controls:BadgeButton Click="{x:Bind ViewModel.OpenWebSessions}"
+                                          Content="{CustomResource WebSessionsTitle}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE774;"
+                                          IsChevronVisible="True" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource Contacts}"
+                                          Footer="{CustomResource SuggestContactsInfo}">
+                    <controls:BadgeButton Click="{x:Bind ViewModel.ClearContacts}"
+                                          Content="{CustomResource SyncContactsDelete}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
+                                          Glyph="&#xE74D;" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsContactsSyncEnabled, Mode=TwoWay}"
+                              Content="{CustomResource SyncContacts}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsContactsSuggestEnabled, Mode=TwoWay}"
+                              Content="{CustomResource SuggestContacts}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl x:Name="SensitiveContent"
+                                          x:Load="False"
+                                          Header="{CustomResource SensitiveTitle}"
+                                          Footer="{CustomResource SensitiveInfo}">
+                    <CheckBox IsChecked="{x:Bind ViewModel.IgnoreSensitiveContentRestrictions, Mode=TwoWay}"
+                              Content="{CustomResource SensitiveDisableFiltering}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource SecretChat}"
+                                          Footer="{CustomResource SecretWebPageInfo}">
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsSecretPreviewsEnabled, Mode=TwoWay}"
+                              Content="{CustomResource SecretWebPage}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+            </controls:SettingsPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

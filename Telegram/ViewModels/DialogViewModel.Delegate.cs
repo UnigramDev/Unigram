@@ -1,0 +1,645 @@
+//
+// Copyright Fela Ameghino 2015-2023
+//
+// Distributed under the GNU General Public License v3.0. (See accompanying
+// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
+//
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Net;
+using Telegram.Common;
+using Telegram.Controls.Gallery;
+using Telegram.Controls.Messages;
+using Telegram.Services.Settings;
+using Telegram.Services.Updates;
+using Telegram.Td.Api;
+using Telegram.ViewModels.Chats;
+using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Gallery;
+using Telegram.Views;
+using Telegram.Views.Popups;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+
+namespace Telegram.ViewModels
+{
+    public partial class DialogViewModel : IMessageDelegate
+    {
+        public bool CanBeDownloaded(object content, File file)
+        {
+            var chat = _chat;
+            if (chat == null || ClientService.IsDownloadFileCanceled(file.Id))
+            {
+                return false;
+            }
+
+            if (content is Animation animation)
+            {
+                return Settings.AutoDownload.ShouldDownloadVideo(GetChatType(chat), animation.AnimationValue.Size);
+            }
+            else if (content is Audio audio)
+            {
+                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), audio.AudioValue.Size);
+            }
+            else if (content is Document document)
+            {
+                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), document.DocumentValue.Size);
+            }
+            else if (content is Photo photo)
+            {
+                var big = photo.GetBig();
+                if (big != null && ClientService.IsDownloadFileCanceled(big.Photo.Id))
+                {
+                    return false;
+                }
+
+                return Settings.AutoDownload.ShouldDownloadPhoto(GetChatType(chat));
+            }
+            else if (content is Sticker)
+            {
+                // Stickers aren't part of the deal
+                return true;
+            }
+            else if (content is Video video)
+            {
+                return Settings.AutoDownload.ShouldDownloadVideo(GetChatType(chat), video.VideoValue.Size);
+            }
+            else if (content is VideoNote videoNote)
+            {
+                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), videoNote.Video.Size);
+            }
+            else if (content is VoiceNote)
+            {
+                return !Settings.AutoDownload.Disabled;
+            }
+
+            return false;
+        }
+
+        private AutoDownloadChat GetChatType(Chat chat)
+        {
+            if (chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel || chat.Type is ChatTypeBasicGroup)
+            {
+                return AutoDownloadChat.Group;
+            }
+            else if (chat.Type is ChatTypePrivate or ChatTypeSecret)
+            {
+                var user = ClientService.GetUser(chat);
+                if (user == null)
+                {
+                    return AutoDownloadChat.OtherPrivateChat;
+                }
+                else if (user.IsContact)
+                {
+                    return AutoDownloadChat.Contact;
+                }
+            }
+
+            return AutoDownloadChat.Channel;
+        }
+
+        public void DownloadFile(MessageViewModel message, File file)
+        {
+            ClientService.DownloadFile(file.Id, 32);
+        }
+
+
+
+        public void ViewVisibleMessages(bool intermediate)
+        {
+            Delegate?.ViewVisibleMessages(intermediate);
+        }
+
+        public void DoubleClick(MessageViewModel message)
+        {
+            if (Settings.Appearance.IsQuickReplySelected)
+            {
+                ReplyToMessage(message);
+            }
+            else if (message.InteractionInfo != null && message.InteractionInfo.Reactions.IsChosen(ClientService.DefaultReaction))
+            {
+                ClientService.SendAsync(new RemoveMessageReaction(message.ChatId, message.Id, ClientService.DefaultReaction));
+            }
+            else
+            {
+                ClientService.SendAsync(new AddMessageReaction(message.ChatId, message.Id, ClientService.DefaultReaction, false, false));
+            }
+        }
+
+        public async void OpenReply(MessageViewModel message)
+        {
+            if (message.ReplyToMessageState == ReplyToMessageState.None)
+            {
+                if (message.ReplyInChatId == message.ChatId || message.ReplyInChatId == 0)
+                {
+                    await LoadMessageSliceAsync(message.Id, message.ReplyToMessageId);
+                }
+                else
+                {
+                    NavigationService.NavigateToChat(message.ReplyInChatId, message.ReplyToMessageId);
+                }
+            }
+        }
+
+        public async void OpenThread(MessageViewModel message)
+        {
+            long chatId = message.ChatId;
+            long threadId = message.Id;
+
+            long? messageId = null;
+
+            if (message.ChatId == ClientService.Options.RepliesBotChatId)
+            {
+                if (message.ForwardInfo?.Origin is MessageForwardOriginUser or MessageForwardOriginChat)
+                {
+                    chatId = message.ForwardInfo.FromChatId;
+                    threadId = message.ForwardInfo.FromMessageId;
+
+                    messageId = threadId;
+                }
+                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                {
+                    chatId = fromChannel.ChatId;
+                    threadId = fromChannel.MessageId;
+
+                    messageId = threadId;
+                }
+
+                var original = await ClientService.SendAsync(new GetMessage(chatId, threadId)) as Message;
+                if (original == null || !original.CanGetMessageThread)
+                {
+                    NavigationService.NavigateToChat(chatId, threadId);
+                    return;
+                }
+            }
+
+            var response = await ClientService.SendAsync(new GetMessageThread(chatId, threadId));
+            if (response is MessageThreadInfo)
+            {
+                NavigationService.NavigateToThread(chatId, threadId, messageId);
+            }
+        }
+
+
+
+        public async void OpenFile(File file)
+        {
+            var local = await ClientService.GetFileAsync(file);
+            if (local != null)
+            {
+                if (file.Local.Path.EndsWith(".unigram-theme"))
+                {
+                    await ShowPopupAsync(new ThemePreviewPopup(local));
+                }
+                else
+                {
+                    await Windows.System.Launcher.LaunchFileAsync(local);
+                }
+            }
+        }
+
+        public void OpenWebPage(WebPage webPage)
+        {
+            if (webPage.InstantViewVersion != 0)
+            {
+                //if (NavigationService is UnigramNavigationService asdas)
+                //{
+                //    asdas.NavigateToInstant(webPage.Url);
+                //    return;
+                //}
+
+                NavigationService.NavigateToInstant(webPage.Url);
+            }
+            else if (MessageHelper.TryCreateUri(webPage.Url, out Uri uri))
+            {
+                MessageHelper.OpenTelegramUrl(ClientService, NavigationService, uri);
+            }
+        }
+
+        public async void OpenSticker(Sticker sticker)
+        {
+            if (sticker.SetId != 0)
+            {
+                await StickersPopup.ShowAsync(sticker.SetId, Sticker_Click);
+            }
+        }
+
+        public async void OpenLocation(Location location, string title)
+        {
+            var options = new Windows.System.LauncherOptions();
+            options.FallbackUri = new Uri(string.Format(CultureInfo.InvariantCulture, "https://www.google.com/maps/search/?api=1&query={0},{1}", location.Latitude, location.Longitude));
+
+            if (title != null)
+            {
+                await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}_{2}", location.Latitude, location.Longitude, WebUtility.UrlEncode(title))), options);
+            }
+            else
+            {
+                await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}", location.Latitude, location.Longitude)), options);
+            }
+        }
+
+        public void OpenLiveLocation(MessageViewModel message)
+        {
+            //NavigationService.Navigate(typeof(LiveLocationPage), message.ChatId);
+        }
+
+        public void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button)
+        {
+            KeyboardButtonInline(message, button);
+        }
+
+        public void Call(MessageViewModel message, bool video)
+        {
+            Call(video);
+        }
+
+        public async void VotePoll(MessageViewModel message, IList<PollOption> options)
+        {
+            var poll = message.Content as MessagePoll;
+            if (poll == null)
+            {
+                return;
+            }
+
+            var ids = options.Select(x => poll.Poll.Options.IndexOf(x)).ToArray();
+            if (ids.IsEmpty())
+            {
+                return;
+            }
+
+            await ClientService.SendAsync(new SetPollAnswer(message.ChatId, message.Id, ids));
+
+            var updated = message.Content as MessagePoll;
+            if (updated.Poll.Type is PollTypeQuiz quiz)
+            {
+                if (quiz.CorrectOptionId == ids[0])
+                {
+                    Aggregator.Publish(new UpdateConfetti());
+                }
+                else
+                {
+                    var container = ListField?.ContainerFromItem(message) as SelectorItem;
+                    var root = container?.ContentTemplateRoot as MessageSelector;
+
+                    var bubble = root?.Content as MessageBubble;
+                    if (bubble == null)
+                    {
+                        return;
+                    }
+
+                    VisualUtilities.ShakeView(bubble);
+                }
+            }
+        }
+
+
+        public async void OpenUsername(string username)
+        {
+            var response = await ClientService.SendAsync(new SearchPublicChat(username));
+            if (response is Chat chat)
+            {
+                if (chat.Type is ChatTypePrivate privata)
+                {
+                    var user = ClientService.GetUser(privata.UserId);
+                    if (user?.Type is UserTypeBot)
+                    {
+                        NavigationService.NavigateToChat(chat);
+                    }
+                    else
+                    {
+                        NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+                    }
+                }
+                else
+                {
+                    NavigationService.NavigateToChat(chat);
+                }
+            }
+            else
+            {
+                await ShowPopupAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
+            }
+        }
+
+        public async void OpenUser(long userId)
+        {
+            var response = await ClientService.SendAsync(new CreatePrivateChat(userId, false));
+            if (response is Chat chat)
+            {
+                var user = ClientService.GetUser(userId);
+                if (user?.Type is UserTypeBot)
+                {
+                    NavigationService.NavigateToChat(chat);
+                }
+                else
+                {
+                    NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+                }
+            }
+        }
+
+        public void OpenViaBot(long viaBotUserId)
+        {
+            var chat = Chat;
+            if (chat != null && chat.Type is ChatTypeSupergroup super && super.IsChannel)
+            {
+                var supergroup = ClientService.GetSupergroup(super.SupergroupId);
+                if (supergroup != null && !supergroup.CanPostMessages())
+                {
+                    return;
+                }
+            }
+
+            var user = ClientService.GetUser(viaBotUserId);
+            if (user != null && user.HasActiveUsername(out string username))
+            {
+                SetText($"@{username} ");
+                ResolveInlineBot(username);
+            }
+        }
+
+        public void OpenChat(long chatId, bool profile = false)
+        {
+            var chat = ClientService.GetChat(chatId);
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (profile)
+            {
+                NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+            }
+            else
+            {
+                NavigationService.NavigateToChat(chat);
+            }
+        }
+
+        public void OpenChat(long chatId, long messageId)
+        {
+            var chat = ClientService.GetChat(chatId);
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.NavigateToChat(chat, message: messageId);
+        }
+
+        public void OpenHashtag(string hashtag)
+        {
+            Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this, hashtag);
+        }
+
+        public async void OpenUrl(string url, bool untrust)
+        {
+            if (MessageHelper.TryCreateUri(url, out Uri uri))
+            {
+                if (MessageHelper.IsTelegramUrl(uri))
+                {
+                    MessageHelper.OpenTelegramUrl(ClientService, NavigationService, uri);
+                }
+                else
+                {
+                    //if (message?.Media is TLMessageMediaWebPage webpageMedia)
+                    //{
+                    //    if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
+                    //    {
+                    //        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
+                    //        if (service != null)
+                    //        {
+                    //            service.Navigate(typeof(InstantPage), webpageMedia);
+                    //            return;
+                    //        }
+                    //    }
+                    //}
+
+                    if (untrust)
+                    {
+                        var confirm = await ShowPopupAsync(string.Format(Strings.OpenUrlAlert, url), Strings.AppName, Strings.OK, Strings.Cancel);
+                        if (confirm != ContentDialogResult.Primary)
+                        {
+                            return;
+                        }
+                    }
+
+                    try
+                    {
+                        await Windows.System.Launcher.LaunchUriAsync(uri);
+                    }
+                    catch { }
+                }
+            }
+        }
+
+        public void OpenBankCardNumber(string number)
+        {
+            //var response = await ClientService.SendAsync(new GetBankCardInfo(number));
+            //if (response is BankCardInfo info)
+            //{
+            //    var url = info.Actions.FirstOrDefault(x => x.)
+            //}
+        }
+
+        public async void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
+        {
+            if (message.Content is MessageAudio or MessageVoiceNote)
+            {
+                _playbackService.Play(message, _threadId);
+
+                if (timestamp > 0)
+                {
+                    _playbackService.Seek(TimeSpan.FromSeconds(timestamp));
+                }
+            }
+            else if (message.Content is MessagePoll poll)
+            {
+                await ShowPopupAsync(new PollResultsPopup(ClientService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll));
+            }
+            else if (message.Content is MessageGame game && message.ReplyMarkup is ReplyMarkupInlineKeyboard inline)
+            {
+                foreach (var row in inline.Rows)
+                {
+                    foreach (var button in row)
+                    {
+                        if (button.Type is InlineKeyboardButtonTypeCallbackGame)
+                        {
+                            KeyboardButtonInline(message, button);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                GalleryViewModelBase viewModel = null;
+
+                var webPage = message.Content is MessageText text ? text.WebPage : null;
+                if (webPage != null && webPage.IsInstantGallery())
+                {
+                    viewModel = await InstantGalleryViewModel.CreateAsync(ClientService, StorageService, Aggregator, message, webPage);
+                }
+
+                if (viewModel == null && (message.Content is MessageAnimation || webPage?.Animation != null))
+                {
+                    Delegate?.PlayMessage(message, target);
+                }
+                else
+                {
+                    if (viewModel == null)
+                    {
+                        if (message.Content is MessageVideoNote or MessagePhoto or MessageVideo && !message.IsSecret())
+                        {
+                            viewModel = new ChatGalleryViewModel(ClientService, _storageService, Aggregator, message.ChatId, _threadId, message.Get());
+                        }
+                        else
+                        {
+                            viewModel = new SingleGalleryViewModel(ClientService, _storageService, Aggregator, new GalleryMessage(ClientService, message.Get()));
+                        }
+                    }
+
+                    await GalleryView.ShowAsync(viewModel, target != null ? () => target : null, timestamp);
+                }
+
+                TextField?.Focus(FocusState.Programmatic);
+            }
+        }
+
+        public void PlayMessage(MessageViewModel message)
+        {
+            _playbackService.Play(message, _threadId);
+        }
+
+
+
+        public async void SendBotCommand(string command)
+        {
+            await SendMessageAsync(command);
+        }
+
+
+
+        public string GetAdminTitle(MessageViewModel message)
+        {
+            if (message.SenderId is MessageSenderUser senderUser)
+            {
+                return GetAdminTitle(senderUser.UserId);
+            }
+            else if (message.SenderId is MessageSenderChat && !message.IsChannelPost)
+            {
+                return message.AuthorSignature.Length > 0 ? message.AuthorSignature : string.Empty;
+            }
+
+            return string.Empty;
+        }
+
+        public string GetAdminTitle(long userId)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return string.Empty;
+            }
+
+            if (_admins.TryGetValue(chat.Id, out IList<ChatAdministrator> value))
+            {
+                var admin = value.FirstOrDefault(x => x.UserId == userId);
+                if (admin != null)
+                {
+                    if (string.IsNullOrEmpty(admin.CustomTitle))
+                    {
+                        if (admin.IsOwner)
+                        {
+                            return Strings.ChannelCreator;
+                        }
+
+                        return Strings.ChannelAdmin;
+                    }
+
+                    return admin.CustomTitle;
+                }
+            }
+
+            return string.Empty;
+        }
+
+        public void Select(MessageViewModel message)
+        {
+            if (message.IsService())
+            {
+                return;
+            }
+
+            if (message.MediaAlbumId != 0)
+            {
+                if (message.Content is MessageAlbum album)
+                {
+                    foreach (var child in album.Messages)
+                    {
+                        _selectedItems[child.Id] = child;
+                        child.SelectionChanged();
+                    }
+
+                    message.SelectionChanged();
+                }
+                else if (_groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel group))
+                {
+                    _selectedItems[message.Id] = message;
+                    message.SelectionChanged();
+                    group.SelectionChanged();
+                }
+            }
+            else
+            {
+                _selectedItems[message.Id] = message;
+                message.SelectionChanged();
+            }
+
+            RaisePropertyChanged(nameof(CanForwardSelectedMessages));
+            RaisePropertyChanged(nameof(CanDeleteSelectedMessages));
+            RaisePropertyChanged(nameof(CanCopySelectedMessage));
+            RaisePropertyChanged(nameof(CanReportSelectedMessages));
+
+            RaisePropertyChanged(nameof(SelectedCount));
+        }
+
+        public void Unselect(MessageViewModel message)
+        {
+            if (message.MediaAlbumId != 0)
+            {
+                if (message.Content is MessageAlbum album)
+                {
+                    foreach (var child in album.Messages)
+                    {
+                        _selectedItems.TryRemove(child.Id, out _);
+                        child.SelectionChanged();
+                    }
+
+                    message.SelectionChanged();
+                }
+                else if (_groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel group))
+                {
+                    _selectedItems.TryRemove(message.Id, out _);
+                    message.SelectionChanged();
+                    group.SelectionChanged();
+                }
+            }
+            else
+            {
+                _selectedItems.TryRemove(message.Id, out _);
+                message.SelectionChanged();
+            }
+
+            RaisePropertyChanged(nameof(CanForwardSelectedMessages));
+            RaisePropertyChanged(nameof(CanDeleteSelectedMessages));
+            RaisePropertyChanged(nameof(CanCopySelectedMessage));
+            RaisePropertyChanged(nameof(CanReportSelectedMessages));
+
+            RaisePropertyChanged(nameof(SelectedCount));
+        }
+    }
+}

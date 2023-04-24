@@ -1,8 +1,0 @@
-namespace Unigram.Native
-{
-    [default_interface]
-    runtimeclass AudioPitchEffect : Windows.Media.Effects.IBasicAudioEffect
-    {
-        AudioPitchEffect();
-    } 
-}

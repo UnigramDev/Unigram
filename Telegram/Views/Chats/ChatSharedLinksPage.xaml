@@ -1,0 +1,94 @@
+﻿<local:ChatSharedMediaPageBase x:Class="Telegram.Views.Chats.ChatSharedLinksPage"
+                               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                               xmlns:local="using:Telegram.Views.Chats"
+                               xmlns:cells="using:Telegram.Controls.Cells"
+                               xmlns:controls="using:Telegram.Controls"
+                               xmlns:messages="using:Telegram.Controls.Messages"
+                               xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
+                               xmlns:selectors="using:Telegram.Selectors"
+                               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                               mc:Ignorable="d"
+                               d:DesignHeight="300"
+                               d:DesignWidth="400">
+
+    <Grid>
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Links, Mode=OneWay}"
+                                SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
+                                Loaded="List_Loaded"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging">
+            <ListView.Header>
+                <StackPanel>
+                    <controls:ProfileHeader x:Name="ProfileHeader"
+                                            Chat="{x:Bind ViewModel.Chat}"
+                                            SizeChanged="ProfileHeader_SizeChanged"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
+                                            Margin="0,0,0,16" />
+
+                    <Grid x:Name="HeaderPanel"
+                          MaxWidth="1000"
+                          Margin="24,0"
+                          Canvas.ZIndex="1">
+                        <Border x:Name="ClipperBackground"
+                                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                                BorderThickness="0,0,0,1"
+                                BackgroundSizing="InnerBorderEdge"
+                                Margin="-24,0,-24,0"
+                                Grid.ColumnSpan="2" />
+
+                        <Grid CornerRadius="8,8,0,0">
+                            <Border x:Name="CardBackground"
+                                    Background="{ThemeResource SettingsItemBackground}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8,8,0,0" />
+                            <controls:TopNavView IsItemClickEnabled="True"
+                                                 ItemClick="Header_ItemClick"
+                                                 ItemsSource="{x:Bind ViewModel.Items}"
+                                                 SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                                 DisplayMemberPath="Text"
+                                                 Grid.RowSpan="1" />
+                        </Grid>
+                        <messages:MessageService x:Name="DateHeader"
+                                                 Visibility="Collapsed"
+                                                 VerticalAlignment="Bottom"
+                                                 Margin="0,0,0,-30">
+                            <TextBlock x:Name="DateHeaderLabel"
+                                       Text="31 dicembre 2017"
+                                       Foreground="White"
+                                       TextAlignment="Center"
+                                       Style="{StaticResource CaptionTextBlockStyle}" />
+                        </messages:MessageService>
+                    </Grid>
+
+                    <Grid MaxWidth="1000"
+                          Margin="24,0">
+                        <Border Background="{ThemeResource SettingsItemBackground}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1,0">
+                            <TextBox x:Name="Search"
+                                     Text="{x:Bind ViewModel.Links.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     PlaceholderText="{CustomResource Search}"
+                                     Margin="12,8"
+                                     InputScope="Search" />
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </ListView.Header>
+            <!--<ListView.Footer>
+                <microsoft:ProgressBar Background="Transparent"
+                                       IsIndeterminate="{x:Bind ViewModel.Links.IsLoading, Mode=OneWay}" />
+            </ListView.Footer>-->
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <cells:SharedLinkCell />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </controls:TableListView>
+    </Grid>
+</local:ChatSharedMediaPageBase>

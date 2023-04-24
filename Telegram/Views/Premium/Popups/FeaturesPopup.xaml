@@ -1,0 +1,85 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Premium.Popups.FeaturesPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Premium.Popups"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:cells="using:Telegram.Controls.Cells.Premium"
+                       xmlns:selectors="using:Telegram.Selectors"
+                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d">
+
+    <Grid Margin="-24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="440" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid VerticalAlignment="Top"
+              Width="320"
+              Height="320">
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="1,0"
+                                     EndPoint="0,1">
+                    <GradientStop Color="#FFE75ACC" />
+                    <GradientStop Color="#FF6797FF"
+                                  Offset="1" />
+                </LinearGradientBrush>
+            </Grid.Background>
+        </Grid>
+
+        <FlipView x:Name="ScrollingHost"
+                  Background="Transparent"
+                  SelectionChanged="OnSelectionChanged">
+            <FlipView.ItemTemplateSelector>
+                <selectors:PremiumFeatureTemplateSelector>
+                    <selectors:PremiumFeatureTemplateSelector.ItemTemplate>
+                        <DataTemplate>
+                            <cells:PremiumFeatureCell DataContextChanged="OnDataContextChanged" />
+                        </DataTemplate>
+                    </selectors:PremiumFeatureTemplateSelector.ItemTemplate>
+                    <selectors:PremiumFeatureTemplateSelector.StickersTemplate>
+                        <DataTemplate>
+                            <cells:PremiumFeatureUniqueStickersCell DataContextChanged="OnDataContextChanged" />
+                        </DataTemplate>
+                    </selectors:PremiumFeatureTemplateSelector.StickersTemplate>
+                </selectors:PremiumFeatureTemplateSelector>
+            </FlipView.ItemTemplateSelector>
+        </FlipView>
+
+        <muxc:PipsPager x:Name="Pager"
+                        SelectedPageIndex="{x:Bind ScrollingHost.SelectedIndex, Mode=TwoWay}"
+                        HorizontalAlignment="Center"
+                        Grid.Row="1" />
+
+        <Grid x:Name="PurchasePanel"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Stretch"
+              Margin="24,12,24,24"
+              Grid.Row="2">
+            <Rectangle x:Name="PurchaseShadow"
+                       Loaded="PurchaseShadow_Loaded"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Fill="White"
+                       Margin="0"
+                       RadiusX="4"
+                       RadiusY="4">
+            </Rectangle>
+            <Border Background="{StaticResource PremiumLinearGradientBrush}"
+                    CornerRadius="4"
+                    Height="36" />
+            <controls:BadgeButton x:Name="PurchaseCommand"
+                                  Click="Purchase_Click"
+                                  Style="{StaticResource StartButtonStyle}"
+                                  HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Center"
+                                  FontWeight="SemiBold"
+                                  Padding="16,3,16,5"
+                                  CornerRadius="4"
+                                  Margin="0"
+                                  Height="36" />
+        </Grid>
+    </Grid>
+</controls:ContentPopup>

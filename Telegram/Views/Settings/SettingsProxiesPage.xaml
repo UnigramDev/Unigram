@@ -1,0 +1,68 @@
+﻿<local:HostedPage x:Class="Telegram.Views.Settings.SettingsProxiesPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:cells="using:Telegram.Controls.Cells"
+                  xmlns:selectors="using:Telegram.Selectors"
+                  xmlns:viewModels="using:Telegram.ViewModels.Settings"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Items}"
+                                ItemClick="List_ItemClick"
+                                IsItemClickEnabled="True"
+                                SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                VerticalContentAlignment="Top">
+            <ListView.Header>
+                <controls:SettingsPanel IsHeader="True">
+                    <controls:HeaderedControl>
+                        <controls:BadgeButton Content="{CustomResource AddProxy}"
+                                              Click="{x:Bind ViewModel.Add}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE710;" />
+                    </controls:HeaderedControl>
+
+                    <TextBlock Text="{CustomResource ProxyConnections}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="24,16,24,8" />
+                </controls:SettingsPanel>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:ConnectionViewModel">
+                    <Grid Padding="12,12"
+                          Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Text="{x:Bind DisplayName}"
+                                   VerticalAlignment="Bottom"
+                                   Style="{StaticResource BaseTextBlockStyle}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis" />
+                        <cells:ProxyCell Status="{x:Bind Status, Mode=OneWay}"
+                                         VerticalAlignment="Top"
+                                         Grid.Row="1" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Footer>
+                <Border Height="32" />
+            </ListView.Footer>
+        </controls:TableListView>
+    </Grid>
+</local:HostedPage>

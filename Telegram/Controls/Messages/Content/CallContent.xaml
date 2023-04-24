@@ -1,0 +1,164 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:Telegram.Controls.Messages.Content"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    mc:Ignorable="d"
+                    d:DesignHeight="300"
+                    d:DesignWidth="400">
+
+    <Style x:Name="InlineButtonStyle"
+           TargetType="controls:GlyphHyperlinkButton">
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource MessageMediaForegroundBrush}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderThickness"
+                Value="0" />
+        <Setter Property="Padding"
+                Value="0" />
+        <Setter Property="HorizontalAlignment"
+                Value="Left" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Center" />
+        <Setter Property="VerticalAlignment"
+                Value="Top" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Center" />
+        <Setter Property="FontFamily"
+                Value="{StaticResource SymbolThemeFontFamily}" />
+        <Setter Property="FontSize"
+                Value="{StaticResource GlyphLargeFontSize}" />
+        <Setter Property="Glyph"
+                Value="&#xE700;" />
+        <Setter Property="Height"
+                Value="48" />
+        <Setter Property="Width"
+                Value="48" />
+        <Setter Property="FontWeight"
+                Value="Normal" />
+        <Setter Property="CornerRadius"
+                Value="24" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:GlyphHyperlinkButton">
+                    <Grid x:Name="RootGrid"
+                          Background="{TemplateBinding Background}"
+                          CornerRadius="{TemplateBinding CornerRadius}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                       Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SystemControlHighlightBaseMediumHighBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                       Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SystemControlHighlightBaseMediumBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                       Storyboard.TargetName="ContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <TextBlock x:Name="ContentPresenter"
+                                   Margin="{TemplateBinding Padding}"
+                                   HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   Text="{TemplateBinding Glyph}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:CallContent">
+        <Setter Property="MinWidth"
+                Value="220" />
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:CallContent">
+                    <Grid x:Name="LayoutRoot">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="Missed">
+                                    <VisualState.Setters>
+                                        <Setter Target="ReasonGlyph.Foreground"
+                                                Value="{ThemeResource MessageCallMissedForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Default" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Border Width="48"
+                                Height="48"
+                                CornerRadius="24"
+                                Background="{ThemeResource MessageMediaBackgroundBrush}"
+                                VerticalAlignment="Top">
+                            <controls:GlyphHyperlinkButton x:Name="Button"
+                                                           Glyph="&#xE717;"
+                                                           Style="{StaticResource InlineButtonStyle}" />
+                        </Border>
+                        <StackPanel Margin="8,0,0,2"
+                                    VerticalAlignment="Center"
+                                    Grid.Column="1">
+                            <TextBlock x:Name="TitleLabel"
+                                       Foreground="{ThemeResource MessageForegroundBrush}"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       Style="{StaticResource BaseTextBlockStyle}" />
+                            <TextBlock Style="{StaticResource DisabledCaptionTextBlockStyle}">
+                                <ToolTipService.ToolTip>
+                                    <ToolTip x:Name="Tip" />
+                                </ToolTipService.ToolTip>
+                                <Run x:Name="ReasonGlyph"
+                                     FontSize="10"
+                                     Foreground="{ThemeResource MessageCallForegroundBrush}"
+                                     FontFamily="{StaticResource TelegramThemeFontFamily}" />
+                                <Run x:Name="DateLabel" /><Run x:Name="DurationLabel" />
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

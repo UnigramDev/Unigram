@@ -268,3 +268,10 @@ _Pvt_Extensions
 /Unigram/Libraries/ffmpeg/runtimes/ARM
 /Unigram/Unigram.Native.Calls/Generated Files
 /Unigram/Unigram.Native/Generated Files
+/Unigram/Unigram.CodeGen
+/Unigram/Telegram.Native/Generated Files
+/Unigram/Telegram.Native.Calls/Generated Files
+/Telegram.Native/Generated Files
+/Telegram.Native.Calls/Generated Files
+/Telegram/Constants.Secret.cs
+/Libraries/rlottie/ARM64

@@ -1,0 +1,85 @@
+<controls:ContentPopup x:Class="Telegram.Views.Popups.ProxyPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Popups"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       Background="{ThemeResource PageBackgroundDarkBrush}"
+                       PrimaryButtonText="OK"
+                       SecondaryButtonText="Cancel"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <ContentDialog.Title>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{CustomResource ProxyDetails}" />
+            <controls:GlyphButton x:Name="ShareButton"
+                                  x:Load="False"
+                                  Click="Share_Click"
+                                  Glyph="&#xE72D;"
+                                  AutomationProperties.Name="{CustomResource ShareSendTo}"
+                                  ToolTipService.ToolTip="{CustomResource ShareSendTo}"
+                                  Style="{StaticResource HeaderGlyphButtonStyle}"
+                                  Margin="0,-8,-12,-24"
+                                  Grid.Column="1" />
+        </Grid>
+    </ContentDialog.Title>
+
+    <StackPanel>
+        <RadioButton x:Name="TypeSocks"
+                     Content="{CustomResource UseProxySocks5}"
+                     Checked="Type_Toggled"
+                     Unchecked="Type_Toggled"
+                     IsChecked="True" />
+
+        <RadioButton x:Name="TypeHttp"
+                     Content="HTTP"
+                     Checked="Type_Toggled"
+                     Unchecked="Type_Toggled" />
+
+        <RadioButton x:Name="TypeProto"
+                     Content="{CustomResource UseProxyTelegram}"
+                     Checked="Type_Toggled"
+                     Unchecked="Type_Toggled" />
+
+        <TextBox x:Name="FieldServer"
+                 PlaceholderText="{CustomResource UseProxyAddress}"
+                 Margin="0,8" />
+        <TextBox x:Name="FieldPort"
+                 PlaceholderText="{CustomResource UseProxyPort}"
+                 InputScope="Number"
+                 Margin="0,0,0,8" />
+        <StackPanel x:Name="TypeSocksPanel">
+            <TextBox x:Name="FieldUsername"
+                     PlaceholderText="{CustomResource UseProxyUsername}"
+                     Header="{CustomResource ProxyCredentialsOptional}"
+                     Margin="0,4,0,8" />
+            <PasswordBox x:Name="FieldPassword"
+                         PlaceholderText="{CustomResource UseProxyPassword}"
+                         Margin="0,0,0,8" />
+        </StackPanel>
+        <StackPanel x:Name="TypeProtoPanel"
+                    Visibility="Collapsed">
+            <TextBox x:Name="FieldSecret"
+                     PlaceholderText="{CustomResource UseProxySecret}"
+                     Header="{CustomResource ProxyCredentials}"
+                     Margin="0,4,0,8" />
+        </StackPanel>
+        <StackPanel x:Name="TypeHttpPanel"
+                    Visibility="Collapsed">
+            <CheckBox x:Name="FieldTransparent"
+                      Content="{CustomResource TransparentTcpConnection}"
+                      Margin="0,0,0,8" />
+        </StackPanel>
+
+        <TextBlock x:Name="FieldPanel"
+                   Text="{CustomResource UseProxyInfo}"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}" />
+    </StackPanel>
+</controls:ContentPopup>

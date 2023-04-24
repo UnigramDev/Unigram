@@ -1,0 +1,43 @@
+﻿<local:ContentPopup x:Class="Telegram.Views.Popups.ChooseColorPopup"
+                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="using:Telegram.Controls"
+                    xmlns:controls="using:Telegram.Controls"
+                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                    mc:Ignorable="d"
+                    Title="TITLE"
+                    PrimaryButtonText="Button1"
+                    SecondaryButtonText="Button2"
+                    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <Grid Margin="0,0,0,-12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <controls:ColorTextBox x:Name="TextField"
+                               ColorChanged="TextField_ColorChanged"
+                               HorizontalAlignment="Stretch"
+                               Margin="0,0,0,12" />
+
+        <controls:ColorPicker x:Name="Picker"
+                              ColorChanged="Picker_ColorChanged"
+                              BorderBrush="{ThemeResource ControlStrokeColorSecondaryBrush}"
+                              BorderThickness="1"
+                              CornerRadius="4"
+                              Height="240"
+                              Padding="0,0"
+                              Grid.Row="1" />
+
+        <HyperlinkButton x:Name="Accent"
+                         Content="Use system accent color"
+                         Click="System_Click"
+                         HorizontalAlignment="Left"
+                         Margin="-12,0,0,-12"
+                         Grid.Row="2" />
+    </Grid>
+</local:ContentPopup>

@@ -1,0 +1,55 @@
+import "Telegram.Native.Calls.idl";
+import "RemoteMediaStateUpdatedEventArgs.idl";
+import "SignalingDataEmittedEventArgs.idl";
+import "VoipVideoCapture.idl";
+import "VoipDescriptor.idl";
+
+namespace Telegram.Native.Calls
+{
+    runtimeclass VoipManager : Windows.Foundation.IClosable
+    {
+        static Telegram.Td.Api.CallProtocol Protocol{ get; };
+
+        VoipManager(String version, VoipDescriptor descriptor);
+        void Start();
+
+
+
+        //void SetNetworkType(NetworkType networkType);
+        Boolean IsMuted;
+        void SetAudioOutputGainControlEnabled(Boolean enabled);
+        void SetEchoCancellationStrength(Int32 strength);
+
+        Boolean SupportsVideo{ get; };
+        void SetIncomingVideoOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+
+        void SetAudioInputDevice(String id);
+        void SetAudioOutputDevice(String id);
+        void SetAudioOutputDuckingEnabled(Boolean enabled);
+
+        void SetIsLowBatteryLevel(Boolean isLowBatteryLevel);
+
+        //std::string getLastError();
+        String GetDebugInfo();
+        Int64 GetPreferredRelayId();
+        //TrafficStats getTrafficStats();
+        //PersistentState getPersistentState();
+
+        void ReceiveSignalingData(Windows.Foundation.Collections.IVector<byte> data);
+        //virtual void setVideoCapture(std::shared_ptr<VideoCaptureInterface> videoCapture) = 0;
+        void SetVideoCapture(VoipCaptureBase videoCapture);
+        void SetRequestedVideoAspect(Single aspect);
+
+        //void stop(std::function<void(FinalState)> completion);
+
+
+
+        event Windows.Foundation.TypedEventHandler<VoipManager, VoipState> StateUpdated;
+        event Windows.Foundation.TypedEventHandler<VoipManager, Int32> SignalBarsUpdated;
+        event Windows.Foundation.TypedEventHandler<VoipManager, Single> AudioLevelUpdated;
+        event Windows.Foundation.TypedEventHandler<VoipManager, Boolean> RemoteBatteryLevelIsLowUpdated;
+        event Windows.Foundation.TypedEventHandler<VoipManager, RemoteMediaStateUpdatedEventArgs> RemoteMediaStateUpdated;
+        event Windows.Foundation.TypedEventHandler<VoipManager, Single> RemotePrefferedAspectRatioUpdated;
+        event Windows.Foundation.TypedEventHandler<VoipManager, SignalingDataEmittedEventArgs> SignalingDataEmitted;
+    }
+} // namespace Telegram.Native.Calls

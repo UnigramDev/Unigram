@@ -1,0 +1,79 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.TranslatePopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Popups"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       Title="TITLE"
+                       PrimaryButtonText="Button1"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
+
+    <controls:ContentPopup.Resources>
+        <Style TargetType="controls:LoadingTextBlock">
+            <Setter Property="Background"
+                    Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+            <Setter Property="BorderBrush"
+                    Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+            <Setter Property="Foreground"
+                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="PlaceholderBrush"
+                    Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="VerticalAlignment"
+                    Value="Top" />
+            <Setter Property="HorizontalAlignment"
+                    Value="Stretch" />
+            <Setter Property="Padding"
+                    Value="24,4,24,4" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:LoadingTextBlock">
+                        <Grid>
+                            <TextBlock x:Name="Placeholder"
+                                       Text="{TemplateBinding PlaceholderText}"
+                                       Foreground="{TemplateBinding PlaceholderBrush}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       Padding="{TemplateBinding Padding}"
+                                       TextAlignment="DetectFromContent"
+                                       TextWrapping="Wrap" />
+                            <TextBlock x:Name="Presenter"
+                                       Text="{TemplateBinding Text}"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       Padding="{TemplateBinding Padding}"
+                                       IsTextSelectionEnabled="{TemplateBinding IsTextSelectionEnabled}"
+                                       TextAlignment="DetectFromContent"
+                                       TextWrapping="Wrap" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </controls:ContentPopup.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="Subtitle"
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   Margin="0,-12,0,0" />
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto"
+                      Margin="-24,0"
+                      Padding="0,8,0,16"
+                      Grid.Row="1">
+            <StackPanel x:Name="Presenter">
+                <StackPanel.ChildrenTransitions>
+                    <TransitionCollection>
+                        <RepositionThemeTransition />
+                    </TransitionCollection>
+                </StackPanel.ChildrenTransitions>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</controls:ContentPopup>

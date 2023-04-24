@@ -1,0 +1,185 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.StickersPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Popups"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:common="using:Telegram.Common"
+                       xmlns:viewModels="using:Telegram.ViewModels.Drawers"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       PrimaryButtonStyle="{x:Bind ConvertIsInstalledStyle(ViewModel.IsInstalled, ViewModel.IsArchived), Mode=OneWay}"
+                       PrimaryButtonText="{x:Bind ConvertIsInstalled(ViewModel.IsInstalled, ViewModel.IsArchived, ViewModel.IsOfficial, ViewModel.StickerType), Mode=OneWay}"
+                       PrimaryButtonCommand="{x:Bind ViewModel.SendCommand}"
+                       VerticalContentAlignment="Stretch"
+                       ContentMaxHeight="500"
+                       Closing="OnClosing"
+                       Loaded="OnLoaded"
+                       Unloaded="OnUnloaded">
+
+    <ContentDialog.Resources>
+        <DataTemplate x:Key="AnimatedItemTemplate">
+            <Grid Margin="2">
+                <controls:LottieView30Fps x:Name="Player"
+                                          AutoPlay="False" />
+
+                <Border HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Background="{StaticResource PremiumObliqueGradientBrush}"
+                        CornerRadius="10"
+                        Width="20"
+                        Height="20"
+                        Margin="-2,0,-2,-2">
+                    <TextBlock HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="#FFFFFF"
+                               FontFamily="{StaticResource SymbolThemeFontFamily}"
+                               FontSize="16"
+                               Text="&#xE9BE;" />
+                </Border>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="VideoItemTemplate">
+            <Grid Margin="2">
+                <controls:AnimationView30Fps x:Name="Player"
+                                             AutoPlay="False"
+                                             IsCachingEnabled="True" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ItemTemplate">
+            <Grid Margin="2">
+                <Border>
+                    <Image />
+                </Border>
+            </Grid>
+        </DataTemplate>
+    </ContentDialog.Resources>
+
+    <Grid Margin="-24,-14,-24,-24">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <GridView x:Name="ScrollingHost"
+                  ItemsSource="{x:Bind ViewModel.ItemsView}"
+                  ItemClick="List_ItemClick"
+                  IsItemClickEnabled="True"
+                  SelectionMode="None"
+                  ChoosingItemContainer="OnChoosingItemContainer"
+                  ContainerContentChanging="OnContainerContentChanging"
+                  common:FluidGridView.OrientationOnly="False">
+            <common:FluidGridView.Triggers>
+                <common:FluidGridViewTrigger RowsOrColumns="{x:Bind ConvertItemsPerRow(ViewModel.StickerType), Mode=OneWay}" />
+            </common:FluidGridView.Triggers>
+            <GridView.Footer>
+                <Border Height="24" />
+            </GridView.Footer>
+            <GridView.ItemContainerStyle>
+                <Style TargetType="GridViewItem"
+                       BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                    <Setter Property="Margin"
+                            Value="0" />
+                    <Setter Property="Padding"
+                            Value="0" />
+                    <Setter Property="MinWidth"
+                            Value="0" />
+                    <Setter Property="MinHeight"
+                            Value="0" />
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Stretch" />
+                    <Setter Property="VerticalContentAlignment"
+                            Value="Stretch" />
+                </Style>
+            </GridView.ItemContainerStyle>
+            <GridView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                            <Grid Padding="12,4,12,12">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock common:TextBlockHelper.Text="{x:Bind Title}"
+                                           VerticalAlignment="Bottom"
+                                           Margin="12,0"
+                                           Style="{StaticResource BaseTextBlockStyle}" />
+                                <TextBlock Text="{x:Bind common:Locale.Declension('Stickers', Size)}"
+                                           VerticalAlignment="Top"
+                                           Margin="12,0"
+                                           Style="{StaticResource InfoBodyTextBlockStyle}"
+                                           Grid.Row="1" />
+
+                                <controls:BadgeButton Content="{CustomResource Add}"
+                                                      Visibility="{x:Bind IsInstalled, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                                      Style="{StaticResource StartButtonStyle}"
+                                                      Background="#2ca5e0"
+                                                      HorizontalAlignment="Right"
+                                                      VerticalAlignment="Center"
+                                                      Padding="12,1,12,2"
+                                                      CornerRadius="12"
+                                                      Margin="0,-6"
+                                                      Grid.RowSpan="2"
+                                                      Grid.Column="1" />
+                            </Grid>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                    <GroupStyle.HeaderContainerStyle>
+                        <Style TargetType="GridViewHeaderItem">
+                            <Setter Property="Background"
+                                    Value="Transparent" />
+                            <Setter Property="FontFamily"
+                                    Value="{ThemeResource ContentControlThemeFontFamily}" />
+                            <Setter Property="FontSize"
+                                    Value="{ThemeResource ListViewHeaderItemThemeFontSize}" />
+                            <Setter Property="Margin"
+                                    Value="0" />
+                            <Setter Property="Padding"
+                                    Value="0" />
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Stretch" />
+                            <Setter Property="VerticalContentAlignment"
+                                    Value="Top" />
+                            <Setter Property="MinHeight"
+                                    Value="32" />
+                            <Setter Property="UseSystemFocusVisuals"
+                                    Value="True" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="GridViewHeaderItem">
+                                        <Border Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}">
+                                            <ContentPresenter x:Name="ContentPresenter"
+                                                              Margin="{TemplateBinding Padding}"
+                                                              Content="{TemplateBinding Content}"
+                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                              ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.HeaderContainerStyle>
+                </GroupStyle>
+            </GridView.GroupStyle>
+            <GridView.ItemContainerTransitions>
+                <TransitionCollection />
+            </GridView.ItemContainerTransitions>
+            <GridView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsWrapGrid Orientation="Horizontal"
+                                   AreStickyGroupHeadersEnabled="True" />
+                </ItemsPanelTemplate>
+            </GridView.ItemsPanel>
+        </GridView>
+
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+                                    ScrollingHost="{x:Bind ScrollingHost}"
+                                    Padding="0,54,0,0" />
+    </Grid>
+</controls:ContentPopup>

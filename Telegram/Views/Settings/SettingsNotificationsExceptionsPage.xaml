@@ -1,0 +1,69 @@
+﻿<local:HostedPage x:Class="Telegram.Views.Settings.SettingsNotificationsExceptionsPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:cells="using:Telegram.Controls.Cells"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d"
+                  Title="{x:Bind ViewModel.Scope.Title}">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Items}"
+                                ItemClick="ListView_ItemClick"
+                                IsItemClickEnabled="True"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                SelectionMode="None">
+            <ListView.Header>
+                <controls:SettingsPanel IsHeader="True">
+                    <controls:HeaderedControl>
+                        <CheckBox x:Name="Alert"
+                                  Click="{x:Bind ViewModel.Scope.SendExecute}"
+                                  IsChecked="{x:Bind ViewModel.Scope.Alert, Mode=TwoWay}"
+                                  Content="{CustomResource Alert}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl Header="{CustomResource Settings}">
+                        <CheckBox x:Name="Preview"
+                                  Click="{x:Bind ViewModel.Scope.SendExecute}"
+                                  IsChecked="{x:Bind ViewModel.Scope.Preview, Mode=TwoWay}"
+                                  Content="{CustomResource MessagePreview}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                        <controls:BadgeButton Click="{x:Bind ViewModel.ChooseSound}"
+                                              Content="{CustomResource Sound}"
+                                              Badge="{x:Bind ViewModel.Scope.SoundTitle, Mode=OneWay}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE99D;" />
+                    </controls:HeaderedControl>
+
+                    <TextBlock x:Name="HeaderLabel"
+                               Text="{CustomResource NotificationsExceptions}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="24,16,24,8" />
+                </controls:SettingsPanel>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <cells:ProfileCell BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    Background="{ThemeResource SettingsItemBackground}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Footer>
+                <Border Height="32" />
+            </ListView.Footer>
+        </controls:TableListView>
+    </Grid>
+</local:HostedPage>

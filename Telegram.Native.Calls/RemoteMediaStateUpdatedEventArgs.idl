@@ -1,0 +1,11 @@
+import "Telegram.Native.Calls.idl";
+
+namespace Telegram.Native.Calls
+{
+    [default_interface]
+    runtimeclass RemoteMediaStateUpdatedEventArgs
+    {
+        VoipAudioState Audio{ get; };
+        VoipVideoState Video{ get; };
+    }
+} // namespace Telegram.Native.Calls

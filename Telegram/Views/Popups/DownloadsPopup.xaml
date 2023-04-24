@@ -1,0 +1,67 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.DownloadsPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Popups"
+                       xmlns:cells="using:Telegram.Controls.Cells"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:viewModels="using:Telegram.ViewModels"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Opened="OnOpened"
+                       Closed="OnClosed">
+
+    <ContentDialog.Title>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{CustomResource DownloadsTabs}"
+                       TextTrimming="CharacterEllipsis" />
+            <controls:MoreButton Click="Menu_ContextRequested"
+                                 Margin="0,-8,-12,-24"
+                                 Grid.Column="1" />
+        </Grid>
+    </ContentDialog.Title>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBox x:Name="SearchField"
+                 Text="{x:Bind ViewModel.Items.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 PlaceholderText="{CustomResource Search}"
+                 PreventKeyboardDisplayOnProgrammaticFocus="True"
+                 VerticalAlignment="Center" />
+
+        <controls:LottieView x:Name="Placeholder"
+                             x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
+                             Source="ms-appx:///Assets/Animations/DownloadsEmpty.tgs"
+                             IsLoopingEnabled="True"
+                             IsCachingEnabled="False"
+                             Width="140"
+                             Height="140"
+                             Margin="0,24,0,8"
+                             Grid.Row="1" />
+
+
+        <ListView ItemsSource="{x:Bind ViewModel.Items}"
+                  SelectionMode="None"
+                  ChoosingItemContainer="OnChoosingItemContainer"
+                  ContainerContentChanging="OnContainerContentChanging"
+                  MinHeight="172"
+                  Margin="-24,0"
+                  Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:FileDownloadViewModel">
+                    <cells:FileDownloadCell IsFirst="{x:Bind IsFirst, Mode=OneWay}"
+                                            CompleteDate="{x:Bind CompleteDate, Mode=OneWay}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</controls:ContentPopup>

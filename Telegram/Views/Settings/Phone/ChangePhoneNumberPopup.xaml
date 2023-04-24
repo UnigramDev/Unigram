@@ -1,0 +1,29 @@
+<controls:ContentPopup x:Class="Telegram.Views.Settings.ChangePhoneNumberPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Settings"
+                       xmlns:common="using:Telegram.Common"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       PrimaryButtonText="OK"
+                       SecondaryButtonText="Cancel">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:LottieView Source="ms-appx:///Assets/Animations/ChangeNumber.tgs"
+                             IsCachingEnabled="False"
+                             Width="140"
+                             Height="140"
+                             Margin="0,0,0,12" />
+
+        <TextBlock common:TextBlockHelper.Markdown="{CustomResource PhoneNumberHelp}"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   TextAlignment="Center"
+                   Grid.Row="1" />
+    </Grid>
+</controls:ContentPopup>

@@ -1,0 +1,61 @@
+﻿<local:HostedPage x:Class="Telegram.Views.LogOutPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d"
+                  IsNavigationRoot="True">
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <controls:HeaderedControl Header="{CustomResource AlternativeOptions}">
+                    <controls:BadgeButton x:Name="AddAccount"
+                                          x:Load="False"
+                                          Badge="{CustomResource AddAnotherAccountInfo}"
+                                          Content="{CustomResource AddAnotherAccount}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xE8FA;"
+                                          Click="AddAnotherAccount_Click" />
+
+                    <controls:BadgeButton Badge="{CustomResource SetPasscodeInfo}"
+                                          Content="{CustomResource SetPasscode}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Visibility="{x:Bind ViewModel.IsPasscodeEnabled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                                          Glyph="&#xE192;"
+                                          Click="{x:Bind ViewModel.OpenPasscode}" />
+
+                    <controls:BadgeButton Badge="{CustomResource ClearCacheInfo}"
+                                          Content="{CustomResource ClearCache}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xE74D;"
+                                          Click="{x:Bind ViewModel.OpenStorage}" />
+
+                    <controls:BadgeButton Badge="{CustomResource ChangePhoneNumberInfo}"
+                                          Content="{CustomResource ChangePhoneNumber}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xF61B;"
+                                          Click="{x:Bind ViewModel.ChangePhoneNumber}" />
+
+                    <controls:BadgeButton Badge="{CustomResource ContactSupportInfo}"
+                                          Content="{CustomResource ContactSupport}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xED15;"
+                                          Click="{x:Bind ViewModel.Ask}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Footer="{CustomResource LogOutInfo}">
+                    <controls:BadgeButton Content="{CustomResource LogOutTitle}"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xF3B1;"
+                                          Click="{x:Bind ViewModel.Logout}" />
+                </controls:HeaderedControl>
+            </controls:SettingsPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

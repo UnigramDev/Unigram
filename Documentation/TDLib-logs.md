@@ -14,7 +14,7 @@ While being in the Diagnostic settings, under `TDLib Logs` select `Verbosity lev
 
 ### Sending a log file to a user
 To send logs through the app you must disable them first:
-Navigate to the Diagnostics settings, select `Verbosity level` and set it to `Assert`.
+Navigate to the Diagnostics settings, select `Verbosity level` and set it to `Error`.
 You can now click on the item below (marked as `tdlib_log.txt`): a dialog will open and you will be able to pick a chat where to send the file.
 
 ### Finding the log file manually
@@ -25,4 +25,4 @@ While you are signed out, you won't be able to send logs via the app, you have t
 If you're using Unigram from the Store, this is the location:
 `%LOCALAPPDATA%\Packages\38833FF26BA1D.UnigramPreview_g9c9v27vpyspw\LocalState`
 Otherwise, the folder that you're looking for is the following:
-`%LOCALAPPDATA%\Packages\38833FF26BA1D.Unigram_11m80435ym4jm\LocalState`
+`%LOCALAPPDATA%\Packages\TelegramFZ-LLC.Unigram_1vfw5zm9jmzqy\LocalState`

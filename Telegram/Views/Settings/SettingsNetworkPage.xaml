@@ -1,0 +1,101 @@
+<local:HostedPage x:Class="Telegram.Views.Settings.SettingsNetworkPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:selectors="using:Telegram.Selectors"
+                  xmlns:viewModels="using:Telegram.ViewModels.Settings"
+                  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+                  xmlns:td="using:Telegram.Td.Api"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  d:DesignHeight="2000"
+                  mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <controls:HeaderedControl ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:NetworkStatisticsItem">
+                            <controls:SettingsExpander HorizontalContentAlignment="Stretch"
+                                                       BorderThickness="0">
+                                <controls:SettingsExpander.Header>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="56" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
+                                                   HorizontalAlignment="Left"
+                                                   VerticalAlignment="Center"
+                                                   Margin="20,0,0,0"
+                                                   AutomationProperties.AccessibilityView="Raw"
+                                                   Text="{x:Bind Glyph}"
+                                                   FontFamily="{StaticResource SymbolThemeFontFamily}" />
+
+                                        <TextBlock Text="{x:Bind Name}"
+                                                   Style="{StaticResource BodyTextBlockStyle}"
+                                                   TextWrapping="NoWrap"
+                                                   Grid.Column="1" />
+                                        <TextBlock Text="{x:Bind TotalBytes, Converter={StaticResource FileSizeConverter}}"
+                                                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                                                   Margin="0,0,-12,0"
+                                                   Grid.Column="2" />
+                                    </Grid>
+                                </controls:SettingsExpander.Header>
+                                <StackPanel>
+                                    <controls:BadgeButton Content="{CustomResource BytesReceived}"
+                                                          Badge="{x:Bind ReceivedBytes, Converter={StaticResource FileSizeConverter}}"
+                                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                          Glyph="&#xE118;"
+                                                          Background="Transparent"
+                                                          BorderThickness="0,0,0,1"
+                                                          CornerRadius="0" />
+
+                                    <controls:BadgeButton Content="{CustomResource BytesSent}"
+                                                          Badge="{x:Bind SentBytes, Converter={StaticResource FileSizeConverter}}"
+                                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                          Glyph="&#xEA00;"
+                                                          Background="Transparent"
+                                                          CornerRadius="0" />
+                                </StackPanel>
+                            </controls:SettingsExpander>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource TotalNetworkUsage}">
+                    <controls:BadgeButton Content="{CustomResource BytesReceived}"
+                                          Badge="{x:Bind ViewModel.TotalReceivedBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE118;" />
+                    
+                    <controls:BadgeButton Content="{CustomResource BytesSent}"
+                                          Badge="{x:Bind ViewModel.TotalSentBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEA00;" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Footer="{x:Bind ConvertSinceDate(ViewModel.SinceDate), Mode=OneWay}">
+                    <controls:BadgeButton Click="{x:Bind ViewModel.Reset}"
+                                          Content="{CustomResource ResetStatistics}"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEA09;" />
+                </controls:HeaderedControl>
+            </controls:SettingsPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

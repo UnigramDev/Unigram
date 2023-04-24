@@ -1,0 +1,241 @@
+<local:HostedPage x:Class="Telegram.Views.Settings.SettingsAppearancePage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:common="using:Telegram.Common"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:messages="using:Telegram.Controls.Messages"
+                  xmlns:chats="using:Telegram.Controls.Chats"
+                  xmlns:services="using:Telegram.Services"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:cells="using:Telegram.Controls.Cells"
+                  mc:Ignorable="d"
+                  IsNavigationRoot="True">
+
+    <!--<local:HostedPage.Header>
+        <controls:ContentPageHeader>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{CustomResource ChatSettings}"
+                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           VerticalAlignment="Center"
+                           Margin="12,0" />
+
+                <controls:MoreButton Grid.Column="1">
+                    <Button.Flyout>
+                        <MenuFlyout Placement="BottomEdgeAlignedRight">
+                            <MenuFlyoutItem Text="{CustomResource CreateNewThemeMenu}"
+                                            Command="{x:Bind ViewModel.NewThemeCommand}">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE2B1;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </controls:MoreButton>
+            </Grid>
+        </controls:ContentPageHeader>
+    </local:HostedPage.Header>-->
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <contract7Present:Grid.BackgroundTransition>
+            <contract7Present:BrushTransition />
+        </contract7Present:Grid.BackgroundTransition>
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <controls:HeaderedControl>
+                    <Grid x:Name="Preview"
+                          CornerRadius="4,4,0,0">
+                        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter"
+                                                       CornerRadius="4,4,0,0" />
+                        <StackPanel Padding="0,10">
+                            <messages:MessageBubble x:Name="Message1"
+                                                    HorizontalAlignment="Left" />
+                            <messages:MessageBubble x:Name="Message2"
+                                                    HorizontalAlignment="Right">
+                                <FrameworkElement.Resources>
+                                    <common:ThemeOutgoing />
+                                </FrameworkElement.Resources>
+                            </messages:MessageBubble>
+                        </StackPanel>
+                    </Grid>
+
+                    <GridView x:Name="List"
+                              Background="{ThemeResource SettingsItemBackground}"
+                              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                              ItemsSource="{x:Bind ViewModel.ChatThemes}"
+                              SelectedItem="{x:Bind ViewModel.SelectedChatTheme, Mode=TwoWay}"
+                              SelectionMode="Single"
+                              ChoosingItemContainer="OnChoosingItemContainer"
+                              ContainerContentChanging="OnContainerContentChanging"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.HorizontalScrollMode="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                              ScrollViewer.VerticalScrollMode="Disabled"
+                              ItemContainerTransitions="{x:Null}"
+                              Padding="12,16,0,12">
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <cells:ChatThemeCell Width="87" />
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                        <GridView.ItemContainerStyle>
+                            <Style TargetType="GridViewItem"
+                                   BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                                <Setter Property="HorizontalContentAlignment"
+                                        Value="Stretch" />
+                            </Style>
+                        </GridView.ItemContainerStyle>
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsStackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                        <GridView.Footer>
+                            <Border Width="12" />
+                        </GridView.Footer>
+                    </GridView>
+
+                    <controls:BadgeButton Content="{CustomResource ShowAllThemes}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenThemes}"
+                                          Glyph="&#xE90E;"
+                                          IsChevronVisible="True" />
+
+                    <controls:BadgeButton Content="{CustomResource ChatBackground}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenWallpaper}"
+                                          Glyph="&#xE9E7;"
+                                          IsChevronVisible="True" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl>
+                    <CheckBox Content="{CustomResource SettingsSwitchToNightMode}"
+                              Style="{StaticResource SettingsCheckBoxStyle}"
+                              IsChecked="{x:Bind ViewModel.ForceNightMode, Mode=TwoWay}" />
+                    <controls:BadgeButton Content="{CustomResource AutoNightTheme}"
+                                          Badge="{x:Bind ConvertNightMode(ViewModel.NightMode), Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenNightMode}"
+                                          Glyph="&#xE9EA;"
+                                          IsChevronVisible="True" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Background="{ThemeResource SettingsItemBackground}">
+                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="56" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   Margin="20,0,0,0"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   Text="&#xE9EB;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}" />
+
+                        <TextBlock Text="{CustomResource TextSizeHeader}"
+                                   VerticalAlignment="Center"
+                                   Grid.Column="1" />
+                        <Slider Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
+                                AutomationProperties.Name="{CustomResource TextSizeHeader}"
+                                Minimum="0"
+                                Maximum="6"
+                                SmallChange="1"
+                                LargeChange="1"
+                                TickFrequency="1"
+                                TickPlacement="Outside"
+                                IsThumbToolTipEnabled="False"
+                                Margin="12,6,12,6"
+                                Grid.Column="2" />
+                    </Grid>
+                    <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="56" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   Margin="20,0,0,0"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   Text="&#xE9E8;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}" />
+
+                        <TextBlock Text="{CustomResource BubbleRadius}"
+                                   VerticalAlignment="Center"
+                                   Grid.Column="1" />
+                        <Slider Value="{x:Bind ViewModel.BubbleRadius, Mode=TwoWay}"
+                                AutomationProperties.Name="{CustomResource BubbleRadius}"
+                                Minimum="0"
+                                Maximum="15"
+                                SmallChange="1"
+                                LargeChange="1"
+                                TickFrequency="1"
+                                TickPlacement="Outside"
+                                IsThumbToolTipEnabled="False"
+                                Margin="12,6,12,6"
+                                Grid.Column="2" />
+                    </Grid>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Footer="{CustomResource StickersNameInfo}">
+                    <controls:BadgeButton Content="{CustomResource StickersName}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenStickers}"
+                                          Glyph="&#xF4AA;"
+                                          IsChevronVisible="True" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource ChatQuickActions}">
+                    <CheckBox IsChecked="{x:Bind ViewModel.SwipeToShare, Mode=TwoWay}"
+                              Content="{CustomResource SwipeShare}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.SwipeToReply, Mode=TwoWay}"
+                              Content="{CustomResource SwipeReply}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource OtherSettings}">
+                    <CheckBox IsChecked="{x:Bind ViewModel.FullScreenGallery, Mode=TwoWay}"
+                              Content="{CustomResource EnableFullScreenGallery}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.DisableHighlightWords, Mode=TwoWay}"
+                              Content="{CustomResource DisableSpelling}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
+                              Content="{CustomResource SendByEnter}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
+                              Content="{CustomResource ReplaceEmoji}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <controls:BadgeButton Content="{CustomResource DistanceUnits}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEA01;">
+                        <controls:BadgeButton.Badge>
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.DistanceUnitOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.DistanceUnit, Mode=TwoWay}"
+                                                       DisplayMemberPath="Text" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
+                </controls:HeaderedControl>
+            </controls:SettingsPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

@@ -1,0 +1,21 @@
+import "VoipVideoCapture.idl";
+
+namespace Telegram.Native.Calls
+{
+    [default_interface]
+    runtimeclass VoipDescriptor
+    {
+        VoipDescriptor();
+
+        Double InitializationTimeout;
+        Double ReceiveTimeout;
+        Windows.Foundation.Collections.IVector<byte> PersistentState;
+        Windows.Foundation.Collections.IVector<Telegram.Td.Api.CallServer> Servers;
+        Windows.Foundation.Collections.IVector<byte> EncryptionKey;
+        Boolean IsOutgoing;
+        Boolean EnableP2p;
+        String AudioInputId;
+        String AudioOutputId;
+        VoipCaptureBase VideoCapture;
+    }
+} // namespace Telegram.Native.Calls

@@ -1,0 +1,120 @@
+<local:HostedPage x:Class="Telegram.Views.Supergroups.SupergroupEditAdministratorPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:cells="using:Telegram.Controls.Cells"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <local:HostedPage.Footer>
+        <Button x:Name="Done"
+                Content="{CustomResource Done}"
+                Command="{x:Bind ViewModel.SendCommand}"
+                Style="{StaticResource AccentButtonStyle}" />
+    </local:HostedPage.Footer>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <controls:HeaderedControl>
+                    <cells:ProfileCell x:Name="Cell"
+                                    Background="{ThemeResource SettingsItemBackground}"
+                                    Click="{x:Bind ViewModel.OpenProfile}"
+                                    Padding="12,8" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl x:Name="PermissionsRoot"
+                                          Visibility="Collapsed"
+                                          Footer="{CustomResource EditAdminCantEdit}">
+                    <CheckBox x:Name="ChangeInfo"
+                              IsChecked="{x:Bind ViewModel.CanChangeInfo, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminChangeGroupInfo}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox x:Name="PostMessages"
+                              IsChecked="{x:Bind ViewModel.CanPostMessages, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminPostMessages}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox x:Name="EditMessages"
+                              IsChecked="{x:Bind ViewModel.CanEditMessages, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminEditMessages}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox x:Name="DeleteMessages"
+                              IsChecked="{x:Bind ViewModel.CanDeleteMessages, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminGroupDeleteMessages}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox x:Name="BanUsers"
+                              IsChecked="{x:Bind ViewModel.CanRestrictMembers, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminBanUsers}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox x:Name="AddUsers"
+                              IsChecked="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminAddUsers}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox x:Name="PinMessages"
+                              IsChecked="{x:Bind ViewModel.CanPinMessages, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminPinMessages}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox x:Name="ManageVideoChats"
+                              IsChecked="{x:Bind ViewModel.CanManageVideoChats, Mode=TwoWay}"
+                              Content="{CustomResource StartVoipChatPermission}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox x:Name="AddAdmins"
+                              IsChecked="{x:Bind ViewModel.CanPromoteMembers, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminAddAdmins}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox x:Name="IsAnonymous"
+                              IsChecked="{x:Bind ViewModel.IsAnonymous, Mode=TwoWay}"
+                              Content="{CustomResource EditAdminSendAnonymously}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl x:Name="EditRankPanel"
+                                          Header="{CustomResource EditAdminRank}"
+                                          Footer="{CustomResource EditAdminRankInfo}">
+                    <TextBox x:Name="EditRankField"
+                             Text="{x:Bind ViewModel.CustomTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                             MaxLength="16"
+                             PlaceholderText="{CustomResource ChannelCreator}"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             Padding="12,11,6,12" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Visibility="{x:Bind ConvertActionVisibility(TransferOwnership.Visibility, Dismiss.Visibility), Mode=OneWay}">
+                    <controls:BadgeButton x:Name="TransferOwnership"
+                                          Command="{x:Bind ViewModel.TransferCommand}"
+                                          Content="{CustomResource EditAdminGroupTransfer}"
+                                          Visibility="{x:Bind ViewModel.CanTransferOwnership, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <controls:BadgeButton x:Name="Dismiss"
+                                          Command="{x:Bind ViewModel.DismissCommand}"
+                                          Content="{CustomResource EditAdminRemoveAdmin}"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
+                                          Visibility="Collapsed" />
+                </controls:HeaderedControl>
+            </controls:SettingsPanel>
+        </ScrollViewer>
+
+    </Grid>
+</local:HostedPage>

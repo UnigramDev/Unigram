@@ -1,0 +1,131 @@
+<local:HostedPage x:Class="Telegram.Views.Settings.SettingsDataAndStoragePage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:settings="using:Telegram.Services.Settings"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d"
+                  IsNavigationRoot="True">
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <controls:SettingsPanel>
+                <controls:HeaderedControl Header="{CustomResource DataUsage}">
+                    <controls:BadgeButton Content="{CustomResource StorageUsage}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEB05;"
+                                          Click="{x:Bind ViewModel.OpenStorage}"
+                                          IsChevronVisible="True" />
+
+                    <controls:BadgeButton Content="{CustomResource NetworkUsage}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE91F;"
+                                          Click="{x:Bind ViewModel.OpenStats}"
+                                          IsChevronVisible="True" />
+
+                    <controls:BadgeButton Content="{CustomResource DownloadsTabs}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE118;"
+                                          Click="{x:Bind ViewModel.OpenDownloads}" />
+
+                    <Grid>
+                        <controls:BadgeButton Command="{x:Bind ViewModel.StoragePathCommand}"
+                                              Content="{CustomResource StoragePath}"
+                                              Badge="{x:Bind ConvertFilesDirectory(ViewModel.FilesDirectory), Mode=OneWay}"
+                                              Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                              Glyph="&#xF12B;">
+                            <controls:BadgeButton.CommandParameter>
+                                <x:Boolean>False</x:Boolean>
+                            </controls:BadgeButton.CommandParameter>
+                        </controls:BadgeButton>
+
+                        <controls:BadgeButton Command="{x:Bind ViewModel.StoragePathCommand}"
+                                              Visibility="{x:Bind ConvertFilesReset(ViewModel.FilesDirectory), Mode=OneWay}"
+                                              Content="{CustomResource Reset}"
+                                              Style="{StaticResource StartButtonStyle}"
+                                              Background="#2ca5e0"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              Margin="0,0,12,0">
+                            <controls:BadgeButton.CommandParameter>
+                                <x:Boolean>True</x:Boolean>
+                            </controls:BadgeButton.CommandParameter>
+                        </controls:BadgeButton>
+                    </Grid>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource AutomaticMediaDownload}"
+                                          Footer="{CustomResource AutoDownloadAudioInfo}">
+                    <CheckBox IsChecked="{x:Bind ViewModel.AutoDownloadEnabled, Mode=TwoWay}"
+                              Content="{CustomResource AutoDownloadMedia}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <controls:BadgeButton Badge="{x:Bind ConvertAutoDownload(settings:AutoDownloadType.Photos, ViewModel.AutoDownload.Photos, 0), Mode=OneWay}"
+                                          Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                                          IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                                          Content="{CustomResource AutoDownloadPhotos}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xEB9F;">
+                        <Button.CommandParameter>
+                            <settings:AutoDownloadType>Photos</settings:AutoDownloadType>
+                        </Button.CommandParameter>
+                    </controls:BadgeButton>
+
+                    <controls:BadgeButton Badge="{x:Bind ConvertAutoDownload(settings:AutoDownloadType.Videos, ViewModel.AutoDownload.Videos, ViewModel.AutoDownload.MaximumVideoSize), Mode=OneWay}"
+                                          Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                                          IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                                          Content="{CustomResource AutoDownloadVideos}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xE714;">
+                        <Button.CommandParameter>
+                            <settings:AutoDownloadType>Videos</settings:AutoDownloadType>
+                        </Button.CommandParameter>
+                    </controls:BadgeButton>
+
+                    <controls:BadgeButton Badge="{x:Bind ConvertAutoDownload(settings:AutoDownloadType.Documents, ViewModel.AutoDownload.Documents, ViewModel.AutoDownload.MaximumDocumentSize), Mode=OneWay}"
+                                          Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                                          IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
+                                          Content="{CustomResource AutoDownloadFiles}"
+                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                          Glyph="&#xE7C3;">
+                        <Button.CommandParameter>
+                            <settings:AutoDownloadType>Documents</settings:AutoDownloadType>
+                        </Button.CommandParameter>
+                    </controls:BadgeButton>
+
+                    <controls:BadgeButton Click="{x:Bind ViewModel.ResetAutoDownload}"
+                                          Content="{CustomResource ResetAutomaticMediaDownload}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Foreground="Red" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource Streaming}"
+                                          Footer="{CustomResource EnableAllStreamingInfo}">
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsStreamingEnabled, Mode=TwoWay}"
+                              Content="{CustomResource EnableStreaming}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource Calls}">
+                    <controls:BadgeButton Content="{CustomResource VoipUseLessData}">
+                        <controls:BadgeButton.Badge>
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.UseLessDataOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.UseLessData, Mode=TwoWay}"
+                                                       DisplayMemberPath="Text" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource Proxy}">
+                    <controls:BadgeButton Content="{CustomResource ProxySettings}"
+                                          Click="{x:Bind ViewModel.OpenProxy}"
+                                          IsChevronVisible="True" />
+                </controls:HeaderedControl>
+            </controls:SettingsPanel>
+        </ScrollViewer>
+    </Grid>
+</local:HostedPage>

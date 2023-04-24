@@ -1,0 +1,838 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.props" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.props')" />
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1b521e77-46bd-4d60-89f6-d68e9bb9abff}</ProjectGuid>
+    <Keyword>WindowsRuntimeComponent</Keyword>
+    <RootNamespace>Telegram.Native</RootNamespace>
+    <DefaultLanguage>en</DefaultLanguage>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <AppContainerApplication>true</AppContainerApplication>
+    <ApplicationType>Windows Store</ApplicationType>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformMinVersion>10.0.18362.0</WindowsTargetPlatformMinVersion>
+    <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <ProjectName>Telegram.Native</ProjectName>
+    <CppWinRTNamespaceMergeDepth>2</CppWinRTNamespaceMergeDepth>
+    <CppWinRTUsePrefixes>false</CppWinRTUsePrefixes>
+    <CppWinRTOptimized>true</CppWinRTOptimized>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <GenerateManifest>false</GenerateManifest>
+    <MappedPlatform>Debug</MappedPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <GenerateManifest>false</GenerateManifest>
+    <MappedPlatform>ARM64\Debug</MappedPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <GenerateManifest>false</GenerateManifest>
+    <MappedPlatform>x64\Debug</MappedPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <GenerateManifest>false</GenerateManifest>
+    <MappedPlatform>Release</MappedPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <GenerateManifest>false</GenerateManifest>
+    <MappedPlatform>ARM64\Release</MappedPlatform>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <GenerateManifest>false</GenerateManifest>
+    <MappedPlatform>x64\Release</MappedPlatform>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>_WINRT_DLL;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;SAFTM_COMPACT_LOGGING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>28204</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <AdditionalDependencies>d2d1.lib;d3d11.lib;dxgi.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>Mfplat.dll;%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ModuleDefinitionFile>Telegram.Native.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AudioPitchEffect.h">
+      <DependentUpon>AudioPitchEffect.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="BufferSurface.h">
+      <DependentUpon>BufferSurface.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="CachedVideoAnimation.h">
+      <DependentUpon>CachedVideoAnimation.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Composition\CompositionDevice.h">
+      <DependentUpon>Composition\CompositionDevice.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Composition\dcompex.h" />
+    <ClInclude Include="Composition\DirectRectangleClip.h">
+      <DependentUpon>Composition\DirectRectangleClip.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Helpers\COMHelper.h" />
+    <ClInclude Include="Helpers\DebugHelper.h" />
+    <ClInclude Include="Helpers\LibraryHelper.h" />
+    <ClInclude Include="Helpers\StringHelper.h" />
+    <ClInclude Include="HttpProxyWatcher.h">
+      <DependentUpon>HttpProxyWatcher.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="LanguageIdentification.h">
+      <DependentUpon>LanguageIdentification.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="libyuv\include\libyuv.h" />
+    <ClInclude Include="libyuv\include\libyuv\basic_types.h" />
+    <ClInclude Include="libyuv\include\libyuv\compare.h" />
+    <ClInclude Include="libyuv\include\libyuv\compare_row.h" />
+    <ClInclude Include="libyuv\include\libyuv\convert.h" />
+    <ClInclude Include="libyuv\include\libyuv\convert_argb.h" />
+    <ClInclude Include="libyuv\include\libyuv\convert_from.h" />
+    <ClInclude Include="libyuv\include\libyuv\convert_from_argb.h" />
+    <ClInclude Include="libyuv\include\libyuv\cpu_id.h" />
+    <ClInclude Include="libyuv\include\libyuv\macros_msa.h" />
+    <ClInclude Include="libyuv\include\libyuv\mjpeg_decoder.h" />
+    <ClInclude Include="libyuv\include\libyuv\planar_functions.h" />
+    <ClInclude Include="libyuv\include\libyuv\rotate.h" />
+    <ClInclude Include="libyuv\include\libyuv\rotate_argb.h" />
+    <ClInclude Include="libyuv\include\libyuv\rotate_row.h" />
+    <ClInclude Include="libyuv\include\libyuv\row.h" />
+    <ClInclude Include="libyuv\include\libyuv\scale.h" />
+    <ClInclude Include="libyuv\include\libyuv\scale_argb.h" />
+    <ClInclude Include="libyuv\include\libyuv\scale_row.h" />
+    <ClInclude Include="libyuv\include\libyuv\scale_uv.h" />
+    <ClInclude Include="libyuv\include\libyuv\version.h" />
+    <ClInclude Include="libyuv\include\libyuv\video_common.h" />
+    <ClInclude Include="NativeUtils.h">
+      <DependentUpon>NativeUtils.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Opus\OpusOutput.h">
+      <DependentUpon>Opus\OpusOutput.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="PixelBuffer.h">
+      <DependentUpon>PixelBuffer.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="PlaceholderImageHelper.h">
+      <DependentUpon>PlaceholderImageHelper.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="qoi.h" />
+    <ClInclude Include="QrBuffer.h">
+      <DependentUpon>QrBuffer.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="QR\BitBuffer.hpp" />
+    <ClInclude Include="QR\QrCode.hpp" />
+    <ClInclude Include="QR\QrSegment.hpp" />
+    <ClInclude Include="ScreenshotManager.h">
+      <DependentUpon>ScreenshotManager.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="StringUtils.h" />
+    <ClInclude Include="SVG\nanosvg.h" />
+    <ClInclude Include="TelegramGameProxy.h">
+      <DependentUpon>TelegramGameProxy.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="TelegramPaymentProxy.h">
+      <DependentUpon>TelegramPaymentProxy.idl</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Helpers\MathHelper.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="TelegramWebviewProxy.h">
+      <DependentUpon>TelegramWebviewProxy.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="VideoAnimation.h">
+      <DependentUpon>VideoAnimation.idl</DependentUpon>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\embedding-feature-extractor.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\embedding-feature-interface.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\embedding-network-params.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\embedding-network.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\fel\feature-descriptors.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\fel\feature-extractor.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\fel\feature-types.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\fel\fel-parser.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\fel\task-context.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\fel\workspace.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\file\file-utils.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\file\mmap.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\flatbuffers\embedding-network-params-from-flatbuffer.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\flatbuffers\embedding-network_generated.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\flatbuffers\model-utils.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\flatbuffers\model_generated.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\attributes.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\casts.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\compact-logging-levels.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\compact-logging-raw.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\compact-logging.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\endian.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\float16.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\integral-types.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\logging.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\macros.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_strings\numbers.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_strings\str-cat.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_strings\str-split.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\lite_strings\stringpiece.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\math\algorithm.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\math\checksum.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\math\fastexp.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\math\hash.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\math\softmax.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\registry.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\stl-util.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\common\utf8.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\custom-tokenizer.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\fb_model\lang-id-from-fb.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\fb_model\model-provider-from-fb.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\features\char-ngram-feature.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\features\light-sentence-features.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\features\relevant-script-feature.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\lang-id-wrapper.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\lang-id.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\light-sentence.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\model-provider.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\script\approx-script-data.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\script\approx-script.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\script\script-detector.h" />
+    <ClInclude Include="..\Libraries\libtextclassifier\lang_id\script\tiny-script-detector.h" />
+    <ClInclude Include="..\Libraries\libutf\runetypebody.h" />
+    <ClInclude Include="..\Libraries\libutf\utf.h" />
+    <ClInclude Include="..\Libraries\libutf\utfdef.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\embedding-feature-extractor.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\embedding-network-params.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\embedding-network.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\fel\feature-descriptors.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\fel\feature-extractor.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\fel\fel-parser.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\fel\task-context.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\fel\workspace.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\file\file-utils.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\file\mmap.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\flatbuffers\embedding-network-params-from-flatbuffer.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\flatbuffers\model-utils.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\compact-logging-raw.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\lite_base\compact-logging.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\lite_strings\numbers.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\lite_strings\str-split.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\math\checksum.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\math\fastexp.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\math\hash.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\math\softmax.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\utf8.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\custom-tokenizer.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\fb_model\lang-id-from-fb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\fb_model\model-provider-from-fb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\features\char-ngram-feature.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\features\light-sentence-features.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\features\relevant-script-feature.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\lang-id-wrapper.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\lang-id.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\script\approx-script-data.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\script\approx-script.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\script\script-detector.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libtextclassifier\lang_id\script\tiny-script-detector.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\rune.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrcat.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrchr.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrcmp.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrcpy.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrdup.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrecpy.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrlen.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrncat.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrncmp.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrncpy.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrrchr.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runestrstr.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\runetype.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\utfecpy.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\utflen.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\utfnlen.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\utfrrune.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\utfrune.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libutf\utfutf.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AudioPitchEffect.cpp">
+      <DependentUpon>AudioPitchEffect.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="BufferSurface.cpp">
+      <DependentUpon>BufferSurface.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="CachedVideoAnimation.cpp">
+      <DependentUpon>CachedVideoAnimation.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Composition\CompositionDevice.cpp">
+      <DependentUpon>Composition\CompositionDevice.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Composition\DirectRectangleClip.cpp">
+      <DependentUpon>Composition\DirectRectangleClip.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Generated Files\module.g.cpp" />
+    <ClCompile Include="Helpers\LibraryHelper.cpp" />
+    <ClCompile Include="HttpProxyWatcher.cpp">
+      <DependentUpon>HttpProxyWatcher.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="LanguageIdentification.cpp">
+      <DependentUpon>LanguageIdentification.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_common.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_gcc.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_mmi.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_msa.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_neon.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_neon64.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\compare_win.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert_argb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert_from.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert_from_argb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert_jpeg.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert_to_argb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\convert_to_i420.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\cpu_id.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\mjpeg_decoder.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\mjpeg_validate.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\planar_functions.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_any.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_argb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_common.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_gcc.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_mmi.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_msa.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_neon.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_neon64.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\rotate_win.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_any.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_common.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_gcc.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_mmi.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_msa.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_neon.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_neon64.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\row_win.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_any.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_argb.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_common.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_gcc.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_mmi.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_msa.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_neon.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_neon64.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_uv.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\scale_win.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="libyuv\source\video_common.cc">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="NativeUtils.cpp">
+      <DependentUpon>NativeUtils.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Opus\OpusOutput.cpp">
+      <DependentUpon>Opus\OpusOutput.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="PixelBuffer.cpp">
+      <DependentUpon>PixelBuffer.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="PlaceholderImageHelper.cpp">
+      <DependentUpon>PlaceholderImageHelper.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="QrBuffer.cpp">
+      <DependentUpon>QrBuffer.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Qr\BitBuffer.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Qr\QrCode.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Qr\QrSegment.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ScreenshotManager.cpp">
+      <DependentUpon>ScreenshotManager.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="SVG\nanosvg.cpp" />
+    <ClCompile Include="TelegramGameProxy.cpp">
+      <DependentUpon>TelegramGameProxy.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="TelegramPaymentProxy.cpp">
+      <DependentUpon>TelegramPaymentProxy.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="TelegramWebviewProxy.cpp">
+      <DependentUpon>TelegramWebviewProxy.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="VideoAnimation.cpp">
+      <DependentUpon>VideoAnimation.idl</DependentUpon>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Telegram.Native.def" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="AudioPitchEffect.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="BufferSurface.idl" />
+    <Midl Include="CachedVideoAnimation.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="Composition\CompositionDevice.idl" />
+    <Midl Include="Composition\DirectRectangleClip.idl" />
+    <Midl Include="HttpProxyWatcher.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="LanguageIdentification.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="NativeUtils.idl" />
+    <Midl Include="Opus\OpusOutput.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="PixelBuffer.idl" />
+    <Midl Include="PlaceholderImageHelper.idl" />
+    <Midl Include="QrBuffer.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="ScreenshotManager.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="TelegramGameProxy.idl" />
+    <Midl Include="TelegramPaymentProxy.idl" />
+    <Midl Include="TelegramWebviewProxy.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="VideoAnimation.idl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets" Condition="Exists('..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets')" />
+    <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.230225.1\build\native\Microsoft.Windows.CppWinRT.targets'))" />
+  </Target>
+</Project>

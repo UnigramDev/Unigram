@@ -1,0 +1,9 @@
+namespace Telegram.Native.Calls
+{
+	[default_interface]
+	runtimeclass GroupNetworkStateChangedEventArgs
+	{
+		Boolean IsConnected{ get; };
+		Boolean IsTransitioningFromBroadcastToRtc{ get; };
+	}
+}

@@ -1,0 +1,55 @@
+<controls:ContentPopup x:Class="Telegram.Views.Settings.Popups.SettingsDataAutoPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       Title="{x:Bind ViewModel.Title, Mode=OneWay}"
+                       PrimaryButtonCommand="{x:Bind ViewModel.SendCommand}">
+
+    <Grid>
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <StackPanel Spacing="8">
+                <TextBlock Text="{x:Bind ViewModel.Header, Mode=OneWay}"
+                           Style="{StaticResource BaseTextBlockStyle}" />
+
+                <CheckBox IsChecked="{x:Bind ViewModel.Contacts, Mode=TwoWay}"
+                          Content="{CustomResource AutodownloadContacts}" />
+
+                <CheckBox IsChecked="{x:Bind ViewModel.PrivateChats, Mode=TwoWay}"
+                          Content="{CustomResource AutodownloadPrivateChats}" />
+
+                <CheckBox IsChecked="{x:Bind ViewModel.Groups, Mode=TwoWay}"
+                          Content="{CustomResource AutodownloadGroupChats}" />
+
+                <CheckBox IsChecked="{x:Bind ViewModel.Channels, Mode=TwoWay}"
+                          Content="{CustomResource AutodownloadChannels}" />
+
+                <StackPanel Visibility="{x:Bind ViewModel.IsLimitSupported, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock Text="{CustomResource AutoDownloadMaxFileSize}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="0,16,0,0" />
+
+                    <Slider Value="{x:Bind ConvertLimit(ViewModel.Limit), Mode=TwoWay, BindBack=ConvertLimitBack}"
+                            Minimum="0"
+                            Maximum="1"
+                            SmallChange="0.01"
+                            LargeChange="0.1"
+                            StepFrequency="0.01"
+                            TickFrequency="0.25"
+                            TickPlacement="Outside"
+                            IsThumbToolTipEnabled="False"
+                            Margin="0,8,0,8" />
+
+                    <TextBlock Text="{x:Bind ConvertUpTo(ViewModel.Limit), Mode=OneWay}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="0,0,0,8" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</controls:ContentPopup>

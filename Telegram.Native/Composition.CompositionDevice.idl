@@ -1,0 +1,10 @@
+import "Composition.DirectRectangleClip.idl";
+
+namespace Telegram.Native.Composition
+{
+    [default_interface]
+    static runtimeclass CompositionDevice 
+    {
+        static DirectRectangleClip CreateRectangleClip(Windows.UI.Composition.Visual visual);
+    }
+}

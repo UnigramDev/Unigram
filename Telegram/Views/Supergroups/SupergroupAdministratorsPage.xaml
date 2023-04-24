@@ -1,0 +1,65 @@
+<local:HostedPage x:Class="Telegram.Views.Supergroups.SupergroupAdministratorsPage"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:local="using:Telegram.Views"
+                  xmlns:cells="using:Telegram.Controls.Cells"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d">
+
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
+    <Grid Background="{ThemeResource SettingsPageBackground}">
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Members}"
+                                ItemClick="ListView_ItemClick"
+                                IsItemClickEnabled="True"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                SelectionMode="None">
+            <ListView.Header>
+                <controls:SettingsPanel IsHeader="True">
+                    <controls:HeaderedControl x:Name="HeaderPanel"
+                                              Footer="{CustomResource ChannelAntiSpamInfo}"
+                                              Margin="0,0,0,16">
+                        <controls:BadgeButton x:Name="EventLog"
+                                              Content="{CustomResource EventLog}"
+                                              Command="{x:Bind ViewModel.EventLogCommand}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE81C;" />
+
+                        <controls:BadgeButton x:Name="AddNew"
+                                              Visibility="Collapsed"
+                                              Content="{CustomResource ChannelAddAdmin}"
+                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE734;" />
+
+                        <controls:FauxCheckBox x:Name="AntiSpam"
+                                               Content="{CustomResource ChannelAntiSpam}"
+                                               IsChecked="{x:Bind ViewModel.IsAggressiveAntiSpamEnabled, Mode=TwoWay}"
+                                               Style="{StaticResource SettingsCheckBoxStyle}" />
+                    </controls:HeaderedControl>
+                </controls:SettingsPanel>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Footer>
+                <TextBlock x:Name="Footer"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="24,8,24,32" />
+            </ListView.Footer>
+        </controls:TableListView>
+    </Grid>
+</local:HostedPage>

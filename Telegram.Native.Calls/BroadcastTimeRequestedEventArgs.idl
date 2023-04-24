@@ -1,0 +1,10 @@
+namespace Telegram.Native.Calls
+{
+    delegate void BroadcastTimeRequestedDeferral(Int64 time);
+
+    [default_interface]
+    runtimeclass BroadcastTimeRequestedEventArgs
+    {
+        BroadcastTimeRequestedDeferral Deferral{ get; };
+    }
+}

@@ -1,0 +1,44 @@
+import "Telegram.Native.Calls.idl";
+import "VoipGroupDescriptor.idl";
+import "VoipVideoCapture.idl";
+import "VoipVideoChannelInfo.idl";
+import "VoipVideoRendererToken.idl";
+import "GroupNetworkStateChangedEventArgs.idl";
+import "BroadcastTimeRequestedEventArgs.idl";
+import "BroadcastPartRequestedEventArgs.idl";
+
+namespace Telegram.Native.Calls
+{
+    delegate void EmitJsonPayloadDelegate(Int32 ssrc, String payload);
+
+    [default_interface]
+    runtimeclass VoipGroupManager : Windows.Foundation.IClosable
+    {
+        VoipGroupManager(VoipGroupDescriptor descriptor);
+
+        void SetConnectionMode(VoipGroupConnectionMode connectionMode, Boolean keepBroadcastIfWasEnabled, Boolean isUnifiedBroadcast);
+
+        void EmitJoinPayload(EmitJsonPayloadDelegate completion);
+        void SetJoinResponsePayload(String payload);
+        void RemoveSsrcs(Windows.Foundation.Collections.IVector<Int32> ssrcs);
+
+        VoipVideoRendererToken AddIncomingVideoOutput(Int32 audioSource, Telegram.Td.Api.GroupCallParticipantVideoInfo videoInfo, Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+        void AddUnifiedVideoOutput(Microsoft.Graphics.Canvas.UI.Xaml.CanvasControl canvas);
+
+        Boolean IsMuted;
+        Boolean IsNoiseSuppressionEnabled;
+
+        void SetAudioOutputDevice(String id);
+        void SetAudioInputDevice(String id);
+        void SetVideoCapture(VoipCaptureBase videoCapture);
+
+        void SetVolume(Int32 ssrc, Double volume);
+        void SetRequestedVideoChannels(Windows.Foundation.Collections.IVector<VoipVideoChannelInfo> descriptions);
+
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, GroupNetworkStateChangedEventArgs> NetworkStateUpdated;
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, Windows.Foundation.Collections.IVector<VoipGroupParticipant > > AudioLevelsUpdated;
+
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, BroadcastTimeRequestedEventArgs> BroadcastTimeRequested;
+        event Windows.Foundation.TypedEventHandler<VoipGroupManager, BroadcastPartRequestedEventArgs> BroadcastPartRequested;
+    }
+}

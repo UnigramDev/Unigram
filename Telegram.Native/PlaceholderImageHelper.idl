@@ -1,0 +1,47 @@
+namespace Telegram.Native
+{
+	enum PlaceholderEntityType
+	{
+		Bold,
+		Italic,
+		Strikethrough,
+		Underline,
+		Code
+	};
+
+	struct PlaceholderEntity
+	{
+		Int32 Offset;
+		Int32 Length;
+		PlaceholderEntityType Type;
+	};
+
+	[default_interface]
+	runtimeclass PlaceholderImageHelper
+	{
+		static PlaceholderImageHelper Current{ get; };
+
+		void WriteBytes(Windows.Foundation.Collections.IVector<byte> hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+
+		void DrawWebP(String fileName, Int32 maxWidth, Windows.Storage.Streams.IRandomAccessStream randomAccessStream, out Windows.Foundation.Size size);
+		Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Windows.Foundation.Size size);
+
+		Windows.Foundation.IAsyncAction DrawSvgAsync(String path, Windows.UI.Color foreground, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		void DrawSvg(String path, Windows.UI.Color foreground, Windows.Storage.Streams.IRandomAccessStream randomAccessStream, out Windows.Foundation.Size size);
+
+		void DrawIdenticon(Windows.Foundation.Collections.IVector<byte> hash, Int32 side, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+
+		void DrawGlyph(String glyph, Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		void DrawSavedMessages(Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		void DrawDeletedUser(Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		void DrawProfilePlaceholder(String text, Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+
+		[default_overload]
+		void DrawThumbnailPlaceholder(String fileName, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		void DrawThumbnailPlaceholder(Windows.Foundation.Collections.IVector<byte> bytes, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+
+		Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Windows.Foundation.Collections.IVector<PlaceholderEntity> entities, Double fontSize, Double width);
+		Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> LineMetrics(String text, Double fontSize, Double width, Boolean rtl);
+		//Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> EntityMetrics(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width, Boolean rtl);
+	}
+} // namespace Telegram.Native

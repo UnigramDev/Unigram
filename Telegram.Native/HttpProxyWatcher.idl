@@ -1,0 +1,15 @@
+namespace Telegram.Native
+{
+    [default_interface]
+    runtimeclass HttpProxyWatcher : Windows.Foundation.IClosable
+    {
+        static HttpProxyWatcher Current{ get; };
+
+        HttpProxyWatcher();
+
+        String Server{ get; };
+        Boolean IsEnabled{ get; };
+
+        event Windows.Foundation.TypedEventHandler<HttpProxyWatcher, Boolean> Changed;
+    }
+}

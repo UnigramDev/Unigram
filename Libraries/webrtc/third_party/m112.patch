@@ -1,0 +1,54 @@
+diff --git a/boringssl/BUILD.gn b/boringssl/BUILD.gn
+index dfd4ff9d338..bad342cb888 100644
+--- a/boringssl/BUILD.gn
++++ b/boringssl/BUILD.gn
+@@ -65,7 +65,7 @@ if (is_win && !is_msan && current_cpu != "arm64") {
+     asmflags = []
+     include_dirs = [ "src/include" ]
+ 
+-    if (is_msan) {
++    if (is_msan || current_cpu == "arm64") {
+       public_configs = [ ":no_asm_config" ]
+     } else if (current_cpu == "x64") {
+       if (is_apple) {
+diff --git a/crc32c/BUILD.gn b/crc32c/BUILD.gn
+index c745a5f86cf..bb7a7375b2a 100644
+--- a/crc32c/BUILD.gn
++++ b/crc32c/BUILD.gn
+@@ -40,7 +40,7 @@ config("crc32c_config") {
+     defines += [ "HAVE_BUILTIN_PREFETCH=0" ]
+   }
+ 
+-  if (current_cpu == "arm64") {
++  if (current_cpu == "arm64" && !is_win) {
+     defines += [ "HAVE_ARM64_CRC32C=1" ]
+   } else {
+     defines += [ "HAVE_ARM64_CRC32C=0" ]
+diff --git a/libvpx/BUILD.gn b/libvpx/BUILD.gn
+index c5aad48a48d..bf12e2f24ed 100644
+--- a/libvpx/BUILD.gn
++++ b/libvpx/BUILD.gn
+@@ -55,6 +55,8 @@ if (is_nacl) {
+   } else if (is_posix || is_fuchsia) {
+     # Should cover linux, fuchsia, mac, and the ios simulator.
+     os_category = "linux"
++  } else if (current_os == "winuwp") {
++    os_category = "win"
+   } else {  # This should only match windows.
+     os_category = current_os
+   }
+diff --git a/pffft/BUILD.gn b/pffft/BUILD.gn
+index 0203735ac90..ce74d354e93 100644
+--- a/pffft/BUILD.gn
++++ b/pffft/BUILD.gn
+@@ -7,7 +7,9 @@ import("//testing/libfuzzer/fuzzer_test.gni")
+ import("//testing/test.gni")
+ 
+ config("common_config") {
+-  cflags = [ "-Wno-shadow" ]
++  if (is_clang) {
++    cflags = [ "-Wno-shadow" ]
++  }
+ 
+   if (is_win) {
+     defines = [
