@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls.Chats;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -224,7 +225,7 @@ namespace Telegram.ViewModels.Settings
     {
         public bool CompareItems(Background oldItem, Background newItem)
         {
-            return oldItem.Id == newItem.Id;
+            return ChatBackgroundPresenter.BackgroundEquals(oldItem, newItem, true);
         }
 
         public void UpdateItem(Background oldItem, Background newItem)
