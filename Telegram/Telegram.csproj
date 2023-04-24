@@ -128,6 +128,7 @@
     <Compile Include="Assets\Icons\AskQ.cs" />
     <Compile Include="Assets\Icons\Data.cs" />
     <Compile Include="Assets\Icons\Devices.cs" />
+    <Compile Include="Assets\Icons\Dots.cs" />
     <Compile Include="Assets\Icons\Double.cs" />
     <Compile Include="Assets\Icons\Downloading.cs" />
     <Compile Include="Assets\Icons\EmojiToGif.cs" />

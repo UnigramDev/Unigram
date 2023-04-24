@@ -4,15 +4,23 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Text;
+using System.Threading.Tasks;
+using Telegram.Assets.Icons;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Media.Playback;
+using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -56,7 +64,9 @@ namespace Telegram.Controls.Messages.Content
         private ProgressVoice Progress;
         private TextBlock Subtitle;
         private ToggleButton Recognize;
-        private TextBlock RecognizedText;
+        private RichTextBlock RecognizedText;
+        private Run RecognizedSpan;
+        private Border RecognizedIcon;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -118,23 +128,26 @@ namespace Telegram.Controls.Messages.Content
         {
             if (result != null)
             {
-                RecognizedText ??= GetTemplateChild(nameof(RecognizedText)) as TextBlock;
+                RecognizedText ??= GetTemplateChild(nameof(RecognizedText)) as RichTextBlock;
+                RecognizedSpan ??= GetTemplateChild(nameof(RecognizedSpan)) as Run;
 
                 if (result is SpeechRecognitionResultError)
                 {
-                    RecognizedText.Style = App.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
-                    RecognizedText.Text = Strings.NoWordsRecognized;
+                    RecognizedText.Style = App.Current.Resources["InfoCaptionRichTextBlockStyle"] as Style;
+                    RecognizedSpan.Text = Strings.NoWordsRecognized;
+                    UnloadPending();
                 }
                 else if (result is SpeechRecognitionResultPending pending)
                 {
-                    // Add the loading thingy
-                    RecognizedText.Style = App.Current.Resources["BodyTextBlockStyle"] as Style;
-                    RecognizedText.Text = pending.PartialText;
+                    RecognizedText.Style = App.Current.Resources["BodyRichTextBlockStyle"] as Style;
+                    RecognizedSpan.Text = pending.PartialText.TrimEnd('.');
+                    LoadPending();
                 }
                 else if (result is SpeechRecognitionResultText text)
                 {
-                    RecognizedText.Style = App.Current.Resources["BodyTextBlockStyle"] as Style;
-                    RecognizedText.Text = text.Text;
+                    RecognizedText.Style = App.Current.Resources["BodyRichTextBlockStyle"] as Style;
+                    RecognizedSpan.Text = text.Text;
+                    UnloadPending();
                 }
 
                 RecognizedText.Visibility = Visibility.Visible;
@@ -142,7 +155,68 @@ namespace Telegram.Controls.Messages.Content
             else if (RecognizedText != null)
             {
                 RecognizedText.Visibility = Visibility.Collapsed;
+                UnloadPending();
             }
+        }
+
+        private CompositionPropertySet _props;
+        private IAnimatedVisual _previous;
+
+        private void LoadPending()
+        {
+            RecognizedIcon ??= GetTemplateChild(nameof(RecognizedIcon)) as Border;
+            RecognizedIcon.Visibility = Visibility.Visible;
+
+            _previous = GetVisual(Window.Current.Compositor, Colors.Black, out _props);
+            ElementCompositionPreview.SetElementChildVisual(RecognizedIcon, _previous.RootVisual);
+        }
+
+        private void UnloadPending()
+        {
+            if (RecognizedIcon != null)
+            {
+                RecognizedIcon.Visibility = Visibility.Collapsed;
+
+                _previous?.Dispose();
+                _previous = null;
+
+                _props?.Dispose();
+                _props = null;
+
+                ElementCompositionPreview.SetElementChildVisual(RecognizedIcon, null);
+            }
+        }
+
+        private IAnimatedVisual GetVisual(Compositor compositor, Color color, out CompositionPropertySet properties)
+        {
+            var source = new Dots();
+            source.Foreground = color;
+
+            var visual = source.TryCreateAnimatedVisual(compositor, out _);
+            if (visual == null)
+            {
+                properties = null;
+                return null;
+            }
+
+            var linearEasing = compositor.CreateLinearEasingFunction();
+            var animation = compositor.CreateScalarKeyFrameAnimation();
+            animation.Duration = visual.Duration;
+            animation.InsertKeyFrame(1, 1, linearEasing);
+            animation.IterationBehavior = AnimationIterationBehavior.Forever;
+
+            properties = compositor.CreatePropertySet();
+            properties.InsertScalar("Progress", 0);
+
+            var progressAnimation = compositor.CreateExpressionAnimation("_.Progress");
+            progressAnimation.SetReferenceParameter("_", properties);
+            visual.RootVisual.Properties.InsertScalar("Progress", 0.0F);
+            visual.RootVisual.Properties.StartAnimation("Progress", progressAnimation);
+            visual.RootVisual.Scale = new System.Numerics.Vector3(16f / 60f);
+
+            properties.StartAnimation("Progress", animation);
+
+            return visual;
         }
 
         public void Mockup(MessageVoiceNote voiceNote)

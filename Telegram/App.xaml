@@ -148,6 +148,13 @@
                         Value="Normal" />
             </Style>
 
+            <Style x:Key="InfoCaptionRichTextBlockStyle"
+                   TargetType="RichTextBlock"
+                   BasedOn="{StaticResource CaptionRichTextBlockStyle}">
+                <Setter Property="Foreground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+            </Style>
+
             <Style TargetType="PivotItem">
                 <Setter Property="Margin"
                         Value="0" />
