@@ -21,7 +21,6 @@ using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -426,7 +425,7 @@ namespace Telegram.ViewModels.Settings
 
         private void Open(StickersType type)
         {
-            NavigationService.Navigate(typeof(SettingsStickersPage), (int)type, null, new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+            NavigationService.Navigate(typeof(SettingsStickersPage), (int)type);
         }
 
         public void OpenReaction()

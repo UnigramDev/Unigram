@@ -177,6 +177,28 @@ namespace Telegram.ViewModels.Settings
 
 
 
+        public bool SwipeToShare
+        {
+            get => Settings.SwipeToShare;
+            set
+            {
+                Settings.SwipeToShare = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool SwipeToReply
+        {
+            get => Settings.SwipeToReply;
+            set
+            {
+                Settings.SwipeToReply = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
         public bool FullScreenGallery
         {
             get => Settings.FullScreenGallery;

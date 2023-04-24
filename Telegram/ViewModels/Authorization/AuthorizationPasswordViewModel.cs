@@ -72,7 +72,7 @@ namespace Telegram.ViewModels.Authorization
             var response = await ClientService.SendAsync(new CheckAuthenticationPassword(_password));
             if (response is Error error)
             {
-                if (error.TypeEquals(ErrorType.PASSWORD_HASH_INVALID))
+                if (error.MessageEquals(ErrorType.PASSWORD_HASH_INVALID))
                 {
                     Password = string.Empty;
                     RaisePropertyChanged("PASSWORD_INVALID");

@@ -16,6 +16,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
+using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -247,14 +248,14 @@ namespace Telegram.Controls.Messages
             resize.InsertKeyFrame(1, new Vector2(width, 36));
             resize.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             resize.DelayTime = TimeSpan.FromMilliseconds(100);
-            resize.Duration = TimeSpan.FromMilliseconds(150);
+            resize.Duration = Constants.FastAnimation;
 
             var move = compositor.CreateVector2KeyFrameAnimation();
             move.InsertKeyFrame(0, new Vector2(width - 36, 40));
             move.InsertKeyFrame(1, new Vector2(0, 40));
             move.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             move.DelayTime = TimeSpan.FromMilliseconds(100);
-            move.Duration = TimeSpan.FromMilliseconds(150);
+            move.Duration = Constants.FastAnimation;
 
             var viewVisual = ElementCompositionPreview.GetElementVisual(view);
             viewVisual.Clip = compositor.CreateGeometricClip(clip);
@@ -390,7 +391,7 @@ namespace Telegram.Controls.Messages
             var resize = compositor.CreateVector2KeyFrameAnimation();
             resize.InsertKeyFrame(0, new Vector2(width, 36));
             resize.InsertKeyFrame(1, new Vector2(width, height));
-            resize.Duration = TimeSpan.FromMilliseconds(150);
+            resize.Duration = Constants.FastAnimation;
 
             clip.StartAnimation("Size", resize);
 
@@ -527,6 +528,11 @@ namespace Telegram.Controls.Messages
             view.Height = height;
             view.ItemClick += OnStatusClick;
 
+            if (_mode == EmojiDrawerMode.CustomEmojis)
+            {
+                view.ItemContextRequested += OnStatusContextRequested;
+            }
+
             Presenter.Children.Add(view);
 
             if (mode == EmojiDrawerMode.CustomEmojis)
@@ -642,7 +648,7 @@ namespace Telegram.Controls.Messages
             scaleMedium.InsertKeyFrame(1, Vector3.One);
             scaleMedium.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             scaleMedium.DelayTime = TimeSpan.FromMilliseconds(100);
-            scaleMedium.Duration = TimeSpan.FromMilliseconds(150);
+            scaleMedium.Duration = Constants.FastAnimation;
 
             var scalePill = compositor.CreateSpringVector3Animation();
             scalePill.InitialValue = Vector3.Zero;
@@ -684,7 +690,7 @@ namespace Telegram.Controls.Messages
             resize.InsertKeyFrame(1, new Vector2(width, height + yy));
             resize.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             resize.DelayTime = TimeSpan.FromMilliseconds(100);
-            resize.Duration = TimeSpan.FromMilliseconds(150);
+            resize.Duration = Constants.FastAnimation;
 
             drawer.Clip = compositor.CreateGeometricClip(clip);
             visualPill.Clip = compositor.CreateGeometricClip(clip);
@@ -697,12 +703,32 @@ namespace Telegram.Controls.Messages
                 move.InsertKeyFrame(1, new Vector2());
                 move.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
                 move.DelayTime = TimeSpan.FromMilliseconds(100);
-                move.Duration = TimeSpan.FromMilliseconds(150);
+                move.Duration = Constants.FastAnimation;
 
                 clip.StartAnimation("Offset", move);
             }
 
             batch.End();
+        }
+
+        private void OnStatusContextRequested(UIElement sender, ItemContextRequestedEventArgs<Sticker> args)
+        {
+            var element = sender as FrameworkElement;
+            var sticker = args.Item;
+
+            if (sticker == null)
+            {
+                return;
+            }
+
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(SetStatus, (sticker, 60 * 60), Strings.SetEmojiStatusUntil1Hour);
+            flyout.CreateFlyoutItem(SetStatus, (sticker, 60 * 60 * 2), Strings.SetEmojiStatusUntil2Hours);
+            flyout.CreateFlyoutItem(SetStatus, (sticker, 60 * 60 * 8), Strings.SetEmojiStatusUntil8Hours);
+            flyout.CreateFlyoutItem(SetStatus, (sticker, 60 * 60 * 48), Strings.SetEmojiStatusUntil2Days);
+            flyout.CreateFlyoutItem(ChooseStatus, sticker, Strings.SetEmojiStatusUntilOther);
+
+            args.ShowAt(flyout, element);
         }
 
         private void OnStatusClick(object sender, ItemClickEventArgs e)
@@ -719,6 +745,25 @@ namespace Telegram.Controls.Messages
                 {
                     _clientService.Send(new SetDefaultReactionType(sticker.ToReactionType()));
                 }
+            }
+        }
+
+        private void SetStatus((Sticker Sticker, int Duration) item)
+        {
+            if (_mode == EmojiDrawerMode.CustomEmojis && item.Sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+            {
+                _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId), item.Duration));
+            }
+        }
+
+        private async void ChooseStatus(Sticker sticker)
+        {
+            var popup = new ChooseStatusDurationPopup();
+
+            var confirm = await popup.ShowQueuedAsync();
+            if (confirm == ContentDialogResult.Primary && _mode == EmojiDrawerMode.CustomEmojis && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+            {
+                _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId), popup.Value));
             }
         }
     }

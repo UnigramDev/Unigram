@@ -43,5 +43,13 @@ namespace Telegram.Native.Calls
 		Generic = 2
 	};
 
+	struct VoipGroupParticipant
+	{
+		Int32 AudioSource;
+		Single Level;
+		Boolean IsSpeaking;
+		Boolean IsMuted;
+	};
+
 } // namespace Telegram.Native.Calls
 

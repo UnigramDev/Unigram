@@ -104,7 +104,7 @@ namespace Telegram.Views.Supergroups
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as UserCell;
+            var content = args.ItemContainer.ContentTemplateRoot as ProfileCell;
             var member = args.Item as ChatMember;
 
             args.ItemContainer.Tag = args.Item;

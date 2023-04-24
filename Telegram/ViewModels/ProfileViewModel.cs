@@ -714,6 +714,11 @@ namespace Telegram.ViewModels
 
         public void Search()
         {
+            OpenSearch(string.Empty);
+        }
+
+        public void OpenSearch(string query)
+        {
             var chat = _chat;
             if (chat == null)
             {
@@ -725,12 +730,12 @@ namespace Telegram.ViewModels
             {
                 if (chat.Id == chatId)
                 {
-                    NavigationService.GoBack(new NavigationState { { "search", true } });
+                    NavigationService.GoBack(new NavigationState { { "search", query } });
                 }
             }
             else
             {
-                NavigationService.NavigateToChat(chat, state: new NavigationState { { "search", true } });
+                NavigationService.NavigateToChat(chat, state: new NavigationState { { "search", query } });
             }
         }
 

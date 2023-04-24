@@ -604,8 +604,7 @@ namespace Telegram.Controls.Chats
 
             private bool _hasMore = true;
 
-            private string[] _emoji;
-            private int _emojiIndex;
+            private string _emoji;
 
             public EmojiCollection(IClientService clientService, string query, long chatId)
             {
@@ -638,9 +637,9 @@ namespace Telegram.Controls.Chats
                                 return index;
                             });
 
-                            _emoji = results.ToArray();
+                            _emoji = string.Join(" ", results);
 
-                            foreach (var emoji in _emoji)
+                            foreach (var emoji in results)
                             {
                                 Add(new EmojiData(emoji));
                                 count++;
@@ -648,9 +647,9 @@ namespace Telegram.Controls.Chats
                         }
                     }
 
-                    if (_emojiIndex < _emoji.Length)
+                    if (_emoji?.Length > 0)
                     {
-                        var response = await _clientService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji[_emojiIndex++], 1000, _chatId));
+                        var response = await _clientService.SendAsync(new GetStickers(new StickerTypeCustomEmoji(), _emoji, 1000, _chatId));
                         if (response is Stickers stickers)
                         {
                             foreach (var sticker in stickers.StickersValue)
@@ -661,7 +660,7 @@ namespace Telegram.Controls.Chats
                         }
                     }
 
-                    _hasMore = _emojiIndex < _emoji.Length;
+                    _hasMore = false;
                     return new LoadMoreItemsResult { Count = count };
                 });
             }
@@ -718,7 +717,7 @@ namespace Telegram.Controls.Chats
         {
             if (ViewModel.Type == DialogType.ScheduledMessages && ViewModel.ComposerHeader?.EditingMessage == null)
             {
-                await ScheduleAsync();
+                await ScheduleAsync(false);
                 return;
             }
 
@@ -730,18 +729,26 @@ namespace Telegram.Controls.Chats
             await ViewModel.SendMessageAsync(text, options);
         }
 
-        public async Task ScheduleAsync()
+        public async Task ScheduleAsync(bool whenOnline)
         {
             Sending?.Invoke(this, EventArgs.Empty);
 
-            var options = await ViewModel.PickMessageSendOptionsAsync(true);
-            if (options == null)
+            MessageSendOptions options;
+
+            if (whenOnline)
             {
-                return;
+                options = new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendWhenOnline(), 0);
+            }
+            else
+            {
+                options = await ViewModel.PickMessageSendOptionsAsync(true);
             }
 
-            var text = GetFormattedText(true);
-            await ViewModel.SendMessageAsync(text, options);
+            if (options != null)
+            {
+                var text = GetFormattedText(true);
+                await ViewModel.SendMessageAsync(text, options);
+            }
         }
 
         protected override void OnGettingFormattedText()

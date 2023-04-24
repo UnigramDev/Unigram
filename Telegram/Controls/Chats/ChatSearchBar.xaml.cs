@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -45,7 +44,7 @@ namespace Telegram.Controls.Chats
             DataContext = viewModel;
             Bindings.Update();
 
-            Field.Text = string.Empty;
+            Field.Text = viewModel?.Query ?? string.Empty;
             Field.From = null;
             Field.Filter = null;
             Field.State = ChatSearchState.Text;
@@ -96,12 +95,12 @@ namespace Telegram.Controls.Chats
             var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
             clip.InsertKeyFrame(show ? 0 : 1, 48);
             clip.InsertKeyFrame(show ? 1 : 0, 0);
-            clip.Duration = TimeSpan.FromMilliseconds(150);
+            clip.Duration = Constants.FastAnimation;
 
             var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -48, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
-            offset.Duration = TimeSpan.FromMilliseconds(150);
+            offset.Duration = Constants.FastAnimation;
 
             visual.Clip.StartAnimation("TopInset", clip);
             visual.StartAnimation("Offset", offset);

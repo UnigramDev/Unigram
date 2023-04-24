@@ -117,14 +117,14 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            //if (message != null && message.Media is TLMessageMediaGroup groupMedia)
-            //{
-            //    ExpandSelection(new[] { message });
-            //    MessagesDeleteExecute();
-            //    return;
-            //}
-
-            DeleteMessages(chat, new[] { message });
+            if (message.Content is MessageAlbum album)
+            {
+                DeleteMessages(chat, album.Messages);
+            }
+            else
+            {
+                DeleteMessages(chat, new[] { message });
+            }
 
             TextField?.Focus(FocusState.Programmatic);
         }
@@ -939,7 +939,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                if (switchInline.InCurrentChat && bot.HasActiveUsername(out string username))
+                if (switchInline.TargetChat is TargetChatCurrent && bot.HasActiveUsername(out string username))
                 {
                     SetText(string.Format("@{0} {1}", username, switchInline.Query), focus: true);
                     ResolveInlineBot(username, switchInline.Query);
@@ -1346,7 +1346,7 @@ namespace Telegram.ViewModels
 
         #region Service message
 
-        public async void MessageServiceExecute(MessageViewModel message)
+        public async void ExecuteServiceMessage(MessageViewModel message)
         {
             if (message.Content is MessageChatUpgradeFrom chatUpgradeFrom)
             {
@@ -1437,6 +1437,26 @@ namespace Telegram.ViewModels
                     if (confirm == ContentDialogResult.Primary)
                     {
                         await EditPhotoAsync(media);
+                    }
+                }
+            }
+            else if (message.Content is MessageChatSetBackground chatSetBackground)
+            {
+                if (chatSetBackground.OldBackgroundMessageId != 0)
+                {
+                    await LoadMessageSliceAsync(message.Id, chatSetBackground.OldBackgroundMessageId);
+                }
+                else if (message.IsOutgoing)
+                {
+                    ChangeTheme();
+                }
+                else
+                {
+                    var confirm = await ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(chatSetBackground.Background.Background, message.ChatId, message.Id));
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        // TODO:
+                        //ClientService.Send(new SetChatBackground(Chat.Id, ))
                     }
                 }
             }

@@ -109,7 +109,7 @@ namespace Telegram.ViewModels.Premium
             get
             {
                 var channels = Limits.FirstOrDefault(x => x.Type is PremiumLimitTypeSupergroupCount)?.PremiumValue ?? 0;
-                var folders = Limits.FirstOrDefault(x => x.Type is PremiumLimitTypeChatFilterCount)?.PremiumValue ?? 0;
+                var folders = Limits.FirstOrDefault(x => x.Type is PremiumLimitTypeChatFolderCount)?.PremiumValue ?? 0;
                 var pinned = Limits.FirstOrDefault(x => x.Type is PremiumLimitTypePinnedChatCount)?.PremiumValue ?? 0;
                 var links = Limits.FirstOrDefault(x => x.Type is PremiumLimitTypeCreatedPublicChatCount)?.PremiumValue ?? 0;
                 var accounts = 4;

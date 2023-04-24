@@ -52,7 +52,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
 		winrt::event_token AudioLevelsUpdated(Windows::Foundation::TypedEventHandler<
 			winrt::Telegram::Native::Calls::VoipGroupManager,
-			IMapView<int32_t, IKeyValuePair<float, bool>>> const& value);
+			IVector<winrt::Telegram::Native::Calls::VoipGroupParticipant>> const& value);
 		void AudioLevelsUpdated(winrt::event_token const& token);
 
 		winrt::event_token BroadcastPartRequested(Windows::Foundation::TypedEventHandler<
@@ -79,7 +79,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 			winrt::Telegram::Native::Calls::GroupNetworkStateChangedEventArgs>> m_networkStateUpdated;
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Telegram::Native::Calls::VoipGroupManager,
-			IMapView<int32_t, IKeyValuePair<float, bool>>>> m_audioLevelsUpdated;
+			IVector<winrt::Telegram::Native::Calls::VoipGroupParticipant>>> m_audioLevelsUpdated;
 		winrt::event<Windows::Foundation::TypedEventHandler<
 			winrt::Telegram::Native::Calls::VoipGroupManager,
 			winrt::Telegram::Native::Calls::BroadcastPartRequestedEventArgs>> m_broadcastPartRequested;

@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Rg.DiffUtils;
+using System;
 
 namespace Telegram
 {
@@ -47,10 +48,21 @@ namespace Telegram
             /*"telesco.pe"*/
         };
 
-        public static DiffOptions DiffOptions = new DiffOptions
+        public static DiffOptions DiffOptions = new()
         {
             AllowBatching = false,
             DetectMoves = true
         };
+
+#if DEBUG
+        // We use properties in debug so that the duration is re-evaluated
+        // on every access. This way we can easily debug animations without
+        // having to restart the app.
+        public static TimeSpan FastAnimation => TimeSpan.FromMilliseconds(167);
+        public static TimeSpan SoftAnimation => TimeSpan.FromMilliseconds(333);
+#else
+        public static TimeSpan FastAnimation = TimeSpan.FromMilliseconds(167);
+        public static TimeSpan SoftAnimation = TimeSpan.FromMilliseconds(333);
+#endif
     }
 }

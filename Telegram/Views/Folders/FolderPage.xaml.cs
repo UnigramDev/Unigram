@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Converters;
@@ -31,12 +32,12 @@ namespace Telegram.Views.Folders
             TitleField.Focus(FocusState.Keyboard);
         }
 
-        private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
+        private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
         {
-            var content = args.Element as UserCell;
-            var element = content.DataContext as ChatFilterElement;
+            var content = args.Element as ProfileCell;
+            var element = content.DataContext as ChatFolderElement;
 
-            content.UpdateChatFilter(ViewModel.ClientService, element);
+            content.UpdateChatFolder(ViewModel.ClientService, element);
         }
 
         private void Include_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -50,7 +51,7 @@ namespace Telegram.Views.Folders
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var chat = element.DataContext as ChatFilterElement;
+            var chat = element.DataContext as ChatFolderElement;
 
             flyout.CreateFlyoutItem(viewModel.RemoveIncluded, chat, Strings.StickersRemove, new FontIcon { Glyph = Icons.Delete });
 
@@ -68,7 +69,7 @@ namespace Telegram.Views.Folders
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var chat = element.DataContext as ChatFilterElement;
+            var chat = element.DataContext as ChatFolderElement;
 
             flyout.CreateFlyoutItem(viewModel.RemoveExcluded, chat, Strings.StickersRemove, new FontIcon { Glyph = Icons.Delete });
 
@@ -77,7 +78,7 @@ namespace Telegram.Views.Folders
 
         private void Emoji_Click(object sender, RoutedEventArgs e)
         {
-            EmojiList.ItemsSource = Icons.Filters;
+            EmojiList.ItemsSource = Icons.Folders;
             EmojiList.SelectedItem = ViewModel.Icon;
 
             var flyout = FlyoutBase.GetAttachedFlyout(EmojiButton);
@@ -88,7 +89,7 @@ namespace Telegram.Views.Folders
         {
             FlyoutBase.GetAttachedFlyout(EmojiButton).Hide();
 
-            if (e.ClickedItem is ChatFilterIcon icon)
+            if (e.ClickedItem is ChatFolderIcon2 icon)
             {
                 ViewModel.SetIcon(icon);
             }
@@ -101,24 +102,60 @@ namespace Telegram.Views.Folders
                 return;
             }
 
-            if (args.ItemContainer.ContentTemplateRoot is FontIcon textBlock && args.Item is ChatFilterIcon icon)
+            if (args.ItemContainer.ContentTemplateRoot is FontIcon textBlock && args.Item is ChatFolderIcon2 icon)
             {
-                textBlock.Glyph = Icons.FilterToGlyph(icon).Item1;
+                textBlock.Glyph = Icons.FolderToGlyph(icon).Item1;
             }
         }
 
         #region Binding
 
-        private string ConvertTitle(ChatFilter filter)
+        private string ConvertTitle(ChatFolder folder)
         {
-            return filter == null ? Strings.FilterNew : filter.Title;
+            return folder == null ? Strings.FilterNew : folder.Title;
         }
 
-        private string ConvertEmoji(ChatFilterIcon icon)
+        private string ConvertEmoji(ChatFolderIcon2 icon)
         {
-            return Icons.FilterToGlyph(icon).Item1;
+            return Icons.FolderToGlyph(icon).Item1;
+        }
+
+        private Visibility ConvertExcludeVisibility(int linksCount)
+        {
+            return linksCount > 0 ? Visibility.Collapsed : Visibility.Visible;
         }
 
         #endregion
+
+        private void Link_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
+        {
+            var button = args.Element as Button;
+            var link = button.DataContext as ChatFolderInviteLink;
+
+            var content = button.Content as Grid;
+            var title = content.Children[1] as TextBlock;
+            var subtitle = content.Children[2] as TextBlock;
+
+            title.Text = string.IsNullOrEmpty(link.Name) ? link.InviteLink : link.Name;
+            subtitle.Text = Locale.Declension(Strings.R.FilterInviteChats, link.ChatIds.Count);
+        }
+
+        private void Link_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+
+        }
+
+        private void Share_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Link_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is ChatFolderInviteLink link)
+            {
+                ViewModel.OpenLink(link);
+            }
+        }
     }
 }

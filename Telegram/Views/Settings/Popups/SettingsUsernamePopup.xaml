@@ -27,13 +27,11 @@
             <StackPanel Margin="24,0">
                 <TextBox x:Name="Username"
                          Text="{x:Bind ViewModel.Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         IsEnabled="{x:Bind ViewModel.CanBeEdited}"
                          PlaceholderText="{CustomResource UsernamePlaceholder}" />
 
-                <Grid Margin="0,4,0,2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition MaxWidth="1000" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                <Grid Visibility="{x:Bind ViewModel.CanBeEdited}"
+                      Margin="0,4,0,2">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -67,13 +65,16 @@
                             <Run Text="{x:Bind ConvertUsername(ViewModel.Username), Mode=OneWay}" />
                         </Hyperlink>
                     </TextBlock>
-
-                    <TextBlock Text="{CustomResource UsernamesProfileHeader}"
-                               Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                               Style="{StaticResource BaseTextBlockStyle}"
-                               Margin="0,8,0,0"
-                               Grid.Row="2" />
                 </Grid>
+
+                <Border Visibility="{x:Bind ViewModel.CanBeEdited, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                        Margin="0,12,0,0" />
+
+                <TextBlock Text="{CustomResource UsernamesProfileHeader}"
+                           Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           Margin="0,8,0,0"
+                           Grid.Row="2" />
             </StackPanel>
         </ListView.Header>
         <ListView.ItemTemplate>
@@ -92,8 +93,9 @@
             </Style>
         </ListView.ItemContainerStyle>
         <ListView.Footer>
-            <StackPanel Margin="24,8,24,0">
-                <TextBlock Text="{CustomResource UsernamesProfileHelp}"
+            <StackPanel Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                        Margin="24,8,24,0">
+                <TextBlock Text="{x:Bind ViewModel.Footer}"
                            Style="{StaticResource InfoCaptionTextBlockStyle}" />
             </StackPanel>
         </ListView.Footer>

@@ -11,6 +11,8 @@ using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Folders;
+using Telegram.Views;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -186,6 +188,84 @@ namespace Telegram.Controls.Cells
             }
 
             args.Handled = true;
+        }
+
+        public void UpdateSharedChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var chat = args.Item as Chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            args.ItemContainer.Tag = args.Item;
+            Tag = args.Item;
+
+            if (args.Phase == 0)
+            {
+                if (chat.Type is ChatTypeSecret)
+                {
+                    TitleLabel.Foreground = App.Current.Resources["TelegramSecretChatForegroundBrush"] as Brush;
+                    TitleLabel.Text = Icons.LockClosedFilled14 + "\u00A0" + clientService.GetTitle(chat);
+                }
+                else
+                {
+                    TitleLabel.ClearValue(TextBlock.ForegroundProperty);
+                    TitleLabel.Text = clientService.GetTitle(chat);
+                }
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
+
+                SelectionOutline.RadiusX = Photo.Shape == ProfilePictureShape.Ellipse ? 18 : 9;
+                SelectionOutline.RadiusY = Photo.Shape == ProfilePictureShape.Ellipse ? 18 : 9;
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
+        public void UpdateChatFolder(FolderFlag folder)
+        {
+            Photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFolderIcon(folder.Flag), (int)folder.Flag, 36);
+
+            SelectionOutline.RadiusX = 18;
+            SelectionOutline.RadiusY = 18;
+
+            switch (folder.Flag)
+            {
+                case ChatListFolderFlags.IncludeContacts:
+                    TitleLabel.Text = Strings.FilterContacts;
+                    break;
+                case ChatListFolderFlags.IncludeNonContacts:
+                    TitleLabel.Text = Strings.FilterNonContacts;
+                    break;
+                case ChatListFolderFlags.IncludeGroups:
+                    TitleLabel.Text = Strings.FilterGroups;
+                    break;
+                case ChatListFolderFlags.IncludeChannels:
+                    TitleLabel.Text = Strings.FilterChannels;
+                    break;
+                case ChatListFolderFlags.IncludeBots:
+                    TitleLabel.Text = Strings.FilterBots;
+                    break;
+
+                case ChatListFolderFlags.ExcludeMuted:
+                    TitleLabel.Text = Strings.FilterMuted;
+                    break;
+                case ChatListFolderFlags.ExcludeRead:
+                    TitleLabel.Text = Strings.FilterRead;
+                    break;
+                case ChatListFolderFlags.ExcludeArchived:
+                    TitleLabel.Text = Strings.FilterArchived;
+                    break;
+            }
         }
 
         #region Stroke

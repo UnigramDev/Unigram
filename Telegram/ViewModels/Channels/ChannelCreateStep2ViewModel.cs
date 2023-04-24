@@ -43,7 +43,7 @@ namespace Telegram.ViewModels.Channels
                     var response = await ClientService.SendAsync(new SetSupergroupUsername(item.Id, username));
                     if (response is Error error)
                     {
-                        if (error.TypeEquals(ErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
+                        if (error.MessageEquals(ErrorType.CHANNELS_ADMIN_PUBLIC_TOO_MUCH))
                         {
                             HasTooMuchUsernames = true;
                             NavigationService.ShowLimitReached(new PremiumLimitTypeCreatedPublicChatCount());

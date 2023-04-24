@@ -184,15 +184,15 @@ namespace Telegram.Views
             var viewModel = Main;
             if (viewModel != null)
             {
-                var already = viewModel.SelectedFilter;
+                var already = viewModel.SelectedFolder;
                 if (already == null)
                 {
                     return;
                 }
 
-                var index = viewModel.Filters.IndexOf(already);
+                var index = viewModel.Folders.IndexOf(already);
 
-                _canGoNext = index < viewModel.Filters.Count - 1;
+                _canGoNext = index < viewModel.Folders.Count - 1;
                 _canGoPrev = index > 0;
 
                 _tracker.Properties.InsertBoolean("CanGoNext", _canGoNext);

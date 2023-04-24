@@ -21,7 +21,7 @@ namespace Telegram.ViewModels.Chats
         private readonly DialogViewModel _dialog;
         private readonly DisposableMutex _loadMoreLock;
 
-        public ChatSearchViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, DialogViewModel viewModel)
+        public ChatSearchViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, DialogViewModel viewModel, string query)
             : base(clientService, settingsService, aggregator)
         {
             _dialog = viewModel;
@@ -29,6 +29,11 @@ namespace Telegram.ViewModels.Chats
 
             NextCommand = new RelayCommand(NextExecute, NextCanExecute);
             PreviousCommand = new RelayCommand(PreviousExecute, PreviousCanExecute);
+
+            if (!string.IsNullOrEmpty(query))
+            {
+                Search(query, null, null);
+            }
         }
 
         public DialogViewModel Dialog

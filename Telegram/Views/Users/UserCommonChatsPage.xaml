@@ -45,17 +45,24 @@
                                             Chat="{x:Bind ViewModel.Chat}"
                                             SizeChanged="ProfileHeader_SizeChanged"
                                             HorizontalContentAlignment="Stretch"
-                                            VerticalContentAlignment="Stretch" />
+                                            VerticalContentAlignment="Stretch"
+                                            Margin="0,0,0,16" />
 
                     <Grid x:Name="HeaderPanel"
-                          Margin="24,16,24,0"
+                          MaxWidth="1000"
+                          Margin="24,0"
                           Canvas.ZIndex="1">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition MaxWidth="1000" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+                        <Border x:Name="ClipperBackground"
+                                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                                BorderThickness="0,0,0,1"
+                                BackgroundSizing="InnerBorderEdge"
+                                Margin="-24,0,-24,0"
+                                Grid.ColumnSpan="2" />
+
                         <Grid CornerRadius="8,8,0,0">
-                            <Border Background="{ThemeResource SettingsItemBackground}"
+                            <Border x:Name="CardBackground"
+                                    Background="{ThemeResource SettingsItemBackground}"
                                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                     BorderThickness="1"
                                     CornerRadius="8,8,0,0" />

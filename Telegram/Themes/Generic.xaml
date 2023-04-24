@@ -666,7 +666,6 @@
             <Setter.Value>
                 <ControlTemplate TargetType="messages:MessageService">
                     <Grid x:Name="RootGrid"
-                          Margin="{TemplateBinding BorderThickness}"
                           CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -713,7 +712,9 @@
                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           Padding="{TemplateBinding Padding}"
                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Grid.Column="1" />
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          BackgroundSizing="InnerBorderEdge" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -788,7 +789,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="chats:ChatBackgroundRenderer">
-                    <Grid x:Name="LayoutRoot">
+                    <Grid x:Name="LayoutRoot"
+                          CornerRadius="{TemplateBinding CornerRadius}">
                         <Image x:Name="Canvas"
                                Stretch="UniformToFill"
                                AutomationProperties.AccessibilityView="Raw"
@@ -936,16 +938,12 @@
         <Setter Property="HorizontalAlignment"
                 Value="Stretch" />
         <Setter Property="Padding"
-                Value="0,16,0,0" />
+                Value="0,16,0,16" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SettingsHeadline">
-                    <Grid Padding="{TemplateBinding Padding}"
+                    <Grid MaxWidth="1000"
                           Margin="24,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition MaxWidth="1000" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -956,13 +954,14 @@
                                           DecodeFrameType="Logical"
                                           FrameSize="140,140"
                                           Width="140"
-                                          Height="140" />
+                                          Height="140"
+                                          Margin="{TemplateBinding Padding}" />
                         <TextBlock x:Name="Headline"
                                    x:Load="False"
                                    common:TextBlockHelper.Markdown="{TemplateBinding Text}"
                                    Style="{StaticResource InfoCaptionTextBlockStyle}"
                                    TextAlignment="Center"
-                                   Margin="12,16,12,0"
+                                   Margin="12,0,12,0"
                                    Grid.Row="1" />
                     </Grid>
                 </ControlTemplate>
@@ -1028,64 +1027,8 @@
                             Value="0,0,0,0" />
                     <Setter Property="Margin"
                             Value="0,0,0,0" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListViewItem">
-                                <ListViewItemPresenter x:Name="Root"
-                                                       ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                       Control.IsTemplateFocusTarget="True"
-                                                       FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                                                       FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
-                                                       FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
-                                                       FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
-                                                       FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
-                                                       SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}"
-                                                       CheckBrush="{ThemeResource ListViewItemCheckBrush}"
-                                                       CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
-                                                       DragBackground="{ThemeResource ListViewItemDragBackground}"
-                                                       DragForeground="{ThemeResource ListViewItemDragForeground}"
-                                                       FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
-                                                       FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
-                                                       PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
-                                                       PointerOverBackground="{ThemeResource SettingsItemBackgroundPointerOver}"
-                                                       PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
-                                                       SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
-                                                       SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
-                                                       SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
-                                                       PressedBackground="{ThemeResource SettingsItemBackgroundPressed}"
-                                                       SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
-                                                       DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
-                                                       DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
-                                                       ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
-                                                       HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                       VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                       ContentMargin="{TemplateBinding Padding}"
-                                                       CheckMode="{ThemeResource ListViewItemCheckMode}"
-                                                       CornerRadius='0'
-                                                       Windows11:CheckPressedBrush='{ThemeResource ListViewItemCheckPressedBrush}'
-                                                       Windows11:CheckDisabledBrush='{ThemeResource ListViewItemCheckDisabledBrush}'
-                                                       Windows11:CheckBoxPointerOverBrush='{ThemeResource ListViewItemCheckBoxPointerOverBrush}'
-                                                       Windows11:CheckBoxPressedBrush='{ThemeResource ListViewItemCheckBoxPressedBrush}'
-                                                       Windows11:CheckBoxDisabledBrush='{ThemeResource ListViewItemCheckBoxDisabledBrush}'
-                                                       Windows11:CheckBoxSelectedBrush='{ThemeResource ListViewItemCheckBoxSelectedBrush}'
-                                                       Windows11:CheckBoxSelectedPointerOverBrush='{ThemeResource ListViewItemCheckBoxSelectedPointerOverBrush}'
-                                                       Windows11:CheckBoxSelectedPressedBrush='{ThemeResource ListViewItemCheckBoxSelectedPressedBrush}'
-                                                       Windows11:CheckBoxSelectedDisabledBrush='{ThemeResource ListViewItemCheckBoxSelectedDisabledBrush}'
-                                                       Windows11:CheckBoxBorderBrush='{ThemeResource ListViewItemCheckBoxBorderBrush}'
-                                                       Windows11:CheckBoxPointerOverBorderBrush='{ThemeResource ListViewItemCheckBoxPointerOverBorderBrush}'
-                                                       Windows11:CheckBoxPressedBorderBrush='{ThemeResource ListViewItemCheckBoxPressedBorderBrush}'
-                                                       Windows11:CheckBoxDisabledBorderBrush='{ThemeResource ListViewItemCheckBoxDisabledBorderBrush}'
-                                                       Windows11:CheckBoxCornerRadius='{ThemeResource ListViewItemCheckBoxCornerRadius}'
-                                                       Windows11:SelectionIndicatorCornerRadius='{ThemeResource ListViewItemSelectionIndicatorCornerRadius}'
-                                                       Windows11:SelectionIndicatorVisualEnabled='{ThemeResource ListViewItemSelectionIndicatorVisualEnabled}'
-                                                       Windows11:SelectionIndicatorBrush='{ThemeResource ListViewItemSelectionIndicatorBrush}'
-                                                       Windows11:SelectionIndicatorPointerOverBrush='{ThemeResource ListViewItemSelectionIndicatorPointerOverBrush}'
-                                                       Windows11:SelectionIndicatorPressedBrush='{ThemeResource ListViewItemSelectionIndicatorPressedBrush}'
-                                                       Windows11:SelectionIndicatorDisabledBrush='{ThemeResource ListViewItemSelectionIndicatorDisabledBrush}'
-                                                       Windows11:SelectedDisabledBackground='{ThemeResource ListViewItemBackgroundSelectedDisabled}' />
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
+                    <Setter Property="MaxWidth"
+                            Value="1000" />
                 </Style>
             </Setter.Value>
         </Setter>
@@ -1372,16 +1315,13 @@
                 <ControlTemplate TargetType="local:HeaderedControl">
                     <Grid x:Name="ContentRoot"
                           Padding="{TemplateBinding Padding}"
+                          MaxWidth="1000"
                           Margin="24,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition MaxWidth="1000" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
                         <TextBlock x:Name="HeaderLabel"
                                    Text="{TemplateBinding Header}"
                                    Margin="0,0,0,8"
@@ -3269,6 +3209,7 @@
                                       BorderBrush="{TemplateBinding BorderBrush}"
                                       BorderThickness="{TemplateBinding BorderThickness}"
                                       CornerRadius="{TemplateBinding CornerRadius}"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       Padding="0"
                                       MinHeight="44"
                                       HorizontalAlignment="Stretch" />

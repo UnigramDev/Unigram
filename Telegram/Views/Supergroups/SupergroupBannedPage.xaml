@@ -27,7 +27,7 @@
                                 Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:UserCell Background="{ThemeResource SettingsItemBackground}"
+                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
                                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
                 </DataTemplate>
             </ListView.ItemTemplate>

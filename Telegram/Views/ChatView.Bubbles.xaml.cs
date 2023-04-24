@@ -593,6 +593,19 @@ namespace Telegram.Views
                             : Strings.ViewPhotoAction;
                     }
                 }
+                else if (message.Content is MessageChatSetBackground chatSetBackground)
+                {
+                    var photo = service.FindName("Photo") as ChatBackgroundRenderer;
+                    photo?.UpdateSource(_viewModel.ClientService, chatSetBackground.Background.Background, true);
+
+                    var view = service.FindName("View") as Border;
+                    if (view != null)
+                    {
+                        view.Visibility = message.IsOutgoing
+                            ? Visibility.Collapsed
+                            : Visibility.Visible;
+                    }
+                }
             }
 
             if (content is MessageBubble bubble)
@@ -773,6 +786,10 @@ namespace Telegram.Views
                 if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto)
                 {
                     return "ServiceMessagePhotoTemplate";
+                }
+                else if (message.Content is MessageChatSetBackground setBackground && setBackground.OldBackgroundMessageId == 0)
+                {
+                    return "ServiceMessageBackgroundTemplate";
                 }
                 else if (message.Content is MessageHeaderUnread)
                 {

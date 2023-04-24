@@ -107,6 +107,7 @@ namespace Telegram.Controls.Messages
                 MessageChatDeletePhoto chatDeletePhoto => UpdateChatDeletePhoto(message, chatDeletePhoto, active),
                 MessageChatJoinByLink chatJoinByLink => UpdateChatJoinByLink(message, chatJoinByLink, active),
                 MessageChatJoinByRequest chatJoinByRequest => UpdateChatJoinByRequest(message, chatJoinByRequest, active),
+                MessageChatSetBackground chatSetBackground => UpdateChatSetBackground(message, chatSetBackground, active),
                 MessageChatSetMessageAutoDeleteTime chatSetMessageAutoDeleteTime => UpdateChatSetMessageAutoDeleteTime(message, chatSetMessageAutoDeleteTime, active),
                 MessageChatShared chatShared => UpdateChatShared(message, chatShared, active),
                 MessageChatUpgradeFrom chatUpgradeFrom => UpdateChatUpgradeFrom(message, chatUpgradeFrom, active),
@@ -145,6 +146,7 @@ namespace Telegram.Controls.Messages
                     ChatEventIsAllHistoryAvailableToggled isAllHistoryAvailableToggled => UpdateIsAllHistoryAvailableToggled(message, isAllHistoryAvailableToggled, active),
                     ChatEventLinkedChatChanged linkedChatChanged => UpdateLinkedChatChanged(message, linkedChatChanged, active),
                     ChatEventLocationChanged locationChanged => UpdateLocationChanged(message, locationChanged, active),
+                    ChatEventMemberJoinedByInviteLink memberJoinedByInviteLink => UpdateMemberJoinedByInviteLink(message, memberJoinedByInviteLink, active),
                     ChatEventMessageUnpinned messageUnpinned => UpdateMessageUnpinned(message, messageUnpinned, active),
                     ChatEventMessageDeleted messageDeleted => UpdateMessageDeleted(message, messageDeleted, active),
                     ChatEventMessageEdited messageEdited => UpdateMessageEdited(message, messageEdited, active),
@@ -400,6 +402,30 @@ namespace Telegram.Controls.Messages
             else
             {
                 content = ReplaceWithLink(Strings.EventLogRemovedLocation, "un1", fromUser, entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateMemberJoinedByInviteLink(MessageViewModel message, ChatEventMemberJoinedByInviteLink memberJoinedByInviteLink, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (message.IsOutgoing)
+            {
+                content = Strings.ActionInviteYou;
+            }
+            else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
+            {
+                if (memberJoinedByInviteLink.ViaChatFolderInviteLink)
+                {
+                    content = ReplaceWithLink(Strings.ActionInviteUserFolder, "un1", senderUser, entities);
+                }
+                else
+                {
+                    content = ReplaceWithLink(Strings.ActionInviteUser, "un1", senderUser, entities);
+                }
             }
 
             return (content, entities);
@@ -1090,6 +1116,34 @@ namespace Telegram.Controls.Messages
             if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
             {
                 content = ReplaceWithLink(Strings.UserAcceptedToGroupAction, "un1", senderUser, entities);
+            }
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateChatSetBackground(MessageViewModel message, MessageChatSetBackground chatSetBackground, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            if (chatSetBackground.OldBackgroundMessageId != 0)
+            {
+                if (message.IsOutgoing)
+                {
+                    content = Strings.ActionSetSameWallpaperForThisChatSelf;
+                }
+                else if (message.ClientService.TryGetUser(message.SenderId, out User user))
+                {
+                    content = string.Format(Strings.ActionSetSameWallpaperForThisChat, user.FirstName);
+                }
+            }
+            else if (message.IsOutgoing)
+            {
+                content = Strings.ActionSetWallpaperForThisChatSelf;
+            }
+            else if (message.ClientService.TryGetUser(message.SenderId, out User user))
+            {
+                content = string.Format(Strings.ActionSetWallpaperForThisChat, user.FirstName);
             }
 
             return (content, entities);

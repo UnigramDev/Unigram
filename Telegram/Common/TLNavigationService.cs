@@ -88,7 +88,7 @@ namespace Telegram.Common
 
         public async void ShowPromo(PremiumSource source = null)
         {
-            await ShowAsync(typeof(PromoPopup), source);
+            await ShowPopupAsync(typeof(PromoPopup), source);
         }
 
         public async void NavigateToInvoice(MessageViewModel message)

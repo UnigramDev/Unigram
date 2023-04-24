@@ -4,13 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Collections;
 using System.Collections.Specialized;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Controls
 {
@@ -99,23 +96,5 @@ namespace Telegram.Controls
 
     public class TableListViewItem : TextListViewItem
     {
-        private ListViewItemPresenter Root;
-
-        protected override void OnApplyTemplate()
-        {
-            Root = GetTemplateChild(nameof(Root)) as ListViewItemPresenter;
-            base.OnApplyTemplate();
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            if (Root == null)
-            {
-                return base.ArrangeOverride(finalSize);
-            }
-
-            Root.Arrange(new Rect(0, 0, Math.Min(finalSize.Width, 1000), finalSize.Height));
-            return finalSize;
-        }
     }
 }

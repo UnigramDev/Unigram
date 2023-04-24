@@ -9,7 +9,7 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d"
                   Loaded="OnLoaded"
-                  Title="{x:Bind ConvertTitle(ViewModel.Filter), Mode=OneWay}">
+                  Title="{x:Bind ConvertTitle(ViewModel.Folder), Mode=OneWay}">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -116,17 +116,18 @@
                                             ElementPrepared="OnElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <cells:UserCell Background="{ThemeResource SettingsItemBackground}"
-                                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                    BorderThickness="0,1,0,0"
-                                                    ContextRequested="Include_ContextRequested" />
+                                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
+                                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                       BorderThickness="0,1,0,0"
+                                                       ContextRequested="Include_ContextRequested" />
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>
                         </muxc:ItemsRepeater>
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl Header="{CustomResource FilterExclude}"
-                                              Footer="{CustomResource FilterExcludeInfo}">
+                                              Footer="{CustomResource FilterExcludeInfo}"
+                                              Visibility="{x:Bind ConvertExcludeVisibility(ViewModel.Links.Count), Mode=OneWay}">
                         <controls:HeaderedControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel />
@@ -142,10 +143,76 @@
                                             ElementPrepared="OnElementPrepared">
                             <muxc:ItemsRepeater.ItemTemplate>
                                 <DataTemplate>
-                                    <cells:UserCell Background="{ThemeResource SettingsItemBackground}"
-                                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                                    BorderThickness="0,1,0,0"
-                                                    ContextRequested="Exclude_ContextRequested" />
+                                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
+                                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                                       BorderThickness="0,1,0,0"
+                                                       ContextRequested="Exclude_ContextRequested" />
+                                </DataTemplate>
+                            </muxc:ItemsRepeater.ItemTemplate>
+                        </muxc:ItemsRepeater>
+                    </controls:HeaderedControl>
+
+                    <controls:HeaderedControl Header="{CustomResource InviteLinks}"
+                                              Footer="{CustomResource FilterInviteLinksHint}">
+                        <controls:HeaderedControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </controls:HeaderedControl.ItemsPanel>
+                        <controls:BadgeButton Click="{x:Bind ViewModel.CreateLink}"
+                                              Content="{CustomResource CreateNewLink}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              BorderThickness="0"
+                                              Glyph="&#xE9F8;" />
+                        <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
+                                            ItemsSource="{x:Bind ViewModel.Links}"
+                                            ElementPrepared="Link_ElementPrepared">
+                            <muxc:ItemsRepeater.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource EmptyButtonStyle}"
+                                            Click="Link_Click">
+                                        <Grid Background="{ThemeResource SettingsItemBackground}"
+                                              BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                                              BorderThickness="0,1,0,0"
+                                              Padding="12,6"
+                                              ContextRequested="Link_ContextRequested">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <Border Style="{StaticResource AccentCaptionBorderStyle}"
+                                                    Width="36"
+                                                    Height="36"
+                                                    CornerRadius="18"
+                                                    Margin="0,0,12,0"
+                                                    Grid.RowSpan="2">
+                                                <TextBlock Text="&#xE9F8;"
+                                                           Foreground="#FFFFFF"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"
+                                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                           FontSize="20" />
+                                            </Border>
+                                            <TextBlock FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                       TextWrapping="NoWrap"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       VerticalAlignment="Bottom"
+                                                       Grid.Column="1" />
+
+                                            <TextBlock VerticalAlignment="Top"
+                                                       Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       TextWrapping="NoWrap"
+                                                       Grid.Column="1"
+                                                       Grid.Row="1"
+                                                       MaxLines="1" />
+                                        </Grid>
+                                    </Button>
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>
                         </muxc:ItemsRepeater>

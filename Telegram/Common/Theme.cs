@@ -65,6 +65,8 @@ namespace Telegram.Common
 
         public ChatTheme ChatTheme => _lastTheme;
 
+        public ChatBackground ChatBackground => _lastChatBackground;
+
         public void Update(ElementTheme requested)
         {
             Update(requested == ElementTheme.Light
@@ -80,11 +82,13 @@ namespace Telegram.Common
         private long? _lastBackground;
 
         private ChatTheme _lastTheme;
+        private ChatBackground _lastChatBackground;
 
-        public bool Update(ElementTheme elementTheme, ChatTheme theme)
+        public bool Update(ElementTheme elementTheme, ChatTheme theme, ChatBackground background)
         {
             var updated = false;
             var requested = elementTheme == ElementTheme.Dark ? TelegramTheme.Dark : TelegramTheme.Light;
+            var nextBackground = background?.Background;
 
             var settings = requested == TelegramTheme.Light ? theme?.LightSettings : theme?.DarkSettings;
             if (settings != null)
@@ -110,13 +114,10 @@ namespace Telegram.Common
                     ThemeOutgoing.Update(info.Parent, info.Values);
                     ThemeIncoming.Update(info.Parent, info.Values);
                 }
-                if (_lastBackground != settings.Background?.Id)
-                {
-                    updated = true;
-                }
+
+                nextBackground ??= settings.Background;
 
                 _lastAccent = settings.AccentColor;
-                _lastBackground = settings.Background?.Id;
             }
             else
             {
@@ -143,14 +144,17 @@ namespace Telegram.Common
                         ThemeIncoming.Update(requested);
                     }
                 }
-                if (_lastBackground != null)
-                {
-                    updated = true;
-                }
 
                 _lastAccent = null;
-                _lastBackground = null;
             }
+
+            if (nextBackground?.Id != _lastBackground)
+            {
+                updated = true;
+            }
+
+            _lastBackground = nextBackground?.Id;
+            _lastChatBackground = background;
 
             return updated;
         }

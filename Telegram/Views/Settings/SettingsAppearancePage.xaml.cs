@@ -37,7 +37,7 @@ namespace Telegram.Views.Settings
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ClientService, ViewModel.Aggregator);
+            BackgroundPresenter.Update(ViewModel.ClientService, ViewModel.Aggregator);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
         }
@@ -120,13 +120,9 @@ namespace Telegram.Views.Settings
             {
                 return;
             }
-
-            var theme = args.Item as ChatTheme;
-            var cell = args.ItemContainer.ContentTemplateRoot as ChatThemeCell;
-
-            if (cell != null && theme != null)
+            else if (args.ItemContainer.ContentTemplateRoot is ChatThemeCell content && args.Item is ChatTheme theme)
             {
-                cell.Update(ViewModel.ClientService, theme);
+                content.Update(theme);
             }
         }
 

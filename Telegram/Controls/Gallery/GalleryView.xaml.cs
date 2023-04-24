@@ -221,7 +221,7 @@ namespace Telegram.Controls.Gallery
             this.BeginOnUIThread(() =>
             {
                 var viewModel = ViewModel;
-                if (viewModel != null && viewModel.SelectedItem is GalleryMessage message && message.Id == update.MessageId && message.ChatId == update.ChatId && (update.NewContent is MessageExpiredPhoto || update.NewContent is MessageExpiredVideo))
+                if (viewModel != null && viewModel.SelectedItem is GalleryMessage message && message.Id == update.MessageId && message.ChatId == update.ChatId && update.NewContent is MessageExpiredPhoto or MessageExpiredVideo)
                 {
                     OnBackRequestedOverride(this, new HandledEventArgs());
                 }
@@ -812,7 +812,7 @@ namespace Telegram.Controls.Gallery
             Bindings.Update();
 
             ViewModel?.Aggregator.Subscribe<UpdateDeleteMessages>(this, Handle)
-                    .Subscribe<UpdateDeleteMessages>(Handle);
+                    .Subscribe<UpdateMessageContent>(Handle);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -1011,6 +1011,10 @@ namespace Telegram.Controls.Gallery
                 out GalleryContentView previous,
                 out GalleryContentView target,
                 out GalleryContentView next);
+
+            previous.IsEnabled = false;
+            target.IsEnabled = true;
+            next.IsEnabled = false;
 
             var index = viewModel.SelectedIndex;
             if (index < 0 || viewModel.Items.IsEmpty())

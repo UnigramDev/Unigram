@@ -37,6 +37,11 @@
                                                  Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                                                  Type="AllowContacts"
                                                  Style="{StaticResource SettingsRadioButtonStyle}" />
+
+                    <controls:PrivacyRadioButton Content="{CustomResource LastSeenNobody}"
+                                                 Value="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                                 Type="DisallowAll"
+                                                 Style="{StaticResource SettingsRadioButtonStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource AddExceptions}"

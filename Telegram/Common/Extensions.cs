@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -145,37 +146,79 @@ namespace Telegram.Common
             return result.TrimEnd('&');
         }
 
-        public static void ShowTeachingTip(this Window app, FrameworkElement target, string text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode placement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight)
+        public static void ShowTeachingTip(this Window app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
-            ShowTeachingTip(app, target, new FormattedText(text, new TextEntity[0]), placement);
+            ShowTeachingTip(app, target, text, null, placement);
         }
 
-        public static void ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode placement = Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.TopRight)
+        public static void ShowTeachingTip(this Window app, FrameworkElement target, string text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        {
+            ShowTeachingTip(app, target, new FormattedText(text, Array.Empty<TextEntity>()), icon, placement);
+        }
+
+        public static void ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        {
+            ShowTeachingTip(app, target, text, null, placement);
+        }
+
+        public static void ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
             var label = new TextBlock
             {
                 TextWrapping = TextWrapping.Wrap
             };
-            var tip = new Microsoft.UI.Xaml.Controls.TeachingTip
+
+            TextBlockHelper.SetFormattedText(label, text);
+            Grid.SetColumn(label, 1);
+
+            var content = new Grid();
+            content.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            content.ColumnDefinitions.Add(new ColumnDefinition());
+            content.Children.Add(label);
+
+            AnimatedIcon animated = null;
+            if (icon != null)
+            {
+                animated = new AnimatedIcon
+                {
+                    Source = icon,
+                    Width = 32,
+                    Height = 32,
+                    Margin = new Thickness(-4, -12, 8, -12)
+                };
+
+                AnimatedIcon.SetState(animated, "Normal");
+                content.Children.Add(animated);
+            }
+
+            var tip = new TeachingTip
             {
                 Target = target,
                 PreferredPlacement = placement,
                 IsLightDismissEnabled = true,
-                Content = label,
+                Content = content,
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                VerticalContentAlignment = VerticalAlignment.Stretch
+                VerticalContentAlignment = VerticalAlignment.Stretch,
+                MinWidth = 0,
             };
 
-            TextBlockHelper.SetFormattedText(label, text);
 
             if (app.Content is FrameworkElement element)
             {
                 element.Resources["TeachingTip"] = tip;
             }
-            else
+
+            if (animated != null)
             {
-                target.Resources["TeachingTip"] = tip;
+                void handler(object sender, RoutedEventArgs e)
+                {
+                    tip.Loaded -= handler;
+                    AnimatedIcon.SetState(animated, "Checked");
+                }
+
+                tip.Loaded += handler;
             }
+
             tip.IsOpen = true;
         }
 

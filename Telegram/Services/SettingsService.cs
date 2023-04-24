@@ -43,7 +43,6 @@ namespace Telegram.Services
         EmojiSettings Emoji { get; }
         AutoDownloadSettings AutoDownload { get; set; }
         AppearanceSettings Appearance { get; }
-        FiltersSettings Filters { get; }
         PasscodeLockSettings PasscodeLock { get; }
         PlaybackSettings Playback { get; }
         VoIPSettings VoIP { get; }
@@ -87,6 +86,8 @@ namespace Telegram.Services
 
         DistanceUnits DistanceUnits { get; set; }
 
+        bool SwipeToShare { get; set; }
+        bool SwipeToReply { get; set; }
         bool FullScreenGallery { get; set; }
         bool DisableHighlightWords { get; set; }
 
@@ -227,35 +228,14 @@ namespace Telegram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (9UL << 48) | (5UL << 32) | (0UL << 16);
-        public const string CurrentChangelog = @"POWER SAVING AND MORE
-
-**Power Saving Mode**
-• One switch to disable all resource-intensive animations and autoplay for media, stickers and emoji.
-• Power saving mode turns on automatically based on battery charge.
-
-**Granular Playback Speed**
-• Fully flexible playback speed settings for videos, voice and video messages.
-• Tap the “2X” button to quickly switch between 1-1.5-2x speed – or hold it to set any speed between 0.2-2.5x.
-
-**Read Time in Small Groups**
-• Read receipts in groups under 100 members now show the time when your messages were read. 
-
-**Improved Group Invites**
-• When inviting people to groups, you can quickly send invite links to anyone who doesn't allow adding them directly.
-• Invite links now show previews in chats.
-
-**And More**
-• Toggle dynamic pack order. Choose if you want recently used sticker packs to be displayed above the older ones in the panel.
-• Fully translatable bots. Bot descriptions and “What can this bot do?” sections can now be translated.
-• Improved folder support. Mark all messages in a folder as read and use folders when forwarding.";
+        public const ulong CurrentVersion = (9UL << 48) | (6UL << 32) | (0UL << 16);
 
         public int Session => _session;
 
         private ulong? _version;
         public ulong Version
         {
-            get => _version ??= GetValueOrDefault("LongVersion", 0UL);
+            get => _version ??= GetValueOrDefault("LongVersion", CurrentVersion);
             set => AddOrUpdateValue(ref _version, "LongVersion", value);
         }
 
@@ -306,9 +286,6 @@ namespace Telegram.Services
 
         private static DiagnosticsSettings _diagnostics;
         public DiagnosticsSettings Diagnostics => _diagnostics ??= new DiagnosticsSettings();
-
-        private FiltersSettings _filters;
-        public FiltersSettings Filters => _filters ??= new FiltersSettings(_own);
 
         private static PasscodeLockSettings _passcodeLock;
         public PasscodeLockSettings PasscodeLock => _passcodeLock ??= new PasscodeLockSettings();
@@ -488,6 +465,20 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _isTranslateEnabled, _local, "IsTranslateEnabled", value);
         }
 
+        private static bool? _swipeToShare;
+        public bool SwipeToShare
+        {
+            get => _swipeToShare ??= GetValueOrDefault(_local, "SwipeToShare", true);
+            set => AddOrUpdateValue(ref _swipeToShare, _local, "SwipeToShare", value);
+        }
+
+        private static bool? _swipeToReply;
+        public bool SwipeToReply
+        {
+            get => _swipeToReply ??= GetValueOrDefault(_local, "SwipeToReply", true);
+            set => AddOrUpdateValue(ref _swipeToReply, _local, "SwipeToReply", value);
+        }
+
         private static bool? _fullScreenGallery;
         public bool FullScreenGallery
         {
@@ -621,13 +612,13 @@ namespace Telegram.Services
             {
                 if (_pencil == null)
                 {
-                    var offset = GetValueOrDefault(_local, "PencilOffset", 1f);
-                    var thickness = GetValueOrDefault(_local, "PencilThickness", 0.22f);
+                    var offset = GetValueOrDefault(_local, "PencilOffset", 0f);
+                    var thickness = GetValueOrDefault(_local, "PencilThickness", 0.33f);
 
                     _pencil = new Vector2(offset, thickness);
                 }
 
-                return _pencil ?? new Vector2(1f, 0.22f);
+                return _pencil ?? new Vector2(0f, 0.33f);
             }
             set
             {

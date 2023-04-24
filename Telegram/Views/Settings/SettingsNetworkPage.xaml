@@ -33,14 +33,14 @@
                                 <controls:SettingsExpander.Header>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="40" />
+                                            <ColumnDefinition Width="56" />
                                             <ColumnDefinition />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
                                                    HorizontalAlignment="Left"
                                                    VerticalAlignment="Center"
-                                                   Margin="12,0,0,0"
+                                                   Margin="20,0,0,0"
                                                    AutomationProperties.AccessibilityView="Raw"
                                                    Text="{x:Bind Glyph}"
                                                    FontFamily="{StaticResource SymbolThemeFontFamily}" />
@@ -51,6 +51,7 @@
                                                    Grid.Column="1" />
                                         <TextBlock Text="{x:Bind TotalBytes, Converter={StaticResource FileSizeConverter}}"
                                                    Style="{StaticResource InfoBodyTextBlockStyle}"
+                                                   Margin="0,0,-12,0"
                                                    Grid.Column="2" />
                                     </Grid>
                                 </controls:SettingsExpander.Header>

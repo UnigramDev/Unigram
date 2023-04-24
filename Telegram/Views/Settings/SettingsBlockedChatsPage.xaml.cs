@@ -66,7 +66,7 @@ namespace Telegram.Views.Settings
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
+            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
             {
                 content.UpdateMessageSender(ViewModel.ClientService, args, OnContainerContentChanging);
             }

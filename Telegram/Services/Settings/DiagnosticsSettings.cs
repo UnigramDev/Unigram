@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Common;
 
 namespace Telegram.Services.Settings
 {
@@ -15,10 +14,17 @@ namespace Telegram.Services.Settings
         {
         }
 
+        private bool? _chatPreviewToolTip;
+        public bool ChatPreviewToolTip
+        {
+            get => _chatPreviewToolTip ??= GetValueOrDefault("ChatPreviewToolTip", false);
+            set => AddOrUpdateValue(ref _chatPreviewToolTip, "ChatPreviewToolTip", value);
+        }
+
         private bool? _synchronizeItemsSource;
         public bool SynchronizeItemsSource
         {
-            get => _synchronizeItemsSource ??= GetValueOrDefault("SynchronizeItemsSource", ApiInfo.IsPackagedRelease);
+            get => _synchronizeItemsSource ??= GetValueOrDefault("SynchronizeItemsSource", false);
             set => AddOrUpdateValue(ref _synchronizeItemsSource, "SynchronizeItemsSource", value);
         }
 
@@ -39,7 +45,7 @@ namespace Telegram.Services.Settings
         private bool? _allowRightToLeft;
         public bool AllowRightToLeft
         {
-            get => _allowRightToLeft ??= GetValueOrDefault("AllowRightToLeft", ApiInfo.IsPackagedRelease);
+            get => _allowRightToLeft ??= GetValueOrDefault("AllowRightToLeft", false);
             set => AddOrUpdateValue(ref _allowRightToLeft, "AllowRightToLeft", value);
         }
 
@@ -50,18 +56,18 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _stickyPhotos, "StickyPhotos", value);
         }
 
-        private bool? _lowLatencyGC;
-        public bool LowLatencyGC
-        {
-            get => _lowLatencyGC ??= GetValueOrDefault("LowLatencyGC", ApiInfo.IsPackagedRelease);
-            set => AddOrUpdateValue(ref _lowLatencyGC, "LowLatencyGC", value);
-        }
-
         private string? _deviceName;
         public string DeviceName
         {
             get => _deviceName ??= GetValueOrDefault("DeviceName", string.Empty);
             set => AddOrUpdateValue(ref _deviceName, "DeviceName", value);
+        }
+
+        private string _lastNavigatedPageType;
+        public string LastNavigatedPageType
+        {
+            get => _lastNavigatedPageType ??= GetValueOrDefault("LastNavigatedPageType", string.Empty);
+            set => AddOrUpdateValue(ref _lastNavigatedPageType, "LastNavigatedPageType", value);
         }
 
         private string _lastErrorMessage;
@@ -104,6 +110,20 @@ namespace Telegram.Services.Settings
         {
             get => _lastUpdateTime ??= GetValueOrDefault("LastUpdateTime", 0);
             set => AddOrUpdateValue(ref _lastUpdateTime, "LastUpdateTime", value);
+        }
+
+        private long? _storageMaxTimeFromLastAccess;
+        public long StorageMaxTimeFromLastAccess
+        {
+            get => _storageMaxTimeFromLastAccess ??= GetValueOrDefault("StorageMaxTimeFromLastAccess", 0L);
+            set => AddOrUpdateValue(ref _storageMaxTimeFromLastAccess, "StorageMaxTimeFromLastAccess", value);
+        }
+
+        private bool? _useStorageOptimizer;
+        public bool UseStorageOptimizer
+        {
+            get => _useStorageOptimizer ??= GetValueOrDefault("UseStorageOptimizer", false);
+            set => AddOrUpdateValue(ref _useStorageOptimizer, "UseStorageOptimizer", value);
         }
 
         public bool IsLastErrorDiskFull { get; set; }

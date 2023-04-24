@@ -73,6 +73,19 @@ namespace Telegram.Views.Supergroups
 
             PermissionsPanel.Visibility = Visibility.Visible;
 
+            CanSendPhotos.IsEnabled = chat.Permissions.CanSendPhotos;
+            CanSendVideos.IsEnabled = chat.Permissions.CanSendVideos;
+            CanSendOtherMessages.IsEnabled = chat.Permissions.CanSendOtherMessages;
+            CanSendAudios.IsEnabled = chat.Permissions.CanSendAudios;
+            CanSendDocuments.IsEnabled = chat.Permissions.CanSendDocuments;
+            CanSendVoiceNotes.IsEnabled = chat.Permissions.CanSendVoiceNotes;
+            CanSendVideoNotes.IsEnabled = chat.Permissions.CanSendVideoNotes;
+            CanSendPolls.IsEnabled = chat.Permissions.CanSendPolls;
+            CanAddWebPagePreviews.IsEnabled = chat.Permissions.CanAddWebPagePreviews;
+            CanInviteUsers.IsEnabled = chat.Permissions.CanInviteUsers;
+            CanPinMessages.IsEnabled = chat.Permissions.CanPinMessages;
+            CanChangeInfo.IsEnabled = chat.Permissions.CanChangeInfo;
+
             //ChangeInfo.Header = group.IsChannel ? Strings.EditAdminChangeChannelInfo : Strings.EditAdminChangeGroupInfo;
             //PostMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             //EditMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;

@@ -298,7 +298,7 @@ namespace Telegram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    if (error.TypeEquals(ErrorType.EMAIL_UNCONFIRMED))
+                    if (error.MessageEquals(ErrorType.EMAIL_UNCONFIRMED))
                     {
 
                     }

@@ -28,49 +28,49 @@ namespace Telegram.Views.Folders
         private void Items_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
             var button = args.Element as BadgeButton;
-            var filter = button.DataContext as ChatFilterInfo;
+            var folder = button.DataContext as ChatFolderInfo;
 
-            var icon = Icons.ParseFilter(filter.IconName);
+            var icon = Icons.ParseFolder(folder.Icon);
 
-            button.Glyph = Icons.FilterToGlyph(icon).Item1;
-            button.Content = filter.Title;
-            button.Click += Edit_Click;
-            button.CommandParameter = filter;
-            button.ChevronGlyph = args.Index < ViewModel.ClientService.Options.ChatFilterCountMax ? Icons.ChevronRight : Icons.LockClosed;
+            button.Glyph = Icons.FolderToGlyph(icon).Item1;
+            button.Content = folder.Title;
+            button.CommandParameter = folder;
             button.BorderThickness = new Thickness(0, args.Index == 0 ? 0 : 1, 0, 0);
+
+            var chevron = button.Badge as TextBlock;
+            chevron.Text = args.Index > ViewModel.ClientService.Options.ChatFolderCountMax ? Icons.LockClosed : folder.HasMyInviteLinks ? Icons.Link : string.Empty;
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.CommandParameter is ChatFilterInfo filter)
+            if (sender is Button button && button.CommandParameter is ChatFolderInfo folder)
             {
-                ViewModel.Edit(filter);
+                ViewModel.Edit(folder);
             }
         }
 
         private void Recommended_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
             var content = args.Element as Grid;
-            var filter = content.DataContext as RecommendedChatFilter;
+            var folder = content.DataContext as RecommendedChatFolder;
 
             var button = content.Children[0] as BadgeButton;
             var add = content.Children[1] as Button;
 
-            var icon = Icons.ParseFilter(filter.Filter);
+            var icon = Icons.ParseFolder(folder.Folder);
 
-            button.Glyph = Icons.FilterToGlyph(icon).Item1;
-            button.Content = filter.Filter.Title;
-            button.Badge = filter.Description;
+            button.Glyph = Icons.FolderToGlyph(icon).Item1;
+            button.Content = folder.Folder.Title;
+            button.Badge = folder.Description;
 
-            add.Click += AddRecommended_Click;
-            add.CommandParameter = filter;
+            add.CommandParameter = folder;
         }
 
         private void AddRecommended_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.CommandParameter is RecommendedChatFilter filter)
+            if (sender is Button button && button.CommandParameter is RecommendedChatFolder folder)
             {
-                ViewModel.AddRecommended(filter);
+                ViewModel.AddRecommended(folder);
             }
         }
 
@@ -79,7 +79,7 @@ namespace Telegram.Views.Folders
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var chat = element.DataContext as ChatFilterInfo;
+            var chat = element.DataContext as ChatFolderInfo;
 
             flyout.CreateFlyoutItem(ViewModel.Delete, chat, Strings.FilterDeleteItem, new FontIcon { Glyph = Icons.Delete });
 

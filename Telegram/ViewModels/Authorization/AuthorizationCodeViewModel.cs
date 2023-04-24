@@ -122,29 +122,29 @@ namespace Telegram.ViewModels.Authorization
             {
                 IsLoading = false;
 
-                if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
+                if (error.MessageEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
                     await ShowPopupAsync(error.Message, Strings.InvalidPhoneNumber, Strings.OK);
                 }
-                else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
+                else if (error.MessageEquals(ErrorType.PHONE_CODE_EMPTY) || error.MessageEquals(ErrorType.PHONE_CODE_INVALID))
                 {
                     await ShowPopupAsync(error.Message, Strings.InvalidCode, Strings.OK);
                 }
-                else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
+                else if (error.MessageEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
                     NavigationService.GoBack();
                     //NavigationService.Frame.ForwardStack.Clear();
 
                     await ShowPopupAsync(error.Message, Strings.CodeExpired, Strings.OK);
                 }
-                else if (error.TypeEquals(ErrorType.FIRSTNAME_INVALID))
+                else if (error.MessageEquals(ErrorType.FIRSTNAME_INVALID))
                 {
                     NavigationService.GoBack();
                     NavigationService.Frame.ForwardStack.Clear();
 
                     await ShowPopupAsync(error.Message, Strings.InvalidFirstName, Strings.OK);
                 }
-                else if (error.TypeEquals(ErrorType.LASTNAME_INVALID))
+                else if (error.MessageEquals(ErrorType.LASTNAME_INVALID))
                 {
                     NavigationService.GoBack();
                     //NavigationService.Frame.ForwardStack.Clear();

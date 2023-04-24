@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -47,6 +48,11 @@ namespace Telegram.Navigation
         public void ShowPopup(ContentPopup popup)
         {
             _ = popup.ShowQueuedAsync();
+        }
+
+        public Task<ContentDialogResult> ShowPopupAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)
+        {
+            return NavigationService.ShowPopupAsync(sourcePopupType, parameter, tsc);
         }
 
         public Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false)

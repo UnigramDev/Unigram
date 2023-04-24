@@ -273,13 +273,6 @@ namespace Telegram.ViewModels
                         message = GetMessage(_chat.Id, channel, item);
                         message.Content = new MessageChatAddMembers(new[] { memberInvited.UserId });
                         break;
-                    case ChatEventMemberJoinedByInviteLink:
-                        if (item.MemberId is MessageSenderUser invitedUser)
-                        {
-                            message = GetMessage(_chat.Id, channel, item);
-                            message.Content = new MessageChatAddMembers(new[] { invitedUser.UserId });
-                        }
-                        break;
                     case ChatEventSlowModeDelayChanged:
                     case ChatEventPermissionsChanged:
                     case ChatEventMemberRestricted:
@@ -294,6 +287,7 @@ namespace Telegram.ViewModels
                     case ChatEventStickerSetChanged:
                     case ChatEventInvitesToggled:
                     case ChatEventIsAllHistoryAvailableToggled:
+                    case ChatEventMemberJoinedByInviteLink:
                     case ChatEventMessageUnpinned:
                     case ChatEventMessageAutoDeleteTimeChanged:
                     case ChatEventLinkedChatChanged:

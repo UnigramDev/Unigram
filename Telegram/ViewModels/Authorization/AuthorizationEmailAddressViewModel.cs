@@ -55,11 +55,11 @@ namespace Telegram.ViewModels.Authorization
             {
                 IsLoading = false;
 
-                if (error.TypeEquals(ErrorType.EMAIL_INVALID))
+                if (error.MessageEquals(ErrorType.EMAIL_INVALID))
                 {
                     await ShowPopupAsync(Strings.EmailAddressInvalid, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 }
-                else if (error.TypeEquals(ErrorType.EMAIL_NOT_ALLOWED))
+                else if (error.MessageEquals(ErrorType.EMAIL_NOT_ALLOWED))
                 {
                     await ShowPopupAsync(Strings.EmailNotAllowed, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 }

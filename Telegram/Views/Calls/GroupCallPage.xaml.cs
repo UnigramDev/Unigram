@@ -993,7 +993,7 @@ namespace Telegram.Views.Calls
             this.BeginOnUIThread(() => UpdateNetworkState(_service.Call, _service.CurrentUser, args.IsConnected));
         }
 
-        private void OnAudioLevelsUpdated(VoipGroupManager sender, IReadOnlyDictionary<int, KeyValuePair<float, bool>> levels)
+        private void OnAudioLevelsUpdated(VoipGroupManager sender, IList<VoipGroupParticipant> levels)
         {
             var participants = _service?.Participants;
             if (participants == null)
@@ -1005,18 +1005,18 @@ namespace Telegram.Views.Calls
 
             foreach (var level in levels)
             {
-                var value = level.Value.Key;
-                if (level.Key == 0 && sender.IsMuted)
+                var value = level.Level;
+                if (level.AudioSource == 0 && sender.IsMuted)
                 {
                     value = 0;
                 }
 
-                if (level.Key == 0)
+                if (level.AudioSource == 0)
                 {
-                    _drawable.SetAmplitude(MathF.Min(8500, value * 4000) / 8500);
+                    _drawable.SetAmplitude(Math.Min(8500, value * 4000) / 8500);
                 }
 
-                if (participants.TryGetFromAudioSourceId(level.Key, out var participant))
+                if (participants.TryGetFromAudioSourceId(level.AudioSource, out var participant))
                 {
                     validLevels[participant] = value;
 
@@ -1027,7 +1027,7 @@ namespace Telegram.Views.Calls
                         const int cutoffTimeout = 3000;
                         const int silentTimeout = 2000;
 
-                        if (value > speakingLevelThreshold && level.Value.Value)
+                        if (value > speakingLevelThreshold && level.IsSpeaking)
                         {
                             _selectedTimestamp = Environment.TickCount;
                         }
@@ -2484,6 +2484,7 @@ namespace Telegram.Views.Calls
         private int _lastUpdateTime;
 
         private CanvasRenderTarget _target;
+        private CanvasImageBrush _layer;
         private CanvasRadialGradientBrush _layerGradient;
         private CanvasRadialGradientBrush _maskGradient;
 
@@ -2547,11 +2548,10 @@ namespace Telegram.Views.Calls
 
             using (var session = _target.CreateDrawingSession())
             {
-                if (_maskGradient == null)
+                _maskGradient ??= new CanvasRadialGradientBrush(session, Color.FromArgb(0x77, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x00, 0xFF, 0xFF, 0xFF))
                 {
-                    _maskGradient = new CanvasRadialGradientBrush(session, Color.FromArgb(0x77, 0xFF, 0xFF, 0xFF), Color.FromArgb(0x00, 0xFF, 0xFF, 0xFF));
-                    _maskGradient.Center = new Vector2(150, 150);
-                }
+                    Center = new Vector2(150, 150)
+                };
 
                 float bigScale = BlobDrawable.SCALE_BIG_MIN + (BlobDrawable.SCALE_BIG * _amplitude);
                 float tinyScale = BlobDrawable.SCALE_SMALL_MIN + (BlobDrawable.SCALE_SMALL * _amplitude);
@@ -2575,7 +2575,10 @@ namespace Telegram.Views.Calls
                 session.Transform = Matrix3x2.Identity;
                 _buttonWaveDrawable.Draw(session, 150, 150);
             }
-            using (var layer = canvas.CreateLayer(new CanvasImageBrush(canvas, _target)))
+
+            _layer ??= new CanvasImageBrush(canvas, _target);
+
+            using (var layer = canvas.CreateLayer(_layer))
             {
                 if (_layerGradient == null && _stops != null)
                 {

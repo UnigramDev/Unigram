@@ -55,6 +55,8 @@ namespace Telegram.Services
 
         void Start(long chatId, bool video);
 
+        Task DiscardAsync();
+
 #if ENABLE_CALLS
         VoipCaptureType CaptureType { get; }
         Task<VoipCaptureBase> ToggleCapturingAsync(VoipCaptureType type);
@@ -306,6 +308,16 @@ namespace Telegram.Services
             }
         }
 
+        public Task DiscardAsync()
+        {
+            if (Call != null)
+            {
+                return ClientService.SendAsync(new DiscardCall(Call.Id, false, 0, false, 0));
+            }
+
+            return Task.CompletedTask;
+        }
+
         private async Task InitializeSystemCallAsync(User user, bool outgoing)
         {
             if (_systemCall != null || !ApiInfo.IsVoipSupported)
@@ -458,7 +470,10 @@ namespace Telegram.Services
                 {
                     if (pending.IsCreated && pending.IsReceived)
                     {
-                        SoundEffects.Play(update.Call.IsOutgoing ? SoundEffect.VoipRingback : SoundEffect.VoipIncoming);
+                        if (_systemCall == null || !update.Call.IsOutgoing)
+                        {
+                            SoundEffects.Play(update.Call.IsOutgoing ? SoundEffect.VoipRingback : SoundEffect.VoipIncoming);
+                        }
 
                         var user = ClientService.GetUser(update.Call.UserId);
                         if (user == null)

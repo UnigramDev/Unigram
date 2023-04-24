@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,6 +15,8 @@ namespace Telegram.Controls
     {
         public SettingsPanel()
         {
+            MaxWidth = 1048;
+
             ChildrenTransitions = new TransitionCollection
             {
                 new RepositionThemeTransition()
@@ -28,7 +29,6 @@ namespace Telegram.Controls
         protected override Size MeasureOverride(Size availableSize)
         {
             var accumulated = IsFooter ? 0 : 64d;
-            var width = Math.Min(availableSize.Width, 1048);
 
             foreach (UIElement child in Children)
             {
@@ -43,22 +43,21 @@ namespace Telegram.Controls
 
             if (IsHeader)
             {
-                return new Size(width, accumulated - 16);
+                return new Size(availableSize.Width, accumulated - 16);
             }
             else
             {
-                return new Size(width, accumulated + 16);
+                return new Size(availableSize.Width, accumulated + 16);
             }
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
             var accumulated = IsFooter ? 0 : 64d;
-            var width = Math.Min(finalSize.Width, 1048);
 
             foreach (var child in Children)
             {
-                child.Arrange(new Rect(0, accumulated, width, child.DesiredSize.Height));
+                child.Arrange(new Rect(0, accumulated, finalSize.Width, child.DesiredSize.Height));
 
                 if (child.DesiredSize.Height > 0)
                 {

@@ -13,7 +13,6 @@ using Telegram.Common;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Telegram.Views.Popups;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -24,6 +23,8 @@ namespace Telegram.ViewModels.Settings
 {
     public class SettingsBackgroundsViewModel : TLViewModelBase
     {
+        private long? _chatId;
+
         public SettingsBackgroundsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
@@ -32,6 +33,11 @@ namespace Telegram.ViewModels.Settings
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            if (parameter is long chatId)
+            {
+                _chatId = chatId;
+            }
+
             var dark = Settings.Appearance.IsDarkTheme();
             var freeform = dark ? new[] { 0x1B2836, 0x121A22, 0x1B2836, 0x121A22 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
 
@@ -91,7 +97,12 @@ namespace Telegram.ViewModels.Settings
 
         public DiffObservableCollection<Background> Items { get; private set; }
 
-        public async void ChangeToLocal()
+        public void ChangeToLocal()
+        {
+            _ = ChangeToLocalAsync(true);
+        }
+
+        public async Task<ContentDialogResult> ChangeToLocalAsync(bool refresh)
         {
             try
             {
@@ -104,19 +115,51 @@ namespace Telegram.ViewModels.Settings
                 if (file != null)
                 {
                     await file.CopyAsync(ApplicationData.Current.TemporaryFolder, Constants.WallpaperLocalFileName, NameCollisionOption.ReplaceExisting);
-                    await ShowPopupAsync(new BackgroundPopup(Constants.WallpaperLocalFileName));
+
+                    var confirm = await ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(Constants.WallpaperLocalFileName, _chatId));
+                    if (confirm == ContentDialogResult.Primary && refresh)
+                    {
+                        await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+                    }
+
+                    return confirm;
                 }
             }
             catch { }
+
+            return ContentDialogResult.None;
         }
 
-        public async void ChangeToColor()
+        public void ChangeToColor()
         {
-            var confirm = await ShowPopupAsync(new BackgroundPopup(Constants.WallpaperColorFileName));
-            if (confirm == ContentDialogResult.Primary)
+            _ = ChangeToColorAsync(true);
+        }
+
+        public async Task<ContentDialogResult> ChangeToColorAsync(bool refresh)
+        {
+            var confirm = await ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(Constants.WallpaperColorFileName, _chatId));
+            if (confirm == ContentDialogResult.Primary && refresh)
             {
                 await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
             }
+
+            return confirm;
+        }
+
+        public void Change(Background background)
+        {
+            _ = ChangeAsync(background, true);
+        }
+
+        public async Task<ContentDialogResult> ChangeAsync(Background background, bool refresh)
+        {
+            var confirm = await ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(background, _chatId));
+            if (confirm == ContentDialogResult.Primary && refresh)
+            {
+                await NavigatedToAsync(null, NavigationMode.Refresh, null);
+            }
+
+            return confirm;
         }
 
         public async void Reset()

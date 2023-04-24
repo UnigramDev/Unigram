@@ -17,7 +17,7 @@
                           VerticalScrollMode="Auto">
                 <controls:SettingsPanel>
                     <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"
-                                             Text="{CustomResource CreateNewFilterInfo}" />
+                                               Text="{CustomResource CreateNewFilterInfo}" />
 
                     <controls:HeaderedControl Header="{CustomResource Filters}">
                         <controls:HeaderedControl.ItemsPanel>
@@ -33,7 +33,13 @@
                                     <controls:BadgeButton FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                                           IsChevronVisible="True"
-                                                          ContextRequested="Item_ContextRequested" />
+                                                          ContextRequested="Item_ContextRequested"
+                                                          Click="Edit_Click">
+                                        <controls:BadgeButton.Badge>
+                                            <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                       FontSize="20" />
+                                        </controls:BadgeButton.Badge>
+                                    </controls:BadgeButton>
                                 </DataTemplate>
                             </muxc:ItemsRepeater.ItemTemplate>
                         </muxc:ItemsRepeater>
@@ -58,6 +64,7 @@
 
                                         <controls:BadgeButton Content="{CustomResource Add}"
                                                               Style="{StaticResource StartButtonStyle}"
+                                                              Click="AddRecommended_Click"
                                                               Background="#2ca5e0"
                                                               HorizontalAlignment="Right"
                                                               VerticalAlignment="Center"

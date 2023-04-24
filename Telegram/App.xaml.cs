@@ -9,7 +9,6 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -17,8 +16,37 @@ using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
+using Telegram.ViewModels.Authorization;
+using Telegram.ViewModels.BasicGroups;
+using Telegram.ViewModels.Channels;
+using Telegram.ViewModels.Chats;
+using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Folders;
+using Telegram.ViewModels.Payments;
+using Telegram.ViewModels.Premium;
+using Telegram.ViewModels.Settings;
+using Telegram.ViewModels.Settings.Password;
+using Telegram.ViewModels.Settings.Privacy;
+using Telegram.ViewModels.Supergroups;
+using Telegram.ViewModels.Users;
 using Telegram.Views;
+using Telegram.Views.Authorization;
+using Telegram.Views.BasicGroups;
+using Telegram.Views.Channels;
+using Telegram.Views.Chats;
+using Telegram.Views.Folders;
+using Telegram.Views.Folders.Popups;
 using Telegram.Views.Host;
+using Telegram.Views.Payments;
+using Telegram.Views.Popups;
+using Telegram.Views.Premium.Popups;
+using Telegram.Views.Settings;
+using Telegram.Views.Settings.Password;
+using Telegram.Views.Settings.Popups;
+using Telegram.Views.Settings.Privacy;
+using Telegram.Views.Supergroups;
+using Telegram.Views.Users;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
@@ -75,10 +103,18 @@ namespace Telegram
             UnhandledException += (s, args) =>
             {
                 args.Handled = args.Exception is not LayoutCycleException;
+                SettingsService.Current.Diagnostics.LastNavigatedPageType = FrameFacade.LastNavigatedPageType;
                 Client.Execute(new AddLogMessage(1, "Unhandled exception:\n" + args.Exception.ToString()));
             };
 
 #if !DEBUG
+            Microsoft.AppCenter.Crashes.Crashes.GetErrorAttachments = report =>
+            {
+                var lastPageType = SettingsService.Current.Diagnostics.LastNavigatedPageType;
+                SettingsService.Current.Diagnostics.LastNavigatedPageType = null;
+                return new[] { Microsoft.AppCenter.Crashes.ErrorAttachmentLog.AttachmentWithText(lastPageType, "page.txt") };
+            };
+
             Microsoft.AppCenter.AppCenter.Start(Constants.AppCenterId,
                 typeof(Microsoft.AppCenter.Analytics.Analytics),
                 typeof(Microsoft.AppCenter.Crashes.Crashes));
@@ -95,6 +131,25 @@ namespace Telegram
                 {
                     { "ActiveSessions", $"{count}" },
                 });
+
+            static void FatalErrorCallback(int verbosityLevel, string message)
+            {
+                if (verbosityLevel == 0)
+                {
+                    var next = DateTime.Now.ToTimestamp();
+                    var prev = SettingsService.Current.Diagnostics.LastUpdateTime;
+
+                    SettingsService.Current.Diagnostics.LastErrorMessage = message;
+                    SettingsService.Current.Diagnostics.LastErrorVersion = Package.Current.Id.Version.Build;
+                    SettingsService.Current.Diagnostics.LastErrorProperties = string.Join(';', new[]
+                    {
+                        $"CurrentVersion={Telegram.Controls.VersionLabel.GetVersion()}",
+                        $"LastUpdate={next - prev}s",
+                        $"UpdateCount={SettingsService.Current.Diagnostics.UpdateCount}",
+                        $"LastPageType={SettingsService.Current.Diagnostics.LastNavigatedPageType}"
+                    });
+                }
+            }
 
             Client.SetLogMessageCallback(0, FatalErrorCallback);
 
@@ -115,24 +170,6 @@ namespace Telegram
 
             EnteredBackground += OnEnteredBackground;
             LeavingBackground += OnLeavingBackground;
-        }
-
-        private void FatalErrorCallback(int verbosityLevel, string message)
-        {
-            if (verbosityLevel == 0)
-            {
-                var next = DateTime.Now.ToTimestamp();
-                var prev = SettingsService.Current.Diagnostics.LastUpdateTime;
-
-                SettingsService.Current.Diagnostics.LastErrorMessage = message;
-                SettingsService.Current.Diagnostics.LastErrorVersion = Package.Current.Id.Version.Build;
-                SettingsService.Current.Diagnostics.LastErrorProperties = string.Join(';', new[]
-                {
-                    $"CurrentVersion={VersionLabel.GetVersion()}",
-                    $"LastUpdate={next - prev}s",
-                    $"UpdateCount={SettingsService.Current.Diagnostics.UpdateCount}"
-                });
-            }
         }
 
         private void OnEnteredBackground(object sender, EnteredBackgroundEventArgs e)
@@ -479,113 +516,119 @@ namespace Telegram
             await RequestExtendedExecutionSessionAsync();
         }
 
-        public override Task OnSuspendingAsync(object s, SuspendingEventArgs e, bool prelaunchActivated)
+        public override Task OnSuspendingAsync(object s, SuspendingEventArgs e)
         {
             Logs.Logger.Info(Logs.LogTarget.Lifecycle, "OnSuspendingAsync");
 
             TLContainer.Current.Passcode.CloseTime = DateTime.UtcNow;
 
-            return Task.CompletedTask;
+            return Task.WhenAll(TLContainer.Current.ResolveAll<IVoipService>().Select(x => x.DiscardAsync()));
         }
 
         public override INavigable ViewModelForPage(UIElement page, int sessionId)
         {
             return page switch
             {
-                Telegram.Views.ChatsNearbyPage => TLContainer.Current.Resolve<Telegram.ViewModels.ChatsNearbyViewModel>(sessionId),
-                Telegram.Views.DiagnosticsPage => TLContainer.Current.Resolve<Telegram.ViewModels.DiagnosticsViewModel>(sessionId),
-                Telegram.Views.LogOutPage => TLContainer.Current.Resolve<Telegram.ViewModels.LogOutViewModel>(sessionId),
-                Telegram.Views.ProfilePage profile => TLContainer.Current.Resolve<Telegram.ViewModels.ProfileViewModel, Telegram.ViewModels.Delegates.IProfileDelegate>(profile, sessionId),
-                Telegram.Views.InstantPage => TLContainer.Current.Resolve<Telegram.ViewModels.InstantViewModel>(sessionId),
+                ChatsNearbyPage => TLContainer.Current.Resolve<ChatsNearbyViewModel>(sessionId),
+                DiagnosticsPage => TLContainer.Current.Resolve<DiagnosticsViewModel>(sessionId),
+                LogOutPage => TLContainer.Current.Resolve<LogOutViewModel>(sessionId),
+                ProfilePage profile => TLContainer.Current.Resolve<ProfileViewModel, IProfileDelegate>(profile, sessionId),
+                InstantPage => TLContainer.Current.Resolve<InstantViewModel>(sessionId),
                 //
-                Telegram.Views.MainPage => TLContainer.Current.Resolve<Telegram.ViewModels.MainViewModel>(sessionId),
-                Telegram.Views.SettingsPage settings => TLContainer.Current.Resolve<Telegram.ViewModels.SettingsViewModel, Telegram.ViewModels.Delegates.ISettingsDelegate>(settings, sessionId),
-                Telegram.Views.Users.UserCommonChatsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Users.UserCommonChatsViewModel>(sessionId),
-                Telegram.Views.Users.UserCreatePage => TLContainer.Current.Resolve<Telegram.ViewModels.Users.UserCreateViewModel>(sessionId),
-                Telegram.Views.Users.UserEditPage userEdit => TLContainer.Current.Resolve<Telegram.ViewModels.Users.UserEditViewModel, Telegram.ViewModels.Delegates.IUserDelegate>(userEdit, sessionId),
+                MainPage => TLContainer.Current.Resolve<MainViewModel>(sessionId),
+                SettingsPage settings => TLContainer.Current.Resolve<SettingsViewModel, ISettingsDelegate>(settings, sessionId),
+                UserCommonChatsPage => TLContainer.Current.Resolve<UserCommonChatsViewModel>(sessionId),
+                UserCreatePage => TLContainer.Current.Resolve<UserCreateViewModel>(sessionId),
+                UserEditPage userEdit => TLContainer.Current.Resolve<UserEditViewModel, IUserDelegate>(userEdit, sessionId),
                 //
-                Telegram.Views.Supergroups.SupergroupAddAdministratorPage => TLContainer.Current.Resolve<Telegram.ViewModels.Supergroups.SupergroupAddAdministratorViewModel>(sessionId),
-                Telegram.Views.Supergroups.SupergroupAddRestrictedPage => TLContainer.Current.Resolve<Telegram.ViewModels.Supergroups.SupergroupAddRestrictedViewModel>(sessionId),
-                Telegram.Views.Supergroups.SupergroupAdministratorsPage supergroupAdministrators => TLContainer.Current.Resolve<Telegram.ViewModels.Supergroups.SupergroupAdministratorsViewModel, Telegram.ViewModels.Delegates.ISupergroupDelegate>(supergroupAdministrators, sessionId),
-                Telegram.Views.Supergroups.SupergroupBannedPage supergroupBanned => TLContainer.Current.Resolve<Telegram.ViewModels.Supergroups.SupergroupBannedViewModel, Telegram.ViewModels.Delegates.ISupergroupDelegate>(supergroupBanned, sessionId),
-                Telegram.Views.Supergroups.SupergroupEditAdministratorPage supergroupEditAdministrator => TLContainer.Current.Resolve<Telegram.ViewModels.Supergroups.SupergroupEditAdministratorViewModel, Telegram.ViewModels.Delegates.IMemberDelegate>(supergroupEditAdministrator, sessionId),
-                Telegram.Views.Supergroups.SupergroupEditLinkedChatPage supergroupEditLinkedChat => TLContainer.Current.Resolve<Telegram.ViewModels.Supergroups.SupergroupEditLinkedChatViewModel, Telegram.ViewModels.Delegates.ISupergroupDelegate>(supergroupEditLinkedChat, sessionId),
-                Telegram.Views.Supergroups.SupergroupEditRestrictedPage supergroupEditRestricted => TLContainer.Current.Resolve<Telegram.ViewModels.Supergroups.SupergroupEditRestrictedViewModel, Telegram.ViewModels.Delegates.IMemberDelegate>(supergroupEditRestricted, sessionId),
-                Telegram.Views.Supergroups.SupergroupEditStickerSetPage => TLContainer.Current.Resolve<Telegram.ViewModels.Supergroups.SupergroupEditStickerSetViewModel>(sessionId),
-                Telegram.Views.Supergroups.SupergroupEditTypePage supergroupEditType => TLContainer.Current.Resolve<Telegram.ViewModels.Supergroups.SupergroupEditTypeViewModel, Telegram.ViewModels.Delegates.ISupergroupEditDelegate>(supergroupEditType, sessionId),
-                Telegram.Views.Supergroups.SupergroupEditPage supergroupEdit => TLContainer.Current.Resolve<Telegram.ViewModels.Supergroups.SupergroupEditViewModel, Telegram.ViewModels.Delegates.ISupergroupEditDelegate>(supergroupEdit, sessionId),
-                Telegram.Views.Supergroups.SupergroupMembersPage supergroupMembers => TLContainer.Current.Resolve<Telegram.ViewModels.Supergroups.SupergroupMembersViewModel, Telegram.ViewModels.Delegates.ISupergroupDelegate>(supergroupMembers, sessionId),
-                Telegram.Views.Supergroups.SupergroupPermissionsPage supergroupPermissions => TLContainer.Current.Resolve<Telegram.ViewModels.Supergroups.SupergroupPermissionsViewModel, Telegram.ViewModels.Delegates.ISupergroupDelegate>(supergroupPermissions, sessionId),
-                Telegram.Views.Supergroups.SupergroupReactionsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Supergroups.SupergroupReactionsViewModel>(sessionId),
+                SupergroupAddAdministratorPage => TLContainer.Current.Resolve<SupergroupAddAdministratorViewModel>(sessionId),
+                SupergroupAddRestrictedPage => TLContainer.Current.Resolve<SupergroupAddRestrictedViewModel>(sessionId),
+                SupergroupAdministratorsPage supergroupAdministrators => TLContainer.Current.Resolve<SupergroupAdministratorsViewModel, ISupergroupDelegate>(supergroupAdministrators, sessionId),
+                SupergroupBannedPage supergroupBanned => TLContainer.Current.Resolve<SupergroupBannedViewModel, ISupergroupDelegate>(supergroupBanned, sessionId),
+                SupergroupEditAdministratorPage supergroupEditAdministrator => TLContainer.Current.Resolve<SupergroupEditAdministratorViewModel, IMemberDelegate>(supergroupEditAdministrator, sessionId),
+                SupergroupEditLinkedChatPage supergroupEditLinkedChat => TLContainer.Current.Resolve<SupergroupEditLinkedChatViewModel, ISupergroupDelegate>(supergroupEditLinkedChat, sessionId),
+                SupergroupEditRestrictedPage supergroupEditRestricted => TLContainer.Current.Resolve<SupergroupEditRestrictedViewModel, IMemberDelegate>(supergroupEditRestricted, sessionId),
+                SupergroupEditStickerSetPage => TLContainer.Current.Resolve<SupergroupEditStickerSetViewModel>(sessionId),
+                SupergroupEditTypePage supergroupEditType => TLContainer.Current.Resolve<SupergroupEditTypeViewModel, ISupergroupEditDelegate>(supergroupEditType, sessionId),
+                SupergroupEditPage supergroupEdit => TLContainer.Current.Resolve<SupergroupEditViewModel, ISupergroupEditDelegate>(supergroupEdit, sessionId),
+                SupergroupMembersPage supergroupMembers => TLContainer.Current.Resolve<SupergroupMembersViewModel, ISupergroupDelegate>(supergroupMembers, sessionId),
+                SupergroupPermissionsPage supergroupPermissions => TLContainer.Current.Resolve<SupergroupPermissionsViewModel, ISupergroupDelegate>(supergroupPermissions, sessionId),
+                SupergroupReactionsPage => TLContainer.Current.Resolve<SupergroupReactionsViewModel>(sessionId),
                 //
-                Telegram.Views.Authorization.AuthorizationRecoveryPage => TLContainer.Current.Resolve<Telegram.ViewModels.Authorization.AuthorizationRecoveryViewModel>(sessionId),
-                Telegram.Views.Authorization.AuthorizationRegistrationPage => TLContainer.Current.Resolve<Telegram.ViewModels.Authorization.AuthorizationRegistrationViewModel>(sessionId),
-                Telegram.Views.Authorization.AuthorizationPasswordPage => TLContainer.Current.Resolve<Telegram.ViewModels.Authorization.AuthorizationPasswordViewModel>(sessionId),
-                Telegram.Views.Authorization.AuthorizationCodePage => TLContainer.Current.Resolve<Telegram.ViewModels.Authorization.AuthorizationCodeViewModel>(sessionId),
-                Telegram.Views.Authorization.AuthorizationEmailAddressPage => TLContainer.Current.Resolve<Telegram.ViewModels.Authorization.AuthorizationEmailAddressViewModel>(sessionId),
-                Telegram.Views.Authorization.AuthorizationEmailCodePage => TLContainer.Current.Resolve<Telegram.ViewModels.Authorization.AuthorizationEmailCodeViewModel>(sessionId),
-                Telegram.Views.Authorization.AuthorizationPage signIn => TLContainer.Current.Resolve<Telegram.ViewModels.Authorization.AuthorizationViewModel, Telegram.ViewModels.Delegates.ISignInDelegate>(signIn, sessionId),
+                AuthorizationRecoveryPage => TLContainer.Current.Resolve<AuthorizationRecoveryViewModel>(sessionId),
+                AuthorizationRegistrationPage => TLContainer.Current.Resolve<AuthorizationRegistrationViewModel>(sessionId),
+                AuthorizationPasswordPage => TLContainer.Current.Resolve<AuthorizationPasswordViewModel>(sessionId),
+                AuthorizationCodePage => TLContainer.Current.Resolve<AuthorizationCodeViewModel>(sessionId),
+                AuthorizationEmailAddressPage => TLContainer.Current.Resolve<AuthorizationEmailAddressViewModel>(sessionId),
+                AuthorizationEmailCodePage => TLContainer.Current.Resolve<AuthorizationEmailCodeViewModel>(sessionId),
+                AuthorizationPage signIn => TLContainer.Current.Resolve<AuthorizationViewModel, ISignInDelegate>(signIn, sessionId),
                 //
-                Telegram.Views.Folders.FoldersPage => TLContainer.Current.Resolve<Telegram.ViewModels.Folders.FoldersViewModel>(sessionId),
-                Telegram.Views.Folders.FolderPage => TLContainer.Current.Resolve<Telegram.ViewModels.Folders.FolderViewModel>(sessionId),
-                Telegram.Views.Channels.ChannelCreateStep1Page => TLContainer.Current.Resolve<Telegram.ViewModels.Channels.ChannelCreateStep1ViewModel>(sessionId),
-                Telegram.Views.Channels.ChannelCreateStep2Page channelCreateStep2 => TLContainer.Current.Resolve<Telegram.ViewModels.Channels.ChannelCreateStep2ViewModel, Telegram.ViewModels.Delegates.ISupergroupEditDelegate>(channelCreateStep2, sessionId),
-                Telegram.Views.BasicGroups.BasicGroupCreateStep1Page => TLContainer.Current.Resolve<Telegram.ViewModels.BasicGroups.BasicGroupCreateStep1ViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsBlockedChatsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsBlockedChatsViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsStickersPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsStickersViewModel>(sessionId),
+                FoldersPage => TLContainer.Current.Resolve<FoldersViewModel>(sessionId),
+                FolderPage => TLContainer.Current.Resolve<FolderViewModel>(sessionId),
+                ShareFolderPopup => TLContainer.Current.Resolve<ShareFolderViewModel>(sessionId),
+                AddFolderPopup => TLContainer.Current.Resolve<AddFolderViewModel>(sessionId),
+                RemoveFolderPopup => TLContainer.Current.Resolve<RemoveFolderViewModel>(sessionId),
                 //
-                Telegram.Views.Settings.SettingsThemePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsThemeViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsPhoneSentCodePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsPhoneSentCodeViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsPhonePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsPhoneViewModel>(sessionId),
+                ChannelCreateStep1Page => TLContainer.Current.Resolve<ChannelCreateStep1ViewModel>(sessionId),
+                ChannelCreateStep2Page channelCreateStep2 => TLContainer.Current.Resolve<ChannelCreateStep2ViewModel, ISupergroupEditDelegate>(channelCreateStep2, sessionId),
+                BasicGroupCreateStep1Page => TLContainer.Current.Resolve<BasicGroupCreateStep1ViewModel>(sessionId),
+                SettingsBlockedChatsPage => TLContainer.Current.Resolve<SettingsBlockedChatsViewModel>(sessionId),
+                SettingsStickersPage => TLContainer.Current.Resolve<SettingsStickersViewModel>(sessionId),
                 //
-                Telegram.Views.Settings.SettingsAdvancedPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsAdvancedViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsAppearancePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsAppearanceViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsAutoDeletePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsAutoDeleteViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsBackgroundsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsBackgroundsViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsDataAndStoragePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsDataAndStorageViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsLanguagePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsLanguageViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsNetworkPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsNetworkViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsNightModePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsNightModeViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsNotificationsExceptionsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsNotificationsExceptionsViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsPasscodePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsPasscodeViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsPasswordPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsPasswordViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsPrivacyAndSecurityPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsPrivacyAndSecurityViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsProxiesPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsProxiesViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsShortcutsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsShortcutsViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsThemesPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsThemesViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsWebSessionsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsWebSessionsViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsNotificationsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsNotificationsViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsSessionsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsSessionsViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsStoragePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsStorageViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsProfilePage settingsProfilePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsProfileViewModel, Telegram.ViewModels.Delegates.IUserDelegate>(settingsProfilePage, sessionId),
-                Telegram.Views.Settings.SettingsQuickReactionPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsQuickReactionViewModel>(sessionId),
-                Telegram.Views.Settings.SettingsPowerSavingPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsPowerSavingViewModel>(sessionId),
-                Telegram.Views.Settings.Privacy.SettingsPrivacyAllowCallsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel>(sessionId),
-                Telegram.Views.Settings.Privacy.SettingsPrivacyAllowChatInvitesPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel>(sessionId),
-                Telegram.Views.Settings.Privacy.SettingsPrivacyAllowP2PCallsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowP2PCallsViewModel>(sessionId),
-                Telegram.Views.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel>(sessionId),
-                Telegram.Views.Settings.Privacy.SettingsPrivacyShowForwardedPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowForwardedViewModel>(sessionId),
-                Telegram.Views.Settings.Privacy.SettingsPrivacyPhonePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyPhoneViewModel>(sessionId),
-                Telegram.Views.Settings.Privacy.SettingsPrivacyShowPhotoPage privacyShowPhotoPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel, Telegram.ViewModels.Delegates.IUserDelegate>(privacyShowPhotoPage, sessionId),
-                Telegram.Views.Settings.Privacy.SettingsPrivacyShowStatusPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel>(sessionId),
-                Telegram.Views.Settings.Password.SettingsPasswordConfirmPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Password.SettingsPasswordConfirmViewModel>(sessionId),
-                Telegram.Views.Settings.Password.SettingsPasswordCreatePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Password.SettingsPasswordCreateViewModel>(sessionId),
-                Telegram.Views.Settings.Password.SettingsPasswordDonePage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Password.SettingsPasswordDoneViewModel>(sessionId),
-                Telegram.Views.Settings.Password.SettingsPasswordEmailPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Password.SettingsPasswordEmailViewModel>(sessionId),
-                Telegram.Views.Settings.Password.SettingsPasswordHintPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Password.SettingsPasswordHintViewModel>(sessionId),
-                Telegram.Views.Settings.Password.SettingsPasswordIntroPage => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.Password.SettingsPasswordIntroViewModel>(sessionId),
+                SettingsThemePage => TLContainer.Current.Resolve<SettingsThemeViewModel>(sessionId),
+                SettingsPhoneSentCodePage => TLContainer.Current.Resolve<SettingsPhoneSentCodeViewModel>(sessionId),
+                SettingsPhonePage => TLContainer.Current.Resolve<SettingsPhoneViewModel>(sessionId),
+                //
+                SettingsAdvancedPage => TLContainer.Current.Resolve<SettingsAdvancedViewModel>(sessionId),
+                SettingsAppearancePage => TLContainer.Current.Resolve<SettingsAppearanceViewModel>(sessionId),
+                SettingsAutoDeletePage => TLContainer.Current.Resolve<SettingsAutoDeleteViewModel>(sessionId),
+                SettingsBackgroundsPage => TLContainer.Current.Resolve<SettingsBackgroundsViewModel>(sessionId),
+                SettingsDataAndStoragePage => TLContainer.Current.Resolve<SettingsDataAndStorageViewModel>(sessionId),
+                SettingsLanguagePage => TLContainer.Current.Resolve<SettingsLanguageViewModel>(sessionId),
+                SettingsNetworkPage => TLContainer.Current.Resolve<SettingsNetworkViewModel>(sessionId),
+                SettingsNightModePage => TLContainer.Current.Resolve<SettingsNightModeViewModel>(sessionId),
+                SettingsNotificationsExceptionsPage => TLContainer.Current.Resolve<SettingsNotificationsExceptionsViewModel>(sessionId),
+                SettingsPasscodePage => TLContainer.Current.Resolve<SettingsPasscodeViewModel>(sessionId),
+                SettingsPasswordPage => TLContainer.Current.Resolve<SettingsPasswordViewModel>(sessionId),
+                SettingsPrivacyAndSecurityPage => TLContainer.Current.Resolve<SettingsPrivacyAndSecurityViewModel>(sessionId),
+                SettingsProxiesPage => TLContainer.Current.Resolve<SettingsProxiesViewModel>(sessionId),
+                SettingsShortcutsPage => TLContainer.Current.Resolve<SettingsShortcutsViewModel>(sessionId),
+                SettingsThemesPage => TLContainer.Current.Resolve<SettingsThemesViewModel>(sessionId),
+                SettingsWebSessionsPage => TLContainer.Current.Resolve<SettingsWebSessionsViewModel>(sessionId),
+                SettingsNotificationsPage => TLContainer.Current.Resolve<SettingsNotificationsViewModel>(sessionId),
+                SettingsSessionsPage => TLContainer.Current.Resolve<SettingsSessionsViewModel>(sessionId),
+                SettingsStoragePage => TLContainer.Current.Resolve<SettingsStorageViewModel>(sessionId),
+                SettingsProfilePage settingsProfilePage => TLContainer.Current.Resolve<SettingsProfileViewModel, IUserDelegate>(settingsProfilePage, sessionId),
+                SettingsQuickReactionPage => TLContainer.Current.Resolve<SettingsQuickReactionViewModel>(sessionId),
+                SettingsPowerSavingPage => TLContainer.Current.Resolve<SettingsPowerSavingViewModel>(sessionId),
+                SettingsPrivacyAllowCallsPage => TLContainer.Current.Resolve<SettingsPrivacyAllowCallsViewModel>(sessionId),
+                SettingsPrivacyAllowChatInvitesPage => TLContainer.Current.Resolve<SettingsPrivacyAllowChatInvitesViewModel>(sessionId),
+                SettingsPrivacyAllowP2PCallsPage => TLContainer.Current.Resolve<SettingsPrivacyAllowP2PCallsViewModel>(sessionId),
+                SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesPage => TLContainer.Current.Resolve<SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel>(sessionId),
+                SettingsPrivacyShowForwardedPage => TLContainer.Current.Resolve<SettingsPrivacyShowForwardedViewModel>(sessionId),
+                SettingsPrivacyPhonePage => TLContainer.Current.Resolve<SettingsPrivacyPhoneViewModel>(sessionId),
+                SettingsPrivacyShowPhotoPage privacyShowPhotoPage => TLContainer.Current.Resolve<SettingsPrivacyShowPhotoViewModel, IUserDelegate>(privacyShowPhotoPage, sessionId),
+                SettingsPrivacyShowStatusPage => TLContainer.Current.Resolve<SettingsPrivacyShowStatusViewModel>(sessionId),
+                SettingsPasswordConfirmPage => TLContainer.Current.Resolve<SettingsPasswordConfirmViewModel>(sessionId),
+                SettingsPasswordCreatePage => TLContainer.Current.Resolve<SettingsPasswordCreateViewModel>(sessionId),
+                SettingsPasswordDonePage => TLContainer.Current.Resolve<SettingsPasswordDoneViewModel>(sessionId),
+                SettingsPasswordEmailPage => TLContainer.Current.Resolve<SettingsPasswordEmailViewModel>(sessionId),
+                SettingsPasswordHintPage => TLContainer.Current.Resolve<SettingsPasswordHintViewModel>(sessionId),
+                SettingsPasswordIntroPage => TLContainer.Current.Resolve<SettingsPasswordIntroViewModel>(sessionId),
 
-                Telegram.Views.Payments.PaymentFormPage => TLContainer.Current.Resolve<Telegram.ViewModels.Payments.PaymentFormViewModel>(sessionId),
-                Telegram.Views.Chats.MessageStatisticsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Chats.MessageStatisticsViewModel>(sessionId),
-                Telegram.Views.Chats.ChatInviteLinkPage => TLContainer.Current.Resolve<Telegram.ViewModels.Chats.ChatInviteLinkViewModel>(sessionId),
-                Telegram.Views.Chats.ChatStatisticsPage => TLContainer.Current.Resolve<Telegram.ViewModels.Chats.ChatStatisticsViewModel>(sessionId),
+                PaymentFormPage => TLContainer.Current.Resolve<PaymentFormViewModel>(sessionId),
+                MessageStatisticsPage => TLContainer.Current.Resolve<MessageStatisticsViewModel>(sessionId),
+                ChatInviteLinkPage => TLContainer.Current.Resolve<ChatInviteLinkViewModel>(sessionId),
+                ChatStatisticsPage => TLContainer.Current.Resolve<ChatStatisticsViewModel>(sessionId),
 
                 // Popups
-                Telegram.Views.Settings.Popups.SettingsUsernamePopup => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsUsernameViewModel>(sessionId),
-                Telegram.Views.Settings.Popups.SettingsDataAutoPopup => TLContainer.Current.Resolve<Telegram.ViewModels.Settings.SettingsDataAutoViewModel>(sessionId),
-                Telegram.Views.Popups.ChooseSoundPopup => TLContainer.Current.Resolve<Telegram.ViewModels.ChooseSoundViewModel>(sessionId),
-                Telegram.Views.Popups.CreateChatPhotoPopup => TLContainer.Current.Resolve<Telegram.ViewModels.CreateChatPhotoViewModel>(sessionId),
-                Telegram.Views.Premium.Popups.PromoPopup => TLContainer.Current.Resolve<Telegram.ViewModels.Premium.PromoViewModel>(sessionId),
+                SettingsUsernamePopup => TLContainer.Current.Resolve<SettingsUsernameViewModel>(sessionId),
+                SettingsDataAutoPopup => TLContainer.Current.Resolve<SettingsDataAutoViewModel>(sessionId),
+                ChooseSoundPopup => TLContainer.Current.Resolve<ChooseSoundViewModel>(sessionId),
+                CreateChatPhotoPopup => TLContainer.Current.Resolve<CreateChatPhotoViewModel>(sessionId),
+                PromoPopup => TLContainer.Current.Resolve<PromoViewModel>(sessionId),
+                BackgroundsPopup => TLContainer.Current.Resolve<SettingsBackgroundsViewModel>(sessionId),
+                BackgroundPopup backgroundPopup => TLContainer.Current.Resolve<BackgroundViewModel, IBackgroundDelegate>(backgroundPopup, sessionId),
                 _ => null
             };
         }

@@ -45,7 +45,7 @@ namespace Telegram.Views.Settings.Privacy
                 MessagePreview.Mockup(Strings.PrivacyForwardsMessageLine, user.FullName(), true, false, DateTime.Now);
             }
 
-            BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ClientService, ViewModel.Aggregator);
+            BackgroundPresenter.Update(ViewModel.ClientService, ViewModel.Aggregator);
         }
 
         #region Binding

@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Numerics;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
@@ -13,11 +12,11 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class ChatFilterCell : UserControl
+    public sealed partial class ChatFolderCell : UserControl
     {
-        public ChatFilterViewModel ViewModel => DataContext as ChatFilterViewModel;
+        public ChatFolderViewModel ViewModel => DataContext as ChatFolderViewModel;
 
-        public ChatFilterCell()
+        public ChatFolderCell()
         {
             InitializeComponent();
             DataContextChanged += OnDataContextChanged;
@@ -104,7 +103,7 @@ namespace Telegram.Controls.Cells
                 iconSelected.StartAnimation("Opacity", fadeIn);
                 iconSelected.StartAnimation("Translation", spring);
 
-                fadeOut.Duration = TimeSpan.FromMilliseconds(150);
+                fadeOut.Duration = Constants.FastAnimation;
                 title.StartAnimation("Opacity", fadeOut);
             }
             else if (next == "Normal" && prev == "Selected")
@@ -128,7 +127,7 @@ namespace Telegram.Controls.Cells
                 iconSelected.StartAnimation("Translation", offset);
 
                 fadeIn.InsertKeyFrame(1, 0.8f);
-                fadeIn.Duration = TimeSpan.FromMilliseconds(150);
+                fadeIn.Duration = Constants.FastAnimation;
                 title.StartAnimation("Opacity", fadeIn);
             }
             else if (next == "Normal")

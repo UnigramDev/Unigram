@@ -15,34 +15,16 @@ using Telegram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Navigation;
 
-namespace Telegram.Views
+namespace Telegram.Views.Popups
 {
     public sealed partial class BackgroundPopup : ContentPopup, IBackgroundDelegate
     {
         public BackgroundViewModel ViewModel => DataContext as BackgroundViewModel;
 
-        public BackgroundPopup(Background background)
-            : this()
-        {
-            _ = ViewModel.NavigatedToAsync(background, NavigationMode.New, null);
-        }
-
-        public BackgroundPopup(string slug)
-            : this()
-        {
-            _ = ViewModel.NavigatedToAsync(slug, NavigationMode.New, null);
-        }
-
-        private BackgroundPopup()
+        public BackgroundPopup()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<BackgroundViewModel, IBackgroundDelegate>(this);
-
-            Title = Strings.BackgroundPreview;
-            PrimaryButtonText = Strings.Set;
-            SecondaryButtonText = Strings.Cancel;
 
             Message1.Mockup(Strings.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
             Message2.Mockup(Strings.BackgroundPreviewLine2, true, DateTime.Now);
@@ -52,7 +34,7 @@ namespace Telegram.Views
 
         private void Color_Click(object sender, RoutedEventArgs e)
         {
-            Grid.SetRow(ColorPanel, ColorRadio.IsChecked == true ? 2 : 4);
+            Grid.SetRow(ColorPanel, ColorRadio.IsChecked == true ? 2 : 5);
 
             if (ColorRadio.IsChecked == true)
             {
@@ -64,7 +46,7 @@ namespace Telegram.Views
 
         private void Pattern_Click(object sender, RoutedEventArgs e)
         {
-            Grid.SetRow(PatternPanel, PatternRadio.IsChecked == true ? 2 : 4);
+            Grid.SetRow(PatternPanel, PatternRadio.IsChecked == true ? 2 : 5);
 
             if (PatternRadio.IsChecked == true)
             {
@@ -221,10 +203,10 @@ namespace Telegram.Views
                 return;
             }
 
-            var document = args.Item as Document;
+            var pattern = args.Item as PatternInfo;
             var content = args.ItemContainer.ContentTemplateRoot as ChatBackgroundRenderer;
 
-            var background = ViewModel.GetPattern(document);
+            var background = ViewModel.GetPattern(pattern?.Document);
 
             content.UpdateSource(ViewModel.ClientService, background, true);
         }
@@ -286,6 +268,17 @@ namespace Telegram.Views
         private void Play_Click(object sender, RoutedEventArgs e)
         {
             Preview.Next();
+        }
+
+        private void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            Hide(ContentDialogResult.Secondary);
+        }
+
+        private void Done_Click(object sender, RoutedEventArgs e)
+        {
+            Hide(ContentDialogResult.Primary);
+            ViewModel.Done();
         }
     }
 }

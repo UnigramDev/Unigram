@@ -201,9 +201,9 @@ namespace Telegram.Common
             {
                 return 1;
             }
-            else if (chatList is ChatListFilter filter)
+            else if (chatList is ChatListFolder folder)
             {
-                return filter.ChatFilterId;
+                return folder.ChatFolderId;
             }
 
             return -1;
@@ -396,9 +396,9 @@ namespace Telegram.Common
             {
                 return true;
             }
-            else if (x is ChatListFilter filterX && y is ChatListFilter filterY)
+            else if (x is ChatListFolder folderX && y is ChatListFolder folderY)
             {
-                return filterX.ChatFilterId == filterY.ChatFilterId;
+                return folderX.ChatFolderId == folderY.ChatFolderId;
             }
 
             return false;
@@ -1186,6 +1186,7 @@ namespace Telegram.Common
                 case MessageChatDeletePhoto:
                 case MessageChatJoinByLink:
                 case MessageChatJoinByRequest:
+                case MessageChatSetBackground:
                 case MessageChatSetMessageAutoDeleteTime:
                 case MessageChatShared:
                 case MessageChatUpgradeFrom:
@@ -1407,6 +1408,16 @@ namespace Telegram.Common
             }
 
             return false;
+        }
+
+        public static bool AreTheSame(this GroupCallParticipant sender, GroupCallParticipant compare)
+        {
+            if (sender.IsCurrentUser && compare.IsCurrentUser)
+            {
+                return true;
+            }
+
+            return sender.ParticipantId.AreTheSame(compare.ParticipantId);
         }
 
         public static bool IsUser(this MessageSender sender, long userId)

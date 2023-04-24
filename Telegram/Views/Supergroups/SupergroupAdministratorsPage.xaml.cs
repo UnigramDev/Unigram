@@ -74,7 +74,7 @@ namespace Telegram.Views.Supergroups
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
+            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
             {
                 content.UpdateSupergroupMember(ViewModel.ClientService, args, OnContainerContentChanging);
             }

@@ -61,7 +61,7 @@ namespace Telegram.Services
 
         ReactionType DefaultReaction { get; }
 
-        IList<ChatFilterInfo> ChatFilters { get; }
+        IList<ChatFolderInfo> ChatFolders { get; }
         int MainChatListPosition { get; }
 
         IList<string> AnimationSearchEmojis { get; }
@@ -219,7 +219,7 @@ namespace Telegram.Services
 
         private ReactionType _defaultReaction;
 
-        private IList<ChatFilterInfo> _chatFilters = new ChatFilterInfo[0];
+        private IList<ChatFolderInfo> _chatFolders = new ChatFolderInfo[0];
         private int _mainChatListPosition = 0;
 
         private IList<string> _reactions = new List<string>();
@@ -433,6 +433,7 @@ namespace Telegram.Services
                 _client.Send(new SetOption("online", new OptionValueBoolean(false)));
                 _client.Send(new SetOption("use_pfs", new OptionValueBoolean(true)));
                 _client.Send(new SetOption("notification_group_count_max", new OptionValueInteger(25)));
+                _client.Send(new SetOption("storage_max_time_from_last_access", new OptionValueInteger(SettingsService.Current.Diagnostics.StorageMaxTimeFromLastAccess)));
                 _client.Send(new SetTdlibParameters
                 {
                     DatabaseDirectory = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}"),
@@ -446,6 +447,7 @@ namespace Telegram.Services
                     SystemLanguageCode = _deviceInfoService.SystemLanguageCode,
                     DeviceModel = deviceModel,
                     UseTestDc = _settings.UseTestDC,
+                    EnableStorageOptimizer = SettingsService.Current.Diagnostics.UseStorageOptimizer
                 });
                 _client.Send(new GetApplicationConfig(), UpdateConfig);
             });
@@ -522,71 +524,14 @@ namespace Telegram.Services
             }
         }
 
-        private async void UpdateVersion()
+        private void UpdateVersion()
         {
-            if (_settings.Version is < SettingsService.CurrentVersion and > 0)
-            {
-                var response = await SendAsync(new CreatePrivateChat(777000, false));
-                if (response is Chat chat)
-                {
-                    ulong major = (SettingsService.CurrentVersion & 0xFFFF000000000000L) >> 48;
-                    ulong minor = (SettingsService.CurrentVersion & 0x0000FFFF00000000L) >> 32;
-
-                    var title = $"**What's new in Unigram {major}.{minor}:**";
-                    var message = title + Environment.NewLine + SettingsService.CurrentChangelog;
-
-                    var entities = Client.Execute(new GetTextEntities(message)) as TextEntities;
-                    var formattedText = new FormattedText(message, entities.Entities);
-                    formattedText = Client.Execute(new ParseMarkdown(formattedText)) as FormattedText;
-
-                    foreach (var entity in formattedText.Entities)
-                    {
-                        if (entity.Type is TextEntityTypeTextUrl or TextEntityTypeUrl)
-                        {
-                            await SendAsync(new GetWebPagePreview(formattedText));
-                            break;
-                        }
-                    }
-
-                    Send(new AddLocalMessage(chat.Id, new MessageSenderUser(777000), 0, false, new InputMessageText(formattedText, true, false)));
-                }
-            }
-
-            if (_settings.SystemVersion < 17763)
-            {
-                string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
-                ulong version = ulong.Parse(deviceFamilyVersion);
-                ulong build = (version & 0x00000000FFFF0000L) >> 16;
-
-                if (build < 17763)
-                {
-                    var response = await SendAsync(new CreatePrivateChat(777000, false));
-                    if (response is Chat chat)
-                    {
-                        var message = @"It seems that you're using an old version of Windows.
-Future Unigram releases will require Windows 10 October 2018 update to work properly.
-Read more about how to update your device [here](https://support.microsoft.com/help/4028685).";
-
-                        var formattedText = Client.Execute(new ParseMarkdown(new FormattedText(message, new TextEntity[0]))) as FormattedText;
-                        Send(new AddLocalMessage(chat.Id, new MessageSenderUser(777000), 0, false, new InputMessageText(formattedText, true, false)));
-                    }
-                }
-            }
+            ulong major = (_settings.Version & 0xFFFF000000000000L) >> 48;
+            ulong minor = (_settings.Version & 0x0000FFFF00000000L) >> 32;
+            ulong revision = (_settings.Version & 0x00000000FFFF0000L) >> 16;
 
             _settings.UpdateVersion();
-        }
-
-        private async void UpdateLanguagePackStrings(UpdateLanguagePackStrings update)
-        {
-            var response = await SendAsync(new CreatePrivateChat(777000, false));
-            if (response is Chat chat)
-            {
-                var title = $"New language pack strings for {update.LocalizationTarget}:";
-                var message = title + Environment.NewLine + string.Join(Environment.NewLine, update.Strings);
-                var formattedText = new FormattedText(message, new[] { new TextEntity { Offset = 0, Length = title.Length, Type = new TextEntityTypeBold() } });
-
-                Send(new AddLocalMessage(chat.Id, new MessageSenderUser(777000), 0, false, new InputMessageText(formattedText, true, false)));
-            }
+            Send(new AddApplicationChangelog($"{major}.{minor}.{revision}"));
         }
 
         public void CleanUp()
@@ -625,7 +570,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             _installedMaskSets = null;
             _installedEmojiSets = null;
 
-            _chatFilters = new ChatFilterInfo[0];
+            _chatFolders = new ChatFolderInfo[0];
 
             _animationSearchParameters = null;
 
@@ -873,9 +818,9 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             {
                 return 1;
             }
-            else if (chatList is ChatListFilter filter)
+            else if (chatList is ChatListFolder folder)
             {
-                return filter.ChatFilterId;
+                return folder.ChatFolderId;
             }
 
             return -1;
@@ -907,7 +852,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
 
         public ReactionType DefaultReaction => _defaultReaction;
 
-        public IList<ChatFilterInfo> ChatFilters => _chatFilters;
+        public IList<ChatFolderInfo> ChatFolders => _chatFolders;
 
         public int MainChatListPosition => _mainChatListPosition;
 
@@ -1628,6 +1573,13 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     value.AvailableReactions = chatAvailableReactions.AvailableReactions;
                 }
             }
+            else if (update is UpdateChatBackground chatBackground)
+            {
+                if (_chats.TryGetValue(chatBackground.ChatId, out Chat value))
+                {
+                    value.Background = chatBackground.Background;
+                }
+            }
             else if (update is UpdateChatHasProtectedContent updateChatHasProtectedContent)
             {
                 if (_chats.TryGetValue(updateChatHasProtectedContent.ChatId, out Chat value))
@@ -1661,10 +1613,10 @@ Read more about how to update your device [here](https://support.microsoft.com/h
                     Monitor.Exit(value);
                 }
             }
-            else if (update is UpdateChatFilters updateChatFilters)
+            else if (update is UpdateChatFolders updateChatFolders)
             {
-                _chatFilters = updateChatFilters.ChatFilters.ToList();
-                _mainChatListPosition = updateChatFilters.MainChatListPosition;
+                _chatFolders = updateChatFolders.ChatFolders.ToList();
+                _mainChatListPosition = updateChatFolders.MainChatListPosition;
             }
             else if (update is UpdateChatHasScheduledMessages updateChatHasScheduledMessages)
             {
@@ -1886,10 +1838,6 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             else if (update is UpdateLanguagePackStrings updateLanguagePackStrings)
             {
                 _locale.Handle(updateLanguagePackStrings);
-
-#if DEBUG
-                UpdateLanguagePackStrings(updateLanguagePackStrings);
-#endif
             }
             else if (update is UpdateMessageContent updateMessageContent)
             {
@@ -2146,7 +2094,7 @@ Read more about how to update your device [here](https://support.microsoft.com/h
             return false;
         }
 
-        public static bool TypeEquals(this Error error, ErrorType type)
+        public static bool MessageEquals(this Error error, ErrorType type)
         {
             if (error == null || error.Message == null)
             {

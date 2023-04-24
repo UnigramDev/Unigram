@@ -999,6 +999,9 @@ namespace Telegram.ViewModels
                 Function func;
                 if (_topic != null)
                 {
+                    // TODO: Workaround, should be removed some day
+                    await ClientService.SendAsync(new GetMessage(chat.Id, _topic.Info.MessageThreadId));
+
                     func = new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, maxId, -25, 50);
                 }
                 else if (_threadId != 0)
@@ -1575,10 +1578,10 @@ namespace Telegram.ViewModels
                 AccessToken = accessToken;
             }
 
-            if (state.TryGet("search", out bool search))
+            if (state.TryGet("search", out string search))
             {
                 state.Remove("search");
-                SearchExecute();
+                SearchExecute(search);
             }
 
 #pragma warning disable CS4014
@@ -2294,7 +2297,7 @@ namespace Telegram.ViewModels
                     }
                     else if (response is Error error)
                     {
-                        if (error.TypeEquals(ErrorType.MESSAGE_NOT_MODIFIED))
+                        if (error.MessageEquals(ErrorType.MESSAGE_NOT_MODIFIED))
                         {
                             ShowDraftMessage(chat);
                         }
@@ -2837,7 +2840,7 @@ namespace Telegram.ViewModels
                     message = string.Format(Strings.AddMembersAlertNamesText, names, chat.Title);
                 }
                 else
-                { 
+                {
                     message = Locale.Declension(Strings.R.AddManyMembersAlertNamesText, selected.Count, chat.Title);
                 }
 
@@ -2933,11 +2936,11 @@ namespace Telegram.ViewModels
 
         #region Search
 
-        public void SearchExecute()
+        public void SearchExecute(string query)
         {
             if (Search == null)
             {
-                Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this);
+                Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this, query);
             }
             else
             {
@@ -3145,21 +3148,9 @@ namespace Telegram.ViewModels
 
         #region Set theme
 
-        public async void ChangeTheme()
+        public void ChangeTheme()
         {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var dialog = new ChatThemePopup(ClientService, chat.ThemeName);
-
-            var confirm = await ShowPopupAsync(dialog);
-            if (confirm == ContentDialogResult.Primary)
-            {
-                ClientService.Send(new SetChatTheme(chat.Id, dialog.ThemeName));
-            }
+            Delegate?.ChangeTheme();
         }
 
         #endregion
@@ -3231,7 +3222,11 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                if (ClientService.IsRepliesChat(chat))
+                if (user.Type is UserTypeDeleted)
+                {
+                    DeleteChat();
+                }
+                else if (ClientService.IsRepliesChat(chat))
                 {
                     ToggleMute();
                 }

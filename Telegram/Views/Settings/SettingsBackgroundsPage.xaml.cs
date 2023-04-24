@@ -12,7 +12,6 @@ using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Settings
 {
@@ -64,25 +63,21 @@ namespace Telegram.Views.Settings
                 return;
             }
 
-            var wallpaper = args.Item as Background;
+            var background = args.Item as Background;
             var root = args.ItemContainer.ContentTemplateRoot as Grid;
 
             var preview = root.Children[0] as ChatBackgroundRenderer;
             var check = root.Children[1];
 
-            preview.UpdateSource(ViewModel.ClientService, wallpaper, true);
-            check.Visibility = wallpaper == ViewModel.SelectedItem ? Visibility.Visible : Visibility.Collapsed;
+            preview.UpdateSource(ViewModel.ClientService, background, true);
+            check.Visibility = background == ViewModel.SelectedItem ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private async void List_ItemClick(object sender, ItemClickEventArgs e)
+        private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is Background wallpaper)
+            if (e.ClickedItem is Background background)
             {
-                var confirm = await ViewModel.ShowPopupAsync(new BackgroundPopup(wallpaper));
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    await ViewModel.NavigatedToAsync(null, NavigationMode.Refresh, null);
-                }
+                ViewModel.Change(background);
             }
         }
     }

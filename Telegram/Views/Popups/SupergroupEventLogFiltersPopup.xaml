@@ -562,7 +562,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:UserCell Padding="0,6" />
+                    <cells:ProfileCell Padding="0,6" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

@@ -32,17 +32,22 @@ namespace winrt::Telegram::Native::Calls::implementation
 			m_networkStateUpdated(*this, *args);
 		};
 		impl.audioLevelsUpdated = [this](tgcalls::GroupLevelsUpdate const& levels) {
-			auto args = winrt::single_threaded_map<int32_t, IKeyValuePair<float, bool>>(/*std::move(levels)*/);
+			auto args = winrt::single_threaded_vector<winrt::Telegram::Native::Calls::VoipGroupParticipant>(/*std::move(levels)*/);
 
 			for (const tgcalls::GroupLevelUpdate& x : levels.updates) {
-				args.Insert(x.ssrc, winrt::make<winrt::impl::key_value_pair<IKeyValuePair<float, bool>>>(x.value.level, x.value.voice));
+				args.Append(winrt::Telegram::Native::Calls::VoipGroupParticipant {
+					.AudioSource = static_cast<int32_t>(x.ssrc),
+					.Level = x.value.level,
+					.IsSpeaking = x.value.voice,
+					.IsMuted = x.value.isMuted
+				});
 			}
 
-			m_audioLevelsUpdated(*this, args.GetView());
+			m_audioLevelsUpdated(*this, args);
 		};
 		impl.initialInputDeviceId = string_to_unmanaged(descriptor.AudioInputId());
 		impl.initialOutputDeviceId = string_to_unmanaged(descriptor.AudioOutputId());
-		impl.initialEnableNoiseSuppression = descriptor.IsNoiseSuppressionEnabled();
+		impl.initialEnableNoiseSuppression = m_isNoiseSuppressionEnabled = descriptor.IsNoiseSuppressionEnabled();
 		impl.videoContentType = (tgcalls::VideoContentType)descriptor.VideoContentType();
 
 		if (auto videoCapture = descriptor.VideoCapture()) {
@@ -288,7 +293,7 @@ namespace winrt::Telegram::Native::Calls::implementation
 
 	winrt::event_token VoipGroupManager::AudioLevelsUpdated(Windows::Foundation::TypedEventHandler<
 		winrt::Telegram::Native::Calls::VoipGroupManager,
-		IMapView<int32_t, IKeyValuePair<float, bool>>> const& value)
+		IVector<winrt::Telegram::Native::Calls::VoipGroupParticipant>> const& value)
 	{
 		return m_audioLevelsUpdated.add(value);
 	}

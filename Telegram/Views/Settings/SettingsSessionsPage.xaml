@@ -35,13 +35,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="ListViewHeaderItem">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition MaxWidth="1000" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <ContentPresenter />
-                                        </Grid>
+                                        <ContentPresenter MaxWidth="1000" />
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
@@ -66,27 +60,29 @@
                 </GroupStyle>
             </ListView.GroupStyle>
             <ListView.Header>
-                <Grid Margin="0,64,0,16">
-                    <controls:HeaderedControl Header="{CustomResource CurrentSession}"
-                                              Footer="{CustomResource ClearOtherSessionsHelp}">
-                        <Button Click="{x:Bind ViewModel.TerminateCurrent}"
-                                Style="{StaticResource EmptyButtonStyle}">
-                            <cells:SessionCell Session="{x:Bind ViewModel.Current, Mode=OneWay}"
-                                               Background="Transparent" />
-                        </Button>
+                <controls:SettingsPanel>
+                    <Grid>
+                        <controls:HeaderedControl Header="{CustomResource CurrentSession}"
+                                                  Footer="{CustomResource ClearOtherSessionsHelp}">
+                            <Button Click="{x:Bind ViewModel.TerminateCurrent}"
+                                    Style="{StaticResource EmptyButtonStyle}">
+                                <cells:SessionCell Session="{x:Bind ViewModel.Current, Mode=OneWay}"
+                                                   Background="Transparent" />
+                            </Button>
 
-                        <controls:BadgeButton Content="{CustomResource TerminateAllSessions}"
-                                              Click="{x:Bind ViewModel.TerminateOthers}"
-                                              Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Foreground="{ThemeResource DangerButtonBackground}"
-                                              Glyph="&#xE98B;" />
-                    </controls:HeaderedControl>
-                    <HyperlinkButton Content="{CustomResource Rename}"
-                                     Click="{x:Bind ViewModel.Rename}"
-                                     VerticalAlignment="Top"
-                                     HorizontalAlignment="Right"
-                                     Margin="12,10" />
-                </Grid>
+                            <controls:BadgeButton Content="{CustomResource TerminateAllSessions}"
+                                                  Click="{x:Bind ViewModel.TerminateOthers}"
+                                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                                  Foreground="{ThemeResource DangerButtonBackground}"
+                                                  Glyph="&#xE98B;" />
+                        </controls:HeaderedControl>
+                        <HyperlinkButton Content="{CustomResource Rename}"
+                                         Click="{x:Bind ViewModel.Rename}"
+                                         VerticalAlignment="Top"
+                                         HorizontalAlignment="Right"
+                                         Margin="12,10" />
+                    </Grid>
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -94,7 +90,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <StackPanel Margin="0,0,0,32">
+                <controls:SettingsPanel IsFooter="True">
                     <TextBlock Text="{CustomResource SessionsListInfo}"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
                                Margin="24,8,24,8" />
@@ -108,7 +104,7 @@
                             </controls:BadgeButton.Badge>
                         </controls:BadgeButton>
                     </controls:HeaderedControl>
-                </StackPanel>
+                </controls:SettingsPanel>
             </ListView.Footer>
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>

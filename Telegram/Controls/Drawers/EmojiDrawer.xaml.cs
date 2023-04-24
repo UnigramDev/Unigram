@@ -13,12 +13,14 @@ using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using StickerSetViewModel = Telegram.ViewModels.Drawers.StickerSetViewModel;
 
@@ -47,6 +49,7 @@ namespace Telegram.Controls.Drawers
         public EmojiDrawerViewModel ViewModel => DataContext as EmojiDrawerViewModel;
 
         public event ItemClickEventHandler ItemClick;
+        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> ItemContextRequested;
 
         private bool _needUpdate;
 
@@ -560,6 +563,7 @@ namespace Telegram.Controls.Drawers
                     // needs to be created.
                     var item = new GridViewItem { ContentTemplate = Resources[typeName] as DataTemplate, Tag = typeName };
                     item.Style = List.ItemContainerStyle;
+                    item.ContextRequested += OnContextRequested;
                     args.ItemContainer = item;
                 }
             }
@@ -820,6 +824,17 @@ namespace Telegram.Controls.Drawers
                 video.Source = new LocalVideoSource(file);
                 _toolbarHandler.ThrottleVisibleItems();
             }
+        }
+
+        private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var sticker = List.ItemFromContainer(sender) as StickerViewModel;
+            if (sticker == null)
+            {
+                return;
+            }
+
+            ItemContextRequested?.Invoke(sender, new ItemContextRequestedEventArgs<Sticker>(sticker, args));
         }
     }
 }

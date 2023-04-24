@@ -213,11 +213,7 @@ namespace Telegram.ViewModels
 
                 NavigationService.NavigateToInstant(webPage.Url);
             }
-            else if (MessageHelper.TryCreateUri(webPage.Url, out Uri uri) &&
-                    (string.Equals(webPage.Type, "telegram_megagroup", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(webPage.Type, "telegram_channel", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(webPage.Type, "telegram_message", StringComparison.OrdinalIgnoreCase) ||
-                     string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase)))
+            else if (MessageHelper.TryCreateUri(webPage.Url, out Uri uri))
             {
                 MessageHelper.OpenTelegramUrl(ClientService, NavigationService, uri);
             }
@@ -397,8 +393,7 @@ namespace Telegram.ViewModels
 
         public void OpenHashtag(string hashtag)
         {
-            var search = Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this);
-            search.Search(hashtag, null, null);
+            Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this, hashtag);
         }
 
         public async void OpenUrl(string url, bool untrust)

@@ -11,6 +11,14 @@
                   Title="{x:Bind ViewModel.Title}"
                   IsNavigationRoot="True">
 
+    <Page.Transitions>
+        <TransitionCollection>
+            <NavigationThemeTransition>
+                <SlideNavigationTransitionInfo Effect="FromRight" />
+            </NavigationThemeTransition>
+        </TransitionCollection>
+    </Page.Transitions>
+
     <Page.Resources>
         <DataTemplate x:Key="AnimatedItemTemplate">
             <Grid Padding="12,6"

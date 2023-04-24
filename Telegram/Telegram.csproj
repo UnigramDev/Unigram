@@ -155,6 +155,7 @@
     <Compile Include="Assets\Icons\StickerToEmoji.cs" />
     <Compile Include="Assets\Icons\StickerToGif.cs" />
     <Compile Include="Assets\Icons\Sun.cs" />
+    <Compile Include="Assets\Icons\TeachingTipLinkCopied.cs" />
     <Compile Include="Assets\Icons\Unlock.cs" />
     <Compile Include="Assets\Icons\Username.cs" />
     <Compile Include="Assets\Icons\Profile.cs" />
@@ -278,11 +279,20 @@
     <Compile Include="Controls\Cells\ChartCell.xaml.cs">
       <DependentUpon>ChartCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Cells\ChatFolderCell.xaml.cs">
+      <DependentUpon>ChatFolderCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\ForumTopicCell.xaml.cs">
       <DependentUpon>ForumTopicCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\ChatCell.xaml.cs">
       <DependentUpon>ChatCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\ProfileCell.xaml.cs">
+      <DependentUpon>ProfileCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\ProxyCell.xaml.cs">
+      <DependentUpon>ProxyCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\UsernameInfoCell.xaml.cs">
       <DependentUpon>UsernameInfoCell.xaml</DependentUpon>
@@ -298,9 +308,6 @@
     </Compile>
     <Compile Include="Controls\Cells\FileDownloadCell.xaml.cs">
       <DependentUpon>FileDownloadCell.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Cells\ChatFilterCell.xaml.cs">
-      <DependentUpon>ChatFilterCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\GroupCallParticipantGridCell.xaml.cs">
       <DependentUpon>GroupCallParticipantGridCell.xaml</DependentUpon>
@@ -325,9 +332,6 @@
     </Compile>
     <Compile Include="Controls\Cells\SharedVoiceCell.xaml.cs">
       <DependentUpon>SharedVoiceCell.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Cells\UserCell.xaml.cs">
-      <DependentUpon>UserCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\WebSessionCell.xaml.cs">
       <DependentUpon>WebSessionCell.xaml</DependentUpon>
@@ -357,6 +361,9 @@
     <Compile Include="Controls\Chats\ChatSendButton.cs" />
     <Compile Include="Controls\Chats\ChatStickerButton.cs" />
     <Compile Include="Controls\Chats\ChatTextBox.cs" />
+    <Compile Include="Controls\Chats\ChatThemeDrawer.xaml.cs">
+      <DependentUpon>ChatThemeDrawer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ColorPicker.cs" />
     <Compile Include="Controls\ColorSlider.cs" />
     <Compile Include="Controls\ColorTextBox.cs" />
@@ -555,9 +562,6 @@
       <DependentUpon>ProfileHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ProfilePicture.cs" />
-    <Compile Include="Controls\ProxyStatusControl.xaml.cs">
-      <DependentUpon>ProxyStatusControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\LottieView.cs" />
     <Compile Include="Controls\QrCode.cs" />
     <Compile Include="Controls\RecentUserHeads.cs" />
@@ -621,6 +625,9 @@
     <Compile Include="ViewModels\Authorization\AuthorizationRecoveryViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationRegistrationViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationViewModel.cs" />
+    <Compile Include="ViewModels\Folders\RemoveFolderViewModel.cs" />
+    <Compile Include="ViewModels\Folders\AddFolderViewModel.cs" />
+    <Compile Include="ViewModels\Folders\ShareFolderViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
     <Compile Include="ViewModels\TopicListViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
@@ -712,6 +719,16 @@
     <Compile Include="Views\Chats\MessageStatisticsPage.xaml.cs">
       <DependentUpon>MessageStatisticsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\SelectedItemsBinder.cs" />
+    <Compile Include="Views\Folders\Popups\RemoveFolderPopup.xaml.cs">
+      <DependentUpon>RemoveFolderPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Folders\Popups\AddFolderPopup.xaml.cs">
+      <DependentUpon>AddFolderPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Folders\Popups\ShareFolderPopup.xaml.cs">
+      <DependentUpon>ShareFolderPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Payments\PaymentAddressPopup.xaml.cs">
       <DependentUpon>PaymentAddressPopup.xaml</DependentUpon>
     </Compile>
@@ -729,6 +746,9 @@
     </Compile>
     <Compile Include="Views\Popups\ChatJoinRequestsPopup.xaml.cs">
       <DependentUpon>ChatJoinRequestsPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ChooseStatusDurationPopup.xaml.cs">
+      <DependentUpon>ChooseStatusDurationPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ChatTtlPopup.xaml.cs">
       <DependentUpon>ChatTtlPopup.xaml</DependentUpon>
@@ -763,8 +783,8 @@
     <Compile Include="Views\Popups\ScheduleVideoChatPopup.xaml.cs">
       <DependentUpon>ScheduleVideoChatPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\ChatThemePopup.xaml.cs">
-      <DependentUpon>ChatThemePopup.xaml</DependentUpon>
+    <Compile Include="Views\Popups\BackgroundsPopup.xaml.cs">
+      <DependentUpon>BackgroundsPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\StickersPopup.xaml.cs">
       <DependentUpon>StickersPopup.xaml</DependentUpon>
@@ -835,7 +855,6 @@
     <Compile Include="Services\Settings\AutoDownloadSettings.cs" />
     <Compile Include="Services\Settings\DiagnosticsSettings.cs" />
     <Compile Include="Services\Settings\EmojiSettings.cs" />
-    <Compile Include="Services\Settings\FiltersSettings.cs" />
     <Compile Include="Services\Settings\NotificationsSettings.cs" />
     <Compile Include="Services\OptionsService.cs" />
     <Compile Include="Services\Settings\PasscodeLockSettings.cs" />
@@ -859,7 +878,7 @@
     <Compile Include="Navigation\Services\NavigationState.cs" />
     <Compile Include="Services\Updates\UpdateAppVersion.cs" />
     <Compile Include="Services\Updates\UpdateCallDialog.cs" />
-    <Compile Include="Services\Updates\UpdateChatFiltersLayout.cs" />
+    <Compile Include="Services\Updates\UpdateChatFoldersLayout.cs" />
     <Compile Include="Services\Updates\UpdateConfetti.cs" />
     <Compile Include="Services\Updates\UpdatePasscodeLock.cs" />
     <Compile Include="Services\Updates\UpdateWindowActivated.cs" />
@@ -1433,6 +1452,7 @@
     <Content Include="Assets\Animations\AuthorizationStateWaitFragment.tgs" />
     <Content Include="Assets\Animations\AutoDelete.tgs" />
     <Content Include="Assets\Animations\Premium.tgs" />
+    <Content Include="Assets\Animations\ShareFolder.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -1648,11 +1668,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Cells\ChatFolderCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Cells\ForumTopicCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Cells\ChatCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\ProfileCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\ProxyCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1673,10 +1705,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\FileDownloadCell.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Cells\ChatFilterCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1712,10 +1740,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Cells\UserCell.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\Cells\WebSessionCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1733,6 +1757,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Chats\ChatSearchBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Chats\ChatThemeDrawer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1912,10 +1940,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ProxyStatusControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\StartupSwitch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2040,6 +2064,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Folders\Popups\RemoveFolderPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Folders\Popups\AddFolderPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Folders\Popups\ShareFolderPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Payments\PaymentAddressPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2061,6 +2097,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\ChatJoinRequestsPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ChooseStatusDurationPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2108,9 +2148,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\ChatThemePopup.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Views\Popups\BackgroundsPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\StickersPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2628,7 +2668,7 @@
       <Version>4.5.0</Version>
     </PackageReference>
     <PackageReference Include="Telegram.Td.UWP">
-      <Version>1.8.13</Version>
+      <Version>1.8.14</Version>
     </PackageReference>
     <PackageReference Include="Win2D.uwp">
       <Version>1.26.0</Version>

@@ -30,10 +30,10 @@
                       Grid.Row="1">
             <controls:SettingsPanel>
                 <controls:HeaderedControl>
-                    <cells:UserCell x:Name="Cell"
-                                    Background="{ThemeResource SettingsItemBackground}"
-                                    Click="{x:Bind ViewModel.OpenProfile}"
-                                    Padding="12,8" />
+                    <cells:ProfileCell x:Name="Cell"
+                                       Background="{ThemeResource SettingsItemBackground}"
+                                       Click="{x:Bind ViewModel.OpenProfile}"
+                                       Padding="12,8" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="PermissionsPanel"
@@ -44,7 +44,8 @@
 
                     <controls:SettingsExpander>
                         <controls:SettingsExpander.Header>
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanSendMediaMessages, Mode=TwoWay}"
+                            <CheckBox x:Name="CanSendMediaMessages"
+                                      IsChecked="{x:Bind ViewModel.CanSendMediaMessages, Mode=TwoWay}"
                                       Style="{StaticResource SettingsCheckBoxStyle}"
                                       Background="Transparent"
                                       CornerRadius="0">
@@ -57,63 +58,72 @@
 
                         </controls:SettingsExpander.Header>
                         <StackPanel>
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanSendPhotos, Mode=TwoWay}"
+                            <CheckBox x:Name="CanSendPhotos"
+                                      IsChecked="{x:Bind ViewModel.CanSendPhotos, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsSendPhotos}"
                                       Style="{StaticResource SettingsCheckBoxStyle}"
                                       Background="Transparent"
                                       BorderThickness="0,0,0,1"
                                       CornerRadius="0" />
 
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanSendVideos, Mode=TwoWay}"
+                            <CheckBox x:Name="CanSendVideos"
+                                      IsChecked="{x:Bind ViewModel.CanSendVideos, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsSendVideos}"
                                       Style="{StaticResource SettingsCheckBoxStyle}"
                                       Background="Transparent"
                                       BorderThickness="0,0,0,1"
                                       CornerRadius="0" />
 
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanSendOtherMessages, Mode=TwoWay}"
+                            <CheckBox x:Name="CanSendOtherMessages"
+                                      IsChecked="{x:Bind ViewModel.CanSendOtherMessages, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsSendStickers}"
                                       Style="{StaticResource SettingsCheckBoxStyle}"
                                       Background="Transparent"
                                       BorderThickness="0,0,0,1"
                                       CornerRadius="0" />
 
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanSendAudios, Mode=TwoWay}"
+                            <CheckBox x:Name="CanSendAudios"
+                                      IsChecked="{x:Bind ViewModel.CanSendAudios, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsSendMusic}"
                                       Style="{StaticResource SettingsCheckBoxStyle}"
                                       Background="Transparent"
                                       BorderThickness="0,0,0,1"
                                       CornerRadius="0" />
 
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanSendDocuments, Mode=TwoWay}"
+                            <CheckBox x:Name="CanSendDocuments"
+                                      IsChecked="{x:Bind ViewModel.CanSendDocuments, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsSendFiles}"
                                       Style="{StaticResource SettingsCheckBoxStyle}"
                                       Background="Transparent"
                                       BorderThickness="0,0,0,1"
                                       CornerRadius="0" />
 
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanSendVoiceNotes, Mode=TwoWay}"
+                            <CheckBox x:Name="CanSendVoiceNotes"
+                                      IsChecked="{x:Bind ViewModel.CanSendVoiceNotes, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsSendVoices}"
                                       Style="{StaticResource SettingsCheckBoxStyle}"
                                       Background="Transparent"
                                       BorderThickness="0,0,0,1"
                                       CornerRadius="0" />
 
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanSendVideoNotes, Mode=TwoWay}"
+                            <CheckBox x:Name="CanSendVideoNotes"
+                                      IsChecked="{x:Bind ViewModel.CanSendVideoNotes, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsSendRound}"
                                       Style="{StaticResource SettingsCheckBoxStyle}"
                                       Background="Transparent"
                                       BorderThickness="0,0,0,1"
                                       CornerRadius="0" />
 
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanSendPolls, Mode=TwoWay}"
+                            <CheckBox x:Name="CanSendPolls"
+                                      IsChecked="{x:Bind ViewModel.CanSendPolls, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsSendPolls}"
                                       Style="{StaticResource SettingsCheckBoxStyle}"
                                       Background="Transparent"
                                       BorderThickness="0,0,0,1"
                                       CornerRadius="0" />
 
-                            <CheckBox IsChecked="{x:Bind ViewModel.CanAddWebPagePreviews, Mode=TwoWay}"
+                            <CheckBox x:Name="CanAddWebPagePreviews"
+                                      IsChecked="{x:Bind ViewModel.CanAddWebPagePreviews, Mode=TwoWay}"
                                       Content="{CustomResource UserRestrictionsEmbedLinks}"
                                       Style="{StaticResource SettingsCheckBoxStyle}"
                                       Background="Transparent"
@@ -121,16 +131,17 @@
                         </StackPanel>
                     </controls:SettingsExpander>
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
+                    <CheckBox x:Name="CanInviteUsers"
+                              IsChecked="{x:Bind ViewModel.CanInviteUsers, Mode=TwoWay}"
                               Content="{CustomResource UserRestrictionsInviteUsers}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox x:Name="PinMessages"
+                    <CheckBox x:Name="CanPinMessages"
                               IsChecked="{x:Bind ViewModel.CanPinMessages, Mode=TwoWay}"
                               Content="{CustomResource UserRestrictionsPinMessages}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox x:Name="ChangeInfo"
+                    <CheckBox x:Name="CanChangeInfo"
                               IsChecked="{x:Bind ViewModel.CanChangeInfo, Mode=TwoWay}"
                               Content="{CustomResource UserRestrictionsChangeInfo}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

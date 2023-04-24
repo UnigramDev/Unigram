@@ -39,7 +39,7 @@
                                     <microsoft:ItemsRepeater.ItemTemplate>
                                         <DataTemplate>
                                             <Button Style="{StaticResource EmptyButtonStyle}">
-                                                <cells:UserCell />
+                                                <cells:ProfileCell />
                                             </Button>
                                         </DataTemplate>
 

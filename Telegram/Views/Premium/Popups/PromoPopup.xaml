@@ -20,10 +20,6 @@
                   Padding="12,0">
             <ListView.Header>
                 <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition MaxWidth="1000" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />

@@ -60,8 +60,10 @@ namespace Telegram.ViewModels.Settings
             }
             set
             {
-                ClientService.Options.StorageMaxTimeFromLastAccess = value * 60 * 60 * 24;
-                ClientService.Options.UseStorageOptimizer = value > 0;
+                ClientService.Options.StorageMaxTimeFromLastAccess =
+                    Settings.Diagnostics.StorageMaxTimeFromLastAccess = value * 60 * 60 * 24;
+                ClientService.Options.UseStorageOptimizer =
+                    Settings.Diagnostics.UseStorageOptimizer = value > 0;
 
                 RaisePropertyChanged();
             }

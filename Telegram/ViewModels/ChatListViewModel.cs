@@ -321,12 +321,12 @@ namespace Telegram.ViewModels
         public async void DeleteChat(Chat chat)
         {
             var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
-            var dialog = new DeleteChatPopup(ClientService, updated, Items.ChatList, false);
+            var popup = new DeleteChatPopup(ClientService, updated, Items.ChatList, false);
 
-            var confirm = await ShowPopupAsync(dialog);
+            var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
-                var check = dialog.IsChecked == true;
+                var check = popup.IsChecked == true;
 
                 _deletedChats[chat.Id] = true;
                 Items.Handle(chat.Id, 0);
@@ -349,25 +349,26 @@ namespace Telegram.ViewModels
                         return;
                     }
 
-                    if (delete.Type is ChatTypeSecret secret)
-                    {
-                        await ClientService.SendAsync(new CloseSecretChat(secret.SecretChatId));
-                    }
-                    else if (delete.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
+                    if (delete.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
                     {
                         await ClientService.SendAsync(new LeaveChat(delete.Id));
                     }
 
                     var user = ClientService.GetUser(delete);
-                    if (user != null && user.Type is UserTypeRegular)
+                    if (user?.Type is UserTypeRegular)
                     {
-                        ClientService.Send(new DeleteChatHistory(delete.Id, true, check));
+                        await ClientService.SendAsync(new DeleteChatHistory(delete.Id, true, check));
+
+                        if (delete.Type is ChatTypeSecret secret)
+                        {
+                            ClientService.Send(new CloseSecretChat(secret.SecretChatId));
+                        }
                     }
                     else
                     {
-                        if (delete.Type is ChatTypePrivate privata && check)
+                        if (user?.Type is UserTypeBot && check)
                         {
-                            await ClientService.SendAsync(new ToggleMessageSenderIsBlocked(new MessageSenderUser(privata.UserId), true));
+                            await ClientService.SendAsync(new ToggleMessageSenderIsBlocked(new MessageSenderUser(user.Id), true));
                         }
 
                         ClientService.Send(new DeleteChatHistory(delete.Id, true, false));
@@ -542,62 +543,62 @@ namespace Telegram.ViewModels
 
         #region Folder add
 
-        public async void AddToFolder((int ChatFilterId, Chat Chat) data)
+        public async void AddToFolder((int ChatFolderId, Chat Chat) data)
         {
-            var filter = await ClientService.SendAsync(new GetChatFilter(data.ChatFilterId)) as ChatFilter;
-            if (filter == null)
+            var folder = await ClientService.SendAsync(new GetChatFolder(data.ChatFolderId)) as ChatFolder;
+            if (folder == null)
             {
                 return;
             }
 
-            var total = filter.IncludedChatIds.Count + filter.PinnedChatIds.Count + 1;
+            var total = folder.IncludedChatIds.Count + folder.PinnedChatIds.Count + 1;
             if (total > 99)
             {
                 await ShowPopupAsync(Strings.FilterAddToAlertFullText, Strings.FilterAddToAlertFullTitle, Strings.OK);
                 return;
             }
 
-            if (filter.IncludedChatIds.Contains(data.Chat.Id))
+            if (folder.IncludedChatIds.Contains(data.Chat.Id))
             {
                 // Warn user about chat being already in the folder?
                 return;
             }
 
-            filter.ExcludedChatIds.Remove(data.Chat.Id);
-            filter.IncludedChatIds.Add(data.Chat.Id);
+            folder.ExcludedChatIds.Remove(data.Chat.Id);
+            folder.IncludedChatIds.Add(data.Chat.Id);
 
-            ClientService.Send(new EditChatFilter(data.ChatFilterId, filter));
+            ClientService.Send(new EditChatFolder(data.ChatFolderId, folder));
         }
 
         #endregion
 
         #region Folder remove
 
-        public async void RemoveFromFolder((int ChatFilterId, Chat Chat) data)
+        public async void RemoveFromFolder((int ChatFolderId, Chat Chat) data)
         {
-            var filter = await ClientService.SendAsync(new GetChatFilter(data.ChatFilterId)) as ChatFilter;
-            if (filter == null)
+            var folder = await ClientService.SendAsync(new GetChatFolder(data.ChatFolderId)) as ChatFolder;
+            if (folder == null)
             {
                 return;
             }
 
-            var total = filter.ExcludedChatIds.Count + 1;
+            var total = folder.ExcludedChatIds.Count + 1;
             if (total > 99)
             {
                 await ShowPopupAsync(Strings.FilterRemoveFromAlertFullText, Strings.AppName, Strings.OK);
                 return;
             }
 
-            if (filter.ExcludedChatIds.Contains(data.Chat.Id))
+            if (folder.ExcludedChatIds.Contains(data.Chat.Id))
             {
                 // Warn user about chat being already in the folder?
                 return;
             }
 
-            filter.IncludedChatIds.Remove(data.Chat.Id);
-            filter.ExcludedChatIds.Add(data.Chat.Id);
+            folder.IncludedChatIds.Remove(data.Chat.Id);
+            folder.ExcludedChatIds.Add(data.Chat.Id);
 
-            ClientService.Send(new EditChatFilter(data.ChatFilterId, filter));
+            ClientService.Send(new EditChatFolder(data.ChatFolderId, folder));
         }
 
         #endregion
@@ -611,7 +612,7 @@ namespace Telegram.ViewModels
 
         #endregion
 
-        public async void SetFilter(ChatList chatList)
+        public async void SetFolder(ChatList chatList)
         {
             await Items.ReloadAsync(chatList);
             //Aggregator.Unsubscribe(Items);
@@ -970,7 +971,7 @@ namespace Telegram.ViewModels
 namespace Telegram.Td.Api
 {
     [Flags]
-    public enum ChatListFilterFlags
+    public enum ChatListFolderFlags
     {
         IncludeContacts,
         IncludeNonContacts,

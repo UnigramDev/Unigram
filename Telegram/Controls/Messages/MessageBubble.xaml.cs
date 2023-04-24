@@ -212,10 +212,12 @@ namespace Telegram.Controls.Messages
 
             if (message != null)
             {
-                UpdateMessageHeader(message);
+                var chat = message.GetChat();
+
+                UpdateMessageHeader(message, chat);
                 UpdateMessageReply(message);
-                UpdateMessageContent(message);
-                UpdateMessageInteractionInfo(message);
+                UpdateMessageContent(message, chat);
+                UpdateMessageInteractionInfo(message, chat);
 
                 Footer.UpdateMessage(message);
                 UpdateMessageReplyMarkup(message);
@@ -561,9 +563,10 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private void UpdateAction(MessageViewModel message)
+        private void UpdateAction(MessageViewModel message, Chat chat)
         {
-            var chat = message?.GetChat();
+            chat ??= message?.GetChat();
+
             if (chat == null)
             {
                 return;
@@ -704,7 +707,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        public void UpdateMessageHeader(MessageViewModel message)
+        public void UpdateMessageHeader(MessageViewModel message, Chat chat)
         {
             if (!_templateApplied)
             {
@@ -714,7 +717,8 @@ namespace Telegram.Controls.Messages
             HeaderLabel?.Inlines.Clear();
             ForwardLabel?.Inlines.Clear();
 
-            var chat = message?.GetChat();
+            chat ??= message?.GetChat();
+
             if (chat == null)
             {
                 return;
@@ -1145,7 +1149,7 @@ namespace Telegram.Controls.Messages
             Footer.UpdateMessageIsPinned(message);
         }
 
-        public void UpdateMessageInteractionInfo(MessageViewModel message)
+        public void UpdateMessageInteractionInfo(MessageViewModel message, Chat chat)
         {
             if (!_templateApplied)
             {
@@ -1155,7 +1159,7 @@ namespace Telegram.Controls.Messages
             Footer.UpdateMessageInteractionInfo(message);
             UpdateMessageReactions(message, false);
 
-            UpdateAction(message);
+            UpdateAction(message, chat);
 
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
@@ -1217,13 +1221,13 @@ namespace Telegram.Controls.Messages
                     picture.Height = 24;
                     picture.IsEnabled = false;
 
-                    if (message.ClientService.TryGetUser(sender, out User user))
+                    if (message.ClientService.TryGetUser(sender, out User senderUser))
                     {
-                        picture.SetUser(message.ClientService, user, 24);
+                        picture.SetUser(message.ClientService, senderUser, 24);
                     }
-                    else if (message.ClientService.TryGetChat(sender, out Chat chat))
+                    else if (message.ClientService.TryGetChat(sender, out Chat senderChat))
                     {
-                        picture.SetChat(message.ClientService, chat, 24);
+                        picture.SetChat(message.ClientService, senderChat, 24);
                     }
 
                     if (RecentRepliers.Children.Count > 0)
@@ -1289,12 +1293,14 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        public void UpdateMessageContent(MessageViewModel message)
+        public void UpdateMessageContent(MessageViewModel message, Chat chat)
         {
             if (!_templateApplied)
             {
                 return;
             }
+
+            chat ??= message.GetChat();
 
             Panel.Content = message?.GeneratedContent ?? message?.Content;
 
@@ -1313,7 +1319,6 @@ namespace Telegram.Controls.Messages
                 var top = 0;
                 var bottom = 0;
 
-                var chat = message.GetChat();
                 if (message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
                 {
                     top = 4;

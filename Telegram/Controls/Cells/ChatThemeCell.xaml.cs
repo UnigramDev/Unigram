@@ -16,7 +16,6 @@ namespace Telegram.Controls.Cells
 {
     public sealed partial class ChatThemeCell : UserControl
     {
-        private IClientService _clientService;
         private ChatTheme _theme;
 
         public ChatThemeCell()
@@ -24,9 +23,8 @@ namespace Telegram.Controls.Cells
             InitializeComponent();
         }
 
-        public void Update(IClientService clientService, ChatTheme theme)
+        public void Update(ChatTheme theme)
         {
-            _clientService = clientService;
             _theme = theme;
 
             Name.Text = theme?.Name ?? string.Empty;
@@ -36,7 +34,10 @@ namespace Telegram.Controls.Cells
             {
                 NoTheme.Visibility = Visibility.Visible;
 
+                // TODO: find some way to prevent this from playing
                 Preview.Unload();
+                Preview.Visibility = Visibility.Collapsed;
+
                 Outgoing.Fill = null;
                 Incoming.Fill = null;
                 return;
@@ -44,16 +45,18 @@ namespace Telegram.Controls.Cells
 
             NoTheme.Visibility = Visibility.Collapsed;
 
-            Preview.UpdateSource(clientService, settings.Background, true);
+            Preview.Visibility = Visibility.Visible;
+            Preview.UpdateSource(null, settings.Background, true);
+
             Outgoing.Fill = settings.OutgoingMessageFill;
             Incoming.Fill = new SolidColorBrush(ThemeAccentInfo.Colorize(ActualTheme == ElementTheme.Light ? TelegramThemeType.Day : TelegramThemeType.Tinted, settings.AccentColor.ToColor(), "MessageBackgroundBrush"));
         }
 
         private void OnActualThemeChanged(FrameworkElement sender, object args)
         {
-            if (_clientService != null && _theme != null)
+            if (_theme != null)
             {
-                Update(_clientService, _theme);
+                Update(_theme);
             }
         }
     }

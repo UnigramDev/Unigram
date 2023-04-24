@@ -66,7 +66,7 @@ namespace Telegram.Assets.Icons
     // ___________________________________________________________
     // | Theme property |   Accessor   | Type  |  Default value  |
     // |________________|______________|_______|_________________|
-    // | #000000        | Color_000000 | Color | #FF000000 Black |
+    // | #000000        | Foreground   | Color | #FF000000 Black |
     // -----------------------------------------------------------
     public sealed class VoiceVideo
         : Microsoft.UI.Xaml.Controls.IAnimatedVisualSource
@@ -75,22 +75,22 @@ namespace Telegram.Assets.Icons
         // Animation duration: 0.667 seconds.
         internal const long c_durationTicks = 6666666;
 
-        // Theme property: Color_000000.
-        internal static readonly Color c_themeColor_000000 = Color.FromArgb(0xFF, 0x00, 0x00, 0x00);
+        // Theme property: Foreground.
+        internal static readonly Color c_themeForeground = Color.FromArgb(0xFF, 0x00, 0x00, 0x00);
 
         CompositionPropertySet _themeProperties;
-        Color _themeColor_000000 = c_themeColor_000000;
+        Color _themeForeground = c_themeForeground;
 
         // Theme properties.
-        public Color Color_000000
+        public Color Foreground
         {
-            get => _themeColor_000000;
+            get => _themeForeground;
             set
             {
-                _themeColor_000000 = value;
+                _themeForeground = value;
                 if (_themeProperties != null)
                 {
-                    _themeProperties.InsertVector4("Color_000000", ColorAsVector4((Color)_themeColor_000000));
+                    _themeProperties.InsertVector4("Foreground", ColorAsVector4((Color)_themeForeground));
                 }
             }
         }
@@ -102,7 +102,7 @@ namespace Telegram.Assets.Icons
             if (_themeProperties == null)
             {
                 _themeProperties = compositor.CreatePropertySet();
-                _themeProperties.InsertVector4("Color_000000", ColorAsVector4((Color)Color_000000));
+                _themeProperties.InsertVector4("Foreground", ColorAsVector4((Color)Foreground));
             }
             return _themeProperties;
         }
@@ -174,9 +174,9 @@ namespace Telegram.Assets.Icons
         /// </summary>
         public void SetColorProperty(string propertyName, Color value)
         {
-            if (propertyName == "Color_000000")
+            if (propertyName == "Foreground")
             {
-                _themeColor_000000 = value;
+                _themeForeground = value;
             }
             else
             {
@@ -203,7 +203,7 @@ namespace Telegram.Assets.Icons
             readonly Compositor _c;
             readonly ExpressionAnimation _reusableExpressionAnimation;
             readonly CompositionPropertySet _themeProperties;
-            CompositionColorBrush _themeColor_Color_000000;
+            CompositionColorBrush _themeColor_Foreground;
             CompositionContainerShape _containerShape_0;
             CompositionContainerShape _containerShape_1;
             CompositionPath _path_0;
@@ -368,12 +368,12 @@ namespace Telegram.Assets.Icons
                 return result;
             }
 
-            // Color bound to theme property value: Color_000000
-            CompositionColorBrush ThemeColor_Color_000000()
+            // Color bound to theme property value: Foreground
+            CompositionColorBrush ThemeColor_Foreground()
             {
-                if (_themeColor_Color_000000 != null) { return _themeColor_Color_000000; }
-                var result = _themeColor_Color_000000 = _c.CreateColorBrush();
-                BindProperty(_themeColor_Color_000000, "Color", "ColorRGB(_theme.Color_000000.W,_theme.Color_000000.X,_theme.Color_000000.Y,_theme.Color_000000.Z)", "_theme", _themeProperties);
+                if (_themeColor_Foreground != null) { return _themeColor_Foreground; }
+                var result = _themeColor_Foreground = _c.CreateColorBrush();
+                BindProperty(_themeColor_Foreground, "Color", "ColorRGB(_theme.Foreground.W,_theme.Foreground.X,_theme.Foreground.Y,_theme.Foreground.Z)", "_theme", _themeProperties);
                 return result;
             }
 
@@ -512,7 +512,7 @@ namespace Telegram.Assets.Icons
             {
                 // Offset:<120, 90>, Scale:<10, 10>
                 var result = CreateSpriteShape(PathGeometry_0(), new Matrix3x2(10F, 0F, 0F, 10F, 120F, 90F));;
-                result.StrokeBrush = ThemeColor_Color_000000();
+                result.StrokeBrush = ThemeColor_Foreground();
                 result.StrokeMiterLimit = 2F;
                 result.StrokeThickness = 1.5F;
                 return result;
@@ -525,7 +525,7 @@ namespace Telegram.Assets.Icons
             {
                 // Offset:<120, 198.75>, Scale:<10, 10>
                 var result = CreateSpriteShape(PathGeometry_1(), new Matrix3x2(10F, 0F, 0F, 10F, 120F, 198.75F));;
-                result.StrokeBrush = ThemeColor_Color_000000();
+                result.StrokeBrush = ThemeColor_Foreground();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
                 result.StrokeEndCap = CompositionStrokeCap.Round;
@@ -541,7 +541,7 @@ namespace Telegram.Assets.Icons
             {
                 // Offset:<120, 105>, Scale:<10, 10>
                 var result = CreateSpriteShape(PathGeometry_2(), new Matrix3x2(10F, 0F, 0F, 10F, 120F, 105F));;
-                result.StrokeBrush = ThemeColor_Color_000000();
+                result.StrokeBrush = ThemeColor_Foreground();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
                 result.StrokeEndCap = CompositionStrokeCap.Round;
@@ -558,7 +558,7 @@ namespace Telegram.Assets.Icons
             {
                 // Offset:<120, 90>, Scale:<10, 10>
                 var result = CreateSpriteShape(PathGeometry_3(), new Matrix3x2(10F, 0F, 0F, 10F, 120F, 90F));;
-                result.StrokeBrush = ThemeColor_Color_000000();
+                result.StrokeBrush = ThemeColor_Foreground();
                 result.StrokeMiterLimit = 2F;
                 result.StrokeThickness = 1.5F;
                 return result;
@@ -571,7 +571,7 @@ namespace Telegram.Assets.Icons
             {
                 // Offset:<120, 198.75>, Scale:<10, 10>
                 var result = CreateSpriteShape(PathGeometry_4(), new Matrix3x2(10F, 0F, 0F, 10F, 120F, 198.75F));;
-                result.StrokeBrush = ThemeColor_Color_000000();
+                result.StrokeBrush = ThemeColor_Foreground();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
                 result.StrokeEndCap = CompositionStrokeCap.Round;
@@ -587,7 +587,7 @@ namespace Telegram.Assets.Icons
             {
                 // Offset:<120, 105>, Scale:<10, 10>
                 var result = CreateSpriteShape(PathGeometry_5(), new Matrix3x2(10F, 0F, 0F, 10F, 120F, 105F));;
-                result.StrokeBrush = ThemeColor_Color_000000();
+                result.StrokeBrush = ThemeColor_Foreground();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
                 result.StrokeEndCap = CompositionStrokeCap.Round;

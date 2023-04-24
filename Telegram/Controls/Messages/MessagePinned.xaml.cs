@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
@@ -243,12 +242,12 @@ namespace Telegram.Controls.Messages
             var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
             clip.InsertKeyFrame(show ? 0 : 1, 48);
             clip.InsertKeyFrame(show ? 1 : 0, 0);
-            clip.Duration = TimeSpan.FromMilliseconds(150);
+            clip.Duration = Constants.FastAnimation;
 
             var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -48, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
-            offset.Duration = TimeSpan.FromMilliseconds(150);
+            offset.Duration = Constants.FastAnimation;
 
             visual.Clip.StartAnimation("TopInset", clip);
             parent.StartAnimation("Translation", offset);

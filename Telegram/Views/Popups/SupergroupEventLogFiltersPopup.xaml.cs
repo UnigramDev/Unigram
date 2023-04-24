@@ -198,7 +198,7 @@ namespace Telegram.Views.Popups
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
+            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
             {
                 content.UpdateSupergroupAdminFilter(_clientService, args, OnContainerContentChanging);
             }

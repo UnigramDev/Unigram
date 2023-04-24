@@ -83,12 +83,12 @@ namespace Telegram.Controls
             var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
             clip.InsertKeyFrame(show ? 0 : 1, -40);
             clip.InsertKeyFrame(show ? 1 : 0, 0);
-            clip.Duration = TimeSpan.FromMilliseconds(150);
+            clip.Duration = Constants.FastAnimation;
 
             var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, 40, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
-            offset.Duration = TimeSpan.FromMilliseconds(150);
+            offset.Duration = Constants.FastAnimation;
 
             visual.Clip.StartAnimation("BottomInset", clip);
             parent.StartAnimation("Translation", offset);

@@ -233,29 +233,29 @@ namespace Telegram.ViewModels.Authorization
             {
                 IsLoading = false;
 
-                if (error.TypeEquals(ErrorType.PHONE_NUMBER_INVALID))
+                if (error.MessageEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
                     //needShowInvalidAlert(req.phone_number, false);
                     await ShowPopupAsync(Strings.InvalidPhoneNumber, Strings.AppName, Strings.OK);
                 }
-                else if (error.TypeEquals(ErrorType.PHONE_PASSWORD_FLOOD))
+                else if (error.MessageEquals(ErrorType.PHONE_PASSWORD_FLOOD))
                 {
                     await ShowPopupAsync(Strings.FloodWait, Strings.AppName, Strings.OK);
                 }
-                else if (error.TypeEquals(ErrorType.PHONE_NUMBER_FLOOD))
+                else if (error.MessageEquals(ErrorType.PHONE_NUMBER_FLOOD))
                 {
                     await ShowPopupAsync(Strings.PhoneNumberFlood, Strings.AppName, Strings.OK);
                 }
-                else if (error.TypeEquals(ErrorType.PHONE_NUMBER_BANNED))
+                else if (error.MessageEquals(ErrorType.PHONE_NUMBER_BANNED))
                 {
                     //needShowInvalidAlert(req.phone_number, true);
                     await ShowPopupAsync(Strings.BannedPhoneNumber, Strings.AppName, Strings.OK);
                 }
-                else if (error.TypeEquals(ErrorType.PHONE_CODE_EMPTY) || error.TypeEquals(ErrorType.PHONE_CODE_INVALID))
+                else if (error.MessageEquals(ErrorType.PHONE_CODE_EMPTY) || error.MessageEquals(ErrorType.PHONE_CODE_INVALID))
                 {
                     await ShowPopupAsync(Strings.InvalidCode, Strings.AppName, Strings.OK);
                 }
-                else if (error.TypeEquals(ErrorType.PHONE_CODE_EXPIRED))
+                else if (error.MessageEquals(ErrorType.PHONE_CODE_EXPIRED))
                 {
                     await ShowPopupAsync(Strings.CodeExpired, Strings.AppName, Strings.OK);
                 }

@@ -123,15 +123,5 @@ namespace Telegram.Views.Popups
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
         }
-
-        public static string ConvertTtl(int value)
-        {
-            if (value == 0)
-            {
-                return Strings.ShortMessageLifetimeForever;
-            }
-
-            return Locale.FormatTtl(value);
-        }
     }
 }

@@ -1279,13 +1279,14 @@ namespace Telegram.Services
                         || ActionReference != null)
                     && actionTarget != null)
                 {
-                    Method.Invoke(
-                        actionTarget,
-                        new object[]
-                        {
-                            Target,
-                            parameter
-                        });
+                    try
+                    {
+                        Method.Invoke(actionTarget, new[] { Target, parameter });
+                    }
+                    catch
+                    {
+                        MarkForDeletion();
+                    }
                 }
             }
         }

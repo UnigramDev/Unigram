@@ -90,6 +90,17 @@ namespace Telegram.Views.Supergroups
         {
             AddNew.Visibility = group.CanRestrictMembers() ? Visibility.Visible : Visibility.Collapsed;
             Footer.Text = group.IsChannel ? Strings.NoBlockedChannel : Strings.NoBlockedGroup;
+
+            if (group.HasLinkedChat && !group.IsChannel)
+            {
+                PinMessages.IsEnabled = false;
+                ChangeInfo.IsEnabled = false;
+            }
+            else
+            {
+                PinMessages.IsEnabled = true;
+                ChangeInfo.IsEnabled = true;
+            }
         }
 
         public void UpdateSupergroupFullInfo(Chat chat, Supergroup group, SupergroupFullInfo fullInfo)
@@ -258,7 +269,7 @@ namespace Telegram.Views.Supergroups
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is UserCell content)
+            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
             {
                 content.UpdateSupergroupMember(ViewModel.ClientService, args, OnContainerContentChanging);
             }

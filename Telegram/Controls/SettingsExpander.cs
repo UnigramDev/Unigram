@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using Windows.UI.Xaml;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -73,13 +72,22 @@ namespace Telegram.Controls
             PopupRoot.Visibility = Visibility.Visible;
 
             var visual = ElementCompositionPreview.GetElementVisual(PopupRoot);
-            var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(newValue ? 0 : 1, new Vector3(0, -42, 0));
-            offset.InsertKeyFrame(newValue ? 1 : 0, Vector3.Zero);
+            visual.Clip = visual.Compositor.CreateInsetClip();
+
+            var clip = visual.Compositor.CreateScalarKeyFrameAnimation();
+            clip.InsertKeyFrame(newValue ? 0 : 1, 44);
+            clip.InsertKeyFrame(newValue ? 1 : 0, 0);
+            clip.Duration = Constants.FastAnimation;
+
+            var offset = visual.Compositor.CreateScalarKeyFrameAnimation();
+            offset.InsertKeyFrame(newValue ? 0 : 1, -44);
+            offset.InsertKeyFrame(newValue ? 1 : 0, 0);
+            offset.Duration = Constants.FastAnimation;
 
             var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(newValue ? 0 : 1, 0);
             opacity.InsertKeyFrame(newValue ? 1 : 0, 1);
+            opacity.Duration = Constants.FastAnimation;
 
             var batch = visual.Compositor.CreateScopedBatch(Windows.UI.Composition.CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -89,7 +97,8 @@ namespace Telegram.Controls
                     : Visibility.Collapsed;
             };
 
-            visual.StartAnimation("Translation", offset);
+            visual.Clip.StartAnimation("TopInset", clip);
+            visual.StartAnimation("Translation.Y", offset);
             visual.StartAnimation("Opacity", opacity);
 
             batch.End();

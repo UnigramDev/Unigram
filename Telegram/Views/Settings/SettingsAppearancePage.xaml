@@ -198,7 +198,17 @@
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Header="{CustomResource Settings}">
+                <controls:HeaderedControl Header="{CustomResource ChatQuickActions}">
+                    <CheckBox IsChecked="{x:Bind ViewModel.SwipeToShare, Mode=TwoWay}"
+                              Content="{CustomResource SwipeShare}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.SwipeToReply, Mode=TwoWay}"
+                              Content="{CustomResource SwipeReply}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl Header="{CustomResource OtherSettings}">
                     <CheckBox IsChecked="{x:Bind ViewModel.FullScreenGallery, Mode=TwoWay}"
                               Content="{CustomResource EnableFullScreenGallery}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

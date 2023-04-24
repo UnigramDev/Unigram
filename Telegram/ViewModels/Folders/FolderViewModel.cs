@@ -14,7 +14,9 @@ using Telegram.Converters;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Folders.Popups;
 using Telegram.Views.Popups;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Folders
@@ -24,8 +26,10 @@ namespace Telegram.ViewModels.Folders
         public FolderViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Include = new MvxObservableCollection<ChatFilterElement>();
-            Exclude = new MvxObservableCollection<ChatFilterElement>();
+            Include = new MvxObservableCollection<ChatFolderElement>();
+            Exclude = new MvxObservableCollection<ChatFolderElement>();
+
+            Links = new MvxObservableCollection<ChatFolderInviteLink>();
 
             Include.CollectionChanged += OnCollectionChanged;
             Exclude.CollectionChanged += OnCollectionChanged;
@@ -40,16 +44,16 @@ namespace Telegram.ViewModels.Folders
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            ChatFilter filter = null;
+            ChatFolder folder = null;
 
             if (parameter is int id)
             {
-                var response = await ClientService.SendAsync(new GetChatFilter(id));
-                if (response is ChatFilter result)
+                var response = await ClientService.SendAsync(new GetChatFolder(id));
+                if (response is ChatFolder result)
                 {
                     Id = id;
-                    Filter = result;
-                    filter = result;
+                    Folder = result;
+                    folder = result;
                 }
                 else
                 {
@@ -59,44 +63,46 @@ namespace Telegram.ViewModels.Folders
             else
             {
                 Id = null;
-                Filter = null;
-                filter = new ChatFilter();
-                filter.PinnedChatIds = new List<long>();
-                filter.IncludedChatIds = new List<long>();
-                filter.ExcludedChatIds = new List<long>();
+                Folder = null;
+                folder = new ChatFolder();
+                folder.PinnedChatIds = new List<long>();
+                folder.IncludedChatIds = new List<long>();
+                folder.ExcludedChatIds = new List<long>();
             }
 
-            if (filter == null)
+            if (folder == null)
             {
                 return;
             }
 
             if (state != null && state.TryGet("included_chat_id", out long includedChatId))
             {
-                filter.IncludedChatIds.Add(includedChatId);
+                folder.IncludedChatIds.Add(includedChatId);
             }
 
-            _pinnedChatIds = filter.PinnedChatIds;
+            _pinnedChatIds = folder.PinnedChatIds;
 
-            _iconPicked = !string.IsNullOrEmpty(filter.IconName);
+            _iconPicked = !string.IsNullOrEmpty(folder.Icon?.Name);
 
-            Title = filter.Title;
-            Icon = Icons.ParseFilter(filter);
+            Title = folder.Title;
+            Icon = Icons.ParseFolder(folder);
+
+            Links.Clear();
 
             Include.Clear();
             Exclude.Clear();
 
-            if (filter.IncludeContacts) Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeContacts });
-            if (filter.IncludeNonContacts) Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeNonContacts });
-            if (filter.IncludeGroups) Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeGroups });
-            if (filter.IncludeChannels) Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeChannels });
-            if (filter.IncludeBots) Include.Add(new FilterFlag { Flag = ChatListFilterFlags.IncludeBots });
+            if (folder.IncludeContacts) Include.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeContacts });
+            if (folder.IncludeNonContacts) Include.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeNonContacts });
+            if (folder.IncludeGroups) Include.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeGroups });
+            if (folder.IncludeChannels) Include.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeChannels });
+            if (folder.IncludeBots) Include.Add(new FolderFlag { Flag = ChatListFolderFlags.IncludeBots });
 
-            if (filter.ExcludeMuted) Exclude.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeMuted });
-            if (filter.ExcludeRead) Exclude.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeRead });
-            if (filter.ExcludeArchived) Exclude.Add(new FilterFlag { Flag = ChatListFilterFlags.ExcludeArchived });
+            if (folder.ExcludeMuted) Exclude.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeMuted });
+            if (folder.ExcludeRead) Exclude.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeRead });
+            if (folder.ExcludeArchived) Exclude.Add(new FolderFlag { Flag = ChatListFolderFlags.ExcludeArchived });
 
-            foreach (var chatId in filter.PinnedChatIds.Union(filter.IncludedChatIds))
+            foreach (var chatId in folder.PinnedChatIds.Union(folder.IncludedChatIds))
             {
                 var chat = ClientService.GetChat(chatId);
                 if (chat == null)
@@ -104,10 +110,10 @@ namespace Telegram.ViewModels.Folders
                     continue;
                 }
 
-                Include.Add(new FilterChat { Chat = chat });
+                Include.Add(new FolderChat { Chat = chat });
             }
 
-            foreach (var chatId in filter.ExcludedChatIds)
+            foreach (var chatId in folder.ExcludedChatIds)
             {
                 var chat = ClientService.GetChat(chatId);
                 if (chat == null)
@@ -115,19 +121,20 @@ namespace Telegram.ViewModels.Folders
                     continue;
                 }
 
-                Exclude.Add(new FilterChat { Chat = chat });
+                Exclude.Add(new FolderChat { Chat = chat });
             }
 
             UpdateIcon();
+            UpdateLinks();
         }
 
         public int? Id { get; set; }
 
-        private ChatFilter _filter;
-        public ChatFilter Filter
+        private ChatFolder _folder;
+        public ChatFolder Folder
         {
-            get => _filter;
-            set => Set(ref _filter, value);
+            get => _folder;
+            set => Set(ref _folder, value);
         }
 
         private string _title = string.Empty;
@@ -143,14 +150,14 @@ namespace Telegram.ViewModels.Folders
 
         private bool _iconPicked;
 
-        private ChatFilterIcon _icon;
-        public ChatFilterIcon Icon
+        private ChatFolderIcon2 _icon;
+        public ChatFolderIcon2 Icon
         {
             get => _icon;
             private set => Set(ref _icon, value);
         }
 
-        public void SetIcon(ChatFilterIcon icon)
+        public void SetIcon(ChatFolderIcon2 icon)
         {
             _iconPicked = true;
             Icon = icon;
@@ -163,15 +170,27 @@ namespace Telegram.ViewModels.Folders
                 return;
             }
 
-            Icon = Icons.ParseFilter(GetFilter());
+            Icon = Icons.ParseFolder(GetFolder());
+        }
+
+        private async void UpdateLinks()
+        {
+            if (Id is int id)
+            {
+                var response = await ClientService.SendAsync(new GetChatFolderInviteLinks(id));
+                if (response is ChatFolderInviteLinks links)
+                {
+                    Links.ReplaceWith(links.InviteLinks);
+                }
+            }
         }
 
         private IList<long> _pinnedChatIds;
 
-        public MvxObservableCollection<ChatFilterElement> Include { get; private set; }
-        public MvxObservableCollection<ChatFilterElement> Exclude { get; private set; }
+        public MvxObservableCollection<ChatFolderElement> Include { get; private set; }
+        public MvxObservableCollection<ChatFolderElement> Exclude { get; private set; }
 
-
+        public MvxObservableCollection<ChatFolderInviteLink> Links { get; private set; }
 
         public async void AddIncluded()
         {
@@ -181,20 +200,20 @@ namespace Telegram.ViewModels.Folders
 
         public async Task AddIncludeAsync()
         {
-            var result = await SharePopup.AddExecute(true, Include.ToList());
+            var result = await SharePopup.AddExecute(true, _folder == null || (!_folder.IsShareable && Links.Count == 0), Include.ToList());
             if (result != null)
             {
-                foreach (var item in result.OfType<FilterChat>())
+                foreach (var item in result.OfType<FolderChat>())
                 {
-                    var already = Exclude.OfType<FilterChat>().FirstOrDefault(x => x.Chat.Id == item.Chat.Id);
+                    var already = Exclude.OfType<FolderChat>().FirstOrDefault(x => x.Chat.Id == item.Chat.Id);
                     if (already != null)
                     {
                         Exclude.Remove(already);
                     }
                 }
 
-                var flags = result.OfType<FilterFlag>().Cast<ChatFilterElement>();
-                var chats = result.OfType<FilterChat>().OrderBy(x =>
+                var flags = result.OfType<FolderFlag>().Cast<ChatFolderElement>();
+                var chats = result.OfType<FolderChat>().OrderBy(x =>
                 {
                     var index = _pinnedChatIds.IndexOf(x.Chat.Id);
                     if (index != -1)
@@ -217,12 +236,12 @@ namespace Telegram.ViewModels.Folders
 
         public async Task AddExcludeAsync()
         {
-            var result = await SharePopup.AddExecute(false, Exclude.ToList());
+            var result = await SharePopup.AddExecute(false, true, Exclude.ToList());
             if (result != null)
             {
-                foreach (var item in result.OfType<FilterChat>())
+                foreach (var item in result.OfType<FolderChat>())
                 {
-                    var already = Include.OfType<FilterChat>().FirstOrDefault(x => x.Chat.Id == item.Chat.Id);
+                    var already = Include.OfType<FolderChat>().FirstOrDefault(x => x.Chat.Id == item.Chat.Id);
                     if (already != null)
                     {
                         Include.Remove(already);
@@ -233,13 +252,13 @@ namespace Telegram.ViewModels.Folders
             }
         }
 
-        public void RemoveIncluded(ChatFilterElement chat)
+        public void RemoveIncluded(ChatFolderElement chat)
         {
             Include.Remove(chat);
             UpdateIcon();
         }
 
-        public void RemoveExcluded(ChatFilterElement chat)
+        public void RemoveExcluded(ChatFolderElement chat)
         {
             Exclude.Remove(chat);
             UpdateIcon();
@@ -249,7 +268,7 @@ namespace Telegram.ViewModels.Folders
         private async void SendExecute()
         {
             var response = await SendAsync();
-            if (response is ChatFilterInfo)
+            if (response is ChatFolderInfo)
             {
                 NavigationService.GoBack();
             }
@@ -260,11 +279,11 @@ namespace Telegram.ViewModels.Folders
             Function function;
             if (Id is int id)
             {
-                function = new EditChatFilter(id, GetFilter());
+                function = new EditChatFolder(id, GetFolder());
             }
             else
             {
-                function = new CreateChatFilter(GetFilter());
+                function = new CreateChatFolder(GetFolder());
             }
 
             return ClientService.SendAsync(function);
@@ -275,88 +294,203 @@ namespace Telegram.ViewModels.Folders
             return !string.IsNullOrEmpty(Title) && Include.Count > 0;
         }
 
-        private ChatFilter GetFilter()
+        private ChatFolder GetFolder()
         {
-            var filter = new ChatFilter();
-            filter.Title = Title ?? string.Empty;
-            filter.IconName = _iconPicked ? Enum.GetName(typeof(ChatFilterIcon), Icon) : string.Empty;
-            filter.PinnedChatIds = new List<long>();
-            filter.IncludedChatIds = new List<long>();
-            filter.ExcludedChatIds = new List<long>();
+            var folder = new ChatFolder();
+            folder.Title = Title ?? string.Empty;
+            folder.Icon = new ChatFolderIcon(_iconPicked ? Enum.GetName(typeof(ChatFolderIcon2), Icon) : string.Empty);
+            folder.PinnedChatIds = new List<long>();
+            folder.IncludedChatIds = new List<long>();
+            folder.ExcludedChatIds = new List<long>();
 
             foreach (var item in Include)
             {
-                if (item is FilterFlag flag)
+                if (item is FolderFlag flag)
                 {
                     switch (flag.Flag)
                     {
-                        case ChatListFilterFlags.IncludeContacts:
-                            filter.IncludeContacts = true;
+                        case ChatListFolderFlags.IncludeContacts:
+                            folder.IncludeContacts = true;
                             break;
-                        case ChatListFilterFlags.IncludeNonContacts:
-                            filter.IncludeNonContacts = true;
+                        case ChatListFolderFlags.IncludeNonContacts:
+                            folder.IncludeNonContacts = true;
                             break;
-                        case ChatListFilterFlags.IncludeGroups:
-                            filter.IncludeGroups = true;
+                        case ChatListFolderFlags.IncludeGroups:
+                            folder.IncludeGroups = true;
                             break;
-                        case ChatListFilterFlags.IncludeChannels:
-                            filter.IncludeChannels = true;
+                        case ChatListFolderFlags.IncludeChannels:
+                            folder.IncludeChannels = true;
                             break;
-                        case ChatListFilterFlags.IncludeBots:
-                            filter.IncludeBots = true;
+                        case ChatListFolderFlags.IncludeBots:
+                            folder.IncludeBots = true;
                             break;
                     }
                 }
-                else if (item is FilterChat chat)
+                else if (item is FolderChat chat)
                 {
                     if (_pinnedChatIds.Contains(chat.Chat.Id))
                     {
-                        filter.PinnedChatIds.Add(chat.Chat.Id);
+                        folder.PinnedChatIds.Add(chat.Chat.Id);
                     }
                     else
                     {
-                        filter.IncludedChatIds.Add(chat.Chat.Id);
+                        folder.IncludedChatIds.Add(chat.Chat.Id);
                     }
                 }
             }
 
             foreach (var item in Exclude)
             {
-                if (item is FilterFlag flag)
+                if (item is FolderFlag flag)
                 {
                     switch (flag.Flag)
                     {
-                        case ChatListFilterFlags.ExcludeMuted:
-                            filter.ExcludeMuted = true;
+                        case ChatListFolderFlags.ExcludeMuted:
+                            folder.ExcludeMuted = true;
                             break;
-                        case ChatListFilterFlags.ExcludeRead:
-                            filter.ExcludeRead = true;
+                        case ChatListFolderFlags.ExcludeRead:
+                            folder.ExcludeRead = true;
                             break;
-                        case ChatListFilterFlags.ExcludeArchived:
-                            filter.ExcludeArchived = true;
+                        case ChatListFolderFlags.ExcludeArchived:
+                            folder.ExcludeArchived = true;
                             break;
                     }
                 }
-                else if (item is FilterChat chat)
+                else if (item is FolderChat chat)
                 {
-                    filter.ExcludedChatIds.Add(chat.Chat.Id);
+                    folder.ExcludedChatIds.Add(chat.Chat.Id);
                 }
             }
 
-            return filter;
+            return folder;
+        }
+
+        public async void OpenLink(ChatFolderInviteLink link)
+        {
+            var tsc = new TaskCompletionSource<object>();
+
+            var confirm = await ShowPopupAsync(typeof(ShareFolderPopup), Tuple.Create(Id.Value, link), tsc);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                var result = await tsc.Task;
+                if (result is IList<long> chats)
+                {
+                    if (link != null)
+                    {
+                        await ClientService.SendAsync(new EditChatFolderInviteLink(Id.Value, link.InviteLink, string.Empty, chats));
+                    }
+                    else
+                    {
+                        await ClientService.SendAsync(new CreateChatFolderInviteLink(Id.Value, string.Empty, chats));
+                    }
+
+                    UpdateLinks();
+                }
+            }
+        }
+
+        public async void CreateLink()
+        {
+            if (string.IsNullOrEmpty(Title))
+            {
+                ShowPopup(Strings.FilterInviteErrorEmptyName, Strings.AppName, Strings.OK);
+                return;
+            }
+
+            if (Exclude.Any())
+            {
+                ShowPopup(Strings.FilterInviteErrorExcluded, Strings.AppName, Strings.OK);
+                return;
+            }
+
+            if (Include.Any(x => x is FolderFlag) || Include.IsEmpty())
+            {
+                ShowPopup(Strings.FilterInviteErrorTypes, Strings.AppName, Strings.OK);
+                return;
+            }
+
+            if (Id == null)
+            {
+                // TODO: IMHO folder should be created here
+                ShowPopup(Strings.FilterFinishCreating, Strings.AppName, Strings.OK);
+                return;
+            }
+
+            var shareableItems = new List<long>(Include.OfType<FolderChat>().Select(x => x.Chat.Id));
+
+            foreach (var item in Include.OfType<FolderChat>())
+            {
+                var chat = item.Chat;
+                if (chat.Permissions.CanInviteUsers)
+                {
+                    continue;
+                }
+                else if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    if (supergroup.CanInviteUsers())
+                    {
+                        continue;
+                    }
+                    else if (supergroup.HasActiveUsername() && !supergroup.JoinByRequest)
+                    {
+                        continue;
+                    }
+                }
+                else if (ClientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
+                {
+                    if (basicGroup.CanInviteUsers())
+                    {
+                        continue;
+                    }
+                }
+
+                shareableItems.Remove(chat.Id);
+            }
+
+            if (shareableItems.Count > 0)
+            {
+                var response = await ClientService.SendAsync(new CreateChatFolderInviteLink(Id.Value, string.Empty, shareableItems));
+                if (response is ChatFolderInviteLink link)
+                {
+                    OpenLink(link);
+                }
+                else if (response is Error error)
+                {
+                    if (error.MessageEquals(ErrorType.USER_CHANNELS_TOO_MUCH))
+                    {
+                        ShowPopup(Strings.FolderLinkOtherAdminLimitError, Strings.AppName, Strings.OK);
+                    }
+                    else if (error.MessageEquals(ErrorType.CHANNELS_TOO_MUCH))
+                    {
+                        NavigationService.ShowLimitReached(new PremiumLimitTypeSupergroupCount());
+                    }
+                    else if (error.MessageEquals(ErrorType.INVITES_TOO_MUCH))
+                    {
+                        NavigationService.ShowLimitReached(new PremiumLimitTypeChatFolderInviteLinkCount());
+                    }
+                    else if (error.MessageEquals(ErrorType.CHATLISTS_TOO_MUCH))
+                    {
+                        NavigationService.ShowLimitReached(new PremiumLimitTypeShareableChatFolderCount());
+                    }
+                }
+            }
+            else
+            {
+                OpenLink(null);
+            }
         }
     }
 
-    public class ChatFilterElement
+    public class ChatFolderElement
     {
     }
 
-    public class FilterFlag : ChatFilterElement
+    public class FolderFlag : ChatFolderElement
     {
-        public ChatListFilterFlags Flag { get; set; }
+        public ChatListFolderFlags Flag { get; set; }
     }
 
-    public class FilterChat : ChatFilterElement
+    public class FolderChat : ChatFolderElement
     {
         public Chat Chat { get; set; }
     }

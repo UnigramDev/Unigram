@@ -51,23 +51,35 @@ namespace Telegram.Views.Premium.Popups
 
                 switch (type)
                 {
-                    case PremiumLimitTypeChatFilterChosenChatCount:
+                    case PremiumLimitTypeChatFolderChosenChatCount:
                         iconValue = Icons.ChatFilled;
                         freeValue = Strings.LimitReachedChatInFolders;
                         lockedValue = Strings.LimitReachedChatInFoldersLocked;
                         premiumValue = Strings.LimitReachedChatInFoldersPremium;
                         break;
-                    case PremiumLimitTypeChatFilterCount:
+                    case PremiumLimitTypeChatFolderCount:
                         iconValue = Icons.FolderFilled;
                         freeValue = Strings.LimitReachedFolders;
                         lockedValue = Strings.LimitReachedFoldersLocked;
                         premiumValue = Strings.LimitReachedFoldersPremium;
+                        break;
+                    case PremiumLimitTypeShareableChatFolderCount:
+                        iconValue = Icons.FolderFilled;
+                        freeValue = Strings.LimitReachedSharedFolders;
+                        lockedValue = Strings.LimitReachedSharedFoldersLocked;
+                        premiumValue = Strings.LimitReachedSharedFoldersPremium;
                         break;
                     case PremiumLimitTypeCreatedPublicChatCount:
                         iconValue = Icons.LinkFilled;
                         freeValue = Strings.LimitReachedPublicLinks;
                         lockedValue = Strings.LimitReachedPublicLinksLocked;
                         premiumValue = Strings.LimitReachedPublicLinksPremium;
+                        break;
+                    case PremiumLimitTypeChatFolderInviteLinkCount:
+                        iconValue = Icons.LinkFilled;
+                        freeValue = Strings.LimitReachedFolderLinks;
+                        lockedValue = Strings.LimitReachedFolderLinksLocked;
+                        premiumValue = Strings.LimitReachedFolderLinksPremium;
                         break;
                     case PremiumLimitTypePinnedArchivedChatCount:
                     case PremiumLimitTypePinnedChatCount:
@@ -199,10 +211,10 @@ namespace Telegram.Views.Premium.Popups
 
             switch (type)
             {
-                case PremiumLimitTypeChatFilterChosenChatCount:
-                    return CreateLimit(type, clientService.Options.ChatFilterChosenChatCountMax);
-                case PremiumLimitTypeChatFilterCount:
-                    return CreateLimit(type, clientService.Options.ChatFilterCountMax);
+                case PremiumLimitTypeChatFolderChosenChatCount:
+                    return CreateLimit(type, clientService.Options.ChatFolderChosenChatCountMax);
+                case PremiumLimitTypeChatFolderCount:
+                    return CreateLimit(type, clientService.Options.ChatFolderCountMax);
                 case PremiumLimitTypeCreatedPublicChatCount:
                     return CreateLimit(type, 500);
                 case PremiumLimitTypePinnedArchivedChatCount:

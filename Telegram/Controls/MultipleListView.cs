@@ -17,7 +17,7 @@ namespace Telegram.Controls
         }
     }
 
-    public class MultipleListViewItem : TextListViewItem
+    public class MultipleListViewItem : TableListViewItem
     {
         private readonly bool _multi;
         private bool _selected;

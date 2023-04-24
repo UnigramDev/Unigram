@@ -9,11 +9,11 @@ using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace Telegram.Controls
+namespace Telegram.Controls.Cells
 {
-    public sealed partial class ProxyStatusControl : UserControl
+    public sealed partial class ProxyCell : UserControl
     {
-        public ProxyStatusControl()
+        public ProxyCell()
         {
             InitializeComponent();
         }

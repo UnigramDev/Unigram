@@ -72,7 +72,7 @@ namespace Telegram.ViewModels.Authorization
             var response = await ClientService.SendAsync(new RecoverAuthenticationPassword(_recoveryCode, string.Empty, string.Empty));
             if (response is Error error)
             {
-                if (error.TypeEquals(ErrorType.CODE_INVALID))
+                if (error.MessageEquals(ErrorType.CODE_INVALID))
                 {
                     RecoveryCode = string.Empty;
                     RaisePropertyChanged("RECOVERY_CODE_INVALID");

@@ -112,6 +112,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatTitle>(Handle)
                 .Subscribe<UpdateChatPhoto>(Handle)
                 .Subscribe<UpdateChatTheme>(Handle)
+                .Subscribe<UpdateChatBackground>(Handle)
                 .Subscribe<UpdateChatNotificationSettings>(Handle)
                 .Subscribe<UpdateChatOnlineMemberCount>(Handle)
                 .Subscribe<UpdateGroupCall>(Handle);
@@ -297,6 +298,14 @@ namespace Telegram.ViewModels
             }
         }
 
+        public void Handle(UpdateChatBackground update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatTheme(_chat));
+            }
+        }
+
         public void Handle(UpdateUserStatus update)
         {
             if (_chat?.Type is ChatTypePrivate privata && privata.UserId == update.UserId || _chat?.Type is ChatTypeSecret secret && secret.UserId == update.UserId)
@@ -416,7 +425,7 @@ namespace Telegram.ViewModels
                     }
 
                     foreach (SelectorItem container in panel.Children)
-                    { 
+                    {
                         var message = field.ItemFromContainer(container) as MessageViewModel;
                         if (message == null || !message.IsOutgoing)
                         {
@@ -648,7 +657,7 @@ namespace Telegram.ViewModels
                     }
                     else
                     {
-                        bubble.UpdateMessageContent(message);
+                        bubble.UpdateMessageContent(message, _chat);
                         Delegate?.ViewVisibleMessages(false);
                     }
                 });
@@ -752,7 +761,7 @@ namespace Telegram.ViewModels
                     message.InteractionInfo = update.InteractionInfo;
                     return true;
                 },
-                (bubble, message) => bubble.UpdateMessageInteractionInfo(message));
+                (bubble, message) => bubble.UpdateMessageInteractionInfo(message, _chat));
             }
         }
 

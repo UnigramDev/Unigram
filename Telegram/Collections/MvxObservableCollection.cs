@@ -24,8 +24,14 @@ using Telegram.Common;
 
 namespace Telegram.Collections
 {
+    public interface IMvxObservableCollection : IList
+    {
+        void ReplaceWith(IEnumerable collection);
+    }
+
     public class MvxObservableCollection<T>
         : ObservableCollection<T>
+        , IMvxObservableCollection
         , IList<T>
     {
         protected readonly struct SuppressEventsDisposable : IDisposable
@@ -145,7 +151,7 @@ namespace Telegram.Collections
         /// </summary>
         /// <param name="items">The collection from which the items are copied.</param>
         /// <exception cref="ArgumentNullException">The items list is null.</exception>
-        public void ReplaceWith(IEnumerable<T> items)
+        public void ReplaceWith(IEnumerable items)
         {
             if (items == null)
             {
@@ -155,11 +161,12 @@ namespace Telegram.Collections
             using (SuppressEvents())
             {
                 Clear();
-                AddRange(items);
+                AddRange(items.Cast<T>());
             }
 
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
+
 
         public void Change(int index)
         {

@@ -144,7 +144,7 @@ namespace Telegram.Collections
             for (int i = 0; i < Count; i++)
             {
                 var item = this[i];
-                if (item.ParticipantId.AreTheSame(participant.ParticipantId))
+                if (item.AreTheSame(participant))
                 {
                     prev = i;
                     update = item;
@@ -152,7 +152,7 @@ namespace Telegram.Collections
                 }
 
                 var order = participant.Order.CompareTo(item.Order);
-                var compare = participant.ParticipantId.ComparaTo(item.ParticipantId);
+                var compare = participant.IsCurrentUser && item.IsCurrentUser ? 0 : participant.ParticipantId.ComparaTo(item.ParticipantId);
 
                 if (index == int.MaxValue && (order > 0 || participant.Order == item.Order && compare >= 0))
                 {

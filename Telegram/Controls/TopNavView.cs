@@ -282,18 +282,39 @@ namespace Telegram.Controls
                 }
             }
         }
+
+        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        {
+            base.PrepareContainerForItemOverride(element, item);
+
+            if (element is TopNavViewItem topElement)
+            {
+                var indicator = topElement.GetSelectionIndicator(true);
+                if (indicator != null)
+                {
+                    ResetElementAnimationProperties(indicator, topElement.IsSelected ? 1 : 0);
+                }
+            }
+        }
     }
 
     public class TopNavViewItem : TextListViewItem
     {
+        private UIElement SelectionIndicator;
+
         public TopNavViewItem()
         {
             DefaultStyleKey = typeof(TopNavViewItem);
         }
 
-        public UIElement GetSelectionIndicator()
+        public UIElement GetSelectionIndicator(bool fromCache = false)
         {
-            return GetTemplateChild("SelectionIndicator") as UIElement;
+            if (!fromCache)
+            {
+                SelectionIndicator ??= GetTemplateChild("SelectionIndicator") as UIElement;
+            }
+
+            return SelectionIndicator;
         }
     }
 

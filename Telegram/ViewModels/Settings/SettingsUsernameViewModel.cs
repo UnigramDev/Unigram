@@ -22,6 +22,8 @@ namespace Telegram.ViewModels.Settings
 {
     public class SettingsUsernameViewModel : TLViewModelBase, IHandle
     {
+        private long _userId;
+
         public SettingsUsernameViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
@@ -35,8 +37,14 @@ namespace Telegram.ViewModels.Settings
             IsLoading = false;
             ErrorMessage = null;
 
-            if (ClientService.TryGetUser(ClientService.Options.MyId, out User user))
+            if (parameter is not long)
             {
+                parameter = ClientService.Options.MyId;
+            }
+
+            if (parameter is long userId && ClientService.TryGetUser(userId, out User user))
+            {
+                _userId = userId;
                 _username.Value = user.EditableUsername();
                 RaisePropertyChanged(nameof(Username));
 
@@ -55,7 +63,7 @@ namespace Telegram.ViewModels.Settings
 
         public void Handle(UpdateUser update)
         {
-            if (update.User.Id == ClientService.Options.MyId)
+            if (update.User.Id == _userId)
             {
                 BeginOnUIThread(() => UpdateUsernames(update.User.Usernames, Username));
             }
@@ -123,14 +131,28 @@ namespace Telegram.ViewModels.Settings
                         }
                     }
 
-                    ClientService.Send(new ReorderActiveUsernames(order));
+                    if (_userId == ClientService.Options.MyId)
+                    {
+                        ClientService.Send(new ReorderActiveUsernames(order));
+                    }
+                    else
+                    {
+                        ClientService.Send(new ReorderActiveBotUsernames(_userId, order));
+                    }
                 }
             }
         }
 
         public void ToggleUsername(UsernameInfo username)
         {
-            ClientService.Send(new ToggleUsernameIsActive(username.Value, !username.IsActive));
+            if (_userId == ClientService.Options.MyId)
+            {
+                ClientService.Send(new ToggleUsernameIsActive(username.Value, !username.IsActive));
+            }
+            else
+            {
+                ClientService.Send(new ToggleBotUsernameIsActive(_userId, username.Value, !username.IsActive));
+            }
         }
 
         //private string _username = string.Empty;
@@ -151,10 +173,11 @@ namespace Telegram.ViewModels.Settings
             set => _username.Set(value);
         }
 
-        public bool IsVisible
-        {
-            get => Items.Count < 2 && !string.IsNullOrWhiteSpace(_username);
-        }
+        public bool CanBeEdited => _userId == ClientService.Options.MyId;
+
+        public bool IsVisible => Items.Count < 2 && !string.IsNullOrWhiteSpace(_username);
+
+        public string Footer => _userId == ClientService.Options.MyId ? Strings.UsernamesProfileHelp : Strings.BotUsernamesHelp;
 
         private bool _isValid;
         public bool IsValid
@@ -179,6 +202,11 @@ namespace Telegram.ViewModels.Settings
 
         public async void CheckAvailability(string text)
         {
+            if (_userId != ClientService.Options.MyId)
+            {
+                return;
+            }
+
             var response = await ClientService.SendAsync(new SearchPublicChat(text));
             if (response is Chat chat)
             {
@@ -197,19 +225,19 @@ namespace Telegram.ViewModels.Settings
             }
             else if (response is Error error)
             {
-                if (error.TypeEquals(ErrorType.USERNAME_INVALID))
+                if (error.MessageEquals(ErrorType.USERNAME_INVALID))
                 {
                     IsLoading = false;
                     IsAvailable = false;
                     ErrorMessage = Strings.UsernameInvalid;
                 }
-                else if (error.TypeEquals(ErrorType.USERNAME_OCCUPIED))
+                else if (error.MessageEquals(ErrorType.USERNAME_OCCUPIED))
                 {
                     IsLoading = false;
                     IsAvailable = false;
                     ErrorMessage = Strings.UsernameInUse;
                 }
-                else if (error.TypeEquals(ErrorType.USERNAME_NOT_OCCUPIED))
+                else if (error.MessageEquals(ErrorType.USERNAME_NOT_OCCUPIED))
                 {
                     IsLoading = false;
                     IsAvailable = true;
@@ -298,6 +326,11 @@ namespace Telegram.ViewModels.Settings
 
         public async Task<bool> SendAsync()
         {
+            if (_userId != ClientService.Options.MyId)
+            {
+                return true;
+            }
+
             var response = await ClientService.SendAsync(new SetUsername(_username ?? string.Empty));
             if (response is Ok)
             {
@@ -330,7 +363,7 @@ namespace Telegram.ViewModels.Settings
                 }
                 else if (error.CodeEquals(ErrorCode.BAD_REQUEST))
                 {
-                    if (error.TypeEquals(ErrorType.USERNAME_INVALID))
+                    if (error.MessageEquals(ErrorType.USERNAME_INVALID))
                     {
                         //this.HasError = true;
                         //this.Error = Strings.Additional.UsernameInvalid;
@@ -339,7 +372,7 @@ namespace Telegram.ViewModels.Settings
                         //    MessageBox.Show(Strings.Additional.UsernameInvalid, Strings.Additional.Error, 0);
                         //});
                     }
-                    else if (error.TypeEquals(ErrorType.USERNAME_OCCUPIED))
+                    else if (error.MessageEquals(ErrorType.USERNAME_OCCUPIED))
                     {
                         //this.HasError = true;
                         //this.Error = Strings.Additional.UsernameOccupied;
@@ -348,7 +381,7 @@ namespace Telegram.ViewModels.Settings
                         //    MessageBox.Show(Strings.Additional.UsernameOccupied, Strings.Additional.Error, 0);
                         //});
                     }
-                    else if (error.TypeEquals(ErrorType.USERNAME_NOT_MODIFIED))
+                    else if (error.MessageEquals(ErrorType.USERNAME_NOT_MODIFIED))
                     {
                         NavigationService.GoBack();
                     }
@@ -378,7 +411,6 @@ namespace Telegram.ViewModels.Settings
             await ShowPopupAsync(Strings.LinkCopied, Strings.AppName, Strings.OK);
         }
     }
-
 
     public class UsernameInfo : BindableBase
     {

@@ -104,16 +104,6 @@ namespace Telegram.Common
                 _ => false
             };
 
-#if !DEBUG
-            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Capabilities",
-                new System.Collections.Generic.Dictionary<string, string>
-                {
-                    { "InEnergySaverMode", isEnergySaverMode.ToString() },
-                    { "AreEffectsFast", areEffectsFast.ToString() },
-                    { "AdvancedEffectsEnabled", advancedEffectsEnabled.ToString() },
-                });
-#endif
-
             if (m_isDisabledByPolicy != isDisabledByPolicy)
             {
                 m_isDisabledByPolicy = isDisabledByPolicy;

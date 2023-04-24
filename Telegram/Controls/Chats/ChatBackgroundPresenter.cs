@@ -76,7 +76,7 @@ namespace Telegram.Controls.Chats
             });
         }
 
-        public void Update(int session, IClientService clientService, IEventAggregator aggregator)
+        public void Update(IClientService clientService, IEventAggregator aggregator)
         {
             _clientService = clientService;
             _aggregator = aggregator;
@@ -97,7 +97,7 @@ namespace Telegram.Controls.Chats
         private void SyncBackgroundWithChatTheme(ref Background background, bool forDarkTheme)
         {
             // I'm not a big fan of this, but this is the easiest way to keep background in sync
-            var chat = forDarkTheme ? Theme.Current.ChatTheme?.DarkSettings.Background : Theme.Current.ChatTheme?.LightSettings.Background;
+            var chat = Theme.Current.ChatBackground?.Background ?? (forDarkTheme ? Theme.Current.ChatTheme?.DarkSettings.Background : Theme.Current.ChatTheme?.LightSettings.Background);
             if (chat != null)
             {
                 background = chat;
@@ -150,8 +150,7 @@ namespace Telegram.Controls.Chats
             }
             else if (prev.Type is BackgroundTypePattern prevPattern && next.Type is BackgroundTypePattern nextPattern)
             {
-                return prevPattern.IsMoving == nextPattern.IsMoving
-                    && prevPattern.IsInverted == nextPattern.IsInverted
+                return prevPattern.IsInverted == nextPattern.IsInverted
                     && prevPattern.Intensity == nextPattern.Intensity
                     && prev.Document?.DocumentValue.Id == next.Document?.DocumentValue.Id
                     && FillEquals(prevPattern.Fill, nextPattern.Fill);
@@ -159,7 +158,6 @@ namespace Telegram.Controls.Chats
             else if (prev.Type is BackgroundTypeWallpaper prevWallpaper && next.Type is BackgroundTypeWallpaper nextWallpaper)
             {
                 return prevWallpaper.IsBlurred == nextWallpaper.IsBlurred
-                    && prevWallpaper.IsMoving == nextWallpaper.IsMoving
                     && prev.Document?.DocumentValue.Id == next.Document?.DocumentValue.Id;
             }
 

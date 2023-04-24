@@ -46,5 +46,7 @@ namespace Telegram.ViewModels.Delegates
 
 
         void HideStickers();
+
+        void ChangeTheme();
     }
 }

@@ -90,7 +90,7 @@ namespace Telegram.ViewModels.Settings.Password
             }
             else if (response is Error error)
             {
-                if (error.TypeEquals(ErrorType.EMAIL_INVALID))
+                if (error.MessageEquals(ErrorType.EMAIL_INVALID))
                 {
                     await ShowPopupAsync(Strings.PasswordEmailInvalid, Strings.AppName, Strings.OK, Strings.Cancel);
                 }

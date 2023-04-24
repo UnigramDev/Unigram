@@ -104,8 +104,8 @@ namespace Telegram.Views.Supergroups
 
                 title.Text = MeUrlPrefixConverter.Convert(ViewModel.ClientService, username, true);
                 subtitle.Text = active
-                    ? Strings.UsernameLinkActive
-                    : Strings.UsernameLinkInactive;
+                    ? Strings.UsernameProfileLinkActive
+                    : Strings.UsernameProfileLinkInactive;
 
                 handle.Visibility = active ? Visibility.Visible : Visibility.Collapsed;
             }

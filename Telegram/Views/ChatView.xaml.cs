@@ -119,6 +119,7 @@ namespace Telegram.Views
             _typeToItemHashSetMapping.Add("FriendMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessageTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessagePhotoTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("ServiceMessageBackgroundTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ServiceMessageUnreadTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("EmptyMessageTemplate", new HashSet<SelectorItem>());
 
@@ -126,6 +127,7 @@ namespace Telegram.Views
             _typeToTemplateMapping.Add("FriendMessageTemplate", Resources["FriendMessageTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ServiceMessageTemplate", Resources["ServiceMessageTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ServiceMessagePhotoTemplate", Resources["ServiceMessagePhotoTemplate"] as DataTemplate);
+            _typeToTemplateMapping.Add("ServiceMessageBackgroundTemplate", Resources["ServiceMessageBackgroundTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("ServiceMessageUnreadTemplate", Resources["ServiceMessageUnreadTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("EmptyMessageTemplate", Resources["EmptyMessageTemplate"] as DataTemplate);
 
@@ -247,12 +249,12 @@ namespace Telegram.Views
             {
                 Header.Visibility = Visibility.Collapsed;
                 FindName("BackgroundPresenter");
-                BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ClientService, ViewModel.Aggregator);
+                BackgroundPresenter.Update(ViewModel.ClientService, ViewModel.Aggregator);
             }
             else if (!Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().IsMain)
             {
                 FindName("BackgroundPresenter");
-                BackgroundPresenter.Update(ViewModel.SessionId, ViewModel.ClientService, ViewModel.Aggregator);
+                BackgroundPresenter.Update(ViewModel.ClientService, ViewModel.Aggregator);
             }
 
             GroupCall.InitializeParent(ClipperOuter, ViewModel.ClientService);
@@ -261,6 +263,11 @@ namespace Telegram.Views
             PinnedMessage.InitializeParent(Clipper);
 
             ButtonStickers.Source = ViewModel.Settings.Stickers.SelectedTab;
+
+            if (TextRoot.Children.Count > 1)
+            {
+                ShowHideChatThemeDrawer(false, TextRoot.Children[1] as ChatThemeDrawer);
+            }
         }
 
         private void InitializeAutomation()
@@ -441,7 +448,7 @@ namespace Telegram.Views
                 && sourcePageType != typeof(ChatScheduledPage)
                 && sourcePageType != typeof(ChatThreadPage);
 
-            if (unallowed && Theme.Current.Update(ActualTheme, null))
+            if (unallowed && Theme.Current.Update(ActualTheme, null, null))
             {
                 var background = ViewModel.ClientService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
 
@@ -565,8 +572,7 @@ namespace Telegram.Views
                 {
                     _messages.UpdateSource(viewModel.Items);
                 }
-
-                if (!ViewModel.Settings.Diagnostics.SynchronizeItemsSource)
+                else
                 {
                     Messages.ItemsSource = viewModel.Items;
                 }
@@ -860,7 +866,7 @@ namespace Telegram.Views
                 if (content is MessageBubble bubble)
                 {
                     bubble.UpdateAttach(message);
-                    bubble.UpdateMessageHeader(message);
+                    bubble.UpdateMessageHeader(message, _viewModel.Chat);
                 }
             }
         }
@@ -957,7 +963,7 @@ namespace Telegram.Views
 
         public void Search()
         {
-            ViewModel.SearchExecute();
+            ViewModel.SearchExecute(string.Empty);
         }
 
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
@@ -1726,6 +1732,156 @@ namespace Telegram.Views
             Collapse_Click(null, null);
         }
 
+        public void ChangeTheme()
+        {
+            if (TextRoot.Children.Count > 1)
+            {
+                return;
+            }
+
+            var drawer = new ChatThemeDrawer(_viewModel);
+            drawer.ThemeChanged += ChatThemeDrawer_ThemeChanged;
+            drawer.ThemeSelected += ChatThemeDrawer_ThemeSelected;
+
+            TextRoot.Children.Add(drawer);
+            ShowHideChatThemeDrawer(true, drawer);
+        }
+
+        private void ChatThemeDrawer_ThemeChanged(object sender, ChatThemeChangedEventArgs e)
+        {
+            UpdateChatTheme(e.Theme);
+        }
+
+        private void ChatThemeDrawer_ThemeSelected(object sender, ChatThemeSelectedEventArgs e)
+        {
+            if (sender is ChatThemeDrawer drawer)
+            {
+                drawer.ThemeChanged -= ChatThemeDrawer_ThemeChanged;
+                drawer.ThemeSelected -= ChatThemeDrawer_ThemeSelected;
+
+                ShowHideChatThemeDrawer(false, drawer);
+
+                if (e.Applied)
+                {
+                    return;
+                }
+
+                UpdateChatTheme(_viewModel.Chat);
+            }
+        }
+
+        private async void ShowHideChatThemeDrawer(bool show, ChatThemeDrawer drawer)
+        {
+            if (TextRoot.Children.Count == 1)
+            {
+                return;
+            }
+
+            //if ((show && ComposerHeader.Visibility == Visibility.Visible) || (!show && (ComposerHeader.Visibility == Visibility.Collapsed || _composerHeaderCollapsed)))
+            //{
+            //    return;
+            //}
+
+            var composer = ElementCompositionPreview.GetElementVisual(drawer);
+            var messages = ElementCompositionPreview.GetElementVisual(Messages);
+            var textArea = ElementCompositionPreview.GetElementVisual(TextArea);
+            var textMain = ElementCompositionPreview.GetElementVisual(TextMain);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(TextMain, true);
+
+            if (show)
+            {
+                await TextArea.UpdateLayoutAsync();
+            }
+
+            var value = show ? TextArea.ActualSize.Y - TextMain.ActualSize.Y : 0;
+            value = TextArea.ActualSize.Y - TextMain.ActualSize.Y;
+
+            var value1 = TextArea.ActualSize.Y;
+
+            var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
+            rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.BubbleRadius);
+            rect.Size = TextArea.ActualSize;
+            rect.Offset = new Vector2(0, value);
+
+            textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
+
+            if (messages.Clip is InsetClip messagesClip)
+            {
+                messagesClip.TopInset = -44 + value;
+                messagesClip.BottomInset = -96;
+            }
+            else
+            {
+                messages.Clip = textArea.Compositor.CreateInsetClip(0, -44 + value, 0, -96);
+            }
+
+            var batch = composer.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                textArea.Clip = null;
+                composer.Clip = null;
+                //messages.Clip = null;
+                composer.Offset = new Vector3();
+                messages.Offset = new Vector3();
+
+                ContentPanel.Margin = new Thickness();
+
+                if (show)
+                {
+
+                }
+                else
+                {
+                    while (TextRoot.Children.Count > 1)
+                    {
+                        TextRoot.Children.RemoveAt(1);
+                    }
+                }
+
+                UpdateTextAreaRadius();
+            };
+
+            var animClip2 = textArea.Compositor.CreateScalarKeyFrameAnimation();
+            animClip2.InsertKeyFrame(0, show ? -44 : -44 + value);
+            animClip2.InsertKeyFrame(1, show ? -44 + value : -44);
+            animClip2.Duration = Constants.FastAnimation;
+
+            var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
+            animClip3.InsertKeyFrame(0, new Vector2(0, show ? value : 0));
+            animClip3.InsertKeyFrame(1, new Vector2(0, show ? 0 : value));
+            animClip3.Duration = Constants.FastAnimation;
+
+            var anim1 = textArea.Compositor.CreateVector3KeyFrameAnimation();
+            anim1.InsertKeyFrame(0, new Vector3(0, show ? value : 0, 0));
+            anim1.InsertKeyFrame(1, new Vector3(0, show ? 0 : value, 0));
+            anim1.Duration = Constants.FastAnimation;
+
+            var fade1 = textArea.Compositor.CreateScalarKeyFrameAnimation();
+            fade1.InsertKeyFrame(0, show ? 1 : 0);
+            fade1.InsertKeyFrame(1, show ? 0 : 1);
+            fade1.Duration = Constants.FastAnimation;
+
+            var fade2 = textArea.Compositor.CreateScalarKeyFrameAnimation();
+            fade2.InsertKeyFrame(0, show ? 0 : 1);
+            fade2.InsertKeyFrame(1, show ? 1 : 0);
+            fade2.Duration = Constants.FastAnimation;
+
+            rect.StartAnimation("Offset", animClip3);
+
+            messages.Clip.StartAnimation("TopInset", animClip2);
+            messages.StartAnimation("Offset", anim1);
+
+            textMain.StartAnimation("Opacity", fade1);
+
+            composer.StartAnimation("Offset", anim1);
+            composer.StartAnimation("Opacity", fade2);
+
+            batch.End();
+
+            ContentPanel.Margin = new Thickness(0, -value, 0, 0);
+        }
+
         #region Context menu
 
         private void Menu_ContextRequested(object sender, RoutedEventArgs e)
@@ -1744,9 +1900,9 @@ namespace Telegram.Views
             var basicGroup = chat.Type is ChatTypeBasicGroup basicGroupType ? ViewModel.ClientService.GetBasicGroup(basicGroupType.BasicGroupId) : null;
             var supergroup = chat.Type is ChatTypeSupergroup supergroupType ? ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId) : null;
 
-            flyout.CreateFlyoutItem(ViewModel.SearchExecute, Strings.Search, new FontIcon { Glyph = Icons.Search }, Windows.System.VirtualKey.F);
+            flyout.CreateFlyoutItem(Search, Strings.Search, new FontIcon { Glyph = Icons.Search }, VirtualKey.F);
 
-            if (user != null && !secret)
+            if (user != null && user.Type is not UserTypeDeleted && !secret)
             {
                 flyout.CreateFlyoutItem(ViewModel.ChangeTheme, Strings.ChangeColors, new FontIcon { Glyph = Icons.PaintBrush });
             }
@@ -1755,7 +1911,7 @@ namespace Telegram.Views
             {
                 flyout.CreateFlyoutItem(ViewModel.Report, Strings.ReportChat, new FontIcon { Glyph = Icons.ShieldError });
             }
-            if (user != null && user.Id != ViewModel.ClientService.Options.MyId)
+            if (user != null && user.Type is not UserTypeDeleted && user.Id != ViewModel.ClientService.Options.MyId)
             {
                 if (!user.IsContact && !LastSeenConverter.IsServiceUser(user) && !LastSeenConverter.IsSupportUser(user))
                 {
@@ -1784,7 +1940,7 @@ namespace Telegram.Views
                     flyout.CreateFlyoutItem(ViewModel.DeleteChat, Strings.DeleteAndExit, new FontIcon { Glyph = Icons.Delete });
                 }
             }
-            if ((user != null && user.Id != ViewModel.ClientService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
+            if ((user != null && user.Type is not UserTypeDeleted && user.Id != ViewModel.ClientService.Options.MyId) || basicGroup != null || (supergroup != null && !supergroup.IsChannel))
             {
                 var muted = ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0;
                 var silent = chat.DefaultDisableNotification;
@@ -1870,7 +2026,13 @@ namespace Telegram.Views
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(async () => await TextField.SendAsync(true), Strings.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
-            flyout.CreateFlyoutItem(async () => await TextField.ScheduleAsync(), self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
+
+            if (ViewModel.ClientService.TryGetUser(chat, out Td.Api.User user) && user.Type is UserTypeRegular && user.Status is not UserStatusRecently && !self)
+            {
+                flyout.CreateFlyoutItem(async () => await TextField.ScheduleAsync(true), Strings.SendWhenOnline, new FontIcon { Glyph = Icons.PersonCircleOnline });
+            }
+
+            flyout.CreateFlyoutItem(async () => await TextField.ScheduleAsync(false), self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 
             flyout.ShowAt(sender, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
         }
@@ -1941,10 +2103,6 @@ namespace Telegram.Views
                     if (child != null)
                     {
                         message = child.Message;
-                    }
-                    else
-                    {
-                        message = album.Messages.FirstOrDefault() ?? message;
                     }
                 }
             }
@@ -3332,7 +3490,7 @@ namespace Telegram.Views
                 return;
             }
 
-            ViewModel.MessageServiceExecute(message);
+            ViewModel.ExecuteServiceMessage(message);
         }
 
         private void Autocomplete_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
@@ -3604,11 +3762,16 @@ namespace Telegram.Views
                 return;
             }
 
-            var theme = ViewModel.ClientService.GetChatTheme(chat.ThemeName);
-            if (Theme.Current.Update(ActualTheme, theme))
+            UpdateChatTheme(ViewModel.ClientService.GetChatTheme(chat.ThemeName));
+        }
+
+        private async void UpdateChatTheme(ChatTheme theme)
+        {
+            if (Theme.Current.Update(ActualTheme, theme, _viewModel.Chat.Background))
             {
-                var background = ActualTheme == ElementTheme.Light ? theme?.LightSettings.Background : theme?.DarkSettings.Background;
-                background ??= ViewModel.ClientService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
+                var current = _viewModel.Chat.Background?.Background;
+                current ??= ActualTheme == ElementTheme.Light ? theme?.LightSettings.Background : theme?.DarkSettings.Background;
+                current ??= ViewModel.ClientService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
 
                 if (_loadedThemeTask != null)
                 {
@@ -3616,7 +3779,7 @@ namespace Telegram.Views
                 }
 
                 _backgroundPresenter ??= FindBackgroundPresenter();
-                _backgroundPresenter?.Update(background, ActualTheme == ElementTheme.Dark);
+                _backgroundPresenter?.Update(current, ActualTheme == ElementTheme.Dark);
             }
         }
 
@@ -4053,19 +4216,19 @@ namespace Telegram.Views
 
             var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
             rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.BubbleRadius);
-            rect.Size = new Vector2(TextArea.ActualSize.X, 144);
+            rect.Size = new Vector2(TextArea.ActualSize.X, TextArea.ActualSize.Y + 48);
             rect.Offset = new Vector2(0, value);
 
             textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
 
             if (messages.Clip is InsetClip messagesClip)
             {
-                messagesClip.TopInset = value;
+                messagesClip.TopInset = -44 + value;
                 messagesClip.BottomInset = -96;
             }
             else
             {
-                messages.Clip = textArea.Compositor.CreateInsetClip(0, value, 0, -96);
+                messages.Clip = textArea.Compositor.CreateInsetClip(0, -44 + value, 0, -96);
             }
 
             composer.Clip = textArea.Compositor.CreateInsetClip(0, 0, 0, value);
@@ -4101,22 +4264,22 @@ namespace Telegram.Views
             var animClip = textArea.Compositor.CreateScalarKeyFrameAnimation();
             animClip.InsertKeyFrame(0, show ? 48 : 0);
             animClip.InsertKeyFrame(1, show ? 0 : 48);
-            animClip.Duration = TimeSpan.FromMilliseconds(150);
+            animClip.Duration = Constants.FastAnimation;
 
             var animClip2 = textArea.Compositor.CreateScalarKeyFrameAnimation();
-            animClip2.InsertKeyFrame(0, show ? 0 : 48);
-            animClip2.InsertKeyFrame(1, show ? 48 : 0);
-            animClip2.Duration = TimeSpan.FromMilliseconds(150);
+            animClip2.InsertKeyFrame(0, show ? -44 : -44 + 48);
+            animClip2.InsertKeyFrame(1, show ? -44 + 48 : -44);
+            animClip2.Duration = Constants.FastAnimation;
 
             var animClip3 = textArea.Compositor.CreateVector2KeyFrameAnimation();
             animClip3.InsertKeyFrame(0, new Vector2(0, show ? 48 : 0));
             animClip3.InsertKeyFrame(1, new Vector2(0, show ? 0 : 48));
-            animClip3.Duration = TimeSpan.FromMilliseconds(150);
+            animClip3.Duration = Constants.FastAnimation;
 
             var anim1 = textArea.Compositor.CreateVector3KeyFrameAnimation();
             anim1.InsertKeyFrame(0, new Vector3(0, show ? 48 : 0, 0));
             anim1.InsertKeyFrame(1, new Vector3(0, show ? 0 : 48, 0));
-            anim1.Duration = TimeSpan.FromMilliseconds(150);
+            anim1.Duration = Constants.FastAnimation;
 
             rect.StartAnimation("Offset", animClip3);
 
@@ -4131,14 +4294,13 @@ namespace Telegram.Views
 
             batch.End();
 
-
             if (sendout)
             {
                 ContentPanel.Margin = new Thickness(0, 0, 0, -48);
             }
             else
             {
-                ContentPanel.Margin = new Thickness(0, -44, 0, 0);
+                ContentPanel.Margin = new Thickness(0, -48, 0, 0);
             }
 
             if (show)
@@ -4188,12 +4350,12 @@ namespace Telegram.Views
             var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(show ? 0 : 1, new Vector3(-40, 0, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
-            offset.Duration = TimeSpan.FromMilliseconds(150);
+            offset.Duration = Constants.FastAnimation;
 
             var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
             scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
-            scale.Duration = TimeSpan.FromMilliseconds(150);
+            scale.Duration = Constants.FastAnimation;
 
             var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacity.InsertKeyFrame(show ? 0 : 1, 0);
@@ -4244,7 +4406,7 @@ namespace Telegram.Views
             var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, ListAutocomplete.ActualSize.Y, 0));
             offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
-            offset.Duration = TimeSpan.FromMilliseconds(150);
+            offset.Duration = Constants.FastAnimation;
 
             list.StartAnimation("Translation", offset);
 
@@ -4367,6 +4529,10 @@ namespace Telegram.Views
             if (ViewModel.Type == DialogType.Pinned)
             {
                 ShowAction(Strings.UnpinAllMessages, true);
+            }
+            else if (user.Type is UserTypeDeleted)
+            {
+                ShowAction(Strings.DeleteThisChat, true);
             }
             else if (ViewModel.ClientService.IsRepliesChat(chat))
             {

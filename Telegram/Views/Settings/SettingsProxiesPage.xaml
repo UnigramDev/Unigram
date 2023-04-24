@@ -3,6 +3,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:local="using:Telegram.Views"
                   xmlns:controls="using:Telegram.Controls"
+                  xmlns:cells="using:Telegram.Controls.Cells"
                   xmlns:selectors="using:Telegram.Selectors"
                   xmlns:viewModels="using:Telegram.ViewModels.Settings"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -29,7 +30,9 @@
                 <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl>
                         <controls:BadgeButton Content="{CustomResource AddProxy}"
-                                              Click="{x:Bind ViewModel.Add}" />
+                                              Click="{x:Bind ViewModel.Add}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE710;" />
                     </controls:HeaderedControl>
 
                     <TextBlock Text="{CustomResource ProxyConnections}"
@@ -51,12 +54,15 @@
                                    Style="{StaticResource BaseTextBlockStyle}"
                                    TextWrapping="NoWrap"
                                    TextTrimming="CharacterEllipsis" />
-                        <controls:ProxyStatusControl Status="{x:Bind Status, Mode=OneWay}"
-                                                     VerticalAlignment="Top"
-                                                     Grid.Row="1" />
+                        <cells:ProxyCell Status="{x:Bind Status, Mode=OneWay}"
+                                         VerticalAlignment="Top"
+                                         Grid.Row="1" />
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
+            <ListView.Footer>
+                <Border Height="32" />
+            </ListView.Footer>
         </controls:TableListView>
     </Grid>
 </local:HostedPage>
