@@ -112,7 +112,6 @@ namespace Telegram.Controls.Messages
         {
             Presenter = GetTemplateChild(nameof(Presenter)) as ContentPresenter;
             ElementCompositionPreview.SetIsTranslationEnabled(Presenter, true);
-            ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
 
             _templateApplied = true;
             UpdateMessage(_message);
