@@ -520,10 +520,10 @@ to: {1}</value>
     <value>Actions</value>
   </data>
   <data name="ActionSetSameWallpaperForThisChat" xml:space="preserve">
-    <value>{0} set a same wallpaper for this chat.</value>
+    <value>{0} set your wallpaper as their own for this chat.</value>
   </data>
   <data name="ActionSetSameWallpaperForThisChatSelf" xml:space="preserve">
-    <value>You set the same wallpaper for the chat.</value>
+    <value>You set the same wallpaper as your chat partner.</value>
   </data>
   <data name="ActionSetWallpaperForThisChat" xml:space="preserve">
     <value>{0} set a new wallpaper for this chat.</value>
@@ -1377,6 +1377,9 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BotUnblock" xml:space="preserve">
     <value>RESTART</value>
   </data>
+  <data name="BotUsernameHelp" xml:space="preserve">
+    <value>This link cannot be edited. You can acquire additional usernames on *Fragment*.</value>
+  </data>
   <data name="BotUsernamesHelp" xml:space="preserve">
     <value>Drag and drop links to change the order in which they will be displayed on the bot info page.</value>
   </data>
@@ -1745,7 +1748,7 @@ Minimum length is 5 characters.</value>
     <value>Chat archived.</value>
   </data>
   <data name="ChatBackground" xml:space="preserve">
-    <value>Chat Background</value>
+    <value>Chat Wallpaper</value>
   </data>
   <data name="ChatCamera" xml:space="preserve">
     <value>Camera</value>
@@ -2211,7 +2214,7 @@ You can always switch back to the default Telegram theme here.</value>
     <value>Delete and exit</value>
   </data>
   <data name="DeleteChatBackgroundsAlert" xml:space="preserve">
-    <value>Are you sure you want to delete the selected backgrounds?</value>
+    <value>Are you sure you want to delete the selected wallpapers?</value>
   </data>
   <data name="DeleteChatUser" xml:space="preserve">
     <value>Delete chat</value>
@@ -3126,7 +3129,7 @@ Duration: {1}</value>
     <value>You can’t share folders with excluded chats.</value>
   </data>
   <data name="FilterInviteErrorTypes" xml:space="preserve">
-    <value>You can’t share folders which include or exclude specific chat types.</value>
+    <value>You can’t share folders which include or exclude specific chat types like &apos;Groups&apos;, &apos;Contacts&apos;, etc.</value>
   </data>
   <data name="FilterInviteHeader_one" xml:space="preserve">
     <value>Anyone with this link can add **{1}** folder and the **{0}** chat selected below.</value>
@@ -3857,7 +3860,7 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
     <value>You have reserved too many public links. Try revoking the link from an older group or channel.</value>
   </data>
   <data name="LimitReachedSharedFolders" xml:space="preserve">
-    <value>You can only have {0} shareable folders.
+    <value>You can only have **{0}** shareable folders.
 Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   </data>
   <data name="LimitReachedSharedFoldersLocked" xml:space="preserve">
@@ -3915,7 +3918,7 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
     <value>Autoplay Videos</value>
   </data>
   <data name="LiteOptionsBackground" xml:space="preserve">
-    <value>Background rotation</value>
+    <value>Wallpaper rotation</value>
   </data>
   <data name="LiteOptionsBlur" xml:space="preserve">
     <value>Night theme blur</value>
@@ -4517,7 +4520,7 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
     <value>Open</value>
   </data>
   <data name="OpenBackground" xml:space="preserve">
-    <value>VIEW BACKGROUND</value>
+    <value>VIEW WALLPAPER</value>
   </data>
   <data name="OpenChannel" xml:space="preserve">
     <value>VIEW CHANNEL</value>

@@ -67,8 +67,10 @@
                     </TextBlock>
                 </Grid>
 
-                <Border Visibility="{x:Bind ViewModel.CanBeEdited, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                        Margin="0,12,0,0" />
+                <TextBlock common:TextBlockHelper.Markdown="{x:Bind BotUsernameHelpLink}"
+                           Visibility="{x:Bind ViewModel.CanBeEdited, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="0,8,0,12" />
 
                 <TextBlock Text="{CustomResource UsernamesProfileHeader}"
                            Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
