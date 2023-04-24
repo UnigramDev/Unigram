@@ -93,11 +93,8 @@
             </Style>
         </ListView.ItemContainerStyle>
         <ListView.Footer>
-            <StackPanel Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                        Margin="24,8,24,0">
-                <TextBlock Text="{x:Bind ViewModel.Footer}"
-                           Style="{StaticResource InfoCaptionTextBlockStyle}" />
-            </StackPanel>
+            <controls:SettingsFooter Text="{x:Bind ViewModel.Footer}"
+                                     Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" />
         </ListView.Footer>
     </ListView>
 </controls:ContentPopup>

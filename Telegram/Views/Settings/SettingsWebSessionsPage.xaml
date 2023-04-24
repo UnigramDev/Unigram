@@ -44,9 +44,8 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <TextBlock Text="{CustomResource TerminateWebSessionInfo}"
-                           Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           Margin="24,8,24,32" />
+                <controls:SettingsFooter Text="{CustomResource TerminateWebSessionInfo}"
+                                         Margin="24,8,24,32" />
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

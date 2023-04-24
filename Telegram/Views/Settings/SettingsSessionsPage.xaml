@@ -91,9 +91,7 @@
             </ListView.ItemTemplate>
             <ListView.Footer>
                 <controls:SettingsPanel IsFooter="True">
-                    <TextBlock Text="{CustomResource SessionsListInfo}"
-                               Style="{StaticResource InfoCaptionTextBlockStyle}"
-                               Margin="24,8,24,8" />
+                    <controls:SettingsFooter Text="{CustomResource SessionsListInfo}" />
 
                     <controls:HeaderedControl Header="{CustomResource TerminateOldSessionHeader}">
                         <controls:BadgeButton Content="{CustomResource IfInactiveFor}">

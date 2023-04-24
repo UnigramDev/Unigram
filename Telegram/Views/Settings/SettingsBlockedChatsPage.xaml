@@ -42,13 +42,12 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <cells:ProfileCell BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                    Background="{ThemeResource SettingsItemBackground}" />
+                                       Background="{ThemeResource SettingsItemBackground}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
-                <TextBlock Text="{CustomResource UnblockText}"
-                           Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           Margin="24,8,24,36" />
+                <controls:SettingsFooter Text="{CustomResource UnblockText}"
+                                         Margin="24,8,24,32" />
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

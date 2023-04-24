@@ -1344,13 +1344,30 @@
                             <ItemsPresenter x:Name="Presenter" />
                         </Border>
 
-                        <TextBlock x:Name="FooterLabel"
-                                   common:TextBlockHelper.Markdown="{TemplateBinding Footer}"
-                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                   Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
-                                   Margin="0,8,0,0"
-                                   Grid.Row="2" />
+                        <local:SettingsFooter Text="{TemplateBinding Footer}"
+                                              Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                                              Margin="0,8,0,0"
+                                              Grid.Row="2" />
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:SettingsFooter">
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalAlignment"
+                Value="Stretch" />
+        <Setter Property="Margin"
+                Value="24,8,24,0" />
+        <Setter Property="MaxWidth"
+                Value="1000" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SettingsFooter">
+                    <TextBlock common:TextBlockHelper.Markdown="{TemplateBinding Text}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
