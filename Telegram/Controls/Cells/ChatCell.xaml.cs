@@ -1561,7 +1561,7 @@ namespace Telegram.Controls.Cells
                     var playback = TLContainer.Current.Playback;
                     var settings = TLContainer.Current.Resolve<ISettingsService>(_clientService.SessionId);
 
-                    var hidePreview = !SettingsService.Current.Notifications.GetShowPreview(_chat);
+                    var hidePreview = !settings.Notifications.GetShowPreview(_chat);
 
                     if (hidePreview || _chat.LastMessage == null || _chat.LastMessage.IsService())
                     {
