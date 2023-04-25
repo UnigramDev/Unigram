@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Converters;
+using Telegram.Native;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
@@ -251,7 +252,7 @@ namespace Telegram.Common
         public static async Task<IList<object>> SearchAsync(IClientService clientService, string query, EmojiSkinTone skin)
         {
             var result = new List<object>();
-            var inputLanguage = Windows.Globalization.Language.CurrentInputMethodLanguageTag;
+            var inputLanguage = NativeUtils.GetKeyboardCulture();
 
             var response = await clientService.SendAsync(new SearchEmojis(query, false, new[] { inputLanguage }));
             if (response is Emojis suggestions)

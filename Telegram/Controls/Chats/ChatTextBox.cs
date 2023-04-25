@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Native;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -610,7 +611,7 @@ namespace Telegram.Controls.Chats
             {
                 _clientService = clientService;
                 _query = query;
-                _inputLanguage = Windows.Globalization.Language.CurrentInputMethodLanguageTag;
+                _inputLanguage = NativeUtils.GetKeyboardCulture();
                 _chatId = chatId;
             }
 
