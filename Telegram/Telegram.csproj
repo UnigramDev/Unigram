@@ -627,6 +627,7 @@
     <Compile Include="ViewModels\Authorization\AuthorizationRecoveryViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationRegistrationViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationViewModel.cs" />
+    <Compile Include="ViewModels\MessageDelegate.cs" />
     <Compile Include="ViewModels\Folders\RemoveFolderViewModel.cs" />
     <Compile Include="ViewModels\Folders\AddFolderViewModel.cs" />
     <Compile Include="ViewModels\Folders\ShareFolderViewModel.cs" />

@@ -381,7 +381,7 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new GetMessage(update.ChatId, update.ReplyMarkupMessageId));
                 if (response is Message message)
                 {
-                    BeginOnUIThread(() => Delegate?.UpdateChatReplyMarkup(_chat, _messageFactory.Create(this, message)));
+                    BeginOnUIThread(() => Delegate?.UpdateChatReplyMarkup(_chat, CreateMessage(message)));
                 }
                 else
                 {
@@ -1042,7 +1042,7 @@ namespace Telegram.ViewModels
             {
                 if (IsFirstSliceLoaded == true || Type == DialogType.ScheduledMessages)
                 {
-                    var messageCommon = _messageFactory.Create(this, message);
+                    var messageCommon = CreateMessage(message);
                     messageCommon.GeneratedContentUnread = true;
                     messageCommon.IsInitial = false;
 

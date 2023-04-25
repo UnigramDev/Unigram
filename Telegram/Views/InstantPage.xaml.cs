@@ -18,7 +18,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Windows.ApplicationModel;
 using Windows.Foundation;
@@ -36,17 +35,13 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views
 {
-    public sealed partial class InstantPage : HostedPage, IMessageDelegate
+    public sealed partial class InstantPage : HostedPage
     {
         public InstantViewModel ViewModel => DataContext as InstantViewModel;
 
         public ISettingsService Settings => ViewModel.Settings;
 
         public IEventAggregator Aggregator => ViewModel.Aggregator;
-
-        public IDictionary<long, MessageViewModel> SelectedItems => throw new NotImplementedException();
-
-        public bool IsSelectionEnabled => throw new NotImplementedException();
 
         private readonly string _injectedJs;
         private readonly ScrollViewer _scrollingHost;
@@ -841,7 +836,7 @@ namespace Telegram.Views
             var galleryItem = new GalleryPhoto(ViewModel.ClientService, block.Photo, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessagePhoto(block.Photo, null, false, false));
+            var message = CreateMessage(new MessagePhoto(block.Photo, null, false, false));
             var element = new StackPanel { Style = Resources["BlockPhotoStyle"] as Style };
 
             var content = new PhotoContent(message);
@@ -867,7 +862,7 @@ namespace Telegram.Views
             var galleryItem = new GalleryVideo(ViewModel.ClientService, block.Video, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessageVideo(block.Video, null, false, false));
+            var message = CreateMessage(new MessageVideo(block.Video, null, false, false));
             var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
             var content = new VideoContent(message);
@@ -893,7 +888,7 @@ namespace Telegram.Views
             var galleryItem = new GalleryAnimation(ViewModel.ClientService, block.Animation, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessageAnimation(block.Animation, null, false, false));
+            var message = CreateMessage(new MessageAnimation(block.Animation, null, false, false));
             var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
             var content = new AnimationContent(message);
@@ -919,9 +914,9 @@ namespace Telegram.Views
             return element;
         }
 
-        private MessageViewModel GetMessage(MessageContent content)
+        private MessageViewModel CreateMessage(MessageContent content)
         {
-            return ViewModel.CreateMessage(this, new Message { Content = content });
+            return ViewModel.CreateMessage(new Message { Content = content });
         }
 
         private FrameworkElement ProcessEmbed(PageBlockEmbedded block)
@@ -995,7 +990,7 @@ namespace Telegram.Views
                     var galleryItem = new GalleryPhoto(ViewModel.ClientService, photoBlock.Photo, block.Caption.ToPlainText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
-                    var message = GetMessage(new MessagePhoto(photoBlock.Photo, null, false, false));
+                    var message = CreateMessage(new MessagePhoto(photoBlock.Photo, null, false, false));
 
                     var content = new PhotoContent(message);
                     content.Tag = galleryItem;
@@ -1010,7 +1005,7 @@ namespace Telegram.Views
                     var galleryItem = new GalleryVideo(ViewModel.ClientService, videoBlock.Video, block.Caption.ToPlainText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
-                    var message = GetMessage(new MessageVideo(videoBlock.Video, null, false, false));
+                    var message = CreateMessage(new MessageVideo(videoBlock.Video, null, false, false));
 
                     var content = new VideoContent(message);
                     content.Tag = galleryItem;
@@ -1538,156 +1533,5 @@ namespace Telegram.Views
             }
             catch { }
         }
-
-        #region Delegate
-
-        public bool CanBeDownloaded(object content, File file)
-        {
-            return !ViewModel.Settings.AutoDownload.Disabled;
-        }
-
-        public void DownloadFile(MessageViewModel message, File file)
-        {
-        }
-
-        public void DoubleClick(MessageViewModel message)
-        {
-        }
-
-        public void ForwardMessage(MessageViewModel message)
-        {
-        }
-
-        public void OpenReply(MessageViewModel message)
-        {
-        }
-
-        public void OpenFile(File file)
-        {
-        }
-
-        public void OpenWebPage(WebPage webPage)
-        {
-        }
-
-        public void OpenSticker(Sticker sticker)
-        {
-        }
-
-        public void OpenLocation(Location location, string title)
-        {
-        }
-
-        public void OpenLiveLocation(MessageViewModel message)
-        {
-
-        }
-
-        public void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button)
-        {
-        }
-
-        public void ViewVisibleMessages(bool intermediate)
-        {
-
-        }
-
-        public async void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
-        {
-            var content = target.Tag as GalleryContent;
-            content ??= ViewModel.Gallery.Items.FirstOrDefault();
-
-            ViewModel.Gallery.SelectedItem = content;
-            ViewModel.Gallery.FirstItem = content;
-
-            await GalleryView.ShowAsync(ViewModel.Gallery, () => target);
-        }
-
-        public void PlayMessage(MessageViewModel message)
-        {
-        }
-
-        public void OpenUsername(string username)
-        {
-        }
-
-        public void OpenHashtag(string hashtag)
-        {
-        }
-
-        public void OpenBankCardNumber(string number)
-        {
-        }
-
-        public void OpenUser(long userId)
-        {
-        }
-
-        public void OpenChat(long chatId, bool profile = false)
-        {
-        }
-
-        public void OpenChat(long chatId, long messageId)
-        {
-        }
-
-        public void OpenViaBot(long viaBotUserId)
-        {
-        }
-
-        public void OpenUrl(string url, bool untrust)
-        {
-        }
-
-        public void SendBotCommand(string command)
-        {
-        }
-
-        public void Call(MessageViewModel message, bool video)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void VotePoll(MessageViewModel message, IList<PollOption> options)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SelectMessage(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeselectMessage(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsMessageSelected(long messageId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetAdminTitle(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OpenThread(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Select(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Unselect(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
     }
 }

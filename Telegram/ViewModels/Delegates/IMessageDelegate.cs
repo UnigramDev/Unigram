@@ -37,7 +37,6 @@ namespace Telegram.ViewModels.Delegates
         void OpenWebPage(WebPage webPage);
         void OpenSticker(Sticker sticker);
         void OpenLocation(Location location, string title);
-        void OpenLiveLocation(MessageViewModel message);
         void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button);
         void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0);
         void PlayMessage(MessageViewModel message);
@@ -61,5 +60,6 @@ namespace Telegram.ViewModels.Delegates
         void SendBotCommand(string command);
 
         string GetAdminTitle(MessageViewModel message);
+        void UpdateAdministrators(long chatId);
     }
 }

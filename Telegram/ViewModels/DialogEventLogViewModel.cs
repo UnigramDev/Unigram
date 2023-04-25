@@ -249,7 +249,7 @@ namespace Telegram.ViewModels
 
         private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)
         {
-            var message = _messageFactory.Create(this, CreateMessage(chatId, isChannel, chatEvent, child));
+            var message = CreateMessage(CreateMessage(chatId, isChannel, chatEvent, child));
             message.Event = chatEvent;
             message.IsFirst = true;
             message.IsLast = true;

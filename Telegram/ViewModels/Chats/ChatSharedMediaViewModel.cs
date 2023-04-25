@@ -17,11 +17,9 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
-using Telegram.Views;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Users;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -41,18 +39,21 @@ namespace Telegram.ViewModels.Chats
     }
 
     public class ChatSharedMediaViewModel : TLMultipleViewModelBase
-        , IMessageDelegate
         , IHandle
     //, IHandle<UpdateDeleteMessages>
     {
         private readonly IPlaybackService _playbackService;
         private readonly IStorageService _storageService;
 
+        private readonly IMessageDelegate _messageDelegate;
+
         public ChatSharedMediaViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, IPlaybackService playbackService)
             : base(clientService, settingsService, aggregator)
         {
             _playbackService = playbackService;
             _storageService = storageService;
+
+            _messageDelegate = new MessageDelegate(this);
 
             Items = new ObservableCollection<ProfileItem>();
 
@@ -494,10 +495,6 @@ namespace Telegram.ViewModels.Chats
 
         #region Unselect
 
-        IDictionary<long, MessageViewModel> IMessageDelegate.SelectedItems => throw new NotImplementedException();
-
-        public bool IsSelectionEnabled => false;
-
         public void UnselectMessages()
         {
             SelectionMode = ListViewSelectionMode.None;
@@ -507,200 +504,21 @@ namespace Telegram.ViewModels.Chats
 
         #region Delegate
 
-        public bool CanBeDownloaded(object content, File file)
+        public IMessageDelegate MessageDelegate => _messageDelegate;
+
+        public void OpenUsername(string username)
         {
-            return true;
+            _messageDelegate.OpenUsername(username);
         }
 
-        public void DownloadFile(MessageViewModel message, File file)
+        public void OpenUser(long userId)
         {
+            _messageDelegate.OpenUser(userId);
         }
 
-        public void DoubleClick(MessageViewModel message)
+        public void OpenUrl(string url, bool untrust)
         {
-        }
-
-        public void ForwardMessage(MessageViewModel message)
-        {
-        }
-
-        public void ViewVisibleMessages(bool intermediate)
-        {
-
-        }
-
-        public void OpenReply(MessageViewModel message)
-        {
-        }
-
-        public async void OpenFile(File file)
-        {
-            if (file.Local.IsDownloadingCompleted)
-            {
-                try
-                {
-                    var temp = await ClientService.GetFileAsync(file);
-                    var result = await Windows.System.Launcher.LaunchFileAsync(temp);
-                    //var folder = await temp.GetParentAsync();
-                    //var options = new Windows.System.FolderLauncherOptions();
-                    //options.ItemsToSelect.Add(temp);
-
-                    //var result = await Windows.System.Launcher.LaunchFolderAsync(folder, options);
-                }
-                catch { }
-            }
-        }
-
-        public void OpenWebPage(WebPage webPage)
-        {
-        }
-
-        public void OpenSticker(Sticker sticker)
-        {
-        }
-
-        public void OpenLocation(Location location, string title)
-        {
-        }
-
-        public void OpenLiveLocation(MessageViewModel message)
-        {
-
-        }
-
-        public void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button)
-        {
-        }
-
-        public void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
-        {
-        }
-
-        public void PlayMessage(MessageViewModel message)
-        {
-        }
-
-        public async void OpenUsername(string username)
-        {
-            var response = await ClientService.SendAsync(new SearchPublicChat(username));
-            if (response is Chat chat)
-            {
-                if (chat.Type is ChatTypePrivate privata)
-                {
-                    var user = ClientService.GetUser(privata.UserId);
-                    if (user?.Type is UserTypeBot)
-                    {
-                        NavigationService.NavigateToChat(chat);
-                    }
-                    else
-                    {
-                        NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                    }
-                }
-                else
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
-            }
-        }
-
-        public void OpenHashtag(string hashtag)
-        {
-        }
-
-        public void OpenBankCardNumber(string number)
-        {
-        }
-
-        public async void OpenUser(long userId)
-        {
-            var response = await ClientService.SendAsync(new CreatePrivateChat(userId, false));
-            if (response is Chat chat)
-            {
-                var user = ClientService.GetUser(userId);
-                if (user?.Type is UserTypeBot)
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
-                else
-                {
-                    NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                }
-            }
-        }
-
-        public void OpenChat(long chatId, bool profile = false)
-        {
-        }
-
-        public void OpenChat(long chatId, long messageId)
-        {
-        }
-
-        public void OpenViaBot(long viaBotUserId)
-        {
-        }
-
-        public async void OpenUrl(string url, bool untrust)
-        {
-            if (MessageHelper.TryCreateUri(url, out Uri uri))
-            {
-                if (MessageHelper.IsTelegramUrl(uri))
-                {
-                    MessageHelper.OpenTelegramUrl(ClientService, NavigationService, uri);
-                }
-                else
-                {
-                    if (untrust)
-                    {
-                        var confirm = await ShowPopupAsync(string.Format(Strings.OpenUrlAlert, url), Strings.AppName, Strings.OK, Strings.Cancel);
-                        if (confirm != ContentDialogResult.Primary)
-                        {
-                            return;
-                        }
-                    }
-
-                    try
-                    {
-                        await Windows.System.Launcher.LaunchUriAsync(uri);
-                    }
-                    catch { }
-                }
-            }
-        }
-
-        public void SendBotCommand(string command)
-        {
-        }
-
-        public void Call(MessageViewModel message, bool video)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void VotePoll(MessageViewModel message, IList<PollOption> options)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetAdminTitle(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OpenThread(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Select(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Unselect(MessageViewModel message)
-        {
-            throw new NotImplementedException();
+            _messageDelegate.OpenUrl(url, untrust);
         }
 
         #endregion
