@@ -13,6 +13,7 @@ using Telegram.Common;
 using Telegram.Controls.Gallery;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
@@ -33,9 +34,18 @@ namespace Telegram.ViewModels
         public MessageDelegate(TLViewModelBase viewModel)
             : base(viewModel.ClientService, viewModel.Settings, viewModel.Aggregator)
         {
+            _viewModel = viewModel;
+        }
+
+        public MessageDelegate(IClientService clientService, ISettingsService settings)
+            : base(clientService, settings, null)
+        {
+            _viewModel = null;
         }
 
         public virtual Chat Chat { get; }
+
+        public bool IsDialog => _viewModel is DialogViewModel;
 
         public override INavigationService NavigationService
         {
@@ -428,6 +438,19 @@ namespace Telegram.ViewModels
         public virtual void Unselect(MessageViewModel message) { }
 
         #endregion
+    }
+
+    public class ChatMessageDelegate : MessageDelegate
+    {
+        private readonly Chat _chat;
+
+        public ChatMessageDelegate(IClientService clientService, ISettingsService settings, Chat chat)
+            : base(clientService, settings)
+        {
+            _chat = chat;
+        }
+
+        public override Chat Chat => _chat;
     }
 
     public class DialogMessageDelegate : MessageDelegate

@@ -91,6 +91,7 @@ namespace Telegram.Views
         public ILifetimeService Lifetime => _lifetime;
         public IPasscodeService Passcode => _passcode;
         public ILocaleService Locale => _locale;
+        public IPlaybackService Playback => _playback;
 
         public static TLContainer Current
         {

@@ -50,6 +50,25 @@ namespace Telegram.Controls.Messages
             DefaultStyleKey = typeof(MessageBubble);
         }
 
+        public bool HasFloatingElements
+        {
+            get
+            {
+                if (_message?.ReplyMarkup is ReplyMarkupInlineKeyboard)
+                {
+                    return true;
+                }
+
+                var content = _message?.GeneratedContent ?? _message?.Content;
+                if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji || IsFullMedia(content))
+                {
+                    return _message.InteractionInfo?.Reactions.Count > 0;
+                }
+
+                return false;
+            }
+        }
+
         public void UpdateQuery(string text)
         {
             _query = text;
@@ -223,15 +242,6 @@ namespace Telegram.Controls.Messages
                 UpdateMessageReplyMarkup(message);
 
                 UpdateAttach(message);
-
-                if (PhotoColumn.Width.IsAuto && message.HasSenderPhoto)
-                {
-                    PhotoColumn.Width = new GridLength(38, GridUnitType.Pixel);
-                }
-                else if (PhotoColumn.Width.IsAbsolute && !message.HasSenderPhoto)
-                {
-                    PhotoColumn.Width = new GridLength(0, GridUnitType.Auto);
-                }
             }
             else
             {
@@ -467,9 +477,12 @@ namespace Telegram.Controls.Messages
                 _cornerRadius.Set(topLeft, topRight, bottomRight, bottomLeft);
             }
 
-            Margin = new Thickness(0, message.IsFirst ? 4 : 2, 0, 0);
+            if (message.Delegate != null && message.Delegate.IsDialog)
+            {
+                Margin = new Thickness(0, message.IsFirst ? 4 : 2, 0, 0);
 
-            UpdatePhoto(message);
+                UpdatePhoto(message);
+            }
         }
 
         public void ShowHidePhoto(bool show, VerticalAlignment alignment = VerticalAlignment.Bottom)
@@ -509,11 +522,24 @@ namespace Telegram.Controls.Messages
                     Photo.Visibility = Visibility.Collapsed;
                     Photo.Clear();
                 }
+
+                if (PhotoColumn.Width.IsAuto)
+                {
+                    PhotoColumn.Width = new GridLength(38, GridUnitType.Pixel);
+                }
             }
-            else if (Photo != null)
+            else
             {
-                _photoId = null;
-                UnloadObject(ref Photo);
+                if (Photo != null)
+                {
+                    _photoId = null;
+                    UnloadObject(ref Photo);
+                }
+
+                if (PhotoColumn.Width.IsAbsolute)
+                {
+                    PhotoColumn.Width = new GridLength(0, GridUnitType.Auto);
+                }
             }
         }
 
@@ -1158,6 +1184,11 @@ namespace Telegram.Controls.Messages
 
             Footer.UpdateMessageInteractionInfo(message);
             UpdateMessageReactions(message, false);
+
+            if (message.Delegate == null || !message.Delegate.IsDialog)
+            {
+                return;
+            }
 
             UpdateAction(message, chat);
 

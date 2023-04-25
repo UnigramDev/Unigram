@@ -13,7 +13,9 @@ namespace Telegram.ViewModels.Delegates
 {
     public interface IMessageDelegate : IViewModelDelegate
     {
-        public ISettingsService Settings { get; }
+        bool IsDialog { get; }
+
+        ISettingsService Settings { get; }
 
         IEventAggregator Aggregator { get; }
 

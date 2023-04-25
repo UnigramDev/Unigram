@@ -20,6 +20,8 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
+using Telegram.Views;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
@@ -166,8 +168,9 @@ namespace Telegram.Controls.Cells
 
             var tooltip = new ToolTip();
             tooltip.Opened += ToolTip_Opened;
+            tooltip.Closed += Tooltip_Closed;
 
-            ToolTipService.SetToolTip(BriefLabel, tooltip);
+            ToolTipService.SetToolTip(this, tooltip);
 
             _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
             _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
@@ -1551,37 +1554,106 @@ namespace Telegram.Controls.Cells
         private void ToolTip_Opened(object sender, RoutedEventArgs e)
         {
             var tooltip = sender as ToolTip;
-            if (tooltip != null)
+            if (tooltip != null && _chat != null)
             {
-                if (BriefLabel.IsTextTrimmed)
+                if (SettingsService.Current.Diagnostics.ChatPreviewToolTip)
                 {
-                    if (SettingsService.Current.Diagnostics.ChatPreviewToolTip)
+                    var playback = TLContainer.Current.Playback;
+                    var settings = TLContainer.Current.Resolve<ISettingsService>(_clientService.SessionId);
+
+                    var hidePreview = !SettingsService.Current.Notifications.GetShowPreview(_chat);
+
+                    if (hidePreview || _chat.LastMessage == null || _chat.LastMessage.IsService())
                     {
-                        var bubble = new MessageBubble();
-                        bubble.UpdateMessage(new ViewModels.MessageViewModel(_clientService, null, null, _chat.LastMessage));
-
-                        //var background = new ChatBackgroundPresenter();
-                        //background.Update(_clientService, null);
-                        //background.Margin = new Thickness(-8, -4, -8, -8);
-
-                        //var grid = new Grid();
-                        //grid.Children.Add(background);
-                        //grid.Children.Add(bubble);
-                        //grid.Padding = new Thickness(8, 4, 8, 8);
-
-                        tooltip.Content = bubble;
-                        tooltip.Padding = new Thickness();
-                        tooltip.CornerRadius = new CornerRadius(8);
+                        tooltip.IsOpen = false;
+                        return;
                     }
-                    else
+
+                    // TODO: this is not correct, as MessageViewModel doesn't
+                    // hold a strong reference to the IMessageDelegate object.
+                    var delegato = new ChatMessageDelegate(_clientService, settings, _chat);
+                    var message = new MessageViewModel(_clientService, playback, delegato, _chat.LastMessage);
+
+                    var bubble = new MessageBubble();
+                    if (message.IsOutgoing)
                     {
-                        tooltip.Content = FromLabel.Text + BriefLabel.Text;
+                        bubble.Resources = new ThemeOutgoing();
                     }
+
+                    bubble.UpdateMessage(message);
+
+                    var grid = new Grid();
+                    grid.Children.Add(bubble);
+
+                    if (bubble.HasFloatingElements)
+                    {
+                        var presenter = new ChatBackgroundPresenter();
+                        presenter.Update(_clientService, null);
+                        presenter.CornerRadius = new CornerRadius(15);
+
+                        void handler(object sender, SizeChangedEventArgs args)
+                        {
+                            bubble.SizeChanged -= handler;
+                            presenter.Width = args.NewSize.Width;
+                            presenter.Height = args.NewSize.Height;
+                        }
+
+                        bubble.SizeChanged += handler;
+
+                        var canvas = new Canvas();
+                        canvas.Children.Add(presenter);
+                        grid.Children.Insert(0, canvas);
+                    }
+
+                    tooltip.Content = grid;
+                    tooltip.Padding = new Thickness();
+                    tooltip.CornerRadius = new CornerRadius(15);
+
+                    if (message.ReplyToMessageId != 0 ||
+                        message.Content is MessagePinMessage ||
+                        message.Content is MessageGameScore ||
+                        message.Content is MessagePaymentSuccessful)
+                    {
+                        message.ReplyToMessageState = ReplyToMessageState.Loading;
+
+                        _clientService.Send(new GetRepliedMessage(message.ChatId, message.Id), response =>
+                        {
+                            if (response is Message result)
+                            {
+                                message.ReplyToMessage = new MessageViewModel(_clientService, playback, delegato, result);
+                                message.ReplyToMessageState = ReplyToMessageState.None;
+                            }
+                            else
+                            {
+                                message.ReplyToMessageState = ReplyToMessageState.Deleted;
+                            }
+
+                            this.BeginOnUIThread(() =>
+                            {
+                                if (tooltip.IsOpen)
+                                {
+                                    bubble.UpdateMessageReply(message);
+                                }
+                            });
+                        });
+                    }
+                }
+                else if (BriefLabel.IsTextTrimmed)
+                {
+                    tooltip.Content = FromLabel.Text + BriefLabel.Text;
                 }
                 else
                 {
                     tooltip.IsOpen = false;
                 }
+            }
+        }
+
+        private void Tooltip_Closed(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToolTip tooltip)
+            {
+                tooltip.Content = new object();
             }
         }
 
