@@ -197,7 +197,6 @@
             </ListView.Header>
             <ListView.Footer>
                 <controls:SettingsFooter x:Name="Footer"
-                                         Style="{StaticResource InfoCaptionTextBlockStyle}"
                                          Margin="24,8,24,32" />
             </ListView.Footer>
         </controls:TableListView>
