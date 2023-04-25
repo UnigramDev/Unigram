@@ -4,14 +4,15 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.Web.WebView2.Core;
 using System;
 using System.Collections.Generic;
 using Telegram.Common;
-using Telegram.Native;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
+using Windows.Data.Json;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views
@@ -55,8 +56,24 @@ namespace Telegram.Views
             TitleLabel.Visibility = string.IsNullOrWhiteSpace(title) ? Visibility.Collapsed : Visibility.Visible;
             UsernameLabel.Visibility = string.IsNullOrWhiteSpace(username) ? Visibility.Collapsed : Visibility.Visible;
 
-            View.Navigate(new Uri(url));
+            InitializeWebView(url);
             //}
+        }
+
+        private async void InitializeWebView(string url)
+        {
+            await View.EnsureCoreWebView2Async();
+            await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"window.external={invoke:s=>window.chrome.webview.postMessage(s)}");
+            await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
+window.TelegramWebviewProxy = {
+postEvent: function(eventType, eventData) {
+	if (window.external && window.external.invoke) {
+		window.external.invoke(JSON.stringify([eventType, eventData]));
+	}
+}
+}");
+
+            View.CoreWebView2.Navigate(url);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -69,15 +86,33 @@ namespace Telegram.Views
             await SharePopup.GetForCurrentView().ShowAsync(_shareMessage);
         }
 
-        private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
+        private void View_WebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
         {
-            sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramGameProxy(withMyScore =>
+            var json = args.TryGetWebMessageAsString();
+
+            if (JsonArray.TryParse(json, out JsonArray message))
             {
-                this.BeginOnUIThread(async () =>
+                var eventName = message.GetStringAt(0);
+                var eventData = message.GetStringAt(1);
+
+                if (JsonObject.TryParse(eventData, out JsonObject data))
                 {
-                    await SharePopup.GetForCurrentView().ShowAsync(_shareMessage, withMyScore);
-                });
-            }));
+                    ReceiveEvent(eventName, data);
+                }
+            }
+        }
+
+        private async void ReceiveEvent(string eventName, JsonObject data)
+        {
+            if (eventName == "share_game")
+            {
+                await SharePopup.GetForCurrentView().ShowAsync(_shareMessage, false);
+            }
+
+            else if (eventName == "share_score")
+            {
+                await SharePopup.GetForCurrentView().ShowAsync(_shareMessage, true);
+            }
         }
     }
 }

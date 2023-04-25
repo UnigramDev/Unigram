@@ -228,6 +228,16 @@ namespace Telegram.Common
                 var target = GetOrCreateResources(requested, out bool create);
                 var lookup = ThemeService.GetLookup(requested);
 
+                var themeParameters = new Dictionary<string, int>
+                {
+                    { "ContentDialogBackground", 0 },
+                    { "ContentDialogForeground", 0 },
+                    { "ButtonBackground", 0 },
+                    { "ButtonForeground", 0 },
+                    { "SystemControlDisabledChromeDisabledLowBrush", 0 },
+                    { "HyperlinkForeground", 0 }
+                };
+
                 Color GetShade(AccentShade shade)
                 {
                     if (shades != null && shades.TryGetValue(shade, out Color accent))
@@ -263,6 +273,11 @@ namespace Telegram.Common
                             value = color;
                         }
 
+                        if (themeParameters.ContainsKey(item.Key))
+                        {
+                            themeParameters[item.Key] = value.ToValue();
+                        }
+                        
                         AddOrUpdate<SolidColorBrush>(target, item.Key, create,
                             update => update.Color = value);
                     }
@@ -307,24 +322,15 @@ namespace Telegram.Common
                     ThemeDictionaries.Add(requested == TelegramTheme.Light ? "Light" : "Dark", target);
                 }
 
-                int GetColor(string key)
-                {
-                    if (target.TryGet(key, out SolidColorBrush brush))
-                    {
-                        return brush.Color.ToValue();
-                    }
-
-                    return 0;
-                }
-
                 Parameters = new ThemeParameters
                 {
-                    BackgroundColor = GetColor("ContentDialogBackground"),
-                    TextColor = GetColor("ContentDialogForeground"),
-                    ButtonColor = GetColor("ButtonBackground"),
-                    ButtonTextColor = GetColor("ButtonForeground"),
-                    HintColor = GetColor("SystemControlDisabledChromeDisabledLowBrush"),
-                    LinkColor = GetColor("HyperlinkForeground")
+                    BackgroundColor = themeParameters["ContentDialogBackground"],
+                    SecondaryBackgroundColor = themeParameters["ContentDialogBackground"],
+                    TextColor = themeParameters["ContentDialogForeground"],
+                    ButtonColor = themeParameters["ButtonBackground"],
+                    ButtonTextColor = themeParameters["ButtonForeground"],
+                    HintColor = themeParameters["SystemControlDisabledChromeDisabledLowBrush"],
+                    LinkColor = themeParameters["HyperlinkForeground"]
                 };
             }
             catch (UnauthorizedAccessException)

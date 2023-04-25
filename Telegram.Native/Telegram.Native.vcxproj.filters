@@ -694,8 +694,6 @@
   </ItemGroup>
   <ItemGroup>
     <Midl Include="NativeUtils.idl" />
-    <Midl Include="TelegramGameProxy.idl" />
-    <Midl Include="TelegramPaymentProxy.idl" />
     <Midl Include="PlaceholderImageHelper.idl" />
     <Midl Include="VideoAnimation.idl" />
     <Midl Include="AudioPitchEffect.idl" />
@@ -710,7 +708,6 @@
     <Midl Include="LanguageIdentification.idl" />
     <Midl Include="QrBuffer.idl" />
     <Midl Include="CachedVideoAnimation.idl" />
-    <Midl Include="TelegramWebviewProxy.idl" />
     <Midl Include="BufferSurface.idl" />
     <Midl Include="Opus\OpusOutput.idl">
       <Filter>Opus</Filter>

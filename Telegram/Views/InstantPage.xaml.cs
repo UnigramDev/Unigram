@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -923,7 +924,38 @@ namespace Telegram.Views
         {
             var element = new StackPanel { Style = Resources["BlockEmbedStyle"] as Style };
 
-            FrameworkElement child = null;
+            var view = new WebView2();
+
+            async void loaded(object sender, RoutedEventArgs e)
+            {
+                view.Loaded -= loaded;
+
+                await view.EnsureCoreWebView2Async();
+
+                // TODO: auto-size
+
+                if (!block.AllowScrolling)
+                {
+                    await view.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync("document.querySelector('body').style.overflow='hidden'");
+                }
+                if (!string.IsNullOrEmpty(block.Html))
+                {
+                    view.CoreWebView2.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
+                }
+                else if (!string.IsNullOrEmpty(block.Url))
+                {
+                    view.CoreWebView2.Navigate(block.Url);
+                }
+            }
+
+            void unloaded(object sender, RoutedEventArgs e)
+            {
+                view.Unloaded -= unloaded;
+                view.Close();
+            }
+
+            view.Loaded += loaded;
+            view.Unloaded += unloaded;
 
             //if (block.HasPosterPhotoId)
             //{
@@ -933,40 +965,13 @@ namespace Telegram.Views
             //    image.Constraint = photo;
             //    child = image;
             //}
-            if (!string.IsNullOrEmpty(block.Html))
-            {
-                var view = new WebView();
-                if (!block.AllowScrolling)
-                {
-                    view.NavigationCompleted += OnWebViewNavigationCompleted;
-                }
-                view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
+            var ratio = new AspectView();
+            ratio.MaxWidth = block.Width;
+            ratio.MaxHeight = block.Height;
+            ratio.Constraint = new Size(block.Width, block.Height);
+            ratio.Children.Add(view);
 
-                var ratio = new AspectView();
-                ratio.MaxWidth = block.Width;
-                ratio.MaxHeight = block.Height;
-                ratio.Constraint = new Size(block.Width, block.Height);
-                ratio.Children.Add(view);
-                child = ratio;
-            }
-            else if (!string.IsNullOrEmpty(block.Url))
-            {
-                var view = new WebView();
-                if (!block.AllowScrolling)
-                {
-                    view.NavigationCompleted += OnWebViewNavigationCompleted;
-                }
-                view.Navigate(new Uri(block.Url));
-
-                var ratio = new AspectView();
-                ratio.MaxWidth = block.Width;
-                ratio.MaxHeight = block.Height;
-                ratio.Constraint = new Size(block.Width, block.Height);
-                ratio.Children.Add(view);
-                child = ratio;
-            }
-
-            element.Children.Add(child);
+            element.Children.Add(ratio);
 
             var caption = ProcessCaption(block.Caption);
             if (caption != null)
@@ -1522,16 +1527,6 @@ namespace Telegram.Views
 
             fragment = null;
             return false;
-        }
-
-        private async void OnWebViewNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
-        {
-            try
-            {
-                var jss = _injectedJs;
-                await sender.InvokeScriptAsync("eval", new[] { jss });
-            }
-            catch { }
         }
     }
 }
