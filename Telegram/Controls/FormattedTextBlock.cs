@@ -194,10 +194,6 @@ namespace Telegram.Controls
 
                         TextBlock.TextHighlighters.Add(highligher);
                     }
-                    else
-                    {
-                        TextBlock.TextHighlighters.Clear();
-                    }
                 }
 
                 if (_spoiler != null)
