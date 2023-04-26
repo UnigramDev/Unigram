@@ -207,8 +207,6 @@
       <Filter>libyuv\source</Filter>
     </ClCompile>
     <ClCompile Include="Generated Files\module.g.cpp" />
-    <ClCompile Include="TelegramGameProxy.cpp" />
-    <ClCompile Include="TelegramPaymentProxy.cpp" />
     <ClCompile Include="PlaceholderImageHelper.cpp" />
     <ClCompile Include="VideoAnimation.cpp" />
     <ClCompile Include="Helpers\LibraryHelper.cpp">
@@ -408,6 +406,7 @@
     </ClCompile>
     <ClCompile Include="BufferSurface.cpp" />
     <ClCompile Include="PixelBuffer.cpp" />
+    <ClCompile Include="TelegramWebviewProxy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -488,8 +487,6 @@
     <ClInclude Include="libyuv\include\libyuv\video_common.h">
       <Filter>libyuv\include\libyuv</Filter>
     </ClInclude>
-    <ClInclude Include="TelegramGameProxy.h" />
-    <ClInclude Include="TelegramPaymentProxy.h" />
     <ClInclude Include="PlaceholderImageHelper.h" />
     <ClInclude Include="VideoAnimation.h" />
     <ClInclude Include="Helpers\COMHelper.h">
@@ -687,6 +684,7 @@
     <ClInclude Include="qoi.h" />
     <ClInclude Include="BufferSurface.h" />
     <ClInclude Include="PixelBuffer.h" />
+    <ClInclude Include="TelegramWebviewProxy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -713,5 +711,6 @@
       <Filter>Opus</Filter>
     </Midl>
     <Midl Include="PixelBuffer.idl" />
+    <Midl Include="TelegramWebviewProxy.idl" />
   </ItemGroup>
 </Project>

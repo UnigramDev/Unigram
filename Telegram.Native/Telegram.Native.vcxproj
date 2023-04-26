@@ -327,6 +327,7 @@
     <ClInclude Include="SVG\nanosvg.h" />
     <ClInclude Include="Helpers\MathHelper.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="TelegramWebviewProxy.h" />
     <ClInclude Include="VideoAnimation.h">
       <DependentUpon>VideoAnimation.idl</DependentUpon>
     </ClInclude>
@@ -759,6 +760,7 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="SVG\nanosvg.cpp" />
+    <ClCompile Include="TelegramWebviewProxy.cpp" />
     <ClCompile Include="VideoAnimation.cpp">
       <DependentUpon>VideoAnimation.idl</DependentUpon>
     </ClCompile>
@@ -795,6 +797,7 @@
     <Midl Include="ScreenshotManager.idl">
       <SubType>Designer</SubType>
     </Midl>
+    <Midl Include="TelegramWebviewProxy.idl" />
     <Midl Include="VideoAnimation.idl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
