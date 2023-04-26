@@ -1177,52 +1177,30 @@ namespace Telegram.Common
         {
             switch (message.Content)
             {
-                case MessageBasicGroupChatCreate:
-                case MessageChatAddMembers:
-                case MessageChatChangePhoto:
-                case MessageChatChangeTitle:
-                case MessageChatSetTheme:
-                case MessageChatDeleteMember:
-                case MessageChatDeletePhoto:
-                case MessageChatJoinByLink:
-                case MessageChatJoinByRequest:
-                case MessageChatSetBackground:
-                case MessageChatSetMessageAutoDeleteTime:
-                case MessageChatShared:
-                case MessageChatUpgradeFrom:
-                case MessageChatUpgradeTo:
-                case MessageContactRegistered:
-                case MessageCustomServiceAction:
-                case MessageForumTopicCreated:
-                case MessageForumTopicEdited:
-                case MessageForumTopicIsClosedToggled:
-                case MessageGameScore:
-                case MessageGiftedPremium:
-                case MessageInviteVideoChatParticipants:
-                case MessageProximityAlertTriggered:
-                case MessagePassportDataSent:
-                case MessagePaymentSuccessful:
-                case MessagePinMessage:
-                case MessageScreenshotTaken:
-                case MessageSuggestProfilePhoto:
-                case MessageSupergroupChatCreate:
-                case MessageUserShared:
-                case MessageVideoChatEnded:
-                case MessageVideoChatScheduled:
-                case MessageVideoChatStarted:
-                case MessageWebsiteConnected:
-                case MessageWebAppDataSent:
-                    return true;
-                case MessageExpiredPhoto:
-                case MessageExpiredVideo:
-                    return true;
-                // Local types:
-                case MessageChatEvent:
-                case MessageHeaderDate:
-                case MessageHeaderUnread:
-                    return true;
-                default:
+                case MessageAlbum:
+                case MessageAnimatedEmoji:
+                case MessageAnimation:
+                case MessageAudio:
+                case MessageBigEmoji:
+                case MessageCall:
+                case MessageContact:
+                case MessageDice:
+                case MessageDocument:
+                case MessageGame:
+                case MessageInvoice:
+                case MessageLocation:
+                case MessagePhoto:
+                case MessagePoll:
+                case MessageSticker:
+                case MessageText:
+                case MessageUnsupported:
+                case MessageVenue:
+                case MessageVideo:
+                case MessageVideoNote:
+                case MessageVoiceNote:
                     return false;
+                default:
+                    return true;
             }
         }
 
