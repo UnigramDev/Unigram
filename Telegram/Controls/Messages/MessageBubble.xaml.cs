@@ -1956,17 +1956,11 @@ namespace Telegram.Controls.Messages
         {
             if (_cornerRadius.TopLeft == 0 && _cornerRadius.BottomRight == 0)
             {
-                _cornerRadius.Left = -float.MaxValue;
-                _cornerRadius.Top = -float.MaxValue;
-                _cornerRadius.Right = float.MaxValue;
-                _cornerRadius.Bottom = float.MaxValue;
+                _cornerRadius.SetInset(-float.MaxValue, -float.MaxValue, float.MaxValue, float.MaxValue);
             }
             else
             {
-                _cornerRadius.Left = 0;
-                _cornerRadius.Top = 0;
-                _cornerRadius.Right = (float)Math.Truncate(ContentPanel.ActualWidth);
-                _cornerRadius.Bottom = (float)Math.Truncate(ContentPanel.ActualHeight);
+                _cornerRadius.SetInset(0, 0, (float)Math.Truncate(ContentPanel.ActualWidth), (float)Math.Truncate(ContentPanel.ActualHeight));
             }
         }
 
