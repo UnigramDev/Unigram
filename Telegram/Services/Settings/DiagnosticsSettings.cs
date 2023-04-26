@@ -23,13 +23,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _chatPreviewToolTip, "ChatPreviewToolTip", value);
         }
 
-        private bool? _synchronizeItemsSource;
-        public bool SynchronizeItemsSource
-        {
-            get => _synchronizeItemsSource ??= GetValueOrDefault("SynchronizeItemsSource", ApiInfo.IsPackagedRelease);
-            set => AddOrUpdateValue(ref _synchronizeItemsSource, "SynchronizeItemsSource", value);
-        }
-
         private bool? _disableDatabase;
         public bool DisableDatabase
         {

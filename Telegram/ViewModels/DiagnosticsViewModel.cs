@@ -141,16 +141,6 @@ namespace Telegram.ViewModels
             }
         }
 
-        public bool SynchronizeItemsSource
-        {
-            get => Settings.Diagnostics.SynchronizeItemsSource;
-            set
-            {
-                Settings.Diagnostics.SynchronizeItemsSource = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool CopyFormattedCode
         {
             get => Settings.Diagnostics.CopyFormattedCode;

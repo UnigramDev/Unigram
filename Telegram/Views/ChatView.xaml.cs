@@ -139,13 +139,9 @@ namespace Telegram.Views
                 _windowContext.ContactPanel.LaunchFullAppRequested += ContactPanel_LaunchFullAppRequested;
             }
 
+            Messages.ItemsSource = _messages;
             Messages.ViewVisibleMessages = ViewVisibleMessages;
             Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
-
-            if (SettingsService.Current.Diagnostics.SynchronizeItemsSource)
-            {
-                Messages.ItemsSource = _messages;
-            }
 
             InitializeAutomation();
             InitializeStickers();
@@ -566,16 +562,8 @@ namespace Telegram.Views
         {
             if (sender is DialogViewModel viewModel)
             {
+                _messages.UpdateSource(viewModel.Items);
                 viewModel.MessageSliceLoaded -= OnMessageSliceLoaded;
-
-                if (viewModel.Settings.Diagnostics.SynchronizeItemsSource)
-                {
-                    _messages.UpdateSource(viewModel.Items);
-                }
-                else
-                {
-                    Messages.ItemsSource = viewModel.Items;
-                }
             }
 
             //_updateThemeTask?.TrySetResult(true);
