@@ -560,7 +560,7 @@ namespace Telegram.Views
 
             if (content is MessageSelector checkbox)
             {
-                checkbox.UpdateMessage(message);
+                checkbox.UpdateMessage(message, args.ItemContainer as LazoListViewItem);
                 checkbox.UpdateSelectionEnabled(ViewModel.IsSelectionEnabled, false);
 
                 content = checkbox.Content as FrameworkElement;

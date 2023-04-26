@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using Microsoft.UI.Xaml.Controls;
 using System.Linq;
 using System.Numerics;
@@ -114,7 +113,7 @@ namespace Telegram.Controls.Messages
             ElementCompositionPreview.SetIsTranslationEnabled(Presenter, true);
 
             _templateApplied = true;
-            UpdateMessage(_message);
+            UpdateMessage(_message, _parent);
 
             base.OnApplyTemplate();
         }
@@ -145,7 +144,6 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                _parent ??= this.Ancestors<LazoListViewItem>().FirstOrDefault();
                 _parent?.PointerPressed(e);
             }
         }
@@ -156,7 +154,6 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                _parent ??= this.Ancestors<LazoListViewItem>().FirstOrDefault();
                 _parent?.PointerEntered(e);
             }
         }
@@ -167,7 +164,6 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                _parent ??= this.Ancestors<LazoListViewItem>().FirstOrDefault();
                 _parent?.PointerMoved(e);
             }
         }
@@ -178,7 +174,6 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                _parent ??= this.Ancestors<LazoListViewItem>().FirstOrDefault();
                 _parent?.PointerReleased(e);
             }
         }
@@ -189,19 +184,14 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                _parent ??= this.Ancestors<LazoListViewItem>().FirstOrDefault();
                 _parent?.PointerCanceled(e);
             }
         }
 
-        public void UpdateMessage(MessageViewModel message)
+        public void UpdateMessage(MessageViewModel message, LazoListViewItem parent)
         {
-            if (_message?.Id != message?.Id || _message?.ChatId != message?.ChatId)
-            {
-                _parent = null;
-            }
-
             _message = message;
+            _parent = parent;
 
             if (message != null && _templateApplied)
             {
