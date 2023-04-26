@@ -4,9 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Rg.DiffUtils;
 using System;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Entities;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -15,11 +15,15 @@ namespace Telegram.Controls
 {
     public sealed partial class CountryBox : Grid
     {
+        private readonly DiffObservableCollection<Country> _countries;
         private Country _country;
 
         public CountryBox()
         {
             InitializeComponent();
+
+            _countries = new DiffObservableCollection<Country>(Country.All, new CountryDiffHandler(), Constants.DiffOptions);
+            Input.ItemsSource = _countries;
         }
 
         public int TabIndex
@@ -44,15 +48,7 @@ namespace Telegram.Controls
                 Emoji.Glyph = "\U0001F5FA";
             }
 
-            var source = sender.ItemsSource as Country[];
-            var match = Country.All.Where(x => x.DisplayName.Contains(sender.Text, StringComparison.OrdinalIgnoreCase));
-
-            if (source != null && source.SequenceEqual(match))
-            {
-                return;
-            }
-
-            sender.ItemsSource = match.ToArray();
+            _countries.ReplaceDiff(Country.All.Where(x => x.DisplayName.Contains(sender.Text, StringComparison.OrdinalIgnoreCase)));
         }
 
         private void OnSuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)

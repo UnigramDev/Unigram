@@ -10,7 +10,6 @@
       d:DesignWidth="400">
 
     <AutoSuggestBox x:Name="Input"
-                    ItemsSource="{x:Bind entities:Country.All}"
                     PlaceholderText="{CustomResource ChooseCountry}"
                     AutomationProperties.Name="{CustomResource ChooseCountry}"
                     FontFamily="{StaticResource EmojiThemeFontFamily}"
