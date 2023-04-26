@@ -1562,8 +1562,11 @@ namespace Telegram.Controls.Cells
                     var settings = TLContainer.Current.Resolve<ISettingsService>(_clientService.SessionId);
 
                     var hidePreview = !settings.Notifications.GetShowPreview(_chat);
+                    hidePreview |= _chat.HasProtectedContent;
+                    hidePreview |= _chat.LastMessage == null;
+                    hidePreview |= _chat.Type is ChatTypeSecret;
 
-                    if (hidePreview || _chat.LastMessage == null || _chat.LastMessage.IsService())
+                    if (hidePreview || _chat.LastMessage.IsService())
                     {
                         tooltip.IsOpen = false;
                         return;
