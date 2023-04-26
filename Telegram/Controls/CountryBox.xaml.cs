@@ -37,6 +37,13 @@ namespace Telegram.Controls
                 return;
             }
 
+            if (string.IsNullOrEmpty(sender.Text))
+            {
+                _country = null;
+                Country = null;
+                Emoji.Glyph = "\U0001F5FA";
+            }
+
             var source = sender.ItemsSource as Country[];
             var match = Country.All.Where(x => x.DisplayName.Contains(sender.Text, StringComparison.OrdinalIgnoreCase));
 
@@ -52,6 +59,7 @@ namespace Telegram.Controls
         {
             _country = args.SelectedItem as Country;
             Country = args.SelectedItem as Country;
+            Emoji.Glyph = _country?.Emoji ?? "\U0001F5FA";
         }
 
         private void OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
@@ -60,6 +68,7 @@ namespace Telegram.Controls
             {
                 _country = country;
                 Country = country;
+                Emoji.Glyph = country?.Emoji ?? "\U0001F5FA";
 
                 SelectionChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -99,6 +108,7 @@ namespace Telegram.Controls
             }
 
             Input.Text = newValue?.DisplayName ?? string.Empty;
+            Emoji.Glyph = newValue?.Emoji ?? "\U0001F5FA";
 
             _country = newValue;
         }
