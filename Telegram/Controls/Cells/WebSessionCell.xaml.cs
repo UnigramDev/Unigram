@@ -32,7 +32,7 @@ namespace Telegram.Controls.Cells
             Title.Text = string.Format("{0}, {1}, {2}", bot.FirstName, session.Browser, session.Platform);
             Subtitle.Text = string.Format("{0} — {1}", session.Ip, session.Location);
 
-            LastActiveDate.Text = Converter.DateExtended(session.LastActiveDate);
+            LastActiveDate.Text = Formatter.DateExtended(session.LastActiveDate);
         }
     }
 }

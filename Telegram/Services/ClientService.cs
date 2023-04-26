@@ -18,7 +18,6 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
-using Windows.System.Profile;
 
 namespace Telegram.Services
 {

@@ -79,7 +79,7 @@ namespace Telegram.ViewModels
                         var outgoing = message.IsOutgoing;
                         var missed = call.DiscardReason is CallDiscardReasonMissed or CallDiscardReasonDeclined;
                         var failed = !outgoing && missed;
-                        var time = Converter.DateTime(message.Date);
+                        var time = Formatter.ToLocalTime(message.Date);
 
                         if (currentPeer != null)
                         {

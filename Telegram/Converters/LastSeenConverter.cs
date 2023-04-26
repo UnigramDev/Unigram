@@ -136,26 +136,26 @@ namespace Telegram.Converters
                 int day = rightNow.DayOfYear;
                 int year = rightNow.Year;
 
-                var online = Utils.UnixTimestampToDateTime(date);
+                var online = Formatter.ToLocalTime(date);
                 int dateDay = online.DayOfYear;
                 int dateYear = online.Year;
 
                 if (dateDay == day && year == dateYear)
                 {
-                    return string.Format(Strings.LastSeenFormatted, string.Format(Strings.TodayAtFormatted, Converter.ShortTime.Format(online)));
+                    return string.Format(Strings.LastSeenFormatted, string.Format(Strings.TodayAtFormatted, Formatter.ShortTime.Format(online)));
                 }
                 else if (dateDay + 1 == day && year == dateYear)
                 {
-                    return string.Format(Strings.LastSeenFormatted, string.Format(Strings.YesterdayAtFormatted, Converter.ShortTime.Format(online)));
+                    return string.Format(Strings.LastSeenFormatted, string.Format(Strings.YesterdayAtFormatted, Formatter.ShortTime.Format(online)));
                 }
                 else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
                 {
-                    string format = string.Format(Strings.formatDateAtTime, online.ToString(Strings.formatterMonth), Converter.ShortTime.Format(online));
+                    string format = string.Format(Strings.formatDateAtTime, online.ToString(Strings.formatterMonth), Formatter.ShortTime.Format(online));
                     return string.Format(Strings.LastSeenDateFormatted, format);
                 }
                 else
                 {
-                    string format = string.Format(Strings.formatDateAtTime, online.ToString(Strings.formatterYear), Converter.ShortTime.Format(online));
+                    string format = string.Format(Strings.formatDateAtTime, online.ToString(Strings.formatterYear), Formatter.ShortTime.Format(online));
                     return string.Format(Strings.LastSeenDateFormatted, format);
                 }
             }

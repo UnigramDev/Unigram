@@ -43,7 +43,7 @@ namespace Telegram.Views.Settings.Popups
             }
 
             Title.Text = session.DeviceModel;
-            Subtitle.Text = Converter.DateExtended(session.LastActiveDate);
+            Subtitle.Text = Formatter.DateExtended(session.LastActiveDate);
 
             Application.Badge = string.Format("{0} {1}", session.ApplicationName, session.ApplicationVersion);
             Location.Badge = session.Country;

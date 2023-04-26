@@ -7,6 +7,7 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
@@ -277,7 +278,7 @@ namespace Telegram.Common
                         {
                             themeParameters[item.Key] = value.ToValue();
                         }
-                        
+
                         AddOrUpdate<SolidColorBrush>(target, item.Key, create,
                             update => update.Color = value);
                     }

@@ -142,7 +142,7 @@ namespace Telegram.Views
                         if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
                         {
                             DateHeader.CommandParameter = null;
-                            DateHeaderLabel.Text = string.Format(Strings.MessageScheduledOn, Converter.DayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate)));
+                            DateHeaderLabel.Text = string.Format(Strings.MessageScheduledOn, Formatter.DayGrouping(Formatter.ToLocalTime(sendAtDate.SendDate)));
                         }
                         else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
                         {
@@ -152,7 +152,7 @@ namespace Telegram.Views
                         else if (message.Date > 0)
                         {
                             DateHeader.CommandParameter = message.Date;
-                            DateHeaderLabel.Text = Converter.DayGrouping(Utils.UnixTimestampToDateTime(message.Date));
+                            DateHeaderLabel.Text = Formatter.DayGrouping(Formatter.ToLocalTime(message.Date));
                         }
                     }
                 }

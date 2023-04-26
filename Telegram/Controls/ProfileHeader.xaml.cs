@@ -932,7 +932,7 @@ namespace Telegram.Controls
 
                 if (muted is false)
                 {
-                    toggle.Foreground = App.Current.Resources["DangerButtonBackground"] as Brush;
+                    toggle.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
                 }
 
                 flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.Bottom });

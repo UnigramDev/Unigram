@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using Telegram.Common;
 using Telegram.Converters;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -141,7 +140,7 @@ namespace Telegram.Charts.DataView
             }
             else
             {
-                Time.Text = formatData(Utils.UnixTimestampToDateTime(date / 1000));
+                Time.Text = FormatData(Formatter.ToLocalTime(date / 1000));
                 //if (useHour) hourTime.Text = hourFormat.format(date);
             }
 
@@ -168,7 +167,7 @@ namespace Telegram.Charts.DataView
                     holdes[i].Visibility = Visibility.Visible;
 
                     holdes[i].Signature = l.name;
-                    holdes[i].Value = formatWholeNumber(l.y[index]);
+                    holdes[i].Value = FormatWholeNumber(l.y[index]);
                     holdes[i].Foreground = new SolidColorBrush(lines[i].lineColor);
 
                     if (showPercentage)
@@ -198,25 +197,14 @@ namespace Telegram.Charts.DataView
             //}
         }
 
-        private string formatData(DateTime date)
+        private string FormatData(DateTime date)
         {
             //if (useHour) return capitalize(format2.format(date));
             //return capitalize(format.format(date)) + capitalize(format2.format(date));
-            return Converter.DayMonthFullYear.Format(date);
+            return Formatter.DayMonthFullYear.Format(date);
         }
 
-        private string capitalize(string s)
-        {
-            if (s.Length > 0)
-            {
-                return char.ToUpper(s[0]) + s.Substring(1);
-            }
-
-            return s;
-        }
-
-
-        public string formatWholeNumber(int v)
+        public string FormatWholeNumber(int v)
         {
             float num_ = v;
             int count = 0;

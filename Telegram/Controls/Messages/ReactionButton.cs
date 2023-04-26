@@ -157,7 +157,7 @@ namespace Telegram.Controls.Messages
                 Count ??= GetTemplateChild(nameof(Count)) as AnimatedTextBlock;
                 Count.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
-                Count.Text = Converter.ShortNumber(interaction.TotalCount);
+                Count.Text = Formatter.ShortNumber(interaction.TotalCount);
 
                 if (RecentChoosers != null)
                 {

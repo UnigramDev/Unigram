@@ -9,6 +9,7 @@ using System;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Folders;
@@ -84,7 +85,7 @@ namespace Telegram.Controls.Cells
             {
                 if (chat.Type is ChatTypeSecret)
                 {
-                    TitleLabel.Foreground = App.Current.Resources["TelegramSecretChatForegroundBrush"] as Brush;
+                    TitleLabel.Foreground = BootStrapper.Current.Resources["TelegramSecretChatForegroundBrush"] as Brush;
                     TitleLabel.Text = Icons.LockClosedFilled14 + "\u00A0" + clientService.GetTitle(chat);
                 }
                 else
@@ -205,7 +206,7 @@ namespace Telegram.Controls.Cells
             {
                 if (chat.Type is ChatTypeSecret)
                 {
-                    TitleLabel.Foreground = App.Current.Resources["TelegramSecretChatForegroundBrush"] as Brush;
+                    TitleLabel.Foreground = BootStrapper.Current.Resources["TelegramSecretChatForegroundBrush"] as Brush;
                     TitleLabel.Text = Icons.LockClosedFilled14 + "\u00A0" + clientService.GetTitle(chat);
                 }
                 else

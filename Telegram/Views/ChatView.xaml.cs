@@ -1107,7 +1107,7 @@ namespace Telegram.Views
                 }
 
                 SelectorItem target;
-                if (args.VirtualKey == Windows.System.VirtualKey.PageUp)
+                if (args.VirtualKey == VirtualKey.PageUp)
                 {
                     target = Messages.ContainerFromIndex(panel.FirstVisibleIndex) as SelectorItem;
                 }
@@ -1128,7 +1128,7 @@ namespace Telegram.Views
 
         public void OnBackRequested(BackRequestedRoutedEventArgs args)
         {
-            if (args.Key != Windows.System.VirtualKey.Escape)
+            if (args.Key != VirtualKey.Escape)
             {
                 if (ViewModel.IsSelectionEnabled)
                 {
@@ -1966,7 +1966,7 @@ namespace Telegram.Views
 
                 if (muted is false)
                 {
-                    toggle.Foreground = App.Current.Resources["DangerButtonBackground"] as Brush;
+                    toggle.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
                 }
 
                 flyout.Items.Add(mute);
@@ -2401,7 +2401,7 @@ namespace Telegram.Views
                 if (profiles.Count > 1)
                 {
                     //var final = new MenuFlyoutSubItem();
-                    final.Style = App.Current.Resources["MessageSeenMenuFlyoutSubItemStyle"] as Style;
+                    final.Style = BootStrapper.Current.Resources["MessageSeenMenuFlyoutSubItemStyle"] as Style;
                     final.Text = Locale.Declension(played ? Strings.R.MessagePlayed : Strings.R.MessageSeen, viewers.Viewers.Count);
                     final.Icon = new FontIcon { Glyph = played ? Icons.Play : Icons.Seen, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
                     final.Tag = pictures;
@@ -2419,7 +2419,7 @@ namespace Telegram.Views
                         picture.Margin = new Thickness(-4, -2, 0, -2);
 
                         var item = final.CreateFlyoutItem(ViewModel.OpenUser, user.Id, user.FullName());
-                        item.Style = App.Current.Resources["ProfilePictureMenuFlyoutItemStyle"] as Style;
+                        item.Style = BootStrapper.Current.Resources["ProfilePictureMenuFlyoutItemStyle"] as Style;
                         item.Icon = new FontIcon();
                         item.Tag = picture;
                     }
@@ -2431,7 +2431,7 @@ namespace Telegram.Views
                 }
                 else if (profiles.Count > 0)
                 {
-                    placeholder.Style = App.Current.Resources["MessageSeenMenuFlyoutItemStyle"] as Style;
+                    placeholder.Style = BootStrapper.Current.Resources["MessageSeenMenuFlyoutItemStyle"] as Style;
                     placeholder.Text = profiles[0].FullName();
                     placeholder.Tag = pictures;
                     //placeholder.CommandParameter = profiles[0].Id;
@@ -3245,7 +3245,7 @@ namespace Telegram.Views
                     }
                 }
 
-                var complete = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Tab);
+                var complete = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Tab);
                 if (complete && entity is AutocompleteEntity.Command)
                 {
                     InsertText($"{insert} ");
@@ -3374,7 +3374,7 @@ namespace Telegram.Views
             var button = sender as Button;
             if (button.CommandParameter is int messageDate)
             {
-                var date = Converter.DateTime(messageDate);
+                var date = Formatter.ToLocalTime(messageDate);
 
                 var dialog = new CalendarPopup(date);
                 dialog.MaxDate = DateTimeOffset.Now.Date;
@@ -4765,7 +4765,7 @@ namespace Telegram.Views
                         }
                         else
                         {
-                            ShowAction(string.Format(Strings.SendMessageRestricted, Converter.BannedUntil(restrictedSend.RestrictedUntilDate)), false);
+                            ShowAction(string.Format(Strings.SendMessageRestricted, Formatter.BannedUntil(restrictedSend.RestrictedUntilDate)), false);
                         }
                     }
                     else if (ViewModel.Type != DialogType.Thread && group.IsForum)
@@ -4969,7 +4969,7 @@ namespace Telegram.Views
                     var item = new MenuFlyoutProfile();
                     item.Click += handler;
                     item.CommandParameter = messageSender;
-                    item.Style = App.Current.Resources["SendAsMenuFlyoutItemStyle"] as Style;
+                    item.Style = BootStrapper.Current.Resources["SendAsMenuFlyoutItemStyle"] as Style;
                     item.Icon = new FontIcon();
                     item.Tag = picture;
 
@@ -5129,7 +5129,7 @@ namespace Telegram.Views
                         {
                             wavesEnter = 1.0f;
                         }
-                        float interpolation = f7 * Telegram.Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
+                        float interpolation = f7 * Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
                         //canvas.scale(interpolation, interpolation, f, f2);
                         canvas.Transform = Matrix3x2.CreateScale(interpolation, interpolation, new Vector2(x, y));
                         blobDrawable.Update(amplitude, 1.0f);
@@ -5163,7 +5163,7 @@ namespace Telegram.Views
                         }
                     }
                 }
-                float interpolation2 = f7 * Telegram.Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
+                float interpolation2 = f7 * Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
                 //canvas.scale(interpolation2, interpolation2, f, f2);
                 canvas.Transform = Matrix3x2.CreateScale(interpolation2, interpolation2, new Vector2(x, y));
                 blobDrawable.Update(amplitude, 1.0f);
@@ -5189,7 +5189,7 @@ namespace Telegram.Views
         {
             get
             {
-                float interpolation = Telegram.Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
+                float interpolation = Charts.CubicBezierInterpolator.EASE_OUT.getInterpolation(wavesEnter);
                 return (((amplitude * 0.2f) + 0.8f) * interpolation) + ((1.0f - interpolation) * 1.0f);
             }
         }
@@ -5360,7 +5360,7 @@ namespace Telegram.Views
 
         private Matrix3x2 SetRotate(float degree, float px, float py)
         {
-            return Matrix3x2.CreateRotation(Telegram.Charts.MathFEx.ToRadians(degree), new Vector2(px, py));
+            return Matrix3x2.CreateRotation(Charts.MathFEx.ToRadians(degree), new Vector2(px, py));
         }
 
         public void GenerateBlob()

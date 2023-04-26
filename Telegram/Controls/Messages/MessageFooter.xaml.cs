@@ -6,7 +6,6 @@
 //
 using System;
 using System.Numerics;
-using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Converters;
 using Telegram.Td.Api;
@@ -119,7 +118,7 @@ namespace Telegram.Controls.Messages
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
             {
-                _dateLabel = Converter.Date(sendAtDate.SendDate);
+                _dateLabel = Formatter.Date(sendAtDate.SendDate);
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
@@ -127,15 +126,15 @@ namespace Telegram.Controls.Messages
             }
             else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport)
             {
-                var original = Utils.UnixTimestampToDateTime(message.ForwardInfo.Date);
-                var date = Converter.ShortDate.Format(original);
-                var time = Converter.ShortTime.Format(original);
+                var original = Formatter.ToLocalTime(message.ForwardInfo.Date);
+                var date = Formatter.ShortDate.Format(original);
+                var time = Formatter.ShortTime.Format(original);
 
-                _dateLabel = string.Format("{0}, {1} {2} {3}", date, time, "Imported", Converter.Date(message.Date));
+                _dateLabel = string.Format("{0}, {1} {2} {3}", date, time, "Imported", Formatter.Date(message.Date));
             }
             else if (message.Date > 0)
             {
-                _dateLabel = Converter.Date(message.Date);
+                _dateLabel = Formatter.Date(message.Date);
             }
             else
             {
@@ -145,7 +144,7 @@ namespace Telegram.Controls.Messages
 
         public void Mockup(bool outgoing, DateTime date)
         {
-            _dateLabel = Converter.ShortTime.Format(date);
+            _dateLabel = Formatter.ShortTime.Format(date);
             _stateLabel = outgoing ? "\u00A0\uE603" : string.Empty;
             UpdateLabel();
             UpdateTicks(outgoing, outgoing ? true : null);
@@ -188,7 +187,7 @@ namespace Telegram.Controls.Messages
 
             if (message.InteractionInfo?.ViewCount > 0)
             {
-                _viewsLabel = "\uEA03\u00A0" + Converter.ShortNumber(message.InteractionInfo.ViewCount) + "\u00A0";
+                _viewsLabel = "\uEA03\u00A0" + Formatter.ShortNumber(message.InteractionInfo.ViewCount) + "\u00A0";
             }
             else
             {
@@ -335,9 +334,9 @@ namespace Telegram.Controls.Messages
             string text;
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtTime)
             {
-                var dateTime = Converter.DateTime(sendAtTime.SendDate);
-                var date = Converter.LongDate.Format(dateTime);
-                var time = Converter.LongTime.Format(dateTime);
+                var dateTime = Formatter.ToLocalTime(sendAtTime.SendDate);
+                var date = Formatter.LongDate.Format(dateTime);
+                var time = Formatter.LongTime.Format(dateTime);
 
                 text = $"{date} {time}";
             }
@@ -347,9 +346,9 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                var dateTime = Converter.DateTime(message.Date);
-                var date = Converter.LongDate.Format(dateTime);
-                var time = Converter.LongTime.Format(dateTime);
+                var dateTime = Formatter.ToLocalTime(message.Date);
+                var date = Formatter.LongDate.Format(dateTime);
+                var time = Formatter.LongTime.Format(dateTime);
 
                 text = $"{date} {time}";
             }
@@ -362,9 +361,9 @@ namespace Telegram.Controls.Messages
 
             if (message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard)
             {
-                var edit = Converter.DateTime(message.EditDate);
-                var editDate = Converter.LongDate.Format(edit);
-                var editTime = Converter.LongTime.Format(edit);
+                var edit = Formatter.ToLocalTime(message.EditDate);
+                var editDate = Formatter.LongDate.Format(edit);
+                var editTime = Formatter.LongTime.Format(edit);
 
                 text += $"\r\n{Strings.EditedMessage}: {editDate} {editTime}";
             }
@@ -372,13 +371,13 @@ namespace Telegram.Controls.Messages
             DateTime? original = null;
             if (message.ForwardInfo != null)
             {
-                original = Converter.DateTime(message.ForwardInfo.Date);
+                original = Formatter.ToLocalTime(message.ForwardInfo.Date);
             }
 
             if (original != null)
             {
-                var originalDate = Converter.LongDate.Format(original.Value);
-                var originalTime = Converter.LongTime.Format(original.Value);
+                var originalDate = Formatter.LongDate.Format(original.Value);
+                var originalTime = Formatter.LongTime.Format(original.Value);
 
                 text += $"\r\n{Strings.CropOriginal}: {originalDate} {originalTime}";
             }

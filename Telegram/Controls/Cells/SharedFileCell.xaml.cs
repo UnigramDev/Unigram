@@ -235,7 +235,7 @@ namespace Telegram.Controls.Cells
 
         private string UpdateTimeLabel(MessageWithOwner message)
         {
-            return Converter.BannedUntil(message.Date);
+            return Formatter.BannedUntil(message.Date);
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)

@@ -20,7 +20,7 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            var date = until == 0 ? DateTime.Now.AddDays(1) : Converter.DateTime(until);
+            var date = until == 0 ? DateTime.Now.AddDays(1) : Formatter.ToLocalTime(until);
             Date.Date = date.Date;
             Time.Time = date.TimeOfDay;
 

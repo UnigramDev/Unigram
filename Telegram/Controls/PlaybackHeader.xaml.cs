@@ -161,7 +161,7 @@ namespace Telegram.Controls
             if (message.Content is MessageVoiceNote || message.Content is MessageVideoNote || webPage?.VoiceNote != null || webPage?.VideoNote != null)
             {
                 var title = string.Empty;
-                var date = Converter.DateTime(message.Date);
+                var date = Formatter.ToLocalTime(message.Date);
 
                 if (_clientService.TryGetUser(message.SenderId, out Telegram.Td.Api.User senderUser))
                 {
@@ -172,7 +172,7 @@ namespace Telegram.Controls
                     title = _clientService.GetTitle(senderChat);
                 }
 
-                var subtitle = string.Format(Strings.formatDateAtTime, Converter.ShortDate.Format(date), Converter.ShortTime.Format(date));
+                var subtitle = string.Format(Strings.formatDateAtTime, Formatter.ShortDate.Format(date), Formatter.ShortTime.Format(date));
 
                 UpdateText(message.ChatId, message.Id, title, subtitle);
 

@@ -31,8 +31,8 @@ namespace Telegram.Views.Supergroups
                 return Strings.UserRestrictionsUntilForever;
             }
 
-            var dateTime = Converter.DateTime(date);
-            return Converter.ShortDate.Format(dateTime) + ", " + Converter.ShortTime.Format(dateTime);
+            var dateTime = Formatter.ToLocalTime(date);
+            return Formatter.ShortDate.Format(dateTime) + ", " + Formatter.ShortTime.Format(dateTime);
         }
 
         private string ConvertCanSendCount(int count)

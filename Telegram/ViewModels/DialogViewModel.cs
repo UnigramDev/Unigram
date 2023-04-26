@@ -14,6 +14,7 @@ using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Common.Chats;
 using Telegram.Controls.Chats;
+using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -3617,8 +3618,8 @@ namespace Telegram.ViewModels
         {
             if (item != null && next != null)
             {
-                var itemDate = Utils.UnixTimestampToDateTime(GetMessageDate(item));
-                var previousDate = Utils.UnixTimestampToDateTime(GetMessageDate(next));
+                var itemDate = Formatter.ToLocalTime(GetMessageDate(item));
+                var previousDate = Formatter.ToLocalTime(GetMessageDate(next));
                 if (previousDate.Date != itemDate.Date)
                 {
                     return new MessageViewModel(next.ClientService, next.PlaybackService, next.Delegate, new Message(0, next.SenderId, next.ChatId, null, next.SchedulingState, next.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, next.IsChannelPost, next.IsTopicMessage, false, next.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null));
@@ -3632,8 +3633,8 @@ namespace Telegram.ViewModels
         {
             if (next != null && next.Content is MessageHeaderDate && previous != null)
             {
-                var itemDate = Utils.UnixTimestampToDateTime(GetMessageDate(next));
-                var previousDate = Utils.UnixTimestampToDateTime(GetMessageDate(previous));
+                var itemDate = Formatter.ToLocalTime(GetMessageDate(next));
+                var previousDate = Formatter.ToLocalTime(GetMessageDate(previous));
                 if (previousDate.Date != itemDate.Date)
                 {
                     base.RemoveItem(index - 1);

@@ -408,7 +408,7 @@ namespace Telegram.Common
 
             builder.Append(GetSummary(clientService, message));
 
-            var date = string.Format(Strings.TodayAtFormatted, Converter.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
+            var date = string.Format(Strings.TodayAtFormatted, Formatter.ShortTime.Format(Formatter.ToLocalTime(message.Date)));
             if (message.IsOutgoing)
             {
                 builder.Append(string.Format(Strings.AccDescrSentDate, date));

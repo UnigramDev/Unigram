@@ -2551,7 +2551,7 @@ namespace Telegram.Views
 
                 if (show is false)
                 {
-                    Window.Current.ShowTeachingTip(Photo, Strings.ArchiveMoveToMainMenuInfo, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.BottomRight);
+                    Window.Current.ShowTeachingTip(Photo, Strings.ArchiveMoveToMainMenuInfo, TeachingTipPlacementMode.BottomRight);
                 }
             };
 
@@ -3204,7 +3204,7 @@ namespace Telegram.Views
 
                 if (muted is false)
                 {
-                    toggle.Foreground = App.Current.Resources["DangerButtonBackground"] as Brush;
+                    toggle.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
                 }
 
                 flyout.Items.Add(mute);

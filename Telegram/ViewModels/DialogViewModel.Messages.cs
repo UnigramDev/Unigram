@@ -268,8 +268,8 @@ namespace Telegram.ViewModels
                         title = ClientService.GetTitle(senderChat);
                     }
 
-                    var date = Converter.DateTime(message.Date);
-                    builder.AppendLine(string.Format("{0}, [{1} {2}]", title, Converter.ShortDate.Format(date), Converter.ShortTime.Format(date)));
+                    var date = Formatter.ToLocalTime(message.Date);
+                    builder.AppendLine(string.Format("{0}, [{1} {2}]", title, Formatter.ShortDate.Format(date), Formatter.ShortTime.Format(date)));
 
                     if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                     {
@@ -1372,7 +1372,7 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessageHeaderDate)
             {
-                var date = Converter.DateTime(message.Date);
+                var date = Formatter.ToLocalTime(message.Date);
 
                 var dialog = new CalendarPopup(date);
                 dialog.MaxDate = DateTimeOffset.Now.Date;

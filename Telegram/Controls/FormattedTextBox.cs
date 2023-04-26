@@ -65,7 +65,7 @@ namespace Telegram.Controls
                 AllowFocusOnInteraction = false,
                 ShouldConstrainToRootBounds = false,
                 ShowMode = FlyoutShowMode.TransientWithDismissOnPointerMoveAway,
-                FlyoutPresenterStyle = App.Current.Resources["CommandFlyoutPresenterStyle"] as Style,
+                FlyoutPresenterStyle = BootStrapper.Current.Resources["CommandFlyoutPresenterStyle"] as Style,
             };
 
             ContextFlyout = new MenuFlyout();

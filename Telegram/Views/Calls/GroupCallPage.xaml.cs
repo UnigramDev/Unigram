@@ -894,7 +894,7 @@ namespace Telegram.Views.Calls
 
                 if (call.ScheduledStartDate != 0)
                 {
-                    var date = Converter.DateTime(call.ScheduledStartDate);
+                    var date = Formatter.ToLocalTime(call.ScheduledStartDate);
                     var duration = date - DateTime.Now;
 
                     if (duration.TotalDays < 1)

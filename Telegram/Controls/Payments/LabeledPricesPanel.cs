@@ -60,7 +60,7 @@ namespace Telegram.Controls.Payments
 
                     var amount = new TextBlock();
                     amount.Style = Navigation.BootStrapper.Current.Resources["DisabledBodyTextBlockStyle"] as Style;
-                    amount.Text = Converter.FormatAmount(price.Amount, _currency);
+                    amount.Text = Formatter.FormatAmount(price.Amount, _currency);
                     amount.Margin = new Thickness(8, 4, 12, 4);
                     amount.TextAlignment = TextAlignment.Right;
 

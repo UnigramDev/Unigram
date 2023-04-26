@@ -34,10 +34,10 @@ namespace Telegram.Views.Chats
 
         private string ConvertPeriod(int startDate, int endDate)
         {
-            var start = Utils.UnixTimestampToDateTime(startDate);
-            var end = Utils.UnixTimestampToDateTime(endDate);
+            var start = Formatter.ToLocalTime(startDate);
+            var end = Formatter.ToLocalTime(endDate);
 
-            return string.Format("{0} - {1}", Converter.ShortDate.Format(start), Converter.ShortDate.Format(end));
+            return string.Format("{0} - {1}", Formatter.ShortDate.Format(start), Formatter.ShortDate.Format(end));
         }
 
         private string ConvertShowMore(int count)
@@ -185,7 +185,7 @@ namespace Telegram.Views.Chats
                     title.Text = caption.Text.Replace('\n', ' ');
                 }
 
-                subtitle.Text = Converter.DateAt(counters.Message.Date);
+                subtitle.Text = Formatter.DateAt(counters.Message.Date);
 
                 views.Text = Locale.Declension(Strings.R.Views, counters.ViewCount);
                 shares.Text = Locale.Declension(Strings.R.Shares, counters.ForwardCount);

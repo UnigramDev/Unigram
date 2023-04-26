@@ -352,7 +352,7 @@ namespace Telegram.Controls.Messages
                 builder.Append($"{Strings.EditedMessage}, ");
             }
 
-            var date = string.Format(Strings.TodayAtFormatted, Converter.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
+            var date = string.Format(Strings.TodayAtFormatted, Formatter.ShortTime.Format(Formatter.ToLocalTime(message.Date)));
             if (message.IsOutgoing)
             {
                 builder.Append(string.Format(Strings.AccDescrSentDate, date));
@@ -481,7 +481,7 @@ namespace Telegram.Controls.Messages
             {
                 var top = message.IsFirst ? 4 : 2;
                 var action = message.IsSaved || message.IsShareable;
-                
+
                 chat ??= message?.GetChat();
 
                 if (message.IsService())
@@ -1420,7 +1420,7 @@ namespace Telegram.Controls.Messages
                     FooterToNormal();
                     bottom = 4;
                 }
-                else if (content is MessageCall || (content is MessageLocation location && location.LivePeriod > 0 && Converter.DateTime(message.Date + location.LivePeriod) > DateTime.Now))
+                else if (content is MessageCall || (content is MessageLocation location && location.LivePeriod > 0 && Formatter.ToLocalTime(message.Date + location.LivePeriod) > DateTime.Now))
                 {
                     FooterToHidden();
                 }

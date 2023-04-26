@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls.Messages;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -297,7 +298,7 @@ namespace Telegram.Controls
                         hyperlink.Click += (s, args) => Entity_Click(new TextEntityTypeSpoiler(), null);
                         hyperlink.Foreground = TextBlock.Foreground;
                         hyperlink.UnderlineStyle = UnderlineStyle.None;
-                        hyperlink.FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily;
+                        hyperlink.FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily;
                         //hyperlink.Foreground = foreground;
 
                         spoiler ??= new TextHighlighter();
@@ -382,7 +383,7 @@ namespace Telegram.Controls
 
                         _positions.Add(new EmojiPosition { X = shift, CustomEmojiId = customEmoji.CustomEmojiId });
 
-                        direct.AddToCollection(inlines, CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontFamily: App.Current.Resources["SpoilerFontFamily"] as FontFamily, fontSize: fontSize));
+                        direct.AddToCollection(inlines, CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontFamily: BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily, fontSize: fontSize));
                         emojis.Add(customEmoji.CustomEmojiId);
 
                         shift += entity.Length;

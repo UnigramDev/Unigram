@@ -7,7 +7,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using Telegram.Common;
 using Telegram.Converters;
 using Windows.Data.Json;
 using Windows.Globalization.DateTimeFormatting;
@@ -162,12 +161,12 @@ namespace Telegram.Charts.Data
             }
             else if (timeStep < 86400000L)
             {
-                formatter = Converter.ShortTime;
+                formatter = Formatter.ShortTime;
             }
             else
             {
                 //formatter = new SimpleDateFormat("MMM d");
-                formatter = Converter.MonthAbbreviatedDay;
+                formatter = Formatter.MonthAbbreviatedDay;
             }
 
             for (int i = 0; i < daysLookup.Length; i++)
@@ -180,7 +179,7 @@ namespace Telegram.Charts.Data
                 else
                 {
                     //daysLookup[i] = formatter.format(new Date(start + (i * timeStep)));
-                    daysLookup[i] = formatter.Format(Utils.UnixTimestampToDateTime((start + i * timeStep) / 1000));
+                    daysLookup[i] = formatter.Format(Formatter.ToLocalTime((start + i * timeStep) / 1000));
                 }
             }
 

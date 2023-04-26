@@ -257,7 +257,7 @@ namespace Telegram.Controls.Cells
                     MessageHelper.SetEntityData(hyperlink, link);
 
                     ToolTipService.SetToolTip(hyperlink, link);
-                    Grid.SetRow(textBlock, i);
+                    SetRow(textBlock, i);
 
                     LinksPanel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
                     LinksPanel.Children.Add(textBlock);

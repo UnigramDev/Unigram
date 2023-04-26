@@ -16,6 +16,7 @@ using Telegram.Controls.Chats;
 using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.Native;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -613,7 +614,7 @@ namespace Telegram.Controls.Cells
                         }
 
                         _positions.Add(new EmojiPosition { X = shift + entity.Offset + 1, CustomEmojiId = customEmoji.CustomEmojiId });
-                        BriefLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily });
+                        BriefLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
 
                         emoji.Add(customEmoji.CustomEmojiId);
                         shift += 2;
@@ -986,7 +987,7 @@ namespace Telegram.Controls.Cells
 
         private string UpdateTimeLabel(Message message)
         {
-            return Converter.DateExtended(message.Date);
+            return Formatter.DateExtended(message.Date);
         }
 
         private void ToolTip_Opened(object sender, RoutedEventArgs e)

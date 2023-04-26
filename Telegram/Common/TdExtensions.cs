@@ -1559,23 +1559,23 @@ namespace Telegram.Common
 
         public static string GetStartsAt(this MessageVideoChatScheduled messageVideoChatScheduled)
         {
-            var date = Converters.Converter.DateTime(messageVideoChatScheduled.StartDate);
-            return string.Format(Strings.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
+            var date = Converters.Formatter.ToLocalTime(messageVideoChatScheduled.StartDate);
+            return string.Format(Strings.formatDateAtTime, Converters.Formatter.ShortDate.Format(date), Converters.Formatter.ShortTime.Format(date));
         }
 
         public static string GetStartsAt(this GroupCall groupCall)
         {
-            var date = Converters.Converter.DateTime(groupCall.ScheduledStartDate);
+            var date = Converters.Formatter.ToLocalTime(groupCall.ScheduledStartDate);
             if (date.Date == DateTime.Today)
             {
-                return string.Format(Strings.TodayAtFormattedWithToday, Converters.Converter.ShortTime.Format(date));
+                return string.Format(Strings.TodayAtFormattedWithToday, Converters.Formatter.ShortTime.Format(date));
             }
             else if (date.Date.AddDays(1) == DateTime.Today)
             {
-                return string.Format(Strings.YesterdayAtFormatted, Converters.Converter.ShortTime.Format(date));
+                return string.Format(Strings.YesterdayAtFormatted, Converters.Formatter.ShortTime.Format(date));
             }
 
-            return string.Format(Strings.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
+            return string.Format(Strings.formatDateAtTime, Converters.Formatter.ShortDate.Format(date), Converters.Formatter.ShortTime.Format(date));
         }
 
         public static void Discern(this IEnumerable<ReactionType> reactions, out HashSet<string> emoji, out HashSet<long> customEmoji)
@@ -1607,7 +1607,7 @@ namespace Telegram.Common
 
         public static string GetStartsIn(this GroupCall groupCall)
         {
-            var date = Converters.Converter.DateTime(groupCall.ScheduledStartDate);
+            var date = Converters.Formatter.ToLocalTime(groupCall.ScheduledStartDate);
             var duration = date - DateTime.Now;
 
             if (Math.Abs(duration.TotalDays) >= 7)

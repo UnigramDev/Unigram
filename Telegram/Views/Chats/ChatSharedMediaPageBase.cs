@@ -296,7 +296,7 @@ namespace Telegram.Views.Chats
                     return;
                 }
 
-                DateHeaderLabel.Text = Converter.MonthGrouping(Utils.UnixTimestampToDateTime(message.Date));
+                DateHeaderLabel.Text = Formatter.MonthGrouping(Formatter.ToLocalTime(message.Date));
 
                 _dateHeaderTimer.Stop();
                 _dateHeaderTimer.Start();

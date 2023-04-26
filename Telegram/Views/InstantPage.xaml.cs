@@ -308,7 +308,7 @@ namespace Telegram.Views
 
                     if (article.PublishDate > 0)
                     {
-                        description.Text += " — " + Converter.DayMonthFullYear.Format(Converter.DateTime(article.PublishDate));
+                        description.Text += " — " + Formatter.DayMonthFullYear.Format(Formatter.ToLocalTime(article.PublishDate));
                     }
                 }
 
@@ -543,7 +543,7 @@ namespace Telegram.Views
                     textBlock.Inlines.Add(new Run { Text = " — " });
                 }
 
-                textBlock.Inlines.Add(new Run { Text = Converter.DayMonthFullYear.Format(Converter.DateTime(block.PublishDate)) });
+                textBlock.Inlines.Add(new Run { Text = Formatter.DayMonthFullYear.Format(Formatter.ToLocalTime(block.PublishDate)) });
             }
 
             return textBlock;
@@ -1141,7 +1141,7 @@ namespace Telegram.Views
             Grid.SetRow(textAuthor, 0);
 
             var textDate = new TextBlock();
-            textDate.Text = Converter.DateTime(block.Date).ToString("dd MMMM yyyy");
+            textDate.Text = Formatter.ToLocalTime(block.Date).ToString("dd MMMM yyyy");
             textDate.VerticalAlignment = VerticalAlignment.Top;
             textDate.Style = (Style)Resources["CaptionTextBlockStyle"];
             textDate.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];

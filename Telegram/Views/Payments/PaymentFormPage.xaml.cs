@@ -104,7 +104,7 @@ namespace Telegram.Views.Payments
             var content = args.ItemContainer.ContentTemplateRoot as TextBlock;
             if (args.Item is long value)
             {
-                content.Text = Converter.FormatAmount(value, ViewModel.PaymentForm.Invoice.Currency);
+                content.Text = Formatter.FormatAmount(value, ViewModel.PaymentForm.Invoice.Currency);
             }
         }
     }

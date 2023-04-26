@@ -42,12 +42,12 @@ namespace Telegram.Views
             if (ViewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
                 var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = string.Format("{0}, {1}", Converter.Distance(nearby.Distance), Locale.Declension(Strings.R.Members, supergroup.MemberCount));
+                subtitle.Text = string.Format("{0}, {1}", Formatter.Distance(nearby.Distance), Locale.Declension(Strings.R.Members, supergroup.MemberCount));
             }
             else
             {
                 var subtitle = content.Children[2] as TextBlock;
-                subtitle.Text = Converter.Distance(nearby.Distance);
+                subtitle.Text = Formatter.Distance(nearby.Distance);
             }
 
             var photo = content.Children[0] as ProfilePicture;

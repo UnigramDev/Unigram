@@ -167,7 +167,7 @@ namespace Telegram.ViewModels.Settings
             UpdateFile(update, update?.Document, true);
         }
 
-#endregion
+        #endregion
 
         public bool IsAdaptiveWideEnabled
         {

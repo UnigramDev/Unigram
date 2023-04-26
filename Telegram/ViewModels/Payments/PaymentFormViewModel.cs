@@ -359,7 +359,7 @@ namespace Telegram.ViewModels.Payments
             }
 
             var items = validatedInfo.ShippingOptions.Select(
-                x => new ChooseOptionItem(x, Converter.ShippingOption(x, _paymentForm.Invoice.Currency), _shipping?.Id == x.Id));
+                x => new ChooseOptionItem(x, Formatter.ShippingOption(x, _paymentForm.Invoice.Currency), _shipping?.Id == x.Id));
 
             var popup = new ChooseOptionPopup(items);
             popup.Title = Strings.PaymentCheckoutShippingMethod;
@@ -376,8 +376,8 @@ namespace Telegram.ViewModels.Payments
         public async void ChooseTipAmount()
         {
             var popup = new InputPopup(InputPopupType.Value);
-            popup.Value = Converter.Amount(_tipAmount, _paymentForm.Invoice.Currency);
-            popup.Maximum = Converter.Amount(_paymentForm.Invoice.MaxTipAmount, _paymentForm.Invoice.Currency);
+            popup.Value = Formatter.Amount(_tipAmount, _paymentForm.Invoice.Currency);
+            popup.Maximum = Formatter.Amount(_paymentForm.Invoice.MaxTipAmount, _paymentForm.Invoice.Currency);
             popup.Formatter = Locale.GetCurrencyFormatter(_paymentForm.Invoice.Currency);
 
             popup.Title = Strings.SearchTipToday;
@@ -387,7 +387,7 @@ namespace Telegram.ViewModels.Payments
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
-                TipAmount = Converter.AmountBack(popup.Value, _paymentForm.Invoice.Currency);
+                TipAmount = Formatter.AmountBack(popup.Value, _paymentForm.Invoice.Currency);
             }
         }
 

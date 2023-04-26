@@ -6,10 +6,9 @@
 //
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Assets.Icons;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -133,19 +132,19 @@ namespace Telegram.Controls.Messages.Content
 
                 if (result is SpeechRecognitionResultError)
                 {
-                    RecognizedText.Style = App.Current.Resources["InfoCaptionRichTextBlockStyle"] as Style;
+                    RecognizedText.Style = BootStrapper.Current.Resources["InfoCaptionRichTextBlockStyle"] as Style;
                     RecognizedSpan.Text = Strings.NoWordsRecognized;
                     UnloadPending();
                 }
                 else if (result is SpeechRecognitionResultPending pending)
                 {
-                    RecognizedText.Style = App.Current.Resources["BodyRichTextBlockStyle"] as Style;
+                    RecognizedText.Style = BootStrapper.Current.Resources["BodyRichTextBlockStyle"] as Style;
                     RecognizedSpan.Text = pending.PartialText.TrimEnd('.');
                     LoadPending();
                 }
                 else if (result is SpeechRecognitionResultText text)
                 {
-                    RecognizedText.Style = App.Current.Resources["BodyRichTextBlockStyle"] as Style;
+                    RecognizedText.Style = BootStrapper.Current.Resources["BodyRichTextBlockStyle"] as Style;
                     RecognizedSpan.Text = text.Text;
                     UnloadPending();
                 }

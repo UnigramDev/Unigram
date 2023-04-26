@@ -440,7 +440,7 @@ namespace Telegram.Services
             var sound = silent || soundId == 0 ? "silent" : string.Empty;
             var launch = GetLaunch(chat, message);
             var picture = GetPhoto(chat);
-            var dateTime = Converter.DateTime(date).ToUniversalTime().ToString("s") + "Z";
+            var dateTime = Formatter.ToLocalTime(date).ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
             if (soundId != -1 && soundId != 0 && !silent)
@@ -492,7 +492,7 @@ namespace Telegram.Services
             var sound = silent || soundId == 0 ? "silent" : string.Empty;
             var launch = GetLaunch(chat, message);
             var picture = GetPhoto(chat);
-            var dateTime = Converter.DateTime(date).ToUniversalTime().ToString("s") + "Z";
+            var dateTime = Formatter.ToLocalTime(date).ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
             if (soundId != -1 && soundId != 0 && !silent)

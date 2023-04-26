@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Native.Calls;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
@@ -350,7 +351,7 @@ namespace Telegram.Services
                     return;
                 }
 
-                _timeDifference = DateTime.Now - Utils.UnixTimestampToDateTime(unix.Value);
+                _timeDifference = DateTime.Now - Formatter.ToLocalTime(unix.Value);
 
                 _chat = chat;
                 _call = groupCall;

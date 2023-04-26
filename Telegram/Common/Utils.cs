@@ -13,19 +13,6 @@ namespace Telegram.Common
 {
     public static class Utils
     {
-        public static DateTime UnixTimestampToDateTime(double unixTimeStamp)
-        {
-            // From UTC0 UnixTime to local DateTime
-
-            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            DateTime.SpecifyKind(dtDateTime, DateTimeKind.Utc);
-
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-            return dtDateTime;
-        }
-
-
-
         public static byte[] ComputeSHA1(byte[] data)
         {
             var algorithm = HashAlgorithmProvider.OpenAlgorithm(HashAlgorithmNames.Sha1);
@@ -47,7 +34,6 @@ namespace Telegram.Common
             }
             return ComputeSHA1(array);
         }
-
 
         public static byte[] Combine(params byte[][] arrays)
         {
@@ -84,12 +70,6 @@ namespace Telegram.Common
                 flag &= a[i] == b[i];
             }
             return flag;
-        }
-
-        public static DateTime ToDateTime(int? date)
-        {
-            var ticks = date.Value;
-            return UnixTimestampToDateTime(ticks >> 32);
         }
     }
 }

@@ -659,7 +659,7 @@ namespace Telegram.Controls.Cells
             TitlePanel.VerticalAlignment = VerticalAlignment.Center;
             SubtitleLabel.Visibility = Visibility.Collapsed;
 
-            Grid.SetRowSpan(TitlePanel, 2);
+            SetRowSpan(TitlePanel, 2);
         }
 
 
