@@ -1572,8 +1572,6 @@ namespace Telegram.Controls.Cells
                         return;
                     }
 
-                    // TODO: this is not correct, as MessageViewModel doesn't
-                    // hold a strong reference to the IMessageDelegate object.
                     var delegato = new ChatMessageDelegate(_clientService, settings, _chat);
                     var message = new MessageViewModel(_clientService, playback, delegato, _chat.LastMessage);
 
@@ -1583,6 +1581,9 @@ namespace Telegram.Controls.Cells
                         bubble.Resources = new ThemeOutgoing();
                     }
 
+                    // TODO: this is not correct, as MessageViewModel doesn't
+                    // hold a strong reference to the IMessageDelegate object.
+                    bubble.Tag = delegato;
                     bubble.UpdateMessage(message);
 
                     var grid = new Grid();
