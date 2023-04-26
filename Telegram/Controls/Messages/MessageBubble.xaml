@@ -183,6 +183,7 @@
                                         Grid.Row="3" />
 
                                 <local:ReactionsPanel x:Name="Reactions"
+                                                      x:Load="False"
                                                       HorizontalAlignment="Stretch"
                                                       VerticalAlignment="Bottom"
                                                       Padding="4,0,4,4" />

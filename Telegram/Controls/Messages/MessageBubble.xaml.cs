@@ -85,7 +85,6 @@ namespace Telegram.Controls.Messages
         private FormattedTextBlock Message;
         private Border Media;
         private MessageFooter Footer;
-        private ReactionsPanel Reactions;
 
         // Lazy loaded
         private ProfilePicture Photo;
@@ -107,6 +106,8 @@ namespace Telegram.Controls.Messages
         private TextBlock ThreadGlyph;
         private TextBlock ThreadLabel;
 
+        private ReactionsPanel Reactions;
+
         private ReactionsPanel MediaReactions;
         private ReplyMarkupPanel Markup;
 
@@ -124,7 +125,6 @@ namespace Telegram.Controls.Messages
             Message = GetTemplateChild(nameof(Message)) as FormattedTextBlock;
             Media = GetTemplateChild(nameof(Media)) as Border;
             Footer = GetTemplateChild(nameof(Footer)) as MessageFooter;
-            Reactions = GetTemplateChild(nameof(Reactions)) as ReactionsPanel;
 
             //ContentPanel.CanDrag = true;
             //ContentPanel.DragStarting += OnDragStarting;
@@ -247,8 +247,8 @@ namespace Telegram.Controls.Messages
             {
                 Message.Clear();
                 Media.Child = null;
-                Reactions.UpdateMessageReactions(null);
 
+                UnloadObject(ref Reactions);
                 UnloadObject(ref MediaReactions);
             }
 
@@ -1343,7 +1343,7 @@ namespace Telegram.Controls.Messages
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji || (media == footer && IsFullMedia(content)))
             {
-                Reactions.UpdateMessageReactions(null);
+                UnloadObject(ref Reactions);
 
                 if (message.InteractionInfo?.Reactions.Count > 0)
                 {
@@ -1357,8 +1357,17 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                Reactions.UpdateMessageReactions(message, animate);
                 UnloadObject(ref MediaReactions);
+
+                if (message.InteractionInfo?.Reactions.Count > 0)
+                {
+                    LoadObject(ref Reactions, nameof(Reactions));
+                    Reactions.UpdateMessageReactions(message, animate);
+                }
+                else
+                {
+                    UnloadObject(ref Reactions);
+                }
             }
         }
 
