@@ -89,9 +89,9 @@ namespace Telegram.Views.Supergroups
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
             AddNew.Visibility = group.CanRestrictMembers() ? Visibility.Visible : Visibility.Collapsed;
-            Footer.Text = group.IsChannel ? Strings.NoBlockedChannel : Strings.NoBlockedGroup;
+            Footer.Text = Strings.NoBlockedGroup;
 
-            if (group.HasLinkedChat && !group.IsChannel)
+            if (group.HasLinkedChat || group.IsPublic())
             {
                 PinMessages.IsEnabled = false;
                 ChangeInfo.IsEnabled = false;
