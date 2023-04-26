@@ -210,20 +210,20 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            //var message = ViewModel;
-            //var bot = false;
-            //if (message.From != null)
-            //{
-            //    bot = message.From.IsBot;
-            //}
-
-            var bot = false;
-            if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
+            if (message.EditDate != 0)
             {
-                bot = senderUser.Type is UserTypeBot;
-            }
+                var bot = false;
+                if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
+                {
+                    bot = senderUser.Type is UserTypeBot;
+                }
 
-            _editedLabel = message.EditDate != 0 && message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard ? $"{Strings.EditedMessage}\u00A0\u2009" : string.Empty;
+                _editedLabel = message.ViaBotUserId == 0 && !bot && message.ReplyMarkup is not ReplyMarkupInlineKeyboard ? $"{Strings.EditedMessage}\u00A0\u2009" : string.Empty;
+            }
+            else
+            {
+                _editedLabel = string.Empty;
+            }
         }
 
         public void UpdateMessageIsPinned(MessageViewModel message)
