@@ -865,7 +865,7 @@ namespace Telegram.Views
 
                 if (content is MessageBubble bubble)
                 {
-                    bubble.UpdateAttach(message);
+                    bubble.UpdateAttach(message, _viewModel.Chat);
                     bubble.UpdateMessageHeader(message, _viewModel.Chat);
                 }
             }

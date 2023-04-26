@@ -241,7 +241,7 @@ namespace Telegram.Controls.Messages
                 Footer.UpdateMessage(message);
                 UpdateMessageReplyMarkup(message);
 
-                UpdateAttach(message);
+                UpdateAttach(message, chat);
             }
             else
             {
@@ -396,7 +396,7 @@ namespace Telegram.Controls.Messages
             return builder.ToString();
         }
 
-        public void UpdateAttach(MessageViewModel message, bool wide = false)
+        public void UpdateAttach(MessageViewModel message, Chat chat, bool wide = false)
         {
             if (!_templateApplied)
             {
@@ -479,7 +479,58 @@ namespace Telegram.Controls.Messages
 
             if (message.Delegate != null && message.Delegate.IsDialog)
             {
-                Margin = new Thickness(0, message.IsFirst ? 4 : 2, 0, 0);
+                var top = message.IsFirst ? 4 : 2;
+                var action = message.IsSaved || message.IsShareable;
+                
+                chat ??= message?.GetChat();
+
+                if (message.IsService())
+                {
+                    Margin = new Thickness(12, top, 12, 0);
+                }
+                else if (message.IsSaved || (chat != null && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)) && !message.IsChannelPost)
+                {
+                    if (message.IsOutgoing && !message.IsSaved)
+                    {
+                        if (message.Content is MessageSticker or MessageVideoNote)
+                        {
+                            Margin = new Thickness(12, top, 12, 0);
+                        }
+                        else
+                        {
+                            Margin = new Thickness(50, top, 12, 0);
+                        }
+                    }
+                    else
+                    {
+                        if (message.Content is MessageSticker or MessageVideoNote)
+                        {
+                            Margin = new Thickness(12, top, 12, 0);
+                        }
+                        else
+                        {
+                            Margin = new Thickness(12, top, action ? 14 : 50, 0);
+                        }
+                    }
+                }
+                else
+                {
+                    if (message.Content is MessageSticker or MessageVideoNote)
+                    {
+                        Margin = new Thickness(12, top, 12, 0);
+                    }
+                    else
+                    {
+                        if (message.IsOutgoing && !message.IsChannelPost)
+                        {
+                            Margin = new Thickness(50, top, 12, 0);
+                        }
+                        else
+                        {
+                            Margin = new Thickness(12, top, action ? 14 : 50, 0);
+                        }
+                    }
+                }
 
                 UpdatePhoto(message);
             }
@@ -1471,7 +1522,7 @@ namespace Telegram.Controls.Messages
             {
                 if (Media.Child is StickerContent or AnimatedStickerContent or VideoStickerContent or VideoNoteContent)
                 {
-                    UpdateAttach(message);
+                    UpdateAttach(message, chat);
                 }
 
                 if (content is MessageText textMessage && textMessage.WebPage != null)

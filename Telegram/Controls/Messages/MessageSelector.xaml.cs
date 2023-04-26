@@ -221,8 +221,6 @@ namespace Telegram.Controls.Messages
 
                 if (IsAlbumChild)
                 {
-                    Padding = new Thickness();
-
                     if (Icon != null)
                     {
                         if (_message.Content is MessagePhoto or MessageVideo)
@@ -245,57 +243,6 @@ namespace Telegram.Controls.Messages
                 {
                     var presenter = ElementCompositionPreview.GetElementVisual(Presenter);
                     presenter.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled && (message.IsChannelPost || !message.IsOutgoing) ? 36 : 0, 0, 0));
-
-                    var action = message.IsSaved || message.IsShareable;
-                    var chat = message?.GetChat();
-
-                    if (message.IsService())
-                    {
-                        Padding = new Thickness(12, 0, 12, 0);
-                    }
-                    else if (message.IsSaved || (chat != null && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)) && !message.IsChannelPost)
-                    {
-                        if (message.IsOutgoing && !message.IsSaved)
-                        {
-                            if (message.Content is MessageSticker or MessageVideoNote)
-                            {
-                                Padding = new Thickness(12, 0, 12, 0);
-                            }
-                            else
-                            {
-                                Padding = new Thickness(50, 0, 12, 0);
-                            }
-                        }
-                        else
-                        {
-                            if (message.Content is MessageSticker or MessageVideoNote)
-                            {
-                                Padding = new Thickness(12, 0, 12, 0);
-                            }
-                            else
-                            {
-                                Padding = new Thickness(12, 0, action ? 14 : 50, 0);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (message.Content is MessageSticker or MessageVideoNote)
-                        {
-                            Padding = new Thickness(12, 0, 12, 0);
-                        }
-                        else
-                        {
-                            if (message.IsOutgoing && !message.IsChannelPost)
-                            {
-                                Padding = new Thickness(50, 0, 12, 0);
-                            }
-                            else
-                            {
-                                Padding = new Thickness(12, 0, action ? 14 : 50, 0);
-                            }
-                        }
-                    }
                 }
             }
         }
