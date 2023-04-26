@@ -46,6 +46,8 @@ namespace Telegram.Services
             _lifetimeService = lifecycleService;
             _id = session;
 
+            _unreadCount = new DebouncedProperty<int>(200, UpdateUnreadCount, useBackgroundThread: true);
+
             Subscribe();
 
             IsActive = selected;
@@ -65,11 +67,16 @@ namespace Telegram.Services
         public int Id => _id;
         public long UserId => ClientService.Options.MyId;
 
-        private int _unreadCount;
+        private readonly DebouncedProperty<int> _unreadCount;
         public int UnreadCount
         {
             get => _unreadCount;
-            private set => Set(ref _unreadCount, value);
+            private set => _unreadCount.Set(value);
+        }
+
+        private void UpdateUnreadCount(int value)
+        {
+            BeginOnUIThread(() => RaisePropertyChanged(nameof(UnreadCount)));
         }
 
         private bool _isActive;
@@ -107,11 +114,11 @@ namespace Telegram.Services
             {
                 if (Settings.Notifications.IncludeMutedChats)
                 {
-                    BeginOnUIThread(() => UnreadCount = update.UnreadCount, () => _unreadCount = update.UnreadCount);
+                    UnreadCount = update.UnreadCount;
                 }
                 else
                 {
-                    BeginOnUIThread(() => UnreadCount = update.UnreadUnmutedCount, () => _unreadCount = update.UnreadUnmutedCount);
+                    UnreadCount = update.UnreadUnmutedCount;
                 }
             }
         }
@@ -127,11 +134,11 @@ namespace Telegram.Services
             {
                 if (Settings.Notifications.IncludeMutedChats)
                 {
-                    BeginOnUIThread(() => UnreadCount = update.UnreadCount, () => _unreadCount = update.UnreadCount);
+                    UnreadCount = update.UnreadCount;
                 }
                 else
                 {
-                    BeginOnUIThread(() => UnreadCount = update.UnreadUnmutedCount, () => _unreadCount = update.UnreadUnmutedCount);
+                    UnreadCount = update.UnreadUnmutedCount;
                 }
             }
         }

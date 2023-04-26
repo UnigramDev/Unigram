@@ -62,8 +62,7 @@ namespace Telegram.Services
         private readonly ISettingsService _settings;
         private readonly IEventAggregator _aggregator;
 
-        private readonly DisposableMutex _registrationLock;
-        private bool _alreadyRegistered;
+        private readonly DebouncedProperty<int> _unreadCount;
 
         private readonly bool? _suppress;
 
@@ -74,7 +73,7 @@ namespace Telegram.Services
             _sessionService = sessionService;
             _aggregator = aggregator;
 
-            _registrationLock = new DisposableMutex();
+            _unreadCount = new DebouncedProperty<int>(200, UpdateUnreadCount, useBackgroundThread: true);
 
             Subscribe();
 
@@ -99,7 +98,7 @@ namespace Telegram.Services
                 .Subscribe<UpdateActiveNotifications>(Handle);
         }
 
-        private void UpdateBadge(int count)
+        private void UpdateUnreadCount(int count)
         {
             try
             {
@@ -255,11 +254,11 @@ namespace Telegram.Services
             {
                 if (_settings.Notifications.IncludeMutedChats)
                 {
-                    UpdateBadge(update.UnreadCount);
+                    _unreadCount.Set(update.UnreadCount);
                 }
                 else
                 {
-                    UpdateBadge(update.UnreadUnmutedCount);
+                    _unreadCount.Set(update.UnreadUnmutedCount);
                 }
 
                 if (App.Connection is AppServiceConnection connection)
@@ -280,11 +279,11 @@ namespace Telegram.Services
             {
                 if (_settings.Notifications.IncludeMutedChats)
                 {
-                    UpdateBadge(update.UnreadCount);
+                    _unreadCount.Set(update.UnreadCount);
                 }
                 else
                 {
-                    UpdateBadge(update.UnreadUnmutedCount);
+                    _unreadCount.Set(update.UnreadUnmutedCount);
                 }
 
                 if (App.Connection is AppServiceConnection connection)
