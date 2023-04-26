@@ -6357,4 +6357,31 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:WebViewer">
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Stretch" />
+    </Style>
+
+    <Style TargetType="local:EdgeWebPresenter">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:EdgeWebPresenter">
+                    <WebView x:Name="View" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:ChromiumWebPresenter">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ChromiumWebPresenter">
+                    <muxc:WebView2 x:Name="View" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

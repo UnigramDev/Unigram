@@ -4,10 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.Web.WebView2.Core;
-using System;
 using System.Globalization;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Td.Api;
 using Windows.Data.Json;
@@ -19,53 +17,35 @@ namespace Telegram.Views.Popups
 {
     public sealed partial class WebBotPopup : ContentPopup
     {
-        public WebBotPopup(int sessionId, WebAppInfo info, string buttonText)
+        public WebBotPopup(User user, WebAppInfo info, string buttonText)
         {
             InitializeComponent();
-            InitializeWebView(sessionId, info, buttonText);
+
+            Title = user.FullName();
+
+            View.SizeChanged += View_SizeChanged;
+            View.Navigate(info.Url);
         }
 
-        private async void InitializeWebView(int sessionId, WebAppInfo info, string buttonText)
+        private void View_SizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)
         {
-            await View.EnsureCoreWebView2Async();
-            await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"window.external={invoke:s=>window.chrome.webview.postMessage(s)}");
-            await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
-window.TelegramWebviewProxy = {
-postEvent: function(eventType, eventData) {
-	if (window.external && window.external.invoke) {
-		window.external.invoke(JSON.stringify([eventType, eventData]));
-	}
-}
-}");
-
-            View.CoreWebView2.Navigate(info.Url);
+            SendViewport();
         }
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             args.Cancel = true;
 
-            await View.CoreWebView2.ExecuteScriptAsync("window.Telegram.WebView.receiveEvent('main_button_pressed', null);");
+            PostEvent("main_button_pressed");
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
         }
 
-        private void View_WebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
+        private void View_EventReceived(object sender, WebViewerEventReceivedEventArgs e)
         {
-            var json = args.TryGetWebMessageAsString();
-
-            if (JsonArray.TryParse(json, out JsonArray message))
-            {
-                var eventName = message.GetStringAt(0);
-                var eventData = message.GetStringAt(1);
-
-                if (JsonObject.TryParse(eventData, out JsonObject data))
-                {
-                    ReceiveEvent(eventName, data);
-                }
-            }
+            ReceiveEvent(e.EventName, e.EventData);
         }
 
         private void ReceiveEvent(string eventName, JsonObject eventData)
@@ -145,9 +125,27 @@ postEvent: function(eventType, eventData) {
 
         }
 
-        private void OpenPopup(JsonObject eventData)
+        private async void OpenPopup(JsonObject eventData)
         {
+            var title = eventData.GetNamedString("title", string.Empty);
+            var message = eventData.GetNamedString("message", string.Empty);
+            var buttons = eventData.GetNamedArray("buttons");
 
+            foreach (var buttonVal in buttons)
+            {
+                var button = buttonVal.GetObject();
+
+                var id = button.GetNamedString("id");
+                var type = button.GetNamedString("type");
+                var text = button.GetNamedString("text", string.Empty);
+
+                switch (type)
+                {
+
+                }
+            }
+
+            PostEvent("popup_closed");
         }
 
         private void OpenInvoice(JsonObject eventData)
@@ -165,9 +163,9 @@ postEvent: function(eventType, eventData) {
 
         }
 
-        private async void SendViewport()
+        private void SendViewport()
         {
-            await View.CoreWebView2.ExecuteScriptAsync("window.Telegram.WebView.receiveEvent('viewport_changed', {\"height\": " + 500 + "});");
+            PostEvent("viewport_changed", "{ height: " + View.ActualHeight + ", is_state_stable: true, is_expanded: true }");
         }
 
         private void ProcessBackButtonMessage(JsonObject eventData)
@@ -233,6 +231,11 @@ postEvent: function(eventType, eventData) {
         private void SendDataMessage(JsonObject eventData)
         {
 
+        }
+
+        private void PostEvent(string eventName, string eventData = "null")
+        {
+            View.InvokeScript($"window.Telegram.WebView.receiveEvent('{eventName}', {eventData});");
         }
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)

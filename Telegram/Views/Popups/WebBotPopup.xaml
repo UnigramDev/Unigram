@@ -12,12 +12,12 @@
                        SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                        SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       VerticalContentAlignment="Stretch"
                        Closing="OnClosing">
 
     <Grid>
-        <muxc:WebView2 x:Name="View"
-                       WebMessageReceived="View_WebMessageReceived"
-                       MinHeight="500"
-                       Margin="-24" />
+        <controls:WebViewer x:Name="View"
+                            EventReceived="View_EventReceived"
+                            Margin="-24,0,-24,-80" />
     </Grid>
 </controls:ContentPopup>

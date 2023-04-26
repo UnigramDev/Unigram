@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -924,27 +923,26 @@ namespace Telegram.Views
         {
             var element = new StackPanel { Style = Resources["BlockEmbedStyle"] as Style };
 
-            var view = new WebView2();
+            var view = new WebViewer();
 
             async void loaded(object sender, RoutedEventArgs e)
             {
                 view.Loaded -= loaded;
 
-                await view.EnsureCoreWebView2Async();
-
                 // TODO: auto-size
 
                 if (!block.AllowScrolling)
                 {
-                    await view.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync("document.querySelector('body').style.overflow='hidden'");
+                    // TODO: block scrolling
+                    //await view.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync("document.querySelector('body').style.overflow='hidden'");
                 }
                 if (!string.IsNullOrEmpty(block.Html))
                 {
-                    view.CoreWebView2.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
+                    view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
                 }
                 else if (!string.IsNullOrEmpty(block.Url))
                 {
-                    view.CoreWebView2.Navigate(block.Url);
+                    view.Navigate(block.Url);
                 }
             }
 

@@ -33,7 +33,7 @@
     </local:HostedPage.Header>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <muxc:WebView2 x:Name="View"
-                       WebMessageReceived="View_WebMessageReceived" />
+        <controls:WebViewer x:Name="View"
+                            EventReceived="View_EventReceived" />
     </Grid>
 </local:HostedPage>
