@@ -110,8 +110,10 @@ namespace Telegram.Controls.Messages
             UpdateMessageDateImpl(message);
             UpdateMessageEditedImpl(message);
             UpdateMessageIsPinnedImpl(message);
+
+            // UpdateMessageInteractionInfo is always invoked by MessageBubble.UpdateMessage
             //UpdateMessageInteractionInfoInternal(message);
-            UpdateLabel();
+            //UpdateLabel();
         }
 
         private void UpdateMessageDateImpl(MessageViewModel message)
