@@ -233,12 +233,13 @@ namespace Telegram.Controls.Messages
             {
                 var chat = message.GetChat();
 
+                Footer.UpdateMessage(message);
+
                 UpdateMessageHeader(message, chat);
                 UpdateMessageReply(message);
                 UpdateMessageContent(message, chat);
                 UpdateMessageInteractionInfo(message, chat);
 
-                Footer.UpdateMessage(message);
                 UpdateMessageReplyMarkup(message);
 
                 UpdateAttach(message, chat);
