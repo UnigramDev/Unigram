@@ -241,6 +241,19 @@ namespace Telegram.Controls
 
         #endregion
 
+        #region ContentMaxWidth
+
+        public double ContentMaxWidth
+        {
+            get { return (double)GetValue(ContentMaxWidthProperty); }
+            set { SetValue(ContentMaxWidthProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContentMaxWidthProperty =
+            DependencyProperty.Register("ContentMaxWidth", typeof(double), typeof(ContentPopup), new PropertyMetadata(320d));
+
+        #endregion
+
         #region ContentMaxHeight
 
         public double ContentMaxHeight
@@ -250,7 +263,7 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty ContentMaxHeightProperty =
-            DependencyProperty.Register("ContentMaxHeight", typeof(double), typeof(ContentPopup), new PropertyMetadata(double.PositiveInfinity));
+            DependencyProperty.Register("ContentMaxHeight", typeof(double), typeof(ContentPopup), new PropertyMetadata(568d));
 
         #endregion
     }

@@ -2092,8 +2092,14 @@
                         </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="LayoutRoot"
                               Background="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
                             <Rectangle x:Name="LightDismiss"
-                                       Fill="Transparent" />
+                                       Fill="Transparent"
+                                       Grid.ColumnSpan="3" />
 
                             <Border x:Name="BackgroundElement"
                                     Background="{TemplateBinding Background}"
@@ -2101,13 +2107,14 @@
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     CornerRadius="{TemplateBinding CornerRadius}"
-                                    MaxWidth="320"
+                                    MaxWidth="{TemplateBinding ContentMaxWidth}"
                                     MaxHeight="{ThemeResource ContentDialogMaxHeight}"
                                     MinWidth="320"
                                     MinHeight="{ThemeResource ContentDialogMinHeight}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    RenderTransformOrigin="0.5,0.5">
+                                    RenderTransformOrigin="0.5,0.5"
+                                    Grid.Column="1">
                                 <Border.RenderTransform>
                                     <ScaleTransform x:Name="ScaleTransform" />
                                 </Border.RenderTransform>

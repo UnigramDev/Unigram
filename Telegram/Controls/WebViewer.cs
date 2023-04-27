@@ -117,6 +117,10 @@ namespace Telegram.Controls
             {
                 OnEventReceived(eventName, data);
             }
+            else
+            {
+                OnEventReceived(eventName, null);
+            }
         }
 
         public override async void Navigate(string uri)
@@ -196,6 +200,10 @@ postEvent: function(eventType, eventData) {
                 if (JsonObject.TryParse(eventData, out JsonObject data))
                 {
                     OnEventReceived(eventName, data);
+                }
+                else
+                {
+                    OnEventReceived(eventName, null);
                 }
             }
         }

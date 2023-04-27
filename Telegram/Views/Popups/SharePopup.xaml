@@ -17,7 +17,6 @@
                        IsPrimaryButtonEnabled="{x:Bind ConvertButtonEnabled(ViewModel.AllowEmptySelection, ViewModel.SelectedItems.Count), Mode=OneWay}"
                        SecondaryButtonText="Cancel"
                        VerticalContentAlignment="Stretch"
-                       ContentMaxHeight="720"
                        Opened="OnOpened"
                        Closing="OnClosing">
 

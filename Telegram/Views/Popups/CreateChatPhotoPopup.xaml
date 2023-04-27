@@ -16,8 +16,7 @@
                        PrimaryButtonClick="{x:Bind ViewModel.Send}"
                        IsPrimaryButtonEnabled="{x:Bind ConvertEnabled(ViewModel.SelectedBackground, ViewModel.SelectedForeground), Mode=OneWay}"
                        Closing="OnClosing"
-                       VerticalContentAlignment="Stretch"
-                       ContentMaxHeight="640">
+                       VerticalContentAlignment="Stretch">
 
     <controls:ContentPopup.Resources>
         <Style TargetType="GridViewItem"

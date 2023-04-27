@@ -10,7 +10,10 @@ using Telegram.Controls;
 using Telegram.Td.Api;
 using Windows.Data.Json;
 using Windows.UI;
+using Windows.UI.Composition;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Popups
@@ -23,24 +26,20 @@ namespace Telegram.Views.Popups
 
             Title = user.FullName();
 
+            ElementCompositionPreview.SetIsTranslationEnabled(MainButton, true);
+
             View.SizeChanged += View_SizeChanged;
             View.Navigate(info.Url);
         }
 
-        private void View_SizeChanged(object sender, Windows.UI.Xaml.SizeChangedEventArgs e)
+        private void View_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SendViewport();
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void MainButton_Click(object sender, RoutedEventArgs e)
         {
-            args.Cancel = true;
-
             PostEvent("main_button_pressed");
-        }
-
-        private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
         }
 
         private void View_EventReceived(object sender, WebViewerEventReceivedEventArgs e)
@@ -184,8 +183,7 @@ namespace Telegram.Views.Popups
 
             if (is_visible && !string.IsNullOrEmpty(text.Trim()))
             {
-                var button = GetTemplateChild("PrimaryButton") as Button;
-                if (button != null)
+                void SetColor(string color, DependencyProperty property)
                 {
                     if (color.StartsWith("#") && int.TryParse(color.Substring(1), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexColor))
                     {
@@ -193,34 +191,60 @@ namespace Telegram.Views.Popups
                         byte g = (byte)((hexColor & 0x00ff00) >> 8);
                         byte b = (byte)(hexColor & 0x0000ff);
 
-                        button.Background = new SolidColorBrush(Color.FromArgb(0xFF, r, g, b));
+                        MainButton.SetValue(property, new SolidColorBrush(Color.FromArgb(0xFF, r, g, b)));
                     }
                     else
                     {
-                        button.ClearValue(BackgroundProperty);
+                        MainButton.ClearValue(property);
                     }
 
-                    if (text_color.StartsWith("#") && int.TryParse(text_color.Substring(1), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexText_color))
-                    {
-                        byte r = (byte)((hexText_color & 0xff0000) >> 16);
-                        byte g = (byte)((hexText_color & 0x00ff00) >> 8);
-                        byte b = (byte)(hexText_color & 0x0000ff);
-
-                        button.Foreground = new SolidColorBrush(Color.FromArgb(0xFF, r, g, b));
-                    }
-                    else
-                    {
-                        button.ClearValue(ForegroundProperty);
-                    }
                 }
 
-                PrimaryButtonText = text;
-                IsPrimaryButtonEnabled = is_active;
+                SetColor(color, BackgroundProperty);
+                SetColor(text_color, ForegroundProperty);
+
+                MainButton.Content = text;
+                MainButton.IsEnabled = is_active;
+
+                ShowHideMainButton(true);
             }
             else
             {
-                PrimaryButtonText = string.Empty;
+                ShowHideMainButton(false);
             }
+        }
+
+        private bool _mainButtonCollapsed;
+
+        private void ShowHideMainButton(bool show)
+        {
+            if (_mainButtonCollapsed != show)
+            {
+                return;
+            }
+
+            _mainButtonCollapsed = !show;
+
+            Grid.SetRowSpan(View, 2);
+            MainButton.Visibility = Visibility.Visible;
+
+            var visual = ElementCompositionPreview.GetElementVisual(MainButton);
+            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                Grid.SetRowSpan(View, show ? 1 : 2);
+                MainButton.Visibility = show
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            };
+
+            var anim = visual.Compositor.CreateScalarKeyFrameAnimation();
+            anim.InsertKeyFrame(0, show ? 48 : 0);
+            anim.InsertKeyFrame(1, show ? 0 : 48);
+            anim.Duration = Constants.FastAnimation;
+
+            visual.StartAnimation("Translation.Y", anim);
+            batch.End();
         }
 
         private void SwitchInlineQueryMessage(JsonObject eventData)
