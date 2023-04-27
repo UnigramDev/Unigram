@@ -690,6 +690,19 @@ namespace Telegram.Controls
             DependencyProperty.Register("DetailFooter", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
 
         #endregion
+
+        #region BackgroundMargin
+
+        public Thickness BackgroundMargin
+        {
+            get { return (Thickness)GetValue(BackgroundMarginProperty); }
+            set { SetValue(BackgroundMarginProperty, value); }
+        }
+
+        public static readonly DependencyProperty BackgroundMarginProperty =
+            DependencyProperty.Register("BackgroundMargin", typeof(Thickness), typeof(MasterDetailView), new PropertyMetadata(default(Thickness)));
+
+        #endregion
     }
 
     public enum MasterDetailState

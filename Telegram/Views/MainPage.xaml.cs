@@ -3518,6 +3518,11 @@ namespace Telegram.Views
                 inset.RightInset = TopicListPresenter.ActualSize.X;
             }
         }
+
+        private void Banner_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MasterDetail.BackgroundMargin = new Thickness(0, -e.NewSize.Height, 0, 0);
+        }
     }
 
     public class HostedPage : Page
