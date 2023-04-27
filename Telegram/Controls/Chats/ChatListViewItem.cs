@@ -294,15 +294,15 @@ namespace Telegram.Controls.Chats
 
         public void InertiaStateEntered(InteractionTracker sender, InteractionTrackerInertiaStateEnteredArgs args)
         {
-            if (ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message)
+            if (ContentTemplateRoot is MessageSelector selector && selector.Message != null)
             {
                 if (_tracker.Position.X >= 72 && _reply)
                 {
-                    _parent.ViewModel.ReplyToMessage(message);
+                    _parent.ViewModel.ReplyToMessage(selector.Message);
                 }
                 else if (_tracker.Position.X <= -72 && _share)
                 {
-                    _parent.ViewModel.ForwardMessage(message);
+                    _parent.ViewModel.ForwardMessage(selector.Message);
                 }
             }
         }
