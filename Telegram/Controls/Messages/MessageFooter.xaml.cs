@@ -83,7 +83,7 @@ namespace Telegram.Controls.Messages
 
             if (_message != null)
             {
-                UpdateMessage(_message);
+                UpdateMessageImpl(_message, true);
             }
         }
 
@@ -106,14 +106,23 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
+            UpdateMessageImpl(message, false);
+        }
+
+        private void UpdateMessageImpl(MessageViewModel message, bool fromApplyTemplate)
+        {
             UpdateMessageState(message);
             UpdateMessageDateImpl(message);
             UpdateMessageEditedImpl(message);
             UpdateMessageIsPinnedImpl(message);
 
             // UpdateMessageInteractionInfo is always invoked by MessageBubble.UpdateMessage
-            //UpdateMessageInteractionInfoInternal(message);
-            //UpdateLabel();
+
+            if (fromApplyTemplate)
+            {
+                UpdateMessageInteractionInfoImpl(message);
+                UpdateLabel();
+            }
         }
 
         private void UpdateMessageDateImpl(MessageViewModel message)
@@ -154,11 +163,11 @@ namespace Telegram.Controls.Messages
 
         public void UpdateMessageInteractionInfo(MessageViewModel message)
         {
-            UpdateMessageInteractionInfoInternal(message);
+            UpdateMessageInteractionInfoImpl(message);
             UpdateLabel();
         }
 
-        private void UpdateMessageInteractionInfoInternal(MessageViewModel message)
+        private void UpdateMessageInteractionInfoImpl(MessageViewModel message)
         {
             if (message == null || !_templateApplied)
             {
