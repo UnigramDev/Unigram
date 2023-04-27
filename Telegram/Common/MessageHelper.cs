@@ -321,6 +321,39 @@ namespace Telegram.Common
             {
                 NavigateToUsername(clientService, navigation, videoChat.ChatUsername, videoChat.InviteHash, null);
             }
+            else if (internalLink is InternalLinkTypeWebApp webApp)
+            {
+                NavigateToWebApp(clientService, navigation, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName);
+            }
+        }
+
+        private static async void NavigateToWebApp(IClientService clientService, INavigationService navigation, string botUsername, string startParameter, string webAppShortName)
+        {
+            var response = await clientService.SendAsync(new SearchPublicChat(botUsername));
+            if (response is Chat chat && clientService.TryGetUser(chat, out User user))
+            {
+                if (user.Type is not UserTypeBot)
+                {
+                    return;
+                }
+
+                var responss = await clientService.SendAsync(new SearchWebApp(user.Id, webAppShortName));
+                if (responss is FoundWebApp foundWebApp)
+                {
+                    // TODO: confirmation
+                    return;
+
+                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(0, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, false));
+                    if (responsa is HttpUrl url)
+                    {
+                        await new WebBotPopup(user, url.Url).ShowQueuedAsync();
+                    }
+                }
+                else
+                {
+                    // TODO: error
+                }
+            }
         }
 
         private static async void NavigateToUnknownDeepLink(IClientService clientService, string url)

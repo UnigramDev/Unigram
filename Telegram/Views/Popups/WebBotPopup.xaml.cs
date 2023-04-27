@@ -20,7 +20,7 @@ namespace Telegram.Views.Popups
 {
     public sealed partial class WebBotPopup : ContentPopup
     {
-        public WebBotPopup(User user, WebAppInfo info, string buttonText)
+        public WebBotPopup(User user, WebAppInfo info)
         {
             InitializeComponent();
 
@@ -30,6 +30,18 @@ namespace Telegram.Views.Popups
 
             View.SizeChanged += View_SizeChanged;
             View.Navigate(info.Url);
+        }
+
+        public WebBotPopup(User user, string url)
+        {
+            InitializeComponent();
+
+            Title = user.FullName();
+
+            ElementCompositionPreview.SetIsTranslationEnabled(MainButton, true);
+
+            View.SizeChanged += View_SizeChanged;
+            View.Navigate(url);
         }
 
         private void View_SizeChanged(object sender, SizeChangedEventArgs e)
