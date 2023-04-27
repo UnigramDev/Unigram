@@ -50,6 +50,7 @@ namespace Telegram.Controls
         private bool _ignoreLayoutUpdated = true;
 
         private bool _layoutUpdatedSubscribed;
+        private bool _autoPlaySubscribed;
 
         private TextHighlighter _spoiler;
 
@@ -138,6 +139,12 @@ namespace Telegram.Controls
                     _layoutUpdatedSubscribed = false;
                     TextBlock.LayoutUpdated -= OnLayoutUpdated;
                 }
+            }
+
+            if (_autoPlaySubscribed)
+            {
+                _autoPlaySubscribed = false;
+                EffectiveViewportChanged -= OnEffectiveViewportChanged;
             }
 
             UnloadObject(ref CustomEmoji);
@@ -476,9 +483,6 @@ namespace Telegram.Controls
                 direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
             }
 
-            TextBlock.Blocks.Clear();
-            TextBlock.Blocks.Add(direct.GetObject(paragraph) as Paragraph);
-
             if (AdjustLineEnding)
             {
                 if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
@@ -497,12 +501,6 @@ namespace Telegram.Controls
                 }
             }
 
-            if (_layoutUpdatedSubscribed)
-            {
-                _layoutUpdatedSubscribed = false;
-                TextBlock.LayoutUpdated -= OnLayoutUpdated;
-            }
-
             if (emojis != null)
             {
                 LoadObject(ref CustomEmoji, nameof(CustomEmoji));
@@ -514,12 +512,34 @@ namespace Telegram.Controls
                 }
 
                 _ignoreLayoutUpdated = false;
-                _layoutUpdatedSubscribed = true;
-                TextBlock.LayoutUpdated += OnLayoutUpdated;
+
+                if (!_layoutUpdatedSubscribed)
+                {
+                    _layoutUpdatedSubscribed = true;
+                    TextBlock.LayoutUpdated += OnLayoutUpdated;
+                }
+
+                if (!_autoPlaySubscribed)
+                {
+                    _autoPlaySubscribed = true;
+                    EffectiveViewportChanged += OnEffectiveViewportChanged;
+                }
             }
             else if (CustomEmoji != null)
             {
                 UnloadObject(ref CustomEmoji);
+
+                if (_layoutUpdatedSubscribed)
+                {
+                    _layoutUpdatedSubscribed = false;
+                    TextBlock.LayoutUpdated -= OnLayoutUpdated;
+                }
+
+                if (_autoPlaySubscribed)
+                {
+                    _autoPlaySubscribed = false;
+                    EffectiveViewportChanged -= OnEffectiveViewportChanged;
+                }
             }
         }
 
@@ -537,13 +557,19 @@ namespace Telegram.Controls
             }
             else
             {
+                UnloadObject(ref CustomEmoji);
+
                 if (_layoutUpdatedSubscribed)
                 {
                     _layoutUpdatedSubscribed = false;
                     TextBlock.LayoutUpdated -= OnLayoutUpdated;
                 }
 
-                UnloadObject(ref CustomEmoji);
+                if (_autoPlaySubscribed)
+                {
+                    _autoPlaySubscribed = false;
+                    EffectiveViewportChanged -= OnEffectiveViewportChanged;
+                }
             }
         }
 
@@ -571,13 +597,19 @@ namespace Telegram.Controls
 
             if (positions.Count < 1)
             {
+                UnloadObject(ref CustomEmoji);
+
                 if (_layoutUpdatedSubscribed)
                 {
                     _layoutUpdatedSubscribed = false;
                     TextBlock.LayoutUpdated -= OnLayoutUpdated;
                 }
 
-                UnloadObject(ref CustomEmoji);
+                if (_autoPlaySubscribed)
+                {
+                    _autoPlaySubscribed = false;
+                    EffectiveViewportChanged -= OnEffectiveViewportChanged;
+                }
             }
             else
             {
@@ -587,6 +619,12 @@ namespace Telegram.Controls
                 if (_playing)
                 {
                     CustomEmoji.Play();
+                }
+
+                if (!_autoPlaySubscribed)
+                {
+                    _autoPlaySubscribed = true;
+                    EffectiveViewportChanged += OnEffectiveViewportChanged;
                 }
             }
         }
@@ -783,10 +821,11 @@ namespace Telegram.Controls
         {
             if (newValue)
             {
-                EffectiveViewportChanged += OnEffectiveViewportChanged;
+                //EffectiveViewportChanged += OnEffectiveViewportChanged;
             }
             else
             {
+                _autoPlaySubscribed = false;
                 EffectiveViewportChanged -= OnEffectiveViewportChanged;
             }
         }

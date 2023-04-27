@@ -388,8 +388,8 @@ namespace Telegram.Views
 
         public void Play(IEnumerable<(SelectorItem Container, MessageViewModel Message)> items)
         {
-            var next = new Dictionary<long, IPlayerView>();
-            var prev = new HashSet<long>();
+            Dictionary<long, IPlayerView> next = null;
+            HashSet<long> prev = null;
 
             foreach (var pair in items)
             {
@@ -406,46 +406,57 @@ namespace Telegram.Views
                     {
                         // We don't want to start already played dices
                         // but we don't even want to stop them if they're already playing.
+                        prev ??= new HashSet<long>();
                         prev.Add(message.AnimationHash());
                         continue;
                     }
                 }
 
-                var root = container.ContentTemplateRoot as FrameworkElement;
-                if (root is not MessageSelector selector || selector.Content is not MessageBubble bubble)
-                {
-                    continue;
-                }
-
                 if (message.IsAnimatedContentDownloadCompleted())
                 {
+                    var root = container.ContentTemplateRoot as FrameworkElement;
+                    if (root is not MessageSelector selector || selector.Content is not MessageBubble bubble)
+                    {
+                        continue;
+                    }
+
                     var player = bubble.GetPlaybackElement();
                     if (player != null)
                     {
                         player.Tag = message;
+
+                        next ??= new Dictionary<long, IPlayerView>();
                         next[message.AnimationHash()] = player;
                     }
                 }
-
-                next[message.EmojiHash()] = bubble;
             }
 
-            foreach (var item in _prev.Keys.Except(next.Keys.Union(prev)).ToList())
+            var skip = next != null && prev != null
+                ? next.Keys.Union(prev)
+                : next != null ? next.Keys
+                : prev;
+
+            if (skip != null)
             {
-                var presenter = _prev[item].Target as IPlayerView;
-                if (presenter != null && presenter.IsLoopingEnabled)
+                foreach (var item in _prev.Keys.Except(skip).ToList())
                 {
-                    presenter.Pause();
-                }
+                    var presenter = _prev[item].Target as IPlayerView;
+                    if (presenter != null && presenter.IsLoopingEnabled)
+                    {
+                        presenter.Pause();
+                    }
 
-                _prev.Remove(item);
+                    _prev.Remove(item);
+                }
             }
 
-            foreach (var item in next)
+            if (next != null)
             {
-                item.Value?.Play();
-
-                _prev[item.Key] = new WeakReference(item.Value);
+                foreach (var item in next)
+                {
+                    _prev[item.Key] = new WeakReference(item.Value);
+                    item.Value.Play();
+                }
             }
         }
 

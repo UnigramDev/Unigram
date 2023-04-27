@@ -35,7 +35,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
-    public sealed class MessageBubble : Control, IPlayerView
+    public sealed class MessageBubble : Control
     {
         private MessageViewModel _message;
 
@@ -774,15 +774,7 @@ namespace Telegram.Controls.Messages
                 Panel.Reply = Reply;
             }
 
-            if (Reply != null)
-            {
-                Reply.UpdateMessageReply(message);
-
-                if (_playing)
-                {
-                    Reply.Play();
-                }
-            }
+            Reply?.UpdateMessageReply(message);
         }
 
         public void UpdateMessageHeader(MessageViewModel message, Chat chat)
@@ -2877,41 +2869,6 @@ namespace Telegram.Controls.Messages
                     return false;
             }
         }
-
-        #region IPlayerView
-
-        public bool IsAnimatable => Message != null || (Reply?.IsAnimatable ?? false);
-
-        public bool IsLoopingEnabled => true;
-
-        private bool _playing;
-
-        public bool Play()
-        {
-            Message?.Play();
-            Reply?.Play();
-
-            _playing = true;
-            return true;
-        }
-
-        public void Pause()
-        {
-            Message?.Pause();
-            Reply?.Pause();
-
-            _playing = false;
-        }
-
-        public void Unload()
-        {
-            Message?.Unload();
-            Reply?.Unload();
-
-            _playing = false;
-        }
-
-        #endregion
 
         #region XamlMarkupHelper
 
