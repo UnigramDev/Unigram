@@ -2032,12 +2032,10 @@ namespace Telegram.Views
             flyout.MenuFlyoutPresenterStyle.Setters.Add(new Setter(MinWidthProperty, 165));
 
             var element = sender as FrameworkElement;
-            var message = element.Tag as MessageViewModel;
-            if (message == null && sender is SelectorItem container && container.ContentTemplateRoot is FrameworkElement content)
-            {
-                element = content;
-                message = content.Tag as MessageViewModel;
+            var message = Messages.ItemFromContainer(element) as MessageViewModel;
 
+            if (sender is SelectorItem container && container.ContentTemplateRoot is FrameworkElement content)
+            {
                 if (content is MessageSelector selector)
                 {
                     element = selector.Content as MessageBubble;
@@ -2045,6 +2043,10 @@ namespace Telegram.Views
                 else if (content is StackPanel panel)
                 {
                     element = panel.FindName("Service") as FrameworkElement;
+                }
+                else
+                {
+                    element = content;
                 }
             }
 

@@ -39,7 +39,7 @@ namespace Telegram.Controls.Chats
 
         private bool _requiresArrange;
 
-        private bool _forward;
+        private bool _share;
         private bool _reply;
 
         private FrameworkElement _presenter;
@@ -143,10 +143,10 @@ namespace Telegram.Controls.Chats
             _tracker.InteractionSources.Add(_interactionSource);
 
             _tracker.MaxPosition = new Vector3(_reply ? 72 : 0);
-            _tracker.MinPosition = new Vector3(_forward ? -72 : 0);
+            _tracker.MinPosition = new Vector3(_share ? -72 : 0);
 
             _tracker.Properties.InsertBoolean("CanReply", _reply);
-            _tracker.Properties.InsertBoolean("CanForward", _forward);
+            _tracker.Properties.InsertBoolean("CanShare", _share);
 
             //ConfigureAnimations(_visual, null);
             ConfigureRestingPoints();
@@ -164,8 +164,8 @@ namespace Telegram.Controls.Chats
         private void ConfigureAnimations(Visual visual, Visual indicator)
         {
             // Create an animation that changes the offset of the photoVisual and shadowVisual based on the manipulation progress
-            var offsetExp = _visual.Compositor.CreateExpressionAnimation("(tracker.Position.X > 0 && !tracker.CanReply) || (tracker.Position.X <= 0 && !tracker.CanForward) ? 0 : -tracker.Position.X");
-            //var photoOffsetExp = _visual.Compositor.CreateExpressionAnimation("tracker.Position.X > 0 && !tracker.CanReply || tracker.Position.X <= 0 && !tracker.CanForward ? 0 : Max(-72, Min(72, -tracker.Position.X))");
+            var offsetExp = _visual.Compositor.CreateExpressionAnimation("(tracker.Position.X > 0 && !tracker.CanReply) || (tracker.Position.X <= 0 && !tracker.CanShare) ? 0 : -tracker.Position.X");
+            //var photoOffsetExp = _visual.Compositor.CreateExpressionAnimation("tracker.Position.X > 0 && !tracker.CanReply || tracker.Position.X <= 0 && !tracker.CanShare ? 0 : Max(-72, Min(72, -tracker.Position.X))");
             //var photoOffsetExp = _visual.Compositor.CreateExpressionAnimation("-tracker.Position.X");
             offsetExp.SetReferenceParameter("tracker", _tracker);
             visual.StartAnimation("Offset.X", offsetExp);
@@ -211,20 +211,20 @@ namespace Telegram.Controls.Chats
 
         public override bool CantSelect()
         {
-            return ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message && message.IsService();
+            return ContentTemplateRoot is not MessageSelector;
         }
 
-        public void PrepareForItemOverride(MessageViewModel message)
+        public void PrepareForItemOverride(MessageViewModel message, bool canReply)
         {
-            _reply = CanReply();
-            _forward = CanShare();
+            _share = SettingsService.Current.SwipeToShare && message.CanBeForwarded;
+            _reply = SettingsService.Current.SwipeToReply && canReply && ContentTemplateRoot is MessageSelector;
 
             if (_tracker != null)
             {
                 _tracker.Properties.InsertBoolean("CanReply", _reply);
-                _tracker.Properties.InsertBoolean("CanForward", _forward);
+                _tracker.Properties.InsertBoolean("CanShare", _share);
                 _tracker.MaxPosition = new Vector3(_reply ? 72 : 0);
-                _tracker.MinPosition = new Vector3(_forward ? -72 : 0);
+                _tracker.MinPosition = new Vector3(_share ? -72 : 0);
 
                 if (_tracker.Position.X != 0)
                 {
@@ -236,49 +236,6 @@ namespace Telegram.Controls.Chats
                     _visual.Offset = new Vector3();
                 }
             }
-        }
-
-        private bool CanReply()
-        {
-            if (SettingsService.Current.SwipeToReply && ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message)
-            {
-                if (message.IsService())
-                {
-                    return false;
-                }
-
-                var chat = message.GetChat();
-                if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
-                {
-                    var supergroup = _parent.ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId);
-                    if (supergroup.IsChannel)
-                    {
-                        return supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator;
-                    }
-                    else if (supergroup.Status is ChatMemberStatusRestricted restricted)
-                    {
-                        return restricted.Permissions.CanSendBasicMessages;
-                    }
-                }
-                else if (chat != null)
-                {
-                    return chat.Permissions.CanSendBasicMessages;
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool CanShare()
-        {
-            if (SettingsService.Current.SwipeToShare && ContentTemplateRoot is FrameworkElement element && element.Tag is MessageViewModel message)
-            {
-                return message.CanBeForwarded;
-            }
-
-            return false;
         }
 
         public void ValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
@@ -319,7 +276,7 @@ namespace Telegram.Controls.Chats
                 //ElementCompositionPreview.SetElementChildVisual(this, _container);
             }
 
-            var offset = (_tracker.Position.X > 0 && !_reply) || (_tracker.Position.X <= 0 && !_forward) ? 0 : Math.Max(0, Math.Min(72, Math.Abs(_tracker.Position.X)));
+            var offset = (_tracker.Position.X > 0 && !_reply) || (_tracker.Position.X <= 0 && !_share) ? 0 : Math.Max(0, Math.Min(72, Math.Abs(_tracker.Position.X)));
 
             var abs = Math.Abs(offset);
             var percent = abs / 72f;
@@ -343,7 +300,7 @@ namespace Telegram.Controls.Chats
                 {
                     _parent.ViewModel.ReplyToMessage(message);
                 }
-                else if (_tracker.Position.X <= -72 && _forward)
+                else if (_tracker.Position.X <= -72 && _share)
                 {
                     _parent.ViewModel.ForwardMessage(message);
                 }

@@ -772,7 +772,9 @@
                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                        TextAlignment="{TemplateBinding TextAlignment}"
                                        TextReadingOrder="UseFlowDirection"
-                                       OpticalMarginAlignment="None" />
+                                       OpticalMarginAlignment="None">
+                            <Paragraph />
+                        </RichTextBlock>
                         <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                                     x:Load="False"
                                                     IsHitTestVisible="False"

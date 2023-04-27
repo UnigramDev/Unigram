@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Telegram.Common;
 using Telegram.Controls.Messages.Content;
@@ -222,7 +223,6 @@ namespace Telegram.Controls.Messages
             }
 
             _message = message;
-            Tag = message;
 
             if (!_templateApplied)
             {
@@ -247,7 +247,7 @@ namespace Telegram.Controls.Messages
             else
             {
                 Message.Clear();
-                Media.Child = null;
+                //Media.Child = null;
 
                 UnloadObject(ref Reactions);
                 UnloadObject(ref MediaReactions);
@@ -2915,12 +2915,14 @@ namespace Telegram.Controls.Messages
 
         #region XamlMarkupHelper
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LoadObject<T>(ref T element, /*[CallerArgumentExpression("element")]*/string name)
             where T : DependencyObject
         {
             element ??= GetTemplateChild(name) as T;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UnloadObject<T>(ref T element)
             where T : DependencyObject
         {

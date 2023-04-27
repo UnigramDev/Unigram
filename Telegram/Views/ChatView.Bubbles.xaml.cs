@@ -551,11 +551,10 @@ namespace Telegram.Views
 
             _updateThemeTask?.TrySetResult(true);
 
-            content.Tag = message;
-
             if (args.ItemContainer is ChatListViewItem selector)
             {
-                selector.PrepareForItemOverride(message);
+                // TODO: are there chances that at this point TextArea is not up to date yet?
+                selector.PrepareForItemOverride(message, TextArea.Visibility == Visibility.Visible);
             }
 
             if (content is MessageSelector checkbox)

@@ -109,13 +109,17 @@ namespace Telegram.Controls.Messages
 
         protected override void OnApplyTemplate()
         {
+            base.OnApplyTemplate();
+
             Presenter = GetTemplateChild(nameof(Presenter)) as ContentPresenter;
             ElementCompositionPreview.SetIsTranslationEnabled(Presenter, true);
 
             _templateApplied = true;
-            UpdateMessage(_message, _parent);
 
-            base.OnApplyTemplate();
+            if (_message != null)
+            {
+                UpdateMessage(_message, _parent);
+            }
         }
 
         protected override void OnToggle()

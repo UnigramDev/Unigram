@@ -962,10 +962,10 @@ namespace Telegram.Common
 
         public static async Task UpdateLayoutAsync(this FrameworkElement element, bool update = false)
         {
-            var tcs = new TaskCompletionSource<object>();
+            var tcs = new TaskCompletionSource<bool>();
             void layoutUpdated(object s1, object e1)
             {
-                tcs.TrySetResult(null);
+                tcs.TrySetResult(true);
             }
 
             try
@@ -1070,12 +1070,12 @@ namespace Telegram.Common
 
         public static async Task ScrollIntoViewAsync(this ListViewBase listViewBase, object item, ScrollIntoViewAlignment alignment, bool updateLayout)
         {
-            var tcs = new TaskCompletionSource<object>();
+            var tcs = new TaskCompletionSource<bool>();
             var scrollViewer = listViewBase.GetScrollViewer();
 
             void layoutUpdated(object s1, object e1)
             {
-                tcs.TrySetResult(null);
+                tcs.TrySetResult(true);
             }
 
             void viewChanged(object s, ScrollViewerViewChangedEventArgs e)
@@ -1102,11 +1102,11 @@ namespace Telegram.Common
 
         public static async Task ChangeViewAsync(this ScrollViewer scrollViewer, double? horizontalOffset, double? verticalOffset, bool disableAnimation, bool updateLayout)
         {
-            var tcs = new TaskCompletionSource<object>();
+            var tcs = new TaskCompletionSource<bool>();
 
             void layoutUpdated(object s1, object e1)
             {
-                tcs.TrySetResult(null);
+                tcs.TrySetResult(true);
             }
 
             void viewChanged(object s, ScrollViewerViewChangedEventArgs e)
