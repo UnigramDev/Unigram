@@ -2172,7 +2172,6 @@ namespace Telegram.Controls.Messages
             var text = ElementCompositionPreview.GetElementVisual(Message);
             var media = ElementCompositionPreview.GetElementVisual(Media);
             var footer = ElementCompositionPreview.GetElementVisual(Footer);
-            var reactions = ElementCompositionPreview.GetElementVisual(Reactions);
 
             var headerLeft = (float)Header.Margin.Left;
             var textLeft = (float)Message.Margin.Left;
@@ -2185,13 +2184,18 @@ namespace Telegram.Controls.Messages
             text.CenterPoint = new Vector3(-textLeft, 0, 0);
             media.CenterPoint = new Vector3(-mediaLeft, 0, 0);
             footer.CenterPoint = new Vector3(Footer.ActualSize.X + footerRight, Footer.ActualSize.Y + footerBottom, 0);
-            reactions.CenterPoint = new Vector3(0, Reactions.ActualSize.Y, 0);
 
             header.StartAnimation("Scale", factor);
             text.StartAnimation("Scale", factor);
             media.StartAnimation("Scale", factor);
             footer.StartAnimation("Scale", factor);
-            reactions.StartAnimation("Scale", factor);
+
+            if (Reactions != null)
+            {
+                var reactions = ElementCompositionPreview.GetElementVisual(Reactions);
+                reactions.CenterPoint = new Vector3(0, Reactions.ActualSize.Y, 0);
+                reactions.StartAnimation("Scale", factor);
+            }
         }
 
         private void Footer_SizeChanged(object sender, SizeChangedEventArgs e)
