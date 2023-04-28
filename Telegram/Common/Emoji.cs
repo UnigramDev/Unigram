@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -319,11 +318,6 @@ namespace Telegram.Common
             count = 0;
             text = text.Trim();
 
-            if (text.Contains(" "))
-            {
-                return false;
-            }
-
             var result = false;
 
             foreach (var last in EnumerateByComposedCharacterSequence(text))
@@ -357,7 +351,7 @@ namespace Telegram.Common
             var success = TryCountEmojis(stringify, out int count);
 
             Debug.Assert(success);
-            Debug.Assert(count == _rawEmojis.Length);
+            Debug.Assert(count == _rawEmojis.Count);
         }
 
         public static bool IsEmoji(string text)
