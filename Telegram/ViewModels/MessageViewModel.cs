@@ -53,7 +53,10 @@ namespace Telegram.ViewModels
 
         public Photo GetPhoto() => _message.GetPhoto();
 
-        public bool IsService() => _message.IsService();
+        // TODO: this probably needs to be invalidated when
+        // content changes (MessagePhoto => MessagePhotoExpired)
+        private bool? _isService;
+        public bool IsService() => _isService ??= _message.IsService();
 
         private bool? _isSaved;
         public bool IsSaved => _isSaved ??= _message.IsSaved(_clientService.Options.MyId);
@@ -108,10 +111,10 @@ namespace Telegram.ViewModels
             _message = message;
         }
 
-        private bool? _isShareable;
-        public bool IsShareable => _isShareable ??= GetIsShareable();
+        private bool? _canBeShared;
+        public bool CanBeShared => _canBeShared ??= GetCanBeShared();
 
-        private bool GetIsShareable()
+        private bool GetCanBeShared()
         {
             if (SchedulingState != null)
             {
@@ -140,14 +143,14 @@ namespace Telegram.ViewModels
                     return false;
                 }
 
-                var user = ClientService.GetUser(senderUser.UserId);
-                if (user != null && user.Type is UserTypeBot)
-                {
-                    return true;
-                }
-
                 if (!IsOutgoing)
                 {
+                    var user = ClientService.GetUser(senderUser.UserId);
+                    if (user != null && user.Type is UserTypeBot)
+                    {
+                        return true;
+                    }
+
                     if (Content is MessageGame or MessageInvoice)
                     {
                         return true;

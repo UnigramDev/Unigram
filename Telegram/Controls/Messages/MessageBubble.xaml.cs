@@ -481,7 +481,7 @@ namespace Telegram.Controls.Messages
             if (message.Delegate != null && message.Delegate.IsDialog)
             {
                 var top = message.IsFirst ? 4 : 2;
-                var action = message.IsSaved || message.IsShareable;
+                var action = message.IsSaved || message.CanBeShared;
 
                 chat ??= message?.GetChat();
 
@@ -701,7 +701,7 @@ namespace Telegram.Controls.Messages
                     Automation.SetToolTip(ActionButton, Strings.AccDescrOpenChat);
                 }
             }
-            else if (message.IsShareable)
+            else if (message.CanBeShared)
             {
                 if (Action == null)
                 {
