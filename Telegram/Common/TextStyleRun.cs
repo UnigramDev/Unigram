@@ -54,6 +54,11 @@ namespace Telegram.Common
 
         public static IList<TextStyleRun> GetRuns(string text, IList<TextEntity> entities)
         {
+            if (entities == null || entities.Count == 0)
+            {
+                return Array.Empty<TextStyleRun>();
+            }
+
             var runs = new List<TextStyleRun>();
             var entitiesCopy = new List<TextEntity>(entities);
 

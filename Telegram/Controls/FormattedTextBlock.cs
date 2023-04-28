@@ -44,6 +44,9 @@ namespace Telegram.Controls
         private IList<TextEntity> _entities;
         private double _fontSize;
 
+        private bool _isFormatted;
+        private bool _isHighlighted;
+
         private readonly List<EmojiPosition> _positions = new();
 
         private bool _ignoreSpoilers = false;
@@ -192,7 +195,11 @@ namespace Telegram.Controls
         {
             if (_text != null && TextBlock != null && TextBlock.IsLoaded)
             {
-                TextBlock.TextHighlighters.Clear();
+                if (_isHighlighted)
+                {
+                    _isHighlighted = false;
+                    TextBlock.TextHighlighters.Clear();
+                }
 
                 if (query?.Length > 0)
                 {
@@ -204,12 +211,14 @@ namespace Telegram.Controls
                         highligher.Background = new SolidColorBrush(Colors.Orange);
                         highligher.Ranges.Add(new TextRange { StartIndex = find, Length = query.Length });
 
+                        _isHighlighted = true;
                         TextBlock.TextHighlighters.Add(highligher);
                     }
                 }
 
                 if (_spoiler != null)
                 {
+                    _isHighlighted = true;
                     TextBlock.TextHighlighters.Add(_spoiler);
                 }
             }
@@ -244,7 +253,7 @@ namespace Telegram.Controls
             var paragraph = direct.GetXamlDirectObject(Paragraph);
             var inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
 
-            var clear = runs.Count > 0 || Paragraph.Inlines.Count != 1 || Paragraph.Inlines[0] is not Run;
+            var clear = _isFormatted || fontSize != 0 || runs.Count > 0 || Paragraph.Inlines.Count != 1 || Paragraph.Inlines[0] is not Run;
             if (clear)
             {
                 direct.ClearCollection(inlines);
@@ -452,6 +461,8 @@ namespace Telegram.Controls
             }
 
             //ContentPanel.MaxWidth = preformatted ? double.PositiveInfinity : 432;
+
+            _isFormatted = runs.Count > 0 || fontSize != 0;
             IsPreformatted = preformatted;
 
             if (text.Length > previous)
