@@ -6,6 +6,7 @@
 //
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Telegram.Controls.Cells;
 using Telegram.Converters;
 using Telegram.Td.Api;
@@ -111,7 +112,7 @@ namespace Telegram.Controls.Messages
 
         private void UpdateMessageImpl(MessageViewModel message, bool fromApplyTemplate)
         {
-            UpdateMessageState(message);
+            UpdateMessageStateImpl(message);
             UpdateMessageDateImpl(message);
             UpdateMessageEditedImpl(message);
             UpdateMessageIsPinnedImpl(message);
@@ -125,6 +126,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpdateMessageDateImpl(MessageViewModel message)
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
@@ -163,17 +165,18 @@ namespace Telegram.Controls.Messages
 
         public void UpdateMessageInteractionInfo(MessageViewModel message)
         {
-            UpdateMessageInteractionInfoImpl(message);
-            UpdateLabel();
-        }
-
-        private void UpdateMessageInteractionInfoImpl(MessageViewModel message)
-        {
             if (message == null || !_templateApplied)
             {
                 return;
             }
 
+            UpdateMessageInteractionInfoImpl(message);
+            UpdateLabel();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void UpdateMessageInteractionInfoImpl(MessageViewModel message)
+        {
             if (message.InteractionInfo?.ReplyInfo?.ReplyCount > 0 && !message.IsChannelPost)
             {
                 _repliesLabel = $"\uEA02\u00A0" + message.InteractionInfo.ReplyInfo.ReplyCount + "\u00A0";
@@ -208,17 +211,18 @@ namespace Telegram.Controls.Messages
 
         public void UpdateMessageEdited(MessageViewModel message)
         {
-            UpdateMessageEditedImpl(message);
-            UpdateLabel();
-        }
-
-        public void UpdateMessageEditedImpl(MessageViewModel message)
-        {
             if (message == null || !_templateApplied)
             {
                 return;
             }
 
+            UpdateMessageEditedImpl(message);
+            UpdateLabel();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void UpdateMessageEditedImpl(MessageViewModel message)
+        {
             if (message.EditDate != 0)
             {
                 var bot = false;
@@ -237,17 +241,18 @@ namespace Telegram.Controls.Messages
 
         public void UpdateMessageIsPinned(MessageViewModel message)
         {
-            UpdateMessageIsPinnedImpl(message);
-            UpdateLabel();
-        }
-
-        private void UpdateMessageIsPinnedImpl(MessageViewModel message)
-        {
             if (message == null || !_templateApplied)
             {
                 return;
             }
 
+            UpdateMessageIsPinnedImpl(message);
+            UpdateLabel();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void UpdateMessageIsPinnedImpl(MessageViewModel message)
+        {
             if (message.IsPinned)
             {
                 _pinnedGlyph = "\uEA05\u00A0";
@@ -265,9 +270,14 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            _stateLabel = UpdateStateIcon(message);
-
+            UpdateMessageStateImpl(message);
             UpdateLabel();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void UpdateMessageStateImpl(MessageViewModel message)
+        {
+            _stateLabel = UpdateStateIcon(message);
         }
 
         private string UpdateStateIcon(MessageViewModel message)
