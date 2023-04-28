@@ -17,6 +17,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -29,6 +30,8 @@ namespace Telegram.Controls.Messages
         private ContentPresenter Presenter;
 
         private bool _templateApplied;
+
+        private bool _isSelected;
 
         private MessageViewModel _message;
         private LazoListViewItem _parent;
@@ -197,47 +200,57 @@ namespace Telegram.Controls.Messages
             _message = message;
             _parent = parent;
 
-            if (message != null && _templateApplied)
+            if (message == null || !_templateApplied)
             {
-                message.UpdateSelectionCallback(UpdateSelection);
+                return;
+            }
 
-                IsChecked = _isSelectionEnabled && message.Delegate.SelectedItems.ContainsKey(message.Id);
-                Presenter.IsHitTestVisible = !_isSelectionEnabled || IsAlbum;
+            message.UpdateSelectionCallback(UpdateSelection);
 
-                CreateIcon();
-                UpdateIcon(IsChecked is true, false);
+            var selected = _isSelectionEnabled && message.Delegate.SelectedItems.ContainsKey(message.Id);
+            if (selected == _isSelected)
+            {
+                return;
+            }
 
+            _isSelected = selected;
+
+            IsChecked = selected;
+            Presenter.IsHitTestVisible = !_isSelectionEnabled || IsAlbum;
+
+            CreateIcon();
+            UpdateIcon(IsChecked is true, false);
+
+            if (Icon != null)
+            {
+                var icon = ElementCompositionPreview.GetElementVisual(Icon);
+                icon.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled ? 36 : 0, 0, 0));
+            }
+
+            if (IsAlbumChild)
+            {
                 if (Icon != null)
                 {
-                    var icon = ElementCompositionPreview.GetElementVisual(Icon);
-                    icon.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled ? 36 : 0, 0, 0));
-                }
-
-                if (IsAlbumChild)
-                {
-                    if (Icon != null)
+                    if (_message.Content is MessagePhoto or MessageVideo)
                     {
-                        if (_message.Content is MessagePhoto or MessageVideo)
-                        {
-                            Icon.VerticalAlignment = VerticalAlignment.Top;
-                            Icon.HorizontalAlignment = HorizontalAlignment.Right;
-                            Icon.Margin = new Thickness(0, 4, 6, 0);
-                        }
-                        else
-                        {
-                            Icon.VerticalAlignment = VerticalAlignment.Bottom;
-                            Icon.HorizontalAlignment = HorizontalAlignment.Left;
-                            Icon.Margin = new Thickness(28, 0, 0, 4);
-                        }
-
-                        Grid.SetColumn(Icon, 1);
+                        Icon.VerticalAlignment = VerticalAlignment.Top;
+                        Icon.HorizontalAlignment = HorizontalAlignment.Right;
+                        Icon.Margin = new Thickness(0, 4, 6, 0);
                     }
+                    else
+                    {
+                        Icon.VerticalAlignment = VerticalAlignment.Bottom;
+                        Icon.HorizontalAlignment = HorizontalAlignment.Left;
+                        Icon.Margin = new Thickness(28, 0, 0, 4);
+                    }
+
+                    Grid.SetColumn(Icon, 1);
                 }
-                else
-                {
-                    var presenter = ElementCompositionPreview.GetElementVisual(Presenter);
-                    presenter.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled && (message.IsChannelPost || !message.IsOutgoing) ? 36 : 0, 0, 0));
-                }
+            }
+            else
+            {
+                var presenter = ElementCompositionPreview.GetElementVisual(Presenter);
+                presenter.Properties.InsertVector3("Translation", new Vector3(_isSelectionEnabled && (message.IsChannelPost || !message.IsOutgoing) ? 36 : 0, 0, 0));
             }
         }
 
@@ -254,7 +267,9 @@ namespace Telegram.Controls.Messages
 
             if (_message is MessageViewModel message)
             {
-                IsChecked = value && message.Delegate.SelectedItems.ContainsKey(message.Id);
+                _isSelected = value && message.Delegate.SelectedItems.ContainsKey(message.Id);
+
+                IsChecked = _isSelected;
                 Presenter.IsHitTestVisible = !value || IsAlbum;
 
                 CreateIcon();
@@ -334,7 +349,9 @@ namespace Telegram.Controls.Messages
                     selected = message.Delegate.SelectedItems.ContainsKey(message.Id);
                 }
 
-                IsChecked = _isSelectionEnabled && selected;
+                _isSelected = _isSelectionEnabled && selected;
+
+                IsChecked = _isSelected;
                 Presenter.IsHitTestVisible = !_isSelectionEnabled || IsAlbum;
 
                 CreateIcon();
