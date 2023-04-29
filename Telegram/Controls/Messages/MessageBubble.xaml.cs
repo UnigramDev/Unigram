@@ -136,7 +136,6 @@ namespace Telegram.Controls.Messages
             ContentPanel.SizeChanged += OnSizeChanged;
             Message.ContextMenuOpening += Message_ContextMenuOpening;
             Message.TextEntityClick += Message_TextEntityClick;
-            Footer.SizeChanged += Footer_SizeChanged;
 
             ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
@@ -2199,16 +2198,6 @@ namespace Telegram.Controls.Messages
                 var reactions = ElementCompositionPreview.GetElementVisual(Reactions);
                 reactions.CenterPoint = new Vector3(0, Reactions.ActualSize.Y, 0);
                 reactions.StartAnimation("Scale", factor);
-            }
-        }
-
-        private void Footer_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Telegram.App.Track();
-
-            if (e.PreviousSize.Width > 0 && e.NewSize.Width != e.PreviousSize.Width)
-            {
-                Panel.InvalidateMeasure();
             }
         }
 
