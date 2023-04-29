@@ -42,7 +42,7 @@
                     <CheckBox x:Name="Biometrics"
                               Visibility="Collapsed"
                               IsChecked="{x:Bind ViewModel.IsBiometricsEnabled, Mode=TwoWay}"
-                              Content="{CustomResource UnlockFingerprint}"
+                              Content="{CustomResource UnlockWindowsHello}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <controls:BadgeButton Content="{CustomResource AutoLock}"
