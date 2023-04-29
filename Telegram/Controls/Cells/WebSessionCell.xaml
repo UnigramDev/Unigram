@@ -8,7 +8,7 @@
       mc:Ignorable="d"
       d:DesignHeight="300"
       d:DesignWidth="400"
-      Padding="12,8,12,12"
+      Padding="12,8,0,12"
       Background="{ThemeResource SettingsItemBackground}"
       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
 
@@ -18,33 +18,28 @@
         <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     <Grid.ColumnDefinitions>
-        <ColumnDefinition />
         <ColumnDefinition Width="Auto" />
+        <ColumnDefinition />
     </Grid.ColumnDefinitions>
-    <StackPanel Orientation="Horizontal">
-        <controls:ProfilePicture x:Name="Photo"
-                                 Width="18"
-                                 Height="18"
-                                 Margin="0,0,6,-2"
-                                 IsHitTestVisible="False" />
-        <TextBlock x:Name="Domain"
-                   TextTrimming="CharacterEllipsis"
-                   VerticalAlignment="Center"
-                   Style="{StaticResource BaseTextBlockStyle}" />
-    </StackPanel>
+    <controls:ProfilePicture x:Name="Photo"
+                             VerticalAlignment="Top"
+                             Width="36"
+                             Height="36"
+                             Margin="0,0,8,0"
+                             IsEnabled="False"
+                             Grid.RowSpan="3" />
+    <TextBlock x:Name="Domain"
+               TextTrimming="CharacterEllipsis"
+               VerticalAlignment="Center"
+               Style="{StaticResource BaseTextBlockStyle}"
+               Grid.Column="1" />
     <TextBlock x:Name="Title"
                TextTrimming="CharacterEllipsis"
-               Grid.ColumnSpan="2"
+               Grid.Column="1"
                Grid.Row="1" />
     <TextBlock x:Name="Subtitle"
                TextTrimming="CharacterEllipsis"
                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-               Grid.ColumnSpan="2"
+               Grid.Column="1"
                Grid.Row="2" />
-    <TextBlock x:Name="LastActiveDate"
-               Margin="12,0,0,0"
-               VerticalAlignment="Bottom"
-               Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-               Style="{StaticResource CaptionTextBlockStyle}"
-               Grid.Column="1" />
 </Grid>

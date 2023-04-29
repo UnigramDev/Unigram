@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -26,13 +27,11 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            Photo.SetUser(clientService, bot, 18);
+            Photo.SetUser(clientService, bot, 36);
 
-            Domain.Text = session.DomainName;
-            Title.Text = string.Format("{0}, {1}, {2}", bot.FirstName, session.Browser, session.Platform);
-            Subtitle.Text = string.Format("{0} — {1}", session.Ip, session.Location);
-
-            LastActiveDate.Text = Formatter.DateExtended(session.LastActiveDate);
+            Domain.Text = bot.FullName();
+            Title.Text = string.Format("{0}, {1}, {2}", session.DomainName, session.Browser, session.Platform);
+            Subtitle.Text = string.Format("{0} \u2022 {1}", session.Location, Formatter.DateExtended(session.LastActiveDate));
         }
     }
 }
