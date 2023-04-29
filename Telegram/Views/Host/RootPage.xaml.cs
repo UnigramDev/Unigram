@@ -274,16 +274,12 @@ namespace Telegram.Views.Host
             if (e.Content is IRootContentPage content)
             {
                 content.Root = this;
-                Navigation.PaneToggleButtonVisibility = content.EvaluatePaneToggleButtonVisibility()
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                SetPaneToggleButtonVisibility(content.EvaluatePaneToggleButtonVisibility());
                 InitializeNavigation(sender as Frame);
             }
             else
             {
-                Navigation.PaneToggleButtonVisibility = _navigationService.CanGoBack
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                SetPaneToggleButtonVisibility(_navigationService.CanGoBack);
             }
         }
 
@@ -291,9 +287,7 @@ namespace Telegram.Views.Host
         {
             if (_navigationService.Content is not IRootContentPage)
             {
-                Navigation.PaneToggleButtonVisibility = _navigationService.CanGoBack
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
+                SetPaneToggleButtonVisibility(_navigationService.CanGoBack);
             }
         }
 
@@ -651,11 +645,17 @@ namespace Telegram.Views.Host
             InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
         }
 
+        private bool _paneToggleButtonVisible;
+
         public void SetPaneToggleButtonVisibility(bool visible)
         {
-            Navigation.PaneToggleButtonVisibility = visible
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            if (_paneToggleButtonVisible != visible)
+            {
+                _paneToggleButtonVisible = visible;
+                Navigation.PaneToggleButtonVisibility = visible
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
         }
 
         public void SetSelectedIndex(RootDestination value)
