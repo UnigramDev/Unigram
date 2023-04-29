@@ -322,11 +322,14 @@ namespace Telegram.Controls.Drawers
                         }
                     }
                 }
-                else if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+                else
                 {
-                    SettingsService.Current.Emoji.AddRecentEmoji($"{sticker.Emoji};{customEmoji.CustomEmojiId}");
-                    SettingsService.Current.Emoji.SortRecentEmoji();
-                    SettingsService.Current.Emoji.SaveRecentEmoji();
+                    if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+                    {
+                        SettingsService.Current.Emoji.AddRecentEmoji($"{sticker.Emoji};{customEmoji.CustomEmojiId}");
+                        SettingsService.Current.Emoji.SortRecentEmoji();
+                        SettingsService.Current.Emoji.SaveRecentEmoji();
+                    }
 
                     ItemClick?.Invoke(this, e);
                 }
