@@ -152,7 +152,7 @@ namespace Telegram.Controls.Messages.Content
                 Player.IsLoopingEnabled = message.Content is MessageSticker && PowerSavingPolicy.AutoPlayStickersInChats;
                 Player.Source = UriEx.ToLocal(file.Local.Path);
 
-                message.Delegate.ViewVisibleMessages(false);
+                message.Delegate.ViewVisibleMessages();
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

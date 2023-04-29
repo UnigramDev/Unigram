@@ -658,7 +658,7 @@ namespace Telegram.ViewModels
                     else
                     {
                         bubble.UpdateMessageContent(message, _chat);
-                        Delegate?.ViewVisibleMessages(false);
+                        Delegate?.ViewVisibleMessages();
                     }
                 });
 
@@ -731,7 +731,7 @@ namespace Telegram.ViewModels
                 },
                 (bubble, message) =>
                 {
-                    Delegate?.ViewVisibleMessages(false);
+                    Delegate?.ViewVisibleMessages();
                 });
 
                 BeginOnUIThread(() => Delegate?.UpdateChatUnreadReactionCount(_chat, update.UnreadReactionCount));
@@ -821,7 +821,7 @@ namespace Telegram.ViewModels
                 (bubble, message) =>
                 {
                     bubble.UpdateMessage(message);
-                    Delegate?.ViewVisibleMessages(false);
+                    Delegate?.ViewVisibleMessages();
                 });
 
                 if (Settings.Notifications.InAppSounds)

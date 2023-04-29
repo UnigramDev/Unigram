@@ -23,9 +23,9 @@ namespace Telegram.ViewModels
 {
     public partial class DialogViewModel
     {
-        public void ViewVisibleMessages(bool intermediate)
+        public void ViewVisibleMessages()
         {
-            Delegate?.ViewVisibleMessages(intermediate);
+            Delegate?.ViewVisibleMessages();
         }
 
         public void DoubleClick(MessageViewModel message)

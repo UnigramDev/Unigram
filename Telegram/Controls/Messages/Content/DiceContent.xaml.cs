@@ -134,7 +134,7 @@ namespace Telegram.Controls.Messages.Content
                     Player.IndexChanged += OnIndexChanged;
                 }
 
-                message.Delegate.ViewVisibleMessages(false);
+                message.Delegate.ViewVisibleMessages();
             }
             else
             {

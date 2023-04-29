@@ -27,7 +27,6 @@ namespace Telegram.ViewModels.Delegates
         void UpdateChatMessageSender(Chat chat, MessageSender defaultMessageSenderId);
         void UpdateChatPendingJoinRequests(Chat chat);
 
-        void UpdatePinnedMessage();
         void UpdatePinnedMessage(Chat chat, bool known);
         void UpdateCallbackQueryAnswer(Chat chat, MessageViewModel answer);
 
@@ -42,7 +41,7 @@ namespace Telegram.ViewModels.Delegates
 
         void PlayMessage(MessageViewModel message, FrameworkElement target);
 
-        void ViewVisibleMessages(bool intermediate);
+        void ViewVisibleMessages();
 
 
         void HideStickers();

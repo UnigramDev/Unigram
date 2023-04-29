@@ -165,7 +165,7 @@ namespace Telegram.Controls.Messages.Content
                     Button.Progress = 1;
 
                     Player.Source = new LocalVideoSource(file);
-                    message.Delegate.ViewVisibleMessages(false);
+                    message.Delegate.ViewVisibleMessages();
                 }
             }
         }

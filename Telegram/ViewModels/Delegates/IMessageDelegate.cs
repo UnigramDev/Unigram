@@ -47,7 +47,7 @@ namespace Telegram.ViewModels.Delegates
 
         void VotePoll(MessageViewModel message, IList<PollOption> option);
 
-        void ViewVisibleMessages(bool intermediate);
+        void ViewVisibleMessages();
 
         void OpenUsername(string username);
         void OpenUser(long userId);

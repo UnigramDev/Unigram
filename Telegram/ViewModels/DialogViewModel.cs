@@ -903,7 +903,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                Delegate?.UpdatePinnedMessage();
+                Delegate?.ViewVisibleMessages();
             }
             else
             {

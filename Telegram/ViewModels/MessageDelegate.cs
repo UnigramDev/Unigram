@@ -307,7 +307,7 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
-        public virtual void ViewVisibleMessages(bool intermediate) { }
+        public virtual void ViewVisibleMessages() { }
 
         /// <summary>
         /// Only available when created through DialogViewModel
@@ -469,7 +469,7 @@ namespace Telegram.ViewModels
 
         public override void ForwardMessage(MessageViewModel message) => _viewModel.ForwardMessage(message);
 
-        public override void ViewVisibleMessages(bool intermediate) => _viewModel.ViewVisibleMessages(intermediate);
+        public override void ViewVisibleMessages() => _viewModel.ViewVisibleMessages();
 
         public override void DoubleClick(MessageViewModel message) => _viewModel.DoubleClick(message);
 

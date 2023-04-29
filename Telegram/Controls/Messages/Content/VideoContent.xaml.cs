@@ -297,7 +297,7 @@ namespace Telegram.Controls.Messages.Content
                 if (_source?.Id != file.Id)
                 {
                     Player.Source = _source = new RemoteVideoSource(message.ClientService, file, duration);
-                    message.Delegate.ViewVisibleMessages(false);
+                    message.Delegate.ViewVisibleMessages();
                 }
             }
         }

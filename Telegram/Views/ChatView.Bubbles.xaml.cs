@@ -34,6 +34,8 @@ namespace Telegram.Views
 {
     public partial class ChatView
     {
+        private readonly DispatcherTimer _debouncer;
+
         private void OnViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (Messages.ScrollingHost.ScrollableHeight > 0)
@@ -44,7 +46,10 @@ namespace Telegram.Views
             Arrow.Visibility = Visibility.Collapsed;
             //VisualUtilities.SetIsVisible(Arrow, false);
 
-            ViewVisibleMessages(false);
+            ViewVisibleMessages(true);
+
+            _debouncer.Stop();
+            _debouncer.Start();
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -60,7 +65,10 @@ namespace Telegram.Views
                 //VisualUtilities.SetIsVisible(Arrow, true);
             }
 
-            ViewVisibleMessages(false);
+            ViewVisibleMessages(true);
+
+            _debouncer.Stop();
+            _debouncer.Start();
         }
 
         private void UnloadVisibleMessages()
@@ -76,9 +84,10 @@ namespace Telegram.Views
             _prev.Clear();
         }
 
-        public void UpdatePinnedMessage()
+        public void ViewVisibleMessages()
         {
-            ViewVisibleMessages(false);
+            _debouncer.Stop();
+            _debouncer.Start();
         }
 
         public void ViewVisibleMessages(bool intermediate)
@@ -364,7 +373,7 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    ViewVisibleMessages(false);
+                    ViewVisibleMessages();
                 }
             }
             else

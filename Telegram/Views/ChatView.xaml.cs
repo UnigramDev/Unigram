@@ -185,6 +185,14 @@ namespace Telegram.Views
                 ElapsedLabel.Text = btnVoiceMessage.Elapsed.ToString("m\\:ss\\.ff");
             };
 
+            _debouncer = new DispatcherTimer();
+            _debouncer.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
+            _debouncer.Tick += (s, args) =>
+            {
+                _debouncer.Stop();
+                ViewVisibleMessages(false);
+            };
+
             _slowModeTimer = new DispatcherTimer();
             _slowModeTimer.Interval = TimeSpan.FromSeconds(1);
             _slowModeTimer.Tick += (s, args) =>
@@ -619,7 +627,7 @@ namespace Telegram.Views
 
         public void PopupClosed()
         {
-            ViewVisibleMessages(false);
+            ViewVisibleMessages();
         }
 
         private MessageBubble _measurement;
@@ -899,7 +907,7 @@ namespace Telegram.Views
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
             WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
 
-            ViewVisibleMessages(false);
+            ViewVisibleMessages();
 
 
 
@@ -1630,7 +1638,7 @@ namespace Telegram.Views
                     await ViewModel.LoadMessageSliceAsync(null, message);
 
                     ViewModel.LockedPinnedMessageId = message;
-                    UpdatePinnedMessage();
+                    ViewVisibleMessages();
                 }
             }
             else
