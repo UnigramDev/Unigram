@@ -241,6 +241,8 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             availableSize = base.MeasureOverride(availableSize);
 
             if (HorizontalAlignment != HorizontalAlignment.Stretch)
@@ -263,6 +265,8 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             finalSize = base.ArrangeOverride(finalSize);
 
             if (_placeholder.DesiredSize.Width == 0)

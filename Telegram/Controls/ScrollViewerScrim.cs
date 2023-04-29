@@ -135,6 +135,8 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             if (_scrollViewer != null)
             {
                 _propertySet.InsertScalar("ScrollableHeight", (float)_scrollViewer.ScrollableHeight);

@@ -423,6 +423,8 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             var count = Math.Min(_maxCount, Math.Max(1, _items.Count));
             var width = count * (float)(_itemSize + 4) - ((count - 1) * _itemOverlap);
 
@@ -432,6 +434,8 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             return base.ArrangeOverride(finalSize);
         }
     }

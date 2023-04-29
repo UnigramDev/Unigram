@@ -958,6 +958,8 @@ namespace Telegram.Controls.Cells
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             _ignoreLayoutUpdated = false;
         }
 
@@ -1597,6 +1599,8 @@ namespace Telegram.Controls.Cells
 
                         void handler(object sender, SizeChangedEventArgs args)
                         {
+                            Telegram.App.Track();
+
                             bubble.SizeChanged -= handler;
                             presenter.Width = args.NewSize.Width;
                             presenter.Height = args.NewSize.Height;
@@ -2275,6 +2279,8 @@ namespace Telegram.Controls.Cells
     {
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             var TitleLabel = Children[0];
             var Identity = Children[1];
             var MutedIcon = Children[2];
@@ -2342,6 +2348,8 @@ namespace Telegram.Controls.Cells
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             var TitleLabel = Children[0];
             var Identity = Children[1];
             var MutedIcon = Children[2];

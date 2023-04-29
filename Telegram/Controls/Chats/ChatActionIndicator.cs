@@ -165,6 +165,8 @@ namespace Telegram.Controls.Chats
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             var visual = _previous;
             if (visual == null)
             {
@@ -208,6 +210,8 @@ namespace Telegram.Controls.Chats
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             var visual = _previous;
             if (visual == null)
             {

@@ -114,6 +114,8 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             _ignoreLayoutUpdated = false;
             return base.ArrangeOverride(finalSize);
         }

@@ -43,6 +43,8 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             _visual.Size = finalSize.ToVector2();
 
             var width = Math.Max(THICKNESS, Math.Min((float)finalSize.Width, (float)finalSize.Height));

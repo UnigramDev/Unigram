@@ -190,11 +190,15 @@ namespace Telegram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             return new Size(0, 0);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             if (_layoutRoot != null)
             {
                 _layoutRoot.MaxWidth = finalSize.Width;

@@ -2140,6 +2140,8 @@ namespace Telegram.Controls.Messages
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             UpdateClip();
 
             var message = _message;
@@ -2202,6 +2204,8 @@ namespace Telegram.Controls.Messages
 
         private void Footer_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             if (e.PreviousSize.Width > 0 && e.NewSize.Width != e.PreviousSize.Width)
             {
                 Panel.InvalidateMeasure();
@@ -2634,6 +2638,8 @@ namespace Telegram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             //return base.MeasureOverride(availableSize);
 
             var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 320));

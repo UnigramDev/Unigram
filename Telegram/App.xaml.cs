@@ -6,7 +6,9 @@
 //
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -79,6 +81,18 @@ namespace Telegram
 
         private ExtendedExecutionSession _extendedSession;
 
+        private static readonly List<string> _lastCalls = new();
+
+        public static void Track([CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        {
+            _lastCalls.Add(string.Format("[{0}] [{1}:{2}]", member, filePath, line));
+
+            if (_lastCalls.Count > 10)
+            {
+                _lastCalls.RemoveAt(0);
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -103,7 +117,7 @@ namespace Telegram
             UnhandledException += (s, args) =>
             {
                 args.Handled = args.Exception is not LayoutCycleException;
-                SettingsService.Current.Diagnostics.LastNavigatedPageType = FrameFacade.LastNavigatedPageType;
+                SettingsService.Current.Diagnostics.LastNavigatedPageType = string.Join('\n', _lastCalls);
                 Client.Execute(new AddLogMessage(1, "Unhandled exception:\n" + args.Exception.ToString()));
             };
 

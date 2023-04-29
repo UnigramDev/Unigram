@@ -495,6 +495,8 @@ namespace Telegram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             if (ContentWidth > 0 && ContentWidth <= availableSize.Width)
             {
                 LayoutRoot.Measure(new Size(Math.Max(144, ContentWidth), availableSize.Height));
@@ -506,6 +508,8 @@ namespace Telegram.Controls.Messages
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             if (ContentWidth > 0 && ContentWidth <= finalSize.Width)
             {
                 LayoutRoot.Arrange(new Rect(0, 0, finalSize.Width, LayoutRoot.DesiredSize.Height));

@@ -3518,6 +3518,8 @@ namespace Telegram.Views
 
         private void ChatList_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
 
             var chats = ElementCompositionPreview.GetElementVisual(element);
@@ -3529,6 +3531,8 @@ namespace Telegram.Views
 
         private void Banner_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             MasterDetail.BackgroundMargin = new Thickness(0, -e.NewSize.Height, 0, 0);
         }
     }

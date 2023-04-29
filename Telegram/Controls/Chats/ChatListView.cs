@@ -88,6 +88,8 @@ namespace Telegram.Controls.Chats
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             // TODO: triple check
             if (e.NewSize.Height < ActualHeight)
             {

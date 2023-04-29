@@ -67,6 +67,8 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             if (LayoutRoot != null)
             {
                 LayoutRoot.CornerRadius = new CornerRadius(Shape switch

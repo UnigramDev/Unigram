@@ -49,6 +49,8 @@ namespace Telegram.Controls
         /// <inheritdoc />
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             var totalMeasure = new UvMeasure();
             var parentMeasure = new UvMeasure(Orientation, availableSize.Width, availableSize.Height);
             var lineMeasure = new UvMeasure();
@@ -104,6 +106,8 @@ namespace Telegram.Controls
         /// <inheritdoc />
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             var parentMeasure = new UvMeasure(Orientation, finalSize.Width, finalSize.Height);
             var position = new UvMeasure();
 

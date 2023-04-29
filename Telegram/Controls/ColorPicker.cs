@@ -81,6 +81,8 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             UpdateSpectrumPointer(new Point(_color.H / 360 * e.NewSize.Width, (1 - _color.S) * e.NewSize.Height), false);
         }
 

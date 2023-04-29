@@ -940,6 +940,8 @@ namespace Telegram.Controls
 
         private void ImageViewer_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             var horizontal = -e.NewSize.Height;
             var vertical = -e.NewSize.Width;
 

@@ -347,6 +347,8 @@ namespace Telegram.Views.Calls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             var prevSize = e.PreviousSize.ToVector2();
             var nextSize = e.NewSize.ToVector2();
 
@@ -2195,6 +2197,8 @@ namespace Telegram.Views.Calls
 
         private void OnParticipantsSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             UpdateVisibleParticipants(false);
         }
 
@@ -2379,6 +2383,8 @@ namespace Telegram.Views.Calls
 
         private void OnViewportSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             if (ParticipantsPanel.Children.Contains(ViewportAspect) || e.NewSize.Height == e.PreviousSize.Height)
             {
                 return;
@@ -2647,6 +2653,8 @@ namespace Telegram.Views.Calls
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             var index = 0;
             var count = Children.Count;
 
@@ -2722,6 +2730,8 @@ namespace Telegram.Views.Calls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             var index = 0;
             var count = Children.Count;
 

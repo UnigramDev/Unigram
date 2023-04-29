@@ -218,6 +218,8 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             SizeChanged -= OnSizeChanged;
 
             var newSize = e.NewSize.ToVector2();
@@ -250,6 +252,8 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             PrefixPart?.Measure(availableSize);
             SuffixPart?.Measure(availableSize);
             PrevPart?.Measure(availableSize);
@@ -280,6 +284,8 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             PrefixPart?.Arrange(new Rect(0, 0, PrefixPart.DesiredSize.Width, PrefixPart.DesiredSize.Height));
             var width = PrefixPart?.DesiredSize.Width ?? 0;
 
