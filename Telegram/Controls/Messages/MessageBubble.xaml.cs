@@ -61,7 +61,11 @@ namespace Telegram.Controls.Messages
                 }
 
                 var content = _message?.GeneratedContent ?? _message?.Content;
-                if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji || IsFullMedia(content))
+                if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
+                {
+                    return true;
+                }
+                else if (IsFullMedia(content))
                 {
                     return _message.InteractionInfo?.Reactions.Count > 0;
                 }
