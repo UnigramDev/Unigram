@@ -11,6 +11,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Native;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
@@ -712,7 +713,7 @@ namespace Telegram.ViewModels.Drawers
             _clientService = clientService;
             _type = type;
             _query = query;
-            _inputLanguage = Windows.Globalization.Language.CurrentInputMethodLanguageTag;
+            _inputLanguage = NativeUtils.GetKeyboardCulture();
             _chatId = chatId;
             _emojiOnly = emojiOnly;
         }

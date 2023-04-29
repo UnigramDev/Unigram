@@ -1177,52 +1177,30 @@ namespace Telegram.Common
         {
             switch (message.Content)
             {
-                case MessageBasicGroupChatCreate:
-                case MessageChatAddMembers:
-                case MessageChatChangePhoto:
-                case MessageChatChangeTitle:
-                case MessageChatSetTheme:
-                case MessageChatDeleteMember:
-                case MessageChatDeletePhoto:
-                case MessageChatJoinByLink:
-                case MessageChatJoinByRequest:
-                case MessageChatSetBackground:
-                case MessageChatSetMessageAutoDeleteTime:
-                case MessageChatShared:
-                case MessageChatUpgradeFrom:
-                case MessageChatUpgradeTo:
-                case MessageContactRegistered:
-                case MessageCustomServiceAction:
-                case MessageForumTopicCreated:
-                case MessageForumTopicEdited:
-                case MessageForumTopicIsClosedToggled:
-                case MessageGameScore:
-                case MessageGiftedPremium:
-                case MessageInviteVideoChatParticipants:
-                case MessageProximityAlertTriggered:
-                case MessagePassportDataSent:
-                case MessagePaymentSuccessful:
-                case MessagePinMessage:
-                case MessageScreenshotTaken:
-                case MessageSuggestProfilePhoto:
-                case MessageSupergroupChatCreate:
-                case MessageUserShared:
-                case MessageVideoChatEnded:
-                case MessageVideoChatScheduled:
-                case MessageVideoChatStarted:
-                case MessageWebsiteConnected:
-                case MessageWebAppDataSent:
-                    return true;
-                case MessageExpiredPhoto:
-                case MessageExpiredVideo:
-                    return true;
-                // Local types:
-                case MessageChatEvent:
-                case MessageHeaderDate:
-                case MessageHeaderUnread:
-                    return true;
-                default:
+                case MessageAlbum:
+                case MessageAnimatedEmoji:
+                case MessageAnimation:
+                case MessageAudio:
+                case MessageBigEmoji:
+                case MessageCall:
+                case MessageContact:
+                case MessageDice:
+                case MessageDocument:
+                case MessageGame:
+                case MessageInvoice:
+                case MessageLocation:
+                case MessagePhoto:
+                case MessagePoll:
+                case MessageSticker:
+                case MessageText:
+                case MessageUnsupported:
+                case MessageVenue:
+                case MessageVideo:
+                case MessageVideoNote:
+                case MessageVoiceNote:
                     return false;
+                default:
+                    return true;
             }
         }
 
@@ -1559,23 +1537,23 @@ namespace Telegram.Common
 
         public static string GetStartsAt(this MessageVideoChatScheduled messageVideoChatScheduled)
         {
-            var date = Converters.Converter.DateTime(messageVideoChatScheduled.StartDate);
-            return string.Format(Strings.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
+            var date = Converters.Formatter.ToLocalTime(messageVideoChatScheduled.StartDate);
+            return string.Format(Strings.formatDateAtTime, Converters.Formatter.ShortDate.Format(date), Converters.Formatter.ShortTime.Format(date));
         }
 
         public static string GetStartsAt(this GroupCall groupCall)
         {
-            var date = Converters.Converter.DateTime(groupCall.ScheduledStartDate);
+            var date = Converters.Formatter.ToLocalTime(groupCall.ScheduledStartDate);
             if (date.Date == DateTime.Today)
             {
-                return string.Format(Strings.TodayAtFormattedWithToday, Converters.Converter.ShortTime.Format(date));
+                return string.Format(Strings.TodayAtFormattedWithToday, Converters.Formatter.ShortTime.Format(date));
             }
             else if (date.Date.AddDays(1) == DateTime.Today)
             {
-                return string.Format(Strings.YesterdayAtFormatted, Converters.Converter.ShortTime.Format(date));
+                return string.Format(Strings.YesterdayAtFormatted, Converters.Formatter.ShortTime.Format(date));
             }
 
-            return string.Format(Strings.formatDateAtTime, Converters.Converter.ShortDate.Format(date), Converters.Converter.ShortTime.Format(date));
+            return string.Format(Strings.formatDateAtTime, Converters.Formatter.ShortDate.Format(date), Converters.Formatter.ShortTime.Format(date));
         }
 
         public static void Discern(this IEnumerable<ReactionType> reactions, out HashSet<string> emoji, out HashSet<long> customEmoji)
@@ -1607,7 +1585,7 @@ namespace Telegram.Common
 
         public static string GetStartsIn(this GroupCall groupCall)
         {
-            var date = Converters.Converter.DateTime(groupCall.ScheduledStartDate);
+            var date = Converters.Formatter.ToLocalTime(groupCall.ScheduledStartDate);
             var duration = date - DateTime.Now;
 
             if (Math.Abs(duration.TotalDays) >= 7)

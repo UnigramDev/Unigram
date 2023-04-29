@@ -11,7 +11,6 @@ using Telegram.Views.Popups;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Channels
@@ -57,14 +56,14 @@ namespace Telegram.Views.Channels
 
         #region Binding
 
-        private ImageSource ConvertPhoto(string title, BitmapImage preview)
+        private object ConvertPhoto(string title, BitmapImage preview)
         {
             if (preview != null)
             {
                 return preview;
             }
 
-            return PlaceholderHelper.GetNameForChat(title, 64);
+            return PlaceholderHelper.GetNameForChat(title);
         }
 
         private Visibility ConvertPhotoVisibility(string title, BitmapImage preview)

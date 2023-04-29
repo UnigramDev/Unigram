@@ -176,7 +176,7 @@ namespace Telegram.Views.Settings
 
         private string ConvertTimeSpan(TimeSpan time)
         {
-            return Converter.ShortTime.Format(new DateTime(2020, 1, 1) + time);
+            return Formatter.ShortTime.Format(new DateTime(2020, 1, 1) + time);
         }
 
         private string ConvertSunDate(bool enabled, Location location)
@@ -197,8 +197,8 @@ namespace Telegram.Views.Settings
             end = end.Add(sunrise);
 
             return string.Format(Strings.AutoNightUpdateLocationInfo,
-                Converter.ShortTime.Format(start),
-                Converter.ShortTime.Format(end));
+                Formatter.ShortTime.Format(start),
+                Formatter.ShortTime.Format(end));
         }
 
         private string ConvertBrightness(float value)

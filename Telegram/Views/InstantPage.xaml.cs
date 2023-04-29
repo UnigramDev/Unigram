@@ -18,7 +18,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Windows.ApplicationModel;
 using Windows.Foundation;
@@ -36,17 +35,13 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views
 {
-    public sealed partial class InstantPage : HostedPage, IMessageDelegate
+    public sealed partial class InstantPage : HostedPage
     {
         public InstantViewModel ViewModel => DataContext as InstantViewModel;
 
         public ISettingsService Settings => ViewModel.Settings;
 
         public IEventAggregator Aggregator => ViewModel.Aggregator;
-
-        public IDictionary<long, MessageViewModel> SelectedItems => throw new NotImplementedException();
-
-        public bool IsSelectionEnabled => throw new NotImplementedException();
 
         private readonly string _injectedJs;
         private readonly ScrollViewer _scrollingHost;
@@ -313,7 +308,7 @@ namespace Telegram.Views
 
                     if (article.PublishDate > 0)
                     {
-                        description.Text += " — " + Converter.DayMonthFullYear.Format(Converter.DateTime(article.PublishDate));
+                        description.Text += " — " + Formatter.DayMonthFullYear.Format(Formatter.ToLocalTime(article.PublishDate));
                     }
                 }
 
@@ -548,7 +543,7 @@ namespace Telegram.Views
                     textBlock.Inlines.Add(new Run { Text = " — " });
                 }
 
-                textBlock.Inlines.Add(new Run { Text = Converter.DayMonthFullYear.Format(Converter.DateTime(block.PublishDate)) });
+                textBlock.Inlines.Add(new Run { Text = Formatter.DayMonthFullYear.Format(Formatter.ToLocalTime(block.PublishDate)) });
             }
 
             return textBlock;
@@ -841,7 +836,7 @@ namespace Telegram.Views
             var galleryItem = new GalleryPhoto(ViewModel.ClientService, block.Photo, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessagePhoto(block.Photo, null, false, false));
+            var message = CreateMessage(new MessagePhoto(block.Photo, null, false, false));
             var element = new StackPanel { Style = Resources["BlockPhotoStyle"] as Style };
 
             var content = new PhotoContent(message);
@@ -867,7 +862,7 @@ namespace Telegram.Views
             var galleryItem = new GalleryVideo(ViewModel.ClientService, block.Video, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessageVideo(block.Video, null, false, false));
+            var message = CreateMessage(new MessageVideo(block.Video, null, false, false));
             var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
             var content = new VideoContent(message);
@@ -893,7 +888,7 @@ namespace Telegram.Views
             var galleryItem = new GalleryAnimation(ViewModel.ClientService, block.Animation, block.Caption.ToPlainText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
-            var message = GetMessage(new MessageAnimation(block.Animation, null, false, false));
+            var message = CreateMessage(new MessageAnimation(block.Animation, null, false, false));
             var element = new StackPanel { Style = Resources["BlockVideoStyle"] as Style };
 
             var content = new AnimationContent(message);
@@ -919,16 +914,46 @@ namespace Telegram.Views
             return element;
         }
 
-        private MessageViewModel GetMessage(MessageContent content)
+        private MessageViewModel CreateMessage(MessageContent content)
         {
-            return ViewModel.CreateMessage(this, new Message { Content = content });
+            return ViewModel.CreateMessage(new Message { Content = content });
         }
 
         private FrameworkElement ProcessEmbed(PageBlockEmbedded block)
         {
             var element = new StackPanel { Style = Resources["BlockEmbedStyle"] as Style };
 
-            FrameworkElement child = null;
+            var view = new WebViewer();
+
+            async void loaded(object sender, RoutedEventArgs e)
+            {
+                view.Loaded -= loaded;
+
+                // TODO: auto-size
+
+                if (!block.AllowScrolling)
+                {
+                    // TODO: block scrolling
+                    //await view.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync("document.querySelector('body').style.overflow='hidden'");
+                }
+                if (!string.IsNullOrEmpty(block.Html))
+                {
+                    view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
+                }
+                else if (!string.IsNullOrEmpty(block.Url))
+                {
+                    view.Navigate(block.Url);
+                }
+            }
+
+            void unloaded(object sender, RoutedEventArgs e)
+            {
+                view.Unloaded -= unloaded;
+                view.Close();
+            }
+
+            view.Loaded += loaded;
+            view.Unloaded += unloaded;
 
             //if (block.HasPosterPhotoId)
             //{
@@ -938,40 +963,13 @@ namespace Telegram.Views
             //    image.Constraint = photo;
             //    child = image;
             //}
-            if (!string.IsNullOrEmpty(block.Html))
-            {
-                var view = new WebView();
-                if (!block.AllowScrolling)
-                {
-                    view.NavigationCompleted += OnWebViewNavigationCompleted;
-                }
-                view.NavigateToString(block.Html.Replace("src=\"//", "src=\"https://"));
+            var ratio = new AspectView();
+            ratio.MaxWidth = block.Width;
+            ratio.MaxHeight = block.Height;
+            ratio.Constraint = new Size(block.Width, block.Height);
+            ratio.Children.Add(view);
 
-                var ratio = new AspectView();
-                ratio.MaxWidth = block.Width;
-                ratio.MaxHeight = block.Height;
-                ratio.Constraint = new Size(block.Width, block.Height);
-                ratio.Children.Add(view);
-                child = ratio;
-            }
-            else if (!string.IsNullOrEmpty(block.Url))
-            {
-                var view = new WebView();
-                if (!block.AllowScrolling)
-                {
-                    view.NavigationCompleted += OnWebViewNavigationCompleted;
-                }
-                view.Navigate(new Uri(block.Url));
-
-                var ratio = new AspectView();
-                ratio.MaxWidth = block.Width;
-                ratio.MaxHeight = block.Height;
-                ratio.Constraint = new Size(block.Width, block.Height);
-                ratio.Children.Add(view);
-                child = ratio;
-            }
-
-            element.Children.Add(child);
+            element.Children.Add(ratio);
 
             var caption = ProcessCaption(block.Caption);
             if (caption != null)
@@ -995,7 +993,7 @@ namespace Telegram.Views
                     var galleryItem = new GalleryPhoto(ViewModel.ClientService, photoBlock.Photo, block.Caption.ToPlainText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
-                    var message = GetMessage(new MessagePhoto(photoBlock.Photo, null, false, false));
+                    var message = CreateMessage(new MessagePhoto(photoBlock.Photo, null, false, false));
 
                     var content = new PhotoContent(message);
                     content.Tag = galleryItem;
@@ -1010,7 +1008,7 @@ namespace Telegram.Views
                     var galleryItem = new GalleryVideo(ViewModel.ClientService, videoBlock.Video, block.Caption.ToPlainText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
-                    var message = GetMessage(new MessageVideo(videoBlock.Video, null, false, false));
+                    var message = CreateMessage(new MessageVideo(videoBlock.Video, null, false, false));
 
                     var content = new VideoContent(message);
                     content.Tag = galleryItem;
@@ -1143,7 +1141,7 @@ namespace Telegram.Views
             Grid.SetRow(textAuthor, 0);
 
             var textDate = new TextBlock();
-            textDate.Text = Converter.DateTime(block.Date).ToString("dd MMMM yyyy");
+            textDate.Text = Formatter.ToLocalTime(block.Date).ToString("dd MMMM yyyy");
             textDate.VerticalAlignment = VerticalAlignment.Top;
             textDate.Style = (Style)Resources["CaptionTextBlockStyle"];
             textDate.Foreground = (SolidColorBrush)Resources["SystemControlDisabledChromeDisabledLowBrush"];
@@ -1528,166 +1526,5 @@ namespace Telegram.Views
             fragment = null;
             return false;
         }
-
-        private async void OnWebViewNavigationCompleted(WebView sender, WebViewNavigationCompletedEventArgs args)
-        {
-            try
-            {
-                var jss = _injectedJs;
-                await sender.InvokeScriptAsync("eval", new[] { jss });
-            }
-            catch { }
-        }
-
-        #region Delegate
-
-        public bool CanBeDownloaded(object content, File file)
-        {
-            return !ViewModel.Settings.AutoDownload.Disabled;
-        }
-
-        public void DownloadFile(MessageViewModel message, File file)
-        {
-        }
-
-        public void DoubleClick(MessageViewModel message)
-        {
-        }
-
-        public void ForwardMessage(MessageViewModel message)
-        {
-        }
-
-        public void OpenReply(MessageViewModel message)
-        {
-        }
-
-        public void OpenFile(File file)
-        {
-        }
-
-        public void OpenWebPage(WebPage webPage)
-        {
-        }
-
-        public void OpenSticker(Sticker sticker)
-        {
-        }
-
-        public void OpenLocation(Location location, string title)
-        {
-        }
-
-        public void OpenLiveLocation(MessageViewModel message)
-        {
-
-        }
-
-        public void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button)
-        {
-        }
-
-        public void ViewVisibleMessages(bool intermediate)
-        {
-
-        }
-
-        public async void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
-        {
-            var content = target.Tag as GalleryContent;
-            content ??= ViewModel.Gallery.Items.FirstOrDefault();
-
-            ViewModel.Gallery.SelectedItem = content;
-            ViewModel.Gallery.FirstItem = content;
-
-            await GalleryView.ShowAsync(ViewModel.Gallery, () => target);
-        }
-
-        public void PlayMessage(MessageViewModel message)
-        {
-        }
-
-        public void OpenUsername(string username)
-        {
-        }
-
-        public void OpenHashtag(string hashtag)
-        {
-        }
-
-        public void OpenBankCardNumber(string number)
-        {
-        }
-
-        public void OpenUser(long userId)
-        {
-        }
-
-        public void OpenChat(long chatId, bool profile = false)
-        {
-        }
-
-        public void OpenChat(long chatId, long messageId)
-        {
-        }
-
-        public void OpenViaBot(long viaBotUserId)
-        {
-        }
-
-        public void OpenUrl(string url, bool untrust)
-        {
-        }
-
-        public void SendBotCommand(string command)
-        {
-        }
-
-        public void Call(MessageViewModel message, bool video)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void VotePoll(MessageViewModel message, IList<PollOption> options)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SelectMessage(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeselectMessage(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool IsMessageSelected(long messageId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetAdminTitle(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OpenThread(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Select(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Unselect(MessageViewModel message)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
     }
 }

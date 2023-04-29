@@ -137,11 +137,16 @@ namespace Telegram.Controls.Chats
             _renderer.UpdateSource(_clientService, background, false);
         }
 
-        private bool BackgroundEquals(Background prev, Background next)
+        public static bool BackgroundEquals(Background prev, Background next, bool fast = false)
         {
             if (prev == null)
             {
                 return next == null;
+            }
+
+            if (fast && prev.Id != next.Id)
+            {
+                return false;
             }
 
             if (prev.Type is BackgroundTypeFill prevFill && next.Type is BackgroundTypeFill nextFill)
@@ -164,7 +169,7 @@ namespace Telegram.Controls.Chats
             return Equals(prev, next);
         }
 
-        private bool FillEquals(BackgroundFill prev, BackgroundFill next)
+        public static bool FillEquals(BackgroundFill prev, BackgroundFill next)
         {
             if (prev is BackgroundFillSolid prevSolid && next is BackgroundFillSolid nextSolid)
             {

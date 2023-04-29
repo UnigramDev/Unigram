@@ -1810,7 +1810,7 @@ namespace Telegram.Charts
 
             startXIndex = chartData.FindStartIndex(Math.Max(pickerDelegate.pickerStart, 0f));
             endXIndex = chartData.FindEndIndex(startXIndex, Math.Min(pickerDelegate.pickerEnd, 1f));
-            chartHeaderView?.setDates(chartData.x[startXIndex], chartData.x[endXIndex]);
+            chartHeaderView?.SetDates(chartData.x[startXIndex], chartData.x[endXIndex]);
             UpdateLineSignature();
         }
 

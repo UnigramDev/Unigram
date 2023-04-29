@@ -155,7 +155,7 @@ namespace Telegram.Views.Premium.Popups
                     LimitHeader.Visibility = Visibility.Collapsed;
                     LimitPanel.Visibility = Visibility.Collapsed;
 
-                    PurchaseCommand.Style = App.Current.Resources["AccentButtonStyle"] as Style;
+                    PurchaseCommand.Style = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
                     PurchaseIcon.Visibility = Visibility.Collapsed;
                     PurchaseLabel.Text = Strings.OK;
                 }

@@ -4,14 +4,12 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Collections.Generic;
 using Telegram.Common;
-using Telegram.Native;
+using Telegram.Controls;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views
@@ -55,7 +53,7 @@ namespace Telegram.Views
             TitleLabel.Visibility = string.IsNullOrWhiteSpace(title) ? Visibility.Collapsed : Visibility.Visible;
             UsernameLabel.Visibility = string.IsNullOrWhiteSpace(username) ? Visibility.Collapsed : Visibility.Visible;
 
-            View.Navigate(new Uri(url));
+            View.Navigate(url);
             //}
         }
 
@@ -69,15 +67,17 @@ namespace Telegram.Views
             await SharePopup.GetForCurrentView().ShowAsync(_shareMessage);
         }
 
-        private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
+        private async void View_EventReceived(object sender, WebViewerEventReceivedEventArgs e)
         {
-            sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramGameProxy(withMyScore =>
+            if (e.EventName == "share_game")
             {
-                this.BeginOnUIThread(async () =>
-                {
-                    await SharePopup.GetForCurrentView().ShowAsync(_shareMessage, withMyScore);
-                });
-            }));
+                await SharePopup.GetForCurrentView().ShowAsync(_shareMessage, false);
+            }
+
+            else if (e.EventName == "share_score")
+            {
+                await SharePopup.GetForCurrentView().ShowAsync(_shareMessage, true);
+            }
         }
     }
 }

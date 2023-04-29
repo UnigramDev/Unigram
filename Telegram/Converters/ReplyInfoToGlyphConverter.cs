@@ -228,6 +228,8 @@ namespace Telegram.Converters
         public const string SpeakerOff = "\uE9A5";
         public const string SendFilled = "\uE919";
 
+        public const string Ghost = "\uE91A";
+
         public const string VideoChat = "\uE900";
 
         public const string EmojiHand = "\uE901";

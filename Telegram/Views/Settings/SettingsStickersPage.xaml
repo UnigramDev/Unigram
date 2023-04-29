@@ -234,9 +234,8 @@
                                                   Glyph="&#xE7B8;" />
                         </controls:HeaderedControl>
 
-                        <TextBlock Text="{CustomResource MasksInfo}"
-                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                   Margin="24,16,24,8" />
+                        <controls:SettingsFooter Text="{CustomResource MasksInfo}"
+                                                 Margin="24,16,24,8" />
                     </controls:SettingsPanel>
 
                     <controls:SettingsPanel x:Name="EmojiPanel"
@@ -265,23 +264,20 @@
                         </controls:HeaderedControl>
                     </controls:SettingsPanel>
 
-                    <TextBlock x:Name="TrendingPanel"
-                               x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Trending)}"
-                               Text="{CustomResource FeaturedStickersInfo}"
-                               Style="{StaticResource InfoCaptionTextBlockStyle}"
-                               Margin="24,80,24,8" />
+                    <controls:SettingsFooter x:Name="TrendingPanel"
+                                             x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Trending)}"
+                                             Text="{CustomResource FeaturedStickersInfo}"
+                                             Margin="24,80,24,8" />
 
-                    <TextBlock x:Name="ArchivedPanel"
-                               x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Archived)}"
-                               Text="{CustomResource ArchivedMasksInfo}"
-                               Style="{StaticResource InfoCaptionTextBlockStyle}"
-                               Margin="24,80,24,8" />
+                    <controls:SettingsFooter x:Name="ArchivedPanel"
+                                             x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.Archived)}"
+                                             Text="{CustomResource ArchivedMasksInfo}"
+                                             Margin="24,80,24,8" />
 
-                    <TextBlock x:Name="MasksArchivedPanel"
-                               x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.MasksArchived)}"
-                               Text="{CustomResource ArchivedStickersInfo}"
-                               Style="{StaticResource InfoCaptionTextBlockStyle}"
-                               Margin="24,80,24,8" />
+                    <controls:SettingsFooter x:Name="MasksArchivedPanel"
+                                             x:Load="{x:Bind IsType(ViewModel.Type, settings:StickersType.MasksArchived)}"
+                                             Text="{CustomResource ArchivedStickersInfo}"
+                                             Margin="24,80,24,8" />
                 </Grid>
             </ListView.Header>
             <ListView.Footer>

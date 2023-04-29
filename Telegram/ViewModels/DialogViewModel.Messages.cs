@@ -268,8 +268,8 @@ namespace Telegram.ViewModels
                         title = ClientService.GetTitle(senderChat);
                     }
 
-                    var date = Converter.DateTime(message.Date);
-                    builder.AppendLine(string.Format("{0}, [{1} {2}]", title, Converter.ShortDate.Format(date), Converter.ShortTime.Format(date)));
+                    var date = Formatter.ToLocalTime(message.Date);
+                    builder.AppendLine(string.Format("{0}, [{1} {2}]", title, Formatter.ShortDate.Format(date), Formatter.ShortTime.Format(date)));
 
                     if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                     {
@@ -873,7 +873,7 @@ namespace Telegram.ViewModels
 
         #region Keyboard button
 
-        public async void KeyboardButtonInline(MessageViewModel message, InlineKeyboardButton inline)
+        public async void OpenInlineButton(MessageViewModel message, InlineKeyboardButton inline)
         {
             if (_chat is not Chat chat)
             {
@@ -974,7 +974,7 @@ namespace Telegram.ViewModels
                 var bot = message.GetViaBotUser();
                 if (bot != null)
                 {
-                    InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(Strings.Loading, new TextEntity[0]), null), null));
+                    InformativeMessage = CreateMessage(new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(Strings.Loading, new TextEntity[0]), null), null));
                 }
 
                 var response = await ClientService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadData(callback.Data)));
@@ -997,7 +997,7 @@ namespace Telegram.ViewModels
                                 return;
                             }
 
-                            InformativeMessage = _messageFactory.Create(this, new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
+                            InformativeMessage = CreateMessage(new Message(0, new MessageSenderUser(bot.Id), 0, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText(answer.Text, new TextEntity[0]), null), null));
                         }
                     }
                     else if (!string.IsNullOrEmpty(answer.Url))
@@ -1073,7 +1073,7 @@ namespace Telegram.ViewModels
                     }
                     else if (error.Message.Equals("PASSWORD_HASH_INVALID"))
                     {
-                        KeyboardButtonInline(message, inline);
+                        OpenInlineButton(message, inline);
                     }
                 }
             }
@@ -1115,7 +1115,7 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.Id, webApp.Url, Theme.Current.Parameters, Strings.AppName, _threadId, 0));
                 if (response is WebAppInfo webAppInfo)
                 {
-                    await ShowPopupAsync(new WebBotPopup(SessionId, webAppInfo, inline.Text));
+                    await ShowPopupAsync(new WebBotPopup(bot, webAppInfo));
                 }
             }
         }
@@ -1171,10 +1171,16 @@ namespace Telegram.ViewModels
             }
             else if (keyboardButton.Type is KeyboardButtonTypeWebApp webApp && message.SenderId is MessageSenderUser bot)
             {
+                var user = ClientService.GetUser(bot.UserId);
+                if (user == null)
+                {
+                    return;
+                }
+
                 var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.UserId, webApp.Url, Theme.Current.Parameters, Strings.AppName, _threadId, 0));
                 if (response is WebAppInfo webAppInfo)
                 {
-                    await ShowPopupAsync(new WebBotPopup(SessionId, webAppInfo, keyboardButton.Text));
+                    await ShowPopupAsync(new WebBotPopup(user, webAppInfo));
                 }
             }
         }
@@ -1366,7 +1372,7 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessageHeaderDate)
             {
-                var date = Converter.DateTime(message.Date);
+                var date = Formatter.ToLocalTime(message.Date);
 
                 var dialog = new CalendarPopup(date);
                 dialog.MaxDate = DateTimeOffset.Now.Date;

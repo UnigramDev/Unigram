@@ -9,6 +9,12 @@
 #include <winrt/Windows.Data.Xml.Dom.h>
 #include <winrt/Windows.UI.Notifications.h>
 
+typedef
+BOOL
+(APIENTRY* pGetKeyboardLayoutNameW)(
+	_Out_ LPWSTR pwszKLID
+	);
+
 using namespace winrt::Windows::Data::Xml::Dom;
 using namespace winrt::Windows::UI::Notifications;
 
@@ -207,6 +213,36 @@ namespace winrt::Telegram::Native::implementation
 		}
 
 		return buff;
+	}
+
+	hstring NativeUtils::GetKeyboardCulture()
+	{
+		// TODO: I'm not sure about how much expensive this call it.
+		// At the moment it isn't used extremely often, but we should
+		// consider caching it (problem is how to invalidate the cache)
+		static const LibraryInstance user32(L"User32.dll");
+		static const auto getKeyboardLayoutName = user32.GetMethod<pGetKeyboardLayoutNameW>("GetKeyboardLayoutNameW");
+		
+		WCHAR name[KL_NAMELENGTH];
+		if (getKeyboardLayoutName(name))
+		{
+			// The layout name looks something like this: 00000410
+			// Where the first 4 bytes are most likely flags
+			// And the second half is the actually the LCID as a HEX string
+			unsigned int lcid = std::stoul(name + 4, nullptr, 16);
+		
+			WCHAR locale[LOCALE_NAME_MAX_LENGTH];
+			int length = LCIDToLocaleName(lcid, locale, LOCALE_NAME_MAX_LENGTH, 0);
+
+			if (length > 0)
+			{
+				// The string is null terminated
+				return hstring(locale, length - 1);
+			}
+		}
+
+		// TODO: probably better this than an empty string.
+		return L"en-US";
 	}
 
 	bool NativeUtils::IsFileReadable(hstring path)

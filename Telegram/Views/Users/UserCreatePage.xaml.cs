@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.ViewModels.Users;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Users
 {
@@ -28,9 +28,9 @@ namespace Telegram.Views.Users
 
         #region Binding
 
-        private ImageSource ConvertPhoto(string firstName, string lastName)
+        private PlaceholderImage ConvertPhoto(string firstName, string lastName)
         {
-            return PlaceholderHelper.GetNameForUser(firstName, lastName, 64);
+            return PlaceholderHelper.GetNameForUser(firstName, lastName);
         }
 
         #endregion

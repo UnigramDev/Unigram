@@ -18,13 +18,12 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Border Height="140"
-                    Width="140"
-                    Margin="12,24,12,8">
-                <controls:ProfilePicture x:Name="Photo"
-                                         Click="Photo_Click"
-                                         AutomationProperties.Name="{CustomResource AccDescrProfilePicture}" />
-            </Border>
+            <controls:ProfilePicture x:Name="Photo"
+                                     Click="Photo_Click"
+                                     Width="140"
+                                     Height="140"
+                                     Margin="12,24,12,8"
+                                     AutomationProperties.Name="{CustomResource AccDescrProfilePicture}" />
             <Border Height="140"
                     Width="140"
                     Margin="12,8">
@@ -116,7 +115,7 @@
                                       Click="{x:Bind ViewModel.Join}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Glyph="&#xE99B;"
-                                      Grid.Column="2" /> 
+                                      Grid.Column="2" />
                 <controls:BadgeButton x:Name="Leave"
                                       Content="{CustomResource VoipGroupLeave}"
                                       Click="{x:Bind ViewModel.Delete}"

@@ -4,9 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Rg.DiffUtils;
 using System;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Entities;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -15,11 +15,15 @@ namespace Telegram.Controls
 {
     public sealed partial class CountryBox : Grid
     {
+        private readonly DiffObservableCollection<Country> _countries;
         private Country _country;
 
         public CountryBox()
         {
             InitializeComponent();
+
+            _countries = new DiffObservableCollection<Country>(Country.All, new CountryDiffHandler(), Constants.DiffOptions);
+            Input.ItemsSource = _countries;
         }
 
         public int TabIndex
@@ -37,21 +41,21 @@ namespace Telegram.Controls
                 return;
             }
 
-            var source = sender.ItemsSource as Country[];
-            var match = Country.All.Where(x => x.DisplayName.Contains(sender.Text, StringComparison.OrdinalIgnoreCase));
-
-            if (source != null && source.SequenceEqual(match))
+            if (string.IsNullOrEmpty(sender.Text))
             {
-                return;
+                _country = null;
+                Country = null;
+                Emoji.Glyph = "\U0001F5FA";
             }
 
-            sender.ItemsSource = match.ToArray();
+            _countries.ReplaceDiff(Country.All.Where(x => x.DisplayName.Contains(sender.Text, StringComparison.OrdinalIgnoreCase)));
         }
 
         private void OnSuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
             _country = args.SelectedItem as Country;
             Country = args.SelectedItem as Country;
+            Emoji.Glyph = _country?.Emoji ?? "\U0001F5FA";
         }
 
         private void OnQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
@@ -60,6 +64,7 @@ namespace Telegram.Controls
             {
                 _country = country;
                 Country = country;
+                Emoji.Glyph = country?.Emoji ?? "\U0001F5FA";
 
                 SelectionChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -99,6 +104,7 @@ namespace Telegram.Controls
             }
 
             Input.Text = newValue?.DisplayName ?? string.Empty;
+            Emoji.Glyph = newValue?.Emoji ?? "\U0001F5FA";
 
             _country = newValue;
         }

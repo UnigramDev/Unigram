@@ -34,6 +34,8 @@ namespace Telegram.Views
 {
     public partial class ChatView
     {
+        private readonly DispatcherTimer _debouncer;
+
         private void OnViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (Messages.ScrollingHost.ScrollableHeight > 0)
@@ -44,7 +46,10 @@ namespace Telegram.Views
             Arrow.Visibility = Visibility.Collapsed;
             //VisualUtilities.SetIsVisible(Arrow, false);
 
-            ViewVisibleMessages(false);
+            ViewVisibleMessages(true);
+
+            _debouncer.Stop();
+            _debouncer.Start();
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -60,7 +65,10 @@ namespace Telegram.Views
                 //VisualUtilities.SetIsVisible(Arrow, true);
             }
 
-            ViewVisibleMessages(false);
+            ViewVisibleMessages(true);
+
+            _debouncer.Stop();
+            _debouncer.Start();
         }
 
         private void UnloadVisibleMessages()
@@ -76,9 +84,10 @@ namespace Telegram.Views
             _prev.Clear();
         }
 
-        public void UpdatePinnedMessage()
+        public void ViewVisibleMessages()
         {
-            ViewVisibleMessages(false);
+            _debouncer.Stop();
+            _debouncer.Start();
         }
 
         public void ViewVisibleMessages(bool intermediate)
@@ -142,7 +151,7 @@ namespace Telegram.Views
                         if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
                         {
                             DateHeader.CommandParameter = null;
-                            DateHeaderLabel.Text = string.Format(Strings.MessageScheduledOn, Converter.DayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate)));
+                            DateHeaderLabel.Text = string.Format(Strings.MessageScheduledOn, Formatter.DayGrouping(Formatter.ToLocalTime(sendAtDate.SendDate)));
                         }
                         else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
                         {
@@ -152,7 +161,7 @@ namespace Telegram.Views
                         else if (message.Date > 0)
                         {
                             DateHeader.CommandParameter = message.Date;
-                            DateHeaderLabel.Text = Converter.DayGrouping(Utils.UnixTimestampToDateTime(message.Date));
+                            DateHeaderLabel.Text = Formatter.DayGrouping(Formatter.ToLocalTime(message.Date));
                         }
                     }
                 }
@@ -364,7 +373,7 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    ViewVisibleMessages(false);
+                    ViewVisibleMessages();
                 }
             }
             else
@@ -388,8 +397,8 @@ namespace Telegram.Views
 
         public void Play(IEnumerable<(SelectorItem Container, MessageViewModel Message)> items)
         {
-            var next = new Dictionary<long, IPlayerView>();
-            var prev = new HashSet<long>();
+            Dictionary<long, IPlayerView> next = null;
+            HashSet<long> prev = null;
 
             foreach (var pair in items)
             {
@@ -406,46 +415,57 @@ namespace Telegram.Views
                     {
                         // We don't want to start already played dices
                         // but we don't even want to stop them if they're already playing.
+                        prev ??= new HashSet<long>();
                         prev.Add(message.AnimationHash());
                         continue;
                     }
                 }
 
-                var root = container.ContentTemplateRoot as FrameworkElement;
-                if (root is not MessageSelector selector || selector.Content is not MessageBubble bubble)
-                {
-                    continue;
-                }
-
                 if (message.IsAnimatedContentDownloadCompleted())
                 {
+                    var root = container.ContentTemplateRoot as FrameworkElement;
+                    if (root is not MessageSelector selector || selector.Content is not MessageBubble bubble)
+                    {
+                        continue;
+                    }
+
                     var player = bubble.GetPlaybackElement();
                     if (player != null)
                     {
                         player.Tag = message;
+
+                        next ??= new Dictionary<long, IPlayerView>();
                         next[message.AnimationHash()] = player;
                     }
                 }
-
-                next[message.EmojiHash()] = bubble;
             }
 
-            foreach (var item in _prev.Keys.Except(next.Keys.Union(prev)).ToList())
+            var skip = next != null && prev != null
+                ? next.Keys.Union(prev)
+                : next != null ? next.Keys
+                : prev;
+
+            if (skip != null)
             {
-                var presenter = _prev[item].Target as IPlayerView;
-                if (presenter != null && presenter.IsLoopingEnabled)
+                foreach (var item in _prev.Keys.Except(skip).ToList())
                 {
-                    presenter.Pause();
-                }
+                    var presenter = _prev[item].Target as IPlayerView;
+                    if (presenter != null && presenter.IsLoopingEnabled)
+                    {
+                        presenter.Pause();
+                    }
 
-                _prev.Remove(item);
+                    _prev.Remove(item);
+                }
             }
 
-            foreach (var item in next)
+            if (next != null)
             {
-                item.Value?.Play();
-
-                _prev[item.Key] = new WeakReference(item.Value);
+                foreach (var item in next)
+                {
+                    _prev[item.Key] = new WeakReference(item.Value);
+                    item.Value.Play();
+                }
             }
         }
 
@@ -551,16 +571,15 @@ namespace Telegram.Views
 
             _updateThemeTask?.TrySetResult(true);
 
-            content.Tag = message;
-
             if (args.ItemContainer is ChatListViewItem selector)
             {
-                selector.PrepareForItemOverride(message);
+                // TODO: are there chances that at this point TextArea is not up to date yet?
+                selector.PrepareForItemOverride(message, TextArea.Visibility == Visibility.Visible);
             }
 
             if (content is MessageSelector checkbox)
             {
-                checkbox.UpdateMessage(message);
+                checkbox.UpdateMessage(message, args.ItemContainer as LazoListViewItem);
                 checkbox.UpdateSelectionEnabled(ViewModel.IsSelectionEnabled, false);
 
                 content = checkbox.Content as FrameworkElement;

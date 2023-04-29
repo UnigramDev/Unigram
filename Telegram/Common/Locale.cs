@@ -296,7 +296,7 @@ namespace Telegram.Common
                 var day = rightNow.DayOfYear;
                 var year = rightNow.Year;
 
-                var online = Utils.UnixTimestampToDateTime(date);
+                var online = Formatter.ToLocalTime(date);
                 int dateDay = online.DayOfYear;
                 int dateYear = online.Year;
 
@@ -313,22 +313,22 @@ namespace Telegram.Common
                         return Declension(Strings.R.UpdatedMinutes, diff);
                     }
 
-                    var format = string.Format(Strings.TodayAtFormatted, Converter.ShortTime.Format(online)); //getInstance().formatterDay.format(new Date(date)));
+                    var format = string.Format(Strings.TodayAtFormatted, Formatter.ShortTime.Format(online)); //getInstance().formatterDay.format(new Date(date)));
                     return string.Format(Strings.LocationUpdatedFormatted, format);
                 }
                 else if (dateDay + 1 == day && year == dateYear)
                 {
-                    var format = string.Format(Strings.YesterdayAtFormatted, Converter.ShortTime.Format(online)); //getInstance().formatterDay.format(new Date(date)));
+                    var format = string.Format(Strings.YesterdayAtFormatted, Formatter.ShortTime.Format(online)); //getInstance().formatterDay.format(new Date(date)));
                     return string.Format(Strings.LocationUpdatedFormatted, format);
                 }
                 else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
                 {
-                    var format = string.Format(Strings.formatDateAtTime, Converter.ShortDate.Format(online), Converter.ShortTime.Format(online)); //getInstance().formatterMonth.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
+                    var format = string.Format(Strings.formatDateAtTime, Formatter.ShortDate.Format(online), Formatter.ShortTime.Format(online)); //getInstance().formatterMonth.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
                     return string.Format(Strings.LocationUpdatedFormatted, format);
                 }
                 else
                 {
-                    var format = string.Format(Strings.formatDateAtTime, Converter.ShortDate.Format(online), Converter.ShortTime.Format(online)); //getInstance().formatterYear.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
+                    var format = string.Format(Strings.formatDateAtTime, Formatter.ShortDate.Format(online), Formatter.ShortTime.Format(online)); //getInstance().formatterYear.format(new Date(date)), getInstance().formatterDay.format(new Date(date)));
                     return string.Format(Strings.LocationUpdatedFormatted, format);
                 }
             }
@@ -347,24 +347,24 @@ namespace Telegram.Common
                 int day = rightNow.DayOfYear;
                 int year = rightNow.Year;
 
-                var online = Utils.UnixTimestampToDateTime(date);
+                var online = Formatter.ToLocalTime(date);
                 int dateDay = online.DayOfYear;
                 int dateYear = online.Year;
                 if (dateDay == day && year == dateYear)
                 {
-                    return string.Format(Strings.TodayAtFormatted, Converter.ShortTime.Format(online));
+                    return string.Format(Strings.TodayAtFormatted, Formatter.ShortTime.Format(online));
                 }
                 else if (dateDay + 1 == day && year == dateYear)
                 {
-                    return string.Format(Strings.YesterdayAtFormatted, Converter.ShortTime.Format(online));
+                    return string.Format(Strings.YesterdayAtFormatted, Formatter.ShortTime.Format(online));
                 }
                 else if (Math.Abs(DateTime.Now.ToTimestamp() / 1000 - date) < 31536000000L)
                 {
-                    return string.Format(Strings.formatDateAtTime, Converter.ShortDate.Format(online), Converter.ShortTime.Format(online));
+                    return string.Format(Strings.formatDateAtTime, Formatter.ShortDate.Format(online), Formatter.ShortTime.Format(online));
                 }
                 else
                 {
-                    return string.Format(Strings.formatDateAtTime, Converter.ShortDate.Format(online), Converter.ShortTime.Format(online));
+                    return string.Format(Strings.formatDateAtTime, Formatter.ShortDate.Format(online), Formatter.ShortTime.Format(online));
                 }
             }
             catch (Exception)

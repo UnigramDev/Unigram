@@ -52,7 +52,7 @@ namespace Telegram.Controls
 
         public Color Stroke => ColorForValue(_value.X);
 
-        public float StrokeThickness => 4 + _value.Y * 16;
+        public float StrokeThickness => 1 + _value.Y * 19;
 
         public void SetDefault(Vector2 value)
         {
@@ -65,7 +65,7 @@ namespace Telegram.Controls
             }
 
             var w = _layoutRoot.ActualSize.X;
-            var weight = 4 + _current.Y * 16;
+            var weight = 1 + _current.Y * 19;
 
             _thumbVisual.Offset = new Vector3(_current.X * w, 0, 0);
 
@@ -185,7 +185,7 @@ namespace Telegram.Controls
                 bottom = 0;
             }
 
-            var weight = 4 + _current.Y * 16;
+            var weight = 1 + _current.Y * 19;
 
             _thumbDrop.StrokeThickness = 20 - weight * 2 / 2;
             _thumbDrop.Fill = new SolidColorBrush(ColorForValue(_current.X));

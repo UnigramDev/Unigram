@@ -49,22 +49,5 @@ namespace Telegram.Controls
                 }
             }
         }
-
-        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
-        {
-            base.PrepareContainerForItemOverride(element, item);
-
-            var container = element as ListViewItem;
-            if (container == null)
-            {
-                return;
-            }
-
-            var content = container.ContentTemplateRoot;
-            if (content != null)
-            {
-                content.IsHitTestVisible = SelectionMode != ListViewSelectionMode.Multiple;
-            }
-        }
     }
 }

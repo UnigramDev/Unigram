@@ -325,18 +325,9 @@
     </ClInclude>
     <ClInclude Include="StringUtils.h" />
     <ClInclude Include="SVG\nanosvg.h" />
-    <ClInclude Include="TelegramGameProxy.h">
-      <DependentUpon>TelegramGameProxy.idl</DependentUpon>
-    </ClInclude>
-    <ClInclude Include="TelegramPaymentProxy.h">
-      <DependentUpon>TelegramPaymentProxy.idl</DependentUpon>
-    </ClInclude>
     <ClInclude Include="Helpers\MathHelper.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="TelegramWebviewProxy.h">
-      <DependentUpon>TelegramWebviewProxy.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
+    <ClInclude Include="TelegramWebviewProxy.h" />
     <ClInclude Include="VideoAnimation.h">
       <DependentUpon>VideoAnimation.idl</DependentUpon>
     </ClInclude>
@@ -769,16 +760,7 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="SVG\nanosvg.cpp" />
-    <ClCompile Include="TelegramGameProxy.cpp">
-      <DependentUpon>TelegramGameProxy.idl</DependentUpon>
-    </ClCompile>
-    <ClCompile Include="TelegramPaymentProxy.cpp">
-      <DependentUpon>TelegramPaymentProxy.idl</DependentUpon>
-    </ClCompile>
-    <ClCompile Include="TelegramWebviewProxy.cpp">
-      <DependentUpon>TelegramWebviewProxy.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
+    <ClCompile Include="TelegramWebviewProxy.cpp" />
     <ClCompile Include="VideoAnimation.cpp">
       <DependentUpon>VideoAnimation.idl</DependentUpon>
     </ClCompile>
@@ -815,11 +797,7 @@
     <Midl Include="ScreenshotManager.idl">
       <SubType>Designer</SubType>
     </Midl>
-    <Midl Include="TelegramGameProxy.idl" />
-    <Midl Include="TelegramPaymentProxy.idl" />
-    <Midl Include="TelegramWebviewProxy.idl">
-      <SubType>Designer</SubType>
-    </Midl>
+    <Midl Include="TelegramWebviewProxy.idl" />
     <Midl Include="VideoAnimation.idl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

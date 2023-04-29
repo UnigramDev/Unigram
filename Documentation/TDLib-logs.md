@@ -1,4 +1,6 @@
-When you want to report an issue with the Unigram app, you could be asked to send your logs. Notice: never send a log to an unknown person, send it only to the Unigram developer or the [@tdlib_bot](https://t.me/tdlib_bot).
+When you want to report an issue with the Unigram app, you could be asked to send your logs.
+
+⚠️ Never send logs to an unknown person, send them only to Telegram Support (Settings > Ask a Question) or the [@tdlib_bot](https://t.me/tdlib_bot).
 
 ### Opening the Diagnostic settings without signing in
 

@@ -208,7 +208,7 @@ namespace Telegram.Services
             var preparing = new ThemeCustomInfo(theme.Parent, theme.AccentColor, input.Text);
             var fileName = Client.Execute(new CleanFileName(theme.Name)) as Text;
 
-            var lookup = ThemeService.GetLookup(theme.Parent);
+            var lookup = GetLookup(theme.Parent);
 
             foreach (var value in lookup)
             {

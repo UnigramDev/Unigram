@@ -24,12 +24,16 @@ namespace Telegram.ViewModels
         private readonly ITranslateService _translateService;
         private readonly IMessageFactory _messageFactory;
 
+        private readonly IMessageDelegate _messageDelegate;
+
         public InstantViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
             _translateService = translateService;
             _messageFactory = messageFactory;
             _gallery = new InstantGalleryViewModel(clientService, storageService, aggregator);
+
+            _messageDelegate = new InstantMessageDelegate(this);
 
             ShareCommand = new RelayCommand(ShareExecute);
             FeedbackCommand = new RelayCommand(FeedbackExecute);
@@ -51,9 +55,9 @@ namespace Telegram.ViewModels
         public Uri ShareLink { get; set; }
         public string ShareTitle { get; set; }
 
-        public MessageViewModel CreateMessage(IMessageDelegate delegato, Message message)
+        public MessageViewModel CreateMessage(Message message)
         {
-            return _messageFactory.Create(delegato, message);
+            return _messageFactory.Create(_messageDelegate, message);
         }
 
         private InstantGalleryViewModel _gallery;

@@ -26,7 +26,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            Amount.Text = Converter.FormatAmount(invoice.TotalAmount, invoice.Currency);
+            Amount.Text = Formatter.FormatAmount(invoice.TotalAmount, invoice.Currency);
             Label.Text = ConvertLabel(invoice.ReceiptMessageId != 0, invoice.IsTest);
         }
 

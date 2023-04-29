@@ -772,7 +772,9 @@
                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                        TextAlignment="{TemplateBinding TextAlignment}"
                                        TextReadingOrder="UseFlowDirection"
-                                       OpticalMarginAlignment="None" />
+                                       OpticalMarginAlignment="None">
+                            <Paragraph />
+                        </RichTextBlock>
                         <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                                     x:Load="False"
                                                     IsHitTestVisible="False"
@@ -1344,13 +1346,30 @@
                             <ItemsPresenter x:Name="Presenter" />
                         </Border>
 
-                        <TextBlock x:Name="FooterLabel"
-                                   common:TextBlockHelper.Markdown="{TemplateBinding Footer}"
-                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                   Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
-                                   Margin="0,8,0,0"
-                                   Grid.Row="2" />
+                        <local:SettingsFooter Text="{TemplateBinding Footer}"
+                                              Visibility="{Binding Footer, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource NullToVisibilityConverter}}"
+                                              Margin="0,8,0,0"
+                                              Grid.Row="2" />
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:SettingsFooter">
+        <Setter Property="HorizontalAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalAlignment"
+                Value="Stretch" />
+        <Setter Property="Margin"
+                Value="24,8,24,0" />
+        <Setter Property="MaxWidth"
+                Value="1000" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:SettingsFooter">
+                    <TextBlock common:TextBlockHelper.Markdown="{TemplateBinding Text}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -2075,8 +2094,14 @@
                         </VisualStateManager.VisualStateGroups>
                         <Grid x:Name="LayoutRoot"
                               Background="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
                             <Rectangle x:Name="LightDismiss"
-                                       Fill="Transparent" />
+                                       Fill="Transparent"
+                                       Grid.ColumnSpan="3" />
 
                             <Border x:Name="BackgroundElement"
                                     Background="{TemplateBinding Background}"
@@ -2084,13 +2109,14 @@
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     CornerRadius="{TemplateBinding CornerRadius}"
-                                    MaxWidth="320"
+                                    MaxWidth="{TemplateBinding ContentMaxWidth}"
                                     MaxHeight="{ThemeResource ContentDialogMaxHeight}"
                                     MinWidth="320"
                                     MinHeight="{ThemeResource ContentDialogMinHeight}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    RenderTransformOrigin="0.5,0.5">
+                                    RenderTransformOrigin="0.5,0.5"
+                                    Grid.Column="1">
                                 <Border.RenderTransform>
                                     <ScaleTransform x:Name="ScaleTransform" />
                                 </Border.RenderTransform>
@@ -3038,6 +3064,13 @@
                             <ImageBrush x:Name="Texture"
                                         Stretch="UniformToFill" />
                         </Border.Background>
+                        <TextBlock x:Name="Initials"
+                                   Visibility="Collapsed"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Margin="0,1,0,2"
+                                   Foreground="#FFFFFF"
+                                   FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -6335,6 +6368,33 @@
                                       HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                       Padding="{TemplateBinding Padding}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:WebViewer">
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="VerticalContentAlignment"
+                Value="Stretch" />
+    </Style>
+
+    <Style TargetType="local:EdgeWebPresenter">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:EdgeWebPresenter">
+                    <WebView x:Name="View" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:ChromiumWebPresenter">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ChromiumWebPresenter">
+                    <muxc:WebView2 x:Name="View" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

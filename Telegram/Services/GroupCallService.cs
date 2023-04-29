@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Native.Calls;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
@@ -123,7 +124,7 @@ namespace Telegram.Services
 
         private VoipGroupManager _screenManager;
         private VoipScreenCapture _screenCapturer;
-        private EventDebouncer<bool> _screenDebouncer;
+        //private EventDebouncer<bool> _screenDebouncer;
         private int _screenSource;
 
         private VoipCallCoordinator _coordinator;
@@ -350,7 +351,7 @@ namespace Telegram.Services
                     return;
                 }
 
-                _timeDifference = DateTime.Now - Utils.UnixTimestampToDateTime(unix.Value);
+                _timeDifference = DateTime.Now - Formatter.ToLocalTime(unix.Value);
 
                 _chat = chat;
                 _call = groupCall;
@@ -674,8 +675,8 @@ namespace Telegram.Services
 
             if (_screenCapturer != null)
             {
-                _screenDebouncer.Invoked -= OnPaused;
-                _screenDebouncer = null;
+                //_screenDebouncer.Invoked -= OnPaused;
+                //_screenDebouncer = null;
 
                 //_screenCapturer.SetOutput(null);
                 _screenCapturer.FatalErrorOccurred -= OnFatalErrorOccurred;
@@ -957,7 +958,7 @@ namespace Telegram.Services
 
         public bool IsMuted
         {
-            get => _manager.IsMuted;
+            get => _manager?.IsMuted ?? true;
             set
             {
                 if (_manager != null && _currentUser != null && _manager.IsMuted != value)

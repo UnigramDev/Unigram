@@ -13,7 +13,7 @@ namespace Telegram.Services.Settings
 {
     public class NotificationsSettings : SettingsServiceBase
     {
-        private readonly Dictionary<Type, ScopeNotificationSettings> _scopeNotificationSettings = new Dictionary<Type, ScopeNotificationSettings>();
+        private readonly Dictionary<Type, ScopeNotificationSettings> _scopeNotificationSettings = new();
 
         public NotificationsSettings(ApplicationDataContainer container)
             : base(container)

@@ -175,6 +175,17 @@ namespace Telegram.Controls.Messages.Content
 
                 button.Visibility = Visibility.Visible;
             }
+            else if (string.Equals(webPage.Type, "telegram_botapp", StringComparison.OrdinalIgnoreCase))
+            {
+                if (run1 != null)
+                {
+                    run1.Text = run3.Text = string.Empty;
+                    run2.Text = Strings.BotWebAppInstantViewOpen.ToUpper();
+                    run3.Foreground = null;
+                }
+
+                button.Visibility = Visibility.Visible;
+            }
             else
             {
                 button.Visibility = Visibility.Collapsed;

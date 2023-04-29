@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -93,7 +94,7 @@ namespace Telegram.Controls
 
                 if (call.ScheduledStartDate != 0)
                 {
-                    var date = Converters.Converter.DateTime(call.ScheduledStartDate);
+                    var date = Formatter.ToLocalTime(call.ScheduledStartDate);
                     var duration = date - DateTime.Now;
 
                     if (duration.TotalDays < 1)

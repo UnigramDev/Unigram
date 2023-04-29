@@ -4,10 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Native;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Payments;
 using Windows.UI.Xaml.Controls;
@@ -31,7 +29,7 @@ namespace Telegram.Views.Payments
             if (url != null)
             {
                 FindName(nameof(WebPanel));
-                View.Navigate(new Uri(url));
+                View.Navigate(url);
             }
             else
             {
@@ -51,7 +49,7 @@ namespace Telegram.Views.Payments
             if (url != null)
             {
                 FindName(nameof(WebPanel));
-                View.Navigate(new Uri(url));
+                View.Navigate(url);
             }
             else
             {
@@ -94,15 +92,6 @@ namespace Telegram.Views.Payments
             }
         }
 
-        private void View_NavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
-        {
-            sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramPaymentProxy((title, credentials) =>
-            {
-                Credentials = new SavedCredentials(credentials, title);
-                Hide(ContentDialogResult.Primary);
-            }));
-        }
-
         private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             if (Credentials == null)
@@ -114,6 +103,20 @@ namespace Telegram.Views.Payments
 
                 args.Cancel = validated == null;
                 deferral.Complete();
+            }
+        }
+
+        private void View_EventReceived(object sender, WebViewerEventReceivedEventArgs e)
+        {
+            if (e.EventName == "payment_form_submit")
+            {
+                var response = e.EventData.GetNamedValue("credentials");
+                var title = e.EventData.GetNamedString("title", string.Empty);
+
+                var credentials = response.Stringify();
+
+                Credentials = new SavedCredentials(credentials, title);
+                Hide(ContentDialogResult.Primary);
             }
         }
     }

@@ -233,11 +233,20 @@
                             </controls:AnimatedIconToggleButton.Source>
                         </controls:AnimatedIconToggleButton>
 
-                        <TextBlock x:Name="RecognizedText"
-                                   x:Load="False"
-                                   Grid.ColumnSpan="3"
-                                   Grid.Row="1" />
-
+                        <RichTextBlock x:Name="RecognizedText"
+                                       x:Load="False"
+                                       Grid.ColumnSpan="3"
+                                       Grid.Row="1">
+                            <Paragraph>
+                                <Run x:Name="RecognizedSpan" />
+                                <InlineUIContainer>
+                                    <Border x:Name="RecognizedIcon"
+                                            Width="12.8"
+                                            Height="16"
+                                            Margin="-4,2,0,-4" />
+                                </InlineUIContainer>
+                            </Paragraph>
+                        </RichTextBlock>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

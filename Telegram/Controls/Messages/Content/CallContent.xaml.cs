@@ -78,7 +78,7 @@ namespace Telegram.Controls.Messages.Content
 
             TitleLabel.Text = call.ToOutcomeText(message.IsOutgoing);
             ReasonGlyph.Text = outgoing ? "\uE60B\u00A0" : "\uE60C\u00A0";
-            DateLabel.Text = Converter.Date(message.Date);
+            DateLabel.Text = Formatter.Date(message.Date);
 
             if (call.Duration > 0 && !missed)
             {
@@ -102,8 +102,8 @@ namespace Telegram.Controls.Messages.Content
             var tooltip = sender as ToolTip;
             if (tooltip != null && _message != null)
             {
-                var date = Converter.DateTime(_message.Date);
-                var text = $"{Converter.LongDate.Format(date)} {Converter.LongTime.Format(date)}";
+                var date = Formatter.ToLocalTime(_message.Date);
+                var text = $"{Formatter.LongDate.Format(date)} {Formatter.LongTime.Format(date)}";
 
                 tooltip.Content = text;
             }

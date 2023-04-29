@@ -32,6 +32,11 @@ namespace Telegram.Controls
 
             foreach (UIElement child in Children)
             {
+                if (child is SettingsFooter && accumulated > (IsFooter ? 16 : 80))
+                {
+                    accumulated -= 16;
+                }
+
                 child.Measure(availableSize);
 
                 if (child.DesiredSize.Height > 0)
@@ -57,6 +62,11 @@ namespace Telegram.Controls
 
             foreach (var child in Children)
             {
+                if (child is SettingsFooter && accumulated > (IsFooter ? 16 : 80))
+                {
+                    accumulated -= 16;
+                }
+
                 child.Arrange(new Rect(0, accumulated, finalSize.Width, child.DesiredSize.Height));
 
                 if (child.DesiredSize.Height > 0)

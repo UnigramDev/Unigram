@@ -442,7 +442,7 @@ namespace Telegram.Views.Calls
             var user = _clientService.GetUser(call.UserId);
             if (user != null)
             {
-                Image.SetUser(_clientService, user, 144);
+                Image.SetUser(_clientService, user, 140);
 
                 //if (user.ProfilePhoto != null)
                 //{

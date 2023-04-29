@@ -3,20 +3,31 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:local="using:Telegram.Views.Popups"
                        xmlns:controls="using:Telegram.Controls"
+                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        Title="TITLE"
-                       PrimaryButtonText="Button1"
-                       SecondaryButtonText="Button2"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       ContentMaxWidth="394"
+                       HorizontalContentAlignment="Stretch"
+                       VerticalContentAlignment="Stretch"
                        Closing="OnClosing">
 
-    <Grid>
-        <WebView x:Name="View"
-                 NavigationStarting="View_NavigationStarting"
-                 MinHeight="500"
-                 Margin="-24" />
+    <Grid Margin="-24,0,-24,-24">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <controls:WebViewer x:Name="View"
+                            EventReceived="View_EventReceived" />
+
+        <Button x:Name="MainButton"
+                Click="MainButton_Click"
+                Height="48"
+                CornerRadius="0"
+                BorderThickness="0"
+                VerticalAlignment="Bottom"
+                HorizontalAlignment="Stretch"
+                Grid.Row="1" />
     </Grid>
 </controls:ContentPopup>

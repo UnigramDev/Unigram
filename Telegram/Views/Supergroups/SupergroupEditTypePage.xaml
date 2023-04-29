@@ -109,11 +109,9 @@
             </ListView.ItemTemplate>
             <ListView.Footer>
                 <controls:SettingsPanel IsFooter="True">
-                    <TextBlock x:Name="UsernamesFooter"
-                               x:Load="{x:Bind ConvertHeaderLoad(ViewModel.Items.Count), Mode=OneWay}"
-                               Text="{CustomResource UsernamesChannelHelp}"
-                               Style="{StaticResource InfoCaptionTextBlockStyle}"
-                               Margin="24,8,16,8" />
+                    <controls:SettingsFooter x:Name="UsernamesFooter"
+                                             x:Load="{x:Bind ConvertHeaderLoad(ViewModel.Items.Count), Mode=OneWay}"
+                                             Text="{CustomResource UsernamesChannelHelp}" />
 
                     <controls:HeaderedControl x:Name="JoinToSendMessages"
                                               Header="{CustomResource ChannelSettingsJoinTitle}"

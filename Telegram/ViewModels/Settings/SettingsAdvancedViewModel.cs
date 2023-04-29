@@ -13,8 +13,6 @@ using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Windows.ApplicationModel;
-using Windows.System;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -160,8 +158,10 @@ namespace Telegram.ViewModels.Settings
             }
             else if (update.File != null)
             {
-                await Launcher.LaunchFileAsync(update.File);
-                Application.Current.Exit();
+#if !DEBUG
+                await Windows.System.Launcher.LaunchFileAsync(update.File);
+                Windows.UI.Xaml.Application.Current.Exit();
+#endif
             }
 
             UpdateFile(update, update?.Document, true);

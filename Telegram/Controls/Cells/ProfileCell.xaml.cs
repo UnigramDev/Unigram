@@ -648,7 +648,7 @@ namespace Telegram.Controls.Cells
                         break;
                 }
 
-                Photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFolderIcon(flag.Flag), (int)flag.Flag, 36);
+                Photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFolderIcon(flag.Flag), (int)flag.Flag);
             }
         }
 
@@ -659,7 +659,7 @@ namespace Telegram.Controls.Cells
             TitlePanel.VerticalAlignment = VerticalAlignment.Center;
             SubtitleLabel.Visibility = Visibility.Collapsed;
 
-            Grid.SetRowSpan(TitlePanel, 2);
+            SetRowSpan(TitlePanel, 2);
         }
 
 

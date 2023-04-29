@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Windows.ApplicationModel;
@@ -113,7 +114,7 @@ namespace Telegram.Services
                 }
                 else if (cloud.Document.Local.CanBeDownloaded && !cloud.Document.Local.IsDownloadingActive)
                 {
-                    var date = Utils.ToDateTime(cloud.Date);
+                    var date = Formatter.ToLocalTime(cloud.Date);
                     var epoch = DateTime.Now - date;
 
                     if (epoch.TotalDays >= 3 || !_networkService.IsMetered)

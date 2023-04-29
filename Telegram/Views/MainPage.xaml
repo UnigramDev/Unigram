@@ -82,6 +82,7 @@
                                         Grid.RowSpan="2" />
 
                                 <chats:ChatBackgroundPresenter x:Name="BackgroundPart"
+                                                               Margin="{TemplateBinding BackgroundMargin}"
                                                                CornerRadius="9,0,0,0"
                                                                Loading="ChatBackgroundPresenter_Loading"
                                                                Grid.RowSpan="2" />
@@ -443,7 +444,7 @@
                                    Grid.Column="1"
                                    Grid.Row="1">
             <controls:MasterDetailView.Banner>
-                <Grid>
+                <Grid SizeChanged="Banner_SizeChanged">
                     <controls:PlaybackHeader x:Name="Playback"
                                              x:Load="False" />
 

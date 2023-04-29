@@ -546,16 +546,16 @@ namespace Telegram.Collections
         {
             get
             {
-                var start = Utils.UnixTimestampToDateTime(_range.StartDate);
-                var end = Utils.UnixTimestampToDateTime(_range.EndDate);
+                var start = Formatter.ToLocalTime(_range.StartDate);
+                var end = Formatter.ToLocalTime(_range.EndDate);
 
                 if (start.DayOfYear == end.DayOfYear)
                 {
-                    return Converter.DayMonthFullYear.Format(start);
+                    return Formatter.DayMonthFullYear.Format(start);
                 }
                 else if (start.Month == end.Month)
                 {
-                    return Converter.MonthAbbreviatedYear.Format(start);
+                    return Formatter.MonthAbbreviatedYear.Format(start);
                 }
 
                 return start.Year.ToString();

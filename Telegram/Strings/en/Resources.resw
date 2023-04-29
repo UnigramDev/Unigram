@@ -520,10 +520,10 @@ to: {1}</value>
     <value>Actions</value>
   </data>
   <data name="ActionSetSameWallpaperForThisChat" xml:space="preserve">
-    <value>{0} set a same wallpaper for this chat.</value>
+    <value>{0} set your wallpaper as their own for this chat.</value>
   </data>
   <data name="ActionSetSameWallpaperForThisChatSelf" xml:space="preserve">
-    <value>You set the same wallpaper for the chat.</value>
+    <value>You set the same wallpaper as your chat partner.</value>
   </data>
   <data name="ActionSetWallpaperForThisChat" xml:space="preserve">
     <value>{0} set a new wallpaper for this chat.</value>
@@ -1200,7 +1200,7 @@ Sunrise: {1}</value>
     <value>Videos</value>
   </data>
   <data name="AutoStart" xml:space="preserve">
-    <value>Launch Telegram when system starts</value>
+    <value>Launch Unigram when system starts</value>
   </data>
   <data name="AutoStartDisabledInfo" xml:space="preserve">
     <value>Starting with the system was disabled in Windows Settings.
@@ -1247,7 +1247,7 @@ Please enable Unigram in the Startup Apps Settings.</value>
     <value>Wallpaper</value>
   </data>
   <data name="BackgroundPreviewLine1" xml:space="preserve">
-    <value>Hint: some background images look better with the blur effect.</value>
+    <value>Hint: some wallpaper images look better with the blur effect.</value>
   </data>
   <data name="BackgroundPreviewLine2" xml:space="preserve">
     <value>Woo-hoo! Thanks</value>
@@ -1377,8 +1377,14 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BotUnblock" xml:space="preserve">
     <value>RESTART</value>
   </data>
+  <data name="BotUsernameHelp" xml:space="preserve">
+    <value>This link cannot be edited. You can acquire additional usernames on *Fragment*.</value>
+  </data>
   <data name="BotUsernamesHelp" xml:space="preserve">
     <value>Drag and drop links to change the order in which they will be displayed on the bot info page.</value>
+  </data>
+  <data name="BotWebAppInstantViewOpen" xml:space="preserve">
+    <value>Open App</value>
   </data>
   <data name="BubbleRadius" xml:space="preserve">
     <value>Message corners</value>
@@ -1486,7 +1492,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>Change Passcode</value>
   </data>
   <data name="ChangePasscodeInfo" xml:space="preserve">
-    <value>When a passcode is set, a lock icon appears above your chat list. Tap it to lock your Telegram app.
+    <value>When a passcode is set, a lock icon appears above your chat list. Click it to lock your Telegram app.
 
 Note: if you forget your passcode, you&apos;ll need to log out or reinstall the app. All secret chats will be lost.</value>
   </data>
@@ -1745,7 +1751,7 @@ Minimum length is 5 characters.</value>
     <value>Chat archived.</value>
   </data>
   <data name="ChatBackground" xml:space="preserve">
-    <value>Chat Background</value>
+    <value>Chat Wallpaper</value>
   </data>
   <data name="ChatCamera" xml:space="preserve">
     <value>Camera</value>
@@ -2208,10 +2214,10 @@ You can always switch back to the default Telegram theme here.</value>
     <value>Delete for everyone</value>
   </data>
   <data name="DeleteChat" xml:space="preserve">
-    <value>Delete and exit</value>
+    <value>Delete and leave</value>
   </data>
   <data name="DeleteChatBackgroundsAlert" xml:space="preserve">
-    <value>Are you sure you want to delete the selected backgrounds?</value>
+    <value>Are you sure you want to delete the selected wallpapers?</value>
   </data>
   <data name="DeleteChatUser" xml:space="preserve">
     <value>Delete chat</value>
@@ -2542,7 +2548,7 @@ Anyone from the channel will be able to see messages in this group.</value>
     <value>Sorry, you can&apos;t edit this message.</value>
   </data>
   <data name="EditMessageMedia" xml:space="preserve">
-    <value>Tap to edit media</value>
+    <value>Click to edit media</value>
   </data>
   <data name="EditName" xml:space="preserve">
     <value>Edit name</value>
@@ -3084,7 +3090,7 @@ Duration: {1}</value>
     <value>Are you sure you want to remove this folder? Your chats will not be deleted.</value>
   </data>
   <data name="FilterDeleteAlertLinks" xml:space="preserve">
-    <value>Are you sure you want to delete this folder? This will also deactivate all the invite links created to share the folder.</value>
+    <value>Are you sure you want to delete this folder? This will also deactivate all the invite links created to share this folder.</value>
   </data>
   <data name="FilterDeleteItem" xml:space="preserve">
     <value>Delete folder</value>
@@ -3126,7 +3132,7 @@ Duration: {1}</value>
     <value>You can’t share folders with excluded chats.</value>
   </data>
   <data name="FilterInviteErrorTypes" xml:space="preserve">
-    <value>You can’t share folders which include or exclude specific chat types.</value>
+    <value>You can’t share folders which include or exclude specific chat types like &apos;Groups&apos;, &apos;Contacts&apos;, etc.</value>
   </data>
   <data name="FilterInviteHeader_one" xml:space="preserve">
     <value>Anyone with this link can add **{1}** folder and the **{0}** chat selected below.</value>
@@ -3472,7 +3478,7 @@ about Telegram?</value>
     <value>Group type</value>
   </data>
   <data name="GroupUpgradedFrom" xml:space="preserve">
-    <value>Group upgraded to supergroup. Tap here to view older history.</value>
+    <value>Group upgraded to supergroup. Click here to view older history.</value>
   </data>
   <data name="GroupUpgradedTo" xml:space="preserve">
     <value>Group upgraded to supergroup.</value>
@@ -3857,7 +3863,7 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
     <value>You have reserved too many public links. Try revoking the link from an older group or channel.</value>
   </data>
   <data name="LimitReachedSharedFolders" xml:space="preserve">
-    <value>You can only have {0} shareable folders.
+    <value>You can only have **{0}** shareable folders.
 Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   </data>
   <data name="LimitReachedSharedFoldersLocked" xml:space="preserve">
@@ -3915,7 +3921,7 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
     <value>Autoplay Videos</value>
   </data>
   <data name="LiteOptionsBackground" xml:space="preserve">
-    <value>Background rotation</value>
+    <value>Wallpaper rotation</value>
   </data>
   <data name="LiteOptionsBlur" xml:space="preserve">
     <value>Night theme blur</value>
@@ -4131,7 +4137,7 @@ Minimum length is 5 characters.</value>
     <value>Members</value>
   </data>
   <data name="MembersTalkingNobody" xml:space="preserve">
-    <value>Tap to join</value>
+    <value>Click to join</value>
   </data>
   <data name="Mention" xml:space="preserve">
     <value>Mention</value>
@@ -4517,7 +4523,7 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
     <value>Open</value>
   </data>
   <data name="OpenBackground" xml:space="preserve">
-    <value>VIEW BACKGROUND</value>
+    <value>VIEW WALLPAPER</value>
   </data>
   <data name="OpenChannel" xml:space="preserve">
     <value>VIEW CHANNEL</value>
@@ -6244,7 +6250,7 @@ Here’s what is now unlocked.</value>
     <value>Terminate this session?</value>
   </data>
   <data name="TerminateWebSessionInfo" xml:space="preserve">
-    <value>Tap to disconnect from your Telegram account.</value>
+    <value>Click to disconnect from your Telegram account.</value>
   </data>
   <data name="TerminateWebSessionQuestion" xml:space="preserve">
     <value>Disconnect {0}?</value>
@@ -6377,7 +6383,7 @@ Please try again in {0}.</value>
     <value>Top members</value>
   </data>
   <data name="TosAgeText" xml:space="preserve">
-    <value>Tap Agree to confirm that you are {0} or older.</value>
+    <value>Click Agree to confirm that you are {0} or older.</value>
   </data>
   <data name="TosAgeTitle" xml:space="preserve">
     <value>Age Verification</value>
@@ -6405,7 +6411,7 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
     <value>Translate Messages</value>
   </data>
   <data name="TranslateMessagesInfo1" xml:space="preserve">
-    <value>The ‘Translate’ button will appear when you make a single tap on a text message.</value>
+    <value>The ‘Translate’ button will appear when you right click on a text message.</value>
   </data>
   <data name="TranslateMessagesInfo2" xml:space="preserve">
     <value>Google may have access to the messages you translate.</value>
@@ -6499,6 +6505,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="UnlockPremiumStickers" xml:space="preserve">
     <value>Unlock Premium Stickers</value>
+  </data>
+  <data name="UnlockWindowsHello" xml:space="preserve">
+    <value>Unlock with Windows Hello</value>
   </data>
   <data name="Unmute" xml:space="preserve">
     <value>Unmute</value>
@@ -6691,7 +6700,7 @@ However, it is currently available for purchase. **Learn more…**</value>
     <value>Link order</value>
   </data>
   <data name="UsernamesChannelHelp" xml:space="preserve">
-    <value>Drag and drop links to change the order in which they will be displayed on the channel info page.</value>
+    <value>Drag and drop links to change the order in which they will be displayed on the channel&apos;s info page.</value>
   </data>
   <data name="UsernamesProfileHeader" xml:space="preserve">
     <value>Username order</value>

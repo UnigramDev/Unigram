@@ -175,7 +175,7 @@
                                    Margin="8,4,12,4"
                                    Grid.Column="1">
                             <Hyperlink Click="{x:Bind ViewModel.ChooseTipAmount}">
-                                <Run Text="{x:Bind converters:Converter.FormatAmount(ViewModel.TipAmount, ViewModel.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}" />
+                                <Run Text="{x:Bind converters:Formatter.FormatAmount(ViewModel.TipAmount, ViewModel.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}" />
                             </Hyperlink>
                         </TextBlock>
 
@@ -218,7 +218,7 @@
                         <TextBlock Text="{CustomResource PaymentTransactionTotal}"
                                    Style="{StaticResource BaseTextBlockStyle}"
                                    Margin="12,4,0,8" />
-                        <TextBlock Text="{x:Bind converters:Converter.FormatAmount(ViewModel.TotalAmount, ViewModel.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}"
+                        <TextBlock Text="{x:Bind converters:Formatter.FormatAmount(ViewModel.TotalAmount, ViewModel.Invoice.Currency), Mode=OneWay, FallbackValue=Empty}"
                                    Style="{StaticResource BaseTextBlockStyle}"
                                    TextAlignment="Right"
                                    Margin="8,4,12,8"
@@ -251,7 +251,7 @@
                                           Style="{StaticResource SubtitleBadgeButtonStyle}" />
 
                     <controls:BadgeButton Click="{x:Bind ViewModel.ChooseAddress}"
-                                          Content="{x:Bind converters:Converter.PhoneNumber(ViewModel.Info.PhoneNumber), Mode=OneWay, FallbackValue=Empty}"
+                                          Content="{x:Bind converters:Formatter.PhoneNumber(ViewModel.Info.PhoneNumber), Mode=OneWay, FallbackValue=Empty}"
                                           Visibility="{x:Bind ViewModel.Invoice.NeedPhoneNumber, Mode=OneWay, FallbackValue=Collapsed}"
                                           Badge="{CustomResource PaymentCheckoutPhoneNumber}"
                                           Style="{StaticResource SubtitleBadgeButtonStyle}" />

@@ -184,14 +184,14 @@ namespace Telegram.Controls.Messages
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
             {
-                return (string.Format(Strings.MessageScheduledOn, Converter.DayGrouping(Utils.UnixTimestampToDateTime(sendAtDate.SendDate))), null);
+                return (string.Format(Strings.MessageScheduledOn, Formatter.DayGrouping(Formatter.ToLocalTime(sendAtDate.SendDate))), null);
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
                 return (Strings.MessageScheduledUntilOnline, null);
             }
 
-            return (Converter.DayGrouping(Utils.UnixTimestampToDateTime(message.Date)), null);
+            return (Formatter.DayGrouping(Formatter.ToLocalTime(message.Date)), null);
         }
 
         #endregion
@@ -1519,15 +1519,15 @@ namespace Telegram.Controls.Messages
             {
                 if (traveler.Id == message.ClientService.Options.MyId)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.ActionUserWithinYouRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", watcher, entities);
+                    content = ReplaceWithLink(string.Format(Strings.ActionUserWithinYouRadius, Formatter.Distance(proximityAlertTriggered.Distance, false)), "un1", watcher, entities);
                 }
                 else if (watcher.Id == message.ClientService.Options.MyId)
                 {
-                    content = ReplaceWithLink(string.Format(Strings.ActionUserWithinRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, entities);
+                    content = ReplaceWithLink(string.Format(Strings.ActionUserWithinRadius, Formatter.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, entities);
                 }
                 else
                 {
-                    content = ReplaceWithLink(string.Format(Strings.ActionUserWithinOtherRadius, Converter.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, entities);
+                    content = ReplaceWithLink(string.Format(Strings.ActionUserWithinOtherRadius, Formatter.Distance(proximityAlertTriggered.Distance, false)), "un1", traveler, entities);
                     content = ReplaceWithLink(content, "un2", watcher, entities);
                 }
             }

@@ -272,8 +272,8 @@ namespace Telegram.Controls
             _prefixRight = Width(PrefixPart, out double height1);
             _nextRight = Width(NextPart, out double height2);
 
-            var width = Math.Round(_prefixRight + _nextRight + Width(SuffixPart, out double height3));
-            var height = Math.Max(height1, Math.Max(height2, height3));
+            var width = Math.Max(0, Math.Round(_prefixRight + _nextRight + Width(SuffixPart, out double height3)));
+            var height = Math.Max(0, Math.Max(height1, Math.Max(height2, height3)));
 
             return new Size(width, height);
         }

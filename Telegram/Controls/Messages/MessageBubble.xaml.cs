@@ -8,6 +8,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Text;
 using Telegram.Common;
 using Telegram.Controls.Messages.Content;
@@ -34,7 +35,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
-    public sealed class MessageBubble : Control, IPlayerView
+    public sealed class MessageBubble : Control
     {
         private MessageViewModel _message;
 
@@ -48,6 +49,29 @@ namespace Telegram.Controls.Messages
         public MessageBubble()
         {
             DefaultStyleKey = typeof(MessageBubble);
+        }
+
+        public bool HasFloatingElements
+        {
+            get
+            {
+                if (_message?.ReplyMarkup is ReplyMarkupInlineKeyboard)
+                {
+                    return true;
+                }
+
+                var content = _message?.GeneratedContent ?? _message?.Content;
+                if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
+                {
+                    return true;
+                }
+                else if (IsFullMedia(content))
+                {
+                    return _message.InteractionInfo?.Reactions.Count > 0;
+                }
+
+                return false;
+            }
         }
 
         public void UpdateQuery(string text)
@@ -66,7 +90,6 @@ namespace Telegram.Controls.Messages
         private FormattedTextBlock Message;
         private Border Media;
         private MessageFooter Footer;
-        private ReactionsPanel Reactions;
 
         // Lazy loaded
         private ProfilePicture Photo;
@@ -88,6 +111,8 @@ namespace Telegram.Controls.Messages
         private TextBlock ThreadGlyph;
         private TextBlock ThreadLabel;
 
+        private ReactionsPanel Reactions;
+
         private ReactionsPanel MediaReactions;
         private ReplyMarkupPanel Markup;
 
@@ -105,7 +130,6 @@ namespace Telegram.Controls.Messages
             Message = GetTemplateChild(nameof(Message)) as FormattedTextBlock;
             Media = GetTemplateChild(nameof(Media)) as Border;
             Footer = GetTemplateChild(nameof(Footer)) as MessageFooter;
-            Reactions = GetTemplateChild(nameof(Reactions)) as ReactionsPanel;
 
             //ContentPanel.CanDrag = true;
             //ContentPanel.DragStarting += OnDragStarting;
@@ -203,7 +227,6 @@ namespace Telegram.Controls.Messages
             }
 
             _message = message;
-            Tag = message;
 
             if (!_templateApplied)
             {
@@ -214,31 +237,28 @@ namespace Telegram.Controls.Messages
             {
                 var chat = message.GetChat();
 
+                Footer.UpdateMessage(message);
+
                 UpdateMessageHeader(message, chat);
                 UpdateMessageReply(message);
                 UpdateMessageContent(message, chat);
                 UpdateMessageInteractionInfo(message, chat);
 
-                Footer.UpdateMessage(message);
                 UpdateMessageReplyMarkup(message);
 
-                UpdateAttach(message);
-
-                if (PhotoColumn.Width.IsAuto && message.HasSenderPhoto)
-                {
-                    PhotoColumn.Width = new GridLength(38, GridUnitType.Pixel);
-                }
-                else if (PhotoColumn.Width.IsAbsolute && !message.HasSenderPhoto)
-                {
-                    PhotoColumn.Width = new GridLength(0, GridUnitType.Auto);
-                }
+                UpdateAttach(message, chat);
             }
             else
             {
                 Message.Clear();
-                Media.Child = null;
-                Reactions.UpdateMessageReactions(null);
+                //Media.Child = null;
 
+                if (Media.Child is AlbumContent)
+                {
+                    Media.Child = null;
+                }
+
+                UnloadObject(ref Reactions);
                 UnloadObject(ref MediaReactions);
             }
 
@@ -342,7 +362,7 @@ namespace Telegram.Controls.Messages
                 builder.Append($"{Strings.EditedMessage}, ");
             }
 
-            var date = string.Format(Strings.TodayAtFormatted, Converter.ShortTime.Format(Utils.UnixTimestampToDateTime(message.Date)));
+            var date = string.Format(Strings.TodayAtFormatted, Formatter.ShortTime.Format(Formatter.ToLocalTime(message.Date)));
             if (message.IsOutgoing)
             {
                 builder.Append(string.Format(Strings.AccDescrSentDate, date));
@@ -386,7 +406,7 @@ namespace Telegram.Controls.Messages
             return builder.ToString();
         }
 
-        public void UpdateAttach(MessageViewModel message, bool wide = false)
+        public void UpdateAttach(MessageViewModel message, Chat chat, bool wide = false)
         {
             if (!_templateApplied)
             {
@@ -467,9 +487,63 @@ namespace Telegram.Controls.Messages
                 _cornerRadius.Set(topLeft, topRight, bottomRight, bottomLeft);
             }
 
-            Margin = new Thickness(0, message.IsFirst ? 4 : 2, 0, 0);
+            if (message.Delegate != null && message.Delegate.IsDialog)
+            {
+                var top = message.IsFirst ? 4 : 2;
+                var action = message.IsSaved || message.CanBeShared;
 
-            UpdatePhoto(message);
+                chat ??= message?.GetChat();
+
+                if (message.IsService())
+                {
+                    Margin = new Thickness(12, top, 12, 0);
+                }
+                else if (message.IsSaved || (chat != null && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)) && !message.IsChannelPost)
+                {
+                    if (message.IsOutgoing && !message.IsSaved)
+                    {
+                        if (message.Content is MessageSticker or MessageVideoNote)
+                        {
+                            Margin = new Thickness(12, top, 12, 0);
+                        }
+                        else
+                        {
+                            Margin = new Thickness(50, top, 12, 0);
+                        }
+                    }
+                    else
+                    {
+                        if (message.Content is MessageSticker or MessageVideoNote)
+                        {
+                            Margin = new Thickness(12, top, 12, 0);
+                        }
+                        else
+                        {
+                            Margin = new Thickness(12, top, action ? 14 : 50, 0);
+                        }
+                    }
+                }
+                else
+                {
+                    if (message.Content is MessageSticker or MessageVideoNote)
+                    {
+                        Margin = new Thickness(12, top, 12, 0);
+                    }
+                    else
+                    {
+                        if (message.IsOutgoing && !message.IsChannelPost)
+                        {
+                            Margin = new Thickness(50, top, 12, 0);
+                        }
+                        else
+                        {
+                            Margin = new Thickness(12, top, action ? 14 : 50, 0);
+                        }
+                    }
+                }
+
+                UpdatePhoto(message);
+            }
         }
 
         public void ShowHidePhoto(bool show, VerticalAlignment alignment = VerticalAlignment.Bottom)
@@ -509,11 +583,24 @@ namespace Telegram.Controls.Messages
                     Photo.Visibility = Visibility.Collapsed;
                     Photo.Clear();
                 }
+
+                if (PhotoColumn.Width.IsAuto)
+                {
+                    PhotoColumn.Width = new GridLength(38, GridUnitType.Pixel);
+                }
             }
-            else if (Photo != null)
+            else
             {
-                _photoId = null;
-                UnloadObject(ref Photo);
+                if (Photo != null)
+                {
+                    _photoId = null;
+                    UnloadObject(ref Photo);
+                }
+
+                if (PhotoColumn.Width.IsAbsolute)
+                {
+                    PhotoColumn.Width = new GridLength(0, GridUnitType.Auto);
+                }
             }
         }
 
@@ -623,7 +710,7 @@ namespace Telegram.Controls.Messages
                     Automation.SetToolTip(ActionButton, Strings.AccDescrOpenChat);
                 }
             }
-            else if (message.IsShareable)
+            else if (message.CanBeShared)
             {
                 if (Action == null)
                 {
@@ -696,15 +783,7 @@ namespace Telegram.Controls.Messages
                 Panel.Reply = Reply;
             }
 
-            if (Reply != null)
-            {
-                Reply.UpdateMessageReply(message);
-
-                if (_playing)
-                {
-                    Reply.Play();
-                }
-            }
+            Reply?.UpdateMessageReply(message);
         }
 
         public void UpdateMessageHeader(MessageViewModel message, Chat chat)
@@ -1159,6 +1238,11 @@ namespace Telegram.Controls.Messages
             Footer.UpdateMessageInteractionInfo(message);
             UpdateMessageReactions(message, false);
 
+            if (message.Delegate == null || !message.Delegate.IsDialog)
+            {
+                return;
+            }
+
             UpdateAction(message, chat);
 
             var content = message.GeneratedContent ?? message.Content;
@@ -1261,7 +1345,7 @@ namespace Telegram.Controls.Messages
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji || (media == footer && IsFullMedia(content)))
             {
-                Reactions.UpdateMessageReactions(null);
+                UnloadObject(ref Reactions);
 
                 if (message.InteractionInfo?.Reactions.Count > 0)
                 {
@@ -1275,8 +1359,17 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                Reactions.UpdateMessageReactions(message, animate);
                 UnloadObject(ref MediaReactions);
+
+                if (message.InteractionInfo?.Reactions.Count > 0)
+                {
+                    LoadObject(ref Reactions, nameof(Reactions));
+                    Reactions.UpdateMessageReactions(message, animate);
+                }
+                else
+                {
+                    UnloadObject(ref Reactions);
+                }
             }
         }
 
@@ -1338,7 +1431,7 @@ namespace Telegram.Controls.Messages
                     FooterToNormal();
                     bottom = 4;
                 }
-                else if (content is MessageCall || (content is MessageLocation location && location.LivePeriod > 0 && Converter.DateTime(message.Date + location.LivePeriod) > DateTime.Now))
+                else if (content is MessageCall || (content is MessageLocation location && location.LivePeriod > 0 && Formatter.ToLocalTime(message.Date + location.LivePeriod) > DateTime.Now))
                 {
                     FooterToHidden();
                 }
@@ -1440,7 +1533,7 @@ namespace Telegram.Controls.Messages
             {
                 if (Media.Child is StickerContent or AnimatedStickerContent or VideoStickerContent or VideoNoteContent)
                 {
-                    UpdateAttach(message);
+                    UpdateAttach(message, chat);
                 }
 
                 if (content is MessageText textMessage && textMessage.WebPage != null)
@@ -1874,17 +1967,11 @@ namespace Telegram.Controls.Messages
         {
             if (_cornerRadius.TopLeft == 0 && _cornerRadius.BottomRight == 0)
             {
-                _cornerRadius.Left = -float.MaxValue;
-                _cornerRadius.Top = -float.MaxValue;
-                _cornerRadius.Right = float.MaxValue;
-                _cornerRadius.Bottom = float.MaxValue;
+                _cornerRadius.SetInset(-float.MaxValue, -float.MaxValue, float.MaxValue, float.MaxValue);
             }
             else
             {
-                _cornerRadius.Left = 0;
-                _cornerRadius.Top = 0;
-                _cornerRadius.Right = (float)Math.Truncate(ContentPanel.ActualWidth);
-                _cornerRadius.Bottom = (float)Math.Truncate(ContentPanel.ActualHeight);
+                _cornerRadius.SetInset(0, 0, (float)Math.Truncate(ContentPanel.ActualWidth), (float)Math.Truncate(ContentPanel.ActualHeight));
             }
         }
 
@@ -2087,7 +2174,6 @@ namespace Telegram.Controls.Messages
             var text = ElementCompositionPreview.GetElementVisual(Message);
             var media = ElementCompositionPreview.GetElementVisual(Media);
             var footer = ElementCompositionPreview.GetElementVisual(Footer);
-            var reactions = ElementCompositionPreview.GetElementVisual(Reactions);
 
             var headerLeft = (float)Header.Margin.Left;
             var textLeft = (float)Message.Margin.Left;
@@ -2100,13 +2186,18 @@ namespace Telegram.Controls.Messages
             text.CenterPoint = new Vector3(-textLeft, 0, 0);
             media.CenterPoint = new Vector3(-mediaLeft, 0, 0);
             footer.CenterPoint = new Vector3(Footer.ActualSize.X + footerRight, Footer.ActualSize.Y + footerBottom, 0);
-            reactions.CenterPoint = new Vector3(0, Reactions.ActualSize.Y, 0);
 
             header.StartAnimation("Scale", factor);
             text.StartAnimation("Scale", factor);
             media.StartAnimation("Scale", factor);
             footer.StartAnimation("Scale", factor);
-            reactions.StartAnimation("Scale", factor);
+
+            if (Reactions != null)
+            {
+                var reactions = ElementCompositionPreview.GetElementVisual(Reactions);
+                reactions.CenterPoint = new Vector3(0, Reactions.ActualSize.Y, 0);
+                reactions.StartAnimation("Scale", factor);
+            }
         }
 
         private void Footer_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -2552,7 +2643,7 @@ namespace Telegram.Controls.Messages
             var width = 0.0;
             var height = 0.0;
 
-            var constraint = Tag;
+            var constraint = _message as object;
             if (constraint is MessageViewModel viewModel)
             {
                 ttl = viewModel.IsSecret();
@@ -2788,49 +2879,16 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        #region IPlayerView
-
-        public bool IsAnimatable => Message != null || (Reply?.IsAnimatable ?? false);
-
-        public bool IsLoopingEnabled => true;
-
-        private bool _playing;
-
-        public bool Play()
-        {
-            Message?.Play();
-            Reply?.Play();
-
-            _playing = true;
-            return true;
-        }
-
-        public void Pause()
-        {
-            Message?.Pause();
-            Reply?.Pause();
-
-            _playing = false;
-        }
-
-        public void Unload()
-        {
-            Message?.Unload();
-            Reply?.Unload();
-
-            _playing = false;
-        }
-
-        #endregion
-
         #region XamlMarkupHelper
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void LoadObject<T>(ref T element, /*[CallerArgumentExpression("element")]*/string name)
             where T : DependencyObject
         {
             element ??= GetTemplateChild(name) as T;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UnloadObject<T>(ref T element)
             where T : DependencyObject
         {

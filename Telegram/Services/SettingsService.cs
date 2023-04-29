@@ -613,12 +613,12 @@ namespace Telegram.Services
                 if (_pencil == null)
                 {
                     var offset = GetValueOrDefault(_local, "PencilOffset", 0f);
-                    var thickness = GetValueOrDefault(_local, "PencilThickness", 0.33f);
+                    var thickness = GetValueOrDefault(_local, "PencilThickness", 0.22f);
 
                     _pencil = new Vector2(offset, thickness);
                 }
 
-                return _pencil ?? new Vector2(0f, 0.33f);
+                return _pencil ?? new Vector2(0f, 0.22f);
             }
             set
             {

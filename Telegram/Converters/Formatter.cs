@@ -16,7 +16,7 @@ using Windows.System.UserProfile;
 
 namespace Telegram.Converters
 {
-    public static class Converter
+    public static class Formatter
     {
         public static DateTimeFormatter ShortDate { get; private set; }
         public static DateTimeFormatter ShortTime { get; private set; }
@@ -32,7 +32,7 @@ namespace Telegram.Converters
         public static DateTimeFormatter DayMonthAbbreviatedYear { get; private set; }
         public static DateTimeFormatter DayOfWeekAbbreviated { get; private set; }
 
-        static Converter()
+        static Formatter()
         {
             var culture = NativeUtils.GetCurrentCulture();
             var languages = new[] { culture }.Union(GlobalizationPreferences.Languages);
@@ -56,7 +56,7 @@ namespace Telegram.Converters
 
         public static string MonthGrouping(DateTime date)
         {
-            var now = System.DateTime.Now;
+            var now = DateTime.Now;
 
             var difference = Math.Abs(date.Month - now.Month + 12 * (date.Year - now.Year));
             if (difference >= 12)
@@ -69,7 +69,7 @@ namespace Telegram.Converters
 
         public static string DayGrouping(DateTime date)
         {
-            var now = System.DateTime.Now;
+            var now = DateTime.Now;
 
             var difference = Math.Abs(date.Month - now.Month + 12 * (date.Year - now.Year));
             if (difference >= 12)
@@ -158,9 +158,9 @@ namespace Telegram.Converters
             return Common.PhoneNumber.Format(number);
         }
 
-        public static string BannedUntil(long date)
+        public static string BannedUntil(int date)
         {
-            var banned = Utils.UnixTimestampToDateTime(date);
+            var banned = ToLocalTime(date);
             return ShortDate.Format(banned) + ", " + ShortTime.Format(banned);
 
             //try
@@ -168,7 +168,7 @@ namespace Telegram.Converters
             //    date *= 1000;
             //    var rightNow = System.DateTime.Now;
             //    var year = rightNow.Year;
-            //    var banned = Utils.UnixTimestampToDateTime(date);
+            //    var banned = Converter.DateTime(date);
             //    int dateYear = banned.Year;
 
             //    if (year == dateYear)
@@ -294,23 +294,23 @@ namespace Telegram.Converters
 
         public static string DateExtended(int value)
         {
-            var dateTime = Utils.UnixTimestampToDateTime(value);
+            var dateTime = ToLocalTime(value);
 
             //Today
-            if (dateTime.Date == System.DateTime.Now.Date)
+            if (dateTime.Date == DateTime.Now.Date)
             {
                 //TimeLabel.Text = dateTime.ToString(string.Format("{0}", shortTimePattern), cultureInfo);
                 return ShortTime.Format(dateTime);
             }
 
             //Week
-            if (dateTime.Date.AddDays(6) >= System.DateTime.Now.Date)
+            if (dateTime.Date.AddDays(6) >= DateTime.Now.Date)
             {
                 return DayOfWeekAbbreviated.Format(dateTime);
             }
 
             //Year
-            if (dateTime.Date.Year == System.DateTime.Now.Year)
+            if (dateTime.Date.Year == DateTime.Now.Year)
             {
                 // TODO: no idea about how to get a short date without year
             }
@@ -322,17 +322,23 @@ namespace Telegram.Converters
 
         public static string Date(int value)
         {
-            return ShortTime.Format(DateTime(value));
+            return ShortTime.Format(ToLocalTime(value));
         }
 
-        public static DateTime DateTime(int value)
+        public static DateTime ToLocalTime(long value)
         {
-            return Utils.UnixTimestampToDateTime(value);
+            // From UTC0 UnixTime to local DateTime
+
+            var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            DateTime.SpecifyKind(dtDateTime, DateTimeKind.Utc);
+
+            dtDateTime = dtDateTime.AddSeconds(value).ToLocalTime();
+            return dtDateTime;
         }
 
         public static string DateAt(int value)
         {
-            var date = DateTime(value);
+            var date = ToLocalTime(value);
             return string.Format(Strings.formatDateAtTime, ShortDate.Format(date), ShortTime.Format(date));
         }
 

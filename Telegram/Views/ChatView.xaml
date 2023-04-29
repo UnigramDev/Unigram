@@ -600,6 +600,7 @@
                                                Text="31 dicembre 2017"
                                                Foreground="White"
                                                TextAlignment="Center"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                Style="{StaticResource CaptionTextBlockStyle}" />
                                 </messages:MessageService>
                             </Border>

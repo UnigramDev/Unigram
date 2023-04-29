@@ -82,7 +82,7 @@ namespace Telegram.Controls.Messages.Content
 
             if (location.LivePeriod > 0)
             {
-                var expired = Converter.DateTime(message.Date + location.LivePeriod) < DateTime.Now;
+                var expired = Formatter.ToLocalTime(message.Date + location.LivePeriod) < DateTime.Now;
                 if (expired)
                 {
                     LivePanel.Visibility = Visibility.Collapsed;

@@ -158,7 +158,7 @@ namespace Telegram.ViewModels
                     }
                     else
                     {
-                        await ShowPopupAsync(string.Format(temporary, Converter.BannedUntil(restricted.RestrictedUntilDate)), Strings.AppName, Strings.OK);
+                        await ShowPopupAsync(string.Format(temporary, Formatter.BannedUntil(restricted.RestrictedUntilDate)), Strings.AppName, Strings.OK);
                     }
 
                     return true;
@@ -201,7 +201,7 @@ namespace Telegram.ViewModels
                     }
                     else
                     {
-                        label = string.Format(temporary, Converter.BannedUntil(restricted.RestrictedUntilDate));
+                        label = string.Format(temporary, Formatter.BannedUntil(restricted.RestrictedUntilDate));
                     }
 
                     return true;
@@ -222,7 +222,7 @@ namespace Telegram.ViewModels
                     }
                     else
                     {
-                        label = string.Format(temporary, Converter.BannedUntil(restricted.RestrictedUntilDate));
+                        label = string.Format(temporary, Formatter.BannedUntil(restricted.RestrictedUntilDate));
                     }
 
                     return true;
@@ -682,7 +682,7 @@ namespace Telegram.ViewModels
                     var last = Items.LastOrDefault();
                     if (last != null && last.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
                     {
-                        until = Utils.ToDateTime(sendAtDate.SendDate);
+                        until = Formatter.ToLocalTime(sendAtDate.SendDate);
                     }
                 }
 

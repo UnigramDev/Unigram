@@ -158,7 +158,7 @@ namespace Telegram.ViewModels.Settings
                     }
                 }
 
-                if (!string.Equals(_bio, userFull.Bio))
+                if (!string.Equals(_bio, userFull.Bio.Text))
                 {
                     var response = await ClientService.SendAsync(new SetBio(_bio));
                     if (response is Error error)

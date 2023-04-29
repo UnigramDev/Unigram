@@ -230,7 +230,7 @@ namespace Telegram.Controls.Cells
                 var link = links[i];
                 if (MessageHelper.TryCreateUri(link, out Uri uri))
                 {
-                    Photo.Source ??= PlaceholderHelper.GetNameForChat(uri.Host, 96, uri.GetHashCode());
+                    Photo.Source ??= PlaceholderHelper.GetNameForChat(uri.Host, uri.GetHashCode());
 
                     var textBlock = new RichTextBlock { TextWrapping = TextWrapping.NoWrap, TextTrimming = TextTrimming.CharacterEllipsis, IsTextSelectionEnabled = false };
                     var paragraph = new Paragraph();
@@ -257,7 +257,7 @@ namespace Telegram.Controls.Cells
                     MessageHelper.SetEntityData(hyperlink, link);
 
                     ToolTipService.SetToolTip(hyperlink, link);
-                    Grid.SetRow(textBlock, i);
+                    SetRow(textBlock, i);
 
                     LinksPanel.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) });
                     LinksPanel.Children.Add(textBlock);

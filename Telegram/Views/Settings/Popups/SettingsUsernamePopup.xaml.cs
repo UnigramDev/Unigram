@@ -57,13 +57,9 @@ namespace Telegram.Views.Settings.Popups
             return MeUrlPrefixConverter.Convert(ViewModel.ClientService, username);
         }
 
-        public string UsernameHelpLink
-        {
-            get
-            {
-                return string.Format(Strings.UsernameHelpLink, string.Empty).TrimEnd();
-            }
-        }
+        private string UsernameHelpLink => string.Format(Strings.UsernameHelpLink, string.Empty).TrimEnd();
+
+        private string BotUsernameHelpLink => Strings.BotUsernameHelp.Replace("*Fragment*", "[Fragment](https://fragment.com)");
 
         #endregion
 

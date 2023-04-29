@@ -364,7 +364,7 @@ namespace Telegram.Controls.Cells
             if (!skipTransition)
             {
                 zoomedChartView.ClearSelection();
-                chartHeaderView.zoomTo(zoomedChartView, d, true);
+                chartHeaderView.ZoomTo(zoomedChartView, d, true);
             }
 
             zoomedChartView.SetHeader(chartHeaderView);
@@ -379,7 +379,7 @@ namespace Telegram.Controls.Cells
                 zoomedChartView.transitionMode = BaseChartView.TRANSITION_MODE_NONE;
                 //chartView.enabled = false;
                 //zoomedChartView.enabled = true;
-                chartHeaderView.zoomTo(zoomedChartView, d, false);
+                chartHeaderView.ZoomTo(zoomedChartView, d, false);
             }
             else
             {
@@ -408,7 +408,7 @@ namespace Telegram.Controls.Cells
             {
                 return;
             }
-            chartHeaderView.zoomOut(chartView, animated);
+            chartHeaderView.ZoomOut(chartView, animated);
             //chartView.legendSignatureView.chevron.setAlpha(1f);
             zoomedChartView.SetHeader(null);
 

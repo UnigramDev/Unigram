@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Threading;
 using Windows.UI.Xaml;
 
 namespace Telegram.Common
@@ -12,6 +13,9 @@ namespace Telegram.Common
     public class DebouncedProperty<T>
     {
         private readonly DispatcherTimer _timer;
+        private readonly Timer _backgroundTimer;
+
+        private readonly TimeSpan _interval;
 
         private readonly Action<T> _update;
         private readonly Func<T, bool> _canUpdate;
@@ -19,16 +23,25 @@ namespace Telegram.Common
         private T _lastValue;
         private T _value;
 
-        public DebouncedProperty(double milliseconds, Action<T> update, Func<T, bool> canUpdate = null)
-            : this(TimeSpan.FromMilliseconds(milliseconds), update, canUpdate)
+        public DebouncedProperty(double milliseconds, Action<T> update, Func<T, bool> canUpdate = null, bool useBackgroundThread = false)
+            : this(TimeSpan.FromMilliseconds(milliseconds), update, canUpdate, useBackgroundThread)
         {
         }
 
-        public DebouncedProperty(TimeSpan throttle, Action<T> update, Func<T, bool> canUpdate = null)
+        public DebouncedProperty(TimeSpan throttle, Action<T> update, Func<T, bool> canUpdate = null, bool useBackgroundThread = false)
         {
-            _timer = new DispatcherTimer();
-            _timer.Interval = throttle;
-            _timer.Tick += OnTick;
+            if (useBackgroundThread)
+            {
+                _backgroundTimer = new Timer(OnTick);
+            }
+            else
+            {
+                _timer = new DispatcherTimer();
+                _timer.Interval = throttle;
+                _timer.Tick += OnTick;
+            }
+
+            _interval = throttle;
 
             _update = update;
             _canUpdate = canUpdate ?? DefaultCanUpdate;
@@ -47,6 +60,16 @@ namespace Telegram.Common
         public void Cancel()
         {
             _timer?.Stop();
+            _backgroundTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+        }
+
+        private void OnTick(object sender)
+        {
+            _backgroundTimer.Change(Timeout.Infinite, Timeout.Infinite);
+
+            _value = _lastValue;
+            _update(_lastValue);
+            _lastValue = default;
         }
 
         private void OnTick(object sender, object e)
@@ -67,11 +90,13 @@ namespace Telegram.Common
         public void Set(T value)
         {
             _timer?.Stop();
+            _backgroundTimer?.Change(Timeout.Infinite, Timeout.Infinite);
 
             if (_canUpdate(value))
             {
                 _lastValue = value;
                 _timer?.Start();
+                _backgroundTimer?.Change(_interval, TimeSpan.Zero);
             }
             else
             {

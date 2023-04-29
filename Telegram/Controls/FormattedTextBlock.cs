@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls.Messages;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -39,8 +40,12 @@ namespace Telegram.Controls
     public class FormattedTextBlock : Control, IPlayerView
     {
         private IClientService _clientService;
-        private FormattedText _formattedText;
+        private string _text;
+        private IList<TextEntity> _entities;
         private double _fontSize;
+
+        private bool _isFormatted;
+        private bool _isHighlighted;
 
         private readonly List<EmojiPosition> _positions = new();
 
@@ -48,10 +53,12 @@ namespace Telegram.Controls
         private bool _ignoreLayoutUpdated = true;
 
         private bool _layoutUpdatedSubscribed;
+        private bool _autoPlaySubscribed;
 
         private TextHighlighter _spoiler;
 
         private RichTextBlock TextBlock;
+        private Paragraph Paragraph;
         private CustomEmojiCanvas CustomEmoji;
 
         private bool _templateApplied;
@@ -95,11 +102,13 @@ namespace Telegram.Controls
             TextBlock = GetTemplateChild(nameof(TextBlock)) as RichTextBlock;
             TextBlock.ContextMenuOpening += _contextMenuOpening;
 
+            Paragraph = TextBlock.Blocks[0] as Paragraph;
+
             _templateApplied = true;
 
-            if (_clientService != null && _formattedText != null)
+            if (_clientService != null && _text != null)
             {
-                SetText(_clientService, _formattedText.Text, _formattedText.Entities, _fontSize);
+                SetText(_clientService, _text, _entities, _fontSize);
             }
         }
 
@@ -112,7 +121,8 @@ namespace Telegram.Controls
         public void Clear()
         {
             _clientService = null;
-            _formattedText = null;
+            _text = null;
+            _entities = null;
 
             _spoiler = null;
 
@@ -132,6 +142,12 @@ namespace Telegram.Controls
                     _layoutUpdatedSubscribed = false;
                     TextBlock.LayoutUpdated -= OnLayoutUpdated;
                 }
+            }
+
+            if (_autoPlaySubscribed)
+            {
+                _autoPlaySubscribed = false;
+                EffectiveViewportChanged -= OnEffectiveViewportChanged;
             }
 
             UnloadObject(ref CustomEmoji);
@@ -159,7 +175,7 @@ namespace Telegram.Controls
 
                 if (value)
                 {
-                    SetText(_clientService, _formattedText?.Text, _formattedText?.Entities, _fontSize);
+                    SetText(_clientService, _text, _entities, _fontSize);
                     SetQuery(string.Empty);
                 }
             }
@@ -177,13 +193,17 @@ namespace Telegram.Controls
 
         public void SetQuery(string query)
         {
-            if (_formattedText != null && TextBlock != null && TextBlock.IsLoaded)
+            if (_text != null && TextBlock != null && TextBlock.IsLoaded)
             {
-                TextBlock.TextHighlighters.Clear();
+                if (_isHighlighted)
+                {
+                    _isHighlighted = false;
+                    TextBlock.TextHighlighters.Clear();
+                }
 
                 if (query?.Length > 0)
                 {
-                    var find = _formattedText.Text.IndexOf(query, StringComparison.OrdinalIgnoreCase);
+                    var find = _text.IndexOf(query, StringComparison.OrdinalIgnoreCase);
                     if (find != -1)
                     {
                         var highligher = new TextHighlighter();
@@ -191,16 +211,14 @@ namespace Telegram.Controls
                         highligher.Background = new SolidColorBrush(Colors.Orange);
                         highligher.Ranges.Add(new TextRange { StartIndex = find, Length = query.Length });
 
+                        _isHighlighted = true;
                         TextBlock.TextHighlighters.Add(highligher);
-                    }
-                    else
-                    {
-                        TextBlock.TextHighlighters.Clear();
                     }
                 }
 
                 if (_spoiler != null)
                 {
+                    _isHighlighted = true;
                     TextBlock.TextHighlighters.Add(_spoiler);
                 }
             }
@@ -211,7 +229,8 @@ namespace Telegram.Controls
             entities ??= Array.Empty<TextEntity>();
 
             _clientService = clientService;
-            _formattedText = new FormattedText(text, entities);
+            _text = text;
+            _entities = entities;
             _fontSize = fontSize;
 
             if (!_templateApplied || string.IsNullOrEmpty(text))
@@ -231,10 +250,16 @@ namespace Telegram.Controls
             var close = false;
 
             var direct = XamlDirect.GetDefault();
-            var paragraph = direct.CreateInstance(XamlTypeIndex.Paragraph);
+            var paragraph = direct.GetXamlDirectObject(Paragraph);
             var inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
 
-            var emojis = new HashSet<long>();
+            var clear = _isFormatted || fontSize != 0 || runs.Count > 0 || Paragraph.Inlines.Count != 1 || Paragraph.Inlines[0] is not Run;
+            if (clear)
+            {
+                direct.ClearCollection(inlines);
+            }
+
+            HashSet<long> emojis = null;
 
             foreach (var entity in runs)
             {
@@ -297,7 +322,7 @@ namespace Telegram.Controls
                         hyperlink.Click += (s, args) => Entity_Click(new TextEntityTypeSpoiler(), null);
                         hyperlink.Foreground = TextBlock.Foreground;
                         hyperlink.UnderlineStyle = UnderlineStyle.None;
-                        hyperlink.FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily;
+                        hyperlink.FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily;
                         //hyperlink.Foreground = foreground;
 
                         spoiler ??= new TextHighlighter();
@@ -382,7 +407,9 @@ namespace Telegram.Controls
 
                         _positions.Add(new EmojiPosition { X = shift, CustomEmojiId = customEmoji.CustomEmojiId });
 
-                        direct.AddToCollection(inlines, CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontFamily: App.Current.Resources["SpoilerFontFamily"] as FontFamily, fontSize: fontSize));
+                        direct.AddToCollection(inlines, CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontFamily: BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily, fontSize: fontSize));
+
+                        emojis ??= new HashSet<long>();
                         emojis.Add(customEmoji.CustomEmojiId);
 
                         shift += entity.Length;
@@ -434,11 +461,20 @@ namespace Telegram.Controls
             }
 
             //ContentPanel.MaxWidth = preformatted ? double.PositiveInfinity : 432;
+
+            _isFormatted = runs.Count > 0 || fontSize != 0;
             IsPreformatted = preformatted;
 
             if (text.Length > previous)
             {
-                direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous), fontSize: fontSize));
+                if (clear)
+                {
+                    direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous), fontSize: fontSize));
+                }
+                else if (Paragraph.Inlines[0] is Run recycled)
+                {
+                    recycled.Text = text;
+                }
             }
 
             if (spoiler?.Ranges.Count > 0)
@@ -458,9 +494,6 @@ namespace Telegram.Controls
                 direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
             }
 
-            TextBlock.Blocks.Clear();
-            TextBlock.Blocks.Add(direct.GetObject(paragraph) as Paragraph);
-
             if (AdjustLineEnding)
             {
                 if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
@@ -479,13 +512,7 @@ namespace Telegram.Controls
                 }
             }
 
-            if (_layoutUpdatedSubscribed)
-            {
-                _layoutUpdatedSubscribed = false;
-                TextBlock.LayoutUpdated -= OnLayoutUpdated;
-            }
-
-            if (emojis.Count > 0)
+            if (emojis != null)
             {
                 LoadObject(ref CustomEmoji, nameof(CustomEmoji));
                 CustomEmoji.UpdateEntities(clientService, emojis);
@@ -496,12 +523,34 @@ namespace Telegram.Controls
                 }
 
                 _ignoreLayoutUpdated = false;
-                _layoutUpdatedSubscribed = true;
-                TextBlock.LayoutUpdated += OnLayoutUpdated;
+
+                if (!_layoutUpdatedSubscribed)
+                {
+                    _layoutUpdatedSubscribed = true;
+                    TextBlock.LayoutUpdated += OnLayoutUpdated;
+                }
+
+                if (!_autoPlaySubscribed)
+                {
+                    _autoPlaySubscribed = true;
+                    EffectiveViewportChanged += OnEffectiveViewportChanged;
+                }
             }
             else if (CustomEmoji != null)
             {
                 UnloadObject(ref CustomEmoji);
+
+                if (_layoutUpdatedSubscribed)
+                {
+                    _layoutUpdatedSubscribed = false;
+                    TextBlock.LayoutUpdated -= OnLayoutUpdated;
+                }
+
+                if (_autoPlaySubscribed)
+                {
+                    _autoPlaySubscribed = false;
+                    EffectiveViewportChanged -= OnEffectiveViewportChanged;
+                }
             }
         }
 
@@ -519,13 +568,19 @@ namespace Telegram.Controls
             }
             else
             {
+                UnloadObject(ref CustomEmoji);
+
                 if (_layoutUpdatedSubscribed)
                 {
                     _layoutUpdatedSubscribed = false;
                     TextBlock.LayoutUpdated -= OnLayoutUpdated;
                 }
 
-                UnloadObject(ref CustomEmoji);
+                if (_autoPlaySubscribed)
+                {
+                    _autoPlaySubscribed = false;
+                    EffectiveViewportChanged -= OnEffectiveViewportChanged;
+                }
             }
         }
 
@@ -553,13 +608,19 @@ namespace Telegram.Controls
 
             if (positions.Count < 1)
             {
+                UnloadObject(ref CustomEmoji);
+
                 if (_layoutUpdatedSubscribed)
                 {
                     _layoutUpdatedSubscribed = false;
                     TextBlock.LayoutUpdated -= OnLayoutUpdated;
                 }
 
-                UnloadObject(ref CustomEmoji);
+                if (_autoPlaySubscribed)
+                {
+                    _autoPlaySubscribed = false;
+                    EffectiveViewportChanged -= OnEffectiveViewportChanged;
+                }
             }
             else
             {
@@ -569,6 +630,12 @@ namespace Telegram.Controls
                 if (_playing)
                 {
                     CustomEmoji.Play();
+                }
+
+                if (!_autoPlaySubscribed)
+                {
+                    _autoPlaySubscribed = true;
+                    EffectiveViewportChanged += OnEffectiveViewportChanged;
                 }
             }
         }
@@ -765,10 +832,11 @@ namespace Telegram.Controls
         {
             if (newValue)
             {
-                EffectiveViewportChanged += OnEffectiveViewportChanged;
+                //EffectiveViewportChanged += OnEffectiveViewportChanged;
             }
             else
             {
+                _autoPlaySubscribed = false;
                 EffectiveViewportChanged -= OnEffectiveViewportChanged;
             }
         }

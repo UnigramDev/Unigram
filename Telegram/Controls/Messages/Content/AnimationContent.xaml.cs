@@ -160,7 +160,7 @@ namespace Telegram.Controls.Messages.Content
                     Overlay.Opacity = 1;
 
                     Player.Source = new LocalVideoSource(file);
-                    message.Delegate.ViewVisibleMessages(false);
+                    message.Delegate.ViewVisibleMessages();
                 }
             }
         }

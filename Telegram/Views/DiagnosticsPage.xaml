@@ -24,10 +24,6 @@
                               Content="Chat preview tooltip"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.SynchronizeItemsSource, Mode=TwoWay}"
-                              Content="Synchronize items source"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
                     <CheckBox IsChecked="{x:Bind ViewModel.CopyFormattedCode, Mode=TwoWay}"
                               Content="Copy formatted code"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

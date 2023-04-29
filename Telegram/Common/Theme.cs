@@ -7,6 +7,7 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
@@ -74,7 +75,8 @@ namespace Telegram.Common
                 : ApplicationTheme.Dark);
         }
 
-        public ThemeParameters Parameters { get; private set; }
+        private readonly Dictionary<ElementTheme, ThemeParameters> _parameters = new();
+        public ThemeParameters Parameters => _parameters[WindowContext.Current.ActualTheme];
 
         #region Local 
 
@@ -228,6 +230,16 @@ namespace Telegram.Common
                 var target = GetOrCreateResources(requested, out bool create);
                 var lookup = ThemeService.GetLookup(requested);
 
+                var themeParameters = new Dictionary<string, int>
+                {
+                    { "ContentDialogBackground", 0 },
+                    { "ContentDialogForeground", 0 },
+                    { "AccentButtonBackground", 0 },
+                    { "AccentButtonForeground", 0 },
+                    { "SystemControlDisabledChromeDisabledLowBrush", 0 },
+                    { "HyperlinkForeground", 0 }
+                };
+
                 Color GetShade(AccentShade shade)
                 {
                     if (shades != null && shades.TryGetValue(shade, out Color accent))
@@ -261,6 +273,11 @@ namespace Telegram.Common
                         else if (item.Value is Color color)
                         {
                             value = color;
+                        }
+
+                        if (themeParameters.ContainsKey(item.Key))
+                        {
+                            themeParameters[item.Key] = value.ToValue();
                         }
 
                         AddOrUpdate<SolidColorBrush>(target, item.Key, create,
@@ -307,24 +324,15 @@ namespace Telegram.Common
                     ThemeDictionaries.Add(requested == TelegramTheme.Light ? "Light" : "Dark", target);
                 }
 
-                int GetColor(string key)
+                _parameters[requested == TelegramTheme.Light ? ElementTheme.Light : ElementTheme.Dark] = new ThemeParameters
                 {
-                    if (target.TryGet(key, out SolidColorBrush brush))
-                    {
-                        return brush.Color.ToValue();
-                    }
-
-                    return 0;
-                }
-
-                Parameters = new ThemeParameters
-                {
-                    BackgroundColor = GetColor("ContentDialogBackground"),
-                    TextColor = GetColor("ContentDialogForeground"),
-                    ButtonColor = GetColor("ButtonBackground"),
-                    ButtonTextColor = GetColor("ButtonForeground"),
-                    HintColor = GetColor("SystemControlDisabledChromeDisabledLowBrush"),
-                    LinkColor = GetColor("HyperlinkForeground")
+                    BackgroundColor = themeParameters["ContentDialogBackground"],
+                    SecondaryBackgroundColor = themeParameters["ContentDialogBackground"],
+                    TextColor = themeParameters["ContentDialogForeground"],
+                    ButtonColor = themeParameters["AccentButtonBackground"],
+                    ButtonTextColor = themeParameters["AccentButtonForeground"],
+                    HintColor = themeParameters["SystemControlDisabledChromeDisabledLowBrush"],
+                    LinkColor = themeParameters["HyperlinkForeground"]
                 };
             }
             catch (UnauthorizedAccessException)

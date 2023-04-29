@@ -84,11 +84,12 @@ namespace Telegram.Views
     //, IHandle<UpdateChatFoldersLayout>
     //, IHandle<UpdateConfetti>
     {
-        public MainViewModel ViewModel => DataContext as MainViewModel;
+        private MainViewModel _viewModel;
+        public MainViewModel ViewModel => _viewModel ??= DataContext as MainViewModel;
+
         public RootPage Root { get; set; }
 
         private readonly IClientService _clientService;
-        private readonly MainViewModel _viewModel;
 
         private readonly AnimatedListHandler _handler;
 
@@ -100,7 +101,6 @@ namespace Telegram.Views
             DataContext = TLContainer.Current.Resolve<MainViewModel>();
 
             _clientService = ViewModel.ClientService;
-            _viewModel = ViewModel;
 
             _handler = new AnimatedListHandler(ChatsList, AnimatedListType.Other);
 
@@ -1584,13 +1584,21 @@ namespace Telegram.Views
 
         private void UpdateListViewsSelectedItem(long chatId)
         {
+            if (ViewModel.Chats.SelectedItem == chatId)
+            {
+                return;
+            }
+
             ViewModel.Chats.SelectedItem = chatId;
 
             if (ViewModel.Chats.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 if (ViewModel.ClientService.TryGetChat(chatId, out Chat chat) && ViewModel.Chats.Items.Contains(chat))
                 {
-                    ChatsList.SelectedItem = chat;
+                    if (ChatsList.SelectedItem != chat)
+                    {
+                        ChatsList.SelectedItem = chat;
+                    }
                 }
                 else
                 {
@@ -2551,7 +2559,7 @@ namespace Telegram.Views
 
                 if (show is false)
                 {
-                    Window.Current.ShowTeachingTip(Photo, Strings.ArchiveMoveToMainMenuInfo, Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode.BottomRight);
+                    Window.Current.ShowTeachingTip(Photo, Strings.ArchiveMoveToMainMenuInfo, TeachingTipPlacementMode.BottomRight);
                 }
             };
 
@@ -3204,7 +3212,7 @@ namespace Telegram.Views
 
                 if (muted is false)
                 {
-                    toggle.Foreground = App.Current.Resources["DangerButtonBackground"] as Brush;
+                    toggle.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
                 }
 
                 flyout.Items.Add(mute);
@@ -3517,6 +3525,11 @@ namespace Telegram.Views
             {
                 inset.RightInset = TopicListPresenter.ActualSize.X;
             }
+        }
+
+        private void Banner_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            MasterDetail.BackgroundMargin = new Thickness(0, -e.NewSize.Height, 0, 0);
         }
     }
 

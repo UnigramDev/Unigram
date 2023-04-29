@@ -45,8 +45,20 @@ namespace Telegram.Controls.Messages
         {
             var text = Children[0] as FormattedTextBlock;
             var media = Children[1] as FrameworkElement;
-            var footer = Children[3] as MessageFooter;
-            var reactions = Children[2] as ReactionsPanel;
+            var third = Children[2];
+
+            MessageFooter footer;
+            ReactionsPanel reactions;
+            if (third is ReactionsPanel)
+            {
+                footer = Children[3] as MessageFooter;
+                reactions = third as ReactionsPanel;
+            }
+            else
+            {
+                footer = third as MessageFooter;
+                reactions = null;
+            }
 
             var textRow = Grid.GetRow(text);
             var mediaRow = Grid.GetRow(media);
@@ -56,16 +68,19 @@ namespace Telegram.Controls.Messages
             media.Measure(availableSize);
             footer.Measure(availableSize);
 
-            reactions.Footer = footer.DesiredSize;
-            reactions.Measure(availableSize);
+            if (reactions != null)
+            {
+                reactions.Footer = footer.DesiredSize;
+                reactions.Measure(availableSize);
+            }
 
-            if (reactions.HasReactions)
+            if (reactions != null && reactions.HasReactions)
             {
                 _margin = new Size(0, 0);
             }
             else if (textRow == footerRow)
             {
-                _margin = Margins(availableSize.Width);
+                _margin = Margins(availableSize.Width, text, footer);
             }
             else if (mediaRow == footerRow)
             {
@@ -81,21 +96,36 @@ namespace Telegram.Controls.Messages
                 ? media.DesiredSize.Width
                 : Math.Max(media.DesiredSize.Width, text.DesiredSize.Width + margin.Width);
 
+            var reactionsWidth = reactions?.DesiredSize.Width ?? 0;
+            var reactionsHeight = reactions?.DesiredSize.Height ?? 0;
+
             if (Reply != null)
             {
-                Reply.ContentWidth = Math.Max(Math.Max(reactions.DesiredSize.Width, footer.DesiredSize.Width), width);
+                Reply.ContentWidth = Math.Max(Math.Max(reactionsWidth, footer.DesiredSize.Width), width);
             }
 
-            return new Size(Math.Max(Math.Max(reactions.DesiredSize.Width, footer.DesiredSize.Width), width),
-                text.DesiredSize.Height + media.DesiredSize.Height + reactions.DesiredSize.Height + margin.Height);
+            return new Size(Math.Max(Math.Max(reactionsWidth, footer.DesiredSize.Width), width),
+                text.DesiredSize.Height + media.DesiredSize.Height + reactionsHeight + margin.Height);
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
             var text = Children[0] as FormattedTextBlock;
             var media = Children[1] as FrameworkElement;
-            var footer = Children[3] as MessageFooter;
-            var reactions = Children[2] as ReactionsPanel;
+            var third = Children[2];
+
+            MessageFooter footer;
+            ReactionsPanel reactions;
+            if (third is ReactionsPanel)
+            {
+                footer = Children[3] as MessageFooter;
+                reactions = third as ReactionsPanel;
+            }
+            else
+            {
+                footer = third as MessageFooter;
+                reactions = null;
+            }
 
             var textRow = Grid.GetRow(text);
             var mediaRow = Grid.GetRow(media);
@@ -111,24 +141,22 @@ namespace Telegram.Controls.Messages
                 text.Arrange(new Rect(0, media.DesiredSize.Height, finalSize.Width, text.DesiredSize.Height));
             }
 
-            reactions.Arrange(new Rect(0, text.DesiredSize.Height + media.DesiredSize.Height, finalSize.Width, reactions.DesiredSize.Height));
+            reactions?.Arrange(new Rect(0, text.DesiredSize.Height + media.DesiredSize.Height, finalSize.Width, reactions.DesiredSize.Height));
+            var reactionsHeight = reactions?.DesiredSize.Height ?? 0;
 
             var margin = _margin;
             var footerWidth = footer.DesiredSize.Width /*- footer.Margin.Right + footer.Margin.Left*/;
             var footerHeight = footer.DesiredSize.Height /*- footer.Margin.Bottom + footer.Margin.Top*/;
             footer.Arrange(new Rect(finalSize.Width - footerWidth,
-                text.DesiredSize.Height + media.DesiredSize.Height + reactions.DesiredSize.Height - footerHeight + margin.Height,
+                text.DesiredSize.Height + media.DesiredSize.Height + reactionsHeight - footerHeight + margin.Height,
                 footer.DesiredSize.Width,
                 footer.DesiredSize.Height));
 
             return finalSize;
         }
 
-        private Size Margins(double availableWidth)
+        private Size Margins(double availableWidth, FormattedTextBlock text, MessageFooter footer)
         {
-            var text = Children[0] as FormattedTextBlock;
-            var footer = Children[3] as MessageFooter;
-
             var marginLeft = 0d;
             var marginBottom = 0d;
 

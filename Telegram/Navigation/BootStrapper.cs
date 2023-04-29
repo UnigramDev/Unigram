@@ -284,7 +284,7 @@ namespace Telegram.Navigation
             //}
             var handled = NavigationService?.CanGoBack == false;
 
-            RaiseBackRequested(Windows.System.VirtualKey.GoBack, ref handled);
+            RaiseBackRequested(VirtualKey.GoBack, ref handled);
             args.Handled = handled;
         }
 
@@ -336,7 +336,7 @@ namespace Telegram.Navigation
                     dialog.Hide();
                     return;
                 }
-                else if (key == Windows.System.VirtualKey.Escape)
+                else if (key == VirtualKey.Escape)
                 {
                     handled = args.Handled = true;
                     return;
@@ -826,12 +826,12 @@ namespace Telegram.Navigation
 
     public class BackRequestedRoutedEventArgs : HandledEventArgs
     {
-        public BackRequestedRoutedEventArgs(Windows.System.VirtualKey key = Windows.System.VirtualKey.None)
+        public BackRequestedRoutedEventArgs(VirtualKey key = VirtualKey.None)
         {
             Key = key;
         }
 
-        public Windows.System.VirtualKey Key { get; }
+        public VirtualKey Key { get; }
     }
 
     public interface INavigablePage

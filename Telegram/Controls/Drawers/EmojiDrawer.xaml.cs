@@ -100,7 +100,7 @@ namespace Telegram.Controls.Drawers
                 {
                     List.Padding = new Thickness(8, 0, 0, 0);
                     List.ItemContainerStyle.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 4, 4)));
-                    List.GroupStyle[0].HeaderContainerStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0, 0, 0, 6)));
+                    List.GroupStyle[0].HeaderContainerStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0, 0, 8, 6)));
 
                     FluidGridView.GetTriggers(List).Clear();
                     FluidGridView.GetTriggers(List).Add(new FixedGridViewTrigger { ItemLength = 28 });
@@ -285,8 +285,6 @@ namespace Telegram.Controls.Drawers
 
         private async void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ItemClick?.Invoke(this, e);
-
             if (e.ClickedItem is EmojiData data)
             {
                 _needUpdate = true;
@@ -294,6 +292,8 @@ namespace Telegram.Controls.Drawers
                 SettingsService.Current.Emoji.AddRecentEmoji(data.Value);
                 SettingsService.Current.Emoji.SortRecentEmoji();
                 SettingsService.Current.Emoji.SaveRecentEmoji();
+
+                ItemClick?.Invoke(this, e);
             }
             else if (e.ClickedItem is StickerViewModel sticker)
             {
@@ -322,11 +322,16 @@ namespace Telegram.Controls.Drawers
                         }
                     }
                 }
-                else if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+                else
                 {
-                    SettingsService.Current.Emoji.AddRecentEmoji($"{sticker.Emoji};{customEmoji.CustomEmojiId}");
-                    SettingsService.Current.Emoji.SortRecentEmoji();
-                    SettingsService.Current.Emoji.SaveRecentEmoji();
+                    if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+                    {
+                        SettingsService.Current.Emoji.AddRecentEmoji($"{sticker.Emoji};{customEmoji.CustomEmojiId}");
+                        SettingsService.Current.Emoji.SortRecentEmoji();
+                        SettingsService.Current.Emoji.SaveRecentEmoji();
+                    }
+
+                    ItemClick?.Invoke(this, e);
                 }
             }
         }

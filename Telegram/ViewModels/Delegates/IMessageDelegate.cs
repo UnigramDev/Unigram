@@ -13,7 +13,9 @@ namespace Telegram.ViewModels.Delegates
 {
     public interface IMessageDelegate : IViewModelDelegate
     {
-        public ISettingsService Settings { get; }
+        bool IsDialog { get; }
+
+        ISettingsService Settings { get; }
 
         IEventAggregator Aggregator { get; }
 
@@ -27,7 +29,6 @@ namespace Telegram.ViewModels.Delegates
         bool CanBeDownloaded(object content, File file);
         void DownloadFile(MessageViewModel message, File file);
 
-        void DoubleClick(MessageViewModel message);
         void ForwardMessage(MessageViewModel message);
 
         void OpenReply(MessageViewModel message);
@@ -37,7 +38,6 @@ namespace Telegram.ViewModels.Delegates
         void OpenWebPage(WebPage webPage);
         void OpenSticker(Sticker sticker);
         void OpenLocation(Location location, string title);
-        void OpenLiveLocation(MessageViewModel message);
         void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button);
         void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0);
         void PlayMessage(MessageViewModel message);
@@ -46,7 +46,7 @@ namespace Telegram.ViewModels.Delegates
 
         void VotePoll(MessageViewModel message, IList<PollOption> option);
 
-        void ViewVisibleMessages(bool intermediate);
+        void ViewVisibleMessages();
 
         void OpenUsername(string username);
         void OpenUser(long userId);
@@ -61,5 +61,6 @@ namespace Telegram.ViewModels.Delegates
         void SendBotCommand(string command);
 
         string GetAdminTitle(MessageViewModel message);
+        void UpdateAdministrators(long chatId);
     }
 }

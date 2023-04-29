@@ -23,7 +23,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatListView : SelectListView
+    public class ChatListView : ListView
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -34,7 +34,7 @@ namespace Telegram.Controls.Chats
 
         public Action<bool> ViewVisibleMessages { get; set; }
 
-        private readonly DisposableMutex _loadMoreLock = new DisposableMutex();
+        private readonly DisposableMutex _loadMoreLock = new();
 
         private bool _programmaticExternal;
         private bool _programmaticScrolling;
@@ -54,7 +54,6 @@ namespace Telegram.Controls.Chats
             _recognizer = new GestureRecognizer();
             _recognizer.GestureSettings = GestureSettings.DoubleTap;
             _recognizer.Tapped += Recognizer_Tapped;
-
 
             Loaded += OnLoaded;
         }
@@ -89,7 +88,11 @@ namespace Telegram.Controls.Chats
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ViewChanged();
+            // TODO: triple check
+            if (e.NewSize.Height < ActualHeight)
+            {
+                ViewChanged();
+            }
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -373,8 +376,14 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            foreach (SelectorItem container in panel.Children)
+            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
             {
+                var container = ContainerFromIndex(i) as SelectorItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
                 var content = container.ContentTemplateRoot as MessageSelector;
                 content?.UpdateSelectionEnabled(newValue, true);
             }
@@ -407,15 +416,16 @@ namespace Telegram.Controls.Chats
 
         protected void OnDoubleTapped(SelectorItem selector)
         {
-            if (selector.ContentTemplateRoot is FrameworkElement root && root.Tag is MessageViewModel message)
+            var message = ItemFromContainer(selector) as MessageViewModel;
+            if (message!= null)
             {
-                ViewModel.ReplyToMessage(message);
+                ViewModel.DoubleTapped(message);
             }
         }
 
         internal void OnPointerPressed(LazoListViewItem item, PointerRoutedEventArgs e)
         {
-            if (IsSelectionEnabled is false)
+            if (IsSelectionEnabled is false && !_pressed)
             {
                 var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
                 if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonPressed && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
@@ -429,6 +439,10 @@ namespace Telegram.Controls.Chats
                         _recognizer.CompleteGesture();
                     }
                 }
+            }
+            else
+            {
+                _recognizer.CompleteGesture();
             }
 
             _pressed = true;
@@ -599,6 +613,10 @@ namespace Telegram.Controls.Chats
                 {
                     _recognizer.CompleteGesture();
                 }
+            }
+            else
+            {
+                _recognizer.CompleteGesture();
             }
 
             var handled = _firstItem != null && ViewModel.SelectedItems.ContainsKey(_firstItem.Id) == _operation;

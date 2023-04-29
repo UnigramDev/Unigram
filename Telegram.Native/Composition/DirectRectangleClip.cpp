@@ -3,129 +3,143 @@
 
 namespace winrt::Telegram::Native::Composition::implementation
 {
-	float DirectRectangleClip::Left() {
-		return m_left;
-	}
+    float DirectRectangleClip::Left() {
+        return m_left;
+    }
 
-	void DirectRectangleClip::Left(float value) {
-		m_left = value;
-		m_impl->SetLeft(value);
-	}
+    void DirectRectangleClip::Left(float value) {
+        m_left = value;
+        m_impl->SetLeft(value);
+    }
 
-	float DirectRectangleClip::Top() {
-		return m_top;
-	}
+    float DirectRectangleClip::Top() {
+        return m_top;
+    }
 
-	void DirectRectangleClip::Top(float value) {
-		m_top = value;
-		m_impl->SetTop(value);
-	}
+    void DirectRectangleClip::Top(float value) {
+        m_top = value;
+        m_impl->SetTop(value);
+    }
 
-	float DirectRectangleClip::Right() {
-		return m_right;
-	}
+    float DirectRectangleClip::Right() {
+        return m_right;
+    }
 
-	void DirectRectangleClip::Right(float value) {
-		m_right = value;
-		m_impl->SetRight(value);
-	}
+    void DirectRectangleClip::Right(float value) {
+        m_right = value;
+        m_impl->SetRight(value);
+    }
 
-	float DirectRectangleClip::Bottom() {
-		return m_bottom;
-	}
+    float DirectRectangleClip::Bottom() {
+        return m_bottom;
+    }
 
-	void DirectRectangleClip::Bottom(float value) {
-		m_bottom = value;
-		m_impl->SetBottom(value);
-	}
+    void DirectRectangleClip::Bottom(float value) {
+        m_bottom = value;
+        m_impl->SetBottom(value);
+    }
 
 
 
-	float DirectRectangleClip::TopLeft() {
-		return m_topLeft;
-	}
+    float DirectRectangleClip::TopLeft() {
+        return m_topLeft;
+    }
 
-	void DirectRectangleClip::TopLeft(float value) {
-		m_topLeft = value;
-		m_impl->SetTopLeftRadiusX(value);
-		m_impl->SetTopLeftRadiusY(value);
-	}
+    void DirectRectangleClip::TopLeft(float value) {
+        m_topLeft = value;
+        m_impl->SetTopLeftRadiusX(value);
+        m_impl->SetTopLeftRadiusY(value);
+    }
 
-	float DirectRectangleClip::TopRight() {
-		return m_topRight;
-	}
+    float DirectRectangleClip::TopRight() {
+        return m_topRight;
+    }
 
-	void DirectRectangleClip::TopRight(float value) {
-		m_topRight = value;
-		m_impl->SetTopRightRadiusX(value);
-		m_impl->SetTopRightRadiusY(value);
-	}
+    void DirectRectangleClip::TopRight(float value) {
+        m_topRight = value;
+        m_impl->SetTopRightRadiusX(value);
+        m_impl->SetTopRightRadiusY(value);
+    }
 
-	float DirectRectangleClip::BottomRight() {
-		return m_bottomRight;
-	}
+    float DirectRectangleClip::BottomRight() {
+        return m_bottomRight;
+    }
 
-	void DirectRectangleClip::BottomRight(float value) {
-		m_bottomRight = value;
-		m_impl->SetBottomRightRadiusX(value);
-		m_impl->SetBottomRightRadiusY(value);
-	}
+    void DirectRectangleClip::BottomRight(float value) {
+        m_bottomRight = value;
+        m_impl->SetBottomRightRadiusX(value);
+        m_impl->SetBottomRightRadiusY(value);
+    }
 
-	float DirectRectangleClip::BottomLeft() {
-		return m_bottomLeft;
-	}
+    float DirectRectangleClip::BottomLeft() {
+        return m_bottomLeft;
+    }
 
-	void DirectRectangleClip::BottomLeft(float value) {
-		m_bottomLeft = value;
-		m_impl->SetBottomLeftRadiusX(value);
-		m_impl->SetBottomLeftRadiusY(value);
-	}
+    void DirectRectangleClip::BottomLeft(float value) {
+        m_bottomLeft = value;
+        m_impl->SetBottomLeftRadiusX(value);
+        m_impl->SetBottomLeftRadiusY(value);
+    }
 
-	void DirectRectangleClip::Set(float uniform) {
-		TopLeft(uniform);
-		TopRight(uniform);
-		BottomRight(uniform);
-		BottomLeft(uniform);
-	}
+    void DirectRectangleClip::Set(float uniform) {
+        TopLeft(uniform);
+        TopRight(uniform);
+        BottomRight(uniform);
+        BottomLeft(uniform);
+    }
 
-	void DirectRectangleClip::Set(float topLeft, float topRight, float bottomRight, float bottomLeft) {
-		TopLeft(topLeft);
-		TopRight(topRight);
-		BottomRight(bottomRight);
-		BottomLeft(bottomLeft);
-	}
+    void DirectRectangleClip::Set(float topLeft, float topRight, float bottomRight, float bottomLeft) {
+        TopLeft(topLeft);
+        TopRight(topRight);
+        BottomRight(bottomRight);
+        BottomLeft(bottomLeft);
+    }
 
-	void DirectRectangleClip::AnimateTop(Compositor compositor, float from, float to, double duration) {
-		m_top = to;
-		
-		HRESULT hr;
-		auto device = CompositionDevice::Current();
+    void DirectRectangleClip::SetInset(float uniform) {
+        Left(uniform);
+        Top(uniform);
+        Right(uniform);
+        Bottom(uniform);
+    }
 
-		winrt::com_ptr<IDCompositionAnimation> animation;
-		hr = device->CreateCubicBezierAnimation(compositor, from, to, duration, animation.put());
+    void DirectRectangleClip::SetInset(float left, float top, float right, float bottom) {
+        Left(left);
+        Top(top);
+        Right(right);
+        Bottom(bottom);
+    }
 
-		if (SUCCEEDED(hr)) {
-			m_impl->SetTop(animation.get());
-		}
-		else {
-			m_impl->SetTop(to);
-		}
-	}
+    void DirectRectangleClip::AnimateTop(Compositor compositor, float from, float to, double duration) {
+        m_top = to;
 
-	void DirectRectangleClip::AnimateBottom(Compositor compositor, float from, float to, double duration) {
-		m_bottom = to;
+        HRESULT hr;
+        auto device = CompositionDevice::Current();
 
-		HRESULT hr;
-		auto device = CompositionDevice::Current();
+        winrt::com_ptr<IDCompositionAnimation> animation;
+        hr = device->CreateCubicBezierAnimation(compositor, from, to, duration, animation.put());
 
-		winrt::com_ptr<IDCompositionAnimation> animation;
-		hr = device->CreateCubicBezierAnimation(compositor, from, to, duration, animation.put());
+        if (SUCCEEDED(hr)) {
+            m_impl->SetTop(animation.get());
+        }
+        else {
+            m_impl->SetTop(to);
+        }
+    }
 
-		if (SUCCEEDED(hr)) {
-			m_impl->SetBottom(animation.get());
-		}
-		else {
-			m_impl->SetBottom(to);
-		}
-	}
+    void DirectRectangleClip::AnimateBottom(Compositor compositor, float from, float to, double duration) {
+        m_bottom = to;
+
+        HRESULT hr;
+        auto device = CompositionDevice::Current();
+
+        winrt::com_ptr<IDCompositionAnimation> animation;
+        hr = device->CreateCubicBezierAnimation(compositor, from, to, duration, animation.put());
+
+        if (SUCCEEDED(hr)) {
+            m_impl->SetBottom(animation.get());
+        }
+        else {
+            m_impl->SetBottom(to);
+        }
+    }
 }

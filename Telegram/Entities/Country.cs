@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Rg.DiffUtils;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.Globalization;
@@ -307,5 +308,18 @@ namespace Telegram.Entities
         }.OrderBy(x => x.DisplayName).ToList();
 
         #endregion
+    }
+
+    public class CountryDiffHandler : IDiffHandler<Country>
+    {
+        public bool CompareItems(Country oldItem, Country newItem)
+        {
+            return oldItem.Code == newItem.Code;
+        }
+
+        public void UpdateItem(Country oldItem, Country newItem)
+        {
+
+        }
     }
 }

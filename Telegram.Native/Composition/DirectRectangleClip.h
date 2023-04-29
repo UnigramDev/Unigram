@@ -44,6 +44,9 @@ namespace winrt::Telegram::Native::Composition::implementation
         void Set(float uniform);
         void Set(float topLeft, float topRight, float bottomRight, float bottomLeft);
 
+        void SetInset(float uniform);
+        void SetInset(float left, float top, float right, float bottom);
+
         void AnimateTop(Compositor compositor, float from, float to, double duration);
         void AnimateBottom(Compositor compositor, float from, float to, double duration);
 

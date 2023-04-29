@@ -35,7 +35,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Header>
@@ -196,9 +196,8 @@
                 </controls:SettingsPanel>
             </ListView.Header>
             <ListView.Footer>
-                <TextBlock x:Name="Footer"
-                           Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           Margin="24,8,24,32" />
+                <controls:SettingsFooter x:Name="Footer"
+                                         Margin="24,8,24,32" />
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

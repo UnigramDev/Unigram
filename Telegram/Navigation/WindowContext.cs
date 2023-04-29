@@ -193,13 +193,15 @@ namespace Telegram.Navigation
 
 
         private readonly HashSet<int> _screenCaptureDisabled = new();
+        private bool _screenCaptureEnabled = true;
 
         public void DisableScreenCapture(int hash)
         {
             _screenCaptureDisabled.Add(hash);
 
-            if (_screenCaptureDisabled.Count == 1)
+            if (_screenCaptureDisabled.Count == 1 && _screenCaptureEnabled)
             {
+                _screenCaptureEnabled = false;
                 ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = false;
             }
         }
@@ -208,8 +210,9 @@ namespace Telegram.Navigation
         {
             _screenCaptureDisabled.Remove(hash);
 
-            if (_screenCaptureDisabled.Count == 0)
+            if (_screenCaptureDisabled.Count == 0 && !_screenCaptureEnabled)
             {
+                _screenCaptureEnabled = true;
                 ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = true;
             }
         }

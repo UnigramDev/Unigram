@@ -4,9 +4,7 @@
                     xmlns:controls="using:Telegram.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    mc:Ignorable="d"
-                    d:DesignHeight="300"
-                    d:DesignWidth="400">
+                    mc:Ignorable="d">
 
     <Style TargetType="local:MessageBubble">
         <Setter Property="Margin"
@@ -176,6 +174,7 @@
                                 <controls:FormattedTextBlock x:Name="Message"
                                                              Foreground="{ThemeResource MessageForegroundBrush}"
                                                              AdjustLineEnding="True"
+                                                             AutoPlay="True"
                                                              Margin="10,0,10,6"
                                                              Grid.Column="1"
                                                              Grid.Row="2" />
@@ -185,6 +184,7 @@
                                         Grid.Row="3" />
 
                                 <local:ReactionsPanel x:Name="Reactions"
+                                                      x:Load="False"
                                                       HorizontalAlignment="Stretch"
                                                       VerticalAlignment="Bottom"
                                                       Padding="4,0,4,4" />

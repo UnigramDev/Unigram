@@ -29,7 +29,7 @@ namespace Telegram.Views.Settings
                 return null;
             }
 
-            return string.Format(Strings.NetworkUsageSince, string.Format(Strings.formatDateAtTime, Converter.ShortDate.Format(sinceDate), Converter.ShortTime.Format(sinceDate)));
+            return string.Format(Strings.NetworkUsageSince, string.Format(Strings.formatDateAtTime, Formatter.ShortDate.Format(sinceDate), Formatter.ShortTime.Format(sinceDate)));
         }
 
         #endregion

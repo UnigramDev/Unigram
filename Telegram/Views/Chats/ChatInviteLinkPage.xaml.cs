@@ -118,7 +118,7 @@ namespace Telegram.Views.Chats
             else if (phase == 2)
             {
                 var photo = content.Children[0] as ProfilePicture;
-                photo.Source = PlaceholderHelper.GetGlyph(Icons.Link, 0, 36);
+                photo.Source = PlaceholderHelper.GetGlyph(Icons.Link, 0);
             }
         }
 

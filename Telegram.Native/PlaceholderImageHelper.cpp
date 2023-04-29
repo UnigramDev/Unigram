@@ -343,26 +343,6 @@ namespace winrt::Telegram::Native::implementation
         winrt::check_hresult(InternalDrawIdenticon(hash, side, randomAccessStream));
     }
 
-    void PlaceholderImageHelper::DrawGlyph(hstring text, Color top, Color bottom, IRandomAccessStream randomAccessStream)
-    {
-        winrt::check_hresult(InternalDrawProfilePlaceholder(text, top, bottom, 192.0f, m_symbolFormat.get(), randomAccessStream));
-    }
-
-    void PlaceholderImageHelper::DrawSavedMessages(Color top, Color bottom, IRandomAccessStream randomAccessStream)
-    {
-        winrt::check_hresult(InternalDrawProfilePlaceholder(L"\uE907", top, bottom, 192.0f, m_symbolFormat.get(), randomAccessStream));
-    }
-
-    void PlaceholderImageHelper::DrawDeletedUser(Color top, Color bottom, IRandomAccessStream randomAccessStream)
-    {
-        winrt::check_hresult(InternalDrawProfilePlaceholder(L"\uE91A", top, bottom, 184.0f, m_symbolFormat.get(), randomAccessStream));
-    }
-
-    void PlaceholderImageHelper::DrawProfilePlaceholder(hstring text, Color top, Color bottom, IRandomAccessStream randomAccessStream)
-    {
-        winrt::check_hresult(InternalDrawProfilePlaceholder(text, top, bottom, 180.0f, m_textFormat.get(), randomAccessStream));
-    }
-
     void PlaceholderImageHelper::DrawThumbnailPlaceholder(hstring fileName, float blurAmount, IRandomAccessStream randomAccessStream)
     {
         winrt::check_hresult(InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
@@ -557,45 +537,6 @@ namespace winrt::Telegram::Native::implementation
         {
             ReturnIfFailed(result, CreateDeviceResources());
             return InternalDrawIdenticon(hash, side, randomAccessStream);
-        }
-
-        return SaveImageToStream(m_targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
-    }
-
-    HRESULT PlaceholderImageHelper::InternalDrawProfilePlaceholder(hstring glyph, Color top, Color bottom, float offset, IDWriteTextFormat* format, IRandomAccessStream randomAccessStream)
-    {
-        auto lock = critical_section::scoped_lock(m_criticalSection);
-        auto text = glyph.data();
-        auto textLength = glyph.size();
-
-        HRESULT result;
-        DWRITE_TEXT_METRICS textMetrics;
-        ReturnIfFailed(result, MeasureText(text, format, &textMetrics));
-
-        m_d2dContext->SetTarget(m_targetBitmap.get());
-        m_d2dContext->BeginDraw();
-        //m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
-        m_d2dContext->Clear(D2D1::ColorF(top.R / 255.0f, top.G / 255.0f, top.B / 255.0f, top.A / 255.0f));
-
-        D2D1_LINEAR_GRADIENT_BRUSH_PROPERTIES properties;
-        properties.startPoint = { 0, 0 };
-        properties.endPoint = { 0, 192 };
-        D2D1_GRADIENT_STOP* stops = new D2D1_GRADIENT_STOP[2];
-        stops[0] = { 1, D2D1::ColorF(top.R / 255.0f, top.G / 255.0f, top.B / 255.0f, top.A / 255.0f) };
-        stops[1] = { 0, D2D1::ColorF(bottom.R / 255.0f, bottom.G / 255.0f, bottom.B / 255.0f, bottom.A / 255.0f) };
-        winrt::com_ptr<ID2D1GradientStopCollection> collection;
-        ReturnIfFailed(result, m_d2dContext->CreateGradientStopCollection(stops, 2, collection.put()));
-        winrt::com_ptr<ID2D1LinearGradientBrush> brush;
-        ReturnIfFailed(result, m_d2dContext->CreateLinearGradientBrush(properties, collection.get(), brush.put()));
-        m_d2dContext->FillRectangle({ 0, 0, 192, 192 }, brush.get());
-
-        D2D1_RECT_F layoutRect = { (192.0f - textMetrics.width) / 2.0f, (offset - textMetrics.height) / 2.0f, 192.0f, 192.0f };
-        m_d2dContext->DrawText(text, textLength, format, &layoutRect, m_textBrush.get());
-
-        if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
-        {
-            ReturnIfFailed(result, CreateDeviceResources());
-            return InternalDrawProfilePlaceholder(glyph, top, bottom, offset, format, randomAccessStream);
         }
 
         return SaveImageToStream(m_targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);

@@ -4,13 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Converters;
+using Telegram.Native;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
@@ -251,7 +251,7 @@ namespace Telegram.Common
         public static async Task<IList<object>> SearchAsync(IClientService clientService, string query, EmojiSkinTone skin)
         {
             var result = new List<object>();
-            var inputLanguage = Windows.Globalization.Language.CurrentInputMethodLanguageTag;
+            var inputLanguage = NativeUtils.GetKeyboardCulture();
 
             var response = await clientService.SendAsync(new SearchEmojis(query, false, new[] { inputLanguage }));
             if (response is Emojis suggestions)
@@ -318,11 +318,6 @@ namespace Telegram.Common
             count = 0;
             text = text.Trim();
 
-            if (text.Contains(" "))
-            {
-                return false;
-            }
-
             var result = false;
 
             foreach (var last in EnumerateByComposedCharacterSequence(text))
@@ -356,7 +351,7 @@ namespace Telegram.Common
             var success = TryCountEmojis(stringify, out int count);
 
             Debug.Assert(success);
-            Debug.Assert(count == _rawEmojis.Length);
+            Debug.Assert(count == _rawEmojis.Count);
         }
 
         public static bool IsEmoji(string text)

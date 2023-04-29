@@ -110,7 +110,7 @@ namespace Telegram.Controls.Messages.Content
                 Player.IsLoopingEnabled = PowerSavingPolicy.AutoPlayStickersInChats;
                 Player.Source = new LocalVideoSource(file);
 
-                message.Delegate.ViewVisibleMessages(false);
+                message.Delegate.ViewVisibleMessages();
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {

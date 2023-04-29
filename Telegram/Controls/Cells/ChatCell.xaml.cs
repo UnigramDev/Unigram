@@ -20,6 +20,8 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
+using Telegram.Views;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
@@ -166,8 +168,9 @@ namespace Telegram.Controls.Cells
 
             var tooltip = new ToolTip();
             tooltip.Opened += ToolTip_Opened;
+            tooltip.Closed += Tooltip_Closed;
 
-            ToolTipService.SetToolTip(BriefLabel, tooltip);
+            ToolTipService.SetToolTip(this, tooltip);
 
             _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
             _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
@@ -251,7 +254,7 @@ namespace Telegram.Controls.Cells
                 }
 
                 TitleLabel.Text = Strings.ArchivedChats;
-                Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0, 96);
+                Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0);
 
                 UnreadMentionsBadge.Visibility = Visibility.Collapsed;
                 PinnedIcon.Visibility = Visibility.Collapsed;
@@ -1094,7 +1097,7 @@ namespace Telegram.Controls.Cells
                         }
 
                         _positions.Add(new EmojiPosition { X = shift + entity.Offset + 1, CustomEmojiId = customEmoji.CustomEmojiId });
-                        BriefLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily });
+                        BriefLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
 
                         emoji.Add(customEmoji.CustomEmojiId);
                         shift += 2;
@@ -1545,43 +1548,117 @@ namespace Telegram.Controls.Cells
 
         private string UpdateTimeLabel(Message message)
         {
-            return Converter.DateExtended(message.Date);
+            return Formatter.DateExtended(message.Date);
         }
 
         private void ToolTip_Opened(object sender, RoutedEventArgs e)
         {
             var tooltip = sender as ToolTip;
-            if (tooltip != null)
+            if (tooltip != null && _chat != null)
             {
-                if (BriefLabel.IsTextTrimmed)
+                if (SettingsService.Current.Diagnostics.ChatPreviewToolTip)
                 {
-                    if (SettingsService.Current.Diagnostics.ChatPreviewToolTip)
+                    var playback = TLContainer.Current.Playback;
+                    var settings = TLContainer.Current.Resolve<ISettingsService>(_clientService.SessionId);
+
+                    var hidePreview = !settings.Notifications.GetShowPreview(_chat);
+                    hidePreview |= _chat.HasProtectedContent;
+                    hidePreview |= _chat.LastMessage == null;
+                    hidePreview |= _chat.Type is ChatTypeSecret;
+
+                    if (hidePreview || _chat.LastMessage.IsService())
                     {
-                        var bubble = new MessageBubble();
-                        bubble.UpdateMessage(new ViewModels.MessageViewModel(_clientService, null, null, _chat.LastMessage));
-
-                        //var background = new ChatBackgroundPresenter();
-                        //background.Update(_clientService, null);
-                        //background.Margin = new Thickness(-8, -4, -8, -8);
-
-                        //var grid = new Grid();
-                        //grid.Children.Add(background);
-                        //grid.Children.Add(bubble);
-                        //grid.Padding = new Thickness(8, 4, 8, 8);
-
-                        tooltip.Content = bubble;
-                        tooltip.Padding = new Thickness();
-                        tooltip.CornerRadius = new CornerRadius(8);
+                        tooltip.IsOpen = false;
+                        return;
                     }
-                    else
+
+                    var delegato = new ChatMessageDelegate(_clientService, settings, _chat);
+                    var message = new MessageViewModel(_clientService, playback, delegato, _chat.LastMessage);
+
+                    var bubble = new MessageBubble();
+                    if (message.IsOutgoing && !message.IsChannelPost)
                     {
-                        tooltip.Content = FromLabel.Text + BriefLabel.Text;
+                        bubble.Resources = new ThemeOutgoing();
                     }
+
+                    // TODO: this is not correct, as MessageViewModel doesn't
+                    // hold a strong reference to the IMessageDelegate object.
+                    bubble.Tag = delegato;
+                    bubble.UpdateMessage(message);
+
+                    var grid = new Grid();
+                    grid.Children.Add(bubble);
+
+                    if (bubble.HasFloatingElements)
+                    {
+                        var presenter = new ChatBackgroundPresenter();
+                        presenter.Update(_clientService, null);
+                        presenter.CornerRadius = new CornerRadius(15);
+
+                        void handler(object sender, SizeChangedEventArgs args)
+                        {
+                            bubble.SizeChanged -= handler;
+                            presenter.Width = args.NewSize.Width;
+                            presenter.Height = args.NewSize.Height;
+                        }
+
+                        bubble.SizeChanged += handler;
+
+                        var canvas = new Canvas();
+                        canvas.Children.Add(presenter);
+                        grid.Children.Insert(0, canvas);
+                    }
+
+                    tooltip.Content = grid;
+                    tooltip.Padding = new Thickness();
+                    tooltip.CornerRadius = new CornerRadius(15);
+                    tooltip.MaxWidth = double.PositiveInfinity;
+
+                    if (message.ReplyToMessageId != 0 ||
+                        message.Content is MessagePinMessage ||
+                        message.Content is MessageGameScore ||
+                        message.Content is MessagePaymentSuccessful)
+                    {
+                        message.ReplyToMessageState = ReplyToMessageState.Loading;
+
+                        _clientService.Send(new GetRepliedMessage(message.ChatId, message.Id), response =>
+                        {
+                            if (response is Message result)
+                            {
+                                message.ReplyToMessage = new MessageViewModel(_clientService, playback, delegato, result);
+                                message.ReplyToMessageState = ReplyToMessageState.None;
+                            }
+                            else
+                            {
+                                message.ReplyToMessageState = ReplyToMessageState.Deleted;
+                            }
+
+                            this.BeginOnUIThread(() =>
+                            {
+                                if (tooltip.IsOpen)
+                                {
+                                    bubble.UpdateMessageReply(message);
+                                }
+                            });
+                        });
+                    }
+                }
+                else if (BriefLabel.IsTextTrimmed)
+                {
+                    tooltip.Content = FromLabel.Text + BriefLabel.Text;
                 }
                 else
                 {
                     tooltip.IsOpen = false;
                 }
+            }
+        }
+
+        private void Tooltip_Closed(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToolTip tooltip)
+            {
+                tooltip.Content = new object();
             }
         }
 
@@ -1683,7 +1760,7 @@ namespace Telegram.Controls.Cells
             }
 
             TitleLabel.Text = title;
-            Photo.Source = type is ChatTypeSupergroup ? PlaceholderHelper.GetNameForChat(title, 48, color) : PlaceholderHelper.GetNameForUser(title, 48, color);
+            Photo.Source = type is ChatTypeSupergroup ? PlaceholderHelper.GetNameForChat(title, color) : PlaceholderHelper.GetNameForUser(title, color);
 
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
             VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
@@ -1697,7 +1774,7 @@ namespace Telegram.Controls.Cells
 
             FromLabel.Text = from;
             BriefLabel.Text = message;
-            _dateLabel = Converter.ShortTime.Format(date);
+            _dateLabel = Formatter.ShortTime.Format(date);
             _stateLabel = sent ? "\uE601" : string.Empty;
 
             TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
@@ -2353,9 +2430,11 @@ namespace Telegram.Controls.Cells
             var line2Left = min;
             var line2Right = finalSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
 
+            var briefWidth = Math.Max(0, line2Right - line2Left - MinithumbnailPanel.DesiredSize.Width);
+
             rect.X = min;
             rect.Y = 34;
-            rect.Width = FromLabel.DesiredSize.Width;
+            rect.Width = briefWidth;
             rect.Height = FromLabel.DesiredSize.Height;
             FromLabel.Arrange(rect);
 
@@ -2367,7 +2446,7 @@ namespace Telegram.Controls.Cells
 
             rect.X = min + FromLabel.DesiredSize.Width + MinithumbnailPanel.DesiredSize.Width;
             rect.Y = 34;
-            rect.Width = BriefLabel.DesiredSize.Width;
+            rect.Width = Math.Max(0, briefWidth - FromLabel.DesiredSize.Width);
             rect.Height = BriefLabel.DesiredSize.Height;
             BriefLabel.Arrange(rect);
 

@@ -27,7 +27,7 @@ namespace Telegram.Controls.Cells
             _call = call;
 
             DisplayLabel.Text = ConvertCount(call);
-            DateLabel.Text = Converter.DateExtended(call.Message.Date);
+            DateLabel.Text = Formatter.DateExtended(call.Message.Date);
             TypeLabel.Text = call.DisplayType;
 
             Photo.SetUser(clientService, call.Peer, 36);
@@ -51,8 +51,8 @@ namespace Telegram.Controls.Cells
             var tooltip = sender as ToolTip;
             if (tooltip != null && _call != null)
             {
-                var date = Converter.DateTime(_call.Message.Date);
-                var text = $"{Converter.LongDate.Format(date)} {Converter.LongTime.Format(date)}";
+                var date = Formatter.ToLocalTime(_call.Message.Date);
+                var text = $"{Formatter.LongDate.Format(date)} {Formatter.LongTime.Format(date)}";
 
                 tooltip.Content = text;
             }

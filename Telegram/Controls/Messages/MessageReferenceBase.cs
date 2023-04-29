@@ -293,48 +293,9 @@ namespace Telegram.Controls.Messages
                     return SetVideoNoteTemplate(message, videoNote, title, outgoing);
                 case MessageVoiceNote voiceNote:
                     return SetVoiceNoteTemplate(message, voiceNote, title, outgoing);
-
-                case MessageBasicGroupChatCreate:
-                case MessageChatAddMembers:
-                case MessageChatChangePhoto:
-                case MessageChatChangeTitle:
-                case MessageChatSetTheme:
-                case MessageChatDeleteMember:
-                case MessageChatDeletePhoto:
-                case MessageChatJoinByLink:
-                case MessageChatJoinByRequest:
-                case MessageChatSetBackground:
-                case MessageChatSetMessageAutoDeleteTime:
-                case MessageChatUpgradeFrom:
-                case MessageChatUpgradeTo:
-                case MessageContactRegistered:
-                case MessageCustomServiceAction:
-                case MessageForumTopicCreated:
-                case MessageForumTopicEdited:
-                case MessageForumTopicIsClosedToggled:
-                case MessageGameScore:
-                case MessageGiftedPremium:
-                case MessageInviteVideoChatParticipants:
-                case MessageProximityAlertTriggered:
-                case MessagePassportDataSent:
-                case MessagePaymentSuccessful:
-                case MessagePinMessage:
-                case MessageScreenshotTaken:
-                case MessageSuggestProfilePhoto:
-                case MessageSupergroupChatCreate:
-                case MessageVideoChatEnded:
-                case MessageVideoChatScheduled:
-                case MessageVideoChatStarted:
-                case MessageWebsiteConnected:
-                case MessageWebAppDataSent:
-                    return SetServiceTextTemplate(message, title, outgoing);
-                case MessageExpiredPhoto:
-                case MessageExpiredVideo:
+                default:
                     return SetServiceTextTemplate(message, title, outgoing);
             }
-
-            Visibility = Visibility.Collapsed;
-            return false;
         }
 
         private bool SetTextTemplate(MessageViewModel message, MessageText text, string title, bool outgoing)

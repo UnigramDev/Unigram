@@ -39,7 +39,7 @@ namespace Telegram.Views.Chats
 
             if (args.ItemContainer.ContentTemplateRoot is SharedFileCell fileCell)
             {
-                fileCell.UpdateMessage(ViewModel, message);
+                fileCell.UpdateMessage(ViewModel.MessageDelegate, message);
                 fileCell.Tag = message;
             }
         }

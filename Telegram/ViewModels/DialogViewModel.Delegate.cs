@@ -6,114 +6,29 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Net;
 using Telegram.Common;
 using Telegram.Controls.Gallery;
 using Telegram.Controls.Messages;
-using Telegram.Services.Settings;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
-using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Telegram.Views;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.ViewModels
 {
-    public partial class DialogViewModel : IMessageDelegate
+    public partial class DialogViewModel
     {
-        public bool CanBeDownloaded(object content, File file)
+        public void ViewVisibleMessages()
         {
-            var chat = _chat;
-            if (chat == null || ClientService.IsDownloadFileCanceled(file.Id))
-            {
-                return false;
-            }
-
-            if (content is Animation animation)
-            {
-                return Settings.AutoDownload.ShouldDownloadVideo(GetChatType(chat), animation.AnimationValue.Size);
-            }
-            else if (content is Audio audio)
-            {
-                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), audio.AudioValue.Size);
-            }
-            else if (content is Document document)
-            {
-                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), document.DocumentValue.Size);
-            }
-            else if (content is Photo photo)
-            {
-                var big = photo.GetBig();
-                if (big != null && ClientService.IsDownloadFileCanceled(big.Photo.Id))
-                {
-                    return false;
-                }
-
-                return Settings.AutoDownload.ShouldDownloadPhoto(GetChatType(chat));
-            }
-            else if (content is Sticker)
-            {
-                // Stickers aren't part of the deal
-                return true;
-            }
-            else if (content is Video video)
-            {
-                return Settings.AutoDownload.ShouldDownloadVideo(GetChatType(chat), video.VideoValue.Size);
-            }
-            else if (content is VideoNote videoNote)
-            {
-                return Settings.AutoDownload.ShouldDownloadDocument(GetChatType(chat), videoNote.Video.Size);
-            }
-            else if (content is VoiceNote)
-            {
-                return !Settings.AutoDownload.Disabled;
-            }
-
-            return false;
+            Delegate?.ViewVisibleMessages();
         }
 
-        private AutoDownloadChat GetChatType(Chat chat)
-        {
-            if (chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel || chat.Type is ChatTypeBasicGroup)
-            {
-                return AutoDownloadChat.Group;
-            }
-            else if (chat.Type is ChatTypePrivate or ChatTypeSecret)
-            {
-                var user = ClientService.GetUser(chat);
-                if (user == null)
-                {
-                    return AutoDownloadChat.OtherPrivateChat;
-                }
-                else if (user.IsContact)
-                {
-                    return AutoDownloadChat.Contact;
-                }
-            }
-
-            return AutoDownloadChat.Channel;
-        }
-
-        public void DownloadFile(MessageViewModel message, File file)
-        {
-            ClientService.DownloadFile(file.Id, 32);
-        }
-
-
-
-        public void ViewVisibleMessages(bool intermediate)
-        {
-            Delegate?.ViewVisibleMessages(intermediate);
-        }
-
-        public void DoubleClick(MessageViewModel message)
+        public void DoubleTapped(MessageViewModel message)
         {
             if (Settings.Appearance.IsQuickReplySelected)
             {
@@ -185,22 +100,6 @@ namespace Telegram.ViewModels
 
 
 
-        public async void OpenFile(File file)
-        {
-            var local = await ClientService.GetFileAsync(file);
-            if (local != null)
-            {
-                if (file.Local.Path.EndsWith(".unigram-theme"))
-                {
-                    await ShowPopupAsync(new ThemePreviewPopup(local));
-                }
-                else
-                {
-                    await Windows.System.Launcher.LaunchFileAsync(local);
-                }
-            }
-        }
-
         public void OpenWebPage(WebPage webPage)
         {
             if (webPage.InstantViewVersion != 0)
@@ -225,31 +124,6 @@ namespace Telegram.ViewModels
             {
                 await StickersPopup.ShowAsync(sticker.SetId, Sticker_Click);
             }
-        }
-
-        public async void OpenLocation(Location location, string title)
-        {
-            var options = new Windows.System.LauncherOptions();
-            options.FallbackUri = new Uri(string.Format(CultureInfo.InvariantCulture, "https://www.google.com/maps/search/?api=1&query={0},{1}", location.Latitude, location.Longitude));
-
-            if (title != null)
-            {
-                await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}_{2}", location.Latitude, location.Longitude, WebUtility.UrlEncode(title))), options);
-            }
-            else
-            {
-                await Windows.System.Launcher.LaunchUriAsync(new Uri(string.Format(CultureInfo.InvariantCulture, "bingmaps:?collection=point.{0}_{1}", location.Latitude, location.Longitude)), options);
-            }
-        }
-
-        public void OpenLiveLocation(MessageViewModel message)
-        {
-            //NavigationService.Navigate(typeof(LiveLocationPage), message.ChatId);
-        }
-
-        public void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button)
-        {
-            KeyboardButtonInline(message, button);
         }
 
         public void Call(MessageViewModel message, bool video)
@@ -297,49 +171,10 @@ namespace Telegram.ViewModels
         }
 
 
-        public async void OpenUsername(string username)
-        {
-            var response = await ClientService.SendAsync(new SearchPublicChat(username));
-            if (response is Chat chat)
-            {
-                if (chat.Type is ChatTypePrivate privata)
-                {
-                    var user = ClientService.GetUser(privata.UserId);
-                    if (user?.Type is UserTypeBot)
-                    {
-                        NavigationService.NavigateToChat(chat);
-                    }
-                    else
-                    {
-                        NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                    }
-                }
-                else
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
-            }
-            else
-            {
-                await ShowPopupAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
-            }
-        }
 
-        public async void OpenUser(long userId)
+        public void OpenUser(long userId)
         {
-            var response = await ClientService.SendAsync(new CreatePrivateChat(userId, false));
-            if (response is Chat chat)
-            {
-                var user = ClientService.GetUser(userId);
-                if (user?.Type is UserTypeBot)
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
-                else
-                {
-                    NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                }
-            }
+            _messageDelegate.OpenUser(userId);
         }
 
         public void OpenViaBot(long viaBotUserId)
@@ -396,54 +231,9 @@ namespace Telegram.ViewModels
             Search = new ChatSearchViewModel(ClientService, Settings, Aggregator, this, hashtag);
         }
 
-        public async void OpenUrl(string url, bool untrust)
+        public void OpenUrl(string url, bool untrust)
         {
-            if (MessageHelper.TryCreateUri(url, out Uri uri))
-            {
-                if (MessageHelper.IsTelegramUrl(uri))
-                {
-                    MessageHelper.OpenTelegramUrl(ClientService, NavigationService, uri);
-                }
-                else
-                {
-                    //if (message?.Media is TLMessageMediaWebPage webpageMedia)
-                    //{
-                    //    if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
-                    //    {
-                    //        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                    //        if (service != null)
-                    //        {
-                    //            service.Navigate(typeof(InstantPage), webpageMedia);
-                    //            return;
-                    //        }
-                    //    }
-                    //}
-
-                    if (untrust)
-                    {
-                        var confirm = await ShowPopupAsync(string.Format(Strings.OpenUrlAlert, url), Strings.AppName, Strings.OK, Strings.Cancel);
-                        if (confirm != ContentDialogResult.Primary)
-                        {
-                            return;
-                        }
-                    }
-
-                    try
-                    {
-                        await Windows.System.Launcher.LaunchUriAsync(uri);
-                    }
-                    catch { }
-                }
-            }
-        }
-
-        public void OpenBankCardNumber(string number)
-        {
-            //var response = await ClientService.SendAsync(new GetBankCardInfo(number));
-            //if (response is BankCardInfo info)
-            //{
-            //    var url = info.Actions.FirstOrDefault(x => x.)
-            //}
+            _messageDelegate.OpenUrl(url, untrust);
         }
 
         public async void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
@@ -459,7 +249,7 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessagePoll poll)
             {
-                await ShowPopupAsync(new PollResultsPopup(ClientService, Settings, Aggregator, this, message.ChatId, message.Id, poll.Poll));
+                await ShowPopupAsync(new PollResultsPopup(ClientService, Settings, Aggregator, _messageDelegate, message.ChatId, message.Id, poll.Poll));
             }
             else if (message.Content is MessageGame game && message.ReplyMarkup is ReplyMarkupInlineKeyboard inline)
             {
@@ -469,7 +259,7 @@ namespace Telegram.ViewModels
                     {
                         if (button.Type is InlineKeyboardButtonTypeCallbackGame)
                         {
-                            KeyboardButtonInline(message, button);
+                            OpenInlineButton(message, button);
                         }
                     }
                 }
@@ -522,50 +312,6 @@ namespace Telegram.ViewModels
         }
 
 
-
-        public string GetAdminTitle(MessageViewModel message)
-        {
-            if (message.SenderId is MessageSenderUser senderUser)
-            {
-                return GetAdminTitle(senderUser.UserId);
-            }
-            else if (message.SenderId is MessageSenderChat && !message.IsChannelPost)
-            {
-                return message.AuthorSignature.Length > 0 ? message.AuthorSignature : string.Empty;
-            }
-
-            return string.Empty;
-        }
-
-        public string GetAdminTitle(long userId)
-        {
-            var chat = _chat;
-            if (chat == null)
-            {
-                return string.Empty;
-            }
-
-            if (_admins.TryGetValue(chat.Id, out IList<ChatAdministrator> value))
-            {
-                var admin = value.FirstOrDefault(x => x.UserId == userId);
-                if (admin != null)
-                {
-                    if (string.IsNullOrEmpty(admin.CustomTitle))
-                    {
-                        if (admin.IsOwner)
-                        {
-                            return Strings.ChannelCreator;
-                        }
-
-                        return Strings.ChannelAdmin;
-                    }
-
-                    return admin.CustomTitle;
-                }
-            }
-
-            return string.Empty;
-        }
 
         public void Select(MessageViewModel message)
         {

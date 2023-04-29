@@ -31,11 +31,6 @@ namespace Telegram.Native
 
 		void DrawIdenticon(Windows.Foundation.Collections.IVector<byte> hash, Int32 side, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
 
-		void DrawGlyph(String glyph, Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
-		void DrawSavedMessages(Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
-		void DrawDeletedUser(Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
-		void DrawProfilePlaceholder(String text, Windows.UI.Color top, Windows.UI.Color bottom, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
-
 		[default_overload]
 		void DrawThumbnailPlaceholder(String fileName, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
 		void DrawThumbnailPlaceholder(Windows.Foundation.Collections.IVector<byte> bytes, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);

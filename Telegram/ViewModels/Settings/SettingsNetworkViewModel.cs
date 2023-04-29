@@ -31,7 +31,7 @@ namespace Telegram.ViewModels.Settings
             var response = await ClientService.SendAsync(new GetNetworkStatistics(false));
             if (response is NetworkStatistics statistics)
             {
-                SinceDate = Converter.DateTime(statistics.SinceDate);
+                SinceDate = Formatter.ToLocalTime(statistics.SinceDate);
 
                 var notes = new NetworkStatisticsEntryFile(new FileTypeNotes(), null, 0, 0);
                 var other = new NetworkStatisticsEntryFile(new FileTypeOther(), null, 0, 0);

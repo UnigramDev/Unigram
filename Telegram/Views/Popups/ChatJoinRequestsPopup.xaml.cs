@@ -74,7 +74,7 @@ namespace Telegram.Views.Popups
             else if (args.Phase == 1)
             {
                 var time = content.Children[2] as TextBlock;
-                time.Text = Converter.DateExtended(request.Date);
+                time.Text = Formatter.DateExtended(request.Date);
 
                 if (string.IsNullOrEmpty(request.Bio))
                 {

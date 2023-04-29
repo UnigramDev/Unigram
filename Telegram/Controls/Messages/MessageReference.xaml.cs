@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
@@ -272,7 +273,7 @@ namespace Telegram.Controls.Messages
                             }
 
                             _positions.Add(new EmojiPosition { X = shift + entity.Offset + 1, CustomEmojiId = customEmoji.CustomEmojiId });
-                            MessageLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = App.Current.Resources["SpoilerFontFamily"] as FontFamily });
+                            MessageLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
 
                             emoji.Add(customEmoji.CustomEmojiId);
                             shift += 2;

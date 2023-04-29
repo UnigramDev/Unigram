@@ -128,6 +128,7 @@
     <Compile Include="Assets\Icons\AskQ.cs" />
     <Compile Include="Assets\Icons\Data.cs" />
     <Compile Include="Assets\Icons\Devices.cs" />
+    <Compile Include="Assets\Icons\Dots.cs" />
     <Compile Include="Assets\Icons\Double.cs" />
     <Compile Include="Assets\Icons\Downloading.cs" />
     <Compile Include="Assets\Icons\EmojiToGif.cs" />
@@ -411,9 +412,11 @@
       <DependentUpon>InvoicePreviewContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SettingsComboBox.cs" />
+    <Compile Include="Controls\SettingsFooter.cs" />
     <Compile Include="Controls\SettingsHeadline.cs" />
     <Compile Include="Controls\SettingsPanel.cs" />
     <Compile Include="Controls\VersionLabel.cs" />
+    <Compile Include="Controls\WebViewer.cs" />
     <Compile Include="Controls\ZoomViewer.cs" />
     <Compile Include="Controls\GroupCallActiveHeader.xaml.cs">
       <DependentUpon>GroupCallActiveHeader.xaml</DependentUpon>
@@ -625,6 +628,7 @@
     <Compile Include="ViewModels\Authorization\AuthorizationRecoveryViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationRegistrationViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationViewModel.cs" />
+    <Compile Include="ViewModels\MessageDelegate.cs" />
     <Compile Include="ViewModels\Folders\RemoveFolderViewModel.cs" />
     <Compile Include="ViewModels\Folders\AddFolderViewModel.cs" />
     <Compile Include="ViewModels\Folders\ShareFolderViewModel.cs" />
@@ -1343,7 +1347,7 @@
     <Compile Include="Controls\Messages\MessageReference.xaml.cs">
       <DependentUpon>MessageReference.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\Converter.cs" />
+    <Compile Include="Converters\Formatter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\FileSizeConverter.cs" />
     <Compile Include="Converters\InitialNameStringConverter.cs" />

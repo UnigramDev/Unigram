@@ -381,7 +381,7 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new GetMessage(update.ChatId, update.ReplyMarkupMessageId));
                 if (response is Message message)
                 {
-                    BeginOnUIThread(() => Delegate?.UpdateChatReplyMarkup(_chat, _messageFactory.Create(this, message)));
+                    BeginOnUIThread(() => Delegate?.UpdateChatReplyMarkup(_chat, CreateMessage(message)));
                 }
                 else
                 {
@@ -424,8 +424,14 @@ namespace Telegram.ViewModels
                         return;
                     }
 
-                    foreach (SelectorItem container in panel.Children)
+                    for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
                     {
+                        var container = field.ContainerFromIndex(i) as SelectorItem;
+                        if (container == null)
+                        {
+                            continue;
+                        }
+
                         var message = field.ItemFromContainer(container) as MessageViewModel;
                         if (message == null || !message.IsOutgoing)
                         {
@@ -658,7 +664,7 @@ namespace Telegram.ViewModels
                     else
                     {
                         bubble.UpdateMessageContent(message, _chat);
-                        Delegate?.ViewVisibleMessages(false);
+                        Delegate?.ViewVisibleMessages();
                     }
                 });
 
@@ -731,7 +737,7 @@ namespace Telegram.ViewModels
                 },
                 (bubble, message) =>
                 {
-                    Delegate?.ViewVisibleMessages(false);
+                    Delegate?.ViewVisibleMessages();
                 });
 
                 BeginOnUIThread(() => Delegate?.UpdateChatUnreadReactionCount(_chat, update.UnreadReactionCount));
@@ -821,7 +827,7 @@ namespace Telegram.ViewModels
                 (bubble, message) =>
                 {
                     bubble.UpdateMessage(message);
-                    Delegate?.ViewVisibleMessages(false);
+                    Delegate?.ViewVisibleMessages();
                 });
 
                 if (Settings.Notifications.InAppSounds)
@@ -1042,7 +1048,7 @@ namespace Telegram.ViewModels
             {
                 if (IsFirstSliceLoaded == true || Type == DialogType.ScheduledMessages)
                 {
-                    var messageCommon = _messageFactory.Create(this, message);
+                    var messageCommon = CreateMessage(message);
                     messageCommon.GeneratedContentUnread = true;
                     messageCommon.IsInitial = false;
 
@@ -1178,8 +1184,14 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            foreach (SelectorItem container in panel.Children)
+            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
             {
+                var container = ListField.ContainerFromIndex(i) as SelectorItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
                 var content = container.ContentTemplateRoot;
                 if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
                 {

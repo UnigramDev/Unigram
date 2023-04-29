@@ -28,6 +28,7 @@ namespace winrt::Telegram::Native::implementation
 		//static int32_t GetDirectionality(char16 value);
 
 		static hstring GetCurrentCulture();
+		static hstring GetKeyboardCulture();
 
 		static bool IsFileReadable(hstring path);
 
