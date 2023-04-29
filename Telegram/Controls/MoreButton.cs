@@ -5,8 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Assets.Icons;
-using Windows.UI;
-using Windows.UI.Xaml;
 
 namespace Telegram.Controls
 {
@@ -16,19 +14,6 @@ namespace Telegram.Controls
         {
             DefaultStyleKey = typeof(MoreButton);
             IconSource = new More();
-
-            ActualThemeChanged += OnActualThemeChanged;
-            ThemeChanged();
-        }
-
-        private void OnActualThemeChanged(FrameworkElement sender, object args)
-        {
-            ThemeChanged();
-        }
-
-        private void ThemeChanged()
-        {
-            IconSource?.SetColorProperty("Foreground", ActualTheme == ElementTheme.Light ? Colors.Black : Colors.White);
         }
     }
 }
