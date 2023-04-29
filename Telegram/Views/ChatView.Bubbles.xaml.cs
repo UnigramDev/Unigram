@@ -48,10 +48,7 @@ namespace Telegram.Views
             Arrow.Visibility = Visibility.Collapsed;
             //VisualUtilities.SetIsVisible(Arrow, false);
 
-            ViewVisibleMessages(true);
-
-            _debouncer.Stop();
-            _debouncer.Start();
+            ViewVisibleMessages(false);
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -67,10 +64,7 @@ namespace Telegram.Views
                 //VisualUtilities.SetIsVisible(Arrow, true);
             }
 
-            ViewVisibleMessages(true);
-
-            _debouncer.Stop();
-            _debouncer.Start();
+            ViewVisibleMessages(false);
         }
 
         private void UnloadVisibleMessages()
