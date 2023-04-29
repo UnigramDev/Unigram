@@ -47,7 +47,7 @@ namespace Telegram.Views.Popups
             Chat6.Mockup(new ChatTypePrivate(), 5, "Max Bright", string.Empty, "How about some coffee?", true, 0, false, false, DateTime.Now.AddHours(-5));
             Chat7.Mockup(new ChatTypePrivate(), 6, "Natalie Parker", string.Empty, "OK, great)", true, 0, false, false, DateTime.Now.AddHours(-6));
 
-            Photo.Source = PlaceholderHelper.GetNameForUser(Strings.ThemePreviewTitle, 30);
+            Photo.Source = PlaceholderHelper.GetNameForUser(Strings.ThemePreviewTitle);
             Title.Text = Strings.ThemePreviewTitle;
             Subtitle.Text = string.Format("{0} {1} {2}", Strings.LastSeen, Strings.TodayAt, Formatter.ShortTime.Format(DateTime.Now.AddHours(-1)));
 

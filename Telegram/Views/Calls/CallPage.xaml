@@ -132,8 +132,8 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <controls:ProfilePicture x:Name="Image"
-                                     Width="144"
-                                     Height="144"
+                                     Width="140"
+                                     Height="140"
                                      HorizontalAlignment="Center"
                                      VerticalAlignment="Center" />
 

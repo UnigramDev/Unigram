@@ -56,11 +56,6 @@ namespace winrt::Telegram::Native::implementation
 		void DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size);
 		void DrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);
 
-		void DrawGlyph(hstring glyph, _In_ Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
-		void DrawSavedMessages(_In_ Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
-		void DrawDeletedUser(_In_ Color top, _In_ Color bottom, IRandomAccessStream randomAccessStream);
-		void DrawProfilePlaceholder(hstring text, _In_ Color top, _In_ Color bottom, _In_ IRandomAccessStream randomAccessStream);
-			
 		void DrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 		void DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 

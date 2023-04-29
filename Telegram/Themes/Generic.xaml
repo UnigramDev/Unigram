@@ -3064,6 +3064,13 @@
                             <ImageBrush x:Name="Texture"
                                         Stretch="UniformToFill" />
                         </Border.Background>
+                        <TextBlock x:Name="Initials"
+                                   Visibility="Collapsed"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Margin="0,1,0,2"
+                                   Foreground="#FFFFFF"
+                                   FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

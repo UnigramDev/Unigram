@@ -19,11 +19,11 @@
     <Border x:Name="Thumbnail"
             VerticalAlignment="Top"
             CornerRadius="4">
-        <controls:ImageView x:Name="Photo"
-                            Click="Thumbnail_Click"
-                            Stretch="UniformToFill"
-                            Width="48"
-                            Height="48" />
+        <controls:ProfilePicture x:Name="Photo"
+                                 Click="Thumbnail_Click"
+                                 Shape="None"
+                                 Width="48"
+                                 Height="48" />
     </Border>
     <StackPanel Margin="12,0,0,0"
                 Grid.Column="1">

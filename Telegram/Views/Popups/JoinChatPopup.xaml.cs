@@ -23,7 +23,7 @@ namespace Telegram.Views.Popups
 
             _clientService = clientService;
 
-            Photo.SetChat(clientService, info, 72);
+            Photo.SetChat(clientService, info, 96);
 
             Title.Text = info.Title;
             Subtitle.Text = ConvertCount(info.MemberCount, info.MemberUserIds.Count == 0);

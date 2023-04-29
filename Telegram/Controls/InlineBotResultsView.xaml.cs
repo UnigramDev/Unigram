@@ -95,7 +95,7 @@ namespace Telegram.Controls
 
         private void UpdateThumbnail(object target, File file)
         {
-            if (target is Image image)
+            if (target is ProfilePicture image)
             {
                 if (image.Tag is InlineQueryResultSticker)
                 {
@@ -352,7 +352,7 @@ namespace Telegram.Controls
             else if (content.Children[0] is Grid presenter)
             {
                 //var presenter = content.Children[0] as Grid;
-                var thumb = presenter.Children[0] as Image;
+                var thumb = presenter.Children[0] as ProfilePicture;
 
                 var title = content.Children[1] as TextBlock;
                 var description = content.Children[2] as TextBlock;
@@ -466,7 +466,7 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    thumb.Source = PlaceholderHelper.GetNameForChat(title.Text, 96, title.Text.GetHashCode());
+                    thumb.Source = PlaceholderHelper.GetNameForChat(title.Text, title.Text.GetHashCode());
                 }
             }
         }

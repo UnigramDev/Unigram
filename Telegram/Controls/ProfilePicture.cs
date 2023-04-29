@@ -10,6 +10,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -18,6 +19,7 @@ namespace Telegram.Controls
 {
     public enum ProfilePictureShape
     {
+        None,
         Ellipse,
         Superellipse
     }
@@ -28,10 +30,17 @@ namespace Telegram.Controls
         private int? _fileId;
         private long? _referenceId;
 
+        private int _fontSize;
+        private bool _glyph;
+
         private object _parameters;
 
         private Border LayoutRoot;
         private ImageBrush Texture;
+        private LinearGradientBrush Gradient;
+
+        // TODO: consider lazy loading
+        private TextBlock Initials;
 
         public ProfilePicture()
         {
@@ -43,9 +52,16 @@ namespace Telegram.Controls
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Border;
             LayoutRoot.CornerRadius = new CornerRadius(Shape == ProfilePictureShape.Superellipse ? ActualWidth / 4 : ActualWidth / 2);
 
+            Initials = GetTemplateChild(nameof(Initials)) as TextBlock;
             Texture = GetTemplateChild(nameof(Texture)) as ImageBrush;
-            Texture.ImageSource = Source;
 
+            Gradient = new LinearGradientBrush();
+            Gradient.StartPoint = new Windows.Foundation.Point(0, 0);
+            Gradient.EndPoint = new Windows.Foundation.Point(0, 1);
+            Gradient.GradientStops.Add(new GradientStop { Offset = 0 });
+            Gradient.GradientStops.Add(new GradientStop { Offset = 1 });
+
+            OnSourceChanged(Source);
             base.OnApplyTemplate();
         }
 
@@ -53,7 +69,32 @@ namespace Telegram.Controls
         {
             if (LayoutRoot != null)
             {
-                LayoutRoot.CornerRadius = new CornerRadius(Shape == ProfilePictureShape.Superellipse ? finalSize.Width / 4 : finalSize.Width / 2);
+                LayoutRoot.CornerRadius = new CornerRadius(Shape switch
+                {
+                    ProfilePictureShape.Superellipse => finalSize.Width / 4,
+                    ProfilePictureShape.Ellipse => finalSize.Width / 2,
+                    _ => 0
+                });
+            }
+
+            if (Initials != null)
+            {
+                var fontSize = finalSize.Width switch
+                {
+                    < 30 => 12,
+                    < 36 => 14,
+                    < 48 => 16,
+                    < 64 => 20,
+                    < 96 => 24,
+                    < 120 => 32,
+                    _ => 64
+                };
+
+                if (_fontSize != fontSize)
+                {
+                    _fontSize = fontSize;
+                    Initials.FontSize = fontSize;
+                }
             }
 
             return base.ArrangeOverride(finalSize);
@@ -79,7 +120,12 @@ namespace Telegram.Controls
         {
             if (newValue != oldValue && LayoutRoot != null && !double.IsNaN(ActualWidth))
             {
-                LayoutRoot.CornerRadius = new CornerRadius(Shape == ProfilePictureShape.Superellipse ? ActualWidth / 4 : ActualWidth / 2);
+                LayoutRoot.CornerRadius = new CornerRadius(Shape switch
+                {
+                    ProfilePictureShape.Superellipse => ActualWidth / 4,
+                    ProfilePictureShape.Ellipse => ActualWidth / 2,
+                    _ => 0
+                });
             }
         }
 
@@ -103,25 +149,50 @@ namespace Telegram.Controls
 
         #region Source
 
-        public ImageSource Source
+        public object Source
         {
-            get => (ImageSource)GetValue(SourceProperty);
+            get => (object)GetValue(SourceProperty);
             set => SetValue(SourceProperty, value);
         }
 
         public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(ImageSource), typeof(ProfilePicture), new PropertyMetadata(null, OnSourceChanged));
+            DependencyProperty.Register("Source", typeof(object), typeof(ProfilePicture), new PropertyMetadata(null, OnSourceChanged));
 
         private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ProfilePicture)d).OnSourceChanged((ImageSource)e.NewValue);
+            ((ProfilePicture)d).OnSourceChanged((object)e.NewValue);
         }
 
-        private void OnSourceChanged(ImageSource newValue)
+        private void OnSourceChanged(object newValue)
         {
-            if (Texture != null)
+            if (LayoutRoot == null)
             {
-                Texture.ImageSource = newValue;
+                return;
+            }
+
+            if (newValue is PlaceholderImage placeholder)
+            {
+                Gradient.GradientStops[1].Color = placeholder.TopColor;
+                Gradient.GradientStops[0].Color = placeholder.BottomColor;
+
+                LayoutRoot.Background = Gradient;
+
+                Initials.Visibility = Visibility.Visible;
+                Initials.Text = placeholder.Initials;
+
+                if (_glyph != placeholder.IsGlyph)
+                {
+                    _glyph = placeholder.IsGlyph;
+                    Initials.Margin = new Thickness(0, 1, 0, _glyph ? 0 : 2);
+                }
+            }
+            else if (newValue is ImageSource source)
+            {
+                Texture.ImageSource = source;
+
+                LayoutRoot.Background = Texture;
+
+                Initials.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -202,17 +273,19 @@ namespace Telegram.Controls
             }
         }
 
-        private ImageSource GetChat(IClientService clientService, Chat chat, File file, int side, out ProfilePictureShape shape, bool download = true)
+        private object GetChat(IClientService clientService, Chat chat, File file, int side, out ProfilePictureShape shape, bool download = true)
         {
+            System.Diagnostics.Debug.Assert(side == Width);
+
             shape = ProfilePictureShape.Ellipse;
 
             if (chat.Type is ChatTypePrivate privata && clientService.IsSavedMessages(chat))
             {
-                return PlaceholderHelper.GetSavedMessages(privata.UserId, side);
+                return PlaceholderHelper.GetGlyph(Icons.Bookmark, 5);
             }
             else if (clientService.IsRepliesChat(chat))
             {
-                return PlaceholderHelper.GetGlyph(Icons.ChatMultiple, 5, side);
+                return PlaceholderHelper.GetGlyph(Icons.ChatMultiple, 5);
             }
 
             if (clientService.IsForum(chat))
@@ -239,7 +312,7 @@ namespace Telegram.Controls
             }
             else if (clientService.TryGetUser(chat, out User user) && user.Type is UserTypeDeleted)
             {
-                return PlaceholderHelper.GetDeletedUser(user, side);
+                return PlaceholderHelper.GetGlyph(Icons.Ghost, user.Id);
             }
 
             if (chat.Photo?.Minithumbnail != null)
@@ -247,7 +320,7 @@ namespace Telegram.Controls
                 return PlaceholderHelper.GetBlurred(chat.Photo.Minithumbnail.Data);
             }
 
-            return PlaceholderHelper.GetChat(chat, side);
+            return PlaceholderHelper.GetChat(chat);
         }
 
         #endregion
@@ -291,8 +364,10 @@ namespace Telegram.Controls
             }
         }
 
-        private ImageSource GetUser(IClientService clientService, User user, File file, int side, bool download = true)
+        private object GetUser(IClientService clientService, User user, File file, int side, bool download = true)
         {
+            System.Diagnostics.Debug.Assert(side == Width);
+
             if (file != null)
             {
                 if (file.Local.IsDownloadingCompleted)
@@ -312,7 +387,7 @@ namespace Telegram.Controls
             }
             else if (user.Type is UserTypeDeleted)
             {
-                return PlaceholderHelper.GetDeletedUser(user, side);
+                return PlaceholderHelper.GetGlyph(Icons.Ghost, 0);
             }
 
             if (user.ProfilePhoto?.Minithumbnail != null)
@@ -320,7 +395,7 @@ namespace Telegram.Controls
                 return PlaceholderHelper.GetBlurred(user.ProfilePhoto.Minithumbnail.Data);
             }
 
-            return PlaceholderHelper.GetUser(user, side);
+            return PlaceholderHelper.GetUser(user);
         }
 
 
@@ -359,7 +434,7 @@ namespace Telegram.Controls
             Shape = ProfilePictureShape.Ellipse;
         }
 
-        private ImageSource GetChat(IClientService clientService, ChatInviteLinkInfo chat, File file, int side, bool download = true)
+        private object GetChat(IClientService clientService, ChatInviteLinkInfo chat, File file, int side, bool download = true)
         {
             if (file != null)
             {
@@ -384,7 +459,7 @@ namespace Telegram.Controls
                 return PlaceholderHelper.GetBlurred(chat.Photo.Minithumbnail.Data);
             }
 
-            return PlaceholderHelper.GetChat(chat, side);
+            return PlaceholderHelper.GetChat(chat);
         }
 
         #endregion
@@ -422,7 +497,7 @@ namespace Telegram.Controls
             Shape = ProfilePictureShape.Ellipse;
         }
 
-        private ImageSource GetChatPhoto(IClientService clientService, ChatPhoto photo, File file, int side, bool download = true)
+        private object GetChatPhoto(IClientService clientService, ChatPhoto photo, File file, int side, bool download = true)
         {
             if (file != null)
             {
@@ -470,12 +545,12 @@ namespace Telegram.Controls
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
                 {
-                    Source = PlaceholderHelper.GetNameForUser(fromImport.SenderName, 30);
+                    Source = PlaceholderHelper.GetNameForUser(fromImport.SenderName);
                     Shape = ProfilePictureShape.Ellipse;
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
                 {
-                    Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName, 30);
+                    Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName);
                     Shape = ProfilePictureShape.Ellipse;
                 }
             }
@@ -499,6 +574,25 @@ namespace Telegram.Controls
                 Source = photo.Source;
                 Shape = photo.Shape;
             }
+        }
+    }
+
+    public class PlaceholderImage
+    {
+        public string Initials { get; }
+
+        public bool IsGlyph { get; }
+
+        public Color TopColor { get; }
+
+        public Color BottomColor { get; }
+
+        public PlaceholderImage(string initials, bool isGlyph, Color topColor, Color bottomColor)
+        {
+            Initials = initials;
+            IsGlyph = isGlyph;
+            TopColor = topColor;
+            BottomColor = bottomColor;
         }
     }
 }
