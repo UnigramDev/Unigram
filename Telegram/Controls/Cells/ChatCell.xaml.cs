@@ -1612,6 +1612,7 @@ namespace Telegram.Controls.Cells
                     tooltip.Content = grid;
                     tooltip.Padding = new Thickness();
                     tooltip.CornerRadius = new CornerRadius(15);
+                    tooltip.MaxWidth = double.PositiveInfinity;
 
                     if (message.ReplyToMessageId != 0 ||
                         message.Content is MessagePinMessage ||
@@ -2429,9 +2430,11 @@ namespace Telegram.Controls.Cells
             var line2Left = min;
             var line2Right = finalSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
 
+            var briefWidth = Math.Max(0, line2Right - line2Left - MinithumbnailPanel.DesiredSize.Width);
+
             rect.X = min;
             rect.Y = 34;
-            rect.Width = FromLabel.DesiredSize.Width;
+            rect.Width = briefWidth;
             rect.Height = FromLabel.DesiredSize.Height;
             FromLabel.Arrange(rect);
 
@@ -2443,7 +2446,7 @@ namespace Telegram.Controls.Cells
 
             rect.X = min + FromLabel.DesiredSize.Width + MinithumbnailPanel.DesiredSize.Width;
             rect.Y = 34;
-            rect.Width = BriefLabel.DesiredSize.Width;
+            rect.Width = Math.Max(0, briefWidth - FromLabel.DesiredSize.Width);
             rect.Height = BriefLabel.DesiredSize.Height;
             BriefLabel.Arrange(rect);
 
