@@ -312,16 +312,6 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
-        public virtual void DoubleClick(MessageViewModel message) { }
-
-        /// <summary>
-        /// Only available when created through DialogViewModel
-        /// </summary>
-        public virtual void ReplyToMessage(MessageViewModel message) { }
-
-        /// <summary>
-        /// Only available when created through DialogViewModel
-        /// </summary>
         public virtual void OpenReply(MessageViewModel message) { }
 
         /// <summary>
@@ -470,10 +460,6 @@ namespace Telegram.ViewModels
         public override void ForwardMessage(MessageViewModel message) => _viewModel.ForwardMessage(message);
 
         public override void ViewVisibleMessages() => _viewModel.ViewVisibleMessages();
-
-        public override void DoubleClick(MessageViewModel message) => _viewModel.DoubleClick(message);
-
-        public override void ReplyToMessage(MessageViewModel message) => _viewModel.ReplyToMessage(message);
 
         public override void OpenReply(MessageViewModel message) => _viewModel.OpenReply(message);
 

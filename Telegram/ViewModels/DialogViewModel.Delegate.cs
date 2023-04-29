@@ -28,7 +28,7 @@ namespace Telegram.ViewModels
             Delegate?.ViewVisibleMessages();
         }
 
-        public void DoubleClick(MessageViewModel message)
+        public void DoubleTapped(MessageViewModel message)
         {
             if (Settings.Appearance.IsQuickReplySelected)
             {
