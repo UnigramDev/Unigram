@@ -144,12 +144,6 @@ namespace Telegram.ViewModels.Drawers
                         }
                     }
 
-                    for (int i = 20; i < recent.StickersValue.Count; i++)
-                    {
-                        recent.StickersValue.RemoveAt(20);
-                        i--;
-                    }
-
                     BeginOnUIThread(() => Merge(_recentSet.Stickers, recent.StickersValue));
                 }
             });
@@ -339,12 +333,6 @@ namespace Telegram.ViewModels.Drawers
                             break;
                         }
                     }
-                }
-
-                for (int i = 20; i < recent.StickersValue.Count; i++)
-                {
-                    recent.StickersValue.RemoveAt(20);
-                    i--;
                 }
 
                 _favoriteSet.Update(favorite.StickersValue);
