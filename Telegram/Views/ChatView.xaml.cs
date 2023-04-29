@@ -244,7 +244,7 @@ namespace Telegram.Views
 
             //TextField.Language = Native.NativeUtils.GetCurrentCulture();
             _drawable ??= new AvatarWavesDrawable(true, true);
-            _drawable.Update((Color)BootStrapper.Current.Resources["SystemAccentColor"], true);
+            _drawable.Update(Theme.Accent, true);
         }
 
         private void OnNavigatedTo()

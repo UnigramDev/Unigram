@@ -75,7 +75,8 @@ namespace Telegram.Common
                 : ApplicationTheme.Dark);
         }
 
-        public ThemeParameters Parameters { get; private set; }
+        private readonly Dictionary<ElementTheme, ThemeParameters> _parameters = new();
+        public ThemeParameters Parameters => _parameters[WindowContext.Current.ActualTheme];
 
         #region Local 
 
@@ -233,8 +234,8 @@ namespace Telegram.Common
                 {
                     { "ContentDialogBackground", 0 },
                     { "ContentDialogForeground", 0 },
-                    { "ButtonBackground", 0 },
-                    { "ButtonForeground", 0 },
+                    { "AccentButtonBackground", 0 },
+                    { "AccentButtonForeground", 0 },
                     { "SystemControlDisabledChromeDisabledLowBrush", 0 },
                     { "HyperlinkForeground", 0 }
                 };
@@ -323,13 +324,13 @@ namespace Telegram.Common
                     ThemeDictionaries.Add(requested == TelegramTheme.Light ? "Light" : "Dark", target);
                 }
 
-                Parameters = new ThemeParameters
+                _parameters[requested == TelegramTheme.Light ? ElementTheme.Light : ElementTheme.Dark] = new ThemeParameters
                 {
                     BackgroundColor = themeParameters["ContentDialogBackground"],
                     SecondaryBackgroundColor = themeParameters["ContentDialogBackground"],
                     TextColor = themeParameters["ContentDialogForeground"],
-                    ButtonColor = themeParameters["ButtonBackground"],
-                    ButtonTextColor = themeParameters["ButtonForeground"],
+                    ButtonColor = themeParameters["AccentButtonBackground"],
+                    ButtonTextColor = themeParameters["AccentButtonForeground"],
                     HintColor = themeParameters["SystemControlDisabledChromeDisabledLowBrush"],
                     LinkColor = themeParameters["HyperlinkForeground"]
                 };
