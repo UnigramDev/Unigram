@@ -11,6 +11,7 @@ using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Views.Host;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Input;
 using Windows.UI.ViewManagement;
@@ -76,6 +77,20 @@ namespace Telegram.Controls
             Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
 
             ApplicationView_VisibleBoundsChanged(ApplicationView.GetForCurrentView());
+
+            var canvas = VisualTreeHelper.GetParent(this) as Canvas;
+            if (canvas != null)
+            {
+                foreach (var child in canvas.Children)
+                {
+                    if (child is Rectangle rectangle)
+                    {
+                        rectangle.Fill = new SolidColorBrush(ActualTheme == ElementTheme.Light
+                            ? Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF)
+                            : Color.FromArgb(0x99, 0x00, 0x00, 0x00));
+                    }
+                }
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
