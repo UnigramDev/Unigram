@@ -376,8 +376,14 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            foreach (SelectorItem container in panel.Children)
+            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
             {
+                var container = ContainerFromIndex(i) as SelectorItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
                 var content = container.ContentTemplateRoot as MessageSelector;
                 content?.UpdateSelectionEnabled(newValue, true);
             }

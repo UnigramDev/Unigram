@@ -424,8 +424,14 @@ namespace Telegram.ViewModels
                         return;
                     }
 
-                    foreach (SelectorItem container in panel.Children)
+                    for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
                     {
+                        var container = field.ContainerFromIndex(i) as SelectorItem;
+                        if (container == null)
+                        {
+                            continue;
+                        }
+
                         var message = field.ItemFromContainer(container) as MessageViewModel;
                         if (message == null || !message.IsOutgoing)
                         {
@@ -1178,8 +1184,14 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            foreach (SelectorItem container in panel.Children)
+            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
             {
+                var container = ListField.ContainerFromIndex(i) as SelectorItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
                 var content = container.ContentTemplateRoot;
                 if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
                 {
