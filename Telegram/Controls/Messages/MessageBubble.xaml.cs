@@ -2634,7 +2634,7 @@ namespace Telegram.Controls.Messages
             var width = 0.0;
             var height = 0.0;
 
-            var constraint = Tag;
+            var constraint = _message as object;
             if (constraint is MessageViewModel viewModel)
             {
                 ttl = viewModel.IsSecret();
