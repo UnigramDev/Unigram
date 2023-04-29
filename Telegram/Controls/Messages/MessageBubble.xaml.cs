@@ -249,6 +249,11 @@ namespace Telegram.Controls.Messages
                 Message.Clear();
                 //Media.Child = null;
 
+                if (Media.Child is AlbumContent)
+                {
+                    Media.Child = null;
+                }
+
                 UnloadObject(ref Reactions);
                 UnloadObject(ref MediaReactions);
             }
