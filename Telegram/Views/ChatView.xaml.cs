@@ -258,12 +258,20 @@ namespace Telegram.Views
 
         private bool CanFocusText(FocusState state)
         {
-            return TextField.FocusState != state;
+            if (state == FocusState.Keyboard || state == FocusState.Programmatic)
+            {
+                return TextField.FocusState != state;
+            }
+
+            return false;
         }
 
         private void FocusText(FocusState state)
         {
-            TextField.Focus(state);
+            if (state == FocusState.Keyboard || state == FocusState.Programmatic)
+            {
+                TextField.Focus(state);
+            }
         }
 
         private void OnNavigatedTo()
