@@ -84,11 +84,12 @@ namespace Telegram.Views
     //, IHandle<UpdateChatFoldersLayout>
     //, IHandle<UpdateConfetti>
     {
-        public MainViewModel ViewModel => DataContext as MainViewModel;
+        private MainViewModel _viewModel;
+        public MainViewModel ViewModel => _viewModel ??= DataContext as MainViewModel;
+
         public RootPage Root { get; set; }
 
         private readonly IClientService _clientService;
-        private readonly MainViewModel _viewModel;
 
         private readonly AnimatedListHandler _handler;
 
@@ -100,7 +101,6 @@ namespace Telegram.Views
             DataContext = TLContainer.Current.Resolve<MainViewModel>();
 
             _clientService = ViewModel.ClientService;
-            _viewModel = ViewModel;
 
             _handler = new AnimatedListHandler(ChatsList, AnimatedListType.Other);
 
@@ -1584,13 +1584,21 @@ namespace Telegram.Views
 
         private void UpdateListViewsSelectedItem(long chatId)
         {
+            if (ViewModel.Chats.SelectedItem == chatId)
+            {
+                return;
+            }
+
             ViewModel.Chats.SelectedItem = chatId;
 
             if (ViewModel.Chats.SelectionMode != ListViewSelectionMode.Multiple)
             {
                 if (ViewModel.ClientService.TryGetChat(chatId, out Chat chat) && ViewModel.Chats.Items.Contains(chat))
                 {
-                    ChatsList.SelectedItem = chat;
+                    if (ChatsList.SelectedItem != chat)
+                    {
+                        ChatsList.SelectedItem = chat;
+                    }
                 }
                 else
                 {
