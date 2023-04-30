@@ -96,9 +96,8 @@ namespace Telegram.Views
         private ChatBackgroundPresenter _backgroundPresenter;
 
         private readonly DebouncedProperty<FocusState> _focusState;
-        private bool _enableHighlightWords;
-
-        private bool _isTextReadOnly;
+        private bool _enableHighlightWords = true;
+        private bool _isTextReadOnly = false;
 
         private bool _needActivation = true;
 
