@@ -790,8 +790,9 @@
                                                             <Grid Width="48"
                                                                   Height="48"
                                                                   Margin="12,0">
-                                                                <controls:ProfilePicture IsHitTestVisible="False"
-                                                                                         IsTabStop="False" />
+                                                                <controls:ProfilePicture Width="48"
+                                                                                         Height="48"
+                                                                                         IsEnabled="False" />
                                                                 <muxc:InfoBadge Background="{ThemeResource ChatUnreadBadgeBrush}"
                                                                                 Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                                                                 VerticalAlignment="Top"

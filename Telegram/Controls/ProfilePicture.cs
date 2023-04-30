@@ -79,27 +79,32 @@ namespace Telegram.Controls
                 });
             }
 
-            if (Initials != null)
-            {
-                var fontSize = finalSize.Width switch
-                {
-                    < 30 => 12,
-                    < 36 => 14,
-                    < 48 => 16,
-                    < 64 => 20,
-                    < 96 => 24,
-                    < 120 => 32,
-                    _ => 64
-                };
+            return base.ArrangeOverride(finalSize);
+        }
 
-                if (_fontSize != fontSize)
-                {
-                    _fontSize = fontSize;
-                    Initials.FontSize = fontSize;
-                }
+        private void UpdateFontSize()
+        {
+            if (Initials == null || double.IsNaN(Width))
+            {
+                return;
             }
 
-            return base.ArrangeOverride(finalSize);
+            var fontSize = Width switch
+            {
+                < 30 => 12,
+                < 36 => 14,
+                < 48 => 16,
+                < 64 => 20,
+                < 96 => 24,
+                < 120 => 32,
+                _ => 64
+            };
+
+            if (_fontSize != fontSize)
+            {
+                _fontSize = fontSize;
+                Initials.FontSize = fontSize;
+            }
         }
 
         #region Shape
@@ -187,6 +192,8 @@ namespace Telegram.Controls
                     _glyph = placeholder.IsGlyph;
                     Initials.Margin = new Thickness(0, 1, 0, _glyph ? 0 : 2);
                 }
+
+                UpdateFontSize();
             }
             else if (newValue is ImageSource source)
             {
