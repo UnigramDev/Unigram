@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
@@ -17,9 +16,6 @@ namespace Telegram.ViewModels.Supergroups
         public SupergroupAdministratorsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new SupergroupMembersFilterAdministrators(), query => new SupergroupMembersFilterAdministrators())
         {
-            EventLogCommand = new RelayCommand(EventLogExecute);
-            AddCommand = new RelayCommand(AddExecute);
-            ParticipantDismissCommand = new RelayCommand<ChatMember>(ParticipantDismissExecute);
         }
 
         private bool _isAggressiveAntiSpamEnabled;
@@ -50,37 +46,20 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public RelayCommand EventLogCommand { get; }
-        private void EventLogExecute()
+        public void EventLog()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is Chat chat)
             {
-                return;
+                NavigationService.Navigate(typeof(ChatEventLogPage), chat.Id);
             }
-
-            NavigationService.Navigate(typeof(ChatEventLogPage), chat.Id);
         }
 
-        public RelayCommand AddCommand { get; }
-        private void AddExecute()
+        public void Add()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is Chat chat)
             {
-                return;
+                NavigationService.Navigate(typeof(SupergroupAddAdministratorPage), chat.Id);
             }
-
-            NavigationService.Navigate(typeof(SupergroupAddAdministratorPage), chat.Id);
         }
-
-        #region Context menu
-
-        public RelayCommand<ChatMember> ParticipantDismissCommand { get; }
-        private async void ParticipantDismissExecute(ChatMember participant)
-        {
-        }
-
-        #endregion
     }
 }
