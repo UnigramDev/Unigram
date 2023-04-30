@@ -380,15 +380,6 @@ namespace Telegram.ViewModels.Settings
         {
             var rules = new List<UserPrivacySettingRule>();
 
-            if (_restrictedUsers != null && _restrictedUsers.UserIds.Count > 0 && _selectedItem != PrivacyValue.DisallowAll)
-            {
-                rules.Add(_restrictedUsers);
-            }
-            if (_restrictedChatMembers != null && _restrictedChatMembers.ChatIds.Count > 0 && _selectedItem != PrivacyValue.DisallowAll)
-            {
-                rules.Add(_restrictedChatMembers);
-            }
-
             if (_allowedUsers != null && _allowedUsers.UserIds.Count > 0 && _selectedItem != PrivacyValue.AllowAll)
             {
                 rules.Add(_allowedUsers);
@@ -396,6 +387,15 @@ namespace Telegram.ViewModels.Settings
             if (_allowedChatMembers != null && _allowedChatMembers.ChatIds.Count > 0 && _selectedItem != PrivacyValue.AllowAll)
             {
                 rules.Add(_allowedChatMembers);
+            }
+
+            if (_restrictedUsers != null && _restrictedUsers.UserIds.Count > 0 && _selectedItem != PrivacyValue.DisallowAll)
+            {
+                rules.Add(_restrictedUsers);
+            }
+            if (_restrictedChatMembers != null && _restrictedChatMembers.ChatIds.Count > 0 && _selectedItem != PrivacyValue.DisallowAll)
+            {
+                rules.Add(_restrictedChatMembers);
             }
 
             switch (_selectedItem)
