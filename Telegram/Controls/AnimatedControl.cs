@@ -43,7 +43,7 @@ namespace Telegram.Controls
         protected CanvasBitmap _bitmap;
 
         protected Panel _layoutRoot;
-        protected Image _canvas;
+        protected Border _canvas;
 
         protected TAnimation _animation;
 
@@ -84,7 +84,7 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
-            var canvas = GetTemplateChild("Canvas") as Image;
+            var canvas = GetTemplateChild("Canvas") as Border;
             if (canvas == null)
             {
                 return;
@@ -257,7 +257,11 @@ namespace Telegram.Controls
                         var device = _surface?.Device ?? CanvasDevice.GetSharedDevice();
 
                         _surface = new CanvasImageSource(device, newSize.X, newSize.Y, newDpi, CanvasAlphaMode.Premultiplied);
-                        _canvas.Source = _surface;
+                        _canvas.Background = new ImageBrush
+                        {
+                            ImageSource = _surface,
+                            Stretch = Stretch.UniformToFill
+                        };
 
                         CreateBitmap(true);
 
@@ -281,9 +285,8 @@ namespace Telegram.Controls
                     _layoutRoot.Children.Remove(_layoutRoot.Children[0]);
                 }
 
-                _canvas = new Image
+                _canvas = new Border
                 {
-                    Stretch = Stretch.Fill,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     VerticalAlignment = VerticalAlignment.Stretch
                 };

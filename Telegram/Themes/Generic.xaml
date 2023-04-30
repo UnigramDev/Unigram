@@ -793,11 +793,10 @@
                 <ControlTemplate TargetType="chats:ChatBackgroundRenderer">
                     <Grid x:Name="LayoutRoot"
                           CornerRadius="{TemplateBinding CornerRadius}">
-                        <Image x:Name="Canvas"
-                               Stretch="UniformToFill"
-                               AutomationProperties.AccessibilityView="Raw"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Stretch" />
+                        <Border x:Name="Canvas"
+                                AutomationProperties.AccessibilityView="Raw"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -811,11 +810,10 @@
             <Setter.Value>
                 <ControlTemplate TargetType="messages:CustomEmojiCanvas">
                     <Grid x:Name="LayoutRoot">
-                        <Image x:Name="Canvas"
-                               Stretch="UniformToFill"
-                               AutomationProperties.AccessibilityView="Raw"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Stretch" />
+                        <Border x:Name="Canvas"
+                                AutomationProperties.AccessibilityView="Raw"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -833,11 +831,10 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:CustomEmojiIcon">
                     <Grid x:Name="LayoutRoot">
-                        <Image x:Name="Canvas"
-                               Stretch="Fill"
-                               AutomationProperties.AccessibilityView="Raw"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Stretch" />
+                        <Border x:Name="Canvas"
+                                AutomationProperties.AccessibilityView="Raw"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
