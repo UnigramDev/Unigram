@@ -501,7 +501,7 @@ namespace Telegram.Controls
             {
                 Subscribe(false);
 
-                if (playing)
+                if (playing && !_unloaded)
                 {
                     Display();
                 }

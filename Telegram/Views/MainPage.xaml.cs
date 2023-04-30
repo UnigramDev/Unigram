@@ -1584,11 +1584,6 @@ namespace Telegram.Views
 
         private void UpdateListViewsSelectedItem(long chatId)
         {
-            if (ViewModel.Chats.SelectedItem == chatId)
-            {
-                return;
-            }
-
             ViewModel.Chats.SelectedItem = chatId;
 
             if (ViewModel.Chats.SelectionMode != ListViewSelectionMode.Multiple)

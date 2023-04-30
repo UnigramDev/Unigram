@@ -255,7 +255,7 @@
     </UserControl.Resources>
 
     <Grid Background="{ThemeResource SettingsItemBackground}"
-          Margin="0,0,12,8"
+          Margin="0,0,8,8"
           CornerRadius="8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />

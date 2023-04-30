@@ -419,7 +419,7 @@ namespace Telegram.Controls.Chats
         protected void OnDoubleTapped(SelectorItem selector)
         {
             var message = ItemFromContainer(selector) as MessageViewModel;
-            if (message!= null)
+            if (message != null)
             {
                 ViewModel.DoubleTapped(message);
             }
