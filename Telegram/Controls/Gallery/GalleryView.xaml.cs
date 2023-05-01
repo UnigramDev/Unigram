@@ -368,6 +368,10 @@ namespace Telegram.Controls.Gallery
         {
             _closing = closing;
 
+            if (_closing != null && IsConstrainedToRootBounds)
+            {
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
+            }
 
             Load(parameter);
 
@@ -377,11 +381,6 @@ namespace Telegram.Controls.Gallery
                 if (_unloaded)
                 {
                     return;
-                }
-
-                if (_closing != null && IsConstrainedToRootBounds)
-                {
-                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", _closing());
                 }
 
                 parameter.Items.CollectionChanged -= OnCollectionChanged;
