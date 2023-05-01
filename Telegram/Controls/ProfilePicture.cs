@@ -59,8 +59,8 @@ namespace Telegram.Controls
             Gradient.GradientStops.Add(new GradientStop { Offset = 0 });
             Gradient.GradientStops.Add(new GradientStop { Offset = 1 });
 
-            UpdateCornerRadius();
-            UpdateFontSize();
+            //UpdateCornerRadius();
+            //UpdateFontSize();
 
             OnSourceChanged(Source);
             base.OnApplyTemplate();
@@ -124,12 +124,12 @@ namespace Telegram.Controls
 
         private void OnShapeChanged(ProfilePictureShape newValue, ProfilePictureShape oldValue)
         {
-            if (newValue != oldValue && LayoutRoot != null && !double.IsNaN(ActualWidth))
+            if (newValue != oldValue && LayoutRoot != null && !double.IsNaN(Width))
             {
                 LayoutRoot.CornerRadius = new CornerRadius(Shape switch
                 {
-                    ProfilePictureShape.Superellipse => ActualWidth / 4,
-                    ProfilePictureShape.Ellipse => ActualWidth / 2,
+                    ProfilePictureShape.Superellipse => Width / 4,
+                    ProfilePictureShape.Ellipse => Width / 2,
                     _ => 0
                 });
             }
@@ -200,6 +200,9 @@ namespace Telegram.Controls
 
                 Initials.Visibility = Visibility.Collapsed;
             }
+
+            UpdateCornerRadius();
+            UpdateFontSize();
         }
 
         #endregion
