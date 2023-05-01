@@ -38,6 +38,7 @@ namespace Telegram.Controls
         private BreadcrumbBar DetailHeaderPresenter;
         private Border DetailHeaderBackground;
         private FrameworkElement BackgroundPart;
+        private ContentControl DetailAction;
         private Border BorderPart;
         private Border MaterialPart;
 
@@ -284,6 +285,7 @@ namespace Telegram.Controls
             DetailPresenter = GetTemplateChild(nameof(DetailPresenter)) as Grid;
             DetailHeaderPresenter = GetTemplateChild(nameof(DetailHeaderPresenter)) as BreadcrumbBar;
             DetailHeaderBackground = GetTemplateChild(nameof(DetailHeaderBackground)) as Border;
+            DetailAction = GetTemplateChild(nameof(DetailAction)) as ContentControl;
             BackgroundPart = GetTemplateChild(nameof(BackgroundPart)) as FrameworkElement;
             BorderPart = GetTemplateChild(nameof(BorderPart)) as Border;
             MaterialPart = GetTemplateChild(nameof(MaterialPart)) as Border;
@@ -299,6 +301,8 @@ namespace Telegram.Controls
             BorderPart.Visibility = _backgroundType != BackgroundKind.None ? Visibility.Visible : Visibility.Collapsed;
             MaterialPart.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
             DetailHeaderPresenter.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
+
+            ElementCompositionPreview.SetIsTranslationEnabled(DetailAction, true);
 
             var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
             detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
@@ -381,8 +385,7 @@ namespace Telegram.Controls
         {
             if (e.Content is HostedPage hosted)
             {
-                DetailHeader = hosted.Header;
-                DetailFooter = hosted.Footer;
+                DetailFooter = hosted.Action;
 
                 if (hosted.ShowHeader)
                 {
@@ -471,6 +474,7 @@ namespace Telegram.Controls
 
             var visual1 = ElementCompositionPreview.GetElementVisual(DetailHeaderBackground);
             var visual2 = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
+            var visual3 = ElementCompositionPreview.GetElementVisual(DetailAction);
 
             // min out: 0.583
             // max out: 1
@@ -484,12 +488,17 @@ namespace Telegram.Controls
             var slideOut = visual1.Compositor.CreateExpressionAnimation($"vector3({expOut}, {expOut}, 1)");
             slideOut.SetReferenceParameter("scrollViewer", properties);
 
+            var expOut3 = "-clamp(((-scrollViewer.Translation.Y / 32) * 16), 0, 16)";
+            var slideOut3 = visual1.Compositor.CreateExpressionAnimation(expOut3);
+            slideOut3.SetReferenceParameter("scrollViewer", properties);
+
             var expIn = "clamp(1.357 - ((-scrollViewer.Translation.Y / 32) * 0.357), 1, 1.357)";
             var slideIn = visual1.Compositor.CreateExpressionAnimation($"vector3({expIn}, {expIn}, 1)");
             slideIn.SetReferenceParameter("scrollViewer", properties);
 
             visual1.StartAnimation("Scale", slideIn);
             visual2.StartAnimation("Scale", slideOut);
+            visual3.StartAnimation("Translation.Y", slideOut3);
 
             var fadeIn = visual1.Compositor.CreateExpressionAnimation("scrollViewer.Translation.Y < -16 ? -(scrollViewer.Translation.Y + 16) / 16 : 0");
             fadeIn.SetReferenceParameter("scrollViewer", properties);
@@ -521,7 +530,7 @@ namespace Telegram.Controls
 
         private void OnBackStackChanged(object sender, EventArgs e)
         {
-            if (DetailFrame.Content is HostedPage hosted && hosted.Header == null)
+            if (DetailFrame.Content is HostedPage hosted)
             {
                 _backStack.ReplaceWith(BuildBackStack(hosted.IsNavigationRoot));
                 _backStack.Add(_currentPage);

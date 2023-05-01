@@ -11,36 +11,6 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">
 
-    <!--<local:HostedPage.Header>
-        <controls:ContentPageHeader>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <TextBlock Text="{CustomResource ColorThemes}"
-                           Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                           Style="{StaticResource BaseTextBlockStyle}"
-                           VerticalAlignment="Center"
-                           Margin="12,0" />
-
-                <controls:MoreButton Grid.Column="1">
-                    <Button.Flyout>
-                        <MenuFlyout Placement="BottomEdgeAlignedRight">
-                            <MenuFlyoutItem Text="{CustomResource CreateNewThemeMenu}"
-                                            Command="{x:Bind ViewModel.NewThemeCommand}">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE2B1;"
-                                              Style="{StaticResource DefaultFontIconStyle}" />
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                        </MenuFlyout>
-                    </Button.Flyout>
-                </controls:MoreButton>
-            </Grid>
-        </controls:ContentPageHeader>
-    </local:HostedPage.Header>-->
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"

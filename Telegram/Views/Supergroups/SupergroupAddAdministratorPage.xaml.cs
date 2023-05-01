@@ -31,28 +31,28 @@ namespace Telegram.Views.Supergroups
             InitializeComponent();
             Title = Strings.ChannelAddAdmin;
 
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += async (s, args) =>
-            {
-                var items = ViewModel.Search;
-                if (items != null && string.Equals(SearchField.Text, items.Query))
-                {
-                    await items.LoadMoreItemsAsync(0);
-                    await items.LoadMoreItemsAsync(1);
-                    await items.LoadMoreItemsAsync(2);
-                    await items.LoadMoreItemsAsync(3);
-                }
-            };
+            //var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            //debouncer.Invoked += async (s, args) =>
+            //{
+            //    var items = ViewModel.Search;
+            //    if (items != null && string.Equals(SearchField.Text, items.Query))
+            //    {
+            //        await items.LoadMoreItemsAsync(0);
+            //        await items.LoadMoreItemsAsync(1);
+            //        await items.LoadMoreItemsAsync(2);
+            //        await items.LoadMoreItemsAsync(3);
+            //    }
+            //};
         }
 
         public void OnBackRequested(HandledEventArgs args)
         {
-            if (ContentPanel.Visibility == Visibility.Collapsed)
-            {
-                SearchField.Text = string.Empty;
-                Search_LostFocus(null, null);
-                args.Handled = true;
-            }
+            //if (ContentPanel.Visibility == Visibility.Collapsed)
+            //{
+            //    SearchField.Text = string.Empty;
+            //    Search_LostFocus(null, null);
+            //    args.Handled = true;
+            //}
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -196,35 +196,35 @@ namespace Telegram.Views.Supergroups
 
         private void Search_Click(object sender, RoutedEventArgs e)
         {
-            MainHeader.Visibility = Visibility.Collapsed;
-            SearchField.Visibility = Visibility.Visible;
+            //MainHeader.Visibility = Visibility.Collapsed;
+            //SearchField.Visibility = Visibility.Visible;
 
-            SearchField.Focus(FocusState.Keyboard);
+            //SearchField.Focus(FocusState.Keyboard);
         }
 
         private void Search_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                MainHeader.Visibility = Visibility.Visible;
-                SearchField.Visibility = Visibility.Collapsed;
+            //if (string.IsNullOrEmpty(SearchField.Text))
+            //{
+            //    MainHeader.Visibility = Visibility.Visible;
+            //    SearchField.Visibility = Visibility.Collapsed;
 
-                Focus(FocusState.Programmatic);
-            }
+            //    Focus(FocusState.Programmatic);
+            //}
         }
 
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (string.IsNullOrEmpty(SearchField.Text))
-            {
-                ContentPanel.Visibility = Visibility.Visible;
-                ViewModel.Search = null;
-            }
-            else
-            {
-                ContentPanel.Visibility = Visibility.Collapsed;
-                ViewModel.Search = new SearchMembersAndUsersCollection(ViewModel.ClientService, ViewModel.Chat.Id, new ChatMembersFilterMembers(), SearchField.Text);
-            }
+            //if (string.IsNullOrEmpty(SearchField.Text))
+            //{
+            //    ContentPanel.Visibility = Visibility.Visible;
+            //    ViewModel.Search = null;
+            //}
+            //else
+            //{
+            //    ContentPanel.Visibility = Visibility.Collapsed;
+            //    ViewModel.Search = new SearchMembersAndUsersCollection(ViewModel.ClientService, ViewModel.Chat.Id, new ChatMembersFilterMembers(), SearchField.Text);
+            //}
         }
     }
 }

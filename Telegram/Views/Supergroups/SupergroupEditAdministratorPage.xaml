@@ -16,12 +16,12 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <local:HostedPage.Footer>
+    <local:HostedPage.Action>
         <Button x:Name="Done"
                 Content="{CustomResource Done}"
                 Command="{x:Bind ViewModel.SendCommand}"
                 Style="{StaticResource AccentButtonStyle}" />
-    </local:HostedPage.Footer>
+    </local:HostedPage.Action>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"

@@ -112,11 +112,13 @@
                                         </muxc:BreadcrumbBar.ItemTemplate>
                                     </muxc:BreadcrumbBar>
 
-                                    <ContentControl Content="{TemplateBinding DetailFooter}"
+                                    <ContentControl x:Name="DetailAction"
+                                                    Content="{TemplateBinding DetailFooter}"
                                                     IsTabStop="False"
-                                                    HorizontalContentAlignment="Right"
                                                     VerticalContentAlignment="Stretch"
+                                                    HorizontalAlignment="Right"
                                                     VerticalAlignment="Top"
+                                                    Height="48"
                                                     Margin="0,16,0,0"
                                                     Canvas.ZIndex="1" />
                                 </Grid>

@@ -55,13 +55,10 @@ namespace Telegram.ViewModels.Chats
 
         public void OpenChannel()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is Chat chat)
             {
-                return;
+                NavigationService.Navigate(typeof(ChatStatisticsPage), chat.Id);
             }
-
-            NavigationService.Navigate(typeof(ChatStatisticsPage), chat.Id);
         }
 
         public void OpenPost(Message message)

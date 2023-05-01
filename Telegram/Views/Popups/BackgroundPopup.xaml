@@ -584,15 +584,6 @@
         </ResourceDictionary>
     </ContentDialog.Resources>
 
-    <!--<local:HostedPage.Header>
-        <controls:ButtonPageHeader
-            x:Name="Header"
-            Text="{CustomResource BackgroundPreview}"
-            CommandToolTip="{CustomResource ShareFile}"
-            Command="{x:Bind ViewModel.ShareCommand}"
-            Glyph="&#xE72D;"/>
-    </local:HostedPage.Header>-->
-
     <Grid x:Name="LayoutRoot"
           Margin="-24,0,-24,-24">
         <Grid.RowDefinitions>

@@ -3534,19 +3534,6 @@ namespace Telegram.Views
 
     public class HostedPage : Page
     {
-        #region Header
-
-        public UIElement Header
-        {
-            get => (UIElement)GetValue(HeaderProperty);
-            set => SetValue(HeaderProperty, value);
-        }
-
-        public static readonly DependencyProperty HeaderProperty =
-            DependencyProperty.Register("Header", typeof(UIElement), typeof(HostedPage), new PropertyMetadata(null));
-
-        #endregion
-
         #region HasHeader
 
         public bool ShowHeader
@@ -3560,16 +3547,16 @@ namespace Telegram.Views
 
         #endregion
 
-        #region Footer
+        #region Action
 
-        public UIElement Footer
+        public UIElement Action
         {
-            get { return (UIElement)GetValue(FooterProperty); }
-            set { SetValue(FooterProperty, value); }
+            get { return (UIElement)GetValue(ActionProperty); }
+            set { SetValue(ActionProperty, value); }
         }
 
-        public static readonly DependencyProperty FooterProperty =
-            DependencyProperty.Register("Footer", typeof(UIElement), typeof(HostedPage), new PropertyMetadata(null));
+        public static readonly DependencyProperty ActionProperty =
+            DependencyProperty.Register("Action", typeof(UIElement), typeof(HostedPage), new PropertyMetadata(null));
 
         #endregion
 
