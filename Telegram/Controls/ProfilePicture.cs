@@ -9,7 +9,6 @@ using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -50,7 +49,6 @@ namespace Telegram.Controls
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Border;
-            LayoutRoot.CornerRadius = new CornerRadius(Shape == ProfilePictureShape.Superellipse ? ActualWidth / 4 : ActualWidth / 2);
 
             Initials = GetTemplateChild(nameof(Initials)) as TextBlock;
             Texture = GetTemplateChild(nameof(Texture)) as ImageBrush;
@@ -61,25 +59,26 @@ namespace Telegram.Controls
             Gradient.GradientStops.Add(new GradientStop { Offset = 0 });
             Gradient.GradientStops.Add(new GradientStop { Offset = 1 });
 
+            UpdateCornerRadius();
+            UpdateFontSize();
+
             OnSourceChanged(Source);
             base.OnApplyTemplate();
         }
 
-        protected override Size ArrangeOverride(Size finalSize)
+        private void UpdateCornerRadius()
         {
-            Telegram.App.Track();
-
-            if (LayoutRoot != null)
+            if (LayoutRoot == null || double.IsNaN(Width))
             {
-                LayoutRoot.CornerRadius = new CornerRadius(Shape switch
-                {
-                    ProfilePictureShape.Superellipse => finalSize.Width / 4,
-                    ProfilePictureShape.Ellipse => finalSize.Width / 2,
-                    _ => 0
-                });
+                return;
             }
 
-            return base.ArrangeOverride(finalSize);
+            LayoutRoot.CornerRadius = new CornerRadius(Shape switch
+            {
+                ProfilePictureShape.Superellipse => Width / 4,
+                ProfilePictureShape.Ellipse => Width / 2,
+                _ => 0
+            });
         }
 
         private void UpdateFontSize()
@@ -192,8 +191,6 @@ namespace Telegram.Controls
                     _glyph = placeholder.IsGlyph;
                     Initials.Margin = new Thickness(0, 1, 0, _glyph ? 0 : 2);
                 }
-
-                UpdateFontSize();
             }
             else if (newValue is ImageSource source)
             {
