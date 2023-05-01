@@ -348,7 +348,7 @@ namespace Telegram.Controls.Cells
                     if (user.Type is UserTypeBot)
                     {
                         builder.Append(Strings.Bot);
-                        builder.Append(", ");
+                        builder.Append(user.FullName());
                     }
                     if (user.Id == clientService.Options.MyId)
                     {
@@ -360,6 +360,12 @@ namespace Telegram.Controls.Cells
                     }
 
                     builder.Append(", ");
+
+                    if (user.IsVerified)
+                    {
+                        builder.Append(Strings.AccDescrVerified);
+                        builder.Append(", ");
+                    }
                 }
             }
             else
@@ -376,6 +382,12 @@ namespace Telegram.Controls.Cells
                 builder.Append(", ");
                 builder.Append(clientService.GetTitle(chat));
                 builder.Append(", ");
+
+                if (clientService.TryGetSupergroup(chat, out Supergroup supergroup) && supergroup.IsVerified)
+                {
+                    builder.Append(Strings.AccDescrVerified);
+                    builder.Append(", ");
+                }
             }
 
             if (chat.UnreadCount > 0)
