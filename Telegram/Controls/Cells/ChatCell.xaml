@@ -210,6 +210,7 @@
 
                             <messages:CustomEmojiCanvas x:Name="CustomEmoji"
                                                         x:Load="False"
+                                                        Margin="-2"
                                                         Grid.Column="2" />
 
                             <chats:ChatActionIndicator x:Name="ChatActionIndicator"
