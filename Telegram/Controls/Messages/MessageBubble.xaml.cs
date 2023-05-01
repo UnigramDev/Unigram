@@ -311,6 +311,16 @@ namespace Telegram.Controls.Messages
             {
                 builder.AppendLine($"{title}. ");
 
+                var viaBot = message.ClientService.GetUser(message.ViaBotUserId);
+                if (viaBot != null && viaBot.HasActiveUsername(out string viaBotUsername))
+                {
+                    builder.Append($" {Strings.ViaBot} @{viaBotUsername}. ");
+                }
+                else
+                {
+                    builder.Append(". ");
+                }
+
                 var admin = message.Delegate.GetAdminTitle(message);
                 if (!string.IsNullOrEmpty(title))
                 {
@@ -1041,7 +1051,7 @@ namespace Telegram.Controls.Messages
                 LoadHeaderLabel();
 
                 var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(CreateRun(HeaderLabel.Inlines.Count > 0 ? " via @" : "via @", FontWeights.Normal));
+                hyperlink.Inlines.Add(CreateRun(HeaderLabel.Inlines.Count > 0 ? $" {Strings.ViaBot} @" : $"{Strings.ViaBot} @", FontWeights.Normal));
                 hyperlink.Inlines.Add(CreateRun(viaBotUsername));
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
