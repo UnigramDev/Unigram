@@ -300,7 +300,7 @@ namespace Telegram.Controls
             _animationFrameRate = animation.FrameRate;
             _animationTotalFrame = animation.TotalFrame;
 
-            CreateBitmap();
+            //CreateBitmap();
 
             if (_backward)
             {

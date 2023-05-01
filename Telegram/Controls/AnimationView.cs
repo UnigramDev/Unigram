@@ -173,7 +173,7 @@ namespace Telegram.Controls
             _animation = animation;
             _hideThumbnail = null;
 
-            CreateBitmap();
+            //CreateBitmap();
 
             if (Load())
             {
