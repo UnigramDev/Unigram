@@ -122,6 +122,12 @@ namespace Telegram.Views.Popups
             else if (basicGroup != null)
             {
                 TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.AreYouSureDeleteAndExitName, chat.Title));
+
+                if (asOwner)
+                {
+                    CheckBox.Visibility = Visibility.Visible;
+                    CheckBox.Content = Strings.DeleteGroupForAll;
+                }
             }
             else if (supergroup != null)
             {
@@ -129,14 +135,19 @@ namespace Telegram.Views.Popups
                 {
                     if (supergroup.IsChannel)
                     {
-                        Subtitle.Text = Strings.ChannelDeleteAlert;
+                        //Subtitle.Text = Strings.ChannelDeleteAlert;
+                        CheckBox.Visibility = Visibility.Visible;
+                        CheckBox.Content = Strings.DeleteChannelForAll;
                     }
                     else
                     {
-                        Subtitle.Text = Strings.MegaDeleteAlert;
+                        //Subtitle.Text = Strings.MegaDeleteAlert;
+                        CheckBox.Visibility = Visibility.Visible;
+                        CheckBox.Content = Strings.DeleteGroupForAll;
                     }
                 }
-                else if (supergroup.IsChannel)
+                
+                if (supergroup.IsChannel)
                 {
                     TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.ChannelLeaveAlertWithName, chat.Title));
                 }
@@ -150,9 +161,13 @@ namespace Telegram.Views.Popups
             {
                 PrimaryButtonText = Strings.ClearHistory;
             }
-            else if (user != null || basicGroup != null)
+            else if (user != null)
             {
                 PrimaryButtonText = Strings.DeleteChatUser;
+            }
+            else if (basicGroup != null)
+            {
+                PrimaryButtonText = Strings.DeleteThisGroup;
             }
             else if (supergroup != null)
             {

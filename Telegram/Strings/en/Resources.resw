@@ -1235,7 +1235,7 @@ Please enable Unigram in the Startup Apps Settings.</value>
     <value>Color</value>
   </data>
   <data name="BackgroundColorSinglePreviewLine1" xml:space="preserve">
-    <value>Press &apos;Set&apos; to apply the wallpaper.</value>
+    <value>Click &apos;Set&apos; to apply the wallpaper.</value>
   </data>
   <data name="BackgroundColorSinglePreviewLine2" xml:space="preserve">
     <value>Looks good</value>
@@ -2216,6 +2216,9 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DeleteCallsForEveryone" xml:space="preserve">
     <value>Delete for everyone</value>
   </data>
+  <data name="DeleteChannelForAll" xml:space="preserve">
+    <value>Delete the channel for all subscribers</value>
+  </data>
   <data name="DeleteChat" xml:space="preserve">
     <value>Delete and leave</value>
   </data>
@@ -2239,6 +2242,9 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DeleteFromRecent" xml:space="preserve">
     <value>Remove from Recent</value>
+  </data>
+  <data name="DeleteGroupForAll" xml:space="preserve">
+    <value>Delete the group for all members</value>
   </data>
   <data name="DeleteLocalization" xml:space="preserve">
     <value>Delete localization?</value>

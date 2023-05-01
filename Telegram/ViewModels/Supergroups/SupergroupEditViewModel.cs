@@ -381,15 +381,25 @@ namespace Telegram.ViewModels.Supergroups
             if (_chat is Chat chat)
             {
                 var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
-                var dialog = new DeleteChatPopup(ClientService, updated, null, false, true);
+                var popup = new DeleteChatPopup(ClientService, updated, null, false, true);
 
-                var confirm = await ShowPopupAsync(dialog);
+                var confirm = await ShowPopupAsync(popup);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
                 }
 
-                var response = await ClientService.SendAsync(new DeleteChat(chat.Id));
+                Function request;
+                if (popup.IsChecked)
+                {
+                    request = new DeleteChat(chat.Id);
+                }
+                else
+                {
+                    request = new LeaveChat(chat.Id);
+                }
+
+                var response = await ClientService.SendAsync(request);
                 if (response is Ok)
                 {
                     NavigationService.RemovePeerFromStack(chat.Id);
