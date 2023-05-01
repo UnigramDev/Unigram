@@ -3055,13 +3055,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProfilePicture">
-                    <Border x:Name="LayoutRoot"
-                            AutomationProperties.AccessibilityView="Raw">
+                    <Border x:Name="LayoutRoot">
                         <Border.Background>
                             <ImageBrush x:Name="Texture"
                                         Stretch="UniformToFill" />
                         </Border.Background>
                         <TextBlock x:Name="Initials"
+                                   AutomationProperties.AccessibilityView="Raw"
                                    Visibility="Collapsed"
                                    TextAlignment="Center"
                                    VerticalAlignment="Center"
