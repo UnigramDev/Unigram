@@ -22,7 +22,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views;
-using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -113,15 +112,14 @@ namespace Telegram.Controls.Cells
         #region InitializeComponent
 
         private Grid PhotoPanel;
-        private ChatCellPanel LayoutRoot;
         private TextBlock TitleLabel;
         private IdentityIcon Identity;
-        private FontIcon MutedIcon;
+        private TextBlock MutedIcon;
         private TextBlock TimeLabel;
         private Border MinithumbnailPanel;
         private ChatActionIndicator ChatActionIndicator;
         private TextBlock TypingLabel;
-        private Border PinnedIcon;
+        private TextBlock PinnedIcon;
         private Border UnreadMentionsBadge;
         private InfoBadge UnreadBadge;
         private Rectangle DropVisual;
@@ -145,15 +143,14 @@ namespace Telegram.Controls.Cells
         protected override void OnApplyTemplate()
         {
             PhotoPanel = GetTemplateChild(nameof(PhotoPanel)) as Grid;
-            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as ChatCellPanel;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
             Identity = GetTemplateChild(nameof(Identity)) as IdentityIcon;
-            MutedIcon = GetTemplateChild(nameof(MutedIcon)) as FontIcon;
+            MutedIcon = GetTemplateChild(nameof(MutedIcon)) as TextBlock;
             TimeLabel = GetTemplateChild(nameof(TimeLabel)) as TextBlock;
             MinithumbnailPanel = GetTemplateChild(nameof(MinithumbnailPanel)) as Border;
             ChatActionIndicator = GetTemplateChild(nameof(ChatActionIndicator)) as ChatActionIndicator;
             TypingLabel = GetTemplateChild(nameof(TypingLabel)) as TextBlock;
-            PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as Border;
+            PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as TextBlock;
             UnreadMentionsBadge = GetTemplateChild(nameof(UnreadMentionsBadge)) as Border;
             UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as InfoBadge;
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
@@ -872,36 +869,36 @@ namespace Telegram.Controls.Cells
                 CompactBadge.Value = UnreadBadge.Value;
             }
 
-            ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
+            //ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
 
-            var visual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
-            visual.Clip ??= visual.Compositor.CreateInsetClip();
+            //var visual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            //visual.Clip ??= visual.Compositor.CreateInsetClip();
 
-            var x = LayoutRoot.ActualSize.X + 24;
+            //var x = LayoutRoot.ActualSize.X + 24;
 
-            if (animate)
-            {
-                var offset0 = visual.Compositor.CreateVector3KeyFrameAnimation();
-                offset0.InsertKeyFrame(0, new Vector3(compact ? 0 : -x, 0, 0));
-                offset0.InsertKeyFrame(1, new Vector3(compact ? -x : 0, 0, 0));
-                //offset0.Duration = Constants.FastAnimation;
-                visual.StartAnimation("Translation", offset0);
+            //if (animate)
+            //{
+            //    var offset0 = visual.Compositor.CreateVector3KeyFrameAnimation();
+            //    offset0.InsertKeyFrame(0, new Vector3(compact ? 0 : -x, 0, 0));
+            //    offset0.InsertKeyFrame(1, new Vector3(compact ? -x : 0, 0, 0));
+            //    //offset0.Duration = Constants.FastAnimation;
+            //    visual.StartAnimation("Translation", offset0);
 
-                var clip0 = visual.Compositor.CreateScalarKeyFrameAnimation();
-                clip0.InsertKeyFrame(0, compact ? -24 : x - 24);
-                clip0.InsertKeyFrame(1, compact ? x - 24 : -24);
-                //clip0.Duration = Constants.FastAnimation;
-                visual.Clip.StartAnimation("LeftInset", clip0);
-            }
-            else
-            {
-                visual.Properties.InsertVector3("Translation", new Vector3(compact ? -x : 0, 0, 0));
+            //    var clip0 = visual.Compositor.CreateScalarKeyFrameAnimation();
+            //    clip0.InsertKeyFrame(0, compact ? -24 : x - 24);
+            //    clip0.InsertKeyFrame(1, compact ? x - 24 : -24);
+            //    //clip0.Duration = Constants.FastAnimation;
+            //    visual.Clip.StartAnimation("LeftInset", clip0);
+            //}
+            //else
+            //{
+            //    visual.Properties.InsertVector3("Translation", new Vector3(compact ? -x : 0, 0, 0));
 
-                if (visual.Clip is InsetClip inset)
-                {
-                    inset.LeftInset = compact ? x - 24 : -24;
-                }
-            }
+            //    if (visual.Clip is InsetClip inset)
+            //    {
+            //        inset.LeftInset = compact ? x - 24 : -24;
+            //    }
+            //}
 
             if (CompactBadgeRoot != null)
             {
@@ -910,7 +907,7 @@ namespace Telegram.Controls.Cells
 
                 if (animate)
                 {
-                    var scale0 = visual.Compositor.CreateVector3KeyFrameAnimation();
+                    var scale0 = badge.Compositor.CreateVector3KeyFrameAnimation();
                     scale0.InsertKeyFrame(0, compact ? Vector3.Zero : Vector3.One);
                     scale0.InsertKeyFrame(1, compact ? Vector3.One : Vector3.Zero);
                     scale0.Duration = Constants.FastAnimation;
@@ -2285,223 +2282,5 @@ namespace Telegram.Controls.Cells
 
         #endregion
 
-    }
-
-    public class ChatCellPanel : Panel
-    {
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            Telegram.App.Track();
-
-            var TitleLabel = Children[0];
-            var Identity = Children[1];
-            var MutedIcon = Children[2];
-            var TimeLabel = Children[3];
-
-            var FromLabel = Children[4];
-            var MinithumbnailPanel = Children[5];
-            var BriefLabel = Children[6];
-
-            var shift = 0;
-            var CustomEmoji = default(CustomEmojiCanvas);
-
-            if (Children[7] is CustomEmojiCanvas)
-            {
-                shift++;
-                CustomEmoji = Children[7] as CustomEmojiCanvas;
-            }
-
-            var ChatActionIndicator = Children[7 + shift];
-            var TypingLabel = Children[8 + shift];
-            var PinnedIcon = Children[9 + shift];
-            var UnreadMentionsBadge = Children[10 + shift];
-            var UnreadBadge = Children[11 + shift];
-
-            TimeLabel.Measure(availableSize);
-            Identity.Measure(availableSize);
-            MutedIcon.Measure(availableSize);
-
-            var line1Left = 12;
-            var line1Right = availableSize.Width - 12 - TimeLabel.DesiredSize.Width;
-
-            var titleWidth = Math.Max(0, line1Right - (line1Left + Identity.DesiredSize.Width + MutedIcon.DesiredSize.Width));
-
-            TitleLabel.Measure(new Size(titleWidth, availableSize.Height));
-
-
-
-            MinithumbnailPanel.Measure(availableSize);
-            ChatActionIndicator.Measure(availableSize);
-            PinnedIcon.Measure(availableSize);
-            UnreadBadge.Measure(availableSize);
-            UnreadMentionsBadge.Measure(availableSize);
-
-            var line2RightPadding = Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width);
-
-            var line2Left = 12d;
-            var line2Right = availableSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
-
-            var briefWidth = Math.Max(0, line2Right - line2Left - MinithumbnailPanel.DesiredSize.Width);
-
-            FromLabel.Measure(new Size(briefWidth, availableSize.Height));
-            BriefLabel.Measure(new Size(Math.Max(0, briefWidth - FromLabel.DesiredSize.Width), availableSize.Height));
-            CustomEmoji?.Measure(new Size(briefWidth, availableSize.Height));
-            TypingLabel.Measure(new Size(briefWidth + MinithumbnailPanel.DesiredSize.Width, availableSize.Height));
-
-            if (Children.Count > 12 + shift)
-            {
-                Children[12 + shift].Measure(availableSize);
-            }
-
-            return base.MeasureOverride(availableSize);
-
-            return new Size(availableSize.Width, 64);
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            Telegram.App.Track();
-
-            var TitleLabel = Children[0];
-            var Identity = Children[1];
-            var MutedIcon = Children[2];
-            var TimeLabel = Children[3];
-
-            var FromLabel = Children[4];
-            var MinithumbnailPanel = Children[5];
-            var BriefLabel = Children[6];
-
-            var shift = 0;
-            var CustomEmoji = default(CustomEmojiCanvas);
-
-            if (Children[7] is CustomEmojiCanvas)
-            {
-                shift++;
-                CustomEmoji = Children[7] as CustomEmojiCanvas;
-            }
-
-            var ChatActionIndicator = Children[7 + shift];
-            var TypingLabel = Children[8 + shift];
-            var PinnedIcon = Children[9 + shift];
-            var UnreadMentionsBadge = Children[10 + shift];
-            var UnreadBadge = Children[11 + shift];
-
-            var rect = new Rect();
-            var min = 12d;
-
-            rect.X = Math.Max(min, finalSize.Width - 8 - TimeLabel.DesiredSize.Width);
-            rect.Y = 13;
-            rect.Width = TimeLabel.DesiredSize.Width;
-            rect.Height = TimeLabel.DesiredSize.Height;
-            TimeLabel.Arrange(rect);
-
-            var line1Right = finalSize.Width - 8 - TimeLabel.DesiredSize.Width;
-
-            double titleWidth;
-            if (min + TitleLabel.DesiredSize.Width + Identity.DesiredSize.Width + MutedIcon.DesiredSize.Width > line1Right)
-            {
-                titleWidth = Math.Max(0, line1Right - (min + Identity.DesiredSize.Width + MutedIcon.DesiredSize.Width));
-            }
-            else
-            {
-                titleWidth = TitleLabel.DesiredSize.Width;
-            }
-
-            rect.X = min;
-            rect.Y = 12;
-            rect.Width = titleWidth;
-            rect.Height = TitleLabel.DesiredSize.Height;
-            TitleLabel.Arrange(rect);
-
-            rect.X = min + titleWidth;
-            rect.Y = 14;
-            rect.Width = Identity.DesiredSize.Width;
-            rect.Height = Identity.DesiredSize.Height;
-            Identity.Arrange(rect);
-
-            rect.X = min + titleWidth + Identity.DesiredSize.Width;
-            rect.Y = 14;
-            rect.Width = MutedIcon.DesiredSize.Width;
-            rect.Height = MutedIcon.DesiredSize.Height;
-            MutedIcon.Arrange(rect);
-
-
-
-            rect.X = Math.Max(min, finalSize.Width - 8 - PinnedIcon.DesiredSize.Width);
-            rect.Y = 34;
-            rect.Width = PinnedIcon.DesiredSize.Width;
-            rect.Height = PinnedIcon.DesiredSize.Height;
-            PinnedIcon.Arrange(rect);
-
-            rect.X = finalSize.Width - 8 - UnreadBadge.DesiredSize.Width;
-            rect.Y = 36;
-            rect.Width = UnreadBadge.DesiredSize.Width;
-            rect.Height = UnreadBadge.DesiredSize.Height;
-            UnreadBadge.Arrange(rect);
-
-            rect.X = finalSize.Width - 8 - UnreadBadge.DesiredSize.Width - UnreadMentionsBadge.DesiredSize.Width;
-            rect.Y = 36;
-            rect.Width = UnreadMentionsBadge.DesiredSize.Width;
-            rect.Height = UnreadMentionsBadge.DesiredSize.Height;
-            UnreadMentionsBadge.Arrange(rect);
-
-            var line2RightPadding = Math.Max(PinnedIcon.DesiredSize.Width, UnreadBadge.DesiredSize.Width);
-
-            var line2Left = min;
-            var line2Right = finalSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
-
-            var briefWidth = Math.Max(0, line2Right - line2Left - MinithumbnailPanel.DesiredSize.Width);
-
-            rect.X = min;
-            rect.Y = 34;
-            rect.Width = briefWidth;
-            rect.Height = FromLabel.DesiredSize.Height;
-            FromLabel.Arrange(rect);
-
-            rect.X = min + FromLabel.DesiredSize.Width;
-            rect.Y = 34;
-            rect.Width = MinithumbnailPanel.DesiredSize.Width;
-            rect.Height = MinithumbnailPanel.DesiredSize.Height;
-            MinithumbnailPanel.Arrange(rect);
-
-            rect.X = min + FromLabel.DesiredSize.Width + MinithumbnailPanel.DesiredSize.Width;
-            rect.Y = 34;
-            rect.Width = Math.Max(0, briefWidth - FromLabel.DesiredSize.Width);
-            rect.Height = BriefLabel.DesiredSize.Height;
-            BriefLabel.Arrange(rect);
-
-            if (CustomEmoji != null)
-            {
-                rect.X -= 2;
-                rect.Y -= 2;
-                rect.Width += 4;
-                rect.Height += 4;
-                CustomEmoji.Arrange(rect);
-            }
-
-            rect.X = min;
-            rect.Y = 34;
-            rect.Width = ChatActionIndicator.DesiredSize.Width;
-            rect.Height = ChatActionIndicator.DesiredSize.Height;
-            ChatActionIndicator.Arrange(rect);
-
-            line2Left = min + ChatActionIndicator.DesiredSize.Width;
-            line2Right = finalSize.Width - 8 - line2RightPadding - UnreadMentionsBadge.DesiredSize.Width;
-
-            var typingLabel = Math.Max(0, line2Right - line2Left);
-
-            rect.X = min + ChatActionIndicator.DesiredSize.Width;
-            rect.Y = 34;
-            rect.Width = typingLabel;
-            rect.Height = TypingLabel.DesiredSize.Height;
-            TypingLabel.Arrange(rect);
-
-            if (Children.Count > 12 + shift)
-            {
-                Children[12 + shift].Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
-            }
-
-            return finalSize;
-        }
     }
 }

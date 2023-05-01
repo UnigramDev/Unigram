@@ -62,12 +62,18 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
 
                         <Grid x:Name="PhotoPanel"
                               Width="48"
                               Height="48"
-                              Margin="8,8,0,8"
+                              Margin="8,8,12,8"
+                              Grid.RowSpan="2"
                               Canvas.ZIndex="1">
                             <Rectangle x:Name="SelectionOutline"
                                        StrokeThickness="2"
@@ -111,10 +117,15 @@
                             </Border>
                         </Grid>
 
-                        <local:ChatCellPanel x:Name="LayoutRoot"
-                                             Height="64"
-                                             Background="Transparent"
-                                             Grid.Column="1">
+                        <Grid HorizontalAlignment="Left"
+                              VerticalAlignment="Bottom"
+                              Margin="0,0,0,2"
+                              Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock x:Name="TitleLabel"
                                        MaxLines="1"
                                        TextWrapping="NoWrap"
@@ -124,24 +135,37 @@
                             <controls:IdentityIcon x:Name="Identity"
                                                    VerticalAlignment="Bottom"
                                                    Margin="4,0,0,0"
-                                                   Grid.Column="2" />
-                            <FontIcon x:Name="MutedIcon"
-                                      Glyph="&#xE979;"
-                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                      Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                      VerticalAlignment="Bottom"
-                                      FontSize="16"
-                                      Margin="4,0,0,0"
-                                      Grid.Column="3" />
-
-                            <TextBlock x:Name="TimeLabel"
-                                       Text="11:10"
-                                       FontFamily="Segoe UI, ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"
-                                       Style="{StaticResource CaptionTextBlockStyle}"
-                                       Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
-                                       Margin="0,0,0,1"
+                                                   Grid.Column="1" />
+                            <TextBlock x:Name="MutedIcon"
+                                       Text="&#xE979;"
+                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                       Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                       VerticalAlignment="Bottom"
+                                       FontSize="16"
+                                       Margin="4,0,0,0"
                                        Grid.Column="2" />
+                        </Grid>
 
+                        <TextBlock x:Name="TimeLabel"
+                                   Text="11:10"
+                                   FontFamily="Segoe UI, ms-appx:///Assets/Fonts/Telegram.ttf#Telegram"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                                   Margin="0,0,8,3"
+                                   VerticalAlignment="Bottom"
+                                   Grid.Column="2" />
+
+                        <Grid Margin="0,2,8,0"
+                              Grid.Column="1"
+                              Grid.ColumnSpan="2"
+                              Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
                             <TextBlock x:Name="FromLabel"
                                        Style="{StaticResource BodyTextBlockStyle}"
                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
@@ -153,11 +177,11 @@
 
                             <Border x:Name="MinithumbnailPanel"
                                     Margin="0,0,6,0"
+                                    VerticalAlignment="Top"
                                     CornerRadius="2"
                                     Width="18"
                                     Height="18"
-                                    Grid.Column="2"
-                                    Grid.Row="1">
+                                    Grid.Column="1">
                                 <Border.Background>
                                     <ImageBrush x:Name="Minithumbnail"
                                                 Stretch="UniformToFill"
@@ -176,7 +200,8 @@
                                        TextTrimming="CharacterEllipsis"
                                        TextWrapping="NoWrap"
                                        VerticalAlignment="Top"
-                                       MaxLines="1" />
+                                       MaxLines="1"
+                                       Grid.Column="2" />
                             <!--<ToolTipService.ToolTip>
                                 <ToolTip Opened="ToolTip_Opened" />
                             </ToolTipService.ToolTip>-->
@@ -184,15 +209,17 @@
                                  Foreground="{ThemeResource ChatDraftLabelBrush}" />-->
 
                             <messages:CustomEmojiCanvas x:Name="CustomEmoji"
-                                                        x:Load="False" />
+                                                        x:Load="False"
+                                                        Grid.Column="2" />
 
                             <chats:ChatActionIndicator x:Name="ChatActionIndicator"
                                                        Visibility="Collapsed"
                                                        Fill="{ThemeResource PageHeaderHighlightBrush}"
-                                                       VerticalAlignment="Bottom"
+                                                       VerticalAlignment="Top"
+                                                       HorizontalAlignment="Left"
                                                        Width="20"
                                                        Height="20"
-                                                       Margin="0,0,4,0" />
+                                                       Grid.ColumnSpan="3" />
                             <TextBlock x:Name="TypingLabel"
                                        Visibility="Collapsed"
                                        Style="{StaticResource BodyTextBlockStyle}"
@@ -200,35 +227,31 @@
                                        Foreground="{ThemeResource SystemControlHighlightAccentBrush}"
                                        TextTrimming="CharacterEllipsis"
                                        TextWrapping="NoWrap"
-                                       MaxLines="1" />
+                                       MaxLines="1"
+                                       Margin="24,0,0,0"
+                                       Grid.ColumnSpan="3" />
 
-                            <Border x:Name="PinnedIcon"
-                                    Width="20"
-                                    Height="20"
-                                    VerticalAlignment="Bottom"
-                                    HorizontalAlignment="Right"
-                                    Margin="8,0,0,0"
-                                    Grid.ColumnSpan="2"
-                                    Grid.Column="4"
-                                    Grid.Row="1">
-                                <FontIcon Glyph="&#xE97B;"
-                                          FontSize="16"
-                                          FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                          Foreground="{ThemeResource TextFillColorTertiaryBrush}"
-                                          HorizontalAlignment="Right"
-                                          VerticalAlignment="Center" />
-                            </Border>
+                            <TextBlock x:Name="PinnedIcon"
+                                       Text="&#xE97B;"
+                                       FontSize="16"
+                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                       Foreground="{ThemeResource TextFillColorTertiaryBrush}"
+                                       HorizontalAlignment="Right"
+                                       VerticalAlignment="Top"
+                                       Margin="4,2,0,0"
+                                       Grid.ColumnSpan="2"
+                                       Grid.Column="3" />
+
                             <Border x:Name="UnreadMentionsBadge"
                                     Background="{ThemeResource ChatUnreadBadgeBrush}"
                                     Width="16"
                                     Height="16"
                                     CornerRadius="8"
-                                    VerticalAlignment="Bottom"
+                                    VerticalAlignment="Top"
                                     HorizontalAlignment="Right"
-                                    Margin="8,0,0,0"
+                                    Margin="4,2,0,0"
                                     Visibility="Collapsed"
-                                    Grid.Column="4"
-                                    Grid.Row="1">
+                                    Grid.Column="3">
                                 <TextBlock x:Name="UnreadMentionsLabel"
                                            Text="&#xE986;"
                                            FontSize="12"
@@ -241,21 +264,23 @@
                             <muxc:InfoBadge x:Name="UnreadBadge"
                                             Background="{ThemeResource ChatUnreadBadgeBrush}"
                                             Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                            VerticalAlignment="Bottom"
+                                            VerticalAlignment="Top"
                                             HorizontalAlignment="Right"
-                                            Margin="8,0,0,0"
+                                            Margin="4,2,0,0"
                                             Visibility="Collapsed"
-                                            Grid.Column="5"
+                                            Grid.Column="4"
                                             Grid.Row="1" />
+                        </Grid>
 
-                            <Rectangle x:Name="DropVisual"
-                                       x:Load="False"
-                                       Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                       StrokeThickness="2"
-                                       RadiusX="4"
-                                       RadiusY="4"
-                                       Visibility="Collapsed" />
-                        </local:ChatCellPanel>
+                        <Rectangle x:Name="DropVisual"
+                                   x:Load="False"
+                                   Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                   StrokeThickness="2"
+                                   RadiusX="4"
+                                   RadiusY="4"
+                                   Visibility="Collapsed"
+                                   Grid.ColumnSpan="2"
+                                   Grid.RowSpan="2" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
