@@ -570,7 +570,9 @@ namespace Telegram.Views
             if (args.ItemContainer is ChatListViewItem selector)
             {
                 // TODO: are there chances that at this point TextArea is not up to date yet?
-                selector.PrepareForItemOverride(message, TextArea.Visibility == Visibility.Visible);
+                selector.PrepareForItemOverride(message,
+                    _viewModel.Type is DialogType.History or DialogType.Thread or DialogType.ScheduledMessages
+                    && TextArea.Visibility == Visibility.Visible);
             }
 
             if (content is MessageSelector checkbox)
