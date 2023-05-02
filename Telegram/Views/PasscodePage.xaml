@@ -110,8 +110,8 @@
                         Margin="0,0,8,0">
                     <controls:GlyphButton Glyph="&#xE904;"
                                           Click="Biometrics_Click"
-                                          AutomationProperties.Name="{CustomResource UnlockFingerprint}"
-                                          ToolTipService.ToolTip="{CustomResource UnlockFingerprint}"
+                                          AutomationProperties.Name="{CustomResource UnlockWindowsHello}"
+                                          ToolTipService.ToolTip="{CustomResource UnlockWindowsHello}"
                                           Style="{StaticResource RoundGlyphButtonStyle}"
                                           Foreground="#FFFFFF"
                                           Width="32"

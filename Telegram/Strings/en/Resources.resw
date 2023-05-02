@@ -6509,9 +6509,6 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="Unlock" xml:space="preserve">
     <value>Unlock</value>
   </data>
-  <data name="UnlockFingerprint" xml:space="preserve">
-    <value>Unlock with Fingerprint</value>
-  </data>
   <data name="UnlockPremiumStickers" xml:space="preserve">
     <value>Unlock Premium Stickers</value>
   </data>
