@@ -256,6 +256,8 @@ namespace Telegram.Controls
 
         private void Grip_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
+            Telegram.App.Track();
+
             var master = Children[2] as FrameworkElement;
             var grip = Children[3] as UserControl;
 

@@ -126,6 +126,11 @@ namespace Telegram.Controls
         {
             Telegram.App.Track();
 
+            if (double.IsNaN(Height))
+            {
+                return;
+            }
+
             Height = double.NaN;
         }
 
