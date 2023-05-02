@@ -345,8 +345,8 @@ namespace Telegram.Controls.Cells
                     if (user.Type is UserTypeBot)
                     {
                         builder.Append(Strings.Bot);
-                        builder.Append(user.FullName());
                     }
+
                     if (user.Id == clientService.Options.MyId)
                     {
                         builder.Append(Strings.SavedMessages);
