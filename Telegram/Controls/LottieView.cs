@@ -293,14 +293,16 @@ namespace Telegram.Controls
 
             var frameRate = Math.Clamp(animation.FrameRate, 30, _limitFps ? 30 : 60);
 
+            await _nextFrameLock.WaitAsync();
+
+            _needToCreateBitmap = true;
+
             _interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / frameRate));
             _animation = animation;
             _hideThumbnail = null;
 
             _animationFrameRate = animation.FrameRate;
             _animationTotalFrame = animation.TotalFrame;
-
-            CreateBitmap();
 
             if (_backward)
             {
@@ -310,6 +312,13 @@ namespace Telegram.Controls
             {
                 _index = 0; //_isCachingEnabled ? 0 : _animationTotalFrame - 1;
             }
+
+            lock (_drawFrameLock)
+            {
+                CreateBitmap();
+            }
+
+            _nextFrameLock.Release();
 
             if (Load())
             {

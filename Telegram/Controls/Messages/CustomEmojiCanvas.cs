@@ -188,23 +188,6 @@ namespace Telegram.Controls.Messages
             OnSourceChanged();
         }
 
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            return new Size(0, 0);
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            if (_layoutRoot != null)
-            {
-                _layoutRoot.MaxWidth = finalSize.Width;
-                _layoutRoot.MaxHeight = finalSize.Height;
-            }
-
-            _layoutRoot?.Arrange(new Rect(0, 0, finalSize.Width, finalSize.Height));
-            return finalSize;
-        }
-
         public void UpdatePositions(IList<EmojiPosition> positions)
         {
             _positions.Clear();

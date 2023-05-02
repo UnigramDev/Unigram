@@ -212,8 +212,10 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock x:Name="TitleInfo"
                            Text="{CustomResource VoipGroupVoiceChat}"
-                           VerticalAlignment="Center"
                            TextLineBounds="TrimToCapHeight"
+                           TextWrapping="NoWrap"
+                           TextTrimming="CharacterEllipsis"
+                           VerticalAlignment="Center"
                            Margin="12,0,0,0"
                            AutomationProperties.LiveSetting="Assertive"
                            Foreground="{ThemeResource PageHeaderForegroundBrush}"

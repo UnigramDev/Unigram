@@ -124,6 +124,13 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
+            if (double.IsNaN(Height))
+            {
+                return;
+            }
+
             Height = double.NaN;
         }
 

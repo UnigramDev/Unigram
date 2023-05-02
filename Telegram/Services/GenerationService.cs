@@ -113,6 +113,11 @@ namespace Telegram.Services
 
         private bool IsTemporary(StorageFile source)
         {
+            if (string.IsNullOrEmpty(source.Path))
+            {
+                return false;
+            }
+
             var path1 = Path.GetDirectoryName(source.Path).TrimEnd('\\');
             var path2 = ApplicationData.Current.TemporaryFolder.Path.TrimEnd('\\');
 

@@ -47,7 +47,6 @@ namespace Telegram.Views.Supergroups
             _isEmbedded = embedded;
             _isLocked = locked;
 
-            Header.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
             ListHeader.Visibility = embedded ? Visibility.Collapsed : Visibility.Visible;
             ScrollingHost.Padding = new Thickness(0, embedded ? 12 : embedded ? 12 + 16 : 16, 0, 0);
             //ListHeader.Height = embedded && !locked ? 12 : embedded ? 12 + 16 : 16;

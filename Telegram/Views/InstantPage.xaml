@@ -246,7 +246,7 @@
         </Style>
     </Page.Resources>
 
-    <local:HostedPage.Footer>
+    <local:HostedPage.Action>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -278,7 +278,7 @@
                 </Button.Flyout>
             </controls:MoreButton>
         </Grid>
-    </local:HostedPage.Footer>
+    </local:HostedPage.Action>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ListView x:Name="ScrollingHost"

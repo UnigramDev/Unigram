@@ -55,7 +55,7 @@
         </DataTemplate>
     </Page.Resources>
 
-    <local:HostedPage.Header>
+    <!--<local:HostedPage.Header>
         <controls:ContentPageHeader>
             <Grid>
                 <Grid x:Name="MainHeader">
@@ -83,7 +83,7 @@
                          Canvas.ZIndex="1" />
             </Grid>
         </controls:ContentPageHeader>
-    </local:HostedPage.Header>
+    </local:HostedPage.Header>-->
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView ItemsSource="{x:Bind SearchResults.View, Mode=OneWay}"

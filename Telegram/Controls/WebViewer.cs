@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Telegram.Native;
 using Windows.Data.Json;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
@@ -102,6 +103,7 @@ namespace Telegram.Controls
 
             View = GetTemplateChild(nameof(View)) as WebView;
             View.NavigationStarting += OnNavigationStarting;
+            View.Unloaded += OnUnloaded;
 
             _templatedApplied.TrySetResult(true);
         }
@@ -109,6 +111,11 @@ namespace Telegram.Controls
         private void OnNavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
         {
             sender.AddWebAllowedObject("TelegramWebviewProxy", new TelegramWebviewProxy(ReceiveEvent));
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Close();
         }
 
         private void ReceiveEvent(string eventName, string eventData)

@@ -77,6 +77,8 @@ namespace Telegram.Controls
     {
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             var last = true;
             var first = default(UIElement);
 

@@ -416,6 +416,8 @@ namespace Telegram.Views.Calls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             _blurVisual.Size = e.NewSize.ToVector2();
 
             if (_collapsed)

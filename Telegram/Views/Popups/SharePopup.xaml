@@ -100,7 +100,9 @@
                                             <Grid Width="48"
                                                   Height="48"
                                                   Margin="12,0">
-                                                <controls:ProfilePicture IsHitTestVisible="False" />
+                                                <controls:ProfilePicture Width="48"
+                                                                         Height="48"
+                                                                         IsEnabled="False" />
                                                 <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
                                                         MinWidth="20"
                                                         Height="20"

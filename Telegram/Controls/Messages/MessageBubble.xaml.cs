@@ -136,7 +136,6 @@ namespace Telegram.Controls.Messages
             ContentPanel.SizeChanged += OnSizeChanged;
             Message.ContextMenuOpening += Message_ContextMenuOpening;
             Message.TextEntityClick += Message_TextEntityClick;
-            Footer.SizeChanged += Footer_SizeChanged;
 
             ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
@@ -311,6 +310,16 @@ namespace Telegram.Controls.Messages
             if (title?.Length > 0)
             {
                 builder.AppendLine($"{title}. ");
+
+                var viaBot = message.ClientService.GetUser(message.ViaBotUserId);
+                if (viaBot != null && viaBot.HasActiveUsername(out string viaBotUsername))
+                {
+                    builder.Append($" {Strings.ViaBot} @{viaBotUsername}. ");
+                }
+                else
+                {
+                    builder.Append(". ");
+                }
 
                 var admin = message.Delegate.GetAdminTitle(message);
                 if (!string.IsNullOrEmpty(title))
@@ -822,7 +831,7 @@ namespace Telegram.Controls.Messages
                     if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                     {
                         title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
-                        foreground = PlaceholderHelper.GetBrush(fromUser.SenderUserId);
+                        foreground = PlaceholderImage.GetBrush(fromUser.SenderUserId);
                     }
                     else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                     {
@@ -863,7 +872,7 @@ namespace Telegram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(CreateRun(senderUser.FullName()));
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = PlaceholderHelper.GetBrush(senderUser.Id);
+                    hyperlink.Foreground = PlaceholderImage.GetBrush(senderUser.Id);
                     hyperlink.Click += From_Click;
 
                     LoadHeaderLabel();
@@ -879,7 +888,7 @@ namespace Telegram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(CreateRun(senderChat.Title));
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = PlaceholderHelper.GetBrush(senderChat.Id);
+                    hyperlink.Foreground = PlaceholderImage.GetBrush(senderChat.Id);
                     hyperlink.Click += From_Click;
 
                     LoadHeaderLabel();
@@ -913,7 +922,7 @@ namespace Telegram.Controls.Messages
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
                     title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
-                    foreground = PlaceholderHelper.GetBrush(fromUser.SenderUserId);
+                    foreground = PlaceholderImage.GetBrush(fromUser.SenderUserId);
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                 {
@@ -1042,7 +1051,7 @@ namespace Telegram.Controls.Messages
                 LoadHeaderLabel();
 
                 var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(CreateRun(HeaderLabel.Inlines.Count > 0 ? " via @" : "via @", FontWeights.Normal));
+                hyperlink.Inlines.Add(CreateRun(HeaderLabel.Inlines.Count > 0 ? $" {Strings.ViaBot} @" : $"{Strings.ViaBot} @", FontWeights.Normal));
                 hyperlink.Inlines.Add(CreateRun(viaBotUsername));
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
@@ -2140,6 +2149,8 @@ namespace Telegram.Controls.Messages
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             UpdateClip();
 
             var message = _message;
@@ -2197,14 +2208,6 @@ namespace Telegram.Controls.Messages
                 var reactions = ElementCompositionPreview.GetElementVisual(Reactions);
                 reactions.CenterPoint = new Vector3(0, Reactions.ActualSize.Y, 0);
                 reactions.StartAnimation("Scale", factor);
-            }
-        }
-
-        private void Footer_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (e.PreviousSize.Width > 0 && e.NewSize.Width != e.PreviousSize.Width)
-            {
-                Panel.InvalidateMeasure();
             }
         }
 
@@ -2634,6 +2637,8 @@ namespace Telegram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             //return base.MeasureOverride(availableSize);
 
             var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 320));

@@ -22,7 +22,6 @@ namespace Telegram.Views
             InitializeComponent();
 
             Content = new ChatView(CreateViewModel, SetTitle);
-            Header = View.Header;
             NavigationCacheMode = NavigationCacheMode.Required;
         }
 

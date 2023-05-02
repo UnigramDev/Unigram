@@ -112,11 +112,13 @@
                                         </muxc:BreadcrumbBar.ItemTemplate>
                                     </muxc:BreadcrumbBar>
 
-                                    <ContentControl Content="{TemplateBinding DetailFooter}"
+                                    <ContentControl x:Name="DetailAction"
+                                                    Content="{TemplateBinding DetailFooter}"
                                                     IsTabStop="False"
-                                                    HorizontalContentAlignment="Right"
                                                     VerticalContentAlignment="Stretch"
+                                                    HorizontalAlignment="Right"
                                                     VerticalAlignment="Top"
+                                                    Height="48"
                                                     Margin="0,16,0,0"
                                                     Canvas.ZIndex="1" />
                                 </Grid>
@@ -450,7 +452,7 @@
 
                     <Grid x:Name="CallBanner"
                           x:Load="False"
-                          Margin="0,0,12,8"
+                          Margin="0,0,8,8"
                           CornerRadius="8"
                           Height="40"
                           Background="{ThemeResource SystemControlHighlightAccentBrush}"
@@ -790,8 +792,9 @@
                                                             <Grid Width="48"
                                                                   Height="48"
                                                                   Margin="12,0">
-                                                                <controls:ProfilePicture IsHitTestVisible="False"
-                                                                                         IsTabStop="False" />
+                                                                <controls:ProfilePicture Width="48"
+                                                                                         Height="48"
+                                                                                         IsEnabled="False" />
                                                                 <muxc:InfoBadge Background="{ThemeResource ChatUnreadBadgeBrush}"
                                                                                 Foreground="{ThemeResource ChatUnreadLabelBrush}"
                                                                                 VerticalAlignment="Top"

@@ -220,6 +220,8 @@ namespace Telegram.Views.Calls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
         }
 
         private void Resize_Click(object sender, RoutedEventArgs e)

@@ -15,6 +15,8 @@ namespace Telegram.Controls.Gallery
     {
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             var element1 = Children[0];
             var element2 = Children[1];
             var element3 = Children[2] as FrameworkElement;
@@ -39,6 +41,8 @@ namespace Telegram.Controls.Gallery
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             var element1 = Children[0];
             var element2 = Children[1];
             var element3 = Children[2] as FrameworkElement;

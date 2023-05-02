@@ -1277,12 +1277,44 @@
     {
       "selection": [
         {
+          "order": 721,
+          "id": 226,
+          "name": "ic_fluent_chat_multiple_20_filled",
+          "prevSize": 32,
+          "code": 59917,
+          "tempChar": ""
+        },
+        {
+          "order": 720,
+          "id": 225,
+          "name": "ic_fluent_archive_20_filled",
+          "prevSize": 32,
+          "code": 59918,
+          "tempChar": ""
+        },
+        {
+          "order": 719,
+          "id": 224,
+          "name": "ic_fluent_bookmark_20_filled",
+          "prevSize": 32,
+          "code": 59919,
+          "tempChar": ""
+        },
+        {
+          "order": 718,
+          "id": 223,
+          "name": "ic_fluent_history_20_regular",
+          "prevSize": 32,
+          "code": 59780,
+          "tempChar": ""
+        },
+        {
           "order": 716,
           "id": 222,
           "name": "PersonCircleOnline",
           "prevSize": 32,
           "code": 59778,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 715,
@@ -1290,7 +1322,7 @@
           "name": "ic_fluent_arrow_sync_20_regular",
           "prevSize": 32,
           "code": 59777,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 712,
@@ -1298,7 +1330,7 @@
           "name": "ic_fluent_slide_text_20_regular",
           "prevSize": 32,
           "code": 59914,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 711,
@@ -1306,7 +1338,7 @@
           "name": "ic_fluent_arrow_reset_20_regular",
           "prevSize": 32,
           "code": 59913,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 710,
@@ -1314,7 +1346,7 @@
           "name": "ic_fluent_chat_add_20_regular",
           "prevSize": 32,
           "code": 59912,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 704,
@@ -1322,7 +1354,7 @@
           "name": "ic_fluent_ruler_20_regular",
           "prevSize": 32,
           "code": 59905,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -1338,7 +1370,7 @@
           "name": "ic_fluent_arrow_upload_20_regular",
           "prevSize": 32,
           "code": 59904,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 702,
@@ -1346,7 +1378,7 @@
           "name": "ic_fluent_camera_sparkles_20_regular",
           "prevSize": 32,
           "code": 59902,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 701,
@@ -1354,7 +1386,7 @@
           "name": "ic_fluent_camera_add_20_regular",
           "prevSize": 32,
           "code": 59901,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 700,
@@ -1362,7 +1394,7 @@
           "name": "ic_fluent_play_circle_20_regular",
           "prevSize": 32,
           "code": 59900,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 698,
@@ -1370,7 +1402,7 @@
           "name": "ic_fluent_shield_task_20_regular",
           "prevSize": 32,
           "code": 59897,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 693,
@@ -1378,7 +1410,7 @@
           "name": "ic_fluent_re_order_dots_vertical_20_regular",
           "prevSize": 32,
           "code": 59894,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 687,
@@ -1386,7 +1418,7 @@
           "name": "ic_fluent_full_screen_minimize_20_regular",
           "prevSize": 32,
           "code": 59891,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 688,
@@ -1394,7 +1426,7 @@
           "name": "ic_fluent_full_screen_maximize_20_regular",
           "prevSize": 32,
           "code": 59892,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 686,
@@ -1402,7 +1434,7 @@
           "name": "ic_fluent_mention_20_regular",
           "prevSize": 32,
           "code": 59890,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 683,
@@ -1410,7 +1442,7 @@
           "name": "ic_fluent_my_location_20_regular",
           "prevSize": 32,
           "code": 59887,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 682,
@@ -1418,7 +1450,7 @@
           "name": "ic_fluent_weather_sunny_20_regular",
           "prevSize": 32,
           "code": 59886,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 678,
@@ -1426,7 +1458,7 @@
           "name": "ic_fluent_emoji_edit_20_regular",
           "prevSize": 32,
           "code": 59884,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 679,
@@ -1434,7 +1466,7 @@
           "name": "ic_fluent_emoji_add_20_regular",
           "prevSize": 32,
           "code": 59885,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 677,
@@ -1442,7 +1474,7 @@
           "name": "ic_fluent_text_font_size_20_regular",
           "prevSize": 32,
           "code": 59883,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 676,
@@ -1450,7 +1482,7 @@
           "name": "ic_fluent_shapes_20_regular",
           "prevSize": 32,
           "code": 59880,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 675,
@@ -1458,7 +1490,7 @@
           "name": "ic_fluent_weather_moon_20_regular",
           "prevSize": 32,
           "code": 59882,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 674,
@@ -1466,7 +1498,7 @@
           "name": "ic_fluent_wallpaper_20_regular",
           "prevSize": 32,
           "code": 59879,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 673,
@@ -1474,7 +1506,7 @@
           "name": "ic_fluent_arrow_sort_20_regular",
           "prevSize": 32,
           "code": 59878,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 671,
@@ -1482,7 +1514,7 @@
           "name": "ic_fluent_subtract_circle_20_regular",
           "prevSize": 32,
           "code": 59859,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 672,
@@ -1490,7 +1522,7 @@
           "name": "ic_fluent_add_circle_20_regular",
           "prevSize": 32,
           "code": 59877,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 646,
@@ -1498,7 +1530,7 @@
           "name": "ic_fluent_chat_20_regular",
           "prevSize": 32,
           "code": 59839,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 624,
@@ -1506,7 +1538,7 @@
           "name": "ic_fluent_person_20_filled",
           "prevSize": 32,
           "code": 59832,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 625,
@@ -1514,7 +1546,7 @@
           "name": "ic_fluent_people_20_filled",
           "prevSize": 32,
           "code": 59833,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 626,
@@ -1522,7 +1554,7 @@
           "name": "ic_fluent_chat_20_filled1",
           "prevSize": 32,
           "code": 59834,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 627,
@@ -1530,7 +1562,7 @@
           "name": "ic_fluent_pin_20_filled",
           "prevSize": 32,
           "code": 59835,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 628,
@@ -1538,7 +1570,7 @@
           "name": "ic_fluent_link_20_filled",
           "prevSize": 32,
           "code": 59836,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 629,
@@ -1546,7 +1578,7 @@
           "name": "ic_fluent_folder_20_filled",
           "prevSize": 32,
           "code": 59837,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 609,
@@ -1554,7 +1586,7 @@
           "name": "ic_fluent_person_available_20_regular",
           "prevSize": 32,
           "code": 59816,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 608,
@@ -1562,7 +1594,7 @@
           "name": "ic_fluent_person_circle_20_regular",
           "prevSize": 32,
           "code": 59817,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 607,
@@ -1570,7 +1602,7 @@
           "name": "ic_fluent_eye_off_20_regular",
           "prevSize": 32,
           "code": 59814,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 606,
@@ -1578,7 +1610,7 @@
           "name": "ic_fluent_eye_20_regular",
           "prevSize": 32,
           "code": 59815,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 605,
@@ -1586,7 +1618,7 @@
           "name": "ic_fluent_speaker_off_20_regular",
           "prevSize": 32,
           "code": 59813,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 604,
@@ -1594,7 +1626,7 @@
           "name": "ic_fluent_alert_on_20_regular",
           "prevSize": 32,
           "code": 59812,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 598,
@@ -1602,7 +1634,7 @@
           "name": "ic_fluent_alert_snooze_20_regular",
           "prevSize": 32,
           "code": 59804,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 597,
@@ -1610,7 +1642,7 @@
           "name": "ic_fluent_music_note_2_20_regular",
           "prevSize": 32,
           "code": 59805,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 596,
@@ -1618,7 +1650,7 @@
           "name": "ic_fluent_music_note_off_2_20_regular",
           "prevSize": 32,
           "code": 59806,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 594,
@@ -1626,7 +1658,7 @@
           "name": "ic_fluent_arrow_exit_20_regular",
           "prevSize": 32,
           "code": 59801,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 595,
@@ -1634,7 +1666,7 @@
           "name": "ic_fluent_arrow_enter_20_regular",
           "prevSize": 32,
           "code": 59803,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 593,
@@ -1642,7 +1674,7 @@
           "name": "ic_fluent_heart_12_filled",
           "prevSize": 32,
           "code": 59800,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 588,
@@ -1650,7 +1682,7 @@
           "name": "ic_fluent_compose_20_regular",
           "prevSize": 32,
           "code": 59796,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 587,
@@ -1658,7 +1690,7 @@
           "name": "ic_fluent_chat_multiple_20_regular",
           "prevSize": 32,
           "code": 59794,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 534,
@@ -1666,7 +1698,7 @@
           "name": "ic_fluent_live_20_regular",
           "prevSize": 32,
           "code": 59789,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 533,
@@ -1674,7 +1706,7 @@
           "name": "ic_fluent_dialpad_20_regular",
           "prevSize": 32,
           "code": 59788,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 532,
@@ -1682,7 +1714,7 @@
           "name": "ic_fluent_hand_right_20_regular",
           "prevSize": 32,
           "code": 59787,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 531,
@@ -1690,7 +1722,7 @@
           "name": "ic_fluent_folder_add_20_regular",
           "prevSize": 32,
           "code": 59786,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 530,
@@ -1698,7 +1730,7 @@
           "name": "ic_fluent_arrow_trending_20_regular",
           "prevSize": 32,
           "code": 59785,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 529,
@@ -1706,7 +1738,7 @@
           "name": "ic_fluent_subtract_circle_20_filled",
           "prevSize": 32,
           "code": 59784,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 528,
@@ -1714,7 +1746,7 @@
           "name": "ic_fluent_heart_20_regular1",
           "prevSize": 32,
           "code": 59783,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 526,
@@ -1722,7 +1754,7 @@
           "name": "ic_fluent_heart_16_filled",
           "prevSize": 32,
           "code": 59781,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 527,
@@ -1730,7 +1762,7 @@
           "name": "ic_fluent_mention_16_regular",
           "prevSize": 32,
           "code": 59782,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 520,
@@ -1738,7 +1770,7 @@
           "name": "ic_fluent_window_new_20_regular",
           "prevSize": 32,
           "code": 59775,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 519,
@@ -1746,7 +1778,7 @@
           "name": "ic_fluent_checkmark_circle_20_regular",
           "prevSize": 32,
           "code": 59774,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 517,
@@ -1754,7 +1786,7 @@
           "name": "ic_fluent_tab_in_private_20_regular",
           "prevSize": 32,
           "code": 59772,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 518,
@@ -1762,7 +1794,7 @@
           "name": "ic_fluent_translate_20_regular",
           "prevSize": 32,
           "code": 59773,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 516,
@@ -1770,7 +1802,7 @@
           "name": "Pin",
           "prevSize": 32,
           "code": 59771,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 515,
@@ -1778,7 +1810,7 @@
           "name": "Verified",
           "prevSize": 32,
           "code": 59770,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 514,
@@ -1786,7 +1818,7 @@
           "name": "Speaker-Mute",
           "prevSize": 32,
           "code": 59769,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -1802,7 +1834,7 @@
           "name": "ic_fluent_paint_brush_20_regular",
           "prevSize": 32,
           "code": 59662,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 495,
@@ -1810,7 +1842,7 @@
           "name": "ic_fluent_top_speed_20_regular",
           "prevSize": 32,
           "code": 59661,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 490,
@@ -1818,7 +1850,7 @@
           "name": "ic_fluent_checkmark_20_regular",
           "prevSize": 32,
           "code": 59643,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 488,
@@ -1826,7 +1858,7 @@
           "name": "ic_fluent_zoom_out_20_regular",
           "prevSize": 32,
           "code": 59754,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 487,
@@ -1834,7 +1866,7 @@
           "name": "ic_fluent_zoom_in_20_regular",
           "prevSize": 32,
           "code": 59753,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 486,
@@ -1842,7 +1874,7 @@
           "name": "ic_fluent_stack_20_regular",
           "prevSize": 32,
           "code": 59660,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 482,
@@ -1850,7 +1882,7 @@
           "name": "ic_fluent_dock_panel_right_20_filled",
           "prevSize": 32,
           "code": 59751,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 483,
@@ -1858,7 +1890,7 @@
           "name": "ic_fluent_dock_panel_right_20_regular",
           "prevSize": 32,
           "code": 59752,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 481,
@@ -1866,7 +1898,7 @@
           "name": "ic_fluent_arrow_clockwise_20_regular",
           "prevSize": 32,
           "code": 59180,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 477,
@@ -1874,7 +1906,7 @@
           "name": "ic_fluent_arrow_minimize_20_regular",
           "prevSize": 32,
           "code": 59749,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 478,
@@ -1882,7 +1914,7 @@
           "name": "ic_fluent_arrow_maximize_20_regular",
           "prevSize": 32,
           "code": 59750,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 476,
@@ -1890,7 +1922,7 @@
           "name": "ic_fluent_video_off_20_filled",
           "prevSize": 32,
           "code": 59747,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 475,
@@ -1898,7 +1930,7 @@
           "name": "ic_fluent_video_20_filled",
           "prevSize": 32,
           "code": 59748,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 473,
@@ -1906,7 +1938,7 @@
           "name": "ic_fluent_share_screen_stop_20_filled",
           "prevSize": 32,
           "code": 59733,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 474,
@@ -1914,7 +1946,7 @@
           "name": "ic_fluent_share_screen_start_20_filled",
           "prevSize": 32,
           "code": 59734,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 417,
@@ -1922,7 +1954,7 @@
           "name": "uniE930",
           "prevSize": 32,
           "code": 59696,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 416,
@@ -1930,7 +1962,7 @@
           "name": "uniE92E",
           "prevSize": 32,
           "code": 59694,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 415,
@@ -1938,7 +1970,7 @@
           "name": "uniE92F",
           "prevSize": 32,
           "code": 59695,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 412,
@@ -1946,7 +1978,7 @@
           "name": "uniE910",
           "prevSize": 32,
           "code": 59664,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 411,
@@ -1954,7 +1986,7 @@
           "name": "uniE915",
           "prevSize": 32,
           "code": 59669,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 408,
@@ -1962,7 +1994,7 @@
           "name": "uniE90F",
           "prevSize": 32,
           "code": 59663,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 407,
@@ -1970,7 +2002,7 @@
           "name": "uniE905",
           "prevSize": 32,
           "code": 59653,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 406,
@@ -1978,7 +2010,7 @@
           "name": "uniE904",
           "prevSize": 32,
           "code": 59652,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 405,
@@ -1986,7 +2018,7 @@
           "name": "uniE903",
           "prevSize": 32,
           "code": 59651,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 404,
@@ -1994,7 +2026,7 @@
           "name": "uniE901",
           "prevSize": 32,
           "code": 59649,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 400,
@@ -2002,7 +2034,7 @@
           "name": "uniE99A",
           "prevSize": 32,
           "code": 59802,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 401,
@@ -2010,7 +2042,7 @@
           "name": "uniE783",
           "prevSize": 32,
           "code": 59267,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 399,
@@ -2018,7 +2050,7 @@
           "name": "uniE919",
           "prevSize": 32,
           "code": 59673,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 398,
@@ -2026,7 +2058,7 @@
           "name": "uniF12E",
           "prevSize": 32,
           "code": 61742,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 390,
@@ -2034,7 +2066,7 @@
           "name": "uniF122",
           "prevSize": 32,
           "code": 61730,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 385,
@@ -2042,7 +2074,7 @@
           "name": "uniE74F",
           "prevSize": 32,
           "code": 59215,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 386,
@@ -2050,7 +2082,7 @@
           "name": "uniE993",
           "prevSize": 32,
           "code": 59795,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 387,
@@ -2058,7 +2090,7 @@
           "name": "uniE995",
           "prevSize": 32,
           "code": 59797,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 382,
@@ -2066,7 +2098,7 @@
           "name": "uniEC42",
           "prevSize": 32,
           "code": 60482,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 383,
@@ -2074,7 +2106,7 @@
           "name": "uniF164",
           "prevSize": 32,
           "code": 61796,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 384,
@@ -2082,7 +2114,7 @@
           "name": "uniF166",
           "prevSize": 32,
           "code": 61798,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 378,
@@ -2090,7 +2122,7 @@
           "name": "uniE72A",
           "prevSize": 32,
           "code": 59178,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 377,
@@ -2098,7 +2130,7 @@
           "name": "uniE897",
           "prevSize": 32,
           "code": 59543,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 372,
@@ -2106,7 +2138,7 @@
           "name": "uniE7AC",
           "prevSize": 32,
           "code": 59308,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 373,
@@ -2114,7 +2146,7 @@
           "name": "uniE91D",
           "prevSize": 32,
           "code": 59677,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 374,
@@ -2122,7 +2154,7 @@
           "name": "uniE93D",
           "prevSize": 32,
           "code": 59709,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 371,
@@ -2130,7 +2162,7 @@
           "name": "uniEA1A",
           "prevSize": 32,
           "code": 59930,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 264,
@@ -2138,7 +2170,7 @@
           "name": "uniE0E2",
           "prevSize": 32,
           "code": 57570,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 265,
@@ -2146,7 +2178,7 @@
           "name": "uniE0E3",
           "prevSize": 32,
           "code": 57571,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 266,
@@ -2154,7 +2186,7 @@
           "name": "uniE0E4",
           "prevSize": 32,
           "code": 57572,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 267,
@@ -2162,7 +2194,7 @@
           "name": "uniE0E5",
           "prevSize": 32,
           "code": 57573,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 268,
@@ -2170,7 +2202,7 @@
           "name": "uniE001",
           "prevSize": 32,
           "code": 57345,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 269,
@@ -2178,7 +2210,7 @@
           "name": "uniE1C4",
           "prevSize": 32,
           "code": 57796,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 270,
@@ -2186,7 +2218,7 @@
           "name": "uniE2B1",
           "prevSize": 32,
           "code": 58033,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 271,
@@ -2194,7 +2226,7 @@
           "name": "uniE7A6",
           "prevSize": 32,
           "code": 59302,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 272,
@@ -2202,7 +2234,7 @@
           "name": "uniE7A7",
           "prevSize": 32,
           "code": 59303,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 273,
@@ -2210,7 +2242,7 @@
           "name": "uniE7A8",
           "prevSize": 32,
           "code": 59304,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 274,
@@ -2218,7 +2250,7 @@
           "name": "uniE7B8",
           "prevSize": 32,
           "code": 59320,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 275,
@@ -2226,7 +2258,7 @@
           "name": "uniE7C3",
           "prevSize": 32,
           "code": 59331,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 276,
@@ -2234,7 +2266,7 @@
           "name": "uniE7ED",
           "prevSize": 32,
           "code": 59373,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 277,
@@ -2242,7 +2274,7 @@
           "name": "uniE8BD",
           "prevSize": 32,
           "code": 59581,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 278,
@@ -2250,7 +2282,7 @@
           "name": "uniE8C6",
           "prevSize": 32,
           "code": 59590,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 279,
@@ -2258,7 +2290,7 @@
           "name": "uniE8C8",
           "prevSize": 32,
           "code": 59592,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 280,
@@ -2266,7 +2298,7 @@
           "name": "uniE8CB",
           "prevSize": 32,
           "code": 59595,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 281,
@@ -2274,7 +2306,7 @@
           "name": "uniE8D2",
           "prevSize": 32,
           "code": 59602,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 282,
@@ -2282,7 +2314,7 @@
           "name": "uniE8D6",
           "prevSize": 32,
           "code": 59606,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 283,
@@ -2290,7 +2322,7 @@
           "name": "uniE8D9",
           "prevSize": 32,
           "code": 59609,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 284,
@@ -2298,7 +2330,7 @@
           "name": "uniE8DB",
           "prevSize": 32,
           "code": 59611,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 285,
@@ -2306,7 +2338,7 @@
           "name": "uniE8DC",
           "prevSize": 32,
           "code": 59612,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 286,
@@ -2314,7 +2346,7 @@
           "name": "uniE8DD",
           "prevSize": 32,
           "code": 59613,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 287,
@@ -2322,7 +2354,7 @@
           "name": "uniE8DE",
           "prevSize": 32,
           "code": 59614,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 288,
@@ -2330,7 +2362,7 @@
           "name": "uniE8FA",
           "prevSize": 32,
           "code": 59642,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 289,
@@ -2338,7 +2370,7 @@
           "name": "uniE9CE",
           "prevSize": 32,
           "code": 59854,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 290,
@@ -2346,7 +2378,7 @@
           "name": "uniE9D9",
           "prevSize": 32,
           "code": 59865,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 291,
@@ -2354,7 +2386,7 @@
           "name": "uniE9E9",
           "prevSize": 32,
           "code": 59881,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 292,
@@ -2362,7 +2394,7 @@
           "name": "uniE10B",
           "prevSize": 32,
           "code": 57611,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 511,
@@ -2370,7 +2402,7 @@
           "name": "uniE10C",
           "prevSize": 32,
           "code": 57612,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 294,
@@ -2378,7 +2410,7 @@
           "name": "uniE71B",
           "prevSize": 32,
           "code": 59163,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 295,
@@ -2386,7 +2418,7 @@
           "name": "uniE71F",
           "prevSize": 32,
           "code": 59167,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 296,
@@ -2394,7 +2426,7 @@
           "name": "uniE72B",
           "prevSize": 32,
           "code": 59179,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 297,
@@ -2402,7 +2434,7 @@
           "name": "uniE72D",
           "prevSize": 32,
           "code": 59181,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 298,
@@ -2410,7 +2442,7 @@
           "name": "uniE72E",
           "prevSize": 32,
           "code": 59182,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 299,
@@ -2418,7 +2450,7 @@
           "name": "uniE73E",
           "prevSize": 32,
           "code": 59198,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 300,
@@ -2426,7 +2458,7 @@
           "name": "uniE74B",
           "prevSize": 32,
           "code": 59211,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 301,
@@ -2434,7 +2466,7 @@
           "name": "uniE74D",
           "prevSize": 32,
           "code": 59213,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 302,
@@ -2442,7 +2474,7 @@
           "name": "uniE75C",
           "prevSize": 32,
           "code": 59228,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 303,
@@ -2450,7 +2482,7 @@
           "name": "uniE76E",
           "prevSize": 32,
           "code": 59246,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 304,
@@ -2458,7 +2490,7 @@
           "name": "uniE77A",
           "prevSize": 32,
           "code": 59258,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 305,
@@ -2466,7 +2498,7 @@
           "name": "uniE77B",
           "prevSize": 32,
           "code": 59259,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 306,
@@ -2474,7 +2506,7 @@
           "name": "uniE77F",
           "prevSize": 32,
           "code": 59263,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 307,
@@ -2482,7 +2514,7 @@
           "name": "uniE81C",
           "prevSize": 32,
           "code": 59420,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 308,
@@ -2490,7 +2522,7 @@
           "name": "uniE91C",
           "prevSize": 32,
           "code": 59676,
-          "tempChar": "",
+          "tempChar": "",
           "codes": [
             59676
           ]
@@ -2501,7 +2533,7 @@
           "name": "uniE91F",
           "prevSize": 32,
           "code": 59679,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 310,
@@ -2509,7 +2541,7 @@
           "name": "uniE92B",
           "prevSize": 32,
           "code": 59691,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 311,
@@ -2517,7 +2549,7 @@
           "name": "uniE104",
           "prevSize": 32,
           "code": 57604,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 312,
@@ -2525,7 +2557,7 @@
           "name": "uniE118",
           "prevSize": 32,
           "code": 57624,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 313,
@@ -2533,7 +2565,7 @@
           "name": "uniE168",
           "prevSize": 32,
           "code": 57704,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 314,
@@ -2541,7 +2573,7 @@
           "name": "uniE192",
           "prevSize": 32,
           "code": 57746,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 315,
@@ -2549,7 +2581,7 @@
           "name": "uniE248",
           "prevSize": 32,
           "code": 57928,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 316,
@@ -2557,7 +2589,7 @@
           "name": "uniE610",
           "prevSize": 32,
           "code": 58896,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 317,
@@ -2565,7 +2597,7 @@
           "name": "uniE700",
           "prevSize": 32,
           "code": 59136,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 318,
@@ -2573,7 +2605,7 @@
           "name": "uniE710",
           "prevSize": 32,
           "code": 59152,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 319,
@@ -2581,7 +2613,7 @@
           "name": "uniE711",
           "prevSize": 32,
           "code": 59153,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 320,
@@ -2589,7 +2621,7 @@
           "name": "uniE713",
           "prevSize": 32,
           "code": 59155,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 321,
@@ -2597,7 +2629,7 @@
           "name": "uniE714",
           "prevSize": 32,
           "code": 59156,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 322,
@@ -2605,7 +2637,7 @@
           "name": "uniE716",
           "prevSize": 32,
           "code": 59158,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 323,
@@ -2613,7 +2645,7 @@
           "name": "uniE717",
           "prevSize": 32,
           "code": 59159,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 324,
@@ -2621,7 +2653,7 @@
           "name": "uniE720",
           "prevSize": 32,
           "code": 59168,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 325,
@@ -2629,7 +2661,7 @@
           "name": "uniE721",
           "prevSize": 32,
           "code": 59169,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 326,
@@ -2637,7 +2669,7 @@
           "name": "uniE722",
           "prevSize": 32,
           "code": 59170,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 327,
@@ -2645,7 +2677,7 @@
           "name": "uniE730",
           "prevSize": 32,
           "code": 59184,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 328,
@@ -2653,7 +2685,7 @@
           "name": "uniE734",
           "prevSize": 32,
           "code": 59188,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 329,
@@ -2661,7 +2693,7 @@
           "name": "uniE735",
           "prevSize": 32,
           "code": 59189,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 330,
@@ -2669,7 +2701,7 @@
           "name": "uniE762",
           "prevSize": 32,
           "code": 59234,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -2693,7 +2725,7 @@
           "name": "uniE774",
           "prevSize": 32,
           "code": 59252,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 334,
@@ -2701,7 +2733,7 @@
           "name": "uniE785",
           "prevSize": 32,
           "code": 59269,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 335,
@@ -2709,7 +2741,7 @@
           "name": "uniE787",
           "prevSize": 32,
           "code": 59271,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 336,
@@ -2717,7 +2749,7 @@
           "name": "uniE789",
           "prevSize": 32,
           "code": 59273,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 337,
@@ -2725,7 +2757,7 @@
           "name": "uniE792",
           "prevSize": 32,
           "code": 59282,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 338,
@@ -2733,7 +2765,7 @@
           "name": "uniE825",
           "prevSize": 32,
           "code": 59429,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 339,
@@ -2741,7 +2773,7 @@
           "name": "uniE838",
           "prevSize": 32,
           "code": 59448,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 340,
@@ -2749,7 +2781,7 @@
           "name": "uniE840",
           "prevSize": 32,
           "code": 59456,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 341,
@@ -2757,7 +2789,7 @@
           "name": "uniE892",
           "prevSize": 32,
           "code": 59538,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 342,
@@ -2765,7 +2797,7 @@
           "name": "uniE893",
           "prevSize": 32,
           "code": 59539,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 343,
@@ -2773,7 +2805,7 @@
           "name": "uniE902",
           "prevSize": 32,
           "code": 59650,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 344,
@@ -2781,7 +2813,7 @@
           "name": "uniE907",
           "prevSize": 32,
           "code": 59655,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 345,
@@ -2789,7 +2821,7 @@
           "name": "uniE909",
           "prevSize": 32,
           "code": 59657,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 346,
@@ -2797,7 +2829,7 @@
           "name": "uniEA19",
           "prevSize": 32,
           "code": 59929,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 347,
@@ -2805,7 +2837,7 @@
           "name": "uniE916",
           "prevSize": 32,
           "code": 59670,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 348,
@@ -2813,7 +2845,7 @@
           "name": "uniE917",
           "prevSize": 32,
           "code": 59671,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 349,
@@ -2821,7 +2853,7 @@
           "name": "uniE918",
           "prevSize": 32,
           "code": 59672,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 350,
@@ -2829,7 +2861,7 @@
           "name": "uniE929",
           "prevSize": 32,
           "code": 59689,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 351,
@@ -2837,7 +2869,7 @@
           "name": "uniE932",
           "prevSize": 32,
           "code": 59698,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 352,
@@ -2845,7 +2877,7 @@
           "name": "uniE943",
           "prevSize": 32,
           "code": 59715,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 353,
@@ -2853,7 +2885,7 @@
           "name": "uniE946",
           "prevSize": 32,
           "code": 59718,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 354,
@@ -2861,7 +2893,7 @@
           "name": "uniE975",
           "prevSize": 32,
           "code": 59765,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 355,
@@ -2869,7 +2901,7 @@
           "name": "uniEA8F",
           "prevSize": 32,
           "code": 60047,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 356,
@@ -2877,7 +2909,7 @@
           "name": "uniEA37",
           "prevSize": 32,
           "code": 59959,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 357,
@@ -2885,7 +2917,7 @@
           "name": "uniEA80",
           "prevSize": 32,
           "code": 60032,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 358,
@@ -2893,7 +2925,7 @@
           "name": "uniEA99",
           "prevSize": 32,
           "code": 60057,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 359,
@@ -2901,7 +2933,7 @@
           "name": "uniEB05",
           "prevSize": 32,
           "code": 60165,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 360,
@@ -2909,7 +2941,7 @@
           "name": "uniEB9F",
           "prevSize": 32,
           "code": 60319,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 361,
@@ -2917,7 +2949,7 @@
           "name": "uniEC61",
           "prevSize": 32,
           "code": 60513,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 362,
@@ -2925,7 +2957,7 @@
           "name": "uniED15",
           "prevSize": 32,
           "code": 60693,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 363,
@@ -2933,7 +2965,7 @@
           "name": "uniEE56",
           "prevSize": 32,
           "code": 61014,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 364,
@@ -2941,7 +2973,7 @@
           "name": "uniF0E3",
           "prevSize": 32,
           "code": 61667,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 365,
@@ -2949,7 +2981,7 @@
           "name": "uniF3B1",
           "prevSize": 32,
           "code": 62385,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 366,
@@ -2957,7 +2989,7 @@
           "name": "uniF4A9",
           "prevSize": 32,
           "code": 62633,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 367,
@@ -2965,7 +2997,7 @@
           "name": "uniF4AA",
           "prevSize": 32,
           "code": 62634,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 368,
@@ -2973,7 +3005,7 @@
           "name": "uniF12B",
           "prevSize": 32,
           "code": 61739,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 369,
@@ -2981,7 +3013,7 @@
           "name": "uniF61B",
           "prevSize": 32,
           "code": 63003,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 370,
@@ -2989,7 +3021,7 @@
           "name": "uniF140",
           "prevSize": 32,
           "code": 61760,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 4,
@@ -3003,6 +3035,86 @@
       "height": 1024,
       "prevSize": 32,
       "icons": [
+        {
+          "id": 226,
+          "paths": [
+            "M437.16 102.4c-183.8 0-332.8 149-332.8 332.8 0 58.932 15.339 114.35 42.253 162.401l-40.742 106.614c-15.016 39.291 21.13 78.925 61.635 67.579l127.354-35.671c43.172 20.449 91.434 31.877 142.3 31.877 183.799 0 332.801-148.997 332.801-332.8 0-183.8-149.002-332.8-332.801-332.8zM336.6 805.898c61.030 70.845 151.399 115.702 252.246 115.702 50.862 0 99.128-11.428 142.3-31.877l127.35 35.671c40.509 11.346 76.652-28.288 61.64-67.579l-40.745-106.614c26.916-48.056 42.255-103.47 42.255-162.401 0-99.348-43.535-188.529-112.563-249.508 7.429 28.906 11.581 59.128 12.032 90.247 31.119 45.297 49.331 100.151 49.331 159.261 0 53.801-15.063 104.003-41.19 146.714l-6.569 10.737 49.623 129.838-146.432-41.011-8.919 4.567c-38.405 19.656-81.925 30.756-128.113 30.756-60.37 0-116.305-18.995-162.149-51.338-31.095-0.835-61.268-5.361-90.097-13.164z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_chat_multiple_20_filled"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 225,
+          "paths": [
+            "M102.4 217.6c0-35.346 28.654-64 64-64h691.2c35.348 0 64 28.654 64 64v76.8c0 35.346-28.652 64-64 64h-691.2c-35.346 0-64-28.654-64-64v-76.8zM153.6 409.6h716.8v307.2c0 84.833-68.767 153.6-153.6 153.6h-409.6c-84.831 0-153.6-68.767-153.6-153.6v-307.2zM435.2 512c-14.138 0-25.6 11.464-25.6 25.6s11.462 25.6 25.6 25.6h153.6c14.136 0 25.6-11.464 25.6-25.6s-11.464-25.6-25.6-25.6h-153.6z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_archive_20_filled"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 224,
+          "paths": [
+            "M204.8 230.4c0-70.692 57.308-128 128-128h358.4c70.692 0 128 57.308 128 128v665.6c0 9.631-5.402 18.442-13.983 22.815-8.581 4.367-18.888 3.553-26.675-2.109l-266.542-193.848-266.543 193.848c-7.788 5.663-18.094 6.477-26.674 2.109-8.58-4.372-13.983-13.184-13.983-22.815v-665.6z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_bookmark_20_filled"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 223,
+          "paths": [
+            "M179.202 102.2l4.602 0.413c10.449 1.896 18.689 10.137 20.586 20.586l0.412 4.601-0.034 113.23c59.645-67.745 140.754-114.777 232.59-131.798 222.43-41.225 436.159 105.67 477.386 328.097 41.221 222.429-105.672 436.158-328.1 477.384-222.427 41.226-436.163-105.667-477.388-328.095-4.44-23.956-8.067-67.558-6.643-101.331 0.596-14.126 12.53-25.094 26.656-24.499s25.095 12.53 24.499 26.656c-1.252 29.69 2.058 69.488 5.831 89.84 36.071 194.627 223.091 323.159 417.716 287.089 194.621-36.076 323.154-223.089 287.084-417.714s-223.089-323.157-417.711-287.086c-94.165 17.453-175.373 70.9-228.657 147.368l140.268 0.057 4.601 0.413c11.942 2.168 20.999 12.62 20.999 25.187s-9.056 23.020-20.999 25.188l-4.601 0.412h-179.098l-4.601-0.412c-10.45-1.897-18.69-10.137-20.586-20.586l-0.413-4.602v-204.8l0.413-4.601c1.896-10.449 10.136-18.69 20.586-20.586l4.601-0.413zM486.402 307l4.602 0.413c10.449 1.896 18.689 10.137 20.586 20.586l0.41 4.601v179.4h102.4l4.603 0.415c11.945 2.166 20.997 12.616 20.997 25.185s-9.052 23.020-20.997 25.185l-4.603 0.415h-127.998l-4.601-0.415c-10.45-1.894-18.69-10.132-20.586-20.582l-0.413-4.603v-205l0.413-4.601c1.896-10.449 10.136-18.69 20.586-20.586l4.601-0.413z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_history_20_regular"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
         {
           "id": 222,
           "paths": [
@@ -8176,7 +8288,7 @@
           "name": "AirplaneFilled24",
           "prevSize": 32,
           "code": 59857,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 647,
@@ -8184,7 +8296,7 @@
           "name": "ic_fluent_clipboard_text_ltr_24_filled",
           "prevSize": 32,
           "code": 59855,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 648,
@@ -8192,7 +8304,7 @@
           "name": "ic_fluent_clipboard_text_ltr_24_regular",
           "prevSize": 32,
           "code": 59856,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 644,
@@ -8203,7 +8315,7 @@
           "codes": [
             59840
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 645,
@@ -8214,7 +8326,7 @@
           "codes": [
             59841
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 642,
@@ -8222,7 +8334,7 @@
           "name": "ic_fluent_paint_brush_24_filled",
           "prevSize": 32,
           "code": 59842,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 643,
@@ -8230,7 +8342,7 @@
           "name": "ic_fluent_paint_brush_24_regular",
           "prevSize": 32,
           "code": 59843,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 640,
@@ -8238,7 +8350,7 @@
           "name": "ic_fluent_music_note_1_24_filled",
           "prevSize": 32,
           "code": 59844,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 641,
@@ -8246,7 +8358,7 @@
           "name": "ic_fluent_music_note_1_24_regular",
           "prevSize": 32,
           "code": 59845,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 638,
@@ -8254,7 +8366,7 @@
           "name": "ic_fluent_thumb_like_24_filled",
           "prevSize": 32,
           "code": 59846,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 639,
@@ -8262,7 +8374,7 @@
           "name": "ic_fluent_thumb_like_24_regular",
           "prevSize": 32,
           "code": 59847,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 636,
@@ -8270,7 +8382,7 @@
           "name": "ic_fluent_lightbulb_24_filled",
           "prevSize": 32,
           "code": 59848,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 637,
@@ -8278,7 +8390,7 @@
           "name": "ic_fluent_lightbulb_24_regular",
           "prevSize": 32,
           "code": 59849,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 634,
@@ -8286,7 +8398,7 @@
           "name": "ic_fluent_money_24_filled",
           "prevSize": 32,
           "code": 59850,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 635,
@@ -8294,7 +8406,7 @@
           "name": "ic_fluent_money_24_regular",
           "prevSize": 32,
           "code": 59851,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 632,
@@ -8302,7 +8414,7 @@
           "name": "ic_fluent_book_open_24_filled",
           "prevSize": 32,
           "code": 59852,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 633,
@@ -8310,7 +8422,7 @@
           "name": "ic_fluent_book_open_24_regular",
           "prevSize": 32,
           "code": 59853,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 589,
@@ -8318,7 +8430,7 @@
           "name": "mask_filled_1",
           "prevSize": 32,
           "code": 59716,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 590,
@@ -8326,7 +8438,7 @@
           "name": "mask_outline_1",
           "prevSize": 32,
           "code": 59717,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 583,
@@ -8334,7 +8446,7 @@
           "name": "ic_fluent_folder_24_filled",
           "prevSize": 32,
           "code": 59745,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 584,
@@ -8342,7 +8454,7 @@
           "name": "ic_fluent_folder_24_regular",
           "prevSize": 32,
           "code": 59746,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 581,
@@ -8350,7 +8462,7 @@
           "name": "ic_fluent_person_24_filled",
           "prevSize": 32,
           "code": 59743,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 582,
@@ -8358,7 +8470,7 @@
           "name": "ic_fluent_person_24_regular",
           "prevSize": 32,
           "code": 59744,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 579,
@@ -8366,7 +8478,7 @@
           "name": "ic_fluent_people_24_filled",
           "prevSize": 32,
           "code": 59741,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 580,
@@ -8374,7 +8486,7 @@
           "name": "ic_fluent_people_24_regular",
           "prevSize": 32,
           "code": 59742,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 577,
@@ -8382,7 +8494,7 @@
           "name": "ic_fluent_megaphone_24_filled",
           "prevSize": 32,
           "code": 59739,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 578,
@@ -8390,7 +8502,7 @@
           "name": "ic_fluent_megaphone_24_regular",
           "prevSize": 32,
           "code": 59740,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 575,
@@ -8398,7 +8510,7 @@
           "name": "ic_fluent_bot_24_filled",
           "prevSize": 32,
           "code": 59737,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 576,
@@ -8406,7 +8518,7 @@
           "name": "ic_fluent_bot_24_regular",
           "prevSize": 32,
           "code": 59738,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 573,
@@ -8414,7 +8526,7 @@
           "name": "ic_fluent_alert_24_filled",
           "prevSize": 32,
           "code": 59735,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 574,
@@ -8422,7 +8534,7 @@
           "name": "ic_fluent_alert_24_regular",
           "prevSize": 32,
           "code": 59736,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 571,
@@ -8430,7 +8542,7 @@
           "name": "ic_fluent_chat_multiple_24_filled",
           "prevSize": 32,
           "code": 59731,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 572,
@@ -8438,7 +8550,7 @@
           "name": "ic_fluent_chat_multiple_24_regular",
           "prevSize": 32,
           "code": 59732,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 569,
@@ -8446,7 +8558,7 @@
           "name": "ic_fluent_briefcase_24_filled",
           "prevSize": 32,
           "code": 59729,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 570,
@@ -8454,7 +8566,7 @@
           "name": "ic_fluent_briefcase_24_regular",
           "prevSize": 32,
           "code": 59730,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 567,
@@ -8462,7 +8574,7 @@
           "name": "ic_fluent_airplane_24_filled",
           "prevSize": 32,
           "code": 59727,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 568,
@@ -8470,7 +8582,7 @@
           "name": "ic_fluent_airplane_24_regular",
           "prevSize": 32,
           "code": 59728,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 565,
@@ -8478,7 +8590,7 @@
           "name": "ic_fluent_arrow_trending_lines_24_filled",
           "prevSize": 32,
           "code": 59725,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 566,
@@ -8486,7 +8598,7 @@
           "name": "ic_fluent_arrow_trending_lines_24_regular",
           "prevSize": 32,
           "code": 59726,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 563,
@@ -8494,7 +8606,7 @@
           "name": "ic_fluent_hat_graduation_24_filled",
           "prevSize": 32,
           "code": 59723,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 564,
@@ -8502,7 +8614,7 @@
           "name": "ic_fluent_hat_graduation_24_regular",
           "prevSize": 32,
           "code": 59724,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 561,
@@ -8510,7 +8622,7 @@
           "name": "ic_fluent_sport_soccer_24_filled",
           "prevSize": 32,
           "code": 59721,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 562,
@@ -8518,7 +8630,7 @@
           "name": "ic_fluent_sport_soccer_24_regular",
           "prevSize": 32,
           "code": 59722,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 559,
@@ -8526,7 +8638,7 @@
           "name": "ic_fluent_drink_wine_24_filled",
           "prevSize": 32,
           "code": 59719,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 560,
@@ -8534,7 +8646,7 @@
           "name": "ic_fluent_drink_wine_24_regular",
           "prevSize": 32,
           "code": 59720,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 555,
@@ -8542,7 +8654,7 @@
           "name": "ic_fluent_heart_24_filled",
           "prevSize": 32,
           "code": 59713,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 556,
@@ -8550,7 +8662,7 @@
           "name": "ic_fluent_heart_24_regular",
           "prevSize": 32,
           "code": 59714,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 553,
@@ -8558,7 +8670,7 @@
           "name": "ic_fluent_home_24_filled",
           "prevSize": 32,
           "code": 59708,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 554,
@@ -8566,7 +8678,7 @@
           "name": "ic_fluent_home_24_regular",
           "prevSize": 32,
           "code": 59712,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 551,
@@ -8574,7 +8686,7 @@
           "name": "ic_fluent_games_24_filled",
           "prevSize": 32,
           "code": 59706,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 552,
@@ -8582,7 +8694,7 @@
           "name": "ic_fluent_games_24_regular",
           "prevSize": 32,
           "code": 59707,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 549,
@@ -8590,7 +8702,7 @@
           "name": "ic_fluent_leaf_one_24_filled",
           "prevSize": 32,
           "code": 59704,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 550,
@@ -8598,7 +8710,7 @@
           "name": "ic_fluent_leaf_one_24_regular",
           "prevSize": 32,
           "code": 59705,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 547,
@@ -8606,7 +8718,7 @@
           "name": "ic_fluent_star_24_filled",
           "prevSize": 32,
           "code": 59702,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 548,
@@ -8614,7 +8726,7 @@
           "name": "ic_fluent_star_24_regular",
           "prevSize": 32,
           "code": 59703,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 545,
@@ -8622,7 +8734,7 @@
           "name": "ic_fluent_trophy_24_filled",
           "prevSize": 32,
           "code": 59700,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 546,
@@ -8630,7 +8742,7 @@
           "name": "ic_fluent_trophy_24_regular",
           "prevSize": 32,
           "code": 59701,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 543,
@@ -8638,7 +8750,7 @@
           "name": "ic_fluent_animal_cat_24_filled",
           "prevSize": 32,
           "code": 59697,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 544,
@@ -8646,7 +8758,7 @@
           "name": "ic_fluent_animal_cat_24_regular",
           "prevSize": 32,
           "code": 59699,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 541,
@@ -8654,7 +8766,7 @@
           "name": "ic_fluent_call_24_filled",
           "prevSize": 32,
           "code": 59792,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 542,
@@ -8662,7 +8774,7 @@
           "name": "ic_fluent_call_24_regular",
           "prevSize": 32,
           "code": 59793,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 539,
@@ -8670,7 +8782,7 @@
           "name": "ic_fluent_settings_24_filled",
           "prevSize": 32,
           "code": 59790,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 540,
@@ -8678,7 +8790,7 @@
           "name": "ic_fluent_settings_24_regular",
           "prevSize": 32,
           "code": 59791,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 5,
@@ -9970,7 +10082,7 @@
           "name": "ic_fluent_clock_20_regular",
           "prevSize": 32,
           "code": 59665,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 423,
@@ -9978,7 +10090,7 @@
           "name": "ic_fluent_emoji_20_regular",
           "prevSize": 32,
           "code": 59680,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 424,
@@ -9986,7 +10098,7 @@
           "name": "ic_fluent_animal_cat_20_regular",
           "prevSize": 32,
           "code": 59681,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 421,
@@ -9994,7 +10106,7 @@
           "name": "ic_fluent_food_pizza_20_regular",
           "prevSize": 32,
           "code": 59682,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 420,
@@ -10002,7 +10114,7 @@
           "name": "ic_fluent_sport_soccer_20_regular",
           "prevSize": 32,
           "code": 59683,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 425,
@@ -10010,7 +10122,7 @@
           "name": "ic_fluent_vehicle_car_20_regular",
           "prevSize": 32,
           "code": 59684,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 419,
@@ -10018,7 +10130,7 @@
           "name": "ic_fluent_lightbulb_filament_20_regular",
           "prevSize": 32,
           "code": 59685,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 418,
@@ -10026,7 +10138,7 @@
           "name": "ic_fluent_symbols_20_regular",
           "prevSize": 32,
           "code": 59686,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 422,
@@ -10034,7 +10146,7 @@
           "name": "ic_fluent_flag_20_regular",
           "prevSize": 32,
           "code": 59687,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 3,
@@ -10196,12 +10308,20 @@
     {
       "selection": [
         {
+          "order": 717,
+          "id": 114,
+          "name": "ShieldStar",
+          "prevSize": 32,
+          "code": 59779,
+          "tempChar": ""
+        },
+        {
           "order": 713,
           "id": 113,
           "name": "bot_command_0",
           "prevSize": 32,
           "code": 59915,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 696,
@@ -10212,7 +10332,7 @@
           "codes": [
             59895
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 697,
@@ -10220,7 +10340,7 @@
           "name": "link_1",
           "prevSize": 32,
           "code": 59896,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 692,
@@ -10235,7 +10355,7 @@
             59896,
             59897
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 691,
@@ -10250,7 +10370,7 @@
             59901,
             59902
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 690,
@@ -10265,7 +10385,7 @@
             59906,
             59907
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 689,
@@ -10280,7 +10400,7 @@
             59911,
             59912
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 652,
@@ -10288,7 +10408,7 @@
           "name": "gift_premium",
           "prevSize": 32,
           "code": 59860,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 630,
@@ -10296,7 +10416,7 @@
           "name": "Circle",
           "prevSize": 32,
           "code": 59963,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 621,
@@ -10304,7 +10424,7 @@
           "name": "Premium",
           "prevSize": 32,
           "code": 59829,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 603,
@@ -10312,7 +10432,7 @@
           "name": "ic_fluent_clock_alarm_hour_20_regular",
           "prevSize": 32,
           "code": 59811,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 601,
@@ -10320,7 +10440,7 @@
           "name": "never",
           "prevSize": 32,
           "code": 59807,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 599,
@@ -10328,7 +10448,7 @@
           "name": "day",
           "prevSize": 32,
           "code": 59808,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 602,
@@ -10336,7 +10456,7 @@
           "name": "week",
           "prevSize": 32,
           "code": 59809,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 600,
@@ -10344,7 +10464,7 @@
           "name": "month",
           "prevSize": 32,
           "code": 59810,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 592,
@@ -10352,7 +10472,7 @@
           "name": "mask_outline_2",
           "prevSize": 32,
           "code": 59799,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 521,
@@ -10360,7 +10480,7 @@
           "name": "Reactions",
           "prevSize": 32,
           "code": 59776,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 513,
@@ -10368,7 +10488,7 @@
           "name": "ic_fluent_dismiss_24_regular",
           "prevSize": 32,
           "code": 59768,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 497,
@@ -10376,7 +10496,7 @@
           "name": "Seen",
           "prevSize": 32,
           "code": 59755,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 494,
@@ -10384,7 +10504,7 @@
           "name": "ArrowDownSmall",
           "prevSize": 32,
           "code": 60892,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 492,
@@ -10392,7 +10512,7 @@
           "name": "ArrowLeftSmall",
           "prevSize": 32,
           "code": 60889,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 491,
@@ -10400,7 +10520,7 @@
           "name": "ArrowRightSmall",
           "prevSize": 32,
           "code": 60890,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 493,
@@ -10408,7 +10528,7 @@
           "name": "ArrowUpSmall",
           "prevSize": 32,
           "code": 60891,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 489,
@@ -10416,7 +10536,7 @@
           "name": "DismissSmall",
           "prevSize": 32,
           "code": 57610,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 403,
@@ -10424,7 +10544,7 @@
           "name": "VoiceChat",
           "prevSize": 32,
           "code": 59648,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 397,
@@ -10432,7 +10552,7 @@
           "name": "uniE768",
           "prevSize": 32,
           "code": 59240,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 394,
@@ -10440,7 +10560,7 @@
           "name": "uniE769",
           "prevSize": 32,
           "code": 59241,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 393,
@@ -10448,7 +10568,7 @@
           "name": "uniEC57",
           "prevSize": 32,
           "code": 60503,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 392,
@@ -10456,7 +10576,7 @@
           "name": "uniEC58",
           "prevSize": 32,
           "code": 60504,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 391,
@@ -10464,7 +10584,7 @@
           "name": "uniE8ED",
           "prevSize": 32,
           "code": 59629,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 262,
@@ -10472,7 +10592,7 @@
           "name": "Compact",
           "prevSize": 32,
           "code": 59692,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 263,
@@ -10480,7 +10600,7 @@
           "name": "CompactFull",
           "prevSize": 32,
           "code": 59693,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 261,
@@ -10488,7 +10608,7 @@
           "name": "Pinned",
           "prevSize": 32,
           "code": 59711,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 259,
@@ -10496,7 +10616,7 @@
           "name": "Replies",
           "prevSize": 32,
           "code": 59710,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -10528,7 +10648,7 @@
           "name": "CancelSmall",
           "prevSize": 32,
           "code": 59688,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 237,
@@ -10536,7 +10656,7 @@
           "name": "DownloadSmall",
           "prevSize": 32,
           "code": 59690,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -10616,7 +10736,7 @@
           "prevSize": 32,
           "code": 58880,
           "name": "uniE600",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 9,
@@ -10625,7 +10745,7 @@
           "prevSize": 32,
           "code": 58881,
           "name": "uniE601",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 10,
@@ -10634,7 +10754,7 @@
           "prevSize": 32,
           "code": 58882,
           "name": "uniE602",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 11,
@@ -10643,7 +10763,7 @@
           "prevSize": 32,
           "code": 58883,
           "name": "uniE603",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 12,
@@ -10652,7 +10772,7 @@
           "prevSize": 32,
           "code": 58885,
           "name": "uniE605",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 13,
@@ -10661,7 +10781,7 @@
           "prevSize": 32,
           "code": 58887,
           "name": "uniE607",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 14,
@@ -10670,7 +10790,7 @@
           "prevSize": 32,
           "code": 58888,
           "name": "uniE608",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 15,
@@ -10679,7 +10799,7 @@
           "prevSize": 32,
           "code": 58891,
           "name": "uniE60B",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 16,
@@ -10688,7 +10808,7 @@
           "prevSize": 32,
           "code": 58892,
           "name": "uniE60C",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 235,
@@ -10696,7 +10816,7 @@
           "name": "Trending",
           "prevSize": 32,
           "code": 58893,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 18,
@@ -10705,7 +10825,7 @@
           "prevSize": 32,
           "code": 58894,
           "name": "uniE60E",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 19,
@@ -10714,7 +10834,7 @@
           "prevSize": 32,
           "code": 58895,
           "name": "uniE60F",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 20,
@@ -10740,7 +10860,7 @@
           "prevSize": 32,
           "code": 58897,
           "name": "uniE611",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 23,
@@ -10749,7 +10869,7 @@
           "prevSize": 32,
           "code": 58898,
           "name": "uniE612",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 381,
@@ -10757,7 +10877,7 @@
           "name": "BotCommands",
           "prevSize": 32,
           "code": 58899,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 24,
@@ -10775,7 +10895,7 @@
           "prevSize": 32,
           "code": 58900,
           "name": "uniE614",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 26,
@@ -10847,7 +10967,7 @@
           "prevSize": 32,
           "code": 59654,
           "name": "uniE906",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 34,
@@ -10865,7 +10985,7 @@
           "prevSize": 32,
           "code": 59656,
           "name": "uniE908",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 36,
@@ -10883,7 +11003,7 @@
           "prevSize": 32,
           "code": 59658,
           "name": "uniE90A",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 38,
@@ -10892,7 +11012,7 @@
           "prevSize": 32,
           "code": 59659,
           "name": "uniE90B",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 39,
@@ -10955,7 +11075,7 @@
           "prevSize": 32,
           "code": 59666,
           "name": "uniE912",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 46,
@@ -10964,7 +11084,7 @@
           "prevSize": 32,
           "code": 59667,
           "name": "uniE913",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 47,
@@ -10973,7 +11093,7 @@
           "prevSize": 32,
           "code": 59668,
           "name": "uniE914",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 48,
@@ -11027,7 +11147,7 @@
           "prevSize": 32,
           "code": 59674,
           "name": "uniE91A",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 54,
@@ -11036,7 +11156,7 @@
           "prevSize": 32,
           "code": 59675,
           "name": "uniE91B",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 55,
@@ -11063,7 +11183,7 @@
           "prevSize": 32,
           "code": 59678,
           "name": "uniE91E",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 58,
@@ -11081,7 +11201,7 @@
           "prevSize": 32,
           "code": 942080,
           "name": "uE6000",
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 2,
@@ -11095,6 +11215,29 @@
       "height": 1024,
       "prevSize": 32,
       "icons": [
+        {
+          "id": 114,
+          "paths": [
+            "M496.64 107.52c10.24-5.12 20.48-5.12 30.72 0 97.28 66.56 204.8 107.52 322.56 122.88 10.24 0 20.48 15.36 20.48 25.6v230.4c0 199.68-117.76 343.040-348.16 435.2-5.12 0-10.24 0-20.48 0-230.4-92.16-348.16-235.52-348.16-435.2v-230.4c0-10.24 10.24-25.6 20.48-25.6 117.76-15.36 225.28-56.32 322.56-122.88zM491.52 168.96c-87.040 56.32-184.32 92.16-286.72 107.52v209.92c0 174.080 102.4 302.080 307.2 384 204.8-81.92 307.2-209.92 307.2-384v-209.92c-102.4-15.36-199.68-51.2-286.72-107.52l-20.48-10.24-20.48 10.24z",
+            "M537.6 322.56c-5.12-10.24-15.36-15.36-25.6-15.36s-20.48 5.12-25.6 15.36l-40.96 92.16-97.28 10.24c-10.24 0-20.48 10.24-20.48 15.36-5.12 10.24 0 20.48 5.12 30.72l71.68 66.56-20.48 97.28c0 10.24 0 20.48 10.24 25.6s20.48 5.12 25.6 0l92.16-46.080 87.040 46.080c10.24 5.12 20.48 5.12 25.6 0s10.24-15.36 10.24-25.6l-20.48-97.28 71.68-66.56c5.12-5.12 10.24-15.36 5.12-25.6s-10.24-15.36-20.48-15.36l-97.28-10.24-35.84-97.28zM486.4 445.44l25.6-51.2 25.6 51.2c5.12 10.24 10.24 15.36 20.48 15.36l56.32 10.24-40.96 40.96c-5.12 5.12-10.24 15.36-10.24 25.6l10.24 56.32-51.2-30.72c-10.24-5.12-15.36-5.12-25.6 0l-51.2 30.72 15.36-61.44c0-10.24 0-15.36-10.24-25.6l-40.96-35.84 56.32-10.24c10.24 0 15.36-5.12 20.48-15.36z"
+          ],
+          "attrs": [
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ShieldStar"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {}
+            ]
+          }
+        },
         {
           "id": 113,
           "paths": [
@@ -13086,20 +13229,17 @@
         {
           "id": 53,
           "paths": [
-            "M922 1024q-7 0-13.5-2.5t-10.5-7.5l-113-113-113 113q-10 10-24 10t-24-10l-112-112-113 112q-10 11-24 11t-24-11l-112-112-113 112q-7 8-17 9.5t-20-2.5q-9-4-15-12.5t-6-18.5v-546q0-92 35-173 35-80 95.5-140.5t141.5-95.5q80-35 172-35t172 35q81 35 141.5 95.5t95.5 140.5q35 81 35 173v546q0 10-6 18.5t-15 12.5q-4 2-7 2.5t-6 0.5v0zM512 819q7 0 13 2.5t11 7.5l113 113 112-113q10-10 24-10t25 10l77 78v-463q0-78-29-146-30-69-81-120t-119-80q-68-30-146-30t-146 30q-68 29-119 80t-81 120q-29 68-29 146v463l78-78q10-10 24-10t25 10l112 112 113-112q4-5 10-7.5t13-2.5v0zM444 410q0 42-30 72t-73 30q-42 0-72-30t-30-72q0-43 30-73t72-30q43 0 73 30t30 73v0zM785 410q0 42-30 72t-72 30q-43 0-73-30t-30-72q0-43 30-73t73-30q42 0 72 30t30 73z"
+            "M512 51.2c-209.92 0-384 174.080-384 384v486.4c0 40.96 51.2 66.56 81.92 40.96l25.6-20.48c46.080-40.96 117.76-40.96 163.84-5.12 61.44 51.2 153.6 51.2 215.040 0 51.2-35.84 117.76-35.84 163.84 5.12l25.6 20.48c35.84 25.6 81.92 5.12 81.92-40.96v-486.4c10.24-209.92-163.84-384-373.76-384zM368.64 537.6c-30.72 0-61.44-40.96-61.44-87.040 0-51.2 30.72-92.16 61.44-92.16s61.44 40.96 61.44 92.16c5.12 46.080-25.6 87.040-61.44 87.040zM655.36 537.6c-35.84 0-61.44-40.96-61.44-92.16s30.72-92.16 61.44-92.16 61.44 46.080 61.44 97.28c0 46.080-30.72 87.040-61.44 87.040z"
           ],
           "attrs": [],
-          "isMulticolor": false,
-          "isMulticolor2": false,
           "tags": [
             "uniE91A"
           ],
           "defaultCode": 59674,
           "grid": 0,
-          "colorPermutations": {
-            "13333331": [],
-            "12552552551": []
-          }
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "colorPermutations": {}
         },
         {
           "id": 54,
@@ -13256,7 +13396,7 @@
       "metadata": {
         "fontFamily": "Telegram",
         "majorVersion": 2,
-        "minorVersion": 69
+        "minorVersion": 71
       },
       "metrics": {
         "emSize": 1024,

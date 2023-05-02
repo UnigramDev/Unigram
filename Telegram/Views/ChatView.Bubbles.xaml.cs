@@ -38,6 +38,8 @@ namespace Telegram.Views
 
         private void OnViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             if (Messages.ScrollingHost.ScrollableHeight > 0)
             {
                 return;
@@ -46,10 +48,7 @@ namespace Telegram.Views
             Arrow.Visibility = Visibility.Collapsed;
             //VisualUtilities.SetIsVisible(Arrow, false);
 
-            ViewVisibleMessages(true);
-
-            _debouncer.Stop();
-            _debouncer.Start();
+            ViewVisibleMessages(false);
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -65,10 +64,7 @@ namespace Telegram.Views
                 //VisualUtilities.SetIsVisible(Arrow, true);
             }
 
-            ViewVisibleMessages(true);
-
-            _debouncer.Stop();
-            _debouncer.Start();
+            ViewVisibleMessages(false);
         }
 
         private void UnloadVisibleMessages()
@@ -574,7 +570,9 @@ namespace Telegram.Views
             if (args.ItemContainer is ChatListViewItem selector)
             {
                 // TODO: are there chances that at this point TextArea is not up to date yet?
-                selector.PrepareForItemOverride(message, TextArea.Visibility == Visibility.Visible);
+                selector.PrepareForItemOverride(message,
+                    _viewModel.Type is DialogType.History or DialogType.Thread or DialogType.ScheduledMessages
+                    && TextArea.Visibility == Visibility.Visible);
             }
 
             if (content is MessageSelector checkbox)
@@ -726,6 +724,8 @@ namespace Telegram.Views
 
         private void Item_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             var panel = Messages.ItemsStack;
             if (panel == null || e.PreviousSize.Height == e.NewSize.Height)
             {

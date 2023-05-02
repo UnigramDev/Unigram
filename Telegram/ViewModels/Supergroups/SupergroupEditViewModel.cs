@@ -12,6 +12,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
+using Telegram.Views;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Supergroups;
@@ -38,20 +39,7 @@ namespace Telegram.ViewModels.Supergroups
         {
             _profilePhotoService = profilePhotoService;
 
-            EditTypeCommand = new RelayCommand(EditTypeExecute);
-            EditLinkedChatCommand = new RelayCommand(EditLinkedChatExecute);
-            EditStickerSetCommand = new RelayCommand(EditStickerSetExecute);
-
-            LinksCommand = new RelayCommand(LinksExecute);
-            DeleteCommand = new RelayCommand(DeleteExecute);
-
-            SendCommand = new RelayCommand(SendExecute);
-
-            ReactionsCommand = new RelayCommand(ReactionsExecute);
-            MembersCommand = new RelayCommand(MembersExecute);
-            AdminsCommand = new RelayCommand(AdminsExecute);
-            BannedCommand = new RelayCommand(BannedExecute);
-            KickedCommand = new RelayCommand(KickedExecute);
+            SendCommand = new RelayCommand(Send);
         }
 
         protected Chat _chat;
@@ -242,7 +230,7 @@ namespace Telegram.ViewModels.Supergroups
         #endregion
 
         public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        private async void Send()
         {
             var chat = _chat;
             if (chat == null)
@@ -342,149 +330,127 @@ namespace Telegram.ViewModels.Supergroups
             await _profilePhotoService.CreatePhotoAsync(NavigationService, Chat.Id);
         }
 
-        public RelayCommand EditTypeCommand { get; }
-        private void EditTypeExecute()
+        public void EditType()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is Chat chat)
             {
-                return;
+                NavigationService.Navigate(typeof(SupergroupEditTypePage), chat.Id);
             }
-
-            NavigationService.Navigate(typeof(SupergroupEditTypePage), chat.Id);
         }
 
-        public RelayCommand EditStickerSetCommand { get; }
-        private void EditStickerSetExecute()
+        public void EditStickerSet()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is Chat chat)
             {
-                return;
+                NavigationService.Navigate(typeof(SupergroupEditStickerSetPage), chat.Id);
             }
-
-            NavigationService.Navigate(typeof(SupergroupEditStickerSetPage), chat.Id);
         }
 
-        public RelayCommand EditLinkedChatCommand { get; }
-        private void EditLinkedChatExecute()
+        public void EditLinkedChat()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is Chat chat)
             {
-                return;
-            }
+                var supergroup = ClientService.GetSupergroup(chat);
+                if (supergroup == null)
+                {
+                    return;
+                }
 
-            var supergroup = ClientService.GetSupergroup(chat);
-            if (supergroup == null)
-            {
-                return;
+                NavigationService.Navigate(typeof(SupergroupEditLinkedChatPage), chat.Id);
             }
-
-            NavigationService.Navigate(typeof(SupergroupEditLinkedChatPage), chat.Id);
         }
 
-        public RelayCommand LinksCommand { get; }
-        private void LinksExecute()
+        public void Links()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is Chat chat)
             {
-                return;
+                NavigationService.Navigate(typeof(ChatInviteLinkPage), chat.Id);
             }
-
-            NavigationService.Navigate(typeof(ChatInviteLinkPage), chat.Id);
         }
 
-        public RelayCommand DeleteCommand { get; }
-        private async void DeleteExecute()
+        public void EventLog()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is Chat chat)
             {
-                return;
+                NavigationService.Navigate(typeof(ChatEventLogPage), chat.Id);
             }
+        }
 
-            var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
-            var dialog = new DeleteChatPopup(ClientService, updated, null, false, true);
+        public async void Delete()
+        {
+            if (_chat is Chat chat)
+            {
+                var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
+                var popup = new DeleteChatPopup(ClientService, updated, null, false, true);
 
-            var confirm = await ShowPopupAsync(dialog);
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
+                var confirm = await ShowPopupAsync(popup);
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    return;
+                }
 
-            var response = await ClientService.SendAsync(new DeleteChat(chat.Id));
-            if (response is Ok)
-            {
-                NavigationService.RemovePeerFromStack(chat.Id);
-            }
-            else if (response is Error error)
-            {
-                // TODO: ...
+                Function request;
+                if (popup.IsChecked)
+                {
+                    request = new DeleteChat(chat.Id);
+                }
+                else
+                {
+                    request = new LeaveChat(chat.Id);
+                }
+
+                var response = await ClientService.SendAsync(request);
+                if (response is Ok)
+                {
+                    NavigationService.RemovePeerFromStack(chat.Id);
+                }
+                else if (response is Error error)
+                {
+                    // TODO: ...
+                }
             }
         }
 
         #region Navigation
 
-        public RelayCommand ReactionsCommand { get; }
-        private void ReactionsExecute()
+        public void Reactions()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is Chat chat)
             {
-                return;
+                NavigationService.Navigate(typeof(SupergroupReactionsPage), chat.Id);
             }
-
-            NavigationService.Navigate(typeof(SupergroupReactionsPage), chat.Id);
         }
 
-        public RelayCommand AdminsCommand { get; }
-        private void AdminsExecute()
+        public void Admins()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is Chat chat)
             {
-                return;
+                NavigationService.Navigate(typeof(SupergroupAdministratorsPage), chat.Id);
             }
-
-            NavigationService.Navigate(typeof(SupergroupAdministratorsPage), chat.Id);
         }
 
-        public RelayCommand BannedCommand { get; }
-        private void BannedExecute()
+        public void Banned()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is Chat chat)
             {
-                return;
+                NavigationService.Navigate(typeof(SupergroupBannedPage), chat.Id);
             }
-
-            NavigationService.Navigate(typeof(SupergroupBannedPage), chat.Id);
         }
 
-        public RelayCommand KickedCommand { get; }
-        private void KickedExecute()
+        public void Kicked()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is Chat chat)
             {
-                return;
+                NavigationService.Navigate(typeof(SupergroupPermissionsPage), chat.Id);
             }
-
-            NavigationService.Navigate(typeof(SupergroupPermissionsPage), chat.Id);
         }
 
-        public RelayCommand MembersCommand { get; }
-        private void MembersExecute()
+        public void Members()
         {
-            var chat = _chat;
-            if (chat == null)
+            if (_chat is Chat chat)
             {
-                return;
+                NavigationService.Navigate(typeof(SupergroupMembersPage), chat.Id);
             }
-
-            NavigationService.Navigate(typeof(SupergroupMembersPage), chat.Id);
         }
 
         #endregion

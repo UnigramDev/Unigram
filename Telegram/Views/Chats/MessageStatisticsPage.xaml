@@ -20,51 +20,21 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <!--<local:HostedPage.Header>
-        <controls:ContentPageHeader>
-            <Grid x:Name="Header">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <controls:ProfilePicture x:Name="Photo"
-                                         Width="36"
-                                         Height="36"
-                                         Margin="12,0"
-                                         IsHitTestVisible="False" />
-
-                <StackPanel Orientation="Vertical"
-                            VerticalAlignment="Center"
-                            Margin="0,-2,0,2"
-                            Grid.Column="1">
-                    <TextBlock x:Name="Title"
-                               Style="{StaticResource BaseTextBlockStyle}"
-                               TextTrimming="CharacterEllipsis"
-                               TextWrapping="NoWrap"
-                               MaxLines="1" />
-                    <TextBlock x:Name="Subtitle"
-                               Text="{CustomResource ViewMessageStatistic}"
-                               Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                               Style="{StaticResource CaptionTextBlockStyle}" />
-                </StackPanel>
-
-                <controls:MoreButton Grid.Column="2">
-                    <Button.Flyout>
-                        <MenuFlyout Placement="BottomEdgeAlignedRight">
-                            <MenuFlyoutItem Text="{CustomResource ViewChannelStats}"
-                                            Command="{x:Bind ViewModel.OpenChannelCommand}">
-                                <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE9D9;"
-                                              Style="{StaticResource DefaultFontIconStyle}" />
-                                </MenuFlyoutItem.Icon>
-                            </MenuFlyoutItem>
-                        </MenuFlyout>
-                    </Button.Flyout>
-                </controls:MoreButton>
-            </Grid>
-        </controls:ContentPageHeader>
-    </local:HostedPage.Header>-->
+    <local:HostedPage.Action>
+        <controls:MoreButton Grid.Column="2">
+            <Button.Flyout>
+                <MenuFlyout Placement="BottomEdgeAlignedRight">
+                    <MenuFlyoutItem Text="{CustomResource ViewChannelStats}"
+                                    Click="{x:Bind ViewModel.OpenChannel}">
+                        <MenuFlyoutItem.Icon>
+                            <FontIcon Glyph="&#xE9D9;"
+                                      Style="{StaticResource DefaultFontIconStyle}" />
+                        </MenuFlyoutItem.Icon>
+                    </MenuFlyoutItem>
+                </MenuFlyout>
+            </Button.Flyout>
+        </controls:MoreButton>
+    </local:HostedPage.Action>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"

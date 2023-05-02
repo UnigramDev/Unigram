@@ -21,6 +21,8 @@ namespace Telegram.Controls
     {
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             var size = finalSize.ToVector2();
 
             var rows = Math.Ceiling(size.Y / 68);

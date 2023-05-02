@@ -66,7 +66,7 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateChatPhoto(Chat chat)
         {
-            Photo.SetChat(ViewModel.ClientService, chat, 64);
+            Photo.SetChat(ViewModel.ClientService, chat, 96);
         }
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
@@ -77,6 +77,9 @@ namespace Telegram.Views.Supergroups
             DeletePanel.Footer = group.IsChannel ? Strings.ChannelDeleteInfo : Strings.MegaDeleteInfo;
 
             Members.Content = group.IsChannel ? Strings.ChannelSubscribers : Strings.ChannelMembers;
+            Members.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+
+            EventLog.Visibility = Visibility.Visible;
 
             ViewModel.Title = chat.Title;
             ViewModel.IsSignatures = group.SignMessages;
@@ -115,7 +118,6 @@ namespace Telegram.Views.Supergroups
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
             Permissions.Visibility = group.IsChannel || !group.CanRestrictMembers() ? Visibility.Collapsed : Visibility.Visible;
-            Blacklist.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             DeletePanel.Visibility = group.Status is ChatMemberStatusCreator ? Visibility.Visible : Visibility.Collapsed;
 
@@ -208,6 +210,8 @@ namespace Telegram.Views.Supergroups
             DeletePanel.Footer = Strings.MegaDeleteInfo;
 
             Members.Content = Strings.ChannelMembers;
+
+            EventLog.Visibility = Visibility.Collapsed;
 
             ViewModel.Title = chat.Title;
             ViewModel.IsSignatures = false;

@@ -244,6 +244,9 @@
   <data name="AccDescrStickers" xml:space="preserve">
     <value>Stickers</value>
   </data>
+  <data name="AccDescrVerified" xml:space="preserve">
+    <value>Verified</value>
+  </data>
   <data name="AccDescrVideoMessage" xml:space="preserve">
     <value>Record video message</value>
   </data>
@@ -1232,10 +1235,10 @@ Please enable Unigram in the Startup Apps Settings.</value>
     <value>Color</value>
   </data>
   <data name="BackgroundColorSinglePreviewLine1" xml:space="preserve">
-    <value>Press &apos;Set&apos; to apply the background.</value>
+    <value>Click &apos;Set&apos; to apply the wallpaper.</value>
   </data>
   <data name="BackgroundColorSinglePreviewLine2" xml:space="preserve">
-    <value>Enjoy the view.</value>
+    <value>Looks good</value>
   </data>
   <data name="BackgroundIntensity" xml:space="preserve">
     <value>Intensity</value>
@@ -1244,7 +1247,7 @@ Please enable Unigram in the Startup Apps Settings.</value>
     <value>Pattern</value>
   </data>
   <data name="BackgroundPreview" xml:space="preserve">
-    <value>Wallpaper</value>
+    <value>Wallpaper Preview</value>
   </data>
   <data name="BackgroundPreviewLine1" xml:space="preserve">
     <value>Hint: some wallpaper images look better with the blur effect.</value>
@@ -1328,7 +1331,7 @@ Please enable Unigram in the Startup Apps Settings.</value>
     <value>Use @BotFather to manage this bot.</value>
   </data>
   <data name="BotName" xml:space="preserve">
-    <value>Bot name</value>
+    <value>Bot Name</value>
   </data>
   <data name="BotOpenPageMessage" xml:space="preserve">
     <value>**{0}** would like to open its web app to proceed.
@@ -1964,7 +1967,7 @@ Minimum length is 5 characters.</value>
     <value>Code expired, please start over.</value>
   </data>
   <data name="ColorPickerBackground" xml:space="preserve">
-    <value>Background</value>
+    <value>Wallpaper</value>
   </data>
   <data name="ColorPickerMainColor" xml:space="preserve">
     <value>Accent Color</value>
@@ -2199,10 +2202,10 @@ You can always switch back to the default Telegram theme here.</value>
     <value>Delete and Leave Group</value>
   </data>
   <data name="DeleteBackground_one" xml:space="preserve">
-    <value>Delete background</value>
+    <value>Delete wallpaper</value>
   </data>
   <data name="DeleteBackground_other" xml:space="preserve">
-    <value>Delete {0} backgrounds</value>
+    <value>Delete {0} wallpapers</value>
   </data>
   <data name="DeleteBanUser" xml:space="preserve">
     <value>Ban user</value>
@@ -2212,6 +2215,9 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DeleteCallsForEveryone" xml:space="preserve">
     <value>Delete for everyone</value>
+  </data>
+  <data name="DeleteChannelForAll" xml:space="preserve">
+    <value>Delete the channel for all subscribers</value>
   </data>
   <data name="DeleteChat" xml:space="preserve">
     <value>Delete and leave</value>
@@ -2236,6 +2242,9 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DeleteFromRecent" xml:space="preserve">
     <value>Remove from Recent</value>
+  </data>
+  <data name="DeleteGroupForAll" xml:space="preserve">
+    <value>Delete the group for all members</value>
   </data>
   <data name="DeleteLocalization" xml:space="preserve">
     <value>Delete localization?</value>
@@ -2815,7 +2824,7 @@ Learn more at telegram.org</value>
     <value>Invite links</value>
   </data>
   <data name="EventLogFilterLeavingMembers" xml:space="preserve">
-    <value>Members Leaving</value>
+    <value>Members leaving</value>
   </data>
   <data name="EventLogFilterNewAdmins" xml:space="preserve">
     <value>Admin rights</value>
@@ -3129,7 +3138,7 @@ Duration: {1}</value>
     <value>You can’t share folders without a name.</value>
   </data>
   <data name="FilterInviteErrorExcluded" xml:space="preserve">
-    <value>You can’t share folders with excluded chats.</value>
+    <value>You can’t share folders that exclude chats.</value>
   </data>
   <data name="FilterInviteErrorTypes" xml:space="preserve">
     <value>You can’t share folders which include or exclude specific chat types like &apos;Groups&apos;, &apos;Contacts&apos;, etc.</value>
@@ -3240,10 +3249,10 @@ Duration: {1}</value>
     <value>{0} chats to join</value>
   </data>
   <data name="FolderLinkHeaderChatsQuit_one" xml:space="preserve">
-    <value>{0} chat to quit</value>
+    <value>{0} chat to leave</value>
   </data>
   <data name="FolderLinkHeaderChatsQuit_other" xml:space="preserve">
-    <value>{0} chats to quit</value>
+    <value>{0} chats to leave</value>
   </data>
   <data name="FolderLinkHint" xml:space="preserve">
     <value>You can deselect the chats you don’t want to join.</value>
@@ -3827,10 +3836,10 @@ You can change your language back at any time in Settings.</value>
   </data>
   <data name="LimitReachedFolderLinks" xml:space="preserve">
     <value>You can only create {0} invite links.
-Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
+Upgrade to **Telegram Premium** to create up to **{1}**.</value>
   </data>
   <data name="LimitReachedFolderLinksLocked" xml:space="preserve">
-    <value>You can only create {0} invite links. We are working to let you increase this limit in the future.</value>
+    <value>You can only create {0} invite links. This limit may increase in the future.</value>
   </data>
   <data name="LimitReachedFolderLinksPremium" xml:space="preserve">
     <value>You can only create {0} invite links. Try deleting some folder invite links.</value>
@@ -3863,7 +3872,7 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
     <value>You have reserved too many public links. Try revoking the link from an older group or channel.</value>
   </data>
   <data name="LimitReachedSharedFolders" xml:space="preserve">
-    <value>You can only have **{0}** shareable folders.
+    <value>You can only have {0} shareable folders.
 Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   </data>
   <data name="LimitReachedSharedFoldersLocked" xml:space="preserve">
@@ -3969,7 +3978,7 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
     <value>Loading...</value>
   </data>
   <data name="LocalAudioCache" xml:space="preserve">
-    <value>Voice &amp; Video messages</value>
+    <value>Voice messages</value>
   </data>
   <data name="LocalCache" xml:space="preserve">
     <value>Other files</value>
@@ -5435,16 +5444,16 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Are you sure you want to reset auto-download settings?</value>
   </data>
   <data name="ResetChatBackgrounds" xml:space="preserve">
-    <value>Reset Chat Backgrounds</value>
+    <value>Reset Chat Wallpapers</value>
   </data>
   <data name="ResetChatBackgroundsAlert" xml:space="preserve">
-    <value>Are you sure you want to reset all chat backgrounds?</value>
+    <value>Are you sure you want to reset all chat wallpapers?</value>
   </data>
   <data name="ResetChatBackgroundsAlertTitle" xml:space="preserve">
-    <value>Reset chat backgrounds</value>
+    <value>Reset chat wallpapers</value>
   </data>
   <data name="ResetChatBackgroundsInfo" xml:space="preserve">
-    <value>Remove all uploaded chat backgrounds and restore the pre-installed ones.</value>
+    <value>Remove all uploaded wallpapers and restore the pre-installed ones.</value>
   </data>
   <data name="ResetMyAccount" xml:space="preserve">
     <value>RESET MY ACCOUNT</value>
@@ -5759,7 +5768,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>Promote to admin</value>
   </data>
   <data name="SetBackground" xml:space="preserve">
-    <value>SET BACKGROUND</value>
+    <value>SET WALLPAPER</value>
   </data>
   <data name="SetColor" xml:space="preserve">
     <value>Set a color</value>
@@ -6353,7 +6362,7 @@ Please try again in {0}.</value>
     <value>In {0}</value>
   </data>
   <data name="TopicRestarted2" xml:space="preserve">
-    <value>{0} reopened topic</value>
+    <value>{0} reopened the topic</value>
   </data>
   <data name="Topics" xml:space="preserve">
     <value>Topics</value>
@@ -6414,7 +6423,7 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
     <value>The ‘Translate’ button will appear when you right click on a text message.</value>
   </data>
   <data name="TranslateMessagesInfo2" xml:space="preserve">
-    <value>Google may have access to the messages you translate.</value>
+    <value>Google may have access to the text of messages you translate.</value>
   </data>
   <data name="TranslationFailedAlert1" xml:space="preserve">
     <value>Translation failed. Try again later.</value>
@@ -6700,7 +6709,7 @@ However, it is currently available for purchase. **Learn more…**</value>
     <value>Link order</value>
   </data>
   <data name="UsernamesChannelHelp" xml:space="preserve">
-    <value>Drag and drop links to change the order in which they will be displayed on the channel&apos;s info page.</value>
+    <value>Drag and drop links to change the order in which they will be displayed on the channel info page.</value>
   </data>
   <data name="UsernamesProfileHeader" xml:space="preserve">
     <value>Username order</value>

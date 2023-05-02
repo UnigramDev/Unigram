@@ -250,6 +250,8 @@ namespace Telegram.Controls
     {
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             var width = 0d;
             var height = 0d;
 
@@ -274,6 +276,8 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             var x = 0d;
 
             foreach (var child in Children)

@@ -67,6 +67,8 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
+            Telegram.App.Track();
+
             var banner = Children[0];
             var detail = Children[1];
             var master = Children[2];
@@ -121,6 +123,8 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
+            Telegram.App.Track();
+
             var banner = Children[0];
             var detail = Children[1];
             var master = Children[2];
@@ -252,6 +256,8 @@ namespace Telegram.Controls
 
         private void Grip_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
+            Telegram.App.Track();
+
             var master = Children[2] as FrameworkElement;
             var grip = Children[3] as UserControl;
 

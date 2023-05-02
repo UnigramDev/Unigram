@@ -52,7 +52,7 @@ namespace Telegram.Views.Host
 
             if (navigationService.Frame.Content is HostedPage hosted)
             {
-                PageHeader.Content = hosted.Header;
+                PageHeader.Content = hosted.Action;
             }
             else
             {
@@ -74,7 +74,7 @@ namespace Telegram.Views.Host
         {
             if (e.Content is HostedPage hosted)
             {
-                PageHeader.Content = hosted.Header;
+                PageHeader.Content = hosted.Action;
             }
             else
             {

@@ -234,7 +234,7 @@ namespace Telegram.Controls.Cells
 
         public void UpdateChatFolder(FolderFlag folder)
         {
-            Photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFolderIcon(folder.Flag), (int)folder.Flag);
+            Photo.Source = PlaceholderImage.GetGlyph(MainPage.GetFolderIcon(folder.Flag), (int)folder.Flag);
 
             SelectionOutline.RadiusX = 18;
             SelectionOutline.RadiusY = 18;

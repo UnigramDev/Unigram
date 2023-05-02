@@ -96,9 +96,8 @@ namespace Telegram.Views
         private ChatBackgroundPresenter _backgroundPresenter;
 
         private readonly DebouncedProperty<FocusState> _focusState;
-        private bool _enableHighlightWords;
-
-        private bool _isTextReadOnly;
+        private bool _enableHighlightWords = true;
+        private bool _isTextReadOnly = false;
 
         private bool _needActivation = true;
 
@@ -258,12 +257,20 @@ namespace Telegram.Views
 
         private bool CanFocusText(FocusState state)
         {
-            return TextField.FocusState != state;
+            if (state == FocusState.Keyboard || state == FocusState.Programmatic)
+            {
+                return TextField.FocusState != state;
+            }
+
+            return false;
         }
 
         private void FocusText(FocusState state)
         {
-            TextField.Focus(state);
+            if (state == FocusState.Keyboard || state == FocusState.Programmatic)
+            {
+                TextField.Focus(state);
+            }
         }
 
         private void OnNavigatedTo()
@@ -570,11 +577,14 @@ namespace Telegram.Views
                     case NotifyCollectionChangedAction.Remove:
                         RemoveRange(e.OldStartingIndex, e.OldItems.Count);
                         break;
-                    case NotifyCollectionChangedAction.Move:
-                        Move(e.OldStartingIndex, e.NewStartingIndex);
-                        break;
                     case NotifyCollectionChangedAction.Reset:
                         ReplaceWith(_source);
+                        break;
+                    case NotifyCollectionChangedAction.Move:
+                        if (e.NewItems[0] is T item)
+                        {
+                            Move(e.OldStartingIndex, e.NewStartingIndex, item);
+                        }
                         break;
                 }
             }
@@ -2970,17 +2980,23 @@ namespace Telegram.Views
 
         private void InlinePanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             _textShadowVisual.IsVisible = Math.Round(e.NewSize.Height) > ViewModel.Settings.Appearance.BubbleRadius
                 || ReplyMarkupPanel.Visibility == Visibility.Visible;
         }
 
         private void TextArea_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             _rootVisual.Size = e.NewSize.ToVector2();
         }
 
         private void ElapsedPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             var point = _elapsedVisual.Offset;
             point.X = (float)-e.NewSize.Width;
 
@@ -2990,6 +3006,8 @@ namespace Telegram.Views
 
         private void SlidePanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             var point = _slideVisual.Offset;
             point.X = (float)e.NewSize.Width + 36;
 
@@ -3459,11 +3477,15 @@ namespace Telegram.Views
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
 
         }
 
         private void ContentPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             if (ListInline != null)
             {
                 ListInline.MaxHeight = Math.Min(320, Math.Max(e.NewSize.Height - 48, 0));
@@ -3474,11 +3496,15 @@ namespace Telegram.Views
 
         private void Arrow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             ElementCompositionPreview.GetElementVisual(sender as UIElement).CenterPoint = new Vector3((float)e.NewSize.Width / 2f, (float)e.NewSize.Height - (float)e.NewSize.Width / 2f, 0);
         }
 
         private void DateHeaderPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             ElementCompositionPreview.GetElementVisual(sender as UIElement).CenterPoint = new Vector3((float)e.NewSize.Width / 2f, (float)e.NewSize.Height / 2f, 0);
         }
 
@@ -3881,7 +3907,7 @@ namespace Telegram.Views
                 else
                 {
                     UnloadObject(Icon);
-                    Photo.Source = PlaceholderHelper.GetGlyph(Icons.ChatMultiple, 5);
+                    Photo.Source = PlaceholderImage.GetGlyph(Icons.ChatMultiple, 5);
                     Photo.IsEnabled = false;
                 }
             }

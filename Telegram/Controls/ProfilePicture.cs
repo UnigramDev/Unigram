@@ -4,13 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.Foundation;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -50,7 +51,6 @@ namespace Telegram.Controls
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Border;
-            LayoutRoot.CornerRadius = new CornerRadius(Shape == ProfilePictureShape.Superellipse ? ActualWidth / 4 : ActualWidth / 2);
 
             Initials = GetTemplateChild(nameof(Initials)) as TextBlock;
             Texture = GetTemplateChild(nameof(Texture)) as ImageBrush;
@@ -61,43 +61,51 @@ namespace Telegram.Controls
             Gradient.GradientStops.Add(new GradientStop { Offset = 0 });
             Gradient.GradientStops.Add(new GradientStop { Offset = 1 });
 
+            //UpdateCornerRadius();
+            //UpdateFontSize();
+
             OnSourceChanged(Source);
             base.OnApplyTemplate();
         }
 
-        protected override Size ArrangeOverride(Size finalSize)
+        private void UpdateCornerRadius()
         {
-            if (LayoutRoot != null)
+            if (LayoutRoot == null || double.IsNaN(Width))
             {
-                LayoutRoot.CornerRadius = new CornerRadius(Shape switch
-                {
-                    ProfilePictureShape.Superellipse => finalSize.Width / 4,
-                    ProfilePictureShape.Ellipse => finalSize.Width / 2,
-                    _ => 0
-                });
+                return;
             }
 
-            if (Initials != null)
+            LayoutRoot.CornerRadius = new CornerRadius(Shape switch
             {
-                var fontSize = finalSize.Width switch
-                {
-                    < 30 => 12,
-                    < 36 => 14,
-                    < 48 => 16,
-                    < 64 => 20,
-                    < 96 => 24,
-                    < 120 => 32,
-                    _ => 64
-                };
+                ProfilePictureShape.Superellipse => Width / 4,
+                ProfilePictureShape.Ellipse => Width / 2,
+                _ => 0
+            });
+        }
 
-                if (_fontSize != fontSize)
-                {
-                    _fontSize = fontSize;
-                    Initials.FontSize = fontSize;
-                }
+        private void UpdateFontSize()
+        {
+            if (Initials == null || double.IsNaN(Width))
+            {
+                return;
             }
 
-            return base.ArrangeOverride(finalSize);
+            var fontSize = Width switch
+            {
+                < 30 => 12,
+                < 36 => 14,
+                < 48 => 16,
+                < 64 => 20,
+                < 96 => 24,
+                < 120 => 32,
+                _ => 64
+            };
+
+            if (_fontSize != fontSize)
+            {
+                _fontSize = fontSize;
+                Initials.FontSize = fontSize;
+            }
         }
 
         #region Shape
@@ -113,20 +121,7 @@ namespace Telegram.Controls
 
         private static void OnShapeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ProfilePicture)d).OnShapeChanged((ProfilePictureShape)e.NewValue, (ProfilePictureShape)e.OldValue);
-        }
-
-        private void OnShapeChanged(ProfilePictureShape newValue, ProfilePictureShape oldValue)
-        {
-            if (newValue != oldValue && LayoutRoot != null && !double.IsNaN(ActualWidth))
-            {
-                LayoutRoot.CornerRadius = new CornerRadius(Shape switch
-                {
-                    ProfilePictureShape.Superellipse => ActualWidth / 4,
-                    ProfilePictureShape.Ellipse => ActualWidth / 2,
-                    _ => 0
-                });
-            }
+            ((ProfilePicture)d).UpdateCornerRadius();
         }
 
         #endregion
@@ -172,8 +167,8 @@ namespace Telegram.Controls
 
             if (newValue is PlaceholderImage placeholder)
             {
-                Gradient.GradientStops[1].Color = placeholder.TopColor;
-                Gradient.GradientStops[0].Color = placeholder.BottomColor;
+                Gradient.GradientStops[0].Color = placeholder.TopColor;
+                Gradient.GradientStops[1].Color = placeholder.BottomColor;
 
                 LayoutRoot.Background = Gradient;
 
@@ -194,6 +189,9 @@ namespace Telegram.Controls
 
                 Initials.Visibility = Visibility.Collapsed;
             }
+
+            UpdateCornerRadius();
+            UpdateFontSize();
         }
 
         #endregion
@@ -281,11 +279,11 @@ namespace Telegram.Controls
 
             if (chat.Type is ChatTypePrivate privata && clientService.IsSavedMessages(chat))
             {
-                return PlaceholderHelper.GetGlyph(Icons.Bookmark, 5);
+                return PlaceholderImage.GetGlyph(Icons.BookmarkFilled, 5);
             }
             else if (clientService.IsRepliesChat(chat))
             {
-                return PlaceholderHelper.GetGlyph(Icons.ChatMultiple, 5);
+                return PlaceholderImage.GetGlyph(Icons.ChatMultipleFilled, 5);
             }
 
             if (clientService.IsForum(chat))
@@ -312,7 +310,7 @@ namespace Telegram.Controls
             }
             else if (clientService.TryGetUser(chat, out User user) && user.Type is UserTypeDeleted)
             {
-                return PlaceholderHelper.GetGlyph(Icons.Ghost, user.Id);
+                return PlaceholderImage.GetGlyph(Icons.GhostFilled, long.MinValue);
             }
 
             if (chat.Photo?.Minithumbnail != null)
@@ -320,7 +318,7 @@ namespace Telegram.Controls
                 return PlaceholderHelper.GetBlurred(chat.Photo.Minithumbnail.Data);
             }
 
-            return PlaceholderHelper.GetChat(chat);
+            return PlaceholderImage.GetChat(chat);
         }
 
         #endregion
@@ -387,7 +385,7 @@ namespace Telegram.Controls
             }
             else if (user.Type is UserTypeDeleted)
             {
-                return PlaceholderHelper.GetGlyph(Icons.Ghost, 0);
+                return PlaceholderImage.GetGlyph(Icons.GhostFilled, long.MinValue);
             }
 
             if (user.ProfilePhoto?.Minithumbnail != null)
@@ -395,7 +393,7 @@ namespace Telegram.Controls
                 return PlaceholderHelper.GetBlurred(user.ProfilePhoto.Minithumbnail.Data);
             }
 
-            return PlaceholderHelper.GetUser(user);
+            return PlaceholderImage.GetUser(user);
         }
 
 
@@ -459,7 +457,7 @@ namespace Telegram.Controls
                 return PlaceholderHelper.GetBlurred(chat.Photo.Minithumbnail.Data);
             }
 
-            return PlaceholderHelper.GetChat(chat);
+            return PlaceholderImage.GetChat(chat);
         }
 
         #endregion
@@ -545,12 +543,12 @@ namespace Telegram.Controls
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
                 {
-                    Source = PlaceholderHelper.GetNameForUser(fromImport.SenderName);
+                    Source = PlaceholderImage.GetNameForUser(fromImport.SenderName);
                     Shape = ProfilePictureShape.Ellipse;
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
                 {
-                    Source = PlaceholderHelper.GetNameForUser(fromHiddenUser.SenderName);
+                    Source = PlaceholderImage.GetNameForUser(fromHiddenUser.SenderName);
                     Shape = ProfilePictureShape.Ellipse;
                 }
             }
@@ -587,12 +585,117 @@ namespace Telegram.Controls
 
         public Color BottomColor { get; }
 
-        public PlaceholderImage(string initials, bool isGlyph, Color topColor, Color bottomColor)
+        public PlaceholderImage(string initials, bool isGlyph, long id)
         {
             Initials = initials;
             IsGlyph = isGlyph;
-            TopColor = topColor;
-            BottomColor = bottomColor;
+
+            if (id == long.MinValue)
+            {
+                TopColor = _disabledTop;
+                BottomColor = _disabled;
+            }
+            else
+            {
+                TopColor = _colorsTop[Math.Abs(id % _colors.Length)];
+                BottomColor = _colors[Math.Abs(id % _colors.Length)];
+            }
         }
+
+        #region Static stuff
+
+        private static readonly Color[] _colorsTop = new Color[7]
+        {
+            Color.FromArgb(0xFF, 0xEF, 0x8E, 0x67),
+            Color.FromArgb(0xFF, 0xF7, 0xCE, 0x79),
+            Color.FromArgb(0xFF, 0x8C, 0xAF, 0xF9),
+            Color.FromArgb(0xFF, 0xAC, 0xDC, 0x89),
+            Color.FromArgb(0xFF, 0x81, 0xE9, 0xD6),
+            Color.FromArgb(0xFF, 0x8A, 0xD3, 0xF9),
+            Color.FromArgb(0xFF, 0xFF, 0xAF, 0xC7),
+        };
+
+        private static readonly Color[] _colors = new Color[7]
+        {
+            Color.FromArgb(0xFF, 0xEC, 0x5F, 0x6D),
+            Color.FromArgb(0xFF, 0xF2, 0xAC, 0x6A),
+            Color.FromArgb(0xFF, 0x65, 0x60, 0xF6),
+            Color.FromArgb(0xFF, 0x75, 0xC8, 0x73),
+            Color.FromArgb(0xFF, 0x62, 0xC6, 0xB7),
+            Color.FromArgb(0xFF, 0x51, 0x9D, 0xEA),
+            Color.FromArgb(0xFF, 0xF2, 0x74, 0x9A),
+        };
+
+        private static readonly Color _disabledTop = Color.FromArgb(0xFF, 0xA6, 0xAB, 0xB7);
+        private static readonly Color _disabled = Color.FromArgb(0xFF, 0x86, 0x89, 0x92);
+
+        public static SolidColorBrush GetBrush(long i)
+        {
+            return new SolidColorBrush(_colors[Math.Abs(i % _colors.Length)]);
+        }
+
+        public static CompositionBrush GetBrush(Compositor compositor, long i)
+        {
+            return compositor.CreateColorBrush(_colors[Math.Abs(i % _colors.Length)]);
+        }
+
+        public static PlaceholderImage GetChat(Chat chat)
+        {
+            if (chat.Type is ChatTypePrivate privata)
+            {
+                return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, privata.UserId);
+            }
+            else if (chat.Type is ChatTypeSecret secret)
+            {
+                return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, secret.UserId);
+            }
+            else if (chat.Type is ChatTypeBasicGroup basic)
+            {
+                return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, basic.BasicGroupId);
+            }
+            else if (chat.Type is ChatTypeSupergroup super)
+            {
+                return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, super.SupergroupId);
+            }
+
+            return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, 5);
+        }
+
+        public static PlaceholderImage GetChat(ChatInviteLinkInfo chat)
+        {
+            if (chat.ChatId != 0)
+            {
+                return new PlaceholderImage(InitialNameStringConverter.Convert(chat.Title), false, chat.ChatId);
+            }
+
+            return new PlaceholderImage(InitialNameStringConverter.Convert(chat.Title), false, 5);
+        }
+
+        public static PlaceholderImage GetUser(User user)
+        {
+            return new PlaceholderImage(InitialNameStringConverter.Convert(user), false, user.Id);
+        }
+
+        public static PlaceholderImage GetNameForUser(string firstName, string lastName, long id = 5)
+        {
+            return new PlaceholderImage(InitialNameStringConverter.Convert(firstName, lastName), false, id);
+        }
+
+        public static PlaceholderImage GetNameForUser(string name, long id = 5)
+        {
+            return new PlaceholderImage(InitialNameStringConverter.Convert((object)name), false, id);
+        }
+
+        public static PlaceholderImage GetNameForChat(string title, long id = 5)
+        {
+            return new PlaceholderImage(InitialNameStringConverter.Convert(title), false, id);
+        }
+
+        public static PlaceholderImage GetGlyph(string glyph, long id = 5)
+        {
+            return new PlaceholderImage(glyph, true, id);
+        }
+
+        #endregion
     }
 }

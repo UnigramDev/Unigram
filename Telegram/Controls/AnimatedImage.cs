@@ -45,6 +45,7 @@ namespace Telegram.Controls
         private readonly ConcurrentQueue<PixelBuffer> _backgroundQueue = new();
 
         private bool _bitmapClean = true;
+        protected bool _needToCreateBitmap = true;
 
         protected Panel _layoutRoot;
         protected Image _canvas;
@@ -61,7 +62,6 @@ namespace Telegram.Controls
 
         protected bool _isLoopingEnabled = true;
 
-        protected readonly object _recreateLock = new();
         protected readonly object _drawFrameLock = new();
         protected readonly SemaphoreSlim _nextFrameLock = new(1, 1);
 
@@ -203,7 +203,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            lock (_recreateLock)
+            lock (_drawFrameLock)
             {
                 var newDpi = _currentDpi;
 
@@ -215,9 +215,7 @@ namespace Telegram.Controls
                 {
                     try
                     {
-                        CreateBitmap();
-
-                        Invalidate();
+                        DrawFrame();
                         OnSourceChanged();
                     }
                     catch
@@ -299,11 +297,8 @@ namespace Telegram.Controls
             _unloaded = true;
             Subscribe(false);
 
-            lock (_recreateLock)
+            lock (_drawFrameLock)
             {
-                ////_canvas.Source = new BitmapImage();
-                //_layoutRoot?.Children.Remove(_canvas);
-                //_canvas = null;
                 if (_canvas != null)
                 {
                     _canvas.Source = null;
@@ -374,7 +369,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (_bitmap0 == null)
+            if (_needToCreateBitmap)
             {
                 CreateBitmap();
             }
@@ -396,6 +391,18 @@ namespace Telegram.Controls
             }
         }
 
+        protected async Task CreateBitmapAsync()
+        {
+            await _nextFrameLock.WaitAsync();
+
+            lock (_drawFrameLock)
+            {
+                CreateBitmap();
+            }
+
+            _nextFrameLock.Release();
+        }
+
         protected void CreateBitmap()
         {
             var temp = CreateBitmap(_currentDpi, out int width, out int height);
@@ -415,8 +422,15 @@ namespace Telegram.Controls
 
                 _backgroundQueue.Enqueue(new PixelBuffer(_bitmap0));
                 _backgroundQueue.Enqueue(new PixelBuffer(_bitmap1));
+
+                // Must be removed, otherwise it will be enqueued again breaking everything
+                if (_canvas != null)
+                {
+                    _canvas.Source = null;
+                }
             }
 
+            _needToCreateBitmap = _animation == null;
             UpdateSource();
         }
 
@@ -476,6 +490,12 @@ namespace Telegram.Controls
 
         private bool TryDequeueOrExchange(out PixelBuffer frame)
         {
+            if (_needToCreateBitmap)
+            {
+                frame = null;
+                return false;
+            }
+
             if (_backgroundQueue.TryDequeue(out frame))
             {
                 return true;
@@ -501,7 +521,7 @@ namespace Telegram.Controls
             {
                 Subscribe(false);
 
-                if (playing)
+                if (playing && !_unloaded)
                 {
                     Display();
                 }
@@ -512,7 +532,7 @@ namespace Telegram.Controls
         {
             if (_bitmapClean && !_unloaded)
             {
-                CreateBitmap();
+                await CreateBitmapAsync();
 
                 // Invalidate to render the first frame
                 // Would be nice to move this to IndividualAnimatedImage

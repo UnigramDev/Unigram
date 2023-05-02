@@ -145,6 +145,7 @@ namespace Telegram.Converters
         public const string Comment = "\uE8BD";
 
         public const string Archive = "\uE7B8";
+        public const string ArchiveFilled = "\uEA0E";
 
         public const string WindowNew = "\uE97F";
 
@@ -220,6 +221,7 @@ namespace Telegram.Converters
         public const string ShieldCheckmark = "\uEA1A";
         public const string Bug = "\uE825";
         public const string Bookmark = "\uE907";
+        public const string BookmarkFilled = "\uEA0F";
         public const string ArrowRight = "\uE72A";
         public const string Channel = "\uEC42";
         public const string Speaker = "\uE995";
@@ -228,7 +230,7 @@ namespace Telegram.Converters
         public const string SpeakerOff = "\uE9A5";
         public const string SendFilled = "\uE919";
 
-        public const string Ghost = "\uE91A";
+        public const string GhostFilled = "\uE91A";
 
         public const string VideoChat = "\uE900";
 
@@ -240,6 +242,7 @@ namespace Telegram.Converters
 
         public const string ChatBubblesQuestion = "\uE783";
         public const string ChatMultiple = "\uE992";
+        public const string ChatMultipleFilled = "\uEA0D";
 
         public const string TopSpeed = "\uE90D";
 

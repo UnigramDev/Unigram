@@ -72,7 +72,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
-                Photo.Source = PlaceholderHelper.GetNameForUser(contact.Contact.FirstName, contact.Contact.LastName);
+                Photo.Source = PlaceholderImage.GetNameForUser(contact.Contact.FirstName, contact.Contact.LastName);
             }
 
             Title.Text = contact.Contact.GetFullName();

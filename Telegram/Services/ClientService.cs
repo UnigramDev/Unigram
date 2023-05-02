@@ -1892,10 +1892,6 @@ namespace Telegram.Services
                 if (updateOption.Name == "my_id" && updateOption.Value is OptionValueInteger myId)
                 {
                     _settings.UserId = myId.Value;
-
-#if !DEBUG
-                    Microsoft.AppCenter.AppCenter.SetUserId($"uid={myId.Value}");
-#endif
                 }
                 else if (updateOption.Name == "is_premium" || updateOption.Name == "is_premium_available")
                 {

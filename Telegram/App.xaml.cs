@@ -6,7 +6,9 @@
 //
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -55,6 +57,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
@@ -79,6 +82,18 @@ namespace Telegram
 
         private ExtendedExecutionSession _extendedSession;
 
+        private static readonly List<string> _lastCalls = new();
+
+        public static void Track([CallerMemberName] string member = "", [CallerFilePath] string filePath = "")
+        {
+            _lastCalls.Add(string.Format("[{0}] {1} --- {2}", member, filePath, Environment.TickCount));
+
+            if (_lastCalls.Count > 50)
+            {
+                _lastCalls.RemoveAt(0);
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -93,7 +108,7 @@ namespace Telegram
                 SettingsService.Current.Diagnostics.UpdateCount++;
             }
 
-            TLContainer.Current.Configure(out int count);
+            TLContainer.Current.Configure();
 
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             InitializeComponent();
@@ -103,16 +118,25 @@ namespace Telegram
             UnhandledException += (s, args) =>
             {
                 args.Handled = args.Exception is not LayoutCycleException;
-                SettingsService.Current.Diagnostics.LastNavigatedPageType = FrameFacade.LastNavigatedPageType;
-                Client.Execute(new AddLogMessage(1, "Unhandled exception:\n" + args.Exception.ToString()));
+
+                var path = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.txt");
+                var data = $"Unhandled exception:\n{args.Exception}\n\n{string.Join('\n', _lastCalls)}";
+
+                System.IO.File.WriteAllText(path, data);
+                Client.Execute(new AddLogMessage(1, data));
             };
 
 #if !DEBUG
             Microsoft.AppCenter.Crashes.Crashes.GetErrorAttachments = report =>
             {
-                var lastPageType = SettingsService.Current.Diagnostics.LastNavigatedPageType;
-                SettingsService.Current.Diagnostics.LastNavigatedPageType = null;
-                return new[] { Microsoft.AppCenter.Crashes.ErrorAttachmentLog.AttachmentWithText(lastPageType, "page.txt") };
+                var path = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.txt");
+                if (System.IO.File.Exists(path))
+                {
+                    var data = System.IO.File.ReadAllText(path);
+                    return new[] { Microsoft.AppCenter.Crashes.ErrorAttachmentLog.AttachmentWithText(data, "crash.txt") };
+                }
+
+                return Array.Empty<Microsoft.AppCenter.Crashes.ErrorAttachmentLog>();
             };
 
             Microsoft.AppCenter.AppCenter.Start(Constants.AppCenterId,
@@ -124,12 +148,6 @@ namespace Telegram
                 {
                     { "DeviceFamily", AnalyticsInfo.VersionInfo.DeviceFamily },
                     { "Architecture", Package.Current.Id.Architecture.ToString() }
-                });
-
-            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Instance",
-                new System.Collections.Generic.Dictionary<string, string>
-                {
-                    { "ActiveSessions", $"{count}" },
                 });
 
             static void FatalErrorCallback(int verbosityLevel, string message)

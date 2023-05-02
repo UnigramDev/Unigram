@@ -8,11 +8,11 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">
 
-    <local:HostedPage.Footer>
+    <local:HostedPage.Action>
         <Button Content="{CustomResource Done}"
                 Command="{x:Bind ViewModel.SendCommand}"
                 Style="{StaticResource AccentButtonStyle}" />
-    </local:HostedPage.Footer>
+    </local:HostedPage.Action>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"

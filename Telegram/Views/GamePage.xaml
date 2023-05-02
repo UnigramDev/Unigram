@@ -8,8 +8,12 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">
 
-    <local:HostedPage.Header>
-        <controls:ContentPageHeader>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:ContentPageHeader Background="{ThemeResource PageSubHeaderBackgroundBrush2}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
@@ -30,10 +34,9 @@
                                       Grid.Column="1" />
             </Grid>
         </controls:ContentPageHeader>
-    </local:HostedPage.Header>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <controls:WebViewer x:Name="View"
-                            EventReceived="View_EventReceived" />
+                            EventReceived="View_EventReceived"
+                            Grid.Row="1" />
     </Grid>
 </local:HostedPage>

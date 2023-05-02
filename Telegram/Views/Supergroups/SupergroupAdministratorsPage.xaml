@@ -31,16 +31,17 @@
                                               Margin="0,0,0,16">
                         <controls:BadgeButton x:Name="EventLog"
                                               Content="{CustomResource EventLog}"
-                                              Command="{x:Bind ViewModel.EventLogCommand}"
+                                              Click="{x:Bind ViewModel.EventLog}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xE81C;" />
+                                              IsChevronVisible="True"
+                                              Glyph="&#xE984;" />
 
                         <controls:BadgeButton x:Name="AddNew"
                                               Visibility="Collapsed"
                                               Content="{CustomResource ChannelAddAdmin}"
-                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Click="{x:Bind ViewModel.Add}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xE734;" />
+                                              Glyph="&#xE983;" />
 
                         <controls:FauxCheckBox x:Name="AntiSpam"
                                                Content="{CustomResource ChannelAntiSpam}"

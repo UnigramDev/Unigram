@@ -121,6 +121,13 @@ namespace Telegram.Controls
                 return false;
             }
 
+            // This line should not be needed, but we keep it anyway for now
+            if (animation.PixelWidth != pixels.PixelWidth || animation.PixelHeight != pixels.PixelHeight)
+            {
+                Telegram.App.Track();
+                return false;
+            }
+
             if (_shouldStopNextFrame)
             {
                 _shouldStopNextFrame = false;
@@ -169,11 +176,22 @@ namespace Telegram.Controls
 
             var frameRate = Math.Clamp(animation.FrameRate, 1, _isCachingEnabled ? 30 : 60);
 
+            await _nextFrameLock.WaitAsync();
+
+            _needToCreateBitmap = true;
+
             _interval = TimeSpan.FromMilliseconds(1000d / frameRate);
             _animation = animation;
             _hideThumbnail = null;
 
-            CreateBitmap();
+            //CreateBitmap();
+
+            lock (_drawFrameLock)
+            {
+                CreateBitmap();
+            }
+
+            _nextFrameLock.Release();
 
             if (Load())
             {

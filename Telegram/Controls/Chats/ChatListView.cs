@@ -88,6 +88,8 @@ namespace Telegram.Controls.Chats
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            Telegram.App.Track();
+
             // TODO: triple check
             if (e.NewSize.Height < ActualHeight)
             {
@@ -417,7 +419,7 @@ namespace Telegram.Controls.Chats
         protected void OnDoubleTapped(SelectorItem selector)
         {
             var message = ItemFromContainer(selector) as MessageViewModel;
-            if (message!= null)
+            if (message != null)
             {
                 ViewModel.DoubleTapped(message);
             }
