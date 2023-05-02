@@ -648,7 +648,7 @@ namespace Telegram.Controls.Cells
                         break;
                 }
 
-                Photo.Source = PlaceholderHelper.GetGlyph(MainPage.GetFolderIcon(flag.Flag), (int)flag.Flag);
+                Photo.Source = PlaceholderImage.GetGlyph(MainPage.GetFolderIcon(flag.Flag), (int)flag.Flag);
             }
         }
 

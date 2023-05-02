@@ -7,7 +7,6 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
-using Telegram.Common;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -73,8 +72,8 @@ namespace Telegram.Controls.Cells
 
         public void UpdateVenue(Venue venue)
         {
-            SelectionOutline.Stroke = PlaceholderHelper.GetBrush(venue.Id.GetHashCode());
-            Photo.Background = PlaceholderHelper.GetBrush(venue.Id.GetHashCode());
+            SelectionOutline.Stroke = PlaceholderImage.GetBrush(venue.Id.GetHashCode());
+            Photo.Background = PlaceholderImage.GetBrush(venue.Id.GetHashCode());
             PhotoElement.UriSource = new Uri(string.Format("https://ss3.4sqi.net/img/categories_v2/{0}_88.png", venue.Type));
 
             TitleLabel.Text = venue.Title;
@@ -82,7 +81,7 @@ namespace Telegram.Controls.Cells
 
             if (_ellipse != null)
             {
-                _ellipse.FillBrush = PlaceholderHelper.GetBrush(_ellipse.Compositor, venue.Id.GetHashCode());
+                _ellipse.FillBrush = PlaceholderImage.GetBrush(_ellipse.Compositor, venue.Id.GetHashCode());
             }
         }
 

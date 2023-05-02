@@ -831,7 +831,7 @@ namespace Telegram.Controls.Messages
                     if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                     {
                         title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
-                        foreground = PlaceholderHelper.GetBrush(fromUser.SenderUserId);
+                        foreground = PlaceholderImage.GetBrush(fromUser.SenderUserId);
                     }
                     else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                     {
@@ -872,7 +872,7 @@ namespace Telegram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(CreateRun(senderUser.FullName()));
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = PlaceholderHelper.GetBrush(senderUser.Id);
+                    hyperlink.Foreground = PlaceholderImage.GetBrush(senderUser.Id);
                     hyperlink.Click += From_Click;
 
                     LoadHeaderLabel();
@@ -888,7 +888,7 @@ namespace Telegram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(CreateRun(senderChat.Title));
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = PlaceholderHelper.GetBrush(senderChat.Id);
+                    hyperlink.Foreground = PlaceholderImage.GetBrush(senderChat.Id);
                     hyperlink.Click += From_Click;
 
                     LoadHeaderLabel();
@@ -922,7 +922,7 @@ namespace Telegram.Controls.Messages
                 if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
                 {
                     title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
-                    foreground = PlaceholderHelper.GetBrush(fromUser.SenderUserId);
+                    foreground = PlaceholderImage.GetBrush(fromUser.SenderUserId);
                 }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
                 {

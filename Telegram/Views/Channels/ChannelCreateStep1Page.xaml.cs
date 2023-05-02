@@ -63,7 +63,7 @@ namespace Telegram.Views.Channels
                 return preview;
             }
 
-            return PlaceholderHelper.GetNameForChat(title);
+            return PlaceholderImage.GetNameForChat(title);
         }
 
         private Visibility ConvertPhotoVisibility(string title, BitmapImage preview)

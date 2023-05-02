@@ -236,13 +236,13 @@ namespace Telegram.Controls.Messages
 
                     if (sender is MessageSenderUser user)
                     {
-                        BorderBrush = PlaceholderHelper.GetBrush(user.UserId);
-                        TitleLabel.Foreground = PlaceholderHelper.GetBrush(user.UserId);
+                        BorderBrush = PlaceholderImage.GetBrush(user.UserId);
+                        TitleLabel.Foreground = PlaceholderImage.GetBrush(user.UserId);
                     }
                     else if (sender is MessageSenderChat chat)
                     {
-                        BorderBrush = PlaceholderHelper.GetBrush(chat.ChatId);
-                        TitleLabel.Foreground = PlaceholderHelper.GetBrush(chat.ChatId);
+                        BorderBrush = PlaceholderImage.GetBrush(chat.ChatId);
+                        TitleLabel.Foreground = PlaceholderImage.GetBrush(chat.ChatId);
                     }
                 }
 

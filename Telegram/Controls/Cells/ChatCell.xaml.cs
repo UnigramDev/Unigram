@@ -251,7 +251,7 @@ namespace Telegram.Controls.Cells
                 }
 
                 TitleLabel.Text = Strings.ArchivedChats;
-                Photo.Source = PlaceholderHelper.GetGlyph(Icons.Archive, 0);
+                Photo.Source = PlaceholderImage.GetGlyph(Icons.ArchiveFilled, 5);
 
                 UnreadMentionsBadge.Visibility = Visibility.Collapsed;
                 PinnedIcon.Visibility = Visibility.Collapsed;
@@ -1773,7 +1773,7 @@ namespace Telegram.Controls.Cells
             }
 
             TitleLabel.Text = title;
-            Photo.Source = type is ChatTypeSupergroup ? PlaceholderHelper.GetNameForChat(title, color) : PlaceholderHelper.GetNameForUser(title, color);
+            Photo.Source = type is ChatTypeSupergroup ? PlaceholderImage.GetNameForChat(title, color) : PlaceholderImage.GetNameForUser(title, color);
 
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
             VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);

@@ -12,8 +12,6 @@ using System.IO.Compression;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using Telegram.Controls;
-using Telegram.Converters;
 using Telegram.Native;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -21,7 +19,6 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.UI;
-using Windows.UI.Composition;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -29,43 +26,6 @@ namespace Telegram.Common
 {
     public static class PlaceholderHelper
     {
-        private static readonly Color[] _colors = new Color[7]
-        {
-            Color.FromArgb(0xFF, 0xE5, 0x65, 0x55),
-            Color.FromArgb(0xFF, 0xF2, 0x8C, 0x48),
-            Color.FromArgb(0xFF, 0x8E, 0x85, 0xEE),
-            Color.FromArgb(0xFF, 0x76, 0xC8, 0x4D),
-            Color.FromArgb(0xFF, 0x5F, 0xBE, 0xD5),
-            Color.FromArgb(0xFF, 0x54, 0x9C, 0xDD),
-            Color.FromArgb(0xFF, 0xF2, 0x74, 0x9A),
-        };
-
-        private static readonly Color[] _colorsTop = new Color[7];
-        private static readonly Color[] _colorsBottom = new Color[7];
-
-        static PlaceholderHelper()
-        {
-            for (int i = 0; i < _colors.Length; i++)
-            {
-                var hsv = _colors[i].ToHSL();
-                var luminance = hsv.L;
-                hsv.L = luminance * 0.9;
-                _colorsTop[i] = hsv.ToRGB();
-                hsv.L = luminance * 1.1;
-                _colorsBottom[i] = hsv.ToRGB();
-            }
-        }
-
-        public static SolidColorBrush GetBrush(long i)
-        {
-            return new SolidColorBrush(_colors[Math.Abs(i % _colors.Length)]);
-        }
-
-        public static CompositionBrush GetBrush(Compositor compositor, long i)
-        {
-            return compositor.CreateColorBrush(_colors[Math.Abs(i % _colors.Length)]);
-        }
-
         public static ImageSource GetIdenticon(IList<byte> hash, int side)
         {
             var bitmap = new BitmapImage();
@@ -80,75 +40,6 @@ namespace Telegram.Common
             }
 
             return bitmap;
-        }
-
-        public static PlaceholderImage GetChat(Chat chat)
-        {
-            Color topColor;
-            Color bottomColor;
-
-            if (chat.Type is ChatTypePrivate privata)
-            {
-                topColor = _colorsTop[Math.Abs(privata.UserId % _colors.Length)];
-                bottomColor = _colorsBottom[Math.Abs(privata.UserId % _colors.Length)];
-            }
-            else if (chat.Type is ChatTypeSecret secret)
-            {
-                topColor = _colorsTop[Math.Abs(secret.UserId % _colors.Length)];
-                bottomColor = _colorsBottom[Math.Abs(secret.UserId % _colors.Length)];
-            }
-            else if (chat.Type is ChatTypeBasicGroup basic)
-            {
-                topColor = _colorsTop[Math.Abs(basic.BasicGroupId % _colors.Length)];
-                bottomColor = _colorsBottom[Math.Abs(basic.BasicGroupId % _colors.Length)];
-            }
-            else if (chat.Type is ChatTypeSupergroup super)
-            {
-                topColor = _colorsTop[Math.Abs(super.SupergroupId % _colors.Length)];
-                bottomColor = _colorsBottom[Math.Abs(super.SupergroupId % _colors.Length)];
-            }
-            else
-            {
-                topColor = _colorsTop[5];
-                bottomColor = _colorsBottom[5];
-            }
-
-            return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, topColor, bottomColor);
-        }
-
-        public static PlaceholderImage GetChat(ChatInviteLinkInfo chat)
-        {
-            if (chat.ChatId != 0)
-            {
-                return new PlaceholderImage(InitialNameStringConverter.Convert(chat.Title), false, _colorsTop[Math.Abs(chat.ChatId % _colors.Length)], _colorsBottom[Math.Abs(chat.ChatId % _colors.Length)]);
-            }
-
-            return new PlaceholderImage(InitialNameStringConverter.Convert(chat.Title), false, _colorsTop[5], _colorsBottom[5]);
-        }
-
-        public static PlaceholderImage GetUser(User user)
-        {
-            return new PlaceholderImage(InitialNameStringConverter.Convert(user), false, _colorsTop[Math.Abs(user.Id % _colors.Length)], _colorsBottom[Math.Abs(user.Id % _colors.Length)]);
-        }
-
-        public static PlaceholderImage GetNameForUser(string firstName, string lastName, long color = 5)
-        {
-            return new PlaceholderImage(InitialNameStringConverter.Convert(firstName, lastName), false, _colorsTop[Math.Abs(color % _colors.Length)], _colorsBottom[Math.Abs(color % _colors.Length)]);
-        }
-
-        public static PlaceholderImage GetNameForUser(string name, long color = 5)
-        {
-            return new PlaceholderImage(InitialNameStringConverter.Convert((object)name), false, _colorsTop[Math.Abs(color % _colors.Length)], _colorsBottom[Math.Abs(color % _colors.Length)]);
-        }
-
-        public static PlaceholderImage GetNameForChat(string title, long color = 5)
-        {
-            return new PlaceholderImage(InitialNameStringConverter.Convert(title), false, _colorsTop[Math.Abs(color % _colors.Length)], _colorsBottom[Math.Abs(color % _colors.Length)]);
-        }
-
-        public static PlaceholderImage GetGlyph(string glyph, long id)
-        {
-            return new PlaceholderImage(glyph, true, _colorsTop[Math.Abs(id % _colors.Length)], _colorsBottom[Math.Abs(id % _colors.Length)]);
         }
 
         public static ImageSource GetBitmap(IClientService clientService, PhotoSize photoSize)
