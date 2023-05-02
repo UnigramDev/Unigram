@@ -108,7 +108,7 @@ namespace Telegram
                 SettingsService.Current.Diagnostics.UpdateCount++;
             }
 
-            TLContainer.Current.Configure(out int count);
+            TLContainer.Current.Configure();
 
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             InitializeComponent();
@@ -148,12 +148,6 @@ namespace Telegram
                 {
                     { "DeviceFamily", AnalyticsInfo.VersionInfo.DeviceFamily },
                     { "Architecture", Package.Current.Id.Architecture.ToString() }
-                });
-
-            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Instance",
-                new System.Collections.Generic.Dictionary<string, string>
-                {
-                    { "ActiveSessions", $"{count}" },
                 });
 
             static void FatalErrorCallback(int verbosityLevel, string message)

@@ -280,6 +280,8 @@ namespace Telegram.Controls
         {
             if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
+                Telegram.App.Track();
+
                 while (_layoutRoot.Children.Count > 0)
                 {
                     _layoutRoot.Children.Remove(_layoutRoot.Children[0]);

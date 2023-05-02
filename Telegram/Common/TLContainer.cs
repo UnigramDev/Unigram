@@ -34,10 +34,8 @@ namespace Telegram.Views
 
         public int Count => _containers.Count;
 
-        public void Configure(out int count)
+        public void Configure()
         {
-            count = 0;
-
             var fail = true;
             var first = 0;
 
@@ -48,7 +46,6 @@ namespace Telegram.Views
                     first = session;
                 }
 
-                count++;
                 fail = false;
                 Current.Build(session);
             }
