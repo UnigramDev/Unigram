@@ -209,7 +209,7 @@ namespace Telegram.Controls.Messages.Content
 
         public void Recycle()
         {
-            if (Media.Child is IContent content)
+            if (_templateApplied && Media.Child is IContent content)
             {
                 content.Recycle();
             }

@@ -113,8 +113,12 @@ namespace Telegram.Controls.Messages.Content
 
         public void Recycle()
         {
+            if (_thumbnailToken != null)
+            {
+                UpdateManager.Unsubscribe(this);
+            }
+
             _thumbnailToken = null;
-            UpdateManager.Unsubscribe(this);
         }
 
         public bool IsValid(MessageContent content, bool primary)

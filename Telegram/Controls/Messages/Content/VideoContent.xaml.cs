@@ -323,11 +323,18 @@ namespace Telegram.Controls.Messages.Content
 
         public void Recycle()
         {
+            if (_fileToken != null || _thumbnailToken != null)
+            {
+                UpdateManager.Unsubscribe(this);
+            }
+
             _fileToken = null;
             _thumbnailToken = null;
-            UpdateManager.Unsubscribe(this);
 
-            Player.Source = null;
+            if (_templateApplied)
+            {
+                Player.Source = null;
+            }
         }
 
         public bool IsValid(MessageContent content, bool primary)
