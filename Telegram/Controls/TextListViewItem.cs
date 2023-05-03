@@ -8,6 +8,7 @@ using LinqToVisualTree;
 using System.Text;
 using Telegram.Controls.Cells;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 
@@ -51,6 +52,12 @@ namespace Telegram.Controls
 
             foreach (TextBlock child in descendants)
             {
+                var view = AutomationProperties.GetAccessibilityView(child);
+                if (view == AccessibilityView.Raw)
+                {
+                    continue;
+                }
+
                 if (builder.Length > 0)
                 {
                     builder.Append(", ");
@@ -90,6 +97,12 @@ namespace Telegram.Controls
 
             foreach (TextBlock child in descendants)
             {
+                var view = AutomationProperties.GetAccessibilityView(child);
+                if (view == AccessibilityView.Raw)
+                {
+                    continue;
+                }
+
                 if (builder.Length > 0)
                 {
                     builder.Append(", ");
