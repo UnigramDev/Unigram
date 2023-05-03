@@ -1161,12 +1161,14 @@ namespace Telegram.ViewModels
 
                     if (firstVisibleIndex == -1)
                     {
-                        firstVisibleItem = replied.FirstOrDefault(x => x.Id == maxId);
-
-                        if (firstVisibleItem != null)
+                        for (int i = replied.Count - 1; i >= 0 ; i--)
                         {
-                            firstVisibleIndex = replied.IndexOf(firstVisibleItem);
-                            unread = false;
+                            if (replied[i].Id == maxId)
+                            {
+                                firstVisibleIndex = i;
+                                unread = false;
+                                break;
+                            }
                         }
                     }
 
