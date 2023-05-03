@@ -44,6 +44,8 @@ namespace Telegram.Controls
         private IList<TextEntity> _entities;
         private double _fontSize;
 
+        private string _query;
+
         private bool _isFormatted;
         private bool _isHighlighted;
 
@@ -109,6 +111,11 @@ namespace Telegram.Controls
             if (_clientService != null && _text != null)
             {
                 SetText(_clientService, _text, _entities, _fontSize);
+
+                if (_query != null)
+                {
+                    SetQuery(string.Empty);
+                }
             }
         }
 
@@ -126,6 +133,7 @@ namespace Telegram.Controls
             _text = null;
             _entities = null;
 
+            _query = null;
             _spoiler = null;
 
             Cleanup();
@@ -195,6 +203,8 @@ namespace Telegram.Controls
 
         public void SetQuery(string query)
         {
+            _query = query;
+
             if (_text != null && TextBlock != null && TextBlock.IsLoaded)
             {
                 if (_isHighlighted)
@@ -322,7 +332,7 @@ namespace Telegram.Controls
                     {
                         var hyperlink = new Hyperlink();
                         hyperlink.Click += (s, args) => Entity_Click(new TextEntityTypeSpoiler(), null);
-                        hyperlink.Foreground = TextBlock.Foreground;
+                        hyperlink.Foreground = null;
                         hyperlink.UnderlineStyle = UnderlineStyle.None;
                         hyperlink.FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily;
                         //hyperlink.Foreground = foreground;
@@ -481,7 +491,7 @@ namespace Telegram.Controls
 
             if (spoiler?.Ranges.Count > 0)
             {
-                spoiler.Foreground = new SolidColorBrush(Colors.Black);
+                spoiler.Foreground = new SolidColorBrush(Colors.Transparent);
                 spoiler.Background = new SolidColorBrush(Colors.Black);
 
                 _spoiler = spoiler;

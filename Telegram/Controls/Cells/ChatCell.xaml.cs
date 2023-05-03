@@ -1595,6 +1595,7 @@ namespace Telegram.Controls.Cells
                     // TODO: this is not correct, as MessageViewModel doesn't
                     // hold a strong reference to the IMessageDelegate object.
                     bubble.Tag = delegato;
+                    bubble.UpdateQuery(string.Empty);
                     bubble.UpdateMessage(message);
 
                     var grid = new Grid();
