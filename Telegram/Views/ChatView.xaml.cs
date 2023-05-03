@@ -2264,7 +2264,7 @@ namespace Telegram.Views
                             return;
                         }
 
-                        ViewModel.ClientService.CancelDownloadFile(file.Id);
+                        ViewModel.ClientService.CancelDownloadFile(file);
                         ViewModel.ClientService.Send(new DeleteFileW(file.Id));
                     }, message, "Delete from disk", new FontIcon { Glyph = Icons.Delete });
                 }

@@ -70,34 +70,40 @@ namespace Telegram.Services
 
             if (Enum.TryParse(args[1], true, out ConversionType conversion))
             {
-                if (conversion == ConversionType.Copy)
-                {
-                    await CopyAsync(update, args);
-                }
-                else if (conversion == ConversionType.Compress)
-                {
-                    await CompressAsync(update, args);
-                }
-                else if (conversion == ConversionType.Opus)
-                {
-                    await TranscodeOpusAsync(update, args);
-                }
-                else if (conversion == ConversionType.Transcode)
-                {
-                    await TranscodeAsync(update, args);
-                }
-                else if (conversion == ConversionType.TranscodeThumbnail)
-                {
-                    await ThumbnailTranscodeAsync(update, args);
-                }
-                else if (conversion == ConversionType.DocumentThumbnail)
-                {
-                    await ThumbnailDocumentAsync(update, args);
-                }
-                // TDLib
-                else if (conversion == ConversionType.Url)
+                // Url is the only conversion requested by TDLib
+                if (conversion == ConversionType.Url)
                 {
                     await DownloadAsync(update);
+                }
+                else
+                {
+                    // TODO: unify some stuff, such as retrieving source and destination file,
+                    // deleting the temp files, updating the future access list.
+
+                    if (conversion == ConversionType.Copy)
+                    {
+                        await CopyAsync(update, args);
+                    }
+                    else if (conversion == ConversionType.Compress)
+                    {
+                        await CompressAsync(update, args);
+                    }
+                    else if (conversion == ConversionType.Opus)
+                    {
+                        await TranscodeOpusAsync(update, args);
+                    }
+                    else if (conversion == ConversionType.Transcode)
+                    {
+                        await TranscodeAsync(update, args);
+                    }
+                    else if (conversion == ConversionType.TranscodeThumbnail)
+                    {
+                        await ThumbnailTranscodeAsync(update, args);
+                    }
+                    else if (conversion == ConversionType.DocumentThumbnail)
+                    {
+                        await ThumbnailDocumentAsync(update, args);
+                    }
                 }
             }
             else
@@ -135,7 +141,7 @@ namespace Telegram.Services
 
                 var client = new HttpClient();
                 client.DefaultRequestHeaders.ExpectContinue = false;
-                var temp = await _clientService.GetFileAsync(update.DestinationPath);
+                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
                 var request = new HttpRequestMessage(HttpMethod.Get, result);
                 var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
                 var length = int.Parse(response.Content.Headers.GetValues("Content-Length").FirstOrDefault());
@@ -189,7 +195,7 @@ namespace Telegram.Services
             try
             {
                 var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                var temp = await _clientService.GetFileAsync(update.DestinationPath);
+                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
                 if (IsTemporary(file))
                 {
@@ -206,6 +212,8 @@ namespace Telegram.Services
             {
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
+
+            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         private async Task CompressAsync(UpdateFileGenerationStart update, string[] args)
@@ -213,7 +221,7 @@ namespace Telegram.Services
             try
             {
                 var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                var temp = await _clientService.GetFileAsync(update.DestinationPath);
+                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
                 if (args.Length > 3)
                 {
@@ -244,6 +252,8 @@ namespace Telegram.Services
             {
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
+
+            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         private async Task ThumbnailAsync(UpdateFileGenerationStart update, string[] args)
@@ -251,7 +261,7 @@ namespace Telegram.Services
             try
             {
                 var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                var temp = await _clientService.GetFileAsync(update.DestinationPath);
+                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
                 if (args.Length > 3)
                 {
@@ -269,6 +279,8 @@ namespace Telegram.Services
             {
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
+
+            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         private async Task TranscodeOpusAsync(UpdateFileGenerationStart update, string[] args)
@@ -280,21 +292,27 @@ namespace Telegram.Services
                     if (opus.IsValid)
                     {
                         var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                        await Task.Run(() => opus.Transcode(file.Path));
+                        opus.Transcode(file.Path);
+
+                        _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
+
+                        if (IsTemporary(file))
+                        {
+                            await file.DeleteAsync();
+                        }
                     }
                     else
                     {
                         _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID can't access the file")));
-                        return;
                     }
                 }
-
-                _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
             }
             catch (Exception ex)
             {
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
+
+            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         private async Task TranscodeAsync(UpdateFileGenerationStart update, string[] args)
@@ -305,7 +323,7 @@ namespace Telegram.Services
                 if (conversion.Mute || conversion.Transcode)
                 {
                     var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                    var temp = await _clientService.GetFileAsync(update.DestinationPath);
+                    var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
                     var profile = await MediaEncodingProfile.CreateFromFileAsync(file);
                     if (profile.Audio == null && conversion.Mute && conversion.TrimStartTime == null && conversion.TrimStopTime == null)
@@ -384,6 +402,8 @@ namespace Telegram.Services
             {
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
+
+            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         private async Task ThumbnailTranscodeAsync(UpdateFileGenerationStart update, string[] args)
@@ -394,7 +414,7 @@ namespace Telegram.Services
                 //if (conversion.Transcode)
                 {
                     var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                    var temp = await _clientService.GetFileAsync(update.DestinationPath);
+                    var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
                     var props = await file.Properties.GetVideoPropertiesAsync();
 
@@ -444,6 +464,8 @@ namespace Telegram.Services
             {
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
+
+            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         private async Task ThumbnailDocumentAsync(UpdateFileGenerationStart update, string[] args)
@@ -451,7 +473,7 @@ namespace Telegram.Services
             try
             {
                 var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
-                var temp = await _clientService.GetFileAsync(update.DestinationPath);
+                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
 
                 var mode = ThumbnailMode.DocumentsView;
                 if (file.ContentType.StartsWith("audio/"))
@@ -483,6 +505,8 @@ namespace Telegram.Services
             {
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
+
+            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         public class VideoConversion

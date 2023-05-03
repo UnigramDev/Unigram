@@ -19,7 +19,6 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
-using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Text;
@@ -149,69 +148,6 @@ namespace Telegram.Controls.Messages
             {
                 UpdateMessage(_message);
             }
-        }
-
-        private async void OnDragStarting(UIElement sender, DragStartingEventArgs args)
-        {
-            var deferral = args.GetDeferral();
-
-            if (AllowDrag(_message, out string path))
-            {
-                var file = await _message.ClientService.GetFileAsync(path);
-                if (file != null)
-                {
-                    using (var stream = new InMemoryRandomAccessStream())
-                    {
-                        using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
-                        {
-                            writer.WriteInt64(_message.ChatId);
-                            writer.WriteInt64(_message.Id);
-
-                            await writer.FlushAsync();
-                            await writer.StoreAsync();
-                        }
-
-                        stream.Seek(0);
-
-                        args.Data.SetData("application/x-tl-message", stream.CloneStream());
-                        args.Data.SetStorageItems(new[] { file }, true);
-
-                        args.Data.RequestedOperation = Windows.ApplicationModel.DataTransfer.DataPackageOperation.Copy;
-
-                        // Exception in some condition
-                        args.DragUI.SetContentFromDataPackage();
-                    }
-                }
-                else
-                {
-                    args.Cancel = true;
-                }
-            }
-            else
-            {
-                args.Cancel = true;
-            }
-
-            deferral.Complete();
-        }
-
-        private bool AllowDrag(MessageViewModel message, out string path)
-        {
-            if (message == null || message.SelfDestructTime > 0 || !message.CanBeSaved)
-            {
-                path = null;
-                return false;
-            }
-
-            var file = message.GetFile();
-            if (file != null && file.Local.IsDownloadingCompleted)
-            {
-                path = file.Local.Path;
-                return true;
-            }
-
-            path = null;
-            return false;
         }
 
         #endregion

@@ -25,8 +25,6 @@ namespace Telegram.ViewModels.Settings
         public SettingsDataAndStorageViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            AutoDownloadCommand = new RelayCommand<AutoDownloadType>(AutoDownloadExecute);
-            StoragePathCommand = new RelayCommand<bool>(StoragePathExecute);
         }
 
         public int UseLessData
@@ -89,44 +87,48 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<bool> StoragePathCommand { get; }
-        private async void StoragePathExecute(bool reset)
+        public async void ChooseDownloadsFolder()
         {
-            var path = FilesDirectory;
-            if (reset)
+            try
             {
-                FilesDirectory = null;
-            }
-            else
-            {
-                try
+                var picker = new FolderPicker();
+                picker.SuggestedStartLocation = PickerLocationId.Downloads;
+                picker.FileTypeFilter.Add("*");
+
+                var folder = await picker.PickSingleFolderAsync();
+                if (folder != null)
                 {
-                    var picker = new FolderPicker();
-                    picker.SuggestedStartLocation = PickerLocationId.Downloads;
-                    picker.FileTypeFilter.Add("*");
-
-                    var folder = await picker.PickSingleFolderAsync();
-                    if (folder != null)
-                    {
-                        StorageApplicationPermissions.MostRecentlyUsedList.AddOrReplace("FilesDirectory", folder);
-                        FilesDirectory = folder.Path;
-                    }
+                    StorageApplicationPermissions.FutureAccessList.EnqueueOrReplace("FilesDirectory", folder);
+                    FilesDirectory = folder.Path;
                 }
-                catch { }
             }
-
-            if (string.Equals(path, FilesDirectory, StringComparison.OrdinalIgnoreCase))
-            {
-                return;
-            }
-
-            ClientService.Close(true);
+            catch { }
         }
 
-        public RelayCommand<AutoDownloadType> AutoDownloadCommand { get; }
-        public async void AutoDownloadExecute(AutoDownloadType type)
+        public void ResetDownloadsFolder()
         {
-            await ShowPopupAsync(typeof(SettingsDataAutoPopup), type);
+            FilesDirectory = null;
+            StorageApplicationPermissions.FutureAccessList.Remove("FilesDirectory");
+        }
+
+        public void AutoDownloadPhotos()
+        {
+            OpenAutoDownload(AutoDownloadType.Photos);
+        }
+
+        public void AutoDownloadVideos()
+        {
+            OpenAutoDownload(AutoDownloadType.Videos);
+        }
+
+        public void AutoDownloadDocuments()
+        {
+            OpenAutoDownload(AutoDownloadType.Documents);
+        }
+
+        private async void OpenAutoDownload(AutoDownloadType type)
+        {
+            await ShowPopupAsync(typeof(SettingsDataAutoPopup), AutoDownloadType.Documents);
             RaisePropertyChanged(nameof(AutoDownload));
         }
 

@@ -4,14 +4,187 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Td.Api;
+using Windows.Foundation;
+using Windows.Storage;
+using Windows.Storage.AccessCache;
 
 namespace Telegram.Services
 {
     public partial class ClientService
     {
+        private readonly HashSet<int> _canceledDownloads = new();
+        private readonly HashSet<string> _completedDownloads = new();
+
+        public async Task<StorageFile> GetFileAsync(File file, bool completed = true)
+        {
+            // Extremely important to do this only for completed,
+            // as this method is being used by RemoteFileStream as well.
+            if (file.Local.IsDownloadingCompleted && completed)
+            {
+                await SendAsync(new DownloadFile(file.Id, 16, 0, 0, false));
+            }
+
+            if (file.Local.IsDownloadingCompleted || (file.Local.Path.Length > 0 && !completed))
+            {
+                try
+                {
+                    if (file.Local.IsDownloadingCompleted && FutureContains(file.Remote.UniqueId))
+                    {
+                        return await FutureGetFileAsync(file.Remote.UniqueId);
+                    }
+
+                    return await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                }
+                catch
+                {
+                    return await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                }
+            }
+
+            return null;
+        }
+
+        private async Task<StorageFile> CreateDownloadedFileAsync(string tempFileName)
+        {
+            await MigrateDownloadsFolderAsync();
+
+            if (_settings.FilesDirectory != null && StorageApplicationPermissions.FutureAccessList.ContainsItem("FilesDirectory"))
+            {
+                try
+                {
+                    StorageFolder folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync("FilesDirectory");
+                    return await folder.CreateFileAsync(tempFileName, CreationCollisionOption.GenerateUniqueName);
+                }
+                catch { }
+            }
+
+            return await DownloadsFolder.CreateFileAsync(tempFileName, CreationCollisionOption.GenerateUniqueName);
+        }
+
+        private async Task MigrateDownloadsFolderAsync()
+        {
+            if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
+            {
+                try
+                {
+                    StorageFolder folder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
+                    StorageApplicationPermissions.FutureAccessList.AddOrReplace("FilesDirectory", folder);
+                }
+                catch
+                {
+                    _settings.FilesDirectory = null;
+                }
+
+                StorageApplicationPermissions.MostRecentlyUsedList.Remove("FilesDirectory");
+            }
+        }
+
+        public async void AddFileToDownloads(File file, long chatId, long messageId, int priority = 30)
+        {
+            Send(new AddFileToDownloads(file.Id, chatId, messageId, priority));
+
+            if (FutureContains(file.Remote.UniqueId, true) || FutureContains(file.Remote.UniqueId))
+            {
+                return;
+            }
+
+            StorageFile destination = await CreateDownloadedFileAsync($"Unconfirmed {file.Id}.tdownload");
+            FutureAddOrReplace(file.Remote.UniqueId, destination, true);
+        }
+
+        private async void TrackDownloadedFile(File file)
+        {
+            if (file.Local.IsDownloadingCompleted && FutureContains(file.Remote.UniqueId, true))
+            {
+                if (_completedDownloads.Contains(file.Remote.UniqueId))
+                {
+                    return;
+                }
+
+                _completedDownloads.Add(file.Remote.UniqueId);
+
+                StorageFile source = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                StorageFile destination = await FutureGetFileAsync(file.Remote.UniqueId, true);
+
+                await source.CopyAndReplaceAsync(destination);
+                await destination.RenameAsync(source.Name, NameCollisionOption.GenerateUniqueName);
+
+                FutureRemove(file.Remote.UniqueId, true);
+                FutureAddOrReplace(file.Remote.UniqueId, destination);
+            }
+
+            EventAggregator.Default.Send(file, $"{SessionId}_{file.Id}", file.Local.IsDownloadingCompleted);
+        }
+
+        public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
+        {
+            Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
+        }
+
+        public async Task<File> DownloadFileAsync(File file, int priority, int offset = 0, int limit = 0)
+        {
+            var response = await SendAsync(new DownloadFile(file.Id, priority, offset, limit, true));
+            if (response is File updated)
+            {
+                return ProcessFile(updated);
+            }
+
+            return file;
+        }
+
+        public async void CancelDownloadFile(File file, bool onlyIfPending = false)
+        {
+            _canceledDownloads.Add(file.Id);
+            Send(new CancelDownloadFile(file.Id, onlyIfPending));
+            Send(new RemoveFileFromDownloads(file.Id, false));
+
+            if (FutureContains(file.Remote.UniqueId, true))
+            {
+                StorageFile destination = await FutureGetFileAsync(file.Remote.UniqueId, true);
+                FutureRemove(file.Remote.UniqueId, true);
+
+                await destination.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            }
+        }
+
+        public bool IsDownloadFileCanceled(int fileId)
+        {
+            return _canceledDownloads.Contains(fileId);
+        }
+
+        private static bool FutureContains(string token, bool temp = false)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return false;
+            }
+
+            return StorageApplicationPermissions.FutureAccessList.ContainsItem(temp ? token + "temp" : token);
+        }
+
+        private static void FutureRemove(string token, bool temp = false)
+        {
+            StorageApplicationPermissions.FutureAccessList.Remove(temp ? token + "temp" : token);
+        }
+
+        private static void FutureAddOrReplace(string token, IStorageItem item, bool temp = false)
+        {
+            StorageApplicationPermissions.FutureAccessList.AddOrReplace(temp ? token + "temp" : token, item);
+        }
+
+        private static IAsyncOperation<StorageFile> FutureGetFileAsync(string token, bool temp = false)
+        {
+            return StorageApplicationPermissions.FutureAccessList.GetFileAsync(temp ? token + "temp" : token);
+        }
+
+
+
         private File ProcessFile(File file)
         {
             if (_files.TryGetValue(file.Id, out File singleton))

@@ -388,7 +388,7 @@ namespace Telegram.Controls.Messages.Content
             var file = video.VideoValue;
             if (file.Local.IsDownloadingActive)
             {
-                _message.ClientService.CancelDownloadFile(file.Id);
+                _message.ClientService.CancelDownloadFile(file);
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
@@ -402,7 +402,7 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else
                 {
-                    _message.ClientService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                    _message.ClientService.AddFileToDownloads(file, _message.ChatId, _message.Id);
                 }
             }
             else
@@ -424,7 +424,7 @@ namespace Telegram.Controls.Messages.Content
                 var file = video.VideoValue;
                 if (file.Local.IsDownloadingActive)
                 {
-                    _message.ClientService.CancelDownloadFile(file.Id);
+                    _message.ClientService.CancelDownloadFile(file);
                 }
                 else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
                 {
@@ -438,7 +438,7 @@ namespace Telegram.Controls.Messages.Content
                     }
                     else
                     {
-                        _message.ClientService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                        _message.ClientService.AddFileToDownloads(file, _message.ChatId, _message.Id);
                     }
                 }
                 else

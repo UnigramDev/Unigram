@@ -250,7 +250,7 @@ namespace Telegram.Controls.Cells
             {
                 if (_delegate != null)
                 {
-                    _message.ClientService.CancelDownloadFile(file.Id);
+                    _message.ClientService.CancelDownloadFile(file);
                 }
                 else
                 {
@@ -261,7 +261,7 @@ namespace Telegram.Controls.Cells
             {
                 if (_delegate != null)
                 {
-                    _message.ClientService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                    _message.ClientService.AddFileToDownloads(file, _message.ChatId, _message.Id);
                 }
                 else
                 {

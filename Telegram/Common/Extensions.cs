@@ -365,31 +365,6 @@ namespace Telegram.Common
             }
         }
 
-        public static string Enqueue(this StorageItemAccessList list, IStorageItem item)
-        {
-            try
-            {
-                if (list.Entries.Count >= list.MaximumItemsAllowed - 10)
-                {
-                    var first = list.Entries.LastOrDefault();
-                    if (first.Token != null)
-                    {
-                        list.Remove(first.Token);
-                    }
-                }
-            }
-            catch { }
-
-            try
-            {
-                return list.Add(item);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
         public static string RegexReplace(this string input, string pattern, string replacement)
         {
             return Regex.Replace(input, pattern, replacement);
@@ -534,6 +509,59 @@ namespace Telegram.Common
             }
 
             return relativePath;
+        }
+
+        public static string Enqueue(this StorageItemAccessList list, IStorageItem item)
+        {
+            try
+            {
+                if (list.Entries.Count >= list.MaximumItemsAllowed - 10)
+                {
+                    for (int i = list.Entries.Count - 1; i >= 0; i--)
+                    {
+                        var entry = list.Entries[i];
+                        if (entry.Token != "FilesDirectory")
+                        {
+                            list.Remove(entry.Token);
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            try
+            {
+                return list.Add(item);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public static void EnqueueOrReplace(this StorageItemAccessList list, string token, IStorageItem item)
+        {
+            try
+            {
+                if (list.Entries.Count >= list.MaximumItemsAllowed - 10)
+                {
+                    for (int i = list.Entries.Count - 1; i >= 0; i--)
+                    {
+                        var entry = list.Entries[i];
+                        if (entry.Token != "FilesDirectory")
+                        {
+                            list.Remove(entry.Token);
+                        }
+                    }
+                }
+            }
+            catch { }
+
+            try
+            {
+                list.AddOrReplace(token, item);
+            }
+            catch { }
         }
 
         public static async Task<InputFile> ToGeneratedAsync(this StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null, bool forceCopy = false)

@@ -224,7 +224,7 @@ namespace Telegram.Controls.Messages.Content
             var file = game.Game.Animation?.AnimationValue ?? game.Game.Photo?.GetBig()?.Photo;
             if (file.Local.IsDownloadingActive)
             {
-                _message.ClientService.CancelDownloadFile(file.Id);
+                _message.ClientService.CancelDownloadFile(file);
             }
             else if (file.Remote.IsUploadingActive)
             {

@@ -368,7 +368,7 @@ namespace Telegram.Controls.Cells
             var file = audio.AudioValue;
             if (file.Local.IsDownloadingActive)
             {
-                _message.ClientService.CancelDownloadFile(file.Id);
+                _message.ClientService.CancelDownloadFile(file);
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
@@ -376,7 +376,7 @@ namespace Telegram.Controls.Cells
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ClientService.AddFileToDownloads(file.Id, _message.ChatId, _message.Id);
+                _message.ClientService.AddFileToDownloads(file, _message.ChatId, _message.Id);
             }
             else
             {

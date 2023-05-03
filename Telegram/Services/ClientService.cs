@@ -17,7 +17,6 @@ using Telegram.Services.Updates;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Windows.Storage;
-using Windows.Storage.AccessCache;
 
 namespace Telegram.Services
 {
@@ -34,13 +33,12 @@ namespace Telegram.Services
         Task<BaseObject> CheckChatInviteLinkAsync(string inviteLink);
 
         Task<StorageFile> GetFileAsync(File file, bool completed = true);
-        Task<StorageFile> GetFileAsync(string path);
 
         void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
         Task<File> DownloadFileAsync(File file, int priority, int offset = 0, int limit = 0);
 
-        void AddFileToDownloads(int fileId, long chatId, long messageId, int priority = 30);
-        void CancelDownloadFile(int fileId, bool onlyIfPending = false);
+        void AddFileToDownloads(File file, long chatId, long messageId, int priority = 30);
+        void CancelDownloadFile(File file, bool onlyIfPending = false);
         bool IsDownloadFileCanceled(int fileId);
 
         Task<Chats> GetChatListAsync(ChatList chatList, int offset, int limit);
@@ -395,19 +393,9 @@ namespace Telegram.Services
             _chatList[0].Add(new OrderedChat(13, new ChatPosition(new ChatListMain(), int.MaxValue - 13, false, null)));
 #endif
 
-            Task.Factory.StartNew(async () =>
+            Task.Factory.StartNew(() =>
             {
-                var filesDirectory = string.Empty;
                 var useMessageDatabase = true;
-
-                if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
-                {
-                    var folder = await GetFilesFolderAsync(false);
-                    if (folder != null)
-                    {
-                        filesDirectory = folder.Path;
-                    }
-                }
 
                 if (_settings.Diagnostics.DisableDatabase)
                 {
@@ -438,7 +426,6 @@ namespace Telegram.Services
                     DatabaseDirectory = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, $"{_session}"),
                     UseSecretChats = true,
                     UseMessageDatabase = useMessageDatabase,
-                    FilesDirectory = filesDirectory,
                     ApiId = Constants.ApiId,
                     ApiHash = Constants.ApiHash,
                     ApplicationVersion = _deviceInfoService.ApplicationVersion,
@@ -625,145 +612,6 @@ namespace Telegram.Services
         }
 
 
-
-        private readonly ConcurrentBag<int> _canceledDownloads = new ConcurrentBag<int>();
-
-        private async Task<StorageFolder> GetFilesFolderAsync(bool fallbackToLocal)
-        {
-            if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
-            {
-                try
-                {
-                    return await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
-                }
-                catch
-                {
-                    if (fallbackToLocal)
-                    {
-                        return ApplicationData.Current.LocalFolder;
-                    }
-                }
-            }
-            else if (fallbackToLocal)
-            {
-                return ApplicationData.Current.LocalFolder;
-            }
-
-            return null;
-        }
-
-        public async Task<StorageFile> GetFileAsync(File file, bool completed = true)
-        {
-            // Extremely important to do this only for completed,
-            // as this method is being used by RemoteFileStream as well.
-            if (completed)
-            {
-                await SendAsync(new DownloadFile(file.Id, 16, 0, 0, false));
-            }
-
-            if (file.Local.IsDownloadingCompleted || !completed)
-            {
-                try
-                {
-                    var folder = await GetFilesFolderAsync(true);
-                    folder ??= ApplicationData.Current.LocalFolder;
-
-                    if (IsRelativePath(ApplicationData.Current.LocalFolder.Path, file.Local.Path, out string relativeLocal))
-                    {
-                        return await ApplicationData.Current.LocalFolder.GetFileAsync(relativeLocal);
-                    }
-                    else if (IsRelativePath(folder.Path, file.Local.Path, out string relativeFolder))
-                    {
-                        return await folder.GetFileAsync(relativeFolder);
-                    }
-
-                    return await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                }
-                catch (System.IO.FileNotFoundException)
-                {
-                    Send(new DeleteFileW(file.Id));
-                }
-                catch { }
-
-                return null;
-            }
-
-            return null;
-        }
-
-        public async Task<StorageFile> GetFileAsync(string path)
-        {
-            try
-            {
-                var folder = await GetFilesFolderAsync(true);
-                folder ??= ApplicationData.Current.LocalFolder;
-
-                if (IsRelativePath(ApplicationData.Current.LocalFolder.Path, path, out string relativeLocal))
-                {
-                    return await ApplicationData.Current.LocalFolder.GetFileAsync(relativeLocal);
-                }
-                else if (IsRelativePath(folder.Path, path, out string relativeFolder))
-                {
-                    return await folder.GetFileAsync(relativeFolder);
-                }
-
-                return await StorageFile.GetFileFromPathAsync(path);
-            }
-            catch { }
-
-            return null;
-        }
-
-        private static bool IsRelativePath(string relativeTo, string path, out string relative)
-        {
-            var relativeFull = System.IO.Path.GetFullPath(relativeTo);
-            var pathFull = System.IO.Path.GetFullPath(path);
-
-            if (pathFull.Length > relativeFull.Length && pathFull[relativeFull.Length] == '\\')
-            {
-                if (pathFull.StartsWith(relativeFull, StringComparison.OrdinalIgnoreCase))
-                {
-                    relative = pathFull.Substring(relativeFull.Length + 1);
-                    return true;
-                }
-            }
-
-            relative = null;
-            return false;
-        }
-
-        public void AddFileToDownloads(int fileId, long chatId, long messageId, int priority = 30)
-        {
-            Send(new AddFileToDownloads(fileId, chatId, messageId, priority));
-        }
-
-        public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
-        {
-            Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
-        }
-
-        public async Task<File> DownloadFileAsync(File file, int priority, int offset = 0, int limit = 0)
-        {
-            var response = await SendAsync(new DownloadFile(file.Id, priority, offset, limit, true));
-            if (response is File updated)
-            {
-                return ProcessFile(updated);
-            }
-
-            return file;
-        }
-
-        public void CancelDownloadFile(int fileId, bool onlyIfPending = false)
-        {
-            _canceledDownloads.Add(fileId);
-            Send(new CancelDownloadFile(fileId, onlyIfPending));
-            Send(new RemoveFileFromDownloads(fileId, false));
-        }
-
-        public bool IsDownloadFileCanceled(int fileId)
-        {
-            return _canceledDownloads.Contains(fileId);
-        }
 
 
         public int SessionId => _session;
@@ -1802,9 +1650,7 @@ namespace Telegram.Services
             }
             else if (update is UpdateFile updateFile)
             {
-                EventAggregator.Default.Send(updateFile.File, $"{SessionId}_{updateFile.File.Id}",
-                    updateFile.File.Local.IsDownloadingCompleted);
-
+                TrackDownloadedFile(updateFile.File);
                 //return;
             }
             else if (update is UpdateFileGenerationStart updateFileGenerationStart)

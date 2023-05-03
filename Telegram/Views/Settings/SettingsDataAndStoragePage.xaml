@@ -33,28 +33,20 @@
                                           Click="{x:Bind ViewModel.OpenDownloads}" />
 
                     <Grid>
-                        <controls:BadgeButton Command="{x:Bind ViewModel.StoragePathCommand}"
+                        <controls:BadgeButton Click="{x:Bind ViewModel.ChooseDownloadsFolder}"
                                               Content="{CustomResource StoragePath}"
                                               Badge="{x:Bind ConvertFilesDirectory(ViewModel.FilesDirectory), Mode=OneWay}"
                                               Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                              Glyph="&#xF12B;">
-                            <controls:BadgeButton.CommandParameter>
-                                <x:Boolean>False</x:Boolean>
-                            </controls:BadgeButton.CommandParameter>
-                        </controls:BadgeButton>
+                                              Glyph="&#xF12B;" />
 
-                        <controls:BadgeButton Command="{x:Bind ViewModel.StoragePathCommand}"
+                        <controls:BadgeButton Click="{x:Bind ViewModel.ResetDownloadsFolder}"
                                               Visibility="{x:Bind ConvertFilesReset(ViewModel.FilesDirectory), Mode=OneWay}"
                                               Content="{CustomResource Reset}"
                                               Style="{StaticResource StartButtonStyle}"
                                               Background="#2ca5e0"
                                               HorizontalAlignment="Right"
                                               VerticalAlignment="Center"
-                                              Margin="0,0,12,0">
-                            <controls:BadgeButton.CommandParameter>
-                                <x:Boolean>True</x:Boolean>
-                            </controls:BadgeButton.CommandParameter>
-                        </controls:BadgeButton>
+                                              Margin="0,0,12,0" />
                     </Grid>
                 </controls:HeaderedControl>
 
@@ -65,37 +57,25 @@
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <controls:BadgeButton Badge="{x:Bind ConvertAutoDownload(settings:AutoDownloadType.Photos, ViewModel.AutoDownload.Photos, 0), Mode=OneWay}"
-                                          Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                                          Click="{x:Bind ViewModel.AutoDownloadPhotos}"
                                           IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                                           Content="{CustomResource AutoDownloadPhotos}"
                                           Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                          Glyph="&#xEB9F;">
-                        <Button.CommandParameter>
-                            <settings:AutoDownloadType>Photos</settings:AutoDownloadType>
-                        </Button.CommandParameter>
-                    </controls:BadgeButton>
+                                          Glyph="&#xEB9F;" />
 
                     <controls:BadgeButton Badge="{x:Bind ConvertAutoDownload(settings:AutoDownloadType.Videos, ViewModel.AutoDownload.Videos, ViewModel.AutoDownload.MaximumVideoSize), Mode=OneWay}"
-                                          Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                                          Click="{x:Bind ViewModel.AutoDownloadVideos}"
                                           IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                                           Content="{CustomResource AutoDownloadVideos}"
                                           Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                          Glyph="&#xE714;">
-                        <Button.CommandParameter>
-                            <settings:AutoDownloadType>Videos</settings:AutoDownloadType>
-                        </Button.CommandParameter>
-                    </controls:BadgeButton>
+                                          Glyph="&#xE714;" />
 
                     <controls:BadgeButton Badge="{x:Bind ConvertAutoDownload(settings:AutoDownloadType.Documents, ViewModel.AutoDownload.Documents, ViewModel.AutoDownload.MaximumDocumentSize), Mode=OneWay}"
-                                          Command="{x:Bind ViewModel.AutoDownloadCommand}"
+                                          Click="{x:Bind ViewModel.AutoDownloadDocuments}"
                                           IsEnabled="{x:Bind ViewModel.AutoDownloadEnabled, Mode=OneWay}"
                                           Content="{CustomResource AutoDownloadFiles}"
                                           Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                          Glyph="&#xE7C3;">
-                        <Button.CommandParameter>
-                            <settings:AutoDownloadType>Documents</settings:AutoDownloadType>
-                        </Button.CommandParameter>
-                    </controls:BadgeButton>
+                                          Glyph="&#xE7C3;" />
 
                     <controls:BadgeButton Click="{x:Bind ViewModel.ResetAutoDownload}"
                                           Content="{CustomResource ResetAutomaticMediaDownload}"

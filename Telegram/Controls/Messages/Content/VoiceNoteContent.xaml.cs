@@ -454,7 +454,7 @@ namespace Telegram.Controls.Messages.Content
             var file = voiceNote.Voice;
             if (file.Local.IsDownloadingActive)
             {
-                _message.ClientService.CancelDownloadFile(file.Id);
+                _message.ClientService.CancelDownloadFile(file);
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
