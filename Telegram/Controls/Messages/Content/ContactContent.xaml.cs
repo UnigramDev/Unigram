@@ -81,6 +81,10 @@ namespace Telegram.Controls.Messages.Content
             Button.Visibility = string.IsNullOrEmpty(contact.Contact.Vcard) ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        public void Recycle()
+        {
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             return content is MessageContact;

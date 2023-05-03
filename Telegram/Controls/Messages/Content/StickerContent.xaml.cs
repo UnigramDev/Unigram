@@ -102,6 +102,12 @@ namespace Telegram.Controls.Messages.Content
             ElementCompositionPreview.SetElementChildVisual(this, visual);
         }
 
+        public void Recycle()
+        {
+            _fileToken = null;
+            UpdateManager.Unsubscribe(this);
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessageSticker sticker)

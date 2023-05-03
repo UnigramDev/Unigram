@@ -16,6 +16,8 @@ namespace Telegram.Controls.Messages
 
         void UpdateMessage(MessageViewModel message);
 
+        void Recycle();
+
         bool IsValid(MessageContent content, bool primary);
     }
 

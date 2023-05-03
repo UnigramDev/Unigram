@@ -108,6 +108,10 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
+        public void Recycle()
+        {
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             return content is MessageLocation;

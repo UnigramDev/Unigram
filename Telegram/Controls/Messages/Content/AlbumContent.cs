@@ -464,6 +464,11 @@ namespace Telegram.Controls.Messages.Content
 
         #endregion
 
+        public void Recycle()
+        {
+            // AlbumContent doesn't get recycled
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessageAlbum)

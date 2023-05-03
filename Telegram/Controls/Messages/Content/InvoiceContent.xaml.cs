@@ -62,6 +62,10 @@ namespace Telegram.Controls.Messages.Content
             Footer.UpdateMessage(message);
         }
 
+        public void Recycle()
+        {
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             return content is MessageInvoice invoice && invoice.Photo == null;

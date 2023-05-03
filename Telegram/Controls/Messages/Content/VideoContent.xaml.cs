@@ -321,6 +321,15 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
+        public void Recycle()
+        {
+            _fileToken = null;
+            _thumbnailToken = null;
+            UpdateManager.Unsubscribe(this);
+
+            Player.Source = null;
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessageVideo)

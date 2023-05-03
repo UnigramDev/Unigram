@@ -341,6 +341,13 @@ namespace Telegram.Controls.Messages.Content
             brush.ImageSource = source;
         }
 
+        public void Recycle()
+        {
+            _fileToken = null;
+            _thumbnailToken = null;
+            UpdateManager.Unsubscribe(this);
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessagePhoto)

@@ -206,6 +206,10 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
+        public void Recycle()
+        {
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessageDice)

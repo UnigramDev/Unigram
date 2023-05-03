@@ -358,6 +358,13 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
+        public void Recycle()
+        {
+            _fileToken = null;
+            _thumbnailToken = null;
+            UpdateManager.Unsubscribe(this);
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessageAudio)

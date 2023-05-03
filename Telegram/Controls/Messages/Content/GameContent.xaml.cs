@@ -102,6 +102,14 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
+        public void Recycle()
+        {
+            if (Media.Child is IContent content)
+            {
+                content.Recycle();
+            }
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             return content is MessageGame;

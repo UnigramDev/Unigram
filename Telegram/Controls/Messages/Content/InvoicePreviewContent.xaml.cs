@@ -120,6 +120,10 @@ namespace Telegram.Controls.Messages.Content
             brush.ImageSource = source;
         }
 
+        public void Recycle()
+        {
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaPreview)

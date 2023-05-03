@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class CallContent : Windows.UI.Xaml.Controls.Control, IContent
+    public sealed class CallContent : Control, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -90,6 +90,10 @@ namespace Telegram.Controls.Messages.Content
             }
 
             VisualStateManager.GoToState(this, missed ? "Missed" : "Default", false);
+        }
+
+        public void Recycle()
+        {
         }
 
         public bool IsValid(MessageContent content, bool primary)

@@ -180,6 +180,15 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
+        public void Recycle()
+        {
+            _fileToken = null;
+            _interactionToken = null;
+            UpdateManager.Unsubscribe(this);
+
+            Player.Source = null;
+        }
+
         public bool IsValid(MessageContent content, bool primary)
         {
             if (content is MessageSticker sticker)

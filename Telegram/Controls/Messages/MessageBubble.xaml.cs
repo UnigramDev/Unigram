@@ -252,7 +252,11 @@ namespace Telegram.Controls.Messages
                 Message.Clear();
                 //Media.Child = null;
 
-                if (Media.Child is AlbumContent)
+                if (Media.Child is IContent content)
+                {
+                    content.Recycle();
+                }
+                else if (Media.Child is AlbumContent)
                 {
                     Media.Child = null;
                 }
