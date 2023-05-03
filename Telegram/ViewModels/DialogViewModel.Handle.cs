@@ -644,6 +644,7 @@ namespace Telegram.ViewModels
                 {
                     if (update.NewContent is not MessageAlbum)
                     {
+                        message.Reset();
                         message.Content = update.NewContent;
 
                         ProcessEmoji(message);

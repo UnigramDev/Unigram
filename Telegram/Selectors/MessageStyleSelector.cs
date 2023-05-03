@@ -19,7 +19,7 @@ namespace Telegram.Selectors
 
         protected override Style SelectStyleCore(object item, DependencyObject container)
         {
-            if (item is MessageViewModel message && message.IsService())
+            if (item is MessageViewModel message && message.IsService)
             {
                 return ServiceStyle;
             }

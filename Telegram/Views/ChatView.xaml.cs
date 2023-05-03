@@ -2539,7 +2539,7 @@ namespace Telegram.Views
                 return false;
             }
 
-            if (message.SchedulingState != null || message.IsService())
+            if (message.SchedulingState != null || message.IsService)
             {
                 return false;
             }
@@ -2646,7 +2646,7 @@ namespace Telegram.Views
         private bool MessageReport_Loaded(MessageViewModel message)
         {
             var chat = ViewModel.Chat;
-            if (chat == null || !chat.CanBeReported || message.Event != null || message.IsService())
+            if (chat == null || !chat.CanBeReported || message.Event != null || message.IsService)
             {
                 return false;
             }
@@ -2663,7 +2663,7 @@ namespace Telegram.Views
         private bool MessageReportFalsePositive_Loaded(MessageViewModel message)
         {
             var chat = ViewModel.Chat;
-            if (chat == null || message.IsService())
+            if (chat == null || message.IsService)
             {
                 return false;
             }
@@ -2774,7 +2774,7 @@ namespace Telegram.Views
 
         private bool MessageSelect_Loaded(MessageViewModel message)
         {
-            if (_myPeople || ViewModel.Type == DialogType.EventLog || message.IsService())
+            if (_myPeople || ViewModel.Type == DialogType.EventLog || message.IsService)
             {
                 return false;
             }

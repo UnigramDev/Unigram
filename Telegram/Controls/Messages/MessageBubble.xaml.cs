@@ -503,11 +503,7 @@ namespace Telegram.Controls.Messages
 
                 chat ??= message?.GetChat();
 
-                if (message.IsService())
-                {
-                    Margin = new Thickness(12, top, 12, 0);
-                }
-                else if (message.IsSaved || (chat != null && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)) && !message.IsChannelPost)
+                if (message.IsSaved || (chat != null && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)) && !message.IsChannelPost)
                 {
                     if (message.IsOutgoing && !message.IsSaved)
                     {

@@ -800,7 +800,7 @@ namespace Telegram.Views
                 return "EmptyMessageTemplate";
             }
 
-            if (message.IsService())
+            if (message.IsService)
             {
                 if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto)
                 {

@@ -3717,11 +3717,7 @@ namespace Telegram.ViewModels
 
         private static bool AreTogether(MessageViewModel message1, MessageViewModel message2)
         {
-            if (message1.IsService())
-            {
-                return message2.IsService();
-            }
-            else if (message2.IsService())
+            if (message1.IsService || message2.IsService)
             {
                 return false;
             }

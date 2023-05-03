@@ -315,7 +315,7 @@ namespace Telegram.ViewModels
 
         public void Select(MessageViewModel message)
         {
-            if (message.IsService())
+            if (message.IsService)
             {
                 return;
             }

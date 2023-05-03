@@ -670,7 +670,7 @@ namespace Telegram.Controls.Chats
 
         protected bool CantSelect(object item)
         {
-            return item is MessageViewModel message && message.IsService();
+            return item is MessageViewModel message && message.IsService;
         }
 
         protected long IdFromContainer(DependencyObject container)
