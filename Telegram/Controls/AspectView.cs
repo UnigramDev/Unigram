@@ -72,7 +72,7 @@ namespace Telegram.Controls
             var constraint = Constraint;
             if (constraint is MessageViewModel viewModel)
             {
-                ttl = viewModel.IsSecret();
+                //ttl = viewModel.SelfDestructTime > 0;
                 constraint = viewModel.Content;
 
                 if (viewModel.MediaAlbumId != 0 && Tag is true)
@@ -82,7 +82,7 @@ namespace Telegram.Controls
             }
             else if (constraint is Message message)
             {
-                ttl = message.SelfDestructTime > 0;
+                //ttl = message.SelfDestructTime > 0;
                 constraint = message.Content;
 
                 if (message.MediaAlbumId != 0 && Tag is true)
@@ -105,6 +105,7 @@ namespace Telegram.Controls
 
             if (constraint is MessageAnimation animationMessage)
             {
+                ttl = animationMessage.IsSecret;
                 constraint = animationMessage.Animation;
             }
             else if (constraint is MessageInvoice invoiceMessage)
@@ -144,6 +145,7 @@ namespace Telegram.Controls
             }
             else if (constraint is MessagePhoto photoMessage)
             {
+                ttl = photoMessage.IsSecret;
                 constraint = photoMessage.Photo;
             }
             else if (constraint is MessageSticker stickerMessage)
@@ -188,10 +190,12 @@ namespace Telegram.Controls
             }
             else if (constraint is MessageVideo videoMessage)
             {
+                ttl = videoMessage.IsSecret;
                 constraint = videoMessage.Video;
             }
             else if (constraint is MessageVideoNote videoNoteMessage)
             {
+                ttl = videoNoteMessage.IsSecret;
                 constraint = videoNoteMessage.VideoNote;
             }
             else if (constraint is MessageChatChangePhoto chatChangePhoto)

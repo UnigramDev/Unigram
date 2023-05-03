@@ -78,7 +78,7 @@ namespace Telegram.Controls.Messages.Content
 
             _message = message;
 
-            var photo = GetContent(message.Content, out bool hasSpoiler);
+            var photo = GetContent(message.Content, out bool hasSpoiler, out bool isSecret);
             if (photo == null || !_templateApplied)
             {
                 _hidden = (prevId != nextId || _hidden) && hasSpoiler;
@@ -104,13 +104,13 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            if (!big.Photo.Local.IsDownloadingCompleted || message.IsSecret())
+            if (!big.Photo.Local.IsDownloadingCompleted || isSecret)
             {
-                UpdateThumbnail(message, small, photo.Minithumbnail, true);
+                UpdateThumbnail(message, small, photo.Minithumbnail, true, isSecret);
             }
             else
             {
-                UpdateThumbnail(message, null, photo.Minithumbnail, false);
+                UpdateThumbnail(message, null, photo.Minithumbnail, false, isSecret);
             }
 
             UpdateManager.Subscribe(this, message, big.Photo, ref _fileToken, UpdateFile);
@@ -145,7 +145,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateFile(MessageViewModel message, File file)
         {
-            var photo = GetContent(message.Content, out bool hasSpoiler);
+            var photo = GetContent(message.Content, out bool hasSpoiler, out bool isSecret);
             if (photo == null || !_templateApplied)
             {
                 return;
@@ -176,7 +176,7 @@ namespace Telegram.Controls.Messages.Content
                 Button.Opacity = 1;
                 Overlay.Opacity = 0;
 
-                if (message.IsSecret())
+                if (isSecret)
                 {
                     Texture.Source = null;
                 }
@@ -201,7 +201,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
-                if (message.IsSecret())
+                if (isSecret)
                 {
                     //Button.Glyph = Icons.Ttl;
                     Button.SetGlyph(file.Id, MessageContentState.Ttl);
@@ -282,16 +282,16 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(object target, File file)
         {
-            var photo = GetContent(_message.Content, out _);
+            var photo = GetContent(_message.Content, out _, out bool isSecret);
             if (photo == null || !_templateApplied)
             {
                 return;
             }
 
-            UpdateThumbnail(_message, file, photo.Minithumbnail, false);
+            UpdateThumbnail(_message, file, photo.Minithumbnail, false, isSecret);
         }
 
-        private async void UpdateThumbnail(MessageViewModel message, File file, Minithumbnail minithumbnail, bool download)
+        private async void UpdateThumbnail(MessageViewModel message, File file, Minithumbnail minithumbnail, bool download, bool isSecret)
         {
             ImageSource source = null;
             ImageBrush brush;
@@ -316,7 +316,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, message.IsSecret() ? 15 : 3);
+                    source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, isSecret ? 15 : 3);
                 }
                 else if (download)
                 {
@@ -324,7 +324,7 @@ namespace Telegram.Controls.Messages.Content
                     {
                         if (minithumbnail != null)
                         {
-                            source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, message.IsSecret() ? 15 : 3);
+                            source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, isSecret ? 15 : 3);
                         }
 
                         message.ClientService.DownloadFile(file.Id, 1);
@@ -335,7 +335,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (minithumbnail != null)
             {
-                source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, message.IsSecret() ? 15 : 3);
+                source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, isSecret ? 15 : 3);
             }
 
             brush.ImageSource = source;
@@ -363,36 +363,41 @@ namespace Telegram.Controls.Messages.Content
             return false;
         }
 
-        private Photo GetContent(MessageContent content, out bool hasSpoiler)
+        private Photo GetContent(MessageContent content, out bool hasSpoiler, out bool isSecret)
         {
             if (content is MessagePhoto photo)
             {
                 hasSpoiler = photo.HasSpoiler;
+                isSecret = photo.IsSecret;
                 return photo.Photo;
             }
             else if (content is MessageGame game)
             {
                 hasSpoiler = false;
+                isSecret = false;
                 return game.Game.Photo;
             }
             else if (content is MessageText text && text.WebPage != null)
             {
                 hasSpoiler = false;
+                isSecret = false;
                 return text.WebPage.Photo;
             }
             else if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaPhoto extendedMediaPhoto)
             {
                 hasSpoiler = false;
+                isSecret = false;
                 return extendedMediaPhoto.Photo;
             }
 
             hasSpoiler = false;
+            isSecret = false;
             return null;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var photo = GetContent(_message?.Content, out bool hasSpoiler);
+            var photo = GetContent(_message?.Content, out bool hasSpoiler, out _);
             if (photo == null)
             {
                 return;

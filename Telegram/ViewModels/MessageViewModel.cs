@@ -59,8 +59,6 @@ namespace Telegram.ViewModels
         private bool? _isSaved;
         public bool IsSaved => _isSaved ??= _message.IsSaved(_clientService.Options.MyId);
 
-        public bool IsSecret() => _message.IsSecret();
-
         public MessageViewModel ReplyToMessage { get; set; }
         public ReplyToMessageState ReplyToMessageState { get; set; } = ReplyToMessageState.None;
 

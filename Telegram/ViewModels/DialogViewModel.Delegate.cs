@@ -282,13 +282,24 @@ namespace Telegram.ViewModels
                 {
                     if (viewModel == null)
                     {
-                        if (message.Content is MessageVideoNote or MessagePhoto or MessageVideo && !message.IsSecret())
+                        static bool IsSingle(MessageContent content)
                         {
-                            viewModel = new ChatGalleryViewModel(ClientService, _storageService, Aggregator, message.ChatId, _threadId, message.Get());
+                            return content switch
+                            {
+                                MessagePhoto photo => photo.IsSecret,
+                                MessageVideo video => video.IsSecret,
+                                MessageVideoNote videoNote => videoNote.IsSecret,
+                                _ => true
+                            };
+                        }
+
+                        if (IsSingle(message.Content))
+                        {
+                            viewModel = new SingleGalleryViewModel(ClientService, _storageService, Aggregator, new GalleryMessage(ClientService, message.Get()));
                         }
                         else
                         {
-                            viewModel = new SingleGalleryViewModel(ClientService, _storageService, Aggregator, new GalleryMessage(ClientService, message.Get()));
+                            viewModel = new ChatGalleryViewModel(ClientService, _storageService, Aggregator, message.ChatId, _threadId, message.Get());
                         }
                     }
 

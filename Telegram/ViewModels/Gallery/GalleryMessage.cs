@@ -150,31 +150,36 @@ namespace Telegram.ViewModels.Gallery
             }
         }
 
-        public override bool HasStickers
+        public override bool HasStickers => _message.Content switch
         {
-            get
-            {
-                if (_message.Content is MessagePhoto photo)
-                {
-                    return photo.Photo.HasStickers;
-                }
-                else if (_message.Content is MessageVideo video)
-                {
-                    return video.Video.HasStickers;
-                }
-
-                return false;
-            }
-        }
+            MessagePhoto photo => photo.Photo.HasStickers,
+            MessageVideo video => video.Video.HasStickers,
+            _ => false
+        };
 
 
 
         public override bool CanView => true;
-        public override bool CanCopy => !_hasProtectedContent && !_message.IsSecret() && IsPhoto;
-        public override bool CanSave => !_hasProtectedContent && !_message.IsSecret();
+        public override bool CanCopy => CanSave && IsPhoto;
+        public override bool CanSave => !_hasProtectedContent && _message.Content switch
+        {
+            MessageAnimation animation => !animation.IsSecret,
+            MessagePhoto photo => !photo.IsSecret,
+            MessageVideo video => !video.IsSecret,
+            MessageVideoNote videoNote => !videoNote.IsSecret,
+            _ => true
+        };
+
         public override bool CanShare => CanSave;
 
-        public override bool IsProtected => _hasProtectedContent || _message.IsSecret();
+        public override bool IsProtected => _hasProtectedContent || _message.Content switch
+        {
+            MessageAnimation animation => animation.IsSecret,
+            MessagePhoto photo => photo.IsSecret,
+            MessageVideo video => video.IsSecret,
+            MessageVideoNote videoNote => videoNote.IsSecret,
+            _ => false
+        };
 
         public override int Duration
         {

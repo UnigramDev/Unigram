@@ -1152,27 +1152,6 @@ namespace Telegram.Common
             return false;
         }
 
-        public static bool IsSecret(this Message message)
-        {
-            switch (message.Content)
-            {
-                case MessageAnimation animation:
-                    return animation.IsSecret;
-                case MessagePhoto photo:
-                    return photo.IsSecret;
-                case MessageVideo video:
-                    return video.IsSecret;
-                case MessageVideoNote videoNote:
-                    return videoNote.IsSecret;
-
-                //case MessageExpiredPhoto expiredPhoto:
-                //case MessageExpiredVideo expiredVideo:
-                //    return true;
-                default:
-                    return false;
-            }
-        }
-
         public static bool IsService(this Message message)
         {
             switch (message.Content)

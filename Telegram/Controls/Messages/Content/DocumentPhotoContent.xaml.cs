@@ -128,36 +128,22 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
-                if (message.IsSecret())
+                //Button.Glyph = message.SendingState is MessageSendingStatePending ? Icons.Confirm : Icons.Photo;
+                Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Photo);
+                Button.Progress = 1;
+
+                if (message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0 || (message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0))
                 {
-                    //Button.Glyph = Icons.Ttl;
-                    Button.SetGlyph(file.Id, MessageContentState.Ttl);
-                    Button.Progress = 1;
-
                     Button.Opacity = 1;
-                    Overlay.Opacity = 1;
-
-                    Subtitle.Text = Locale.FormatTtl(message.SelfDestructTime, true);
                 }
                 else
                 {
-                    //Button.Glyph = message.SendingState is MessageSendingStatePending ? Icons.Confirm : Icons.Photo;
-                    Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Photo);
-                    Button.Progress = 1;
-
-                    if (message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0 || (message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0))
-                    {
-                        Button.Opacity = 1;
-                    }
-                    else
-                    {
-                        Button.Opacity = 0;
-                    }
-
-                    Overlay.Opacity = 0;
-
-                    Texture.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                    Button.Opacity = 0;
                 }
+
+                Overlay.Opacity = 0;
+
+                Texture.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
             }
         }
 
@@ -166,7 +152,7 @@ namespace Telegram.Controls.Messages.Content
             if (file.Local.IsDownloadingCompleted)
             {
                 //Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.GetLocal(file.Local.Path)), Stretch = Stretch.UniformToFill };
-                Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path, message.IsSecret() ? 15 : 3), Stretch = Stretch.UniformToFill };
+                Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path, 3), Stretch = Stretch.UniformToFill };
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
             {
