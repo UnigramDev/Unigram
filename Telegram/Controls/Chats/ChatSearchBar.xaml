@@ -307,25 +307,27 @@
                                IsHitTestVisible="False"
                                Grid.Column="1" />
 
+                    <controls:GlyphButton x:Name="DeleteButton"
+                                          Click="Delete_Click"
+                                          Glyph="&#xE711;"
+                                          FontSize="16"
+                                          Width="36"
+                                          Height="32"
+                                          IsTabStop="False"
+                                          Grid.Column="4"
+                                          AutomationProperties.AccessibilityView="Raw"
+                                          VerticalAlignment="Center"
+                                          Visibility="Collapsed" />
 
-                    <Button x:Name="DeleteButton"
-                            Click="Delete_Click"
-                            Grid.Row="1"
-                            Style="{StaticResource TextDeleteButtonStyle}"
-                            IsTabStop="False"
-                            Grid.Column="4"
-                            MinWidth="34"
-                            AutomationProperties.AccessibilityView="Raw"
-                            VerticalAlignment="Stretch"
-                            Visibility="Collapsed" />
-                    <Button x:Name="QueryButton"
-                            Click="Search_Click"
-                            Grid.Row="1"
-                            Style="{StaticResource TextQueryButtonStyle}"
-                            IsTabStop="False"
-                            MinWidth="34"
-                            AutomationProperties.AccessibilityView="Raw"
-                            VerticalAlignment="Stretch" />
+                    <controls:GlyphButton x:Name="QueryButton"
+                                          Click="Search_Click"
+                                          Glyph="&#xE721;"
+                                          FontSize="16"
+                                          Width="36"
+                                          Height="32"
+                                          IsTabStop="False"
+                                          AutomationProperties.AccessibilityView="Raw"
+                                          VerticalAlignment="Center" />
                 </Grid>
 
                 <controls:GlyphButton x:Name="SearchPrevious"
