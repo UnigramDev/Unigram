@@ -209,12 +209,12 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public bool DisableHighlightWords
+        public bool UseSystemSpellChecker
         {
-            get => Settings.DisableHighlightWords;
+            get => Settings.UseSystemSpellChecker;
             set
             {
-                Settings.DisableHighlightWords = value;
+                Settings.UseSystemSpellChecker = value;
                 RaisePropertyChanged();
             }
         }

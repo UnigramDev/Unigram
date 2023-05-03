@@ -89,7 +89,7 @@ namespace Telegram.Services
         bool SwipeToShare { get; set; }
         bool SwipeToReply { get; set; }
         bool FullScreenGallery { get; set; }
-        bool DisableHighlightWords { get; set; }
+        bool UseSystemSpellChecker { get; set; }
 
         bool IsStreamingEnabled { get; set; }
         double VolumeLevel { get; set; }
@@ -487,10 +487,10 @@ namespace Telegram.Services
         }
 
         private static bool? _disableHighlightWords;
-        public bool DisableHighlightWords
+        public bool UseSystemSpellChecker
         {
-            get => _disableHighlightWords ??= GetValueOrDefault(_local, "DisableHighlightWords", false);
-            set => AddOrUpdateValue(ref _disableHighlightWords, _local, "DisableHighlightWords", value);
+            get => !(_disableHighlightWords ??= GetValueOrDefault(_local, "DisableHighlightWords", false));
+            set => AddOrUpdateValue(ref _disableHighlightWords, _local, "DisableHighlightWords", !value);
         }
 
         private static bool? _isSendByEnterEnabled;

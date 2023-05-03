@@ -184,8 +184,8 @@
                               Content="{CustomResource EnableFullScreenGallery}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.DisableHighlightWords, Mode=TwoWay}"
-                              Content="{CustomResource DisableSpelling}"
+                    <CheckBox IsChecked="{x:Bind ViewModel.UseSystemSpellChecker, Mode=TwoWay}"
+                              Content="{CustomResource UseSystemSpellChecker}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"

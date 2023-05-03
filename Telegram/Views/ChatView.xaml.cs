@@ -96,7 +96,7 @@ namespace Telegram.Views
         private ChatBackgroundPresenter _backgroundPresenter;
 
         private readonly DebouncedProperty<FocusState> _focusState;
-        private bool _enableHighlightWords = true;
+        private bool _useSystemSpellChecker = true;
         private bool _isTextReadOnly = false;
 
         private bool _needActivation = true;
@@ -633,11 +633,11 @@ namespace Telegram.Views
 
             TextField.IsReplaceEmojiEnabled = ViewModel.Settings.IsReplaceEmojiEnabled;
 
-            if (_enableHighlightWords == SettingsService.Current.DisableHighlightWords)
+            if (_useSystemSpellChecker != SettingsService.Current.UseSystemSpellChecker)
             {
-                _enableHighlightWords = !SettingsService.Current.DisableHighlightWords;
-                TextField.IsTextPredictionEnabled = _enableHighlightWords;
-                TextField.IsSpellCheckEnabled = _enableHighlightWords;
+                _useSystemSpellChecker = !SettingsService.Current.UseSystemSpellChecker;
+                TextField.IsTextPredictionEnabled = _useSystemSpellChecker;
+                TextField.IsSpellCheckEnabled = _useSystemSpellChecker;
             }
 
             _focusState.Set(FocusState.Programmatic);

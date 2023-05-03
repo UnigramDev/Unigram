@@ -2345,9 +2345,6 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DisableReactionsInfo" xml:space="preserve">
     <value>Members of the group can’t add any reactions to messages.</value>
   </data>
-  <data name="DisableSpelling" xml:space="preserve">
-    <value>Disable misspelled words highlight</value>
-  </data>
   <data name="Discard" xml:space="preserve">
     <value>Discard</value>
   </data>
@@ -2643,7 +2640,7 @@ If the number above is correct, please wait for the verification code.</value>
 You&apos;ll need the password you set up here to log in to your Telegram account.</value>
   </data>
   <data name="EnableFullScreenGallery" xml:space="preserve">
-    <value>Enable full-screen gallery</value>
+    <value>Enable Full-Screen Gallery</value>
   </data>
   <data name="EnablePhotoSpoiler" xml:space="preserve">
     <value>Hide with spoiler</value>
@@ -5352,7 +5349,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Rename current device</value>
   </data>
   <data name="ReplaceEmoji" xml:space="preserve">
-    <value>Replace emoji automatically</value>
+    <value>Replace Emoji Automatically</value>
   </data>
   <data name="Replies_one" xml:space="preserve">
     <value>{0} Reply</value>
@@ -6782,6 +6779,9 @@ However, it is currently available for purchase. **Learn more…**</value>
   </data>
   <data name="Users_other" xml:space="preserve">
     <value>{0} users</value>
+  </data>
+  <data name="UseSystemSpellChecker" xml:space="preserve">
+    <value>Use System Spell Checker</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
     <value>via</value>
