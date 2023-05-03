@@ -80,6 +80,9 @@ namespace Telegram.Services
                     // TODO: unify some stuff, such as retrieving source and destination file,
                     // deleting the temp files, updating the future access list.
 
+                    // TODO: figure out a way to remove the file from the future access list:
+                    // the same file can go through multiple generations simultaneously.
+
                     if (conversion == ConversionType.Copy)
                     {
                         await CopyAsync(update, args);
@@ -213,7 +216,7 @@ namespace Telegram.Services
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
 
-            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
+            //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         private async Task CompressAsync(UpdateFileGenerationStart update, string[] args)
@@ -253,7 +256,7 @@ namespace Telegram.Services
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
 
-            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
+            //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         private async Task ThumbnailAsync(UpdateFileGenerationStart update, string[] args)
@@ -280,7 +283,7 @@ namespace Telegram.Services
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
 
-            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
+            //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         private async Task TranscodeOpusAsync(UpdateFileGenerationStart update, string[] args)
@@ -312,7 +315,7 @@ namespace Telegram.Services
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
 
-            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
+            //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         private async Task TranscodeAsync(UpdateFileGenerationStart update, string[] args)
@@ -403,7 +406,7 @@ namespace Telegram.Services
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
 
-            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
+            //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         private async Task ThumbnailTranscodeAsync(UpdateFileGenerationStart update, string[] args)
@@ -465,7 +468,7 @@ namespace Telegram.Services
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
 
-            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
+            //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         private async Task ThumbnailDocumentAsync(UpdateFileGenerationStart update, string[] args)
@@ -506,7 +509,7 @@ namespace Telegram.Services
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
             }
 
-            StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
+            //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
         }
 
         public class VideoConversion
