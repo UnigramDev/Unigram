@@ -79,8 +79,9 @@
 
                     <controls:BadgeButton Click="{x:Bind ViewModel.ResetAutoDownload}"
                                           Content="{CustomResource ResetAutomaticMediaDownload}"
+                                          Foreground="{ThemeResource DangerButtonBackground}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Foreground="Red" />
+                                          Glyph="&#xEA09;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource Streaming}"
