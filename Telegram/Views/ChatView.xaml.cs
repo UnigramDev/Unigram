@@ -4292,7 +4292,7 @@ namespace Telegram.Views
 
             var rect = textArea.Compositor.CreateRoundedRectangleGeometry();
             rect.CornerRadius = new Vector2(SettingsService.Current.Appearance.BubbleRadius);
-            rect.Size = new Vector2(TextArea.ActualSize.X, TextArea.ActualSize.Y + 48);
+            rect.Size = new Vector2(TextArea.ActualSize.X, 192 + 48);
             rect.Offset = new Vector2(0, value);
 
             textArea.Clip = textArea.Compositor.CreateGeometricClip(rect);
