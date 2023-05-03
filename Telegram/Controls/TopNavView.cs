@@ -47,6 +47,9 @@ namespace Telegram.Controls
             if (SelectionMode == ListViewSelectionMode.Single)
             {
                 AnimateSelectionChanged(SelectedItem);
+
+                // TODO: would be cool to do this only on programmatic changes, but I'm afraid it's not possible.
+                ScrollIntoView(SelectedItem);
             }
             else
             {
