@@ -60,14 +60,16 @@
                                          GotFocus="Question_GotFocus"
                                          Grid.Column="1" />
 
-                                <Button Command="{x:Bind RemoveCommand}"
-                                        Grid.Row="1"
-                                        Style="{StaticResource TextDeleteButtonStyle}"
-                                        HorizontalAlignment="Right"
-                                        IsTabStop="False"
-                                        Grid.Column="1"
-                                        MinWidth="34"
-                                        VerticalAlignment="Stretch" />
+                                <controls:GlyphButton Command="{x:Bind RemoveCommand}"
+                                                      Glyph="&#xE711;"
+                                                      IsTabStop="False"
+                                                      AutomationProperties.AccessibilityView="Raw"
+                                                      FontSize="16"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Right"
+                                                      Width="36"
+                                                      Height="32"
+                                                      Grid.Column="1" />
                             </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -92,7 +94,7 @@
                         <CheckBox x:Name="Multiple"
                                   Checked="Multiple_Toggled"
                                   Unchecked="Multiple_Toggled"
-                                  Content="{CustomResource PollMultiple}"/>
+                                  Content="{CustomResource PollMultiple}" />
 
                         <CheckBox x:Name="Quiz"
                                   Checked="Quiz_Toggled"
