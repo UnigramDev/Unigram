@@ -2150,9 +2150,6 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="Cut" xml:space="preserve">
     <value>Cut</value>
   </data>
-  <data name="Daily" xml:space="preserve">
-    <value>Daily</value>
-  </data>
   <data name="DartInfo" xml:space="preserve">
     <value>Send a **:dart:** emoji to try your luck.</value>
   </data>
@@ -7195,9 +7192,6 @@ Participants will see that the chat is being recorded.</value>
   </data>
   <data name="WebSessionsTitle" xml:space="preserve">
     <value>Logged In with Telegram</value>
-  </data>
-  <data name="Weekly" xml:space="preserve">
-    <value>Weekly</value>
   </data>
   <data name="Weeks_one" xml:space="preserve">
     <value>{0} week</value>
