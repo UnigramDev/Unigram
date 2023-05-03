@@ -5,8 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Telegram.Common;
-
 namespace Telegram.Services.Settings
 {
     public class DiagnosticsSettings : SettingsServiceBase
@@ -16,11 +14,11 @@ namespace Telegram.Services.Settings
         {
         }
 
-        private bool? _chatPreviewToolTip;
-        public bool ChatPreviewToolTip
+        private bool? _enableChatPreviews;
+        public bool EnableChatPreviews
         {
-            get => _chatPreviewToolTip ??= GetValueOrDefault("ChatPreviewToolTip", ApiInfo.IsPackagedRelease);
-            set => AddOrUpdateValue(ref _chatPreviewToolTip, "ChatPreviewToolTip", value);
+            get => _enableChatPreviews ??= GetValueOrDefault("ChatPreviewToolTip", true);
+            set => AddOrUpdateValue(ref _enableChatPreviews, "ChatPreviewToolTip", value);
         }
 
         private bool? _disableDatabase;

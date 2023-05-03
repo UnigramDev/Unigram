@@ -177,6 +177,18 @@ namespace Telegram.ViewModels.Settings
 
 
 
+        public bool EnableChatPreviews
+        {
+            get => Settings.Diagnostics.EnableChatPreviews;
+            set
+            {
+                Settings.Diagnostics.EnableChatPreviews = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+
         public bool SwipeToShare
         {
             get => Settings.SwipeToShare;

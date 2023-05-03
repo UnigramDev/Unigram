@@ -974,6 +974,8 @@ namespace Telegram.Controls.Cells
 
         private void OnLayoutUpdated(object sender, object e)
         {
+            Telegram.App.Track();
+
             if (_ignoreLayoutUpdated)
             {
                 return;
@@ -1565,9 +1567,9 @@ namespace Telegram.Controls.Cells
         private void ToolTip_Opened(object sender, RoutedEventArgs e)
         {
             var tooltip = sender as ToolTip;
-            if (tooltip != null && _chat != null)
+            if (tooltip != null)
             {
-                if (SettingsService.Current.Diagnostics.ChatPreviewToolTip)
+                if (SettingsService.Current.Diagnostics.EnableChatPreviews && _chat != null)
                 {
                     var playback = TLContainer.Current.Playback;
                     var settings = TLContainer.Current.Resolve<ISettingsService>(_clientService.SessionId);
@@ -1656,10 +1658,6 @@ namespace Telegram.Controls.Cells
                             });
                         });
                     }
-                }
-                else if (BriefLabel.IsTextTrimmed)
-                {
-                    tooltip.Content = FromLabel.Text + BriefLabel.Text;
                 }
                 else
                 {

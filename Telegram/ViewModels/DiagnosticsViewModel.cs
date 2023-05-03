@@ -131,16 +131,6 @@ namespace Telegram.ViewModels
         public MvxObservableCollection<DiagnosticsOption> Options { get; private set; }
         public MvxObservableCollection<DiagnosticsTag> Tags { get; private set; }
 
-        public bool ChatPreviewToolTip
-        {
-            get => Settings.Diagnostics.ChatPreviewToolTip;
-            set
-            {
-                Settings.Diagnostics.ChatPreviewToolTip = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool CopyFormattedCode
         {
             get => Settings.Diagnostics.CopyFormattedCode;

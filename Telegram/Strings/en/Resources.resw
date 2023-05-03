@@ -2632,6 +2632,12 @@ If the number above is correct, please wait for the verification code.</value>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>When possible, Telegram will start playing videos and music right away, without waiting for the files to fully download.</value>
   </data>
+  <data name="EnableChatPreviews" xml:space="preserve">
+    <value>Enable Chat Previews</value>
+  </data>
+  <data name="EnableChatPreviewsInfo" xml:space="preserve">
+    <value>Hover on a chat in the chat list to preview the last message.</value>
+  </data>
   <data name="EnabledNotifications" xml:space="preserve">
     <value>Enabled Notifications</value>
   </data>
