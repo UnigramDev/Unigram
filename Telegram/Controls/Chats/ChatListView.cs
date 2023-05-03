@@ -36,6 +36,8 @@ namespace Telegram.Controls.Chats
 
         private readonly DisposableMutex _loadMoreLock = new();
 
+        private readonly TaskCompletionSource<ItemsStackPanel> _waitItemsPanelRoot = new();
+
         private bool _programmaticExternal;
         private bool _programmaticScrolling;
 
@@ -56,6 +58,7 @@ namespace Telegram.Controls.Chats
             _recognizer.Tapped += Recognizer_Tapped;
 
             Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
 
         public void ScrollToBottom()
@@ -69,12 +72,30 @@ namespace Telegram.Controls.Chats
             if (panel != null)
             {
                 ItemsStack = panel;
+                ItemsStack.SizeChanged -= OnSizeChanged;
                 ItemsStack.SizeChanged += OnSizeChanged;
 
+                _waitItemsPanelRoot.TrySetResult(panel);
                 SetScrollMode();
             }
 
             ViewChanged();
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Logger.Info($"ItemsPanelRoot.Children.Count: {ItemsStack?.Children.Count}");
+            Logger.Info($"Items.Count: {Items.Count}");
+
+            // Note, this is done because of the following:
+            // In some conditions (always?) ListView starts to store
+            // all the created containers in the ItemsPanelRoot (on Unload presumably).
+            // This causes an enormous overhead when moving from a different page to ChatPage,
+            // as all the SelectorItem (some times they can be hundreds) will be measured arranged
+            // right before all of them get unloaded again.
+            // Setting ItemsSource to null seems to prevent this from happening.
+            // IMPORTANT: this must only happen on Unload (so when closing the chat page).
+            ItemsSource = null;
         }
 
         protected override void OnApplyTemplate()
@@ -317,7 +338,7 @@ namespace Telegram.Controls.Chats
         public async Task ScrollIntoViewAsync(MessageViewModel item, ScrollIntoViewAlignment alignment)
         {
             var index = ViewModel.Items.IndexOf(item);
-            var stack = ItemsStack;
+            var stack = await _waitItemsPanelRoot.Task;
 
             if (stack == null || index >= ItemsStack.FirstCacheIndex && index <= ItemsStack.LastCacheIndex)
             {

@@ -56,7 +56,7 @@ using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Views
 {
-    public sealed partial class ChatView : HostedPage, INavigablePage, ISearchablePage, IDialogDelegate, IActivablePage
+    public sealed partial class ChatView : UserControl, INavigablePage, ISearchablePage, IDialogDelegate, IActivablePage
     {
         private DialogViewModel _viewModel;
         public DialogViewModel ViewModel => _viewModel ??= DataContext as DialogViewModel;
@@ -116,8 +116,6 @@ namespace Telegram.Views
             _autocompleteZoomer.Closing = _autocompleteHandler.ThrottleVisibleItems;
             _autocompleteZoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
             _autocompleteZoomer.SessionId = () => ViewModel.ClientService.SessionId;
-
-            NavigationCacheMode = Windows.UI.Xaml.Navigation.NavigationCacheMode.Required;
 
             _loadedThemeTask = new TaskCompletionSource<bool>();
 
@@ -598,7 +596,7 @@ namespace Telegram.Views
                 viewModel.MessageSliceLoaded -= OnMessageSliceLoaded;
             }
 
-            //_updateThemeTask?.TrySetResult(true);
+            Messages.ItemsSource ??= _messages;
 
             Bindings.Update();
             Cleanup(ref _cleanup);
@@ -606,6 +604,9 @@ namespace Telegram.Views
 
         public void Activate(int sessionId)
         {
+            Telegram.Logs.Logger.Info($"ItemsPanelRoot.Children.Count: {Messages.ItemsStack?.Children.Count}");
+            Telegram.Logs.Logger.Info($"Items.Count: {Messages.Items.Count}");
+
             DataContext = _viewModel = _getViewModel(this, sessionId);
 
             _updateThemeTask = new TaskCompletionSource<bool>();
