@@ -2828,18 +2828,13 @@ namespace Telegram.Views
                 return false;
             }
 
-            var file = message.GetFile();
-            if (file != null && file.Local.IsDownloadingCompleted)
+            return message.Content switch
             {
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool MessageSaveDownload_Loaded(MessageViewModel messageCommon)
-        {
-            return false;
+                MessageAudio audio => audio.Audio.AudioValue.Local.IsDownloadingCompleted,
+                MessageDocument document => document.Document.DocumentValue.Local.IsDownloadingCompleted,
+                MessageVideo video => video.Video.VideoValue.Local.IsDownloadingCompleted,
+                _ => false
+            };
         }
 
         private bool MessageSaveAnimation_Loaded(MessageViewModel message)
