@@ -67,7 +67,6 @@ namespace Telegram.Controls.Chats
             }
 
             ElementCompositionPreview.SetElementChildVisual(this, visual?.RootVisual);
-            InvalidateArrange();
         }
 
         #region Fill

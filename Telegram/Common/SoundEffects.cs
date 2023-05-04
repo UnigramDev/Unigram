@@ -19,14 +19,18 @@ namespace Telegram.Common
     {
         public static void Stop()
         {
-            foreach (var reference in _prevGraph.Values.ToArray())
+            try
             {
-                if (reference.TryGetTarget(out AudioGraph target))
+                foreach (var reference in _prevGraph.Values.ToArray())
                 {
-                    reference.SetTarget(null);
-                    target.Stop();
+                    if (reference.TryGetTarget(out AudioGraph target))
+                    {
+                        reference.SetTarget(null);
+                        target.Stop();
+                    }
                 }
             }
+            catch { }
 
             _prevGraph.Clear();
         }
