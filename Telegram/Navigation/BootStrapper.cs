@@ -336,6 +336,11 @@ namespace Telegram.Navigation
                     dialog.Hide();
                     return;
                 }
+                else if (popup.Child is ToolTip toolTip)
+                {
+                    toolTip.IsOpen = false;
+                    return;
+                }
                 else if (key == VirtualKey.Escape)
                 {
                     handled = args.Handled = true;
