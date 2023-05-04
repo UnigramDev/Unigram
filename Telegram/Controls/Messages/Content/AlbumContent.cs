@@ -42,7 +42,7 @@ namespace Telegram.Controls.Messages.Content
         {
             Telegram.App.Track();
 
-            var album = _message.Content as MessageAlbum;
+            var album = _message?.Content as MessageAlbum;
             if (album == null || album.Messages.Count <= 1)
             {
                 return base.MeasureOverride(availableSize);
@@ -77,7 +77,7 @@ namespace Telegram.Controls.Messages.Content
         {
             Telegram.App.Track();
 
-            var album = _message.Content as MessageAlbum;
+            var album = _message?.Content as MessageAlbum;
             if (album == null || album.Messages.Count <= 1)
             {
                 return base.ArrangeOverride(finalSize);
