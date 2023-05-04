@@ -134,7 +134,7 @@ namespace Telegram.Services
                 var folder = await permanent.GetParentAsync();
                 folder ??= await GetDownloadsFolderAsync();
 
-                if (folder != null && IsRelativePath(folder.Path, permanent.Path, out _))
+                if (folder != null && Extensions.IsRelativePath(folder.Path, permanent.Path, out _))
                 {
                     var options = new FolderLauncherOptions();
                     options.ItemsToSelect.Add(permanent);
@@ -162,24 +162,6 @@ namespace Telegram.Services
             {
                 return AsyncInfo.Run<StorageFolder>(task => null);
             }
-        }
-
-        private static bool IsRelativePath(string relativeTo, string path, out string relative)
-        {
-            var relativeFull = Path.GetFullPath(relativeTo);
-            var pathFull = Path.GetFullPath(path);
-
-            if (pathFull.Length > relativeFull.Length && pathFull[relativeFull.Length] == '\\')
-            {
-                if (pathFull.StartsWith(relativeFull, StringComparison.OrdinalIgnoreCase))
-                {
-                    relative = pathFull.Substring(relativeFull.Length + 1);
-                    return true;
-                }
-            }
-
-            relative = null;
-            return false;
         }
     }
 }

@@ -127,13 +127,20 @@ namespace Telegram.Services
                     {
                         _completedDownloads.Add(file.Remote.UniqueId);
 
-                        StorageFile source = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                        StorageFile destination = await Future.CreateFileAsync(_settings, source.Name);
+                        var source = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                        if (Future.CheckAccess(source))
+                        {
+                            return source;
+                        }
+                        else
+                        {
+                            var destination = await Future.CreateFileAsync(_settings, source.Name);
 
-                        await source.CopyAndReplaceAsync(destination);
-                        Future.AddOrReplace(file.Remote.UniqueId, destination);
+                            await source.CopyAndReplaceAsync(destination);
+                            Future.AddOrReplace(file.Remote.UniqueId, destination);
 
-                        return destination;
+                            return destination;
+                        }
                     }
 
                     return permanent;
@@ -253,6 +260,16 @@ namespace Telegram.Services
             public static void AddOrReplace(string token, IStorageItem item, bool temp = false)
             {
                 StorageApplicationPermissions.FutureAccessList.EnqueueOrReplace(temp ? token + "temp" : token, item);
+            }
+
+            public static bool CheckAccess(IStorageItem item)
+            {
+                if (Extensions.IsRelativePath(ApplicationData.Current.LocalFolder.Path, item.Path, out string _))
+                {
+                    return false;
+                }
+
+                return StorageApplicationPermissions.FutureAccessList.CheckAccess(item);
             }
 
             public static async Task<bool> ContainsAsync(string token, bool temp = false)

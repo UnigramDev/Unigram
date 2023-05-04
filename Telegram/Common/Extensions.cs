@@ -511,6 +511,24 @@ namespace Telegram.Common
             return relativePath;
         }
 
+        public static bool IsRelativePath(string relativeTo, string path, out string relative)
+        {
+            var relativeFull = Path.GetFullPath(relativeTo);
+            var pathFull = Path.GetFullPath(path);
+
+            if (pathFull.Length > relativeFull.Length && pathFull[relativeFull.Length] == '\\')
+            {
+                if (pathFull.StartsWith(relativeFull, StringComparison.OrdinalIgnoreCase))
+                {
+                    relative = pathFull.Substring(relativeFull.Length + 1);
+                    return true;
+                }
+            }
+
+            relative = null;
+            return false;
+        }
+
         public static string Enqueue(this StorageItemAccessList list, IStorageItem item)
         {
             try
