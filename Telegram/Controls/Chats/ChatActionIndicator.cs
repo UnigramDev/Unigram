@@ -5,11 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml.Controls;
-using System;
 using System.Numerics;
 using Telegram.Assets.Icons;
 using Telegram.Td.Api;
-using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -62,6 +60,11 @@ namespace Telegram.Controls.Chats
 
             _action = type;
             _previous = visual;
+
+            if (visual?.RootVisual != null)
+            {
+                visual.RootVisual.Scale = new Vector3(0.1f, 0.1f, 1.0f);
+            }
 
             ElementCompositionPreview.SetElementChildVisual(this, visual?.RootVisual);
             InvalidateArrange();
@@ -161,88 +164,6 @@ namespace Telegram.Controls.Chats
             }
 
             return null;
-        }
-
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            Telegram.App.Track();
-
-            var visual = _previous;
-            if (visual == null)
-            {
-                // If we don't have a visual, we will show the fallback icon, so we need to do a traditional measure.
-                return base.MeasureOverride(availableSize);
-            }
-
-            // Animated Icon scales using the Uniform strategy, meaning that it scales the horizonal and vertical
-            // dimensions equally by the maximum amount that doesn't exceed the available size in either dimension.
-            // If the available size is infinite in both dimensions then we don't scale the visual. Otherwise, we
-            // calculate the scale factor by comparing the default visual size to the available size. This produces 2
-            // scale factors, one for each dimension. We choose the smaller of the scale factors to not exceed the
-            // available size in that dimension.
-            var visualSize = visual.Size;
-            if (visualSize != Vector2.Zero)
-            {
-                var widthScale = double.IsInfinity(availableSize.Width) ? double.PositiveInfinity : availableSize.Width / visualSize.X;
-                var heightScale = double.IsInfinity(availableSize.Height) ? double.PositiveInfinity : availableSize.Height / visualSize.Y;
-                if (double.IsInfinity(widthScale) && double.IsInfinity(heightScale))
-                {
-                    return visualSize.ToSize();
-                }
-                else if (double.IsInfinity(widthScale))
-                {
-                    return new Size(visualSize.X * heightScale, availableSize.Height);
-                }
-                else if (double.IsInfinity(heightScale))
-                {
-                    return new Size(availableSize.Width, visualSize.Y * widthScale);
-                }
-                else
-                {
-                    return heightScale > widthScale
-                        ? new Size(availableSize.Width, visualSize.Y * widthScale)
-                        : new Size(visualSize.X * heightScale, availableSize.Height);
-                }
-            }
-
-            return visualSize.ToSize();
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            Telegram.App.Track();
-
-            var visual = _previous;
-            if (visual == null)
-            {
-                return base.ArrangeOverride(finalSize);
-            }
-
-            var visualSize = visual.Size;
-            Vector2 Scale()
-            {
-                var scale = finalSize.ToVector2() / visualSize;
-                if (scale.X < scale.Y)
-                {
-                    scale.Y = scale.X;
-                }
-                else
-                {
-                    scale.X = scale.Y;
-                }
-                return scale;
-            };
-
-            var scale = Scale();
-            var arrangedSize = new Vector2(
-                MathF.Min((float)finalSize.Width / scale.X, visualSize.X),
-                MathF.Min((float)finalSize.Height / scale.Y, visualSize.Y));
-            var offset = (finalSize.ToVector2() - (visualSize * scale)) / 2;
-            var rootVisual = visual.RootVisual;
-            rootVisual.Offset = new Vector3(offset, 0.0f);
-            rootVisual.Size = arrangedSize;
-            rootVisual.Scale = new Vector3(scale, 1.0f);
-            return finalSize;
         }
     }
 }
