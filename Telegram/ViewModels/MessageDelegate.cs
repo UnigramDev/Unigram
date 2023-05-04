@@ -141,16 +141,16 @@ namespace Telegram.ViewModels
 
         public async void OpenFile(File file)
         {
-            var local = await ClientService.GetFileAsync(file);
-            if (local != null)
+            var permanent = await ClientService.GetPermanentFileAsync(file);
+            if (permanent != null)
             {
                 if (file.Local.Path.EndsWith(".unigram-theme"))
                 {
-                    await ShowPopupAsync(new ThemePreviewPopup(local));
+                    await ShowPopupAsync(new ThemePreviewPopup(permanent));
                 }
                 else
                 {
-                    await Windows.System.Launcher.LaunchFileAsync(local);
+                    await Windows.System.Launcher.LaunchFileAsync(permanent);
                 }
             }
         }

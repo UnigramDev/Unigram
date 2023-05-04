@@ -33,6 +33,7 @@ namespace Telegram.Services
         Task<BaseObject> CheckChatInviteLinkAsync(string inviteLink);
 
         Task<StorageFile> GetFileAsync(File file, bool completed = true);
+        Task<StorageFile> GetPermanentFileAsync(File file);
 
         void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false);
         Task<File> DownloadFileAsync(File file, int priority, int offset = 0, int limit = 0);
@@ -611,6 +612,23 @@ namespace Telegram.Services
             return response;
         }
 
+
+
+        public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
+        {
+            Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
+        }
+
+        public async Task<File> DownloadFileAsync(File file, int priority, int offset = 0, int limit = 0)
+        {
+            var response = await SendAsync(new DownloadFile(file.Id, priority, offset, limit, true));
+            if (response is File updated)
+            {
+                return ProcessFile(updated);
+            }
+
+            return file;
+        }
 
 
 

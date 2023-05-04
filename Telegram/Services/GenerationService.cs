@@ -290,24 +290,26 @@ namespace Telegram.Services
         {
             try
             {
+                var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
+
                 using (var opus = new OpusOutput(update.DestinationPath))
                 {
                     if (opus.IsValid)
                     {
-                        var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
                         opus.Transcode(file.Path);
-
-                        _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
-
-                        if (IsTemporary(file))
-                        {
-                            await file.DeleteAsync();
-                        }
                     }
                     else
                     {
                         _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID can't access the file")));
+                        return;
                     }
+                }
+
+                _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
+
+                if (IsTemporary(file))
+                {
+                    await file.DeleteAsync();
                 }
             }
             catch (Exception ex)

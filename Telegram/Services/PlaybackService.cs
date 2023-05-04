@@ -258,8 +258,8 @@ namespace Telegram.Services
             {
                 try
                 {
-                    var file = await item.Message.ClientService.GetFileAsync(item.Stream.File);
-                    await transport.DisplayUpdater.CopyFromFileAsync(MediaPlaybackType.Music, file);
+                    var cached = await item.Message.ClientService.GetFileAsync(item.Stream.File);
+                    await transport.DisplayUpdater.CopyFromFileAsync(MediaPlaybackType.Music, cached);
                 }
                 catch
                 {

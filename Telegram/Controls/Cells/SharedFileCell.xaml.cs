@@ -270,10 +270,12 @@ namespace Telegram.Controls.Cells
             }
             else if (_delegate == null)
             {
-                var temp = await _message.ClientService.GetFileAsync(file);
-                if (temp != null)
+                // TODO: Replace with IStorageService.OpenFileAsync
+
+                var permanent = await _message.ClientService.GetPermanentFileAsync(file);
+                if (permanent != null)
                 {
-                    await Windows.System.Launcher.LaunchFileAsync(temp);
+                    await Windows.System.Launcher.LaunchFileAsync(permanent);
                 }
             }
             else

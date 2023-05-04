@@ -21,6 +21,9 @@ namespace Telegram.Common
         private static bool? _isMediaSupported;
         public static bool IsMediaSupported => _isMediaSupported ??= NativeUtils.IsMediaSupported();
 
+        private static bool? _isStorageSupported;
+        public static bool IsStorageSupported => _isStorageSupported ??= ApiInformation.IsMethodPresent("Windows.Storage.KnownFolders", "GetFolderAsync");
+
         private static bool? _isVoipSupported;
         public static bool IsVoipSupported => _isVoipSupported ??= ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);
 

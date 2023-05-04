@@ -16,7 +16,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Gallery
 {
@@ -126,7 +125,7 @@ namespace Telegram.Controls.Gallery
             UpdateFile(_item, file);
         }
 
-        private async void UpdateFile(GalleryContent item, File file)
+        private void UpdateFile(GalleryContent item, File file)
         {
             var reference = item?.GetFile();
             if (reference == null || reference.Id != file.Id)
@@ -171,23 +170,7 @@ namespace Telegram.Controls.Gallery
                     Button.SetGlyph(file.Id, MessageContentState.Photo);
                     Button.Opacity = 0;
 
-                    try
-                    {
-                        BitmapImage image;
-                        Texture.Source = image = new BitmapImage(); // (UriEx.GetLocal(file.Local.Path));
-
-                        var test = await item.ClientService.GetFileAsync(file);
-                        using (var stream = await test.OpenReadAsync())
-                        {
-                            await image.SetSourceAsync(stream);
-                        }
-
-                        Texture.Source = image;
-                    }
-                    catch
-                    {
-                        Texture.Source = null;
-                    }
+                    Texture.Source = UriEx.ToBitmap(file.Local.Path, 0, 0);
                 }
             }
 

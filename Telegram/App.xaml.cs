@@ -94,6 +94,13 @@ namespace Telegram
             }
         }
 
+        public static void Track(Exception ex, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "")
+        {
+#if !DEBUG
+            Microsoft.AppCenter.Crashes.Crashes.TrackError(ex);
+#endif
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
         /// Initializes the singleton application object.  This is the first line of authored code

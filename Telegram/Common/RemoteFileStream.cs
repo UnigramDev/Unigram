@@ -76,9 +76,9 @@ namespace Telegram.Common
                     {
                         _fileStream?.Dispose();
 
-                        var file = await _clientService.GetFileAsync(_file, false);
+                        var cached = await _clientService.GetFileAsync(_file, false);
 
-                        _fileStream = await file.OpenAsync(FileAccessMode.Read, StorageOpenOptions.AllowReadersAndWriters);
+                        _fileStream = await cached.OpenAsync(FileAccessMode.Read, StorageOpenOptions.AllowReadersAndWriters);
                         _filePath = path;
                     }
                     else if (_fileStream == null)

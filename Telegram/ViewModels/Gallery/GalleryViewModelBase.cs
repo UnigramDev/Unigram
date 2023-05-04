@@ -249,11 +249,11 @@ namespace Telegram.ViewModels.Gallery
                 return;
             }
 
-            var temp = await ClientService.GetFileAsync(file);
-            if (temp != null)
+            var cached = await ClientService.GetFileAsync(file);
+            if (cached != null)
             {
                 var dataPackage = new DataPackage();
-                dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(temp));
+                dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromFile(cached));
                 ClipboardEx.TrySetContent(dataPackage);
             }
         }
@@ -269,7 +269,7 @@ namespace Telegram.ViewModels.Gallery
             var file = item.GetFile();
             if (file != null)
             {
-                await _storageService.SaveAsAsync(file);
+                await _storageService.SaveFileAsAsync(file);
             }
         }
 
@@ -284,7 +284,7 @@ namespace Telegram.ViewModels.Gallery
             var file = item.GetFile();
             if (file != null)
             {
-                await _storageService.OpenWithAsync(file);
+                await _storageService.OpenFileWithAsync(file);
             }
         }
 

@@ -337,7 +337,7 @@ namespace Telegram.ViewModels.Chats
             var file = message.GetFile();
             if (file != null)
             {
-                await _storageService.SaveAsAsync(file);
+                await _storageService.SaveFileAsAsync(file);
             }
         }
 

@@ -1079,13 +1079,13 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var storageFile = await ClientService.GetFileAsync(file);
-            if (storageFile == null)
+            var cached = await ClientService.GetFileAsync(file);
+            if (cached == null)
             {
                 return;
             }
 
-            await EditMediaAsync(storageFile);
+            await EditMediaAsync(cached);
         }
 
         public async Task EditMediaAsync(StorageFile file)
@@ -1104,11 +1104,11 @@ namespace Telegram.ViewModels
 
             var formattedText = GetFormattedText(true);
 
-            var dialog = new SendFilesPopup(SessionId, new[] { storage }, true, false, false, false, false, false);
-            dialog.Caption = formattedText
+            var popup = new SendFilesPopup(SessionId, new[] { storage }, true, false, false, false, false, false);
+            popup.Caption = formattedText
                 .Substring(0, ClientService.Options.MessageCaptionLengthMax);
 
-            var confirm = await dialog.OpenAsync();
+            var confirm = await popup.OpenAsync();
 
             TextField?.Focus(FocusState.Programmatic);
 
@@ -1117,16 +1117,16 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            TextField?.SetText(dialog.Caption);
+            TextField?.SetText(popup.Caption);
 
             Task<InputMessageFactory> request = null;
             if (storage is StoragePhoto)
             {
-                request = _messageFactory.CreatePhotoAsync(storage.File, dialog.IsFilesSelected, storage.HasSpoiler, storage.Ttl, storage.IsEdited ? storage.EditState : null);
+                request = _messageFactory.CreatePhotoAsync(storage.File, popup.IsFilesSelected, storage.HasSpoiler, storage.Ttl, storage.IsEdited ? storage.EditState : null);
             }
             else if (storage is StorageVideo video)
             {
-                request = _messageFactory.CreateVideoAsync(storage.File, video.IsMuted, dialog.IsFilesSelected, storage.HasSpoiler, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform());
+                request = _messageFactory.CreateVideoAsync(storage.File, video.IsMuted, popup.IsFilesSelected, storage.HasSpoiler, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform());
             }
 
             if (request == null)

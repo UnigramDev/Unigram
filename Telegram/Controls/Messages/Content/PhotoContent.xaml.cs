@@ -242,7 +242,7 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private async void UpdateTexture(MessageViewModel message, PhotoSize big, File file)
+        private void UpdateTexture(MessageViewModel message, PhotoSize big, File file)
         {
             var width = 0;
             var height = 0;
@@ -257,27 +257,7 @@ namespace Telegram.Controls.Messages.Content
                 height = (int)(big.Height * ratio);
             }
 
-            try
-            {
-                BitmapImage image;
-                Texture.Source = image = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height }; // UriEx.GetLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height };
-
-                var test = await message.ClientService.GetFileAsync(file);
-                if (test == null)
-                {
-                    Texture.Source = null;
-                    return;
-                }
-
-                using (var stream = await test.OpenReadAsync())
-                {
-                    await image.SetSourceAsync(stream);
-                }
-            }
-            catch
-            {
-                Texture.Source = null;
-            }
+            Texture.Source = UriEx.ToBitmap(file.Local.Path, width, height);
         }
 
         private void UpdateThumbnail(object target, File file)

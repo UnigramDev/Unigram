@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Td.Api;
-using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 
@@ -18,6 +17,63 @@ namespace Telegram.Services
 {
     public partial class ClientService
     {
+        /*
+         * How does this work?
+         * 
+         * As a general rule, all files are downloaded by TDLib into the app cache.
+         * The goal however, is to make the local cache folder invisible to the user,
+         * and to only provide access to the files through the Downloads folder instead.
+         * 
+         * # Automatic downloads
+         * Nothing happens in this case, automatic downloads always end up in cache.
+         * 
+         * # Manual downloads
+         * All the downloads that pass through the download manager (aka manual downloads)
+         * are automatically copied to the user Downloads folder as soon as the download is completed.
+         * We do this operation in two steps:
+         * 
+         * 1. AddFileToDownloads
+         * - When the download is started, a temporary file is created in the final location.
+         * - The file will look something like this: Unconfirmed {fileId}.tdownload
+         * - The file is then added to the system FutureAccessList using the file UniqueId+temp as token.
+         * Note: this only happens if FutureAccessList doesn't contain any of UniqueId or UniqueId+temp tokens.
+         * 
+         * 2. TrackDownloadedFile
+         * - Whenever an UpdateFile event is received and the download is actually completed,
+         * - we check in the FutureAccessList if there's any file belonging to it, by using UniqueId+temp as token.
+         * - if this is the case, we retrieve both the file from cache and the temporary file in the Downloads folder.
+         * - we then proceed by replacing the latter with a copy with the cache file, that is then renamed with the final name.
+         * - finally we can remove UniqueId+temp from FutureAccessList and add the final UniqueId to the list.
+         * 
+         * # Using the files
+         * The app will always rely on TDLib LocalFile to determine a file status.
+         * This means that if the user clears the app cache, the link between cached and permanent files will be broken.
+         * This considered, the user must be able to perform different actions on the downloaded files, including:
+         * 
+         * 1. OpenFile(With)Async and OpenFolderAsync (IStorageService)
+         * - We make sure that the LocalFile from TDLib reports IsDownloadingCompleted as true
+         * - If yes, we try to retrieve the permanent file from FutureAccessList using UniqueId
+         *   - If the permanent file doesn't exist or it was edited after being copied, we do nothing
+         *   - Otherwise we create a new unique copy of the file in the Downloads folder and we add it to the FutureAccessList
+         * - We launch the file
+         * 
+         * 2. SaveFileAsAsync (IStorageService)
+         * - We make sure that the LocalFile from TDLib reports IsDownloadingCompleted as true
+         * - If yes, we try to retrieve the cache file
+         *   - We save the copy
+         * - If not, and the download didn't start yet
+         *   - We call AddFileToDownloads passing the custom location
+         * 
+         * # Other scenarios
+         * All the stuff that needs to be also considered:
+         * 
+         * 1. User manually deletes the permanent file
+         * FutureAccessList is not kept synchronized by the system, so it's not enough to call ContainsItem,
+         * a try-catch on GetFileAsync is needed to make sure that the file is still accessible.
+         * Note: the file will still be visible as "downloaded" within the app.
+         * 
+         */
+
         private readonly HashSet<int> _canceledDownloads = new();
         private readonly HashSet<string> _completedDownloads = new();
 
@@ -25,82 +81,99 @@ namespace Telegram.Services
         {
             // Extremely important to do this only for completed,
             // as this method is being used by RemoteFileStream as well.
-            if (file.Local.IsDownloadingCompleted && completed)
+            if (completed)
             {
                 await SendAsync(new DownloadFile(file.Id, 16, 0, 0, false));
             }
 
-            if (file.Local.IsDownloadingCompleted || (file.Local.Path.Length > 0 && !completed))
+            if (file.Local.IsDownloadingCompleted || !completed)
             {
                 try
                 {
-                    if (file.Local.IsDownloadingCompleted && FutureContains(file.Remote.UniqueId))
-                    {
-                        return await FutureGetFileAsync(file.Remote.UniqueId);
-                    }
-
                     return await StorageFile.GetFileFromPathAsync(file.Local.Path);
                 }
-                catch
+                catch (System.IO.FileNotFoundException)
                 {
-                    return await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    Send(new DeleteFileW(file.Id));
+                }
+                catch { }
+
+                return null;
+            }
+
+            return null;
+        }
+
+        public async Task<StorageFile> GetPermanentFileAsync(File file)
+        {
+            if (file == null)
+            {
+                return null;
+            }
+
+            // Let's TDLib check the file integrity
+            if (file.Local.IsDownloadingCompleted)
+            {
+                await SendAsync(new DownloadFile(file.Id, 16, 0, 0, false));
+            }
+
+            // If it's still valid, we can proceed with the operation
+            if (file.Local.IsDownloadingCompleted && file.Remote.UniqueId.Length > 0)
+            {
+                try
+                {
+                    var permanent = await Future.GetFileAsync(file.Remote.UniqueId);
+                    if (permanent == null)
+                    {
+                        _completedDownloads.Add(file.Remote.UniqueId);
+
+                        StorageFile source = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                        StorageFile destination = await Future.CreateFileAsync(_settings, source.Name);
+
+                        await source.CopyAndReplaceAsync(destination);
+                        Future.AddOrReplace(file.Remote.UniqueId, destination);
+
+                        return destination;
+                    }
+
+                    return permanent;
+                }
+                catch (Exception ex)
+                {
+                    Future.Remove(file.Remote.UniqueId);
+
+                    // TODO, but high chances to happen
+                    Telegram.App.Track(ex);
                 }
             }
 
             return null;
         }
 
-        private async Task<StorageFile> CreateDownloadedFileAsync(string tempFileName)
-        {
-            await MigrateDownloadsFolderAsync();
-
-            if (_settings.FilesDirectory != null && StorageApplicationPermissions.FutureAccessList.ContainsItem("FilesDirectory"))
-            {
-                try
-                {
-                    StorageFolder folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync("FilesDirectory");
-                    return await folder.CreateFileAsync(tempFileName, CreationCollisionOption.GenerateUniqueName);
-                }
-                catch { }
-            }
-
-            return await DownloadsFolder.CreateFileAsync(tempFileName, CreationCollisionOption.GenerateUniqueName);
-        }
-
-        private async Task MigrateDownloadsFolderAsync()
-        {
-            if (_settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
-            {
-                try
-                {
-                    StorageFolder folder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
-                    StorageApplicationPermissions.FutureAccessList.AddOrReplace("FilesDirectory", folder);
-                }
-                catch
-                {
-                    _settings.FilesDirectory = null;
-                }
-
-                StorageApplicationPermissions.MostRecentlyUsedList.Remove("FilesDirectory");
-            }
-        }
-
         public async void AddFileToDownloads(File file, long chatId, long messageId, int priority = 30)
         {
             Send(new AddFileToDownloads(file.Id, chatId, messageId, priority));
 
-            if (FutureContains(file.Remote.UniqueId, true) || FutureContains(file.Remote.UniqueId))
+            if (Future.Contains(file.Remote.UniqueId, true) || await Future.ContainsAsync(file.Remote.UniqueId))
             {
                 return;
             }
 
-            StorageFile destination = await CreateDownloadedFileAsync($"Unconfirmed {file.Id}.tdownload");
-            FutureAddOrReplace(file.Remote.UniqueId, destination, true);
+            try
+            {
+                StorageFile destination = await Future.CreateFileAsync(_settings, $"Unconfirmed {file.Id}.tdownload");
+                Future.AddOrReplace(file.Remote.UniqueId, destination, true);
+            }
+            catch (Exception ex)
+            {
+                // TODO, but high chances to happen
+                Telegram.App.Track(ex);
+            }
         }
 
         private async void TrackDownloadedFile(File file)
         {
-            if (file.Local.IsDownloadingCompleted && FutureContains(file.Remote.UniqueId, true))
+            if (file.Local.IsDownloadingCompleted && Future.Contains(file.Remote.UniqueId, true))
             {
                 if (_completedDownloads.Contains(file.Remote.UniqueId))
                 {
@@ -109,47 +182,49 @@ namespace Telegram.Services
 
                 _completedDownloads.Add(file.Remote.UniqueId);
 
-                StorageFile source = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-                StorageFile destination = await FutureGetFileAsync(file.Remote.UniqueId, true);
+                try
+                {
+                    StorageFile source = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                    StorageFile destination = await Future.GetFileAsync(file.Remote.UniqueId, true);
 
-                await source.CopyAndReplaceAsync(destination);
-                await destination.RenameAsync(source.Name, NameCollisionOption.GenerateUniqueName);
+                    await source.CopyAndReplaceAsync(destination);
+                    await destination.RenameAsync(source.Name, NameCollisionOption.GenerateUniqueName);
 
-                FutureRemove(file.Remote.UniqueId, true);
-                FutureAddOrReplace(file.Remote.UniqueId, destination);
+                    Future.Remove(file.Remote.UniqueId, true);
+                    Future.AddOrReplace(file.Remote.UniqueId, destination);
+                }
+                catch (Exception ex)
+                {
+                    // TODO, but high chances to happen
+                    Telegram.App.Track(ex);
+                }
             }
 
             EventAggregator.Default.Send(file, $"{SessionId}_{file.Id}", file.Local.IsDownloadingCompleted);
         }
 
-        public void DownloadFile(int fileId, int priority, int offset = 0, int limit = 0, bool synchronous = false)
-        {
-            Send(new DownloadFile(fileId, priority, offset, limit, synchronous));
-        }
-
-        public async Task<File> DownloadFileAsync(File file, int priority, int offset = 0, int limit = 0)
-        {
-            var response = await SendAsync(new DownloadFile(file.Id, priority, offset, limit, true));
-            if (response is File updated)
-            {
-                return ProcessFile(updated);
-            }
-
-            return file;
-        }
-
         public async void CancelDownloadFile(File file, bool onlyIfPending = false)
         {
             _canceledDownloads.Add(file.Id);
+            _completedDownloads.Remove(file.Remote.UniqueId);
+
             Send(new CancelDownloadFile(file.Id, onlyIfPending));
             Send(new RemoveFileFromDownloads(file.Id, false));
 
-            if (FutureContains(file.Remote.UniqueId, true))
+            try
             {
-                StorageFile destination = await FutureGetFileAsync(file.Remote.UniqueId, true);
-                FutureRemove(file.Remote.UniqueId, true);
+                var destination = await Future.GetFileAsync(file.Remote.UniqueId, true);
+                if (destination != null)
+                {
+                    Future.Remove(file.Remote.UniqueId, true);
 
-                await destination.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                    await destination.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                }
+            }
+            catch (Exception ex)
+            {
+                // TODO, but high chances to happen
+                Telegram.App.Track(ex);
             }
         }
 
@@ -158,29 +233,86 @@ namespace Telegram.Services
             return _canceledDownloads.Contains(fileId);
         }
 
-        private static bool FutureContains(string token, bool temp = false)
+        public static class Future
         {
-            if (string.IsNullOrEmpty(token))
+            public static bool Contains(string token, bool temp = false)
             {
-                return false;
+                if (string.IsNullOrEmpty(token))
+                {
+                    return false;
+                }
+
+                return StorageApplicationPermissions.FutureAccessList.ContainsItem(temp ? token + "temp" : token);
             }
 
-            return StorageApplicationPermissions.FutureAccessList.ContainsItem(temp ? token + "temp" : token);
-        }
+            public static void Remove(string token, bool temp = false)
+            {
+                StorageApplicationPermissions.FutureAccessList.Remove(temp ? token + "temp" : token);
+            }
 
-        private static void FutureRemove(string token, bool temp = false)
-        {
-            StorageApplicationPermissions.FutureAccessList.Remove(temp ? token + "temp" : token);
-        }
+            public static void AddOrReplace(string token, IStorageItem item, bool temp = false)
+            {
+                StorageApplicationPermissions.FutureAccessList.EnqueueOrReplace(temp ? token + "temp" : token, item);
+            }
 
-        private static void FutureAddOrReplace(string token, IStorageItem item, bool temp = false)
-        {
-            StorageApplicationPermissions.FutureAccessList.AddOrReplace(temp ? token + "temp" : token, item);
-        }
+            public static async Task<bool> ContainsAsync(string token, bool temp = false)
+            {
+                var destination = await GetFileAsync(token, temp);
+                return destination != null;
+            }
 
-        private static IAsyncOperation<StorageFile> FutureGetFileAsync(string token, bool temp = false)
-        {
-            return StorageApplicationPermissions.FutureAccessList.GetFileAsync(temp ? token + "temp" : token);
+            public static async Task<StorageFile> GetFileAsync(string token, bool temp = false)
+            {
+                try
+                {
+                    if (Contains(token, temp))
+                    {
+                        return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(temp ? token + "temp" : token);
+                    }
+
+                    return null;
+                }
+                catch (System.IO.FileNotFoundException)
+                {
+                    StorageApplicationPermissions.FutureAccessList.Remove(temp ? token + "temp" : token);
+                    return null;
+                }
+            }
+
+            public static async Task<StorageFile> CreateFileAsync(ISettingsService settings, string tempFileName)
+            {
+                await MigrateDownloadsFolderAsync(settings);
+
+                if (settings.FilesDirectory != null && StorageApplicationPermissions.FutureAccessList.ContainsItem("FilesDirectory"))
+                {
+                    try
+                    {
+                        StorageFolder folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync("FilesDirectory");
+                        return await folder.CreateFileAsync(tempFileName, CreationCollisionOption.GenerateUniqueName);
+                    }
+                    catch { }
+                }
+
+                return await DownloadsFolder.CreateFileAsync(tempFileName, CreationCollisionOption.GenerateUniqueName);
+            }
+
+            public static async Task MigrateDownloadsFolderAsync(ISettingsService settings)
+            {
+                if (settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
+                {
+                    try
+                    {
+                        StorageFolder folder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
+                        StorageApplicationPermissions.FutureAccessList.EnqueueOrReplace("FilesDirectory", folder);
+                    }
+                    catch
+                    {
+                        settings.FilesDirectory = null;
+                    }
+
+                    StorageApplicationPermissions.MostRecentlyUsedList.Remove("FilesDirectory");
+                }
+            }
         }
 
 
