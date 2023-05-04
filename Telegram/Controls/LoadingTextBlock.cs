@@ -144,6 +144,7 @@ namespace Telegram.Controls
                 return;
             }
 
+            Telegram.App.Track();
             InvalidateMeasure();
             InvalidateArrange();
 

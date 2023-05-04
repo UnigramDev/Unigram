@@ -2053,6 +2053,7 @@ namespace Telegram.Views.Calls
             }
 
             _selectedEndpointId = cell.IsSelected ? cell.EndpointId : null;
+            Telegram.App.Track();
             Viewport.InvalidateMeasure();
 
             TransformList(ActualSize, ActualSize, _mode, _mode);
@@ -2639,6 +2640,7 @@ namespace Telegram.Views.Calls
                 if (_mode != value)
                 {
                     _mode = value;
+                    Telegram.App.Track();
                     InvalidateMeasure();
                 }
             }

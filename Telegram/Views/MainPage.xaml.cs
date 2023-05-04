@@ -2285,6 +2285,7 @@ namespace Telegram.Views
             button.IconSource = entry.Icon;
 
             var icon = button.Descendants<Microsoft.UI.Xaml.Controls.AnimatedIcon>().FirstOrDefault() as UIElement;
+            Telegram.App.Track();
             icon?.InvalidateMeasure();
 
             if (entry.Parent == null)

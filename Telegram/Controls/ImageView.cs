@@ -106,14 +106,10 @@ namespace Telegram.Controls
 
         private static void OnConstraintChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ImageView)d).OnConstraintChanged(e.NewValue, e.OldValue);
-            ((ImageView)d).InvalidateMeasure();
+            // TODO: removed as an experiment
+            //((ImageView)d).InvalidateMeasure();
         }
 
-        protected virtual void OnConstraintChanged(object newValue, object oldValue)
-        {
-
-        }
         #endregion
 
         protected override Size MeasureOverride(Size availableSize)

@@ -42,6 +42,7 @@ namespace Telegram.Controls
         private static void OrientationPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var wrapPanel = d as WrapPanel;
+            Telegram.App.Track();
             wrapPanel?.InvalidateMeasure();
             wrapPanel?.InvalidateArrange();
         }

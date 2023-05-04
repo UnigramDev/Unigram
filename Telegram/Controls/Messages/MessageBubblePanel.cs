@@ -34,7 +34,9 @@ namespace Telegram.Controls.Messages
                 if (_placeholder != value)
                 {
                     _placeholder = value;
-                    InvalidateMeasure();
+
+                    // TODO: removed as an experiment
+                    //InvalidateMeasure();
                 }
             }
         }

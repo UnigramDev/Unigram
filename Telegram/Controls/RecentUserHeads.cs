@@ -177,6 +177,7 @@ namespace Telegram.Controls
             Canvas.SetZIndex(container, -index);
             _layoutRoot.Children.Insert(index, container);
 
+            Telegram.App.Track();
             InvalidateMeasure();
             AnimateAlignment();
 
@@ -224,6 +225,7 @@ namespace Telegram.Controls
                 _layoutRoot.Children.Insert(count, container);
             }
 
+            Telegram.App.Track();
             InvalidateMeasure();
             AnimateAlignment();
 
@@ -312,6 +314,7 @@ namespace Telegram.Controls
                     _toBeRemoved.Clear();
                 }
 
+                Telegram.App.Track();
                 InvalidateMeasure();
             };
 

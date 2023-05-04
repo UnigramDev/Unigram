@@ -802,6 +802,7 @@ namespace Telegram.Views.Popups
         {
             _positionsBase = null;
 
+            Telegram.App.Track();
             InvalidateMeasure();
             InvalidateArrange();
         }

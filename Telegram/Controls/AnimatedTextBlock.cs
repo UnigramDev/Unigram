@@ -213,6 +213,7 @@ namespace Telegram.Controls
                 ChangePartText(ref NextPart, nameof(NextPart), newValue);
             }
 
+            Telegram.App.Track();
             InvalidateMeasure();
         }
 

@@ -49,8 +49,8 @@ namespace Telegram.Controls
                 if (ActualWidth >= columnMinimalWidthLeft + columnMinimalWidthMain && dialogsWidthRatio == 0 && _allowCompact != value)
                 {
                     _allowCompact = value;
+                    Telegram.App.Track();
                     InvalidateMeasure();
-                    InvalidateArrange();
                 }
                 else
                 {
@@ -266,9 +266,9 @@ namespace Telegram.Controls
 
             dialogsWidthRatio = gripWidthRatio;
             SettingsService.Current.DialogsWidthRatio = gripWidthRatio;
-
+            
+            Telegram.App.Track();
             InvalidateMeasure();
-            InvalidateArrange();
 
             grip.ReleasePointerCapture(e.Pointer);
             e.Handled = true;
