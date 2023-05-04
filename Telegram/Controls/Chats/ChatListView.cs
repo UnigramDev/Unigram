@@ -35,6 +35,7 @@ namespace Telegram.Controls.Chats
         public Action<bool> ViewVisibleMessages { get; set; }
 
         private readonly DisposableMutex _loadMoreLock = new();
+        private int _loadMoreCount = 0;
 
         private readonly TaskCompletionSource<ItemsStackPanel> _waitItemsPanelRoot = new();
 
@@ -146,6 +147,8 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
+            _loadMoreCount++;
+
             using (await _loadMoreLock.WaitAsync())
             {
                 var lastSlice = ViewModel.IsLastSliceLoaded != true;
@@ -177,8 +180,13 @@ namespace Telegram.Controls.Chats
                     }
                 }
 
+                _loadMoreCount--;
+
                 // Not sure if this is extremely effective, but we try
-                await this.UpdateLayoutAsync();
+                if (_loadMoreCount < 3)
+                {
+                    await this.UpdateLayoutAsync();
+                }
             }
         }
 
