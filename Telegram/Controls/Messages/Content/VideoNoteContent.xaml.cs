@@ -291,14 +291,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                if (_message.Content is not MessageVideoNote)
-                {
-                    _message.ClientService.DownloadFile(file.Id, 30);
-                }
-                else
-                {
-                    _message.ClientService.AddFileToDownloads(file, _message.ChatId, _message.Id);
-                }
+                _message.ClientService.DownloadFile(file.Id, 30);
             }
             else
             {
