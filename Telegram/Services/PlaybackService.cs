@@ -454,14 +454,12 @@ namespace Telegram.Services
             var index = items.IndexOf(CurrentPlayback);
             if (index == (_isReversed ? 0 : items.Count - 1))
             {
-                SetSource(items, _isReversed ? items.Count - 1 : 0);
+                SetSource(items, _isReversed ? items.Count - 1 : 0, true);
             }
             else
             {
-                SetSource(items, _isReversed ? index - 1 : index + 1);
+                SetSource(items, _isReversed ? index - 1 : index + 1, true);
             }
-
-            Play();
         }
 
         public void MovePrevious()
@@ -475,21 +473,19 @@ namespace Telegram.Services
             var index = items.IndexOf(CurrentPlayback);
             if (index == (_isReversed ? items.Count - 1 : 0))
             {
-                SetSource(items, _isReversed ? 0 : items.Count - 1);
+                SetSource(items, _isReversed ? 0 : items.Count - 1, true);
             }
             else
             {
-                SetSource(items, _isReversed ? index + 1 : index - 1);
+                SetSource(items, _isReversed ? index + 1 : index - 1, true);
             }
-
-            Play();
         }
 
-        private void SetSource(List<PlaybackItem> items, int index)
+        private void SetSource(List<PlaybackItem> items, int index, bool play = false)
         {
             if (index >= 0 && index <= items.Count - 1)
             {
-                SetSource(items[index]);
+                SetSource(items[index], play);
             }
         }
 
