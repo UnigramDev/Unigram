@@ -258,6 +258,7 @@
     <Compile Include="Common\UniqueList.cs" />
     <Compile Include="Common\Utils.cs" />
     <Compile Include="Common\VisualUtilities.cs" />
+    <Compile Include="Common\WatchDog.cs" />
     <Compile Include="Common\WindowContext.cs" />
     <Compile Include="Common\XamlResourceLoader.cs" />
     <Compile Include="Common\ZoomableListHandler.cs" />
