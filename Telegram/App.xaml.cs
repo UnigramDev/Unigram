@@ -191,8 +191,6 @@ namespace Telegram
                         SettingsService.Current.Diagnostics.LastErrorProperties.Split(';').Select(x => x.Split('=')).ToDictionary(x => x[0], y => y[1]));
                 }
             }
-
-            WatchDog.Start();
 #endif
 
             EnteredBackground += OnEnteredBackground;
@@ -549,7 +547,6 @@ namespace Telegram
 
             TLContainer.Current.Passcode.CloseTime = DateTime.UtcNow;
 
-            WatchDog.Stop();
             return Task.WhenAll(TLContainer.Current.ResolveAll<IVoipService>().Select(x => x.DiscardAsync()));
         }
 

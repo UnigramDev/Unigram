@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Logs;
 using Telegram.Navigation.Services;
 using Telegram.Services.ViewService;
@@ -246,6 +247,8 @@ namespace Telegram.Navigation
                 default:
                     break;
             }
+
+            WatchDog.Start(e.PreviousExecutionState);
 
             // handle pre-launch
             if (e.PrelaunchActivated)
@@ -707,6 +710,7 @@ namespace Telegram.Navigation
                 //{
                 //    await _LifecycleLogic.AutoSuspendAllFramesAsync(sender, e, AutoExtendExecutionSession);
                 //}
+                WatchDog.Stop();
                 await OnSuspendingAsync(sender, e);
             }
             finally
