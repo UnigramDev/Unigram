@@ -1115,7 +1115,10 @@ namespace Telegram.Controls.Gallery
 
                 var command = new RelayCommand<double>(rate =>
                 {
-                    _mediaPlayer.PlaybackSession.PlaybackRate = rate;
+                    if (_mediaPlayer?.PlaybackSession != null)
+                    {
+                        _mediaPlayer.PlaybackSession.PlaybackRate = rate;
+                    }
                 });
 
                 var speed = new MenuFlyoutSubItem();
