@@ -110,6 +110,7 @@ namespace Telegram.Controls.Messages.Content
 
         public void Recycle()
         {
+            _message = null;
         }
 
         public bool IsValid(MessageContent content, bool primary)

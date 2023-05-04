@@ -154,6 +154,30 @@ namespace Telegram.Controls.Messages
 
         public UIElement MediaTemplateRoot => Media.Child;
 
+        public void Recycle()
+        {
+            Message.Clear();
+            Footer.UpdateMessage(null);
+            //Media.Child = null;
+
+            // TODO: Setting Media.Child to null is quite expensive
+            // but not doing that causes quite a lot of crashes, because
+            // MessageViewModel.Delegate reference will be lost while Media.Child
+            // is still alive throwing a lot of NullReferenceExceptions and it's not
+            // completely clear about how many of them are actually crashy
+            // and which ones are actually caught.
+
+            if (Media.Child is IContent content)
+            {
+                content.Recycle();
+            }
+
+            UnloadObject(ref Reactions);
+            UnloadObject(ref MediaReactions);
+
+            UnregisterEvents();
+        }
+
         public void UpdateMessage(MessageViewModel message)
         {
             if (_message?.Id != message?.Id && Message != null)
@@ -182,23 +206,6 @@ namespace Telegram.Controls.Messages
                 UpdateMessageReplyMarkup(message);
 
                 UpdateAttach(message, chat);
-            }
-            else
-            {
-                Message.Clear();
-                //Media.Child = null;
-
-                if (Media.Child is IContent content)
-                {
-                    content.Recycle();
-                }
-                else if (Media.Child is AlbumContent)
-                {
-                    Media.Child = null;
-                }
-
-                UnloadObject(ref Reactions);
-                UnloadObject(ref MediaReactions);
             }
 
             if (_highlight != null)

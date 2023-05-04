@@ -466,7 +466,17 @@ namespace Telegram.Controls.Messages.Content
 
         public void Recycle()
         {
-            // AlbumContent doesn't get recycled
+            _message = null;
+
+            foreach (var child in Children)
+            {
+                if (child is MessageSelector selector)
+                {
+                    selector.Recycle();
+                }
+            }
+
+            _positions = default;
         }
 
         public bool IsValid(MessageContent content, bool primary)

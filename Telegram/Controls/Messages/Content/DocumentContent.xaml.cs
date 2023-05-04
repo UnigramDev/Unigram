@@ -198,6 +198,8 @@ namespace Telegram.Controls.Messages.Content
 
         public void Recycle()
         {
+            _message = null;
+
             if (_fileToken != null || _thumbnailToken != null)
             {
                 UpdateManager.Unsubscribe(this);

@@ -49,12 +49,11 @@ namespace Telegram.Controls.Messages
 
         public MessageViewModel Message => _message;
 
-        public void Unload()
+        public void Recycle()
         {
             if (Content is MessageBubble bubble)
             {
-                bubble.UpdateMessage(null);
-                bubble.UnregisterEvents();
+                bubble.Recycle();
             }
 
             _message?.UpdateSelectionCallback(null);

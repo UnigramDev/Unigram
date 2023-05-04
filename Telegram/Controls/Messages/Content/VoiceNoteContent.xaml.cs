@@ -407,6 +407,15 @@ namespace Telegram.Controls.Messages.Content
 
         public void Recycle()
         {
+            if (_message != null)
+            {
+                _message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
+                _message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+                _message.PlaybackService.PositionChanged -= OnPositionChanged;
+            }
+
+            _message = null;
+
             if (_fileToken != null)
             {
                 UpdateManager.Unsubscribe(this);

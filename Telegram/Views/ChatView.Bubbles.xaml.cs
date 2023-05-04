@@ -546,7 +546,7 @@ namespace Telegram.Views
                         selettore.EffectiveViewportChanged -= _effectiveViewportHandler;
                     }
 
-                    selettore.Unload();
+                    selettore.Recycle();
                 }
 
                 if (_sizeChangedHandler != null)
