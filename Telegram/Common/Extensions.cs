@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Telegram.Controls.Messages;
 using Telegram.Entities;
 using Telegram.Native;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -1207,6 +1208,11 @@ namespace Telegram.Common
             }
 
             Window.Current.Close();
+        }
+
+        public static Task ConsolidateAsync(this Application app)
+        {
+            return WindowContext.ForEachAsync(window => ApplicationView.GetForCurrentView().ConsolidateAsync());
         }
     }
 

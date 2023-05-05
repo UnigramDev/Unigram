@@ -312,11 +312,11 @@ namespace Telegram
             }
         }
 
-        private void AppServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        private async void AppServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             if (args.Request.Message.TryGetValue("Exit", out _))
             {
-                Application.Current.Exit();
+                await Application.Current.ConsolidateAsync();
             }
         }
 

@@ -449,7 +449,7 @@ namespace Telegram.ViewModels
             }
 
             await Launcher.LaunchFileAsync(file);
-            Application.Current.Exit();
+            await Application.Current.ConsolidateAsync();
         }
 
         public async void CreateSecretChat()

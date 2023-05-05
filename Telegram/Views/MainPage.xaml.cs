@@ -1124,24 +1124,18 @@ namespace Telegram.Views
 
                 args.Handled = true;
             }
-            else if (command is ShortcutCommand.Quit or ShortcutCommand.Close)
+            else if (command is ShortcutCommand.Quit)
             {
-                if (command is ShortcutCommand.Quit && App.Connection != null)
+                if (App.Connection != null)
                 {
                     await App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet { { "Exit", string.Empty } });
                 }
 
-                ApplicationView.GetForCurrentView().Consolidated += (s, args) =>
-                {
-                    Application.Current.Exit();
-                };
-
-                if (await ApplicationView.GetForCurrentView().TryConsolidateAsync())
-                {
-                    return;
-                }
-
-                Application.Current.Exit();
+                await Application.Current.ConsolidateAsync();
+            }
+            else if (command is ShortcutCommand.Close)
+            {
+                await ApplicationView.GetForCurrentView().ConsolidateAsync();
             }
             else if (command == ShortcutCommand.Lock)
             {

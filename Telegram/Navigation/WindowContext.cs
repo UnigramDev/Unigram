@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation.Services;
 using Telegram.Services.Keyboard;
@@ -81,6 +82,18 @@ namespace Telegram.Navigation
             {
                 window.Dispatcher.Dispatch(() => action(window as TLWindowContext));
             }
+        }
+
+        public static Task ForEachAsync(Func<TLWindowContext, Task> action)
+        {
+            var tasks = new List<Task>();
+
+            foreach (var window in ActiveWrappers.ToArray())
+            {
+                tasks.Add(window.Dispatcher.DispatchAsync(() => action(window as TLWindowContext)));
+            }
+
+            return Task.WhenAll(tasks);
         }
 
         [ThreadStatic]
