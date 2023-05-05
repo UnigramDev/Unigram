@@ -1161,9 +1161,9 @@ namespace Telegram.ViewModels
 
                     if (firstVisibleIndex == -1)
                     {
-                        for (int i = replied.Count - 1; i >= 0 ; i--)
+                        for (int i = replied.Count - 1; i >= 0; i--)
                         {
-                            if (replied[i].Id == maxId)
+                            if (replied[i].Id == maxId || replied[i].Content is MessageAlbum album && album.Messages.ContainsKey(maxId))
                             {
                                 firstVisibleIndex = i;
                                 unread = false;
