@@ -975,12 +975,12 @@ namespace Telegram.Controls.Cells
 
         private void OnLayoutUpdated(object sender, object e)
         {
-            Logger.Debug();
-
             if (_ignoreLayoutUpdated)
             {
                 return;
             }
+
+            Logger.Debug();
 
             if (_positions.Count > 0)
             {

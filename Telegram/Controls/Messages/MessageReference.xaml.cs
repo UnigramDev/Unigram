@@ -85,6 +85,8 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
+            Logger.Debug();
+
             if (_positions.Count > 0)
             {
                 _ignoreLayoutUpdated = true;
