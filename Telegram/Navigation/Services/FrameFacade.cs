@@ -349,6 +349,19 @@ namespace Telegram.Navigation.Services
         {
             Logger.Info();
 
+            // This should get rid of most of the NotSupportedExceptions
+            // and related crashes, but I'm not sure if it is still needed
+            // or in the meanwhile the issue was fixed by Microsoft
+
+            //var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+            //foreach (var popup in popups)
+            //{
+            //    if (popup.Child is ToolTip toolTip)
+            //    {
+            //        toolTip.IsOpen = false;
+            //    }
+            //}
+
             var parameter = e.Parameter;
             if (parameter is string cacheKey && e.SourcePageType == typeof(ChatPage))
             {

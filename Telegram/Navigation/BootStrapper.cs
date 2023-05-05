@@ -340,7 +340,6 @@ namespace Telegram.Navigation
                 else if (popup.Child is ToolTip toolTip)
                 {
                     toolTip.IsOpen = false;
-                    return;
                 }
                 else if (key == VirtualKey.Escape)
                 {
