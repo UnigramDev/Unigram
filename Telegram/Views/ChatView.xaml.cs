@@ -502,6 +502,11 @@ namespace Telegram.Views
         {
             if (cache != null)
             {
+                //foreach (var message in cache)
+                //{
+                //    message.Cleanup();
+                //}
+
                 cache.Clear();
                 cache = null;
             }
@@ -635,7 +640,7 @@ namespace Telegram.Views
 
             if (_useSystemSpellChecker != SettingsService.Current.UseSystemSpellChecker)
             {
-                _useSystemSpellChecker = !SettingsService.Current.UseSystemSpellChecker;
+                _useSystemSpellChecker = SettingsService.Current.UseSystemSpellChecker;
                 TextField.IsTextPredictionEnabled = _useSystemSpellChecker;
                 TextField.IsSpellCheckEnabled = _useSystemSpellChecker;
             }
