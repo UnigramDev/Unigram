@@ -55,6 +55,11 @@ namespace Telegram.Services
 
         public static async Task<bool> LaunchAsync(IDispatcherContext context)
         {
+            if (ApiInfo.IsStoreRelease)
+            {
+                return false;
+            }
+
             try
             {
                 var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
