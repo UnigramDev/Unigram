@@ -26,28 +26,6 @@
                                           Glyph="&#xE91F;"
                                           Click="{x:Bind ViewModel.OpenStats}"
                                           IsChevronVisible="True" />
-
-                    <controls:BadgeButton Content="{CustomResource DownloadsTabs}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE118;"
-                                          Click="{x:Bind ViewModel.OpenDownloads}" />
-
-                    <Grid>
-                        <controls:BadgeButton Click="{x:Bind ViewModel.ChooseDownloadsFolder}"
-                                              Content="{CustomResource StoragePath}"
-                                              Badge="{x:Bind ConvertFilesDirectory(ViewModel.FilesDirectory), Mode=OneWay}"
-                                              Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                              Glyph="&#xF12B;" />
-
-                        <controls:BadgeButton Click="{x:Bind ViewModel.ResetDownloadsFolder}"
-                                              Visibility="{x:Bind ConvertFilesReset(ViewModel.FilesDirectory), Mode=OneWay}"
-                                              Content="{CustomResource Reset}"
-                                              Style="{StaticResource StartButtonStyle}"
-                                              Background="#2ca5e0"
-                                              HorizontalAlignment="Right"
-                                              VerticalAlignment="Center"
-                                              Margin="0,0,12,0" />
-                    </Grid>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource AutomaticMediaDownload}"
@@ -82,6 +60,26 @@
                                           Foreground="{ThemeResource DangerButtonBackground}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xEA09;" />
+                </controls:HeaderedControl>
+
+                <controls:HeaderedControl x:Name="DownloadFolder"
+                                          x:Load="{x:Bind ViewModel.HasDownloadFolder}">
+                    <Grid>
+                        <controls:BadgeButton Click="{x:Bind ViewModel.ChooseDownloadFolder}"
+                                              Content="{CustomResource DownloadFolder}"
+                                              Badge="{x:Bind ViewModel.DownloadFolder, Mode=OneWay}"
+                                              Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
+                                              Glyph="&#xEA10;" />
+
+                        <controls:BadgeButton Click="{x:Bind ViewModel.ResetDownloadFolder}"
+                                              Visibility="{x:Bind ConvertFilesReset(ViewModel.DownloadFolder), Mode=OneWay}"
+                                              Content="{CustomResource Reset}"
+                                              Style="{StaticResource StartButtonStyle}"
+                                              Background="#2ca5e0"
+                                              HorizontalAlignment="Right"
+                                              VerticalAlignment="Center"
+                                              Margin="0,0,12,0" />
+                    </Grid>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource Streaming}"

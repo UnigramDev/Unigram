@@ -11,7 +11,7 @@ using Telegram.Common;
 using Telegram.Native;
 using Telegram.Td.Api;
 using Windows.Storage;
-using Windows.Storage.AccessCache;
+using Future = Telegram.Services.StorageService.Future;
 
 namespace Telegram.Services
 {
@@ -110,6 +110,10 @@ namespace Telegram.Services
             {
                 return null;
             }
+            else if (ApiInfo.HasCacheOnly)
+            {
+                return await GetFileAsync(file, true);
+            }
 
             // Let's TDLib check the file integrity
             if (file.Local.IsDownloadingCompleted)
@@ -134,7 +138,7 @@ namespace Telegram.Services
                         }
                         else
                         {
-                            var destination = await Future.CreateFileAsync(_settings, source.Name);
+                            var destination = await Future.CreateFileAsync(source.Name);
 
                             await source.CopyAndReplaceAsync(destination);
                             Future.AddOrReplace(file.Remote.UniqueId, destination);
@@ -161,14 +165,14 @@ namespace Telegram.Services
         {
             Send(new AddFileToDownloads(file.Id, chatId, messageId, priority));
 
-            if (Future.Contains(file.Remote.UniqueId, true) || await Future.ContainsAsync(file.Remote.UniqueId))
+            if (ApiInfo.HasCacheOnly || Future.Contains(file.Remote.UniqueId, true) || await Future.ContainsAsync(file.Remote.UniqueId))
             {
                 return;
             }
 
             try
             {
-                StorageFile destination = await Future.CreateFileAsync(_settings, $"Unconfirmed {file.Id}.tdownload");
+                StorageFile destination = await Future.CreateFileAsync($"Unconfirmed {file.Id}.tdownload");
                 Future.AddOrReplace(file.Remote.UniqueId, destination, true);
             }
             catch (Exception ex)
@@ -180,7 +184,7 @@ namespace Telegram.Services
 
         private async void TrackDownloadedFile(File file)
         {
-            if (file.Local.IsDownloadingCompleted && Future.Contains(file.Remote.UniqueId, true))
+            if (ApiInfo.HasDownloadFolder && file.Local.IsDownloadingCompleted && Future.Contains(file.Remote.UniqueId, true))
             {
                 if (_completedDownloads.Contains(file.Remote.UniqueId))
                 {
@@ -218,6 +222,11 @@ namespace Telegram.Services
             Send(new CancelDownloadFile(file.Id, onlyIfPending));
             Send(new RemoveFileFromDownloads(file.Id, false));
 
+            if (ApiInfo.HasCacheOnly)
+            {
+                return;
+            }
+
             try
             {
                 var destination = await Future.GetFileAsync(file.Remote.UniqueId, true);
@@ -239,100 +248,6 @@ namespace Telegram.Services
         {
             return _canceledDownloads.Contains(fileId);
         }
-
-        public static class Future
-        {
-            public static bool Contains(string token, bool temp = false)
-            {
-                if (string.IsNullOrEmpty(token))
-                {
-                    return false;
-                }
-
-                return StorageApplicationPermissions.FutureAccessList.ContainsItem(temp ? token + "temp" : token);
-            }
-
-            public static void Remove(string token, bool temp = false)
-            {
-                StorageApplicationPermissions.FutureAccessList.Remove(temp ? token + "temp" : token);
-            }
-
-            public static void AddOrReplace(string token, IStorageItem item, bool temp = false)
-            {
-                StorageApplicationPermissions.FutureAccessList.EnqueueOrReplace(temp ? token + "temp" : token, item);
-            }
-
-            public static bool CheckAccess(IStorageItem item)
-            {
-                if (Extensions.IsRelativePath(ApplicationData.Current.LocalFolder.Path, item.Path, out string _))
-                {
-                    return false;
-                }
-
-                return StorageApplicationPermissions.FutureAccessList.CheckAccess(item);
-            }
-
-            public static async Task<bool> ContainsAsync(string token, bool temp = false)
-            {
-                var destination = await GetFileAsync(token, temp);
-                return destination != null;
-            }
-
-            public static async Task<StorageFile> GetFileAsync(string token, bool temp = false)
-            {
-                try
-                {
-                    if (Contains(token, temp))
-                    {
-                        return await StorageApplicationPermissions.FutureAccessList.GetFileAsync(temp ? token + "temp" : token);
-                    }
-
-                    return null;
-                }
-                catch (System.IO.FileNotFoundException)
-                {
-                    StorageApplicationPermissions.FutureAccessList.Remove(temp ? token + "temp" : token);
-                    return null;
-                }
-            }
-
-            public static async Task<StorageFile> CreateFileAsync(ISettingsService settings, string tempFileName)
-            {
-                await MigrateDownloadsFolderAsync(settings);
-
-                if (settings.FilesDirectory != null && StorageApplicationPermissions.FutureAccessList.ContainsItem("FilesDirectory"))
-                {
-                    try
-                    {
-                        StorageFolder folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync("FilesDirectory");
-                        return await folder.CreateFileAsync(tempFileName, CreationCollisionOption.GenerateUniqueName);
-                    }
-                    catch { }
-                }
-
-                return await DownloadsFolder.CreateFileAsync(tempFileName, CreationCollisionOption.GenerateUniqueName);
-            }
-
-            public static async Task MigrateDownloadsFolderAsync(ISettingsService settings)
-            {
-                if (settings.FilesDirectory != null && StorageApplicationPermissions.MostRecentlyUsedList.ContainsItem("FilesDirectory"))
-                {
-                    try
-                    {
-                        StorageFolder folder = await StorageApplicationPermissions.MostRecentlyUsedList.GetFolderAsync("FilesDirectory");
-                        StorageApplicationPermissions.FutureAccessList.EnqueueOrReplace("FilesDirectory", folder);
-                    }
-                    catch
-                    {
-                        settings.FilesDirectory = null;
-                    }
-
-                    StorageApplicationPermissions.MostRecentlyUsedList.Remove("FilesDirectory");
-                }
-            }
-        }
-
-
 
         private File ProcessFile(File file)
         {

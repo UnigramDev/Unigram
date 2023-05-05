@@ -6,6 +6,7 @@
 //
 using System.Text;
 using Telegram.Converters;
+using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
@@ -24,19 +25,9 @@ namespace Telegram.Views.Settings
 
         #region Binding
 
-        private string ConvertFilesDirectory(string path)
+        private Visibility ConvertFilesReset(DownloadFolder path)
         {
-            if (string.IsNullOrEmpty(path))
-            {
-                return Strings.Default;
-            }
-
-            return path;
-        }
-
-        private Visibility ConvertFilesReset(string path)
-        {
-            if (string.IsNullOrEmpty(path))
+            if (path == null || !path.IsCustom)
             {
                 return Visibility.Collapsed;
             }

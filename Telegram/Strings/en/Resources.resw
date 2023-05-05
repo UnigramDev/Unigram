@@ -2433,6 +2433,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   <data name="Downloading" xml:space="preserve">
     <value>Downloading</value>
   </data>
+  <data name="DownloadFolder" xml:space="preserve">
+    <value>Download Folder</value>
+  </data>
   <data name="DownloadsTabs" xml:space="preserve">
     <value>Downloads</value>
   </data>
@@ -6112,9 +6115,6 @@ and enter your phone number.</value>
   </data>
   <data name="StopPollAlertTitle" xml:space="preserve">
     <value>Stop poll?</value>
-  </data>
-  <data name="StoragePath" xml:space="preserve">
-    <value>Storage Path</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>Storage Usage</value>

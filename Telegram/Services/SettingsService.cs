@@ -51,8 +51,6 @@ namespace Telegram.Services
 
         long UserId { get; set; }
 
-        string FilesDirectory { get; set; }
-
         int VerbosityLevel { get; set; }
         bool UseTestDC { get; set; }
 
@@ -295,13 +293,6 @@ namespace Telegram.Services
 
         private static VoIPSettings _voip;
         public VoIPSettings VoIP => _voip ??= new VoIPSettings();
-
-        private string _filesDirectory;
-        public string FilesDirectory
-        {
-            get => _filesDirectory ??= GetValueOrDefault("FilesDirectory", null as string);
-            set => AddOrUpdateValue(ref _filesDirectory, "FilesDirectory", value);
-        }
 
         private int? _verbosityLevel;
         public int VerbosityLevel

@@ -7,7 +7,6 @@
 using System;
 using System.Threading;
 using Telegram.Native;
-using Windows.System.Profile;
 
 namespace Telegram.Common
 {
@@ -20,7 +19,7 @@ namespace Telegram.Common
 
         public static void Initialize(int timeout)
         {
-            if (AnalyticsInfo.VersionInfo.DeviceFamily.Equals("Windows.Desktop"))
+            if (ApiInfo.IsDesktop)
             {
                 if (timeout > 0)
                 {

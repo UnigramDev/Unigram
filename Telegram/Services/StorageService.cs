@@ -13,10 +13,37 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
+using FileNotFoundException = System.IO.FileNotFoundException;
 using Path = System.IO.Path;
+using SAP = Windows.Storage.AccessCache.StorageApplicationPermissions;
 
 namespace Telegram.Services
 {
+    public class DownloadFolder
+    {
+        public string DisplayPath { get; }
+
+        public string Path { get; }
+
+        public bool IsCustom { get; }
+
+        public DownloadFolder(bool custom, StorageFolder folder)
+        {
+            var directoryName = System.IO.Path.GetDirectoryName(folder.Path);
+            var path = System.IO.Path.Combine(directoryName, folder.DisplayName);
+
+            DisplayPath = path;
+            Path = folder.Path;
+
+            IsCustom = custom;
+        }
+
+        public override string ToString()
+        {
+            return DisplayPath;
+        }
+    }
+
     public interface IStorageService
     {
         Task SaveFileAsAsync(File file);
@@ -26,6 +53,10 @@ namespace Telegram.Services
         Task OpenFileWithAsync(File file);
 
         Task OpenFolderAsync(File file);
+
+        Task<DownloadFolder> GetDownloadFolderAsync();
+
+        Task<DownloadFolder> SetDownloadFolderAsync(StorageFolder folder);
     }
 
     public class StorageService : IStorageService
@@ -132,7 +163,7 @@ namespace Telegram.Services
             try
             {
                 var folder = await permanent.GetParentAsync();
-                folder ??= await GetDownloadsFolderAsync();
+                folder ??= await GetDownloadFolderAsync2();
 
                 if (folder != null && Extensions.IsRelativePath(folder.Path, permanent.Path, out _))
                 {
@@ -145,22 +176,200 @@ namespace Telegram.Services
             catch { }
         }
 
-        private static IAsyncOperation<StorageFolder> GetDownloadsFolderAsync()
+        private static IAsyncOperation<StorageFolder> GetDownloadFolderAsync2()
         {
             try
             {
-                if (ApiInfo.IsStorageSupported)
+                if (ApiInfo.HasDownloadFolder)
                 {
                     return KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
                 }
-                else
-                {
-                    return KnownFolders.GetFolderForUserAsync(Windows.System.User.GetDefault(), KnownFolderId.DownloadsFolder);
-                }
+
+                return null;
             }
             catch
             {
                 return AsyncInfo.Run<StorageFolder>(task => null);
+            }
+        }
+
+        public Task<DownloadFolder> GetDownloadFolderAsync()
+        {
+            return Future.GetFolderAsync();
+        }
+
+        public async Task<DownloadFolder> SetDownloadFolderAsync(StorageFolder folder)
+        {
+            if (folder == null)
+            {
+                if (Future.Contains(Future.DownloadFolder))
+                {
+                    Future.Remove(Future.DownloadFolder);
+                }
+
+                return await Future.GetFolderAsync();
+            }
+
+            var downloads = await Future.GetDefaultFolderAsync();
+
+            var path1 = Path.GetFullPath(folder.Path);
+            var path2 = Path.GetFullPath(downloads.Path);
+
+            if (string.Equals(path1, path2, StringComparison.OrdinalIgnoreCase))
+            {
+                Future.Remove(Future.DownloadFolder);
+            }
+            else
+            {
+                Future.AddOrReplace(Future.DownloadFolder, folder);
+            }
+
+            return await Future.GetFolderAsync();
+        }
+
+
+
+        public static class Future
+        {
+            public const string DownloadFolder = "FilesDirectory";
+
+            public static bool Contains(string token, bool temp = false)
+            {
+                if (string.IsNullOrEmpty(token))
+                {
+                    return false;
+                }
+
+                return SAP.FutureAccessList.ContainsItem(temp ? token + "temp" : token);
+            }
+
+            public static void Remove(string token, bool temp = false)
+            {
+                if (SAP.FutureAccessList.ContainsItem(temp ? token + "temp" : token))
+                {
+                    SAP.FutureAccessList.Remove(temp ? token + "temp" : token);
+                }
+            }
+
+            public static void AddOrReplace(string token, IStorageItem item, bool temp = false)
+            {
+                SAP.FutureAccessList.EnqueueOrReplace(temp ? token + "temp" : token, item);
+            }
+
+            public static bool CheckAccess(IStorageItem item)
+            {
+                if (Extensions.IsRelativePath(ApplicationData.Current.LocalFolder.Path, item.Path, out string _))
+                {
+                    return false;
+                }
+
+                return SAP.FutureAccessList.CheckAccess(item);
+            }
+
+            public static async Task<bool> ContainsAsync(string token, bool temp = false)
+            {
+                var destination = await GetFileAsync(token, temp);
+                return destination != null;
+            }
+
+            public static async Task<StorageFile> GetFileAsync(string token, bool temp = false)
+            {
+                try
+                {
+                    if (Contains(token, temp))
+                    {
+                        return await SAP.FutureAccessList.GetFileAsync(temp ? token + "temp" : token);
+                    }
+
+                    return null;
+                }
+                catch (System.IO.FileNotFoundException)
+                {
+                    SAP.FutureAccessList.Remove(temp ? token + "temp" : token);
+                    return null;
+                }
+            }
+
+            public static async Task<StorageFile> CreateFileAsync(string tempFileName)
+            {
+                if (ApiInfo.HasCacheOnly)
+                {
+                    return null;
+                }
+
+                await MigrateDownloadFolderAsync();
+
+                if (SAP.FutureAccessList.ContainsItem(DownloadFolder))
+                {
+                    try
+                    {
+                        StorageFolder folder = await SAP.FutureAccessList.GetFolderAsync(DownloadFolder);
+                        return await folder.CreateFileAsync(tempFileName, CreationCollisionOption.GenerateUniqueName);
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        SAP.FutureAccessList.Remove(DownloadFolder);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                    }
+                }
+
+                return await DownloadsFolder.CreateFileAsync(tempFileName, CreationCollisionOption.GenerateUniqueName);
+            }
+
+            public static async Task<DownloadFolder> GetFolderAsync()
+            {
+                if (ApiInfo.HasCacheOnly)
+                {
+                    return null;
+                }
+
+                await MigrateDownloadFolderAsync();
+
+                if (SAP.FutureAccessList.ContainsItem(DownloadFolder))
+                {
+                    try
+                    {
+                        return new DownloadFolder(true, await SAP.FutureAccessList.GetFolderAsync(DownloadFolder));
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        SAP.FutureAccessList.Remove(DownloadFolder);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex);
+                    }
+                }
+
+                return new DownloadFolder(false, await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder));
+            }
+
+            public static async Task<DownloadFolder> GetDefaultFolderAsync()
+            {
+                return new DownloadFolder(false, await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder));
+            }
+
+            public static async Task MigrateDownloadFolderAsync()
+            {
+                if (SAP.MostRecentlyUsedList.ContainsItem(DownloadFolder))
+                {
+                    try
+                    {
+                        StorageFolder folder = await SAP.MostRecentlyUsedList.GetFolderAsync(DownloadFolder);
+                        SAP.FutureAccessList.EnqueueOrReplace(DownloadFolder, folder);
+                    }
+                    catch
+                    {
+                        SAP.MostRecentlyUsedList.Remove(DownloadFolder);
+                    }
+                    finally
+                    {
+                        SAP.MostRecentlyUsedList.Remove(DownloadFolder);
+                    }
+                }
             }
         }
     }

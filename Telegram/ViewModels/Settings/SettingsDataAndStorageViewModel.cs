@@ -6,25 +6,35 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native.Calls;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Popups;
-using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
     public class SettingsDataAndStorageViewModel : TLViewModelBase
     {
-        public SettingsDataAndStorageViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        private readonly IStorageService _storageService;
+
+        public SettingsDataAndStorageViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            _storageService = storageService;
+        }
+
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        {
+            DownloadFolder = await _storageService.GetDownloadFolderAsync();
         }
 
         public int UseLessData
@@ -77,17 +87,16 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public string FilesDirectory
+        public bool HasDownloadFolder => ApiInfo.HasDownloadFolder;
+
+        private DownloadFolder _DownloadFolder;
+        public DownloadFolder DownloadFolder
         {
-            get => Settings.FilesDirectory;
-            set
-            {
-                Settings.FilesDirectory = value;
-                RaisePropertyChanged();
-            }
+            get => _DownloadFolder;
+            set => Set(ref _DownloadFolder, value);
         }
 
-        public async void ChooseDownloadsFolder()
+        public async void ChooseDownloadFolder()
         {
             try
             {
@@ -98,17 +107,18 @@ namespace Telegram.ViewModels.Settings
                 var folder = await picker.PickSingleFolderAsync();
                 if (folder != null)
                 {
-                    StorageApplicationPermissions.FutureAccessList.EnqueueOrReplace("FilesDirectory", folder);
-                    FilesDirectory = folder.Path;
+                    DownloadFolder = await _storageService.SetDownloadFolderAsync(folder);
                 }
             }
-            catch { }
+            catch
+            {
+                ResetDownloadFolder();
+            }
         }
 
-        public void ResetDownloadsFolder()
+        public async void ResetDownloadFolder()
         {
-            FilesDirectory = null;
-            StorageApplicationPermissions.FutureAccessList.Remove("FilesDirectory");
+            DownloadFolder = await _storageService.SetDownloadFolderAsync(null);
         }
 
         public void AutoDownloadPhotos()
@@ -160,11 +170,6 @@ namespace Telegram.ViewModels.Settings
         public void OpenStats()
         {
             NavigationService.Navigate(typeof(SettingsNetworkPage));
-        }
-
-        public async void OpenDownloads()
-        {
-            await new DownloadsPopup(SessionId, NavigationService).ShowQueuedAsync();
         }
 
         public void OpenProxy()

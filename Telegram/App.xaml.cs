@@ -467,7 +467,7 @@ namespace Telegram
 
         private async Task RequestExtendedExecutionSessionAsync()
         {
-            if (_extendedSession == null && AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")
+            if (_extendedSession == null && ApiInfo.IsDesktop)
             {
                 var session = new ExtendedExecutionSession();
                 session.Reason = ExtendedExecutionReason.Unspecified;

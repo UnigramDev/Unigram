@@ -651,6 +651,7 @@ namespace Telegram.Views
                 return (T)(object)new Telegram.ViewModels.Settings.SettingsDataAndStorageViewModel(
                     _clientService,
                     _settingsService,
+                    _storageService,
                     _eventAggregator);
             }
             else if (type == typeof(Telegram.ViewModels.Settings.SettingsDataAutoViewModel))

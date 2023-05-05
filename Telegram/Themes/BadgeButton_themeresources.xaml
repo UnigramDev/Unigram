@@ -237,7 +237,7 @@
                                         Content="{TemplateBinding Badge}"
                                         Visibility="{TemplateBinding BadgeVisibility}"
                                         Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                                        Padding="0,-12,12,12"
+                                        Padding="0,-10,12,12"
                                         IsTabStop="False"
                                         Grid.Column="1"
                                         Grid.Row="1">

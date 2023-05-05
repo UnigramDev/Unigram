@@ -103,11 +103,11 @@ namespace Telegram.Services.Settings
             return preferences;
         }
 
-        public bool IsDefault => _photos == AutoDownloadMode.All &&
-                    _videos == AutoDownloadMode.All &&
-                    _maximumVideoSize == 10 * 1024 * 1024 &&
-                    _documents == AutoDownloadMode.All &&
-                    _maximumDocumentSize == 3 * 1024 * 1024;
+        public bool IsDefault => _photos == AutoDownloadMode.All
+            && _videos == AutoDownloadMode.All
+            && _maximumVideoSize == 10 * 1024 * 1024
+            && _documents == AutoDownloadMode.All
+            && _maximumDocumentSize == 3 * 1024 * 1024;
 
         private bool _disabled;
         public bool Disabled => _disabled;

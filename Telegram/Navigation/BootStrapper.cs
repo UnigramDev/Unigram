@@ -16,7 +16,6 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.System;
-using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -777,7 +776,7 @@ namespace Telegram.Navigation
             {
                 Logger.Info($"autoExtendExecutionSession: {autoExtendExecutionSession}");
 
-                if (autoExtendExecutionSession && AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Desktop")
+                if (autoExtendExecutionSession && !ApiInfo.IsDesktop)
                 {
                     using (var session = new ExtendedExecutionSession { Reason = ExtendedExecutionReason.SavingData })
                     {
