@@ -447,7 +447,7 @@ namespace Telegram
             }
             catch { }
 
-#if DEBUG
+#if !DEBUG
             if (await CloudUpdateService.LaunchAsync(context))
             {
                 return;
