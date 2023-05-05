@@ -104,8 +104,8 @@ namespace Telegram
         //private const string FormatWithMessage = "[{0:yyyy-MM-dd HH\\:mm\\:ss\\:ffff}][{1}][{2}:{3}] {4}";
         //private const string FormatWithoutMessage = "[{0:yyyy-MM-dd HH\\:mm\\:ss\\:ffff}][{1}][{2}:{3}]";
 
-        private const string FormatWithMessage = "[{0}][{1}][{2}:{3}][{4}] {5}";
-        private const string FormatWithoutMessage = "[{0}][{1}][{2}:{3}][{4}]";
+        private const string FormatWithMessage = "[{0:F3}][{2}:{3}][{4}] {5}";
+        private const string FormatWithoutMessage = "[{0:F3}][{2}:{3}][{4}]";
 
         public static string Dump()
         {
