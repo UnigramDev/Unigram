@@ -7,8 +7,6 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Native;
-using Telegram.Td;
-using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -170,17 +168,24 @@ namespace Telegram.Controls
             if (animation == null || newValue?.Id != _source?.Id)
             {
                 // The app can't access the file specified
-                Client.Execute(new AddLogMessage(5, $"Can't load animation for playback: {newValue.FilePath}"));
+                Logger.Info($"Can't load animation for playback: {newValue.FilePath}");
                 return;
             }
 
-            var frameRate = Math.Clamp(animation.FrameRate, 1, _isCachingEnabled ? 30 : 60);
+            var frameRate = 1000d / Math.Clamp(animation.FrameRate, 1, _isCachingEnabled ? 30 : 60);
+            if (double.IsNaN(frameRate))
+            {
+                Logger.Error(new Exception($"Can't load animation for playback, bad frame rate: {animation.FrameRate}, {newValue.FilePath}"));
+
+                Unload();
+                return;
+            }
 
             await _nextFrameLock.WaitAsync();
 
             _needToCreateBitmap = true;
 
-            _interval = TimeSpan.FromMilliseconds(1000d / frameRate);
+            _interval = TimeSpan.FromMilliseconds(frameRate);
             _animation = animation;
             _hideThumbnail = null;
 
