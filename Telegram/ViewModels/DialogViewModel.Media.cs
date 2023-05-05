@@ -18,7 +18,6 @@ using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Graphics.Imaging;
 using Windows.Media.Capture;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
@@ -919,14 +918,18 @@ namespace Telegram.ViewModels
                     var bitmap = await package.GetBitmapAsync();
                     var media = new List<StorageFile>();
 
-                    var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
+                    var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.bmp", DateTime.Now);
                     var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
 
-                    using (var stream = await bitmap.OpenReadAsync())
+                    using (var source = await bitmap.OpenReadAsync())
+                    using (var destination = await cache.OpenAsync(FileAccessMode.ReadWrite))
                     {
-                        var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
-                        media.Add(result);
+                        await RandomAccessStream.CopyAsync(
+                            source.GetInputStreamAt(0),
+                            destination.GetOutputStreamAt(0));
                     }
+
+                    media.Add(cache);
 
                     var captionElements = new List<string>();
 

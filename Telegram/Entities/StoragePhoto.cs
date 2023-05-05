@@ -7,6 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 
@@ -62,17 +63,22 @@ namespace Telegram.Entities
                     return null;
                 }
 
-                var basic = await file.GetBasicPropertiesAsync();
-                var image = await file.Properties.GetImagePropertiesAsync();
-
-                if (image.Width >= 20 * image.Height || image.Height >= 20 * image.Width)
+                using (var source = await file.OpenReadAsync())
                 {
-                    return null;
-                }
+                    var bitmap = await BitmapDecoder.CreateAsync(source);
 
-                if (image.Width > 0 && image.Height > 0)
-                {
-                    return new StoragePhoto(file, basic, image);
+                    var basic = await file.GetBasicPropertiesAsync();
+                    var image = await file.Properties.GetImagePropertiesAsync();
+
+                    if (bitmap.PixelWidth >= 20 * bitmap.PixelHeight || bitmap.PixelHeight >= 20 * bitmap.PixelWidth)
+                    {
+                        return null;
+                    }
+
+                    if (bitmap.PixelWidth > 0 && bitmap.PixelHeight > 0)
+                    {
+                        return new StoragePhoto(file, basic, image);
+                    }
                 }
 
                 return null;
