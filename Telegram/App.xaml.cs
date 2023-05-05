@@ -129,7 +129,7 @@ namespace Telegram
             Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Windows",
                 new System.Collections.Generic.Dictionary<string, string>
                 {
-                    { "DeviceFamily", AnalyticsInfo.VersionInfo.DeviceFamily },
+                    { "DeviceFamily", Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily },
                     { "Architecture", Package.Current.Id.Architecture.ToString() }
                 });
 
