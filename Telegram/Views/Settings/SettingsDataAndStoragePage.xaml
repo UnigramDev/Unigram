@@ -55,7 +55,9 @@
                                           Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                                           Glyph="&#xE7C3;" />
 
-                    <controls:BadgeButton Click="{x:Bind ViewModel.ResetAutoDownload}"
+                    <controls:BadgeButton x:Name="ResetAutoDownload"
+                                          x:Load="{x:Bind ConvertResetAutoDownload(ViewModel.AutoDownloadDefault), Mode=OneWay}"
+                                          Click="{x:Bind ViewModel.ResetAutoDownload}"
                                           Content="{CustomResource ResetAutomaticMediaDownload}"
                                           Foreground="{ThemeResource DangerButtonBackground}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
@@ -71,8 +73,9 @@
                                               Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                                               Glyph="&#xEA10;" />
 
-                        <controls:BadgeButton Click="{x:Bind ViewModel.ResetDownloadFolder}"
-                                              Visibility="{x:Bind ConvertFilesReset(ViewModel.DownloadFolder), Mode=OneWay}"
+                        <controls:BadgeButton x:Name="ResetDownloadFolder"
+                                              x:Load="{x:Bind ConvertResetDownloadFolder(ViewModel.DownloadFolder), Mode=OneWay}"
+                                              Click="{x:Bind ViewModel.ResetDownloadFolder}"
                                               Content="{CustomResource Reset}"
                                               Style="{StaticResource StartButtonStyle}"
                                               Background="#2ca5e0"
@@ -89,7 +92,7 @@
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Header="{CustomResource Calls}">
+                <!--<controls:HeaderedControl Header="{CustomResource Calls}">
                     <controls:BadgeButton Content="{CustomResource VoipUseLessData}">
                         <controls:BadgeButton.Badge>
                             <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.UseLessDataOptions}"
@@ -97,11 +100,13 @@
                                                        DisplayMemberPath="Text" />
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
-                </controls:HeaderedControl>
+                </controls:HeaderedControl>-->
 
                 <controls:HeaderedControl Header="{CustomResource Proxy}">
                     <controls:BadgeButton Content="{CustomResource ProxySettings}"
                                           Click="{x:Bind ViewModel.OpenProxy}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xEA1A;"
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>

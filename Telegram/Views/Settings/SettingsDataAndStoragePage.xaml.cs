@@ -9,7 +9,6 @@ using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.ViewModels.Settings;
-using Windows.UI.Xaml;
 
 namespace Telegram.Views.Settings
 {
@@ -25,14 +24,14 @@ namespace Telegram.Views.Settings
 
         #region Binding
 
-        private Visibility ConvertFilesReset(DownloadFolder path)
+        private bool ConvertResetAutoDownload(bool isDefault)
         {
-            if (path == null || !path.IsCustom)
-            {
-                return Visibility.Collapsed;
-            }
+            return !isDefault;
+        }
 
-            return Visibility.Visible;
+        private bool ConvertResetDownloadFolder(DownloadFolder path)
+        {
+            return path != null && path.IsCustom;
         }
 
         private string ConvertAutoDownload(AutoDownloadType type, AutoDownloadMode mode, long limit)

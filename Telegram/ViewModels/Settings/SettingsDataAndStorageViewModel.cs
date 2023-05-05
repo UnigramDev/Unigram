@@ -12,7 +12,6 @@ using Telegram.Native.Calls;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Settings;
-using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Popups;
@@ -66,6 +65,8 @@ namespace Telegram.ViewModels.Settings
 
 
         public Services.Settings.AutoDownloadSettings AutoDownload => Settings.AutoDownload;
+
+        public bool AutoDownloadDefault => AutoDownload.IsDefault;
 
         public bool AutoDownloadEnabled
         {
@@ -138,8 +139,9 @@ namespace Telegram.ViewModels.Settings
 
         private async void OpenAutoDownload(AutoDownloadType type)
         {
-            await ShowPopupAsync(typeof(SettingsDataAutoPopup), AutoDownloadType.Documents);
+            await ShowPopupAsync(typeof(SettingsDataAutoPopup), type);
             RaisePropertyChanged(nameof(AutoDownload));
+            RaisePropertyChanged(nameof(AutoDownloadDefault));
         }
 
         public async void ResetAutoDownload()
@@ -147,17 +149,18 @@ namespace Telegram.ViewModels.Settings
             var confirm = await ShowPopupAsync(Strings.ResetAutomaticMediaDownloadAlert, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                var response = await ClientService.SendAsync(new GetAutoDownloadSettingsPresets());
-                if (response is AutoDownloadSettingsPresets presets)
-                {
-                    Settings.AutoDownload = Services.Settings.AutoDownloadSettings.FromPreset(presets.High);
-                }
-                else
+                //var response = await ClientService.SendAsync(new GetAutoDownloadSettingsPresets());
+                //if (response is AutoDownloadSettingsPresets presets)
+                //{
+                //    Settings.AutoDownload = Services.Settings.AutoDownloadSettings.FromPreset(presets.High);
+                //}
+                //else
                 {
                     Settings.AutoDownload = Services.Settings.AutoDownloadSettings.Default;
                 }
 
                 RaisePropertyChanged(nameof(AutoDownloadEnabled));
+                RaisePropertyChanged(nameof(AutoDownloadDefault));
                 RaisePropertyChanged(nameof(AutoDownload));
             }
         }
