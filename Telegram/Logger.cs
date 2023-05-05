@@ -7,6 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Security;
 using Telegram.Services;
 
 namespace Telegram
@@ -58,7 +60,11 @@ namespace Telegram
 
         private static readonly List<string> _lastCalls = new();
 
-        private static void Log(LogLevel level, Type type, string message, string member, string filePath, int line)
+        [SuppressUnmanagedCodeSecurity]
+        [DllImport("kernel32.dll")]
+        private unsafe static extern void GetSystemTimeAsFileTime(long* pSystemTimeAsFileTime);
+
+        private static unsafe void Log(LogLevel level, Type type, string message, string member, string filePath, int line)
         {
             var limit = SettingsService.Current.Diagnostics.LoggerLimit;
             if (limit == 0)
@@ -67,14 +73,19 @@ namespace Telegram
             }
 
             // We use UtcNow instead of Now because Now is expensive.
+            long diff = 116444736000000000;
+            long time = 0;
+
+            GetSystemTimeAsFileTime(&time);
+
             string entry;
             if (message.Length > 0)
             {
-                entry = string.Format(FormatWithMessage, DateTime.UtcNow, level, member, line, message);
+                entry = string.Format(FormatWithMessage, (time - diff) / 10_000_000d, level, filePath, line, member, message);
             }
             else
             {
-                entry = string.Format(FormatWithoutMessage, DateTime.UtcNow, level, member, line);
+                entry = string.Format(FormatWithoutMessage, (time - diff) / 10_000_000d, level, filePath, line, member);
             }
 
             _lastCalls.Add(entry);
@@ -90,8 +101,11 @@ namespace Telegram
             }
         }
 
-        private const string FormatWithMessage = "[{0:yyyy-MM-dd HH\\:mm\\:ss\\:ffff}][{1}][{2}:{3}] {4}";
-        private const string FormatWithoutMessage = "[{0:yyyy-MM-dd HH\\:mm\\:ss\\:ffff}][{1}][{2}:{3}]";
+        //private const string FormatWithMessage = "[{0:yyyy-MM-dd HH\\:mm\\:ss\\:ffff}][{1}][{2}:{3}] {4}";
+        //private const string FormatWithoutMessage = "[{0:yyyy-MM-dd HH\\:mm\\:ss\\:ffff}][{1}][{2}:{3}]";
+
+        private const string FormatWithMessage = "[{0}][{1}][{2}:{3}][4] {5}";
+        private const string FormatWithoutMessage = "[{0}][{1}][{2}:{3}][4]";
 
         public static string Dump()
         {
