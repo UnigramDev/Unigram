@@ -151,10 +151,10 @@ namespace Telegram.Services
                 }
                 catch (Exception ex)
                 {
-                    Future.Remove(file.Remote.UniqueId);
-
                     // TODO, but high chances to happen
                     Logger.Error(ex);
+
+                    Future.Remove(file.Remote.UniqueId);
                 }
             }
 
@@ -208,6 +208,8 @@ namespace Telegram.Services
                 {
                     // TODO, but high chances to happen
                     Logger.Error(ex);
+
+                    Future.Remove(file.Remote.UniqueId, true);
                 }
             }
 
