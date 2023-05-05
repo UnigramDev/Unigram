@@ -18,12 +18,11 @@ namespace Telegram.Common
         }
     }
 
-    public class CrashedException : Exception
+    public class UnhandledException : Exception
     {
-        public CrashedException()
-            : base("The process has crashed.")
+        public UnhandledException()
+            : base("The process crashed.")
         {
-
         }
     }
 
@@ -42,21 +41,25 @@ namespace Telegram.Common
             // since the last time the user rebooted or logged in. It can also be in this
             // state if it was running but then crashed, or because the user closed it earlier.
 
-            var version = VersionLabel.GetVersion();
-
             if (previousExecutionState == ApplicationExecutionState.NotRunning && File.Exists(_crashLock))
             {
                 var text = File.ReadAllText(_crashLock);
-                var exception = new UnexpectedException();
-
-                // Temporary, as for now this happens even after updates
-                if (text == version)
+                // TODO: REMOVE ME!!!
+                if (text.Contains("(8374)") || text.Contains("(8376)"))
                 {
-                    Crashes.TrackError(exception, attachments: ErrorAttachmentLog.AttachmentWithText(text, "crash.txt"));
+
+                }
+                else if (text.StartsWith("Unhandled"))
+                {
+                    Crashes.TrackError(new UnhandledException(), attachments: ErrorAttachmentLog.AttachmentWithText(text, "crash.txt"));
+                }
+                else
+                {
+                    Crashes.TrackError(new UnexpectedException(), attachments: ErrorAttachmentLog.AttachmentWithText(text, "crash.txt"));
                 }
             }
 
-            File.WriteAllText(_crashLock, version);
+            File.WriteAllText(_crashLock, VersionLabel.GetVersion());
         }
 
         public static void Update(string data)

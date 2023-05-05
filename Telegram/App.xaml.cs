@@ -147,8 +147,7 @@ namespace Telegram
                     {
                         $"CurrentVersion={Telegram.Controls.VersionLabel.GetVersion()}",
                         $"LastUpdate={next - prev}s",
-                        $"UpdateCount={SettingsService.Current.Diagnostics.UpdateCount}",
-                        $"LastPageType={SettingsService.Current.Diagnostics.LastNavigatedPageType}"
+                        $"UpdateCount={SettingsService.Current.Diagnostics.UpdateCount}"
                     });
                 }
             }

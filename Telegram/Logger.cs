@@ -47,7 +47,7 @@ namespace Telegram
         public static void Error(Exception exception, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
 #if !DEBUG
-            Microsoft.AppCenter.Crashes.Crashes.TrackError(ex);
+            Microsoft.AppCenter.Crashes.Crashes.TrackError(exception);
 #endif
 
             Log(LogLevel.Error, null, exception.ToString(), member, filePath, line);
@@ -104,8 +104,8 @@ namespace Telegram
         //private const string FormatWithMessage = "[{0:yyyy-MM-dd HH\\:mm\\:ss\\:ffff}][{1}][{2}:{3}] {4}";
         //private const string FormatWithoutMessage = "[{0:yyyy-MM-dd HH\\:mm\\:ss\\:ffff}][{1}][{2}:{3}]";
 
-        private const string FormatWithMessage = "[{0}][{1}][{2}:{3}][4] {5}";
-        private const string FormatWithoutMessage = "[{0}][{1}][{2}:{3}][4]";
+        private const string FormatWithMessage = "[{0}][{1}][{2}:{3}][{4}] {5}";
+        private const string FormatWithoutMessage = "[{0}][{1}][{2}:{3}][{4}]";
 
         public static string Dump()
         {
