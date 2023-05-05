@@ -314,6 +314,8 @@ namespace Telegram.Collections
 
         public void Move(int oldIndex, int newIndex, T item)
         {
+            newIndex = Math.Min(Count, newIndex);
+
             using (SuppressEvents())
             {
                 RemoveAt(oldIndex);
