@@ -497,7 +497,7 @@ namespace Telegram.ViewModels.Drawers
                 IsLoaded = true;
 
                 var limit = info.Size > info.Covers.Count;
-                var count = limit ? 15 : info.Size;
+                var count = Math.Min(info.Covers.Count, limit ? 15 : info.Size);
 
                 for (int i = 0; i < count; i++)
                 {

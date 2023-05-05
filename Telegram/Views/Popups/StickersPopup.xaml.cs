@@ -237,6 +237,11 @@ namespace Telegram.Views.Popups
             }
 
             var file = sticker.StickerValue;
+            if (file == null)
+            {
+                return;
+            }
+
             if (file.Local.IsDownloadingCompleted)
             {
                 if (content.Children[0] is Border border && border.Child is Image photo)

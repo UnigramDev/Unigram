@@ -93,20 +93,39 @@ namespace Telegram.ViewModels
             RaisePropertyChanged(nameof(ItemsView));
         }
 
-        private void UpdateStickerSets(object response)
+        private async void UpdateStickerSets(object responses)
         {
-            if (response is StickerSets sets && sets.Sets.Count > 0)
+            if (responses is StickerSets setss && setss.Sets.Count > 0)
             {
-                IsLoading = false;
+                var sets = new List<StickerSet>();
 
-                Title = Strings.Emoji;
-                IsInstalled = sets.Sets.All(x => x.IsInstalled);
-                IsArchived = sets.Sets.All(x => x.IsArchived);
-                IsOfficial = sets.Sets.All(x => x.IsOfficial);
-                Count = sets.Sets.Sum(x => x.Size);
-                StickerType = sets.Sets[0].StickerType;
+                foreach (var id in setss.Sets)
+                {
+                    var response = await ClientService.SendAsync(new GetStickerSet(id.Id));
+                    if (response is StickerSet set)
+                    {
+                        sets.Add(set);
+                    }
+                }
 
-                Items.ReplaceWith(sets.Sets.Select(x => new Drawers.StickerSetViewModel(ClientService, x)));
+                if (sets.Count > 0)
+                {
+                    IsLoading = false;
+
+                    Title = Strings.Emoji;
+                    IsInstalled = sets.All(x => x.IsInstalled);
+                    IsArchived = sets.All(x => x.IsArchived);
+                    IsOfficial = sets.All(x => x.IsOfficial);
+                    Count = sets.Sum(x => x.Stickers.Count);
+                    StickerType = sets[0].StickerType;
+
+                    Items.ReplaceWith(sets.Select(x => new Drawers.StickerSetViewModel(ClientService, x)));
+                }
+                else
+                {
+                    Title = "Sticker pack not found.";
+                    Items.Clear();
+                }
             }
             else
             {

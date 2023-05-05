@@ -152,6 +152,7 @@ namespace Telegram.ViewModels.Gallery
 
         public override bool HasStickers => _message.Content switch
         {
+            MessageAnimation animation => animation.Animation.HasStickers,
             MessagePhoto photo => photo.Photo.HasStickers,
             MessageVideo video => video.Video.HasStickers,
             _ => false
