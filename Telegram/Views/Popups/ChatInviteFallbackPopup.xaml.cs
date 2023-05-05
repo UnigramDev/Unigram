@@ -47,7 +47,7 @@ namespace Telegram.Views.Popups
                     : Locale.Declension(Strings.R.InviteChannelRestrictedUsers2, users.Count);
 
                 PrimaryButtonText = Strings.Close;
-                SecondaryButtonText = null;
+                SecondaryButtonText = string.Empty;
 
                 ScrollingHost.SelectionMode = ListViewSelectionMode.None;
             }
