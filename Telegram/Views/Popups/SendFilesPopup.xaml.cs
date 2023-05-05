@@ -761,7 +761,7 @@ namespace Telegram.Views.Popups
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var sizes = Sizes;
             if (sizes == null || sizes.Count == 1)
@@ -782,7 +782,7 @@ namespace Telegram.Views.Popups
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var positions = _positions;
             if (positions.Item1 == null || positions.Item1.Length == 1)
@@ -802,7 +802,7 @@ namespace Telegram.Views.Popups
         {
             _positionsBase = null;
 
-            Telegram.App.Track();
+            Logger.Debug();
             InvalidateMeasure();
             InvalidateArrange();
         }

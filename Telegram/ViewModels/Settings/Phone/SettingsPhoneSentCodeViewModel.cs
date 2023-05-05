@@ -125,6 +125,7 @@ namespace Telegram.ViewModels.Settings
             else if (response is Error error)
             {
                 IsLoading = false;
+                Logger.Error(error.Message);
 
                 if (error.MessageEquals(ErrorType.PHONE_NUMBER_OCCUPIED))
                 {
@@ -167,8 +168,6 @@ namespace Telegram.ViewModels.Settings
                 {
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({error.Message})", Resources.Error).ShowAsync();
                 }
-
-                Logs.Logger.Error(Logs.LogTarget.API, "account.signIn error " + error);
             }
         }
 

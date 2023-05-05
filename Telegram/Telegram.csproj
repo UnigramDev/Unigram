@@ -620,8 +620,6 @@
     <Compile Include="Strings\en\Resources.cs">
       <DependentUpon>Resources.resw</DependentUpon>
     </Compile>
-    <Compile Include="TypeContainerGenerator.cs" />
-    <Compile Include="TypeCrosserGenerator.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationCodeViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationEmailAddressViewModel.cs" />
     <Compile Include="ViewModels\Authorization\AuthorizationEmailCodeViewModel.cs" />
@@ -823,11 +821,7 @@
     <Compile Include="Entities\BitmapEditState.cs" />
     <Compile Include="Entities\StoragePhoto.cs" />
     <Compile Include="Entities\StorageVideo.cs" />
-    <Compile Include="Logs\ILogListener.cs" />
-    <Compile Include="Logs\Log.cs" />
-    <Compile Include="Logs\Logger.cs" />
-    <Compile Include="Logs\LogHelper.cs" />
-    <Compile Include="Logs\LogLevel.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Navigation\BindableBase.cs" />
     <Compile Include="Navigation\BootStrapper.cs" />
     <Compile Include="Navigation\DispatcherContext.cs" />

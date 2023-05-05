@@ -124,7 +124,7 @@ namespace Telegram.Controls
             // This line should not be needed, but we keep it anyway for now
             if (animation.PixelWidth != pixels.PixelWidth || animation.PixelHeight != pixels.PixelHeight)
             {
-                Telegram.App.Track();
+                Logger.Debug();
                 return false;
             }
 

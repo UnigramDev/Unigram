@@ -45,7 +45,7 @@ namespace Telegram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var text = Children[0] as FormattedTextBlock;
             var media = Children[1] as FrameworkElement;
@@ -114,7 +114,7 @@ namespace Telegram.Controls.Messages
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var text = Children[0] as FormattedTextBlock;
             var media = Children[1] as FrameworkElement;

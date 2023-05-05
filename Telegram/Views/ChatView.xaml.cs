@@ -604,8 +604,8 @@ namespace Telegram.Views
 
         public void Activate(int sessionId)
         {
-            Telegram.Logs.Logger.Info($"ItemsPanelRoot.Children.Count: {Messages.ItemsStack?.Children.Count}");
-            Telegram.Logs.Logger.Info($"Items.Count: {Messages.Items.Count}");
+            Logger.Info($"ItemsPanelRoot.Children.Count: {Messages.ItemsStack?.Children.Count}");
+            Logger.Info($"Items.Count: {Messages.Items.Count}");
 
             DataContext = _viewModel = _getViewModel(this, sessionId);
 
@@ -2976,7 +2976,7 @@ namespace Telegram.Views
 
         private void InlinePanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             _textShadowVisual.IsVisible = Math.Round(e.NewSize.Height) > ViewModel.Settings.Appearance.BubbleRadius
                 || ReplyMarkupPanel.Visibility == Visibility.Visible;
@@ -2984,14 +2984,14 @@ namespace Telegram.Views
 
         private void TextArea_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             _rootVisual.Size = e.NewSize.ToVector2();
         }
 
         private void ElapsedPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var point = _elapsedVisual.Offset;
             point.X = (float)-e.NewSize.Width;
@@ -3002,7 +3002,7 @@ namespace Telegram.Views
 
         private void SlidePanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var point = _slideVisual.Offset;
             point.X = (float)e.NewSize.Width + 36;
@@ -3473,14 +3473,14 @@ namespace Telegram.Views
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
 
         }
 
         private void ContentPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             if (ListInline != null)
             {
@@ -3492,14 +3492,14 @@ namespace Telegram.Views
 
         private void Arrow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             ElementCompositionPreview.GetElementVisual(sender as UIElement).CenterPoint = new Vector3((float)e.NewSize.Width / 2f, (float)e.NewSize.Height - (float)e.NewSize.Width / 2f, 0);
         }
 
         private void DateHeaderPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             ElementCompositionPreview.GetElementVisual(sender as UIElement).CenterPoint = new Vector3((float)e.NewSize.Width / 2f, (float)e.NewSize.Height / 2f, 0);
         }

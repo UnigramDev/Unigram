@@ -72,6 +72,8 @@ namespace Telegram.ViewModels.Authorization
             var response = await ClientService.SendAsync(new RecoverAuthenticationPassword(_recoveryCode, string.Empty, string.Empty));
             if (response is Error error)
             {
+                Logger.Error(error.Message);
+
                 if (error.MessageEquals(ErrorType.CODE_INVALID))
                 {
                     RecoveryCode = string.Empty;
@@ -82,8 +84,6 @@ namespace Telegram.ViewModels.Authorization
                     AlertsService.ShowFloodWaitAlert(error.Message);
                     //await new MessageDialog($"{Resources.FloodWaitString}\r\n\r\n({result.Error.Message})", Resources.Error).ShowAsync();
                 }
-
-                Logs.Logger.Error(Logs.LogTarget.API, "account.checkPassword error " + error);
             }
         }
 

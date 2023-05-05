@@ -2285,7 +2285,7 @@ namespace Telegram.Views
             button.IconSource = entry.Icon;
 
             var icon = button.Descendants<Microsoft.UI.Xaml.Controls.AnimatedIcon>().FirstOrDefault() as UIElement;
-            Telegram.App.Track();
+            Logger.Debug();
             icon?.InvalidateMeasure();
 
             if (entry.Parent == null)
@@ -3514,7 +3514,7 @@ namespace Telegram.Views
 
         private void ChatList_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
 
@@ -3527,7 +3527,7 @@ namespace Telegram.Views
 
         private void Banner_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             MasterDetail.BackgroundMargin = new Thickness(0, -e.NewSize.Height, 0, 0);
         }

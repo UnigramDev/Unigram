@@ -75,6 +75,11 @@ namespace Telegram.Views
             }
         }
 
+        private async void Dump_Click(object sender, RoutedEventArgs e)
+        {
+            await SharePopup.GetForCurrentView().ShowAsync(new FormattedText(Logger.Dump(), Array.Empty<TextEntity>()));
+        }
+
         private void Crash_Click(object sender, RoutedEventArgs e)
         {
             throw new TestCrashException();

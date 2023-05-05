@@ -78,7 +78,7 @@ namespace Telegram.Controls.Chats
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             if (_hitTest != null && _requiresArrange)
             {

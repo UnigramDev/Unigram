@@ -46,7 +46,7 @@ namespace Telegram.Controls.Gallery
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             if (_lastStretch == Stretch)
             {

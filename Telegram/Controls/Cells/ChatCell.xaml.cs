@@ -968,14 +968,14 @@ namespace Telegram.Controls.Cells
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             _ignoreLayoutUpdated = false;
         }
 
         private void OnLayoutUpdated(object sender, object e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             if (_ignoreLayoutUpdated)
             {
@@ -1612,7 +1612,7 @@ namespace Telegram.Controls.Cells
 
                         void handler(object sender, SizeChangedEventArgs args)
                         {
-                            Telegram.App.Track();
+                            Logger.Debug();
 
                             bubble.SizeChanged -= handler;
                             presenter.Width = args.NewSize.Width;

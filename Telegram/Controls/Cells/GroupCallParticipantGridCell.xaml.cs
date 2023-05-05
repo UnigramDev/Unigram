@@ -253,7 +253,7 @@ namespace Telegram.Controls.Cells
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             if (_pausedVisual != null)
             {

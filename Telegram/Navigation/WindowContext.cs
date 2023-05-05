@@ -142,7 +142,7 @@ namespace Telegram.Navigation
 
         private void OnResizeStarted(CoreWindow sender, object args)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             if (Window.Content is FrameworkElement element)
             {
@@ -155,7 +155,7 @@ namespace Telegram.Navigation
 
         private void OnResizeCompleted(CoreWindow sender, object args)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             Size = new Size(sender.Bounds.Width, sender.Bounds.Height);
 

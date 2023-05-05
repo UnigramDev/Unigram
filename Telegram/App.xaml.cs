@@ -6,9 +6,7 @@
 //
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -16,8 +14,6 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
-using Telegram.Td;
-using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Authorization;
 using Telegram.ViewModels.BasicGroups;
@@ -82,25 +78,6 @@ namespace Telegram
 
         private ExtendedExecutionSession _extendedSession;
 
-        private static readonly List<string> _lastCalls = new();
-
-        public static void Track([CallerMemberName] string member = "", [CallerFilePath] string filePath = "")
-        {
-            _lastCalls.Add(string.Format("[{0}] {1} --- {2}", member, filePath, Environment.TickCount));
-
-            if (_lastCalls.Count > 50)
-            {
-                _lastCalls.RemoveAt(0);
-            }
-        }
-
-        public static void Track(Exception ex, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "")
-        {
-#if !DEBUG
-            Microsoft.AppCenter.Crashes.Crashes.TrackError(ex);
-#endif
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -127,10 +104,10 @@ namespace Telegram
                 args.Handled = args.Exception is not LayoutCycleException;
 
                 var path = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.txt");
-                var data = $"Unhandled exception:\n{args.Exception}\n\n{string.Join('\n', _lastCalls)}";
+                var data = $"Unhandled exception:\n{args.Exception}\n\n{Logger.Dump()}";
 
                 System.IO.File.WriteAllText(path, data);
-                Client.Execute(new AddLogMessage(1, data));
+                WatchDog.Update(data);
             };
 
 #if !DEBUG
@@ -176,7 +153,7 @@ namespace Telegram
                 }
             }
 
-            Client.SetLogMessageCallback(0, FatalErrorCallback);
+            Telegram.Td.Client.SetLogMessageCallback(0, FatalErrorCallback);
 
             var lastMessage = SettingsService.Current.Diagnostics.LastErrorMessage;
             if (lastMessage != null && lastMessage.Length > 0 && SettingsService.Current.Diagnostics.LastErrorVersion == Package.Current.Id.Version.Build)
@@ -502,21 +479,21 @@ namespace Telegram
                 {
                     _extendedSession = session;
 
-                    Logs.Logger.Info(Logs.LogTarget.Lifecycle, "ExtendedExecutionResult.Allowed");
+                    Logger.Info("ExtendedExecutionResult.Allowed");
                 }
                 else
                 {
                     session.Revoked -= ExtendedExecutionSession_Revoked;
                     session.Dispose();
 
-                    Logs.Logger.Warning(Logs.LogTarget.Lifecycle, "ExtendedExecutionResult.Denied");
+                    Logger.Warning("ExtendedExecutionResult.Denied");
                 }
             }
         }
 
         private void ExtendedExecutionSession_Revoked(object sender, ExtendedExecutionRevokedEventArgs args)
         {
-            Logs.Logger.Warning(Logs.LogTarget.Lifecycle, "ExtendedExecutionSession.Revoked");
+            Logger.Warning("ExtendedExecutionSession.Revoked");
 
             if (_extendedSession != null)
             {
@@ -527,7 +504,7 @@ namespace Telegram
 
         public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
-            Logs.Logger.Info(Logs.LogTarget.Lifecycle, "OnResuming");
+            Logger.Info("OnResuming");
 
             // #1225: Will this work? No one knows.
             foreach (var network in TLContainer.Current.ResolveAll<INetworkService>())
@@ -543,7 +520,7 @@ namespace Telegram
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e)
         {
-            Logs.Logger.Info(Logs.LogTarget.Lifecycle, "OnSuspendingAsync");
+            Logger.Info("OnSuspendingAsync");
 
             TLContainer.Current.Passcode.CloseTime = DateTime.UtcNow;
 

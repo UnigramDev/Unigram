@@ -56,13 +56,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _deviceName, "DeviceName", value);
         }
 
-        private string _lastNavigatedPageType;
-        public string LastNavigatedPageType
-        {
-            get => _lastNavigatedPageType ??= GetValueOrDefault("LastNavigatedPageType", string.Empty);
-            set => AddOrUpdateValue(ref _lastNavigatedPageType, "LastNavigatedPageType", value);
-        }
-
         private string _lastErrorMessage;
         public string LastErrorMessage
         {
@@ -103,6 +96,13 @@ namespace Telegram.Services.Settings
         {
             get => _lastUpdateTime ??= GetValueOrDefault("LastUpdateTime", 0);
             set => AddOrUpdateValue(ref _lastUpdateTime, "LastUpdateTime", value);
+        }
+
+        private int? _loggerLimit;
+        public int LoggerLimit
+        {
+            get => _loggerLimit ??= GetValueOrDefault("LoggerLimit", 50);
+            set => AddOrUpdateValue(ref _loggerLimit, "LoggerLimit", value);
         }
 
         private long? _storageMaxTimeFromLastAccess;

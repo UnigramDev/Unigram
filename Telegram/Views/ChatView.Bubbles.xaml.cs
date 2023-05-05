@@ -38,7 +38,7 @@ namespace Telegram.Views
 
         private void OnViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             if (Messages.ScrollingHost.ScrollableHeight > 0)
             {
@@ -724,7 +724,7 @@ namespace Telegram.Views
 
         private void Item_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var panel = Messages.ItemsStack;
             if (panel == null || e.PreviousSize.Height == e.NewSize.Height)

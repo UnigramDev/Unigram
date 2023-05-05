@@ -2092,7 +2092,7 @@ namespace Telegram.Controls.Messages
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             UpdateClip();
 
@@ -2580,7 +2580,7 @@ namespace Telegram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             //return base.MeasureOverride(availableSize);
 

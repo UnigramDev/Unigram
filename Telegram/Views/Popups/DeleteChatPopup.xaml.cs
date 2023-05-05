@@ -146,7 +146,7 @@ namespace Telegram.Views.Popups
                         CheckBox.Content = Strings.DeleteGroupForAll;
                     }
                 }
-                
+
                 if (supergroup.IsChannel)
                 {
                     TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.ChannelLeaveAlertWithName, chat.Title));

@@ -107,6 +107,7 @@ namespace Telegram.ViewModels.Authorization
             if (response is Error error)
             {
                 IsLoading = false;
+                Logger.Error(error.Message);
 
                 if (error.MessageEquals(ErrorType.EMAIL_VERIFY_EXPIRED))
                 {
@@ -116,8 +117,6 @@ namespace Telegram.ViewModels.Authorization
                 {
                     await ShowPopupAsync(Strings.InvalidCode, Strings.RestorePasswordNoEmailTitle, Strings.OK);
                 }
-
-                Logs.Logger.Error(Logs.LogTarget.API, "account.signIn error " + error);
             }
         }
     }

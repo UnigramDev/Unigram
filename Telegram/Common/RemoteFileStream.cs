@@ -219,7 +219,7 @@ namespace Telegram.Common
                     _next = _offset + _chunk / 3;
                 }
 
-                //Logs.Logger.Debug($"Enough data available, offset: {_offset}, next: {_next}, size: {_file.Size}");
+                //Logger.Debug($"Enough data available, offset: {_offset}, next: {_next}, size: {_file.Size}");
 
                 _readLock.Release();
             }
@@ -231,7 +231,7 @@ namespace Telegram.Common
                 _clientService.Send(new DownloadFile(_file.Id, 32, _offset, /*_chunk*/ 0, false));
                 _next = _offset + _chunk / 3;
 
-                //Logs.Logger.Debug($"Not enough data available, offset: {_offset}, next: {_next}, size: {_file.Size}");
+                //Logger.Debug($"Not enough data available, offset: {_offset}, next: {_next}, size: {_file.Size}");
 
                 _event.WaitOne();
             }
@@ -258,12 +258,12 @@ namespace Telegram.Common
 
             if (file.Local.Path.Length > 0 && ((file.Local.DownloadOffset == _offset && (enough || end)) || file.Local.IsDownloadingCompleted))
             {
-                //Logs.Logger.Debug($"Next chunk is available, offset: {_offset}, prefix: {file.Local.DownloadedPrefixSize}, size: {_file.Size}");
+                //Logger.Debug($"Next chunk is available, offset: {_offset}, prefix: {file.Local.DownloadedPrefixSize}, size: {_file.Size}");
                 _event.Set();
             }
             //else
             //{
-            //    Logs.Logger.Debug($"Next chunk is not available, offset: {_offset}, real: {file.Local.DownloadOffset}, prefix: {file.Local.DownloadedPrefixSize}, size: {_file.Size}, completed: {file.Local.IsDownloadingCompleted}");
+            //    Logger.Debug($"Next chunk is not available, offset: {_offset}, real: {file.Local.DownloadOffset}, prefix: {file.Local.DownloadedPrefixSize}, size: {_file.Size}, completed: {file.Local.IsDownloadingCompleted}");
             //}
         }
 
@@ -276,7 +276,7 @@ namespace Telegram.Common
 
             _disposed = true;
 
-            //Logs.Logger.Debug($"Disposing the stream");
+            //Logger.Debug($"Disposing the stream");
             EventAggregator.Default.Unsubscribe(this);
 
             _canceled = true;

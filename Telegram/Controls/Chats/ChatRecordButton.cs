@@ -10,7 +10,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Logs;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Devices.Enumeration;
@@ -103,7 +102,7 @@ namespace Telegram.Controls.Chats
             _timer.Interval = TimeSpan.FromMilliseconds(300);
             _timer.Tick += (s, args) =>
             {
-                Logger.Debug(LogTarget.Recording, "Timer Tick, check for permissions");
+                Logger.Debug("Timer Tick, check for permissions");
 
                 _timer.Stop();
                 RecordAudioVideoRunnable();
@@ -154,7 +153,7 @@ namespace Telegram.Controls.Chats
 
         private void OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            Logger.Debug(LogTarget.Recording, "OnPointerReleased");
+            Logger.Debug("OnPointerReleased");
 
             Icon.PointerCaptureLost -= OnPointerCaptureLost;
             Icon.ReleasePointerCapture(e.Pointer);
@@ -164,7 +163,7 @@ namespace Telegram.Controls.Chats
 
         private void OnPointerCanceled(object sender, PointerRoutedEventArgs e)
         {
-            Logger.Debug(LogTarget.Recording, "OnPointerCanceled");
+            Logger.Debug("OnPointerCanceled");
 
             Icon.PointerCaptureLost -= OnPointerCaptureLost;
             Icon.ReleasePointerCapture(e.Pointer);
@@ -174,7 +173,7 @@ namespace Telegram.Controls.Chats
 
         private void OnPointerCaptureLost(object sender, PointerRoutedEventArgs e)
         {
-            Logger.Debug(LogTarget.Recording, "OnPointerCaptureLost");
+            Logger.Debug("OnPointerCaptureLost");
             OnRelease();
         }
 
@@ -191,7 +190,7 @@ namespace Telegram.Controls.Chats
 
             ViewModel.PlaybackService.Pause();
 
-            Logger.Debug(LogTarget.Recording, "Permissions granted, mode: " + Mode);
+            Logger.Debug("Permissions granted, mode: " + Mode);
 
             _recorder.Start(Mode, ViewModel.Chat);
             UpdateRecordingInterface();
@@ -227,7 +226,7 @@ namespace Telegram.Controls.Chats
 
         private void UpdateRecordingInterface()
         {
-            Logger.Debug(LogTarget.Recording, "Updating interface, state: " + recordInterfaceState);
+            Logger.Debug("Updating interface, state: " + recordInterfaceState);
 
             if (_recordingLocked && _recordingAudioVideo)
             {
@@ -321,7 +320,7 @@ namespace Telegram.Controls.Chats
                 });
             }
 
-            Logger.Debug(LogTarget.Recording, "Updated interface, state: " + recordInterfaceState);
+            Logger.Debug("Updated interface, state: " + recordInterfaceState);
         }
 
         private async void OnClick(object sender, RoutedEventArgs e)
@@ -338,7 +337,7 @@ namespace Telegram.Controls.Chats
                     return;
                 }
 
-                Logger.Debug(LogTarget.Recording, "Click mode: Press");
+                Logger.Debug("Click mode: Press");
 
                 if (_recordingLocked)
                 {
@@ -370,7 +369,7 @@ namespace Telegram.Controls.Chats
 
                 if (_hasRecordVideo)
                 {
-                    Logger.Debug(LogTarget.Recording, "Can record videos, start timer to allow switch");
+                    Logger.Debug("Can record videos, start timer to allow switch");
 
                     _calledRecordRunnable = false;
                     _recordAudioVideoRunnableStarted = true;
@@ -383,7 +382,7 @@ namespace Telegram.Controls.Chats
             }
             else
             {
-                Logger.Debug(LogTarget.Recording, "Click mode: Release");
+                Logger.Debug("Click mode: Release");
                 OnRelease();
             }
         }
@@ -392,7 +391,7 @@ namespace Telegram.Controls.Chats
         {
             if (_recordingLocked)
             {
-                Logger.Debug(LogTarget.Recording, "Click mode: Release - Programmatic");
+                Logger.Debug("Click mode: Release - Programmatic");
 
                 if (!_hasRecordVideo || _calledRecordRunnable)
                 {
@@ -409,19 +408,19 @@ namespace Telegram.Controls.Chats
 
             if (_recordingLocked)
             {
-                Logger.Debug(LogTarget.Recording, "Recording is locked, abort");
+                Logger.Debug("Recording is locked, abort");
                 return;
             }
             if (_recordAudioVideoRunnableStarted)
             {
-                Logger.Debug(LogTarget.Recording, "Timer should still tick, change mode to: " + (Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video));
+                Logger.Debug("Timer should still tick, change mode to: " + (Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video));
 
                 _timer.Stop();
                 Mode = Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video;
             }
             else if (!_hasRecordVideo || _calledRecordRunnable)
             {
-                Logger.Debug(LogTarget.Recording, "Timer has tick, stopping recording");
+                Logger.Debug("Timer has tick, stopping recording");
 
                 _recorder.Stop(ViewModel, false);
                 _recordingAudioVideo = false;
@@ -527,7 +526,7 @@ namespace Telegram.Controls.Chats
 
         public void LockRecording()
         {
-            Logger.Debug(LogTarget.Recording, "Locking recording");
+            Logger.Debug("Locking recording");
 
             _enqueuedLocking = false;
             _recordingLocked = true;
@@ -600,15 +599,15 @@ namespace Telegram.Controls.Chats
 
             public async void Start(ChatRecordMode mode, Chat chat)
             {
-                Logger.Debug(LogTarget.Recording, "Start invoked, mode: " + mode);
+                Logger.Debug("Start invoked, mode: " + mode);
 
                 await _recordQueue.Enqueue(async () =>
                 {
-                    Logger.Debug(LogTarget.Recording, "Enqueued start invoked");
+                    Logger.Debug("Enqueued start invoked");
 
                     if (_recorder != null)
                     {
-                        Logger.Debug(LogTarget.Recording, "_recorder != null, abort");
+                        Logger.Debug("_recorder != null, abort");
 
                         RecordingFailed?.Invoke(this, EventArgs.Empty);
                         return;
@@ -659,18 +658,18 @@ namespace Telegram.Controls.Chats
 
                         await _recorder.m_mediaCapture.InitializeAsync(_recorder.settings);
 
-                        Logger.Debug(LogTarget.Recording, "Devices initialized, starting");
+                        Logger.Debug("Devices initialized, starting");
 
                         await InitializeQuantumAsync();
                         await _recorder.StartAsync();
 
-                        Logger.Debug(LogTarget.Recording, "Recording started at " + DateTime.Now);
+                        Logger.Debug("Recording started at " + DateTime.Now);
 
                         _start = DateTime.Now;
                     }
                     catch (Exception ex)
                     {
-                        Logger.Debug(LogTarget.Recording, "Failed to initialize devices, abort: " + ex);
+                        Logger.Debug("Failed to initialize devices, abort: " + ex);
 
                         if (_reader != null)
                         {
@@ -878,11 +877,11 @@ namespace Telegram.Controls.Chats
 
             public async void Stop(DialogViewModel viewModel, bool? cancel)
             {
-                Logger.Debug(LogTarget.Recording, "Stop invoked, cancel: " + cancel);
+                Logger.Debug("Stop invoked, cancel: " + cancel);
 
                 await _recordQueue.Enqueue(async () =>
                 {
-                    Logger.Debug(LogTarget.Recording, "Enqueued stop invoked");
+                    Logger.Debug("Enqueued stop invoked");
 
                     var recorder = _recorder;
                     var file = _file;
@@ -893,7 +892,7 @@ namespace Telegram.Controls.Chats
 
                     if (recorder == null || file == null || chat == null)
                     {
-                        Logger.Debug(LogTarget.Recording, "recorder or file == null, abort");
+                        Logger.Debug("recorder or file == null, abort");
                         return;
                     }
 
@@ -902,7 +901,7 @@ namespace Telegram.Controls.Chats
                     var now = DateTime.Now;
                     var elapsed = now - _start;
 
-                    Logger.Debug(LogTarget.Recording, "stopping reader");
+                    Logger.Debug("stopping reader");
 
                     if (reader != null)
                     {
@@ -912,11 +911,11 @@ namespace Telegram.Controls.Chats
                         QuantumProcessed?.Invoke(0);
                     }
 
-                    Logger.Debug(LogTarget.Recording, "stopping recorder, elapsed " + elapsed);
+                    Logger.Debug("stopping recorder, elapsed " + elapsed);
 
                     await recorder.StopAsync();
 
-                    Logger.Debug(LogTarget.Recording, "recorder stopped");
+                    Logger.Debug("recorder stopped");
 
                     if (cancel == true || elapsed.TotalMilliseconds < 700)
                     {
@@ -926,7 +925,7 @@ namespace Telegram.Controls.Chats
                         }
                         catch { }
 
-                        Logger.Debug(LogTarget.Recording, "recording canceled or too short, abort");
+                        Logger.Debug("recording canceled or too short, abort");
 
                         if (elapsed.TotalMilliseconds < 700)
                         {
@@ -935,7 +934,7 @@ namespace Telegram.Controls.Chats
                     }
                     else
                     {
-                        Logger.Debug(LogTarget.Recording, "sending recorded file");
+                        Logger.Debug("sending recorded file");
 
                         if (cancel == false)
                         {

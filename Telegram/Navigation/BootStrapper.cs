@@ -10,7 +10,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Logs;
 using Telegram.Navigation.Services;
 using Telegram.Services.ViewService;
 using Windows.ApplicationModel;
@@ -809,7 +808,7 @@ namespace Telegram.Navigation
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error($"FrameId: [{nav.FrameFacade.FrameId}] {ex} {ex.Message}", member: nameof(AutoSuspendAllFramesAsync));
+                        Logger.Error($"FrameId: [{nav.FrameFacade.FrameId}] {ex} {ex.Message}");
                     }
                 }
             }

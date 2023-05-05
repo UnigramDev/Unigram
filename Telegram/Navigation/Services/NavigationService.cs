@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Logs;
 using Telegram.Services.ViewService;
 using Telegram.Views;
 using Windows.ApplicationModel.Core;
@@ -240,7 +239,7 @@ namespace Telegram.Navigation.Services
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error($"NavigateToAsync {ex.Message}");
+                    Logger.Error(ex);
                 }
             };
         }

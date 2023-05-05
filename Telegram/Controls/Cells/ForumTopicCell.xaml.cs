@@ -475,7 +475,7 @@ namespace Telegram.Controls.Cells
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             _ignoreLayoutUpdated = false;
         }
@@ -1552,7 +1552,7 @@ namespace Telegram.Controls.Cells
     {
         protected override Size MeasureOverride(Size availableSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var PhotoPanel = Children[0];
 
@@ -1625,7 +1625,7 @@ namespace Telegram.Controls.Cells
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var PhotoPanel = Children[0];
 

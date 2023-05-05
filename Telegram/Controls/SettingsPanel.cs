@@ -28,7 +28,7 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var accumulated = IsFooter ? 0 : 64d;
 
@@ -60,7 +60,7 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var accumulated = IsFooter ? 0 : 64d;
 

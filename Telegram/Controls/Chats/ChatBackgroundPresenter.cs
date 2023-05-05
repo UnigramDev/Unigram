@@ -201,7 +201,7 @@ namespace Telegram.Controls.Chats
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             if (_fill is BackgroundFillFreeformGradient freeform)
             {

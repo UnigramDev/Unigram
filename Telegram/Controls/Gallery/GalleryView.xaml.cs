@@ -926,7 +926,7 @@ namespace Telegram.Controls.Gallery
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             LayoutRoot.Width = finalSize.Width;
             LayoutRoot.Height = finalSize.Height - Padding.Top;

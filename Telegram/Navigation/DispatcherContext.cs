@@ -7,7 +7,6 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using Telegram.Logs;
 using Windows.System;
 
 namespace Telegram.Navigation

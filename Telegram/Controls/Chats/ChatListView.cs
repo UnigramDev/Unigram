@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Messages;
-using Telegram.Logs;
 using Telegram.ViewModels;
 using Windows.Devices.Input;
 using Windows.UI.Input;
@@ -110,7 +109,7 @@ namespace Telegram.Controls.Chats
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             // TODO: triple check
             if (e.NewSize.Height < ActualHeight)
@@ -158,7 +157,7 @@ namespace Telegram.Controls.Chats
                     && ItemsStack.FirstCacheIndex == 0
                     && lastSlice)
                 {
-                    Logger.Debug(LogTarget.Chat, $"Going {direction}, loading history in the past");
+                    Logger.Debug($"Going {direction}, loading history in the past");
                     await ViewModel.LoadNextSliceAsync(direction != PanelScrollingDirection.None);
                 }
                 else if (direction == PanelScrollingDirection.Forward
@@ -170,7 +169,7 @@ namespace Telegram.Controls.Chats
                 {
                     if (lastSlice && ItemsStack.FirstVisibleIndex == 0)
                     {
-                        Logger.Debug(LogTarget.Chat, $"Going {direction}, loading history in the past");
+                        Logger.Debug($"Going {direction}, loading history in the past");
                         await ViewModel.LoadNextSliceAsync(direction != PanelScrollingDirection.None);
                     }
 
@@ -194,7 +193,7 @@ namespace Telegram.Controls.Chats
         {
             if (firstSlice)
             {
-                Logger.Debug(LogTarget.Chat, $"Going {direction}, loading history in the future");
+                Logger.Debug($"Going {direction}, loading history in the future");
                 return ViewModel.LoadPreviousSliceAsync(direction != PanelScrollingDirection.None);
             }
 
@@ -250,7 +249,7 @@ namespace Telegram.Controls.Chats
             {
                 if (panel.ItemsUpdatingScrollMode != mode)
                 {
-                    Logger.Debug(LogTarget.Chat, "Changed scrolling mode to KeepItemsInView");
+                    Logger.Debug("Changed scrolling mode to KeepItemsInView");
                     panel.ItemsUpdatingScrollMode = _currentMode = ItemsUpdatingScrollMode.KeepItemsInView;
                 }
             }
@@ -258,7 +257,7 @@ namespace Telegram.Controls.Chats
             {
                 if (panel.ItemsUpdatingScrollMode != mode)
                 {
-                    Logger.Debug(LogTarget.Chat, "Changed scrolling mode to KeepLastItemInView");
+                    Logger.Debug("Changed scrolling mode to KeepLastItemInView");
                     panel.ItemsUpdatingScrollMode = _currentMode = ItemsUpdatingScrollMode.KeepLastItemInView;
                 }
             }
@@ -274,7 +273,7 @@ namespace Telegram.Controls.Chats
             var scrollViewer = ScrollingHost;
             if (scrollViewer == null)
             {
-                Logger.Debug(LogTarget.Chat, "ScrollingHost == null");
+                Logger.Debug("ScrollingHost == null");
                 goto Exit;
             }
 
@@ -284,7 +283,7 @@ namespace Telegram.Controls.Chats
             var selectorItem = ContainerFromItem(item) as SelectorItem;
             if (selectorItem == null)
             {
-                Logger.Debug(LogTarget.Chat, "selectorItem == null, abort");
+                Logger.Debug("selectorItem == null, abort");
                 goto Exit;
             }
 

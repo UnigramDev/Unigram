@@ -117,7 +117,7 @@ namespace Telegram.Services
             }
             catch
             {
-                Logs.Logger.Warning(Logs.LogTarget.Contacts, "Sync contacts canceled");
+                Logger.Warning("Sync contacts canceled");
                 Debug.WriteLine("» Sync contacts canceled");
             }
         }
@@ -137,7 +137,7 @@ namespace Telegram.Services
             }
             catch
             {
-                Logs.Logger.Warning(Logs.LogTarget.Contacts, "Sync contacts canceled");
+                Logger.Warning("Sync contacts canceled");
                 Debug.WriteLine("» Sync contacts canceled");
             }
 
@@ -148,7 +148,7 @@ namespace Telegram.Services
         {
             Telegram.Td.Api.BaseObject result = null;
 
-            Logs.Logger.Info(Logs.LogTarget.Contacts, "Importing contacts");
+            Logger.Info("Importing contacts");
             Debug.WriteLine("» Importing contacts");
 
             var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AllContactsReadOnly);
@@ -157,7 +157,7 @@ namespace Telegram.Services
                 result = await ImportAsync(store);
             }
 
-            Logs.Logger.Info(Logs.LogTarget.Contacts, "Importing contacts completed");
+            Logger.Info("Importing contacts completed");
             Debug.WriteLine("» Importing contacts completed");
 
             return result;
@@ -227,14 +227,14 @@ namespace Telegram.Services
             }
             catch
             {
-                Logs.Logger.Warning(Logs.LogTarget.Contacts, "Sync contacts canceled");
+                Logger.Warning("Sync contacts canceled");
                 Debug.WriteLine("» Sync contacts canceled");
             }
         }
 
         private async Task ExportAsyncInternal(Telegram.Td.Api.Users result)
         {
-            Logs.Logger.Info(Logs.LogTarget.Contacts, "Exporting contacts");
+            Logger.Info("Exporting contacts");
             Debug.WriteLine("» Exporting contacts");
 
             var store = await ContactManager.RequestStoreAsync(ContactStoreAccessType.AppContactsReadWrite);
@@ -257,7 +257,7 @@ namespace Telegram.Services
                 await ExportAsync(contactList, annotationList, result);
             }
 
-            Logs.Logger.Info(Logs.LogTarget.Contacts, "Exporting contacts completed");
+            Logger.Info("Exporting contacts completed");
             Debug.WriteLine("» Exporting contacts completed");
         }
 

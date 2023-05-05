@@ -8,7 +8,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Logs;
 using Telegram.Navigation;
 using Telegram.Views.Host;
 using Windows.ApplicationModel.Core;

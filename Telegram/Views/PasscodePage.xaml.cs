@@ -167,7 +167,7 @@ namespace Telegram.Views
 
         private void Window_SizeChanged(object sender, WindowSizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             UpdateView();
         }

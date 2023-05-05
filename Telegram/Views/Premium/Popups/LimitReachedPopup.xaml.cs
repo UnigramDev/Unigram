@@ -188,7 +188,7 @@ namespace Telegram.Views.Premium.Popups
             }
             else if (response is Error error)
             {
-                Logs.Logger.Error(Logs.LogTarget.API, "channels.getAdminedPublicChannels error " + error);
+                Logger.Error(error.Message);
             }
         }
 

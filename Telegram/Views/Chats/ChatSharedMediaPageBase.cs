@@ -266,7 +266,7 @@ namespace Telegram.Views.Chats
 
         private void ItemsPanelRoot_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             ScrollingHost.ItemsPanelRoot.SizeChanged -= ItemsPanelRoot_SizeChanged;
 
@@ -308,7 +308,7 @@ namespace Telegram.Views.Chats
 
         protected void ProfileHeader_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             _properties?.InsertScalar("ActualHeight", (float)e.NewSize.Height + 16);
 

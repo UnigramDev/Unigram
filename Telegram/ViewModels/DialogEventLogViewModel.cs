@@ -145,7 +145,7 @@ namespace Telegram.ViewModels
                     if (events.Events.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Logs.Logger.Debug(Logs.LogTarget.Chat, "Setting scroll mode to KeepLastItemInView");
+                        Logger.Debug("Setting scroll mode to KeepLastItemInView");
                     }
 
                     var replied = ProcessEvents(events);
@@ -200,7 +200,7 @@ namespace Telegram.ViewModels
                     if (events.Events.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
-                        Logs.Logger.Debug(Logs.LogTarget.Chat, "Setting scroll mode to KeepLastItemInView");
+                        Logger.Debug("Setting scroll mode to KeepLastItemInView");
                     }
 
                     var replied = ProcessEvents(events);

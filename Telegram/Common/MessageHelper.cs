@@ -531,7 +531,7 @@ namespace Telegram.Common
                         await MessagePopup.ShowAsync(error.Message, Strings.AppName, Strings.OK);
                     }
 
-                    Logs.Logger.Warning(Logs.LogTarget.API, "account.signIn error " + error);
+                    Logger.Error("account.signIn error " + error);
                 }
             }
             else

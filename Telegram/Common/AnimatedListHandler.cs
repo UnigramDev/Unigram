@@ -55,7 +55,7 @@ namespace Telegram.Common
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             if (sender is ListViewBase)
             {

@@ -70,7 +70,7 @@ namespace Telegram.Controls
                     provider.Invoke();
                 }
 
-                Logs.Logger.Debug(Logs.LogTarget.Chat, "Tab pressed and handled");
+                Logger.Debug("Tab pressed and handled");
                 e.Handled = true;
             }
             else if (e.Key == VirtualKey.Tab)

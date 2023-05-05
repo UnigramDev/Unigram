@@ -72,6 +72,8 @@ namespace Telegram.ViewModels.Authorization
             var response = await ClientService.SendAsync(new CheckAuthenticationPassword(_password));
             if (response is Error error)
             {
+                Logger.Error(error.Message);
+
                 if (error.MessageEquals(ErrorType.PASSWORD_HASH_INVALID))
                 {
                     Password = string.Empty;
@@ -81,8 +83,6 @@ namespace Telegram.ViewModels.Authorization
                 {
                     AlertsService.ShowFloodWaitAlert(error.Message);
                 }
-
-                Logs.Logger.Error(Logs.LogTarget.API, "account.checkPassword error " + error);
             }
         }
 

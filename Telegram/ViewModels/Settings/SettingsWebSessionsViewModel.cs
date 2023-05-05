@@ -109,7 +109,7 @@ namespace Telegram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Logs.Logger.Error(Logs.LogTarget.API, "auth.resetWebAuthotization error " + error);
+                    Logger.Error(error.Message);
                 }
 
                 ClientService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(session.BotUserId), true));
@@ -128,7 +128,7 @@ namespace Telegram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Logs.Logger.Error(Logs.LogTarget.API, "auth.resetWebAuthotizations error " + error);
+                    Logger.Error(error.Message);
                 }
             }
         }

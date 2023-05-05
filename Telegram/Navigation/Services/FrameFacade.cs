@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Telegram.Common;
-using Telegram.Logs;
 using Telegram.Views;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;

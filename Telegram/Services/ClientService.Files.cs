@@ -150,7 +150,7 @@ namespace Telegram.Services
                     Future.Remove(file.Remote.UniqueId);
 
                     // TODO, but high chances to happen
-                    Telegram.App.Track(ex);
+                    Logger.Error(ex);
                 }
             }
 
@@ -174,7 +174,7 @@ namespace Telegram.Services
             catch (Exception ex)
             {
                 // TODO, but high chances to happen
-                Telegram.App.Track(ex);
+                Logger.Error(ex);
             }
         }
 
@@ -203,7 +203,7 @@ namespace Telegram.Services
                 catch (Exception ex)
                 {
                     // TODO, but high chances to happen
-                    Telegram.App.Track(ex);
+                    Logger.Error(ex);
                 }
             }
 
@@ -231,7 +231,7 @@ namespace Telegram.Services
             catch (Exception ex)
             {
                 // TODO, but high chances to happen
-                Telegram.App.Track(ex);
+                Logger.Error(ex);
             }
         }
 

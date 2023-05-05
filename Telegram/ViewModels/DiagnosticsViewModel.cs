@@ -175,6 +175,33 @@ namespace Telegram.ViewModels
 
         public bool DisableDatabase => Settings.Diagnostics.DisableDatabase;
 
+        private bool _showInMemoryLogs = false;
+        public bool ShowInMemoryLogs
+        {
+            get => _showInMemoryLogs;
+            set
+            {
+                if (Set(ref _showInMemoryLogs, value))
+                {
+                    RaisePropertyChanged(nameof(InMemoryLogs));
+                }
+            }
+        }
+
+        public string InMemoryLogs => _showInMemoryLogs
+            ? Logger.Dump()
+            : null;
+
+        public int InMemoryLogsLimit
+        {
+            get => SettingsService.Current.Diagnostics.LoggerLimit;
+            set
+            {
+                SettingsService.Current.Diagnostics.LoggerLimit = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool UseTestDC
         {
             get => Settings.UseTestDC;

@@ -28,7 +28,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using Telegram.Logs;
 using Telegram.Navigation;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;

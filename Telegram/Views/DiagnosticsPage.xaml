@@ -37,6 +37,33 @@
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
+                <controls:HeaderedControl Header="In-Memory Logs">
+                    <controls:SettingsExpander IsExpanded="{x:Bind ViewModel.ShowInMemoryLogs, Mode=TwoWay}">
+                        <controls:SettingsExpander.Header>
+                            <controls:BadgeButton Content="Dump"
+                                                  Click="Dump_Click" />
+                        </controls:SettingsExpander.Header>
+                        <TextBlock Text="{x:Bind ViewModel.InMemoryLogs, Mode=OneWay}"
+                                   TextWrapping="Wrap"
+                                   FontFamily="Consolas"
+                                   IsTextSelectionEnabled="True"
+                                   Margin="0,8,16,8" />
+                    </controls:SettingsExpander>
+                    <Grid Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource SettingsItemBorderBrush}"
+                          Padding="12,8">
+                        <Slider Value="{x:Bind ViewModel.InMemoryLogsLimit, Mode=TwoWay}"
+                                Maximum="200"
+                                Minimum="0"
+                                SmallChange="1"
+                                LargeChange="1"
+                                StepFrequency="1"
+                                TickFrequency="1"
+                                TickPlacement="Outside"
+                                IsThumbToolTipEnabled="False" />
+                    </Grid>
+                </controls:HeaderedControl>
+
                 <controls:HeaderedControl Header="Calls Logs">
                     <controls:BadgeButton Content="tgcalls.txt"
                                           Click="Calls_Click"

@@ -213,13 +213,13 @@ namespace Telegram.Controls
                 ChangePartText(ref NextPart, nameof(NextPart), newValue);
             }
 
-            Telegram.App.Track();
+            Logger.Debug();
             InvalidateMeasure();
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             SizeChanged -= OnSizeChanged;
 
@@ -253,7 +253,7 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             PrefixPart?.Measure(availableSize);
             SuffixPart?.Measure(availableSize);
@@ -285,7 +285,7 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             PrefixPart?.Arrange(new Rect(0, 0, PrefixPart.DesiredSize.Width, PrefixPart.DesiredSize.Height));
             var width = PrefixPart?.DesiredSize.Width ?? 0;

@@ -347,7 +347,7 @@ namespace Telegram.Views.Calls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var prevSize = e.PreviousSize.ToVector2();
             var nextSize = e.NewSize.ToVector2();
@@ -2053,7 +2053,7 @@ namespace Telegram.Views.Calls
             }
 
             _selectedEndpointId = cell.IsSelected ? cell.EndpointId : null;
-            Telegram.App.Track();
+            Logger.Debug();
             Viewport.InvalidateMeasure();
 
             TransformList(ActualSize, ActualSize, _mode, _mode);
@@ -2198,7 +2198,7 @@ namespace Telegram.Views.Calls
 
         private void OnParticipantsSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             UpdateVisibleParticipants(false);
         }
@@ -2384,7 +2384,7 @@ namespace Telegram.Views.Calls
 
         private void OnViewportSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             if (ParticipantsPanel.Children.Contains(ViewportAspect) || e.NewSize.Height == e.PreviousSize.Height)
             {
@@ -2640,7 +2640,7 @@ namespace Telegram.Views.Calls
                 if (_mode != value)
                 {
                     _mode = value;
-                    Telegram.App.Track();
+                    Logger.Debug();
                     InvalidateMeasure();
                 }
             }
@@ -2655,7 +2655,7 @@ namespace Telegram.Views.Calls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var index = 0;
             var count = Children.Count;
@@ -2732,7 +2732,7 @@ namespace Telegram.Views.Calls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             var index = 0;
             var count = Children.Count;

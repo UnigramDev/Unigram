@@ -121,6 +121,7 @@ namespace Telegram.ViewModels.Authorization
             if (response is Error error)
             {
                 IsLoading = false;
+                Logger.Error(error.Message);
 
                 if (error.MessageEquals(ErrorType.PHONE_NUMBER_INVALID))
                 {
@@ -159,8 +160,6 @@ namespace Telegram.ViewModels.Authorization
                 {
                     await ShowPopupAsync(error.Message, Strings.AppName, Strings.OK);
                 }
-
-                Logs.Logger.Error(Logs.LogTarget.API, "account.signIn error " + error);
             }
         }
 

@@ -1134,7 +1134,7 @@ namespace Telegram.ViewModels
                                 }
                                 else if (maxId == lastReadMessageId)
                                 {
-                                    Logs.Logger.Debug(Logs.LogTarget.Chat, "Looking for first unread message, can't find it");
+                                    Logger.Debug("Looking for first unread message, can't find it");
                                 }
 
                                 if (maxId == lastReadMessageId)
@@ -1273,7 +1273,7 @@ namespace Telegram.ViewModels
                     if (messages.MessagesValue.Count > 0)
                     {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Logs.Logger.Debug(Logs.LogTarget.Chat, "Setting scroll mode to KeepLastItemInView");
+                        Logger.Debug("Setting scroll mode to KeepLastItemInView");
                     }
 
                     var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => CreateMessage(x)).ToList();
@@ -1593,21 +1593,21 @@ namespace Telegram.ViewModels
 #pragma warning disable CS4014
             if (_type == DialogType.ScheduledMessages)
             {
-                Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Loadings scheduled messages", chat.Id));
+                Logger.Debug(string.Format("{0} - Loadings scheduled messages", chat.Id));
 
                 NotifyMessageSliceLoaded();
                 LoadScheduledSliceAsync();
             }
             else if (_type == DialogType.EventLog)
             {
-                Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Loadings event log", chat.Id));
+                Logger.Debug(string.Format("{0} - Loadings event log", chat.Id));
 
                 NotifyMessageSliceLoaded();
                 LoadEventLogSliceAsync();
             }
             else if (state.TryGet("message_id", out long navigation))
             {
-                Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Loading messages from specific id", chat.Id));
+                Logger.Debug(string.Format("{0} - Loading messages from specific id", chat.Id));
 
                 state.Remove("message_id");
                 LoadMessageSliceAsync(null, navigation);
@@ -1646,26 +1646,26 @@ namespace Telegram.ViewModels
                 {
                     if (Settings.Chats.TryRemove(chat.Id, _threadId, ChatSetting.Pixel, out double pixel))
                     {
-                        Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Loading messages from specific pixel", chat.Id));
+                        Logger.Debug(string.Format("{0} - Loading messages from specific pixel", chat.Id));
 
                         LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom, pixel);
                     }
                     else
                     {
-                        Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Loading messages from specific id, pixel missing", chat.Id));
+                        Logger.Debug(string.Format("{0} - Loading messages from specific id, pixel missing", chat.Id));
 
                         LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom);
                     }
                 }
                 else /*if (chat.UnreadCount > 0)*/
                 {
-                    Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Loading messages from LastReadInboxMessageId: {1}", chat.Id, chat.LastReadInboxMessageId));
+                    Logger.Debug(string.Format("{0} - Loading messages from LastReadInboxMessageId: {1}", chat.Id, chat.LastReadInboxMessageId));
 
                     LoadMessageSliceAsync(null, lastReadMessageId, VerticalAlignment.Top);
                 }
                 //else
                 //{
-                //    Logs.Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from LastMessageId: {1}", chat.Id, chat.LastMessage?.Id));
+                //    Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from LastMessageId: {1}", chat.Id, chat.LastMessage?.Id));
 
                 //    LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom);
                 //}
@@ -1838,7 +1838,7 @@ namespace Telegram.ViewModels
                     Settings.Chats.TryRemove(chat.Id, _threadId, ChatSetting.Index, out long index);
                     Settings.Chats.TryRemove(chat.Id, _threadId, ChatSetting.Pixel, out double pixel);
 
-                    Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
+                    Logger.Debug(string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
 
                     return;
                 }
@@ -1871,7 +1871,7 @@ namespace Telegram.ViewModels
                             Settings.Chats[chat.Id, _threadId, ChatSetting.Index] = start;
                             Settings.Chats[chat.Id, _threadId, ChatSetting.Pixel] = field.ActualHeight - (position.Y + container.ActualHeight);
 
-                            Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, Items[panel.LastVisibleIndex].Id, field.ActualHeight - (position.Y + container.ActualHeight)));
+                            Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, Items[panel.LastVisibleIndex].Id, field.ActualHeight - (position.Y + container.ActualHeight)));
                         }
                         else
                         {
@@ -1879,7 +1879,7 @@ namespace Telegram.ViewModels
                             Settings.Chats[chat.Id, _threadId, ChatSetting.Index] = start;
                             Settings.Chats.TryRemove(chat.Id, _threadId, ChatSetting.Pixel, out double pixel);
 
-                            Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, Items[panel.LastVisibleIndex].Id));
+                            Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, Items[panel.LastVisibleIndex].Id));
                         }
 
                     }
@@ -1889,7 +1889,7 @@ namespace Telegram.ViewModels
                         Settings.Chats.TryRemove(chat.Id, _threadId, ChatSetting.Index, out long _);
                         Settings.Chats.TryRemove(chat.Id, _threadId, ChatSetting.Pixel, out double _);
 
-                        Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Removing scrolling position, as last item is chat.LastMessage", chat.Id));
+                        Logger.Debug(string.Format("{0} - Removing scrolling position, as last item is chat.LastMessage", chat.Id));
                     }
                 }
                 else
@@ -1898,7 +1898,7 @@ namespace Telegram.ViewModels
                     Settings.Chats.TryRemove(chat.Id, _threadId, ChatSetting.Index, out long _);
                     Settings.Chats.TryRemove(chat.Id, _threadId, ChatSetting.Pixel, out double _);
 
-                    Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
+                    Logger.Debug(string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
                 }
             }
             catch
@@ -1907,7 +1907,7 @@ namespace Telegram.ViewModels
                 Settings.Chats.TryRemove(chat.Id, _threadId, ChatSetting.Index, out long _);
                 Settings.Chats.TryRemove(chat.Id, _threadId, ChatSetting.Pixel, out double _);
 
-                Logs.Logger.Debug(Logs.LogTarget.Chat, string.Format("{0} - Removing scrolling position, exception", chat.Id));
+                Logger.Debug(string.Format("{0} - Removing scrolling position, exception", chat.Id));
             }
 
             SaveDraft();

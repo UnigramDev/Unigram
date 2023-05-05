@@ -173,7 +173,7 @@ namespace Telegram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Logs.Logger.Error(Logs.LogTarget.API, "auth.resetAuthotizations error " + error);
+                    Logger.Error(error.Message);
                 }
             }
         }
@@ -223,7 +223,7 @@ namespace Telegram.ViewModels.Settings
                 }
                 else if (response is Error error)
                 {
-                    Logs.Logger.Error(Logs.LogTarget.API, "auth.resetAuthotization error " + error);
+                    Logger.Error(error.Message);
                 }
             }
         }

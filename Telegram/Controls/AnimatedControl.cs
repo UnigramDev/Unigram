@@ -155,7 +155,7 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Telegram.App.Track();
+            Logger.Debug();
 
             lock (_drawFrameLock)
             {
@@ -280,7 +280,7 @@ namespace Telegram.Controls
         {
             if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
-                Telegram.App.Track();
+                Logger.Debug();
 
                 while (_layoutRoot.Children.Count > 0)
                 {
