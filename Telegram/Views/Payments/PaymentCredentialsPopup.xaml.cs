@@ -94,6 +94,8 @@ namespace Telegram.Views.Payments
 
         private async void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            IsPrimaryButtonEnabled = false;
+
             if (Credentials == null)
             {
                 var deferral = args.GetDeferral();
@@ -104,6 +106,8 @@ namespace Telegram.Views.Payments
                 args.Cancel = validated == null;
                 deferral.Complete();
             }
+
+            IsPrimaryButtonEnabled = true;
         }
 
         private void View_EventReceived(object sender, WebViewerEventReceivedEventArgs e)

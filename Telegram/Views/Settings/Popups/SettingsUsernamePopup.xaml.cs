@@ -65,11 +65,15 @@ namespace Telegram.Views.Settings.Popups
 
         private async void ContentPopup_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            IsPrimaryButtonEnabled = false;
+
             var deferral = args.GetDeferral();
             var confirm = await ViewModel.SendAsync();
 
             args.Cancel = !confirm;
             deferral.Complete();
+
+            IsPrimaryButtonEnabled = true;
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
