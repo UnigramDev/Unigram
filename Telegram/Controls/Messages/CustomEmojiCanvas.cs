@@ -49,7 +49,7 @@ namespace Telegram.Controls.Messages
             _pool = EmojiCache.MergeOrCreate(_emojiSize, GetHashCode());
         }
 
-        protected override void OnDpiChanged(float currentDpi)
+        protected override void OnDpiChanged(double rasterizationScale)
         {
             var hash = GetHashCode();
 
@@ -81,7 +81,7 @@ namespace Telegram.Controls.Messages
             if (needsCreate)
             {
                 _emojiSize = GetDpiAwareSize(20);
-                return CreateBitmap(device, awareSize.Width, awareSize.Height, dpi: _currentDpi);
+                return CreateBitmap(device, awareSize.Width, awareSize.Height, scale: _rasterizationScale);
             }
 
             return null;
@@ -118,8 +118,8 @@ namespace Telegram.Controls.Messages
             {
                 if (_pool.TryGet(item.CustomEmojiId, out EmojiRenderer animation))
                 {
-                    var x = (int)((2 + item.X - 0) * (_currentDpi / 96));
-                    var y = (int)((2 + item.Y - 0) * (_currentDpi / 96));
+                    var x = (int)((2 + item.X - 0) * _rasterizationScale);
+                    var y = (int)((2 + item.Y - 0) * _rasterizationScale);
 
                     var matches = animation.PixelWidth * animation.PixelHeight * 4 == animation.Buffer?.Length;
                     if (matches && animation.HasRenderedFirstFrame && x + _emojiSize <= _bitmap.SizeInPixels.Width && y + _emojiSize <= _bitmap.SizeInPixels.Height)

@@ -13,7 +13,6 @@ using Telegram.Navigation.Services;
 using Telegram.Services.Keyboard;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.Graphics.Display;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -52,7 +51,24 @@ namespace Telegram.Navigation
 
         public bool IsInMainView { get; }
 
-        public UIElement Content => Window.Content;
+        public UIElement Content
+        {
+            get => Window.Content;
+            set
+            {
+                if (Window.Content?.XamlRoot != null)
+                {
+                    Window.Content.XamlRoot.Changed -= OnXamlRootChanged;
+                }
+
+                Window.Content = value;
+
+                if (Window.Content?.XamlRoot != null)
+                {
+                    Window.Content.XamlRoot.Changed += OnXamlRootChanged;
+                }
+            }
+        }
 
         public Size Size { get; set; }
 
@@ -141,16 +157,13 @@ namespace Telegram.Navigation
             window.CoreWindow.ResizeStarted += OnResizeStarted;
             window.CoreWindow.ResizeCompleted += OnResizeCompleted;
 
-            var displayInformation = DisplayInformation.GetForCurrentView();
-            displayInformation.DpiChanged += OnDpiChanged;
-
             Size = new Size(window.Bounds.Width, window.Bounds.Height);
-            RasterizationScale = displayInformation.LogicalDpi / 96d;
+            RasterizationScale = 1;
         }
 
-        private void OnDpiChanged(DisplayInformation sender, object args)
+        private void OnXamlRootChanged(XamlRoot sender, XamlRootChangedEventArgs args)
         {
-            RasterizationScale = sender.LogicalDpi / 96d;
+            RasterizationScale = sender.RasterizationScale;
         }
 
         private void OnResizeStarted(CoreWindow sender, object args)

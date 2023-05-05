@@ -12,7 +12,6 @@ using Telegram.Common;
 using Telegram.Native;
 using Windows.Foundation;
 using Windows.Graphics;
-using Windows.Graphics.Display;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -32,7 +31,7 @@ namespace Telegram.Controls
     [TemplatePart(Name = "Canvas", Type = typeof(Image))]
     public abstract class AnimatedImage<TAnimation> : AnimatedImage, IPlayerView
     {
-        protected float _currentDpi;
+        protected double _rasterizationScale;
         protected bool _active = true;
         protected bool _visible = true;
 
@@ -107,17 +106,16 @@ namespace Telegram.Controls
 
         private void RegisterEventHandlers()
         {
-            _currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+            _rasterizationScale = XamlRoot.RasterizationScale;
+            _visible = XamlRoot.IsHostVisible;
             _active = !_autoPause || Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
-            _visible = Window.Current.CoreWindow.Visible;
 
             if (_hasInitialLoadedEventFired)
             {
                 return;
             }
 
-            DisplayInformation.GetForCurrentView().DpiChanged += OnDpiChanged;
-            Window.Current.VisibilityChanged += OnVisibilityChanged;
+            XamlRoot.Changed += OnXamlRootChanged;
 
             if (_autoPause)
             {
@@ -129,8 +127,7 @@ namespace Telegram.Controls
 
         private void UnregisterEventHandlers()
         {
-            DisplayInformation.GetForCurrentView().DpiChanged -= OnDpiChanged;
-            Window.Current.VisibilityChanged -= OnVisibilityChanged;
+            XamlRoot.Changed -= OnXamlRootChanged;
 
             if (_autoPause)
             {
@@ -140,12 +137,32 @@ namespace Telegram.Controls
             _hasInitialLoadedEventFired = false;
         }
 
-        private void OnDpiChanged(DisplayInformation sender, object args)
+        private void OnXamlRootChanged(XamlRoot sender, XamlRootChangedEventArgs args)
         {
             lock (_drawFrameLock)
             {
-                _currentDpi = sender.LogicalDpi;
-                Changed();
+                if (_rasterizationScale != sender.RasterizationScale)
+                {
+                    _rasterizationScale = sender.RasterizationScale;
+                    Changed();
+                }
+
+#warning TODO: this method logic should be improved
+                if (_visible == sender.IsHostVisible)
+                {
+                    return;
+                }
+
+                _visible = sender.IsHostVisible;
+
+                if (sender.IsHostVisible)
+                {
+                    Changed();
+                }
+                else
+                {
+                    Subscribe(false);
+                }
             }
         }
 
@@ -172,28 +189,6 @@ namespace Telegram.Controls
             }
         }
 
-        private void OnVisibilityChanged(object sender, VisibilityChangedEventArgs e)
-        {
-            lock (_drawFrameLock)
-            {
-                if (_visible == e.Visible)
-                {
-                    return;
-                }
-
-                _visible = e.Visible;
-
-                if (e.Visible)
-                {
-                    Changed();
-                }
-                else
-                {
-                    Subscribe(false);
-                }
-            }
-        }
-
         private void Changed(bool force = false)
         {
             if (_canvas == null || !_visible)
@@ -205,10 +200,10 @@ namespace Telegram.Controls
 
             lock (_drawFrameLock)
             {
-                var newDpi = _currentDpi;
+                var newDpi = _rasterizationScale;
 
                 bool needsCreate = _bitmap0 == null;
-                needsCreate |= _currentDpi != newDpi;
+                needsCreate |= _rasterizationScale != newDpi;
                 needsCreate |= force;
 
                 if (needsCreate)
@@ -405,7 +400,7 @@ namespace Telegram.Controls
 
         protected void CreateBitmap()
         {
-            var temp = CreateBitmap(_currentDpi, out int width, out int height);
+            var temp = CreateBitmap(_rasterizationScale, out int width, out int height);
 
             var needsCreate = _bitmap0 == null || _bitmap1 == null;
             needsCreate |= _bitmap0?.PixelWidth != width || _bitmap0?.PixelHeight != height;
@@ -434,7 +429,7 @@ namespace Telegram.Controls
             UpdateSource();
         }
 
-        protected abstract bool CreateBitmap(float dpi, out int width, out int height);
+        protected abstract bool CreateBitmap(double dpi, out int width, out int height);
 
         protected SizeInt32 GetDpiAwareSize(Size size)
         {
@@ -445,14 +440,14 @@ namespace Telegram.Controls
         {
             return new SizeInt32
             {
-                Width = (int)(width * (_currentDpi / 96)),
-                Height = (int)(height * (_currentDpi / 96))
+                Width = (int)(width * _rasterizationScale),
+                Height = (int)(height * _rasterizationScale)
             };
         }
 
         protected int GetDpiAwareSize(double size)
         {
-            return (int)(size * (_currentDpi / 96));
+            return (int)(size * _rasterizationScale);
         }
 
         protected abstract void DrawFrame(WriteableBitmap args);

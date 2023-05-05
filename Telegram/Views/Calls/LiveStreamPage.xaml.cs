@@ -137,7 +137,7 @@ namespace Telegram.Views.Calls
 
         private void OnClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
         {
-            Window.Current.Content = null;
+            WindowContext.Current.Content = null;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

@@ -594,9 +594,9 @@ namespace Telegram.Navigation
 
             CallOnInitialize(false, e);
 
-            if (Window.Current.Content == null)
+            if (WindowContext.Current.Content == null)
             {
-                Window.Current.Content = CreateRootElement(e);
+                WindowContext.Current.Content = CreateRootElement(e);
             }
             else
             {

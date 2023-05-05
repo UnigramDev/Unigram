@@ -63,13 +63,13 @@ namespace Telegram.Controls.Chats
 
             bool needsCreate = _bitmap == null;
             needsCreate |= _bitmap?.Size.Width != width || _bitmap?.Size.Height != height;
-            needsCreate |= _bitmap?.Dpi != _currentDpi;
+            needsCreate |= _bitmap?.Dpi != (_rasterizationScale * 96);
             needsCreate |= _bitmap?.Device != device;
             needsCreate &= _currentSize.X > 0 && _currentSize.Y > 0;
 
             if (needsCreate)
             {
-                var bitmap = CreateTarget(device, width, height, dpi: _currentDpi);
+                var bitmap = CreateTarget(device, width, height, scale: _rasterizationScale);
 
                 if (_backgroundFill is BackgroundFillGradient or BackgroundFillSolid)
                 {

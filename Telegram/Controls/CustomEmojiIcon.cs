@@ -75,7 +75,7 @@ namespace Telegram.Controls
             }
         }
 
-        protected override void OnDpiChanged(float currentDpi)
+        protected override void OnDpiChanged(double rasterizationScale)
         {
             var hash = GetHashCode();
 
@@ -352,7 +352,7 @@ namespace Telegram.Controls
                 if (_frameSize != value)
                 {
                     _frameSize = value;
-                    OnDpiChanged(_currentDpi);
+                    OnDpiChanged(_rasterizationScale);
                 }
             }
         }

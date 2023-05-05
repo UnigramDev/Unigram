@@ -15,7 +15,6 @@ using Telegram.Common;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.DirectX;
-using Windows.Graphics.Display;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
@@ -31,7 +30,7 @@ namespace Telegram.Controls
     public abstract class AnimatedControl<TAnimation> : Control, IPlayerView
     {
         protected Vector2 _currentSize;
-        protected float _currentDpi;
+        protected double _rasterizationScale;
         protected bool _active = true;
         protected bool _visible = true;
 
@@ -79,11 +78,12 @@ namespace Telegram.Controls
             _dispatcher = DispatcherQueue.GetForCurrentThread();
 
             SizeChanged += OnSizeChanged;
-            RegisterEventHandlers();
         }
 
         protected override void OnApplyTemplate()
         {
+            RegisterEventHandlers();
+
             var canvas = GetTemplateChild("Canvas") as Border;
             if (canvas == null)
             {
@@ -103,17 +103,19 @@ namespace Telegram.Controls
 
         private void RegisterEventHandlers()
         {
-            _currentDpi = DisplayInformation.GetForCurrentView().LogicalDpi;
+            _rasterizationScale = XamlRoot.RasterizationScale;
+            _visible = XamlRoot.IsHostVisible;
             _active = !_autoPause || Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
-            _visible = Window.Current.CoreWindow.Visible;
 
             if (_hasInitialLoadedEventFired)
             {
                 return;
             }
 
-            DisplayInformation.GetForCurrentView().DpiChanged += OnDpiChanged;
-            Window.Current.VisibilityChanged += OnVisibilityChanged;
+#warning TODO: this
+            OnDpiChanged(_rasterizationScale);
+
+            XamlRoot.Changed += OnXamlRootChanged;
             CompositionTarget.SurfaceContentsLost += OnSurfaceContentsLost;
 
             if (_autoPause)
@@ -126,8 +128,7 @@ namespace Telegram.Controls
 
         private void UnregisterEventHandlers()
         {
-            DisplayInformation.GetForCurrentView().DpiChanged -= OnDpiChanged;
-            Window.Current.VisibilityChanged -= OnVisibilityChanged;
+            XamlRoot.Changed -= OnXamlRootChanged;
             CompositionTarget.SurfaceContentsLost -= OnSurfaceContentsLost;
 
             if (_autoPause)
@@ -138,17 +139,38 @@ namespace Telegram.Controls
             _hasInitialLoadedEventFired = false;
         }
 
-        private void OnDpiChanged(DisplayInformation sender, object args)
+        private void OnXamlRootChanged(XamlRoot sender, XamlRootChangedEventArgs args)
         {
             lock (_drawFrameLock)
             {
-                _currentDpi = sender.LogicalDpi;
-                Changed();
-                OnDpiChanged(sender.LogicalDpi);
+                if (_rasterizationScale != sender.RasterizationScale)
+                {
+                    _rasterizationScale = sender.RasterizationScale;
+
+                    Changed();
+                    OnDpiChanged(sender.RasterizationScale);
+                }
+
+#warning TODO: this method logic should be improved
+                if (_visible == sender.IsHostVisible)
+                {
+                    return;
+                }
+
+                _visible = sender.IsHostVisible;
+
+                if (sender.IsHostVisible)
+                {
+                    Changed();
+                }
+                else
+                {
+                    Subscribe(false);
+                }
             }
         }
 
-        protected virtual void OnDpiChanged(float currentDpi)
+        protected virtual void OnDpiChanged(double currentDpi)
         {
 
         }
@@ -205,28 +227,6 @@ namespace Telegram.Controls
             }
         }
 
-        private void OnVisibilityChanged(object sender, VisibilityChangedEventArgs e)
-        {
-            lock (_drawFrameLock)
-            {
-                if (_visible == e.Visible)
-                {
-                    return;
-                }
-
-                _visible = e.Visible;
-
-                if (e.Visible)
-                {
-                    Changed();
-                }
-                else
-                {
-                    Subscribe(false);
-                }
-            }
-        }
-
         private void Changed(bool force = false, bool load = true)
         {
             if (_canvas == null || !_visible)
@@ -242,7 +242,7 @@ namespace Telegram.Controls
 
             lock (_recreateLock)
             {
-                var newDpi = _currentDpi;
+                var newDpi = _rasterizationScale;
                 var newSize = _currentSize;
 
                 bool needsCreate = _surface == null;
@@ -256,7 +256,7 @@ namespace Telegram.Controls
                     {
                         var device = _surface?.Device ?? CanvasDevice.GetSharedDevice();
 
-                        _surface = new CanvasImageSource(device, newSize.X, newSize.Y, newDpi, CanvasAlphaMode.Premultiplied);
+                        _surface = new CanvasImageSource(device, newSize.X, newSize.Y, (float)(newDpi * 96), CanvasAlphaMode.Premultiplied);
                         _canvas.Background = new ImageBrush
                         {
                             ImageSource = _surface,
@@ -487,18 +487,18 @@ namespace Telegram.Controls
 
         protected abstract CanvasBitmap CreateBitmap(CanvasDevice device);
 
-        protected CanvasBitmap CreateBitmap(CanvasDevice device, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, float dpi = 96)
+        protected CanvasBitmap CreateBitmap(CanvasDevice device, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, double scale = 1)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(width * height * 4);
-            var bitmap = CanvasBitmap.CreateFromBytes(device, buffer, width, height, pixelFormat, dpi);
+            var bitmap = CanvasBitmap.CreateFromBytes(device, buffer, width, height, pixelFormat, (float)(scale * 96));
             ArrayPool<byte>.Shared.Return(buffer);
 
             return bitmap;
         }
 
-        protected CanvasRenderTarget CreateTarget(ICanvasResourceCreator sender, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, float dpi = 96)
+        protected CanvasRenderTarget CreateTarget(ICanvasResourceCreator sender, int width, int height, DirectXPixelFormat pixelFormat = DirectXPixelFormat.B8G8R8A8UIntNormalized, double scale = 1)
         {
-            return new CanvasRenderTarget(sender, width, height, dpi, pixelFormat, CanvasAlphaMode.Premultiplied);
+            return new CanvasRenderTarget(sender, width, height, (float)(scale * 96), pixelFormat, CanvasAlphaMode.Premultiplied);
         }
 
         protected SizeInt32 GetDpiAwareSize(Size size)
@@ -510,14 +510,14 @@ namespace Telegram.Controls
         {
             return new SizeInt32
             {
-                Width = (int)(width * (_currentDpi / 96)),
-                Height = (int)(height * (_currentDpi / 96))
+                Width = (int)(width * _rasterizationScale),
+                Height = (int)(height * _rasterizationScale)
             };
         }
 
         protected int GetDpiAwareSize(double size)
         {
-            return (int)(size * (_currentDpi / 96));
+            return (int)(size * _rasterizationScale);
         }
 
         protected abstract void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args);

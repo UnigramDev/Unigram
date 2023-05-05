@@ -79,7 +79,7 @@ namespace Telegram.Controls
             _animation = null;
         }
 
-        protected override bool CreateBitmap(float dpi, out int width, out int height)
+        protected override bool CreateBitmap(double rasterizationScale, out int width, out int height)
         {
             if (_animation != null)
             {

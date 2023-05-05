@@ -17,7 +17,6 @@ using Telegram.Services.ViewService;
 using Telegram.Views.Host;
 using Windows.Devices.Input;
 using Windows.Foundation;
-using Windows.Graphics.Display;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -177,7 +176,7 @@ namespace Telegram.Controls
 
         private void DisplayRegion_Changed(Rect sender, object args)
         {
-            var scaleFactor = DisplayInformation.GetForCurrentView().RawPixelsPerViewPixel;
+            var scaleFactor = XamlRoot.RasterizationScale;
 
             var x = Window.Current.Bounds.X - sender.X / scaleFactor;
             var y = Window.Current.Bounds.Y - sender.Y / scaleFactor;
