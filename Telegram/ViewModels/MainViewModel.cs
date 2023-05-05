@@ -21,8 +21,6 @@ using Telegram.ViewModels.Folders;
 using Telegram.Views;
 using Telegram.Views.Folders;
 using Telegram.Views.Popups;
-using Windows.System;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -39,7 +37,6 @@ namespace Telegram.ViewModels
         //, IHandle
         , IDisposable
     {
-        private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;
         private readonly IPasscodeService _passcodeService;
         private readonly ILifetimeService _lifetimeService;
@@ -55,7 +52,6 @@ namespace Telegram.ViewModels
         public MainViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, IGroupCallService groupCallService, ISettingsSearchService settingsSearchService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
             : base(clientService, settingsService, aggregator)
         {
-            _pushService = pushService;
             _contactsService = contactsService;
             _passcodeService = passcodeService;
             _lifetimeService = lifecycle;
@@ -437,19 +433,7 @@ namespace Telegram.ViewModels
 
         public async void UpdateApp()
         {
-            var file = _cloudUpdateService.NextUpdate?.File;
-            if (file == null)
-            {
-                return;
-            }
-
-            if (App.Connection != null)
-            {
-                await App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet { { "Exit", string.Empty } });
-            }
-
-            await Launcher.LaunchFileAsync(file);
-            await Application.Current.ConsolidateAsync();
+            await CloudUpdateService.LaunchAsync(Dispatcher);
         }
 
         public async void CreateSecretChat()

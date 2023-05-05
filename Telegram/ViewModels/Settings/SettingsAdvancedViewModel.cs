@@ -159,8 +159,7 @@ namespace Telegram.ViewModels.Settings
             else if (update.File != null)
             {
 #if !DEBUG
-                await Windows.System.Launcher.LaunchFileAsync(update.File);
-                Windows.UI.Xaml.Application.Current.Exit();
+                await CloudUpdateService.LaunchAsync(Dispatcher);
 #endif
             }
 

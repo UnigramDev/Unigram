@@ -54,7 +54,6 @@ using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Foundation;
 using Windows.Storage;
-using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.ViewManagement;
@@ -373,7 +372,8 @@ namespace Telegram
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
             //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
-            Task.Run(() => OnStartSync());
+            var context = WindowContext.Current.Dispatcher;
+            _ = Task.Run(() => OnStartSync(context));
             //return Task.CompletedTask;
 
             if (startKind == StartKind.Activate)
@@ -425,7 +425,7 @@ namespace Telegram
             return new TLNavigationService(TLContainer.Current.Resolve<IClientService>(session), TLContainer.Current.Resolve<IViewService>(session), frame, session, id);
         }
 
-        private async void OnStartSync()
+        private async void OnStartSync(IDispatcherContext context)
         {
             await RequestExtendedExecutionSessionAsync();
 
@@ -447,7 +447,12 @@ namespace Telegram
             }
             catch { }
 
-#if !DEBUG
+#if DEBUG
+            if (await CloudUpdateService.LaunchAsync(context))
+            {
+                return;
+            }
+
             if (SettingsService.Current.IsTrayVisible
                 && Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
             {

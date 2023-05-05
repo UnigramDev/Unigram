@@ -10,26 +10,25 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Windows.ApplicationModel;
+using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.System;
+using Windows.UI.Xaml;
 
 namespace Telegram.Services
 {
     public interface ICloudUpdateService
     {
         CloudUpdate NextUpdate { get; }
-
         Task UpdateAsync(bool force);
-        //Task<CloudUpdate> GetNextUpdateAsync();
-        //Task<IList<CloudUpdate>> GetHistoryAsync();
     }
 
     public class CloudUpdateService : ICloudUpdateService
     {
-        private readonly FileContext<CloudUpdate> _mapping = new FileContext<CloudUpdate>();
-
         private readonly IClientService _clientService;
         private readonly INetworkService _networkService;
         private readonly IEventAggregator _aggregator;
@@ -54,6 +53,58 @@ namespace Telegram.Services
             await UpdateAsync(false);
         }
 
+        public static async Task<bool> LaunchAsync(IDispatcherContext context)
+        {
+            try
+            {
+                var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
+                var files = await folder.GetFilesAsync();
+
+                var current = Package.Current.Id.Version.ToVersion();
+                var versions = new List<(Version Version, StorageFile File)>();
+
+                foreach (var file in files)
+                {
+                    var split = System.IO.Path.GetFileNameWithoutExtension(file.Name);
+                    if (Version.TryParse(split, out Version version))
+                    {
+                        versions.Add((version, file));
+                    }
+                }
+
+                var latest = versions.Max(x => x.Version);
+
+                foreach (var update in versions)
+                {
+                    // If this isn't the most recent version and it isn't in use, just delete it
+                    if (update.Version <= current || update.Version < latest)
+                    {
+                        await update.File.DeleteAsync();
+                        continue;
+                    }
+
+                    // As soon as we find a valid update, we launch it
+
+                    if (App.Connection != null)
+                    {
+                        await App.Connection.SendMessageAsync(new ValueSet { { "Exit", string.Empty } });
+                    }
+
+                    await context.DispatchAsync(() => Launcher.LaunchFileAsync(update.File));
+                    await Application.Current.ConsolidateAsync();
+
+                    // This line will never be reached
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+
+            return false;
+        }
+
         public async Task UpdateAsync(bool force)
         {
             if (ApiInfo.IsStoreRelease)
@@ -72,37 +123,9 @@ namespace Telegram.Services
             _checking = true;
             _lastCheck = diff;
 
-            var folder = await ApplicationData.Current.LocalFolder.CreateFolderAsync("updates", CreationCollisionOption.OpenIfExists);
-            var files = await folder.GetFilesAsync();
-
             var current = Package.Current.Id.Version.ToVersion();
-            var sets = new List<Version>();
-
-            foreach (var file in files)
-            {
-                var split = System.IO.Path.GetFileNameWithoutExtension(file.Name);
-                if (Version.TryParse(split, out Version version))
-                {
-                    sets.Add(version);
-                }
-            }
-
-            foreach (var version in sets)
-            {
-                // If this isn't the most recent version and it isn't in use, just delete it
-                if (version <= current)
-                {
-                    var file = await folder.TryGetItemAsync($"{version}.msixbundle") as StorageFile;
-                    if (file != null)
-                    {
-                        await file.DeleteAsync();
-                    }
-                }
-
-                // We can safely ignore any other version as next steps will take care of them
-            }
-
             var cloud = await GetNextUpdateAsync();
+
             if (cloud != null && cloud.Version > current)
             {
                 _nextUpdate = cloud;
