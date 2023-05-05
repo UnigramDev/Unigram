@@ -342,7 +342,6 @@
       <DependentUpon>ChatJoinRequestsHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ChatListListView.cs" />
-    <Compile Include="Controls\ChatListSkeleton.cs" />
     <Compile Include="Controls\ChatStatisticsOverview.xaml.cs">
       <DependentUpon>ChatStatisticsOverview.xaml</DependentUpon>
     </Compile>
