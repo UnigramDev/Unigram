@@ -131,16 +131,6 @@ namespace Telegram.ViewModels
         public MvxObservableCollection<DiagnosticsOption> Options { get; private set; }
         public MvxObservableCollection<DiagnosticsTag> Tags { get; private set; }
 
-        public bool CopyFormattedCode
-        {
-            get => Settings.Diagnostics.CopyFormattedCode;
-            set
-            {
-                Settings.Diagnostics.CopyFormattedCode = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool LegacyScrollBars
         {
             get => Settings.Diagnostics.LegacyScrollBars;

@@ -296,7 +296,7 @@ namespace Telegram.Controls
                 {
                     var data = text.Substring(entity.Offset, entity.Length);
 
-                    if (SettingsService.Current.Diagnostics.CopyFormattedCode && entity.Type is TextEntityTypeCode)
+                    if (entity.Type is TextEntityTypeCode)
                     {
                         var hyperlink = new Hyperlink();
                         hyperlink.Click += (s, args) => Entity_Click(entity.Type, data);

@@ -44,13 +44,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _disableDatabase, "DisableDatabase", value);
         }
 
-        private bool? _copyFormattedCode;
-        public bool CopyFormattedCode
-        {
-            get => _copyFormattedCode ??= GetValueOrDefault("CopyFormattedCode", true);
-            set => AddOrUpdateValue(ref _copyFormattedCode, "CopyFormattedCode", value);
-        }
-
         private bool? _allowRightToLeft;
         public bool AllowRightToLeft
         {
