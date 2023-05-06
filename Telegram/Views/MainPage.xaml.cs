@@ -215,7 +215,8 @@ namespace Telegram.Views
                 chatView.UpdateChatLastMessage(chat);
             });
 
-            if (chat.Id == _viewModel.Topics?.Chat?.Id
+            if (chat.LastMessage != null
+                && chat.Id == _viewModel.Topics.Chat?.Id
                 && _viewModel.Topics.Items.TryGetValue(chat.LastMessage.MessageThreadId, out ForumTopic topic))
             {
                 topic.LastMessage = chat.LastMessage;
