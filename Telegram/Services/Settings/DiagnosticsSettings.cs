@@ -5,6 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Telegram.Common;
+
 namespace Telegram.Services.Settings
 {
     public class DiagnosticsSettings : SettingsServiceBase
@@ -19,6 +21,20 @@ namespace Telegram.Services.Settings
         {
             get => _enableChatPreviews ??= GetValueOrDefault("ChatPreviewToolTip", true);
             set => AddOrUpdateValue(ref _enableChatPreviews, "ChatPreviewToolTip", value);
+        }
+
+        private bool? _legacyScrollBars;
+        public bool LegacyScrollBars
+        {
+            get => _legacyScrollBars ??= GetValueOrDefault("LegacyScrollBars", ApiInfo.IsPackagedRelease);
+            set => AddOrUpdateValue(ref _legacyScrollBars, "LegacyScrollBars", value);
+        }
+
+        private bool? _legacyScrollViewers;
+        public bool LegacyScrollViewers
+        {
+            get => _legacyScrollViewers ??= GetValueOrDefault("LegacyScrollViewers", ApiInfo.IsPackagedRelease);
+            set => AddOrUpdateValue(ref _legacyScrollViewers, "LegacyScrollViewers", value);
         }
 
         private bool? _disableDatabase;
