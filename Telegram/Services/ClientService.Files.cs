@@ -212,8 +212,6 @@ namespace Telegram.Services
                     Future.Remove(file.Remote.UniqueId, true);
                 }
             }
-
-            EventAggregator.Default.Send(file, $"{SessionId}_{file.Id}", file.Local.IsDownloadingCompleted);
         }
 
         public async void CancelDownloadFile(File file, bool onlyIfPending = false)
