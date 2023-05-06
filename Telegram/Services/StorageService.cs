@@ -37,6 +37,14 @@ namespace Telegram.Services
             IsCustom = custom;
         }
 
+        public DownloadFolder(bool custom, string path)
+        {
+            DisplayPath = path;
+            Path = path;
+
+            IsCustom = custom;
+        }
+
         public override string ToString()
         {
             return DisplayPath;
@@ -52,6 +60,8 @@ namespace Telegram.Services
         Task OpenFileWithAsync(File file);
 
         Task OpenFolderAsync(File file);
+
+        bool CheckAccessToFolder(File file);
 
         Task<DownloadFolder> GetDownloadFolderAsync();
 
@@ -192,6 +202,17 @@ namespace Telegram.Services
             }
         }
 
+        public bool CheckAccessToFolder(File file)
+        {
+            if (ApiInfo.HasDownloadFolder)
+            {
+                return true;
+            }
+
+            return Future.Contains(file.Remote.UniqueId)
+                || Future.Contains(Future.DownloadFolder);
+        }
+
         public Task<DownloadFolder> GetDownloadFolderAsync()
         {
             return Future.GetFolderAsync();
@@ -210,11 +231,7 @@ namespace Telegram.Services
             }
 
             var downloads = await Future.GetDefaultFolderAsync();
-
-            var path1 = Path.GetFullPath(folder.Path);
-            var path2 = Path.GetFullPath(downloads.Path);
-
-            if (string.Equals(path1, path2, StringComparison.OrdinalIgnoreCase))
+            if (downloads == null || Extensions.IsRelativePath(downloads.Path, folder.Path, out _))
             {
                 Future.Remove(Future.DownloadFolder);
             }
@@ -335,12 +352,22 @@ namespace Telegram.Services
                     }
                 }
 
-                return new DownloadFolder(false, await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder));
+                if (ApiInfo.HasKnownFolders)
+                {
+                    return new DownloadFolder(false, await GetDefaultFolderAsync());
+                }
+
+                return new DownloadFolder(false, Strings.DownloadFolderDefault);
             }
 
-            public static async Task<StorageFolder> GetDefaultFolderAsync()
+            public static IAsyncOperation<StorageFolder> GetDefaultFolderAsync()
             {
-                return await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
+                if (ApiInfo.HasKnownFolders)
+                {
+                    return KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
+                }
+
+                return null;
             }
 
             public static async Task MigrateDownloadFolderAsync()

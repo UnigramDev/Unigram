@@ -2246,8 +2246,8 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(MessageSaveAnimation_Loaded, ViewModel.SaveMessageAnimation, message, Strings.SaveToGIFs, new FontIcon { Glyph = Icons.Gif });
                 flyout.CreateFlyoutItem(MessageSaveSound_Loaded, ViewModel.SaveMessageNotificationSound, message, Strings.SaveForNotifications, new FontIcon { Glyph = Icons.MusicNote2 });
                 flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.SaveMessageMedia, message, Strings.SaveAs, new FontIcon { Glyph = Icons.SaveAs });
-                flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.OpenMessageWith, message, Strings.OpenWith, new FontIcon { Glyph = Icons.OpenIn });
-                flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.OpenMessageFolder, message, Strings.ShowInFolder, new FontIcon { Glyph = Icons.FolderOpen });
+                flyout.CreateFlyoutItem(MessageOpenMedia_Loaded, ViewModel.OpenMessageWith, message, Strings.OpenWith, new FontIcon { Glyph = Icons.OpenIn });
+                flyout.CreateFlyoutItem(MessageOpenFolder_Loaded, ViewModel.OpenMessageFolder, message, Strings.ShowInFolder, new FontIcon { Glyph = Icons.FolderOpen });
 
                 // Contacts
                 flyout.CreateFlyoutItem(MessageAddContact_Loaded, ViewModel.AddToContacts, message, Strings.AddContactTitle, new FontIcon { Glyph = Icons.Person });
@@ -2835,9 +2835,45 @@ namespace Telegram.Views
 
             return message.Content switch
             {
+                MessagePhoto photo => photo.Photo.GetBig()?.Photo.Local.IsDownloadingCompleted ?? false,
                 MessageAudio audio => audio.Audio.AudioValue.Local.IsDownloadingCompleted,
                 MessageDocument document => document.Document.DocumentValue.Local.IsDownloadingCompleted,
                 MessageVideo video => video.Video.VideoValue.Local.IsDownloadingCompleted,
+                _ => false
+            };
+        }
+
+        private bool MessageOpenMedia_Loaded(MessageViewModel message)
+        {
+            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            {
+                return false;
+            }
+
+            return message.Content switch
+            {
+                MessageAudio audio => audio.Audio.AudioValue.Local.IsDownloadingCompleted,
+                MessageDocument document => document.Document.DocumentValue.Local.IsDownloadingCompleted,
+                MessageVideo video => video.Video.VideoValue.Local.IsDownloadingCompleted,
+                _ => false
+            };
+        }
+
+        private bool MessageOpenFolder_Loaded(MessageViewModel message)
+        {
+            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            {
+                return false;
+            }
+
+            return message.Content switch
+            {
+                MessageAudio audio => audio.Audio.AudioValue.Local.IsDownloadingCompleted
+                    && ViewModel.StorageService.CheckAccessToFolder(audio.Audio.AudioValue),
+                MessageDocument document => document.Document.DocumentValue.Local.IsDownloadingCompleted
+                    && ViewModel.StorageService.CheckAccessToFolder(document.Document.DocumentValue),
+                MessageVideo video => video.Video.VideoValue.Local.IsDownloadingCompleted
+                    && ViewModel.StorageService.CheckAccessToFolder(video.Video.VideoValue),
                 _ => false
             };
         }

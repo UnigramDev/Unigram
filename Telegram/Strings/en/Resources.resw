@@ -2430,11 +2430,14 @@ Anyone from the channel will be able to see messages in this group.</value>
   <data name="DoubleTapSetting" xml:space="preserve">
     <value>Quick Reaction</value>
   </data>
-  <data name="Downloading" xml:space="preserve">
-    <value>Downloading</value>
-  </data>
   <data name="DownloadFolder" xml:space="preserve">
     <value>Download Folder</value>
+  </data>
+  <data name="DownloadFolderDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Downloading</value>
   </data>
   <data name="DownloadsTabs" xml:space="preserve">
     <value>Downloads</value>

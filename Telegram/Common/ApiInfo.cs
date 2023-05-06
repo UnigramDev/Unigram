@@ -25,9 +25,12 @@ namespace Telegram.Common
         public static bool IsMediaSupported => _isMediaSupported ??= NativeUtils.IsMediaSupported();
 
         private static bool? _hasDownloadFolder;
-        public static bool HasDownloadFolder => _hasDownloadFolder ??= IsDesktop && ApiInformation.IsMethodPresent("Windows.Storage.KnownFolders", "GetFolderAsync");
+        public static bool HasDownloadFolder => _hasDownloadFolder ??= IsDesktop;
 
         public static bool HasCacheOnly => !HasDownloadFolder;
+
+        private static bool? _hasKnownFolders;
+        public static bool HasKnownFolders => _hasKnownFolders ??= ApiInformation.IsEnumNamedValuePresent("Windows.Storage.KnownFolderId", "DownloadsFolder");
 
         private static bool? _isVoipSupported;
         public static bool IsVoipSupported => _isVoipSupported ??= ApiInformation.IsApiContractPresent("Windows.ApplicationModel.Calls.CallsVoipContract", 1);

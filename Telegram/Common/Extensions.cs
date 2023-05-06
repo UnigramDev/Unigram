@@ -527,7 +527,7 @@ namespace Telegram.Common
             }
 
             relative = null;
-            return false;
+            return string.Equals(relativeFull, pathFull, StringComparison.OrdinalIgnoreCase);
         }
 
         public static string Enqueue(this StorageItemAccessList list, IStorageItem item)
