@@ -6,7 +6,6 @@
 //
 using System;
 using System.Threading.Tasks;
-using Telegram.Common;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
@@ -15,44 +14,18 @@ namespace Telegram.Entities
 {
     public class StoragePhoto : StorageMedia
     {
-        private readonly BasicProperties _basic;
+        private readonly uint _width;
+        private readonly uint _height;
 
-        public StoragePhoto(StorageFile file, BasicProperties basic, ImageProperties props)
+        public StoragePhoto(StorageFile file, BasicProperties basic, uint width, uint height)
             : base(file, basic)
         {
-            _basic = basic;
-
-            Properties = props;
+            _width = width;
+            _height = height;
         }
 
-        public override uint Width => Properties.GetWidth();
-        public override uint Height => Properties.GetHeight();
-
-        //private bool? _isAnimatable;
-        //public override bool IsAnimatable
-        //{
-        //    get
-        //    {
-        //        if (_isAnimatable == null)
-        //        {
-        //            try
-        //            {
-        //                using (var archive = ZipFile.OpenRead(File.Path))
-        //                {
-        //                    _isAnimatable = true;
-        //                }
-        //            }
-        //            catch
-        //            {
-        //                _isAnimatable = false;
-        //            }
-        //        }
-
-        //        return _isAnimatable ?? false;
-        //    }
-        //}
-
-        public ImageProperties Properties { get; private set; }
+        public override uint Width => _width;
+        public override uint Height => _height;
 
         public static new async Task<StoragePhoto> CreateAsync(StorageFile file)
         {
@@ -66,9 +39,7 @@ namespace Telegram.Entities
                 using (var source = await file.OpenReadAsync())
                 {
                     var bitmap = await BitmapDecoder.CreateAsync(source);
-
                     var basic = await file.GetBasicPropertiesAsync();
-                    var image = await file.Properties.GetImagePropertiesAsync();
 
                     if (bitmap.PixelWidth >= 20 * bitmap.PixelHeight || bitmap.PixelHeight >= 20 * bitmap.PixelWidth)
                     {
@@ -77,7 +48,7 @@ namespace Telegram.Entities
 
                     if (bitmap.PixelWidth > 0 && bitmap.PixelHeight > 0)
                     {
-                        return new StoragePhoto(file, basic, image);
+                        return new StoragePhoto(file, basic, bitmap.PixelWidth, bitmap.PixelHeight);
                     }
                 }
 

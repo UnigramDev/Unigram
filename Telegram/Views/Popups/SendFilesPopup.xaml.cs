@@ -21,8 +21,8 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.Graphics.Imaging;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -441,15 +441,17 @@ namespace Telegram.Views.Popups
                     var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
                     var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
 
-                    using (var stream = await bitmap.OpenReadAsync())
+                    using (var source = await bitmap.OpenReadAsync())
+                    using (var destination = await cache.OpenAsync(FileAccessMode.ReadWrite))
                     {
-                        var result = await ImageHelper.TranscodeAsync(stream, cache, BitmapEncoder.PngEncoderId);
-                        var photo = await StoragePhoto.CreateAsync(result);
-                        if (photo == null)
-                        {
-                            return;
-                        }
+                        await RandomAccessStream.CopyAsync(
+                            source.GetInputStreamAt(0),
+                            destination.GetOutputStreamAt(0));
+                    }
 
+                    var photo = await StoragePhoto.CreateAsync(cache);
+                    if (photo != null)
+                    {
                         Items.Add(photo);
 
                         UpdateView();
