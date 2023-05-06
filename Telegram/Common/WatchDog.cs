@@ -35,6 +35,8 @@ namespace Telegram.Common
             _crashLock = Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.lock");
         }
 
+        public static bool? HasCrashedInLastSession { get; private set; }
+
         public static void Start(ApplicationExecutionState previousExecutionState)
         {
             // NotRunning: An app could be in this state because it hasn't been launched
@@ -51,12 +53,18 @@ namespace Telegram.Common
                 }
                 else if (text.StartsWith("Unhandled"))
                 {
+                    HasCrashedInLastSession = true;
                     Crashes.TrackError(new UnhandledException(), attachments: ErrorAttachmentLog.AttachmentWithText(text, "crash.txt"));
                 }
                 else
                 {
+                    HasCrashedInLastSession = null;
                     Crashes.TrackError(new UnexpectedException(), attachments: ErrorAttachmentLog.AttachmentWithText(text, "crash.txt"));
                 }
+            }
+            else
+            {
+                HasCrashedInLastSession = false;
             }
 
             File.WriteAllText(_crashLock, VersionLabel.GetVersion());
