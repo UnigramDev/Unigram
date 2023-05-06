@@ -41,6 +41,14 @@ namespace Telegram.ViewModels.Supergroups
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            if (parameter is string tuple)
+            {
+                var split = tuple.Split(';');
+                long.TryParse(split[0], out long id);
+
+                parameter = id;
+            }
+
             var chatId = (long)parameter;
 
             Chat = ClientService.GetChat(chatId);
