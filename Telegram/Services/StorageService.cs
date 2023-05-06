@@ -13,7 +13,6 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.System;
-using FileNotFoundException = System.IO.FileNotFoundException;
 using Path = System.IO.Path;
 using SAP = Windows.Storage.AccessCache.StorageApplicationPermissions;
 
@@ -283,9 +282,9 @@ namespace Telegram.Services
 
                     return null;
                 }
-                catch (System.IO.FileNotFoundException)
+                catch
                 {
-                    SAP.FutureAccessList.Remove(temp ? token + "temp" : token);
+                    Remove(temp ? token + "temp" : token);
                     return null;
                 }
             }
@@ -306,13 +305,9 @@ namespace Telegram.Services
                         StorageFolder folder = await SAP.FutureAccessList.GetFolderAsync(DownloadFolder);
                         return await folder.CreateFileAsync(tempFileName, CreationCollisionOption.GenerateUniqueName);
                     }
-                    catch (FileNotFoundException)
+                    catch
                     {
-                        SAP.FutureAccessList.Remove(DownloadFolder);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error(ex);
+                        Remove(DownloadFolder);
                     }
                 }
 
@@ -334,22 +329,18 @@ namespace Telegram.Services
                     {
                         return new DownloadFolder(true, await SAP.FutureAccessList.GetFolderAsync(DownloadFolder));
                     }
-                    catch (FileNotFoundException)
+                    catch
                     {
-                        SAP.FutureAccessList.Remove(DownloadFolder);
-                    }
-                    catch (Exception ex)
-                    {
-                        Logger.Error(ex);
+                        Remove(DownloadFolder);
                     }
                 }
 
                 return new DownloadFolder(false, await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder));
             }
 
-            public static async Task<DownloadFolder> GetDefaultFolderAsync()
+            public static async Task<StorageFolder> GetDefaultFolderAsync()
             {
-                return new DownloadFolder(false, await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder));
+                return await KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
             }
 
             public static async Task MigrateDownloadFolderAsync()
@@ -361,14 +352,12 @@ namespace Telegram.Services
                         StorageFolder folder = await SAP.MostRecentlyUsedList.GetFolderAsync(DownloadFolder);
                         SAP.FutureAccessList.EnqueueOrReplace(DownloadFolder, folder);
                     }
-                    catch
+                    catch (Exception ex)
                     {
-                        SAP.MostRecentlyUsedList.Remove(DownloadFolder);
+                        Logger.Error(ex);
                     }
-                    finally
-                    {
-                        SAP.MostRecentlyUsedList.Remove(DownloadFolder);
-                    }
+
+                    SAP.MostRecentlyUsedList.Remove(DownloadFolder);
                 }
             }
         }
