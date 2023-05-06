@@ -379,9 +379,10 @@ namespace Telegram.Services
                         StorageFolder folder = await SAP.MostRecentlyUsedList.GetFolderAsync(DownloadFolder);
                         SAP.FutureAccessList.EnqueueOrReplace(DownloadFolder, folder);
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        Logger.Error(ex);
+                        // The app still remembers about the custom folder
+                        // but we have no longer access to it (deleted, or whatever) 
                     }
 
                     SAP.MostRecentlyUsedList.Remove(DownloadFolder);
