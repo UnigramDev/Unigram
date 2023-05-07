@@ -97,12 +97,12 @@ namespace Telegram.Common
             var count = SettingsService.Current.Diagnostics.UpdateCount;
 
             var info =
-                $"Current version: {version}" + 
-                $"Time since last update: {next - prev}s" +
-                $"Update count: {count}";
+                $"Current version: {version}\n" + 
+                $"Time since last update: {next - prev}s\n" +
+                $"Update count: {count}\n\n";
 
             var dump = Logger.Dump();
-            var payload = data + "\n----------\n" + info + "\n\n" + dump;
+            var payload = data + "\n----------\n" + info + dump;
 
             // Sigh...
             File.WriteAllText(Path.ChangeExtension(_crashLog, ".appcenter"), payload);

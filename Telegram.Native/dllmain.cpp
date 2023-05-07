@@ -81,36 +81,21 @@ static long Filter(_In_ struct _EXCEPTION_POINTERS* exceptionInfo)
         NativeUtils::Callback(GetStackTrace(exceptionInfo->ExceptionRecord->ExceptionCode));
     }
 
-    if (m_previous)
-    {
-        return m_previous(exceptionInfo);
-    }
-
-    return EXCEPTION_EXECUTE_HANDLER;
-
     // This code would allow the app to continue running,
     // but there are great chances to make a big mess.
-    if (exceptionInfo->ExceptionRecord->ExceptionFlags & EXCEPTION_NONCONTINUABLE)
-    {
-        return EXCEPTION_EXECUTE_HANDLER;
-    }
+    //if (exceptionInfo->ExceptionRecord->ExceptionFlags & EXCEPTION_NONCONTINUABLE)
+    //{
+    //    return EXCEPTION_EXECUTE_HANDLER;
+    //}
 
     return EXCEPTION_CONTINUE_EXECUTION;
 }
-
-static LPTOP_LEVEL_EXCEPTION_FILTER m_previous;
 
 STDAPI_(BOOL) DllMain(_In_opt_ HINSTANCE hinst, DWORD reason, _In_opt_ void* reserved)
 {
     if (reason == DLL_THREAD_ATTACH)
     {
-        m_previous = SetUnhandledExceptionFilter(Filter);
-    }
-    else if (reason == DLL_THREAD_DETACH && m_previous)
-    {
-        // TODO: I'm not sure if this is actually needed
-        SetUnhandledExceptionFilter(m_previous);
-        m_previous = nullptr;
+        SetUnhandledExceptionFilter(Filter);
     }
 
     return TRUE;
