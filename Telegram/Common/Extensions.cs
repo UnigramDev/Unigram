@@ -588,7 +588,7 @@ namespace Telegram.Common
             var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
             var path = file.Path;
 
-            if (conversion == ConversionType.Copy && arguments == null && NativeUtils.IsFileReadable(file.Path) && !forceCopy)
+            if (conversion == ConversionType.Copy && arguments == null && !forceCopy && NativeUtils.IsFileReadable(file.Path))
             {
                 return new InputFileLocal(path);
             }
@@ -599,7 +599,7 @@ namespace Telegram.Common
             }
 
             var props = await file.GetBasicPropertiesAsync();
-            return new InputFileGenerated(path, token + "#" + conversion + (arguments != null ? "#" + arguments : string.Empty) + "#" + props.DateModified.ToString("s"), (int)props.Size);
+            return new InputFileGenerated(path, token + "#" + conversion + (arguments != null ? "#" + arguments : string.Empty) + "#" + props.DateModified.ToString("s"), (long)props.Size);
         }
 
         public static async Task<InputThumbnail> ToThumbnailAsync(this StorageFile file, VideoConversion video = null, ConversionType conversion = ConversionType.Copy, string arguments = null)
