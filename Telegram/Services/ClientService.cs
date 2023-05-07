@@ -147,7 +147,6 @@ namespace Telegram.Services
         bool IsStickerSetInstalled(long id);
 
         ChatListUnreadCount GetUnreadCount(ChatList chatList);
-        void SetUnreadCount(ChatList chatList, UpdateUnreadChatCount chatCount = null, UpdateUnreadMessageCount messageCount = null);
 
         ChatTheme GetChatTheme(string themeName);
         IList<ChatTheme> GetChatThemes();
@@ -183,28 +182,28 @@ namespace Telegram.Services
 
         private readonly Action<BaseObject> _processFilesDelegate;
 
-        private readonly Dictionary<long, Chat> _chats = new Dictionary<long, Chat>();
-        private readonly ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>> _chatActions = new ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>>();
-        private readonly ConcurrentDictionary<ChatMessageId, ConcurrentDictionary<MessageSender, ChatAction>> _topicActions = new ConcurrentDictionary<ChatMessageId, ConcurrentDictionary<MessageSender, ChatAction>>();
+        private readonly Dictionary<long, Chat> _chats = new();
+        private readonly ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>> _chatActions = new();
+        private readonly ConcurrentDictionary<ChatMessageId, ConcurrentDictionary<MessageSender, ChatAction>> _topicActions = new();
 
-        private readonly Dictionary<int, SecretChat> _secretChats = new Dictionary<int, SecretChat>();
+        private readonly Dictionary<int, SecretChat> _secretChats = new();
 
-        private readonly Dictionary<long, long> _usersToChats = new Dictionary<long, long>();
+        private readonly Dictionary<long, long> _usersToChats = new();
 
-        private readonly Dictionary<long, User> _users = new Dictionary<long, User>();
-        private readonly Dictionary<long, UserFullInfo> _usersFull = new Dictionary<long, UserFullInfo>();
+        private readonly Dictionary<long, User> _users = new();
+        private readonly Dictionary<long, UserFullInfo> _usersFull = new();
 
-        private readonly Dictionary<long, BasicGroup> _basicGroups = new Dictionary<long, BasicGroup>();
-        private readonly Dictionary<long, BasicGroupFullInfo> _basicGroupsFull = new Dictionary<long, BasicGroupFullInfo>();
+        private readonly Dictionary<long, BasicGroup> _basicGroups = new();
+        private readonly Dictionary<long, BasicGroupFullInfo> _basicGroupsFull = new();
 
-        private readonly Dictionary<long, Supergroup> _supergroups = new Dictionary<long, Supergroup>();
-        private readonly Dictionary<long, SupergroupFullInfo> _supergroupsFull = new Dictionary<long, SupergroupFullInfo>();
+        private readonly Dictionary<long, Supergroup> _supergroups = new();
+        private readonly Dictionary<long, SupergroupFullInfo> _supergroupsFull = new();
 
-        private readonly Dictionary<ChatMessageId, ForumTopicInfo> _topics = new Dictionary<ChatMessageId, ForumTopicInfo>();
+        private readonly Dictionary<ChatMessageId, ForumTopicInfo> _topics = new();
 
-        private readonly Dictionary<int, ChatListUnreadCount> _unreadCounts = new Dictionary<int, ChatListUnreadCount>();
+        private readonly Dictionary<int, ChatListUnreadCount> _unreadCounts = new();
 
-        private readonly Dictionary<int, File> _files = new Dictionary<int, File>();
+        private readonly Dictionary<int, File> _files = new();
 
         private IList<string> _diceEmojis;
 
@@ -237,7 +236,7 @@ namespace Telegram.Services
         private bool _initializeAfterClose;
 
         private static volatile Task _longRunningTask;
-        private static readonly object _longRunningLock = new object();
+        private static readonly object _longRunningLock = new();
 
         public ClientService(int session, bool online, IDeviceInfoService deviceInfoService, ISettingsService settings, ILocaleService locale, IEventAggregator aggregator)
         {
@@ -592,7 +591,7 @@ namespace Telegram.Services
 
 
 
-        private readonly Dictionary<long, DateTime> _chatAccessibleUntil = new Dictionary<long, DateTime>();
+        private readonly Dictionary<long, DateTime> _chatAccessibleUntil = new();
 
         public async Task<BaseObject> CheckChatInviteLinkAsync(string inviteLink)
         {
@@ -640,7 +639,13 @@ namespace Telegram.Services
 
         public ChatListUnreadCount GetUnreadCount(ChatList chatList)
         {
-            var id = GetIdFromChatList(chatList);
+            var id = chatList switch
+            {
+                ChatListArchive => 1,
+                ChatListFolder folder => folder.ChatFolderId,
+                _ => 0
+            };
+
             if (_unreadCounts.TryGetValue(id, out ChatListUnreadCount value))
             {
                 return value;
@@ -656,7 +661,13 @@ namespace Telegram.Services
 
         public void SetUnreadCount(ChatList chatList, UpdateUnreadChatCount chatCount = null, UpdateUnreadMessageCount messageCount = null)
         {
-            var id = GetIdFromChatList(chatList);
+            var id = chatList switch
+            {
+                ChatListArchive => 1,
+                ChatListFolder folder => folder.ChatFolderId,
+                _ => 0
+            };
+
             if (_unreadCounts.TryGetValue(id, out ChatListUnreadCount value))
             {
                 value.UnreadChatCount = chatCount ?? value.UnreadChatCount;
@@ -671,24 +682,6 @@ namespace Telegram.Services
                 UnreadChatCount = chatCount ?? new UpdateUnreadChatCount(),
                 UnreadMessageCount = messageCount ?? new UpdateUnreadMessageCount()
             };
-        }
-
-        private int GetIdFromChatList(ChatList chatList)
-        {
-            if (chatList is ChatListMain or null)
-            {
-                return 0;
-            }
-            else if (chatList is ChatListArchive)
-            {
-                return 1;
-            }
-            else if (chatList is ChatListFolder folder)
-            {
-                return folder.ChatFolderId;
-            }
-
-            return -1;
         }
 
 

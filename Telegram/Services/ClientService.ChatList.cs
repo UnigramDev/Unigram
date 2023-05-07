@@ -45,7 +45,12 @@ namespace Telegram.Services
         {
             Monitor.Enter(_chatList);
 
-            var index = GetIdFromChatList(chatList);
+            var index = chatList switch
+            {
+                ChatListArchive => 1,
+                ChatListFolder folder => folder.ChatFolderId,
+                _ => 0
+            };
 
             var count = offset + limit;
             var sorted = _chatList[index];
