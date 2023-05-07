@@ -26,26 +26,11 @@ namespace Telegram.ViewModels
             _passcodeService = passcodeService;
         }
 
-        public bool IsPasscodeEnabled
-        {
-            get { return _passcodeService.IsEnabled; }
-        }
+        public bool IsPasscodeEnabled => _passcodeService.IsEnabled;
 
         public async void ChangePhoneNumber()
         {
-            var popup = new ChangePhoneNumberPopup();
-
-            var change = await ShowPopupAsync(popup);
-            if (change != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            var confirm = await ShowPopupAsync(Strings.PhoneNumberAlert, Strings.AppName, Strings.OK, Strings.Cancel);
-            if (confirm == ContentDialogResult.Primary)
-            {
-                NavigationService.Navigate(typeof(SettingsPhonePage));
-            }
+            await ShowPopupAsync(new ChangePhoneNumberPopup());
         }
 
         public async void Ask()

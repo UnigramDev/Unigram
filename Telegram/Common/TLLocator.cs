@@ -109,8 +109,7 @@ namespace Telegram.Views
                 return (T)(object)new Telegram.ViewModels.Authorization.AuthorizationCodeViewModel(
                     _clientService,
                     _settingsService,
-                    _eventAggregator,
-                    _sessionService);
+                    _eventAggregator);
             }
             else if (type == typeof(Telegram.ViewModels.Authorization.AuthorizationPasswordViewModel))
             {
@@ -575,20 +574,6 @@ namespace Telegram.Views
                         _clientService,
                         _networkService,
                         _eventAggregator));
-            }
-            else if (type == typeof(Telegram.ViewModels.Settings.SettingsPhoneViewModel))
-            {
-                return (T)(object)new Telegram.ViewModels.Settings.SettingsPhoneViewModel(
-                    _clientService,
-                    _settingsService,
-                    _eventAggregator);
-            }
-            else if (type == typeof(Telegram.ViewModels.Settings.SettingsPhoneSentCodeViewModel))
-            {
-                return (T)(object)new Telegram.ViewModels.Settings.SettingsPhoneSentCodeViewModel(
-                    _clientService,
-                    _settingsService,
-                    _eventAggregator);
             }
             else if (type == typeof(Telegram.ViewModels.Settings.SettingsStorageViewModel))
             {

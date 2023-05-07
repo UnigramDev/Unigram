@@ -15,8 +15,7 @@ namespace Telegram.Views.Settings
             InitializeComponent();
 
             Title = Strings.ChangePhoneNumber;
-            PrimaryButtonText = Strings.Change;
-            SecondaryButtonText = Strings.Cancel;
+            PrimaryButtonText = Strings.OK;
         }
     }
 }

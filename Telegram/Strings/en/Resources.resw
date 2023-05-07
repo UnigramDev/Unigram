@@ -4887,7 +4887,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.</value>
   </data>
   <data name="PhoneNumberHelp" xml:space="preserve">
-    <value>You can change your Telegram number here. Your account and all your cloud data — messages, media, contacts, etc. will be moved to the new number.</value>
+    <value>You can change your Telegram number from the official Telegram app for Android and iPhone. Your account and all your cloud data — messages, media, contacts, etc. will be moved to the new number.</value>
   </data>
   <data name="PhotoForRestDescription" xml:space="preserve">
     <value>You can upload a public photo for users who are restricted from seeing your real profile photos.</value>

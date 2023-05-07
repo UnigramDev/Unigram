@@ -550,8 +550,6 @@ namespace Telegram
                 SettingsStickersPage => TLContainer.Current.Resolve<SettingsStickersViewModel>(sessionId),
                 //
                 SettingsThemePage => TLContainer.Current.Resolve<SettingsThemeViewModel>(sessionId),
-                SettingsPhoneSentCodePage => TLContainer.Current.Resolve<SettingsPhoneSentCodeViewModel>(sessionId),
-                SettingsPhonePage => TLContainer.Current.Resolve<SettingsPhoneViewModel>(sessionId),
                 //
                 SettingsAdvancedPage => TLContainer.Current.Resolve<SettingsAdvancedViewModel>(sessionId),
                 SettingsAppearancePage => TLContainer.Current.Resolve<SettingsAppearanceViewModel>(sessionId),

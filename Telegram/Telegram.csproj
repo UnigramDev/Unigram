@@ -938,8 +938,6 @@
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordEmailViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordHintViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordIntroViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Phone\SettingsPhoneSentCodeViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Phone\SettingsPhoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowCallsViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowChatInvitesViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowFindingByPhoneNumberViewModel.cs" />
@@ -1143,12 +1141,6 @@
     </Compile>
     <Compile Include="Views\Settings\Phone\ChangePhoneNumberPopup.xaml.cs">
       <DependentUpon>ChangePhoneNumberPopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Phone\SettingsPhonePage.xaml.cs">
-      <DependentUpon>SettingsPhonePage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Phone\SettingsPhoneSentCodePage.xaml.cs">
-      <DependentUpon>SettingsPhoneSentCodePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Popups\SettingsDataAutoPopup.xaml.cs">
       <DependentUpon>SettingsDataAutoPopup.xaml</DependentUpon>
@@ -2395,14 +2387,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\Phone\ChangePhoneNumberPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Settings\Phone\SettingsPhonePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Settings\Phone\SettingsPhoneSentCodePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

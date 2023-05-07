@@ -32,7 +32,7 @@ namespace Telegram.Views.Settings
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Photo.SetUser(ViewModel.ClientService, user, 140);
+            Photo.SetUser(ViewModel.ClientService, user, 96);
 
 #if DEBUG
             PhoneNumber.Badge = "+42 --- --- ----";

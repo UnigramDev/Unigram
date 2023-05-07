@@ -16,14 +16,11 @@ namespace Telegram.ViewModels.Authorization
 {
     public class AuthorizationCodeViewModel : TLViewModelBase
     {
-        private readonly ISessionService _sessionService;
         private bool _confirmedGoBack;
 
-        public AuthorizationCodeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ISessionService sessionService)
+        public AuthorizationCodeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            _sessionService = sessionService;
-
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
             ResendCommand = new RelayCommand(ResendExecute, () => !IsLoading);
         }

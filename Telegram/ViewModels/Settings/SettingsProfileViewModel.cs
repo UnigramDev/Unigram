@@ -12,7 +12,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Popups;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -192,19 +191,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void ChangePhoneNumber()
         {
-            var popup = new ChangePhoneNumberPopup();
-
-            var change = await ShowPopupAsync(popup);
-            if (change != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            var confirm = await ShowPopupAsync(Strings.PhoneNumberAlert, Strings.AppName, Strings.OK, Strings.Cancel);
-            if (confirm == ContentDialogResult.Primary)
-            {
-                NavigationService.Navigate(typeof(SettingsPhonePage));
-            }
+            await ShowPopupAsync(new ChangePhoneNumberPopup());
         }
 
         public async void ChangeUsername()
