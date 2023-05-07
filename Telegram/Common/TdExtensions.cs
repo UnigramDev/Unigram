@@ -2297,10 +2297,17 @@ namespace Telegram.Td.Api
             for (int i = 0; i < rects.Length; i++)
             {
                 var rect = positions.Item1[i].Item1;
-                rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, rect.Width * ratio, rect.Height * ratio);
+
+                var width = Math.Max(0, rect.Width * ratio);
+                var height = Math.Max(0, rect.Height * ratio);
+
+                rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, width, height);
             }
 
-            return (rects, new Size(positions.Item2.Width * ratio, positions.Item2.Height * ratio));
+            var finalWidth = Math.Max(0, positions.Item2.Width * ratio);
+            var finalHeight = Math.Max(0, positions.Item2.Height * ratio);
+
+            return (rects, new Size(finalWidth, finalHeight));
         }
 
         private IEnumerable<Size> GetSizes()
