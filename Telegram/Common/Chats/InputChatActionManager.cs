@@ -4,18 +4,18 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Services;
 using Telegram.Td.Api;
 
 namespace Telegram.Common.Chats
 {
     public class InputChatActionManager
     {
-        public static string GetTypingString(Chat chat, IDictionary<MessageSender, ChatAction> typingUsers, Func<long, User> getUser, Func<long, Chat> getChat, out ChatAction commonAction)
+        public static string GetTypingString(ChatType chatType, IDictionary<MessageSender, ChatAction> typingUsers, IClientService clientService, out ChatAction commonAction)
         {
-            if (chat?.Type is ChatTypePrivate or ChatTypeSecret)
+            if (chatType is ChatTypePrivate or ChatTypeSecret)
             {
                 var tuple = typingUsers.FirstOrDefault();
                 var action = tuple.Value;
@@ -67,27 +67,18 @@ namespace Telegram.Common.Chats
                 var tuple = typingUsers.FirstOrDefault();
 
                 string userName = null;
-                if (tuple.Key is MessageSenderUser senderUser)
+                if (clientService.TryGetUser(tuple.Key, out User senderUser))
                 {
-                    var user = getUser.Invoke(senderUser.UserId);
-                    if (user == null)
-                    {
-                        commonAction = null;
-                        return string.Empty;
-                    }
-
-                    userName = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
+                    userName = senderUser.FirstName;
                 }
-                else if (tuple.Key is MessageSenderChat senderChat)
+                else if (clientService.TryGetChat(tuple.Key, out Chat senderChat))
                 {
-                    var user = getChat.Invoke(senderChat.ChatId);
-                    if (user == null)
-                    {
-                        commonAction = null;
-                        return string.Empty;
-                    }
-
-                    userName = chat.Title;
+                    userName = senderChat.Title;
+                }
+                else
+                {
+                    commonAction = null;
+                    return string.Empty;
                 }
 
                 var action = tuple.Value;
@@ -136,31 +127,23 @@ namespace Telegram.Common.Chats
                 var label = string.Empty;
                 foreach (var pu in typingUsers)
                 {
-                    if (pu.Key is MessageSenderUser senderUser)
+                    if (clientService.TryGetUser(pu.Key, out User senderUser))
                     {
-                        var user = getUser.Invoke(senderUser.UserId);
-                        if (user != null)
+                        if (label.Length > 0)
                         {
-                            if (label.Length > 0)
-                            {
-                                label += ", ";
-                            }
-                            label += string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
-                            count++;
+                            label += ", ";
                         }
+                        label += senderUser.FirstName;
+                        count++;
                     }
-                    else if (pu.Key is MessageSenderChat senderChat)
+                    else if (clientService.TryGetChat(pu.Key, out Chat senderChat))
                     {
-                        var user = getChat.Invoke(senderChat.ChatId);
-                        if (user != null)
+                        if (label.Length > 0)
                         {
-                            if (label.Length > 0)
-                            {
-                                label += ", ";
-                            }
-                            label += user.Title;
-                            count++;
+                            label += ", ";
                         }
+                        label += senderChat.Title;
+                        count++;
                     }
 
                     if (count == 2)

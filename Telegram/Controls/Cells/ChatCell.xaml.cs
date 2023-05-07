@@ -570,7 +570,7 @@ namespace Telegram.Controls.Cells
 
             if (actions != null && actions.Count > 0)
             {
-                TypingLabel.Text = InputChatActionManager.GetTypingString(chat, actions, _clientService.GetUser, _clientService.GetChat, out ChatAction commonAction);
+                TypingLabel.Text = InputChatActionManager.GetTypingString(chat.Type, actions, _clientService, out ChatAction commonAction);
                 ChatActionIndicator.UpdateAction(commonAction);
                 ChatActionIndicator.Visibility = Visibility.Visible;
                 TypingLabel.Visibility = Visibility.Visible;

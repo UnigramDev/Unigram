@@ -3995,7 +3995,7 @@ namespace Telegram.Views
 
             if (actions != null && actions.Count > 0 && (ViewModel.Type == DialogType.History || ViewModel.Type == DialogType.Thread))
             {
-                ChatActionLabel.Text = InputChatActionManager.GetTypingString(chat, actions, ViewModel.ClientService.GetUser, ViewModel.ClientService.GetChat, out ChatAction commonAction);
+                ChatActionLabel.Text = InputChatActionManager.GetTypingString(chat.Type, actions, ViewModel.ClientService, out ChatAction commonAction);
                 ChatActionIndicator.UpdateAction(commonAction);
                 ChatActionPanel.Visibility = Visibility.Visible;
                 Subtitle.Opacity = 0;
