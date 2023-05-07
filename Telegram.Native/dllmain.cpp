@@ -85,10 +85,10 @@ static long Filter(_In_ struct _EXCEPTION_POINTERS* exceptionInfo)
     // but there are great chances to make a big mess.
     //if (exceptionInfo->ExceptionRecord->ExceptionFlags & EXCEPTION_NONCONTINUABLE)
     //{
-    //    return EXCEPTION_EXECUTE_HANDLER;
+    return EXCEPTION_EXECUTE_HANDLER;
     //}
 
-    return EXCEPTION_CONTINUE_EXECUTION;
+    //return EXCEPTION_CONTINUE_EXECUTION;
 }
 
 STDAPI_(BOOL) DllMain(_In_opt_ HINSTANCE hinst, DWORD reason, _In_opt_ void* reserved)
