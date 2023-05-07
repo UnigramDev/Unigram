@@ -467,7 +467,15 @@ namespace Telegram.Controls
 
             range.SetText(end > start ? TextSetOptions.Unlink : TextSetOptions.None, popup.Text);
             range.SetRange(start, start + popup.Text.Length);
-            range.Link = $"\"{popup.Link}\"";
+
+            if (IsSafe(popup.Text))
+            {
+                range.Link = $"\"{popup.Link}\"";
+            }
+            else
+            {
+                range.Link = string.Empty;
+            }
 
             Document.Selection.SetRange(range.EndPosition, range.EndPosition);
             Document.ApplyDisplayUpdates();
@@ -962,11 +970,11 @@ namespace Telegram.Controls
                         {
                             range.CharacterFormat.Name = "Consolas";
                         }
-                        else if (entity.Type is TextEntityTypeTextUrl textUrl)
+                        else if (entity.Type is TextEntityTypeTextUrl textUrl && IsSafe(text, entity))
                         {
                             range.Link = $"\"{textUrl.Url}\"";
                         }
-                        else if (entity.Type is TextEntityTypeMentionName mentionName)
+                        else if (entity.Type is TextEntityTypeMentionName mentionName && IsSafe(text, entity))
                         {
                             range.Link = $"\"tg-user://{mentionName.UserId}\"";
                         }
@@ -1024,11 +1032,11 @@ namespace Telegram.Controls
                         {
                             range.CharacterFormat.Name = "Consolas";
                         }
-                        else if (entity.Type is TextEntityTypeTextUrl textUrl)
+                        else if (entity.Type is TextEntityTypeTextUrl textUrl && IsSafe(text, entity))
                         {
                             range.Link = $"\"{textUrl.Url}\"";
                         }
-                        else if (entity.Type is TextEntityTypeMentionName mentionName)
+                        else if (entity.Type is TextEntityTypeMentionName mentionName && IsSafe(text, entity))
                         {
                             range.Link = $"\"tg-user://{mentionName.UserId}\"";
                         }
@@ -1042,6 +1050,38 @@ namespace Telegram.Controls
             Document.EndUndoGroup();
 
             _updateLocked = false;
+        }
+
+        private static readonly char[] _unsafeChars = new[]
+        {
+            '\u0000', '\u0001', '\u0002', '\u0003', '\u0004', '\u0005', '\u0006', '\u0007', '\u0008',
+            '\u0009', '\u000a', '\u000b', '\u000c', '\u000d', '\u000e', '\u000f', '\u0010', '\u0011',
+            '\u0012', '\u0013', '\u0014', '\u0015', '\u0016', '\u0017', '\u0018', '\u0019', '\u001a',
+            '\u001b', '\u001c', '\u001d', '\u001e', '\u001f', '\u0020', '\u007f', '\u0080', '\u0081',
+            '\u0082', '\u0083', '\u0084', '\u0085', '\u0086', '\u0087', '\u0088', '\u0089', '\u008a',
+            '\u008b', '\u008c', '\u008d', '\u008e', '\u008f', '\u0090', '\u0091', '\u0092', '\u0093',
+            '\u0094', '\u0095', '\u0096', '\u0097', '\u0098', '\u0099', '\u009a', '\u009b', '\u009c',
+            '\u009d', '\u009e', '\u009f', '\u00a0', '\u0600', '\u0601', '\u0602', '\u0603', '\u06dd',
+            '\u070f', '\u1680', '\u17b4', '\u17b5', '\u180e', '\u2000', '\u2001', '\u2002', '\u2003',
+            '\u2004', '\u2005', '\u2006', '\u2007', '\u2008', '\u2009', '\u200a', '\u200b', '\u200c',
+            '\u200d', '\u200e', '\u200f', '\u2028', '\u2029', '\u202a', '\u202b', '\u202c', '\u202d',
+            '\u202e', '\u202f', '\u205f', '\u2060', '\u2061', '\u2062', '\u2063', '\u2064', '\u206a',
+            '\u206b', '\u206c', '\u206d', '\u206e', '\u206f', '\u3000', '\ufdd0', '\ufdd1', '\ufdd2',
+            '\ufdd3', '\ufdd4', '\ufdd5', '\ufdd6', '\ufdd7', '\ufdd8', '\ufdd9', '\ufdda', '\ufddb',
+            '\ufddc', '\ufddd', '\ufdde', '\ufddf', '\ufde0', '\ufde1', '\ufde2', '\ufde3', '\ufde4',
+            '\ufde5', '\ufde6', '\ufde7', '\ufde8', '\ufde9', '\ufdea', '\ufdeb', '\ufdec', '\ufded',
+            '\ufdee', '\ufdef', '\ufeff', '\ufff9', '\ufffa', '\ufffb', '\ufffc', '\ufffe'
+        };
+
+        private static bool IsSafe(string text, TextEntity entity = null)
+        {
+            if (entity != null)
+            {
+                text = text.Substring(entity.Offset, entity.Length);
+            }
+
+            text = text.Trim(_unsafeChars);
+            return text.Length > 0;
         }
 
         public void InsertText(string text, bool allowPreceding = false, bool allowTrailing = false)
