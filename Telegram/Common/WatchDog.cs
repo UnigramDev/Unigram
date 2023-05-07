@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using Telegram.Controls;
+using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Windows.ApplicationModel.Activation;
@@ -20,19 +21,19 @@ namespace Telegram.Common
 
     public class UnhandledException : Exception
     {
-        public UnhandledException()
-            : base("The process crashed.")
+        public UnhandledException(string message)
+            : base(message)
         {
         }
     }
 
     public class WatchDog
     {
-        private static readonly string _crashLock;
+        private static readonly string _crashLog;
 
         static WatchDog()
         {
-            _crashLock = Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.lock");
+            _crashLog = Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.log");
         }
 
         public static bool? HasCrashedInLastSession { get; private set; }
@@ -43,23 +44,25 @@ namespace Telegram.Common
             // since the last time the user rebooted or logged in. It can also be in this
             // state if it was running but then crashed, or because the user closed it earlier.
 
-            if (previousExecutionState == ApplicationExecutionState.NotRunning && File.Exists(_crashLock))
+            if (previousExecutionState == ApplicationExecutionState.NotRunning && File.Exists(_crashLog))
             {
-                var text = File.ReadAllText(_crashLock);
-                // TODO: REMOVE ME!!!
-                if (text.Contains("(8374)") || text.Contains("(8376)"))
-                {
+                var text = File.ReadAllText(_crashLog);
+                var split = text.Split("\n----------\n");
 
-                }
-                else if (text.StartsWith("Unhandled"))
+                if (split.Length == 2)
                 {
                     HasCrashedInLastSession = true;
-                    Crashes.TrackError(new UnhandledException(), attachments: ErrorAttachmentLog.AttachmentWithText(text, "crash.txt"));
+
+                    var exception = GetException(split[0], out bool report);
+                    if (report)
+                    {
+                        Crashes.TrackError(exception, attachments: ErrorAttachmentLog.AttachmentWithText(split[1], "crash.txt"));
+                    }
                 }
                 else
                 {
                     HasCrashedInLastSession = null;
-                    Crashes.TrackError(new UnexpectedException(), attachments: ErrorAttachmentLog.AttachmentWithText(text, "crash.txt"));
+                    Crashes.TrackError(new UnexpectedException());
                 }
             }
             else
@@ -67,20 +70,52 @@ namespace Telegram.Common
                 HasCrashedInLastSession = false;
             }
 
-            File.WriteAllText(_crashLock, VersionLabel.GetVersion());
+            File.WriteAllText(_crashLog, VersionLabel.GetVersion());
+        }
+
+        private static Exception GetException(string message, out bool unhandled)
+        {
+            if (message.StartsWith("TDLib"))
+            {
+                var exception = TdException.FromMessage(message);
+                unhandled = exception.IsUnhandled;
+
+                return exception;
+            }
+
+            unhandled = true;
+            return new UnhandledException(message);
         }
 
         public static void Update(string data)
         {
-            File.WriteAllText(_crashLock, data);
-            Client.Execute(new AddLogMessage(1, data));
+            var version = VersionLabel.GetVersion();
+
+            var next = DateTime.Now.ToTimestamp();
+            var prev = SettingsService.Current.Diagnostics.LastUpdateTime;
+
+            var count = SettingsService.Current.Diagnostics.UpdateCount;
+
+            var info =
+                $"Current version: {version}" + 
+                $"Time since last update: {next - prev}s" +
+                $"Update count: {count}";
+
+            var dump = Logger.Dump();
+            var payload = data + "\n----------\n" + info + "\n\n" + dump;
+
+            // Sigh...
+            File.WriteAllText(Path.ChangeExtension(_crashLog, ".appcenter"), payload);
+
+            File.WriteAllText(_crashLog, payload);
+            Client.Execute(new AddLogMessage(1, payload));
         }
 
         public static void Stop()
         {
-            if (File.Exists(_crashLock))
+            if (File.Exists(_crashLog))
             {
-                File.Delete(_crashLock);
+                File.Delete(_crashLog);
             }
         }
     }

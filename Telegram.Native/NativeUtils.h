@@ -35,6 +35,10 @@ namespace winrt::Telegram::Native::implementation
 
 		static bool IsMediaSupported();
 
+		static void SetFatalErrorCallback(FatalErrorCallback action);
+
+		static FatalErrorCallback Callback;
+
 	private:
 		static uint64_t GetDirectorySizeInternal(const std::wstring &path, const std::wstring &filter, uint64_t size);
 		static void CleanDirectoryInternal(const std::wstring &path, int days);

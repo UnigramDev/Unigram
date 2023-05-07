@@ -1,5 +1,7 @@
 namespace Telegram.Native
 {
+	delegate void FatalErrorCallback(String stackTrace);
+
     [default_interface]
 	runtimeclass NativeUtils
 	{
@@ -25,5 +27,7 @@ namespace Telegram.Native
 		static Boolean IsFileReadable(String path, out Int64 fileSize, out Int64 fileTime);
 
 		static Boolean IsMediaSupported();
+
+		static void SetFatalErrorCallback(FatalErrorCallback action);
 	}
 } // namespace Telegram.Native

@@ -407,6 +407,7 @@
     <ClCompile Include="BufferSurface.cpp" />
     <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="TelegramWebviewProxy.cpp" />
+    <ClCompile Include="dllmain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

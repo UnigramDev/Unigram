@@ -569,6 +569,7 @@
     <ClCompile Include="Composition\DirectRectangleClip.cpp">
       <DependentUpon>Composition\DirectRectangleClip.idl</DependentUpon>
     </ClCompile>
+    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Generated Files\module.g.cpp" />
     <ClCompile Include="Helpers\LibraryHelper.cpp" />
     <ClCompile Include="HttpProxyWatcher.cpp">

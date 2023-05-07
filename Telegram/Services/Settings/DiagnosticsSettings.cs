@@ -63,27 +63,6 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _deviceName, "DeviceName", value);
         }
 
-        private string _lastErrorMessage;
-        public string LastErrorMessage
-        {
-            get => _lastErrorMessage ??= GetValueOrDefault("LastErrorMessage", string.Empty);
-            set => AddOrUpdateValue(ref _lastErrorMessage, "LastErrorMessage", value);
-        }
-
-        private string _lastErrorProperties;
-        public string LastErrorProperties
-        {
-            get => _lastErrorProperties ??= GetValueOrDefault("LastErrorProperties", string.Empty);
-            set => AddOrUpdateValue(ref _lastErrorProperties, "LastErrorProperties", value);
-        }
-
-        private int? _lastErrorVersion;
-        public int LastErrorVersion
-        {
-            get => _lastErrorVersion ??= GetValueOrDefault("LastErrorVersion", 0);
-            set => AddOrUpdateValue(ref _lastErrorVersion, "LastErrorVersion", value);
-        }
-
         private int? _updateCount;
         public int UpdateCount
         {

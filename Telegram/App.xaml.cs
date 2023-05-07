@@ -9,11 +9,13 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
+using Telegram.Td;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Authorization;
 using Telegram.ViewModels.BasicGroups;
@@ -53,7 +55,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
 using Windows.Foundation;
-using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.ViewManagement;
@@ -67,8 +68,6 @@ namespace Telegram
     {
         public static ShareOperation ShareOperation { get; set; }
         public static Window ShareWindow { get; set; }
-
-        public bool IsBackground { get; private set; }
 
         public static ConcurrentDictionary<long, DataPackageView> DataPackages { get; } = new ConcurrentDictionary<long, DataPackageView>();
 
@@ -101,18 +100,16 @@ namespace Telegram
             UnhandledException += (s, args) =>
             {
                 args.Handled = args.Exception is not LayoutCycleException;
-
-                var path = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.txt");
-                var data = $"Unhandled exception:\n{args.Exception}\n\n{Logger.Dump()}";
-
-                System.IO.File.WriteAllText(path, data);
-                WatchDog.Update(data);
+                WatchDog.Update($"Unhandled exception: {args.Exception}");
             };
+
+            NativeUtils.SetFatalErrorCallback(FatalErrorCallback);
+            Client.SetLogMessageCallback(0, FatalErrorCallback);
 
 #if !DEBUG
             Microsoft.AppCenter.Crashes.Crashes.GetErrorAttachments = report =>
             {
-                var path = System.IO.Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.txt");
+                var path = System.IO.Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "crash.appcenter");
                 if (System.IO.File.Exists(path))
                 {
                     var data = System.IO.File.ReadAllText(path);
@@ -132,54 +129,25 @@ namespace Telegram
                     { "DeviceFamily", Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily },
                     { "Architecture", Package.Current.Id.Architecture.ToString() }
                 });
+#endif
+        }
 
-            static void FatalErrorCallback(int verbosityLevel, string message)
+        private static void FatalErrorCallback(string message)
+        {
+            FatalErrorCallback(int.MaxValue, message);
+        }
+
+        private static void FatalErrorCallback(int verbosityLevel, string message)
+        {
+            if (verbosityLevel == 0 || verbosityLevel == int.MaxValue)
             {
                 if (verbosityLevel == 0)
                 {
-                    var next = DateTime.Now.ToTimestamp();
-                    var prev = SettingsService.Current.Diagnostics.LastUpdateTime;
-
-                    SettingsService.Current.Diagnostics.LastErrorMessage = message;
-                    SettingsService.Current.Diagnostics.LastErrorVersion = Package.Current.Id.Version.Build;
-                    SettingsService.Current.Diagnostics.LastErrorProperties = string.Join(';', new[]
-                    {
-                        $"CurrentVersion={Telegram.Controls.VersionLabel.GetVersion()}",
-                        $"LastUpdate={next - prev}s",
-                        $"UpdateCount={SettingsService.Current.Diagnostics.UpdateCount}"
-                    });
+                    message = $"TDLib exception: {message}";
                 }
+
+                WatchDog.Update(message);
             }
-
-            Telegram.Td.Client.SetLogMessageCallback(0, FatalErrorCallback);
-
-            var lastMessage = SettingsService.Current.Diagnostics.LastErrorMessage;
-            if (lastMessage != null && lastMessage.Length > 0 && SettingsService.Current.Diagnostics.LastErrorVersion == Package.Current.Id.Version.Build)
-            {
-                SettingsService.Current.Diagnostics.LastErrorMessage = null;
-                SettingsService.Current.Diagnostics.IsLastErrorDiskFull = TdException.IsDiskFullError(lastMessage);
-
-                var exception = TdException.FromMessage(lastMessage);
-                if (exception.IsUnhandled)
-                {
-                    Microsoft.AppCenter.Crashes.Crashes.TrackError(exception,
-                        SettingsService.Current.Diagnostics.LastErrorProperties.Split(';').Select(x => x.Split('=')).ToDictionary(x => x[0], y => y[1]));
-                }
-            }
-#endif
-
-            EnteredBackground += OnEnteredBackground;
-            LeavingBackground += OnLeavingBackground;
-        }
-
-        private void OnEnteredBackground(object sender, EnteredBackgroundEventArgs e)
-        {
-            IsBackground = true;
-        }
-
-        private void OnLeavingBackground(object sender, LeavingBackgroundEventArgs e)
-        {
-            IsBackground = false;
         }
 
         protected override void OnWindowCreated(WindowCreatedEventArgs args)

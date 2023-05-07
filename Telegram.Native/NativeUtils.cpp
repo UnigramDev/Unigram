@@ -20,6 +20,13 @@ using namespace winrt::Windows::UI::Notifications;
 
 namespace winrt::Telegram::Native::implementation
 {
+    FatalErrorCallback NativeUtils::Callback;
+
+    void NativeUtils::SetFatalErrorCallback(FatalErrorCallback callback)
+    {
+        Callback = callback;
+    }
+
     bool NativeUtils::FileExists(hstring path)
     {
         WIN32_FILE_ATTRIBUTE_DATA fileInfo;
@@ -300,7 +307,6 @@ namespace winrt::Telegram::Native::implementation
         CloseHandle(handle);
         return true;
     }
-
 
     bool NativeUtils::IsMediaSupported()
     {
