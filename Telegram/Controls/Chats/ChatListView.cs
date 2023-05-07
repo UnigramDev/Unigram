@@ -110,12 +110,7 @@ namespace Telegram.Controls.Chats
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             Logger.Debug();
-
-            // TODO: triple check
-            if (e.NewSize.Height < ActualHeight)
-            {
-                ViewChanged();
-            }
+            ViewChanged();
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
