@@ -5,10 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
+using Windows.Foundation;
 using Windows.Media.Audio;
 using Windows.Media.Render;
 using Windows.Storage;
@@ -17,67 +16,83 @@ namespace Telegram.Common
 {
     public static class SoundEffects
     {
+        private static AudioGraph _temporaryGraph;
+        private static AudioGraph _permanentGraph;
+
+        private static int _permanentCount;
+
         public static void Stop()
+        {
+            StopTemporary();
+            StopPermanent();
+        }
+
+        private static void StopTemporary()
         {
             try
             {
-                foreach (var reference in _prevGraph.Values.ToArray())
-                {
-                    if (reference.TryGetTarget(out AudioGraph target))
-                    {
-                        reference.SetTarget(null);
-                        target.Stop();
-                    }
-                }
+                _temporaryGraph?.Stop();
+                _temporaryGraph?.Dispose();
             }
             catch { }
 
-            _prevGraph.Clear();
+            _temporaryGraph = null;
         }
 
-        public static async void Play(SoundEffect effect)
+        private static void StopPermanent()
+        {
+            try
+            {
+                _permanentGraph?.Stop();
+                _permanentGraph?.Dispose();
+            }
+            catch { }
+
+            _permanentGraph = null;
+            _permanentCount = 0;
+        }
+
+        public static void Play(SoundEffect effect)
         {
             switch (effect)
             {
                 case SoundEffect.Sent:
-                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/sent.mp3")));
+                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/sent.mp3")));
                     break;
                 case SoundEffect.VoipIncoming:
-                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_incoming.mp3")), null, 0);
+                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_incoming.mp3")), null, true);
                     break;
                 case SoundEffect.VoipRingback:
-                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_ringback.mp3")), null, 0);
+                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_ringback.mp3")), null, true);
                     break;
                 case SoundEffect.VoipConnecting:
-                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_connecting.mp3")), tag: 0);
+                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_connecting.mp3")), permanent: true);
                     break;
                 case SoundEffect.VoipBusy:
-                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_busy.mp3")), 5, 0);
+                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voip_busy.mp3")), 4, permanent: true);
                     break;
                 case SoundEffect.VideoChatJoin:
-                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voicechat_join.mp3")), tag: 0);
+                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voicechat_join.mp3")), permanent: true);
                     break;
                 case SoundEffect.VideoChatLeave:
-                    await Play(await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voicechat_leave.mp3")), tag: 0);
+                    _ = Play(StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Audio/voicechat_leave.mp3")), permanent: true);
                     break;
             }
         }
 
-        public static async void Play(File file)
+        public static void Play(File file)
         {
             if (file.Local.IsDownloadingCompleted)
             {
-                await Play(await StorageFile.GetFileFromPathAsync(file.Local.Path), tag: 1);
+                _ = Play(StorageFile.GetFileFromPathAsync(file.Local.Path), permanent: true);
             }
         }
 
-        private static readonly ConcurrentDictionary<int, WeakReference<AudioGraph>> _prevGraph = new ConcurrentDictionary<int, WeakReference<AudioGraph>>();
-
-        private static async Task Play(StorageFile file, int? loopCount = 0, int? tag = null)
+        private static async Task Play(IAsyncOperation<StorageFile> fileTask, int? loopCount = 0, bool permanent = false)
         {
             try
             {
-                await Task.Yield();
+                var file = await fileTask;
 
                 // This seems to fail in some conditions.
                 var settings = new AudioGraphSettings(AudioRenderCategory.Media);
@@ -106,15 +121,49 @@ namespace Telegram.Common
                 fileInputNodeResult.FileInputNode
                     .AddOutgoingConnection(deviceOutputNodeResult.DeviceOutputNode);
 
-                if (tag != null)
+                if (permanent)
                 {
-                    if (_prevGraph.TryGetValue(tag.Value, out WeakReference<AudioGraph> reference) && reference.TryGetTarget(out AudioGraph target))
+                    StopPermanent();
+                    _permanentGraph = result.Graph;
+                    _permanentCount = loopCount ?? -1;
+
+                    void handler(AudioFileInputNode node, object args)
                     {
-                        reference.SetTarget(null);
-                        target.Stop();
+                        try
+                        {
+                            if (_permanentCount == 0)
+                            {
+                                node.FileCompleted -= handler;
+                                StopPermanent();
+                            }
+                            else
+                            {
+                                _permanentCount--;
+                            }
+                        }
+                        catch
+                        {
+                            StopPermanent();
+                        }
                     }
 
-                    _prevGraph[tag.Value] = new WeakReference<AudioGraph>(result.Graph);
+                    if (loopCount.HasValue)
+                    {
+                        fileInputNodeResult.FileInputNode.FileCompleted += handler;
+                    }
+                }
+                else
+                {
+                    StopTemporary();
+                    _temporaryGraph = result.Graph;
+
+                    void handler(AudioFileInputNode node, object args)
+                    {
+                        node.FileCompleted -= handler;
+                        StopTemporary();
+                    }
+
+                    fileInputNodeResult.FileInputNode.FileCompleted += handler;
                 }
 
                 result.Graph.Start();
