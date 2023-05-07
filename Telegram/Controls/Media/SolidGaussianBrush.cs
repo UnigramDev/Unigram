@@ -6,6 +6,7 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Effects;
+using System;
 using Telegram.Common;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -28,13 +29,20 @@ namespace Telegram.Controls.Media
         {
             if (m_isConnected)
             {
-                UpdateBrush();
+                try
+                {
+                    UpdateBrush();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
             }
         }
 
         private void UpdateBrush()
         {
-            if (!PowerSavingPolicy.AreMaterialsEnabled && m_brush is CompositionEffectBrush)
+            if (m_brush is CompositionEffectBrush && !PowerSavingPolicy.AreMaterialsEnabled)
             {
                 m_brush.Dispose();
                 m_brush = null;
@@ -95,7 +103,14 @@ namespace Telegram.Controls.Media
 
         protected override void OnConnected()
         {
-            UpdateBrush();
+            try
+            {
+                UpdateBrush();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
 
             m_isConnected = true;
             base.OnConnected();
