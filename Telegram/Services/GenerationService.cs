@@ -61,7 +61,7 @@ namespace Telegram.Services
 
         public async void Handle(UpdateFileGenerationStart update)
         {
-            var args = update.Conversion.Split('#');
+            var args = update.Conversion.Split('#', StringSplitOptions.RemoveEmptyEntries);
             if (args.Length < 2)
             {
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "Invalid generation arguments")));
