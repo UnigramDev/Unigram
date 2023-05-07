@@ -47,7 +47,6 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -844,32 +843,22 @@ namespace Telegram.Views
 
         private void UpdateUser(User user)
         {
+            TitleBarLogo.IsEnabled = _clientService.IsPremium;
+
             if (user.EmojiStatus != null)
             {
-                TitleBarLogo.IsEnabled = _clientService.IsPremium;
-
                 LogoBasic.Visibility = Visibility.Collapsed;
                 LogoPremium.Visibility = Visibility.Collapsed;
 
-                if (LogoEmoji == null)
-                {
-                    FindName(nameof(LogoEmoji));
-                }
-
-                LogoEmoji.SetCustomEmoji(ViewModel.ClientService, user.EmojiStatus.CustomEmojiId);
+                FindName(nameof(LogoEmoji));
+                LogoEmoji?.SetCustomEmoji(_clientService, user.EmojiStatus.CustomEmojiId);
             }
             else
             {
-                TitleBarLogo.IsEnabled = _clientService.IsPremium;
-
                 LogoBasic.Visibility = _clientService.IsPremium ? Visibility.Collapsed : Visibility.Visible;
                 LogoPremium.Visibility = _clientService.IsPremium ? Visibility.Visible : Visibility.Collapsed;
 
-                if (LogoEmoji != null)
-                {
-                    XamlMarkupHelper.UnloadObject(LogoEmoji);
-                    LogoEmoji = null;
-                }
+                UnloadObject(LogoEmoji);
             }
 
             Photo.SetUser(_clientService, user, 28);
