@@ -93,7 +93,6 @@ namespace Telegram.Controls
             }
 
             _canvas = canvas;
-            UpdateSource();
 
             _layoutRoot = GetTemplateChild("LayoutRoot") as Panel;
             _layoutRoot.Loaded += OnLoaded;
@@ -189,12 +188,16 @@ namespace Telegram.Controls
             }
         }
 
-        private void Changed(bool force = false)
+        private void Changed(bool force = false, bool tryLoad = true)
         {
             if (_canvas == null || !_visible)
             {
-                // Load is going to invoke Changed again
-                Load();
+                if (tryLoad)
+                {
+                    // Load is going to invoke Changed again
+                    Load();
+                }
+
                 return;
             }
 
@@ -225,8 +228,7 @@ namespace Telegram.Controls
         {
             if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
             {
-                UpdateSource();
-                Changed();
+                Changed(tryLoad: false);
 
                 _unloaded = false;
                 OnLoaded();
@@ -235,21 +237,6 @@ namespace Telegram.Controls
             }
 
             return false;
-        }
-
-        private void UpdateSource()
-        {
-            //if (_canvas == null || _canvas.Source == _current)
-            //{
-            //    return;
-            //}
-
-            //OnUpdateSource(_current);
-        }
-
-        protected virtual void OnUpdateSource(WriteableBitmap bitmap)
-        {
-            //_canvas.Source = _current;
         }
 
         protected virtual void OnLoaded()
@@ -426,7 +413,6 @@ namespace Telegram.Controls
             }
 
             _needToCreateBitmap = _animation == null;
-            UpdateSource();
         }
 
         protected abstract bool CreateBitmap(double dpi, out int width, out int height);

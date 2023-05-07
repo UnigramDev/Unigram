@@ -227,11 +227,11 @@ namespace Telegram.Controls
             }
         }
 
-        private void Changed(bool force = false, bool load = true)
+        private void Changed(bool force = false, bool tryLoad = true)
         {
             if (_canvas == null || !_visible)
             {
-                if (load)
+                if (tryLoad)
                 {
                     // Load is going to invoke Changed again
                     Load();
@@ -296,7 +296,7 @@ namespace Telegram.Controls
                 AutomationProperties.SetAccessibilityView(_canvas, AccessibilityView.Raw);
 
                 _layoutRoot.Children.Add(_canvas);
-                Changed(load: false);
+                Changed(tryLoad: false);
 
                 _unloaded = false;
                 _disposed = false;
