@@ -588,21 +588,43 @@ namespace Telegram.Common
             var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
             var path = file.Path;
 
-            if (conversion == ConversionType.Copy && arguments == null && !forceCopy && NativeUtils.IsFileReadable(file.Path))
+            if (NativeUtils.IsFileReadable(path, out long fileSize, out long fileTime))
             {
-                return new InputFileLocal(path);
+                if (conversion == ConversionType.Copy && arguments == null && !forceCopy)
+                {
+                    return new InputFileLocal(path);
+                }
+
+                if (conversion == ConversionType.Compress)
+                {
+                    path = Path.ChangeExtension(path, ".jpg");
+                }
+
+                return new InputFileGenerated(path, string.Format("{0}#{1}#{2}#{3}", token, conversion, arguments, fileTime), fileSize);
+            }
+
+            if (string.IsNullOrEmpty(path))
+            {
+                path = file.FolderRelativeId;
             }
 
             if (conversion == ConversionType.Compress)
             {
-                path = Path.GetFileNameWithoutExtension(path) + ".jpg";
+                path = Path.ChangeExtension(path, ".jpg");
             }
 
-            var props = await file.GetBasicPropertiesAsync();
-            return new InputFileGenerated(path, token + "#" + conversion + (arguments != null ? "#" + arguments : string.Empty) + "#" + props.DateModified.ToString("s"), (long)props.Size);
+            try
+            {
+                var props = await file.GetBasicPropertiesAsync();
+                return new InputFileGenerated(path, string.Format("{0}#{1}#{2}#{3:s}", token, conversion, arguments, props.DateModified), (long)props.Size);
+            }
+            catch
+            {
+                return new InputFileGenerated(path, string.Format("{0}#{1}#{2}#{3}", token, conversion, arguments, 0), 0);
+            }
         }
 
-        public static async Task<InputThumbnail> ToThumbnailAsync(this StorageFile file, VideoConversion video = null, ConversionType conversion = ConversionType.Copy, string arguments = null)
+        public static async Task<InputThumbnail> ToVideoThumbnailAsync(this StorageFile file, VideoConversion video = null, ConversionType conversion = ConversionType.Copy, string arguments = null)
         {
             var props = await file.Properties.GetVideoPropertiesAsync();
 

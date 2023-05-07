@@ -20,7 +20,9 @@ namespace Telegram.Native
 
 		static String GetKeyboardCulture();
 
+		[default_overload]
 		static Boolean IsFileReadable(String path);
+		static Boolean IsFileReadable(String path, out Int64 fileSize, out Int64 fileTime);
 
 		static Boolean IsMediaSupported();
 	}

@@ -31,6 +31,7 @@ namespace winrt::Telegram::Native::implementation
 		static hstring GetKeyboardCulture();
 
 		static bool IsFileReadable(hstring path);
+		static bool IsFileReadable(hstring path, int64_t& fileSize, int64_t& fileTime);
 
 		static bool IsMediaSupported();
 
@@ -39,6 +40,7 @@ namespace winrt::Telegram::Native::implementation
 		static void CleanDirectoryInternal(const std::wstring &path, int days);
 		static bool IsBrowsePath(const std::wstring& path);
 		static ULONGLONG FileTimeToSeconds(FILETIME& ft);
+		static bool IsFileReadableInternal(hstring path, int64_t* fileSize, int64_t* fileTime);
 	};
 } // namespace winrt::Telegram::Native::implementation
 
