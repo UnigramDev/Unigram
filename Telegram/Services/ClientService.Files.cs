@@ -184,7 +184,10 @@ namespace Telegram.Services
 
         private async void TrackDownloadedFile(File file)
         {
-            if (ApiInfo.HasDownloadFolder && file.Local.IsDownloadingCompleted && Future.Contains(file.Remote.UniqueId, true))
+            if (ApiInfo.HasDownloadFolder
+                && file.Local.IsDownloadingCompleted
+                && file.Remote.IsUploadingCompleted
+                && Future.Contains(file.Remote.UniqueId, true))
             {
                 if (_completedDownloads.Contains(file.Remote.UniqueId))
                 {
