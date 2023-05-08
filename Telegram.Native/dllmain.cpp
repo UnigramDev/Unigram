@@ -32,7 +32,7 @@ const wchar_t* GetExceptionMessage(DWORD code)
 }
 
 // From http://davidpritchard.org/archives/907
-std::wstring GetStackTrace(DWORD code)
+std::wstring GetBacktrace(DWORD code)
 {
     constexpr uint32_t TRACE_MAX_STACK_FRAMES = 99;
     void* stack[TRACE_MAX_STACK_FRAMES];
@@ -74,11 +74,11 @@ std::wstring GetStackTrace(DWORD code)
     return result;
 }
 
-static long Filter(_In_ struct _EXCEPTION_POINTERS* exceptionInfo)
+LONG WINAPI Filter(EXCEPTION_POINTERS* exceptionInfo)
 {
     if (NativeUtils::Callback)
     {
-        NativeUtils::Callback(GetStackTrace(exceptionInfo->ExceptionRecord->ExceptionCode));
+        NativeUtils::Callback(GetBacktrace(exceptionInfo->ExceptionRecord->ExceptionCode));
     }
 
     // This code would allow the app to continue running,
