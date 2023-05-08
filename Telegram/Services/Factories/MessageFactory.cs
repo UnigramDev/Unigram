@@ -12,7 +12,6 @@ using Telegram.Entities;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
-using Windows.Graphics.Imaging;
 using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
@@ -56,23 +55,11 @@ namespace Telegram.Services.Factories
 
         public async Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool asFile, bool spoiler = false, int ttl = 0, BitmapEditState editState = null)
         {
-            try
-            {
-                using (var stream = await file.OpenReadAsync())
-                {
-                    var decoder = await BitmapDecoder.CreateAsync(stream);
-                    if (decoder.FrameCount > 1)
-                    {
-                        asFile = true;
-                    }
-                }
-            }
-            catch
+            var size = await ImageHelper.GetScaleAsync(file, editState: editState);
+            if (size.Width == 0 || size.Height == 0)
             {
                 asFile = true;
             }
-
-            var size = await ImageHelper.GetScaleAsync(file, editState: editState);
 
             var generated = await file.ToGeneratedAsync(asFile ? ConversionType.Copy : ConversionType.Compress, editState != null ? JsonConvert.SerializeObject(editState) : null);
             var thumbnail = default(InputThumbnail);

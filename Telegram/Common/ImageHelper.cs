@@ -14,6 +14,7 @@ using Telegram.Charts;
 using Telegram.Controls;
 using Telegram.Entities;
 using Windows.Foundation;
+using Windows.Graphics;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -24,38 +25,62 @@ namespace Telegram.Common
 {
     public static class ImageHelper
     {
-        public static async Task<(int Width, int Height)> GetScaleAsync(StorageFile file, int requestedMinSide = 1280, BitmapEditState editState = null)
+        public static async Task<SizeInt32> GetScaleAsync(StorageFile file, bool allowMultipleFrames = false, int requestedMinSide = 1280, BitmapEditState editState = null)
         {
-            var props = await file.Properties.GetImagePropertiesAsync();
-            var width = props.Width;
-            var height = props.Height;
-
-            if (editState?.Rectangle is Rect crop)
+            using (var source = await file.OpenReadAsync())
             {
-                width = (uint)(crop.Width * props.Width);
-                height = (uint)(crop.Height * props.Height);
-            }
+                var decoder = await BitmapDecoder.CreateAsync(source);
+                if (decoder.FrameCount > 1 && !allowMultipleFrames)
+                {
+                    return new SizeInt32 { Width = 0, Height = 0 };
+                }
 
-            if (width > requestedMinSide || height > requestedMinSide)
-            {
-                double ratioX = (double)requestedMinSide / width;
-                double ratioY = (double)requestedMinSide / height;
-                double ratio = Math.Min(ratioX, ratioY);
+                var width = decoder.PixelWidth;
+                var height = decoder.PixelHeight;
+
+                if (editState?.Rectangle is Rect crop)
+                {
+                    width = (uint)(crop.Width * decoder.PixelWidth);
+                    height = (uint)(crop.Height * decoder.PixelHeight);
+                }
+
+                if (width > requestedMinSide || height > requestedMinSide)
+                {
+                    double ratioX = (double)requestedMinSide / width;
+                    double ratioY = (double)requestedMinSide / height;
+                    double ratio = Math.Min(ratioX, ratioY);
+
+                    if (editState != null && editState.Rotation is BitmapRotation.Clockwise90Degrees or BitmapRotation.Clockwise270Degrees)
+                    {
+                        return new SizeInt32
+                        {
+                            Width = (int)(height * ratio),
+                            Height = (int)(width * ratio)
+                        };
+                    }
+
+                    return new SizeInt32
+                    {
+                        Width = (int)(width * ratio),
+                        Height = (int)(height * ratio)
+                    };
+                }
 
                 if (editState != null && editState.Rotation is BitmapRotation.Clockwise90Degrees or BitmapRotation.Clockwise270Degrees)
                 {
-                    return ((int)(height * ratio), (int)(width * ratio));
+                    return new SizeInt32
+                    {
+                        Width = (int)(height),
+                        Height = (int)(width)
+                    };
                 }
 
-                return ((int)(width * ratio), (int)(height * ratio));
-            }
-
-            if (editState != null && editState.Rotation is BitmapRotation.Clockwise90Degrees or BitmapRotation.Clockwise270Degrees)
-            {
-                return ((int)height, (int)width);
-            }
-
-            return ((int)width, (int)height);
+                return new SizeInt32
+                {
+                    Width = (int)(width),
+                    Height = (int)(height)
+                };
+            };
         }
 
 
@@ -70,9 +95,9 @@ namespace Telegram.Common
         /// <returns></returns>
         public static async Task<StorageFile> ScaleJpegAsync(StorageFile sourceFile, StorageFile resizedImageFile, int requestedMinSide = 1280, double quality = 0.77)
         {
-            using (var imageStream = await sourceFile.OpenReadAsync())
+            using (var source = await sourceFile.OpenReadAsync())
             {
-                var decoder = await BitmapDecoder.CreateAsync(imageStream);
+                var decoder = await BitmapDecoder.CreateAsync(source);
                 //if (decoder.FrameCount > 1)
                 //{
                 //    throw new InvalidCastException();
@@ -122,9 +147,9 @@ namespace Telegram.Common
             return resizedImageFile;
         }
 
-        public static async Task<StorageFile> TranscodeAsync(IRandomAccessStream imageStream, StorageFile resizedImageFile, Guid encoderId)
+        public static async Task<StorageFile> TranscodeAsync(IRandomAccessStream source, StorageFile resizedImageFile, Guid encoderId)
         {
-            var decoder = await BitmapDecoder.CreateAsync(imageStream);
+            var decoder = await BitmapDecoder.CreateAsync(source);
             //if (decoder.FrameCount > 1)
             //{
             //    throw new InvalidCastException();
@@ -152,10 +177,10 @@ namespace Telegram.Common
                     using var grabber = await FrameGrabber.CreateFromStreamAsync(videoStream);
                     using var frame = await grabber.ExtractVideoFrameAsync(TimeSpan.Zero);
 
-                    using var imageStream = new InMemoryRandomAccessStream();
+                    using var source = new InMemoryRandomAccessStream();
 
-                    await frame.EncodeAsPngAsync(imageStream);
-                    return await GetPreviewBitmapAsync(imageStream, requestedMinSide);
+                    await frame.EncodeAsPngAsync(source);
+                    return await GetPreviewBitmapAsync(source, requestedMinSide);
                 }
                 else
                 {
@@ -169,9 +194,9 @@ namespace Telegram.Common
             }
         }
 
-        public static async Task<ImageSource> GetPreviewBitmapAsync(IRandomAccessStream imageStream, int requestedMinSide = 1280)
+        public static async Task<ImageSource> GetPreviewBitmapAsync(IRandomAccessStream source, int requestedMinSide = 1280)
         {
-            var decoder = await BitmapDecoder.CreateAsync(imageStream);
+            var decoder = await BitmapDecoder.CreateAsync(source);
             if (decoder.BitmapPixelFormat == BitmapPixelFormat.Bgra8)
             {
                 var originalPixelWidth = decoder.PixelWidth;
@@ -209,7 +234,7 @@ namespace Telegram.Common
             else
             {
                 var bitmap = new BitmapImage();
-                await bitmap.SetSourceAsync(imageStream);
+                await bitmap.SetSourceAsync(source);
 
                 return bitmap;
             }
@@ -219,10 +244,10 @@ namespace Telegram.Common
         {
             file ??= await ApplicationData.Current.TemporaryFolder.CreateFileAsync("crop.jpg", CreationCollisionOption.ReplaceExisting);
 
-            using (var fileStream = await OpenReadAsync(sourceFile))
-            using (var outputStream = await file.OpenAsync(FileAccessMode.ReadWrite))
+            using (var source = await OpenReadAsync(sourceFile))
+            using (var destination = await file.OpenAsync(FileAccessMode.ReadWrite))
             {
-                var decoder = await BitmapDecoder.CreateAsync(fileStream);
+                var decoder = await BitmapDecoder.CreateAsync(source);
                 var cropWidth = (double)decoder.PixelWidth;
                 var cropHeight = (double)decoder.PixelHeight;
 
@@ -274,7 +299,7 @@ namespace Telegram.Common
                 var qualityValue = new BitmapTypedValue(quality, PropertyType.Single);
                 propertySet.Add("ImageQuality", qualityValue);
 
-                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputStream);
+                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, destination);
                 encoder.SetSoftwareBitmap(pixelData);
                 await encoder.FlushAsync();
             }
@@ -349,10 +374,10 @@ namespace Telegram.Common
                 using var grabber = await FrameGrabber.CreateFromStreamAsync(videoStream);
                 using var frame = await grabber.ExtractVideoFrameAsync(TimeSpan.Zero);
 
-                using var imageStream = new InMemoryRandomAccessStream();
+                using var source = new InMemoryRandomAccessStream();
 
-                await frame.EncodeAsPngAsync(imageStream);
-                return await CropAndPreviewAsync(imageStream, editState);
+                await frame.EncodeAsPngAsync(source);
+                return await CropAndPreviewAsync(source, editState);
 
             }
             else
@@ -362,9 +387,9 @@ namespace Telegram.Common
             }
         }
 
-        public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream imageStream, BitmapEditState editState)
+        public static async Task<ImageSource> CropAndPreviewAsync(IRandomAccessStream source, BitmapEditState editState)
         {
-            var decoder = await BitmapDecoder.CreateAsync(imageStream);
+            var decoder = await BitmapDecoder.CreateAsync(source);
             var cropWidth = (double)decoder.PixelWidth;
             var cropHeight = (double)decoder.PixelHeight;
 
@@ -439,10 +464,10 @@ namespace Telegram.Common
                 using var grabber = await FrameGrabber.CreateFromStreamAsync(videoStream);
                 using var frame = await grabber.ExtractVideoFrameAsync(TimeSpan.Zero);
 
-                var imageStream = new InMemoryRandomAccessStream();
+                var source = new InMemoryRandomAccessStream();
 
-                await frame.EncodeAsPngAsync(imageStream);
-                return imageStream;
+                await frame.EncodeAsPngAsync(source);
+                return source;
             }
             else
             {
