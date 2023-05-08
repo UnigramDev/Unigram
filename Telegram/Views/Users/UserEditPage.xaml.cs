@@ -26,7 +26,7 @@ namespace Telegram.Views.Users
 
         public void UpdateUser(Chat chat, User user, bool secret)
         {
-            Photo.SetUser(ViewModel.ClientService, user, 140);
+            Photo.SetUser(ViewModel.ClientService, user, 96);
 
             if (user.Type is UserTypeBot userTypeBot && userTypeBot.CanBeEdited)
             {

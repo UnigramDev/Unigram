@@ -177,7 +177,7 @@
                                           Content="{CustomResource ResetToOriginalPhoto}"
                                           Foreground="{ThemeResource DangerButtonBackground}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xF3B1;" />
+                                          Glyph="&#xEA09;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>
