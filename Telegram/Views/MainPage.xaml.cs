@@ -166,22 +166,21 @@ namespace Telegram.Views
         private void InitializeTitleBar()
         {
             var sender = CoreApplication.GetCurrentView().TitleBar;
+            sender.IsVisibleChanged += OnLayoutMetricsChanged;
+            sender.LayoutMetricsChanged += OnLayoutMetricsChanged;
 
-            TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 0), GridUnitType.Pixel);
-            TitleBarrr.ColumnDefinitions[3].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 6), GridUnitType.Pixel);
-
-            StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0 ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-
-            sender.IsVisibleChanged += CoreTitleBar_LayoutMetricsChanged;
-            sender.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+            OnLayoutMetricsChanged(sender, null);
         }
 
-        private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        private void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
             TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 0), GridUnitType.Pixel);
-            TitleBarrr.ColumnDefinitions[3].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 6), GridUnitType.Pixel);
+            TitleBarrr.ColumnDefinitions[4].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 0), GridUnitType.Pixel);
 
-            StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0 ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+            Grid.SetColumn(TitleBarLogo, sender.SystemOverlayLeftInset > 0 ? 3 : 1);
+            StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0
+                ? FlowDirection.RightToLeft
+                : FlowDirection.LeftToRight;
         }
 
         private void InitializeLocalization()
@@ -1007,8 +1006,8 @@ namespace Telegram.Views
             WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
 
             var titleBar = CoreApplication.GetCurrentView().TitleBar;
-            titleBar.IsVisibleChanged -= CoreTitleBar_LayoutMetricsChanged;
-            titleBar.LayoutMetricsChanged -= CoreTitleBar_LayoutMetricsChanged;
+            titleBar.IsVisibleChanged -= OnLayoutMetricsChanged;
+            titleBar.LayoutMetricsChanged -= OnLayoutMetricsChanged;
 
             Bindings.StopTracking();
 
@@ -1534,12 +1533,14 @@ namespace Telegram.Views
                 var logo = ElementCompositionPreview.GetElementVisual(TitleBarLogo);
                 var label = ElementCompositionPreview.GetElementVisual(StateLabel);
 
+                var offset = StateLabel.FlowDirection == FlowDirection.RightToLeft ? -36 : +36;
+
                 ElementCompositionPreview.SetIsTranslationEnabled(TitleBarLogo, true);
                 ElementCompositionPreview.SetIsTranslationEnabled(StateLabel, true);
 
                 var anim = logo.Compositor.CreateVector3KeyFrameAnimation();
                 anim.InsertKeyFrame(visible ? 0 : 1, new Vector3(0, 0, 0));
-                anim.InsertKeyFrame(visible ? 1 : 0, new Vector3(36, 0, 0));
+                anim.InsertKeyFrame(visible ? 1 : 0, new Vector3(offset, 0, 0));
 
                 logo.StartAnimation("Translation", anim);
                 label.StartAnimation("Translation", anim);

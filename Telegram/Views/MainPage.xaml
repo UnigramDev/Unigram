@@ -180,24 +180,25 @@
               Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="52" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Border x:Name="TitleBarHandle"
                     Background="Transparent"
-                    Grid.ColumnSpan="2"
                     Grid.Column="2" />
 
             <muxc:ProgressBar x:Name="State"
                               VerticalAlignment="Top"
                               Background="Transparent"
                               IsHitTestVisible="False"
-                              Grid.ColumnSpan="4" />
+                              Grid.ColumnSpan="5" />
 
             <HyperlinkButton x:Name="TitleBarLogo"
                              Click="Status_Click"
                              Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                             Margin="6,0"
                              Width="40"
                              Height="40"
                              Grid.Column="1">

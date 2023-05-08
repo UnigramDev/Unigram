@@ -223,6 +223,7 @@ namespace Telegram.Converters
         public const string Bookmark = "\uE907";
         public const string BookmarkFilled = "\uEA0F";
         public const string ArrowRight = "\uE72A";
+        public const string ArrowLeft = "\uE72B";
         public const string Channel = "\uEC42";
         public const string Speaker = "\uE995";
         public const string Speaker1 = "\uE993";

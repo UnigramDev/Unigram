@@ -4,6 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Converters;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -29,6 +31,26 @@ namespace Telegram.Controls
 
             RootSplitView.PaneOpening += OnPaneOpening;
             RootSplitView.PaneClosing += OnPaneClosing;
+
+            var sender = CoreApplication.GetCurrentView().TitleBar;
+            sender.IsVisibleChanged += OnLayoutMetricsChanged;
+            sender.LayoutMetricsChanged += OnLayoutMetricsChanged;
+
+            OnLayoutMetricsChanged(sender, null);
+        }
+
+        private void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        {
+            if (sender.SystemOverlayLeftInset > 0)
+            {
+                TogglePaneButton.Glyph = Icons.ArrowRight;
+                TogglePaneButton.HorizontalAlignment = HorizontalAlignment.Right;
+            }
+            else
+            {
+                TogglePaneButton.Glyph = Icons.ArrowLeft;
+                TogglePaneButton.HorizontalAlignment = HorizontalAlignment.Left;
+            }
         }
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
