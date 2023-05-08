@@ -1765,9 +1765,6 @@ Minimum length is 5 characters.</value>
   <data name="ChatDocument" xml:space="preserve">
     <value>File</value>
   </data>
-  <data name="ChatGallery" xml:space="preserve">
-    <value>Gallery</value>
-  </data>
   <data name="ChatHintsDelete" xml:space="preserve">
     <value>Remove {0} from suggestions?</value>
   </data>
@@ -4891,6 +4888,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PhotoForRestDescription" xml:space="preserve">
     <value>You can upload a public photo for users who are restricted from seeing your real profile photos.</value>
+  </data>
+  <data name="PhotoOrVideo" xml:space="preserve">
+    <value>Photo or Video</value>
   </data>
   <data name="Photos_one" xml:space="preserve">
     <value>{0} photo</value>

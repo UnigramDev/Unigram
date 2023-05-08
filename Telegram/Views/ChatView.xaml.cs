@@ -1586,7 +1586,7 @@ namespace Telegram.Views
 
                 if (photoRights || videoRights)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.SendMedia, Strings.ChatGallery, new FontIcon { Glyph = Icons.Image });
+                    flyout.CreateFlyoutItem(ViewModel.SendMedia, Strings.PhotoOrVideo, new FontIcon { Glyph = Icons.Image });
                     flyout.CreateFlyoutItem(ViewModel.SendCamera, Strings.ChatCamera, new FontIcon { Glyph = Icons.Camera });
                 }
 
@@ -1621,7 +1621,7 @@ namespace Telegram.Views
             {
                 if (photoRights || videoRights)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.EditMedia, Strings.ChatGallery, new FontIcon { Glyph = Icons.Image });
+                    flyout.CreateFlyoutItem(ViewModel.EditMedia, Strings.PhotoOrVideo, new FontIcon { Glyph = Icons.Image });
                 }
 
                 if (documentRights)
