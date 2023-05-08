@@ -153,6 +153,8 @@ namespace Telegram.Views
         {
             Window.Current.Activated -= Window_Activated;
             Window.Current.SizeChanged -= Window_SizeChanged;
+
+            _retryTimer.Stop();
         }
 
         #region Bounds
@@ -205,7 +207,11 @@ namespace Telegram.Views
 
             _retryTimer.Stop();
             _accepted = true;
+        }
 
+        public void Update()
+        {
+            _accepted = true;
             Hide();
         }
 

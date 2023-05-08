@@ -2139,7 +2139,6 @@ namespace Telegram.Views
             }
 
             ViewModel.Passcode.Lock();
-            App.ShowPasscode(false);
         }
 
         private void OnUpdate(object sender, EventArgs e)

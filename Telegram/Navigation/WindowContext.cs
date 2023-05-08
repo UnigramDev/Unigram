@@ -78,6 +78,11 @@ namespace Telegram.Navigation
             UpdateTitleBar();
 
             #endregion
+
+            if (TLContainer.Current.Passcode.IsLockscreenRequired)
+            {
+                Lock(true);
+            }
         }
 
         public bool IsInMainView { get; }
@@ -185,6 +190,52 @@ namespace Telegram.Navigation
                 _screenCaptureEnabled = true;
                 ApplicationView.GetForCurrentView().IsScreenCaptureEnabled = true;
             }
+        }
+
+        #endregion
+
+        #region Lock
+
+        private PasscodePage _locked;
+
+        public async void Lock(bool biometrics)
+        {
+            if (_locked != null)
+            {
+                return;
+            }
+
+            // This is a rare case, but it can happen.
+            var content = Window.Current.Content;
+            if (content != null)
+            {
+                content.Visibility = Visibility.Collapsed;
+            }
+
+            _locked = new PasscodePage(biometrics);
+
+            static void handler(ContentDialog s, ContentDialogClosingEventArgs args)
+            {
+                s.Closing -= handler;
+
+                // This is a rare case, but it can happen.
+                var content = Window.Current.Content;
+                if (content != null)
+                {
+                    content.Visibility = Visibility.Visible;
+                }
+            }
+
+            _locked.Closing += handler;
+            await _locked.ShowQueuedAsync();
+
+            _locked = null;
+        }
+
+        public void Unlock()
+        {
+            _locked?.Update();
+            _locked = null;
         }
 
         #endregion

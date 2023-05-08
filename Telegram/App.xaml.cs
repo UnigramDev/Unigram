@@ -93,8 +93,6 @@ namespace Telegram
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             InitializeComponent();
 
-            InactivityHelper.Detected += Inactivity_Detected;
-
             UnhandledException += (s, args) =>
             {
                 args.Handled = args.Exception is not LayoutCycleException;
@@ -156,56 +154,6 @@ namespace Telegram
             //    : CoreWindowFlowDirection.LeftToRight;
 
             base.OnWindowCreated(args);
-        }
-
-        private void Inactivity_Detected(object sender, EventArgs e)
-        {
-            WindowContext.Default().Dispatcher.Dispatch(() =>
-            {
-                var passcode = TLContainer.Current.Passcode;
-                if (passcode != null)
-                {
-                    passcode.Lock();
-                    ShowPasscode(false);
-                }
-            });
-        }
-
-        [ThreadStatic]
-        private static bool _passcodeShown;
-        public static async void ShowPasscode(bool biometrics)
-        {
-            if (_passcodeShown)
-            {
-                return;
-            }
-
-            _passcodeShown = true;
-
-            // This is a rare case, but it can happen.
-            var content = Window.Current.Content;
-            if (content != null)
-            {
-                content.Visibility = Visibility.Collapsed;
-            }
-
-            var dialog = new PasscodePage(biometrics);
-            void handler(ContentDialog s, ContentDialogClosingEventArgs args)
-            {
-                dialog.Closing -= handler;
-
-                // This is a rare case, but it can happen.
-                var content = Window.Current.Content;
-                if (content != null)
-                {
-                    content.Visibility = Visibility.Visible;
-                }
-            }
-
-            dialog.Closing += handler;
-            var result = await dialog.ShowQueuedAsync();
-
-            _passcodeShown = false;
         }
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
@@ -292,11 +240,6 @@ namespace Telegram
 
         public override async void OnStart(StartKind startKind, IActivatedEventArgs args)
         {
-            if (TLContainer.Current.Passcode.IsLockscreenRequired)
-            {
-                ShowPasscode(true);
-            }
-
             if (startKind == StartKind.Activate)
             {
                 var lifetime = TLContainer.Current.Lifetime;

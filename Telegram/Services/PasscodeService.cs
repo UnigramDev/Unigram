@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services.Settings;
 using Telegram.Services.Updates;
 using Telegram.Views;
@@ -53,6 +54,13 @@ namespace Telegram.Services
             {
                 _retryIn = 5000 + (5000 * (Math.Min(_settingsService.RetryCount, 8) - 3));
             }
+
+            InactivityHelper.Detected += OnInactivityDetected;
+        }
+
+        private void OnInactivityDetected(object sender, EventArgs e)
+        {
+            Lock();
         }
 
         public int RetryIn => (int)Math.Ceiling(UpdateRetryIn() / 1000);
@@ -89,6 +97,8 @@ namespace Telegram.Services
             _settingsService.IsLocked = true;
             _settingsService.CloseTime = DateTime.MaxValue;
             Publish(true);
+
+            WindowContext.ForEach(window => window.Lock(false));
         }
 
         public void Unlock()
@@ -99,6 +109,8 @@ namespace Telegram.Services
             _settingsService.RetryTime = DateTime.MaxValue;
             _retryIn = 0;
             Publish(true);
+
+            WindowContext.ForEach(window => window.Unlock());
         }
 
         public void Set(string passcode, bool simple, int timeout)
