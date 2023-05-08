@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -138,7 +139,7 @@ namespace Telegram.ViewModels.Supergroups
             ChatAvailableReactions value = _available switch
             {
                 SupergroupAvailableReactions.All => new ChatAvailableReactionsAll(),
-                SupergroupAvailableReactions.None => new ChatAvailableReactionsSome(),
+                SupergroupAvailableReactions.None => new ChatAvailableReactionsSome(Array.Empty<ReactionType>()),
                 SupergroupAvailableReactions.Some => new ChatAvailableReactionsSome(items),
                 _ => null
             };
