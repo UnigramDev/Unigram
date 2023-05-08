@@ -6,7 +6,7 @@
 //
 using System;
 using System.Numerics;
-using Telegram.Common;
+using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Telegram.ViewModels.Settings.Privacy;
 using Windows.Foundation.Metadata;

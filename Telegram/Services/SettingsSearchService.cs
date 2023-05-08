@@ -8,7 +8,6 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Telegram.Views;

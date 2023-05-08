@@ -8,7 +8,6 @@ using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;

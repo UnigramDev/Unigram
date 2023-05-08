@@ -6,7 +6,6 @@
 //
 using System;
 using System.Threading;
-using Telegram.Common;
 using Telegram.Controls.Chats;
 using Telegram.Navigation;
 using Telegram.Td.Api;

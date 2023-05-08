@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation.Services;
 using Telegram.Services;

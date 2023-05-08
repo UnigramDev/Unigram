@@ -6,7 +6,6 @@
 //
 using System;
 using System.ComponentModel;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Navigation.Services;

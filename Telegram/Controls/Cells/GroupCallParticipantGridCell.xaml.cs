@@ -8,7 +8,6 @@ using Microsoft.Graphics.Canvas.Effects;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.Numerics;
-using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Native.Calls;
 using Telegram.Services;

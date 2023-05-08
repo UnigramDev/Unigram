@@ -8,7 +8,6 @@ using LinqToVisualTree;
 using System;
 using System.Linq;
 using System.Numerics;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Td.Api;
 using Telegram.ViewModels;

@@ -92,7 +92,8 @@ namespace Telegram.Common
 
             if (_legacyScrollViewer != SettingsService.Current.Diagnostics.LegacyScrollViewers)
             {
-                if (SettingsService.Current.Diagnostics.LegacyScrollViewers) {
+                if (SettingsService.Current.Diagnostics.LegacyScrollViewers)
+                {
                     var style = new Style
                     {
                         TargetType = typeof(ScrollViewer),

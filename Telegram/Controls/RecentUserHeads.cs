@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Numerics;
-using Telegram.Common;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI.Composition;

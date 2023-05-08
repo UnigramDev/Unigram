@@ -24,9 +24,9 @@ namespace Telegram.Stub
         [STAThread]
         static void Main()
         {
-            if (!Mutex.TryOpenExisting(MUTEX_NAME, out Mutex mutex))
+            if (!Mutex.TryOpenExisting(MUTEX_NAME, out _))
             {
-                mutex = new Mutex(false, MUTEX_NAME);
+                Mutex mutex = new Mutex(false, MUTEX_NAME);
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new BridgeApplicationContext());

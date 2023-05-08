@@ -6,7 +6,6 @@
 //
 using System;
 using System.Globalization;
-using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;

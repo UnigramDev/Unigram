@@ -6,7 +6,6 @@
 //
 using System.Collections.Generic;
 using System.Linq;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Services;

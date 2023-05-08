@@ -7,7 +7,6 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
-using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;

@@ -96,9 +96,12 @@ namespace Telegram.Stub
                 return;
             }
 
-            _connection = new AppServiceConnection();
-            _connection.PackageFamilyName = Package.Current.Id.FamilyName;
-            _connection.AppServiceName = "org.telegram.bridge";
+            _connection = new AppServiceConnection
+            {
+                PackageFamilyName = Package.Current.Id.FamilyName,
+                AppServiceName = "org.telegram.bridge"
+            };
+
             _connection.RequestReceived += Connection_RequestReceived;
             _connection.ServiceClosed += Connection_ServiceClosed;
 

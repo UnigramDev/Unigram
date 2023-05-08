@@ -6,7 +6,7 @@
 //
 using System;
 
-namespace Telegram
+namespace Telegram.Td
 {
     public class TdException : Exception
     {

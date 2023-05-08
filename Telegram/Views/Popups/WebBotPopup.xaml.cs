@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Globalization;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Td.Api;
 using Windows.Data.Json;

@@ -17,21 +17,19 @@ using Telegram.Common;
 using Telegram.Native;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Xaml.Media;
-using Point = Windows.Foundation.Point;
 
-namespace Telegram.Common
+namespace Telegram.Td.Api
 {
     public static class TdExtensions
     {
-        public static Vector2 ToVector2(this Telegram.Td.Api.Point point)
+        public static Vector2 ToVector2(this Point point)
         {
             return new Vector2((float)point.X, (float)point.Y);
         }
 
-        public static Vector2 ToVector2(this Telegram.Td.Api.Point point, float scale)
+        public static Vector2 ToVector2(this Point point, float scale)
         {
             return new Vector2((float)point.X * scale, (float)point.Y * scale);
         }
@@ -412,6 +410,40 @@ namespace Telegram.Common
                 (string.Equals(webPage.SiteName, "twitter", StringComparison.OrdinalIgnoreCase) ||
                  string.Equals(webPage.SiteName, "instagram", StringComparison.OrdinalIgnoreCase) ||
                  string.Equals(webPage.Type, "telegram_album", StringComparison.OrdinalIgnoreCase));
+        }
+
+        public static bool CodeEquals(this Error error, ErrorCode code)
+        {
+            if (error == null)
+            {
+                return false;
+            }
+
+            if (Enum.IsDefined(typeof(ErrorCode), error.Code))
+            {
+                return (ErrorCode)error.Code == code;
+            }
+
+            return false;
+        }
+
+        public static bool MessageEquals(this Error error, ErrorType type)
+        {
+            if (error == null || error.Message == null)
+            {
+                return false;
+            }
+
+            var strings = error.Message.Split(':');
+            var typeString = strings[0];
+            if (Enum.IsDefined(typeof(ErrorType), typeString))
+            {
+                var value = (ErrorType)Enum.Parse(typeof(ErrorType), typeString, true);
+
+                return value == type;
+            }
+
+            return false;
         }
 
         public static bool NeedInfo(this Invoice invoice)
@@ -2133,44 +2165,44 @@ namespace Telegram.Common
 
         public static LinearGradientBrush GetGradient(Color topColor, Color bottomColor, int angle)
         {
-            Point topPoint;
-            Point bottomPoint;
+            Windows.Foundation.Point topPoint;
+            Windows.Foundation.Point bottomPoint;
 
             switch (angle)
             {
                 case 0:
                 case 360:
-                    topPoint = new Point(0.5, 0);
-                    bottomPoint = new Point(0.5, 1);
+                    topPoint = new Windows.Foundation.Point(0.5, 0);
+                    bottomPoint = new Windows.Foundation.Point(0.5, 1);
                     break;
                 case 45:
                 default:
-                    topPoint = new Point(1, 0);
-                    bottomPoint = new Point(0, 1);
+                    topPoint = new Windows.Foundation.Point(1, 0);
+                    bottomPoint = new Windows.Foundation.Point(0, 1);
                     break;
                 case 90:
-                    topPoint = new Point(1, 0.5);
-                    bottomPoint = new Point(0, 0.5);
+                    topPoint = new Windows.Foundation.Point(1, 0.5);
+                    bottomPoint = new Windows.Foundation.Point(0, 0.5);
                     break;
                 case 135:
-                    topPoint = new Point(1, 1);
-                    bottomPoint = new Point(0, 0);
+                    topPoint = new Windows.Foundation.Point(1, 1);
+                    bottomPoint = new Windows.Foundation.Point(0, 0);
                     break;
                 case 180:
-                    topPoint = new Point(0.5, 1);
-                    bottomPoint = new Point(0.5, 0);
+                    topPoint = new Windows.Foundation.Point(0.5, 1);
+                    bottomPoint = new Windows.Foundation.Point(0.5, 0);
                     break;
                 case 225:
-                    topPoint = new Point(0, 1);
-                    bottomPoint = new Point(1, 0);
+                    topPoint = new Windows.Foundation.Point(0, 1);
+                    bottomPoint = new Windows.Foundation.Point(1, 0);
                     break;
                 case 270:
-                    topPoint = new Point(0, 0.5);
-                    bottomPoint = new Point(1, 0.5);
+                    topPoint = new Windows.Foundation.Point(0, 0.5);
+                    bottomPoint = new Windows.Foundation.Point(1, 0.5);
                     break;
                 case 315:
-                    topPoint = new Point(0, 0);
-                    bottomPoint = new Point(1, 1);
+                    topPoint = new Windows.Foundation.Point(0, 0);
+                    bottomPoint = new Windows.Foundation.Point(1, 1);
                     break;
             }
 
@@ -2236,292 +2268,6 @@ namespace Telegram.Common
             brush.EndPoint = bottomPoint;
 
             return brush;
-        }
-    }
-}
-
-namespace Telegram.Td.Api
-{
-    public class MessageBigEmoji : MessageContent
-    {
-        public FormattedText Text { get; set; }
-
-        public int Count { get; set; }
-
-        public MessageBigEmoji()
-        {
-
-        }
-
-        public MessageBigEmoji(FormattedText text, int count)
-        {
-            Text = text;
-            Count = count;
-        }
-
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class MessageAlbum : MessageContent
-    {
-        public bool IsMedia { get; }
-
-        public FormattedText Caption { get; set; }
-
-        public UniqueList<long, MessageViewModel> Messages { get; } = new UniqueList<long, MessageViewModel>(x => x.Id);
-
-        public MessageAlbum(bool media)
-        {
-            IsMedia = media;
-        }
-
-        public const double ITEM_MARGIN = 2;
-        public const double MAX_WIDTH = 320 + ITEM_MARGIN;
-        public const double MAX_HEIGHT = 420 + ITEM_MARGIN;
-
-        private ((Rect, MosaicItemPosition)[], Size)? _positions;
-
-        public void Invalidate()
-        {
-            _positions = null;
-        }
-
-        public (Rect[], Size) GetPositionsForWidth(double w)
-        {
-            var positions = _positions ??= MosaicAlbumLayout.chatMessageBubbleMosaicLayout(new Size(MAX_WIDTH, MAX_HEIGHT), GetSizes());
-
-            var ratio = w / positions.Item2.Width;
-            var rects = new Rect[positions.Item1.Length];
-
-            for (int i = 0; i < rects.Length; i++)
-            {
-                var rect = positions.Item1[i].Item1;
-
-                var width = Math.Max(0, rect.Width * ratio);
-                var height = Math.Max(0, rect.Height * ratio);
-
-                width = double.IsNaN(width) ? 0 : width;
-                height = double.IsNaN(height) ? 0 : height;
-
-                rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, width, height);
-            }
-
-            var finalWidth = Math.Max(0, positions.Item2.Width * ratio);
-            var finalHeight = Math.Max(0, positions.Item2.Height * ratio);
-
-            finalWidth = double.IsNaN(finalWidth) ? 0 : finalWidth;
-            finalHeight = double.IsNaN(finalHeight) ? 0 : finalHeight;
-
-            return (rects, new Size(finalWidth, finalHeight));
-        }
-
-        private IEnumerable<Size> GetSizes()
-        {
-            foreach (var message in Messages)
-            {
-                if (message.Content is MessagePhoto photoMedia)
-                {
-                    yield return GetClosestPhotoSizeWithSize(photoMedia.Photo.Sizes, 1280, false);
-                }
-                else if (message.Content is MessageVideo videoMedia)
-                {
-                    if (videoMedia.Video.Width != 0 && videoMedia.Video.Height != 0)
-                    {
-                        yield return new Size(videoMedia.Video.Width, videoMedia.Video.Height);
-                    }
-                    else if (videoMedia.Video.Thumbnail != null)
-                    {
-                        yield return new Size(videoMedia.Video.Thumbnail.Width, videoMedia.Video.Thumbnail.Height);
-                    }
-                    else
-                    {
-                        // We are returning a random size, it's still better than NaN.
-                        yield return new Size(1280, 1280);
-                    }
-                }
-            }
-        }
-
-        public static Size GetClosestPhotoSizeWithSize(IList<PhotoSize> sizes, int side)
-        {
-            return GetClosestPhotoSizeWithSize(sizes, side, false);
-        }
-
-        public static Size GetClosestPhotoSizeWithSize(IList<PhotoSize> sizes, int side, bool byMinSide)
-        {
-            if (sizes == null || sizes.IsEmpty())
-            {
-                // We are returning a random size, it's still better than NaN.
-                return new Size(1280, 1280);
-            }
-
-            int lastSide = 0;
-            PhotoSize closestObject = null;
-            for (int a = 0; a < sizes.Count; a++)
-            {
-                PhotoSize obj = sizes[a];
-                if (obj == null)
-                {
-                    continue;
-                }
-
-                int w = obj.Width;
-                int h = obj.Height;
-
-                if (byMinSide)
-                {
-                    int currentSide = h >= w ? w : h;
-                    if (closestObject == null || side > 100 && side > lastSide && lastSide < currentSide)
-                    {
-                        closestObject = obj;
-                        lastSide = currentSide;
-                    }
-                }
-                else
-                {
-                    int currentSide = w >= h ? w : h;
-                    if (closestObject == null || side > 100 && currentSide <= side && lastSide < currentSide)
-                    {
-                        closestObject = obj;
-                        lastSide = currentSide;
-                    }
-                }
-            }
-
-            return new Size(closestObject.Width, closestObject.Height);
-        }
-
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class MessageChatEvent : MessageContent
-    {
-        /// <summary>
-        /// Action performed by the user.
-        /// </summary>
-        public ChatEventAction Action { get; set; }
-
-        /// <summary>
-        /// Identifier of the user who performed the action that triggered the event.
-        /// </summary>
-        public MessageSender MemberId { get; set; }
-
-        /// <summary>
-        /// Point in time (Unix timestamp) when the event happened.
-        /// </summary>
-        public int Date { get; set; }
-
-        /// <summary>
-        /// Chat event identifier.
-        /// </summary>
-        public long Id { get; set; }
-
-        public MessageChatEvent(ChatEvent chatEvent)
-        {
-            Action = chatEvent.Action;
-            MemberId = chatEvent.MemberId;
-            Date = chatEvent.Date;
-            Id = chatEvent.Id;
-        }
-
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class MessageSponsored : MessageContent
-    {
-        public MessageSponsored(SponsoredMessage message)
-        {
-            Content = message.Content;
-            Link = message.Link;
-            ShowChatPhoto = message.ShowChatPhoto;
-            SponsorChatInfo = message.SponsorChatInfo;
-            SponsorChatId = message.SponsorChatId;
-            IsRecommended = message.IsRecommended;
-        }
-
-        /// <summary>
-        /// Content of the message. Currently, can be only of the type messageText.
-        /// </summary>
-        public MessageContent Content { get; set; }
-
-        /// <summary>
-        /// An internal link to be opened when the sponsored message is clicked; may be null
-        /// if the sponsor chat needs to be opened instead.
-        /// </summary>
-        public InternalLinkType Link { get; set; }
-
-        /// <summary>
-        /// True, if the sponsor's chat photo must be shown.
-        /// </summary>
-        public bool ShowChatPhoto { get; set; }
-
-        /// <summary>
-        /// Information about the sponsor chat; may be null unless SponsorChatId == 0.
-        /// </summary>
-        public ChatInviteLinkInfo SponsorChatInfo { get; set; }
-
-        /// <summary>
-        /// Sponsor chat identifier; 0 if the sponsor chat is accessible through an invite
-        /// link.
-        /// </summary>
-        public long SponsorChatId { get; set; }
-
-        /// <summary>
-        /// True, if the message needs to be labeled as "recommended" instead of "sponsored".
-        /// </summary>
-        public bool IsRecommended { get; set; }
-
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string ToString()
-        {
-            return nameof(MessageSponsored);
-        }
-    }
-
-    public class MessageHeaderDate : MessageContent
-    {
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string ToString()
-        {
-            return nameof(MessageHeaderDate);
-        }
-    }
-
-    public class MessageHeaderUnread : MessageContent
-    {
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override string ToString()
-        {
-            return nameof(MessageHeaderUnread);
-        }
-    }
-
-    public class PremiumLimitTypeConnectedAccounts : PremiumLimitType
-    {
-        public NativeObject ToUnmanaged()
-        {
-            throw new NotImplementedException();
         }
     }
 }

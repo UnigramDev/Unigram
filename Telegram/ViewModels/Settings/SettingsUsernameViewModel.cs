@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Converters;
-using Telegram.Entities;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;

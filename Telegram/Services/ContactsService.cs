@@ -392,7 +392,7 @@ namespace Telegram.Services
             try
             {
                 var user = _clientService.GetUser(_clientService.Options.MyId);
-                var displayName = user?.FullName() ?? "Unigram";
+                var displayName = Td.Api.TdExtensions.FullName(user);
 
                 ContactList contactList = null;
                 if (_clientService.Options.TryGetValue("x_contact_list", out string id))

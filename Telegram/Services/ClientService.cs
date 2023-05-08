@@ -11,8 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Common;
-using Telegram.Entities;
 using Telegram.Services.Updates;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -1849,34 +1847,6 @@ namespace Telegram.Services
 
             _aggregator.Publish(update);
         }
-
-        private void ProcessTopicUpdate(Update update)
-        {
-            if (update is UpdateNewMessage newMessage)
-            {
-                if (newMessage.Message.Content is MessageForumTopicCreated)
-                {
-
-                }
-                else if (newMessage.Message.Content is MessageForumTopicEdited)
-                {
-
-                }
-                else if (newMessage.Message.Content is MessageForumTopicIsClosedToggled)
-                {
-
-                }
-                else if (newMessage.Message.Content is MessageForumTopicIsHiddenToggled)
-                {
-
-                }
-            }
-        }
-    }
-
-    public class TopicLoader
-    {
-
     }
 
     public class ChatListUnreadCount
@@ -1885,127 +1855,6 @@ namespace Telegram.Services
 
         public UpdateUnreadChatCount UnreadChatCount { get; set; }
         public UpdateUnreadMessageCount UnreadMessageCount { get; set; }
-    }
-
-    public class FileContext<T> : ConcurrentDictionary<int, List<T>>
-    {
-        public new List<T> this[int id]
-        {
-            get
-            {
-                if (TryGetValue(id, out List<T> items))
-                {
-                    return items;
-                }
-
-                return this[id] = new List<T>();
-            }
-            set => base[id] = value;
-        }
-    }
-
-    static class TdClientExtensions
-    {
-        public static void Send(this Client client, Function function, Action<BaseObject> handler)
-        {
-            if (handler == null)
-            {
-                client.Send(function, null);
-            }
-            else
-            {
-                client.Send(function, new TdHandler(handler));
-            }
-        }
-
-        public static void Send(this Client client, Function function)
-        {
-            client.Send(function, null);
-        }
-
-        public static Task<BaseObject> SendAsync(this Client client, Function function, Action<BaseObject> closure)
-        {
-            var tsc = new TdCompletionSource(closure);
-            client.Send(function, tsc);
-
-            return tsc.Task;
-        }
-
-
-
-        public static bool CodeEquals(this Error error, ErrorCode code)
-        {
-            if (error == null)
-            {
-                return false;
-            }
-
-            if (Enum.IsDefined(typeof(ErrorCode), error.Code))
-            {
-                return (ErrorCode)error.Code == code;
-            }
-
-            return false;
-        }
-
-        public static bool MessageEquals(this Error error, ErrorType type)
-        {
-            if (error == null || error.Message == null)
-            {
-                return false;
-            }
-
-            var strings = error.Message.Split(':');
-            var typeString = strings[0];
-            if (Enum.IsDefined(typeof(ErrorType), typeString))
-            {
-                var value = (ErrorType)Enum.Parse(typeof(ErrorType), typeString, true);
-
-                return value == type;
-            }
-
-            return false;
-        }
-    }
-
-    class TdCompletionSource : TaskCompletionSource<BaseObject>, ClientResultHandler
-    {
-        private readonly Action<BaseObject> _closure;
-
-        public TdCompletionSource(Action<BaseObject> closure)
-        {
-            _closure = closure;
-        }
-
-        public void OnResult(BaseObject result)
-        {
-            _closure(result);
-            SetResult(result);
-        }
-    }
-
-    class TdHandler : ClientResultHandler
-    {
-        private readonly Action<BaseObject> _callback;
-
-        public TdHandler(Action<BaseObject> callback)
-        {
-            _callback = callback;
-        }
-
-        public void OnResult(BaseObject result)
-        {
-            try
-            {
-                _callback(result);
-            }
-            catch
-            {
-                // We need to explicitly catch here because
-                // an exception on the handler thread will cause
-                // the app to no longer receive any update from TDLib.
-            }
-        }
     }
 
     public class MessageSenderEqualityComparer : IEqualityComparer<MessageSender>
