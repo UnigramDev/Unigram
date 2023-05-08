@@ -728,6 +728,8 @@
                 Value="36" />-->
         <Setter Property="HorizontalContentAlignment"
                 Value="Center" />
+        <Setter Property="IsTabStop"
+                Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate>
@@ -3052,10 +3054,15 @@
     </Style>
 
     <Style TargetType="local:ProfilePicture">
+        <Setter Property="UseSystemFocusVisuals"
+                Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ProfilePicture">
-                    <Border x:Name="LayoutRoot">
+                    <Border x:Name="LayoutRoot"
+                            Control.IsTemplateFocusTarget="True">
                         <Border.Background>
                             <ImageBrush x:Name="Texture"
                                         Stretch="UniformToFill" />

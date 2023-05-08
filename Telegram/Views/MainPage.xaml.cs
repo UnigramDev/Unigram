@@ -125,9 +125,6 @@ namespace Telegram.Views
 
             ChatsList.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
-            var header = ElementCompositionPreview.GetElementVisual(PageHeader);
-            header.Clip = header.Compositor.CreateInsetClip();
-
             //var show = !((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats;
             var show = !((TLViewModelBase)ViewModel).Settings.HideArchivedChats;
 
@@ -705,21 +702,14 @@ namespace Telegram.Views
             Root?.SetSidebarEnabled(show);
             MasterDetail.IsOnlyChild = !show;
 
-            Photo.Visibility = show || rpMasterTitlebar.SelectedIndex == 3
-                ? Visibility.Collapsed
-                : Visibility.Visible;
+            Photo.Margin = new Thickness(show ? -62 : 0, 0, show ? 0 : 12, 0);
+            Photo.Visibility = show || rpMasterTitlebar.SelectedIndex != 3
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             if (ChatTabsLeft == null)
             {
                 FindName(nameof(ChatTabsLeft));
-            }
-
-            if (show && PhotoSide != null)
-            {
-                if (_clientService.TryGetUser(_clientService.Options.MyId, out User user))
-                {
-                    PhotoSide.SetUser(_clientService, user, 28);
-                }
             }
 
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
@@ -862,7 +852,6 @@ namespace Telegram.Views
             }
 
             Photo.SetUser(_clientService, user, 28);
-            PhotoSide?.SetUser(_clientService, user, 28);
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
@@ -1891,7 +1880,7 @@ namespace Telegram.Views
                 }
             }
 
-            Photo.Visibility = _tabsLeftCollapsed && rpMasterTitlebar.SelectedIndex != 3
+            Photo.Visibility = _tabsLeftCollapsed || rpMasterTitlebar.SelectedIndex != 3
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
@@ -2053,7 +2042,7 @@ namespace Telegram.Views
 
             if (SearchField.FocusState != FocusState.Unfocused)
             {
-                FocusTarget.Focus(FocusState.Programmatic);
+                Photo.Focus(FocusState.Programmatic);
             }
 
             SearchField.Text = string.Empty;

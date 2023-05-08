@@ -132,6 +132,10 @@
                 Value="24" />
         <Setter Property="CornerRadius"
                 Value="24" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FileButton">
@@ -252,6 +256,10 @@
                 Value="16" />
         <Setter Property="CornerRadius"
                 Value="10" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FileButton">
@@ -379,6 +387,10 @@
                 Value="24" />
         <Setter Property="RequestedTheme"
                 Value="Dark" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FileButton">
@@ -513,6 +525,10 @@
                 Value="12" />
         <Setter Property="RequestedTheme"
                 Value="Dark" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:FileButton">

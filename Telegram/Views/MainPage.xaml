@@ -284,20 +284,9 @@
               x:Name="ChatTabsLeft"
               Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="42" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <controls:ProfilePicture x:Name="PhotoSide"
-                                     Click="Photo_Click"
-                                     HorizontalAlignment="Left"
-                                     VerticalAlignment="Bottom"
-                                     Margin="22,2,0,12"
-                                     Width="28"
-                                     Height="28"
-                                     AutomationProperties.LandmarkType="Navigation"
-                                     AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
-                                     ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}" />
-
             <controls:TopNavView x:Name="ChatFoldersSide"
                                  ItemsSource="{x:Bind NavigationResults.View}"
                                  SelectedItem="{x:Bind ConvertFolder(ViewModel.SelectedFolder), Mode=TwoWay, BindBack=ConvertFolderBack}"
@@ -481,237 +470,231 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <controls:ContentPageHeader x:Name="PageHeader"
-                                            Background="Transparent"
-                                            BorderBrush="Transparent"
-                                            Margin="0,-8,0,0">
-                    <Grid x:Name="Header">
+                <Grid x:Name="Header"
+                      Background="Transparent"
+                      BorderBrush="Transparent"
+                      Height="{StaticResource NavigationViewTopPaneHeight}"
+                      Margin="0,-8,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid x:Name="MainHeader"
+                          Padding="12,0,0,0"
+                          Grid.ColumnSpan="2">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
+                            <ColumnDefinition Width="Auto"
+                                              MinWidth="12" />
                         </Grid.ColumnDefinitions>
-                        <Grid x:Name="MainHeader"
-                              Padding="12,0,0,0"
-                              Grid.ColumnSpan="2">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto"
-                                                  MinWidth="12" />
-                            </Grid.ColumnDefinitions>
-                            <Button x:Name="FocusTarget"
-                                    Content="Nothing to see here, tab further"
-                                    Width="12"
-                                    Height="12"
-                                    Opacity="0"
-                                    Grid.ColumnSpan="2" />
-                            <controls:ProfilePicture x:Name="Photo"
-                                                     Click="Photo_Click"
-                                                     VerticalAlignment="Center"
-                                                     Margin="0,0,12,0"
-                                                     Width="28"
-                                                     Height="28"
-                                                     AutomationProperties.LandmarkType="Navigation"
-                                                     AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
-                                                     ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}" />
+                        <controls:ProfilePicture x:Name="Photo"
+                                                 Click="Photo_Click"
+                                                 HorizontalAlignment="Left"
+                                                 VerticalAlignment="Center"
+                                                 Margin="0,0,12,0"
+                                                 Width="28"
+                                                 Height="28"
+                                                 AutomationProperties.LandmarkType="Navigation"
+                                                 AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
+                                                 ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}" />
 
-                            <TextBox x:Name="SearchField"
-                                     PlaceholderText="{CustomResource Search}"
-                                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
-                                     PreventKeyboardDisplayOnProgrammaticFocus="True"
-                                     AutomationProperties.LandmarkType="Search"
-                                     VerticalAlignment="Center"
-                                     GotFocus="Search_Click"
-                                     TextChanged="Search_TextChanged"
-                                     KeyDown="Search_KeyDown"
-                                     Grid.Column="1">
-                                <TextBox.Header>
-                                    <ItemsControl x:Name="Test"
-                                                  x:Load="False"
-                                                  ItemsSource="{x:Bind ViewModel.Chats.SearchFilters}"
-                                                  Margin="-4,0,0,0">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate x:DataType="collections:ISearchChatsFilter">
-                                                <StackPanel Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                                            Orientation="Horizontal"
-                                                            RequestedTheme="Dark"
-                                                            Margin="8,4,-4,4"
-                                                            CornerRadius="2">
-                                                    <TextBlock Text="{x:Bind Glyph}"
-                                                               Margin="8,0,8,0"
-                                                               FontSize="16"
-                                                               FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                               VerticalAlignment="Center" />
-                                                    <TextBlock Text="{x:Bind Text}"
-                                                               TextWrapping="NoWrap"
-                                                               TextTrimming="CharacterEllipsis"
-                                                               Margin="0,0,8,0"
-                                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                               Style="{StaticResource BodyTextBlockStyle}"
-                                                               VerticalAlignment="Center" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                    </ItemsControl>
-                                </TextBox.Header>
-                            </TextBox>
+                        <TextBox x:Name="SearchField"
+                                 PlaceholderText="{CustomResource Search}"
+                                 BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                 PreventKeyboardDisplayOnProgrammaticFocus="True"
+                                 AutomationProperties.LandmarkType="Search"
+                                 VerticalAlignment="Center"
+                                 GotFocus="Search_Click"
+                                 TextChanged="Search_TextChanged"
+                                 KeyDown="Search_KeyDown"
+                                 Grid.Column="1">
+                            <TextBox.Header>
+                                <ItemsControl x:Name="Test"
+                                              x:Load="False"
+                                              ItemsSource="{x:Bind ViewModel.Chats.SearchFilters}"
+                                              Margin="-4,0,0,0">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="collections:ISearchChatsFilter">
+                                            <StackPanel Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                                                        Orientation="Horizontal"
+                                                        RequestedTheme="Dark"
+                                                        Margin="8,4,-4,4"
+                                                        CornerRadius="2">
+                                                <TextBlock Text="{x:Bind Glyph}"
+                                                           Margin="8,0,8,0"
+                                                           FontSize="16"
+                                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                           VerticalAlignment="Center" />
+                                                <TextBlock Text="{x:Bind Text}"
+                                                           TextWrapping="NoWrap"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           Margin="0,0,8,0"
+                                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                           Style="{StaticResource BodyTextBlockStyle}"
+                                                           VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                </ItemsControl>
+                            </TextBox.Header>
+                        </TextBox>
 
-                            <StackPanel x:Name="ContactsOptions"
-                                        Orientation="Horizontal"
-                                        VerticalAlignment="Center"
-                                        Grid.Column="2">
-                                <controls:GlyphToggleButton Glyph="&#xE91B;"
-                                                            CheckedGlyph="&#xE91E;"
-                                                            IsChecked="{x:Bind ViewModel.Contacts.IsSortedByEpoch, Mode=TwoWay}"
-                                                            Style="{StaticResource HeaderGlyphToggleButtonStyle}"
-                                                            FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                                            AutomationProperties.Name="{CustomResource AccDescrContactSorting}"
-                                                            ToolTipService.ToolTip="{CustomResource AccDescrContactSorting}"
-                                                            IsOneWay="False"
-                                                            Width="40"
-                                                            Height="40" />
-                            </StackPanel>
-                            <StackPanel x:Name="ChatsOptions"
-                                        Orientation="Horizontal"
-                                        VerticalAlignment="Center"
-                                        Grid.Column="2">
-                                <controls:GlyphButton x:Name="ComposeButton"
-                                                      Glyph="&#xE996;"
-                                                      AutomationProperties.Name="{CustomResource NewConversationShortcut}"
-                                                      ToolTipService.ToolTip="{CustomResource NewConversationShortcut}"
-                                                      FontSize="16"
-                                                      VerticalAlignment="Center"
-                                                      Margin="-36,0,0,0"
-                                                      Width="36"
-                                                      Height="32">
-                                    <Button.Flyout>
-                                        <MenuFlyout Placement="BottomEdgeAlignedRight">
-                                            <MenuFlyoutItem Click="NewGroup_Click"
-                                                            Text="{CustomResource NewGroup}">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE716;"
-                                                              Style="{StaticResource DefaultFontIconStyle}" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                            <MenuFlyoutItem Click="{x:Bind ViewModel.CreateSecretChat}"
-                                                            Text="{CustomResource NewSecretChat}">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE916;"
-                                                              Style="{StaticResource DefaultFontIconStyle}" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                            <MenuFlyoutItem Click="NewChannel_Click"
-                                                            Text="{CustomResource NewChannel}">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE789;"
-                                                              Style="{StaticResource DefaultFontIconStyle}" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                        </MenuFlyout>
-                                    </Button.Flyout>
-                                </controls:GlyphButton>
-                                <controls:GlyphButton x:Name="Proxy"
-                                                      Glyph="&#xEA19;"
-                                                      Click="Proxy_Click"
-                                                      Visibility="Collapsed"
-                                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                                      Style="{StaticResource HeaderGlyphButtonStyle}"
-                                                      AutomationProperties.Name="{CustomResource ProxySettings}"
-                                                      ToolTipService.ToolTip="{CustomResource ProxySettings}"
-                                                      Width="40"
-                                                      Height="40" />
-                                <controls:GlyphButton x:Name="Lock"
-                                                      Visibility="Collapsed"
-                                                      Glyph="&#xE785;"
-                                                      Click="Lock_Click"
-                                                      Style="{StaticResource HeaderGlyphButtonStyle}"
-                                                      AutomationProperties.Name="{CustomResource AccDescrPasscodeLock}"
-                                                      ToolTipService.ToolTip="{CustomResource AccDescrPasscodeLock}"
-                                                      Width="40"
-                                                      Height="40" />
-                            </StackPanel>
-                        </Grid>
-
-                        <Grid x:Name="ManagePanel"
-                              Visibility="Collapsed"
-                              Grid.ColumnSpan="3">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <controls:GlyphButton x:Name="ManageMute"
-                                                  Click="{x:Bind ViewModel.Chats.NotifySelectedChats}"
-                                                  Style="{StaticResource HeaderGlyphButtonStyle}"
+                        <StackPanel x:Name="ContactsOptions"
+                                    Orientation="Horizontal"
+                                    VerticalAlignment="Center"
+                                    Grid.Column="2">
+                            <controls:GlyphToggleButton Glyph="&#xE91B;"
+                                                        CheckedGlyph="&#xE91E;"
+                                                        IsChecked="{x:Bind ViewModel.Contacts.IsSortedByEpoch, Mode=TwoWay}"
+                                                        Style="{StaticResource HeaderGlyphToggleButtonStyle}"
+                                                        FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                                        AutomationProperties.Name="{CustomResource AccDescrContactSorting}"
+                                                        ToolTipService.ToolTip="{CustomResource AccDescrContactSorting}"
+                                                        IsOneWay="False"
+                                                        Width="40"
+                                                        Height="40" />
+                        </StackPanel>
+                        <StackPanel x:Name="ChatsOptions"
+                                    Orientation="Horizontal"
+                                    VerticalAlignment="Center"
+                                    Grid.Column="2">
+                            <controls:GlyphButton x:Name="ComposeButton"
+                                                  Glyph="&#xE996;"
+                                                  AutomationProperties.Name="{CustomResource NewConversationShortcut}"
+                                                  ToolTipService.ToolTip="{CustomResource NewConversationShortcut}"
+                                                  FontSize="16"
                                                   VerticalAlignment="Center"
-                                                  Width="40"
-                                                  Height="40" />
-                            <controls:GlyphButton x:Name="ManageMark"
-                                                  Click="{x:Bind ViewModel.Chats.MarkSelectedChatsAsRead}"
+                                                  Margin="-36,0,0,0"
+                                                  Width="36"
+                                                  Height="32">
+                                <Button.Flyout>
+                                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                                        <MenuFlyoutItem Click="NewGroup_Click"
+                                                        Text="{CustomResource NewGroup}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE716;"
+                                                          Style="{StaticResource DefaultFontIconStyle}" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem Click="{x:Bind ViewModel.CreateSecretChat}"
+                                                        Text="{CustomResource NewSecretChat}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE916;"
+                                                          Style="{StaticResource DefaultFontIconStyle}" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem Click="NewChannel_Click"
+                                                        Text="{CustomResource NewChannel}">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Glyph="&#xE789;"
+                                                          Style="{StaticResource DefaultFontIconStyle}" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </controls:GlyphButton>
+                            <controls:GlyphButton x:Name="Proxy"
+                                                  Glyph="&#xEA19;"
+                                                  Click="Proxy_Click"
+                                                  Visibility="Collapsed"
                                                   FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                   Style="{StaticResource HeaderGlyphButtonStyle}"
-                                                  VerticalAlignment="Center"
+                                                  AutomationProperties.Name="{CustomResource ProxySettings}"
+                                                  ToolTipService.ToolTip="{CustomResource ProxySettings}"
                                                   Width="40"
-                                                  Height="40"
-                                                  Grid.Column="1" />
-                            <controls:GlyphButton Glyph="&#xE7B8;"
-                                                  Click="{x:Bind ViewModel.Chats.ArchiveSelectedChats}"
-                                                  AutomationProperties.Name="{CustomResource Archive}"
-                                                  ToolTipService.ToolTip="{CustomResource Archive}"
+                                                  Height="40" />
+                            <controls:GlyphButton x:Name="Lock"
+                                                  Visibility="Collapsed"
+                                                  Glyph="&#xE785;"
+                                                  Click="Lock_Click"
                                                   Style="{StaticResource HeaderGlyphButtonStyle}"
-                                                  VerticalAlignment="Center"
+                                                  AutomationProperties.Name="{CustomResource AccDescrPasscodeLock}"
+                                                  ToolTipService.ToolTip="{CustomResource AccDescrPasscodeLock}"
                                                   Width="40"
-                                                  Height="40"
-                                                  Grid.Column="2" />
-                            <controls:GlyphButton Glyph="&#xE74D;"
-                                                  Click="{x:Bind ViewModel.Chats.DeleteSelectedChats}"
-                                                  AutomationProperties.Name="{CustomResource Delete}"
-                                                  ToolTipService.ToolTip="{CustomResource Delete}"
-                                                  Style="{StaticResource HeaderGlyphButtonStyle}"
-                                                  VerticalAlignment="Center"
-                                                  Width="40"
-                                                  Height="40"
-                                                  Grid.Column="3" />
-                            <controls:GlyphButton x:Name="ManageClear"
-                                                  Glyph="&#xEA99;"
-                                                  Click="{x:Bind ViewModel.Chats.ClearSelectedChats}"
-                                                  AutomationProperties.Name="{CustomResource ClearHistory}"
-                                                  ToolTipService.ToolTip="{CustomResource ClearHistory}"
-                                                  Style="{StaticResource HeaderGlyphButtonStyle}"
-                                                  VerticalAlignment="Center"
-                                                  Width="40"
-                                                  Height="40"
-                                                  Grid.Column="4" />
-
-                            <ContentControl Content="{x:Bind ViewModel.Chats.SelectedItems.Count, Mode=OneWay}"
-                                            HorizontalContentAlignment="Center"
-                                            VerticalContentAlignment="Center"
-                                            FontWeight="SemiBold"
-                                            Padding="12,0"
-                                            Height="48"
-                                            Grid.Column="6">
-                                <ContentControl.ContentTransitions>
-                                    <TransitionCollection>
-                                        <EntranceThemeTransition />
-                                    </TransitionCollection>
-                                </ContentControl.ContentTransitions>
-                                <ContentControl.Clip>
-                                    <RectangleGeometry Rect="0,0,200,48" />
-                                </ContentControl.Clip>
-                            </ContentControl>
-                        </Grid>
+                                                  Height="40" />
+                        </StackPanel>
                     </Grid>
-                </controls:ContentPageHeader>
+
+                    <Grid x:Name="ManagePanel"
+                          Visibility="Collapsed"
+                          Grid.ColumnSpan="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <controls:GlyphButton x:Name="ManageMute"
+                                              Click="{x:Bind ViewModel.Chats.NotifySelectedChats}"
+                                              Style="{StaticResource HeaderGlyphButtonStyle}"
+                                              VerticalAlignment="Center"
+                                              Width="40"
+                                              Height="40" />
+                        <controls:GlyphButton x:Name="ManageMark"
+                                              Click="{x:Bind ViewModel.Chats.MarkSelectedChatsAsRead}"
+                                              FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                              Style="{StaticResource HeaderGlyphButtonStyle}"
+                                              VerticalAlignment="Center"
+                                              Width="40"
+                                              Height="40"
+                                              Grid.Column="1" />
+                        <controls:GlyphButton Glyph="&#xE7B8;"
+                                              Click="{x:Bind ViewModel.Chats.ArchiveSelectedChats}"
+                                              AutomationProperties.Name="{CustomResource Archive}"
+                                              ToolTipService.ToolTip="{CustomResource Archive}"
+                                              Style="{StaticResource HeaderGlyphButtonStyle}"
+                                              VerticalAlignment="Center"
+                                              Width="40"
+                                              Height="40"
+                                              Grid.Column="2" />
+                        <controls:GlyphButton Glyph="&#xE74D;"
+                                              Click="{x:Bind ViewModel.Chats.DeleteSelectedChats}"
+                                              AutomationProperties.Name="{CustomResource Delete}"
+                                              ToolTipService.ToolTip="{CustomResource Delete}"
+                                              Style="{StaticResource HeaderGlyphButtonStyle}"
+                                              VerticalAlignment="Center"
+                                              Width="40"
+                                              Height="40"
+                                              Grid.Column="3" />
+                        <controls:GlyphButton x:Name="ManageClear"
+                                              Glyph="&#xEA99;"
+                                              Click="{x:Bind ViewModel.Chats.ClearSelectedChats}"
+                                              AutomationProperties.Name="{CustomResource ClearHistory}"
+                                              ToolTipService.ToolTip="{CustomResource ClearHistory}"
+                                              Style="{StaticResource HeaderGlyphButtonStyle}"
+                                              VerticalAlignment="Center"
+                                              Width="40"
+                                              Height="40"
+                                              Grid.Column="4" />
+
+                        <ContentControl Content="{x:Bind ViewModel.Chats.SelectedItems.Count, Mode=OneWay}"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        FontWeight="SemiBold"
+                                        Padding="12,0"
+                                        Height="48"
+                                        Grid.Column="6">
+                            <ContentControl.ContentTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition />
+                                </TransitionCollection>
+                            </ContentControl.ContentTransitions>
+                            <ContentControl.Clip>
+                                <RectangleGeometry Rect="0,0,200,48" />
+                            </ContentControl.Clip>
+                        </ContentControl>
+                    </Grid>
+                </Grid>
 
                 <Pivot x:Name="rpMasterTitlebar"
                        SelectionChanged="Pivot_SelectionChanged"

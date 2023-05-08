@@ -185,6 +185,8 @@
     </Style>
 
     <Style TargetType="local:VoiceNoteContent">
+        <Setter Property="IsTabStop"
+                Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:VoiceNoteContent">
