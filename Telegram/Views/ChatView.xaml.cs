@@ -2829,6 +2829,14 @@ namespace Telegram.Views
                 return false;
             }
 
+            var file = message.GetFile();
+            if (file != null)
+            {
+                return file.Local.IsDownloadingCompleted;
+            }
+
+            return false;
+
             return message.Content switch
             {
                 MessagePhoto photo => photo.Photo.GetBig()?.Photo.Local.IsDownloadingCompleted ?? false,
