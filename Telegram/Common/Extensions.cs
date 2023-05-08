@@ -326,6 +326,11 @@ namespace Telegram.Common
             return (long)(dateTime.ToUniversalTime() - dtDateTime).TotalMilliseconds;
         }
 
+        public static Size ToSize(this Rect rectangle)
+        {
+            return new Size(rectangle.Width, rectangle.Height);
+        }
+
         public static bool TryGet<T>(this IDictionary<object, object> dict, object key, out T value)
         {
             bool success;

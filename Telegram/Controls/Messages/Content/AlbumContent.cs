@@ -66,7 +66,7 @@ namespace Telegram.Controls.Messages.Content
 
             for (int i = 0; i < Math.Min(positions.Item1.Length, Children.Count); i++)
             {
-                Children[i].Measure(new Size(positions.Item1[i].Width, positions.Item1[i].Height));
+                Children[i].Measure(positions.Item1[i].ToSize());
             }
 
             _positions = positions;
