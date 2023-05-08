@@ -160,7 +160,9 @@ namespace Telegram.Services
             item.Aggregator.Unsubscribe(item);
             //WindowContext.Unsubscribe(item);
 
-            foreach (var window in WindowContext.ActiveWrappers.ToArray())
+            // TODO: check if this can be replaced with ForEach
+            // but most likely not (because of Close)
+            foreach (var window in WindowContext.All.ToArray())
             {
                 await window.Dispatcher.DispatchAsync(() =>
                 {

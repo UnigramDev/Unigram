@@ -142,28 +142,25 @@ namespace Telegram.ViewModels.Settings
                 //TLWindowContext.Current.NavigationServices.Remove(NavigationService);
                 //BootStrapper.Current.NavigationService.Reset();
 
-                foreach (var window in WindowContext.ActiveWrappers)
+                WindowContext.ForEach(window =>
                 {
-                    window.Dispatcher.Dispatch(() =>
+                    ResourceContext.GetForCurrentView().Reset();
+                    ResourceContext.GetForViewIndependentUse().Reset();
+
+                    if (window.Content is FrameworkElement frameworkElement)
                     {
-                        ResourceContext.GetForCurrentView().Reset();
-                        ResourceContext.GetForViewIndependentUse().Reset();
+                        //window.CoreWindow.FlowDirection = _localeService.FlowDirection == FlowDirection.RightToLeft
+                        //    ? CoreWindowFlowDirection.RightToLeft
+                        //    : CoreWindowFlowDirection.LeftToRight;
 
-                        if (window.Content is FrameworkElement frameworkElement)
-                        {
-                            //window.CoreWindow.FlowDirection = _localeService.FlowDirection == FlowDirection.RightToLeft
-                            //    ? CoreWindowFlowDirection.RightToLeft
-                            //    : CoreWindowFlowDirection.LeftToRight;
+                        frameworkElement.FlowDirection = LocaleService.Current.FlowDirection;
+                    }
 
-                            frameworkElement.FlowDirection = _localeService.FlowDirection;
-                        }
-
-                        if (window.Content is RootPage root)
-                        {
-                            root.UpdateComponent();
-                        }
-                    });
-                }
+                    if (window.Content is RootPage root)
+                    {
+                        root.UpdateComponent();
+                    }
+                });
             }
 
             IsLoading = false;

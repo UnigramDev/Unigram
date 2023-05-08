@@ -21,6 +21,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Resources;
 
 namespace Telegram.Navigation
 {
@@ -63,10 +64,11 @@ namespace Telegram.Navigation
 
             CreateWindowWrapper(args.Window);
             ViewService.OnWindowCreated();
+            CustomXamlResourceLoader.Current = new XamlResourceLoader();
             base.OnWindowCreated(args);
         }
 
-        protected virtual WindowContext CreateWindowWrapper(Window window)
+        private WindowContext CreateWindowWrapper(Window window)
         {
             return new WindowContext(window);
         }
@@ -506,7 +508,7 @@ namespace Telegram.Navigation
             frame.Content = (existingContent == ExistingContent.Include) ? Window.Current.Content : null;
 
             // if the service already exists for this frame, use the existing one.
-            foreach (var nav in WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices))
+            foreach (var nav in WindowContext.All.SelectMany(x => x.NavigationServices))
             {
                 if (nav.FrameFacade.Frame.Equals(frame))
                 {
@@ -541,7 +543,7 @@ namespace Telegram.Navigation
                 if (cacheAge >= CacheMaxDuration)
                 {
                     // clear state in every nav service in every view
-                    foreach (var nav in WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices))
+                    foreach (var nav in WindowContext.All.SelectMany(x => x.NavigationServices))
                     {
                         nav.FrameFacade.ClearFrameState();
                     }
@@ -793,7 +795,7 @@ namespace Telegram.Navigation
                 Logger.Info();
 
                 //allow only main view NavigationService as others won't be able to use Dispatcher and processing will stuck
-                var services = WindowContext.ActiveWrappers.SelectMany(x => x.NavigationServices).Where(x => x.IsInMainView);
+                var services = WindowContext.All.SelectMany(x => x.NavigationServices).Where(x => x.IsInMainView);
                 foreach (INavigationService nav in services.ToArray())
                 {
                     try

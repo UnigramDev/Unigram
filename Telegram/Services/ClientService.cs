@@ -66,9 +66,9 @@ namespace Telegram.Services
         Background GetSelectedBackground(bool darkTheme);
         Background SelectedBackground { get; }
 
-        AuthorizationState GetAuthorizationState();
+        Task<AuthorizationState> GetAuthorizationStateAsync();
         AuthorizationState AuthorizationState { get; }
-        ConnectionState GetConnectionState();
+        ConnectionState ConnectionState { get; }
 
         string GetTitle(Chat chat, bool tiny = false);
         string GetTitle(MessageForwardInfo info);
@@ -223,6 +223,7 @@ namespace Telegram.Services
 
         private UpdateChatThemes _chatThemes;
 
+        private TaskCompletionSource<bool> _authorizationStateTask = new();
         private AuthorizationState _authorizationState;
         private ConnectionState _connectionState;
 
@@ -558,6 +559,7 @@ namespace Telegram.Services
 
             _animationSearchParameters = null;
 
+            _authorizationStateTask = new();
             _authorizationState = null;
             _connectionState = null;
 
@@ -684,19 +686,22 @@ namespace Telegram.Services
 
 
 
-        public AuthorizationState GetAuthorizationState()
+        public async Task<AuthorizationState> GetAuthorizationStateAsync()
         {
+            if (_authorizationState is not null)
+            {
+                return _authorizationState;
+            }
+
+            await _authorizationStateTask.Task;
             return _authorizationState;
         }
 
         public AuthorizationState AuthorizationState => _authorizationState;
 
-        public Settings.NotificationsSettings Notifications => _settings.Notifications;
+        public ConnectionState ConnectionState => _connectionState;
 
-        public ConnectionState GetConnectionState()
-        {
-            return _connectionState;
-        }
+        public Settings.NotificationsSettings Notifications => _settings.Notifications;
 
         public bool IsPremium => _options.IsPremium;
 
@@ -1361,18 +1366,22 @@ namespace Telegram.Services
             {
                 switch (updateAuthorizationState.AuthorizationState)
                 {
-                    case AuthorizationStateLoggingOut loggingOut:
+                    case AuthorizationStateLoggingOut:
                         _settings.Clear();
                         break;
-                    case AuthorizationStateClosed closed:
+                    case AuthorizationStateClosed:
                         CleanUp();
                         break;
-                    case AuthorizationStateReady ready:
+                    case AuthorizationStateReady:
                         InitializeReady();
                         break;
                 }
 
-                _authorizationState = updateAuthorizationState.AuthorizationState;
+                if (updateAuthorizationState.AuthorizationState is not AuthorizationStateWaitTdlibParameters)
+                {
+                    _authorizationStateTask.TrySetResult(true);
+                    _authorizationState = updateAuthorizationState.AuthorizationState;
+                }
             }
             else if (update is UpdateAnimationSearchParameters updateAnimationSearchParameters)
             {

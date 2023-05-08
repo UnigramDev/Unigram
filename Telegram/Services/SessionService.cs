@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -224,9 +225,13 @@ namespace Telegram.Services
             //    _lifetimeService.Unregister(this);
             //}
 
-            foreach (TLWindowContext window in WindowContext.ActiveWrappers)
+            if (IsActive)
             {
-                window.Handle(this, update);
+                WindowContext.ForEach(window =>
+                {
+                    var root = window.NavigationServices.FirstOrDefault(x => x.SessionId == Id && x.FrameFacade.FrameId == $"{Id}") as TLRootNavigationService;
+                    root?.Handle(update);
+                });
             }
         }
 

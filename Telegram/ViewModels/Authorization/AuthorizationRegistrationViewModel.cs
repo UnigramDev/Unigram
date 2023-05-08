@@ -48,8 +48,7 @@ namespace Telegram.ViewModels.Authorization
                 return;
             }
 
-            var state = ClientService.GetAuthorizationState();
-            if (state is AuthorizationStateWaitRegistration waitRegistration && waitRegistration.TermsOfService != null && waitRegistration.TermsOfService.ShowPopup)
+            if (ClientService.AuthorizationState is AuthorizationStateWaitRegistration waitRegistration && waitRegistration.TermsOfService != null && waitRegistration.TermsOfService.ShowPopup)
             {
                 async void CancelSignUp()
                 {

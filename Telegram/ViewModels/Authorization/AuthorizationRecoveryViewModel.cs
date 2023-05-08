@@ -28,8 +28,7 @@ namespace Telegram.ViewModels.Authorization
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var authState = ClientService.GetAuthorizationState();
-            if (authState is AuthorizationStateWaitPassword waitPassword)
+            if (ClientService.AuthorizationState is AuthorizationStateWaitPassword waitPassword)
             {
                 _parameters = waitPassword;
                 RecoveryEmailAddressPattern = waitPassword.RecoveryEmailAddressPattern;

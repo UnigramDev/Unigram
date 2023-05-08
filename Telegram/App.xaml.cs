@@ -54,13 +54,11 @@ using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
-using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Resources;
 
 namespace Telegram
 {
@@ -157,13 +155,7 @@ namespace Telegram
             //    ? CoreWindowFlowDirection.RightToLeft
             //    : CoreWindowFlowDirection.LeftToRight;
 
-            CustomXamlResourceLoader.Current = new XamlResourceLoader();
             base.OnWindowCreated(args);
-        }
-
-        protected override WindowContext CreateWindowWrapper(Window window)
-        {
-            return new TLWindowContext(window, ApplicationView.GetApplicationViewIdForWindow(window.CoreWindow));
         }
 
         private void Inactivity_Detected(object sender, EventArgs e)
@@ -325,26 +317,17 @@ namespace Telegram
 
             var navService = WindowContext.Current.NavigationServices.GetByFrameId($"{TLContainer.Current.Lifetime.ActiveItem.Id}");
             var service = TLContainer.Current.Resolve<IClientService>();
-            if (service == null)
-            {
-                return;
-            }
 
-            var state = service.GetAuthorizationState();
-            if (state == null)
+            if (service.AuthorizationState != null)
             {
-                return;
+                WindowContext.Current.Activate(args, navService, service.AuthorizationState);
             }
-
-            TLWindowContext.Current.SetActivatedArgs(args, navService);
-            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(320, 500));
-            //SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
             var context = WindowContext.Current.Dispatcher;
             _ = Task.Run(() => OnStartSync(context));
             //return Task.CompletedTask;
 
-            if (startKind == StartKind.Activate)
+            if (args is not LaunchActivatedEventArgs)
             {
                 var view = ApplicationView.GetForCurrentView();
                 await ApplicationViewSwitcher.TryShowAsStandaloneAsync(view.Id);
@@ -472,6 +455,8 @@ namespace Telegram
                 _extendedSession.Dispose();
                 _extendedSession = null;
             }
+
+            // TODO: consider killing the tray icon here
         }
 
         public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)

@@ -113,13 +113,6 @@ namespace Telegram.Views
             InitializeSearch();
             InitializeLock();
 
-            var update = new UpdateConnectionState(ViewModel.ClientService.GetConnectionState());
-            if (update.State != null)
-            {
-                Handle(update);
-                ViewModel.Aggregator.Publish(update);
-            }
-
             DropShadowEx.Attach(UpdateShadow);
             Window.Current.SetTitleBar(TitleBarHandle);
 
@@ -491,7 +484,7 @@ namespace Telegram.Views
         {
             if (update.Name.Equals("expect_blocking") || update.Name.Equals("enabled_proxy_id"))
             {
-                this.BeginOnUIThread(() => SetProxyVisibility(_clientService.Options.ExpectBlocking, _clientService.Options.EnabledProxyId, _clientService.GetConnectionState()));
+                this.BeginOnUIThread(() => SetProxyVisibility(_clientService.Options.ExpectBlocking, _clientService.Options.EnabledProxyId, _clientService.ConnectionState));
             }
         }
 
@@ -869,7 +862,7 @@ namespace Telegram.Views
 
             ShowHideBanner(ViewModel.PlaybackService.CurrentItem != null);
 
-            var update = new UpdateConnectionState(ViewModel.ClientService.GetConnectionState());
+            var update = new UpdateConnectionState(ViewModel.ClientService.ConnectionState);
             if (update.State != null)
             {
                 Handle(update);

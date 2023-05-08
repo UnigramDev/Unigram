@@ -90,7 +90,6 @@ namespace Telegram.Services
                 .Subscribe<UpdateSuggestedActions>(Handle)
                 .Subscribe<UpdateServiceNotification>(Handle)
                 .Subscribe<UpdateTermsOfService>(Handle)
-                .Subscribe<UpdateAuthorizationState>(Handle)
                 .Subscribe<UpdateUser>(Handle)
                 .Subscribe<UpdateNotification>(Handle)
                 .Subscribe<UpdateNotificationGroup>(Handle)
@@ -369,8 +368,7 @@ namespace Telegram.Services
                 return;
             }
 
-            var connectionState = _clientService.GetConnectionState();
-            if (connectionState is ConnectionStateUpdating)
+            if (_clientService.ConnectionState is ConnectionStateUpdating)
             {
                 // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
                 return;
@@ -400,8 +398,7 @@ namespace Telegram.Services
 
         public void Handle(UpdateNotification update)
         {
-            var connectionState = _clientService.GetConnectionState();
-            if (connectionState is ConnectionStateUpdating)
+            if (_clientService.ConnectionState is ConnectionStateUpdating)
             {
                 // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
                 return;
@@ -537,7 +534,7 @@ namespace Telegram.Services
         {
             try
             {
-                var active = TLWindowContext.ActiveWindow;
+                var active = WindowContext.Active;
                 if (active == null)
                 {
                     await action();
@@ -775,28 +772,9 @@ namespace Telegram.Services
             }
         }
 
-        private readonly TaskCompletionSource<AuthorizationState> _authorizationStateTask = new TaskCompletionSource<AuthorizationState>();
-
-        public void Handle(UpdateAuthorizationState update)
-        {
-            switch (update.AuthorizationState)
-            {
-                case AuthorizationStateWaitTdlibParameters:
-                    break;
-                default:
-                    _authorizationStateTask.TrySetResult(update.AuthorizationState);
-                    break;
-            }
-        }
-
         public async Task ProcessAsync(Dictionary<string, string> data)
         {
-            var state = _clientService.GetAuthorizationState();
-            if (state is not AuthorizationStateReady)
-            {
-                state = await _authorizationStateTask.Task;
-            }
-
+            var state = await _clientService.GetAuthorizationStateAsync();
             if (state is not AuthorizationStateReady)
             {
                 return;

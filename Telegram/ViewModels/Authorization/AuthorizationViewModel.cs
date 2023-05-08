@@ -52,7 +52,7 @@ namespace Telegram.ViewModels.Authorization
                 }
             });
 
-            var authState = ClientService.GetAuthorizationState();
+            var authState = ClientService.AuthorizationState;
             var waitState = authState is AuthorizationStateWaitPhoneNumber
                 or AuthorizationStateWaitCode
                 or AuthorizationStateWaitPassword

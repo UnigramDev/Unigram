@@ -27,8 +27,7 @@ namespace Telegram.ViewModels.Authorization
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var authState = ClientService.GetAuthorizationState();
-            if (authState is AuthorizationStateWaitCode waitCode)
+            if (ClientService.AuthorizationState is AuthorizationStateWaitCode waitCode)
             {
                 _codeInfo = waitCode.CodeInfo;
 
@@ -40,8 +39,7 @@ namespace Telegram.ViewModels.Authorization
 
         public override async void NavigatingFrom(NavigatingEventArgs args)
         {
-            var authState = ClientService.GetAuthorizationState();
-            if (authState is AuthorizationStateWaitCode waitCode && !_confirmedGoBack)
+            if (ClientService.AuthorizationState is AuthorizationStateWaitCode waitCode && !_confirmedGoBack)
             {
                 args.Cancel = true;
 

@@ -156,7 +156,7 @@ namespace Telegram.ViewModels.Settings
         {
             if (string.Equals(update.Name, "enabled_proxy_id", StringComparison.OrdinalIgnoreCase))
             {
-                BeginOnUIThread(() => Handle(ClientService.GetConnectionState(), ClientService.Options.EnabledProxyId));
+                BeginOnUIThread(() => Handle(ClientService.ConnectionState, ClientService.Options.EnabledProxyId));
             }
         }
 
@@ -251,7 +251,7 @@ namespace Telegram.ViewModels.Settings
                 await ClientService.SendAsync(new DisableProxy());
             }
 
-            Handle(ClientService.GetConnectionState(), ClientService.Options.EnabledProxyId);
+            Handle(ClientService.ConnectionState, ClientService.Options.EnabledProxyId);
         }
 
         public async void Edit(ConnectionViewModel connection)
@@ -274,7 +274,7 @@ namespace Telegram.ViewModels.Settings
                 await UpdateAsync(edited);
             }
 
-            Handle(ClientService.GetConnectionState(), ClientService.Options.EnabledProxyId);
+            Handle(ClientService.ConnectionState, ClientService.Options.EnabledProxyId);
         }
 
         public async void Remove(ProxyViewModel proxy)
@@ -291,7 +291,7 @@ namespace Telegram.ViewModels.Settings
                 Items.Remove(proxy);
             }
 
-            Handle(ClientService.GetConnectionState(), ClientService.Options.EnabledProxyId);
+            Handle(ClientService.ConnectionState, ClientService.Options.EnabledProxyId);
         }
 
         public async void Share(ProxyViewModel proxy)

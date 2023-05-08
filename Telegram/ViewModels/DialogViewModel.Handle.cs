@@ -12,6 +12,7 @@ using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Messages;
 using Telegram.Controls.Messages.Content;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
@@ -537,7 +538,7 @@ namespace Telegram.ViewModels
 
                     if (!update.Message.IsOutgoing && Settings.Notifications.InAppSounds)
                     {
-                        if (TLWindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+                        if (WindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
                         {
                             _notificationsService.PlaySound();
                         }

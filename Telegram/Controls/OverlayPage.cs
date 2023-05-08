@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -114,7 +113,7 @@ namespace Telegram.Controls
                 root.PopupClosed();
             }
 
-            TLWindowContext.Current.UpdateTitleBar();
+            WindowContext.Current.UpdateTitleBar();
         }
 
         public bool IsConstrainedToRootBounds => _popupHost?.IsConstrainedToRootBounds ?? !CanUnconstrainFromRootBounds;

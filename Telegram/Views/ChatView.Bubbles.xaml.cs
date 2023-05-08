@@ -14,6 +14,7 @@ using Telegram.Controls.Chats;
 using Telegram.Controls.Gallery;
 using Telegram.Controls.Messages;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -244,7 +245,7 @@ namespace Telegram.Views
             ShowHideDateHeader(minDateValue > 0 && minDateIndex > 0, minDateValue > 0 && minDateIndex is > 0 and < int.MaxValue);
 
             // Read and play messages logic:
-            if (messages.Count > 0 && !Messages.IsProgrammaticScrolling && _windowContext.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+            if (messages.Count > 0 && !Messages.IsProgrammaticScrolling && WindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
             {
                 MessageSource source = ViewModel.Type switch
                 {

@@ -23,10 +23,10 @@ namespace Telegram.Services
     {
         Task JumpListAsync();
 
-        Task SyncAsync(Telegram.Td.Api.Users result);
+        Task SyncAsync(Td.Api.Users result);
 
-        Task<Telegram.Td.Api.BaseObject> ImportAsync();
-        Task ExportAsync(Telegram.Td.Api.Users result);
+        Task<Td.Api.BaseObject> ImportAsync();
+        Task ExportAsync(Td.Api.Users result);
 
         Task RemoveAsync();
     }
@@ -56,28 +56,28 @@ namespace Telegram.Services
 
             _contacts = new HashSet<long>();
 
-            _aggregator.Subscribe<Telegram.Td.Api.UpdateAuthorizationState>(this, Handle);
+            _aggregator.Subscribe<Td.Api.UpdateAuthorizationState>(this, Handle);
         }
 
-        public async void Handle(Telegram.Td.Api.UpdateAuthorizationState update)
+        public async void Handle(Td.Api.UpdateAuthorizationState update)
         {
-            if (update.AuthorizationState is Telegram.Td.Api.AuthorizationStateReady && _settingsService.IsContactsSyncEnabled)
+            if (update.AuthorizationState is Td.Api.AuthorizationStateReady && _settingsService.IsContactsSyncEnabled)
             {
-                await SyncAsync(await _clientService.SendAsync(new Telegram.Td.Api.GetContacts()) as Telegram.Td.Api.Users);
+                await SyncAsync(await _clientService.SendAsync(new Td.Api.GetContacts()) as Td.Api.Users);
             }
         }
 
-        public async void Handle(Telegram.Td.Api.UpdateUser update)
+        public async void Handle(Td.Api.UpdateUser update)
         {
             if (update.User.IsContact && !_contacts.Contains(update.User.Id))
             {
                 // New contact
-                await SyncAsync(await _clientService.SendAsync(new Telegram.Td.Api.GetContacts()) as Telegram.Td.Api.Users);
+                await SyncAsync(await _clientService.SendAsync(new Td.Api.GetContacts()) as Td.Api.Users);
             }
             else if (_contacts.Contains(update.User.Id) && !update.User.IsContact)
             {
                 // Deleted contact
-                await SyncAsync(await _clientService.SendAsync(new Telegram.Td.Api.GetContacts()) as Telegram.Td.Api.Users);
+                await SyncAsync(await _clientService.SendAsync(new Td.Api.GetContacts()) as Td.Api.Users);
             }
         }
 
@@ -98,7 +98,7 @@ namespace Telegram.Services
             }
         }
 
-        public async Task SyncAsync(Telegram.Td.Api.Users result)
+        public async Task SyncAsync(Td.Api.Users result)
         {
             try
             {
@@ -124,7 +124,7 @@ namespace Telegram.Services
 
         #region Import
 
-        public async Task<Telegram.Td.Api.BaseObject> ImportAsync()
+        public async Task<Td.Api.BaseObject> ImportAsync()
         {
             try
             {
@@ -144,9 +144,9 @@ namespace Telegram.Services
             return null;
         }
 
-        private async Task<Telegram.Td.Api.BaseObject> ImportAsyncInternal()
+        private async Task<Td.Api.BaseObject> ImportAsyncInternal()
         {
-            Telegram.Td.Api.BaseObject result = null;
+            Td.Api.BaseObject result = null;
 
             Logger.Info("Importing contacts");
             Debug.WriteLine("» Importing contacts");
@@ -163,7 +163,7 @@ namespace Telegram.Services
             return result;
         }
 
-        private async Task<Telegram.Td.Api.BaseObject> ImportAsync(ContactStore store)
+        private async Task<Td.Api.BaseObject> ImportAsync(ContactStore store)
         {
             var contacts = await store.FindContactsAsync();
             var importedPhones = new Dictionary<string, Contact>();
@@ -176,7 +176,7 @@ namespace Telegram.Services
                 }
             }
 
-            var importingContacts = new List<Telegram.Td.Api.Contact>();
+            var importingContacts = new List<Td.Api.Contact>();
 
             foreach (var phone in importedPhones.Keys.ToList())
             {
@@ -196,7 +196,7 @@ namespace Telegram.Services
 
                 if (!string.IsNullOrEmpty(firstName) || !string.IsNullOrEmpty(lastName))
                 {
-                    var item = new Telegram.Td.Api.Contact
+                    var item = new Td.Api.Contact
                     {
                         PhoneNumber = phone,
                         FirstName = firstName,
@@ -207,14 +207,14 @@ namespace Telegram.Services
                 }
             }
 
-            return await _clientService.SendAsync(new Telegram.Td.Api.ChangeImportedContacts(importingContacts));
+            return await _clientService.SendAsync(new Td.Api.ChangeImportedContacts(importingContacts));
         }
 
         #endregion
 
         #region Export
 
-        public async Task ExportAsync(Telegram.Td.Api.Users result)
+        public async Task ExportAsync(Td.Api.Users result)
         {
             try
             {
@@ -232,7 +232,7 @@ namespace Telegram.Services
             }
         }
 
-        private async Task ExportAsyncInternal(Telegram.Td.Api.Users result)
+        private async Task ExportAsyncInternal(Td.Api.Users result)
         {
             Logger.Info("Exporting contacts");
             Debug.WriteLine("» Exporting contacts");
@@ -261,7 +261,7 @@ namespace Telegram.Services
             Debug.WriteLine("» Exporting contacts completed");
         }
 
-        private async Task ExportAsync(ContactList contactList, ContactAnnotationList annotationList, Telegram.Td.Api.Users result)
+        private async Task ExportAsync(ContactList contactList, ContactAnnotationList annotationList, Td.Api.Users result)
         {
             if (result == null)
             {
@@ -376,7 +376,7 @@ namespace Telegram.Services
                 if (userDataAccount == null)
                 {
                     userDataAccount = await store.CreateAccountAsync($"{_clientService.Options.MyId}");
-                    await _clientService.SendAsync(new Telegram.Td.Api.SetOption("x_user_data_account", new Telegram.Td.Api.OptionValueString(userDataAccount.Id)));
+                    await _clientService.SendAsync(new Td.Api.SetOption("x_user_data_account", new Td.Api.OptionValueString(userDataAccount.Id)));
                 }
 
                 return userDataAccount;
@@ -403,7 +403,7 @@ namespace Telegram.Services
                 if (contactList == null)
                 {
                     contactList = await store.CreateContactListAsync(displayName, userDataAccount.Id);
-                    await _clientService.SendAsync(new Telegram.Td.Api.SetOption("x_contact_list", new Telegram.Td.Api.OptionValueString(contactList.Id)));
+                    await _clientService.SendAsync(new Td.Api.SetOption("x_contact_list", new Td.Api.OptionValueString(contactList.Id)));
                 }
 
                 contactList.DisplayName = displayName;
@@ -437,7 +437,7 @@ namespace Telegram.Services
                 if (contactList == null)
                 {
                     contactList = await store.CreateAnnotationListAsync(userDataAccount.Id);
-                    await _clientService.SendAsync(new Telegram.Td.Api.SetOption("x_annotation_list", new Telegram.Td.Api.OptionValueString(contactList.Id)));
+                    await _clientService.SendAsync(new Td.Api.SetOption("x_annotation_list", new Td.Api.OptionValueString(contactList.Id)));
                 }
 
                 return contactList;

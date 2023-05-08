@@ -64,8 +64,6 @@ namespace Telegram.Views
         private readonly Func<IDialogDelegate, int, DialogViewModel> _getViewModel;
         private readonly Action<string> _setTitle;
 
-        private readonly TLWindowContext _windowContext;
-
         private readonly bool _myPeople;
 
         private readonly DispatcherTimer _slowModeTimer;
@@ -135,14 +133,12 @@ namespace Telegram.Views
             _typeToTemplateMapping.Add("ServiceMessageUnreadTemplate", Resources["ServiceMessageUnreadTemplate"] as DataTemplate);
             _typeToTemplateMapping.Add("EmptyMessageTemplate", Resources["EmptyMessageTemplate"] as DataTemplate);
 
-            _windowContext = TLWindowContext.Current;
-
             _focusState = new DebouncedProperty<FocusState>(100, FocusText, CanFocusText);
 
-            if (_windowContext.ContactPanel != null)
+            if (WindowContext.Current.ContactPanel != null)
             {
                 _myPeople = true;
-                _windowContext.ContactPanel.LaunchFullAppRequested += ContactPanel_LaunchFullAppRequested;
+                WindowContext.Current.ContactPanel.LaunchFullAppRequested += ContactPanel_LaunchFullAppRequested;
             }
 
             Messages.ItemsSource = _messages;
@@ -273,7 +269,7 @@ namespace Telegram.Views
 
         private void OnNavigatedTo()
         {
-            if (_windowContext.ContactPanel != null)
+            if (WindowContext.Current.ContactPanel != null)
             {
                 Header.Visibility = Visibility.Collapsed;
                 FindName("BackgroundPresenter");

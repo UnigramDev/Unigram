@@ -174,7 +174,7 @@ namespace Telegram.Views.Host
 
                 _canGoBackToken = service.Frame.RegisterPropertyChangedCallback(Frame.CanGoBackProperty, OnCanGoBackChanged);
 
-                switch (session.ClientService.GetAuthorizationState())
+                switch (session.ClientService.AuthorizationState)
                 {
                     case AuthorizationStateReady:
                         service.Navigate(typeof(MainPage));
@@ -213,7 +213,7 @@ namespace Telegram.Views.Host
                     session.Aggregator.Publish(counters.UnreadMessageCount);
                 }
 
-                session.Aggregator.Publish(new UpdateConnectionState(session.ClientService.GetConnectionState()));
+                session.Aggregator.Publish(new UpdateConnectionState(session.ClientService.ConnectionState));
             }
             else
             {

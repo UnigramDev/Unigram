@@ -202,8 +202,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypeAuthenticationCode authenticationCode)
             {
-                var state = clientService.GetAuthorizationState();
-                if (state is AuthorizationStateWaitCode)
+                if (clientService.AuthorizationState is AuthorizationStateWaitCode)
                 {
                     clientService.Send(new CheckAuthenticationCode(authenticationCode.Code));
                 }
@@ -465,22 +464,25 @@ namespace Telegram.Common
                         //TLWindowContext.Current.NavigationServices.Remove(NavigationService);
                         //BootStrapper.Current.NavigationService.Reset();
 
-                        foreach (var window in WindowContext.ActiveWrappers)
+                        WindowContext.ForEach(window =>
                         {
-                            window.Dispatcher.Dispatch(() =>
-                            {
-                                ResourceContext.GetForCurrentView().Reset();
-                                ResourceContext.GetForViewIndependentUse().Reset();
+                            ResourceContext.GetForCurrentView().Reset();
+                            ResourceContext.GetForViewIndependentUse().Reset();
 
-                                if (window.Content is RootPage root)
-                                {
-                                    window.Dispatcher.Dispatch(() =>
-                                    {
-                                        root.UpdateComponent();
-                                    });
-                                }
-                            });
-                        }
+                            if (window.Content is FrameworkElement frameworkElement)
+                            {
+                                //window.CoreWindow.FlowDirection = _localeService.FlowDirection == FlowDirection.RightToLeft
+                                //    ? CoreWindowFlowDirection.RightToLeft
+                                //    : CoreWindowFlowDirection.LeftToRight;
+
+                                frameworkElement.FlowDirection = LocaleService.Current.FlowDirection;
+                            }
+
+                            if (window.Content is RootPage root)
+                            {
+                                root.UpdateComponent();
+                            }
+                        });
                     }
                 }
             }
@@ -488,8 +490,7 @@ namespace Telegram.Common
 
         public static async void NavigateToSendCode(IClientService clientService, string phoneCode)
         {
-            var state = clientService.GetAuthorizationState();
-            if (state is AuthorizationStateWaitCode)
+            if (clientService.AuthorizationState is AuthorizationStateWaitCode)
             {
                 if (clientService.Options.TryGetValue("x_firstname", out string firstValue))
                 {

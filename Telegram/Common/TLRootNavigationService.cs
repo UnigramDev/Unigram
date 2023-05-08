@@ -27,14 +27,9 @@ namespace Telegram.Common
             _lifetimeService = TLContainer.Current.Lifetime;
         }
 
-        public void Handle(UpdateAuthorizationState update)
+        public async void Handle(UpdateAuthorizationState update)
         {
-            Handle(update.AuthorizationState);
-        }
-
-        public async void Handle(AuthorizationState state)
-        {
-            switch (state)
+            switch (update.AuthorizationState)
             {
                 case AuthorizationStateReady:
                     Navigate(typeof(MainPage));

@@ -103,7 +103,7 @@ namespace Telegram.Services.ViewService
                         newWindow.Close();
                     };
 
-                    WindowContext.Current.Content = parameters.Content(control);
+                    newWindow.Content = parameters.Content(control);
                     newWindow.Activate();
 
                     var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
@@ -205,7 +205,7 @@ namespace Telegram.Services.ViewService
 
                     var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, id, false);
                     nav.Navigate(page, parameter);
-                    WindowContext.Current.Content = BootStrapper.Current.CreateRootElement(nav);
+                    newWindow.Content = BootStrapper.Current.CreateRootElement(nav);
                     newWindow.Activate();
 
                     await ApplicationViewSwitcher

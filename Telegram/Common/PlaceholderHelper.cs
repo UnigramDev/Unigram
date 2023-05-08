@@ -13,6 +13,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Telegram.Native;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -276,7 +277,7 @@ namespace Telegram.Common
         {
             try
             {
-                maxWidth = maxWidth < 512 ? maxWidth * TLWindowContext.Current.RasterizationScale : maxWidth;
+                maxWidth = maxWidth < 512 ? maxWidth * WindowContext.Current.RasterizationScale : maxWidth;
                 maxWidth = Math.Min(maxWidth, 512);
 
                 Size size;
