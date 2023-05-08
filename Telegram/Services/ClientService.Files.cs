@@ -149,11 +149,8 @@ namespace Telegram.Services
 
                     return permanent;
                 }
-                catch (Exception ex)
+                catch
                 {
-                    // TODO, but high chances to happen
-                    Logger.Error(ex);
-
                     Future.Remove(file.Remote.UniqueId);
                 }
             }
@@ -175,10 +172,9 @@ namespace Telegram.Services
                 StorageFile destination = await Future.CreateFileAsync($"Unconfirmed {file.Id}.tdownload");
                 Future.AddOrReplace(file.Remote.UniqueId, destination, true);
             }
-            catch (Exception ex)
+            catch
             {
-                // TODO, but high chances to happen
-                Logger.Error(ex);
+                Future.Remove(file.Remote.UniqueId, true);
             }
         }
 

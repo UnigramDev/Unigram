@@ -56,7 +56,7 @@ namespace Telegram.Common
                     var exception = GetException(split[0], out bool report);
                     if (report)
                     {
-                        Crashes.TrackError(exception, attachments: ErrorAttachmentLog.AttachmentWithText(split[1], "crash.txt"));
+                        Crashes.TrackError(exception, attachments: ErrorAttachmentLog.AttachmentWithText(text, "crash.txt"));
                     }
                 }
                 else
@@ -97,7 +97,7 @@ namespace Telegram.Common
             var count = SettingsService.Current.Diagnostics.UpdateCount;
 
             var info =
-                $"Current version: {version}\n" + 
+                $"Current version: {version}\n" +
                 $"Time since last update: {next - prev}s\n" +
                 $"Update count: {count}\n\n";
 
