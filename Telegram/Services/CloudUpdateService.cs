@@ -57,6 +57,10 @@ namespace Telegram.Services
 
         public static async Task<bool> LaunchAsync(IDispatcherContext context)
         {
+#if DEBUG
+            return false;
+#endif
+
             if (ApiInfo.IsStoreRelease || !_updateLock.Wait(0))
             {
                 return false;
@@ -115,6 +119,10 @@ namespace Telegram.Services
 
         public async Task UpdateAsync(bool force)
         {
+#if DEBUG
+            return;
+#endif
+
             if (ApiInfo.IsStoreRelease || !_updateLock.Wait(0))
             {
                 return;
