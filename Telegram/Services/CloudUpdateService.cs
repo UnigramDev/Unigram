@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Converters;
@@ -33,11 +34,12 @@ namespace Telegram.Services
         private readonly INetworkService _networkService;
         private readonly IEventAggregator _aggregator;
 
+        private static readonly SemaphoreSlim _updateLock = new(1, 1);
+
         private long? _chatId;
         private CloudUpdate _nextUpdate;
 
         private long _lastCheck;
-        private bool _checking;
 
         public CloudUpdateService(IClientService clientService, INetworkService networkService, IEventAggregator aggregator)
         {
@@ -55,7 +57,7 @@ namespace Telegram.Services
 
         public static async Task<bool> LaunchAsync(IDispatcherContext context)
         {
-            if (ApiInfo.IsStoreRelease)
+            if (ApiInfo.IsStoreRelease || !_updateLock.Wait(0))
             {
                 return false;
             }
@@ -107,25 +109,26 @@ namespace Telegram.Services
                 Logger.Error(ex);
             }
 
+            _updateLock.Release();
             return false;
         }
 
         public async Task UpdateAsync(bool force)
         {
-            if (ApiInfo.IsStoreRelease)
+            if (ApiInfo.IsStoreRelease || !_updateLock.Wait(0))
             {
                 return;
             }
 
             var diff = Environment.TickCount - _lastCheck;
-            var skip = diff < 5 * 60 * 1000 || _checking;
+            var skip = diff < 5 * 60 * 1000;
 
             if (skip && !force)
             {
+                _updateLock.Release();
                 return;
             }
 
-            _checking = true;
             _lastCheck = diff;
 
             var current = Package.Current.Id.Version.ToVersion();
@@ -155,8 +158,7 @@ namespace Telegram.Services
 
             // This call is needed to delete old updates from disk
             await GetHistoryAsync();
-
-            _checking = false;
+            _updateLock.Release();
         }
 
         private async void UpdateFile(object target, File file)
