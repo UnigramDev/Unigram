@@ -478,6 +478,8 @@ namespace Telegram.Controls.Gallery
 
             ApplicationView.GetForCurrentView().VisibleBoundsChanged -= OnVisibleBoundsChanged;
 
+            var translate = true;
+
             if (ViewModel != null)
             {
                 WindowContext.Current.EnableScreenCapture(ViewModel.GetHashCode());
@@ -486,30 +488,28 @@ namespace Telegram.Controls.Gallery
                 ViewModel.Items.CollectionChanged -= OnCollectionChanged;
 
                 Bindings.StopTracking();
-            }
 
-            var translate = true;
-
-            if (ViewModel != null && ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
-            {
-                var root = LayoutRoot.CurrentElement;
-                if (root.IsLoaded && IsConstrainedToRootBounds && !_lastFullScreen)
+                if (ViewModel.SelectedItem == ViewModel.FirstItem && _closing != null)
                 {
-                    var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
-                    if (animation != null)
+                    var root = LayoutRoot.CurrentElement;
+                    if (root != null && root.IsLoaded && IsConstrainedToRootBounds && !_lastFullScreen)
                     {
-                        var element = _closing();
-                        if (element.IsLoaded)
+                        var animation = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("FullScreenPicture", root);
+                        if (animation != null)
                         {
-                            void handler(ConnectedAnimation s, object e)
+                            var element = _closing();
+                            if (element.IsLoaded)
                             {
-                                animation.Completed -= handler;
-                                Hide();
-                            }
+                                void handler(ConnectedAnimation s, object e)
+                                {
+                                    animation.Completed -= handler;
+                                    Hide();
+                                }
 
-                            animation.Completed += handler;
-                            animation.Configuration = new DirectConnectedAnimationConfiguration();
-                            translate = animation.TryStart(element);
+                                animation.Completed += handler;
+                                animation.Configuration = new DirectConnectedAnimationConfiguration();
+                                translate = animation.TryStart(element);
+                            }
                         }
                     }
                 }
