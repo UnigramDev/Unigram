@@ -153,33 +153,35 @@ namespace Telegram.Common
             }
             else if (x is ChatAvailableReactionsSome xSome && y is ChatAvailableReactionsSome ySome)
             {
-                if (xSome.Reactions.Count != ySome.Reactions.Count)
+                if (xSome.Reactions?.Count != ySome.Reactions?.Count)
                 {
                     return false;
                 }
 
-                var emojiHash = new HashSet<string>();
-                var customHash = new HashSet<long>();
+                HashSet<string> emojiHash = null;
+                HashSet<long> customHash = null;
 
                 for (int i = 0; i < xSome.Reactions.Count; i++)
                 {
                     if (xSome.Reactions[i] is ReactionTypeEmoji emoji)
                     {
+                        emojiHash ??= new HashSet<string>();
                         emojiHash.Add(emoji.Emoji);
                     }
                     else if (xSome.Reactions[i] is ReactionTypeCustomEmoji custom)
                     {
+                        customHash ??= new HashSet<long>();
                         customHash.Add(custom.CustomEmojiId);
                     }
                 }
 
                 for (int i = 0; i < ySome.Reactions.Count; i++)
                 {
-                    if (ySome.Reactions[i] is ReactionTypeEmoji emoji && !emojiHash.Contains(emoji.Emoji))
+                    if (ySome.Reactions[i] is ReactionTypeEmoji emoji && (emojiHash == null || !emojiHash.Contains(emoji.Emoji)))
                     {
                         return false;
                     }
-                    else if (ySome.Reactions[i] is ReactionTypeCustomEmoji custom && !customHash.Contains(custom.CustomEmojiId))
+                    else if (ySome.Reactions[i] is ReactionTypeCustomEmoji custom && (customHash == null || !customHash.Contains(custom.CustomEmojiId)))
                     {
                         return false;
                     }
