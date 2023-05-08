@@ -48,8 +48,11 @@ namespace Telegram.Controls
             {
                 AnimateSelectionChanged(SelectedItem);
 
-                // TODO: would be cool to do this only on programmatic changes, but I'm afraid it's not possible.
-                ScrollIntoView(SelectedItem);
+                if (FocusFollowsSingleSelection)
+                {
+                    // TODO: would be cool to do this only on programmatic changes, but I'm afraid it's not possible.
+                    ScrollIntoView(SelectedItem);
+                }
             }
             else
             {
@@ -66,6 +69,19 @@ namespace Telegram.Controls
         }
 
         public event TypedEventHandler<UIElement, ContextRequestedEventArgs> ItemContextRequested;
+
+        #region FocusFollowsSingleSelection
+
+        public bool FocusFollowsSingleSelection
+        {
+            get { return (bool)GetValue(FocusFollowsSingleSelectionProperty); }
+            set { SetValue(FocusFollowsSingleSelectionProperty, value); }
+        }
+
+        public static readonly DependencyProperty FocusFollowsSingleSelectionProperty =
+            DependencyProperty.Register("FocusFollowsSingleSelection", typeof(bool), typeof(TopNavView), new PropertyMetadata(true));
+
+        #endregion
 
         #region Orientation
 

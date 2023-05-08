@@ -895,6 +895,7 @@
                                                                  DragItemsStarting="ChatFolders_DragItemsStarting"
                                                                  DragItemsCompleted="ChatFolders_DragItemsCompleted"
                                                                  ScrollViewer.IsHorizontalScrollChainingEnabled="False"
+                                                                 FocusFollowsSingleSelection="False"
                                                                  Height="40"
                                                                  Margin="0,-8,0,0">
                                                 <controls:TopNavView.ItemTemplate>
@@ -990,6 +991,7 @@
                                                              ItemClick="ListView_ItemClick"
                                                              Style="{StaticResource DefaultListViewStyle}"
                                                              VerticalAlignment="Stretch"
+                                                             FocusFollowsSingleSelection="False"
                                                              Height="Auto">
                                             <ListView.ItemsPanel>
                                                 <ItemsPanelTemplate>

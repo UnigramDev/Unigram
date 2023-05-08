@@ -66,6 +66,7 @@
 
                 <controls:TopNavView x:Name="Navigation"
                                      Orientation="Vertical"
+                                     FocusFollowsSingleSelection="False"
                                      Height="Auto">
                     <controls:TopNavView.ItemsPanel>
                         <ItemsPanelTemplate>
