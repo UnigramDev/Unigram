@@ -203,11 +203,8 @@ namespace Telegram.Services
                     Future.Remove(file.Remote.UniqueId, true);
                     Future.AddOrReplace(file.Remote.UniqueId, destination);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    // TODO, but high chances to happen
-                    Logger.Error(ex);
-
                     Future.Remove(file.Remote.UniqueId, true);
                 }
             }

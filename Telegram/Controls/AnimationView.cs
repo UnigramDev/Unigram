@@ -165,21 +165,13 @@ namespace Telegram.Controls
             _source = newValue;
 
             var animation = await Task.Run(() => CachedVideoAnimation.LoadFromFile(newValue, 0, 0, _isCachingEnabled));
-            if (animation == null || newValue?.Id != _source?.Id)
+            if (animation == null || newValue?.Id != _source?.Id || double.IsNaN(animation.FrameRate))
             {
                 // The app can't access the file specified
-                Logger.Info($"Can't load animation for playback: {newValue.FilePath}");
                 return;
             }
 
             var frameRate = 1000d / Math.Clamp(animation.FrameRate, 1, _isCachingEnabled ? 30 : 60);
-            if (double.IsNaN(frameRate))
-            {
-                Logger.Error(new Exception($"Can't load animation for playback, bad frame rate: {animation.FrameRate}, {newValue.FilePath}"));
-
-                Unload();
-                return;
-            }
 
             await _nextFrameLock.WaitAsync();
 
