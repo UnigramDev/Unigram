@@ -313,7 +313,7 @@ namespace Telegram.Collections
 
         public void Move(int oldIndex, int newIndex, T item)
         {
-            newIndex = Math.Min(Count, newIndex);
+            newIndex = Math.Min(Count - 1, newIndex);
 
             using (SuppressEvents())
             {
