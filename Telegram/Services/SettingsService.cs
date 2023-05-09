@@ -300,7 +300,7 @@ namespace Telegram.Services
 #if DEBUG
             get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", 5);
 #else
-            get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", 1);
+            get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", 2);
 #endif
             set => AddOrUpdateValue(ref _verbosityLevel, _local, "VerbosityLevel", value);
         }

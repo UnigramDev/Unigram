@@ -204,12 +204,12 @@ namespace Telegram.ViewModels
             ? Logger.Dump()
             : null;
 
-        public int InMemoryLogsLimit
+        public bool LoggerSink
         {
-            get => SettingsService.Current.Diagnostics.LoggerLimit;
+            get => SettingsService.Current.Diagnostics.LoggerSink;
             set
             {
-                SettingsService.Current.Diagnostics.LoggerLimit = value;
+                SettingsService.Current.Diagnostics.LoggerSink = value;
                 RaisePropertyChanged();
             }
         }

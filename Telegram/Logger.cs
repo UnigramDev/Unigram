@@ -6,10 +6,13 @@
 //
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using Telegram.Services;
+using Telegram.Td;
+using Telegram.Td.Api;
 
 namespace Telegram
 {
@@ -66,12 +69,6 @@ namespace Telegram
 
         private static unsafe void Log(LogLevel level, Type type, string message, string member, string filePath, int line)
         {
-            var limit = SettingsService.Current.Diagnostics.LoggerLimit;
-            if (limit == 0)
-            {
-                return;
-            }
-
             // We use UtcNow instead of Now because Now is expensive.
             long diff = 116444736000000000;
             long time = 0;
@@ -90,13 +87,14 @@ namespace Telegram
 
             _lastCalls.Add(entry);
 
-            if (_lastCalls.Count > limit)
+            if (_lastCalls.Count > 50)
             {
                 _lastCalls.RemoveAt(0);
             }
 
-            if (level != LogLevel.Debug || message.Length > 0)
+            if (SettingsService.Current.Diagnostics.LoggerSink && (level != LogLevel.Debug || message.Length > 0))
             {
+                Client.Execute(new AddLogMessage(2, string.Format("[{0}:{1}][{2}] {3}", level, Path.GetFileName(filePath), line, member, message)));
                 System.Diagnostics.Debug.WriteLine(entry);
             }
         }
@@ -109,11 +107,6 @@ namespace Telegram
 
         public static string Dump()
         {
-            if (SettingsService.Current.Diagnostics.LoggerLimit == 0)
-            {
-                return "Logs are disabled";
-            }
-
             return string.Join('\n', _lastCalls);
         }
     }

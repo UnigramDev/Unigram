@@ -55,19 +55,9 @@
                                    IsTextSelectionEnabled="True"
                                    Margin="0,8,16,8" />
                     </controls:SettingsExpander>
-                    <Grid Background="{ThemeResource SettingsItemBackground}"
-                          BorderBrush="{ThemeResource SettingsItemBorderBrush}"
-                          Padding="12,8">
-                        <Slider Value="{x:Bind ViewModel.InMemoryLogsLimit, Mode=TwoWay}"
-                                Maximum="200"
-                                Minimum="0"
-                                SmallChange="1"
-                                LargeChange="1"
-                                StepFrequency="1"
-                                TickFrequency="1"
-                                TickPlacement="Outside"
-                                IsThumbToolTipEnabled="False" />
-                    </Grid>
+                    <CheckBox IsChecked="{x:Bind ViewModel.LoggerSink, Mode=TwoWay}"
+                              Content="Write app logs to tdlib_log.txt"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="Calls Logs">

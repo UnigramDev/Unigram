@@ -77,11 +77,11 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _lastUpdateTime, "LastUpdateTime", value);
         }
 
-        private int? _loggerLimit;
-        public int LoggerLimit
+        private bool? _loggerSink;
+        public bool LoggerSink
         {
-            get => _loggerLimit ??= GetValueOrDefault("LoggerLimit", 50);
-            set => AddOrUpdateValue(ref _loggerLimit, "LoggerLimit", value);
+            get => _loggerSink ??= GetValueOrDefault("LoggerSink", true);
+            set => AddOrUpdateValue(ref _loggerSink, "LoggerSink", value);
         }
 
         private long? _storageMaxTimeFromLastAccess;
