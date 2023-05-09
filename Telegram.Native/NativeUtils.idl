@@ -29,5 +29,7 @@ namespace Telegram.Native
 		static Boolean IsMediaSupported();
 
 		static void SetFatalErrorCallback(FatalErrorCallback action);
+
+		static String GetBacktrace();
 	}
 } // namespace Telegram.Native

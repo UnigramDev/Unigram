@@ -37,6 +37,8 @@ namespace winrt::Telegram::Native::implementation
 
 		static void SetFatalErrorCallback(FatalErrorCallback action);
 
+		static hstring GetBacktrace();
+
 		static FatalErrorCallback Callback;
 
 	private:

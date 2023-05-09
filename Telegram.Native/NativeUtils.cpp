@@ -5,6 +5,7 @@
 #endif
 
 #include "Helpers\LibraryHelper.h"
+#include "StringUtils.h"
 
 #include <winrt/Windows.Data.Xml.Dom.h>
 #include <winrt/Windows.UI.Notifications.h>
@@ -320,4 +321,10 @@ namespace winrt::Telegram::Native::implementation
 
         return result != E_NOTIMPL;
     }
+
+    hstring NativeUtils::GetBacktrace()
+    {
+        return hstring(::GetBacktrace(0));
+    }
+
 } // namespace winrt::Telegram::Native::implementation

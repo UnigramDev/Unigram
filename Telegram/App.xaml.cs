@@ -96,7 +96,7 @@ namespace Telegram
             UnhandledException += (s, args) =>
             {
                 args.Handled = args.Exception is not LayoutCycleException;
-                WatchDog.Update($"Unhandled exception: {args.Exception}");
+                WatchDog.Update($"Unhandled exception: {args.Exception}\n\n" + NativeUtils.GetBacktrace());
             };
 
             NativeUtils.SetFatalErrorCallback(FatalErrorCallback);
