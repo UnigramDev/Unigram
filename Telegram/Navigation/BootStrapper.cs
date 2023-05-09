@@ -62,9 +62,9 @@ namespace Telegram.Navigation
             // WARNING: this is used by Xbox (and some Windows users)
             SystemNavigationManager.GetForCurrentView().BackRequested += BackHandler;
 
+            CustomXamlResourceLoader.Current = new XamlResourceLoader();
             CreateWindowWrapper(args.Window);
             ViewService.OnWindowCreated();
-            CustomXamlResourceLoader.Current = new XamlResourceLoader();
             base.OnWindowCreated(args);
         }
 
