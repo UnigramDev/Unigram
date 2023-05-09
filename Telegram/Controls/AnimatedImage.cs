@@ -393,7 +393,7 @@ namespace Telegram.Controls
             needsCreate |= _bitmap0?.PixelWidth != width || _bitmap0?.PixelHeight != height;
             needsCreate |= _bitmap1?.PixelWidth != width || _bitmap1?.PixelHeight != height;
 
-            if (temp && needsCreate && _animation != null)
+            if (temp && needsCreate && _animation != null && width > 0 && height > 0)
             {
                 _bitmap0 = new WriteableBitmap(width, height);
                 _bitmap1 = new WriteableBitmap(width, height);
