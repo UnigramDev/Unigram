@@ -2141,11 +2141,6 @@ namespace Telegram.Views
             ViewModel.Passcode.Lock();
         }
 
-        private void OnUpdate(object sender, EventArgs e)
-        {
-            //Bindings.Update();
-        }
-
         private void DialogsSearchListView_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             if (args.ItemContainer == null)

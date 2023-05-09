@@ -295,8 +295,6 @@ namespace Telegram.Controls
             DetailHeaderPresenter.ItemsSource = _backStack;
             DetailHeaderPresenter.ItemClicked += DetailHeaderPresenter_ItemClicked;
 
-            MasterPresenter.RegisterPropertyChangedCallback(VisibilityProperty, OnVisibilityChanged);
-
             BackgroundPart.Visibility = _backgroundType == BackgroundKind.Background ? Visibility.Visible : Visibility.Collapsed;
             BorderPart.Visibility = _backgroundType != BackgroundKind.None ? Visibility.Visible : Visibility.Collapsed;
             MaterialPart.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
@@ -357,14 +355,6 @@ namespace Telegram.Controls
             }
 
             NavigationService.GoBack();
-        }
-
-        private void OnVisibilityChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            if (MasterPresenter.Visibility == Visibility.Visible)
-            {
-                Update?.Invoke(this, EventArgs.Empty);
-            }
         }
 
         private void OnNavigating(object sender, NavigatingEventArgs e)
@@ -630,7 +620,6 @@ namespace Telegram.Controls
         }
 
         public event EventHandler ViewStateChanged;
-        public event EventHandler Update;
 
         #endregion
 

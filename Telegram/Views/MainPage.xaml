@@ -432,7 +432,6 @@
 
         <controls:MasterDetailView x:Name="MasterDetail"
                                    ViewStateChanged="OnStateChanged"
-                                   Update="OnUpdate"
                                    Grid.Column="1"
                                    Grid.Row="1">
             <controls:MasterDetailView.Banner>
