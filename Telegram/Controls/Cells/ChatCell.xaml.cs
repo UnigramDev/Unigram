@@ -1570,7 +1570,7 @@ namespace Telegram.Controls.Cells
             var tooltip = sender as ToolTip;
             if (tooltip != null)
             {
-                if (SettingsService.Current.Diagnostics.EnableChatPreviews && _chat != null)
+                if (SettingsService.Current.Notifications.InAppPreview && _chat != null)
                 {
                     var playback = TLContainer.Current.Playback;
                     var settings = TLContainer.Current.Resolve<ISettingsService>(_clientService.SessionId);

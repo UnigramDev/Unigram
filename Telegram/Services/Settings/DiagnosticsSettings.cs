@@ -14,13 +14,6 @@ namespace Telegram.Services.Settings
         {
         }
 
-        private bool? _enableChatPreviews;
-        public bool EnableChatPreviews
-        {
-            get => _enableChatPreviews ??= GetValueOrDefault("ChatPreviewToolTip", true);
-            set => AddOrUpdateValue(ref _enableChatPreviews, "ChatPreviewToolTip", value);
-        }
-
         private bool? _legacyScrollBars;
         public bool LegacyScrollBars
         {

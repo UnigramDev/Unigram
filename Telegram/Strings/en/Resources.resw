@@ -2632,12 +2632,6 @@ If the number above is correct, please wait for the verification code.</value>
   <data name="EnableAllStreamingInfo" xml:space="preserve">
     <value>When possible, Telegram will start playing videos and music right away, without waiting for the files to fully download.</value>
   </data>
-  <data name="EnableChatPreviews" xml:space="preserve">
-    <value>Enable Chat Previews</value>
-  </data>
-  <data name="EnableChatPreviewsInfo" xml:space="preserve">
-    <value>Hover your cursor on a chat to preview the latest message.</value>
-  </data>
   <data name="EnabledNotifications" xml:space="preserve">
     <value>Enabled Notifications</value>
   </data>
@@ -3568,6 +3562,9 @@ They can still join via an invite link as long as they are not on the Removed Us
   </data>
   <data name="InAppPreview" xml:space="preserve">
     <value>In-App Preview</value>
+  </data>
+  <data name="InAppPreviewInfo" xml:space="preserve">
+    <value>Hover your cursor on a chat to preview the latest message.</value>
   </data>
   <data name="InAppSounds" xml:space="preserve">
     <value>In-App Sounds</value>

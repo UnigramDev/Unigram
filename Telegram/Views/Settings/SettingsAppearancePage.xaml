@@ -169,12 +169,6 @@
                                           IsChevronVisible="True" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Footer="{CustomResource EnableChatPreviewsInfo}">
-                    <CheckBox IsChecked="{x:Bind ViewModel.EnableChatPreviews, Mode=TwoWay}"
-                              Content="{CustomResource EnableChatPreviews}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-                </controls:HeaderedControl>
-
                 <controls:HeaderedControl Header="{CustomResource ChatQuickActions}">
                     <CheckBox IsChecked="{x:Bind ViewModel.SwipeToShare, Mode=TwoWay}"
                               Content="{CustomResource SwipeShare}"

@@ -35,7 +35,8 @@
                     </ItemsControl.ItemTemplate>
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Header="{CustomResource InAppNotifications}">
+                <controls:HeaderedControl Header="{CustomResource InAppNotifications}"
+                                          Footer="{CustomResource InAppPreviewInfo}">
                     <CheckBox x:Name="InAppFlash"
                               x:Load="False"
                               IsChecked="{x:Bind ViewModel.InAppFlash, Mode=TwoWay}"
