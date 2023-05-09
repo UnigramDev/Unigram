@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using Telegram.Common;
 using Telegram.Views;
+using Telegram.Views.Authorization;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
@@ -277,7 +278,7 @@ namespace Telegram.Navigation.Services
 
         #endregion
 
-        readonly List<EventHandler<NavigatedEventArgs>> _navigatedEventHandlers = new List<EventHandler<NavigatedEventArgs>>();
+        readonly List<EventHandler<NavigatedEventArgs>> _navigatedEventHandlers = new();
         public event EventHandler<NavigatedEventArgs> Navigated
         {
             add
@@ -295,6 +296,16 @@ namespace Telegram.Navigation.Services
                 }
             }
         }
+
+        private static readonly HashSet<Type> _authorizationTypes = new()
+        {
+            typeof(AuthorizationCodePage),
+            typeof(AuthorizationEmailAddressPage),
+            typeof(AuthorizationEmailCodePage),
+            typeof(AuthorizationPasswordPage),
+            //typeof(AuthorizationRecoveryPage),
+            typeof(AuthorizationRegistrationPage)
+        };
 
         private void FacadeNavigatedEventHandler(object sender, NavigationEventArgs e)
         {
@@ -324,9 +335,14 @@ namespace Telegram.Navigation.Services
             {
                 handler(Frame, args);
             }
+
+            if (Frame.BackStack.Count > 0 && _authorizationTypes.Contains(Frame.BackStack[Frame.BackStack.Count - 1].SourcePageType))
+            {
+                Frame.BackStack.RemoveAt(Frame.BackStack.Count - 1);
+            }
         }
 
-        readonly List<EventHandler<NavigatingEventArgs>> _navigatingEventHandlers = new List<EventHandler<NavigatingEventArgs>>();
+        readonly List<EventHandler<NavigatingEventArgs>> _navigatingEventHandlers = new();
         public event EventHandler<NavigatingEventArgs> Navigating
         {
             add
