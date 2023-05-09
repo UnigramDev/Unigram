@@ -2637,12 +2637,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>5.0.1</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>5.0.1</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
     </PackageReference>
@@ -2664,6 +2658,13 @@
     <PackageReference Include="Win2D.uwp">
       <Version>1.26.0</Version>
     </PackageReference>
+	<!-- Used by AppCenter -->
+    <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3">
+      <Version>2.1.4</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reflection.Metadata">
+      <Version>1.7.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Telegram.Native.Calls\Telegram.Native.Calls.vcxproj">
@@ -2681,6 +2682,18 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.AppCenter, Version=0.0.0.0, Culture=neutral, PublicKeyToken=8a600e2fee7ba272, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\AppCenter\Microsoft.AppCenter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Analytics, Version=0.0.0.0, Culture=neutral, PublicKeyToken=8a600e2fee7ba272, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\AppCenter\Microsoft.AppCenter.Analytics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Crashes, Version=0.0.0.0, Culture=neutral, PublicKeyToken=8a600e2fee7ba272, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libraries\AppCenter\Microsoft.AppCenter.Crashes.dll</HintPath>
+    </Reference>
     <Reference Include="RLottie">
       <HintPath>$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.winmd</HintPath>
       <Implementation>RLottie.dll</Implementation>

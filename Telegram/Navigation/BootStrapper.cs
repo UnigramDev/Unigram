@@ -248,7 +248,7 @@ namespace Telegram.Navigation
                     break;
             }
 
-            WatchDog.Start(e.PreviousExecutionState);
+            WatchDog.Launch(e.PreviousExecutionState);
 
             // handle pre-launch
             if (e.PrelaunchActivated)
@@ -576,7 +576,7 @@ namespace Telegram.Navigation
             get => _currentState;
             set
             {
-                Logger.Info($"CurrenstState changed to {value}");
+                Logger.Info($"CurrentState changed to {value}");
                 CurrentStateHistory.Add($"{DateTime.Now}-{Guid.NewGuid()}", value);
                 _currentState = value;
             }
@@ -709,11 +709,15 @@ namespace Telegram.Navigation
                 //{
                 //    await _LifecycleLogic.AutoSuspendAllFramesAsync(sender, e, AutoExtendExecutionSession);
                 //}
-                WatchDog.Stop();
                 await OnSuspendingAsync(sender, e);
+            }
+            catch
+            {
+                // Ignored
             }
             finally
             {
+                WatchDog.Suspend();
                 deferral.Complete();
             }
         }

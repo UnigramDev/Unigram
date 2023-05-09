@@ -9,13 +9,11 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
-using Telegram.Td;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Authorization;
 using Telegram.ViewModels.BasicGroups;
@@ -95,55 +93,12 @@ namespace Telegram
 
             UnhandledException += (s, args) =>
             {
-                args.Handled = args.Exception is not LayoutCycleException;
-                WatchDog.Update($"Unhandled exception: {args.Exception}\n\n" + NativeUtils.GetBacktrace());
+                args.Handled = args.Exception
+                    is not LayoutCycleException
+                    and not OutOfMemoryException;
             };
 
-            NativeUtils.SetFatalErrorCallback(FatalErrorCallback);
-            Client.SetLogMessageCallback(0, FatalErrorCallback);
-
-#if !DEBUG
-            Microsoft.AppCenter.Crashes.Crashes.GetErrorAttachments = report =>
-            {
-                var path = System.IO.Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "crash.appcenter");
-                if (System.IO.File.Exists(path))
-                {
-                    var data = System.IO.File.ReadAllText(path);
-                    return new[] { Microsoft.AppCenter.Crashes.ErrorAttachmentLog.AttachmentWithText(data, "crash.txt") };
-                }
-
-                return Array.Empty<Microsoft.AppCenter.Crashes.ErrorAttachmentLog>();
-            };
-
-            Microsoft.AppCenter.AppCenter.Start(Constants.AppCenterId,
-                typeof(Microsoft.AppCenter.Analytics.Analytics),
-                typeof(Microsoft.AppCenter.Crashes.Crashes));
-
-            Microsoft.AppCenter.Analytics.Analytics.TrackEvent("Windows",
-                new System.Collections.Generic.Dictionary<string, string>
-                {
-                    { "DeviceFamily", Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily },
-                    { "Architecture", Package.Current.Id.Architecture.ToString() }
-                });
-#endif
-        }
-
-        private static void FatalErrorCallback(string message)
-        {
-            FatalErrorCallback(int.MaxValue, message);
-        }
-
-        private static void FatalErrorCallback(int verbosityLevel, string message)
-        {
-            if (verbosityLevel == 0 || verbosityLevel == int.MaxValue)
-            {
-                if (verbosityLevel == 0)
-                {
-                    message = $"TDLib exception: {message}";
-                }
-
-                WatchDog.Update(message);
-            }
+            WatchDog.Initialize();
         }
 
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
