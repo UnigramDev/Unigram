@@ -1,9 +1,9 @@
 1. First, check that you have the [necessary tools](#requirements) installed.
 2. Go to <https://my.telegram.org/apps> and register a new app.
 3. Clone the repository __*recursively*__ by using `git clone --recursive https://github.com/UnigramDev/Unigram.git`.
-4. Create a new file inside `Unigram/Unigram/Unigram` and name it `Constants.Secret.cs`:
+4. Create a new file inside `Unigram/Telegram` and name it `Constants.Secret.cs`:
 ```csharp
-namespace Unigram
+namespace Telegram
 {
     public static partial class Constants
     {
@@ -58,8 +58,8 @@ Unigram uses WebRTC for calls and video chats. Since WebRTC doesn't currently su
 
 ### Building without WebRTC
 Since compiling WebRTC is time and resources consuming, it is possible to build the app without calls support:
-- Locate Unigram > References and remove `Unigram.Native.Calls` from the list.
-- From Unigram > Properties > Build, remove `ENABLE_CALLS` directive.
+- Locate Telegram > References and remove `Telegram.Native.Calls` from the list.
+- From Telegram > Properties > Build, remove `ENABLE_CALLS` directive.
 - Exclude from the project the following files:
   - Controls/Cells/GroupCallParticipantGridCell.xaml
   - Views/GroupCallPage.xaml
