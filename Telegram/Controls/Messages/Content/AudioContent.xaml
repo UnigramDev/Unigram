@@ -56,7 +56,8 @@
                                        TextTrimming="CharacterEllipsis"
                                        Style="{StaticResource BaseTextBlockStyle}" />
                             <TextBlock x:Name="Subtitle"
-                                       Style="{StaticResource DisabledCaptionTextBlockStyle}" />
+                                       Style="{StaticResource DisabledCaptionTextBlockStyle}"
+                                       Typography.NumeralAlignment="Tabular" />
                         </StackPanel>
                     </Grid>
                 </ControlTemplate>

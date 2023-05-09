@@ -48,7 +48,8 @@
                                        Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="White"
                                        TextAlignment="Right"
-                                       TextWrapping="NoWrap" />
+                                       TextWrapping="NoWrap"
+                                       Typography.NumeralAlignment="Tabular" />
                         </Border>
                     </controls:AspectView>
                 </ControlTemplate>

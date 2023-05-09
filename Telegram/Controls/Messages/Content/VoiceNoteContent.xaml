@@ -217,7 +217,8 @@
                                                     HorizontalAlignment="Left" />
 
                             <TextBlock x:Name="Subtitle"
-                                       Style="{StaticResource DisabledCaptionTextBlockStyle}" />
+                                       Style="{StaticResource DisabledCaptionTextBlockStyle}"
+                                       Typography.NumeralAlignment="Tabular" />
                         </StackPanel>
 
                         <controls:AnimatedIconToggleButton x:Name="Recognize"

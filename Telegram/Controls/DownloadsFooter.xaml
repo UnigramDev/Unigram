@@ -54,7 +54,7 @@
 
         <TextBlock x:Name="Size"
                    Style="{StaticResource InfoBodyTextBlockStyle}"
-                   FontFamily="{StaticResource MonospaceDigitsFontFamily}"
+                   Typography.NumeralAlignment="Tabular"
                    VerticalAlignment="Center"
                    Grid.Column="2" />
     </Grid>

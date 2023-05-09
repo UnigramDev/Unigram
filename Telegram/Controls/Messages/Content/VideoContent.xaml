@@ -45,7 +45,8 @@
                             <TextBlock x:Name="Subtitle"
                                        Style="{StaticResource CaptionTextBlockStyle}"
                                        Foreground="White"
-                                       TextWrapping="NoWrap" />
+                                       TextWrapping="NoWrap"
+                                       Typography.NumeralAlignment="Tabular" />
                         </controls:FileButton>
                     </controls:AspectView>
                 </ControlTemplate>
