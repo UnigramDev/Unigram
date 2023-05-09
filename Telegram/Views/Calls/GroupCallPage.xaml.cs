@@ -29,6 +29,7 @@ using Windows.Graphics.Capture;
 using Windows.System;
 using Windows.System.Display;
 using Windows.UI;
+using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -1584,7 +1585,7 @@ namespace Telegram.Views.Calls
 
                 var output = new MenuFlyoutSubItem();
                 output.Text = "Speaker";
-                output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                output.Icon = new FontIcon { Glyph = Icons.Speaker3, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
                 output.Items.Add(defaultOutput);
 
                 _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
@@ -2078,6 +2079,38 @@ namespace Telegram.Views.Calls
 
             var call = _service.Call;
 
+            var slider = new MenuFlyoutSlider
+            {
+                Icon = new FontIcon { FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily },
+                TextValueConverter = new TextValueProvider(newValue => string.Format("{0:P0}", newValue / 100)),
+                IconValueConverter = new IconValueProvider(newValue => newValue switch
+                {
+                    double n when n > 66 => Icons.Speaker3,
+                    double n when n > 33 => Icons.Speaker2,
+                    double n when n > 0 => Icons.Speaker1,
+                    _ => Icons.SpeakerOff
+                }),
+                FontWeight = FontWeights.SemiBold,
+                Value = participant.VolumeLevel / 100d,
+                Minimum = 0,
+                Maximum = 200
+            };
+
+            var debounder = new EventDebouncer<RangeBaseValueChangedEventArgs>(Constants.HoldingThrottle, handler => slider.ValueChanged += new RangeBaseValueChangedEventHandler(handler), handler => slider.ValueChanged -= new RangeBaseValueChangedEventHandler(handler));
+            debounder.Invoked += (s, args) =>
+            {
+                if (args.NewValue > 0)
+                {
+                    _clientService.Send(new SetGroupCallParticipantVolumeLevel(call.Id, participant.ParticipantId, (int)(args.NewValue * 100)));
+                }
+                else
+                {
+                    _clientService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, participant.ParticipantId, true));
+                }
+            };
+
+            flyout.Items.Add(slider);
+
             if (participant.IsCurrentUser)
             {
                 if (participant.IsHandRaised)
@@ -2099,31 +2132,6 @@ namespace Telegram.Views.Calls
             }
             else
             {
-                var slider = new Slider
-                {
-                    Value = participant.VolumeLevel / 100d,
-                    Minimum = 0,
-                    Maximum = 200,
-                    MinWidth = 200,
-                    TickFrequency = 100,
-                    TickPlacement = TickPlacement.Outside
-                };
-
-                var debounder = new EventDebouncer<RangeBaseValueChangedEventArgs>(Constants.HoldingThrottle, handler => slider.ValueChanged += new RangeBaseValueChangedEventHandler(handler), handler => slider.ValueChanged -= new RangeBaseValueChangedEventHandler(handler));
-                debounder.Invoked += (s, args) =>
-                {
-                    if (args.NewValue > 0)
-                    {
-                        _clientService.Send(new SetGroupCallParticipantVolumeLevel(call.Id, participant.ParticipantId, (int)(args.NewValue * 100)));
-                    }
-                    else
-                    {
-                        _clientService.Send(new ToggleGroupCallParticipantIsMuted(call.Id, participant.ParticipantId, true));
-                    }
-                };
-
-                flyout.Items.Add(new ContentMenuFlyoutItem { Content = slider });
-
                 if (participant.HasVideoInfo())
                 {
                     //if (participant.ParticipantId.IsEqual(_pinnedParticipant?.ParticipantId))

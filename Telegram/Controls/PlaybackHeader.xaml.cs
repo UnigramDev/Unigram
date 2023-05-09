@@ -9,18 +9,21 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Media.Playback;
 using Windows.System;
 using Windows.UI.Composition;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
@@ -151,7 +154,13 @@ namespace Telegram.Controls
                     : Visibility.Visible;
             }
 
-            VolumeSlider.Value = _playbackService.Volume * 100;
+            VolumeButton.Glyph = _playbackService.Volume switch
+            {
+                double n when n > 0.66 => Icons.Speaker3,
+                double n when n > 0.33 => Icons.Speaker2,
+                double n when n > 0 => Icons.Speaker1,
+                _ => Icons.SpeakerOff
+            };
 
             PlaybackButton.Glyph = _playbackService.PlaybackState == MediaPlaybackState.Paused ? Icons.Play : Icons.Pause;
             Automation.SetToolTip(PlaybackButton, _playbackService.PlaybackState == MediaPlaybackState.Paused ? Strings.AccActionPlay : Strings.AccActionPause);
@@ -309,32 +318,41 @@ namespace Telegram.Controls
             }
         }
 
+        private void VolumeButton_Click(object sender, RoutedEventArgs e)
+        {
+            var slider = new MenuFlyoutSlider
+            {
+                Icon = new FontIcon { FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily },
+                TextValueConverter = new TextValueProvider(newValue => string.Format("{0:P0}", newValue / 100)),
+                IconValueConverter = new IconValueProvider(newValue => newValue switch
+                {
+                    double n when n > 66 => Icons.Speaker3,
+                    double n when n > 33 => Icons.Speaker2,
+                    double n when n > 0 => Icons.Speaker1,
+                    _ => Icons.SpeakerOff
+                }),
+                FontWeight = FontWeights.SemiBold,
+                Value = _playbackService.Volume * 100
+            };
+
+            slider.ValueChanged += VolumeSlider_ValueChanged;
+
+            var flyout = new MenuFlyout();
+            flyout.Items.Add(slider);
+            flyout.ShowAt(VolumeButton, FlyoutPlacementMode.BottomEdgeAlignedRight);
+        }
+
         private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             _playbackService.Volume = e.NewValue / 100;
 
-            switch (_playbackService.Volume)
+            VolumeButton.Glyph = _playbackService.Volume switch
             {
-                case double n when n >= 1d / 2d:
-                    VolumeButton.Glyph = Icons.Speaker;
-                    break;
-                case double n when n is > 0 and < (1d / 2d):
-                    VolumeButton.Glyph = Icons.Speaker1;
-                    break;
-
-                //case double n when n >= 1d / 3d * 2d:
-                //    VolumeButton.Glyph = Icons.Speaker;
-                //    break;
-                //case double n when n >= 1d / 3d && n < 1d / 3d * 2d:
-                //    VolumeButton.Glyph = "\uE994";
-                //    break;
-                //case double n when n > 0 && n < 1d / 3d:
-                //    VolumeButton.Glyph = Icons.Speaker1;
-                //    break;
-                default:
-                    VolumeButton.Glyph = Icons.SpeakerNone;
-                    break;
-            }
+                double n when n > 0.66 => Icons.Speaker3,
+                double n when n > 0.33 => Icons.Speaker2,
+                double n when n > 0 => Icons.Speaker1,
+                _ => Icons.SpeakerOff
+            };
         }
 
         private void Repeat_Click(object sender, RoutedEventArgs e)

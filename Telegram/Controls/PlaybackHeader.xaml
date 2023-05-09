@@ -386,29 +386,14 @@
                                      ToolTipService.ToolTip="{CustomResource Next}" />
 
         <controls:GlyphButton x:Name="VolumeButton"
+                              Click="VolumeButton_Click"
                               Glyph="&#xE74F;"
                               Width="40"
                               Height="40"
                               Grid.Column="4"
                               Foreground="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
                               AutomationProperties.Name="{CustomResource VoipGroupVolume}"
-                              ToolTipService.ToolTip="{CustomResource VoipGroupVolume}">
-            <controls:GlyphButton.Flyout>
-                <Flyout Placement="Bottom">
-                    <Flyout.FlyoutPresenterStyle>
-                        <Style TargetType="FlyoutPresenter"
-                               BasedOn="{StaticResource DefaultFlyoutPresenterStyle}">
-                            <Setter Property="MinWidth"
-                                    Value="0" />
-                        </Style>
-                    </Flyout.FlyoutPresenterStyle>
-                    <Slider x:Name="VolumeSlider"
-                            ValueChanged="VolumeSlider_ValueChanged"
-                            Orientation="Vertical"
-                            Height="140" />
-                </Flyout>
-            </controls:GlyphButton.Flyout>
-        </controls:GlyphButton>
+                              ToolTipService.ToolTip="{CustomResource VoipGroupVolume}" />
 
         <controls:GlyphToggleButton x:Name="RateButton"
                                     Click="Rate_Click"

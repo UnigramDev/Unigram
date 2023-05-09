@@ -928,7 +928,7 @@ namespace Telegram.Controls
                 var toggle = flyout.CreateFlyoutItem(
                     muted ? ViewModel.Unmute : ViewModel.Mute,
                     muted ? Strings.UnmuteNotifications : Strings.MuteNotifications,
-                    new FontIcon { Glyph = muted ? Icons.Speaker : Icons.SpeakerOff });
+                    new FontIcon { Glyph = muted ? Icons.Speaker3 : Icons.SpeakerOff });
 
                 if (muted is false)
                 {

@@ -154,19 +154,6 @@ namespace Telegram.Controls
 
         #endregion
 
-        #region TickFrequency
-
-        public double TickFrequency
-        {
-            get { return (double)GetValue(TickFrequencyProperty); }
-            set { SetValue(TickFrequencyProperty, value); }
-        }
-
-        public static readonly DependencyProperty TickFrequencyProperty =
-            DependencyProperty.Register("TickFrequency", typeof(double), typeof(MenuFlyoutSlider), new PropertyMetadata(0d));
-
-        #endregion
-
         #region StepFrequency
 
         public double StepFrequency

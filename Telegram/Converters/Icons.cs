@@ -225,10 +225,11 @@ namespace Telegram.Converters
         public const string ArrowRight = "\uE72A";
         public const string ArrowLeft = "\uE72B";
         public const string Channel = "\uEC42";
-        public const string Speaker = "\uE995";
+        public const string Speaker3 = "\uEA12";
+        public const string Speaker2 = "\uE995";
         public const string Speaker1 = "\uE993";
-        public const string SpeakerNone = "\uE74F";
-        public const string SpeakerOff = "\uE9A5";
+        public const string Speaker0 = "\uEA11";
+        public const string SpeakerOff = "\uE74F";
         public const string SendFilled = "\uE919";
 
         public const string GhostFilled = "\uE91A";

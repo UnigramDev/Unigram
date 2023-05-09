@@ -891,7 +891,7 @@ namespace Telegram.Views.Calls
 
             var output = new MenuFlyoutSubItem();
             output.Text = "Speaker";
-            output.Icon = new FontIcon { Glyph = Icons.Speaker, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            output.Icon = new FontIcon { Glyph = Icons.Speaker3, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
             output.Items.Add(defaultOutput);
 
             _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
