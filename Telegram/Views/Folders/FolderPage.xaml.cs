@@ -82,7 +82,7 @@ namespace Telegram.Views.Folders
             EmojiList.SelectedItem = ViewModel.Icon;
 
             var flyout = FlyoutBase.GetAttachedFlyout(EmojiButton);
-            flyout.ShowAt(EmojiButton, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
+            flyout.ShowAt(EmojiButton, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }
 
         private void EmojiList_ItemClick(object sender, ItemClickEventArgs e)

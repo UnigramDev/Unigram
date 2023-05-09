@@ -6,12 +6,15 @@
 //
 using System;
 using System.Collections.Generic;
+using Telegram.Controls;
 using Telegram.Controls.Drawers;
 using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.System;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
@@ -19,6 +22,14 @@ namespace Telegram.Common
 {
     public static class MenuFlyoutHelper
     {
+        public static void ShowAt(this FlyoutBase flyout, DependencyObject placementTarget, FlyoutPlacementMode placement)
+        {
+            flyout.ShowAt(placementTarget, new FlyoutShowOptions
+            {
+                Placement = placement
+            });
+        }
+
         public static void ShowAt(this ContextRequestedEventArgs args, MenuFlyout flyout, FrameworkElement element)
         {
             if (flyout.Items.Count > 0 && args.TryGetPosition(element, out Point point))
@@ -72,6 +83,60 @@ namespace Telegram.Common
 
             args.Handled = true;
         }
+
+        #region Playback speed
+
+        public static void CreatePlaybackSpeed(this MenuFlyout flyout, double value, Action<double> valueChanged)
+        {
+            CreatePlaybackSpeed(flyout.Items, value, valueChanged);
+        }
+
+        public static void CreatePlaybackSpeed(this MenuFlyoutSubItem flyout, double value, Action<double> valueChanged)
+        {
+            CreatePlaybackSpeed(flyout.Items, value, valueChanged);
+        }
+
+        private static void CreatePlaybackSpeed(this IList<MenuFlyoutItemBase> items, double value, Action<double> valueChanged)
+        {
+            var rates = new double[] { 0.5, 1, 1.5, 2 };
+            var labels = new string[] { "0.5x", Strings.SpeedNormal, "1.5x", "2x" };
+
+            var slider = new MenuFlyoutSlider();
+            slider.TextValueConverter = new TextValueProvider(newValue => string.Format("{0:F1}x", newValue));
+            slider.FontWeight = FontWeights.SemiBold;
+            slider.Minimum = 0.2;
+            slider.Maximum = 2.5;
+            slider.SmallChange = 0.1;
+            slider.LargeChange = 0.5;
+            slider.StepFrequency = 0.01;
+            slider.Value = value;
+
+            var debounder = new EventDebouncer<RangeBaseValueChangedEventArgs>(Constants.HoldingThrottle, handler => slider.ValueChanged += new RangeBaseValueChangedEventHandler(handler), handler => slider.ValueChanged -= new RangeBaseValueChangedEventHandler(handler));
+            debounder.Invoked += (s, args) =>
+            {
+                valueChanged(args.NewValue);
+            };
+
+            items.Add(slider);
+
+            for (int i = 0; i < rates.Length; i++)
+            {
+                //var rate = rates[i];
+                //var toggle = new ToggleMenuFlyoutItem
+                //{
+                //    Text = labels[i],
+                //    IsChecked = value == rate,
+                //    CommandParameter = rate,
+                //    Command = new RelayCommand<double>(valueChanged)
+                //};
+
+                //flyout.Items.Add(toggle);
+
+                items.CreateFlyoutItem(valueChanged, rates[i], labels[i]);
+            }
+        }
+
+        #endregion
 
         public static MenuFlyoutSeparator CreateFlyoutSeparator(this MenuFlyout flyout)
         {
@@ -288,18 +353,17 @@ namespace Telegram.Common
 
         public static MenuFlyoutItem CreateFlyoutItem<T>(this MenuFlyout flyout, Action<T> command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
-            return flyout.Items.CreateFlyoutItem(true, command, parameter, text, icon, key, modifiers);
+            return flyout.Items.CreateFlyoutItem(command, parameter, text, icon, key, modifiers);
         }
 
         public static MenuFlyoutItem CreateFlyoutItem<T>(this MenuFlyoutSubItem flyout, Action<T> command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
-            return flyout.Items.CreateFlyoutItem(true, command, parameter, text, icon, key, modifiers);
+            return flyout.Items.CreateFlyoutItem(command, parameter, text, icon, key, modifiers);
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem<T>(this IList<MenuFlyoutItemBase> items, bool enabled, Action<T> command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem<T>(this IList<MenuFlyoutItemBase> items, Action<T> command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             var flyoutItem = new MenuFlyoutItem();
-            flyoutItem.IsEnabled = enabled;
             flyoutItem.CommandParameter = parameter;
             flyoutItem.Command = new RelayCommand<T>(command);
             flyoutItem.Text = text;

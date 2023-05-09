@@ -917,7 +917,7 @@ namespace Telegram.Views.Calls
 
             if (flyout.Items.Count > 0)
             {
-                flyout.ShowAt(sender as Button, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
+                flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedLeft);
             }
         }
 

@@ -1102,7 +1102,15 @@ namespace Telegram.Controls.Gallery
             }
             else
             {
-                flyout.ShowAt(element, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
+                flyout.ShowAt(element, FlyoutPlacementMode.TopEdgeAlignedRight);
+            }
+        }
+
+        private void UpdatePlaybackSpeed(double value)
+        {
+            if (_mediaPlayer?.PlaybackSession != null)
+            {
+                _mediaPlayer.PlaybackSession.PlaybackRate = value;
             }
         }
 
@@ -1110,34 +1118,10 @@ namespace Telegram.Controls.Gallery
         {
             if (item.IsVideo && !item.IsLoop && _mediaPlayer != null)
             {
-                var rates = new double[] { 0.25, 0.5, 1, 1.5, 2 };
-                var labels = new string[] { Strings.SpeedVerySlow, Strings.SpeedSlow, Strings.SpeedNormal, Strings.SpeedFast, Strings.SpeedVeryFast };
-
-                var command = new RelayCommand<double>(rate =>
-                {
-                    if (_mediaPlayer?.PlaybackSession != null)
-                    {
-                        _mediaPlayer.PlaybackSession.PlaybackRate = rate;
-                    }
-                });
-
                 var speed = new MenuFlyoutSubItem();
                 speed.Text = Strings.Speed;
                 speed.Icon = new FontIcon { Glyph = Icons.TopSpeed, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
-
-                for (int i = 0; i < rates.Length; i++)
-                {
-                    var rate = rates[i];
-                    var toggle = new ToggleMenuFlyoutItem
-                    {
-                        Text = labels[i],
-                        IsChecked = _mediaPlayer.PlaybackSession.PlaybackRate == rate,
-                        CommandParameter = rate,
-                        Command = command
-                    };
-
-                    speed.Items.Add(toggle);
-                }
+                speed.CreatePlaybackSpeed(_mediaPlayer.PlaybackSession.PlaybackRate, UpdatePlaybackSpeed);
 
                 flyout.Items.Add(speed);
                 flyout.CreateFlyoutSeparator();

@@ -1625,11 +1625,11 @@ namespace Telegram.Views.Calls
             {
                 if (sender == Settings)
                 {
-                    flyout.ShowAt(sender as Button, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft });
+                    flyout.ShowAt(sender as Button, FlyoutPlacementMode.TopEdgeAlignedLeft);
                 }
                 else
                 {
-                    flyout.ShowAt(sender as Button, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
+                    flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedLeft);
                 }
             }
         }

@@ -1633,7 +1633,7 @@ namespace Telegram.Views
 
             if (flyout.Items.Count > 0)
             {
-                flyout.ShowAt(ButtonAttach, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft });
+                flyout.ShowAt(ButtonAttach, FlyoutPlacementMode.TopEdgeAlignedLeft);
             }
         }
 
@@ -2042,7 +2042,7 @@ namespace Telegram.Views
 
             if (flyout.Items.Count > 0)
             {
-                flyout.ShowAt(sender as Button, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
+                flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
             }
         }
 
@@ -2071,7 +2071,7 @@ namespace Telegram.Views
 
             flyout.CreateFlyoutItem(async () => await TextField.ScheduleAsync(false), self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 
-            flyout.ShowAt(sender, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
+            flyout.ShowAt(sender, FlyoutPlacementMode.TopEdgeAlignedRight);
         }
 
         private async void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -5127,7 +5127,7 @@ namespace Telegram.Views
                 }
             }
 
-            flyout.ShowAt(ButtonMore, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedLeft });
+            flyout.ShowAt(ButtonMore, FlyoutPlacementMode.TopEdgeAlignedLeft);
         }
 
         private void InlineBotResults_Loaded(object sender, RoutedEventArgs e)

@@ -366,28 +366,14 @@ namespace Telegram.Controls
         private void Rate_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
-            var rates = new double[] { 0.25, 0.5, 1, 1.5, 2 };
-            var labels = new string[] { Strings.SpeedVerySlow, Strings.SpeedSlow, Strings.SpeedNormal, Strings.SpeedFast, Strings.SpeedVeryFast };
+            flyout.CreatePlaybackSpeed(_playbackService.PlaybackRate, UpdatePlaybackSpeed);
+            flyout.ShowAt(RateButton, FlyoutPlacementMode.BottomEdgeAlignedRight);
+        }
 
-            for (int i = 0; i < rates.Length; i++)
-            {
-                var rate = rates[i];
-                var toggle = new ToggleMenuFlyoutItem
-                {
-                    Text = labels[i],
-                    IsChecked = _playbackService.PlaybackRate == rate,
-                    CommandParameter = rate,
-                    Command = new RelayCommand<double>(x =>
-                    {
-                        _playbackService.PlaybackRate = rate;
-                        RateButton.IsChecked = rate != 1;
-                    })
-                };
-
-                flyout.Items.Add(toggle);
-            }
-
-            flyout.ShowAt(RateButton, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
+        private void UpdatePlaybackSpeed(double value)
+        {
+            _playbackService.PlaybackRate = value;
+            RateButton.IsChecked = value != 1;
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)

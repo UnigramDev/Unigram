@@ -747,7 +747,7 @@ namespace Telegram.Controls
 
             if (flyout.Items.Count > 0)
             {
-                flyout.ShowAt(sender as Button, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
+                flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
             }
         }
 
@@ -935,7 +935,7 @@ namespace Telegram.Controls
                     toggle.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
                 }
 
-                flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.Bottom });
+                flyout.ShowAt(sender as DependencyObject, FlyoutPlacementMode.Bottom);
             }
         }
     }

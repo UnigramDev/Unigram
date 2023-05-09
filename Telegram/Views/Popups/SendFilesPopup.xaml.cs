@@ -606,7 +606,7 @@ namespace Telegram.Views.Popups
             var flyout = new Flyout();
             flyout.Content = stack;
 
-            flyout.ShowAt(button.Parent as UIElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.TopEdgeAlignedRight });
+            flyout.ShowAt(button.Parent, FlyoutPlacementMode.TopEdgeAlignedRight);
         }
 
         private void Mute_Click(object sender, RoutedEventArgs e)
@@ -672,7 +672,7 @@ namespace Telegram.Views.Popups
             flyout.CreateFlyoutItem(() => { Silent = true; Hide(ContentDialogResult.Primary); }, Strings.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
             flyout.CreateFlyoutItem(() => { Schedule = true; Hide(ContentDialogResult.Primary); }, self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
 
-            flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
+            flyout.ShowAt(sender as DependencyObject, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

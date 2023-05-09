@@ -6336,20 +6336,24 @@
                         <TextBlock x:Name="PrefixPart"
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
-                                   Foreground="{TemplateBinding Foreground}" />
+                                   Foreground="{TemplateBinding Foreground}"
+                                   FontWeight="{TemplateBinding FontWeight}" />
                         <TextBlock x:Name="SuffixPart"
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
+                                   FontWeight="{TemplateBinding FontWeight}"
                                    Grid.Column="2" />
                         <TextBlock x:Name="PrevPart"
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
+                                   FontWeight="{TemplateBinding FontWeight}"
                                    Grid.ColumnSpan="2" />
                         <TextBlock x:Name="NextPart"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
+                                   FontWeight="{TemplateBinding FontWeight}"
                                    Grid.Column="1" />
                     </local:AnimatedTextBlockPresenter>
                 </ControlTemplate>

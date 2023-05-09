@@ -77,7 +77,7 @@ namespace Telegram.Views.Popups
                 flyout.CreateFlyoutItem(ViewModel.RemoveAll, Strings.DeleteAll, new FontIcon { Glyph = Icons.Delete });
             }
 
-            flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
+            flyout.ShowAt(sender as DependencyObject, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

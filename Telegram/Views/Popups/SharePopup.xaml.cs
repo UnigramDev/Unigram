@@ -84,7 +84,7 @@ namespace Telegram.Views.Popups
             flyout.CreateFlyoutItem(() => { ViewModel.SendAsCopy = true; Hide(ContentDialogResult.Primary); }, Strings.HideSenderNames.Replace("\\’", "’"), new FontIcon { Glyph = Icons.DocumentCopy });
             flyout.CreateFlyoutItem(() => { ViewModel.RemoveCaptions = true; Hide(ContentDialogResult.Primary); }, Strings.HideCaption, new FontIcon { Glyph = Icons.Block });
 
-            flyout.ShowAt(sender as FrameworkElement, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedRight });
+            flyout.ShowAt(sender as DependencyObject, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }
 
         private void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

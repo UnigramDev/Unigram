@@ -2452,7 +2452,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(ViewModel.DeleteFolder, folder, Strings.Remove, new FontIcon { Glyph = Icons.Delete });
             }
 
-            flyout.ShowAt(element, new FlyoutShowOptions { Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft });
+            flyout.ShowAt(element, FlyoutPlacementMode.BottomEdgeAlignedLeft);
         }
 
         private void ArchivedChats_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
