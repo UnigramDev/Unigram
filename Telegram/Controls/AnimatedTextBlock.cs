@@ -22,20 +22,43 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
-            ChangePartText(ref NextPart, nameof(NextPart), Text, true);
+            ChangePartText(ref NextPart, nameof(NextPart), Text, true, true);
         }
 
-        private void ChangePartText(ref TextBlock part, string name, string text, bool length = false)
+        private void ChangePartText(ref TextBlock part, string name, string text, bool resize, bool length = false)
         {
             if (part != null || text.Length > 0 || length)
             {
                 if (part == null)
                 {
                     part = GetTemplateChild(name) as TextBlock;
-                    ElementCompositionPreview.SetIsTranslationEnabled(part, true);
+
+                    if (resize)
+                    {
+                        part.SizeChanged += Part_SizeChanged;
+                    }
+                    else
+                    {
+                        ElementCompositionPreview.SetIsTranslationEnabled(part, true);
+                    }
                 }
 
                 part.Text = text;
+            }
+        }
+
+        private void Part_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(sender as UIElement);
+            var point = e.NewSize.ToVector2();
+
+            if (sender == PrevPart)
+            {
+                visual.CenterPoint = new Vector3(point.X / 2, -4, 0);
+            }
+            else if (sender == NextPart)
+            {
+                visual.CenterPoint = new Vector3(point.X / 2, point.Y + 4, 0);
             }
         }
 
@@ -167,17 +190,16 @@ namespace Telegram.Controls
                 prevValue = prevValue.Replace(" ", " \u200B");
                 suffix = suffix.Replace(" ", " \u200B");
 
-                ChangePartText(ref PrefixPart, nameof(PrefixPart), prefix);
-                ChangePartText(ref SuffixPart, nameof(SuffixPart), suffix);
+                ChangePartText(ref PrefixPart, nameof(PrefixPart), prefix, false);
+                ChangePartText(ref SuffixPart, nameof(SuffixPart), suffix, false);
 
-                ChangePartText(ref PrevPart, nameof(PrevPart), prevValue, true);
-                ChangePartText(ref NextPart, nameof(NextPart), nextValue);
+                ChangePartText(ref PrevPart, nameof(PrevPart), prevValue, true, true);
+                ChangePartText(ref NextPart, nameof(NextPart), nextValue, true);
 
                 var prevVisual = ElementCompositionPreview.GetElementVisual(PrevPart);
                 var nextVisual = ElementCompositionPreview.GetElementVisual(NextPart);
 
-                var delta = (float)FontSize;
-                var easing = prevVisual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0, 0), new Vector2(0, 1));
+                var easing = prevVisual.Compositor.CreateCubicBezierEasingFunction(new Vector2(0.25f, 0.1f), new Vector2(0.25f, 1));
 
                 var fadeOut = prevVisual.Compositor.CreateScalarKeyFrameAnimation();
                 fadeOut.InsertKeyFrame(0, 1);
@@ -189,28 +211,28 @@ namespace Telegram.Controls
                 fadeIn.InsertKeyFrame(1, 1, easing);
                 fadeIn.Duration = Constants.FastAnimation;
 
-                var slideOut = prevVisual.Compositor.CreateScalarKeyFrameAnimation();
-                slideOut.InsertKeyFrame(0, 0);
-                slideOut.InsertKeyFrame(1, delta, easing);
+                var slideOut = prevVisual.Compositor.CreateVector3KeyFrameAnimation();
+                slideOut.InsertKeyFrame(0, Vector3.One);
+                slideOut.InsertKeyFrame(1, Vector3.Zero, easing);
                 slideOut.Duration = Constants.FastAnimation;
 
-                var slideIn = prevVisual.Compositor.CreateScalarKeyFrameAnimation();
-                slideIn.InsertKeyFrame(0, -delta);
-                slideIn.InsertKeyFrame(1, 0, easing);
+                var slideIn = prevVisual.Compositor.CreateVector3KeyFrameAnimation();
+                slideIn.InsertKeyFrame(0, Vector3.Zero);
+                slideIn.InsertKeyFrame(1, Vector3.One, easing);
                 slideIn.Duration = Constants.FastAnimation;
 
                 prevVisual.StartAnimation("Opacity", fadeOut);
                 nextVisual.StartAnimation("Opacity", fadeIn);
-                prevVisual.StartAnimation("Translation.Y", slideOut);
-                nextVisual.StartAnimation("Translation.Y", slideIn);
+                prevVisual.StartAnimation("Scale", slideOut);
+                nextVisual.StartAnimation("Scale", slideIn);
             }
             else
             {
-                ChangePartText(ref PrefixPart, nameof(PrefixPart), string.Empty);
-                ChangePartText(ref SuffixPart, nameof(SuffixPart), string.Empty);
+                ChangePartText(ref PrefixPart, nameof(PrefixPart), string.Empty, false);
+                ChangePartText(ref SuffixPart, nameof(SuffixPart), string.Empty, false);
 
-                ChangePartText(ref PrevPart, nameof(PrevPart), string.Empty);
-                ChangePartText(ref NextPart, nameof(NextPart), newValue);
+                ChangePartText(ref PrevPart, nameof(PrevPart), string.Empty, true);
+                ChangePartText(ref NextPart, nameof(NextPart), newValue, true);
             }
 
             Logger.Debug();
