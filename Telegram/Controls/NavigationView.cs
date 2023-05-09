@@ -41,15 +41,22 @@ namespace Telegram.Controls
 
         private void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
-            if (sender.SystemOverlayLeftInset > 0)
+            try
             {
-                TogglePaneButton.Glyph = Icons.ArrowRight;
-                TogglePaneButton.HorizontalAlignment = HorizontalAlignment.Right;
+                if (sender.SystemOverlayLeftInset > 0)
+                {
+                    TogglePaneButton.Glyph = Icons.ArrowRight;
+                    TogglePaneButton.HorizontalAlignment = HorizontalAlignment.Right;
+                }
+                else
+                {
+                    TogglePaneButton.Glyph = Icons.ArrowLeft;
+                    TogglePaneButton.HorizontalAlignment = HorizontalAlignment.Left;
+                }
             }
-            else
+            catch
             {
-                TogglePaneButton.Glyph = Icons.ArrowLeft;
-                TogglePaneButton.HorizontalAlignment = HorizontalAlignment.Left;
+                // Most likely InvalidComObjectException
             }
         }
 

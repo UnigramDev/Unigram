@@ -174,13 +174,20 @@ namespace Telegram.Views
 
         private void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
-            TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 0), GridUnitType.Pixel);
-            TitleBarrr.ColumnDefinitions[4].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 0), GridUnitType.Pixel);
+            try
+            {
+                TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 0), GridUnitType.Pixel);
+                TitleBarrr.ColumnDefinitions[4].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 0), GridUnitType.Pixel);
 
-            Grid.SetColumn(TitleBarLogo, sender.SystemOverlayLeftInset > 0 ? 3 : 1);
-            StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0
-                ? FlowDirection.RightToLeft
-                : FlowDirection.LeftToRight;
+                Grid.SetColumn(TitleBarLogo, sender.SystemOverlayLeftInset > 0 ? 3 : 1);
+                StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0
+                    ? FlowDirection.RightToLeft
+                    : FlowDirection.LeftToRight;
+            }
+            catch
+            {
+                // Most likely InvalidComObjectException
+            }
         }
 
         private void InitializeLocalization()
