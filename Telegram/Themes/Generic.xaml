@@ -1024,6 +1024,8 @@
                        BasedOn="{StaticResource DefaultListViewItemStyle}">
                     <Setter Property="HorizontalContentAlignment"
                             Value="Stretch" />
+                    <Setter Property="CornerRadius"
+                            Value="0" />
                     <Setter Property="Padding"
                             Value="0,0,0,0" />
                     <Setter Property="Margin"
@@ -1041,6 +1043,7 @@
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <Border.Resources>
                             <x:Boolean x:Key="ListViewBaseItemRoundedChromeEnabled">False</x:Boolean>
+                            <CornerRadius x:Key="ListViewItemCornerRadius">0</CornerRadius>
                         </Border.Resources>
                         <ScrollViewer x:Name="ScrollViewer"
                                       TabNavigation="{TemplateBinding TabNavigation}"
