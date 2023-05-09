@@ -44,6 +44,7 @@
         <TextBlock x:Name="Subtitle"
                    Style="{StaticResource BodyTextBlockStyle}"
                    Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                   Typography.NumeralAlignment="Tabular"
                    TextTrimming="CharacterEllipsis"
                    TextWrapping="NoWrap"
                    MaxLines="1"
