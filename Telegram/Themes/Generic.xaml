@@ -1371,7 +1371,8 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:SettingsFooter">
                     <TextBlock common:TextBlockHelper.Markdown="{TemplateBinding Text}"
-                               Style="{StaticResource InfoCaptionTextBlockStyle}" />
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               AutomationProperties.AccessibilityView="Raw" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
