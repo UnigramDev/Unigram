@@ -6,12 +6,14 @@ using System.Collections.Generic;
 using System.IO;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Native;
 using Telegram.Services;
 using Telegram.Td;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
+using Windows.System;
 using Windows.System.Profile;
 using File = System.IO.File;
 
@@ -184,19 +186,18 @@ namespace Telegram
 
             var count = SettingsService.Current.Diagnostics.UpdateCount;
 
+            var memoryUsage = FileSizeConverter.Convert((long)MemoryManager.AppMemoryUsage);
+
             var info =
-                $"Current version: {version} {Package.Current.Id.Architecture}\n" +
+                $"Current version: {version}\n" +
+                $"Memory usage: {memoryUsage}\n" +
+                $"Memory usage level: {MemoryManager.AppMemoryUsageLevel}\n" +
+                $"Memory usage limit: {MemoryManager.AppMemoryUsageLimit}\n" +
                 $"Time since last update: {next - prev}s\n" +
                 $"Update count: {count}\n\n";
 
             var dump = Logger.Dump();
             var payload = info + dump;
-
-            // This is just an experiment and it can probably be removed
-            if (managed)
-            {
-                payload = NativeUtils.GetBacktrace() + "\n----------\n" + payload;
-            }
 
             File.WriteAllText(_crashLog, reportId);
             File.WriteAllText(GetErrorReportPath(reportId), payload);
