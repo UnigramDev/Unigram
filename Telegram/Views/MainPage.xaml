@@ -895,7 +895,6 @@
                                                                  DragItemsStarting="ChatFolders_DragItemsStarting"
                                                                  DragItemsCompleted="ChatFolders_DragItemsCompleted"
                                                                  ScrollViewer.IsHorizontalScrollChainingEnabled="False"
-                                                                 FocusFollowsSingleSelection="False"
                                                                  Height="40"
                                                                  Margin="0,-8,0,0">
                                                 <controls:TopNavView.ItemTemplate>
@@ -941,6 +940,7 @@
                                                         SelectionChanged="ListView_SelectionChanged"
                                                         ChoosingItemContainer="ChatsList_ChoosingItemContainer"
                                                         SizeChanged="ChatList_SizeChanged"
+                                                        FocusFollowsSingleSelection="False"
                                                         Grid.Row="1">
                                         <ListView.Header>
                                             <Grid x:Name="ArchivedChatsPresenter">
