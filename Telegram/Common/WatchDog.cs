@@ -92,6 +92,14 @@ namespace Telegram
                 Track(args.ReportId, args.Exception is not UnmanagedException);
             };
 
+            Crashes.SentErrorReport += (s, args) =>
+            {
+                if (File.Exists(GetErrorReportPath(args.Report.Id)))
+                {
+                    File.Delete(GetErrorReportPath(args.Report.Id));
+                }
+            };
+
             Crashes.ShouldProcessErrorReport = report =>
             {
                 return report.Id == _lastSessionErrorReportId;
@@ -135,9 +143,6 @@ namespace Telegram
 
         private static void FatalErrorCallback(string message)
         {
-            File.WriteAllText(_crashLog, message);
-            return;
-
             FatalErrorCallback(int.MaxValue, message);
         }
 
