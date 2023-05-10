@@ -56,6 +56,7 @@ namespace Telegram.Views.Host
             _navigationViewSelected = RootDestination.Chats;
             _navigationViewItems = new MvxObservableCollection<object>
             {
+                RootDestination.ShowAccounts,
                 RootDestination.Status,
                 // ------------
                 RootDestination.Separator,
@@ -347,18 +348,7 @@ namespace Telegram.Views.Host
         {
             for (int i = 0; i < _navigationViewItems.Count; i++)
             {
-                if (_navigationViewItems[i] is ISessionService)
-                {
-                    _navigationViewItems.RemoveAt(i);
-
-                    if (i < _navigationViewItems.Count && _navigationViewItems[i] is RootDestination.Separator)
-                    {
-                        _navigationViewItems.RemoveAt(i);
-                    }
-
-                    i--;
-                }
-                else if (_navigationViewItems[i] is RootDestination.AddAccount)
+                if (_navigationViewItems[i] is ISessionService || _navigationViewItems[i] is RootDestination.AddAccount)
                 {
                     _navigationViewItems.RemoveAt(i);
 
@@ -371,22 +361,22 @@ namespace Telegram.Views.Host
                 }
             }
 
-            var index = 2;
+            var index = 3;
 
             if (clientService.IsPremium is false)
             {
-                if (_navigationViewItems[0] is RootDestination.Status)
+                if (_navigationViewItems[1] is RootDestination.Status)
                 {
-                    _navigationViewItems.RemoveAt(0);
-                    _navigationViewItems.RemoveAt(0);
+                    _navigationViewItems.RemoveAt(1);
+                    _navigationViewItems.RemoveAt(1);
                 }
 
-                index = 0;
+                index = 1;
             }
-            else if (_navigationViewItems[0] is not RootDestination.Status)
+            else if (_navigationViewItems[1] is not RootDestination.Status)
             {
-                _navigationViewItems.Insert(0, RootDestination.Separator);
-                _navigationViewItems.Insert(0, RootDestination.Status);
+                _navigationViewItems.Insert(1, RootDestination.Separator);
+                _navigationViewItems.Insert(1, RootDestination.Status);
             }
 
             if (SettingsService.Current.HideArchivedChats is false)
@@ -403,18 +393,18 @@ namespace Telegram.Views.Host
 
             if (show && items != null)
             {
-                _navigationViewItems.Insert(0, RootDestination.Separator);
+                _navigationViewItems.Insert(1, RootDestination.Separator);
 
                 if (items.Count < 4)
                 {
-                    _navigationViewItems.Insert(0, RootDestination.AddAccount);
+                    _navigationViewItems.Insert(1, RootDestination.AddAccount);
                 }
 
                 if (items.Count > 1)
                 {
                     foreach (var item in items.OrderByDescending(x => { int index = Array.IndexOf(SettingsService.Current.AccountsSelectorOrder, x.Id); return index < 0 ? x.Id : index; }))
                     {
-                        _navigationViewItems.Insert(0, item);
+                        _navigationViewItems.Insert(1, item);
                     }
                 }
             }
@@ -437,10 +427,24 @@ namespace Telegram.Views.Host
                 {
                     args.ItemContainer = new Controls.NavigationViewItemSeparator();
                 }
-                else if (destination != RootDestination.Separator && args.ItemContainer is not Controls.NavigationViewItem)
+                else if (destination != RootDestination.Separator)
                 {
-                    args.ItemContainer = new Controls.NavigationViewItem();
-                    args.ItemContainer.ContextRequested += OnContextRequested;
+                    if (args.ItemContainer is not Controls.NavigationViewItem)
+                    {
+                        args.ItemContainer = new Controls.NavigationViewItem();
+                        args.ItemContainer.ContextRequested += OnContextRequested;
+                    }
+
+                    if (destination is RootDestination.ShowAccounts)
+                    {
+                        AutomationProperties.SetName(args.ItemContainer, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.AccDescrHideAccounts : Strings.AccDescrShowAccounts);
+                        args.ItemContainer.FocusVisualMargin = new Thickness(0, -22, 0, 2);
+                    }
+                    else
+                    {
+                        AutomationProperties.SetName(args.ItemContainer, string.Empty);
+                        args.ItemContainer.FocusVisualMargin = new Thickness();
+                    }
                 }
             }
 
@@ -588,6 +592,12 @@ namespace Telegram.Views.Host
                         content.Text = Strings.News;
                         content.Glyph = Icons.Megaphone;
                         break;
+
+                    case RootDestination.ShowAccounts:
+                        // TODO: this is absolutely terrible, find a better way
+                        content.Text = "'";
+                        content.Glyph = string.Empty;
+                        break;
                 }
             }
         }
@@ -602,6 +612,12 @@ namespace Telegram.Views.Host
             Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
 
             Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.AccDescrHideAccounts : Strings.AccDescrShowAccounts);
+
+            var selector = NavigationViewList.ContainerFromIndex(0);
+            if (selector != null)
+            {
+                AutomationProperties.SetName(selector, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.AccDescrHideAccounts : Strings.AccDescrShowAccounts);
+            }
         }
 
         private void OnItemClick(object sender, ItemClickEventArgs e)
@@ -617,7 +633,12 @@ namespace Telegram.Views.Host
             }
             else if (e.ClickedItem is RootDestination destination)
             {
-                if (destination == RootDestination.AddAccount)
+                if (destination is RootDestination.ShowAccounts)
+                {
+                    Expand_Click(null, null);
+                    return;
+                }
+                else if (destination is RootDestination.AddAccount)
                 {
                     Create();
                 }
@@ -1016,6 +1037,7 @@ namespace Telegram.Views.Host
 
     public enum RootDestination
     {
+        ShowAccounts,
         AddAccount,
 
         Status,

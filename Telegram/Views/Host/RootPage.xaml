@@ -155,7 +155,7 @@
                                  PaneClosing="Navigation_PaneClosing">
             <controls:NavigationView.PaneHeader>
                 <Border x:Name="AccountsPlaceholder"
-                        Height="48" />
+                        Height="8" />
             </controls:NavigationView.PaneHeader>
             <controls:NavigationView.PaneFooter>
                 <ListView x:Name="NavigationViewList"
