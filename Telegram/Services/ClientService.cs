@@ -1836,7 +1836,13 @@ namespace Telegram.Services
             }
             else if (update is UpdateUser updateUser)
             {
+                _users.TryGetValue(updateUser.User.Id, out User value);
                 _users[updateUser.User.Id] = updateUser.User;
+
+                if (value != null && value.IsContact != updateUser.User.IsContact)
+                {
+                    _aggregator.Publish(new UpdateUserIsContact(updateUser.User.Id));
+                }
             }
             else if (update is UpdateUserFullInfo updateUserFullInfo)
             {

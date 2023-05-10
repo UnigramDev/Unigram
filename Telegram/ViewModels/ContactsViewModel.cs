@@ -62,7 +62,8 @@ namespace Telegram.ViewModels
 
         public async void Activate()
         {
-            Aggregator.Subscribe<UpdateUserStatus>(this, Handle);
+            Aggregator.Subscribe<UpdateUserStatus>(this, Handle)
+                .Subscribe<UpdateUserIsContact>(Handle);
 
             using (await _loadMoreLock.WaitAsync())
             {
@@ -159,34 +160,28 @@ namespace Telegram.ViewModels
             });
         }
 
-        //public void Handle(TLUpdateContactLink update)
-        //{
-        //    BeginOnUIThread(() =>
-        //    {
-        //        //var contact = update.MyLink is TLContactLinkContact;
-        //        //var already = Items.FirstOrDefault(x => x != null && x.Id == update.UserId);
-        //        //if (already == null)
-        //        //{
-        //        //    if (contact)
-        //        //    {
-        //        //        var user = ClientService.GetUser(update.UserId) as TLUser;
-        //        //        if (user != null)
-        //        //        {
-        //        //            Items.Add(user);
-        //        //        }
-        //        //    }
-        //        //    return;
-        //        //}
+        public void Handle(UpdateUserIsContact update)
+        {
+            var user = ClientService.GetUser(update.UserId);
+            if (user == null || user.Id == ClientService.Options.MyId)
+            {
+                return;
+            }
 
-        //        //if (contact)
-        //        //{
-        //        //    Items.Add(already);
-        //        //    return;
-        //        //}
+            BeginOnUIThread(() =>
+            {
+                var first = Items.FirstOrDefault(x => x != null && x.Id == update.UserId);
+                if (first != null)
+                {
+                    Items.Remove(first);
+                }
 
-        //        //Items.Remove(already);
-        //    });
-        //}
+                if (user.IsContact)
+                {
+                    Items.Add(user);
+                }
+            });
+        }
 
         #endregion
 
