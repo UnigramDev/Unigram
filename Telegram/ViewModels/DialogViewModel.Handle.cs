@@ -531,7 +531,6 @@ namespace Telegram.ViewModels
         {
             if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
             {
-                var endReached = IsEndReached();
                 BeginOnUIThread(() =>
                 {
                     InsertMessage(update.Message);
@@ -824,7 +823,7 @@ namespace Telegram.ViewModels
                 {
                     message.Replace(update.Message);
                     message.GeneratedContentUnread = true;
-                    return MoveMessageInOrder(Items, message);
+                    return true; //MoveMessageInOrder(Items, message);
                 },
                 (bubble, message) =>
                 {
@@ -1135,11 +1134,6 @@ namespace Telegram.ViewModels
             var newIndex = -1;
             var oldIndex = -1;
 
-            if (messages.Count == 0)
-            {
-                newIndex = 0;
-            }
-
             for (var i = messages.Count - 1; i >= 0; i--)
             {
                 if (messages[i].Id == 0)
@@ -1164,7 +1158,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            if (newIndex != -1 && oldIndex != -1 && newIndex != oldIndex)
+            if (newIndex > oldIndex)
             {
                 newIndex = Math.Min(newIndex, messages.Count - 1);
                 messages.RemoveAt(oldIndex);
