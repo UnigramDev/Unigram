@@ -1166,7 +1166,9 @@ namespace Telegram.ViewModels
 
             if (newIndex != -1 && oldIndex != -1 && newIndex != oldIndex)
             {
-                messages.Move(oldIndex, newIndex, message);
+                newIndex = Math.Min(newIndex, messages.Count - 1);
+                messages.RemoveAt(oldIndex);
+                messages.Insert(newIndex, message);
                 return false;
             }
 

@@ -579,12 +579,6 @@ namespace Telegram.Views
                     case NotifyCollectionChangedAction.Reset:
                         ReplaceWith(_source);
                         break;
-                    case NotifyCollectionChangedAction.Move:
-                        if (e.NewItems[0] is T item)
-                        {
-                            Move(e.OldStartingIndex, e.NewStartingIndex, item);
-                        }
-                        break;
                 }
             }
         }

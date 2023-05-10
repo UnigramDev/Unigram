@@ -311,19 +311,6 @@ namespace Telegram.Collections
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, removedItems, start));
         }
 
-        public void Move(int oldIndex, int newIndex, T item)
-        {
-            newIndex = Math.Min(Count - 1, newIndex);
-
-            using (SuppressEvents())
-            {
-                RemoveAt(oldIndex);
-                Insert(newIndex, item);
-            }
-
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, item, newIndex, oldIndex));
-        }
-
         public void Reset()
         {
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
