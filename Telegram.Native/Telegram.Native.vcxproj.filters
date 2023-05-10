@@ -686,6 +686,7 @@
     <ClInclude Include="BufferSurface.h" />
     <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="TelegramWebviewProxy.h" />
+    <ClInclude Include="DebugUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

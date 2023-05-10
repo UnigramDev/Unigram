@@ -5,7 +5,7 @@
 #endif
 
 #include "Helpers\LibraryHelper.h"
-#include "StringUtils.h"
+#include "DebugUtils.h"
 
 #include <winrt/Windows.Data.Xml.Dom.h>
 #include <winrt/Windows.UI.Notifications.h>
@@ -26,6 +26,7 @@ namespace winrt::Telegram::Native::implementation
     void NativeUtils::SetFatalErrorCallback(FatalErrorCallback callback)
     {
         Callback = callback;
+        GetBacktrace();
     }
 
     bool NativeUtils::FileExists(hstring path)

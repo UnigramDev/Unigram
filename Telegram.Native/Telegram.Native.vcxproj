@@ -264,6 +264,7 @@
     <ClInclude Include="Composition\DirectRectangleClip.h">
       <DependentUpon>Composition\DirectRectangleClip.idl</DependentUpon>
     </ClInclude>
+    <ClInclude Include="DebugUtils.h" />
     <ClInclude Include="Helpers\COMHelper.h" />
     <ClInclude Include="Helpers\DebugHelper.h" />
     <ClInclude Include="Helpers\LibraryHelper.h" />

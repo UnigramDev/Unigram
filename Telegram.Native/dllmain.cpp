@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "NativeUtils.h"
-#include "StringUtils.h"
+#include "DebugUtils.h"
 
 using namespace winrt::Telegram::Native::implementation;
 

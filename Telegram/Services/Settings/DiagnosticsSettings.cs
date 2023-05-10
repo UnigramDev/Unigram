@@ -80,7 +80,7 @@ namespace Telegram.Services.Settings
         private bool? _loggerSink;
         public bool LoggerSink
         {
-            get => _loggerSink ??= GetValueOrDefault("LoggerSink", true);
+            get => _loggerSink ??= GetValueOrDefault("LoggerSink", false);
             set => AddOrUpdateValue(ref _loggerSink, "LoggerSink", value);
         }
 
