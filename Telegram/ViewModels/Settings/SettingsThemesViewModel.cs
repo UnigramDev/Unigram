@@ -222,7 +222,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void DeleteTheme(ThemeCustomInfo theme)
         {
-            var confirm = await ShowPopupAsync(Strings.DeleteThemeAlert, Strings.AppName, Strings.Delete, Strings.Cancel);
+            var confirm = await ShowPopupAsync(Strings.DeleteThemeAlert, Strings.AppName, Strings.Delete, Strings.Cancel, dangerous: true);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

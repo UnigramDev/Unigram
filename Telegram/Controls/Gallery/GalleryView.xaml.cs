@@ -1132,7 +1132,7 @@ namespace Telegram.Controls.Gallery
             flyout.CreateFlyoutItem(() => item.CanCopy, viewModel.Copy, Strings.Copy, Icons.DocumentCopy, VirtualKey.C);
             flyout.CreateFlyoutItem(() => item.CanSave, viewModel.Save, Strings.SaveAs, Icons.SaveAs, VirtualKey.S);
             flyout.CreateFlyoutItem(() => viewModel.CanOpenWith, viewModel.OpenWith, Strings.OpenInExternalApp, Icons.OpenIn);
-            flyout.CreateFlyoutItem(() => viewModel.CanDelete, viewModel.Delete, Strings.Delete, Icons.Delete);
+            flyout.CreateFlyoutItem(() => viewModel.CanDelete, viewModel.Delete, Strings.Delete, Icons.Delete, dangerous: true);
         }
 
         #endregion

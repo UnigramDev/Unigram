@@ -74,6 +74,7 @@ namespace Telegram.Views.Popups
 
             if (viewModel.Items.Count > 0)
             {
+                // TODO: DeleteAll => RemoveAll?
                 flyout.CreateFlyoutItem(ViewModel.RemoveAll, Strings.DeleteAll, Icons.Delete);
             }
 

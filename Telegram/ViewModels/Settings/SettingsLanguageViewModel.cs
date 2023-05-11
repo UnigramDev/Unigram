@@ -168,7 +168,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void Delete(LanguagePackInfo info)
         {
-            var confirm = await ShowPopupAsync(Strings.DeleteLocalization, Strings.AppName, Strings.Delete, Strings.Cancel);
+            var confirm = await ShowPopupAsync(Strings.DeleteLocalization, Strings.AppName, Strings.Delete, Strings.Cancel, dangerous: true);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

@@ -65,7 +65,7 @@ namespace Telegram.Views.Settings
                 flyout.CreateFlyoutSeparator();
                 flyout.CreateFlyoutItem(ViewModel.ShareTheme, custom, Strings.ShareFile, Icons.Share);
                 flyout.CreateFlyoutItem(ViewModel.EditTheme, custom, Strings.Edit, Icons.Edit);
-                flyout.CreateFlyoutItem(ViewModel.DeleteTheme, custom, Strings.Delete, Icons.Delete);
+                flyout.CreateFlyoutItem(ViewModel.DeleteTheme, custom, Strings.Delete, Icons.Delete, dangerous: true);
             }
 
             args.ShowAt(flyout, element);

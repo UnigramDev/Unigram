@@ -110,7 +110,7 @@ namespace Telegram.Views.Chats
                     //    flyout.CreateFlyoutItem(ViewModel.MessagesReportCommand, "Report Selected", Icons.ShieldError);
                     //}
 
-                    flyout.CreateFlyoutItem(ViewModel.DeleteSelectedMessages, Strings.DeleteSelected, Icons.Delete);
+                    flyout.CreateFlyoutItem(ViewModel.DeleteSelectedMessages, Strings.DeleteSelected, Icons.Delete, dangerous: true);
                     flyout.CreateFlyoutItem(ViewModel.UnselectMessages, Strings.ClearSelection);
                     //flyout.CreateFlyoutSeparator();
                     //flyout.CreateFlyoutItem(ViewModel.MessagesCopyCommand, "Copy Selected as Text", Icons.DocumentCopy);
@@ -124,7 +124,7 @@ namespace Telegram.Views.Chats
             {
 
                 flyout.CreateFlyoutItem(MessageView_Loaded, ViewModel.ViewMessage, message, Strings.ShowInChat, Icons.Comment);
-                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.DeleteMessage, message, Strings.Delete, Icons.Delete);
+                flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.DeleteMessage, message, Strings.Delete, Icons.Delete, dangerous: true);
                 flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.ForwardMessage, message, Strings.Forward, Icons.Share);
                 flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.SelectMessage, message, Strings.Select, Icons.CheckmarkCircle);
                 flyout.CreateFlyoutItem(MessageSave_Loaded, ViewModel.SaveMessage, message, Strings.SaveAs, Icons.SaveAs);

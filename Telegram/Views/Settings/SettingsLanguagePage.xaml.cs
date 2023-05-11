@@ -48,7 +48,7 @@ namespace Telegram.Views.Settings
                 return;
             }
 
-            flyout.CreateFlyoutItem(ViewModel.Delete, info, Strings.Delete, Icons.Delete);
+            flyout.CreateFlyoutItem(ViewModel.Delete, info, Strings.Delete, Icons.Delete, dangerous: true);
 
             args.ShowAt(flyout, element);
         }

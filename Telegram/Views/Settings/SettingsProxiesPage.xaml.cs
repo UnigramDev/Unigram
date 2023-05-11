@@ -49,7 +49,7 @@ namespace Telegram.Views.Settings
             }
 
             flyout.CreateFlyoutItem(ViewModel.Edit, proxy, Strings.Edit, Icons.Edit);
-            flyout.CreateFlyoutItem(ViewModel.Remove, proxy, Strings.Delete, Icons.Delete);
+            flyout.CreateFlyoutItem(ViewModel.Remove, proxy, Strings.Delete, Icons.Delete, dangerous: true);
 
             args.ShowAt(flyout, element);
         }

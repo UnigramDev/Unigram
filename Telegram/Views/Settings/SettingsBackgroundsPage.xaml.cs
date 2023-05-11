@@ -51,7 +51,7 @@ namespace Telegram.Views.Settings
             var flyout = new MenuFlyout();
 
             flyout.CreateFlyoutItem(ViewModel.Share, background, Strings.ShareFile, Icons.Share);
-            flyout.CreateFlyoutItem(ViewModel.Delete, background, Strings.Delete, Icons.Delete);
+            flyout.CreateFlyoutItem(ViewModel.Delete, background, Strings.Delete, Icons.Delete, dangerous: true);
 
             args.ShowAt(flyout, element);
         }

@@ -385,7 +385,7 @@ namespace Telegram.ViewModels
         {
             var chats = SelectedItems.ToList();
 
-            var confirm = await ShowPopupAsync(Strings.AreYouSureDeleteFewChats, Locale.Declension(Strings.R.ChatsSelected, chats.Count), Strings.Delete, Strings.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSureDeleteFewChats, Locale.Declension(Strings.R.ChatsSelected, chats.Count), Strings.Delete, Strings.Cancel, dangerous: true);
             if (confirm == ContentDialogResult.Primary)
             {
                 foreach (var chat in chats)
