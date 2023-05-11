@@ -903,7 +903,15 @@ namespace Telegram.Controls
 
         public void PasteFromClipboard()
         {
-            Document.Selection.Paste(0);
+            try
+            {
+                Document.Selection.Paste(0);
+            }
+            catch
+            {
+                // Seems to throw a UnauthorizedAccessException some times
+                Logger.Error();
+            }
         }
 
         public void SetText(FormattedText formattedText)
@@ -1096,8 +1104,16 @@ namespace Telegram.Controls
                 text,
                 trailing && allowTrailing ? " " : "");
 
-            Document.Selection.SetText(TextSetOptions.None, block);
-            Document.Selection.StartPosition = Document.Selection.EndPosition;
+            try
+            {
+                Document.Selection.SetText(TextSetOptions.None, block);
+                Document.Selection.StartPosition = Document.Selection.EndPosition;
+            }
+            catch
+            {
+                // Seems to throw a UnauthorizedAccessException some times
+                Logger.Error($"text: {text}");
+            }
         }
 
         public async void InsertEmoji(Sticker sticker)
