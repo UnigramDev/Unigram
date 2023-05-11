@@ -111,7 +111,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var chat = message.GetChat();
+            var chat = message.Chat;
             if (chat == null)
             {
                 return;
@@ -213,7 +213,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var chat = first.GetChat();
+            var chat = first.Chat;
             if (chat == null)
             {
                 return;
@@ -256,7 +256,7 @@ namespace Telegram.ViewModels
 
                 foreach (var message in messages)
                 {
-                    var chat = message.GetChat();
+                    var chat = message.Chat;
                     var title = chat.Title;
 
                     if (ClientService.TryGetUser(message.SenderId, out Telegram.Td.Api.User senderUser))
@@ -623,7 +623,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var chat = message.GetChat();
+            var chat = message.Chat;
             if (chat == null)
             {
                 return;
@@ -731,7 +731,7 @@ namespace Telegram.ViewModels
 
         public async void PinMessage(MessageViewModel message)
         {
-            var chat = message.GetChat();
+            var chat = message.Chat;
             if (chat == null)
             {
                 return;

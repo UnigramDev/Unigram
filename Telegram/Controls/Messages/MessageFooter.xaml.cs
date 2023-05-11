@@ -287,7 +287,7 @@ namespace Telegram.Controls.Messages
                 var maxId = 0L;
                 var messageHash = message.ChatId ^ message.Id;
 
-                var chat = message.GetChat();
+                var chat = message.Chat;
                 if (chat != null)
                 {
                     maxId = chat.LastReadOutboxMessageId;

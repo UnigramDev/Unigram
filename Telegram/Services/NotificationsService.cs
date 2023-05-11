@@ -17,6 +17,7 @@ using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Telegram.Views;
 using Windows.ApplicationModel.AppService;
 using Windows.Data.Xml.Dom;
@@ -936,7 +937,7 @@ namespace Telegram.Services
         {
             if (message.IsService())
             {
-                return MessageService.GetText(new ViewModels.MessageViewModel(_clientService, null, null, message));
+                return MessageService.GetText(new MessageViewModel(_clientService, null, null, chat, message));
             }
 
             var result = string.Empty;

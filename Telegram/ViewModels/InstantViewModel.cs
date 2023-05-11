@@ -57,7 +57,7 @@ namespace Telegram.ViewModels
 
         public MessageViewModel CreateMessage(Message message)
         {
-            return _messageFactory.Create(_messageDelegate, message);
+            return _messageFactory.Create(_messageDelegate, null, message);
         }
 
         private InstantGalleryViewModel _gallery;

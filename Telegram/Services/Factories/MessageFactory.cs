@@ -22,7 +22,7 @@ namespace Telegram.Services.Factories
 {
     public interface IMessageFactory
     {
-        MessageViewModel Create(IMessageDelegate delegato, Message message);
+        MessageViewModel Create(IMessageDelegate delegato, Chat chat, Message message);
 
         Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool asFile, bool spoiler = false, int ttl = 0, BitmapEditState editState = null);
         Task<InputMessageFactory> CreateVideoAsync(StorageFile file, bool animated, bool asFile, bool spoiler = false, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null);
@@ -41,14 +41,14 @@ namespace Telegram.Services.Factories
             _playbackService = playbackService;
         }
 
-        public MessageViewModel Create(IMessageDelegate delegato, Message message)
+        public MessageViewModel Create(IMessageDelegate delegato, Chat chat, Message message)
         {
             if (message == null)
             {
                 return null;
             }
 
-            return new MessageViewModel(_clientService, _playbackService, delegato, message);
+            return new MessageViewModel(_clientService, _playbackService, delegato, chat, message);
         }
 
 

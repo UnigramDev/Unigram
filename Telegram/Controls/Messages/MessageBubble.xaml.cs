@@ -194,18 +194,16 @@ namespace Telegram.Controls.Messages
 
             if (message != null)
             {
-                var chat = message.GetChat();
-
                 Footer.UpdateMessage(message);
 
-                UpdateMessageHeader(message, chat);
+                UpdateMessageHeader(message);
                 UpdateMessageReply(message);
-                UpdateMessageContent(message, chat);
-                UpdateMessageInteractionInfo(message, chat);
+                UpdateMessageContent(message);
+                UpdateMessageInteractionInfo(message);
 
                 UpdateMessageReplyMarkup(message);
 
-                UpdateAttach(message, chat);
+                UpdateAttach(message);
             }
 
             if (_highlight != null)
@@ -227,7 +225,7 @@ namespace Telegram.Controls.Messages
 
         public string UpdateAutomation(MessageViewModel message)
         {
-            var chat = message.GetChat();
+            var chat = message.Chat;
 
             var title = string.Empty;
             var senderBot = false;
@@ -362,9 +360,10 @@ namespace Telegram.Controls.Messages
             return builder.ToString();
         }
 
-        public void UpdateAttach(MessageViewModel message, Chat chat, bool wide = false)
+        public void UpdateAttach(MessageViewModel message, bool wide = false)
         {
-            if (!_templateApplied)
+            var chat = message?.Chat;
+            if (chat == null || !_templateApplied)
             {
                 return;
             }
@@ -447,8 +446,6 @@ namespace Telegram.Controls.Messages
             {
                 var top = message.IsFirst ? 4 : 2;
                 var action = message.IsSaved || message.CanBeShared;
-
-                chat ??= message?.GetChat();
 
                 if (message.IsSaved || (chat != null && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup)) && !message.IsChannelPost)
                 {
@@ -602,10 +599,9 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private void UpdateAction(MessageViewModel message, Chat chat)
+        private void UpdateAction(MessageViewModel message)
         {
-            chat ??= message?.GetChat();
-
+            var chat = message?.Chat;
             if (chat == null)
             {
                 return;
@@ -738,22 +734,16 @@ namespace Telegram.Controls.Messages
             Reply?.UpdateMessageReply(message);
         }
 
-        public void UpdateMessageHeader(MessageViewModel message, Chat chat)
+        public void UpdateMessageHeader(MessageViewModel message)
         {
-            if (!_templateApplied)
+            var chat = message?.Chat;
+            if (chat == null || !_templateApplied)
             {
                 return;
             }
 
             HeaderLabel?.Inlines.Clear();
             ForwardLabel?.Inlines.Clear();
-
-            chat ??= message?.GetChat();
-
-            if (chat == null)
-            {
-                return;
-            }
 
             var content = message.GeneratedContent ?? message.Content;
             var light = content is MessageSticker
@@ -1180,9 +1170,10 @@ namespace Telegram.Controls.Messages
             Footer.UpdateMessageIsPinned(message);
         }
 
-        public void UpdateMessageInteractionInfo(MessageViewModel message, Chat chat)
+        public void UpdateMessageInteractionInfo(MessageViewModel message)
         {
-            if (!_templateApplied)
+            var chat = message?.Chat;
+            if (chat == null || !_templateApplied)
             {
                 return;
             }
@@ -1195,7 +1186,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            UpdateAction(message, chat);
+            UpdateAction(message);
 
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji)
@@ -1338,14 +1329,13 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        public void UpdateMessageContent(MessageViewModel message, Chat chat)
+        public void UpdateMessageContent(MessageViewModel message)
         {
-            if (!_templateApplied)
+            var chat = message?.Chat;
+            if (chat == null || !_templateApplied)
             {
                 return;
             }
-
-            chat ??= message.GetChat();
 
             Panel.Content = message?.GeneratedContent ?? message?.Content;
 
@@ -1485,7 +1475,7 @@ namespace Telegram.Controls.Messages
             {
                 if (Media.Child is StickerContent or AnimatedStickerContent or VideoStickerContent or VideoNoteContent)
                 {
-                    UpdateAttach(message, chat);
+                    UpdateAttach(message);
                 }
 
                 if (content is MessageText textMessage && textMessage.WebPage != null)

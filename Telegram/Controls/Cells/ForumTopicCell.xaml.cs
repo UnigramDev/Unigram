@@ -271,13 +271,13 @@ namespace Telegram.Controls.Cells
 
         public void UpdateForumTopicLastMessage(ForumTopic topic)
         {
-            if (topic == null || !_templateApplied)
+            if (topic == null || _chat == null || !_templateApplied)
             {
                 return;
             }
 
             DraftLabel.Text = UpdateDraftLabel(topic);
-            FromLabel.Text = UpdateFromLabel(topic);
+            FromLabel.Text = UpdateFromLabel(_chat, topic);
             TimeLabel.Text = UpdateTimeLabel(topic);
             StateIcon.Glyph = UpdateStateIcon(topic.LastReadOutboxMessageId, topic, topic.DraftMessage, topic.LastMessage, topic.LastMessage?.SendingState);
 
@@ -742,7 +742,7 @@ namespace Telegram.Controls.Cells
             return string.Empty;
         }
 
-        private string UpdateFromLabel(ForumTopic topic)
+        private string UpdateFromLabel(Chat chat, ForumTopic topic)
         {
             if (topic.DraftMessage != null)
             {
@@ -759,14 +759,14 @@ namespace Telegram.Controls.Cells
                 return string.Empty;
             }
 
-            return UpdateFromLabel(topic, message);
+            return UpdateFromLabel(chat, topic, message);
         }
 
-        private string UpdateFromLabel(ForumTopic topic, Message message)
+        private string UpdateFromLabel(Chat chat, ForumTopic topic, Message message)
         {
             if (message.IsService())
             {
-                return MessageService.GetText(new ViewModels.MessageViewModel(_clientService, null, null, message));
+                return MessageService.GetText(new ViewModels.MessageViewModel(_clientService, null, null, chat, message));
             }
 
             var format = "{0}: ";

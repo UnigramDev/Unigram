@@ -900,8 +900,8 @@ namespace Telegram.Views
 
                 if (content is MessageBubble bubble)
                 {
-                    bubble.UpdateAttach(message, _viewModel.Chat);
-                    bubble.UpdateMessageHeader(message, _viewModel.Chat);
+                    bubble.UpdateAttach(message);
+                    bubble.UpdateMessageHeader(message);
                 }
             }
         }
@@ -2102,7 +2102,7 @@ namespace Telegram.Views
                 return;
             }
 
-            var chat = message.GetChat();
+            var chat = message.Chat;
             if (chat == null)
             {
                 return;
@@ -2504,7 +2504,7 @@ namespace Telegram.Views
                 return false;
             }
 
-            var chat = message.GetChat();
+            var chat = message.Chat;
             if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
             {
                 var supergroup = ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId);
@@ -2543,7 +2543,7 @@ namespace Telegram.Views
                 return false;
             }
 
-            var chat = message.GetChat();
+            var chat = message.Chat;
             if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
             {
                 var supergroup = ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId);
@@ -2760,7 +2760,7 @@ namespace Telegram.Views
 
         private bool MessageCopyLink_Loaded(MessageViewModel message)
         {
-            var chat = message.GetChat();
+            var chat = message.Chat;
             if (chat != null && chat.Type is ChatTypeSupergroup)
             {
                 //var supergroup = ViewModel.ClientService.GetSupergroup(supergroupType.SupergroupId);

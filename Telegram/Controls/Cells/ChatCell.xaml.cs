@@ -1387,7 +1387,7 @@ namespace Telegram.Controls.Cells
         {
             if (message.IsService())
             {
-                return MessageService.GetText(new ViewModels.MessageViewModel(_clientService, null, null, message));
+                return MessageService.GetText(new MessageViewModel(_clientService, null, null, chat, message));
             }
 
             var format = "{0}: \u200B";
@@ -1588,7 +1588,7 @@ namespace Telegram.Controls.Cells
                     }
 
                     var delegato = new ChatMessageDelegate(_clientService, settings, _chat);
-                    var message = new MessageViewModel(_clientService, playback, delegato, _chat.LastMessage);
+                    var message = new MessageViewModel(_clientService, playback, delegato, _chat, _chat.LastMessage);
 
                     var bubble = new MessageBubble();
                     if (message.IsOutgoing && !message.IsChannelPost)
@@ -1643,7 +1643,7 @@ namespace Telegram.Controls.Cells
                         {
                             if (response is Message result)
                             {
-                                message.ReplyToMessage = new MessageViewModel(_clientService, playback, delegato, result);
+                                message.ReplyToMessage = new MessageViewModel(_clientService, playback, delegato, _chat, result);
                                 message.ReplyToMessageState = ReplyToMessageState.None;
                             }
                             else

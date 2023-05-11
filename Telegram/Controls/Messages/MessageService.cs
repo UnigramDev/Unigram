@@ -841,7 +841,7 @@ namespace Telegram.Controls.Messages
                 var whoUser = message.ClientService.GetUser(singleUserId);
                 if (message.SenderId is MessageSenderUser senderUser && singleUserId == senderUser.UserId)
                 {
-                    var chat = message.GetChat();
+                    var chat = message.Chat;
                     if (chat == null)
                     {
                         return (content, entities);
@@ -890,7 +890,7 @@ namespace Telegram.Controls.Messages
                     }
                     else if (singleUserId == message.ClientService.Options.MyId)
                     {
-                        var chat = message.GetChat();
+                        var chat = message.Chat;
                         var supergroup = chat.Type as ChatTypeSupergroup;
                         if (supergroup != null)
                         {
@@ -1154,7 +1154,7 @@ namespace Telegram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var chat = message.GetChat();
+            var chat = message.Chat;
             if (chat?.Type is ChatTypeSecret)
             {
                 if (chatSetMessageAutoDeleteTime.MessageAutoDeleteTime != 0)
@@ -1601,7 +1601,7 @@ namespace Telegram.Controls.Messages
                 }
             }
 
-            var chat = message.ClientService.GetChat(message.ChatId);
+            var chat = message.Chat;
             content = string.Format(Strings.ActionBotDocuments, chat?.Title ?? string.Empty, str.ToString());
 
             return (content, null);
@@ -1612,7 +1612,7 @@ namespace Telegram.Controls.Messages
             var content = string.Empty;
 
             var invoice = GetInvoice(message);
-            var chat = message.GetChat();
+            var chat = message.Chat;
 
             if (invoice != null)
             {
@@ -1792,7 +1792,7 @@ namespace Telegram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var chat = message.GetChat();
+            var chat = message.Chat;
             if (chat != null && message.ClientService.TryGetChat(chatShared.ChatId, out Chat sharedChat))
             {
                 if (message.ClientService.TryGetSupergroup(sharedChat, out Supergroup supergroup) && supergroup.IsChannel)
@@ -1813,7 +1813,7 @@ namespace Telegram.Controls.Messages
             var content = string.Empty;
             var entities = active ? new List<TextEntity>() : null;
 
-            var chat = message.GetChat();
+            var chat = message.Chat;
             if (chat != null && message.ClientService.TryGetUser(userShared.UserId, out User sharedUser))
             {
                 content = ReplaceWithLink(Strings.ActionRequestedPeer, "un1", sharedUser, entities);

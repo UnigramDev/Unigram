@@ -15,16 +15,24 @@ namespace Telegram.ViewModels
     public class MessageViewModel : MessageWithOwner
     {
         private readonly IPlaybackService _playbackService;
+
+        // TODO: find a way NOT to use a weak reference here
         private readonly WeakReference _delegate;
+
+        protected readonly Chat _chat;
 
         private Action _updateSelection;
 
-        public MessageViewModel(IClientService clientService, IPlaybackService playbackService, IMessageDelegate delegato, Message message)
+        public MessageViewModel(IClientService clientService, IPlaybackService playbackService, IMessageDelegate delegato, Chat chat, Message message)
             : base(clientService, message)
         {
             _playbackService = playbackService;
             _delegate = new WeakReference(delegato);
+
+            _chat = chat;
         }
+
+        public Chat Chat => _chat;
 
         public void SelectionChanged()
         {
@@ -122,11 +130,6 @@ namespace Telegram.ViewModels
             return null;
         }
 
-        public Chat GetChat()
-        {
-            return ClientService.GetChat(_message.ChatId);
-        }
-
         public void Replace(Message message)
         {
             _message = message;
@@ -177,8 +180,7 @@ namespace Telegram.ViewModels
                         return true;
                     }
 
-                    var chat = ClientService.GetChat(ChatId);
-                    if (chat != null && chat.Type is ChatTypeSupergroup super && !super.IsChannel)
+                    if (Chat?.Type is ChatTypeSupergroup super && !super.IsChannel)
                     {
                         var supergroup = ClientService.GetSupergroup(super.SupergroupId);
                         return supergroup != null && supergroup.IsPublic() && Content is not MessageContact and not MessageLocation;
@@ -219,13 +221,7 @@ namespace Telegram.ViewModels
                 return false;
             }
 
-            var chat = GetChat();
-            if (chat != null && (chat.Type is ChatTypeSupergroup || chat.Type is ChatTypeBasicGroup))
-            {
-                return true;
-            }
-
-            return false;
+            return Chat?.Type is ChatTypeSupergroup or ChatTypeBasicGroup;
         }
 
 
