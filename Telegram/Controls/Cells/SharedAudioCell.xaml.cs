@@ -45,15 +45,12 @@ namespace Telegram.Controls.Cells
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            var message = _message;
-            if (message == null)
+            if (_playbackService != null)
             {
-                return;
+                _playbackService.SourceChanged -= OnPlaybackStateChanged;
+                _playbackService.StateChanged -= OnPlaybackStateChanged;
+                _playbackService.PositionChanged -= OnPositionChanged;
             }
-
-            _playbackService.PropertyChanged -= OnCurrentItemChanged;
-            _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
-            _playbackService.PositionChanged -= OnPositionChanged;
         }
 
         public void UpdateMessage(IPlaybackService playbackService, MessageWithOwner message)
@@ -61,14 +58,15 @@ namespace Telegram.Controls.Cells
             _playbackService = playbackService;
             _message = message;
 
-            _playbackService.PropertyChanged -= OnCurrentItemChanged;
-            _playbackService.PropertyChanged += OnCurrentItemChanged;
+            _playbackService.SourceChanged -= OnPlaybackStateChanged;
 
             var audio = GetContent(message.Content);
             if (audio == null)
             {
                 return;
             }
+
+            _playbackService.SourceChanged += OnPlaybackStateChanged;
 
             Title.Text = audio.GetTitle();
 
@@ -95,17 +93,6 @@ namespace Telegram.Controls.Cells
         }
 
         #region Playback
-
-        private void OnCurrentItemChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            var audio = GetContent(_message?.Content);
-            if (audio == null)
-            {
-                return;
-            }
-
-            this.BeginOnUIThread(() => UpdateFile(_message, audio.AudioValue));
-        }
 
         private void OnPlaybackStateChanged(IPlaybackService sender, object args)
         {
@@ -161,7 +148,7 @@ namespace Telegram.Controls.Cells
 
         private void UpdateFile(MessageWithOwner message, File file)
         {
-            _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+            _playbackService.StateChanged -= OnPlaybackStateChanged;
             _playbackService.PositionChanged -= OnPositionChanged;
 
             var audio = GetContent(message.Content);
@@ -264,7 +251,7 @@ namespace Telegram.Controls.Cells
 
                 UpdatePosition(_playbackService.Position, _playbackService.Duration);
 
-                _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
+                _playbackService.StateChanged += OnPlaybackStateChanged;
                 _playbackService.PositionChanged += OnPositionChanged;
             }
             else

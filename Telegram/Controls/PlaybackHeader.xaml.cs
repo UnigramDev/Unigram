@@ -78,23 +78,20 @@ namespace Telegram.Controls
             _playbackService = playbackService;
             _navigationService = navigationService;
 
-            _playbackService.PropertyChanged -= OnCurrentItemChanged;
-            _playbackService.PropertyChanged += OnCurrentItemChanged;
-            _playbackService.PlaybackStateChanged -= OnPlaybackStateChanged;
-            _playbackService.PlaybackStateChanged += OnPlaybackStateChanged;
+            // We unsubscribe first to avoid duplicated notifications
+            _playbackService.SourceChanged -= OnPlaybackStateChanged;
+            _playbackService.StateChanged -= OnPlaybackStateChanged;
             _playbackService.PositionChanged -= OnPositionChanged;
-            _playbackService.PositionChanged += OnPositionChanged;
+            _playbackService.SourceChanged += OnPlaybackStateChanged;
+
             _playbackService.PlaylistChanged -= OnPlaylistChanged;
+            _playbackService.StateChanged += OnPlaybackStateChanged;
+            _playbackService.PositionChanged += OnPositionChanged;
             _playbackService.PlaylistChanged += OnPlaylistChanged;
 
             Items.ItemsSource = _playbackService.Items;
 
             UpdateGlyph();
-        }
-
-        private void OnCurrentItemChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            this.BeginOnUIThread(UpdateGlyph);
         }
 
         private void OnPlaybackStateChanged(IPlaybackService sender, object args)
@@ -110,7 +107,7 @@ namespace Telegram.Controls
             this.BeginOnUIThread(() => UpdatePosition(position, duration));
         }
 
-        private void OnPlaylistChanged(object sender, EventArgs e)
+        private void OnPlaylistChanged(IPlaybackService sender, object args)
         {
             this.BeginOnUIThread(() =>
             {

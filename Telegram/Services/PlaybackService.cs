@@ -7,12 +7,10 @@
 using FFmpegInteropX;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
@@ -22,7 +20,7 @@ using Windows.Media.Playback;
 
 namespace Telegram.Services
 {
-    public interface IPlaybackService : INotifyPropertyChanged
+    public interface IPlaybackService
     {
         IReadOnlyList<PlaybackItem> Items { get; }
 
@@ -58,9 +56,11 @@ namespace Telegram.Services
 
 
         event TypedEventHandler<IPlaybackService, MediaPlayerFailedEventArgs> MediaFailed;
-        event TypedEventHandler<IPlaybackService, object> PlaybackStateChanged;
+
+        event TypedEventHandler<IPlaybackService, object> StateChanged;
+        event TypedEventHandler<IPlaybackService, object> SourceChanged;
         event TypedEventHandler<IPlaybackService, object> PositionChanged;
-        event EventHandler PlaylistChanged;
+        event TypedEventHandler<IPlaybackService, object> PlaylistChanged;
     }
 
     public class PlaybackService : BindableBase, IPlaybackService
@@ -77,9 +77,10 @@ namespace Telegram.Services
         private Queue<Message> _queue;
 
         public event TypedEventHandler<IPlaybackService, MediaPlayerFailedEventArgs> MediaFailed;
-        public event TypedEventHandler<IPlaybackService, object> PlaybackStateChanged;
+        public event TypedEventHandler<IPlaybackService, object> StateChanged;
+        public event TypedEventHandler<IPlaybackService, object> SourceChanged;
         public event TypedEventHandler<IPlaybackService, object> PositionChanged;
-        public event EventHandler PlaylistChanged;
+        public event TypedEventHandler<IPlaybackService, object> PlaylistChanged;
 
         public PlaybackService(ISettingsService settingsService)
         {
@@ -284,7 +285,7 @@ namespace Telegram.Services
             {
                 _currentItem = value?.Message;
                 _currentPlayback = value;
-                RaisePropertyChanged(nameof(CurrentItem));
+                SourceChanged?.Invoke(this, value);
                 UpdateTransport();
             }
         }
@@ -304,7 +305,7 @@ namespace Telegram.Services
                 if (_playbackState != value)
                 {
                     _playbackState = value;
-                    PlaybackStateChanged?.Invoke(this, null);
+                    StateChanged?.Invoke(this, null);
                 }
             }
             //get

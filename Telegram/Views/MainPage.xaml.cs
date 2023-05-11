@@ -104,7 +104,7 @@ namespace Telegram.Views
             _handler = new AnimatedListHandler(ChatsList, AnimatedListType.Other);
 
             ViewModel.Chats.Delegate = this;
-            ViewModel.PlaybackService.PropertyChanged += OnCurrentItemChanged;
+            ViewModel.PlaybackService.SourceChanged += OnPlaybackSourceChanged;
 
             NavigationCacheMode = NavigationCacheMode.Disabled;
 
@@ -145,7 +145,7 @@ namespace Telegram.Views
                 var viewModel = ViewModel;
                 if (viewModel != null)
                 {
-                    viewModel.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
+                    viewModel.PlaybackService.SourceChanged -= OnPlaybackSourceChanged;
 
                     viewModel.Settings.Delegate = null;
                     viewModel.Chats.Delegate = null;
@@ -906,9 +906,9 @@ namespace Telegram.Views
                 .Subscribe<UpdateConfetti>(Handle);
         }
 
-        private void OnCurrentItemChanged(object sender, PropertyChangedEventArgs e)
+        private void OnPlaybackSourceChanged(IPlaybackService sender, object e)
         {
-            this.BeginOnUIThread(() => ShowHideBanner(ViewModel.PlaybackService.CurrentItem != null));
+            this.BeginOnUIThread(() => ShowHideBanner(sender.CurrentItem != null));
         }
 
         private bool _bannerCollapsed;

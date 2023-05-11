@@ -46,15 +46,12 @@ namespace Telegram.Controls.Messages.Content
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            var message = _message;
-            if (message == null)
+            if (_message != null)
             {
-                return;
+                _message.PlaybackService.SourceChanged -= OnPlaybackStateChanged;
+                _message.PlaybackService.StateChanged -= OnPlaybackStateChanged;
+                _message.PlaybackService.PositionChanged -= OnPositionChanged;
             }
-
-            message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
-            message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
-            message.PlaybackService.PositionChanged -= OnPositionChanged;
         }
 
         #region InitializeComponent
@@ -90,7 +87,7 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = message;
 
-            message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
+            message.PlaybackService.SourceChanged -= OnPlaybackStateChanged;
 
             var voiceNote = GetContent(message.Content);
             if (voiceNote == null || !_templateApplied)
@@ -98,7 +95,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            message.PlaybackService.PropertyChanged += OnCurrentItemChanged;
+            message.PlaybackService.SourceChanged += OnPlaybackStateChanged;
 
             Progress.UpdateWaveform(voiceNote);
 
@@ -232,22 +229,12 @@ namespace Telegram.Controls.Messages.Content
 
         #region Playback
 
-        private void OnCurrentItemChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            var voiceNote = GetContent(_message?.Content);
-            if (voiceNote == null)
-            {
-                return;
-            }
-
-            this.BeginOnUIThread(() => UpdateFile(_message, voiceNote.Voice));
-        }
-
         private void OnPlaybackStateChanged(IPlaybackService sender, object args)
         {
             var voiceNote = GetContent(_message?.Content);
             if (voiceNote == null)
             {
+                Recycle(sender);
                 return;
             }
 
@@ -332,7 +319,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateFile(MessageViewModel message, File file)
         {
-            message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
+            message.PlaybackService.StateChanged -= OnPlaybackStateChanged;
             message.PlaybackService.PositionChanged -= OnPositionChanged;
 
             var voiceNote = GetContent(message.Content);
@@ -391,7 +378,7 @@ namespace Telegram.Controls.Messages.Content
 
                     UpdatePosition(message.PlaybackService.Position, message.PlaybackService.Duration);
 
-                    message.PlaybackService.PlaybackStateChanged += OnPlaybackStateChanged;
+                    message.PlaybackService.StateChanged += OnPlaybackStateChanged;
                     message.PlaybackService.PositionChanged += OnPositionChanged;
                 }
                 else
@@ -407,11 +394,16 @@ namespace Telegram.Controls.Messages.Content
 
         public void Recycle()
         {
-            if (_message != null)
+            Recycle(_message?.PlaybackService);
+        }
+
+        private void Recycle(object sender)
+        {
+            if (sender is IPlaybackService playback)
             {
-                _message.PlaybackService.PropertyChanged -= OnCurrentItemChanged;
-                _message.PlaybackService.PlaybackStateChanged -= OnPlaybackStateChanged;
-                _message.PlaybackService.PositionChanged -= OnPositionChanged;
+                playback.SourceChanged -= OnPlaybackStateChanged;
+                playback.StateChanged -= OnPlaybackStateChanged;
+                playback.PositionChanged -= OnPositionChanged;
             }
 
             _message = null;
