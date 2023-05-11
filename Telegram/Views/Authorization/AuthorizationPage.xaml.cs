@@ -42,6 +42,7 @@ namespace Telegram.Views.Authorization
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             ViewModel.PropertyChanged += OnPropertyChanged;
+            Frame.ForwardStack.Clear();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
