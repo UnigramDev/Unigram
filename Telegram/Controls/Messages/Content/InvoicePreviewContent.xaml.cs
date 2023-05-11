@@ -56,7 +56,7 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = message;
 
-            var preview = GetContent(message.Content);
+            var preview = GetContent(message);
             if (preview == null || !_templateApplied)
             {
                 return;
@@ -135,8 +135,14 @@ namespace Telegram.Controls.Messages.Content
             return false;
         }
 
-        private MessageExtendedMediaPreview GetContent(MessageContent content)
+        private MessageExtendedMediaPreview GetContent(MessageViewModel message)
         {
+            if (message?.Delegate == null)
+            {
+                return null;
+            }
+
+            var content = message.Content;
             if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaPreview extendedMedia)
             {
                 return extendedMedia;

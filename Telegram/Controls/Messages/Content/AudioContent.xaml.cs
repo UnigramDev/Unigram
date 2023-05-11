@@ -88,7 +88,7 @@ namespace Telegram.Controls.Messages.Content
 
             message.PlaybackService.SourceChanged -= OnPlaybackStateChanged;
 
-            var audio = GetContent(message.Content);
+            var audio = GetContent(message);
             if (audio == null || !_templateApplied)
             {
                 return;
@@ -126,7 +126,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void OnPlaybackStateChanged(IPlaybackService sender, object args)
         {
-            var audio = GetContent(_message?.Content);
+            var audio = GetContent(_message);
             if (audio == null)
             {
                 Recycle(sender);
@@ -182,7 +182,7 @@ namespace Telegram.Controls.Messages.Content
             message.PlaybackService.StateChanged -= OnPlaybackStateChanged;
             message.PlaybackService.PositionChanged -= OnPositionChanged;
 
-            var audio = GetContent(message.Content);
+            var audio = GetContent(message);
             if (audio == null || !_templateApplied)
             {
                 return;
@@ -300,7 +300,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(object target, File file)
         {
-            var audio = GetContent(_message.Content);
+            var audio = GetContent(_message);
             if (audio == null || !_templateApplied)
             {
                 return;
@@ -384,8 +384,14 @@ namespace Telegram.Controls.Messages.Content
             return false;
         }
 
-        private Audio GetContent(MessageContent content)
+        private Audio GetContent(MessageViewModel message)
         {
+            if (message?.Delegate == null)
+            {
+                return null;
+            }
+
+            var content = message.Content;
             if (content is MessageAudio audio)
             {
                 return audio.Audio;
@@ -410,7 +416,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            var audio = GetContent(_message?.Content);
+            var audio = GetContent(_message);
             if (audio == null)
             {
                 return;
@@ -440,7 +446,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Download_Click(object sender, RoutedEventArgs e)
         {
-            var audio = GetContent(_message?.Content);
+            var audio = GetContent(_message);
             if (audio == null)
             {
                 return;

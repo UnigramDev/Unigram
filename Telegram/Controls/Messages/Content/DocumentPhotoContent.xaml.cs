@@ -29,7 +29,7 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = message;
 
-            var photo = GetContent(message.Content);
+            var photo = GetContent(message);
             if (photo == null)
             {
                 return;
@@ -74,7 +74,7 @@ namespace Telegram.Controls.Messages.Content
 
         public void UpdateFile(MessageViewModel message, File file)
         {
-            var photo = GetContent(message.Content);
+            var photo = GetContent(message);
             if (photo == null)
             {
                 return;
@@ -175,8 +175,14 @@ namespace Telegram.Controls.Messages.Content
             return false;
         }
 
-        private Document GetContent(MessageContent content)
+        private Document GetContent(MessageViewModel message)
         {
+            if (message?.Delegate == null)
+            {
+                return null;
+            }
+
+            var content = message.Content;
             if (content is MessageText text && text.WebPage != null)
             {
                 return text.WebPage.Document;
@@ -187,7 +193,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var photo = GetContent(_message?.Content);
+            var photo = GetContent(_message);
             if (photo == null)
             {
                 return;

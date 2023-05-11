@@ -164,6 +164,11 @@ namespace Telegram.Controls.Messages.Content
 
         private Sticker GetContent(MessageViewModel message)
         {
+            if (message?.Delegate == null)
+            {
+                return null;
+            }
+
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageSticker sticker)
             {

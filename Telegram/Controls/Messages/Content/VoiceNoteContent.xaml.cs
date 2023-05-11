@@ -89,7 +89,7 @@ namespace Telegram.Controls.Messages.Content
 
             message.PlaybackService.SourceChanged -= OnPlaybackStateChanged;
 
-            var voiceNote = GetContent(message.Content);
+            var voiceNote = GetContent(message);
             if (voiceNote == null || !_templateApplied)
             {
                 return;
@@ -231,7 +231,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void OnPlaybackStateChanged(IPlaybackService sender, object args)
         {
-            var voiceNote = GetContent(_message?.Content);
+            var voiceNote = GetContent(_message);
             if (voiceNote == null)
             {
                 Recycle(sender);
@@ -257,7 +257,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            var voiceNote = GetContent(message.Content);
+            var voiceNote = GetContent(message);
             if (voiceNote == null)
             {
                 return;
@@ -322,7 +322,7 @@ namespace Telegram.Controls.Messages.Content
             message.PlaybackService.StateChanged -= OnPlaybackStateChanged;
             message.PlaybackService.PositionChanged -= OnPositionChanged;
 
-            var voiceNote = GetContent(message.Content);
+            var voiceNote = GetContent(message);
             if (voiceNote == null || !_templateApplied)
             {
                 return;
@@ -430,8 +430,14 @@ namespace Telegram.Controls.Messages.Content
             return false;
         }
 
-        private VoiceNote GetContent(MessageContent content)
+        private VoiceNote GetContent(MessageViewModel message)
         {
+            if (message?.Delegate == null)
+            {
+                return null;
+            }
+
+            var content = message.Content;
             if (content is MessageVoiceNote voiceNote)
             {
                 return voiceNote.VoiceNote;
@@ -446,7 +452,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var voiceNote = GetContent(_message?.Content);
+            var voiceNote = GetContent(_message);
             if (voiceNote == null)
             {
                 return;
@@ -489,7 +495,7 @@ namespace Telegram.Controls.Messages.Content
         {
             if (Recognize.IsChecked == true)
             {
-                var voiceNote = GetContent(_message?.Content);
+                var voiceNote = GetContent(_message);
                 if (voiceNote == null)
                 {
                     return;

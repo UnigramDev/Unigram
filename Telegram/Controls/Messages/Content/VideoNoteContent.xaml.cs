@@ -68,7 +68,7 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = message;
 
-            var videoNote = GetContent(message.Content, out bool isSecret);
+            var videoNote = GetContent(message, out bool isSecret);
             if (videoNote == null || !_templateApplied)
             {
                 return;
@@ -107,7 +107,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateFile(MessageViewModel message, File file)
         {
-            var videoNote = GetContent(message.Content, out bool isSecret);
+            var videoNote = GetContent(message, out bool isSecret);
             if (videoNote == null || !_templateApplied)
             {
                 return;
@@ -172,7 +172,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(object target, File file)
         {
-            var videoNote = GetContent(_message.Content, out bool isSecret);
+            var videoNote = GetContent(_message, out bool isSecret);
             if (videoNote == null || !_templateApplied)
             {
                 return;
@@ -247,8 +247,15 @@ namespace Telegram.Controls.Messages.Content
             return false;
         }
 
-        private VideoNote GetContent(MessageContent content, out bool isSecret)
+        private VideoNote GetContent(MessageViewModel message, out bool isSecret)
         {
+            if (message?.Delegate == null)
+            {
+                isSecret = false;
+                return null;
+            }
+
+            var content = message.Content;
             if (content is MessageVideoNote videoNote)
             {
                 isSecret = videoNote.IsSecret;
@@ -276,7 +283,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var videoNote = GetContent(_message.Content, out _);
+            var videoNote = GetContent(_message, out _);
             if (videoNote == null)
             {
                 return;

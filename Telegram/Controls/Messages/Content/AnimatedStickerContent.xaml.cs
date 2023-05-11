@@ -213,6 +213,13 @@ namespace Telegram.Controls.Messages.Content
 
         private Sticker GetContent(MessageViewModel message, out bool premium)
         {
+            // TODO: temp, until a solution is found
+            if (message?.Delegate == null)
+            {
+                premium = false;
+                return null;
+            }
+
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageSticker sticker)
             {

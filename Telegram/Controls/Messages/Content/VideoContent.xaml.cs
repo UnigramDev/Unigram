@@ -70,7 +70,7 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = message;
 
-            var video = GetContent(message.Content, out bool isSecret);
+            var video = GetContent(message, out bool isSecret);
             if (video == null || !_templateApplied)
             {
                 return;
@@ -101,7 +101,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateFile(MessageViewModel message, File file)
         {
-            var video = GetContent(message.Content, out bool isSecret);
+            var video = GetContent(message, out bool isSecret);
             if (video == null || !_templateApplied)
             {
                 return;
@@ -236,7 +236,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(object target, File file)
         {
-            var video = GetContent(_message.Content, out bool isSecret);
+            var video = GetContent(_message, out bool isSecret);
             if (video == null || !_templateApplied)
             {
                 return;
@@ -304,7 +304,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Player_PositionChanged(object sender, int seconds)
         {
-            var video = GetContent(_message?.Content, out _);
+            var video = GetContent(_message, out _);
             if (video == null)
             {
                 return;
@@ -357,8 +357,15 @@ namespace Telegram.Controls.Messages.Content
             return false;
         }
 
-        private Video GetContent(MessageContent content, out bool isSecret)
+        private Video GetContent(MessageViewModel message, out bool isSecret)
         {
+            if (message?.Delegate == null)
+            {
+                isSecret = false;
+                return null;
+            }
+
+            var content = message.Content;
             if (content is MessageVideo video)
             {
                 isSecret = video.IsSecret;
@@ -381,7 +388,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var video = GetContent(_message.Content, out bool isSecret);
+            var video = GetContent(_message, out bool isSecret);
             if (video == null || isSecret)
             {
                 return;
@@ -415,7 +422,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Play_Click(object sender, RoutedEventArgs e)
         {
-            var video = GetContent(_message.Content, out bool isSecret);
+            var video = GetContent(_message, out bool isSecret);
             if (video == null)
             {
                 return;

@@ -78,7 +78,7 @@ namespace Telegram.Controls.Messages.Content
 
             _message = message;
 
-            var photo = GetContent(message.Content, out bool hasSpoiler, out bool isSecret);
+            var photo = GetContent(message, out bool hasSpoiler, out bool isSecret);
             if (photo == null || !_templateApplied)
             {
                 _hidden = (prevId != nextId || _hidden) && hasSpoiler;
@@ -145,7 +145,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateFile(MessageViewModel message, File file)
         {
-            var photo = GetContent(message.Content, out bool hasSpoiler, out bool isSecret);
+            var photo = GetContent(message, out bool hasSpoiler, out bool isSecret);
             if (photo == null || !_templateApplied)
             {
                 return;
@@ -262,7 +262,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(object target, File file)
         {
-            var photo = GetContent(_message.Content, out _, out bool isSecret);
+            var photo = GetContent(_message, out _, out bool isSecret);
             if (photo == null || !_templateApplied)
             {
                 return;
@@ -356,8 +356,16 @@ namespace Telegram.Controls.Messages.Content
             return false;
         }
 
-        private Photo GetContent(MessageContent content, out bool hasSpoiler, out bool isSecret)
+        private Photo GetContent(MessageViewModel message, out bool hasSpoiler, out bool isSecret)
         {
+            if (message?.Delegate == null)
+            {
+                hasSpoiler = false;
+                isSecret = false;
+                return null;
+            }
+
+            var content = message.Content;
             if (content is MessagePhoto photo)
             {
                 hasSpoiler = photo.HasSpoiler;
@@ -390,7 +398,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var photo = GetContent(_message?.Content, out bool hasSpoiler, out _);
+            var photo = GetContent(_message, out bool hasSpoiler, out _);
             if (photo == null)
             {
                 return;

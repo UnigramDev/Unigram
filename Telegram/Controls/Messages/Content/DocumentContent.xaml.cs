@@ -64,7 +64,7 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = message;
 
-            var document = GetContent(message.Content);
+            var document = GetContent(message);
             if (document == null || !_templateApplied)
             {
                 return;
@@ -94,7 +94,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateFile(MessageViewModel message, File file)
         {
-            var document = GetContent(message.Content);
+            var document = GetContent(message);
             if (document == null || !_templateApplied)
             {
                 return;
@@ -151,7 +151,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(object target, File file)
         {
-            var document = GetContent(_message.Content);
+            var document = GetContent(_message);
             if (document == null || !_templateApplied)
             {
                 return;
@@ -223,8 +223,14 @@ namespace Telegram.Controls.Messages.Content
             return false;
         }
 
-        private Document GetContent(MessageContent content)
+        private Document GetContent(MessageViewModel message)
         {
+            if (message?.Delegate == null)
+            {
+                return null;
+            }
+
+            var content = message.Content;
             if (content is MessageDocument document)
             {
                 return document.Document;
@@ -239,7 +245,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var document = GetContent(_message.Content);
+            var document = GetContent(_message);
             if (document == null)
             {
                 return;
@@ -273,7 +279,7 @@ namespace Telegram.Controls.Messages.Content
 
         private async void Button_DragStarting(UIElement sender, DragStartingEventArgs args)
         {
-            var document = GetContent(_message.Content);
+            var document = GetContent(_message);
             if (document == null)
             {
                 return;
