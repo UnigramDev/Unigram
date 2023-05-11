@@ -188,7 +188,7 @@ namespace Telegram.Controls
                 RepeatButton.Visibility = Visibility.Collapsed;
                 //ShuffleButton.Visibility = Visibility.Collapsed;
 
-                UpdateRate(int.MaxValue);
+                UpdateSpeed(int.MaxValue);
 
                 ViewButton.Padding = new Thickness(48 + 6, 0, 40 * 2 + 48 + 12, 0);
             }
@@ -215,7 +215,7 @@ namespace Telegram.Controls
                 RepeatButton.Visibility = Visibility.Visible;
                 //ShuffleButton.Visibility = Visibility.Visible;
 
-                UpdateRate(audio.Duration);
+                UpdateSpeed(audio.Duration);
                 UpdateRepeat();
 
                 ViewButton.Padding = new Thickness(40 * 3 + 12, 0, 40 * 2 + 48 + 12, 0);
@@ -278,10 +278,16 @@ namespace Telegram.Controls
                 : Strings.AccDescrRepeatOff);
         }
 
-        private void UpdateRate(int duration)
+        private void UpdateSpeed(int duration)
         {
-            RateButton.IsChecked = _playbackService.PlaybackRate != 1.0;
-            RateButton.Visibility = duration >= 10 * 60
+            SpeedText.Text = string.Format("{0:N1}x", _playbackService.PlaybackSpeed);
+            SpeedButton.Badge = string.Format("{0:N1}x", _playbackService.PlaybackSpeed);
+
+            SpeedText.Visibility = duration >= 10 * 60
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            SpeedButton.Visibility = duration >= 10 * 60
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
@@ -364,31 +370,18 @@ namespace Telegram.Controls
             _playbackService.IsReversed = ShuffleButton.IsChecked == true;
         }
 
-        private void Rate_Click(object sender, RoutedEventArgs e)
-        {
-            if (_playbackService.PlaybackRate == 1.0)
-            {
-                _playbackService.PlaybackRate = 2.0;
-                RateButton.IsChecked = true;
-            }
-            else
-            {
-                _playbackService.PlaybackRate = 1.0;
-                RateButton.IsChecked = false;
-            }
-        }
-
-        private void Rate_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        private void Speed_Click(object sender, RoutedEventArgs e)
         {
             var flyout = new MenuFlyout();
-            flyout.CreatePlaybackSpeed(_playbackService.PlaybackRate, UpdatePlaybackSpeed);
-            flyout.ShowAt(RateButton, FlyoutPlacementMode.BottomEdgeAlignedRight);
+            flyout.CreatePlaybackSpeed(_playbackService.PlaybackSpeed, UpdatePlaybackSpeed);
+            flyout.ShowAt(SpeedButton, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }
 
         private void UpdatePlaybackSpeed(double value)
         {
-            _playbackService.PlaybackRate = value;
-            RateButton.IsChecked = value != 1;
+            _playbackService.PlaybackSpeed = value;
+            SpeedText.Text = string.Format("{0:N1}x", value);
+            SpeedButton.Badge = string.Format("{0:N1}x", value);
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)

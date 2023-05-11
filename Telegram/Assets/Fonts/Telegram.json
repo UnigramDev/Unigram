@@ -1277,12 +1277,28 @@
     {
       "selection": [
         {
+          "order": 727,
+          "id": 230,
+          "name": "ic_fluent_arrow_repeat_all_20_regular",
+          "prevSize": 32,
+          "code": 59924,
+          "tempChar": ""
+        },
+        {
+          "order": 726,
+          "id": 229,
+          "name": "ic_fluent_arrow_repeat_1_20_regular",
+          "prevSize": 32,
+          "code": 59925,
+          "tempChar": ""
+        },
+        {
           "order": 723,
           "id": 228,
           "name": "ic_fluent_speaker_0_20_regular",
           "prevSize": 32,
           "code": 59921,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 724,
@@ -1290,7 +1306,7 @@
           "name": "ic_fluent_speaker_3_20_regular",
           "prevSize": 32,
           "code": 59922,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 721,
@@ -1298,7 +1314,7 @@
           "name": "ic_fluent_chat_multiple_20_filled",
           "prevSize": 32,
           "code": 59917,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 720,
@@ -1306,7 +1322,7 @@
           "name": "ic_fluent_archive_20_filled",
           "prevSize": 32,
           "code": 59918,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 719,
@@ -1314,7 +1330,7 @@
           "name": "ic_fluent_bookmark_20_filled",
           "prevSize": 32,
           "code": 59919,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 718,
@@ -1322,7 +1338,7 @@
           "name": "ic_fluent_history_20_regular",
           "prevSize": 32,
           "code": 59780,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 716,
@@ -1330,7 +1346,7 @@
           "name": "PersonCircleOnline",
           "prevSize": 32,
           "code": 59778,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 715,
@@ -1338,7 +1354,7 @@
           "name": "ic_fluent_arrow_sync_20_regular",
           "prevSize": 32,
           "code": 59777,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 712,
@@ -1346,7 +1362,7 @@
           "name": "ic_fluent_slide_text_20_regular",
           "prevSize": 32,
           "code": 59914,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 711,
@@ -1354,7 +1370,7 @@
           "name": "ic_fluent_arrow_reset_20_regular",
           "prevSize": 32,
           "code": 59913,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 710,
@@ -1362,7 +1378,7 @@
           "name": "ic_fluent_chat_add_20_regular",
           "prevSize": 32,
           "code": 59912,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 704,
@@ -1370,7 +1386,7 @@
           "name": "ic_fluent_ruler_20_regular",
           "prevSize": 32,
           "code": 59905,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -1386,7 +1402,7 @@
           "name": "ic_fluent_arrow_upload_20_regular",
           "prevSize": 32,
           "code": 59904,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 702,
@@ -1394,7 +1410,7 @@
           "name": "ic_fluent_camera_sparkles_20_regular",
           "prevSize": 32,
           "code": 59902,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 701,
@@ -1402,7 +1418,7 @@
           "name": "ic_fluent_camera_add_20_regular",
           "prevSize": 32,
           "code": 59901,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 700,
@@ -1410,7 +1426,7 @@
           "name": "ic_fluent_play_circle_20_regular",
           "prevSize": 32,
           "code": 59900,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 698,
@@ -1418,7 +1434,7 @@
           "name": "ic_fluent_shield_task_20_regular",
           "prevSize": 32,
           "code": 59897,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 693,
@@ -1426,7 +1442,7 @@
           "name": "ic_fluent_re_order_dots_vertical_20_regular",
           "prevSize": 32,
           "code": 59894,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 687,
@@ -1434,7 +1450,7 @@
           "name": "ic_fluent_full_screen_minimize_20_regular",
           "prevSize": 32,
           "code": 59891,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 688,
@@ -1442,7 +1458,7 @@
           "name": "ic_fluent_full_screen_maximize_20_regular",
           "prevSize": 32,
           "code": 59892,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 686,
@@ -1450,7 +1466,7 @@
           "name": "ic_fluent_mention_20_regular",
           "prevSize": 32,
           "code": 59890,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 683,
@@ -1458,7 +1474,7 @@
           "name": "ic_fluent_my_location_20_regular",
           "prevSize": 32,
           "code": 59887,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 682,
@@ -1466,7 +1482,7 @@
           "name": "ic_fluent_weather_sunny_20_regular",
           "prevSize": 32,
           "code": 59886,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 678,
@@ -1474,7 +1490,7 @@
           "name": "ic_fluent_emoji_edit_20_regular",
           "prevSize": 32,
           "code": 59884,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 679,
@@ -1482,7 +1498,7 @@
           "name": "ic_fluent_emoji_add_20_regular",
           "prevSize": 32,
           "code": 59885,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 677,
@@ -1490,7 +1506,7 @@
           "name": "ic_fluent_text_font_size_20_regular",
           "prevSize": 32,
           "code": 59883,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 676,
@@ -1498,7 +1514,7 @@
           "name": "ic_fluent_shapes_20_regular",
           "prevSize": 32,
           "code": 59880,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 675,
@@ -1506,7 +1522,7 @@
           "name": "ic_fluent_weather_moon_20_regular",
           "prevSize": 32,
           "code": 59882,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 674,
@@ -1514,7 +1530,7 @@
           "name": "ic_fluent_wallpaper_20_regular",
           "prevSize": 32,
           "code": 59879,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 673,
@@ -1522,7 +1538,7 @@
           "name": "ic_fluent_arrow_sort_20_regular",
           "prevSize": 32,
           "code": 59878,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 671,
@@ -1530,7 +1546,7 @@
           "name": "ic_fluent_subtract_circle_20_regular",
           "prevSize": 32,
           "code": 59859,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 672,
@@ -1538,7 +1554,7 @@
           "name": "ic_fluent_add_circle_20_regular",
           "prevSize": 32,
           "code": 59877,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 646,
@@ -1546,7 +1562,7 @@
           "name": "ic_fluent_chat_20_regular",
           "prevSize": 32,
           "code": 59839,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 624,
@@ -1554,7 +1570,7 @@
           "name": "ic_fluent_person_20_filled",
           "prevSize": 32,
           "code": 59832,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 625,
@@ -1562,7 +1578,7 @@
           "name": "ic_fluent_people_20_filled",
           "prevSize": 32,
           "code": 59833,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 626,
@@ -1570,7 +1586,7 @@
           "name": "ic_fluent_chat_20_filled1",
           "prevSize": 32,
           "code": 59834,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 627,
@@ -1578,7 +1594,7 @@
           "name": "ic_fluent_pin_20_filled",
           "prevSize": 32,
           "code": 59835,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 628,
@@ -1586,7 +1602,7 @@
           "name": "ic_fluent_link_20_filled",
           "prevSize": 32,
           "code": 59836,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 629,
@@ -1594,7 +1610,7 @@
           "name": "ic_fluent_folder_20_filled",
           "prevSize": 32,
           "code": 59837,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 609,
@@ -1602,7 +1618,7 @@
           "name": "ic_fluent_person_available_20_regular",
           "prevSize": 32,
           "code": 59816,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 608,
@@ -1610,7 +1626,7 @@
           "name": "ic_fluent_person_circle_20_regular",
           "prevSize": 32,
           "code": 59817,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 607,
@@ -1618,7 +1634,7 @@
           "name": "ic_fluent_eye_off_20_regular",
           "prevSize": 32,
           "code": 59814,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 606,
@@ -1626,7 +1642,7 @@
           "name": "ic_fluent_eye_20_regular",
           "prevSize": 32,
           "code": 59815,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 605,
@@ -1634,7 +1650,7 @@
           "name": "ic_fluent_speaker_off_20_regular1",
           "prevSize": 32,
           "code": 59813,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 604,
@@ -1642,7 +1658,7 @@
           "name": "ic_fluent_alert_on_20_regular",
           "prevSize": 32,
           "code": 59812,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 598,
@@ -1650,7 +1666,7 @@
           "name": "ic_fluent_alert_snooze_20_regular",
           "prevSize": 32,
           "code": 59804,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 597,
@@ -1658,7 +1674,7 @@
           "name": "ic_fluent_music_note_2_20_regular",
           "prevSize": 32,
           "code": 59805,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 596,
@@ -1666,7 +1682,7 @@
           "name": "ic_fluent_music_note_off_2_20_regular",
           "prevSize": 32,
           "code": 59806,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 594,
@@ -1674,7 +1690,7 @@
           "name": "ic_fluent_arrow_exit_20_regular",
           "prevSize": 32,
           "code": 59801,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 595,
@@ -1682,7 +1698,7 @@
           "name": "ic_fluent_arrow_enter_20_regular",
           "prevSize": 32,
           "code": 59803,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 593,
@@ -1690,7 +1706,7 @@
           "name": "ic_fluent_heart_12_filled",
           "prevSize": 32,
           "code": 59800,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 588,
@@ -1698,7 +1714,7 @@
           "name": "ic_fluent_compose_20_regular",
           "prevSize": 32,
           "code": 59796,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 587,
@@ -1706,7 +1722,7 @@
           "name": "ic_fluent_chat_multiple_20_regular",
           "prevSize": 32,
           "code": 59794,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 534,
@@ -1714,7 +1730,7 @@
           "name": "ic_fluent_live_20_regular",
           "prevSize": 32,
           "code": 59789,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 533,
@@ -1722,7 +1738,7 @@
           "name": "ic_fluent_dialpad_20_regular",
           "prevSize": 32,
           "code": 59788,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 532,
@@ -1730,7 +1746,7 @@
           "name": "ic_fluent_hand_right_20_regular",
           "prevSize": 32,
           "code": 59787,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 531,
@@ -1738,7 +1754,7 @@
           "name": "ic_fluent_folder_add_20_regular",
           "prevSize": 32,
           "code": 59786,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 530,
@@ -1746,7 +1762,7 @@
           "name": "ic_fluent_arrow_trending_20_regular",
           "prevSize": 32,
           "code": 59785,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 529,
@@ -1754,7 +1770,7 @@
           "name": "ic_fluent_subtract_circle_20_filled",
           "prevSize": 32,
           "code": 59784,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 528,
@@ -1762,7 +1778,7 @@
           "name": "ic_fluent_heart_20_regular1",
           "prevSize": 32,
           "code": 59783,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 526,
@@ -1770,7 +1786,7 @@
           "name": "ic_fluent_heart_16_filled",
           "prevSize": 32,
           "code": 59781,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 527,
@@ -1778,7 +1794,7 @@
           "name": "ic_fluent_mention_16_regular",
           "prevSize": 32,
           "code": 59782,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 520,
@@ -1786,7 +1802,7 @@
           "name": "ic_fluent_window_new_20_regular",
           "prevSize": 32,
           "code": 59775,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 519,
@@ -1794,7 +1810,7 @@
           "name": "ic_fluent_checkmark_circle_20_regular",
           "prevSize": 32,
           "code": 59774,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 517,
@@ -1802,7 +1818,7 @@
           "name": "ic_fluent_tab_in_private_20_regular",
           "prevSize": 32,
           "code": 59772,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 518,
@@ -1810,7 +1826,7 @@
           "name": "ic_fluent_translate_20_regular",
           "prevSize": 32,
           "code": 59773,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 516,
@@ -1818,7 +1834,7 @@
           "name": "Pin",
           "prevSize": 32,
           "code": 59771,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 515,
@@ -1826,7 +1842,7 @@
           "name": "Verified",
           "prevSize": 32,
           "code": 59770,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 514,
@@ -1834,7 +1850,7 @@
           "name": "Speaker-Mute",
           "prevSize": 32,
           "code": 59769,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -1850,7 +1866,7 @@
           "name": "ic_fluent_paint_brush_20_regular",
           "prevSize": 32,
           "code": 59662,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 495,
@@ -1858,7 +1874,7 @@
           "name": "ic_fluent_top_speed_20_regular",
           "prevSize": 32,
           "code": 59661,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 490,
@@ -1866,7 +1882,7 @@
           "name": "ic_fluent_checkmark_20_regular",
           "prevSize": 32,
           "code": 59643,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 488,
@@ -1874,7 +1890,7 @@
           "name": "ic_fluent_zoom_out_20_regular",
           "prevSize": 32,
           "code": 59754,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 487,
@@ -1882,7 +1898,7 @@
           "name": "ic_fluent_zoom_in_20_regular",
           "prevSize": 32,
           "code": 59753,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 486,
@@ -1890,7 +1906,7 @@
           "name": "ic_fluent_stack_20_regular",
           "prevSize": 32,
           "code": 59660,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 482,
@@ -1898,7 +1914,7 @@
           "name": "ic_fluent_dock_panel_right_20_filled",
           "prevSize": 32,
           "code": 59751,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 483,
@@ -1906,7 +1922,7 @@
           "name": "ic_fluent_dock_panel_right_20_regular",
           "prevSize": 32,
           "code": 59752,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 481,
@@ -1914,7 +1930,7 @@
           "name": "ic_fluent_arrow_clockwise_20_regular",
           "prevSize": 32,
           "code": 59180,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 477,
@@ -1922,7 +1938,7 @@
           "name": "ic_fluent_arrow_minimize_20_regular",
           "prevSize": 32,
           "code": 59749,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 478,
@@ -1930,7 +1946,7 @@
           "name": "ic_fluent_arrow_maximize_20_regular",
           "prevSize": 32,
           "code": 59750,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 476,
@@ -1938,7 +1954,7 @@
           "name": "ic_fluent_video_off_20_filled",
           "prevSize": 32,
           "code": 59747,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 475,
@@ -1946,7 +1962,7 @@
           "name": "ic_fluent_video_20_filled",
           "prevSize": 32,
           "code": 59748,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 473,
@@ -1954,7 +1970,7 @@
           "name": "ic_fluent_share_screen_stop_20_filled",
           "prevSize": 32,
           "code": 59733,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 474,
@@ -1962,7 +1978,7 @@
           "name": "ic_fluent_share_screen_start_20_filled",
           "prevSize": 32,
           "code": 59734,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 417,
@@ -1970,7 +1986,7 @@
           "name": "uniE930",
           "prevSize": 32,
           "code": 59696,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 416,
@@ -1978,7 +1994,7 @@
           "name": "uniE92E",
           "prevSize": 32,
           "code": 59694,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 415,
@@ -1986,7 +2002,7 @@
           "name": "uniE92F",
           "prevSize": 32,
           "code": 59695,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 412,
@@ -1994,7 +2010,7 @@
           "name": "uniE910",
           "prevSize": 32,
           "code": 59664,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 411,
@@ -2002,7 +2018,7 @@
           "name": "uniE915",
           "prevSize": 32,
           "code": 59669,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 408,
@@ -2010,7 +2026,7 @@
           "name": "uniE90F",
           "prevSize": 32,
           "code": 59663,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 407,
@@ -2018,7 +2034,7 @@
           "name": "uniE905",
           "prevSize": 32,
           "code": 59653,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 406,
@@ -2026,7 +2042,7 @@
           "name": "uniE904",
           "prevSize": 32,
           "code": 59652,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 405,
@@ -2034,7 +2050,7 @@
           "name": "uniE903",
           "prevSize": 32,
           "code": 59651,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 404,
@@ -2042,7 +2058,7 @@
           "name": "uniE901",
           "prevSize": 32,
           "code": 59649,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 400,
@@ -2050,7 +2066,7 @@
           "name": "uniE99A",
           "prevSize": 32,
           "code": 59802,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 401,
@@ -2058,7 +2074,7 @@
           "name": "uniE783",
           "prevSize": 32,
           "code": 59267,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 399,
@@ -2066,7 +2082,7 @@
           "name": "uniE919",
           "prevSize": 32,
           "code": 59673,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 398,
@@ -2074,7 +2090,7 @@
           "name": "uniF12E",
           "prevSize": 32,
           "code": 61742,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 390,
@@ -2082,7 +2098,7 @@
           "name": "uniF122",
           "prevSize": 32,
           "code": 61730,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 386,
@@ -2090,7 +2106,7 @@
           "name": "ic_fluent_speaker_1_20_regular",
           "prevSize": 32,
           "code": 59795,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 387,
@@ -2098,7 +2114,7 @@
           "name": "ic_fluent_speaker_2_20_regular",
           "prevSize": 32,
           "code": 59797,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 382,
@@ -2106,7 +2122,7 @@
           "name": "uniEC42",
           "prevSize": 32,
           "code": 60482,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 383,
@@ -2114,7 +2130,7 @@
           "name": "uniF164",
           "prevSize": 32,
           "code": 61796,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 384,
@@ -2122,7 +2138,7 @@
           "name": "uniF166",
           "prevSize": 32,
           "code": 61798,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 378,
@@ -2130,7 +2146,7 @@
           "name": "uniE72A",
           "prevSize": 32,
           "code": 59178,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 377,
@@ -2138,7 +2154,7 @@
           "name": "uniE897",
           "prevSize": 32,
           "code": 59543,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 372,
@@ -2146,7 +2162,7 @@
           "name": "uniE7AC",
           "prevSize": 32,
           "code": 59308,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 373,
@@ -2154,7 +2170,7 @@
           "name": "uniE91D",
           "prevSize": 32,
           "code": 59677,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 374,
@@ -2162,7 +2178,7 @@
           "name": "uniE93D",
           "prevSize": 32,
           "code": 59709,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 371,
@@ -2170,7 +2186,7 @@
           "name": "uniEA1A",
           "prevSize": 32,
           "code": 59930,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 264,
@@ -2178,7 +2194,7 @@
           "name": "uniE0E2",
           "prevSize": 32,
           "code": 57570,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 265,
@@ -2186,7 +2202,7 @@
           "name": "uniE0E3",
           "prevSize": 32,
           "code": 57571,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 266,
@@ -2194,7 +2210,7 @@
           "name": "uniE0E4",
           "prevSize": 32,
           "code": 57572,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 267,
@@ -2202,7 +2218,7 @@
           "name": "uniE0E5",
           "prevSize": 32,
           "code": 57573,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 268,
@@ -2210,7 +2226,7 @@
           "name": "uniE001",
           "prevSize": 32,
           "code": 57345,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 269,
@@ -2218,7 +2234,7 @@
           "name": "uniE1C4",
           "prevSize": 32,
           "code": 57796,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 270,
@@ -2226,7 +2242,7 @@
           "name": "uniE2B1",
           "prevSize": 32,
           "code": 58033,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 271,
@@ -2234,7 +2250,7 @@
           "name": "uniE7A6",
           "prevSize": 32,
           "code": 59302,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 272,
@@ -2242,7 +2258,7 @@
           "name": "uniE7A7",
           "prevSize": 32,
           "code": 59303,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 273,
@@ -2250,7 +2266,7 @@
           "name": "uniE7A8",
           "prevSize": 32,
           "code": 59304,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 274,
@@ -2258,7 +2274,7 @@
           "name": "uniE7B8",
           "prevSize": 32,
           "code": 59320,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 275,
@@ -2266,7 +2282,7 @@
           "name": "uniE7C3",
           "prevSize": 32,
           "code": 59331,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 276,
@@ -2274,7 +2290,7 @@
           "name": "uniE7ED",
           "prevSize": 32,
           "code": 59373,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 277,
@@ -2282,7 +2298,7 @@
           "name": "uniE8BD",
           "prevSize": 32,
           "code": 59581,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 278,
@@ -2290,7 +2306,7 @@
           "name": "uniE8C6",
           "prevSize": 32,
           "code": 59590,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 279,
@@ -2298,7 +2314,7 @@
           "name": "uniE8C8",
           "prevSize": 32,
           "code": 59592,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 280,
@@ -2306,7 +2322,7 @@
           "name": "uniE8CB",
           "prevSize": 32,
           "code": 59595,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 281,
@@ -2314,7 +2330,7 @@
           "name": "uniE8D2",
           "prevSize": 32,
           "code": 59602,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 282,
@@ -2322,7 +2338,7 @@
           "name": "uniE8D6",
           "prevSize": 32,
           "code": 59606,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 283,
@@ -2330,7 +2346,7 @@
           "name": "uniE8D9",
           "prevSize": 32,
           "code": 59609,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 284,
@@ -2338,7 +2354,7 @@
           "name": "uniE8DB",
           "prevSize": 32,
           "code": 59611,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 285,
@@ -2346,7 +2362,7 @@
           "name": "uniE8DC",
           "prevSize": 32,
           "code": 59612,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 286,
@@ -2354,7 +2370,7 @@
           "name": "uniE8DD",
           "prevSize": 32,
           "code": 59613,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 287,
@@ -2362,7 +2378,7 @@
           "name": "uniE8DE",
           "prevSize": 32,
           "code": 59614,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 288,
@@ -2370,7 +2386,7 @@
           "name": "uniE8FA",
           "prevSize": 32,
           "code": 59642,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 289,
@@ -2378,7 +2394,7 @@
           "name": "uniE9CE",
           "prevSize": 32,
           "code": 59854,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 290,
@@ -2386,7 +2402,7 @@
           "name": "uniE9D9",
           "prevSize": 32,
           "code": 59865,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 291,
@@ -2394,7 +2410,7 @@
           "name": "uniE9E9",
           "prevSize": 32,
           "code": 59881,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 292,
@@ -2402,7 +2418,7 @@
           "name": "uniE10B",
           "prevSize": 32,
           "code": 57611,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 511,
@@ -2410,7 +2426,7 @@
           "name": "uniE10C",
           "prevSize": 32,
           "code": 57612,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 294,
@@ -2418,7 +2434,7 @@
           "name": "uniE71B",
           "prevSize": 32,
           "code": 59163,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 295,
@@ -2426,7 +2442,7 @@
           "name": "uniE71F",
           "prevSize": 32,
           "code": 59167,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 296,
@@ -2434,7 +2450,7 @@
           "name": "uniE72B",
           "prevSize": 32,
           "code": 59179,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 297,
@@ -2442,7 +2458,7 @@
           "name": "uniE72D",
           "prevSize": 32,
           "code": 59181,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 298,
@@ -2450,7 +2466,7 @@
           "name": "uniE72E",
           "prevSize": 32,
           "code": 59182,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 299,
@@ -2458,7 +2474,7 @@
           "name": "uniE73E",
           "prevSize": 32,
           "code": 59198,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 300,
@@ -2466,7 +2482,7 @@
           "name": "uniE74B",
           "prevSize": 32,
           "code": 59211,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 301,
@@ -2474,7 +2490,7 @@
           "name": "uniE74D",
           "prevSize": 32,
           "code": 59213,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 302,
@@ -2482,7 +2498,7 @@
           "name": "uniE75C",
           "prevSize": 32,
           "code": 59228,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 303,
@@ -2490,7 +2506,7 @@
           "name": "uniE76E",
           "prevSize": 32,
           "code": 59246,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 304,
@@ -2498,7 +2514,7 @@
           "name": "uniE77A",
           "prevSize": 32,
           "code": 59258,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 305,
@@ -2506,7 +2522,7 @@
           "name": "uniE77B",
           "prevSize": 32,
           "code": 59259,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 306,
@@ -2514,7 +2530,7 @@
           "name": "uniE77F",
           "prevSize": 32,
           "code": 59263,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 307,
@@ -2522,7 +2538,7 @@
           "name": "uniE81C",
           "prevSize": 32,
           "code": 59420,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 308,
@@ -2530,7 +2546,7 @@
           "name": "uniE91C",
           "prevSize": 32,
           "code": 59676,
-          "tempChar": "",
+          "tempChar": "",
           "codes": [
             59676
           ]
@@ -2541,7 +2557,7 @@
           "name": "uniE91F",
           "prevSize": 32,
           "code": 59679,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 310,
@@ -2549,7 +2565,7 @@
           "name": "uniE92B",
           "prevSize": 32,
           "code": 59691,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 311,
@@ -2557,7 +2573,7 @@
           "name": "uniE104",
           "prevSize": 32,
           "code": 57604,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 312,
@@ -2565,7 +2581,7 @@
           "name": "uniE118",
           "prevSize": 32,
           "code": 57624,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 313,
@@ -2573,7 +2589,7 @@
           "name": "uniE168",
           "prevSize": 32,
           "code": 57704,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 314,
@@ -2581,7 +2597,7 @@
           "name": "uniE192",
           "prevSize": 32,
           "code": 57746,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 315,
@@ -2589,7 +2605,7 @@
           "name": "uniE248",
           "prevSize": 32,
           "code": 57928,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 316,
@@ -2597,7 +2613,7 @@
           "name": "uniE610",
           "prevSize": 32,
           "code": 58896,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 317,
@@ -2605,7 +2621,7 @@
           "name": "uniE700",
           "prevSize": 32,
           "code": 59136,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 318,
@@ -2613,7 +2629,7 @@
           "name": "uniE710",
           "prevSize": 32,
           "code": 59152,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 319,
@@ -2621,7 +2637,7 @@
           "name": "uniE711",
           "prevSize": 32,
           "code": 59153,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 320,
@@ -2629,7 +2645,7 @@
           "name": "uniE713",
           "prevSize": 32,
           "code": 59155,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 321,
@@ -2637,7 +2653,7 @@
           "name": "uniE714",
           "prevSize": 32,
           "code": 59156,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 322,
@@ -2645,7 +2661,7 @@
           "name": "uniE716",
           "prevSize": 32,
           "code": 59158,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 323,
@@ -2653,7 +2669,7 @@
           "name": "uniE717",
           "prevSize": 32,
           "code": 59159,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 324,
@@ -2661,7 +2677,7 @@
           "name": "uniE720",
           "prevSize": 32,
           "code": 59168,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 325,
@@ -2669,7 +2685,7 @@
           "name": "uniE721",
           "prevSize": 32,
           "code": 59169,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 326,
@@ -2677,7 +2693,7 @@
           "name": "uniE722",
           "prevSize": 32,
           "code": 59170,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 327,
@@ -2685,7 +2701,7 @@
           "name": "uniE730",
           "prevSize": 32,
           "code": 59184,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 328,
@@ -2693,7 +2709,7 @@
           "name": "uniE734",
           "prevSize": 32,
           "code": 59188,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 329,
@@ -2701,7 +2717,7 @@
           "name": "uniE735",
           "prevSize": 32,
           "code": 59189,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 330,
@@ -2709,7 +2725,7 @@
           "name": "uniE762",
           "prevSize": 32,
           "code": 59234,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -2733,7 +2749,7 @@
           "name": "uniE774",
           "prevSize": 32,
           "code": 59252,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 334,
@@ -2741,7 +2757,7 @@
           "name": "uniE785",
           "prevSize": 32,
           "code": 59269,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 335,
@@ -2749,7 +2765,7 @@
           "name": "uniE787",
           "prevSize": 32,
           "code": 59271,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 336,
@@ -2757,7 +2773,7 @@
           "name": "uniE789",
           "prevSize": 32,
           "code": 59273,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 337,
@@ -2765,7 +2781,7 @@
           "name": "uniE792",
           "prevSize": 32,
           "code": 59282,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 338,
@@ -2773,7 +2789,7 @@
           "name": "uniE825",
           "prevSize": 32,
           "code": 59429,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 339,
@@ -2781,7 +2797,7 @@
           "name": "uniE838",
           "prevSize": 32,
           "code": 59448,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 340,
@@ -2789,7 +2805,7 @@
           "name": "uniE840",
           "prevSize": 32,
           "code": 59456,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 341,
@@ -2797,7 +2813,7 @@
           "name": "uniE892",
           "prevSize": 32,
           "code": 59538,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 342,
@@ -2805,7 +2821,7 @@
           "name": "uniE893",
           "prevSize": 32,
           "code": 59539,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 343,
@@ -2813,7 +2829,7 @@
           "name": "uniE902",
           "prevSize": 32,
           "code": 59650,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 344,
@@ -2821,7 +2837,7 @@
           "name": "uniE907",
           "prevSize": 32,
           "code": 59655,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 345,
@@ -2829,7 +2845,7 @@
           "name": "uniE909",
           "prevSize": 32,
           "code": 59657,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 346,
@@ -2837,7 +2853,7 @@
           "name": "uniEA19",
           "prevSize": 32,
           "code": 59929,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 347,
@@ -2845,7 +2861,7 @@
           "name": "uniE916",
           "prevSize": 32,
           "code": 59670,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 348,
@@ -2853,7 +2869,7 @@
           "name": "uniE917",
           "prevSize": 32,
           "code": 59671,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 349,
@@ -2861,7 +2877,7 @@
           "name": "uniE918",
           "prevSize": 32,
           "code": 59672,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 350,
@@ -2869,7 +2885,7 @@
           "name": "uniE929",
           "prevSize": 32,
           "code": 59689,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 351,
@@ -2877,7 +2893,7 @@
           "name": "uniE932",
           "prevSize": 32,
           "code": 59698,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 352,
@@ -2885,7 +2901,7 @@
           "name": "uniE943",
           "prevSize": 32,
           "code": 59715,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 385,
@@ -2893,7 +2909,7 @@
           "name": "ic_fluent_speaker_off_20_regular",
           "prevSize": 32,
           "code": 59215,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 353,
@@ -2901,7 +2917,7 @@
           "name": "uniE946",
           "prevSize": 32,
           "code": 59718,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 354,
@@ -2909,7 +2925,7 @@
           "name": "uniE975",
           "prevSize": 32,
           "code": 59765,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 355,
@@ -2917,7 +2933,7 @@
           "name": "uniEA8F",
           "prevSize": 32,
           "code": 60047,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 356,
@@ -2925,7 +2941,7 @@
           "name": "uniEA37",
           "prevSize": 32,
           "code": 59959,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 357,
@@ -2933,7 +2949,7 @@
           "name": "uniEA80",
           "prevSize": 32,
           "code": 60032,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 358,
@@ -2941,7 +2957,7 @@
           "name": "uniEA99",
           "prevSize": 32,
           "code": 60057,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 359,
@@ -2949,7 +2965,7 @@
           "name": "uniEB05",
           "prevSize": 32,
           "code": 60165,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 360,
@@ -2957,7 +2973,7 @@
           "name": "uniEB9F",
           "prevSize": 32,
           "code": 60319,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 361,
@@ -2965,7 +2981,7 @@
           "name": "uniEC61",
           "prevSize": 32,
           "code": 60513,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 362,
@@ -2973,7 +2989,7 @@
           "name": "uniED15",
           "prevSize": 32,
           "code": 60693,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 363,
@@ -2981,7 +2997,7 @@
           "name": "uniEE56",
           "prevSize": 32,
           "code": 61014,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 364,
@@ -2989,7 +3005,7 @@
           "name": "uniF0E3",
           "prevSize": 32,
           "code": 61667,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 365,
@@ -2997,7 +3013,7 @@
           "name": "uniF3B1",
           "prevSize": 32,
           "code": 62385,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 366,
@@ -3005,7 +3021,7 @@
           "name": "uniF4A9",
           "prevSize": 32,
           "code": 62633,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 367,
@@ -3013,7 +3029,7 @@
           "name": "uniF4AA",
           "prevSize": 32,
           "code": 62634,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 368,
@@ -3021,7 +3037,7 @@
           "name": "uniF12B",
           "prevSize": 32,
           "code": 61739,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 369,
@@ -3029,7 +3045,7 @@
           "name": "uniF61B",
           "prevSize": 32,
           "code": 63003,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 370,
@@ -3037,24 +3053,24 @@
           "name": "uniF140",
           "prevSize": 32,
           "code": 61760,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 4,
       "metadata": {
         "name": "Fluent UI",
         "importSize": {
-          "width": 21,
-          "height": 21
+          "width": 20,
+          "height": 20
         }
       },
       "height": 1024,
       "prevSize": 32,
       "icons": [
         {
-          "id": 228,
+          "id": 230,
           "paths": [
-            "M417.894 757.76l-118.004-118.491h-87.771c-9.752 0-19.505-1.95-28.282-5.851s-16.579-9.265-23.406-15.604c-6.827-6.339-12.19-14.629-15.604-23.406-3.901-8.777-5.851-18.53-5.851-28.282v-146.285c0-9.752 1.95-19.505 5.851-28.282s9.265-16.579 15.604-23.406c6.339-6.827 14.629-12.19 23.406-16.091s18.53-5.851 28.282-5.851h87.771l118.004-118.491c2.926-2.926 6.339-5.364 9.752-6.827 0.975 0 1.463-0.488 2.438-0.975 4.389-1.463 9.265-2.438 13.653-2.438 4.876 0 9.265 0.975 13.653 2.438 4.389 1.95 8.777 4.389 12.19 7.802 6.827 6.339 10.24 15.116 10.728 24.381 0 0 0 0.975 0 1.463v477.866c0 3.413 0 6.827-1.463 10.24 0 1.463-0.975 2.438-1.463 3.901-1.95 4.389-4.389 8.29-7.802 11.703s-7.314 6.339-11.703 7.802c-4.389 1.95-9.265 2.926-14.141 2.926-9.752 0-19.017-3.413-25.356-10.24h-0.488zM326.71 597.821l104.838 104.35v-418.377l-104.838 104.838c-2.438 2.438-5.364 4.389-8.29 5.851-2.926 0.975-5.851 1.463-8.777 1.463h-97.524c-6.339 0-12.678 2.438-17.067 6.827-2.438 2.438-4.389 5.364-5.364 8.29s-1.463 5.851-1.463 8.777v146.285c0 6.339 2.438 12.678 6.827 17.067 2.438 2.438 5.364 4.389 8.29 5.851 2.926 0.975 5.851 1.463 8.777 1.463h97.524c6.339 0 12.678 2.438 17.067 6.827v0.488z"
+            "M844.8 341.566c5.955 0 11.433 2.033 15.78 5.442l3.446 3.229 0.835 1.024c35.487 43.94 56.74 99.857 56.74 160.739 0 137.667-108.662 249.948-244.895 255.764l-11.105 0.236h-307.2c-5.209 0-10.381-0.154-15.514-0.461l84.815 84.756c8.887 8.888 9.874 22.682 2.962 32.66l-2.962 3.548c-8.886 8.883-22.681 9.871-32.658 2.959l-3.545-2.959-128-128c-8.887-8.888-9.874-22.682-2.962-32.66l2.962-3.548 128-128c9.997-9.994 26.206-9.994 36.204 0 8.887 8.888 9.874 22.682 2.962 32.66l-2.962 3.548-83.792 83.789 7.213 0.379 7.277 0.128h307.2c113.106 0 204.8-91.694 204.8-204.8 0-48.818-17.080-93.647-45.594-128.836-3.487-4.329-5.606-9.916-5.606-15.997 0-14.138 11.464-25.6 25.6-25.6zM596.296 135.498c8.888-8.887 22.682-9.874 32.66-2.962l3.548 2.962 128 128 2.959 3.545c6.047 8.73 6.047 20.383 0 29.113l-2.959 3.545-128 128-3.548 2.962c-8.73 6.048-20.383 6.048-29.112 0l-3.548-2.962-2.959-3.545c-6.047-8.73-6.047-20.383 0-29.113l2.959-3.545 83.794-83.793-7.214-0.378-7.276-0.127h-307.2c-113.108 0-204.8 91.692-204.8 204.8 0 48.963 17.181 93.911 45.843 129.147 3.286 4.28 5.357 9.805 5.357 15.816 0 14.136-11.462 25.6-25.6 25.6-8.55 0-16.122-4.193-20.771-10.634-35.041-43.827-56.029-99.425-56.029-159.928 0-137.664 108.662-249.949 244.895-255.763l11.105-0.237h307.2c5.207 0 10.383 0.156 15.514 0.462l-84.818-84.761-2.959-3.545c-6.912-9.977-5.924-23.772 2.959-32.658z"
           ],
           "attrs": [
             {}
@@ -3063,7 +3079,7 @@
           "isMulticolor2": false,
           "grid": 0,
           "tags": [
-            "ic_fluent_speaker_0_20_regular"
+            "ic_fluent_arrow_repeat_all_20_regular"
           ],
           "colorPermutations": {
             "13333331": [
@@ -3072,9 +3088,9 @@
           }
         },
         {
-          "id": 227,
+          "id": 229,
           "paths": [
-            "M724.607 801.158c0 0 0 2.926 0 4.389 0 2.926 0.488 5.851 1.463 8.777 1.463 3.413 3.413 5.851 5.851 8.29 4.389 4.389 10.728 6.827 17.067 6.827 0 0 0.488 0 0.975 0 2.438 0 4.876-0.488 6.827-1.463 0.488 0 0.975 0 1.463-0.488 0.975 0 1.95-0.975 2.926-1.463s1.95-0.975 2.926-1.95c5.364-3.413 10.728-7.314 15.604-11.703 6.339-5.364 12.19-10.728 17.554-16.579 11.215-11.215 21.943-23.893 32.183-36.571s19.505-26.331 27.794-40.472c3.901-6.827 7.802-13.166 11.703-19.992 3.413-6.339 6.827-12.19 9.752-18.53 13.653-27.794 23.406-57.051 30.232-87.284s10.24-60.952 10.24-92.16c0-31.207-3.413-61.927-10.24-92.16s-17.067-59.002-30.232-87.284c-2.926-6.339-6.339-12.678-9.752-19.017-3.901-6.827-7.802-13.653-11.703-19.992-8.29-13.653-17.554-27.307-27.794-39.985-9.752-12.678-20.48-25.356-31.695-36.571-4.876-4.876-9.752-9.265-14.629-13.653-5.851-5.364-12.678-10.24-19.017-14.629-1.463-0.975-2.438-1.463-3.901-2.438-0.975-0.488-2.438-0.975-3.413-1.463-0.975 0-2.438-0.975-3.901-0.975s-2.438 0-3.901 0c-6.339 0-12.678 2.438-17.554 6.827-2.438 2.438-4.389 4.876-5.364 7.802s-1.95 6.339-1.95 9.265c0 4.389 0.975 8.29 2.438 10.728 0 0.488 0.975 1.463 1.463 1.95 1.463 1.95 3.413 3.901 5.364 6.339 3.413 3.413 7.314 6.827 11.215 10.24s7.802 6.339 11.703 10.24c18.53 16.579 34.621 35.109 48.762 55.589s25.844 42.423 35.596 65.341c9.752 22.918 17.067 46.811 21.943 71.192s7.314 48.762 7.314 73.142c0 24.869-2.438 49.25-7.314 73.63s-12.19 47.787-21.943 70.705c-9.752 22.918-21.455 44.373-35.596 64.853s-30.72 39.010-48.762 56.076c-3.901 3.413-7.802 6.827-11.703 10.24-3.901 2.926-7.802 6.339-11.215 10.24 0 0-0.975 0.975-0.975 1.463-0.975 1.463-1.95 2.438-2.926 3.901-0.975 0.975-1.95 2.438-2.438 3.413-0.975 1.95-1.95 3.901-2.438 6.339v-0.975zM417.894 765.562l-118.004-118.491h-87.771c-9.752 0-19.505-1.95-28.282-5.851s-16.579-9.265-23.406-15.604c-6.827-6.339-12.19-14.629-15.604-23.406-3.901-8.777-5.851-18.53-5.851-28.282v-146.285c0-9.752 1.95-19.505 5.851-28.282s9.265-16.579 15.604-23.406c6.339-6.827 14.629-12.19 23.406-16.091s18.53-5.851 28.282-5.851h87.771l118.004-118.491c2.926-2.926 6.339-5.364 9.752-6.827 0.975 0 1.463-0.488 2.438-0.975 4.389-1.463 9.265-2.438 14.141-2.438s9.265 0.975 13.653 2.438c4.389 1.95 8.777 4.389 12.19 7.802 6.827 6.339 10.24 15.116 10.24 24.381 0 0 0 0.975 0 1.463v477.866c0 3.413 0 6.827-1.463 10.24 0 1.463-0.975 2.438-1.463 3.901-1.95 4.389-4.389 8.29-7.802 11.703s-7.314 6.339-11.703 7.802c-4.389 1.95-9.265 2.926-14.141 2.926-9.752 0-19.017-3.413-25.356-10.24h-0.488zM326.71 605.623l104.838 104.35v-418.377l-104.838 104.838c-2.438 2.438-5.364 4.389-8.29 5.851-2.926 0.975-5.851 1.463-8.777 1.463h-97.524c-6.339 0-12.678 2.438-17.067 6.827-2.438 2.438-4.389 5.364-5.851 8.29-0.975 2.926-1.463 5.851-1.463 8.777v146.285c0 6.339 2.438 12.678 6.827 17.067 2.438 2.438 5.364 4.389 8.29 5.851 2.926 0.975 5.851 1.463 8.777 1.463h97.524c6.339 0 12.678 2.438 17.066 6.827l0.488 0.488zM628.058 713.874c0 0 0 2.438 0 3.901 0 2.926 0.488 6.339 1.95 9.265s3.413 5.364 5.364 7.802c4.876 4.876 10.728 7.314 17.554 7.314 1.463 0 2.926 0 3.901 0 1.463 0 2.926-0.488 4.389-1.463 2.438-0.975 4.876-2.438 7.802-4.389 0.488 0 1.463-0.975 1.95-1.463 3.413-2.438 6.827-5.364 10.728-8.777 3.413-3.413 6.827-6.827 9.752-10.24 0.975-0.975 1.95-1.95 2.926-3.413 6.827-7.802 12.678-16.091 18.53-24.869 6.827-9.752 13.166-19.992 19.017-30.232 3.413-5.851 5.851-11.215 8.777-16.579 1.95-3.901 3.413-7.314 5.364-11.215 18.042-40.472 27.307-83.87 27.307-127.756s-9.265-87.771-27.307-127.756c-1.95-4.876-3.901-9.265-6.339-13.653-2.438-4.876-4.876-9.752-7.802-14.629-5.851-10.24-11.703-19.992-18.53-29.745-6.827-9.265-13.653-18.53-21.455-27.307-2.926-3.413-6.339-6.827-9.752-10.24-3.901-3.901-8.29-7.802-12.678-11.215 0 0-0.488 0-0.975-0.488-2.438-1.95-4.876-3.413-6.827-4.389-1.463-0.488-3.413-0.975-5.851-0.975-0.975 0-1.95 0-2.926 0-6.339 0-12.678 2.438-17.554 6.827 0 0 0 0-0.488 0.488-4.389 4.389-6.827 10.24-6.827 16.579 0 2.926 0 4.876 0.975 6.827 0 0.975 0.488 1.95 1.463 2.926 1.463 2.438 3.413 4.876 6.339 8.29 5.364 6.339 10.728 12.678 16.091 19.017 7.314 8.777 14.141 17.554 20.968 26.331 0.975 0.975 1.463 1.95 2.438 2.926 9.752 13.166 18.042 27.307 25.356 41.935 7.314 15.604 13.166 32.183 17.067 49.25 1.95 9.265 3.413 18.53 4.389 27.794 0.975 10.24 1.463 20.48 1.463 31.207 0 9.752 0 19.505-1.463 29.257-0.975 10.24-2.438 19.992-4.389 29.745-3.901 17.067-9.265 33.646-17.067 49.25-0.488 1.463-1.463 2.926-1.95 4.389-7.314 14.141-15.604 27.794-25.356 40.472-4.389 5.851-9.265 12.19-14.141 18.042-7.314 9.265-15.116 18.53-23.406 27.307-2.926 3.413-4.876 5.851-5.851 8.29-0.488 0.975-0.975 1.95-1.463 2.926 0 0.975-0.488 1.95-0.488 3.413l-0.975-0.975zM533.46 621.714c0 0 0 1.95 0 2.926 0 2.926 0 5.851 1.463 8.29 1.463 3.413 3.413 6.339 5.851 8.777 4.389 4.389 10.728 7.314 17.067 7.314 3.901 0 7.802-0.975 11.703-2.926 2.926-1.463 5.364-3.413 7.314-5.851 3.413-3.413 6.339-6.827 9.265-10.728 4.389-5.851 8.29-12.19 12.19-18.53 6.339-11.215 11.703-23.406 15.604-35.596 4.389-12.19 7.314-25.356 9.752-38.034 0.975-4.876 1.463-10.24 1.95-15.116 0.975-6.827 0.975-13.653 0.975-20.968 0-3.413 0-6.827 0-9.752 0-8.777-1.463-18.041-2.926-26.819-1.95-12.678-5.364-25.356-9.752-37.547s-9.265-23.893-15.604-35.109c-5.851-10.728-13.166-20.968-21.455-29.745-2.926-2.926-5.364-5.364-8.29-6.827-0.488 0-0.975-0.488-1.95-0.975-2.438-0.975-5.364-1.463-8.777-1.463-2.926 0-5.851 0.488-8.777 1.463-3.413 1.463-5.851 3.413-8.29 5.851-4.389 4.389-7.314 10.728-6.827 17.067 0 3.413 0 6.339 1.463 8.29 0 0.975 0.488 1.463 0.975 2.438 0 0.975 0.975 1.463 1.463 2.438s0.975 1.463 1.95 2.438c5.851 8.777 11.215 17.554 16.091 25.844s8.777 16.579 12.19 25.356c3.413 8.29 5.851 17.554 7.802 26.819 0.488 3.901 1.463 7.314 1.463 11.215 0.488 6.339 0.975 12.678 0.975 19.504 0 4.876 0 9.265-0.488 14.141 0 5.364-0.975 11.215-1.95 16.579-1.95 9.265-4.389 18.042-7.802 26.819-3.413 8.29-7.314 17.067-12.19 25.356-1.463 2.438-2.926 5.364-4.876 7.802-3.901 5.851-7.314 12.19-11.215 18.042-0.488 0.975-1.463 1.95-1.95 2.438-0.975 1.95-1.95 3.413-2.438 4.389-0.488 1.463-0.975 3.413-1.463 5.364l-0.488-0.975z"
+            "M844.8 341.566c5.955 0 11.433 2.033 15.78 5.442l3.446 3.229 0.835 1.024c35.487 43.94 56.74 99.857 56.74 160.739 0 10.092-0.584 20.045-1.72 29.834-15.79-7.936-32.43-14.428-49.746-19.308 0.179-3.487 0.266-6.999 0.266-10.527 0-48.818-17.080-93.647-45.594-128.836-3.487-4.329-5.606-9.916-5.606-15.997 0-14.138 11.464-25.6 25.6-25.6zM522.598 716.8c-4.664 16.502-7.864 33.618-9.452 51.2h-154.747c-5.209 0-10.381-0.154-15.514-0.461l84.815 84.756c8.887 8.888 9.874 22.682 2.962 32.66l-2.962 3.548c-8.886 8.883-22.681 9.871-32.658 2.959l-3.545-2.959-128-128c-8.887-8.888-9.874-22.682-2.962-32.66l2.962-3.548 128-128c9.997-9.994 26.206-9.994 36.204 0 8.887 8.888 9.874 22.682 2.962 32.66l-2.962 3.548-83.792 83.789 7.213 0.379 7.277 0.128h164.198zM596.296 135.498c8.888-8.887 22.682-9.874 32.66-2.962l3.548 2.962 128 128 2.959 3.545c6.047 8.73 6.047 20.383 0 29.113l-2.959 3.545-128 128-3.548 2.962c-8.73 6.048-20.383 6.048-29.112 0l-3.548-2.962-2.959-3.545c-6.047-8.73-6.047-20.383 0-29.113l2.959-3.545 83.794-83.793-7.214-0.378-7.276-0.127h-307.2c-113.108 0-204.8 91.692-204.8 204.8 0 48.963 17.181 93.911 45.843 129.147 3.286 4.28 5.357 9.805 5.357 15.816 0 14.136-11.462 25.6-25.6 25.6-8.55 0-16.122-4.193-20.771-10.634-35.041-43.827-56.029-99.425-56.029-159.928 0-137.665 108.662-249.949 244.895-255.763l11.105-0.237h307.2c5.207 0 10.383 0.156 15.514 0.462l-84.818-84.761-2.959-3.545c-6.912-9.977-5.924-23.772 2.959-32.658zM1024 793.6c0 127.247-103.153 230.4-230.4 230.4s-230.4-103.153-230.4-230.4c0-127.247 103.153-230.4 230.4-230.4s230.4 103.153 230.4 230.4zM821.642 657.336c-9.441-2.673-25.114-1.802-34.785 11.945-10.916 15.524-29.757 37.151-55.905 50.222-12.646 6.323-17.772 21.699-11.448 34.345s21.699 17.772 34.345 11.448c15.324-7.66 28.559-17.193 39.752-27.085v157.788c0 14.136 11.464 25.6 25.6 25.6s25.6-11.464 25.6-25.6v-208.712c0-17.838-13.686-27.269-23.158-29.952z"
           ],
           "attrs": [
             {}
@@ -3083,8 +3099,44 @@
           "isMulticolor2": false,
           "grid": 0,
           "tags": [
+            "ic_fluent_arrow_repeat_1_20_regular"
+          ],
+          "colorPermutations": {
+            "13333331": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 228,
+          "paths": [
+            "M395.264 772.096l-123.904-124.416h-92.16c-10.24 0-20.48-2.048-29.696-6.144s-17.408-9.728-24.576-16.384c-7.168-6.656-12.8-15.36-16.384-24.576-4.096-9.216-6.144-19.456-6.144-29.696v-153.6c0-10.24 2.048-20.48 6.144-29.696s9.728-17.408 16.384-24.576c6.656-7.168 15.36-12.8 24.576-16.896s19.456-6.144 29.696-6.144h92.16l123.904-124.416c3.072-3.072 6.656-5.632 10.24-7.168 1.024 0 1.536-0.512 2.56-1.024 4.608-1.536 9.728-2.56 14.336-2.56 5.12 0 9.728 1.024 14.336 2.56 4.608 2.048 9.216 4.608 12.8 8.192 7.168 6.656 10.752 15.872 11.264 25.6 0 0 0 1.024 0 1.536v501.76c0 3.584 0 7.168-1.536 10.752 0 1.536-1.024 2.56-1.536 4.096-2.048 4.608-4.608 8.704-8.192 12.288s-7.68 6.656-12.288 8.192c-4.608 2.048-9.728 3.072-14.848 3.072-10.24 0-19.968-3.584-26.624-10.752h-0.512zM299.52 604.16l110.080 109.568v-439.296l-110.080 110.080c-2.56 2.56-5.632 4.608-8.704 6.144-3.072 1.024-6.144 1.536-9.216 1.536h-102.4c-6.656 0-13.312 2.56-17.92 7.168-2.56 2.56-4.608 5.632-5.632 8.704s-1.536 6.144-1.536 9.216v153.6c0 6.656 2.56 13.312 7.168 17.92 2.56 2.56 5.632 4.608 8.704 6.144 3.072 1.024 6.144 1.536 9.216 1.536h102.4c6.656 0 13.312 2.56 17.92 7.168v0.512z"
+          ],
+          "attrs": [],
+          "grid": 0,
+          "tags": [
+            "ic_fluent_speaker_0_20_regular"
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "13333331": []
+          }
+        },
+        {
+          "id": 227,
+          "paths": [
+            "M717.312 813.568c0 0 0 3.072 0 4.608 0 3.072 0.512 6.144 1.536 9.216 1.536 3.584 3.584 6.144 6.144 8.704 4.608 4.608 11.264 7.168 17.92 7.168 0 0 0.512 0 1.024 0 2.56 0 5.12-0.512 7.168-1.536 0.512 0 1.024 0 1.536-0.512 1.024 0 2.048-1.024 3.072-1.536s2.048-1.024 3.072-2.048c5.632-3.584 11.264-7.68 16.384-12.288 6.656-5.632 12.8-11.264 18.432-17.408 11.776-11.776 23.040-25.088 33.792-38.4s20.48-27.648 29.184-42.496c4.096-7.168 8.192-13.824 12.288-20.992 3.584-6.656 7.168-12.8 10.24-19.456 14.336-29.184 24.576-59.904 31.744-91.648s10.752-64 10.752-96.768c0-32.768-3.584-65.024-10.752-96.768s-17.92-61.952-31.744-91.648c-3.072-6.656-6.656-13.312-10.24-19.968-4.096-7.168-8.192-14.336-12.288-20.992-8.704-14.336-18.432-28.672-29.184-41.984-10.24-13.312-21.504-26.624-33.28-38.4-5.12-5.12-10.24-9.728-15.36-14.336-6.144-5.632-13.312-10.752-19.968-15.36-1.536-1.024-2.56-1.536-4.096-2.56-1.024-0.512-2.56-1.024-3.584-1.536-1.024 0-2.56-1.024-4.096-1.024s-2.56 0-4.096 0c-6.656 0-13.312 2.56-18.432 7.168-2.56 2.56-4.608 5.12-5.632 8.192s-2.048 6.656-2.048 9.728c0 4.608 1.024 8.704 2.56 11.264 0 0.512 1.024 1.536 1.536 2.048 1.536 2.048 3.584 4.096 5.632 6.656 3.584 3.584 7.68 7.168 11.776 10.752s8.192 6.656 12.288 10.752c19.456 17.408 36.352 36.864 51.2 58.368s27.136 44.544 37.376 68.608c10.24 24.064 17.92 49.152 23.040 74.752s7.68 51.2 7.68 76.8c0 26.112-2.56 51.712-7.68 77.312s-12.8 50.176-23.040 74.24c-10.24 24.064-22.528 46.592-37.376 68.096s-32.256 40.96-51.2 58.88c-4.096 3.584-8.192 7.168-12.288 10.752-4.096 3.072-8.192 6.656-11.776 10.752 0 0-1.024 1.024-1.024 1.536-1.024 1.536-2.048 2.56-3.072 4.096-1.024 1.024-2.048 2.56-2.56 3.584-1.024 2.048-2.048 4.096-2.56 6.656v-1.024zM395.264 776.192l-123.904-124.416h-92.16c-10.24 0-20.48-2.048-29.696-6.144s-17.408-9.728-24.576-16.384c-7.168-6.656-12.8-15.36-16.384-24.576-4.096-9.216-6.144-19.456-6.144-29.696v-153.6c0-10.24 2.048-20.48 6.144-29.696s9.728-17.408 16.384-24.576c6.656-7.168 15.36-12.8 24.576-16.896s19.456-6.144 29.696-6.144h92.16l123.904-124.416c3.072-3.072 6.656-5.632 10.24-7.168 1.024 0 1.536-0.512 2.56-1.024 4.608-1.536 9.728-2.56 14.848-2.56s9.728 1.024 14.336 2.56c4.608 2.048 9.216 4.608 12.8 8.192 7.168 6.656 10.752 15.872 10.752 25.6 0 0 0 1.024 0 1.536v501.76c0 3.584 0 7.168-1.536 10.752 0 1.536-1.024 2.56-1.536 4.096-2.048 4.608-4.608 8.704-8.192 12.288s-7.68 6.656-12.288 8.192c-4.608 2.048-9.728 3.072-14.848 3.072-10.24 0-19.968-3.584-26.624-10.752h-0.512zM299.52 608.256l110.080 109.568v-439.296l-110.080 110.080c-2.56 2.56-5.632 4.608-8.704 6.144-3.072 1.024-6.144 1.536-9.216 1.536h-102.4c-6.656 0-13.312 2.56-17.92 7.168-2.56 2.56-4.608 5.632-6.144 8.704-1.024 3.072-1.536 6.144-1.536 9.216v153.6c0 6.656 2.56 13.312 7.168 17.92 2.56 2.56 5.632 4.608 8.704 6.144 3.072 1.024 6.144 1.536 9.216 1.536h102.4c6.656 0 13.312 2.56 17.92 7.168l0.512 0.512zM615.936 721.92c0 0 0 2.56 0 4.096 0 3.072 0.512 6.656 2.048 9.728s3.584 5.632 5.632 8.192c5.12 5.12 11.264 7.68 18.432 7.68 1.536 0 3.072 0 4.096 0 1.536 0 3.072-0.512 4.608-1.536 2.56-1.024 5.12-2.56 8.192-4.608 0.512 0 1.536-1.024 2.048-1.536 3.584-2.56 7.168-5.632 11.264-9.216 3.584-3.584 7.168-7.168 10.24-10.752 1.024-1.024 2.048-2.048 3.072-3.584 7.168-8.192 13.312-16.896 19.456-26.112 7.168-10.24 13.824-20.992 19.968-31.744 3.584-6.144 6.144-11.776 9.216-17.408 2.048-4.096 3.584-7.68 5.632-11.776 18.944-42.496 28.672-88.064 28.672-134.144s-9.728-92.16-28.672-134.144c-2.048-5.12-4.096-9.728-6.656-14.336-2.56-5.12-5.12-10.24-8.192-15.36-6.144-10.752-12.288-20.992-19.456-31.232-7.168-9.728-14.336-19.456-22.528-28.672-3.072-3.584-6.656-7.168-10.24-10.752-4.096-4.096-8.704-8.192-13.312-11.776 0 0-0.512 0-1.024-0.512-2.56-2.048-5.12-3.584-7.168-4.608-1.536-0.512-3.584-1.024-6.144-1.024-1.024 0-2.048 0-3.072 0-6.656 0-13.312 2.56-18.432 7.168 0 0 0 0-0.512 0.512-4.608 4.608-7.168 10.752-7.168 17.408 0 3.072 0 5.12 1.024 7.168 0 1.024 0.512 2.048 1.536 3.072 1.536 2.56 3.584 5.12 6.656 8.704 5.632 6.656 11.264 13.312 16.896 19.968 7.68 9.216 14.848 18.432 22.016 27.648 1.024 1.024 1.536 2.048 2.56 3.072 10.24 13.824 18.944 28.672 26.624 44.032 7.68 16.384 13.824 33.792 17.92 51.712 2.048 9.728 3.584 19.456 4.608 29.184 1.024 10.752 1.536 21.504 1.536 32.768 0 10.24 0 20.48-1.536 30.72-1.024 10.752-2.56 20.992-4.608 31.232-4.096 17.92-9.728 35.328-17.92 51.712-0.512 1.536-1.536 3.072-2.048 4.608-7.68 14.848-16.384 29.184-26.624 42.496-4.608 6.144-9.728 12.8-14.848 18.944-7.68 9.728-15.872 19.456-24.576 28.672-3.072 3.584-5.12 6.144-6.144 8.704-0.512 1.024-1.024 2.048-1.536 3.072 0 1.024-0.512 2.048-0.512 3.584l-1.024-1.024zM516.608 625.152c0 0 0 2.048 0 3.072 0 3.072 0 6.144 1.536 8.704 1.536 3.584 3.584 6.656 6.144 9.216 4.608 4.608 11.264 7.68 17.92 7.68 4.096 0 8.192-1.024 12.288-3.072 3.072-1.536 5.632-3.584 7.68-6.144 3.584-3.584 6.656-7.168 9.728-11.264 4.608-6.144 8.704-12.8 12.8-19.456 6.656-11.776 12.288-24.576 16.384-37.376 4.608-12.8 7.68-26.624 10.24-39.936 1.024-5.12 1.536-10.752 2.048-15.872 1.024-7.168 1.024-14.336 1.024-22.016 0-3.584 0-7.168 0-10.24 0-9.216-1.536-18.944-3.072-28.16-2.048-13.312-5.632-26.624-10.24-39.424s-9.728-25.088-16.384-36.864c-6.144-11.264-13.824-22.016-22.528-31.232-3.072-3.072-5.632-5.632-8.704-7.168-0.512 0-1.024-0.512-2.048-1.024-2.56-1.024-5.632-1.536-9.216-1.536-3.072 0-6.144 0.512-9.216 1.536-3.584 1.536-6.144 3.584-8.704 6.144-4.608 4.608-7.68 11.264-7.168 17.92 0 3.584 0 6.656 1.536 8.704 0 1.024 0.512 1.536 1.024 2.56 0 1.024 1.024 1.536 1.536 2.56s1.024 1.536 2.048 2.56c6.144 9.216 11.776 18.432 16.896 27.136s9.216 17.408 12.8 26.624c3.584 8.704 6.144 18.432 8.192 28.16 0.512 4.096 1.536 7.68 1.536 11.776 0.512 6.656 1.024 13.312 1.024 20.48 0 5.12 0 9.728-0.512 14.848 0 5.632-1.024 11.776-2.048 17.408-2.048 9.728-4.608 18.944-8.192 28.16-3.584 8.704-7.68 17.92-12.8 26.624-1.536 2.56-3.072 5.632-5.12 8.192-4.096 6.144-7.68 12.8-11.776 18.944-0.512 1.024-1.536 2.048-2.048 2.56-1.024 2.048-2.048 3.584-2.56 4.608-0.512 1.536-1.024 3.584-1.536 5.632l-0.512-1.024z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "grid": 0,
+          "tags": [
             "ic_fluent_speaker_3_20_regular"
           ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
           "colorPermutations": {
             "13333331": [
               {}
@@ -5357,9 +5409,11 @@
         {
           "id": 119,
           "paths": [
-            "M417.894 757.76l-118.004-118.491h-87.771c-9.752 0-19.505-1.95-28.282-5.851s-16.579-9.265-23.406-15.604c-6.827-6.827-12.19-14.629-15.604-23.406-3.901-8.777-5.851-18.53-5.851-28.282v-146.285c0-9.752 1.95-19.505 5.851-28.282s9.265-16.579 15.604-23.406c6.827-6.827 14.629-12.19 23.406-16.091s18.53-5.851 28.282-5.851h87.771l118.004-118.491c2.926-2.926 6.339-5.364 9.752-6.827 0.975 0 1.463-0.488 2.438-0.975 4.389-1.463 9.265-2.438 13.653-2.438 4.876 0 9.265 0.975 13.653 2.438 4.389 1.95 8.777 4.389 12.19 7.802 6.827 6.339 10.24 15.116 10.728 24.381 0 0 0 0.975 0 1.463v477.866c0 3.413 0 6.827-1.463 10.24 0 1.463-0.975 2.438-1.463 3.901-1.95 4.389-4.389 8.29-7.802 11.703s-7.314 6.339-11.703 7.802c-4.389 1.95-9.265 2.926-14.141 2.926-9.752 0-19.017-3.413-25.356-10.24h-0.488zM326.71 597.821l104.838 104.35v-418.377l-104.838 104.838c-2.438 2.438-5.364 4.389-8.29 5.851-2.926 0.975-5.851 1.463-8.777 1.463h-97.524c-6.339 0-12.678 2.438-17.067 6.827-2.438 2.438-4.389 5.364-5.364 8.29s-1.463 5.851-1.463 8.777v146.285c0 6.339 2.438 12.678 6.827 17.067 2.438 2.438 5.364 4.389 8.29 5.851 2.926 0.975 5.851 1.463 8.777 1.463h97.524c6.339 0 12.678 2.438 17.067 6.827v0.488zM533.948 613.425c0 0 0 2.438 0 3.413 0 0 0 0.488 0 0.975 0 6.339 2.438 12.19 7.314 16.579s10.728 6.827 17.067 6.827c3.413 0 7.314-0.488 10.24-2.438 3.413-1.463 6.339-3.901 8.777-6.827 0.488-0.488 0.975-0.975 1.463-1.95 7.314-8.777 14.141-18.53 19.505-28.77 6.339-11.215 11.215-22.918 15.604-35.109s7.314-24.381 9.752-37.059c0-1.463 0.488-2.926 0.975-4.876 1.463-10.728 2.438-21.455 2.438-32.183 0-12.678-0.975-24.868-3.413-37.059-1.95-12.678-5.364-24.869-9.752-36.571-4.389-12.19-9.265-23.406-15.604-34.621-5.851-10.728-13.166-21.455-21.455-30.72 0-0.488-0.975-0.975-1.463-1.463-4.389-4.876-10.728-7.802-17.554-7.314-2.926 0-5.851 0.488-8.777 1.463-3.413 1.463-5.851 3.413-8.29 5.851-4.389 4.389-7.314 10.728-6.827 17.067 0 0.488 0 0.975 0 1.463 0 2.438 0.488 4.876 1.463 6.827 0.488 1.463 1.463 2.926 2.438 4.389 0.488 0.975 1.463 1.95 1.95 2.926 3.901 4.876 7.314 10.24 10.728 15.604 6.827 11.215 12.678 22.918 17.554 35.109 2.926 7.802 5.364 15.604 6.827 23.406 1.95 11.215 3.413 22.43 2.926 33.645 0 6.827 0 13.653-0.975 19.992-1.463 12.678-4.389 25.356-9.265 37.059-2.438 6.339-5.364 13.166-8.777 19.017-5.851 11.215-12.19 21.455-19.505 31.695-0.975 1.463-1.95 2.926-2.926 3.901-0.488 0.975-0.975 1.95-1.463 3.413 0 0 0 0.975 0 1.463 0 0.975-0.488 1.95-0.488 3.413l-0.488 1.463z"
+            "M395.264 772.096l-123.904-124.416h-92.16c-10.24 0-20.48-2.048-29.696-6.144s-17.408-9.728-24.576-16.384c-7.168-7.168-12.8-15.36-16.384-24.576-4.096-9.216-6.144-19.456-6.144-29.696v-153.6c0-10.24 2.048-20.48 6.144-29.696s9.728-17.408 16.384-24.576c7.168-7.168 15.36-12.8 24.576-16.896s19.456-6.144 29.696-6.144h92.16l123.904-124.416c3.072-3.072 6.656-5.632 10.24-7.168 1.024 0 1.536-0.512 2.56-1.024 4.608-1.536 9.728-2.56 14.336-2.56 5.12 0 9.728 1.024 14.336 2.56 4.608 2.048 9.216 4.608 12.8 8.192 7.168 6.656 10.752 15.872 11.264 25.6 0 0 0 1.024 0 1.536v501.76c0 3.584 0 7.168-1.536 10.752 0 1.536-1.024 2.56-1.536 4.096-2.048 4.608-4.608 8.704-8.192 12.288s-7.68 6.656-12.288 8.192c-4.608 2.048-9.728 3.072-14.848 3.072-10.24 0-19.968-3.584-26.624-10.752h-0.512zM299.52 604.16l110.080 109.568v-439.296l-110.080 110.080c-2.56 2.56-5.632 4.608-8.704 6.144-3.072 1.024-6.144 1.536-9.216 1.536h-102.4c-6.656 0-13.312 2.56-17.92 7.168-2.56 2.56-4.608 5.632-5.632 8.704s-1.536 6.144-1.536 9.216v153.6c0 6.656 2.56 13.312 7.168 17.92 2.56 2.56 5.632 4.608 8.704 6.144 3.072 1.024 6.144 1.536 9.216 1.536h102.4c6.656 0 13.312 2.56 17.92 7.168v0.512zM517.12 620.544c0 0 0 2.56 0 3.584 0 0 0 0.512 0 1.024 0 6.656 2.56 12.8 7.68 17.408s11.264 7.168 17.92 7.168c3.584 0 7.68-0.512 10.752-2.56 3.584-1.536 6.656-4.096 9.216-7.168 0.512-0.512 1.024-1.024 1.536-2.048 7.68-9.216 14.848-19.456 20.48-30.208 6.656-11.776 11.776-24.064 16.384-36.864s7.68-25.6 10.24-38.912c0-1.536 0.512-3.072 1.024-5.12 1.536-11.264 2.56-22.528 2.56-33.792 0-13.312-1.024-26.112-3.584-38.912-2.048-13.312-5.632-26.112-10.24-38.4-4.608-12.8-9.728-24.576-16.384-36.352-6.144-11.264-13.824-22.528-22.528-32.256 0-0.512-1.024-1.024-1.536-1.536-4.608-5.12-11.264-8.192-18.432-7.68-3.072 0-6.144 0.512-9.216 1.536-3.584 1.536-6.144 3.584-8.704 6.144-4.608 4.608-7.68 11.264-7.168 17.92 0 0.512 0 1.024 0 1.536 0 2.56 0.512 5.12 1.536 7.168 0.512 1.536 1.536 3.072 2.56 4.608 0.512 1.024 1.536 2.048 2.048 3.072 4.096 5.12 7.68 10.752 11.264 16.384 7.168 11.776 13.312 24.064 18.432 36.864 3.072 8.192 5.632 16.384 7.168 24.576 2.048 11.776 3.584 23.552 3.072 35.328 0 7.168 0 14.336-1.024 20.992-1.536 13.312-4.608 26.624-9.728 38.912-2.56 6.656-5.632 13.824-9.216 19.968-6.144 11.776-12.8 22.528-20.48 33.28-1.024 1.536-2.048 3.072-3.072 4.096-0.512 1.024-1.024 2.048-1.536 3.584 0 0 0 1.024 0 1.536 0 1.024-0.512 2.048-0.512 3.584l-0.512 1.536z"
           ],
-          "attrs": [],
+          "attrs": [
+            {}
+          ],
           "grid": 0,
           "tags": [
             "ic_fluent_speaker_1_20_regular"
@@ -5367,15 +5421,19 @@
           "isMulticolor": false,
           "isMulticolor2": false,
           "colorPermutations": {
-            "13333331": []
+            "13333331": [
+              {}
+            ]
           }
         },
         {
           "id": 118,
           "paths": [
-            "M417.894 757.76l-118.004-118.491h-87.771c-9.752 0-19.505-1.95-28.282-5.851s-16.579-9.265-23.406-15.604c-6.827-6.827-12.19-14.629-15.604-23.406-3.901-8.777-5.851-18.53-5.851-28.282v-146.285c0-9.752 1.95-19.505 5.851-28.282s9.265-16.579 15.604-23.406c6.827-6.827 14.629-12.19 23.406-16.091s18.53-5.851 28.282-5.851h87.771l118.004-118.491c2.926-2.926 6.339-5.364 9.752-6.827 0.975 0 1.463-0.488 2.438-0.975 4.389-1.463 9.265-2.438 13.653-2.438 4.876 0 9.265 0.975 13.653 2.438 4.389 1.95 8.777 4.389 12.19 7.802 6.827 6.339 10.24 15.116 10.728 24.381 0 0 0 0.975 0 1.463v477.866c0 3.413 0 6.827-1.463 10.24 0 1.463-0.975 2.438-1.463 3.901-1.95 4.389-4.389 8.29-7.802 11.703s-7.314 6.339-11.703 7.802c-4.389 1.95-9.265 2.926-14.141 2.926-9.752 0-19.017-3.413-25.356-10.24h-0.488zM326.71 597.821l104.838 104.35v-418.377l-104.838 104.838c-2.438 2.438-5.364 4.389-8.29 5.851-2.926 0.975-5.851 1.463-8.777 1.463h-97.524c-6.339 0-12.678 2.438-17.067 6.827-2.438 2.438-4.389 5.364-5.364 8.29s-1.463 5.851-1.463 8.777v146.285c0 6.339 2.438 12.678 6.827 17.067 2.438 2.438 5.364 4.389 8.29 5.851 2.926 0.975 5.851 1.463 8.777 1.463h97.524c6.339 0 12.678 2.438 17.067 6.827v0.488zM628.058 705.585c0 0 0 2.926 0 4.389 0 2.926 0.488 6.339 1.95 9.265s3.413 5.364 5.364 7.802c4.876 4.876 10.728 7.314 17.554 7.314 3.413 0 6.339-0.488 8.777-1.463 1.463-0.488 2.438-0.975 3.413-1.95 1.463-0.975 2.926-1.95 3.901-2.926 3.413-2.926 6.827-5.851 9.752-8.777 4.389-4.389 8.777-8.777 12.678-13.166 7.314-8.29 14.629-17.554 21.455-27.307 6.827-9.265 12.678-19.505 18.53-29.257 5.364-9.752 10.24-19.505 14.141-28.282 18.042-40.472 27.307-83.87 27.307-127.756s-9.265-87.771-27.307-127.756c-3.901-9.265-8.777-19.017-14.141-28.77s-11.703-19.505-18.042-28.77c-6.827-9.265-13.653-18.53-20.968-26.819-1.95-1.95-3.901-3.901-5.851-6.339-5.364-5.851-11.215-11.215-17.554-16.579-0.488-0.488-1.463-0.975-2.438-1.463-1.95-1.463-3.901-2.438-5.364-2.926-0.488 0-1.463 0-1.95-0.488-0.975 0-1.95 0-2.926-0.488-0.975 0-2.438 0-3.413 0-6.339 0-12.678 2.438-17.554 6.827 0 0 0 0-0.488 0.488-4.389 4.389-6.827 10.24-6.827 16.579 0 0.488 0 0.975 0 1.463 0 1.463 0 2.926 0.488 4.389 0 1.463 0.975 2.926 1.463 4.389 0.975 1.463 1.95 2.926 2.926 4.876 0.975 1.463 1.95 2.438 2.926 3.413 4.876 4.876 9.265 9.265 13.653 14.629 20.48 22.43 38.034 47.787 50.712 75.581 6.339 13.166 11.215 27.307 14.629 41.448 5.364 21.943 8.29 44.373 8.29 67.291 0 39.985-7.802 76.069-22.918 108.739-4.389 9.752-9.752 19.017-15.116 28.282-14.141 22.43-30.72 43.398-49.737 61.44 0 0-0.488 0.975-0.975 0.975-0.975 0.975-1.95 2.438-2.926 3.413s-1.463 2.438-2.438 3.901c0 0.488-0.488 0.975-0.975 1.463 0 1.463-0.975 2.438-0.975 4.389l0.975-1.463zM533.46 613.425c0 0 0 2.438 0 3.413 0 0 0 0.488 0 0.975 0 6.339 2.438 12.19 7.314 16.579s10.728 6.827 17.067 6.827c3.413 0 7.314-0.488 10.24-2.438 3.413-1.463 6.339-3.901 8.777-6.827 0.488-0.488 0.975-0.975 1.463-1.95 7.314-8.777 14.141-18.53 19.505-28.77 6.339-11.215 11.215-22.918 15.604-35.109s7.314-24.381 9.752-37.059c0-1.463 0.488-2.926 0.975-4.876 1.463-10.728 2.438-21.455 2.438-32.183 0-12.678-0.975-24.868-3.413-37.059-1.95-12.678-5.364-24.869-9.752-36.571-4.389-12.19-9.265-23.406-15.604-34.621-5.851-10.728-13.166-21.455-21.455-30.72 0-0.488-0.975-0.975-1.463-1.463-4.389-4.876-10.728-7.802-17.554-7.314-2.926 0-5.851 0.488-8.777 1.463-3.413 1.463-5.851 3.413-8.29 5.851-4.389 4.389-7.314 10.728-6.827 17.067 0 0.488 0 0.975 0 1.463 0 2.438 0.488 4.876 1.463 6.827 0.488 1.463 1.463 2.926 2.438 4.389 0.488 0.975 1.463 1.95 1.95 2.926 3.901 4.876 7.314 10.24 10.728 15.604 6.827 11.215 12.678 22.918 17.554 35.109 2.926 7.802 5.364 15.604 6.827 23.406 1.95 11.215 3.413 22.43 2.926 33.645 0 6.827 0 13.653-0.975 19.992-1.463 12.678-4.389 25.356-9.265 37.059-2.438 6.339-5.364 13.166-8.777 19.017-5.851 11.215-12.19 21.455-19.505 31.695-0.975 1.463-1.95 2.926-2.926 3.901-0.488 0.975-0.975 1.95-1.463 3.413 0 0 0 0.975 0 1.463 0 0.975-0.488 1.95-0.488 3.413l-0.488 1.463z"
+            "M395.264 772.096l-123.904-124.416h-92.16c-10.24 0-20.48-2.048-29.696-6.144s-17.408-9.728-24.576-16.384c-7.168-7.168-12.8-15.36-16.384-24.576-4.096-9.216-6.144-19.456-6.144-29.696v-153.6c0-10.24 2.048-20.48 6.144-29.696s9.728-17.408 16.384-24.576c7.168-7.168 15.36-12.8 24.576-16.896s19.456-6.144 29.696-6.144h92.16l123.904-124.416c3.072-3.072 6.656-5.632 10.24-7.168 1.024 0 1.536-0.512 2.56-1.024 4.608-1.536 9.728-2.56 14.336-2.56 5.12 0 9.728 1.024 14.336 2.56 4.608 2.048 9.216 4.608 12.8 8.192 7.168 6.656 10.752 15.872 11.264 25.6 0 0 0 1.024 0 1.536v501.76c0 3.584 0 7.168-1.536 10.752 0 1.536-1.024 2.56-1.536 4.096-2.048 4.608-4.608 8.704-8.192 12.288s-7.68 6.656-12.288 8.192c-4.608 2.048-9.728 3.072-14.848 3.072-10.24 0-19.968-3.584-26.624-10.752h-0.512zM299.52 604.16l110.080 109.568v-439.296l-110.080 110.080c-2.56 2.56-5.632 4.608-8.704 6.144-3.072 1.024-6.144 1.536-9.216 1.536h-102.4c-6.656 0-13.312 2.56-17.92 7.168-2.56 2.56-4.608 5.632-5.632 8.704s-1.536 6.144-1.536 9.216v153.6c0 6.656 2.56 13.312 7.168 17.92 2.56 2.56 5.632 4.608 8.704 6.144 3.072 1.024 6.144 1.536 9.216 1.536h102.4c6.656 0 13.312 2.56 17.92 7.168v0.512zM615.936 717.312c0 0 0 3.072 0 4.608 0 3.072 0.512 6.656 2.048 9.728s3.584 5.632 5.632 8.192c5.12 5.12 11.264 7.68 18.432 7.68 3.584 0 6.656-0.512 9.216-1.536 1.536-0.512 2.56-1.024 3.584-2.048 1.536-1.024 3.072-2.048 4.096-3.072 3.584-3.072 7.168-6.144 10.24-9.216 4.608-4.608 9.216-9.216 13.312-13.824 7.68-8.704 15.36-18.432 22.528-28.672 7.168-9.728 13.312-20.48 19.456-30.72 5.632-10.24 10.752-20.48 14.848-29.696 18.944-42.496 28.672-88.064 28.672-134.144s-9.728-92.16-28.672-134.144c-4.096-9.728-9.216-19.968-14.848-30.208s-12.288-20.48-18.944-30.208c-7.168-9.728-14.336-19.456-22.016-28.16-2.048-2.048-4.096-4.096-6.144-6.656-5.632-6.144-11.776-11.776-18.432-17.408-0.512-0.512-1.536-1.024-2.56-1.536-2.048-1.536-4.096-2.56-5.632-3.072-0.512 0-1.536 0-2.048-0.512-1.024 0-2.048 0-3.072-0.512-1.024 0-2.56 0-3.584 0-6.656 0-13.312 2.56-18.432 7.168 0 0 0 0-0.512 0.512-4.608 4.608-7.168 10.752-7.168 17.408 0 0.512 0 1.024 0 1.536 0 1.536 0 3.072 0.512 4.608 0 1.536 1.024 3.072 1.536 4.608 1.024 1.536 2.048 3.072 3.072 5.12 1.024 1.536 2.048 2.56 3.072 3.584 5.12 5.12 9.728 9.728 14.336 15.36 21.504 23.552 39.936 50.176 53.248 79.36 6.656 13.824 11.776 28.672 15.36 43.52 5.632 23.040 8.704 46.592 8.704 70.656 0 41.984-8.192 79.872-24.064 114.176-4.608 10.24-10.24 19.968-15.872 29.696-14.848 23.552-32.256 45.568-52.224 64.512 0 0-0.512 1.024-1.024 1.024-1.024 1.024-2.048 2.56-3.072 3.584s-1.536 2.56-2.56 4.096c0 0.512-0.512 1.024-1.024 1.536 0 1.536-1.024 2.56-1.024 4.608l1.024-1.536zM516.608 620.544c0 0 0 2.56 0 3.584 0 0 0 0.512 0 1.024 0 6.656 2.56 12.8 7.68 17.408s11.264 7.168 17.92 7.168c3.584 0 7.68-0.512 10.752-2.56 3.584-1.536 6.656-4.096 9.216-7.168 0.512-0.512 1.024-1.024 1.536-2.048 7.68-9.216 14.848-19.456 20.48-30.208 6.656-11.776 11.776-24.064 16.384-36.864s7.68-25.6 10.24-38.912c0-1.536 0.512-3.072 1.024-5.12 1.536-11.264 2.56-22.528 2.56-33.792 0-13.312-1.024-26.112-3.584-38.912-2.048-13.312-5.632-26.112-10.24-38.4-4.608-12.8-9.728-24.576-16.384-36.352-6.144-11.264-13.824-22.528-22.528-32.256 0-0.512-1.024-1.024-1.536-1.536-4.608-5.12-11.264-8.192-18.432-7.68-3.072 0-6.144 0.512-9.216 1.536-3.584 1.536-6.144 3.584-8.704 6.144-4.608 4.608-7.68 11.264-7.168 17.92 0 0.512 0 1.024 0 1.536 0 2.56 0.512 5.12 1.536 7.168 0.512 1.536 1.536 3.072 2.56 4.608 0.512 1.024 1.536 2.048 2.048 3.072 4.096 5.12 7.68 10.752 11.264 16.384 7.168 11.776 13.312 24.064 18.432 36.864 3.072 8.192 5.632 16.384 7.168 24.576 2.048 11.776 3.584 23.552 3.072 35.328 0 7.168 0 14.336-1.024 20.992-1.536 13.312-4.608 26.624-9.728 38.912-2.56 6.656-5.632 13.824-9.216 19.968-6.144 11.776-12.8 22.528-20.48 33.28-1.024 1.536-2.048 3.072-3.072 4.096-0.512 1.024-1.024 2.048-1.536 3.584 0 0 0 1.024 0 1.536 0 1.024-0.512 2.048-0.512 3.584l-0.512 1.536z"
           ],
-          "attrs": [],
+          "attrs": [
+            {}
+          ],
           "grid": 0,
           "tags": [
             "ic_fluent_speaker_2_20_regular"
@@ -5383,7 +5441,9 @@
           "isMulticolor": false,
           "isMulticolor2": false,
           "colorPermutations": {
-            "13333331": []
+            "13333331": [
+              {}
+            ]
           }
         },
         {
@@ -7822,11 +7882,9 @@
         {
           "id": 120,
           "paths": [
-            "M417.894 762.149l-118.004-118.491h-87.771c-9.752 0-19.505-1.95-28.282-5.851s-16.579-9.265-23.406-15.604c-6.827-6.827-12.19-14.629-15.604-23.406-3.901-8.777-5.851-18.53-5.851-28.282v-146.286c0-9.752 1.95-19.505 5.851-28.282s9.265-16.579 15.604-23.406c6.827-6.827 14.629-12.19 23.406-16.091s18.53-5.851 28.282-5.851h87.771l118.004-118.491c2.926-2.926 6.339-5.364 9.752-6.827 0.975 0 1.463-0.488 2.438-0.975 4.389-1.463 9.265-2.438 13.653-2.438 4.876 0 9.265 0.975 13.653 2.438 4.389 1.95 8.777 4.389 12.19 7.802 6.827 6.339 10.24 15.116 10.728 24.381 0 0 0 0.975 0 1.463v477.867c0 3.413 0 6.827-1.463 10.24 0 1.463-0.975 2.438-1.463 3.901-1.95 4.389-4.389 8.29-7.802 11.703s-7.314 6.339-11.703 7.802c-4.389 1.95-9.265 2.926-13.653 2.926-9.752 0-19.017-3.413-25.356-10.24h-0.975zM828.957 636.343l-104.838-104.838-104.838 104.838c-2.438 2.438-5.364 4.389-8.29 5.851-2.926 0.975-5.851 1.463-8.777 1.463-6.339 0-12.678-2.438-17.067-6.827-2.438-2.438-4.389-5.364-5.364-8.29s-1.463-5.851-1.463-8.777c0-6.339 2.438-12.678 6.827-17.067l104.838-104.838-104.838-104.838c0 0-4.389-5.364-5.364-8.29s-1.463-5.851-1.463-8.777c0-6.339 2.438-12.678 6.827-17.067 2.438-2.438 5.364-4.389 8.29-5.851 2.926-0.975 5.851-1.463 8.777-1.463 6.339 0 12.678 2.438 17.067 6.827l104.838 104.35 104.838-104.35c2.438-2.438 5.364-4.389 8.29-5.851 2.926-0.975 5.851-1.463 8.777-1.463 6.339 0 12.678 2.438 17.067 6.827 2.438 2.438 4.389 5.364 5.364 8.29s1.463 5.851 1.463 8.777c0 6.339-2.438 12.678-6.827 17.067l-104.35 104.838 104.35 104.838c0 0 4.389 5.364 5.364 8.29s1.463 5.851 1.463 8.777c0 6.339-2.438 12.678-6.827 17.067-2.438 2.438-5.364 4.389-8.29 5.851-2.926 0.975-5.851 1.463-8.777 1.463-6.339 0-12.678-2.438-17.067-6.827zM326.71 602.21l104.838 104.35v-418.377l-104.838 104.838c-2.438 2.438-5.364 4.389-8.29 5.851-2.926 0.975-5.851 1.463-8.777 1.463h-97.524c-6.339 0-12.678 2.438-17.067 6.827-2.438 2.438-4.389 5.364-5.851 8.29-0.975 2.926-1.463 5.851-1.463 8.777v146.286c0 6.339 2.438 12.678 6.827 17.067 2.438 2.438 5.364 4.389 8.29 5.851 2.926 0.975 5.851 1.463 8.777 1.463h97.524c6.339 0 12.678 2.438 17.067 6.827l0.488 0.488z"
+            "M395.264 772.096l-123.904-124.416h-92.16c-10.24 0-20.48-2.048-29.696-6.144s-17.408-9.728-24.576-16.384c-7.168-7.168-12.8-15.36-16.384-24.576-4.096-9.216-6.144-19.456-6.144-29.696v-153.6c0-10.24 2.048-20.48 6.144-29.696s9.728-17.408 16.384-24.576c7.168-7.168 15.36-12.8 24.576-16.896s19.456-6.144 29.696-6.144h92.16l123.904-124.416c3.072-3.072 6.656-5.632 10.24-7.168 1.024 0 1.536-0.512 2.56-1.024 4.608-1.536 9.728-2.56 14.336-2.56 5.12 0 9.728 1.024 14.336 2.56 4.608 2.048 9.216 4.608 12.8 8.192 7.168 6.656 10.752 15.872 11.264 25.6 0 0 0 1.024 0 1.536v501.76c0 3.584 0 7.168-1.536 10.752 0 1.536-1.024 2.56-1.536 4.096-2.048 4.608-4.608 8.704-8.192 12.288s-7.68 6.656-12.288 8.192c-4.608 2.048-9.728 3.072-14.336 3.072-10.24 0-19.968-3.584-26.624-10.752h-1.024zM826.88 640l-110.080-110.080-110.080 110.080c-2.56 2.56-5.632 4.608-8.704 6.144-3.072 1.024-6.144 1.536-9.216 1.536-6.656 0-13.312-2.56-17.92-7.168-2.56-2.56-4.608-5.632-5.632-8.704s-1.536-6.144-1.536-9.216c0-6.656 2.56-13.312 7.168-17.92l110.080-110.080-110.080-110.080c0 0-4.608-5.632-5.632-8.704s-1.536-6.144-1.536-9.216c0-6.656 2.56-13.312 7.168-17.92 2.56-2.56 5.632-4.608 8.704-6.144 3.072-1.024 6.144-1.536 9.216-1.536 6.656 0 13.312 2.56 17.92 7.168l110.080 109.568 110.080-109.568c2.56-2.56 5.632-4.608 8.704-6.144 3.072-1.024 6.144-1.536 9.216-1.536 6.656 0 13.312 2.56 17.92 7.168 2.56 2.56 4.608 5.632 5.632 8.704s1.536 6.144 1.536 9.216c0 6.656-2.56 13.312-7.168 17.92l-109.568 110.080 109.568 110.080c0 0 4.608 5.632 5.632 8.704s1.536 6.144 1.536 9.216c0 6.656-2.56 13.312-7.168 17.92-2.56 2.56-5.632 4.608-8.704 6.144-3.072 1.024-6.144 1.536-9.216 1.536-6.656 0-13.312-2.56-17.92-7.168zM299.52 604.16l110.080 109.568v-439.296l-110.080 110.080c-2.56 2.56-5.632 4.608-8.704 6.144-3.072 1.024-6.144 1.536-9.216 1.536h-102.4c-6.656 0-13.312 2.56-17.92 7.168-2.56 2.56-4.608 5.632-6.144 8.704-1.024 3.072-1.536 6.144-1.536 9.216v153.6c0 6.656 2.56 13.312 7.168 17.92 2.56 2.56 5.632 4.608 8.704 6.144 3.072 1.024 6.144 1.536 9.216 1.536h102.4c6.656 0 13.312 2.56 17.92 7.168l0.512 0.512z"
           ],
-          "attrs": [
-            {}
-          ],
+          "attrs": [],
           "grid": 0,
           "tags": [
             "ic_fluent_speaker_off_20_regular"
@@ -7834,9 +7892,7 @@
           "isMulticolor": false,
           "isMulticolor2": false,
           "colorPermutations": {
-            "13333331": [
-              {}
-            ]
+            "13333331": []
           }
         },
         {
@@ -8323,7 +8379,7 @@
           "name": "AirplaneFilled24",
           "prevSize": 32,
           "code": 59857,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 647,
@@ -8331,7 +8387,7 @@
           "name": "ic_fluent_clipboard_text_ltr_24_filled",
           "prevSize": 32,
           "code": 59855,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 648,
@@ -8339,7 +8395,7 @@
           "name": "ic_fluent_clipboard_text_ltr_24_regular",
           "prevSize": 32,
           "code": 59856,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 644,
@@ -8350,7 +8406,7 @@
           "codes": [
             59840
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 645,
@@ -8361,7 +8417,7 @@
           "codes": [
             59841
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 642,
@@ -8369,7 +8425,7 @@
           "name": "ic_fluent_paint_brush_24_filled",
           "prevSize": 32,
           "code": 59842,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 643,
@@ -8377,7 +8433,7 @@
           "name": "ic_fluent_paint_brush_24_regular",
           "prevSize": 32,
           "code": 59843,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 640,
@@ -8385,7 +8441,7 @@
           "name": "ic_fluent_music_note_1_24_filled",
           "prevSize": 32,
           "code": 59844,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 641,
@@ -8393,7 +8449,7 @@
           "name": "ic_fluent_music_note_1_24_regular",
           "prevSize": 32,
           "code": 59845,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 638,
@@ -8401,7 +8457,7 @@
           "name": "ic_fluent_thumb_like_24_filled",
           "prevSize": 32,
           "code": 59846,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 639,
@@ -8409,7 +8465,7 @@
           "name": "ic_fluent_thumb_like_24_regular",
           "prevSize": 32,
           "code": 59847,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 636,
@@ -8417,7 +8473,7 @@
           "name": "ic_fluent_lightbulb_24_filled",
           "prevSize": 32,
           "code": 59848,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 637,
@@ -8425,7 +8481,7 @@
           "name": "ic_fluent_lightbulb_24_regular",
           "prevSize": 32,
           "code": 59849,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 634,
@@ -8433,7 +8489,7 @@
           "name": "ic_fluent_money_24_filled",
           "prevSize": 32,
           "code": 59850,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 635,
@@ -8441,7 +8497,7 @@
           "name": "ic_fluent_money_24_regular",
           "prevSize": 32,
           "code": 59851,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 632,
@@ -8449,7 +8505,7 @@
           "name": "ic_fluent_book_open_24_filled",
           "prevSize": 32,
           "code": 59852,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 633,
@@ -8457,7 +8513,7 @@
           "name": "ic_fluent_book_open_24_regular",
           "prevSize": 32,
           "code": 59853,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 589,
@@ -8465,7 +8521,7 @@
           "name": "mask_filled_1",
           "prevSize": 32,
           "code": 59716,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 590,
@@ -8473,7 +8529,7 @@
           "name": "mask_outline_1",
           "prevSize": 32,
           "code": 59717,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 583,
@@ -8481,7 +8537,7 @@
           "name": "ic_fluent_folder_24_filled",
           "prevSize": 32,
           "code": 59745,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 584,
@@ -8489,7 +8545,7 @@
           "name": "ic_fluent_folder_24_regular",
           "prevSize": 32,
           "code": 59746,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 581,
@@ -8497,7 +8553,7 @@
           "name": "ic_fluent_person_24_filled",
           "prevSize": 32,
           "code": 59743,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 582,
@@ -8505,7 +8561,7 @@
           "name": "ic_fluent_person_24_regular",
           "prevSize": 32,
           "code": 59744,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 579,
@@ -8513,7 +8569,7 @@
           "name": "ic_fluent_people_24_filled",
           "prevSize": 32,
           "code": 59741,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 580,
@@ -8521,7 +8577,7 @@
           "name": "ic_fluent_people_24_regular",
           "prevSize": 32,
           "code": 59742,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 577,
@@ -8529,7 +8585,7 @@
           "name": "ic_fluent_megaphone_24_filled",
           "prevSize": 32,
           "code": 59739,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 578,
@@ -8537,7 +8593,7 @@
           "name": "ic_fluent_megaphone_24_regular",
           "prevSize": 32,
           "code": 59740,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 575,
@@ -8545,7 +8601,7 @@
           "name": "ic_fluent_bot_24_filled",
           "prevSize": 32,
           "code": 59737,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 576,
@@ -8553,7 +8609,7 @@
           "name": "ic_fluent_bot_24_regular",
           "prevSize": 32,
           "code": 59738,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 573,
@@ -8561,7 +8617,7 @@
           "name": "ic_fluent_alert_24_filled",
           "prevSize": 32,
           "code": 59735,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 574,
@@ -8569,7 +8625,7 @@
           "name": "ic_fluent_alert_24_regular",
           "prevSize": 32,
           "code": 59736,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 571,
@@ -8577,7 +8633,7 @@
           "name": "ic_fluent_chat_multiple_24_filled",
           "prevSize": 32,
           "code": 59731,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 572,
@@ -8585,7 +8641,7 @@
           "name": "ic_fluent_chat_multiple_24_regular",
           "prevSize": 32,
           "code": 59732,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 569,
@@ -8593,7 +8649,7 @@
           "name": "ic_fluent_briefcase_24_filled",
           "prevSize": 32,
           "code": 59729,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 570,
@@ -8601,7 +8657,7 @@
           "name": "ic_fluent_briefcase_24_regular",
           "prevSize": 32,
           "code": 59730,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 567,
@@ -8609,7 +8665,7 @@
           "name": "ic_fluent_airplane_24_filled",
           "prevSize": 32,
           "code": 59727,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 568,
@@ -8617,7 +8673,7 @@
           "name": "ic_fluent_airplane_24_regular",
           "prevSize": 32,
           "code": 59728,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 565,
@@ -8625,7 +8681,7 @@
           "name": "ic_fluent_arrow_trending_lines_24_filled",
           "prevSize": 32,
           "code": 59725,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 566,
@@ -8633,7 +8689,7 @@
           "name": "ic_fluent_arrow_trending_lines_24_regular",
           "prevSize": 32,
           "code": 59726,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 563,
@@ -8641,7 +8697,7 @@
           "name": "ic_fluent_hat_graduation_24_filled",
           "prevSize": 32,
           "code": 59723,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 564,
@@ -8649,7 +8705,7 @@
           "name": "ic_fluent_hat_graduation_24_regular",
           "prevSize": 32,
           "code": 59724,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 561,
@@ -8657,7 +8713,7 @@
           "name": "ic_fluent_sport_soccer_24_filled",
           "prevSize": 32,
           "code": 59721,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 562,
@@ -8665,7 +8721,7 @@
           "name": "ic_fluent_sport_soccer_24_regular",
           "prevSize": 32,
           "code": 59722,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 559,
@@ -8673,7 +8729,7 @@
           "name": "ic_fluent_drink_wine_24_filled",
           "prevSize": 32,
           "code": 59719,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 560,
@@ -8681,7 +8737,7 @@
           "name": "ic_fluent_drink_wine_24_regular",
           "prevSize": 32,
           "code": 59720,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 555,
@@ -8689,7 +8745,7 @@
           "name": "ic_fluent_heart_24_filled",
           "prevSize": 32,
           "code": 59713,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 556,
@@ -8697,7 +8753,7 @@
           "name": "ic_fluent_heart_24_regular",
           "prevSize": 32,
           "code": 59714,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 553,
@@ -8705,7 +8761,7 @@
           "name": "ic_fluent_home_24_filled",
           "prevSize": 32,
           "code": 59708,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 554,
@@ -8713,7 +8769,7 @@
           "name": "ic_fluent_home_24_regular",
           "prevSize": 32,
           "code": 59712,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 551,
@@ -8721,7 +8777,7 @@
           "name": "ic_fluent_games_24_filled",
           "prevSize": 32,
           "code": 59706,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 552,
@@ -8729,7 +8785,7 @@
           "name": "ic_fluent_games_24_regular",
           "prevSize": 32,
           "code": 59707,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 549,
@@ -8737,7 +8793,7 @@
           "name": "ic_fluent_leaf_one_24_filled",
           "prevSize": 32,
           "code": 59704,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 550,
@@ -8745,7 +8801,7 @@
           "name": "ic_fluent_leaf_one_24_regular",
           "prevSize": 32,
           "code": 59705,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 547,
@@ -8753,7 +8809,7 @@
           "name": "ic_fluent_star_24_filled",
           "prevSize": 32,
           "code": 59702,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 548,
@@ -8761,7 +8817,7 @@
           "name": "ic_fluent_star_24_regular",
           "prevSize": 32,
           "code": 59703,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 545,
@@ -8769,7 +8825,7 @@
           "name": "ic_fluent_trophy_24_filled",
           "prevSize": 32,
           "code": 59700,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 546,
@@ -8777,7 +8833,7 @@
           "name": "ic_fluent_trophy_24_regular",
           "prevSize": 32,
           "code": 59701,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 543,
@@ -8785,7 +8841,7 @@
           "name": "ic_fluent_animal_cat_24_filled",
           "prevSize": 32,
           "code": 59697,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 544,
@@ -8793,7 +8849,7 @@
           "name": "ic_fluent_animal_cat_24_regular",
           "prevSize": 32,
           "code": 59699,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 541,
@@ -8801,7 +8857,7 @@
           "name": "ic_fluent_call_24_filled",
           "prevSize": 32,
           "code": 59792,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 542,
@@ -8809,7 +8865,7 @@
           "name": "ic_fluent_call_24_regular",
           "prevSize": 32,
           "code": 59793,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 539,
@@ -8817,7 +8873,7 @@
           "name": "ic_fluent_settings_24_filled",
           "prevSize": 32,
           "code": 59790,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 540,
@@ -8825,7 +8881,7 @@
           "name": "ic_fluent_settings_24_regular",
           "prevSize": 32,
           "code": 59791,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 5,
@@ -10117,7 +10173,7 @@
           "name": "ic_fluent_clock_20_regular",
           "prevSize": 32,
           "code": 59665,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 423,
@@ -10125,7 +10181,7 @@
           "name": "ic_fluent_emoji_20_regular",
           "prevSize": 32,
           "code": 59680,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 424,
@@ -10133,7 +10189,7 @@
           "name": "ic_fluent_animal_cat_20_regular",
           "prevSize": 32,
           "code": 59681,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 421,
@@ -10141,7 +10197,7 @@
           "name": "ic_fluent_food_pizza_20_regular",
           "prevSize": 32,
           "code": 59682,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 420,
@@ -10149,7 +10205,7 @@
           "name": "ic_fluent_sport_soccer_20_regular",
           "prevSize": 32,
           "code": 59683,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 425,
@@ -10157,7 +10213,7 @@
           "name": "ic_fluent_vehicle_car_20_regular",
           "prevSize": 32,
           "code": 59684,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 419,
@@ -10165,7 +10221,7 @@
           "name": "ic_fluent_lightbulb_filament_20_regular",
           "prevSize": 32,
           "code": 59685,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 418,
@@ -10173,7 +10229,7 @@
           "name": "ic_fluent_symbols_20_regular",
           "prevSize": 32,
           "code": 59686,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 422,
@@ -10181,7 +10237,7 @@
           "name": "ic_fluent_flag_20_regular",
           "prevSize": 32,
           "code": 59687,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 3,
@@ -10343,12 +10399,20 @@
     {
       "selection": [
         {
+          "order": 725,
+          "id": 116,
+          "name": "ic_fluent_speed_template_20_regular",
+          "prevSize": 32,
+          "code": 59923,
+          "tempChar": ""
+        },
+        {
           "order": 722,
           "id": 115,
           "name": "ic_fluent_folder_arrow_download_20_regular",
           "prevSize": 32,
           "code": 59920,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 717,
@@ -10356,7 +10420,7 @@
           "name": "ShieldStar",
           "prevSize": 32,
           "code": 59779,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 713,
@@ -10364,7 +10428,7 @@
           "name": "bot_command_0",
           "prevSize": 32,
           "code": 59915,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 696,
@@ -10375,7 +10439,7 @@
           "codes": [
             59895
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 697,
@@ -10383,7 +10447,7 @@
           "name": "link_1",
           "prevSize": 32,
           "code": 59896,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 692,
@@ -10398,7 +10462,7 @@
             59896,
             59897
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 691,
@@ -10413,7 +10477,7 @@
             59901,
             59902
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 690,
@@ -10428,7 +10492,7 @@
             59906,
             59907
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 689,
@@ -10443,7 +10507,7 @@
             59911,
             59912
           ],
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 652,
@@ -10451,7 +10515,7 @@
           "name": "gift_premium",
           "prevSize": 32,
           "code": 59860,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 630,
@@ -10459,7 +10523,7 @@
           "name": "Circle",
           "prevSize": 32,
           "code": 59963,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 621,
@@ -10467,7 +10531,7 @@
           "name": "Premium",
           "prevSize": 32,
           "code": 59829,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 603,
@@ -10475,7 +10539,7 @@
           "name": "ic_fluent_clock_alarm_hour_20_regular",
           "prevSize": 32,
           "code": 59811,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 601,
@@ -10483,7 +10547,7 @@
           "name": "never",
           "prevSize": 32,
           "code": 59807,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 599,
@@ -10491,7 +10555,7 @@
           "name": "day",
           "prevSize": 32,
           "code": 59808,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 602,
@@ -10499,7 +10563,7 @@
           "name": "week",
           "prevSize": 32,
           "code": 59809,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 600,
@@ -10507,7 +10571,7 @@
           "name": "month",
           "prevSize": 32,
           "code": 59810,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 592,
@@ -10515,7 +10579,7 @@
           "name": "mask_outline_2",
           "prevSize": 32,
           "code": 59799,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 521,
@@ -10523,7 +10587,7 @@
           "name": "Reactions",
           "prevSize": 32,
           "code": 59776,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 513,
@@ -10531,7 +10595,7 @@
           "name": "ic_fluent_dismiss_24_regular",
           "prevSize": 32,
           "code": 59768,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 497,
@@ -10539,7 +10603,7 @@
           "name": "Seen",
           "prevSize": 32,
           "code": 59755,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 494,
@@ -10547,7 +10611,7 @@
           "name": "ArrowDownSmall",
           "prevSize": 32,
           "code": 60892,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 492,
@@ -10555,7 +10619,7 @@
           "name": "ArrowLeftSmall",
           "prevSize": 32,
           "code": 60889,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 491,
@@ -10563,7 +10627,7 @@
           "name": "ArrowRightSmall",
           "prevSize": 32,
           "code": 60890,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 493,
@@ -10571,7 +10635,7 @@
           "name": "ArrowUpSmall",
           "prevSize": 32,
           "code": 60891,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 489,
@@ -10579,7 +10643,7 @@
           "name": "DismissSmall",
           "prevSize": 32,
           "code": 57610,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 403,
@@ -10587,7 +10651,7 @@
           "name": "VoiceChat",
           "prevSize": 32,
           "code": 59648,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 397,
@@ -10595,7 +10659,7 @@
           "name": "uniE768",
           "prevSize": 32,
           "code": 59240,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 394,
@@ -10603,7 +10667,7 @@
           "name": "uniE769",
           "prevSize": 32,
           "code": 59241,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 393,
@@ -10611,7 +10675,7 @@
           "name": "uniEC57",
           "prevSize": 32,
           "code": 60503,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 392,
@@ -10619,7 +10683,7 @@
           "name": "uniEC58",
           "prevSize": 32,
           "code": 60504,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 391,
@@ -10627,7 +10691,7 @@
           "name": "uniE8ED",
           "prevSize": 32,
           "code": 59629,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 262,
@@ -10635,7 +10699,7 @@
           "name": "Compact",
           "prevSize": 32,
           "code": 59692,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 263,
@@ -10643,7 +10707,7 @@
           "name": "CompactFull",
           "prevSize": 32,
           "code": 59693,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 261,
@@ -10651,7 +10715,7 @@
           "name": "Pinned",
           "prevSize": 32,
           "code": 59711,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 259,
@@ -10659,7 +10723,7 @@
           "name": "Replies",
           "prevSize": 32,
           "code": 59710,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -10691,7 +10755,7 @@
           "name": "CancelSmall",
           "prevSize": 32,
           "code": 59688,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 237,
@@ -10699,7 +10763,7 @@
           "name": "DownloadSmall",
           "prevSize": 32,
           "code": 59690,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 0,
@@ -10779,7 +10843,7 @@
           "prevSize": 32,
           "code": 58880,
           "name": "uniE600",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 9,
@@ -10788,7 +10852,7 @@
           "prevSize": 32,
           "code": 58881,
           "name": "uniE601",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 10,
@@ -10797,7 +10861,7 @@
           "prevSize": 32,
           "code": 58882,
           "name": "uniE602",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 11,
@@ -10806,7 +10870,7 @@
           "prevSize": 32,
           "code": 58883,
           "name": "uniE603",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 12,
@@ -10815,7 +10879,7 @@
           "prevSize": 32,
           "code": 58885,
           "name": "uniE605",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 13,
@@ -10824,7 +10888,7 @@
           "prevSize": 32,
           "code": 58887,
           "name": "uniE607",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 14,
@@ -10833,7 +10897,7 @@
           "prevSize": 32,
           "code": 58888,
           "name": "uniE608",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 15,
@@ -10842,7 +10906,7 @@
           "prevSize": 32,
           "code": 58891,
           "name": "uniE60B",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 16,
@@ -10851,7 +10915,7 @@
           "prevSize": 32,
           "code": 58892,
           "name": "uniE60C",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 235,
@@ -10859,7 +10923,7 @@
           "name": "Trending",
           "prevSize": 32,
           "code": 58893,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 18,
@@ -10868,7 +10932,7 @@
           "prevSize": 32,
           "code": 58894,
           "name": "uniE60E",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 19,
@@ -10877,7 +10941,7 @@
           "prevSize": 32,
           "code": 58895,
           "name": "uniE60F",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 20,
@@ -10903,7 +10967,7 @@
           "prevSize": 32,
           "code": 58897,
           "name": "uniE611",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 23,
@@ -10912,7 +10976,7 @@
           "prevSize": 32,
           "code": 58898,
           "name": "uniE612",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 381,
@@ -10920,7 +10984,7 @@
           "name": "BotCommands",
           "prevSize": 32,
           "code": 58899,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 24,
@@ -10938,7 +11002,7 @@
           "prevSize": 32,
           "code": 58900,
           "name": "uniE614",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 26,
@@ -11010,7 +11074,7 @@
           "prevSize": 32,
           "code": 59654,
           "name": "uniE906",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 34,
@@ -11028,7 +11092,7 @@
           "prevSize": 32,
           "code": 59656,
           "name": "uniE908",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 36,
@@ -11046,7 +11110,7 @@
           "prevSize": 32,
           "code": 59658,
           "name": "uniE90A",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 38,
@@ -11055,7 +11119,7 @@
           "prevSize": 32,
           "code": 59659,
           "name": "uniE90B",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 39,
@@ -11118,7 +11182,7 @@
           "prevSize": 32,
           "code": 59666,
           "name": "uniE912",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 46,
@@ -11127,7 +11191,7 @@
           "prevSize": 32,
           "code": 59667,
           "name": "uniE913",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 47,
@@ -11136,7 +11200,7 @@
           "prevSize": 32,
           "code": 59668,
           "name": "uniE914",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 48,
@@ -11190,7 +11254,7 @@
           "prevSize": 32,
           "code": 59674,
           "name": "uniE91A",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 54,
@@ -11199,7 +11263,7 @@
           "prevSize": 32,
           "code": 59675,
           "name": "uniE91B",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 55,
@@ -11226,7 +11290,7 @@
           "prevSize": 32,
           "code": 59678,
           "name": "uniE91E",
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "id": 58,
@@ -11244,7 +11308,7 @@
           "prevSize": 32,
           "code": 942080,
           "name": "uE6000",
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 2,
@@ -11258,6 +11322,41 @@
       "height": 1024,
       "prevSize": 32,
       "icons": [
+        {
+          "id": 116,
+          "paths": [
+            "M896 153.6h-307.2c-15.36 0-25.6-10.24-25.6-25.6s10.24-25.6 25.6-25.6h307.2c15.36 0 25.6 10.24 25.6 25.6s-10.24 25.6-25.6 25.6z",
+            "M486.4 153.6h-204.8c-15.36 0-25.6-10.24-25.6-25.6s10.24-25.6 25.6-25.6h204.8c15.36 0 25.6 10.24 25.6 25.6s-10.24 25.6-25.6 25.6z",
+            "M179.2 153.6h-51.2c-15.36 0-25.6-10.24-25.6-25.6s10.24-25.6 25.6-25.6h51.2c15.36 0 25.6 10.24 25.6 25.6s-10.24 25.6-25.6 25.6z",
+            "M896 921.6h-307.2c-15.36 0-25.6-10.24-25.6-25.6s10.24-25.6 25.6-25.6h307.2c15.36 0 25.6 10.24 25.6 25.6s-10.24 25.6-25.6 25.6z",
+            "M486.4 921.6h-204.8c-15.36 0-25.6-10.24-25.6-25.6s10.24-25.6 25.6-25.6h204.8c15.36 0 25.6 10.24 25.6 25.6s-10.24 25.6-25.6 25.6z",
+            "M179.2 921.6h-51.2c-15.36 0-25.6-10.24-25.6-25.6s10.24-25.6 25.6-25.6h51.2c15.36 0 25.6 10.24 25.6 25.6s-10.24 25.6-25.6 25.6z"
+          ],
+          "attrs": [
+            {},
+            {},
+            {},
+            {},
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 0,
+          "tags": [
+            "ic_fluent_speed_template_20_regular"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {},
+              {},
+              {},
+              {}
+            ]
+          }
+        },
         {
           "id": 115,
           "paths": [
@@ -13461,7 +13560,7 @@
       "metadata": {
         "fontFamily": "Telegram",
         "majorVersion": 2,
-        "minorVersion": 73
+        "minorVersion": 75
       },
       "metrics": {
         "emSize": 1024,

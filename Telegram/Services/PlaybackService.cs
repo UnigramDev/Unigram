@@ -26,7 +26,7 @@ namespace Telegram.Services
 
         MessageWithOwner CurrentItem { get; }
 
-        double PlaybackRate { get; set; }
+        double PlaybackSpeed { get; set; }
 
         double Volume { get; set; }
 
@@ -63,11 +63,12 @@ namespace Telegram.Services
         event TypedEventHandler<IPlaybackService, object> PlaylistChanged;
     }
 
-    public class PlaybackService : BindableBase, IPlaybackService
+    public class PlaybackService : IPlaybackService
     {
         private readonly ISettingsService _settingsService;
 
         private MediaPlayer _mediaPlayer;
+        private double _lastTotalSeconds = double.MinValue;
 
         private readonly ConditionalWeakTable<IMediaPlaybackSource, PlaybackItem> _mapping;
 
@@ -89,7 +90,7 @@ namespace Telegram.Services
             _isRepeatEnabled = _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.Track
                 ? null
                 : _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.List;
-            _playbackRate = _settingsService.Playback.PlaybackRate;
+            _playbackSpeed = _settingsService.Playback.PlaybackRate;
 
             _mapping = new ConditionalWeakTable<IMediaPlaybackSource, PlaybackItem>();
         }
@@ -193,9 +194,9 @@ namespace Telegram.Services
 
         private void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
         {
-            if (sender.PlaybackState == MediaPlaybackState.Playing && sender.PlaybackRate != _playbackRate)
+            if (sender.PlaybackState == MediaPlaybackState.Playing && sender.PlaybackRate != _playbackSpeed)
             {
-                sender.PlaybackRate = _playbackRate;
+                sender.PlaybackRate = _playbackSpeed;
             }
 
             switch (sender.PlaybackState)
@@ -215,6 +216,13 @@ namespace Telegram.Services
 
         private void OnPositionChanged(MediaPlaybackSession sender, object args)
         {
+            //var totalSeconds = Math.Truncate(sender.Position.TotalSeconds);
+            //if (totalSeconds == _lastTotalSeconds)
+            //{
+            //    return;
+            //}
+
+            //_lastTotalSeconds = totalSeconds;
             PositionChanged?.Invoke(this, args);
         }
 
@@ -354,13 +362,13 @@ namespace Telegram.Services
             }
         }
 
-        private double _playbackRate = 1.0;
-        public double PlaybackRate
+        private double _playbackSpeed = 1.0;
+        public double PlaybackSpeed
         {
-            get => _playbackRate;
+            get => _playbackSpeed;
             set
             {
-                _playbackRate = value;
+                _playbackSpeed = value;
                 _settingsService.Playback.PlaybackRate = value;
 
                 Execute(player =>
@@ -397,7 +405,7 @@ namespace Telegram.Services
         {
             if (CurrentPlayback is PlaybackItem item)
             {
-                PlaybackRate = item.CanChangePlaybackRate ? _settingsService.Playback.PlaybackRate : 1;
+                PlaybackSpeed = item.CanChangePlaybackRate ? _settingsService.Playback.PlaybackRate : 1;
             }
 
             Execute(player =>
