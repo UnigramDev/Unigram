@@ -600,7 +600,7 @@ namespace Telegram.Controls
 
         private void LoadCustomEmoji()
         {
-            var positions = new List<EmojiPosition>();
+            List<EmojiPosition> positions = null;
 
             foreach (var item in _positions)
             {
@@ -612,6 +612,7 @@ namespace Telegram.Controls
 
                 var rect = pointer.GetCharacterRect(LogicalDirection.Forward);
 
+                positions ??= new();
                 positions.Add(new EmojiPosition
                 {
                     CustomEmojiId = item.CustomEmojiId,
@@ -620,7 +621,7 @@ namespace Telegram.Controls
                 });
             }
 
-            if (positions.Count < 1)
+            if (positions == null)
             {
                 UnloadObject(ref CustomEmoji);
 

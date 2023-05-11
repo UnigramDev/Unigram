@@ -160,7 +160,7 @@ namespace Telegram.Common
                 return;
             }
 
-            var next = new Dictionary<long, IPlayerView>();
+            Dictionary<long, IPlayerView> next = null;
 
             for (int i = firstVisibleIndex; i <= lastVisibleIndex; i++)
             {
@@ -222,42 +222,46 @@ namespace Telegram.Common
                     if (lottie != null)
                     {
                         lottie.Tag = item;
+
+                        next ??= new();
                         next[item.GetHashCode()] = lottie;
                     }
                 }
             }
 
-            foreach (var item in _prev.Keys.Except(next.Keys).ToList())
+            if (next != null)
             {
-                _prev[item]?.Pause();
-                _prev.Remove(item);
-            }
-
-            //if (intermediate)
-            //{
-            //    return;
-            //}
-
-            foreach (var item in next)
-            {
-                //if (_prev.ContainsKey(item))
-                //{
-                //    continue;
-                //}
-
-                if (IsDisabledByPolicy)
+                foreach (var item in _prev.Keys.Except(next.Keys).ToList())
                 {
-                    if (item.Value is AnimatedImage image)
+                    _prev[item]?.Pause();
+                    _prev.Remove(item);
+                }
+
+                foreach (var item in next)
+                {
+                    if (IsDisabledByPolicy)
                     {
-                        image.Display();
+                        if (item.Value is AnimatedImage image)
+                        {
+                            image.Display();
+                        }
                     }
+                    else
+                    {
+                        item.Value?.Play();
+                    }
+
+                    _prev[item.Key] = item.Value;
                 }
-                else
+            }
+            else
+            {
+                foreach (var item in _prev)
                 {
-                    item.Value?.Play();
+                    item.Value?.Pause();
                 }
 
-                _prev[item.Key] = item.Value;
+                _prev.Clear();
             }
 
             _unloaded = false;

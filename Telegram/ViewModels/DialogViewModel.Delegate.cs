@@ -131,26 +131,20 @@ namespace Telegram.ViewModels
             Call(video);
         }
 
-        public async void VotePoll(MessageViewModel message, IList<PollOption> options)
+        public async void VotePoll(MessageViewModel message, IList<int> options)
         {
             var poll = message.Content as MessagePoll;
-            if (poll == null)
+            if (poll == null || options == null)
             {
                 return;
             }
 
-            var ids = options.Select(x => poll.Poll.Options.IndexOf(x)).ToArray();
-            if (ids.IsEmpty())
-            {
-                return;
-            }
-
-            await ClientService.SendAsync(new SetPollAnswer(message.ChatId, message.Id, ids));
+            await ClientService.SendAsync(new SetPollAnswer(message.ChatId, message.Id, options));
 
             var updated = message.Content as MessagePoll;
             if (updated.Poll.Type is PollTypeQuiz quiz)
             {
-                if (quiz.CorrectOptionId == ids[0])
+                if (quiz.CorrectOptionId == options[0])
                 {
                     Aggregator.Publish(new UpdateConfetti());
                 }

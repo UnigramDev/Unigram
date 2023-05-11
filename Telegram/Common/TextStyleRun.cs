@@ -233,6 +233,11 @@ namespace Telegram.Common
 
         public static IList<TextEntity> GetEntities(string text, IList<TextStyleRun> runs)
         {
+            if (runs == null)
+            {
+                return Array.Empty<TextEntity>();
+            }
+
             var results = new List<TextEntity>();
 
             foreach (var run in runs)

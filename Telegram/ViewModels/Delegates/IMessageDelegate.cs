@@ -44,7 +44,7 @@ namespace Telegram.ViewModels.Delegates
 
         void Call(MessageViewModel message, bool video);
 
-        void VotePoll(MessageViewModel message, IList<PollOption> option);
+        void VotePoll(MessageViewModel message, IList<int> option);
 
         void ViewVisibleMessages();
 

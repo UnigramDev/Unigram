@@ -805,13 +805,14 @@ namespace Telegram.Services
 
             var timestamp = Environment.TickCount;
 
-            var validSpeakers = new Dictionary<int, SpeakingParticipant>();
-            var silentParticipants = new HashSet<int>();
+            Dictionary<int, SpeakingParticipant> validSpeakers = null;
+            HashSet<int> silentParticipants = new();
 
             foreach (var level in levels)
             {
                 if (level.Level > speakingLevelThreshold && level.IsSpeaking)
                 {
+                    validSpeakers ??= new();
                     validSpeakers[level.AudioSource] = new SpeakingParticipant(timestamp, level.Level);
                 }
                 else
@@ -822,32 +823,41 @@ namespace Telegram.Services
 
             foreach (var item in _speakingParticipants)
             {
-                if (validSpeakers.ContainsKey(item.Key))
+                if (validSpeakers != null && validSpeakers.ContainsKey(item.Key))
                 {
                     continue;
                 }
 
                 var delta = timestamp - item.Value.Timestamp;
 
-                if (silentParticipants.Contains(item.Key))
+                if (silentParticipants != null && silentParticipants.Contains(item.Key))
                 {
                     if (delta < silentTimeout)
                     {
+                        validSpeakers ??= new();
                         validSpeakers[item.Key] = item.Value;
                     }
                 }
                 else if (delta < cutoffTimeout)
                 {
+                    validSpeakers ??= new();
                     validSpeakers[item.Key] = item.Value;
                 }
             }
 
             foreach (var item in levels)
             {
-                ClientService.Send(new SetGroupCallParticipantIsSpeaking(call.Id, item.AudioSource, validSpeakers.ContainsKey(item.AudioSource)));
+                ClientService.Send(new SetGroupCallParticipantIsSpeaking(call.Id, item.AudioSource, validSpeakers != null && validSpeakers.ContainsKey(item.AudioSource)));
             }
 
-            _speakingParticipants = validSpeakers;
+            if (validSpeakers != null)
+            {
+                _speakingParticipants = validSpeakers;
+            }
+            else
+            {
+                _speakingParticipants.Clear();
+            }
         }
 
 #endif

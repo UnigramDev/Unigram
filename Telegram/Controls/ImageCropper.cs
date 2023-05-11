@@ -771,30 +771,32 @@ namespace Telegram.Controls
 
         public static IReadOnlyList<BitmapProportions> GetProportionsFor(double width, double height)
         {
-            var items = new List<BitmapProportions>();
-            items.Add(BitmapProportions.Original);
-            items.Add(BitmapProportions.Square);
-
             if (width > height)
             {
-                items.Add(BitmapProportions.ThreeOverTwo);
-                items.Add(BitmapProportions.FiveOverThree);
-                items.Add(BitmapProportions.FourOverThree);
-                items.Add(BitmapProportions.FiveOverFour);
-                items.Add(BitmapProportions.SevenOverFive);
-                items.Add(BitmapProportions.SixteenOverNine);
-            }
-            else
-            {
-                items.Add(BitmapProportions.TwoOverThree);
-                items.Add(BitmapProportions.ThreeOverFive);
-                items.Add(BitmapProportions.ThreeOverFour);
-                items.Add(BitmapProportions.FourOverFive);
-                items.Add(BitmapProportions.FiveOverSeven);
-                items.Add(BitmapProportions.NineOverSixteen);
+                return new List<BitmapProportions>
+                {
+                    BitmapProportions.Original,
+                    BitmapProportions.Square,
+                    BitmapProportions.ThreeOverTwo,
+                    BitmapProportions.FiveOverThree,
+                    BitmapProportions.FourOverThree,
+                    BitmapProportions.FiveOverFour,
+                    BitmapProportions.SevenOverFive,
+                    BitmapProportions.SixteenOverNine
+                };
             }
 
-            return items;
+            return new List<BitmapProportions>
+            {
+                BitmapProportions.Original,
+                BitmapProportions.Square,
+                BitmapProportions.TwoOverThree,
+                BitmapProportions.ThreeOverFive,
+                BitmapProportions.ThreeOverFour,
+                BitmapProportions.FourOverFive,
+                BitmapProportions.FiveOverSeven,
+                BitmapProportions.NineOverSixteen
+            };
         }
 
         #endregion

@@ -359,7 +359,7 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
-        public virtual void VotePoll(MessageViewModel message, IList<PollOption> options) { }
+        public virtual void VotePoll(MessageViewModel message, IList<int> options) { }
 
         /// <summary>
         /// Only available when created through DialogViewModel
@@ -475,7 +475,7 @@ namespace Telegram.ViewModels
 
         public override void Call(MessageViewModel message, bool video) => _viewModel.Call(video);
 
-        public override void VotePoll(MessageViewModel message, IList<PollOption> options) => _viewModel.VotePoll(message, options);
+        public override void VotePoll(MessageViewModel message, IList<int> options) => _viewModel.VotePoll(message, options);
 
         public override void OpenViaBot(long viaBotUserId) => _viewModel.OpenViaBot(viaBotUserId);
 

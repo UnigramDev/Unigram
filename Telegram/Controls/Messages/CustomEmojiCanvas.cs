@@ -202,7 +202,11 @@ namespace Telegram.Controls.Messages
         public void UpdatePositions(IList<EmojiPosition> positions)
         {
             _positions.Clear();
-            _positions.AddRange(positions);
+
+            if (positions != null)
+            {
+                _positions.AddRange(positions);
+            }
 
             _dropState = true;
         }
@@ -220,7 +224,13 @@ namespace Telegram.Controls.Messages
             _clientService = clientService;
             _animation = new object();
 
-            var request = new List<long>();
+            if (customEmoji == null)
+            {
+                OnSourceChanged();
+                return;
+            }
+
+            List<long> request = null;
             var hash = GetHashCode();
 
             foreach (var emoji in customEmoji)
@@ -240,10 +250,11 @@ namespace Telegram.Controls.Messages
                     continue;
                 }
 
+                request ??= new();
                 request.Add(emoji);
             }
 
-            if (request.Count < 1)
+            if (request == null)
             {
                 OnSourceChanged();
                 return;

@@ -149,17 +149,21 @@ namespace Telegram.ViewModels.Folders
             }
             else
             {
-                var temp = new List<Chat>();
+                List<Chat> temp = null;
 
                 foreach (var chat in Items[0])
                 {
                     if (_shareableChats.Contains(chat.Id) && !SelectedItems.Contains(chat))
                     {
+                        temp ??= new();
                         temp.Add(chat);
                     }
                 }
 
-                SelectedItems.AddRange(temp);
+                if (temp != null)
+                {
+                    SelectedItems.AddRange(temp);
+                }
             }
         }
     }

@@ -42,11 +42,8 @@ namespace Telegram.ViewModels.Settings
             var response = await ClientService.SendAsync(new GetLocalizationTargetInfo(false));
             if (response is LocalizationTargetInfo pack)
             {
-                var customs = new List<LanguagePackInfo>();
-                var results = new List<LanguagePackInfo>();
-
-                customs.AddRange(pack.LanguagePacks.Where(x => x.IsInstalled).OrderBy(k => k.Name));
-                results.AddRange(pack.LanguagePacks.Where(x => !x.IsInstalled).OrderBy(k => k.Name));
+                var customs = pack.LanguagePacks.Where(x => x.IsInstalled).OrderBy(k => k.Name).ToList();
+                var results = pack.LanguagePacks.Where(x => !x.IsInstalled).OrderBy(k => k.Name).ToList();
 
                 var items = new List<List<LanguagePackInfo>>();
 

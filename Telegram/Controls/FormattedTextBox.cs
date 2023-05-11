@@ -749,10 +749,10 @@ namespace Telegram.Controls
             value = value.TrimEnd('\v', '\r');
 
             var builder = new StringBuilder(value);
-            var runs = new List<TextStyleRun>();
 
-            var last = default(TextStyleRun);
-            var type = default(TextEntityType);
+            List<TextStyleRun> runs = null;
+            TextStyleRun last = null;
+            TextEntityType type = default;
 
             var hidden = 0;
 
@@ -770,10 +770,12 @@ namespace Telegram.Controls
                     {
                         if (last != null)
                         {
+                            runs ??= new();
                             runs.Add(last);
                             last = null;
                         }
 
+                        runs ??= new();
                         runs.Add(new TextStyleRun { Start = i - hidden, End = i - hidden + split[0].Length, Flags = TextStyle.Emoji, Type = new TextEntityTypeCustomEmoji(customEmojiId) });
                         type = null;
 
@@ -837,6 +839,7 @@ namespace Telegram.Controls
                 {
                     if (last != null)
                     {
+                        runs ??= new();
                         runs.Add(last);
                         last = null;
                     }
@@ -851,6 +854,7 @@ namespace Telegram.Controls
 
             if (last != null)
             {
+                runs ??= new();
                 runs.Add(last);
             }
 
@@ -1154,8 +1158,8 @@ namespace Telegram.Controls
 
             Document.GetText(TextGetOptions.None, out string value);
 
-            var emoji = new HashSet<long>();
-            var positions = new List<EmojiPosition>();
+            HashSet<long> emoji = null;
+            List<EmojiPosition> positions = null;
 
             var index = value.IndexOf('￼');
 
@@ -1169,7 +1173,10 @@ namespace Telegram.Controls
                 var split = obj.Split(';');
                 if (split.Length == 2 && long.TryParse(split[1], out long customEmojiId))
                 {
+                    emoji ??= new();
                     emoji.Add(customEmojiId);
+
+                    positions ??= new();
                     positions.Add(new EmojiPosition
                     {
                         CustomEmojiId = customEmojiId,

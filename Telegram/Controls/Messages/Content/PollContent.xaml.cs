@@ -323,7 +323,11 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            _message.Delegate.VotePoll(_message, new[] { option });
+            var optionId = poll.Poll.Options.IndexOf(option);
+            if (optionId != -1)
+            {
+                _message.Delegate.VotePoll(_message, new[] { optionId });
+            }
         }
 
         private void Option_Toggled(object sender, RoutedEventArgs e)
@@ -341,13 +345,15 @@ namespace Telegram.Controls.Messages.Content
 
         private void Submit_Click(object sender, RoutedEventArgs e)
         {
-            var options = new List<PollOption>();
+            List<int> options = null;
 
-            foreach (PollOptionControl button in Options.Children)
+            for (int i = 0; i < Options.Children.Count; i++) 
             {
-                if (button.IsChecked == true && button.Tag is PollOption option)
+                var button = Options.Children[i] as PollOptionControl;
+                if (button != null && button.IsChecked == true)
                 {
-                    options.Add(option);
+                    options ??= new();
+                    options.Add(i);
                 }
             }
 

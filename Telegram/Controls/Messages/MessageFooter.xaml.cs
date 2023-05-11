@@ -275,7 +275,7 @@ namespace Telegram.Controls.Messages
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void UpdateMessageStateImpl(MessageViewModel message)
+        private void UpdateMessageStateImpl(MessageViewModel message)
         {
             _stateLabel = UpdateStateIcon(message);
         }
