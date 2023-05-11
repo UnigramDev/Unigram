@@ -78,43 +78,54 @@ namespace Telegram.Common
             var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(relative) as StorageFile;
             if (item == null)
             {
-                item = await ApplicationData.Current.LocalFolder.CreateFileAsync(relative, CreationCollisionOption.ReplaceExisting);
-
-                using (var stream = await item.OpenAsync(FileAccessMode.ReadWrite))
+                try
                 {
-                    try
+                    item = await ApplicationData.Current.LocalFolder.CreateFileAsync(relative, CreationCollisionOption.ReplaceExisting);
+
+                    using (var stream = await item.OpenAsync(FileAccessMode.ReadWrite))
                     {
-                        var text = await GetSvgXml(file.Local.Path);
+                        var text = await ProcessSvgXmlAsync(file.Local.Path);
                         await PlaceholderImageHelper.Current.DrawSvgAsync(text, Colors.White, stream);
+
+                        bitmap = await CanvasBitmap.LoadAsync(resourceCreator, stream);
                     }
-                    catch { }
+                }
+                catch
+                {
+                    delete = true;
                 }
             }
-
-            if (item != null)
+            else
             {
-                using (var stream = await item.OpenReadAsync())
+                try
                 {
-                    try
+                    using (var stream = await item.OpenReadAsync())
                     {
                         bitmap = await CanvasBitmap.LoadAsync(resourceCreator, stream);
                     }
-                    catch
-                    {
-                        delete = true;
-                    }
+                }
+                catch
+                {
+                    delete = true;
                 }
             }
 
             if (item != null && delete)
             {
-                await item.DeleteAsync();
+                try
+                {
+                    await item.DeleteAsync();
+                }
+                catch
+                {
+                    // Shit happens
+                }
             }
 
             return bitmap;
         }
 
-        private static async Task<string> GetSvgXml(string filePath)
+        private static async Task<string> ProcessSvgXmlAsync(string filePath)
         {
             var styles = new Dictionary<string, string>();
             var text = string.Empty;

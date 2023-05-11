@@ -329,6 +329,7 @@ namespace winrt::Telegram::Native::implementation
 
         Windows::Foundation::Size size;
         winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, size));
+        randomAccessStream.Seek(0);
 
         co_await ui_thread;
     }
