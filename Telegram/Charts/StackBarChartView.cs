@@ -133,12 +133,12 @@ namespace Telegram.Charts
                 Paint paint = selected || postTransition ? line.unselectedPaint : line.paint;
                 if (selected)
                 {
-                    line.unselectedPaint.Color = Extensions.blendARGB(line.lineColor, line.blendColor, selectionA);
+                    line.unselectedPaint.Color = ChartExtensions.blendARGB(line.lineColor, line.blendColor, selectionA);
                 }
 
                 if (postTransition)
                 {
-                    line.unselectedPaint.Color = Extensions.blendARGB(line.lineColor, line.blendColor, 1f);
+                    line.unselectedPaint.Color = ChartExtensions.blendARGB(line.lineColor, line.blendColor, 1f);
                 }
 
                 paint.A = (byte)(255 * transitionAlpha);

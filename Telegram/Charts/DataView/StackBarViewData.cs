@@ -38,7 +38,7 @@ namespace Telegram.Charts.DataView
 
             if (Navigation.BootStrapper.Current.Resources.TryGet("ApplicationPageBackgroundThemeBrush", out SolidColorBrush brush))
             {
-                blendColor = Extensions.blendARGB(brush.Color, lineColor, 0.3f);
+                blendColor = ChartExtensions.blendARGB(brush.Color, lineColor, 0.3f);
             }
         }
     }

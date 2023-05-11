@@ -36,6 +36,27 @@ namespace Telegram.ViewModels
             _updateSelection = action;
         }
 
+        //public void Cleanup()
+        //{
+        //    _playbackService = null;
+        //    _delegate = null;
+
+        //    _updateSelection = null;
+
+        //    if (_message.Content is MessageAlbum album)
+        //    {
+        //        foreach (var child in album.Messages)
+        //        {
+        //            child.Cleanup();
+        //        }
+
+        //        album.Messages.Clear();
+        //    }
+
+        //    ReplyToMessage?.Cleanup();
+        //    ReplyToMessage = null;
+        //}
+
         public IPlaybackService PlaybackService => _playbackService;
         public IMessageDelegate Delegate => _delegate.Target as IMessageDelegate;
 

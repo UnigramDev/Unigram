@@ -123,13 +123,13 @@ namespace Telegram.Charts
 
                     if (selected)
                     {
-                        line.unselectedPaint.Color = Extensions.blendARGB(
+                        line.unselectedPaint.Color = ChartExtensions.blendARGB(
                             line.line.color, line.blendColor, 1f - selectionA);
                     }
 
                     if (postTransition)
                     {
-                        line.unselectedPaint.Color = Extensions.blendARGB(
+                        line.unselectedPaint.Color = ChartExtensions.blendARGB(
                                 line.line.color, line.blendColor, 0);
                     }
 

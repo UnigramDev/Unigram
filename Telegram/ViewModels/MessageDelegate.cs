@@ -141,6 +141,8 @@ namespace Telegram.ViewModels
 
         public async void OpenFile(File file)
         {
+            // TODO: Replace with IStorageService.OpenFileAsync
+
             var permanent = await ClientService.GetPermanentFileAsync(file);
             if (permanent != null)
             {

@@ -113,7 +113,7 @@ namespace Telegram.Charts
         }
     }
 
-    public static class Extensions
+    public static class ChartExtensions
     {
         public static Color blendARGB(this Color color1, Color color2, float ratio)
         {
@@ -150,11 +150,6 @@ namespace Telegram.Charts
             return i - (i >> 1);
         }
 
-        public static Color ToColor(this int color)
-        {
-            return Color.FromArgb(0xFF, (byte)((color >> 16) & 0xFF), (byte)((color >> 8) & 0xFF), (byte)(color & 0xFF));
-        }
-
         public static Color ToColor(this string color)
         {
             color = color.Trim('#');
@@ -168,11 +163,6 @@ namespace Telegram.Charts
             }
 
             return default;
-        }
-
-        public static int ToValue(this Color color)
-        {
-            return (color.R << 16) + (color.G << 8) + color.B;
         }
 
         public static long ToTimestamp(this DateTime dateTime)

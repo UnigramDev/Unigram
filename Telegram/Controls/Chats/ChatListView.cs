@@ -176,9 +176,10 @@ namespace Telegram.Controls.Chats
 
                 _loadMoreCount--;
 
-                // Not sure if this is extremely effective, but we try
+                // This is just not to get too many calls stuck queued
                 if (_loadMoreCount < 3)
                 {
+                    // Not sure if this is extremely effective, but we try
                     await this.UpdateLayoutAsync();
                 }
             }

@@ -215,6 +215,7 @@
     <Compile Include="Common\ApiInfo.cs" />
     <Compile Include="Common\AutocompleteEntityFinder.cs" />
     <Compile Include="Common\Automation.cs" />
+    <Compile Include="Controls\MenuFlyoutSlider.cs" />
     <Compile Include="Td\Api\UpdateUserIsContact.cs" />
     <Compile Include="Td\TdClientExtensions.cs" />
     <Compile Include="Td\TdCompletionSource.cs" />
@@ -2659,7 +2660,7 @@
     <PackageReference Include="Win2D.uwp">
       <Version>1.26.0</Version>
     </PackageReference>
-	<!-- Used by AppCenter -->
+    <!-- Used by AppCenter -->
     <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3">
       <Version>2.1.4</Version>
     </PackageReference>
