@@ -1455,13 +1455,13 @@ namespace Telegram.Views.Calls
             var aliases = await _service.CanChooseAliasAsync(chat.Id);
             if (aliases)
             {
-                flyout.CreateFlyoutItem(async () => await _service.RejoinAsync(), Strings.VoipGroupDisplayAs, new FontIcon { Glyph = Icons.Person });
+                flyout.CreateFlyoutItem(async () => await _service.RejoinAsync(), Strings.VoipGroupDisplayAs, Icons.Person);
                 flyout.CreateFlyoutSeparator();
             }
 
             if (call.CanBeManaged)
             {
-                flyout.CreateFlyoutItem(SetTitle, _service.IsChannel ? Strings.VoipChannelEditTitle : Strings.VoipGroupEditTitle, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(SetTitle, _service.IsChannel ? Strings.VoipChannelEditTitle : Strings.VoipGroupEditTitle, Icons.Edit);
             }
 
             if (call.CanToggleMuteNewParticipants)
@@ -1484,7 +1484,7 @@ namespace Telegram.Views.Calls
 
                 var settings = new MenuFlyoutSubItem();
                 settings.Text = Strings.VoipGroupEditPermissions;
-                settings.Icon = new FontIcon { Glyph = Icons.Key, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                settings.Icon = MenuFlyoutHelper.CreateIcon(Icons.Key);
                 settings.Items.Add(toggleFalse);
                 settings.Items.Add(toggleTrue);
 
@@ -1495,11 +1495,11 @@ namespace Telegram.Views.Calls
             {
                 if (call.RecordDuration > 0)
                 {
-                    flyout.CreateFlyoutItem(StopRecording, Strings.VoipGroupStopRecordCall, new FontIcon { Glyph = Icons.Record });
+                    flyout.CreateFlyoutItem(StopRecording, Strings.VoipGroupStopRecordCall, Icons.Record);
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(StartRecording, Strings.VoipGroupRecordCall, new FontIcon { Glyph = Icons.Record });
+                    flyout.CreateFlyoutItem(StartRecording, Strings.VoipGroupRecordCall, Icons.Record);
                 }
             }
 
@@ -1507,11 +1507,11 @@ namespace Telegram.Views.Calls
             {
                 if (_service.IsScreenSharing)
                 {
-                    flyout.CreateFlyoutItem(_service.EndScreenSharing, Strings.VoipChatStopScreenCapture, new FontIcon { Glyph = Icons.ShareScreenStop });
+                    flyout.CreateFlyoutItem(_service.EndScreenSharing, Strings.VoipChatStopScreenCapture, Icons.ShareScreenStop);
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(_service.StartScreenSharing, Strings.VoipChatStartScreenCapture, new FontIcon { Glyph = Icons.ShareScreenStart });
+                    flyout.CreateFlyoutItem(_service.StartScreenSharing, Strings.VoipChatStartScreenCapture, Icons.ShareScreenStart);
                 }
             }
 
@@ -1525,7 +1525,7 @@ namespace Telegram.Views.Calls
 
                 var video = new MenuFlyoutSubItem();
                 video.Text = "Webcam";
-                video.Icon = new FontIcon { Glyph = Icons.Camera, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                video.Icon = MenuFlyoutHelper.CreateIcon(Icons.Camera);
 
                 _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
                 {
@@ -1554,7 +1554,7 @@ namespace Telegram.Views.Calls
 
                 var input = new MenuFlyoutSubItem();
                 input.Text = "Microphone";
-                input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                input.Icon = MenuFlyoutHelper.CreateIcon(Icons.MicOn);
                 input.Items.Add(defaultInput);
 
                 _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
@@ -1584,7 +1584,7 @@ namespace Telegram.Views.Calls
 
                 var output = new MenuFlyoutSubItem();
                 output.Text = "Speaker";
-                output.Icon = new FontIcon { Glyph = Icons.Speaker3, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
                 output.Items.Add(defaultOutput);
 
                 _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
@@ -1608,16 +1608,16 @@ namespace Telegram.Views.Calls
                 flyout.Items.Add(input);
                 flyout.Items.Add(output);
 
-                flyout.CreateFlyoutItem(() => _service.IsNoiseSuppressionEnabled = !_service.IsNoiseSuppressionEnabled, Strings.VoipNoiseCancellation, _service.IsNoiseSuppressionEnabled ? new FontIcon { Glyph = Icons.Checkmark } : null);
+                flyout.CreateFlyoutItem(() => _service.IsNoiseSuppressionEnabled = !_service.IsNoiseSuppressionEnabled, Strings.VoipNoiseCancellation, _service.IsNoiseSuppressionEnabled ? Icons.Checkmark : null);
             }
 
-            //flyout.CreateFlyoutItem(ShareInviteLink, Strings.VoipGroupShareInviteLink, new FontIcon { Glyph = Icons.Link });
+            //flyout.CreateFlyoutItem(ShareInviteLink, Strings.VoipGroupShareInviteLink, Icons.Link);
 
             if (call.CanBeManaged)
             {
                 flyout.CreateFlyoutSeparator();
 
-                var discard = flyout.CreateFlyoutItem(Discard, _service.IsChannel ? Strings.VoipChannelEndChat : Strings.VoipGroupEndChat, new FontIcon { Glyph = Icons.Dismiss });
+                var discard = flyout.CreateFlyoutItem(Discard, _service.IsChannel ? Strings.VoipChannelEndChat : Strings.VoipGroupEndChat, Icons.Dismiss);
                 discard.Foreground = new SolidColorBrush(Colors.IndianRed);
             }
 
@@ -2080,7 +2080,7 @@ namespace Telegram.Views.Calls
 
             var slider = new MenuFlyoutSlider
             {
-                Icon = new FontIcon { FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily },
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3),
                 TextValueConverter = new TextValueProvider(newValue => string.Format("{0:P0}", newValue / 100)),
                 IconValueConverter = new IconValueProvider(newValue => newValue switch
                 {
@@ -2114,18 +2114,18 @@ namespace Telegram.Views.Calls
             {
                 if (participant.IsHandRaised)
                 {
-                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsHandRaised(_service.Call.Id, participant.ParticipantId, false)), Strings.VoipGroupCancelRaiseHand, new FontIcon { Glyph = Icons.EmojiHand });
+                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsHandRaised(_service.Call.Id, participant.ParticipantId, false)), Strings.VoipGroupCancelRaiseHand, Icons.EmojiHand);
                 }
 
                 if (participant.HasVideoInfo())
                 {
                     //if (participant.ParticipantId.IsEqual(_pinnedParticipant?.ParticipantId))
                     //{
-                    //    flyout.CreateFlyoutItem(() => UpdateGridParticipant(null), "Unpin Video", new FontIcon { Glyph = Icons.PinOff });
+                    //    flyout.CreateFlyoutItem(() => UpdateGridParticipant(null), "Unpin Video", Icons.PinOff);
                     //}
                     //else
                     //{
-                    //    flyout.CreateFlyoutItem(() => UpdateGridParticipant(participant), "Pin Video", new FontIcon { Glyph = Icons.Pin });
+                    //    flyout.CreateFlyoutItem(() => UpdateGridParticipant(participant), "Pin Video", Icons.Pin);
                     //}
                 }
             }
@@ -2135,44 +2135,44 @@ namespace Telegram.Views.Calls
                 {
                     //if (participant.ParticipantId.IsEqual(_pinnedParticipant?.ParticipantId))
                     //{
-                    //    flyout.CreateFlyoutItem(() => UpdateGridParticipant(null), "Unpin Video", new FontIcon { Glyph = Icons.PinOff });
+                    //    flyout.CreateFlyoutItem(() => UpdateGridParticipant(null), "Unpin Video", Icons.PinOff);
                     //}
                     //else
                     //{
-                    //    flyout.CreateFlyoutItem(() => UpdateGridParticipant(participant), "Pin Video", new FontIcon { Glyph = Icons.Pin });
+                    //    flyout.CreateFlyoutItem(() => UpdateGridParticipant(participant), "Pin Video", Icons.Pin);
                     //}
                 }
 
                 if (participant.CanBeUnmutedForAllUsers)
                 {
-                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.VoipGroupAllowToSpeak, new FontIcon { Glyph = Icons.MicOn });
+                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.VoipGroupAllowToSpeak, Icons.MicOn);
                 }
                 else if (participant.CanBeUnmutedForCurrentUser)
                 {
-                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.VoipGroupUnmuteForMe, new FontIcon { Glyph = Icons.MicOn });
+                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, false)), Strings.VoipGroupUnmuteForMe, Icons.MicOn);
                 }
                 else if (participant.CanBeMutedForAllUsers)
                 {
-                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.VoipGroupMute, new FontIcon { Glyph = Icons.MicOff });
+                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.VoipGroupMute, Icons.MicOff);
                 }
                 else if (participant.CanBeMutedForCurrentUser)
                 {
-                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.VoipGroupMuteForMe, new FontIcon { Glyph = Icons.MicOff });
+                    flyout.CreateFlyoutItem(() => _clientService.Send(new ToggleGroupCallParticipantIsMuted(_service.Call.Id, participant.ParticipantId, true)), Strings.VoipGroupMuteForMe, Icons.MicOff);
                 }
 
                 //if (_clientService.TryGetUser(participant.ParticipantId, out User user))
                 //{
-                //    flyout.CreateFlyoutItem(() => _aggregator.Publish(new UpdateSwitchToSender(participant.ParticipantId)), Strings.VoipGroupOpenProfile, new FontIcon { Glyph = Icons.Person });
+                //    flyout.CreateFlyoutItem(() => _aggregator.Publish(new UpdateSwitchToSender(participant.ParticipantId)), Strings.VoipGroupOpenProfile, Icons.Person);
                 //}
                 //else if (_clientService.TryGetChat(participant.ParticipantId, out Chat chat))
                 //{
                 //    if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
                 //    {
-                //        flyout.CreateFlyoutItem(() => _aggregator.Publish(new UpdateSwitchToSender(participant.ParticipantId)), Strings.VoipGroupOpenChannel, new FontIcon { Glyph = Icons.Megaphone });
+                //        flyout.CreateFlyoutItem(() => _aggregator.Publish(new UpdateSwitchToSender(participant.ParticipantId)), Strings.VoipGroupOpenChannel, Icons.Megaphone);
                 //    }
                 //    else
                 //    {
-                //        flyout.CreateFlyoutItem(() => _aggregator.Publish(new UpdateSwitchToSender(participant.ParticipantId)), Strings.VoipGroupOpenGroup, new FontIcon { Glyph = Icons.People });
+                //        flyout.CreateFlyoutItem(() => _aggregator.Publish(new UpdateSwitchToSender(participant.ParticipantId)), Strings.VoipGroupOpenGroup, Icons.People);
                 //    }
                 //}
             }

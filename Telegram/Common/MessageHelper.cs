@@ -30,7 +30,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Point = Windows.Foundation.Point;
 using User = Telegram.Td.Api.User;
 
@@ -894,16 +893,12 @@ namespace Telegram.Common
             var text = sender as RichTextBlock;
             if (args.TryGetPosition(sender, out Point point))
             {
-                var items = Hyperlink_ContextRequested(service, text, point);
-                if (items.Count > 0)
+                var flyout = new MenuFlyout();
+
+                Hyperlink_ContextRequested(flyout, service, text, point);
+
+                if (flyout.Items.Count > 0)
                 {
-                    var flyout = new MenuFlyout();
-
-                    foreach (var item in items)
-                    {
-                        flyout.Items.Add(item);
-                    }
-
                     // We don't want to unfocus the text are when the context menu gets opened
                     flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
                     args.Handled = true;
@@ -919,31 +914,21 @@ namespace Telegram.Common
             }
         }
 
-        public static IList<MenuFlyoutItemBase> Hyperlink_ContextRequested(ITranslateService service, RichTextBlock text, Point point)
+        public static void Hyperlink_ContextRequested(MenuFlyout flyout, ITranslateService service, RichTextBlock text, Point point)
         {
             if (point.X < 0 || point.Y < 0)
             {
                 point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
             }
 
-            var items = new List<MenuFlyoutItemBase>();
-
             var length = text.SelectedText.Length;
             if (length > 0)
             {
-                var link = text.SelectedText;
+                flyout.CreateFlyoutItem(LinkCopy_Click, text.SelectedText, Strings.Copy, Icons.DocumentCopy);
 
-                var copy = new MenuFlyoutItem { Text = Strings.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-                copy.Click += LinkCopy_Click;
-
-                items.Add(copy);
-
-                if (service != null && service.CanTranslate(link))
+                if (service != null && service.CanTranslate(text.SelectedText))
                 {
-                    var translate = new MenuFlyoutItem { Text = Strings.TranslateMessage, DataContext = link, Tag = service, Icon = new FontIcon { Glyph = Icons.Translate, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-                    translate.Click += LinkTranslate_Click;
-
-                    items.Add(translate);
+                    flyout.CreateFlyoutItem(LinkTranslate_Click, Tuple.Create(service, text.SelectedText), Strings.TranslateMessage, Icons.Translate);
                 }
             }
             else
@@ -951,40 +936,31 @@ namespace Telegram.Common
                 var hyperlink = text.GetHyperlinkFromPoint(point);
                 if (hyperlink == null)
                 {
-                    return items;
+                    return;
                 }
 
                 var link = GetEntityData(hyperlink);
                 if (link == null)
                 {
-                    return items;
+                    return;
                 }
 
                 var type = GetEntityType(hyperlink);
                 if (type is null or TextEntityTypeUrl or TextEntityTypeTextUrl)
                 {
-                    var open = new MenuFlyoutItem { Text = Strings.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-
                     var action = GetEntityAction(hyperlink);
                     if (action != null)
                     {
-                        open.Click += (s, args) => action();
+                        flyout.CreateFlyoutItem(action, Strings.Open, Icons.OpenIn);
                     }
                     else
                     {
-                        open.Click += LinkOpen_Click;
+                        flyout.CreateFlyoutItem(LinkOpen_Click, link, Strings.Open, Icons.OpenIn);
                     }
-
-                    items.Add(open);
                 }
 
-                var copy = new MenuFlyoutItem { Text = Strings.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-                copy.Click += LinkCopy_Click;
-
-                items.Add(copy);
+                flyout.CreateFlyoutItem(LinkCopy_Click, link, Strings.Copy, Icons.DocumentCopy);
             }
-
-            return items;
         }
 
         public static void Hyperlink_ContextRequested(UIElement sender, string link, ContextRequestedEventArgs args)
@@ -996,15 +972,9 @@ namespace Telegram.Common
                     point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
                 }
 
-                var open = new MenuFlyoutItem { Text = Strings.Open, DataContext = link, Icon = new FontIcon { Glyph = Icons.OpenIn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-                var copy = new MenuFlyoutItem { Text = Strings.Copy, DataContext = link, Icon = new FontIcon { Glyph = Icons.DocumentCopy, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily } };
-
-                open.Click += LinkOpen_Click;
-                copy.Click += LinkCopy_Click;
-
                 var flyout = new MenuFlyout();
-                flyout.Items.Add(open);
-                flyout.Items.Add(copy);
+                flyout.CreateFlyoutItem(LinkOpen_Click, link, Strings.Open, Icons.OpenIn);
+                flyout.CreateFlyoutItem(LinkCopy_Click, link, Strings.Copy, Icons.DocumentCopy);
 
                 // We don't want to unfocus the text are when the context menu gets opened
                 flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
@@ -1013,36 +983,39 @@ namespace Telegram.Common
             }
         }
 
-        private static async void LinkOpen_Click(object sender, RoutedEventArgs e)
+        private static async void LinkOpen_Click(string link)
         {
-            var item = sender as MenuFlyoutItem;
-            var entity = item.DataContext as string;
-
-            if (TryCreateUri(entity, out Uri uri))
+            if (TryCreateUri(link, out Uri uri))
             {
                 try
                 {
                     await Launcher.LaunchUriAsync(uri);
                 }
-                catch { }
+                catch
+                {
+                    Logger.Error();
+                }
             }
         }
 
-        private static void LinkCopy_Click(object sender, RoutedEventArgs e)
+        private static void LinkCopy_Click(string link)
         {
-            var item = sender as MenuFlyoutItem;
-            var entity = item.DataContext as string;
-
-            var dataPackage = new DataPackage();
-            dataPackage.SetText(entity);
-            ClipboardEx.TrySetContent(dataPackage);
+            try
+            {
+                var dataPackage = new DataPackage();
+                dataPackage.SetText(link);
+                ClipboardEx.TrySetContent(dataPackage);
+            }
+            catch
+            {
+                Logger.Error();
+            }
         }
 
-        private static async void LinkTranslate_Click(object sender, RoutedEventArgs e)
+        private static async void LinkTranslate_Click(Tuple<ITranslateService, string> tuple)
         {
-            var item = sender as MenuFlyoutItem;
-            var entity = item.DataContext as string;
-            var service = item.Tag as ITranslateService;
+            var entity = tuple.Item2;
+            var service = tuple.Item1;
 
             var language = LanguageIdentification.IdentifyLanguage(entity);
             var popup = new TranslatePopup(service, entity, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, true);

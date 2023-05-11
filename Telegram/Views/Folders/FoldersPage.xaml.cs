@@ -81,7 +81,7 @@ namespace Telegram.Views.Folders
             var element = sender as FrameworkElement;
             var chat = element.DataContext as ChatFolderInfo;
 
-            flyout.CreateFlyoutItem(ViewModel.Delete, chat, Strings.FilterDeleteItem, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(ViewModel.Delete, chat, Strings.FilterDeleteItem, Icons.Delete);
 
             args.ShowAt(flyout, element);
         }

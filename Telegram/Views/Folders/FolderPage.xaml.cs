@@ -53,7 +53,7 @@ namespace Telegram.Views.Folders
             var element = sender as FrameworkElement;
             var chat = element.DataContext as ChatFolderElement;
 
-            flyout.CreateFlyoutItem(viewModel.RemoveIncluded, chat, Strings.StickersRemove, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(viewModel.RemoveIncluded, chat, Strings.StickersRemove, Icons.Delete);
 
             args.ShowAt(flyout, element);
         }
@@ -71,7 +71,7 @@ namespace Telegram.Views.Folders
             var element = sender as FrameworkElement;
             var chat = element.DataContext as ChatFolderElement;
 
-            flyout.CreateFlyoutItem(viewModel.RemoveExcluded, chat, Strings.StickersRemove, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(viewModel.RemoveExcluded, chat, Strings.StickersRemove, Icons.Delete);
 
             args.ShowAt(flyout, element);
         }

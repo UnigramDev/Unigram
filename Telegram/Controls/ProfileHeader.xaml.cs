@@ -589,7 +589,7 @@ namespace Telegram.Controls
 
                 var autodelete = new MenuFlyoutSubItem();
                 autodelete.Text = Strings.AutoDeletePopupTitle;
-                autodelete.Icon = new FontIcon { Glyph = icon, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                autodelete.Icon = MenuFlyoutHelper.CreateIcon(icon);
 
                 void AddToggle(int value, int? parameter, string text, string icon)
                 {
@@ -598,7 +598,7 @@ namespace Telegram.Controls
                     item.IsChecked = parameter != null && value == parameter;
                     item.CommandParameter = parameter;
                     item.Command = ViewModel.SetTimerCommand;
-                    item.Icon = new FontIcon { Glyph = icon, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                    item.Icon = MenuFlyoutHelper.CreateIcon(icon);
 
                     autodelete.Items.Add(item);
                 }
@@ -633,10 +633,10 @@ namespace Telegram.Controls
                     //}
                     if (user.IsContact)
                     {
-                        flyout.CreateFlyoutItem(ViewModel.Share, Strings.ShareContact, new FontIcon { Glyph = Icons.Share });
-                        flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.Unblock : ViewModel.Block, chat.IsBlocked ? Strings.Unblock : Strings.BlockContact, new FontIcon { Glyph = chat.IsBlocked ? Icons.Block : Icons.Block });
-                        flyout.CreateFlyoutItem(ViewModel.Edit, Strings.EditContact, new FontIcon { Glyph = Icons.Edit });
-                        flyout.CreateFlyoutItem(ViewModel.Delete, Strings.DeleteContact, new FontIcon { Glyph = Icons.Delete });
+                        flyout.CreateFlyoutItem(ViewModel.Share, Strings.ShareContact, Icons.Share);
+                        flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.Unblock : ViewModel.Block, chat.IsBlocked ? Strings.Unblock : Strings.BlockContact, chat.IsBlocked ? Icons.Block : Icons.Block);
+                        flyout.CreateFlyoutItem(ViewModel.Edit, Strings.EditContact, Icons.Edit);
+                        flyout.CreateFlyoutItem(ViewModel.Delete, Strings.DeleteContact, Icons.Delete);
                     }
                     else
                     {
@@ -644,49 +644,49 @@ namespace Telegram.Controls
                         {
                             if (bot.CanJoinGroups)
                             {
-                                flyout.CreateFlyoutItem(ViewModel.Invite, Strings.BotInvite, new FontIcon { Glyph = Icons.PersonAdd });
+                                flyout.CreateFlyoutItem(ViewModel.Invite, Strings.BotInvite, Icons.PersonAdd);
                             }
 
-                            flyout.CreateFlyoutItem(() => { }, Strings.BotShare, new FontIcon { Glyph = Icons.Share });
+                            flyout.CreateFlyoutItem(() => { }, Strings.BotShare, Icons.Share);
                         }
                         else
                         {
-                            flyout.CreateFlyoutItem(ViewModel.AddToContacts, Strings.AddContact, new FontIcon { Glyph = Icons.PersonAdd });
+                            flyout.CreateFlyoutItem(ViewModel.AddToContacts, Strings.AddContact, Icons.PersonAdd);
                         }
 
                         if (user.PhoneNumber.Length > 0)
                         {
-                            flyout.CreateFlyoutItem(ViewModel.Share, Strings.ShareContact, new FontIcon { Glyph = Icons.Share });
-                            flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.Unblock : ViewModel.Block, chat.IsBlocked ? Strings.Unblock : Strings.BlockContact, new FontIcon { Glyph = chat.IsBlocked ? Icons.Block : Icons.Block });
+                            flyout.CreateFlyoutItem(ViewModel.Share, Strings.ShareContact, Icons.Share);
+                            flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.Unblock : ViewModel.Block, chat.IsBlocked ? Strings.Unblock : Strings.BlockContact, chat.IsBlocked ? Icons.Block : Icons.Block);
                         }
                         else
                         {
                             if (user.Type is UserTypeBot)
                             {
-                                flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.Unblock : ViewModel.Block, chat.IsBlocked ? Strings.BotRestart : Strings.BotStop, new FontIcon { Glyph = chat.IsBlocked ? Icons.Block : Icons.Block });
+                                flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.Unblock : ViewModel.Block, chat.IsBlocked ? Strings.BotRestart : Strings.BotStop, chat.IsBlocked ? Icons.Block : Icons.Block);
                             }
                             else
                             {
-                                flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.Unblock : ViewModel.Block, chat.IsBlocked ? Strings.Unblock : Strings.BlockContact, new FontIcon { Glyph = chat.IsBlocked ? Icons.Block : Icons.Block });
+                                flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.Unblock : ViewModel.Block, chat.IsBlocked ? Strings.Unblock : Strings.BlockContact, chat.IsBlocked ? Icons.Block : Icons.Block);
                             }
                         }
                     }
 
                     if (ViewModel.IsPremium && fullInfo.PremiumGiftOptions.Count > 0)
                     {
-                        flyout.CreateFlyoutItem(ViewModel.GiftPremium, Strings.GiftPremium, new FontIcon { Glyph = Icons.GiftPremium });
+                        flyout.CreateFlyoutItem(ViewModel.GiftPremium, Strings.GiftPremium, Icons.GiftPremium);
                     }
 
                     if (user.Type is UserTypeRegular
                         && !LastSeenConverter.IsServiceUser(user)
                         && !LastSeenConverter.IsSupportUser(user))
                     {
-                        flyout.CreateFlyoutItem(ViewModel.CreateSecretChat, Strings.StartEncryptedChat, new FontIcon { Glyph = Icons.LockClosed });
+                        flyout.CreateFlyoutItem(ViewModel.CreateSecretChat, Strings.StartEncryptedChat, Icons.LockClosed);
                     }
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(ViewModel.Share, Strings.ShareContact, new FontIcon { Glyph = Icons.Share });
+                    flyout.CreateFlyoutItem(ViewModel.Share, Strings.ShareContact, Icons.Share);
                 }
             }
             //if (writeButton != null)
@@ -711,39 +711,39 @@ namespace Telegram.Controls
                 {
                     if (supergroup.IsChannel)
                     {
-                        //flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.ManageChannelMenu, new FontIcon { Glyph = Icons.Edit });
+                        //flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.ManageChannelMenu, Icons.Edit);
                     }
                     else if (supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanInviteUsers) || chat.Permissions.CanInviteUsers)
                     {
-                        flyout.CreateFlyoutItem(ViewModel.Invite, Strings.AddMember, new FontIcon { Glyph = Icons.PersonAdd });
+                        flyout.CreateFlyoutItem(ViewModel.Invite, Strings.AddMember, Icons.PersonAdd);
                     }
                 }
 
                 if (fullInfo != null && fullInfo.CanGetStatistics)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.OpenStatistics, Strings.Statistics, new FontIcon { Glyph = Icons.DataUsage });
+                    flyout.CreateFlyoutItem(ViewModel.OpenStatistics, Strings.Statistics, Icons.DataUsage);
                 }
 
                 if (!super.IsChannel)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.OpenMembers, Strings.SearchMembers, new FontIcon { Glyph = Icons.Search });
+                    flyout.CreateFlyoutItem(ViewModel.OpenMembers, Strings.SearchMembers, Icons.Search);
                 }
                 else if (supergroup.HasLinkedChat)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.Discuss, Strings.ViewDiscussion, new FontIcon { Glyph = Icons.Comment });
+                    flyout.CreateFlyoutItem(ViewModel.Discuss, Strings.ViewDiscussion, Icons.Comment);
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup basic && basicGroup != null)
             {
                 if (basicGroup.Status is ChatMemberStatusCreator || (basicGroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanInviteUsers) || chat.Permissions.CanInviteUsers)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.Invite, Strings.AddMember, new FontIcon { Glyph = Icons.PersonAdd });
+                    flyout.CreateFlyoutItem(ViewModel.Invite, Strings.AddMember, Icons.PersonAdd);
                 }
 
-                flyout.CreateFlyoutItem(ViewModel.OpenMembers, Strings.SearchMembers, new FontIcon { Glyph = Icons.Search });
+                flyout.CreateFlyoutItem(ViewModel.OpenMembers, Strings.SearchMembers, Icons.Search);
             }
 
-            //flyout.CreateFlyoutItem(null, Strings.AddShortcut, new FontIcon { Glyph = Icons.Pin });
+            //flyout.CreateFlyoutItem(null, Strings.AddShortcut, Icons.Pin);
 
             if (flyout.Items.Count > 0)
             {
@@ -919,16 +919,16 @@ namespace Telegram.Controls
                 {
                     flyout.CreateFlyoutItem(true, () => { },
                         silent ? Strings.SoundOn : Strings.SoundOff,
-                        new FontIcon { Glyph = silent ? Icons.MusicNote2 : Icons.MusicNoteOff2 });
+                        silent ? Icons.MusicNote2 : Icons.MusicNoteOff2);
                 }
 
-                flyout.CreateFlyoutItem<int?>(ViewModel.MuteFor, 60 * 60, Strings.MuteFor1h, new FontIcon { Glyph = Icons.ClockAlarmHour });
-                flyout.CreateFlyoutItem<int?>(ViewModel.MuteFor, null, Strings.MuteForPopup, new FontIcon { Glyph = Icons.AlertSnooze });
+                flyout.CreateFlyoutItem<int?>(ViewModel.MuteFor, 60 * 60, Strings.MuteFor1h, Icons.ClockAlarmHour);
+                flyout.CreateFlyoutItem<int?>(ViewModel.MuteFor, null, Strings.MuteForPopup, Icons.AlertSnooze);
 
                 var toggle = flyout.CreateFlyoutItem(
                     muted ? ViewModel.Unmute : ViewModel.Mute,
                     muted ? Strings.UnmuteNotifications : Strings.MuteNotifications,
-                    new FontIcon { Glyph = muted ? Icons.Speaker3 : Icons.SpeakerOff });
+                    muted ? Icons.Speaker3 : Icons.SpeakerOff);
 
                 if (muted is false)
                 {

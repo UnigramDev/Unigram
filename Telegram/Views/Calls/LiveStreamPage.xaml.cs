@@ -419,18 +419,18 @@ namespace Telegram.Views.Calls
 
             if (call.CanBeManaged)
             {
-                flyout.CreateFlyoutItem(SetTitle, _service.IsChannel ? Strings.VoipChannelEditTitle : Strings.VoipGroupEditTitle, new FontIcon { Glyph = Icons.Edit });
+                flyout.CreateFlyoutItem(SetTitle, _service.IsChannel ? Strings.VoipChannelEditTitle : Strings.VoipGroupEditTitle, Icons.Edit);
             }
 
             if (call.CanBeManaged && call.ScheduledStartDate == 0)
             {
                 if (call.RecordDuration > 0)
                 {
-                    flyout.CreateFlyoutItem(StopRecording, Strings.VoipGroupStopRecordCall, new FontIcon { Glyph = Icons.Record });
+                    flyout.CreateFlyoutItem(StopRecording, Strings.VoipGroupStopRecordCall, Icons.Record);
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(StartRecording, Strings.VoipGroupRecordCall, new FontIcon { Glyph = Icons.Record });
+                    flyout.CreateFlyoutItem(StartRecording, Strings.VoipGroupRecordCall, Icons.Record);
                 }
             }
 
@@ -450,7 +450,7 @@ namespace Telegram.Views.Calls
 
                 var output = new MenuFlyoutSubItem();
                 output.Text = "Speaker";
-                output.Icon = new FontIcon { Glyph = Icons.Speaker3, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
                 output.Items.Add(defaultOutput);
 
                 var outputDevices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
@@ -470,14 +470,14 @@ namespace Telegram.Views.Calls
                 flyout.Items.Add(output);
             }
 
-            //flyout.CreateFlyoutItem(ShareInviteLink, Strings.VoipGroupShareInviteLink, new FontIcon { Glyph = Icons.Link });
+            //flyout.CreateFlyoutItem(ShareInviteLink, Strings.VoipGroupShareInviteLink, Icons.Link);
 
             if (chat.Type is ChatTypeSupergroup && _clientService.TryGetSupergroup(chat, out Supergroup supergroup))
             {
                 if (supergroup.Status is ChatMemberStatusCreator)
                 {
                     flyout.CreateFlyoutSeparator();
-                    flyout.CreateFlyoutItem(StreamWith, "Stream with...", new FontIcon { Glyph = Icons.Live });
+                    flyout.CreateFlyoutItem(StreamWith, "Stream with...", Icons.Live);
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup && _clientService.TryGetBasicGroup(chat, out BasicGroup basicGroup))
@@ -485,7 +485,7 @@ namespace Telegram.Views.Calls
                 if (basicGroup.Status is ChatMemberStatusCreator)
                 {
                     flyout.CreateFlyoutSeparator();
-                    flyout.CreateFlyoutItem(StreamWith, "Stream with...", new FontIcon { Glyph = Icons.Live });
+                    flyout.CreateFlyoutItem(StreamWith, "Stream with...", Icons.Live);
                 }
             }
 
@@ -493,7 +493,7 @@ namespace Telegram.Views.Calls
             {
                 flyout.CreateFlyoutSeparator();
 
-                var discard = flyout.CreateFlyoutItem(Discard, _service.IsChannel ? Strings.VoipChannelEndChat : Strings.VoipGroupEndChat, new FontIcon { Glyph = Icons.Dismiss });
+                var discard = flyout.CreateFlyoutItem(Discard, _service.IsChannel ? Strings.VoipChannelEndChat : Strings.VoipGroupEndChat, Icons.Dismiss);
                 discard.Foreground = new SolidColorBrush(Colors.IndianRed);
             }
 

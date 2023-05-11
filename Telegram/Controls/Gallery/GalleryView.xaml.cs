@@ -1120,19 +1120,19 @@ namespace Telegram.Controls.Gallery
             {
                 var speed = new MenuFlyoutSubItem();
                 speed.Text = Strings.Speed;
-                speed.Icon = new FontIcon { Glyph = Icons.TopSpeed, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+                speed.Icon = MenuFlyoutHelper.CreateIcon(Icons.TopSpeed);
                 speed.CreatePlaybackSpeed(_mediaPlayer.PlaybackSession.PlaybackRate, UpdatePlaybackSpeed);
 
                 flyout.Items.Add(speed);
                 flyout.CreateFlyoutSeparator();
             }
 
-            flyout.CreateFlyoutItem(() => item.CanView, viewModel.View, Strings.ShowInChat, new FontIcon { Glyph = Icons.Comment });
-            flyout.CreateFlyoutItem(() => item.CanShare, viewModel.Forward, Strings.Forward, new FontIcon { Glyph = Icons.Share });
-            flyout.CreateFlyoutItem(() => item.CanCopy, viewModel.Copy, Strings.Copy, new FontIcon { Glyph = Icons.DocumentCopy }, VirtualKey.C);
-            flyout.CreateFlyoutItem(() => item.CanSave, viewModel.Save, Strings.SaveAs, new FontIcon { Glyph = Icons.SaveAs }, VirtualKey.S);
-            flyout.CreateFlyoutItem(() => viewModel.CanOpenWith, viewModel.OpenWith, Strings.OpenInExternalApp, new FontIcon { Glyph = Icons.OpenIn });
-            flyout.CreateFlyoutItem(() => viewModel.CanDelete, viewModel.Delete, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(() => item.CanView, viewModel.View, Strings.ShowInChat, Icons.Comment);
+            flyout.CreateFlyoutItem(() => item.CanShare, viewModel.Forward, Strings.Forward, Icons.Share);
+            flyout.CreateFlyoutItem(() => item.CanCopy, viewModel.Copy, Strings.Copy, Icons.DocumentCopy, VirtualKey.C);
+            flyout.CreateFlyoutItem(() => item.CanSave, viewModel.Save, Strings.SaveAs, Icons.SaveAs, VirtualKey.S);
+            flyout.CreateFlyoutItem(() => viewModel.CanOpenWith, viewModel.OpenWith, Strings.OpenInExternalApp, Icons.OpenIn);
+            flyout.CreateFlyoutItem(() => viewModel.CanDelete, viewModel.Delete, Strings.Delete, Icons.Delete);
         }
 
         #endregion

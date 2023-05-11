@@ -31,7 +31,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
@@ -299,26 +298,26 @@ namespace Telegram.Controls
             var formatting = new MenuFlyoutSubItem
             {
                 Text = Strings.Formatting,
-                Icon = new FontIcon { Glyph = Icons.TextFont, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily }
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.TextFont)
             };
 
-            formatting.CreateFlyoutItem(length, ToggleBold, Strings.Bold, new FontIcon { Glyph = Icons.TextBold }, VirtualKey.B);
-            formatting.CreateFlyoutItem(length, ToggleItalic, Strings.Italic, new FontIcon { Glyph = Icons.TextItalic }, VirtualKey.I);
-            formatting.CreateFlyoutItem(length, ToggleUnderline, Strings.Underline, new FontIcon { Glyph = Icons.TextUnderline }, VirtualKey.U);
-            formatting.CreateFlyoutItem(length, ToggleStrikethrough, Strings.Strike, new FontIcon { Glyph = Icons.TextStrikethrough }, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            formatting.CreateFlyoutItem(length && format.Name != "Consolas", ToggleMonospace, Strings.Mono, new FontIcon { Glyph = Icons.Code }, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            formatting.CreateFlyoutItem(length, ToggleSpoiler, Strings.Spoiler, new FontIcon { Glyph = Icons.TabInPrivate }, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            formatting.CreateFlyoutItem(length, ToggleBold, Strings.Bold, Icons.TextBold, VirtualKey.B);
+            formatting.CreateFlyoutItem(length, ToggleItalic, Strings.Italic, Icons.TextItalic, VirtualKey.I);
+            formatting.CreateFlyoutItem(length, ToggleUnderline, Strings.Underline, Icons.TextUnderline, VirtualKey.U);
+            formatting.CreateFlyoutItem(length, ToggleStrikethrough, Strings.Strike, Icons.TextStrikethrough, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            formatting.CreateFlyoutItem(length && format.Name != "Consolas", ToggleMonospace, Strings.Mono, Icons.Code, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+            formatting.CreateFlyoutItem(length, ToggleSpoiler, Strings.Spoiler, Icons.TabInPrivate, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
             formatting.CreateFlyoutSeparator();
-            formatting.CreateFlyoutItem(!mention, CreateLink, clone.Link.Length > 0 ? Strings.EditLink : Strings.CreateLink, new FontIcon { Glyph = Icons.Link }, VirtualKey.K);
+            formatting.CreateFlyoutItem(!mention, CreateLink, clone.Link.Length > 0 ? Strings.EditLink : Strings.CreateLink, Icons.Link, VirtualKey.K);
             formatting.CreateFlyoutSeparator();
             formatting.CreateFlyoutItem(length && !IsDefault(format), ToggleRegular, Strings.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
 
-            flyout.CreateFlyoutItem(Document.CanUndo(), ContextUndo_Click, Strings.Undo, new FontIcon { Glyph = Icons.ArrowUndo }, VirtualKey.Z);
-            flyout.CreateFlyoutItem(Document.CanRedo(), ContextRedo_Click, Strings.Redo, new FontIcon { Glyph = Icons.ArrowRedo }, VirtualKey.Y);
+            flyout.CreateFlyoutItem(Document.CanUndo(), ContextUndo_Click, Strings.Undo, Icons.ArrowUndo, VirtualKey.Z);
+            flyout.CreateFlyoutItem(Document.CanRedo(), ContextRedo_Click, Strings.Redo, Icons.ArrowRedo, VirtualKey.Y);
             flyout.CreateFlyoutSeparator();
-            flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCut_Click, Strings.Cut, new FontIcon { Glyph = Icons.Cut }, VirtualKey.X);
-            flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCopy_Click, Strings.Copy, new FontIcon { Glyph = Icons.DocumentCopy }, VirtualKey.C);
-            flyout.CreateFlyoutItem(Document.CanPaste(), ContextPaste_Click, Strings.Paste, new FontIcon { Glyph = Icons.ClipboardPaste }, VirtualKey.V);
+            flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCut_Click, Strings.Cut, Icons.Cut, VirtualKey.X);
+            flyout.CreateFlyoutItem(length && Document.CanCopy(), ContextCopy_Click, Strings.Copy, Icons.DocumentCopy, VirtualKey.C);
+            flyout.CreateFlyoutItem(Document.CanPaste(), ContextPaste_Click, Strings.Paste, Icons.ClipboardPaste, VirtualKey.V);
             flyout.CreateFlyoutItem(length, ContextDelete_Click, Strings.Delete);
             flyout.CreateFlyoutSeparator();
             flyout.Items.Add(formatting);

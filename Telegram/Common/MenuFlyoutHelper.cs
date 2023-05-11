@@ -84,6 +84,16 @@ namespace Telegram.Common
             args.Handled = true;
         }
 
+        public static IconElement CreateIcon(string glyph)
+        {
+            return new FontIcon
+            {
+                Glyph = glyph,
+                FontSize = 20,
+                FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+            };
+        }
+
         #region Playback speed
 
         public static void CreatePlaybackSpeed(this MenuFlyout flyout, double value, Action<double> valueChanged)
@@ -162,17 +172,17 @@ namespace Telegram.Common
             return null;
         }
 
-        public static void CreateFlyoutItem<T>(this MenuFlyout flyout, Func<T, bool> visibility, Action<T> command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T : class
+        public static void CreateFlyoutItem<T>(this MenuFlyout flyout, Func<T, bool> visibility, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T : class
         {
             flyout.Items.CreateFlyoutItem(visibility, command, parameter, text, icon, key, modifiers);
         }
 
-        public static void CreateFlyoutItem<T>(this MenuFlyoutSubItem flyout, Func<T, bool> visibility, Action<T> command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T : class
+        public static void CreateFlyoutItem<T>(this MenuFlyoutSubItem flyout, Func<T, bool> visibility, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T : class
         {
             flyout.Items.CreateFlyoutItem(visibility, command, parameter, text, icon, key, modifiers);
         }
 
-        public static void CreateFlyoutItem<T>(this IList<MenuFlyoutItemBase> items, Func<T, bool> visibility, Action<T> command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T : class
+        public static void CreateFlyoutItem<T>(this IList<MenuFlyoutItemBase> items, Func<T, bool> visibility, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T : class
         {
             var value = visibility(parameter);
             if (value)
@@ -184,14 +194,12 @@ namespace Telegram.Common
 
                 if (icon != null)
                 {
-                    if (icon is FontIcon fontIcon)
+                    flyoutItem.Icon = new FontIcon
                     {
-                        //fontIcon.Margin = new Thickness(-2);
-                        fontIcon.FontSize = 20;
-                        fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
-                    }
-
-                    flyoutItem.Icon = icon;
+                        Glyph = icon,
+                        FontSize = 20,
+                        FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                    };
                 }
 
                 if (key.HasValue)
@@ -203,17 +211,17 @@ namespace Telegram.Common
             }
         }
 
-        public static void CreateFlyoutItem(this MenuFlyout flyout, Func<bool> visibility, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static void CreateFlyoutItem(this MenuFlyout flyout, Func<bool> visibility, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             flyout.Items.CreateFlyoutItem(visibility, command, text, icon, key, modifiers);
         }
 
-        public static void CreateFlyoutItem(this MenuFlyoutSubItem flyout, Func<bool> visibility, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static void CreateFlyoutItem(this MenuFlyoutSubItem flyout, Func<bool> visibility, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             flyout.Items.CreateFlyoutItem(visibility, command, text, icon, key, modifiers);
         }
 
-        public static void CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, Func<bool> visibility, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static void CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, Func<bool> visibility, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             var value = visibility();
             if (value)
@@ -224,14 +232,12 @@ namespace Telegram.Common
 
                 if (icon != null)
                 {
-                    if (icon is FontIcon fontIcon)
+                    flyoutItem.Icon = new FontIcon
                     {
-                        //fontIcon.Margin = new Thickness(-2);
-                        fontIcon.FontSize = 20;
-                        fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
-                    }
-
-                    flyoutItem.Icon = icon;
+                        Glyph = icon,
+                        FontSize = 20,
+                        FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                    };
                 }
 
                 if (key.HasValue)
@@ -244,7 +250,7 @@ namespace Telegram.Common
         }
 
         // Probably used only for members context menu
-        public static void CreateFlyoutItem<T1, T2, T3>(this MenuFlyout flyout, Func<T1, T2, T3, bool> visibility, Action<T3> command, T1 chatType, T2 status, T3 parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T3 : class
+        public static void CreateFlyoutItem<T1, T2, T3>(this MenuFlyout flyout, Func<T1, T2, T3, bool> visibility, Action<T3> command, T1 chatType, T2 status, T3 parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control) where T3 : class
         {
             var value = visibility(chatType, status, parameter);
             if (value)
@@ -256,14 +262,12 @@ namespace Telegram.Common
 
                 if (icon != null)
                 {
-                    if (icon is FontIcon fontIcon)
+                    flyoutItem.Icon = new FontIcon
                     {
-                        //fontIcon.Margin = new Thickness(-2);
-                        fontIcon.FontSize = 20;
-                        fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
-                    }
-
-                    flyoutItem.Icon = icon;
+                        Glyph = icon,
+                        FontSize = 20,
+                        FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                    };
                 }
 
                 if (key.HasValue)
@@ -275,17 +279,17 @@ namespace Telegram.Common
             }
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyout flyout, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyout flyout, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             return CreateFlyoutItem(flyout.Items, command, text, icon, key, modifiers);
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyoutSubItem flyout, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyoutSubItem flyout, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             return CreateFlyoutItem(flyout.Items, command, text, icon, key, modifiers);
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.IsEnabled = command != null;
@@ -294,14 +298,12 @@ namespace Telegram.Common
 
             if (icon != null)
             {
-                if (icon is FontIcon fontIcon)
+                flyoutItem.Icon = new FontIcon
                 {
-                    //fontIcon.Margin = new Thickness(-2);
-                    fontIcon.FontSize = 20;
-                    fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
-                }
-
-                flyoutItem.Icon = icon;
+                    Glyph = icon,
+                    FontSize = 20,
+                    FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                };
             }
 
             if (key.HasValue)
@@ -313,17 +315,17 @@ namespace Telegram.Common
             return flyoutItem;
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyout flyout, bool enabled, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyout flyout, bool enabled, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             return flyout.Items.CreateFlyoutItem(enabled, command, text, icon, key, modifiers);
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyoutSubItem flyout, bool enabled, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyoutSubItem flyout, bool enabled, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             return flyout.Items.CreateFlyoutItem(enabled, command, text, icon, key, modifiers);
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, bool enabled, Action command, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, bool enabled, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.IsEnabled = enabled;
@@ -332,14 +334,12 @@ namespace Telegram.Common
 
             if (icon != null)
             {
-                if (icon is FontIcon fontIcon)
+                flyoutItem.Icon = new FontIcon
                 {
-                    //fontIcon.Margin = new Thickness(-2);
-                    fontIcon.FontSize = 20;
-                    fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
-                }
-
-                flyoutItem.Icon = icon;
+                    Glyph = icon,
+                    FontSize = 20,
+                    FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                };
             }
 
             if (key.HasValue)
@@ -351,17 +351,17 @@ namespace Telegram.Common
             return flyoutItem;
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem<T>(this MenuFlyout flyout, Action<T> command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem<T>(this MenuFlyout flyout, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             return flyout.Items.CreateFlyoutItem(command, parameter, text, icon, key, modifiers);
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem<T>(this MenuFlyoutSubItem flyout, Action<T> command, T parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem<T>(this MenuFlyoutSubItem flyout, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             return flyout.Items.CreateFlyoutItem(command, parameter, text, icon, key, modifiers);
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem<T>(this IList<MenuFlyoutItemBase> items, Action<T> command, object parameter, string text, IconElement icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
+        public static MenuFlyoutItem CreateFlyoutItem<T>(this IList<MenuFlyoutItemBase> items, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control)
         {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.CommandParameter = parameter;
@@ -370,14 +370,12 @@ namespace Telegram.Common
 
             if (icon != null)
             {
-                if (icon is FontIcon fontIcon)
+                flyoutItem.Icon = new FontIcon
                 {
-                    //fontIcon.Margin = new Thickness(-2);
-                    fontIcon.FontSize = 20;
-                    fontIcon.FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily;
-                }
-
-                flyoutItem.Icon = icon;
+                    Glyph = icon,
+                    FontSize = 20,
+                    FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily,
+                };
             }
 
             if (key.HasValue)

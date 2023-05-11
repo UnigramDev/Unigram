@@ -26,20 +26,20 @@ namespace Telegram.Views
             }
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.ViewSticker, sticker, Strings.ViewPackPreview, new FontIcon { Glyph = Icons.Sticker });
+            flyout.CreateFlyoutItem(ViewModel.ViewSticker, sticker, Strings.ViewPackPreview, Icons.Sticker);
 
             if (ViewModel.ClientService.IsStickerFavorite(sticker.StickerValue.Id))
             {
-                flyout.CreateFlyoutItem(ViewModel.RemoveFavoriteSticker, sticker, Strings.DeleteFromFavorites, new FontIcon { Glyph = Icons.StarOff });
+                flyout.CreateFlyoutItem(ViewModel.RemoveFavoriteSticker, sticker, Strings.DeleteFromFavorites, Icons.StarOff);
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.AddFavoriteSticker, sticker, Strings.AddToFavorites, new FontIcon { Glyph = Icons.Star });
+                flyout.CreateFlyoutItem(ViewModel.AddFavoriteSticker, sticker, Strings.AddToFavorites, Icons.Star);
             }
 
             if (ViewModel.ClientService.IsStickerRecent(sticker.StickerValue.Id))
             {
-                flyout.CreateFlyoutItem(ViewModel.RemoveRecentSticker, sticker, Strings.DeleteFromRecent, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.RemoveRecentSticker, sticker, Strings.DeleteFromRecent, Icons.Delete);
             }
 
             if (ViewModel.Type == ViewModels.DialogType.History)
@@ -53,8 +53,8 @@ namespace Telegram.Views
                 var self = ViewModel.ClientService.IsSavedMessages(chat);
 
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(anim => ViewModel.SendSticker(anim, null, true), sticker, Strings.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
-                flyout.CreateFlyoutItem(anim => ViewModel.SendSticker(anim, true, null), sticker, self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
+                flyout.CreateFlyoutItem(anim => ViewModel.SendSticker(anim, null, true), sticker, Strings.SendWithoutSound, Icons.AlertOff);
+                flyout.CreateFlyoutItem(anim => ViewModel.SendSticker(anim, true, null), sticker, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
             }
 
             args.ShowAt(flyout, element);
@@ -74,11 +74,11 @@ namespace Telegram.Views
 
             if (ViewModel.ClientService.IsAnimationSaved(animation.AnimationValue.Id))
             {
-                flyout.CreateFlyoutItem(ViewModel.DeleteAnimation, animation, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.DeleteAnimation, animation, Strings.Delete, Icons.Delete);
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.SaveAnimation, animation, Strings.SaveToGIFs, new FontIcon { Glyph = Icons.Gif });
+                flyout.CreateFlyoutItem(ViewModel.SaveAnimation, animation, Strings.SaveToGIFs, Icons.Gif);
             }
 
             if (ViewModel.Type == ViewModels.DialogType.History)
@@ -92,8 +92,8 @@ namespace Telegram.Views
                 var self = ViewModel.ClientService.IsSavedMessages(chat);
 
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(anim => ViewModel.SendAnimation(anim, null, true), animation, Strings.SendWithoutSound, new FontIcon { Glyph = Icons.AlertOff });
-                flyout.CreateFlyoutItem(anim => ViewModel.SendAnimation(anim, true, null), animation, self ? Strings.SetReminder : Strings.ScheduleMessage, new FontIcon { Glyph = Icons.CalendarClock });
+                flyout.CreateFlyoutItem(anim => ViewModel.SendAnimation(anim, null, true), animation, Strings.SendWithoutSound, Icons.AlertOff);
+                flyout.CreateFlyoutItem(anim => ViewModel.SendAnimation(anim, true, null), animation, self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
             }
 
             args.ShowAt(flyout, element);

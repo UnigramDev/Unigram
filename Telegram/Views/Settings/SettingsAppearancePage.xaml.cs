@@ -84,14 +84,14 @@ namespace Telegram.Views.Settings
             var theme = List.ItemFromContainer(element) as ChatTheme;
 
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.CreateTheme, theme, Strings.CreateNewThemeMenu, new FontIcon { Glyph = Icons.Color });
+            flyout.CreateFlyoutItem(ViewModel.CreateTheme, theme, Strings.CreateNewThemeMenu, Icons.Color);
 
             //if (!theme.IsOfficial)
             //{
             //    flyout.CreateFlyoutSeparator();
-            //    flyout.CreateFlyoutItem(ViewModel.ThemeShareCommand, theme, Strings.ShareFile, new FontIcon { Glyph = Icons.Share });
-            //    flyout.CreateFlyoutItem(ViewModel.ThemeEditCommand, theme, Strings.Edit, new FontIcon { Glyph = Icons.Edit });
-            //    flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+            //    flyout.CreateFlyoutItem(ViewModel.ThemeShareCommand, theme, Strings.ShareFile, Icons.Share);
+            //    flyout.CreateFlyoutItem(ViewModel.ThemeEditCommand, theme, Strings.Edit, Icons.Edit);
+            //    flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Delete, Icons.Delete);
             //}
 
             args.ShowAt(flyout, element);

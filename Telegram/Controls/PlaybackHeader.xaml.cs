@@ -9,7 +9,6 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Converters;
-using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -23,7 +22,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
@@ -325,7 +323,7 @@ namespace Telegram.Controls
         {
             var slider = new MenuFlyoutSlider
             {
-                Icon = new FontIcon { FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily },
+                Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3),
                 TextValueConverter = new TextValueProvider(newValue => string.Format("{0:P0}", newValue / 100)),
                 IconValueConverter = new IconValueProvider(newValue => newValue switch
                 {

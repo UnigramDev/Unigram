@@ -12,7 +12,6 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Native.Calls;
-using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Devices.Enumeration;
@@ -822,7 +821,7 @@ namespace Telegram.Views.Calls
             }
         }
 
-        private async void Menu_ContextRequested(object sender, RoutedEventArgs e)
+        private void Menu_ContextRequested(object sender, RoutedEventArgs e)
         {
             var flyout = new MenuFlyout();
 
@@ -832,7 +831,7 @@ namespace Telegram.Views.Calls
 
             var video = new MenuFlyoutSubItem();
             video.Text = "Webcam";
-            video.Icon = new FontIcon { Glyph = Icons.Camera, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            video.Icon = MenuFlyoutHelper.CreateIcon(Icons.Camera);
 
             _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
             {
@@ -861,7 +860,7 @@ namespace Telegram.Views.Calls
 
             var input = new MenuFlyoutSubItem();
             input.Text = "Microphone";
-            input.Icon = new FontIcon { Glyph = Icons.MicOn, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            input.Icon = MenuFlyoutHelper.CreateIcon(Icons.MicOn);
             input.Items.Add(defaultInput);
 
             _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>
@@ -891,7 +890,7 @@ namespace Telegram.Views.Calls
 
             var output = new MenuFlyoutSubItem();
             output.Text = "Speaker";
-            output.Icon = new FontIcon { Glyph = Icons.Speaker3, FontFamily = BootStrapper.Current.Resources["TelegramThemeFontFamily"] as FontFamily };
+            output.Icon = MenuFlyoutHelper.CreateIcon(Icons.Speaker3);
             output.Items.Add(defaultOutput);
 
             _dispatcherQueue.TryEnqueue(DispatcherQueuePriority.Normal, async () =>

@@ -468,8 +468,8 @@ namespace Telegram.Views.Host
                 {
                     var flyout = new MenuFlyout();
 
-                    flyout.CreateFlyoutItem(() => Switch(_lifetime.Create(test: false)), "Production Server", new FontIcon { Glyph = Icons.Globe });
-                    flyout.CreateFlyoutItem(() => Switch(_lifetime.Create(test: true)), "Test Server", new FontIcon { Glyph = Icons.Bug });
+                    flyout.CreateFlyoutItem(() => Switch(_lifetime.Create(test: false)), "Production Server", Icons.Globe);
+                    flyout.CreateFlyoutItem(() => Switch(_lifetime.Create(test: true)), "Test Server", Icons.Bug);
 
                     args.ShowAt(flyout, container);
                 }
@@ -480,8 +480,8 @@ namespace Telegram.Views.Host
                 {
                     var flyout = new MenuFlyout();
 
-                    flyout.CreateFlyoutItem(ToggleArchive, Strings.ArchiveMoveToChatList, new FontIcon { Glyph = Icons.Expand });
-                    flyout.CreateFlyoutItem(page.ViewModel.MarkFolderAsRead, ChatFolderViewModel.Archive, Strings.MarkAllAsRead, new FontIcon { Glyph = Icons.MarkAsRead });
+                    flyout.CreateFlyoutItem(ToggleArchive, Strings.ArchiveMoveToChatList, Icons.Expand);
+                    flyout.CreateFlyoutItem(page.ViewModel.MarkFolderAsRead, ChatFolderViewModel.Archive, Strings.MarkAllAsRead, Icons.MarkAsRead);
 
                     args.ShowAt(flyout, container);
                 }
@@ -521,6 +521,7 @@ namespace Telegram.Views.Host
                 var user = session.ClientService.GetUser(session.UserId);
                 if (user == null)
                 {
+                    session.ClientService.Send(new GetUser(session.UserId));
                     return;
                 }
 

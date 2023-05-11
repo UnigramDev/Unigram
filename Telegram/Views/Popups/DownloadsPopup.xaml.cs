@@ -63,18 +63,18 @@ namespace Telegram.Views.Popups
 
             if (viewModel.TotalActiveCount > 0)
             {
-                flyout.CreateFlyoutItem(ViewModel.ToggleAllPaused, Strings.PauseAll, new FontIcon { Glyph = Icons.Pause });
+                flyout.CreateFlyoutItem(ViewModel.ToggleAllPaused, Strings.PauseAll, Icons.Pause);
             }
             else if (viewModel.TotalPausedCount > 0)
             {
-                flyout.CreateFlyoutItem(ViewModel.ToggleAllPaused, Strings.ResumeAll, new FontIcon { Glyph = Icons.Play });
+                flyout.CreateFlyoutItem(ViewModel.ToggleAllPaused, Strings.ResumeAll, Icons.Play);
             }
 
-            flyout.CreateFlyoutItem(ViewModel.OpenSettings, Strings.Settings, new FontIcon { Glyph = Icons.Settings });
+            flyout.CreateFlyoutItem(ViewModel.OpenSettings, Strings.Settings, Icons.Settings);
 
             if (viewModel.Items.Count > 0)
             {
-                flyout.CreateFlyoutItem(ViewModel.RemoveAll, Strings.DeleteAll, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.RemoveAll, Strings.DeleteAll, Icons.Delete);
             }
 
             flyout.ShowAt(sender as DependencyObject, FlyoutPlacementMode.BottomEdgeAlignedRight);
@@ -116,18 +116,18 @@ namespace Telegram.Views.Popups
 
             if (fileDownload.CompleteDate == 0)
             {
-                flyout.CreateFlyoutItem(ViewModel.RemoveFileDownload, fileDownload, Strings.AccActionCancelDownload, new FontIcon { Glyph = Icons.Dismiss });
-                flyout.CreateFlyoutItem(ViewModel.ViewFileDownload, fileDownload, Strings.ViewInChat, new FontIcon { Glyph = Icons.Comment });
+                flyout.CreateFlyoutItem(ViewModel.RemoveFileDownload, fileDownload, Strings.AccActionCancelDownload, Icons.Dismiss);
+                flyout.CreateFlyoutItem(ViewModel.ViewFileDownload, fileDownload, Strings.ViewInChat, Icons.Comment);
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.ViewFileDownload, fileDownload, Strings.ViewInChat, new FontIcon { Glyph = Icons.Comment });
-                flyout.CreateFlyoutItem(ViewModel.ShowFileDownload, fileDownload, Strings.ShowInFolder, new FontIcon { Glyph = Icons.FolderOpen });
+                flyout.CreateFlyoutItem(ViewModel.ViewFileDownload, fileDownload, Strings.ViewInChat, Icons.Comment);
+                flyout.CreateFlyoutItem(ViewModel.ShowFileDownload, fileDownload, Strings.ShowInFolder, Icons.FolderOpen);
 
-                flyout.CreateFlyoutItem(ViewModel.RemoveFileDownload, fileDownload, Strings.DeleteFromRecent, new FontIcon { Glyph = Icons.Delete });
+                flyout.CreateFlyoutItem(ViewModel.RemoveFileDownload, fileDownload, Strings.DeleteFromRecent, Icons.Delete);
 
                 //flyout.CreateFlyoutSeparator();
-                //flyout.CreateFlyoutItem(_ => { }, fileDownload, Strings.lng_context_select_msg, new FontIcon { Glyph = Icons.CheckmarkCircle });
+                //flyout.CreateFlyoutItem(_ => { }, fileDownload, Strings.lng_context_select_msg, Icons.CheckmarkCircle);
             }
 
             args.ShowAt(flyout, sender as FrameworkElement);

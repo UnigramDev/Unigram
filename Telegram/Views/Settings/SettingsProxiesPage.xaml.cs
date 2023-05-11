@@ -45,11 +45,11 @@ namespace Telegram.Views.Settings
 
             if (proxy.Type is ProxyTypeMtproto or ProxyTypeSocks5)
             {
-                flyout.CreateFlyoutItem(ViewModel.Share, proxy, Strings.ShareFile, new FontIcon { Glyph = Icons.Share });
+                flyout.CreateFlyoutItem(ViewModel.Share, proxy, Strings.ShareFile, Icons.Share);
             }
 
-            flyout.CreateFlyoutItem(ViewModel.Edit, proxy, Strings.Edit, new FontIcon { Glyph = Icons.Edit });
-            flyout.CreateFlyoutItem(ViewModel.Remove, proxy, Strings.Delete, new FontIcon { Glyph = Icons.Delete });
+            flyout.CreateFlyoutItem(ViewModel.Edit, proxy, Strings.Edit, Icons.Edit);
+            flyout.CreateFlyoutItem(ViewModel.Remove, proxy, Strings.Delete, Icons.Delete);
 
             args.ShowAt(flyout, element);
         }
