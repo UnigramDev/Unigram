@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System.Collections.Generic;
 using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -20,6 +21,8 @@ namespace Telegram.Controls
 
         public MasterDetailState _viewState;
 
+        private readonly Dictionary<long, SelectorItem> _itemToSelector = new();
+
         public ChatListListView()
         {
             DefaultStyleKey = typeof(ListView);
@@ -28,13 +31,46 @@ namespace Telegram.Controls
             RegisterPropertyChangedCallback(SelectionModeProperty, OnSelectionModeChanged);
         }
 
+        public bool TryGetChatAndCell(long chatId, out Chat chat, out ChatCell cell)
+        {
+            if (_itemToSelector.TryGetValue(chatId, out SelectorItem container))
+            {
+                chat = container.Tag as Chat;
+                cell = container.ContentTemplateRoot as ChatCell;
+                return chat != null && cell != null;
+            }
+
+            chat = null;
+            cell = null;
+            return false;
+        }
+
+        public bool TryGetCell(Chat chat, out ChatCell cell)
+        {
+            if (_itemToSelector.TryGetValue(chat.Id, out SelectorItem container))
+            {
+                cell = container.ContentTemplateRoot as ChatCell;
+                return cell != null;
+            }
+
+            cell = null;
+            return false;
+        }
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.InRecycleQueue)
+            if (args.Item is not Chat chat)
             {
                 return;
             }
 
+            if (args.InRecycleQueue)
+            {
+                _itemToSelector.Remove(chat.Id);
+                return;
+            }
+
+            _itemToSelector[chat.Id] = args.ItemContainer;
             args.ItemContainer.Tag = args.Item;
 
             if (args.Phase == 0)
@@ -49,8 +85,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var content = args.ItemContainer.ContentTemplateRoot as ChatCell;
-            if (content != null && args.Item is Chat chat)
+            if (args.ItemContainer.ContentTemplateRoot is ChatCell content)
             {
                 content.UpdateViewState(chat, _viewState == MasterDetailState.Compact, false);
                 content.UpdateChat(ViewModel.ClientService, chat, ViewModel.Items.ChatList);
@@ -74,24 +109,12 @@ namespace Telegram.Controls
 
         public void UpdateVisibleChats()
         {
-            var panel = ItemsPanelRoot as ItemsStackPanel;
-            if (panel == null)
+            // TODO: supposedly, _itemToSelector should only contain cached items
+            foreach (var item in _itemToSelector)
             {
-                return;
-            }
-
-            foreach (SelectorItem container in panel.Children)
-            {
-                var content = container.ContentTemplateRoot as ChatCell;
-                if (content != null)
+                if (item.Value.ContentTemplateRoot is ChatCell chatView && ViewModel.ClientService.TryGetChat(item.Key, out Chat chat))
                 {
-                    var item = ItemFromContainer(container) as Chat;
-                    if (item == null)
-                    {
-                        continue;
-                    }
-
-                    content.UpdateViewState(item, _viewState == MasterDetailState.Compact, true);
+                    chatView.UpdateViewState(chat, _viewState == MasterDetailState.Compact, true);
                 }
             }
         }

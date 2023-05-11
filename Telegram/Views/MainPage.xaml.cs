@@ -377,22 +377,9 @@ namespace Telegram.Views
 
             update(chat);
 
-            //var position = chat.GetPosition(ViewModel.Chats.Items.ChatList);
-            //if (position == null)
-            //{
-            //    return;
-            //}
-
             this.BeginOnUIThread(() =>
             {
-                var container = ChatsList.ContainerFromItem(chat) as ListViewItem;
-                if (container == null)
-                {
-                    return;
-                }
-
-                var chatView = container.ContentTemplateRoot as ChatCell;
-                if (chatView != null)
+                if (ChatsList.TryGetCell(chat, out ChatCell chatView))
                 {
                     action(chatView, chat);
                 }
@@ -401,29 +388,20 @@ namespace Telegram.Views
 
         private void Handle(long chatId, Action<ChatCell, Chat> action)
         {
-            var chat = _clientService.GetChat(chatId);
-            if (chat == null)
+            this.BeginOnUIThread(() =>
             {
-                return;
-            }
-
-            //var position = chat.GetPosition(ViewModel.Chats.Items.ChatList);
-            //if (position == null)
-            //{
-            //    return;
-            //}
-
-            Handle(chat, action);
+                if (ChatsList.TryGetChatAndCell(chatId, out Chat chat, out ChatCell chatView))
+                {
+                    action(chatView, chat);
+                }
+            });
         }
 
         private void Handle(Chat chat, Action<ChatCell, Chat> action)
         {
             this.BeginOnUIThread(() =>
             {
-                var container = ChatsList.ContainerFromItem(chat) as ListViewItem;
-
-                var chatView = container?.ContentTemplateRoot as ChatCell;
-                if (chatView != null)
+                if (ChatsList.TryGetCell(chat, out ChatCell chatView))
                 {
                     action(chatView, chat);
                 }
