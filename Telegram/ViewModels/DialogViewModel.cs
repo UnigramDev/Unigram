@@ -1207,7 +1207,7 @@ namespace Telegram.ViewModels
                     {
                         await AddHeaderAsync();
                     }
-                    else if (replied.IsEmpty())
+                    else if (replied.Empty())
                     {
                         await AddHeaderAsync();
                     }
@@ -3776,7 +3776,7 @@ namespace Telegram.ViewModels
 
         private readonly bool _oldToNew;
 
-        private List<long> _messages = new List<long>();
+        private List<long> _messages = new();
         private long _lastMessage;
 
         public DialogUnreadMessagesViewModel(DialogViewModel viewModel, bool oldToNew)
@@ -3832,12 +3832,13 @@ namespace Telegram.ViewModels
                 var response = await _viewModel.ClientService.SendAsync(new SearchChatMessages(chat.Id, string.Empty, null, fromMessageId, -9, 10, _filter, _viewModel.ThreadId));
                 if (response is FoundChatMessages messages)
                 {
-                    var stack = new List<long>();
+                    List<long> stack = null;
 
                     if (_oldToNew)
                     {
                         foreach (var message in messages.Messages.Reverse())
                         {
+                            stack ??= new List<long>();
                             stack.Add(message.Id);
                         }
                     }
@@ -3845,11 +3846,12 @@ namespace Telegram.ViewModels
                     {
                         foreach (var message in messages.Messages)
                         {
+                            stack ??= new List<long>();
                             stack.Add(message.Id);
                         }
                     }
 
-                    if (stack.Count > 0)
+                    if (stack != null)
                     {
                         _messages = stack;
                         NextMessage();

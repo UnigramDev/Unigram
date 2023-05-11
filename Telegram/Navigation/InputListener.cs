@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Telegram.Common;
 using Telegram.Navigation;
 using Windows.Foundation;
 using Windows.System;
@@ -95,11 +94,11 @@ namespace Telegram.Services.Keyboard
             {
                 EventArgs = e,
                 VirtualKey = e.VirtualKey,
-                AltKey = _window.CoreWindow.IsKeyDown(VirtualKey.Menu),
-                ControlKey = _window.CoreWindow.IsKeyDown(VirtualKey.Control),
-                ShiftKey = _window.CoreWindow.IsKeyDown(VirtualKey.Shift),
-                WindowsKey = _window.CoreWindow.IsKeyDown(VirtualKey.LeftWindows)
-                    || _window.CoreWindow.IsKeyDown(VirtualKey.RightWindows),
+                AltKey = WindowContext.IsKeyDown(VirtualKey.Menu),
+                ControlKey = WindowContext.IsKeyDown(VirtualKey.Control),
+                ShiftKey = WindowContext.IsKeyDown(VirtualKey.Shift),
+                WindowsKey = WindowContext.IsKeyDown(VirtualKey.LeftWindows)
+                    || WindowContext.IsKeyDown(VirtualKey.RightWindows),
             };
         }
 

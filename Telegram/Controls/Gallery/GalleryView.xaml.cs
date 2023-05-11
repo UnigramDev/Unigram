@@ -1018,7 +1018,7 @@ namespace Telegram.Controls.Gallery
             next.IsEnabled = false;
 
             var index = viewModel.SelectedIndex;
-            if (index < 0 || viewModel.Items.IsEmpty())
+            if (index < 0 || viewModel.Items.Empty())
             {
                 return;
             }

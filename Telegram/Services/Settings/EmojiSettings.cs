@@ -154,7 +154,7 @@ namespace Telegram.Services.Settings
                     }
                 }
 
-                if (_emojiUseHistory.IsEmpty())
+                if (_emojiUseHistory.Count == 0)
                 {
                     if (!GetValueOrDefault("RecentEmojiFilledDefault", false))
                     {

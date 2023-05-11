@@ -784,7 +784,7 @@ namespace Telegram.Views.Popups
 
             if (e.ClickedItem is Chat chat && ViewModel.ClientService.IsSavedMessages(chat))
             {
-                if (ViewModel.SelectedItems.IsEmpty())
+                if (ViewModel.SelectedItems.Empty())
                 {
                     ViewModel.SelectedItems = new MvxObservableCollection<Chat>(new[] { chat });
                     ViewModel.SendCommand.Execute();

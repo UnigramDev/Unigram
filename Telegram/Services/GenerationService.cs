@@ -358,11 +358,14 @@ namespace Telegram.Services
 
                     if (conversion.Transform)
                     {
+                        var crop = conversion.CropRectangle;
+                        var empty = crop == default || (crop.Width == 0 && crop.Height == 0);
+
                         var transform = new VideoTransformEffectDefinition();
                         transform.Rotation = conversion.Rotation;
                         transform.OutputSize = conversion.OutputSize;
                         transform.Mirror = conversion.Mirror;
-                        transform.CropRectangle = conversion.CropRectangle.IsEmpty() ? Rect.Empty : conversion.CropRectangle;
+                        transform.CropRectangle = empty ? Rect.Empty : conversion.CropRectangle;
 
                         if (conversion.VideoBitrate != 0)
                         {

@@ -125,7 +125,7 @@ namespace Telegram.Controls.Cells
                                 int index;
                                 if (title != null && (index = title.LastIndexOf('.')) >= 0)
                                 {
-                                    title = title.Substr(0, index);
+                                    title = title.Substring(0, index);
                                     if ((index = title.LastIndexOf('.')) >= 0)
                                     {
                                         title = title.Substring(index + 1);

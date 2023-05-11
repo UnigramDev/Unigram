@@ -88,8 +88,8 @@ namespace Telegram.ViewModels
 
                 Chats.ReplaceWith(nearby.SupergroupsNearby);
 
-                IsUsersEmpty = nearby.UsersNearby.IsEmpty();
-                IsChatsEmpty = nearby.SupergroupsNearby.IsEmpty();
+                IsUsersEmpty = nearby.UsersNearby.Empty();
+                IsChatsEmpty = nearby.SupergroupsNearby.Empty();
 
                 RaisePropertyChanged(nameof(LoadMoreLabel));
                 RaisePropertyChanged(nameof(LoadMoreVisibility));
@@ -115,7 +115,7 @@ namespace Telegram.ViewModels
                     Users.ReplaceWith(update.UsersNearby);
                 }
 
-                IsUsersEmpty = update.UsersNearby.IsEmpty();
+                IsUsersEmpty = update.UsersNearby.Empty();
             });
         }
 

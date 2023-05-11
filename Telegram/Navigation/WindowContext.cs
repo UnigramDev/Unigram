@@ -558,6 +558,16 @@ namespace Telegram.Navigation
 
         #region Static code
 
+        public static bool IsKeyDown(Windows.System.VirtualKey key)
+        {
+            return Window.Current.CoreWindow.GetKeyState(key).HasFlag(CoreVirtualKeyStates.Down);
+        }
+
+        public static bool IsKeyDownAsync(Windows.System.VirtualKey key)
+        {
+            return Window.Current.CoreWindow.GetAsyncKeyState(key).HasFlag(CoreVirtualKeyStates.Down);
+        }
+
         public static WindowContext Default()
         {
             try

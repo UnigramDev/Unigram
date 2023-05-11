@@ -277,7 +277,7 @@ namespace Telegram.Services
                 }
                 catch
                 {
-                    // All the remote procedures must be wrapped in a try-catch block
+                    // All the remote procedure calls must be wrapped in a try-catch block
                 }
             }
 
@@ -413,7 +413,7 @@ namespace Telegram.Services
                 }
                 catch
                 {
-                    // All the remote procedures must be wrapped in a try-catch block
+                    // All the remote procedure calls must be wrapped in a try-catch block
                 }
             }
         }

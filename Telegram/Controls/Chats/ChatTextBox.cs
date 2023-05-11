@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Native;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -153,9 +154,9 @@ namespace Telegram.Controls.Chats
             }
             else if (e.Key is VirtualKey.Up or VirtualKey.Down)
             {
-                var alt = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Menu);
-                var ctrl = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Shift);
+                var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
+                var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
+                var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
 
                 if (e.Key is VirtualKey.Up or VirtualKey.Down && !alt && !ctrl && !shift && ViewModel.Autocomplete == null)
                 {
@@ -241,7 +242,7 @@ namespace Telegram.Controls.Chats
             else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null
                 && ((ViewModel.Autocomplete is SearchStickersCollection && Autocomplete.SelectedItem != null) || ViewModel.Autocomplete is not SearchStickersCollection))
             {
-                var shift = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Shift);
+                var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
                 if (shift)
                 {
                     return;
@@ -260,7 +261,7 @@ namespace Telegram.Controls.Chats
             }
             else if (e.Key == VirtualKey.Tab)
             {
-                var ctrl = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Control);
+                var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
                 if (ctrl)
                 {
                     return;
@@ -268,7 +269,7 @@ namespace Telegram.Controls.Chats
             }
             else if (e.Key == VirtualKey.X && Math.Abs(Document.Selection.Length) == 4)
             {
-                var alt = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Menu);
+                var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
                 if (alt)
                 {
                     Document.Selection.GetText(TextGetOptions.NoHidden, out string hex);

@@ -3322,7 +3322,7 @@ namespace Telegram.Views
                     }
                 }
 
-                var complete = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Tab);
+                var complete = WindowContext.IsKeyDown(VirtualKey.Tab);
                 if (complete && entity is AutocompleteEntity.Command)
                 {
                     InsertText($"{insert} ");

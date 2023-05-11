@@ -204,7 +204,7 @@ namespace Telegram.ViewModels.Drawers
                 RaisePropertyChanged(nameof(Items));
             }
 
-            if (collection is SearchAnimationsCollection search && search.IsEmpty())
+            if (collection is SearchAnimationsCollection search && search.Empty())
             {
                 await search.LoadMoreItemsAsync(0);
             }

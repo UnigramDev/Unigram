@@ -110,7 +110,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void Clear(StorageStatisticsByChat byChat)
         {
-            if (byChat == null || byChat.ByFileType.IsEmpty())
+            if (byChat == null || byChat.ByFileType.Empty())
             {
                 return;
             }
@@ -124,7 +124,7 @@ namespace Telegram.ViewModels.Settings
             }
 
             var types = dialog.SelectedItems;
-            if (types == null || types.IsEmpty())
+            if (types == null || types.Empty())
             {
                 return;
             }
@@ -195,7 +195,7 @@ namespace Telegram.ViewModels.Settings
                     already.Size += type.Size;
                 }
 
-                if (chat.ChatId == 0 || chat.ByFileType.IsEmpty())
+                if (chat.ChatId == 0 || chat.ByFileType.Empty())
                 {
                     value.ByChat.Remove(chat);
                     i--;

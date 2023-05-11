@@ -180,7 +180,7 @@ namespace Telegram.ViewModels.Settings
             ClientService.Send(new DeleteLanguagePack(info.Id));
             list.Remove(info);
 
-            if (list.IsEmpty())
+            if (list.Empty())
             {
                 Items.Remove(list);
             }

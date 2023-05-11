@@ -404,7 +404,7 @@ namespace Telegram.Controls
         public void removeParent(CanvasControl view)
         {
             parents.Remove(view);
-            if (parents.IsEmpty())
+            if (parents.Empty())
             {
                 pausedState = currentState;
                 currentState = null;

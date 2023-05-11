@@ -460,9 +460,9 @@ namespace Telegram.Views.Host
             }
             else if (container.Content is RootDestination.AddAccount)
             {
-                var alt = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Menu);
-                var ctrl = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Shift);
+                var alt = WindowContext.IsKeyDown(Windows.System.VirtualKey.Menu);
+                var ctrl = WindowContext.IsKeyDown(Windows.System.VirtualKey.Control);
+                var shift = WindowContext.IsKeyDown(Windows.System.VirtualKey.Shift);
 
                 if (alt && !ctrl && shift)
                 {

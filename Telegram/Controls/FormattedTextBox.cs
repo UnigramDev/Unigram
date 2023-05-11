@@ -244,9 +244,9 @@ namespace Telegram.Controls
             }
             else if (e.Key == VirtualKey.Z)
             {
-                var alt = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Menu);
-                var ctrl = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Shift);
+                var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
+                var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
+                var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
 
                 if (ctrl && shift && !alt)
                 {

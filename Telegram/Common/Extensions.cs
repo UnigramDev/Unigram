@@ -72,7 +72,13 @@ namespace Telegram.Common
                     continue;
                 }
 
-                handler(container, listView.ItemFromContainer(container) as T);
+                var item = listView.ItemFromContainer(container) as T;
+                if (item == null)
+                {
+                    continue;
+                }
+
+                handler(container, item);
             }
         }
 
@@ -107,7 +113,7 @@ namespace Telegram.Common
             }
             catch
             {
-
+                // All the remote procedure calls must be wrapped in a try-catch block
             }
         }
 
@@ -119,7 +125,7 @@ namespace Telegram.Common
             }
             catch
             {
-
+                // All the remote procedure calls must be wrapped in a try-catch block
             }
         }
 
@@ -131,20 +137,8 @@ namespace Telegram.Common
             }
             catch
             {
-
+                // All the remote procedure calls must be wrapped in a try-catch block
             }
-        }
-
-        public static string ToQuery(this Dictionary<string, string> dictionary)
-        {
-            var result = string.Empty;
-
-            foreach (var item in dictionary)
-            {
-                result += $"{item.Key}={item.Value}&";
-            }
-
-            return result.TrimEnd('&');
         }
 
         public static void ShowTeachingTip(this Window app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
@@ -221,16 +215,6 @@ namespace Telegram.Common
             }
 
             tip.IsOpen = true;
-        }
-
-        public static bool IsKeyDown(this CoreWindow window, Windows.System.VirtualKey key)
-        {
-            return window.GetKeyState(key).HasFlag(CoreVirtualKeyStates.Down);
-        }
-
-        public static bool IsKeyDownAsync(this CoreWindow window, Windows.System.VirtualKey key)
-        {
-            return window.GetAsyncKeyState(key).HasFlag(CoreVirtualKeyStates.Down);
         }
 
         public static Color ToColor(this int color, bool alpha = false)
@@ -371,23 +355,6 @@ namespace Telegram.Common
             }
         }
 
-        public static string RegexReplace(this string input, string pattern, string replacement)
-        {
-            return Regex.Replace(input, pattern, replacement);
-        }
-
-        public static uint GetHeight(this ImageProperties props)
-        {
-            return props.Height;
-            return props.Orientation == PhotoOrientation.Rotate180 ? props.Height : props.Width;
-        }
-
-        public static uint GetWidth(this ImageProperties props)
-        {
-            return props.Width;
-            return props.Orientation == PhotoOrientation.Rotate180 ? props.Width : props.Height;
-        }
-
 
 
         public static uint GetHeight(this VideoProperties props)
@@ -459,25 +426,6 @@ namespace Telegram.Common
             }
 
             return output;
-        }
-
-        /// <summary>
-        /// Applies the action to each element in the list.
-        /// </summary>
-        /// <typeparam name="T">The enumerable item's type.</typeparam>
-        /// <param name="enumerable">The elements to enumerate.</param>
-        /// <param name="action">The action to apply to each item in the list.</param>
-        public static void Apply<T>(this IEnumerable<T> enumerable, Action<T> action)
-        {
-            foreach (var item in enumerable)
-            {
-                action(item);
-            }
-        }
-
-        public static string Substr(this string source, int startIndex, int endIndex)
-        {
-            return source.Substring(startIndex, endIndex - startIndex);
         }
 
         /// <summary>
@@ -665,38 +613,6 @@ namespace Telegram.Common
             return default;
         }
 
-        public static bool IsEmpty<T>(this ICollection<T> items)
-        {
-            return items.Count == 0;
-        }
-
-        public static void PutRange<TKey, TItem>(this IDictionary<TKey, TItem> list, IDictionary<TKey, TItem> source)
-        {
-            foreach (var item in source)
-            {
-                list[item.Key] = item.Value;
-            }
-        }
-
-
-        public static bool Equals(this string input, params string[] check)
-        {
-            foreach (var str in check)
-            {
-                if (input.Equals(str))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public static bool IsEmpty(this Rect rect)
-        {
-            return rect == default || (rect.Width == 0 && rect.Height == 0);
-        }
-
         public static bool GetBoolean(this ApplicationDataContainer container, string key, bool defaultValue)
         {
             if (container.Values.TryGetValue(key, out object value) && value is bool result)
@@ -729,26 +645,6 @@ namespace Telegram.Common
                 {
                     return result32;
                 }
-            }
-
-            return defaultValue;
-        }
-
-        public static bool GetBoolean(this ApplicationDataCompositeValue container, string key, bool defaultValue)
-        {
-            if (container.TryGetValue(key, out object value) && value is bool result)
-            {
-                return result;
-            }
-
-            return defaultValue;
-        }
-
-        public static int GetInt32(this ApplicationDataCompositeValue container, string key, int defaultValue)
-        {
-            if (container.TryGetValue(key, out object value) && value is int result)
-            {
-                return result;
             }
 
             return defaultValue;
@@ -809,12 +705,6 @@ namespace Telegram.Common
             return val;
         }
 
-        public static int TryParseOrDefault(string value, int defaultValue)
-        {
-            int.TryParse(value, out defaultValue);
-            return defaultValue;
-        }
-
         public static Dictionary<string, string> ParseQueryString(this string query, char separator = '&')
         {
             var first = query.Split('?');
@@ -837,12 +727,6 @@ namespace Telegram.Common
                 }
             }
             return queryDict;
-        }
-
-        public static string GetParameter(this Dictionary<string, string> query, string key)
-        {
-            query.TryGetValue(key, out string value);
-            return value;
         }
 
         public static bool IsBetween(this TimeSpan value, TimeSpan minimum, TimeSpan maximum)
@@ -878,24 +762,6 @@ namespace Telegram.Common
             return false;
         }
 
-        public static bool Contains(this string source, string toCheck, StringComparison comp)
-        {
-            return source.IndexOf(toCheck, comp) >= 0;
-        }
-
-        public static bool StartsWith(this string source, string[] toCheck, StringComparison comp)
-        {
-            foreach (var item in toCheck)
-            {
-                if (source.StartsWith(item, comp))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         public static string Format(this string input)
         {
             if (input != null)
@@ -905,37 +771,6 @@ namespace Telegram.Common
 
             return string.Empty;
         }
-
-        public static string TrimStart(this string target, string trimString)
-        {
-            string result = target;
-            while (result.StartsWith(trimString))
-            {
-                result = result.Substring(trimString.Length);
-            }
-
-            return result;
-        }
-
-        public static string TrimEnd(this string target, string trimString)
-        {
-            string result = target;
-            while (result.EndsWith(trimString))
-            {
-                result = result.Substring(0, result.Length - trimString.Length);
-            }
-
-            return result;
-        }
-
-        //public static string TrimEnd(this string input, string suffixToRemove)
-        //{
-        //    if (input != null && suffixToRemove != null && input.EndsWith(suffixToRemove))
-        //    {
-        //        return input.Substring(0, input.Length - suffixToRemove.Length);
-        //    }
-        //    else return input;
-        //}
 
         public static void AddRange<T>(this IList<T> list, IEnumerable<T> source)
         {
@@ -951,17 +786,6 @@ namespace Telegram.Common
             {
                 list.Add(item);
             }
-        }
-
-        public static List<T> Buffered<T>(int count)
-        {
-            var result = new List<T>(count);
-            for (int i = 0; i < count; i++)
-            {
-                result.Add(default);
-            }
-
-            return result;
         }
 
         public static Hyperlink GetHyperlinkFromPoint(this RichTextBlock text, Point point)
@@ -987,7 +811,7 @@ namespace Telegram.Common
             return GetHyperlink(parent.ElementStart.Parent as TextElement);
         }
 
-        public static bool IsEmpty<T>(this IList<T> list)
+        public static bool Empty<T>(this IList<T> list)
         {
             return list.Count == 0;
         }
@@ -997,35 +821,6 @@ namespace Telegram.Common
             foreach (var item in list)
             {
                 action?.Invoke(item);
-            }
-        }
-
-        public static List<Control> AllChildren(this DependencyObject parent)
-        {
-            var list = new List<Control>();
-
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-            {
-                var child = VisualTreeHelper.GetChild(parent, i);
-                if (child is Control)
-                {
-                    list.Add(child as Control);
-                }
-                list.AddRange(AllChildren(child));
-            }
-
-            return list;
-        }
-
-        public static IEnumerable<T> AllChildren<T>(this DependencyObject parent)
-        {
-            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
-            {
-                var _Child = VisualTreeHelper.GetChild(parent, i);
-                if (_Child is T)
-                {
-                    yield return (T)(object)_Child;
-                }
             }
         }
 
@@ -1069,7 +864,10 @@ namespace Telegram.Common
                 Clipboard.SetContent(content);
                 Clipboard.Flush();
             }
-            catch { }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
     }
 
@@ -1219,11 +1017,6 @@ namespace Telegram.Common
             //    return bubble.ScrollingHost;
             //}
 
-            return listViewBase.Descendants<ScrollViewer>().FirstOrDefault();
-        }
-
-        public static ScrollViewer GetScrollViewer(this Pivot listViewBase)
-        {
             return listViewBase.Descendants<ScrollViewer>().FirstOrDefault();
         }
 

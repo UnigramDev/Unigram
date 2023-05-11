@@ -403,7 +403,7 @@ namespace Telegram.ViewModels.Folders
                 return;
             }
 
-            if (Include.Any(x => x is FolderFlag) || Include.IsEmpty())
+            if (Include.Any(x => x is FolderFlag) || Include.Empty())
             {
                 ShowPopup(Strings.FilterInviteErrorTypes, Strings.AppName, Strings.OK);
                 return;

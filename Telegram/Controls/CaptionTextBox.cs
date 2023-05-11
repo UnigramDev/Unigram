@@ -9,6 +9,7 @@ using System.Collections;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Chats;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.System;
@@ -38,9 +39,9 @@ namespace Telegram.Controls
         {
             if (e.Key is VirtualKey.Up or VirtualKey.Down)
             {
-                var alt = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Menu);
-                var ctrl = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Control);
-                var shift = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Shift);
+                var alt = WindowContext.IsKeyDown(VirtualKey.Menu);
+                var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
+                var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
 
                 if (!alt && !ctrl && !shift)
                 {
@@ -75,7 +76,7 @@ namespace Telegram.Controls
             }
             else if (e.Key == VirtualKey.Tab)
             {
-                var ctrl = Window.Current.CoreWindow.IsKeyDown(VirtualKey.Control);
+                var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
                 if (ctrl)
                 {
                     return;

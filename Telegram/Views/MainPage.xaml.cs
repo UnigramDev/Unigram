@@ -1102,7 +1102,7 @@ namespace Telegram.Views
         private void ProcessFolderCommands(ShortcutCommand command, InputKeyDownEventArgs args)
         {
             var folders = ViewModel.Folders;
-            if (folders.IsEmpty())
+            if (folders.Empty())
             {
                 return;
             }
@@ -1577,7 +1577,7 @@ namespace Telegram.Views
                     ViewModel.Chats.SelectedItems.Add(chat);
                 }
 
-                if (ViewModel.Chats.SelectedItems.IsEmpty())
+                if (ViewModel.Chats.SelectedItems.Empty())
                 {
                     ViewModel.Chats.SelectionMode = MasterDetail.CurrentState == MasterDetailState.Minimal
                         ? ListViewSelectionMode.None
@@ -1971,7 +1971,7 @@ namespace Telegram.Views
 
                 ViewModel.Chats.Search.UpdateQuery(SearchField.Text);
 
-                if (ViewModel.Chats.SearchFilters.IsEmpty() && string.IsNullOrEmpty(SearchField.Text))
+                if (ViewModel.Chats.SearchFilters.Empty() && string.IsNullOrEmpty(SearchField.Text))
                 {
                     ViewModel.Chats.TopChats = new TopChatsCollection(ViewModel.ClientService, new TopChatCategoryUsers(), 30);
                 }

@@ -99,7 +99,7 @@ namespace Telegram.Td.Api
 
         public static Size GetClosestPhotoSizeWithSize(IList<PhotoSize> sizes, int side, bool byMinSide)
         {
-            if (sizes == null || sizes.IsEmpty())
+            if (sizes == null || sizes.Empty())
             {
                 // We are returning a random size, it's still better than NaN.
                 return new Size(1280, 1280);

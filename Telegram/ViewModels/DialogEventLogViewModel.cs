@@ -63,7 +63,7 @@ namespace Telegram.ViewModels
                     && _filters.MessagePins
                     && _filters.MessageDeletions
                     && _filters.MessageEdits
-                    && _userIds.IsEmpty())
+                    && _userIds.Empty())
                 {
                     return Strings.EventLogAllEvents;
                 }

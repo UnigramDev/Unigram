@@ -7,7 +7,10 @@
 using System;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Navigation;
+using Windows.Devices.Input;
 using Windows.Foundation;
+using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
@@ -110,7 +113,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            var ctrl = Window.Current.CoreWindow.IsKeyDown(Windows.System.VirtualKey.Control);
+            var ctrl = WindowContext.IsKeyDown(VirtualKey.Control);
 
             var point = e.GetCurrentPoint(this);
             if (point.Properties.IsHorizontalMouseWheel || ctrl)
@@ -135,7 +138,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (e.Pointer.PointerDeviceType != Windows.Devices.Input.PointerDeviceType.Mouse)
+            if (e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
             {
                 try
                 {

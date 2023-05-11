@@ -381,7 +381,7 @@ namespace Telegram.ViewModels
             var permissions = GetPermissions(chat, out bool restricted);
 
             var items = await StorageMedia.CreateAsync(files);
-            if (items.IsEmpty())
+            if (items.Empty())
             {
                 return;
             }

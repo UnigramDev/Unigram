@@ -335,7 +335,7 @@ namespace Telegram.Collections
                 {
                     hasRanges = LoadDateRanges(_query);
 
-                    if (!hasContent && !hasRanges && _filters.IsEmpty())
+                    if (!hasContent && !hasRanges && _filters.Empty())
                     {
                         _filters.ReplaceWith(new[]
                         {
