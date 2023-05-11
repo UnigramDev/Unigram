@@ -30,14 +30,14 @@ namespace Telegram.Controls
         {
             DefaultStyleKey = typeof(WebViewer);
 
-            if (string.IsNullOrEmpty(CoreWebView2Environment.GetAvailableBrowserVersionString()))
+            if (ChromiumWebPresenter.IsSupported())
             {
-                _presenter = new EdgeWebPresenter();
+                _presenter = new ChromiumWebPresenter();
                 _presenter.EventReceived += OnEventReceived;
             }
             else
             {
-                _presenter = new ChromiumWebPresenter();
+                _presenter = new EdgeWebPresenter();
                 _presenter.EventReceived += OnEventReceived;
             }
 
@@ -172,6 +172,18 @@ namespace Telegram.Controls
         public ChromiumWebPresenter()
         {
             DefaultStyleKey = typeof(ChromiumWebPresenter);
+        }
+
+        public static bool IsSupported()
+        {
+            try
+            {
+                return !string.IsNullOrEmpty(CoreWebView2Environment.GetAvailableBrowserVersionString());
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         protected override async void OnApplyTemplate()
