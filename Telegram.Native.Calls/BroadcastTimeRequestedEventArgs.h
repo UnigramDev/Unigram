@@ -8,13 +8,13 @@ using namespace winrt::Telegram::Td::Api;
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
-	struct BroadcastTimeRequestedEventArgs : BroadcastTimeRequestedEventArgsT<BroadcastTimeRequestedEventArgs>
-	{
-		BroadcastTimeRequestedEventArgs(BroadcastTimeRequestedDeferral deferral);
+    struct BroadcastTimeRequestedEventArgs : BroadcastTimeRequestedEventArgsT<BroadcastTimeRequestedEventArgs>
+    {
+        BroadcastTimeRequestedEventArgs(BroadcastTimeRequestedDeferral deferral);
 
-		BroadcastTimeRequestedDeferral Deferral();
+        BroadcastTimeRequestedDeferral Deferral();
 
-	private:
-		BroadcastTimeRequestedDeferral m_deferral;
-	};
+    private:
+        BroadcastTimeRequestedDeferral m_deferral;
+    };
 }

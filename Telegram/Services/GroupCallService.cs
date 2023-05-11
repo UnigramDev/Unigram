@@ -593,7 +593,7 @@ namespace Telegram.Services
         public async void StartScreenSharing()
         {
             var call = _call;
-            if (call == null || _manager == null || _screenManager != null || !GraphicsCaptureSession.IsSupported())
+            if (call == null || _manager == null || _screenManager != null || !VoipScreenCapture.IsSupported())
             {
                 return;
             }

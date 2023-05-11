@@ -6,53 +6,53 @@
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
-	int32_t VoipVideoChannelInfo::AudioSource()
-	{
-		return m_audioSource;
-	}
+    int32_t VoipVideoChannelInfo::AudioSource()
+    {
+        return m_audioSource;
+    }
 
-	void VoipVideoChannelInfo::AudioSource(int32_t value)
-	{
-		m_audioSource = value;
-	}
+    void VoipVideoChannelInfo::AudioSource(int32_t value)
+    {
+        m_audioSource = value;
+    }
 
-	hstring VoipVideoChannelInfo::EndpointId()
-	{
-		return m_endpointId;
-	}
+    hstring VoipVideoChannelInfo::EndpointId()
+    {
+        return m_endpointId;
+    }
 
-	void VoipVideoChannelInfo::EndpointId(hstring value)
-	{
-		m_endpointId = value;
-	}
+    void VoipVideoChannelInfo::EndpointId(hstring value)
+    {
+        m_endpointId = value;
+    }
 
-	IVector<GroupCallVideoSourceGroup> VoipVideoChannelInfo::SourceGroups()
-	{
-		return m_sourceGroups;
-	}
+    IVector<GroupCallVideoSourceGroup> VoipVideoChannelInfo::SourceGroups()
+    {
+        return m_sourceGroups;
+    }
 
-	void VoipVideoChannelInfo::SourceGroups(IVector<GroupCallVideoSourceGroup> value)
-	{
-		m_sourceGroups = value;
-	}
+    void VoipVideoChannelInfo::SourceGroups(IVector<GroupCallVideoSourceGroup> value)
+    {
+        m_sourceGroups = value;
+    }
 
-	VoipVideoChannelQuality VoipVideoChannelInfo::MinQuality()
-	{
-		return m_minQuality;
-	}
+    VoipVideoChannelQuality VoipVideoChannelInfo::MinQuality()
+    {
+        return m_minQuality;
+    }
 
-	void VoipVideoChannelInfo::MinQuality(VoipVideoChannelQuality value)
-	{
-		m_minQuality = value;
-	}
+    void VoipVideoChannelInfo::MinQuality(VoipVideoChannelQuality value)
+    {
+        m_minQuality = value;
+    }
 
-	VoipVideoChannelQuality VoipVideoChannelInfo::MaxQuality()
-	{
-		return m_maxQuality;
-	}
+    VoipVideoChannelQuality VoipVideoChannelInfo::MaxQuality()
+    {
+        return m_maxQuality;
+    }
 
-	void VoipVideoChannelInfo::MaxQuality(VoipVideoChannelQuality value)
-	{
-		m_maxQuality = value;
-	}
+    void VoipVideoChannelInfo::MaxQuality(VoipVideoChannelQuality value)
+    {
+        m_maxQuality = value;
+    }
 }

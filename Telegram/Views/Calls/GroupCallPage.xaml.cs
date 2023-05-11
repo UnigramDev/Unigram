@@ -25,7 +25,6 @@ using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
-using Windows.Graphics.Capture;
 using Windows.System;
 using Windows.System.Display;
 using Windows.UI;
@@ -1417,7 +1416,7 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            if (_mode != ParticipantsGridMode.Compact && service.CanEnableVideo && GraphicsCaptureSession.IsSupported())
+            if (_mode != ParticipantsGridMode.Compact && service.CanEnableVideo && VoipScreenCapture.IsSupported())
             {
                 switch (_prevColors)
                 {
@@ -1504,7 +1503,7 @@ namespace Telegram.Views.Calls
                 }
             }
 
-            if (_service.CanEnableVideo && GraphicsCaptureSession.IsSupported())
+            if (_service.CanEnableVideo && VoipScreenCapture.IsSupported())
             {
                 if (_service.IsScreenSharing)
                 {

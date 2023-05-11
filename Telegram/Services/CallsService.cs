@@ -185,7 +185,7 @@ namespace Telegram.Services
             }
             else if (type == VoipCaptureType.Screencast && _capturer is not VoipScreenCapture)
             {
-                if (_manager == null || !GraphicsCaptureSession.IsSupported())
+                if (_manager == null || !VoipScreenCapture.IsSupported())
                 {
                     return null;
                 }

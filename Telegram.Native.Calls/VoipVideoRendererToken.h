@@ -13,29 +13,29 @@ using namespace winrt::Windows::Foundation::Collections;
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
-	struct VoipVideoRendererToken : VoipVideoRendererTokenT<VoipVideoRendererToken>
-	{
-		VoipVideoRendererToken(std::shared_ptr<VoipVideoRenderer> sink, int32_t audioSource, hstring endpointId, IVector<GroupCallVideoSourceGroup> sourceGroups, CanvasControl canvasControl);
+    struct VoipVideoRendererToken : VoipVideoRendererTokenT<VoipVideoRendererToken>
+    {
+        VoipVideoRendererToken(std::shared_ptr<VoipVideoRenderer> sink, int32_t audioSource, hstring endpointId, IVector<GroupCallVideoSourceGroup> sourceGroups, CanvasControl canvasControl);
 
-		int32_t AudioSource();
-		hstring EndpointId();
-		IVector<GroupCallVideoSourceGroup> SourceGroups();
+        int32_t AudioSource();
+        hstring EndpointId();
+        IVector<GroupCallVideoSourceGroup> SourceGroups();
 
-		winrt::Windows::UI::Xaml::Media::Stretch Stretch();
-		void Stretch(winrt::Windows::UI::Xaml::Media::Stretch value);
+        winrt::Windows::UI::Xaml::Media::Stretch Stretch();
+        void Stretch(winrt::Windows::UI::Xaml::Media::Stretch value);
 
-		bool IsMirrored();
-		void IsMirrored(bool value);
+        bool IsMirrored();
+        void IsMirrored(bool value);
 
-		bool IsMatch(hstring endpointId, CanvasControl canvasControl);
+        bool IsMatch(hstring endpointId, CanvasControl canvasControl);
 
-		void Stop();
+        void Stop();
 
-	private:
-		std::shared_ptr<VoipVideoRenderer> m_sink;
-		std::shared_ptr<CanvasControl> m_canvasControl;
-		int32_t m_audioSource;
-		hstring m_endpointId;
-		IVector<GroupCallVideoSourceGroup> m_sourceGroups;
-	};
+    private:
+        std::shared_ptr<VoipVideoRenderer> m_sink;
+        std::shared_ptr<CanvasControl> m_canvasControl;
+        int32_t m_audioSource;
+        hstring m_endpointId;
+        IVector<GroupCallVideoSourceGroup> m_sourceGroups;
+    };
 }
