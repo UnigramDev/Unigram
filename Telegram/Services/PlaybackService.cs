@@ -15,7 +15,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.Media;
-using Windows.Media.Core;
 using Windows.Media.Playback;
 
 namespace Telegram.Services
@@ -75,7 +74,6 @@ namespace Telegram.Services
         private long _threadId;
 
         private List<PlaybackItem> _items;
-        private Queue<Message> _queue;
 
         public event TypedEventHandler<IPlaybackService, MediaPlayerFailedEventArgs> MediaFailed;
         public event TypedEventHandler<IPlaybackService, object> StateChanged;
@@ -690,22 +688,13 @@ namespace Telegram.Services
                 }
             }
 
-            //if (_playlist != null)
-            //{
-            //    _playlist.CurrentItemChanged -= OnCurrentItemChanged;
-            //    _playlist.Items.Clear();
-            //    _playlist = null;
-            //}
-
-            if (_queue != null)
-            {
-                _queue.Clear();
-                _queue = null;
-            }
-
             if (_items != null)
             {
-                // TODO: anything else?
+                foreach (var item in _items)
+                {
+                    item.Dispose();
+                }
+
                 _items = null;
             }
 
@@ -768,8 +757,24 @@ namespace Telegram.Services
             }
             catch
             {
-                return _source = MediaSource.CreateFromStream(Stream, "audio");
+                Dispose();
+                return null;
             }
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                _ffmpeg?.Dispose();
+            }
+            catch
+            {
+                Logger.Error();
+            }
+
+            _ffmpeg = null;
+            _source = null;
         }
     }
 }
