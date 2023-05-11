@@ -18,59 +18,10 @@ using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.ViewModels
 {
     public partial class DialogViewModel : IHandle
-    //IHandle<UpdateWindowActivated>,
-    //IHandle<UpdateChatPermissions>,
-    //IHandle<UpdateChatReplyMarkup>,
-    //IHandle<UpdateChatUnreadMentionCount>,
-    //IHandle<UpdateChatUnreadReactionCount>,
-    //IHandle<UpdateChatReadOutbox>,
-    //IHandle<UpdateChatReadInbox>,
-    //IHandle<UpdateChatDraftMessage>,
-    //IHandle<UpdateChatDefaultDisableNotification>,
-    //IHandle<UpdateChatMessageSender>,
-    //IHandle<UpdateChatActionBar>,
-    //IHandle<UpdateChatHasScheduledMessages>,
-    //IHandle<UpdateChatVideoChat>,
-    //IHandle<UpdateChatPendingJoinRequests>,
-
-    //IHandle<UpdateChatAction>,
-
-    //IHandle<UpdateChatLastMessage>,
-    //IHandle<UpdateNewMessage>,
-    //IHandle<UpdateDeleteMessages>,
-
-    //IHandle<UpdateMessageContent>,
-    //IHandle<UpdateMessageContentOpened>,
-    //IHandle<UpdateMessageMentionRead>,
-    //IHandle<UpdateMessageUnreadReactions>,
-    //IHandle<UpdateMessageEdited>,
-    //IHandle<UpdateMessageInteractionInfo>,
-    //IHandle<UpdateMessageIsPinned>,
-    //IHandle<UpdateMessageSendFailed>,
-    //IHandle<UpdateMessageSendSucceeded>,
-    //IHandle<UpdateAnimatedEmojiMessageClicked>,
-
-    //IHandle<UpdateUser>,
-    //IHandle<UpdateUserFullInfo>,
-    //IHandle<UpdateSecretChat>,
-    //IHandle<UpdateBasicGroup>,
-    //IHandle<UpdateBasicGroupFullInfo>,
-    //IHandle<UpdateSupergroup>,
-    //IHandle<UpdateSupergroupFullInfo>,
-    //IHandle<UpdateUserStatus>,
-    //IHandle<UpdateChatTitle>,
-    //IHandle<UpdateChatPhoto>,
-    //IHandle<UpdateChatTheme>,
-    //IHandle<UpdateChatNotificationSettings>,
-    //IHandle<UpdateChatOnlineMemberCount>,
-
-    //IHandle<UpdateGroupCall>
     {
         public override void Subscribe()
         {
@@ -413,38 +364,7 @@ namespace Telegram.ViewModels
             {
                 BeginOnUIThread(() =>
                 {
-                    var field = ListField;
-                    if (field == null)
-                    {
-                        return;
-                    }
-
-                    var panel = field.ItemsPanelRoot as ItemsStackPanel;
-                    if (panel == null || panel.FirstCacheIndex < 0)
-                    {
-                        return;
-                    }
-
-                    for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
-                    {
-                        var container = field.ContainerFromIndex(i) as SelectorItem;
-                        if (container == null)
-                        {
-                            continue;
-                        }
-
-                        var message = field.ItemFromContainer(container) as MessageViewModel;
-                        if (message == null || !message.IsOutgoing)
-                        {
-                            continue;
-                        }
-
-                        var content = container.ContentTemplateRoot as FrameworkElement;
-                        if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
-                        {
-                            bubble.UpdateMessageState(message);
-                        }
-                    }
+                    Delegate?.ForEach((bubble, message) => bubble.UpdateMessageState(message));
                 });
             }
         }
@@ -855,84 +775,45 @@ namespace Telegram.ViewModels
 
         private void Handle(long messageId, Func<MessageViewModel, bool> update, Action<MessageBubble, MessageViewModel> action = null)
         {
-            var field = ListField;
-            if (field == null)
+            BeginOnUIThread(() =>
             {
-                return;
-            }
-
-            BeginOnUIThread(async () =>
-            {
-                using (await _loadMoreLock.WaitAsync())
+                if (Items.TryGetValue(messageId, out var message))
                 {
-                    for (int i = 0; i < Items.Count; i++)
+                    if (_groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel albumMessage))
                     {
-                        var message = Items[i];
-                        if (message.Content is MessageAlbum album)
+                        if (albumMessage.Content is MessageAlbum album && album.Messages.TryGetValue(messageId, out MessageViewModel child))
                         {
-                            var found = false;
+                            update?.Invoke(child);
 
-                            if (album.Messages.TryGetValue(messageId, out MessageViewModel child))
+                            // UpdateMessageSendSucceeded changes the message id
+                            if (messageId != child.Id)
                             {
-                                update?.Invoke(child);
-                                found = true;
-
-                                if (messageId != child.Id)
-                                {
-                                    album.Messages.Remove(messageId);
-                                    album.Messages.Add(child);
-                                }
-
-                                message.UpdateWith(album.Messages[0]);
-                                album.Invalidate();
-
-                                if (action == null)
-                                {
-                                    break;
-                                }
-
-                                var container = field.ContainerFromItem(message) as SelectorItem;
-                                if (container == null)
-                                {
-                                    //break;
-                                    return;
-                                }
-
-                                var content = container.ContentTemplateRoot as FrameworkElement;
-                                if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
-                                {
-                                    action(bubble, message);
-                                }
+                                album.Messages.Remove(messageId);
+                                album.Messages.Add(child);
                             }
 
-                            if (found)
+                            message.UpdateWith(album.Messages[0]);
+                            album.Invalidate();
+
+                            if (action != null)
                             {
-                                return;
+                                Delegate?.UpdateBubbleWithMediaAlbumId(message.MediaAlbumId, bubble => action(bubble, albumMessage));
                             }
                         }
-
-                        if (message.Id == messageId)
+                    }
+                    else if (update == null || update(message))
+                    {
+                        // UpdateMessageSendSucceeded changes the message id
+                        if (action != null)
                         {
-                            if (update == null || update(message))
-                            {
-                                if (action == null)
-                                {
-                                    return;
-                                }
-
-                                var container = field.ContainerFromItem(message) as SelectorItem;
-                                if (container == null)
-                                {
-                                    return;
-                                }
-
-                                var content = container.ContentTemplateRoot as FrameworkElement;
-                                if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
-                                {
-                                    action(bubble, message);
-                                }
-                            }
+                            Delegate?.UpdateBubbleWithMessageId(messageId, bubble => action(bubble, message));
                         }
+                    }
+
+                    if (messageId != message.Id)
+                    {
+                        Items.UpdateMessageSendSucceeded(messageId, message);
+                        Delegate?.UpdateMessageSendSucceeded(messageId, message);
                     }
                 }
             });
@@ -940,107 +821,50 @@ namespace Telegram.ViewModels
 
         private void Handle(long messageId, Action<MessageViewModel> update, Action<MessageBubble, MessageViewModel, bool> action)
         {
-            BeginOnUIThread(async () =>
+            BeginOnUIThread(() =>
             {
-                var field = ListField;
-                if (field == null)
+                if (Items.TryGetValue(messageId, out var message))
                 {
-                    return;
-                }
-
-                using (await _loadMoreLock.WaitAsync())
-                {
-                    for (int i = 0; i < Items.Count; i++)
+                    if (_groupedMessages.TryGetValue(message.MediaAlbumId, out MessageViewModel albumMessage))
                     {
-                        var message = Items[i];
-                        if (message.Content is MessageAlbum album)
+                        if (albumMessage.Content is MessageAlbum album && album.Messages.TryGetValue(messageId, out MessageViewModel child))
                         {
-                            var found = false;
+                            update(child);
 
-                            foreach (var child in album.Messages)
-                            {
-                                if (child.Id == messageId)
-                                {
-                                    update(child);
-                                    found = true;
+                            message.UpdateWith(album.Messages[0]);
+                            album.Invalidate();
 
-                                    message.UpdateWith(album.Messages[0]);
-                                    album.Invalidate();
-
-                                    var container = field.ContainerFromItem(message) as ListViewItem;
-                                    if (container == null)
-                                    {
-                                        break;
-                                    }
-
-                                    var content = container.ContentTemplateRoot as FrameworkElement;
-                                    if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
-                                    {
-                                        action(bubble, message, false);
-                                    }
-
-                                    break;
-                                }
-                            }
-
-                            if (found)
-                            {
-                                continue;
-                            }
-                        }
-
-
-                        if (message.Id == messageId || (message.ReplyToMessageId == messageId && message.ReplyToMessage != null))
-                        {
-                            if (message.Id == messageId)
-                            {
-                                update(message);
-                            }
-                            else if (message.ReplyToMessageId == messageId)
-                            {
-                                update(message.ReplyToMessage);
-                            }
-
-                            var container = field.ContainerFromItem(message) as ListViewItem;
-                            if (container == null)
-                            {
-                                continue;
-                            }
-
-                            var content = container.ContentTemplateRoot as FrameworkElement;
-                            if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
-                            {
-                                action(bubble, message, message.ReplyToMessageId == messageId);
-                            }
+                            Delegate?.UpdateBubbleWithMediaAlbumId(message.MediaAlbumId, bubble => action(bubble, albumMessage, false));
                         }
                     }
+                    else
+                    {
+                        update(message);
+                        Delegate?.UpdateBubbleWithMessageId(messageId, bubble => action(bubble, message, false));
+                    }
                 }
+
+                Delegate?.UpdateBubbleWithReplyToMessageId(messageId, (bubble, reply) =>
+                {
+                    update(reply.ReplyToMessage);
+                    action(bubble, reply, true);
+                });
             });
         }
 
         private void Handle(MessageViewModel message, Action<MessageBubble> action1, Action<MessageService> action2)
         {
-            var field = ListField;
-            if (field == null)
+            Delegate?.UpdateContainerWithMessageId(message.Id, container =>
             {
-                return;
-            }
-
-            var container = field.ContainerFromItem(message) as ListViewItem;
-            if (container == null)
-            {
-                return;
-            }
-
-            var content = container.ContentTemplateRoot as FrameworkElement;
-            if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
-            {
-                action1(bubble);
-            }
-            else if (content is MessageService service)
-            {
-                action2(service);
-            }
+                if (container.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
+                {
+                    action1(bubble);
+                }
+                else if (container.ContentTemplateRoot is MessageService service)
+                {
+                    action2(service);
+                }
+            });
         }
 
         private async void InsertMessage(Message message, long? oldMessageId = null)
@@ -1171,31 +995,7 @@ namespace Telegram.ViewModels
 
         public void UpdateQuery(string query)
         {
-            HandleForCachedItems(bubble => bubble.UpdateQuery(query));
-        }
-
-        private void HandleForCachedItems(Action<MessageBubble> action)
-        {
-            var panel = ListField?.ItemsStack;
-            if (panel == null)
-            {
-                return;
-            }
-
-            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
-            {
-                var container = ListField.ContainerFromIndex(i) as SelectorItem;
-                if (container == null)
-                {
-                    continue;
-                }
-
-                var content = container.ContentTemplateRoot;
-                if (content is MessageSelector selector && selector.Content is MessageBubble bubble)
-                {
-                    action(bubble);
-                }
-            }
+            Delegate?.ForEach(bubble => bubble.UpdateQuery(query));
         }
     }
 }

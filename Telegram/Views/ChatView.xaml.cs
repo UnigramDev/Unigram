@@ -585,6 +585,10 @@ namespace Telegram.Views
 
         private void OnMessageSliceLoaded(object sender, EventArgs e)
         {
+            _albumIdToSelector.Clear();
+            _messageIdToSelector.Clear();
+            _messageIdToMessageIds.Clear();
+
             if (sender is DialogViewModel viewModel)
             {
                 _messages.UpdateSource(viewModel.Items);

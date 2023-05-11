@@ -476,7 +476,9 @@ namespace Telegram.Views
 
 
 
-
+        private readonly Dictionary<long, SelectorItem> _albumIdToSelector = new();
+        private readonly Dictionary<long, SelectorItem> _messageIdToSelector = new();
+        private readonly MultiDictionary<long, long> _messageIdToMessageIds = new();
 
         private readonly Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
         private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
@@ -534,20 +536,27 @@ namespace Telegram.Views
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
+            if (args.Item is not MessageViewModel message)
+            {
+                return;
+            }
+
+            UpdateCache(message, args.ItemContainer, args.InRecycleQueue);
+
             if (args.InRecycleQueue)
             {
                 // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
                 var tag = args.ItemContainer.Tag as string;
                 var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
 
-                if (args.ItemContainer.ContentTemplateRoot is MessageSelector selettore)
+                if (args.ItemContainer.ContentTemplateRoot is MessageSelector selector)
                 {
                     if (_effectiveViewportHandler != null)
                     {
-                        selettore.EffectiveViewportChanged -= _effectiveViewportHandler;
+                        selector.EffectiveViewportChanged -= _effectiveViewportHandler;
                     }
 
-                    selettore.Recycle();
+                    selector.Recycle();
                 }
 
                 if (_sizeChangedHandler != null)
@@ -557,87 +566,87 @@ namespace Telegram.Views
 
                 return;
             }
-
-            var message = args.Item as MessageViewModel;
-
-            var content = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
-            if (content == null)
+            else
             {
-                return;
-            }
-
-            _updateThemeTask?.TrySetResult(true);
-
-            if (args.ItemContainer is ChatListViewItem selector)
-            {
-                // TODO: are there chances that at this point TextArea is not up to date yet?
-                selector.PrepareForItemOverride(message,
-                    _viewModel.Type is DialogType.History or DialogType.Thread or DialogType.ScheduledMessages
-                    && TextArea.Visibility == Visibility.Visible);
-            }
-
-            if (content is MessageSelector checkbox)
-            {
-                checkbox.UpdateMessage(message, args.ItemContainer as LazoListViewItem);
-                checkbox.UpdateSelectionEnabled(ViewModel.IsSelectionEnabled, false);
-
-                content = checkbox.Content as FrameworkElement;
-            }
-            else if (content is MessageService service)
-            {
-                if (message.Content is MessageChatChangePhoto chatChangePhoto)
+                var content = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
+                if (content == null)
                 {
-                    var photo = service.FindName("Photo") as ProfilePicture;
-                    photo?.SetChatPhoto(message.ClientService, chatChangePhoto.Photo, 120);
+                    return;
+                }
 
-                    var view = service.FindName("View") as TextBlock;
-                    if (view != null)
+                _updateThemeTask?.TrySetResult(true);
+
+                if (args.ItemContainer is ChatListViewItem selector)
+                {
+                    // TODO: are there chances that at this point TextArea is not up to date yet?
+                    selector.PrepareForItemOverride(message,
+                        _viewModel.Type is DialogType.History or DialogType.Thread or DialogType.ScheduledMessages
+                        && TextArea.Visibility == Visibility.Visible);
+                }
+
+                if (content is MessageSelector checkbox)
+                {
+                    checkbox.UpdateMessage(message, args.ItemContainer as LazoListViewItem);
+                    checkbox.UpdateSelectionEnabled(ViewModel.IsSelectionEnabled, false);
+
+                    content = checkbox.Content as FrameworkElement;
+                }
+                else if (content is MessageService service)
+                {
+                    if (message.Content is MessageChatChangePhoto chatChangePhoto)
                     {
-                        view.Text = chatChangePhoto.Photo.Animation != null
-                            ? Strings.ViewVideoAction
-                            : Strings.ViewPhotoAction;
+                        var photo = service.FindName("Photo") as ProfilePicture;
+                        photo?.SetChatPhoto(message.ClientService, chatChangePhoto.Photo, 120);
+
+                        var view = service.FindName("View") as TextBlock;
+                        if (view != null)
+                        {
+                            view.Text = chatChangePhoto.Photo.Animation != null
+                                ? Strings.ViewVideoAction
+                                : Strings.ViewPhotoAction;
+                        }
+                    }
+                    else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
+                    {
+                        var photo = service.FindName("Photo") as ProfilePicture;
+                        photo?.SetChatPhoto(message.ClientService, suggestProfilePhoto.Photo, 120);
+
+                        var view = service.FindName("View") as TextBlock;
+                        if (view != null)
+                        {
+                            view.Text = suggestProfilePhoto.Photo.Animation != null
+                                ? Strings.ViewVideoAction
+                                : Strings.ViewPhotoAction;
+                        }
+                    }
+                    else if (message.Content is MessageChatSetBackground chatSetBackground)
+                    {
+                        var photo = service.FindName("Photo") as ChatBackgroundRenderer;
+                        photo?.UpdateSource(_viewModel.ClientService, chatSetBackground.Background.Background, true);
+
+                        var view = service.FindName("View") as Border;
+                        if (view != null)
+                        {
+                            view.Visibility = message.IsOutgoing
+                                ? Visibility.Collapsed
+                                : Visibility.Visible;
+                        }
                     }
                 }
-                else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
+
+                if (content is MessageBubble bubble)
                 {
-                    var photo = service.FindName("Photo") as ProfilePicture;
-                    photo?.SetChatPhoto(message.ClientService, suggestProfilePhoto.Photo, 120);
+                    bubble.UpdateQuery(ViewModel.Search?.Query);
+                    bubble.UpdateMessage(args.Item as MessageViewModel);
 
-                    var view = service.FindName("View") as TextBlock;
-                    if (view != null)
-                    {
-                        view.Text = suggestProfilePhoto.Photo.Animation != null
-                            ? Strings.ViewVideoAction
-                            : Strings.ViewPhotoAction;
-                    }
+                    args.RegisterUpdateCallback(2, RegisterEvents);
+                    args.Handled = true;
                 }
-                else if (message.Content is MessageChatSetBackground chatSetBackground)
+                else if (content is MessageService service)
                 {
-                    var photo = service.FindName("Photo") as ChatBackgroundRenderer;
-                    photo?.UpdateSource(_viewModel.ClientService, chatSetBackground.Background.Background, true);
-
-                    var view = service.FindName("View") as Border;
-                    if (view != null)
-                    {
-                        view.Visibility = message.IsOutgoing
-                            ? Visibility.Collapsed
-                            : Visibility.Visible;
-                    }
+                    service.UpdateMessage(args.Item as MessageViewModel);
+                    args.Handled = true;
                 }
-            }
-
-            if (content is MessageBubble bubble)
-            {
-                bubble.UpdateQuery(ViewModel.Search?.Query);
-                bubble.UpdateMessage(args.Item as MessageViewModel);
-
-                args.RegisterUpdateCallback(2, RegisterEvents);
-                args.Handled = true;
-            }
-            else if (content is MessageService service)
-            {
-                service.UpdateMessage(args.Item as MessageViewModel);
-                args.Handled = true;
             }
         }
 
@@ -829,6 +838,122 @@ namespace Telegram.Views
             }
 
             return "FriendMessageTemplate";
+        }
+
+        public void UpdateContainerWithMessageId(long id, Action<SelectorItem> action)
+        {
+            if (_messageIdToSelector.TryGetValue(id, out var container))
+            {
+                action(container);
+            }
+        }
+
+        public void UpdateBubbleWithMessageId(long id, Action<MessageBubble> action)
+        {
+            if (_messageIdToSelector.TryGetValue(id, out var container))
+            {
+                if (container.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
+                {
+                    action(bubble);
+                }
+            }
+        }
+
+        public void UpdateBubbleWithMediaAlbumId(long id, Action<MessageBubble> action)
+        {
+            if (_albumIdToSelector.TryGetValue(id, out var container))
+            {
+                if (container.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
+                {
+                    action(bubble);
+                }
+            }
+        }
+
+        public void UpdateBubbleWithReplyToMessageId(long id, Action<MessageBubble, MessageViewModel> action)
+        {
+            if (_messageIdToMessageIds.TryGetValue(id, out var ids))
+            {
+                foreach (var messageId in ids)
+                {
+                    if (_viewModel.Items.TryGetValue(messageId, out MessageViewModel message))
+                    {
+                        if (_messageIdToSelector.TryGetValue(messageId, out var container))
+                        {
+                            if (container.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
+                            {
+                                action(bubble, message);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public void ForEach(Action<MessageBubble, MessageViewModel> action)
+        {
+            foreach (var item in _messageIdToSelector)
+            {
+                if (_viewModel.Items.TryGetValue(item.Key, out MessageViewModel message))
+                {
+                    if (item.Value.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
+                    {
+                        action(bubble, message);
+                    }
+                }
+            }
+        }
+
+        public void ForEach(Action<MessageBubble> action)
+        {
+            foreach (var item in _messageIdToSelector)
+            {
+                if (item.Value.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
+                {
+                    action(bubble);
+                }
+            }
+        }
+
+        public void UpdateMessageSendSucceeded(long oldMessageId, MessageViewModel message)
+        {
+            if (_messageIdToSelector.TryGetValue(oldMessageId, out SelectorItem container))
+            {
+                _messageIdToSelector[message.Id] = container;
+                _messageIdToSelector.Remove(oldMessageId);
+            }
+
+            if (message.ReplyToMessageId != 0 && _messageIdToMessageIds.TryGetValue(message.ReplyToMessageId, out var ids))
+            {
+                ids.Add(message.Id);
+                ids.Remove(oldMessageId);
+            }
+        }
+
+        private void UpdateCache(MessageViewModel message, SelectorItem container, bool recycle)
+        {
+            if (recycle)
+            {
+                if (message.MediaAlbumId != 0)
+                    _albumIdToSelector.Remove(message.MediaAlbumId);
+
+                if (message.Id != 0)
+                    _messageIdToSelector.Remove(message.Id);
+
+                if (message.ReplyToMessageId != 0)
+                    _messageIdToMessageIds.Remove(message.ReplyToMessageId, message.Id);
+            }
+            else
+            {
+                if (message.MediaAlbumId != 0)
+                    _albumIdToSelector[message.MediaAlbumId] = container;
+
+                if (message.Id != 0)
+                    _messageIdToSelector[message.Id] = container;
+
+                if (message.ReplyToMessageId != 0)
+                    _messageIdToMessageIds.Add(message.ReplyToMessageId, message.Id);
+            }
         }
     }
 }

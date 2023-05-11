@@ -1426,8 +1426,8 @@ namespace Telegram.ViewModels
 
         private void ProcessAlbums(Chat chat, IList<MessageViewModel> slice)
         {
-            var groups = new Dictionary<long, Tuple<MessageViewModel, MessageAlbum>>();
-            var newGroups = new Dictionary<long, long>();
+            Dictionary<long, Tuple<MessageViewModel, long>> groups = null;
+            Dictionary<long, long> newGroups = null;
 
             for (int i = 0; i < slice.Count; i++)
             {
@@ -1452,6 +1452,7 @@ namespace Telegram.ViewModels
                     group = CreateMessage(groupBase);
 
                     slice[i] = group;
+                    newGroups ??= new();
                     newGroups[groupedId] = groupedId;
                     _groupedMessages[groupedId] = group;
                 }
@@ -1463,7 +1464,8 @@ namespace Telegram.ViewModels
 
                 if (group.Content is MessageAlbum album)
                 {
-                    groups[groupedId] = Tuple.Create(group, album);
+                    groups ??= new();
+                    groups[groupedId] = Tuple.Create(group, group.Id);
 
                     album.Messages.Add(message);
 
@@ -1475,18 +1477,24 @@ namespace Telegram.ViewModels
                 }
             }
 
-            foreach (var group in groups.Values)
+            if (groups != null)
             {
-                group.Item2.Invalidate();
-
-                if (newGroups.ContainsKey(group.Item1.MediaAlbumId))
+                foreach (var group in groups.Values)
                 {
-                    continue;
-                }
+                    if (group.Item1.Content is MessageAlbum album)
+                    {
+                        album.Invalidate();
+                    }
 
-                Handle(new UpdateMessageContent(chat.Id, group.Item1.Id, group.Item1.Content));
-                Handle(new UpdateMessageEdited(chat.Id, group.Item1.Id, group.Item1.EditDate, group.Item1.ReplyMarkup));
-                Handle(new UpdateMessageInteractionInfo(chat.Id, group.Item1.Id, group.Item1.InteractionInfo));
+                    if (newGroups != null && newGroups.ContainsKey(group.Item1.MediaAlbumId))
+                    {
+                        continue;
+                    }
+
+                    Handle(new UpdateMessageContent(chat.Id, group.Item2, group.Item1.Content));
+                    Handle(new UpdateMessageEdited(chat.Id, group.Item2, group.Item1.EditDate, group.Item1.ReplyMarkup));
+                    Handle(new UpdateMessageInteractionInfo(chat.Id, group.Item2, group.Item1.InteractionInfo));
+                }
             }
         }
 
@@ -3332,7 +3340,7 @@ namespace Telegram.ViewModels
 
     public class MessageCollection : MvxObservableCollection<MessageViewModel>
     {
-        private readonly HashSet<long> _messages;
+        private readonly Dictionary<long, MessageViewModel> _messages = new();
 
         private long _first = long.MaxValue;
         private long _last = long.MaxValue;
@@ -3341,7 +3349,7 @@ namespace Telegram.ViewModels
         private bool _suppressPrev = false;
         private bool _suppressNext = false;
 
-        public ISet<long> Ids => _messages;
+        public ICollection<long> Ids => _messages.Keys;
 
         public Action<IEnumerable<MessageViewModel>> AttachChanged;
 
@@ -3350,7 +3358,7 @@ namespace Telegram.ViewModels
             _messages = new();
         }
 
-        public MessageCollection(ISet<long> exclude, IEnumerable<MessageViewModel> source)
+        public MessageCollection(ICollection<long> exclude, IEnumerable<MessageViewModel> source)
         {
             foreach (var item in source)
             {
@@ -3369,9 +3377,26 @@ namespace Telegram.ViewModels
         //    GC.Collect();
         //}
 
+        protected override void ClearItems()
+        {
+            _messages.Clear();
+            base.ClearItems();
+        }
+
         public bool ContainsKey(long id)
         {
-            return _messages.Contains(id);
+            return _messages.ContainsKey(id);
+        }
+
+        public bool TryGetValue(long id, out MessageViewModel value)
+        {
+            return _messages.TryGetValue(id, out value);
+        }
+
+        public void UpdateMessageSendSucceeded(long oldMessageId, MessageViewModel message)
+        {
+            _messages.Remove(oldMessageId);
+            _messages[message.Id] = message;
         }
 
         public void RawAddRange(IList<MessageViewModel> source, bool filter, out bool empty)
@@ -3382,7 +3407,7 @@ namespace Telegram.ViewModels
             {
                 if (filter)
                 {
-                    if (source[i].Id != 0 && _messages.Contains(source[i].Id))
+                    if (source[i].Id != 0 && _messages.ContainsKey(source[i].Id))
                     {
                         continue;
                     }
@@ -3415,7 +3440,7 @@ namespace Telegram.ViewModels
             {
                 if (filter)
                 {
-                    if (source[i].Id != 0 && _messages.Contains(source[i].Id))
+                    if (source[i].Id != 0 && _messages.ContainsKey(source[i].Id))
                     {
                         continue;
                     }
@@ -3455,7 +3480,15 @@ namespace Telegram.ViewModels
 
         protected override void InsertItem(int index, MessageViewModel item)
         {
-            _messages?.Add(item.Id);
+            if (item.Content is MessageAlbum album)
+            {
+                foreach (var child in album.Messages)
+                {
+                    _messages[child.Id] = item;
+                }
+            }
+
+            _messages[item.Id] = item;
 
             if (item.Id != 0)
             {

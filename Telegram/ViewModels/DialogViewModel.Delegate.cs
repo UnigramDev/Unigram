@@ -6,10 +6,8 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Telegram.Common;
 using Telegram.Controls.Gallery;
-using Telegram.Controls.Messages;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
@@ -17,7 +15,6 @@ using Telegram.ViewModels.Gallery;
 using Telegram.Views;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.ViewModels
 {
@@ -150,16 +147,7 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    var container = ListField?.ContainerFromItem(message) as SelectorItem;
-                    var root = container?.ContentTemplateRoot as MessageSelector;
-
-                    var bubble = root?.Content as MessageBubble;
-                    if (bubble == null)
-                    {
-                        return;
-                    }
-
-                    VisualUtilities.ShakeView(bubble);
+                    Delegate?.UpdateBubbleWithMessageId(message.Id, bubble => VisualUtilities.ShakeView(bubble));
                 }
             }
         }
