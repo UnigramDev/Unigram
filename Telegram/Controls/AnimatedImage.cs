@@ -304,6 +304,8 @@ namespace Telegram.Controls
 
                 _bitmap0 = null;
                 _bitmap1 = null;
+
+                _needToCreateBitmap = true;
             }
         }
 
@@ -360,7 +362,8 @@ namespace Telegram.Controls
                 var pixels = Interlocked.Exchange(ref _foregroundFrame, null);
                 if (pixels != null)
                 {
-                    if (_canvas.Source is WriteableBitmap bitmap)
+                    // We must check if the bitmap is still valid
+                    if (_canvas.Source is WriteableBitmap bitmap && (_bitmap0 == bitmap || _bitmap1 == bitmap))
                     {
                         _backgroundQueue.Enqueue(new PixelBuffer(bitmap));
                     }
@@ -387,32 +390,39 @@ namespace Telegram.Controls
 
         protected void CreateBitmap()
         {
-            var temp = CreateBitmap(_rasterizationScale, out int width, out int height);
-
-            var needsCreate = _bitmap0 == null || _bitmap1 == null;
-            needsCreate |= _bitmap0?.PixelWidth != width || _bitmap0?.PixelHeight != height;
-            needsCreate |= _bitmap1?.PixelWidth != width || _bitmap1?.PixelHeight != height;
-
-            if (temp && needsCreate && _animation != null && width > 0 && height > 0)
+            try
             {
-                _bitmap0 = new WriteableBitmap(width, height);
-                _bitmap1 = new WriteableBitmap(width, height);
-                _bitmapClean = true;
+                var temp = CreateBitmap(_rasterizationScale, out int width, out int height);
+
+                var needsCreate = _bitmap0 == null || _bitmap1 == null;
+                needsCreate |= _bitmap0?.PixelWidth != width || _bitmap0?.PixelHeight != height;
+                needsCreate |= _bitmap1?.PixelWidth != width || _bitmap1?.PixelHeight != height;
+
+                if (temp && needsCreate && _animation != null && width > 0 && height > 0)
+                {
+                    _bitmap0 = new WriteableBitmap(width, height);
+                    _bitmap1 = new WriteableBitmap(width, height);
+                    _bitmapClean = true;
+
+                    _foregroundFrame = null;
+                    _backgroundQueue.Clear();
+
+                    _backgroundQueue.Enqueue(new PixelBuffer(_bitmap0));
+                    _backgroundQueue.Enqueue(new PixelBuffer(_bitmap1));
+                }
+
+                _needToCreateBitmap = _animation == null;
+            }
+            catch
+            {
+                _bitmap0 = null;
+                _bitmap1 = null;
 
                 _foregroundFrame = null;
                 _backgroundQueue.Clear();
 
-                _backgroundQueue.Enqueue(new PixelBuffer(_bitmap0));
-                _backgroundQueue.Enqueue(new PixelBuffer(_bitmap1));
-
-                // Must be removed, otherwise it will be enqueued again breaking everything
-                if (_canvas != null)
-                {
-                    _canvas.Source = null;
-                }
+                _needToCreateBitmap = true;
             }
-
-            _needToCreateBitmap = _animation == null;
         }
 
         protected abstract bool CreateBitmap(double dpi, out int width, out int height);
