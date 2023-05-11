@@ -256,14 +256,28 @@ namespace Telegram.Services
                     return false;
                 }
 
-                return SAP.FutureAccessList.ContainsItem(temp ? token + "temp" : token);
+                try
+                {
+                    return SAP.FutureAccessList.ContainsItem(temp ? token + "temp" : token);
+                }
+                catch
+                {
+                    return false;
+                }
             }
 
             public static void Remove(string token, bool temp = false)
             {
-                if (SAP.FutureAccessList.ContainsItem(temp ? token + "temp" : token))
+                try
                 {
-                    SAP.FutureAccessList.Remove(temp ? token + "temp" : token);
+                    if (SAP.FutureAccessList.ContainsItem(temp ? token + "temp" : token))
+                    {
+                        SAP.FutureAccessList.Remove(temp ? token + "temp" : token);
+                    }
+                }
+                catch
+                {
+                    // All the remote procedures must be wrapped in a try-catch block
                 }
             }
 
@@ -279,7 +293,14 @@ namespace Telegram.Services
                     return false;
                 }
 
-                return SAP.FutureAccessList.CheckAccess(item);
+                try
+                {
+                    return SAP.FutureAccessList.CheckAccess(item);
+                }
+                catch
+                {
+                    return false;
+                }
             }
 
             public static async Task<bool> ContainsAsync(string token, bool temp = false)
@@ -315,7 +336,7 @@ namespace Telegram.Services
 
                 await MigrateDownloadFolderAsync();
 
-                if (SAP.FutureAccessList.ContainsItem(DownloadFolder))
+                if (Contains(DownloadFolder))
                 {
                     try
                     {
@@ -340,7 +361,7 @@ namespace Telegram.Services
 
                 await MigrateDownloadFolderAsync();
 
-                if (SAP.FutureAccessList.ContainsItem(DownloadFolder))
+                if (Contains(DownloadFolder))
                 {
                     try
                     {
@@ -372,20 +393,27 @@ namespace Telegram.Services
 
             public static async Task MigrateDownloadFolderAsync()
             {
-                if (SAP.MostRecentlyUsedList.ContainsItem(DownloadFolder))
+                try
                 {
-                    try
+                    if (SAP.MostRecentlyUsedList.ContainsItem(DownloadFolder))
                     {
-                        StorageFolder folder = await SAP.MostRecentlyUsedList.GetFolderAsync(DownloadFolder);
-                        SAP.FutureAccessList.EnqueueOrReplace(DownloadFolder, folder);
-                    }
-                    catch
-                    {
-                        // The app still remembers about the custom folder
-                        // but we have no longer access to it (deleted, or whatever) 
-                    }
+                        try
+                        {
+                            StorageFolder folder = await SAP.MostRecentlyUsedList.GetFolderAsync(DownloadFolder);
+                            SAP.FutureAccessList.EnqueueOrReplace(DownloadFolder, folder);
+                        }
+                        catch
+                        {
+                            // The app still remembers about the custom folder
+                            // but we have no longer access to it (deleted, or whatever) 
+                        }
 
-                    SAP.MostRecentlyUsedList.Remove(DownloadFolder);
+                        SAP.MostRecentlyUsedList.Remove(DownloadFolder);
+                    }
+                }
+                catch
+                {
+                    // All the remote procedures must be wrapped in a try-catch block
                 }
             }
         }
