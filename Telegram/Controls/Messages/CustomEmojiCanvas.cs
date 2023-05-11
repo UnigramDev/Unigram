@@ -28,6 +28,8 @@ namespace Telegram.Controls.Messages
 {
     public class CustomEmojiCanvas : AnimatedControl<object>
     {
+        private readonly object _cacheLock = new();
+
         private readonly HashSet<long> _cache = new();
         private readonly List<EmojiPosition> _positions = new();
 
@@ -53,15 +55,18 @@ namespace Telegram.Controls.Messages
         {
             var hash = GetHashCode();
 
-            foreach (var customEmojiId in _cache)
+            lock (_cacheLock)
             {
-                _pool.Release(customEmojiId, hash);
+                foreach (var customEmojiId in _cache)
+                {
+                    _pool.Release(customEmojiId, hash);
+                }
+
+                EmojiCache.Release(_emojiSize, hash);
+
+                _emojiSize = GetDpiAwareSize(20);
+                _pool = EmojiCache.MergeOrCreate(_emojiSize, hash);
             }
-
-            EmojiCache.Release(_emojiSize, hash);
-
-            _emojiSize = GetDpiAwareSize(20);
-            _pool = EmojiCache.MergeOrCreate(_emojiSize, hash);
 
             if (_clientService != null)
             {
@@ -91,12 +96,15 @@ namespace Telegram.Controls.Messages
         {
             var hash = GetHashCode();
 
-            foreach (var customEmojiId in _cache)
+            lock (_cacheLock)
             {
-                _pool.Release(customEmojiId, hash);
-            }
+                foreach (var customEmojiId in _cache)
+                {
+                    _pool.Release(customEmojiId, hash);
+                }
 
-            _cache.Clear();
+                _cache.Clear();
+            }
         }
 
         protected override void DrawFrame(CanvasImageSource sender, CanvasDrawingSession args)
@@ -170,15 +178,18 @@ namespace Telegram.Controls.Messages
 
             var hash = GetHashCode();
 
-            foreach (var item in _cache)
+            lock (_cacheLock)
             {
-                if (subscribe)
+                foreach (var item in _cache)
                 {
-                    _pool.Show(item, hash);
-                }
-                else
-                {
-                    _pool.Hide(item, hash);
+                    if (subscribe)
+                    {
+                        _pool.Show(item, hash);
+                    }
+                    else
+                    {
+                        _pool.Hide(item, hash);
+                    }
                 }
             }
         }
@@ -221,7 +232,11 @@ namespace Telegram.Controls.Messages
 
                 if (_pool.TryMerge(clientService, emoji, hash, _subscribed, out _))
                 {
-                    _cache.Add(emoji);
+                    lock (_cacheLock)
+                    {
+                        _cache.Add(emoji);
+                    }
+
                     continue;
                 }
 
@@ -254,7 +269,11 @@ namespace Telegram.Controls.Messages
                         continue;
                     }
 
-                    _cache.Add(customEmojiType.CustomEmojiId);
+                    lock (_cacheLock)
+                    {
+                        _cache.Add(customEmojiType.CustomEmojiId);
+                    }
+
                     _pool.MergeOrCreate(clientService, sticker, hash, _subscribed);
                 }
             }
