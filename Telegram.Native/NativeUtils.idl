@@ -31,5 +31,6 @@ namespace Telegram.Native
 		static void SetFatalErrorCallback(FatalErrorCallback action);
 
 		static String GetBacktrace();
+		static void Crash();
 	}
 } // namespace Telegram.Native

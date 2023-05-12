@@ -39,6 +39,8 @@ namespace winrt::Telegram::Native::implementation
 
 		static hstring GetBacktrace();
 
+		static void Crash();
+
 		static FatalErrorCallback Callback;
 
 	private:

@@ -26,7 +26,6 @@ namespace winrt::Telegram::Native::implementation
     void NativeUtils::SetFatalErrorCallback(FatalErrorCallback callback)
     {
         Callback = callback;
-        GetBacktrace();
     }
 
     bool NativeUtils::FileExists(hstring path)
@@ -326,6 +325,12 @@ namespace winrt::Telegram::Native::implementation
     hstring NativeUtils::GetBacktrace()
     {
         return hstring(::GetBacktrace(0));
+    }
+
+    void NativeUtils::Crash()
+    {
+        int32_t* ciao = nullptr;
+        *ciao = 42;
     }
 
 } // namespace winrt::Telegram::Native::implementation

@@ -143,24 +143,22 @@ namespace Telegram
             }
         }
 
-        private static void FatalErrorCallback(string message)
+        public static void FatalErrorCallback(string message)
         {
-            FatalErrorCallback(int.MaxValue, message);
+            Crashes.TrackCrash(new UnmanagedException(message));
         }
 
         private static void FatalErrorCallback(int verbosityLevel, string message)
         {
-            if (verbosityLevel == 0)
+            if (verbosityLevel != 0)
             {
-                var exception = TdException.FromMessage(message);
-                if (exception.IsUnhandled)
-                {
-                    Crashes.TrackCrash(exception);
-                }
+                return;
             }
-            else
+
+            var exception = TdException.FromMessage(message);
+            if (exception.IsUnhandled)
             {
-                Crashes.TrackCrash(new UnmanagedException(message));
+                Crashes.TrackCrash(exception);
             }
         }
 
@@ -173,8 +171,6 @@ namespace Telegram
             HasCrashedInLastSession =
                 _lastSessionErrorReportId != null
                 && previousExecutionState == ApplicationExecutionState.NotRunning;
-
-            File.WriteAllText(_crashLog, VersionLabel.GetVersion());
         }
 
         private static void Track(string reportId, bool managed)

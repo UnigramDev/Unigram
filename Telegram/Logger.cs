@@ -16,35 +16,35 @@ using Telegram.Td.Api;
 
 namespace Telegram
 {
-    public enum LogLevel
-    {
-        Debug,
-        Info,
-        Warning,
-        Error,
-        Critical
-    }
-
     public sealed class Logger
     {
-        public static void Critical(string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public enum LogLevel
         {
-            Log(LogLevel.Critical, null, message, member, filePath, line);
+            Debug,
+            Info,
+            Warning,
+            Error,
+            Critical
         }
 
-        public static void Debug(string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Critical(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
-            Log(LogLevel.Debug, null, message, member, filePath, line);
+            Log(LogLevel.Critical, message, member, filePath, line);
         }
 
-        public static void Warning(string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Debug(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
-            Log(LogLevel.Warning, null, message, member, filePath, line);
+            Log(LogLevel.Debug, message, member, filePath, line);
         }
 
-        public static void Error(string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Warning(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
-            Log(LogLevel.Error, null, message, member, filePath, line);
+            Log(LogLevel.Warning, message, member, filePath, line);
+        }
+
+        public static void Error(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        {
+            Log(LogLevel.Error, message, member, filePath, line);
         }
 
         public static void Error(Exception exception, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
@@ -53,12 +53,12 @@ namespace Telegram
             Microsoft.AppCenter.Crashes.Crashes.TrackError(exception, attachments: Microsoft.AppCenter.Crashes.ErrorAttachmentLog.AttachmentWithText(Dump(), "crash.txt"));
 #endif
 
-            Log(LogLevel.Error, null, exception.ToString(), member, filePath, line);
+            Log(LogLevel.Error, exception.ToString(), member, filePath, line);
         }
 
-        public static void Info(string message = "", [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Info(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
-            Log(LogLevel.Info, null, message, member, filePath, line);
+            Log(LogLevel.Info, message, member, filePath, line);
         }
 
         private static readonly List<string> _lastCalls = new();
@@ -67,7 +67,7 @@ namespace Telegram
         [DllImport("kernel32.dll")]
         private unsafe static extern void GetSystemTimeAsFileTime(long* pSystemTimeAsFileTime);
 
-        private static unsafe void Log(LogLevel level, Type type, string message, string member, string filePath, int line)
+        private static unsafe void Log(LogLevel level, object message, string member, string filePath, int line)
         {
             // We use UtcNow instead of Now because Now is expensive.
             long diff = 116444736000000000;
@@ -76,7 +76,7 @@ namespace Telegram
             GetSystemTimeAsFileTime(&time);
 
             string entry;
-            if (message.Length > 0)
+            if (message != null)
             {
                 entry = string.Format(FormatWithMessage, (time - diff) / 10_000_000d, level, filePath, line, member, message);
             }
@@ -92,9 +92,13 @@ namespace Telegram
                 _lastCalls.RemoveAt(0);
             }
 
-            if (SettingsService.Current.Diagnostics.LoggerSink && (level != LogLevel.Debug || message.Length > 0))
+            if (SettingsService.Current.Diagnostics.LoggerSink && (level != LogLevel.Debug || message != null))
             {
                 Client.Execute(new AddLogMessage(2, string.Format("[{0}:{1}][{2}] {3}", level, Path.GetFileName(filePath), line, member, message)));
+            }
+
+            if (level != LogLevel.Debug || message != null)
+            {
                 System.Diagnostics.Debug.WriteLine(entry);
             }
         }
