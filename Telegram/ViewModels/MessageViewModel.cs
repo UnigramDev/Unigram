@@ -318,7 +318,7 @@ namespace Telegram.ViewModels
             return _message.ToString();
         }
 
-        public string CombinedId => $"{ChatId},{Id}";
+        public MessageId CombinedId => new(this);
 
         public IClientService ClientService => _clientService;
 
@@ -362,7 +362,7 @@ namespace Telegram.ViewModels
             {
                 return Id == y.Id && ChatId == y.ChatId;
             }
-            else if (obj is MessageViewModel ym)
+            else if (obj is MessageWithOwner ym)
             {
                 return Id == ym.Id && ChatId == ym.ChatId;
             }
@@ -372,7 +372,7 @@ namespace Telegram.ViewModels
 
         public override int GetHashCode()
         {
-            return Id.GetHashCode() ^ ChatId.GetHashCode();
+            return HashCode.Combine(ChatId, Id);
         }
 
         public Message Get()

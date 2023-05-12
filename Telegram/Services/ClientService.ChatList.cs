@@ -114,22 +114,22 @@ namespace Telegram.Services
             return new Chats(0, result);
         }
 
-        private struct OrderedChat : IComparable<OrderedChat>
+        private readonly struct OrderedChat : IComparable<OrderedChat>
         {
             public readonly long ChatId;
-            public readonly ChatPosition Position;
+            public readonly long Order;
 
             public OrderedChat(long chatId, ChatPosition position)
             {
                 ChatId = chatId;
-                Position = position;
+                Order = position.Order;
             }
 
             public int CompareTo(OrderedChat o)
             {
-                if (Position.Order != o.Position.Order)
+                if (Order != o.Order)
                 {
-                    return o.Position.Order < Position.Order ? -1 : 1;
+                    return o.Order < Order ? -1 : 1;
                 }
 
                 if (ChatId != o.ChatId)
@@ -143,13 +143,12 @@ namespace Telegram.Services
             public override bool Equals(object obj)
             {
                 OrderedChat o = (OrderedChat)obj;
-                return ChatId == o.ChatId && Position.Order == o.Position.Order;
+                return ChatId == o.ChatId && Order == o.Order;
             }
 
             public override int GetHashCode()
             {
-                return ChatId.GetHashCode() ^
-                    Position.Order.GetHashCode();
+                return HashCode.Combine(ChatId, Order);
             }
         }
     }

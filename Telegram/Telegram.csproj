@@ -641,6 +641,7 @@
     <Compile Include="ViewModels\Folders\RemoveFolderViewModel.cs" />
     <Compile Include="ViewModels\Folders\AddFolderViewModel.cs" />
     <Compile Include="ViewModels\Folders\ShareFolderViewModel.cs" />
+    <Compile Include="Td\Api\MessageId.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
     <Compile Include="ViewModels\TopicListViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
@@ -2640,6 +2641,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Bcl.HashCode">
+      <Version>1.1.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
     </PackageReference>
