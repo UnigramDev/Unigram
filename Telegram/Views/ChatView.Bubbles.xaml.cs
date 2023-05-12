@@ -478,7 +478,7 @@ namespace Telegram.Views
 
         private readonly Dictionary<long, SelectorItem> _albumIdToSelector = new();
         private readonly Dictionary<long, SelectorItem> _messageIdToSelector = new();
-        private readonly MultiDictionary<long, long> _messageIdToMessageIds = new();
+        private readonly MultiValueDictionary<long, long> _messageIdToMessageIds = new();
 
         private readonly Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
         private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();

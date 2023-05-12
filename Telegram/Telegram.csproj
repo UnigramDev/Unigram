@@ -742,6 +742,7 @@
     <Compile Include="Views\Folders\Popups\ShareFolderPopup.xaml.cs">
       <DependentUpon>ShareFolderPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\MultiValueDictionary.cs" />
     <Compile Include="Views\Payments\PaymentAddressPopup.xaml.cs">
       <DependentUpon>PaymentAddressPopup.xaml</DependentUpon>
     </Compile>
