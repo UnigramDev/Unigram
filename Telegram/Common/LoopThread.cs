@@ -16,6 +16,7 @@ namespace Telegram.Common
         private TimeSpan _interval;
         private TimeSpan _elapsed;
 
+        private readonly object _timerLock = new();
         private ThreadPoolTimer _timer;
 
         private readonly SemaphoreSlim _tickSemaphore;
@@ -70,17 +71,23 @@ namespace Telegram.Common
         {
             add
             {
-                _timer ??= ThreadPoolTimer.CreatePeriodicTimer(OnTick, _interval);
-                _tick += value;
+                lock (_timerLock)
+                {
+                    _tick += value;
+                    _timer ??= ThreadPoolTimer.CreatePeriodicTimer(OnTick, _interval);
+                }
             }
             remove
             {
-                _tick -= value;
-
-                if (_tick == null && _timer != null)
+                lock (_timerLock)
                 {
-                    _timer.Cancel();
-                    _timer = null;
+                    _tick -= value;
+
+                    if (_tick == null && _timer != null)
+                    {
+                        _timer.Cancel();
+                        _timer = null;
+                    }
                 }
             }
         }

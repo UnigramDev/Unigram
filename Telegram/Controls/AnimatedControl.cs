@@ -528,10 +528,19 @@ namespace Telegram.Controls
             {
                 if (_disposed)
                 {
+                    _nextFrameLock.Release();
                     return;
                 }
 
-                NextFrame();
+                try
+                {
+                    NextFrame();
+                }
+                catch
+                {
+                    // Not much to do here
+                }
+
                 _nextFrameLock.Release();
             }
         }
@@ -741,10 +750,19 @@ namespace Telegram.Controls
             {
                 if (_disposed)
                 {
+                    _nextFrameLock.Release();
                     return;
                 }
 
-                NextFrame();
+                try
+                {
+                    NextFrame();
+                }
+                catch
+                {
+                    // Not much to do here
+                }
+
                 _nextFrameLock.Release();
             }
         }
