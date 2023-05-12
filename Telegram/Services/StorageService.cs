@@ -189,7 +189,7 @@ namespace Telegram.Services
         {
             try
             {
-                if (ApiInfo.HasDownloadFolder)
+                if (ApiInfo.HasKnownFolders)
                 {
                     return KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
                 }
@@ -204,13 +204,12 @@ namespace Telegram.Services
 
         public bool CheckAccessToFolder(File file)
         {
-            if (ApiInfo.HasDownloadFolder)
+            if (ApiInfo.HasKnownFolders)
             {
                 return true;
             }
 
-            return Future.Contains(file.Remote.UniqueId)
-                || Future.Contains(Future.DownloadFolder);
+            return Future.Contains(Future.DownloadFolder);
         }
 
         public Task<DownloadFolder> GetDownloadFolderAsync()
@@ -230,10 +229,17 @@ namespace Telegram.Services
                 return await Future.GetFolderAsync();
             }
 
-            var downloads = await Future.GetDefaultFolderAsync();
-            if (downloads == null || Extensions.IsRelativePath(downloads.Path, folder.Path, out _))
+            if (ApiInfo.HasKnownFolders)
             {
-                Future.Remove(Future.DownloadFolder);
+                var downloads = await Future.GetDefaultFolderAsync();
+                if (downloads == null || Extensions.IsRelativePath(downloads.Path, folder.Path, out _))
+                {
+                    Future.Remove(Future.DownloadFolder);
+                }
+                else
+                {
+                    Future.AddOrReplace(Future.DownloadFolder, folder);
+                }
             }
             else
             {
