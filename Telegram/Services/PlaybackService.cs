@@ -703,21 +703,25 @@ namespace Telegram.Services
 
         private void Create(PlaybackItem item, IMediaPlaybackSource source)
         {
-            if (_mediaPlayer != null)
+            if (source == null)
             {
+                // TODO: dispose?
                 return;
             }
 
-            _mediaPlayer = new MediaPlayer();
-            _mediaPlayer.SystemMediaTransportControls.AutoRepeatMode = _settingsService.Playback.RepeatMode;
-            _mediaPlayer.SystemMediaTransportControls.ButtonPressed += Transport_ButtonPressed;
-            _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
-            _mediaPlayer.PlaybackSession.PositionChanged += OnPositionChanged;
-            _mediaPlayer.MediaFailed += OnMediaFailed;
-            _mediaPlayer.MediaEnded += OnMediaEnded;
-            _mediaPlayer.SourceChanged += OnSourceChanged;
-            _mediaPlayer.CommandManager.IsEnabled = false;
-            _mediaPlayer.Volume = _settingsService.VolumeLevel;
+            if (_mediaPlayer == null)
+            {
+                _mediaPlayer = new MediaPlayer();
+                _mediaPlayer.SystemMediaTransportControls.AutoRepeatMode = _settingsService.Playback.RepeatMode;
+                _mediaPlayer.SystemMediaTransportControls.ButtonPressed += Transport_ButtonPressed;
+                _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+                _mediaPlayer.PlaybackSession.PositionChanged += OnPositionChanged;
+                _mediaPlayer.MediaFailed += OnMediaFailed;
+                _mediaPlayer.MediaEnded += OnMediaEnded;
+                _mediaPlayer.SourceChanged += OnSourceChanged;
+                _mediaPlayer.CommandManager.IsEnabled = false;
+                _mediaPlayer.Volume = _settingsService.VolumeLevel;
+            }
 
             _mapping.AddOrUpdate(source, item);
             _mediaPlayer.Source = source;
@@ -755,8 +759,10 @@ namespace Telegram.Services
 
                 return _source;
             }
-            catch
+            catch (Exception ex)
             {
+                Logger.Error(ex);
+
                 Dispose();
                 return null;
             }
