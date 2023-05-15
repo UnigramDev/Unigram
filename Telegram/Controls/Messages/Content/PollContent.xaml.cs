@@ -347,7 +347,7 @@ namespace Telegram.Controls.Messages.Content
         {
             List<int> options = null;
 
-            for (int i = 0; i < Options.Children.Count; i++) 
+            for (int i = 0; i < Options.Children.Count; i++)
             {
                 var button = Options.Children[i] as PollOptionControl;
                 if (button != null && button.IsChecked == true)

@@ -266,8 +266,8 @@ namespace Telegram.Controls.Messages
                     builder.Append(". ");
                 }
 
-                var admin = message.Delegate.GetAdminTitle(message);
-                if (!string.IsNullOrEmpty(title))
+                var admin = message.Delegate?.GetAdminTitle(message);
+                if (admin?.Length > 0)
                 {
                     builder.AppendLine($"{admin}. ");
                 }

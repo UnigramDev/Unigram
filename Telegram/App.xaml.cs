@@ -216,7 +216,7 @@ namespace Telegram
             var navService = WindowContext.Current.NavigationServices.GetByFrameId($"{TLContainer.Current.Lifetime.ActiveItem.Id}");
             var service = TLContainer.Current.Resolve<IClientService>();
 
-            if (service.AuthorizationState != null)
+            if (service?.AuthorizationState != null)
             {
                 WindowContext.Current.Activate(args, navService, service.AuthorizationState);
             }

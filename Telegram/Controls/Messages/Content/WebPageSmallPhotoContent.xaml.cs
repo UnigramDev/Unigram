@@ -163,7 +163,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var text = _message.Content as MessageText;
+            var text = _message?.Content as MessageText;
             if (text == null)
             {
                 return;
