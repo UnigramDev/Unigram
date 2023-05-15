@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -84,7 +85,7 @@ namespace Telegram.ViewModels.Drawers
                 .Subscribe<UpdateInstalledStickerSets>(Handle);
         }
 
-        private static readonly Dictionary<int, Dictionary<int, StickerDrawerViewModel>> _windowContext = new Dictionary<int, Dictionary<int, StickerDrawerViewModel>>();
+        private static readonly ConcurrentDictionary<int, Dictionary<int, StickerDrawerViewModel>> _windowContext = new();
         public static StickerDrawerViewModel GetForCurrentView(int sessionId)
         {
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);

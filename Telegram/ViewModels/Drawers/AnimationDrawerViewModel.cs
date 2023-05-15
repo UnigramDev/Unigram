@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -46,7 +47,7 @@ namespace Telegram.ViewModels.Drawers
             Aggregator.Subscribe<UpdateSavedAnimations>(this, Handle);
         }
 
-        private static readonly Dictionary<int, Dictionary<int, AnimationDrawerViewModel>> _windowContext = new Dictionary<int, Dictionary<int, AnimationDrawerViewModel>>();
+        private static readonly ConcurrentDictionary<int, Dictionary<int, AnimationDrawerViewModel>> _windowContext = new();
         public static AnimationDrawerViewModel GetForCurrentView(int sessionId)
         {
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);

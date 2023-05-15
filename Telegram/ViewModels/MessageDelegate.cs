@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace Telegram.ViewModels
     {
         private readonly ViewModelBase _viewModel;
 
-        protected static readonly Dictionary<long, IList<ChatAdministrator>> _admins = new();
+        protected static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new();
 
         public MessageDelegate(ViewModelBase viewModel)
             : base(viewModel.ClientService, viewModel.Settings, viewModel.Aggregator)

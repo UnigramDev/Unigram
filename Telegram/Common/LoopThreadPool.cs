@@ -5,13 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Telegram.Common
 {
     public class LoopThreadPool
     {
-        private static readonly Dictionary<TimeSpan, LoopThread> _specificFrameRate = new();
+        private static readonly ConcurrentDictionary<TimeSpan, LoopThread> _specificFrameRate = new();
 
         public static LoopThread Get(TimeSpan frameRate)
         {

@@ -6,6 +6,7 @@
 //
 using Rg.DiffUtils;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -64,7 +65,7 @@ namespace Telegram.ViewModels.Drawers
             Aggregator.Subscribe<UpdateInstalledStickerSets>(this, Handle);
         }
 
-        private static readonly Dictionary<int, Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>>> _windowContext = new();
+        private static readonly ConcurrentDictionary<int, Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>>> _windowContext = new();
         public static EmojiDrawerViewModel GetForCurrentView(int sessionId, EmojiDrawerMode mode = EmojiDrawerMode.Chat)
         {
             var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
