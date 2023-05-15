@@ -261,17 +261,27 @@ namespace Telegram.Entities
                 }
             }
 
-            var profile = await MediaEncodingProfile.CreateFromFileAsync(File);
-            //profile.Video.Width = (uint)resultWidth;
-            //profile.Video.Height = (uint)resultHeight;
-            //profile.Video.Bitrate = (uint)bitrate;
-
-            if (_isMuted)
+            try
             {
-                profile.Audio = null;
-            }
+                var profile = await MediaEncodingProfile.CreateFromFileAsync(File);
+                //profile.Video.Width = (uint)resultWidth;
+                //profile.Video.Height = (uint)resultHeight;
+                //profile.Video.Bitrate = (uint)bitrate;
 
-            return profile;
+                if (_isMuted)
+                {
+                    profile.Audio = null;
+                }
+
+                return profile;
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+
+                // TODO: what is the user wanted to mute the audio?
+                return null;
+            }
         }
 
         public string ToString(int compression)

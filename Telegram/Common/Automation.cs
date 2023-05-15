@@ -21,8 +21,15 @@ namespace Telegram.Common
     {
         public static void SetToolTip(DependencyObject element, string text)
         {
-            AutomationProperties.SetName(element, text);
-            ToolTipService.SetToolTip(element, text);
+            try
+            {
+                AutomationProperties.SetName(element, text);
+                ToolTipService.SetToolTip(element, text);
+            }
+            catch
+            {
+                // Seems to happen some times
+            }
         }
 
         public static string GetSummary2(Message message)

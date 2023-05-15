@@ -7,6 +7,7 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using Telegram.Converters;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -288,7 +289,21 @@ namespace Telegram.Controls
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void SetDownloadGlyph(bool downloading, bool animate)
+        {
+            try
+            {
+                SetDownloadGlyphInternal(downloading, animate);
+            }
+            catch
+            {
+                // Compositor.CreateSpriteShape can throw InvalidCastException
+                // TODO: fallback to glyph icon?
+            }
+        }
+
+        private void SetDownloadGlyphInternal(bool downloading, bool animate)
         {
             if (_container == null)
             {

@@ -381,7 +381,11 @@ namespace Telegram.Services
 
                 if (ApiInfo.HasKnownFolders)
                 {
-                    return new DownloadFolder(false, await GetDefaultFolderAsync());
+                    var folder = await GetDefaultFolderAsync();
+                    if (folder != null)
+                    {
+                        return new DownloadFolder(false, folder);
+                    }
                 }
 
                 return new DownloadFolder(false, Strings.DownloadFolderDefault);
@@ -391,7 +395,14 @@ namespace Telegram.Services
             {
                 if (ApiInfo.HasKnownFolders)
                 {
-                    return KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
+                    try
+                    {
+                        return KnownFolders.GetFolderAsync(KnownFolderId.DownloadsFolder);
+                    }
+                    catch
+                    {
+                        // All the remote procedure calls must be wrapped in a try-catch block
+                    }
                 }
 
                 return null;

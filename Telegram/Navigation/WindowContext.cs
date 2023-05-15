@@ -345,25 +345,27 @@ namespace Telegram.Navigation
                 catch { }
 
                 var query = "tg://";
+                var chatId = 0L;
 
-                var contactId = await ContactsService.GetContactIdAsync(share.ShareOperation.Contacts.FirstOrDefault());
-                if (contactId is long userId)
+                try
                 {
-                    var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
-                    if (response is Chat chat)
+                    var contactId = await ContactsService.GetContactIdAsync(share.ShareOperation.Contacts.FirstOrDefault());
+                    if (contactId is long userId)
                     {
-                        query = $"ms-contact-profile://meh?ContactRemoteIds=u" + userId;
-                        App.DataPackages[chat.Id] = package.GetView();
-                    }
-                    else
-                    {
-                        App.DataPackages[0] = package.GetView();
+                        var response = await _lifetime.ActiveItem.ClientService.SendAsync(new CreatePrivateChat(userId, false));
+                        if (response is Chat chat)
+                        {
+                            query = $"ms-contact-profile://meh?ContactRemoteIds=u" + userId;
+                            chatId = chat.Id;
+                        }
                     }
                 }
-                else
+                catch
                 {
-                    App.DataPackages[0] = package.GetView();
+                    // ShareOperation.Contacts can throw an InvalidCastException
                 }
+
+                App.DataPackages[chatId] = package.GetView();
 
                 App.ShareOperation = share.ShareOperation;
                 App.ShareWindow = _window;

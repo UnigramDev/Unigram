@@ -111,37 +111,47 @@ namespace Telegram.Controls.Chats
 
         private IAnimatedVisual GetVisual(AnimationType action, Compositor compositor, Color color, out CompositionPropertySet properties)
         {
-            var source = GetVisual(action, compositor, color);
-            if (source == null)
+            try
+            {
+                var source = GetVisual(action, compositor, color);
+                if (source == null)
+                {
+                    properties = null;
+                    return null;
+                }
+
+                // Line that needs to be try-catched
+                // TODO: Should we generate try-catch inside TryCreateAnimatedVisual?
+                var visual = source.TryCreateAnimatedVisual(compositor, out _);
+                if (visual == null)
+                {
+                    properties = null;
+                    return null;
+                }
+
+                var linearEasing = compositor.CreateLinearEasingFunction();
+                var animation = compositor.CreateScalarKeyFrameAnimation();
+                animation.Duration = visual.Duration;
+                animation.InsertKeyFrame(1, 1, linearEasing);
+                animation.IterationBehavior = AnimationIterationBehavior.Forever;
+
+                properties = compositor.CreatePropertySet();
+                properties.InsertScalar("Progress", 0);
+
+                var progressAnimation = compositor.CreateExpressionAnimation("_.Progress");
+                progressAnimation.SetReferenceParameter("_", properties);
+                visual.RootVisual.Properties.InsertScalar("Progress", 0.0F);
+                visual.RootVisual.Properties.StartAnimation("Progress", progressAnimation);
+
+                properties.StartAnimation("Progress", animation);
+
+                return visual;
+            }
+            catch
             {
                 properties = null;
                 return null;
             }
-
-            var visual = source.TryCreateAnimatedVisual(compositor, out _);
-            if (visual == null)
-            {
-                properties = null;
-                return null;
-            }
-
-            var linearEasing = compositor.CreateLinearEasingFunction();
-            var animation = compositor.CreateScalarKeyFrameAnimation();
-            animation.Duration = visual.Duration;
-            animation.InsertKeyFrame(1, 1, linearEasing);
-            animation.IterationBehavior = AnimationIterationBehavior.Forever;
-
-            properties = compositor.CreatePropertySet();
-            properties.InsertScalar("Progress", 0);
-
-            var progressAnimation = compositor.CreateExpressionAnimation("_.Progress");
-            progressAnimation.SetReferenceParameter("_", properties);
-            visual.RootVisual.Properties.InsertScalar("Progress", 0.0F);
-            visual.RootVisual.Properties.StartAnimation("Progress", progressAnimation);
-
-            properties.StartAnimation("Progress", animation);
-
-            return visual;
         }
 
         private IAnimatedVisualSource2 GetVisual(AnimationType action, Compositor compositor, Color color)

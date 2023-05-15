@@ -71,57 +71,26 @@ namespace Telegram.Services.ViewService
 
         public bool IsSupported => true;
 
-        public async Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters)
+        public Task<ViewLifetimeControl> OpenAsync(ViewServiceParams parameters)
         {
-            //if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
-            //{
-            //    try
-            //    {
-            //        ApplicationView.ClearPersistedState("Calls");
-            //    }
-            //    catch { }
-            //}
-
             if (IsSupported)
             {
-                await _mainWindowCreated.Task;
-
-                var newView = CoreApplication.CreateNewView();
-                var dispatcher = new DispatcherContext(newView.DispatcherQueue);
-
-                var newControl = await dispatcher.DispatchAsync(async () =>
+                try
                 {
-                    var newWindow = Window.Current;
-                    var newAppView = ApplicationView.GetForCurrentView();
+                    return OpenAsyncInternal(parameters);
+                }
+                catch (Exception ex)
+                {
+                    // This can happen, but it's unclear when
+                    Logger.Error(ex);
 
-                    newAppView.Title = parameters.Title ?? string.Empty;
-                    newAppView.PersistedStateId = parameters.PersistentId ?? string.Empty;
-
-                    var control = ViewLifetimeControl.GetForCurrentView();
-                    control.Released += (s, args) =>
-                    {
-                        newWindow.Close();
-                    };
-
-                    newWindow.Content = parameters.Content(control);
-                    newWindow.Activate();
-
-                    var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
-                    if (parameters.Width != 0 && parameters.Height != 0)
-                    {
-                        preferences.CustomSize = new Size(parameters.Width, parameters.Height);
-                    }
-
-                    await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
-                    newAppView.TryResizeView(preferences.CustomSize);
-
-                    return control;
-                }).ConfigureAwait(false);
-                return newControl;
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                    return Task.FromResult<ViewLifetimeControl>(null);
+                }
             }
             else
             {
-                await CoreApplication.MainView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+                _ = CoreApplication.MainView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
                 {
                     if (Window.Current.Content is RootPage root)
                     {
@@ -131,6 +100,45 @@ namespace Telegram.Services.ViewService
                 });
                 return null;
             }
+        }
+
+        private async Task<ViewLifetimeControl> OpenAsyncInternal(ViewServiceParams parameters)
+        {
+            await _mainWindowCreated.Task;
+
+            var newView = CoreApplication.CreateNewView();
+            var dispatcher = new DispatcherContext(newView.DispatcherQueue);
+
+            var newControl = await dispatcher.DispatchAsync(async () =>
+            {
+                var newWindow = Window.Current;
+                var newAppView = ApplicationView.GetForCurrentView();
+
+                newAppView.Title = parameters.Title ?? string.Empty;
+                newAppView.PersistedStateId = parameters.PersistentId ?? string.Empty;
+
+                var control = ViewLifetimeControl.GetForCurrentView();
+                control.Released += (s, args) =>
+                {
+                    newWindow.Close();
+                };
+
+                newWindow.Content = parameters.Content(control);
+                newWindow.Activate();
+
+                var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
+                if (parameters.Width != 0 && parameters.Height != 0)
+                {
+                    preferences.CustomSize = new Size(parameters.Width, parameters.Height);
+                }
+
+                await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
+                newAppView.TryResizeView(preferences.CustomSize);
+
+                return control;
+            }).ConfigureAwait(false);
+
+            return newControl;
         }
 
         public async Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null,
