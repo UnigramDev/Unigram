@@ -7,7 +7,7 @@
                        xmlns:messages="using:Telegram.Controls.Messages"
                        xmlns:chats="using:Telegram.Controls.Chats"
                        xmlns:selectors="using:Telegram.Selectors"
-                       xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
+                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                        xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

@@ -4,7 +4,7 @@
       xmlns:local="using:Telegram.Views"
       xmlns:common="using:Telegram.Common"
       xmlns:controls="using:Telegram.Controls"
-      xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
+      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       Loaded="OnLoaded"
@@ -55,7 +55,7 @@
                          KeyDown="PasswordBox_KeyDown"
                          Grid.Row="3" />
 
-            <microsoft:ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
+            <muxc:ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
                                    Background="Transparent"
                                    Grid.Row="4" />
 

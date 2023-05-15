@@ -5,7 +5,7 @@
                   xmlns:controls="using:Telegram.Controls"
                   xmlns:services="using:Telegram.Services"
                   xmlns:settings="using:Telegram.Services.Settings"
-                  xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
+                  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">

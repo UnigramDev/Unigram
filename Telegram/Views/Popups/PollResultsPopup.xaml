@@ -5,7 +5,7 @@
                        xmlns:common="using:Telegram.Common"
                        xmlns:cells="using:Telegram.Controls.Cells"
                        xmlns:controls="using:Telegram.Controls"
-                       xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
+                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
@@ -24,27 +24,27 @@
                    Style="{StaticResource CaptionTextBlockStyle}"
                    Margin="24,0,0,2" />
 
-        <microsoft:ItemsRepeaterScrollHost Grid.Row="1">
+        <muxc:ItemsRepeaterScrollHost Grid.Row="1">
             <ScrollViewer x:Name="ScrollingHost">
-                <microsoft:ItemsRepeater x:Name="Repeater"
+                <muxc:ItemsRepeater x:Name="Repeater"
                                          Layout="{StaticResource ThreadStackLayout}"
                                          ElementPrepared="OnElementPrepared"
                                          Margin="0,0,0,24">
-                    <microsoft:ItemsRepeater.ItemTemplate>
+                    <muxc:ItemsRepeater.ItemTemplate>
                         <DataTemplate x:DataType="local:PollResultViewModel">
                             <controls:HeaderedControl Style="{StaticResource FooteredControlStyle}">
-                                <microsoft:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
+                                <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
                                                          ItemsSource="{x:Bind Items}"
                                                          ElementPrepared="OnElementPrepared">
-                                    <microsoft:ItemsRepeater.ItemTemplate>
+                                    <muxc:ItemsRepeater.ItemTemplate>
                                         <DataTemplate>
                                             <Button Style="{StaticResource EmptyButtonStyle}">
                                                 <cells:ProfileCell />
                                             </Button>
                                         </DataTemplate>
 
-                                    </microsoft:ItemsRepeater.ItemTemplate>
-                                </microsoft:ItemsRepeater>
+                                    </muxc:ItemsRepeater.ItemTemplate>
+                                </muxc:ItemsRepeater>
 
                                 <controls:BadgeButton Command="{x:Bind LoadMoreCommand}"
                                                       Content="{x:Bind LoadMoreLabel, Mode=OneWay}"
@@ -52,10 +52,10 @@
                                                       Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
                             </controls:HeaderedControl>
                         </DataTemplate>
-                    </microsoft:ItemsRepeater.ItemTemplate>
-                </microsoft:ItemsRepeater>
+                    </muxc:ItemsRepeater.ItemTemplate>
+                </muxc:ItemsRepeater>
             </ScrollViewer>
-        </microsoft:ItemsRepeaterScrollHost>
+        </muxc:ItemsRepeaterScrollHost>
 
         <controls:ScrollViewerScrim Background="{ThemeResource PageBackgroundDarkBrush}"
                                     ScrollingHost="{x:Bind ScrollingHost}"

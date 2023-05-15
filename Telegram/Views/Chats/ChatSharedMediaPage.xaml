@@ -6,7 +6,7 @@
                                xmlns:common="using:Telegram.Common"
                                xmlns:controls="using:Telegram.Controls"
                                xmlns:messages="using:Telegram.Controls.Messages"
-                               xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
+                               xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                                xmlns:selectors="using:Telegram.Selectors"
                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -86,7 +86,7 @@
                 </StackPanel>
             </GridView.Header>
             <!--<GridView.Footer>
-                <microsoft:ProgressBar Background="Transparent"
+                <muxc:ProgressBar Background="Transparent"
                                        IsIndeterminate="{x:Bind ViewModel.Media.IsLoading, Mode=OneWay}" />
             </GridView.Footer>-->
             <GridView.ItemTemplateSelector>

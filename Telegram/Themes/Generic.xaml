@@ -10,7 +10,6 @@
                     xmlns:icons="using:Telegram.Assets.Icons"
                     xmlns:common="using:Telegram.Common"
                     xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
-                    xmlns:microsoft="using:Microsoft.UI.Xaml.Controls"
                     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                     xmlns:Windows11="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 13)">
 
@@ -3046,7 +3045,7 @@
                                           HorizontalContentAlignment="Stretch"
                                           VerticalContentAlignment="Stretch"
                                           Grid.Column="1" />
-                        <microsoft:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}"
+                        <muxc:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}"
                                                Background="Transparent"
                                                VerticalAlignment="Bottom"
                                                IsHitTestVisible="False"
