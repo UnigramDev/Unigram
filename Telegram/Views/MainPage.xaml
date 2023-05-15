@@ -196,6 +196,7 @@
             <HyperlinkButton x:Name="TitleBarLogo"
                              Click="Status_Click"
                              Style="{StaticResource EmptyHyperlinkButtonStyle}"
+                             IsTabStop="False"
                              Margin="6,0"
                              Width="40"
                              Height="40"
