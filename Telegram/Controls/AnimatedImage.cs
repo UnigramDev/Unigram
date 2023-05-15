@@ -46,8 +46,8 @@ namespace Telegram.Controls
         private bool _bitmapClean = true;
         protected bool _needToCreateBitmap = true;
 
-        protected Panel _layoutRoot;
-        protected Image _canvas;
+        protected Border _layoutRoot;
+        protected ImageBrush _canvas;
 
         protected TAnimation _animation;
 
@@ -86,15 +86,16 @@ namespace Telegram.Controls
         {
             RegisterEventHandlers();
 
-            var canvas = GetTemplateChild("Canvas") as Image;
+            var canvas = GetTemplateChild("Canvas") as ImageBrush;
             if (canvas == null)
             {
                 return;
             }
 
             _canvas = canvas;
+            _canvas.Stretch = Stretch;
 
-            _layoutRoot = GetTemplateChild("LayoutRoot") as Panel;
+            _layoutRoot = GetTemplateChild("LayoutRoot") as Border;
             _layoutRoot.Loaded += OnLoaded;
             _layoutRoot.Loading += OnLoading;
             _layoutRoot.Unloaded += OnUnloaded;
@@ -283,7 +284,7 @@ namespace Telegram.Controls
             {
                 if (_canvas != null)
                 {
-                    _canvas.Source = null;
+                    _canvas.ImageSource = null;
                 }
             }
 
@@ -363,14 +364,14 @@ namespace Telegram.Controls
                 if (pixels != null)
                 {
                     // We must check if the bitmap is still valid
-                    if (_canvas.Source is WriteableBitmap bitmap && (_bitmap0 == bitmap || _bitmap1 == bitmap))
+                    if (_canvas.ImageSource is WriteableBitmap bitmap && (_bitmap0 == bitmap || _bitmap1 == bitmap))
                     {
                         _backgroundQueue.Enqueue(new PixelBuffer(bitmap));
                     }
 
                     pixels.Visual.Invalidate();
 
-                    _canvas.Source = pixels.Visual;
+                    _canvas.ImageSource = pixels.Visual;
                     DrawFrame(pixels.Visual);
                 }
             }
@@ -552,7 +553,7 @@ namespace Telegram.Controls
                 return false;
             }
 
-            if (_canvas.IsLoaded || _layoutRoot.IsLoaded)
+            if (_layoutRoot.IsLoaded)
             {
                 if (tryLoad is false)
                 {

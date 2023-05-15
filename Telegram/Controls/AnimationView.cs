@@ -8,6 +8,7 @@ using System;
 using System.Threading.Tasks;
 using Telegram.Native;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
@@ -26,7 +27,7 @@ namespace Telegram.Controls
     [TemplatePart(Name = "Thumbnail", Type = typeof(ImageBrush))]
     public class AnimationView : AnimatedImage<CachedVideoAnimation>
     {
-        private ImageBrush _thumbnail;
+        private Image _thumbnail;
         private bool? _hideThumbnail;
 
         private int _prevSeconds = int.MaxValue;
@@ -55,7 +56,7 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
-            _thumbnail = GetTemplateChild("Thumbnail") as ImageBrush;
+            _thumbnail = GetTemplateChild("Thumbnail") as Image;
 
             base.OnApplyTemplate();
         }
