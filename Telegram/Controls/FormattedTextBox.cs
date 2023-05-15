@@ -18,7 +18,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Telegram.ViewModels;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -1188,7 +1187,7 @@ namespace Telegram.Controls
                 index = value.IndexOf('￼', index + 1);
             }
 
-            if (CustomEmoji != null && DataContext is TLViewModelBase viewModel)
+            if (CustomEmoji != null && DataContext is ViewModelBase viewModel)
             {
                 CustomEmoji.UpdatePositions(positions);
                 CustomEmoji.UpdateEntities(viewModel.ClientService, emoji);

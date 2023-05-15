@@ -84,7 +84,7 @@ namespace Telegram.ViewModels
             Children.Add(Settings);
 
             // Any additional child
-            Children.Add(_voipService as TLViewModelBase);
+            Children.Add(_voipService as ViewModelBase);
 
             Subscribe();
         }

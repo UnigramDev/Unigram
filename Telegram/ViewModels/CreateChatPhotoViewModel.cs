@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public struct CreateChatPhotoParameters
+    public readonly struct CreateChatPhotoParameters
     {
         public long? ChatId { get; }
 

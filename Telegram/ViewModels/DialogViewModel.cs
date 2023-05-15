@@ -47,7 +47,7 @@ namespace Telegram.ViewModels
 
         protected readonly ConcurrentDictionary<long, MessageViewModel> _groupedMessages = new();
 
-        protected static readonly Dictionary<string, MessageContent> _contentOverrides = new();
+        protected static readonly Dictionary<MessageId, MessageContent> _contentOverrides = new();
 
         protected readonly DisposableMutex _loadMoreLock = new();
 

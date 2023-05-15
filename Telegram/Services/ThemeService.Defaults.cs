@@ -1766,15 +1766,15 @@ namespace Telegram.Services
 
         private static readonly Dictionary<string, object> _defaultDark = new Dictionary<string, object>
         {
-            { "MessageReactionBackgroundOutgoing", ColorEx.FromHex(0x2B4153) },
-            { "MessageReactionForegroundOutgoing", ColorEx.FromHex(0x7AC3F4) },
-            { "MessageReactionChosenBackgroundOutgoing", ColorEx.FromHex(0x318EE4) },
-            { "MessageReactionChosenForegroundOutgoing", ColorEx.FromHex(0x33393F) },
+            { "MessageReactionBackgroundOutgoing", Color.FromArgb(0xFF, 0x2B, 0x41, 0x53) },
+            { "MessageReactionForegroundOutgoing", Color.FromArgb(0xFF, 0x7A, 0xC3, 0xF4) },
+            { "MessageReactionChosenBackgroundOutgoing", Color.FromArgb(0xFF, 0x31, 0x8E, 0xE4) },
+            { "MessageReactionChosenForegroundOutgoing", Color.FromArgb(0xFF, 0x33, 0x39, 0x3F) },
 
-            { "MessageReactionBackgroundIncoming", ColorEx.FromHex(0x3A4754) },
-            { "MessageReactionForegroundIncoming", ColorEx.FromHex(0x67BBF3) },
-            { "MessageReactionChosenBackgroundIncoming", ColorEx.FromHex(0x6EB2EE) },
-            { "MessageReactionChosenForegroundIncoming", ColorEx.FromHex(0x33393F) },
+            { "MessageReactionBackgroundIncoming", Color.FromArgb(0xFF, 0x3A, 0x47, 0x54) },
+            { "MessageReactionForegroundIncoming", Color.FromArgb(0xFF, 0x67, 0xBB, 0xF3) },
+            { "MessageReactionChosenBackgroundIncoming", Color.FromArgb(0xFF, 0x6E, 0xB2, 0xEE) },
+            { "MessageReactionChosenForegroundIncoming", Color.FromArgb(0xFF, 0x33, 0x39, 0x3F) },
 
             { "ApplicationPageBackgroundThemeBrush", Color.FromArgb(0xFF, 0x17, 0x17, 0x17) },
             { "ChatPageBackgroundBrush", Color.FromArgb(0xFF, 0x17, 0x17, 0x17) },
