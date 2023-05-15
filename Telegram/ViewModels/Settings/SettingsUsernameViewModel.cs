@@ -206,7 +206,7 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var response = await ClientService.SendAsync(new SearchPublicChat(text));
+            var response = await ClientService.SendAsync(new SearchPublicChat(text ?? string.Empty));
             if (response is Chat chat)
             {
                 if (chat.Type is ChatTypePrivate privata && privata.UserId == ClientService.Options.MyId)

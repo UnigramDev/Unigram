@@ -364,7 +364,7 @@ namespace Telegram.ViewModels.Supergroups
 
             var chatId = chat.Type is ChatTypeSupergroup ? chat.Id : 0;
 
-            var response = await ClientService.SendAsync(new CheckChatUsername(chatId, text));
+            var response = await ClientService.SendAsync(new CheckChatUsername(chatId, text ?? string.Empty));
             if (response is CheckChatUsernameResultOk)
             {
                 IsLoading = false;
