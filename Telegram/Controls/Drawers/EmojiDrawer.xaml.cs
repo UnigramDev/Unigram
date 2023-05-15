@@ -484,7 +484,13 @@ namespace Telegram.Controls.Drawers
 
             for (int i = 0; i < elements.Length; i++)
             {
-                var visual = ElementCompositionPreview.GetElementVisual(VisualTreeHelper.GetChild(elements[i], 0) as UIElement);
+                var child = VisualTreeHelper.GetChild(elements[i], 0) as UIElement;
+                if (child == null)
+                {
+                    continue;
+                }
+
+                var visual = ElementCompositionPreview.GetElementVisual(child);
 
                 var from = i;
                 if (elements[i] == Toolbar)

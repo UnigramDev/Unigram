@@ -126,6 +126,10 @@ namespace Telegram.Views
             if (!_hasInitialLoadedEventFired)
             {
                 var root = VisualTreeHelper.GetChild(this, 0) as UIElement;
+                if (root == null)
+                {
+                    return;
+                }
 
                 _visual = ElementCompositionPreview.GetElementVisual(root);
 

@@ -101,7 +101,7 @@ namespace Telegram.Controls.Chats
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (!_hasInitialLoadedEventFired && (SettingsService.Current.SwipeToReply || SettingsService.Current.SwipeToShare))
+            if (!_hasInitialLoadedEventFired && _presenter != null && (SettingsService.Current.SwipeToReply || SettingsService.Current.SwipeToShare))
             {
                 _visual = ElementCompositionPreview.GetElementVisual(_presenter);
 

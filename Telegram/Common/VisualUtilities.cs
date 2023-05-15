@@ -19,6 +19,11 @@ namespace Telegram.Common
             // We use first child inside the control (usually a Grid)
             // so we don't have to worry about absolute offset
             var inner = VisualTreeHelper.GetChild(view, 0) as FrameworkElement;
+            if (inner == null)
+            {
+                return;
+            }
+
             var visual = ElementCompositionPreview.GetElementVisual(inner);
 
             var animation = visual.Compositor.CreateScalarKeyFrameAnimation();

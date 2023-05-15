@@ -813,6 +813,11 @@ namespace Telegram.Views
                     }
 
                     var child = VisualTreeHelper.GetChild(container, 0) as UIElement;
+                    if (child == null)
+                    {
+                        continue;
+                    }
+
                     var visual = ElementCompositionPreview.GetElementVisual(child);
 
                     if (i == args.NewStartingIndex && animateSendout)
