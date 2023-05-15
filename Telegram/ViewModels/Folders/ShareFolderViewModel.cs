@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -11,7 +12,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Folders
 {
-    public class ShareFolderViewModel : TLViewModelBase
+    public class ShareFolderViewModel : ViewModelBase
     {
         public ShareFolderViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

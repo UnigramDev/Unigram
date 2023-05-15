@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -73,7 +74,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class BackgroundViewModel : TLViewModelBase, IDelegable<IBackgroundDelegate>
+    public class BackgroundViewModel : ViewModelBase, IDelegable<IBackgroundDelegate>
     {
         public IBackgroundDelegate Delegate { get; set; }
 

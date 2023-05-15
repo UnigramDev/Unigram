@@ -8,6 +8,7 @@ using Rg.DiffUtils;
 using System;
 using System.Threading.Tasks;
 using Telegram.Collections;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -16,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupMembersViewModelBase : TLViewModelBase, IDelegable<ISupergroupDelegate>
+    public class SupergroupMembersViewModelBase : ViewModelBase, IDelegable<ISupergroupDelegate>
     {
         private readonly SupergroupMembersFilter _filter;
         private readonly Func<string, SupergroupMembersFilter> _find;

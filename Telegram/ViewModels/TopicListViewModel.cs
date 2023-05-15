@@ -11,6 +11,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
@@ -20,7 +21,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {
-    public class TopicListViewModel : TLViewModelBase, IDelegable<IChatListDelegate>
+    public class TopicListViewModel : ViewModelBase, IDelegable<IChatListDelegate>
     {
         private readonly INotificationsService _notificationsService;
 

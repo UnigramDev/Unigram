@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Channels;
@@ -13,7 +14,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.ViewModels.Channels
 {
-    public class ChannelCreateStep1ViewModel : TLViewModelBase
+    public class ChannelCreateStep1ViewModel : ViewModelBase
     {
         public ChannelCreateStep1ViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

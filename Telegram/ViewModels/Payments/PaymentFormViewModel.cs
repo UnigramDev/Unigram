@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -21,7 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Payments
 {
-    public class PaymentFormViewModel : TLViewModelBase
+    public class PaymentFormViewModel : ViewModelBase
     {
         private readonly bool _save;
 

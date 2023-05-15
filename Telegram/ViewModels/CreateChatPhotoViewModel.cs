@@ -7,6 +7,7 @@
 using Rg.DiffUtils;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -31,7 +32,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class CreateChatPhotoViewModel : TLViewModelBase
+    public class CreateChatPhotoViewModel : ViewModelBase
     {
         private long? _chatId;
         private bool _isPublic;

@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class ShareViewModel : TLViewModelBase
+    public class ShareViewModel : ViewModelBase
     {
         public ShareViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -17,9 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsPrivacyViewModelBase : TLMultipleViewModelBase
-        , IHandle
-    //, IHandle<UpdateUserPrivacySettingRules>
+    public class SettingsPrivacyViewModelBase : MultiViewModelBase, IHandle
     {
         private readonly UserPrivacySetting _inputKey;
 

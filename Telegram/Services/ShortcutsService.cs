@@ -11,7 +11,6 @@ using System.Text;
 using Telegram.Collections;
 using Telegram.Navigation;
 using Telegram.Services.Keyboard;
-using Telegram.ViewModels;
 using Windows.Data.Json;
 using Windows.Storage;
 using Windows.System;
@@ -39,7 +38,7 @@ namespace Telegram.Services
         }
     }
 
-    public class ShortcutsService : TLViewModelBase, IShortcutsService
+    public class ShortcutsService : ViewModelBase, IShortcutsService
     {
         #region Const
 

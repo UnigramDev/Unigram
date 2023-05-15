@@ -7,21 +7,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Windows.UI.Xaml.Navigation;
 
-namespace Telegram.ViewModels
+namespace Telegram.Navigation
 {
-    public class TLMultipleViewModelBase : TLViewModelBase
+    public class MultiViewModelBase : ViewModelBase
     {
-        public readonly List<TLViewModelBase> Children;
+        public readonly List<ViewModelBase> Children;
 
-        public TLMultipleViewModelBase(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        public MultiViewModelBase(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Children = new List<TLViewModelBase>();
+            Children = new List<ViewModelBase>();
         }
 
         public override IDispatcherContext Dispatcher

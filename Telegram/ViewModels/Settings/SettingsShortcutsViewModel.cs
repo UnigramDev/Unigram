@@ -6,13 +6,14 @@
 //
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsShortcutsViewModel : TLViewModelBase
+    public class SettingsShortcutsViewModel : ViewModelBase
     {
         private readonly IShortcutsService _shortcutsService;
 

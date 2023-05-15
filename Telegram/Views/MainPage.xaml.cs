@@ -119,7 +119,7 @@ namespace Telegram.Views
             ChatsList.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
             //var show = !((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats;
-            var show = !((TLViewModelBase)ViewModel).Settings.HideArchivedChats;
+            var show = !((ViewModelBase)ViewModel).Settings.HideArchivedChats;
 
             ArchivedChatsPanel.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
             //ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;

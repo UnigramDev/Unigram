@@ -20,10 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsProxiesViewModel : TLViewModelBase
-        , IHandle
-    //, IHandle<UpdateConnectionState>
-    //, IHandle<UpdateOption>
+    public class SettingsProxiesViewModel : ViewModelBase, IHandle
     {
         private readonly INetworkService _networkService;
 

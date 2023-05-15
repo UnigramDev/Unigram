@@ -6,6 +6,7 @@
 //
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -13,7 +14,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Authorization
 {
-    public class AuthorizationEmailCodeViewModel : TLViewModelBase
+    public class AuthorizationEmailCodeViewModel : ViewModelBase
     {
         public AuthorizationEmailCodeViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

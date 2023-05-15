@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native.Calls;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Settings;
@@ -21,7 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsDataAndStorageViewModel : TLViewModelBase
+    public class SettingsDataAndStorageViewModel : ViewModelBase
     {
         private readonly IStorageService _storageService;
 

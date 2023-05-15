@@ -7,6 +7,7 @@
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -14,7 +15,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings.Privacy
 {
-    public class SettingsPrivacyPhoneViewModel : TLMultipleViewModelBase
+    public class SettingsPrivacyPhoneViewModel : MultiViewModelBase
     {
         private readonly SettingsPrivacyShowPhoneViewModel _showPhone;
         private readonly SettingsPrivacyAllowFindingByPhoneNumberViewModel _allowFindingByPhoneNumber;

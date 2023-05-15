@@ -9,9 +9,9 @@ using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
@@ -85,7 +85,7 @@ namespace Telegram.Views.Popups
         }
     }
 
-    public class PollResultViewModel : TLViewModelBase
+    public class PollResultViewModel : ViewModelBase
     {
         private readonly long _chatId;
         private readonly long _messageId;

@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
@@ -16,7 +17,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.ViewModels.BasicGroups
 {
-    public class BasicGroupCreateStep1ViewModel : TLViewModelBase
+    public class BasicGroupCreateStep1ViewModel : ViewModelBase
     {
         private bool _uploadingPhoto;
         private readonly Action _uploadingCallback;

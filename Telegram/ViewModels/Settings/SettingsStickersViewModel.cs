@@ -11,6 +11,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Settings;
@@ -36,10 +37,7 @@ namespace Telegram.ViewModels.Settings
         EmojiArchived
     }
 
-    public class SettingsStickersViewModel : TLViewModelBase, IHandle
-    //, IHandle<UpdateInstalledStickerSets>
-    //, IHandle<UpdateTrendingStickerSets>
-    //, IHandle<UpdateRecentStickers>
+    public class SettingsStickersViewModel : ViewModelBase, IHandle
     {
         private StickersType _type;
 

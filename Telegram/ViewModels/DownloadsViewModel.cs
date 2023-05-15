@@ -21,10 +21,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {
-    public class DownloadsViewModel : TLViewModelBase, IHandle
-    //IHandle<UpdateFileDownload>,
-    //IHandle<UpdateFileAddedToDownloads>,
-    //IHandle<UpdateFileRemovedFromDownloads>
+    public class DownloadsViewModel : ViewModelBase, IHandle
     {
         private readonly IStorageService _storageService;
 

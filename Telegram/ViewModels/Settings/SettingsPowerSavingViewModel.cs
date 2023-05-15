@@ -8,6 +8,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Windows.ApplicationModel;
@@ -15,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsPowerSavingViewModel : TLViewModelBase
+    public class SettingsPowerSavingViewModel : ViewModelBase
     {
         public SettingsPowerSavingViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

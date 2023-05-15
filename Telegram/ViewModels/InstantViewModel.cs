@@ -7,6 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Factories;
@@ -19,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class InstantViewModel : TLViewModelBase
+    public class InstantViewModel : ViewModelBase
     {
         private readonly ITranslateService _translateService;
         private readonly IMessageFactory _messageFactory;

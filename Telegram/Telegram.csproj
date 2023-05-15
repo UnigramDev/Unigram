@@ -995,8 +995,7 @@
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModelBase.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupPermissionsViewModel.cs" />
-    <Compile Include="ViewModels\TLMultipleViewModelBase.cs" />
-    <Compile Include="ViewModels\TLViewModelBase.cs" />
+    <Compile Include="Navigation\MultiViewModelBase.cs" />
     <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCreateViewModel.cs" />
     <Compile Include="Views\BasicGroups\BasicGroupCreateStep1Page.xaml.cs">

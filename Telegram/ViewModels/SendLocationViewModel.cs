@@ -8,6 +8,7 @@ using Rg.DiffUtils;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Collections;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -15,7 +16,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {
-    public class SendLocationViewModel : TLViewModelBase
+    public class SendLocationViewModel : ViewModelBase
     {
         private readonly ILocationService _locationService;
 

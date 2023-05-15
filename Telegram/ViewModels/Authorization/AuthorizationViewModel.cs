@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Authorization
 {
-    public class AuthorizationViewModel : TLViewModelBase, IDelegable<ISignInDelegate>, IHandle
+    public class AuthorizationViewModel : ViewModelBase, IDelegable<ISignInDelegate>, IHandle
     {
         private readonly ISessionService _sessionService;
         private readonly ILifetimeService _lifetimeService;

@@ -8,6 +8,7 @@ using System;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
@@ -17,9 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsAdvancedViewModel : TLViewModelBase
-        , IHandle
-    //, IHandle<UpdateAppVersion>
+    public class SettingsAdvancedViewModel : ViewModelBase, IHandle
     {
         private readonly ICloudUpdateService _cloudUpdateService;
         private CloudUpdate _update;

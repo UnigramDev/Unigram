@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class DiagnosticsViewModel : TLViewModelBase
+    public class DiagnosticsViewModel : ViewModelBase
     {
         public DiagnosticsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

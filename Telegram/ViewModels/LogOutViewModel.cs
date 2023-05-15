@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Settings;
@@ -12,7 +13,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels
 {
-    public class LogOutViewModel : TLViewModelBase
+    public class LogOutViewModel : ViewModelBase
     {
         private readonly INotificationsService _pushService;
         private readonly IContactsService _contactsService;

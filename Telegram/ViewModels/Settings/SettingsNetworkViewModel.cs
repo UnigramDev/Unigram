@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -18,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsNetworkViewModel : TLViewModelBase
+    public class SettingsNetworkViewModel : ViewModelBase
     {
         public SettingsNetworkViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -36,8 +37,8 @@ namespace Telegram.ViewModels.Settings
                 var notes = new NetworkStatisticsEntryFile(new FileTypeNotes(), null, 0, 0);
                 var other = new NetworkStatisticsEntryFile(new FileTypeOther(), null, 0, 0);
 
-                var totalSent = 0l;
-                var totalReceived = 0l;
+                var totalSent = 0L;
+                var totalReceived = 0L;
 
                 var results = new List<NetworkStatisticsEntry>();
 

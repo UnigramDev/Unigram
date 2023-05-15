@@ -8,12 +8,13 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Entities;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Payments
 {
-    public class PaymentAddressViewModel : TLViewModelBase
+    public class PaymentAddressViewModel : ViewModelBase
     {
         private InputInvoice _inputInvoice;
 

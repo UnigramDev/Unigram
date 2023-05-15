@@ -9,15 +9,13 @@ using System.Linq;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 
 namespace Telegram.ViewModels
 {
-    public class ContactsViewModel : TLViewModelBase
-        , IChildViewModel
-    //, IHandle
-    //, IHandle<UpdateUserStatus>
+    public class ContactsViewModel : ViewModelBase, IChildViewModel
     {
         private readonly IContactsService _contactsService;
 

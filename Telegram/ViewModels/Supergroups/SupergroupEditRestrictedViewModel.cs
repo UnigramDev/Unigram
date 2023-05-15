@@ -7,6 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -17,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupEditRestrictedViewModel : TLViewModelBase, IDelegable<IMemberDelegate>
+    public class SupergroupEditRestrictedViewModel : ViewModelBase, IDelegable<IMemberDelegate>
     {
         public IMemberDelegate Delegate { get; set; }
 

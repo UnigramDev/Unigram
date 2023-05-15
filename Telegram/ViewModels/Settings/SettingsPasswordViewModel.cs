@@ -8,6 +8,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -25,7 +26,7 @@ namespace Telegram.ViewModels.Settings
         Recovery
     }
 
-    public class SettingsPasswordViewModel : TLViewModelBase
+    public class SettingsPasswordViewModel : ViewModelBase
     {
         private PasswordState _passwordState;
 
@@ -216,7 +217,7 @@ namespace Telegram.ViewModels.Settings
 
         #endregion
 
-        public class InputViewModel : TLViewModelBase
+        public class InputViewModel : ViewModelBase
         {
             private readonly SettingsPasswordViewModel _viewModel;
 

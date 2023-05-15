@@ -26,16 +26,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class MainViewModel : TLMultipleViewModelBase
-        //IHandle<UpdateServiceNotification>,
-        //IHandle<UpdateUnreadMessageCount>,
-        //IHandle<UpdateUnreadChatCount>,
-        //IHandle<UpdateChatFolders>,
-        //IHandle<UpdateDeleteMessages>,
-        //IHandle<UpdateAppVersion>,
-        //IHandle<UpdateWindowActivated>,
-        //, IHandle
-        , IDisposable
+    public class MainViewModel : MultiViewModelBase, IDisposable
     {
         private readonly IContactsService _contactsService;
         private readonly IPasscodeService _passcodeService;

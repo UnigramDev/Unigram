@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -20,9 +21,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsNotificationsViewModel : TLMultipleViewModelBase
-        , IHandle
-    //, IHandle<UpdateScopeNotificationSettings>
+    public class SettingsNotificationsViewModel : MultiViewModelBase, IHandle
     {
         public SettingsNotificationsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -180,7 +179,7 @@ namespace Telegram.ViewModels.Settings
         }
     }
 
-    public class SettingsNotificationsScope : TLViewModelBase
+    public class SettingsNotificationsScope : ViewModelBase
     {
         private readonly Type _type;
         private readonly string _title;

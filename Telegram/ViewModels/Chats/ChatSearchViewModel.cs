@@ -11,12 +11,13 @@ using System.Linq;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Chats
 {
-    public class ChatSearchViewModel : TLViewModelBase, IDisposable
+    public class ChatSearchViewModel : ViewModelBase, IDisposable
     {
         private readonly DialogViewModel _dialog;
         private readonly DisposableMutex _loadMoreLock;

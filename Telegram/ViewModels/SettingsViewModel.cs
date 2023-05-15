@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -19,13 +20,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class SettingsViewModel : TLViewModelBase
-        , IChildViewModel
-        , IDelegable<ISettingsDelegate>
-        , IHandle
-    //IHandle<UpdateUser>,
-    //IHandle<UpdateUserFullInfo>,
-    //IHandle<UpdateOption>
+    public class SettingsViewModel : ViewModelBase, IChildViewModel, IDelegable<ISettingsDelegate>, IHandle
     {
         private readonly ISettingsSearchService _searchService;
         private readonly IStorageService _storageService;

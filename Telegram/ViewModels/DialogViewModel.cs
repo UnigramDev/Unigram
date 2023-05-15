@@ -38,7 +38,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.ViewModels
 {
-    public partial class DialogViewModel : TLViewModelBase, IDelegable<IDialogDelegate>
+    public partial class DialogViewModel : ViewModelBase, IDelegable<IDialogDelegate>
     {
         private readonly ConcurrentDictionary<long, MessageViewModel> _selectedItems = new();
         public IDictionary<long, MessageViewModel> SelectedItems => _selectedItems;

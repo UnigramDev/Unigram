@@ -13,13 +13,14 @@ using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels
 {
-    public class CallsViewModel : TLViewModelBase
+    public class CallsViewModel : ViewModelBase
     {
         public CallsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

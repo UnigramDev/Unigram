@@ -6,13 +6,14 @@
 //
 using System.Threading.Tasks;
 using Telegram.Entities;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Stripe;
 using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Payments
 {
-    public class PaymentCredentialsViewModel : TLViewModelBase
+    public class PaymentCredentialsViewModel : ViewModelBase
     {
         private PaymentForm _paymentForm;
 

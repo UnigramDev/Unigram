@@ -9,9 +9,9 @@ using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -107,7 +107,7 @@ namespace Telegram.Views.Popups
         }
     }
 
-    public class ChatJoinRequestsViewModel : TLViewModelBase
+    public class ChatJoinRequestsViewModel : ViewModelBase
     {
         private readonly Chat _chat;
         private readonly string _inviteLink;

@@ -7,6 +7,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -16,7 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings.Password
 {
-    public class SettingsPasswordEmailViewModel : TLViewModelBase
+    public class SettingsPasswordEmailViewModel : ViewModelBase
     {
         public SettingsPasswordEmailViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

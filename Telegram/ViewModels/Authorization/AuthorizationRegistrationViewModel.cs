@@ -5,13 +5,14 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Authorization
 {
-    public class AuthorizationRegistrationViewModel : TLViewModelBase
+    public class AuthorizationRegistrationViewModel : ViewModelBase
     {
         public AuthorizationRegistrationViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

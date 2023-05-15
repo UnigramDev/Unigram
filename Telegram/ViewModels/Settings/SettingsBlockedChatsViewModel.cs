@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
@@ -17,7 +18,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsBlockedChatsViewModel : TLViewModelBase
+    public class SettingsBlockedChatsViewModel : ViewModelBase
     {
         public SettingsBlockedChatsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

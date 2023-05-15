@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Views.Popups;
@@ -16,9 +17,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsPasscodeViewModel : TLViewModelBase
-        , IHandle
-    //, IHandle<UpdatePasscodeLock>
+    public class SettingsPasscodeViewModel : ViewModelBase, IHandle
     {
         private readonly IPasscodeService _passcodeService;
 

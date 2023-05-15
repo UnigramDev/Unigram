@@ -25,7 +25,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsThemesViewModel : TLViewModelBase
+    public class SettingsThemesViewModel : ViewModelBase
     {
         private readonly IThemeService _themeService;
         private readonly bool _darkOnly;

@@ -25,7 +25,7 @@ namespace Telegram.ViewModels.Supergroups
         None
     }
 
-    public class SupergroupReactionsViewModel : TLViewModelBase
+    public class SupergroupReactionsViewModel : ViewModelBase
     {
         public SupergroupReactionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

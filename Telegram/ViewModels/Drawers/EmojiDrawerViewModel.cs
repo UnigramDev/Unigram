@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
@@ -28,8 +29,7 @@ namespace Telegram.ViewModels.Drawers
         UserPhoto
     }
 
-    public class EmojiDrawerViewModel : TLViewModelBase
-    //IHandle<UpdateInstalledStickerSets>
+    public class EmojiDrawerViewModel : ViewModelBase
     {
         private bool _updated;
 

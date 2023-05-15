@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
@@ -20,8 +21,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels.Drawers
 {
-    public class AnimationDrawerViewModel : TLViewModelBase
-    //IHandle<UpdateSavedAnimations>
+    public class AnimationDrawerViewModel : ViewModelBase
     {
         private bool _updated;
 

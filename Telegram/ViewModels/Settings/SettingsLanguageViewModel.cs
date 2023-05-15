@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsLanguageViewModel : TLViewModelBase
+    public class SettingsLanguageViewModel : ViewModelBase
     {
         private readonly ILocaleService _localeService;
         private readonly List<LanguagePackInfo> _officialLanguages = new();

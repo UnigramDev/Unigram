@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
@@ -21,9 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Folders
 {
-    public class FoldersViewModel : TLViewModelBase
-        , IHandle
-    //, IHandle<UpdateChatFolders>
+    public class FoldersViewModel : ViewModelBase, IHandle
     {
         public FoldersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

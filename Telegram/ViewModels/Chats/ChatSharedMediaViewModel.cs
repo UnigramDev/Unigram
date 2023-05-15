@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -38,9 +39,7 @@ namespace Telegram.ViewModels.Chats
         }
     }
 
-    public class ChatSharedMediaViewModel : TLMultipleViewModelBase
-        , IHandle
-    //, IHandle<UpdateDeleteMessages>
+    public class ChatSharedMediaViewModel : MultiViewModelBase, IHandle
     {
         private readonly IPlaybackService _playbackService;
         private readonly IStorageService _storageService;

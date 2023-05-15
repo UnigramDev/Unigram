@@ -10,6 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -24,9 +25,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsPrivacyAndSecurityViewModel : TLMultipleViewModelBase
-        , IHandle
-    //, IHandle<UpdateOption>
+    public class SettingsPrivacyAndSecurityViewModel : MultiViewModelBase, IHandle
     {
         private readonly IContactsService _contactsService;
         private readonly IPasscodeService _passcodeService;

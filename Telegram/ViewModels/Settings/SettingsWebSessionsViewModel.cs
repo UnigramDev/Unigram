@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Controls;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -18,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsWebSessionsViewModel : TLViewModelBase
+    public class SettingsWebSessionsViewModel : ViewModelBase
     {
         public SettingsWebSessionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

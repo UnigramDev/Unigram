@@ -21,7 +21,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsThemeViewModel : TLViewModelBase
+    public class SettingsThemeViewModel : ViewModelBase
     {
         private readonly IThemeService _themeService;
 

@@ -15,7 +15,7 @@ using Windows.Storage.Streams;
 
 namespace Telegram.ViewModels.Gallery
 {
-    public abstract class GalleryViewModelBase : TLViewModelBase
+    public abstract class GalleryViewModelBase : ViewModelBase
     {
         private readonly IStorageService _storageService;
 

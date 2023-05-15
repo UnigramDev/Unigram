@@ -25,13 +25,13 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels
 {
-    public class MessageDelegate : TLViewModelBase, IMessageDelegate
+    public class MessageDelegate : ViewModelBase, IMessageDelegate
     {
-        private readonly TLViewModelBase _viewModel;
+        private readonly ViewModelBase _viewModel;
 
         protected static readonly Dictionary<long, IList<ChatAdministrator>> _admins = new();
 
-        public MessageDelegate(TLViewModelBase viewModel)
+        public MessageDelegate(ViewModelBase viewModel)
             : base(viewModel.ClientService, viewModel.Settings, viewModel.Aggregator)
         {
             _viewModel = viewModel;

@@ -8,6 +8,7 @@ using System;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Entities;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -15,7 +16,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Users
 {
-    public class UserCreateViewModel : TLViewModelBase
+    public class UserCreateViewModel : ViewModelBase
     {
         public UserCreateViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

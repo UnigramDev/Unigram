@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Native.Calls;
+using Telegram.Navigation;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
 using Telegram.Td.Api;
-using Telegram.ViewModels;
 using Telegram.Views.Calls;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel;
@@ -63,7 +63,7 @@ namespace Telegram.Services
 #endif
     }
 
-    public class VoipService : TLViewModelBase
+    public class VoipService : ViewModelBase
         , IVoipService
     //, IHandle<UpdateCall>
     //, IHandle<UpdateNewCallSignalingData>

@@ -18,9 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class ChooseSoundViewModel : TLViewModelBase
-        , IHandle
-    //, IHandle<UpdateSavedNotificationSounds>
+    public class ChooseSoundViewModel : ViewModelBase, IHandle
     {
         public ChooseSoundViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

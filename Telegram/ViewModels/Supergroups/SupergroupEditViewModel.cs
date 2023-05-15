@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -21,14 +22,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupEditViewModel : TLViewModelBase
-        , IDelegable<ISupergroupEditDelegate>
-        , IHandle
-    //, IHandle<UpdateChatPhoto>
-    //, IHandle<UpdateSupergroup>
-    //, IHandle<UpdateSupergroupFullInfo>
-    //, IHandle<UpdateBasicGroup>
-    //, IHandle<UpdateBasicGroupFullInfo>
+    public class SupergroupEditViewModel : ViewModelBase, IDelegable<ISupergroupEditDelegate>, IHandle
     {
         public ISupergroupEditDelegate Delegate { get; set; }
 

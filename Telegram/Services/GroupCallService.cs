@@ -14,10 +14,10 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Native.Calls;
+using Telegram.Navigation;
 using Telegram.Services.Updates;
 using Telegram.Services.ViewService;
 using Telegram.Td.Api;
-using Telegram.ViewModels;
 using Telegram.Views.Calls;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.Calls;
@@ -92,10 +92,7 @@ namespace Telegram.Services
         Task ConsolidateAsync();
     }
 
-    public class GroupCallService : TLViewModelBase
-        , IGroupCallService
-    //, IHandle<UpdateGroupCall>
-    //, IHandle<UpdateGroupCallParticipant>
+    public class GroupCallService : ViewModelBase, IGroupCallService
     {
         private readonly IViewService _viewService;
 

@@ -10,18 +10,52 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td.Api;
+using Windows.System;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Navigation
 {
-    // DOCS: https://github.com/Windows-XAML/Template10/wiki/Docs-%7C-MVVM
-    public abstract class ViewModelBase : BindableBase
+    public abstract class ViewModelBase : BindableBase, INavigable
     {
+        private readonly IClientService _clientService;
+        private readonly ISettingsService _settingsService;
+        private readonly IEventAggregator _aggregator;
+
+        public ViewModelBase(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        {
+            _clientService = clientService;
+            _settingsService = settingsService;
+            _aggregator = aggregator;
+        }
+
+        #region Navigation
+
+        public virtual Task NavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        {
+            if (this is IHandle)
+            {
+                Subscribe();
+            }
+
+            return OnNavigatedToAsync(parameter, mode, state);
+        }
+
         protected virtual Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             return Task.CompletedTask;
+        }
+
+        public virtual Task NavigatedFromAsync(NavigationState suspensionState, bool suspending)
+        {
+            if (this is IHandle)
+            {
+                Unsubscribe();
+            }
+
+            return OnNavigatedFromAsync(suspensionState, suspending);
         }
 
         protected virtual Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)
@@ -34,11 +68,43 @@ namespace Telegram.Navigation
 
         }
 
+        public virtual void Subscribe()
+        {
+
+        }
+
+        public void Unsubscribe()
+        {
+            Aggregator.Unsubscribe(this);
+        }
+
+        #endregion
+
+        public IClientService ClientService => _clientService;
+
+        public ISettingsService Settings => _settingsService;
+
+        public IEventAggregator Aggregator => _aggregator;
+
+        public int SessionId => _clientService.SessionId;
+
+        public bool IsPremium => _clientService.IsPremium;
+        public bool IsPremiumAvailable => _clientService.IsPremiumAvailable;
+
+        private bool _isLoading;
+        public virtual bool IsLoading
+        {
+            get => _isLoading;
+            set => Set(ref _isLoading, value);
+        }
+
         public virtual INavigationService NavigationService { get; set; }
 
         public virtual IDispatcherContext Dispatcher { get; set; }
 
         public virtual IDictionary<string, object> SessionState { get; set; }
+
+        #region Popups
 
         public Task<ContentDialogResult> ShowPopupAsync(ContentPopup popup)
         {
@@ -73,6 +139,31 @@ namespace Telegram.Navigation
         public void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
         {
             _ = MessagePopup.ShowAsync(message, title, primary, secondary, dangerous);
+        }
+
+        #endregion
+
+        protected virtual void BeginOnUIThread(DispatcherQueueHandler action, Action fallback = null)
+        {
+            var dispatcher = Dispatcher;
+            dispatcher ??= WindowContext.Default()?.Dispatcher;
+
+            if (dispatcher != null)
+            {
+                dispatcher.Dispatch(action);
+            }
+            else if (fallback != null)
+            {
+                fallback();
+            }
+            else
+            {
+                try
+                {
+                    action();
+                }
+                catch { }
+            }
         }
     }
 }

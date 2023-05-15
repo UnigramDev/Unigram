@@ -38,7 +38,7 @@ namespace Telegram.Services
         ISessionService PreviousItem { get; set; }
     }
 
-    public class LifetimeService : ViewModelBase, ILifetimeService
+    public class LifetimeService : BindableBase, ILifetimeService
     {
         private readonly Dictionary<int, ISessionService> _sessions = new Dictionary<int, ISessionService>();
 

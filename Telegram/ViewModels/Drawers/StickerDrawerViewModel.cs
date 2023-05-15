@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Native;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
@@ -23,10 +24,7 @@ using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels.Drawers
 {
-    public class StickerDrawerViewModel : TLViewModelBase
-    //, IHandle<UpdateRecentStickers>
-    //, IHandle<UpdateFavoriteStickers>
-    //, IHandle<UpdateInstalledStickerSets>
+    public class StickerDrawerViewModel : ViewModelBase
     {
         private readonly DisposableMutex _supergroupLock = new();
 

@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Td.Api;
-using Telegram.ViewModels;
 
 namespace Telegram.Services
 {
@@ -32,11 +31,7 @@ namespace Telegram.Services
         Task<BaseObject> SetAuthenticationPhoneNumberAsync(SetAuthenticationPhoneNumber function);
     }
 
-    public class SessionService : TLViewModelBase
-        , ISessionService
-    //, IHandle<UpdateUnreadMessageCount>
-    //, IHandle<UpdateUnreadChatCount>
-    //, IHandle<UpdateAuthorizationState>
+    public class SessionService : ViewModelBase, ISessionService
     {
         private readonly ILifetimeService _lifetimeService;
         private readonly int _id;

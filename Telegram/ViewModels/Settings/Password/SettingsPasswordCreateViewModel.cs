@@ -5,13 +5,14 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Views.Settings.Password;
 
 namespace Telegram.ViewModels.Settings.Password
 {
-    public class SettingsPasswordCreateViewModel : TLViewModelBase
+    public class SettingsPasswordCreateViewModel : ViewModelBase
     {
         public SettingsPasswordCreateViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsUsernameViewModel : TLViewModelBase, IHandle
+    public class SettingsUsernameViewModel : ViewModelBase, IHandle
     {
         private long _userId;
 
