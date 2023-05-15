@@ -146,9 +146,9 @@ namespace Telegram.Common
 
         public static string GetSummary(IClientService clientService, Message message, bool details = false)
         {
-            if (message.IsService())
+            if (message.IsService() && clientService.TryGetChat(message.ChatId, out Chat chat))
             {
-                return MessageService.GetText(new ViewModels.MessageViewModel(clientService, null, null, message)) + ", ";
+                return MessageService.GetText(new MessageViewModel(clientService, null, null, chat, message)) + ", ";
             }
 
             if (message.Content is MessageAlbum album)
