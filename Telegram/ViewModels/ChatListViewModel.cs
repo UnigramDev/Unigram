@@ -58,12 +58,7 @@ namespace Telegram.ViewModels
             set => Set(ref _selectedItem, value);
         }
 
-        private MvxObservableCollection<Chat> _selectedItems;
-        public MvxObservableCollection<Chat> SelectedItems
-        {
-            get => _selectedItems;
-            set => Set(ref _selectedItems, value);
-        }
+        public MvxObservableCollection<Chat> SelectedItems { get; }
 
         private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
         public ListViewSelectionMode SelectionMode
@@ -480,7 +475,7 @@ namespace Telegram.ViewModels
             SelectedItems.ReplaceWith(new[] { chat });
             SelectionMode = ListViewSelectionMode.Multiple;
 
-            Delegate?.SetSelectedItems(_selectedItems);
+            Delegate?.SetSelectedItems(SelectedItems);
         }
 
         #endregion
@@ -575,6 +570,7 @@ namespace Telegram.ViewModels
             private readonly IEventAggregator _aggregator;
 
             private readonly DisposableMutex _loadMoreLock = new();
+            private readonly HashSet<long> _chats = new();
 
             private readonly ChatListViewModel _viewModel;
 
@@ -617,6 +613,7 @@ namespace Telegram.ViewModels
 
                     _chatList = chatList;
 
+                    _chats.Clear();
                     Clear();
                 }
 
@@ -636,17 +633,21 @@ namespace Telegram.ViewModels
                     var response = await _clientService.GetChatListAsync(_chatList, Count, 20);
                     if (response is Telegram.Td.Api.Chats chats)
                     {
-                        foreach (var id in chats.ChatIds)
+                        foreach (var chat in _clientService.GetChats(chats.ChatIds))
                         {
-                            var chat = _clientService.GetChat(id);
                             var order = chat.GetOrder(_chatList);
-
-                            if (chat != null && order != 0)
+                            if (order != 0)
                             {
+                                // TODO: is this redundant?
                                 var next = NextIndexOf(chat, order);
                                 if (next >= 0)
                                 {
-                                    Remove(chat);
+                                    if (_chats.Contains(chat.Id))
+                                    {
+                                        Remove(chat);
+                                    }
+
+                                    _chats.Add(chat.Id);
                                     Insert(Math.Min(Count, next), chat);
 
                                     if (chat.Id == _viewModel._selectedItem)
@@ -666,7 +667,7 @@ namespace Telegram.ViewModels
                         Subscribe();
 
                         _viewModel.IsLoading = false;
-                        _viewModel.Delegate?.SetSelectedItems(_viewModel._selectedItems);
+                        _viewModel.Delegate?.SetSelectedItems(_viewModel.SelectedItems);
 
                         if (_hasMoreItems == false)
                         {
@@ -765,7 +766,12 @@ namespace Telegram.ViewModels
                         var next = NextIndexOf(chat, order);
                         if (next >= 0)
                         {
-                            Remove(chat);
+                            if (_chats.Contains(chat.Id))
+                            {
+                                Remove(chat);
+                            }
+
+                            _chats.Add(chat.Id);
                             Insert(Math.Min(Count, next), chat);
 
                             if (next == Count - 1)
@@ -790,8 +796,9 @@ namespace Telegram.ViewModels
                             _viewModel.Delegate?.UpdateChatLastMessage(chat);
                         }
                     }
-                    else if (Contains(chat))
+                    else if (_chats.Contains(chat.Id))
                     {
+                        _chats.Remove(chat.Id);
                         Remove(chat);
 
                         if (chat.Id == _viewModel._selectedItem)
