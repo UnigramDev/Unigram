@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Windows.Foundation;
 using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
@@ -17,16 +16,13 @@ namespace Telegram.Collections
         string Key { get; }
     }
 
-    public class FlatteningCollection : MvxObservableCollection<object>, ISupportIncrementalLoading
+    public class FlatteningCollection : IncrementalCollection<object>
     {
-        private readonly ISupportIncrementalLoading _owner;
-
         private readonly List<IKeyedCollection> _groups = new();
 
-        public FlatteningCollection(ISupportIncrementalLoading owner, params IKeyedCollection[] groups)
+        public FlatteningCollection(IIncrementalCollectionOwner owner, params IKeyedCollection[] groups)
+            : base(owner)
         {
-            _owner = owner;
-
             foreach (var group in groups)
             {
                 AddInternal(group);
@@ -127,12 +123,5 @@ namespace Telegram.Collections
                 }
             }
         }
-
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-        {
-            return _owner.LoadMoreItemsAsync(count);
-        }
-
-        public bool HasMoreItems => _owner.HasMoreItems;
     }
 }

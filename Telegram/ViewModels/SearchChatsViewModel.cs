@@ -10,13 +10,12 @@ using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {
-    public class SearchChatsViewModel : ViewModelBase, ISupportIncrementalLoading
+    public class SearchChatsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         private readonly KeyedCollection<SearchResult> _recent = new(Strings.Recent, new SearchResultDiffHandler());
         private readonly KeyedCollection<SearchResult> _chatsAndContacts = new(Strings.ChatsAndContacts, new SearchResultDiffHandler());
@@ -27,6 +26,8 @@ namespace Telegram.ViewModels
         private readonly HashSet<long> _knownUsers = new();
 
         private CancellationTokenSource _cancellation = new();
+
+        private string _messagesOffset = string.Empty;
 
         public SearchChatsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -82,6 +83,8 @@ namespace Telegram.ViewModels
         {
             _globalSearch.Clear();
             _messages.Clear();
+
+            _messagesOffset = string.Empty;
 
             _knownChats.Clear();
             _knownUsers.Clear();
@@ -297,9 +300,11 @@ namespace Telegram.ViewModels
 
         private async Task LoadMessagesAsync(string query, CancellationToken cancellationToken)
         {
-            var response = await ClientService.SendAsync(new SearchMessages(null, query, string.Empty, 100, null, 0, 0));
+            var response = await ClientService.SendAsync(new SearchMessages(null, query, _messagesOffset, 50, null, 0, 0));
             if (response is FoundMessages messages && !cancellationToken.IsCancellationRequested)
             {
+                _messagesOffset = messages.NextOffset;
+
                 foreach (var message in messages.Messages)
                 {
                     _messages.Add(message);
@@ -307,25 +312,17 @@ namespace Telegram.ViewModels
             }
         }
 
-        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
+        #region ISupportIncrementalLoading
+
+        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            throw new NotImplementedException();
+            await LoadMessagesAsync(_query.Value, _cancellation.Token);
+            return new LoadMoreItemsResult { Count = 50 };
         }
 
-        public bool HasMoreItems => false;
+        public bool HasMoreItems => _messagesOffset.Length > 0;
 
-
-
-
-
-
-
-
-
-
-
-
-
+        #endregion
 
         #region Commands
 

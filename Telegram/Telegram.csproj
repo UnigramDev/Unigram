@@ -202,8 +202,8 @@
     <Compile Include="Collections\Handlers\ChatDiffHandler.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
+    <Compile Include="Collections\LegacyIncrementalCollection.cs" />
     <Compile Include="Collections\IncrementalCollection.cs" />
-    <Compile Include="Collections\IncrementalCollectionWithDelegate.cs" />
     <Compile Include="Collections\KeyedList.cs" />
     <Compile Include="Collections\MvxObservableCollection.cs" />
     <Compile Include="Collections\SearchChatMessagesCollection.cs" />
