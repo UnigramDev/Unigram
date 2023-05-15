@@ -1020,6 +1020,12 @@ namespace Telegram.Common
             return listViewBase.Descendants<ScrollViewer>().FirstOrDefault();
         }
 
+        public static void ScrollToTop(this ListViewBase listViewBase)
+        {
+            var scrollViewer = GetScrollViewer(listViewBase);
+            scrollViewer?.ChangeView(null, 0, null);
+        }
+
         public static async Task ConsolidateAsync(this ApplicationView view)
         {
             if (await view.TryConsolidateAsync())

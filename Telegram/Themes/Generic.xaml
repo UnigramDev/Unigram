@@ -50,6 +50,8 @@
            BasedOn="{StaticResource DefaultTextBoxStyle}" />
     <Style TargetType="local:PrefixTextBox"
            BasedOn="{StaticResource DefaultTextBoxStyle}" />
+    <Style TargetType="local:SuggestTextBox"
+           BasedOn="{StaticResource DefaultTextBoxStyle}" />
     <Style TargetType="local:FormattedTextBox"
            BasedOn="{StaticResource DefaultRichEditBoxStyle}" />
     <Style TargetType="local:SettingsComboBox"

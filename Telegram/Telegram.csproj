@@ -198,6 +198,9 @@
     <Compile Include="Charts\StackLinearChartView.cs" />
     <Compile Include="Charts\StepChartView.cs" />
     <Compile Include="Collections\CollectionSeparator.cs" />
+    <Compile Include="Collections\FlatteningCollection.cs" />
+    <Compile Include="Collections\Handlers\ChatDiffHandler.cs" />
+    <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
     <Compile Include="Collections\IncrementalCollection.cs" />
     <Compile Include="Collections\IncrementalCollectionWithDelegate.cs" />
@@ -216,6 +219,10 @@
     <Compile Include="Common\AutocompleteEntityFinder.cs" />
     <Compile Include="Common\Automation.cs" />
     <Compile Include="Controls\MenuFlyoutSlider.cs" />
+    <Compile Include="Controls\SuggestTextBox.cs" />
+    <Compile Include="Controls\Views\SearchChatsView.xaml.cs">
+      <DependentUpon>SearchChatsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Td\Api\UpdateUserIsContact.cs" />
     <Compile Include="Td\TdClientExtensions.cs" />
     <Compile Include="Td\TdCompletionSource.cs" />
@@ -642,6 +649,7 @@
     <Compile Include="ViewModels\Folders\AddFolderViewModel.cs" />
     <Compile Include="ViewModels\Folders\ShareFolderViewModel.cs" />
     <Compile Include="Td\Api\MessageId.cs" />
+    <Compile Include="Collections\Handlers\SearchResultDiffHandler.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
     <Compile Include="ViewModels\TopicListViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
@@ -1955,6 +1963,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\MessageReference.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Views\SearchChatsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

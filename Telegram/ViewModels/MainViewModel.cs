@@ -70,6 +70,7 @@ namespace Telegram.ViewModels
                 : new ChatListMain();
 
             Chats = new ChatListViewModel(clientService, settingsService, aggregator, pushService, chatList);
+            SearchChats = new SearchChatsViewModel(clientService, settingsService, aggregator);
             Topics = new TopicListViewModel(clientService, settingsService, aggregator, pushService, 0);
             Contacts = new ContactsViewModel(clientService, settingsService, aggregator, contactsService);
             Calls = new CallsViewModel(clientService, settingsService, aggregator);
@@ -77,6 +78,7 @@ namespace Telegram.ViewModels
 
             // This must represent pivot tabs
             Children.Add(Chats);
+            Children.Add(SearchChats);
             Children.Add(Contacts);
             Children.Add(Calls);
             Children.Add(Settings);
@@ -413,11 +415,12 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateWindowActivated>(Handle);
         }
 
-        public ChatListViewModel Chats { get; private set; }
-        public TopicListViewModel Topics { get; private set; }
-        public ContactsViewModel Contacts { get; private set; }
-        public CallsViewModel Calls { get; private set; }
-        public SettingsViewModel Settings { get; private set; }
+        public ChatListViewModel Chats { get; }
+        public SearchChatsViewModel SearchChats { get; }
+        public TopicListViewModel Topics { get; }
+        public ContactsViewModel Contacts { get; }
+        public CallsViewModel Calls { get; }
+        public SettingsViewModel Settings { get; }
 
 
 

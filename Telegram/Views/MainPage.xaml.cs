@@ -41,10 +41,8 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -1746,18 +1744,6 @@ namespace Telegram.Views
 
         #region Context menu
 
-        private void TopChat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
-        {
-            var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
-            var chat = element.Tag as Chat;
-
-            flyout.CreateFlyoutItem(_ => true, ViewModel.Chats.DeleteTopChat, chat, Strings.Delete, Icons.Delete);
-
-            args.ShowAt(flyout, element);
-        }
-
         private void Call_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
@@ -1813,18 +1799,23 @@ namespace Telegram.Views
                     _shouldGoBackWithDetail = false;
 
                     Root?.SetSelectedIndex(RootDestination.Contacts);
+                    SearchField.ControlledList = null;
+
                     FindName(nameof(ContactsRoot));
                     break;
                 case 2:
                     _shouldGoBackWithDetail = false;
 
                     Root?.SetSelectedIndex(RootDestination.Calls);
+                    SearchField.ControlledList = null;
+
                     FindName(nameof(CallsRoot));
                     break;
                 case 3:
                     _shouldGoBackWithDetail = false;
 
                     Root?.SetSelectedIndex(RootDestination.Settings);
+                    SearchField.ControlledList = null;
 
                     if (SettingsView == null)
                     {
@@ -1888,6 +1879,11 @@ namespace Telegram.Views
             FindName(nameof(DialogsSearchPanel));
             DialogsPanel.Visibility = Visibility.Visible;
             DialogsSearchPanel.Visibility = Visibility.Visible;
+
+            if (show)
+            {
+                SearchField.ControlledList = DialogsSearchPanel.Root;
+            }
 
             var chats = ElementCompositionPreview.GetElementVisual(DialogsPanel);
             var panel = ElementCompositionPreview.GetElementVisual(DialogsSearchPanel);
@@ -1966,19 +1962,8 @@ namespace Telegram.Views
 
             if (rpMasterTitlebar.SelectedIndex == 0)
             {
-                //DialogsPanel.Visibility = Visibility.Collapsed;
                 ShowHideSearch(true);
-
-                ViewModel.Chats.Search.UpdateQuery(SearchField.Text);
-
-                if (ViewModel.Chats.SearchFilters.Empty() && string.IsNullOrEmpty(SearchField.Text))
-                {
-                    ViewModel.Chats.TopChats = new TopChatsCollection(ViewModel.ClientService, new TopChatCategoryUsers(), 30);
-                }
-                else
-                {
-                    ViewModel.Chats.TopChats = null;
-                }
+                ViewModel.SearchChats.Query = SearchField.Text;
             }
             else if (rpMasterTitlebar.SelectedIndex == 1)
             {
@@ -2037,81 +2022,8 @@ namespace Telegram.Views
                 SettingsView.Visibility = Visibility.Visible;
             }
 
-            ViewModel.Chats.SearchFilters.Clear();
-            ViewModel.Chats.TopChats = null;
-            ViewModel.Chats.Search.Clear();
             ViewModel.Contacts.Search = null;
             ViewModel.Settings.Results.Clear();
-        }
-
-        private void Search_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if (rpMasterTitlebar.SelectedIndex == 0 && e.Key == Windows.System.VirtualKey.Back)
-            {
-                if (SearchField.SelectionStart == 0 && SearchField.SelectionLength == 0)
-                {
-                    if (ViewModel.Chats.SearchFilters?.Count > 0)
-                    {
-                        e.Handled = true;
-                        ViewModel.Chats.SearchFilters.RemoveAt(ViewModel.Chats.SearchFilters.Count - 1);
-                        ViewModel.Chats.Search.UpdateQuery(SearchField.Text);
-                        return;
-                    }
-                }
-            }
-
-            Grid activePanel;
-            ListView activeList;
-            CollectionViewSource activeResults;
-
-            switch (rpMasterTitlebar.SelectedIndex)
-            {
-                case 0:
-                    FindName(nameof(DialogsSearchPanel));
-                    activePanel = DialogsPanel;
-                    activeList = DialogsSearchListView;
-                    activeResults = ChatsResults;
-                    break;
-                case 1:
-                    FindName(nameof(ContactsSearchListView));
-                    activePanel = ContactsPanel;
-                    activeList = ContactsSearchListView;
-                    activeResults = ContactsResults;
-                    break;
-                default:
-                    return;
-            }
-
-            if (activePanel.Visibility == Visibility.Visible)
-            {
-                return;
-            }
-
-            if (e.Key is Windows.System.VirtualKey.Up or Windows.System.VirtualKey.Down)
-            {
-                var index = e.Key == Windows.System.VirtualKey.Up ? -1 : 1;
-                var next = activeList.SelectedIndex + index;
-                if (next >= 0 && next < activeList.Items.Count)
-                {
-                    activeList.SelectedIndex = next;
-                    activeList.ScrollIntoView(activeList.SelectedItem);
-                }
-
-                e.Handled = true;
-            }
-            else if (e.Key == Windows.System.VirtualKey.Enter)
-            {
-                var index = Math.Max(activeList.SelectedIndex, 0);
-                var container = activeList.ContainerFromIndex(index) as ListViewItem;
-                if (container != null)
-                {
-                    var peer = new ListViewItemAutomationPeer(container);
-                    var invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-                    invokeProv.Invoke();
-                }
-
-                e.Handled = true;
-            }
         }
 
         #endregion
@@ -2126,32 +2038,13 @@ namespace Telegram.Views
             ViewModel.Passcode.Lock();
         }
 
-        private void DialogsSearchListView_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
-        {
-            if (args.ItemContainer == null)
-            {
-                args.ItemContainer = new TextListViewItem();
-                args.ItemContainer.Style = DialogsSearchListView.ItemContainerStyle;
-                args.ItemContainer.ContextRequested += Chat_ContextRequested;
-            }
-
-            args.ItemContainer.ContentTemplate = DialogsSearchListView.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
-            args.IsContainerPrepared = true;
-        }
-
         private void DialogsSearchListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.Item is Header header)
+            if (args.InRecycleQueue)
             {
-                var content = args.ItemContainer.ContentTemplateRoot as TextBlock;
-                if (content == null)
-                {
-                    return;
-                }
-
-                content.Text = header.Title;
+                return;
             }
-            if (args.Item is SearchResult result)
+            else if (args.Item is SearchResult result)
             {
                 var content = args.ItemContainer.ContentTemplateRoot as ProfileCell;
                 if (content == null)
@@ -2161,17 +2054,6 @@ namespace Telegram.Views
 
                 args.ItemContainer.Tag = result.Chat;
                 content.UpdateSearchResult(_clientService, args, DialogsSearchListView_ContainerContentChanging);
-            }
-            else if (args.Item is Message message)
-            {
-                var content = args.ItemContainer.ContentTemplateRoot as ChatCell;
-                if (content == null)
-                {
-                    return;
-                }
-
-                args.ItemContainer.Tag = null;
-                content.UpdateMessage(ViewModel.ClientService, message);
             }
 
             args.Handled = true;
@@ -2246,39 +2128,6 @@ namespace Telegram.Views
             }
 
             args.Handled = true;
-        }
-
-        private void TopChats_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
-            var content = args.ItemContainer.ContentTemplateRoot as StackPanel;
-            var chat = args.Item as Chat;
-
-            args.ItemContainer.Tag = chat;
-            content.Tag = chat;
-
-            var grid = content.Children[0] as Grid;
-
-            var photo = grid.Children[0] as ProfilePicture;
-            var title = content.Children[1] as TextBlock;
-
-            photo.SetChat(ViewModel.ClientService, chat, 48);
-            title.Text = ViewModel.ClientService.GetTitle(chat, true);
-
-            var badge = grid.Children[1] as InfoBadge;
-            badge.Visibility = chat.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-            badge.Value = chat.UnreadCount;
-
-            var user = ViewModel.ClientService.GetUser(chat);
-            if (user != null)
-            {
-                var online = grid.Children[2] as Border;
-                online.Visibility = user.Status is UserStatusOnline ? Visibility.Visible : Visibility.Collapsed;
-            }
         }
 
         private void Calls_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -2964,35 +2813,6 @@ namespace Telegram.Views
             }
 
             ShowHideTopicList(false);
-        }
-
-        private void SearchFilters_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.Item is ISearchChatsFilter filter)
-            {
-                var content = args.ItemContainer.ContentTemplateRoot as StackPanel;
-                if (content == null)
-                {
-                    return;
-                }
-
-                var glyph = content.Children[0] as TextBlock;
-                glyph.Text = filter.Glyph ?? string.Empty;
-
-                var title = content.Children[1] as TextBlock;
-                title.Text = filter.Text ?? string.Empty;
-            }
-        }
-
-        private void SearchFilters_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            if (e.ClickedItem is ISearchChatsFilter filter)
-            {
-                ViewModel.Chats.SearchFilters.Add(filter);
-                SearchField.Text = string.Empty;
-
-                //ViewModel.Chats.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, ViewModel.Chats.SearchFilters);
-            }
         }
 
         private void ArchivedChats_ActualThemeChanged(FrameworkElement sender, object args)

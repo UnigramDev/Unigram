@@ -1,0 +1,198 @@
+﻿<UserControl x:Class="Telegram.Controls.Views.SearchChatsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Telegram.Controls.Views"
+             xmlns:controls="using:Telegram.Controls"
+             xmlns:cells="using:Telegram.Controls.Cells"
+             xmlns:selectors="using:Telegram.Selectors"
+             xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <Style x:Name="HeaderListViewItemStyle"
+               TargetType="ListViewItem">
+            <Setter Property="MinHeight"
+                    Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid x:Name="DialogsSearchPanel">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <!--<ListView x:Load="False"
+                                          x:Name="PippoFranco"
+                                          SelectionMode="None"
+                                          IsItemClickEnabled="True"
+                                          ItemClick="SearchFilters_ItemClick"
+                                          ContainerContentChanging="SearchFilters_ContainerContentChanging"
+                                          ItemsSource="{x:Bind ViewModel.Chats.Search.Filters, Mode=OneWay}"
+                                          Style="{StaticResource HorizontalListViewStyle}">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="12,0,8,0"
+                                                           Text="&#xE77B;"
+                                                           FontSize="16"
+                                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                           Style="{StaticResource DisabledBodyTextBlockStyle}"
+                                                           VerticalAlignment="Center" />
+                                                <TextBlock TextWrapping="NoWrap"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           Margin="0,0,12,0"
+                                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                           Style="{StaticResource DisabledBodyTextBlockStyle}"
+                                                           VerticalAlignment="Center" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Setter Property="MinWidth"
+                                                    Value="0" />
+                                            <Setter Property="Padding"
+                                                    Value="0" />
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.ItemContainerTransitions>
+                                        <TransitionCollection />
+                                    </ListView.ItemContainerTransitions>
+                                </ListView>-->
+
+        <ListView x:Name="ScrollingHost"
+                  ItemsSource="{x:Bind ViewModel.Items, Mode=OneWay}"
+                  IsItemClickEnabled="True"
+                  SelectionMode="Single"
+                  ItemClick="OnItemClick"
+                  ChoosingItemContainer="OnChoosingItemContainer"
+                  ContainerContentChanging="OnContainerContentChanging"
+                  Grid.Row="1">
+            <ListView.Header>
+                <StackPanel Visibility="{x:Bind ViewModel.IsTopChatsVisible, Mode=OneWay}">
+                    <controls:TextListView x:Name="TopChats"
+                                           SelectionMode="None"
+                                           IsItemClickEnabled="True"
+                                           ItemClick="OnItemClick"
+                                           ChoosingItemContainer="TopChats_ChoosingItemContainer"
+                                           ContainerContentChanging="TopChats_ContainerContentChanging"
+                                           ItemsSource="{x:Bind ViewModel.TopChats}"
+                                           Style="{StaticResource HorizontalListViewStyle}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Width="72"
+                                            Padding="0,12"
+                                            Background="Transparent"
+                                            ContextRequested="TopChat_ContextRequested">
+                                    <Grid Width="48"
+                                          Height="48"
+                                          Margin="12,0">
+                                        <controls:ProfilePicture Width="48"
+                                                                 Height="48"
+                                                                 IsEnabled="False" />
+                                        <muxc:InfoBadge Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                                        Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                                        VerticalAlignment="Top"
+                                                        HorizontalAlignment="Right" />
+                                        <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                Width="13"
+                                                Height="13"
+                                                CornerRadius="6.5"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Bottom"
+                                                Margin="0,0,1,1">
+                                            <Border Background="{ThemeResource ChatOnlineBadgeBrush}"
+                                                    Width="9"
+                                                    Height="9"
+                                                    CornerRadius="4.5" />
+                                        </Border>
+                                    </Grid>
+
+                                    <TextBlock Margin="0,8,0,0"
+                                               TextAlignment="Center"
+                                               TextWrapping="NoWrap"
+                                               TextTrimming="CharacterEllipsis"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                               Style="{StaticResource CaptionTextBlockStyle}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem"
+                                   BasedOn="{StaticResource DefaultListViewItemStyle}">
+                                <Setter Property="MinWidth"
+                                        Value="0" />
+                                <Setter Property="Padding"
+                                        Value="0" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemContainerTransitions>
+                            <TransitionCollection />
+                        </ListView.ItemContainerTransitions>
+                    </controls:TextListView>
+                </StackPanel>
+            </ListView.Header>
+            <ListView.ItemTemplateSelector>
+                <selectors:SearchTemplateSelector>
+                    <selectors:SearchTemplateSelector.HeaderTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource BaseTextBlockStyle}"
+                                           FontFamily="{StaticResource EmojiThemeFontFamily}"
+                                           Margin="12,12,0,4" />
+
+                                <controls:GlyphButton Click="ClearRecentChats_Click"
+                                                      AllowFocusOnInteraction="False"
+                                                      VerticalAlignment="Bottom"
+                                                      Margin="0,0,0,-6"
+                                                      Glyph="&#xE711;"
+                                                      FontSize="12"
+                                                      Width="48"
+                                                      Height="32"
+                                                      Grid.Column="1" />
+                            </Grid>
+                        </DataTemplate>
+                    </selectors:SearchTemplateSelector.HeaderTemplate>
+                    <selectors:SearchTemplateSelector.ChatTemplate>
+                        <DataTemplate>
+                            <cells:ProfileCell />
+                        </DataTemplate>
+                    </selectors:SearchTemplateSelector.ChatTemplate>
+                    <selectors:SearchTemplateSelector.MessageTemplate>
+                        <DataTemplate>
+                            <cells:ChatCell Stroke="{ThemeResource ChatLastMessageStateBrush}"
+                                            SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                            IsEnabled="False"
+                                            Margin="4,0" />
+                        </DataTemplate>
+                    </selectors:SearchTemplateSelector.MessageTemplate>
+                </selectors:SearchTemplateSelector>
+            </ListView.ItemTemplateSelector>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem"
+                       BasedOn="{StaticResource DefaultListViewItemStyle}">
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Stretch" />
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection />
+            </ListView.ItemContainerTransitions>
+        </ListView>
+    </Grid>
+</UserControl>

@@ -50,7 +50,7 @@ namespace Telegram.ViewModels
             var response = await ClientService.GetChatListAsync(new ChatListMain(), 0, 200);
             if (response is Telegram.Td.Api.Chats chats)
             {
-                var list = ClientService.GetChats(chats.ChatIds);
+                var list = ClientService.GetChats(chats.ChatIds).ToList();
                 Items.Clear();
 
                 if (_searchType is SearchChatsType.Post or SearchChatsType.All)

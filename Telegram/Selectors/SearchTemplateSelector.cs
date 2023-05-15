@@ -20,7 +20,7 @@ namespace Telegram.Selectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            if (item is Header)
+            if (item is IKeyedCollection)
             {
                 return HeaderTemplate;
             }

@@ -172,7 +172,7 @@ namespace Telegram.Collections
                                 //    Add(new Header(Strings.SearchAllChatsShort));
                                 //}
 
-                                Increase(new SearchResult(chat, _query, false));
+                                Increase(new SearchResult(chat, _query, SearchResultType.Chats));
                             }
 
                             _filters.Add(new SearchChatsFilterChat(_clientService, chat));
@@ -212,7 +212,7 @@ namespace Telegram.Collections
                                     //    Add(new Header(Strings.SearchAllChatsShort));
                                     //}
 
-                                    Increase(new SearchResult(chat, _query, false));
+                                    Increase(new SearchResult(chat, _query, SearchResultType.Chats));
                                 }
 
                                 _filters.Add(new SearchChatsFilterChat(_clientService, chat));
@@ -246,7 +246,7 @@ namespace Telegram.Collections
                                 //}
 
                                 _users.Add(id);
-                                Increase(new SearchResult(user, _query, false));
+                                Increase(new SearchResult(user, _query, SearchResultType.Contacts));
                             }
                         }
                     }
@@ -289,7 +289,7 @@ namespace Telegram.Collections
                                     //    Add(new Header(Strings.SearchAllChatsShort));
                                     //}
 
-                                    Increase(new SearchResult(chat, _query, false));
+                                    Increase(new SearchResult(chat, _query, SearchResultType.ChatsOnServer));
                                 }
 
                                 _filters.Add(new SearchChatsFilterChat(_clientService, chat));
@@ -322,7 +322,7 @@ namespace Telegram.Collections
                                     Increase(new Header(Strings.GlobalSearch));
                                 }
 
-                                Increase(new SearchResult(chat, _query, true));
+                                Increase(new SearchResult(chat, _query, SearchResultType.PublicChats));
                             }
                         }
                     }
@@ -465,6 +465,11 @@ namespace Telegram.Collections
         public Header(string title)
         {
             Title = title;
+        }
+
+        public override string ToString()
+        {
+            return Title;
         }
     }
 

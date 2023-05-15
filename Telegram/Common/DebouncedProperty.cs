@@ -20,6 +20,8 @@ namespace Telegram.Common
         private readonly Action<T> _update;
         private readonly Func<T, bool> _canUpdate;
 
+        private CancellationToken _cancellationToken;
+
         private T _lastValue;
         private T _value;
 
@@ -67,18 +69,32 @@ namespace Telegram.Common
         {
             _backgroundTimer.Change(Timeout.Infinite, Timeout.Infinite);
 
-            _value = _lastValue;
-            _update(_lastValue);
-            _lastValue = default;
+            if (_cancellationToken.IsCancellationRequested)
+            {
+                _lastValue = default;
+            }
+            else
+            {
+                _value = _lastValue;
+                _update(_lastValue);
+                _lastValue = default;
+            }
         }
 
         private void OnTick(object sender, object e)
         {
             _timer.Stop();
 
-            _value = _lastValue;
-            _update(_lastValue);
-            _lastValue = default;
+            if (_cancellationToken.IsCancellationRequested)
+            {
+                _lastValue = default;
+            }
+            else
+            {
+                _value = _lastValue;
+                _update(_lastValue);
+                _lastValue = default;
+            }
         }
 
         public T Value
@@ -87,19 +103,23 @@ namespace Telegram.Common
             set => _value = value;
         }
 
-        public void Set(T value)
+        public void Set(T value, CancellationToken cancellationToken = default)
         {
             _timer?.Stop();
             _backgroundTimer?.Change(Timeout.Infinite, Timeout.Infinite);
 
             if (_canUpdate(value))
             {
+                _cancellationToken = cancellationToken;
+
                 _lastValue = value;
                 _timer?.Start();
                 _backgroundTimer?.Change(_interval, TimeSpan.Zero);
             }
             else
             {
+                _cancellationToken = default;
+
                 _value = value;
                 _lastValue = default;
             }

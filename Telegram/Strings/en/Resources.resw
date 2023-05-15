@@ -1765,8 +1765,11 @@ Minimum length is 5 characters.</value>
   <data name="ChatDocument" xml:space="preserve">
     <value>File</value>
   </data>
-  <data name="ChatHintsDelete" xml:space="preserve">
-    <value>Remove {0} from suggestions?</value>
+  <data name="ChatHintsDeleteAlert" xml:space="preserve">
+    <value>Are you sure you want to remove **{0}** from suggestions?</value>
+  </data>
+  <data name="ChatHintsDeleteAlertTitle" xml:space="preserve">
+    <value>Remove suggestion</value>
   </data>
   <data name="ChatHistory" xml:space="preserve">
     <value>Chat history for new members</value>
@@ -1809,6 +1812,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="Chats_other" xml:space="preserve">
     <value>{0} chats</value>
+  </data>
+  <data name="ChatsAndContacts" xml:space="preserve">
+    <value>Chats and Contacts</value>
   </data>
   <data name="ChatsArchived" xml:space="preserve">
     <value>Chats archived.</value>
@@ -1945,8 +1951,23 @@ Minimum length is 5 characters.</value>
   <data name="ClearRecentEmoji" xml:space="preserve">
     <value>Clear recent emoji?</value>
   </data>
-  <data name="ClearSearch" xml:space="preserve">
-    <value>Clear search history?</value>
+  <data name="ClearSearchAlert" xml:space="preserve">
+    <value>Do you want to clear your search history?</value>
+  </data>
+  <data name="ClearSearchAlertTitle" xml:space="preserve">
+    <value>Clear search history</value>
+  </data>
+  <data name="ClearSearchRemove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="ClearSearchSingleAlertTitle" xml:space="preserve">
+    <value>Search history</value>
+  </data>
+  <data name="ClearSearchSingleChatAlertText" xml:space="preserve">
+    <value>Do you want to remove &quot;{0}&quot; from your search history?</value>
+  </data>
+  <data name="ClearSearchSingleUserAlertText" xml:space="preserve">
+    <value>Do you want to remove &quot;{0}&quot; from your search history?</value>
   </data>
   <data name="ClearSelection" xml:space="preserve">
     <value>Clear Selection</value>

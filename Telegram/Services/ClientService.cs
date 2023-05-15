@@ -77,7 +77,7 @@ namespace Telegram.Services
         Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync();
 
         Chat GetChat(long id);
-        IList<Chat> GetChats(IList<long> ids);
+        IEnumerable<Chat> GetChats(IEnumerable<long> ids);
 
         IDictionary<MessageSender, ChatAction> GetChatActions(long id, long threadId = 0);
 
@@ -946,24 +946,20 @@ namespace Telegram.Services
             return _usersToChats.TryGetValue(userId, out value);
         }
 
-        public IList<Chat> GetChats(IList<long> ids)
+        public IEnumerable<Chat> GetChats(IEnumerable<long> ids)
         {
 #if MOCKUP
             return _chats.Values.ToList();
 #endif
-
-            var result = new List<Chat>(ids.Count);
 
             foreach (var id in ids)
             {
                 var chat = GetChat(id);
                 if (chat != null)
                 {
-                    result.Add(chat);
+                    yield return chat;
                 }
             }
-
-            return result;
         }
 
         public IList<User> GetUsers(IEnumerable<long> ids)

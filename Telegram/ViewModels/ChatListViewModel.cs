@@ -42,19 +42,11 @@ namespace Telegram.ViewModels
 
             Items = new ItemsCollection(clientService, aggregator, this, chatList);
 
-            Search = new SearchCollection<object, SearchChatsCollection>(UpdateSearch, new SearchDiffHandler());
-            SearchFilters = new MvxObservableCollection<ISearchChatsFilter>();
-
 #if MOCKUP
             Items.AddRange(clientService.GetChats(null));
 #endif
 
             SelectedItems = new MvxObservableCollection<Chat>();
-        }
-
-        private SearchChatsCollection UpdateSearch(object arg1, string query)
-        {
-            return new SearchChatsCollection(ClientService, query, null);
         }
 
         #region Selection
@@ -85,17 +77,6 @@ namespace Telegram.ViewModels
         public ItemsCollection Items { get; private set; }
 
         public bool IsLastSliceLoaded { get; set; }
-
-        public SearchCollection<object, SearchChatsCollection> Search { get; private set; }
-
-        public MvxObservableCollection<ISearchChatsFilter> SearchFilters { get; private set; }
-
-        private TopChatsCollection _topChats;
-        public TopChatsCollection TopChats
-        {
-            get => _topChats;
-            set => Set(ref _topChats, value);
-        }
 
         #region Open
 
@@ -504,44 +485,6 @@ namespace Telegram.ViewModels
 
         #endregion
 
-        #region Commands
-
-        public async void ClearRecentChats()
-        {
-            var confirm = await ShowPopupAsync(Strings.ClearSearch, Strings.AppName, Strings.OK, Strings.Cancel);
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            ClientService.Send(new ClearRecentlyFoundChats());
-
-            var items = Search;
-            if (items != null && string.IsNullOrEmpty(items.Query))
-            {
-                items.Clear();
-            }
-        }
-
-        public async void DeleteTopChat(Chat chat)
-        {
-            if (chat == null)
-            {
-                return;
-            }
-
-            var confirm = await ShowPopupAsync(string.Format(Strings.ChatHintsDelete, ClientService.GetTitle(chat)), Strings.AppName, Strings.OK, Strings.Cancel);
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
-            ClientService.Send(new RemoveTopChat(new TopChatCategoryUsers(), chat.Id));
-            TopChats?.Remove(chat);
-        }
-
-        #endregion
-
         #region Folder add
 
         public async void AddToFolder((int ChatFolderId, Chat Chat) data)
@@ -936,6 +879,17 @@ namespace Telegram.ViewModels
         }
     }
 
+    public enum SearchResultType
+    {
+        Recent,
+        Chats,
+        ChatsOnServer,
+        Contacts,
+        PublicChats,
+
+        ChatMembers,
+    }
+
     public class SearchResult
     {
         public Chat Chat { get; set; }
@@ -944,27 +898,29 @@ namespace Telegram.ViewModels
 
         public string Query { get; set; }
 
-        public bool IsPublic { get; set; }
+        public SearchResultType Type { get; }
 
-        public SearchResult(Chat chat, string query, bool pub)
+        public bool IsPublic => Type == SearchResultType.PublicChats;
+
+        public SearchResult(Chat chat, string query, SearchResultType type)
         {
             Chat = chat;
             Query = query;
-            IsPublic = pub;
+            Type = type;
         }
 
-        public SearchResult(User user, string query, bool pub)
+        public SearchResult(User user, string query, SearchResultType type)
         {
             User = user;
             Query = query;
-            IsPublic = pub;
+            Type = type;
         }
 
-        public SearchResult(ForumTopic topic, string query, bool pub)
+        public SearchResult(ForumTopic topic, string query, SearchResultType type)
         {
             Topic = topic;
             Query = query;
-            IsPublic = pub;
+            Type = type;
         }
     }
 }
