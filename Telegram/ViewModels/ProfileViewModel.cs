@@ -31,19 +31,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class ProfileViewModel : ChatSharedMediaViewModel
-        , IDelegable<IProfileDelegate>
-        , IHandle
-    //IHandle<UpdateUser>,
-    //IHandle<UpdateUserFullInfo>,
-    //IHandle<UpdateBasicGroup>,
-    //IHandle<UpdateBasicGroupFullInfo>,
-    //IHandle<UpdateSupergroup>,
-    //IHandle<UpdateSupergroupFullInfo>,
-    //IHandle<UpdateUserStatus>,
-    //IHandle<UpdateChatTitle>,
-    //IHandle<UpdateChatPhoto>,
-    //IHandle<UpdateChatNotificationSettings>
+    public class ProfileViewModel : ChatSharedMediaViewModel, IDelegable<IProfileDelegate>, IHandle
     {
         public string LastSeen { get; internal set; }
 
@@ -1104,7 +1092,7 @@ namespace Telegram.ViewModels
 
     }
 
-    public class ChatMemberCollection : IncrementalCollection<ChatMember>
+    public class ChatMemberCollection : LegacyIncrementalCollection<ChatMember>
     {
         private readonly IClientService _clientService;
         private readonly long _chatId;
@@ -1178,7 +1166,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class ChatMemberGroupedCollection : IncrementalCollection<object>
+    public class ChatMemberGroupedCollection : LegacyIncrementalCollection<object>
     {
         private readonly IClientService _clientService;
         private readonly long _chatId;

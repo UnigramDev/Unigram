@@ -6,12 +6,15 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Windows.Foundation;
+using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {
@@ -200,7 +203,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class BotResultsCollection : IncrementalCollection<InlineQueryResult>
+    public class BotResultsCollection : MvxObservableCollection<InlineQueryResult>, ISupportIncrementalLoading
     {
         private readonly IClientService _clientService;
 
@@ -248,26 +251,32 @@ namespace Telegram.ViewModels
         public InlineQueryResultsButton Button => _results.Button;
         public string ButtonText => _results.Button?.Text;
 
-        public override async Task<IList<InlineQueryResult>> LoadDataAsync()
+        public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            if (_nextOffset != null)
+            return AsyncInfo.Run(async token =>
             {
-                var response = await _clientService.SendAsync(new GetInlineQueryResults(_botUserId, _chatId, _location, _query, _nextOffset));
-                if (response is InlineQueryResults results)
+                var totalCount = 0u;
+
+                if (_nextOffset != null)
                 {
-                    _results = results;
-                    _nextOffset = string.IsNullOrEmpty(results.NextOffset) ? null : results.NextOffset;
-
-                    foreach (var item in results.Results)
+                    var response = await _clientService.SendAsync(new GetInlineQueryResults(_botUserId, _chatId, _location, _query, _nextOffset));
+                    if (response is InlineQueryResults results)
                     {
-                        _queryIds[item] = results.InlineQueryId;
+                        _results = results;
+                        _nextOffset = string.IsNullOrEmpty(results.NextOffset) ? null : results.NextOffset;
+
+                        foreach (var item in results.Results)
+                        {
+                            _queryIds[item] = results.InlineQueryId;
+                            Add(item);
+                        }
                     }
-
-                    return results.Results;
                 }
-            }
 
-            return new InlineQueryResult[0];
+                return new LoadMoreItemsResult { Count = totalCount };
+            });
         }
+
+        public bool HasMoreItems => _nextOffset != null;
     }
 }

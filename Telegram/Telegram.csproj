@@ -770,6 +770,7 @@
     <Compile Include="Views\Popups\ChatJoinRequestsPopup.xaml.cs">
       <DependentUpon>ChatJoinRequestsPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\ChatJoinRequestsViewModel.cs" />
     <Compile Include="Views\Popups\ChooseStatusDurationPopup.xaml.cs">
       <DependentUpon>ChooseStatusDurationPopup.xaml</DependentUpon>
     </Compile>

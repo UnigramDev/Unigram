@@ -17,107 +17,96 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels
 {
-    public class CallsViewModel : ViewModelBase
+    public class CallsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         public CallsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new ItemsCollection(clientService);
+            Items = new IncrementalCollection<TLCallGroup>(this);
         }
 
-        public ItemsCollection Items { get; private set; }
+        public IncrementalCollection<TLCallGroup> Items { get; }
 
-        public class ItemsCollection : IncrementalCollection<TLCallGroup>
+        private string _nextOffset = string.Empty;
+        private bool _hasMoreItems = true;
+
+        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            private readonly IClientService _clientService;
+            var totalCount = 0u;
 
-            private string _nextOffset = string.Empty;
-            private bool _hasMoreItems = true;
-
-            public ItemsCollection(IClientService clientService)
+            var response = await ClientService.SendAsync(new SearchCallMessages(_nextOffset, 50, false)); //(new TLInputPeerEmpty(), null, null, new TLInputMessagesFilterPhoneCalls(), 0, 0, 0, _lastMaxId, 50);
+            if (response is FoundMessages messages)
             {
-                _clientService = clientService;
-            }
+                _nextOffset = messages.NextOffset;
+                _hasMoreItems = messages.NextOffset.Length > 0;
 
-            public override async Task<IList<TLCallGroup>> LoadDataAsync()
-            {
-                var response = await _clientService.SendAsync(new SearchCallMessages(_nextOffset, 50, false)); //(new TLInputPeerEmpty(), null, null, new TLInputMessagesFilterPhoneCalls(), 0, 0, 0, _lastMaxId, 50);
-                if (response is FoundMessages messages)
+                List<Message> currentMessages = null;
+                Chat currentChat = null;
+                User currentPeer = null;
+                bool currentFailed = false;
+                DateTime? currentTime = null;
+
+                foreach (var message in messages.Messages)
                 {
-                    _nextOffset = messages.NextOffset;
-                    _hasMoreItems = messages.NextOffset.Length > 0;
-
-                    List<TLCallGroup> groups = new List<TLCallGroup>();
-                    List<Message> currentMessages = null;
-                    Chat currentChat = null;
-                    User currentPeer = null;
-                    bool currentFailed = false;
-                    DateTime? currentTime = null;
-
-                    foreach (var message in messages.Messages)
+                    var chat = ClientService.GetChat(message.ChatId);
+                    if (chat == null)
                     {
-                        var chat = _clientService.GetChat(message.ChatId);
-                        if (chat == null)
-                        {
-                            continue;
-                        }
-
-                        var call = message.Content as MessageCall;
-                        if (call == null)
-                        {
-                            continue;
-                        }
-
-                        var peer = _clientService.GetUser(chat);
-                        if (peer == null)
-                        {
-                            continue;
-                        }
-
-                        var outgoing = message.IsOutgoing;
-                        var missed = call.DiscardReason is CallDiscardReasonMissed or CallDiscardReasonDeclined;
-                        var failed = !outgoing && missed;
-                        var time = Formatter.ToLocalTime(message.Date);
-
-                        if (currentPeer != null)
-                        {
-                            if (currentPeer.Id == peer.Id && currentFailed == failed && currentTime.Value.Date == time.Date)
-                            {
-                                currentMessages.Add(message);
-                                continue;
-                            }
-                            else
-                            {
-                                groups.Add(new TLCallGroup(currentMessages, currentChat.Id, currentPeer, currentFailed));
-                            }
-                        }
-
-                        currentChat = chat;
-                        currentPeer = peer;
-                        currentMessages = new List<Message> { message };
-                        currentFailed = failed;
-                        currentTime = time;
+                        continue;
                     }
 
-                    if (currentMessages?.Count > 0)
+                    var call = message.Content as MessageCall;
+                    if (call == null)
                     {
-                        groups.Add(new TLCallGroup(currentMessages, currentChat.Id, currentPeer, currentFailed));
+                        continue;
                     }
 
-                    return groups;
+                    var peer = ClientService.GetUser(chat);
+                    if (peer == null)
+                    {
+                        continue;
+                    }
+
+                    var outgoing = message.IsOutgoing;
+                    var missed = call.DiscardReason is CallDiscardReasonMissed or CallDiscardReasonDeclined;
+                    var failed = !outgoing && missed;
+                    var time = Formatter.ToLocalTime(message.Date);
+
+                    if (currentPeer != null)
+                    {
+                        if (currentPeer.Id == peer.Id && currentFailed == failed && currentTime.Value.Date == time.Date)
+                        {
+                            currentMessages.Add(message);
+                            continue;
+                        }
+                        else
+                        {
+                            Items.Add(new TLCallGroup(currentMessages, currentChat.Id, currentPeer, currentFailed));
+                            totalCount++;
+                        }
+                    }
+
+                    currentChat = chat;
+                    currentPeer = peer;
+                    currentMessages = new List<Message> { message };
+                    currentFailed = failed;
+                    currentTime = time;
                 }
 
-                return new TLCallGroup[0];
+                if (currentMessages?.Count > 0)
+                {
+                    Items.Add(new TLCallGroup(currentMessages, currentChat.Id, currentPeer, currentFailed));
+                    totalCount++;
+                }
             }
 
-            protected override bool GetHasMoreItems()
-            {
-                return _hasMoreItems;
-            }
+            return new LoadMoreItemsResult { Count = totalCount };
         }
+
+        public bool HasMoreItems => _hasMoreItems;
 
         #region Context menu
 

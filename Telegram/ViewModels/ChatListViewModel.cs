@@ -559,12 +559,7 @@ namespace Telegram.ViewModels
             //RaisePropertyChanged(nameof(Items));
         }
 
-        public class ItemsCollection : ObservableCollection<Chat>
-            , ISupportIncrementalLoading
-        //, IHandle<UpdateAuthorizationState>
-        //, IHandle<UpdateChatDraftMessage>
-        //, IHandle<UpdateChatLastMessage>
-        //, IHandle<UpdateChatPosition>
+        public class ItemsCollection : ObservableCollection<Chat>, ISupportIncrementalLoading
         {
             private readonly IClientService _clientService;
             private readonly IEventAggregator _aggregator;

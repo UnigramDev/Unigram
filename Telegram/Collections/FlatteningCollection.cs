@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.Collections
 {

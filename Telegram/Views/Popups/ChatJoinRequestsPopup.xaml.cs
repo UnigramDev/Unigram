@@ -4,18 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System.Runtime.InteropServices.WindowsRuntime;
-using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
-using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.Foundation;
+using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 
 namespace Telegram.Views.Popups
 {
@@ -104,85 +99,6 @@ namespace Telegram.Views.Popups
             }
 
             args.Handled = true;
-        }
-    }
-
-    public class ChatJoinRequestsViewModel : ViewModelBase
-    {
-        private readonly Chat _chat;
-        private readonly string _inviteLink;
-
-        public ChatJoinRequestsViewModel(Chat chat, string inviteLink, IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(clientService, settingsService, aggregator)
-        {
-            _chat = chat;
-            _inviteLink = inviteLink;
-
-            Items = new ItemCollection(clientService, chat, inviteLink);
-
-            AcceptCommand = new RelayCommand<ChatJoinRequest>(Accept);
-            DismissCommand = new RelayCommand<ChatJoinRequest>(Dismiss);
-        }
-
-        public bool IsChannel => _chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
-
-        public ItemCollection Items { get; private set; }
-
-        public RelayCommand<ChatJoinRequest> AcceptCommand { get; }
-        private void Accept(ChatJoinRequest request)
-        {
-            Process(request, true);
-        }
-
-        public RelayCommand<ChatJoinRequest> DismissCommand { get; }
-        private void Dismiss(ChatJoinRequest request)
-        {
-            Process(request, false);
-        }
-
-        private void Process(ChatJoinRequest request, bool approve)
-        {
-            Items.Remove(request);
-            ClientService.Send(new ProcessChatJoinRequest(_chat.Id, request.UserId, approve));
-        }
-
-        public class ItemCollection : MvxObservableCollection<ChatJoinRequest>, ISupportIncrementalLoading
-        {
-            private readonly IClientService _clientService;
-            private readonly Chat _chat;
-            private readonly string _inviteLink;
-
-            private ChatJoinRequest _offset;
-            private bool _hasMoreItems = true;
-
-            public ItemCollection(IClientService clientService, Chat chat, string inviteLink)
-            {
-                _clientService = clientService;
-                _chat = chat;
-                _inviteLink = inviteLink;
-            }
-
-            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-            {
-                return AsyncInfo.Run(async token =>
-                {
-                    var response = await _clientService.SendAsync(new GetChatJoinRequests(_chat.Id, _inviteLink, string.Empty, _offset, 10));
-                    if (response is ChatJoinRequests requests)
-                    {
-                        foreach (var item in requests.Requests)
-                        {
-                            _offset = item;
-                            Add(item);
-                        }
-
-                        _hasMoreItems = requests.Requests.Count > 0;
-                    }
-
-                    return new LoadMoreItemsResult { Count = 0 };
-                });
-            }
-
-            public bool HasMoreItems => _hasMoreItems;
         }
     }
 }

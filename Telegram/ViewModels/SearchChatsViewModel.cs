@@ -27,7 +27,7 @@ namespace Telegram.ViewModels
 
         private CancellationTokenSource _cancellation = new();
 
-        private string _messagesOffset = string.Empty;
+        private string _nextOffset;
 
         public SearchChatsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -84,7 +84,7 @@ namespace Telegram.ViewModels
             _globalSearch.Clear();
             _messages.Clear();
 
-            _messagesOffset = string.Empty;
+            _nextOffset = null;
 
             _knownChats.Clear();
             _knownUsers.Clear();
@@ -300,10 +300,10 @@ namespace Telegram.ViewModels
 
         private async Task LoadMessagesAsync(string query, CancellationToken cancellationToken)
         {
-            var response = await ClientService.SendAsync(new SearchMessages(null, query, _messagesOffset, 50, null, 0, 0));
+            var response = await ClientService.SendAsync(new SearchMessages(null, query, _nextOffset ?? string.Empty, 50, null, 0, 0));
             if (response is FoundMessages messages && !cancellationToken.IsCancellationRequested)
             {
-                _messagesOffset = messages.NextOffset;
+                _nextOffset = string.IsNullOrEmpty(messages.NextOffset) ? null : messages.NextOffset;
 
                 foreach (var message in messages.Messages)
                 {
@@ -320,7 +320,7 @@ namespace Telegram.ViewModels
             return new LoadMoreItemsResult { Count = 50 };
         }
 
-        public bool HasMoreItems => _messagesOffset.Length > 0;
+        public bool HasMoreItems => _nextOffset != null;
 
         #endregion
 
