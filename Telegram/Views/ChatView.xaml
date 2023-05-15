@@ -613,7 +613,7 @@
         <Grid x:Name="ContentPanel"
               SizeChanged="ContentPanel_SizeChanged"
               Grid.Row="2">
-            <chats:ChatListView x:Name="Messages"
+            <chats:ChatHistoryView x:Name="Messages"
                                 Style="{StaticResource BubbleListViewStyle}"
                                 ItemContainerTransitions="{x:Null}"
                                 ShowsScrollingPlaceholders="False"
@@ -776,7 +776,7 @@
                                 Grid.Row="1" />-->
                     </Grid>
                 </ListView.Header>
-            </chats:ChatListView>
+            </chats:ChatHistoryView>
 
             <controls:ProfilePicture x:Name="StickyPhoto"
                                      x:Load="False"

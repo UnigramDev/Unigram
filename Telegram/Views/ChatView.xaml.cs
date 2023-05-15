@@ -526,7 +526,7 @@ namespace Telegram.Views
 
                 ViewModel.Delegate = null;
                 ViewModel.TextField = null;
-                ViewModel.ListField = null;
+                ViewModel.HistoryField = null;
                 ViewModel.Sticker_Click = null;
 
                 _cleanup = ViewModel.Items;
@@ -611,7 +611,7 @@ namespace Telegram.Views
             _updateThemeTask = new TaskCompletionSource<bool>();
             ViewModel.MessageSliceLoaded += OnMessageSliceLoaded;
             ViewModel.TextField = TextField;
-            ViewModel.ListField = Messages;
+            ViewModel.HistoryField = Messages;
             ViewModel.Sticker_Click = Stickers_ItemClick;
 
             ViewModel.SetText(null, false);

@@ -22,7 +22,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatListView : ListView
+    public class ChatHistoryView : ListView
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
 
@@ -49,7 +49,7 @@ namespace Telegram.Controls.Chats
 
         public PanelScrollingDirection ScrollingDirection { get; private set; }
 
-        public ChatListView()
+        public ChatHistoryView()
         {
             DefaultStyleKey = typeof(ListView);
 
@@ -261,7 +261,7 @@ namespace Telegram.Controls.Chats
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new ChatListViewItem(this);
+            return new ChatHistoryViewItem(this);
         }
 
         public async Task ScrollToItem(MessageViewModel item, VerticalAlignment alignment, bool highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
@@ -387,11 +387,11 @@ namespace Telegram.Controls.Chats
 
         // Using a DependencyProperty as the backing store for IsSelectionEnabled.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty IsSelectionEnabledProperty =
-            DependencyProperty.Register("IsSelectionEnabled", typeof(bool), typeof(ChatListView), new PropertyMetadata(false, OnSelectionEnabledChanged));
+            DependencyProperty.Register("IsSelectionEnabled", typeof(bool), typeof(ChatHistoryView), new PropertyMetadata(false, OnSelectionEnabledChanged));
 
         private static void OnSelectionEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ChatListView)d).OnSelectionEnabledChanged((bool)e.OldValue, (bool)e.NewValue);
+            ((ChatHistoryView)d).OnSelectionEnabledChanged((bool)e.OldValue, (bool)e.NewValue);
         }
 
         private void OnSelectionEnabledChanged(bool oldValue, bool newValue)
@@ -449,7 +449,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        internal void OnPointerPressed(LazoListViewItem item, PointerRoutedEventArgs e)
+        internal void OnPointerPressed(MessageSelector item, PointerRoutedEventArgs e)
         {
             if (IsSelectionEnabled is false && !_pressed)
             {
@@ -474,7 +474,7 @@ namespace Telegram.Controls.Chats
             _pressed = true;
         }
 
-        internal void OnPointerEntered(LazoListViewItem item, PointerRoutedEventArgs e)
+        internal void OnPointerEntered(MessageSelector item, PointerRoutedEventArgs e)
         {
             if (_firstItem == null || !_pressed || !e.Pointer.IsInContact /*|| SelectionMode != ListViewSelectionMode.Multiple*/ || e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
             {
@@ -494,7 +494,7 @@ namespace Telegram.Controls.Chats
                 IsSelectionEnabled = true;
             }
 
-            var message = ItemFromContainer(item) as MessageViewModel;
+            var message = item.Message;
             if (message == null)
             {
                 return;
@@ -519,7 +519,7 @@ namespace Telegram.Controls.Chats
                     return;
                 }
 
-                var index = IndexFromContainer(item);
+                var index = Items.IndexOf(message);
                 var first = Math.Min(begin, index);
                 var last = Math.Max(begin, index);
 
@@ -553,14 +553,14 @@ namespace Telegram.Controls.Chats
             _lastItem = message;
         }
 
-        internal void OnPointerMoved(LazoListViewItem item, PointerRoutedEventArgs e)
+        internal void OnPointerMoved(MessageSelector item, PointerRoutedEventArgs e)
         {
             if (!_pressed || !e.Pointer.IsInContact || e.Pointer.PointerDeviceType != PointerDeviceType.Mouse)
             {
                 return;
             }
 
-            var message = ItemFromContainer(item) as MessageViewModel;
+            var message = item.Message;
             if (message == null)
             {
                 return;
@@ -603,11 +603,7 @@ namespace Telegram.Controls.Chats
                     }
 
                     IsSelectionEnabled = true;
-
-                    if (item.ContentTemplateRoot is MessageSelector selector)
-                    {
-                        selector.ReleasePointerCapture(e.Pointer);
-                    }
+                    item.ReleasePointerCapture(e.Pointer);
                 }
                 else
                 {
@@ -626,7 +622,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        internal void OnPointerReleased(LazoListViewItem item, PointerRoutedEventArgs e)
+        internal void OnPointerReleased(MessageSelector item, PointerRoutedEventArgs e)
         {
             var point = e.GetCurrentPoint(Window.Current.Content as FrameworkElement);
             if (point.Properties.PointerUpdateKind == PointerUpdateKind.LeftButtonReleased && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
@@ -666,25 +662,9 @@ namespace Telegram.Controls.Chats
             e.Handled = handled;
         }
 
-        internal void OnPointerCanceled(LazoListViewItem item, PointerRoutedEventArgs e)
+        internal void OnPointerCanceled(MessageSelector item, PointerRoutedEventArgs e)
         {
             _recognizer.CompleteGesture();
-        }
-
-        protected bool CantSelect(object item)
-        {
-            return item is MessageViewModel message && message.IsService;
-        }
-
-        protected long IdFromContainer(DependencyObject container)
-        {
-            var item = ItemFromContainer(container) as MessageViewModel;
-            if (item != null)
-            {
-                return item.Id;
-            }
-
-            return -1;
         }
 
         enum SelectionDirection

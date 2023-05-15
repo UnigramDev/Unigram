@@ -576,7 +576,7 @@ namespace Telegram.Views
 
                 _updateThemeTask?.TrySetResult(true);
 
-                if (args.ItemContainer is ChatListViewItem selector)
+                if (args.ItemContainer is ChatHistoryViewItem selector)
                 {
                     // TODO: are there chances that at this point TextArea is not up to date yet?
                     selector.PrepareForItemOverride(message,
@@ -586,7 +586,7 @@ namespace Telegram.Views
 
                 if (content is MessageSelector checkbox)
                 {
-                    checkbox.UpdateMessage(message, args.ItemContainer as LazoListViewItem);
+                    checkbox.UpdateMessage(message, Messages);
                     checkbox.UpdateSelectionEnabled(ViewModel.IsSelectionEnabled, false);
 
                     content = checkbox.Content as FrameworkElement;
@@ -723,7 +723,7 @@ namespace Telegram.Views
 
         private SelectorItem CreateSelectorItem(string typeName)
         {
-            SelectorItem item = new ChatListViewItem(Messages);
+            SelectorItem item = new ChatHistoryViewItem(Messages);
             item.ContentTemplate = _typeToTemplateMapping[typeName];
             item.Tag = typeName;
 

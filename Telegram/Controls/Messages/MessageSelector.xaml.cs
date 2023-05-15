@@ -9,6 +9,7 @@ using System.Linq;
 using System.Numerics;
 using Telegram.Assets.Icons;
 using Telegram.Common;
+using Telegram.Controls.Chats;
 using Telegram.Controls.Messages.Content;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -33,7 +34,7 @@ namespace Telegram.Controls.Messages
         private bool _isSelected;
 
         private MessageViewModel _message;
-        private LazoListViewItem _parent;
+        private ChatHistoryView _owner;
 
         public MessageSelector()
         {
@@ -59,7 +60,7 @@ namespace Telegram.Controls.Messages
             _message?.UpdateSelectionCallback(null);
             _message = null;
 
-            _parent = null;
+            _owner = null;
         }
 
         private void CreateIcon()
@@ -119,7 +120,7 @@ namespace Telegram.Controls.Messages
 
             if (_message != null)
             {
-                UpdateMessage(_message, _parent);
+                UpdateMessage(_message, _owner);
             }
         }
 
@@ -149,7 +150,7 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                _parent?.PointerPressed(e);
+                _owner?.OnPointerPressed(this, e);
             }
         }
 
@@ -159,7 +160,7 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                _parent?.PointerEntered(e);
+                _owner?.OnPointerEntered(this, e);
             }
         }
 
@@ -169,7 +170,7 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                _parent?.PointerMoved(e);
+                _owner?.OnPointerMoved(this, e);
             }
         }
 
@@ -179,7 +180,7 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                _parent?.PointerReleased(e);
+                _owner?.OnPointerReleased(this, e);
             }
         }
 
@@ -189,14 +190,14 @@ namespace Telegram.Controls.Messages
 
             if (e.OriginalSource is Grid grid && grid.Name == "LayoutRoot")
             {
-                _parent?.PointerCanceled(e);
+                _owner?.OnPointerCanceled(this, e);
             }
         }
 
-        public void UpdateMessage(MessageViewModel message, LazoListViewItem parent)
+        public void UpdateMessage(MessageViewModel message, ChatHistoryView owner)
         {
             _message = message;
-            _parent = parent;
+            _owner = owner;
 
             if (message == null || !_templateApplied)
             {

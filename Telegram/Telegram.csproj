@@ -200,6 +200,8 @@
     <Compile Include="Collections\CollectionSeparator.cs" />
     <Compile Include="Collections\FlatteningCollection.cs" />
     <Compile Include="Collections\Handlers\ChatDiffHandler.cs" />
+    <Compile Include="Controls\Chats\ChatHistoryView.cs" />
+    <Compile Include="Controls\Chats\ChatHistoryViewItem.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
     <Compile Include="Collections\LegacyIncrementalCollection.cs" />
@@ -370,8 +372,6 @@
     <Compile Include="Controls\Chats\ChatBackgroundPresenter.cs" />
     <Compile Include="Controls\Chats\ChatBackgroundRenderer.cs" />
     <Compile Include="Controls\Chats\ChatBottomButton.cs" />
-    <Compile Include="Controls\Chats\ChatListView.cs" />
-    <Compile Include="Controls\Chats\ChatListViewItem.cs" />
     <Compile Include="Controls\Chats\ChatRecordButton.cs" />
     <Compile Include="Controls\Chats\ChatSearchBar.xaml.cs">
       <DependentUpon>ChatSearchBar.xaml</DependentUpon>
@@ -448,7 +448,6 @@
     <Compile Include="Controls\InlineBotResultsView.xaml.cs">
       <DependentUpon>InlineBotResultsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\LazoListViewItem.cs" />
     <Compile Include="Controls\LoadingTextBlock.cs" />
     <Compile Include="Controls\LoopingPicker.cs" />
     <Compile Include="Controls\MasterDetailPanel.cs" />

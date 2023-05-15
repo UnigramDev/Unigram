@@ -24,9 +24,9 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatListViewItem : LazoListViewItem, IInteractionTrackerOwner
+    public class ChatHistoryViewItem : ListViewItem, IInteractionTrackerOwner
     {
-        private readonly ChatListView _parent;
+        private readonly ChatHistoryView _owner;
 
         private SpriteVisual _hitTest;
         private ContainerVisual _container;
@@ -44,11 +44,9 @@ namespace Telegram.Controls.Chats
 
         private FrameworkElement _presenter;
 
-        public ChatListViewItem(ChatListView parent)
-            : base(parent)
+        public ChatHistoryViewItem(ChatHistoryView owner)
         {
-            _parent = parent;
-
+            _owner = owner;
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
         }
 
@@ -182,7 +180,7 @@ namespace Telegram.Controls.Chats
         }
 
         public static readonly DependencyProperty ContentMarginProperty =
-            DependencyProperty.Register("ContentMargin", typeof(Thickness), typeof(ChatListViewItem), new PropertyMetadata(default(Thickness)));
+            DependencyProperty.Register("ContentMargin", typeof(Thickness), typeof(ChatHistoryViewItem), new PropertyMetadata(default(Thickness)));
 
         #endregion
 
@@ -203,17 +201,12 @@ namespace Telegram.Controls.Chats
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            if (_parent.SelectionMode == ListViewSelectionMode.Multiple && !IsSelected)
+            if (_owner.SelectionMode == ListViewSelectionMode.Multiple && !IsSelected)
             {
-                e.Handled = CantSelect();
+                e.Handled = ContentTemplateRoot is not MessageSelector;
             }
 
             base.OnPointerPressed(e);
-        }
-
-        public override bool CantSelect()
-        {
-            return ContentTemplateRoot is not MessageSelector;
         }
 
         public void PrepareForItemOverride(MessageViewModel message, bool canReply)
@@ -300,11 +293,11 @@ namespace Telegram.Controls.Chats
             {
                 if (_tracker.Position.X >= 72 && _reply)
                 {
-                    _parent.ViewModel.ReplyToMessage(selector.Message);
+                    _owner.ViewModel.ReplyToMessage(selector.Message);
                 }
                 else if (_tracker.Position.X <= -72 && _share)
                 {
-                    _parent.ViewModel.ForwardMessage(selector.Message);
+                    _owner.ViewModel.ForwardMessage(selector.Message);
                 }
             }
         }

@@ -57,7 +57,7 @@ namespace Telegram.ViewModels
             if (last != null)
             {
                 ReplyToMessage(last);
-                await ListField?.ScrollToItem(last, VerticalAlignment.Center, true);
+                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, true);
             }
         }
 
@@ -74,7 +74,7 @@ namespace Telegram.ViewModels
             if (last != null)
             {
                 ReplyToMessage(last);
-                await ListField?.ScrollToItem(last, VerticalAlignment.Center, true);
+                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, true);
             }
             else
             {
@@ -653,7 +653,7 @@ namespace Telegram.ViewModels
             if (last != null)
             {
                 EditMessage(last);
-                await ListField?.ScrollToItem(last, VerticalAlignment.Center, true);
+                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, true);
             }
         }
 

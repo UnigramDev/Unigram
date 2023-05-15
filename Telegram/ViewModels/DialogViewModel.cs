@@ -343,7 +343,7 @@ namespace Telegram.ViewModels
         }
 
         public ChatTextBox TextField { get; set; }
-        public ChatListView ListField { get; set; }
+        public ChatHistoryView HistoryField { get; set; }
 
         public void SetSelection(int start)
         {
@@ -404,7 +404,7 @@ namespace Telegram.ViewModels
 
         public void SetScrollMode(ItemsUpdatingScrollMode mode, bool force)
         {
-            var field = ListField;
+            var field = HistoryField;
             if (field == null)
             {
                 return;
@@ -776,7 +776,7 @@ namespace Telegram.ViewModels
                 var already = Items.LastOrDefault();
                 if (already != null)
                 {
-                    var field = ListField;
+                    var field = HistoryField;
                     if (field != null)
                     {
                         await field.ScrollToItem(already, VerticalAlignment.Bottom, false, int.MaxValue, ScrollIntoViewAlignment.Leading, false);
@@ -930,7 +930,7 @@ namespace Telegram.ViewModels
 
             if (direction == null)
             {
-                var field = ListField;
+                var field = HistoryField;
                 if (field != null)
                 {
                     var panel = field.ItemsPanelRoot as ItemsStackPanel;
@@ -949,7 +949,7 @@ namespace Telegram.ViewModels
             var already = Items.FirstOrDefault(x => x.Id == maxId || x.Content is MessageAlbum album && album.Messages.ContainsKey(maxId));
             if (already != null)
             {
-                var field = ListField;
+                var field = HistoryField;
                 if (field != null)
                 {
                     await field.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
@@ -1329,7 +1329,7 @@ namespace Telegram.ViewModels
         {
             //if (IsFirstSliceLoaded)
             {
-                var field = ListField;
+                var field = HistoryField;
                 if (field == null)
                 {
                     return;
@@ -1840,7 +1840,7 @@ namespace Telegram.ViewModels
 
             try
             {
-                var field = ListField;
+                var field = HistoryField;
                 if (field == null)
                 {
                     Settings.Chats.TryRemove(chat.Id, _threadId, ChatSetting.Index, out long index);
