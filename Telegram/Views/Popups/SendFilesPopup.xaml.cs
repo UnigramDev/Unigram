@@ -819,10 +819,23 @@ namespace Telegram.Views.Popups
             for (int i = 0; i < rects.Length; i++)
             {
                 var rect = positions.Item1[i].Item1;
-                rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, rect.Width * ratio, rect.Height * ratio);
+
+                var width = Math.Max(0, rect.Width * ratio);
+                var height = Math.Max(0, rect.Height * ratio);
+
+                width = double.IsNaN(width) ? 0 : width;
+                height = double.IsNaN(height) ? 0 : height;
+
+                rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, width, height);
             }
 
-            return (rects, new Size(positions.Item2.Width * ratio, positions.Item2.Height * ratio));
+            var finalWidth = Math.Max(0, positions.Item2.Width * ratio);
+            var finalHeight = Math.Max(0, positions.Item2.Height * ratio);
+
+            finalWidth = double.IsNaN(finalWidth) ? 0 : finalWidth;
+            finalHeight = double.IsNaN(finalHeight) ? 0 : finalHeight;
+
+            return (rects, new Size(finalWidth, finalHeight));
         }
     }
 }
