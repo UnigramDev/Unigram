@@ -86,6 +86,7 @@ namespace Telegram
                 SettingsService.Current.Diagnostics.UpdateCount++;
             }
 
+            WatchDog.Initialize();
             TLContainer.Current.Configure();
 
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
@@ -97,8 +98,6 @@ namespace Telegram
                     is not LayoutCycleException
                     and not OutOfMemoryException;
             };
-
-            WatchDog.Initialize();
         }
 
         protected override void OnWindowCreated(WindowCreatedEventArgs args)

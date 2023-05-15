@@ -78,11 +78,11 @@ namespace Telegram
             string entry;
             if (message != null)
             {
-                entry = string.Format(FormatWithMessage, (time - diff) / 10_000_000d, level, filePath, line, member, message);
+                entry = string.Format(FormatWithMessage, (time - diff) / 10_000_000d, level, Path.GetFileName(filePath), line, member, message);
             }
             else
             {
-                entry = string.Format(FormatWithoutMessage, (time - diff) / 10_000_000d, level, filePath, line, member);
+                entry = string.Format(FormatWithoutMessage, (time - diff) / 10_000_000d, level, Path.GetFileName(filePath), line, member);
             }
 
             _lastCalls.Add(entry);

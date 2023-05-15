@@ -184,6 +184,7 @@ namespace Telegram.Navigation
         protected sealed override void OnLaunched(LaunchActivatedEventArgs e)
         {
             Logger.Info();
+            WatchDog.Launch(e.PreviousExecutionState);
             CallInternalLaunchAsync(e);
         }
 
@@ -247,8 +248,6 @@ namespace Telegram.Navigation
                 default:
                     break;
             }
-
-            WatchDog.Launch(e.PreviousExecutionState);
 
             // handle pre-launch
             if (e.PrelaunchActivated)
@@ -519,40 +518,6 @@ namespace Telegram.Navigation
             var navigationService = CreateNavigationService(frame, session, id, root);
             navigationService.FrameFacade.BackButtonHandling = backButton;
             WindowContext.Current.NavigationServices.Add(navigationService);
-
-            if (backButton == BackButton.Attach)
-            {
-                // TODO: unattach others
-
-                // update shell back when backstack changes
-                // only the default frame in this case because secondary should not dismiss the app
-                //frame.RegisterPropertyChangedCallback(Frame.BackStackDepthProperty, (s, args) => UpdateShellBackButton());
-
-                // update shell back when navigation occurs
-                // only the default frame in this case because secondary should not dismiss the app
-                //frame.Navigated += (s, args) => UpdateShellBackButton();
-            }
-
-            // this is always okay to check, default or not
-            // expire any state (based on expiry)
-            // default the cache age to very fresh if not known
-            var otherwise = DateTime.MinValue.ToString();
-            if (DateTime.TryParse(navigationService.FrameFacade.GetFrameState(CacheDateKey, otherwise), out DateTime cacheDate))
-            {
-                var cacheAge = DateTime.Now.Subtract(cacheDate);
-                if (cacheAge >= CacheMaxDuration)
-                {
-                    // clear state in every nav service in every view
-                    foreach (var nav in WindowContext.All.SelectMany(x => x.NavigationServices))
-                    {
-                        nav.FrameFacade.ClearFrameState();
-                    }
-                }
-            }
-            else
-            {
-                // no date, that's okay
-            }
 
             return navigationService;
         }

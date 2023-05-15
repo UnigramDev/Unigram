@@ -4,6 +4,7 @@ using Microsoft.AppCenter.Crashes;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
@@ -80,7 +81,12 @@ namespace Telegram
         public static void Initialize()
         {
             NativeUtils.SetFatalErrorCallback(FatalErrorCallback);
+
+#if DEBUG
+            Client.SetLogMessageCallback(5, FatalErrorCallback);
+#else
             Client.SetLogMessageCallback(0, FatalErrorCallback);
+#endif
 
             if (_disabled)
             {
@@ -88,6 +94,12 @@ namespace Telegram
             }
 
             Read();
+
+            TaskScheduler.UnobservedTaskException += (s, args) =>
+            {
+                Crashes.TrackCrash(args.Exception);
+                args.SetObserved();
+            };
 
             Crashes.CreatingErrorReport += (s, args) =>
             {
@@ -152,6 +164,16 @@ namespace Telegram
         {
             if (verbosityLevel != 0)
             {
+#if DEBUG
+                if (verbosityLevel == 1 && message.Contains("File remote location was changed from"))
+                {
+                    var source = Path.Combine(ApplicationData.Current.LocalFolder.Path, "tdlib_log.txt");
+                    var destination = Path.ChangeExtension(source, ".backup");
+
+                    File.Copy(source, destination, true);
+                }
+#endif
+
                 return;
             }
 
