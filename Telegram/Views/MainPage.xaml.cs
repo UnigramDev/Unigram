@@ -559,20 +559,13 @@ namespace Telegram.Views
 
         private void ShowHideTopTabs(bool show)
         {
-            if ((show && ChatTabs?.Visibility == Visibility.Visible) || (!show && (ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || _tabsTopCollapsed)))
+            if (_tabsTopCollapsed != show)
             {
                 return;
             }
 
-            if (show)
-            {
-                _tabsTopCollapsed = false;
-            }
-
-            if (ChatTabs == null)
-            {
-                FindName(nameof(ChatTabs));
-            }
+            _tabsTopCollapsed = !show;
+            FindName(nameof(ChatTabs));
 
             void ShowHideTopTabsCompleted()
             {
@@ -627,12 +620,14 @@ namespace Telegram.Views
 
         private void ShowHideLeftTabs(bool show)
         {
-            if ((show && ChatTabsLeft?.Visibility == Visibility.Visible) || (!show && (ChatTabsLeft == null || ChatTabsLeft.Visibility == Visibility.Collapsed || _tabsLeftCollapsed)))
+            if (_tabsLeftCollapsed != show)
             {
                 return;
             }
 
             _tabsLeftCollapsed = !show;
+            FindName(nameof(ChatTabsLeft));
+
             Root?.SetSidebarEnabled(show);
             MasterDetail.IsOnlyChild = !show;
 
@@ -649,7 +644,7 @@ namespace Telegram.Views
             void ShowHideLeftTabsCompleted()
             {
                 ChatsList.Margin = new Thickness();
-                ChatTabs.Visibility = _tabsLeftCollapsed
+                ChatTabsLeft.Visibility = _tabsLeftCollapsed
                     ? Visibility.Collapsed
                     : Visibility.Visible;
             }
