@@ -3563,6 +3563,12 @@ They can still join via an invite link as long as they are not on the Removed Us
   <data name="HistoryClearedUndo" xml:space="preserve">
     <value>History cleared</value>
   </data>
+  <data name="HoldToAudio" xml:space="preserve">
+    <value>Hold to record audio. Tap to switch to video.</value>
+  </data>
+  <data name="HoldToVideo" xml:space="preserve">
+    <value>Hold to record video. Tap to switch to audio.</value>
+  </data>
   <data name="Hours_one" xml:space="preserve">
     <value>{0} hour</value>
   </data>
@@ -4902,7 +4908,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Sorry, you have deleted and re-created your account too many times recently. Please wait for a few days before signing up again.</value>
   </data>
   <data name="PhoneNumberHelp" xml:space="preserve">
-    <value>You can change your Telegram number from the official Telegram app for Android and iPhone. Your account and all your cloud data — messages, media, contacts, etc. will be moved to the new number.</value>
+    <value>You can change your Telegram number from the official Telegram app for Android and iOS. Your account and all your cloud data — messages, media, contacts, etc. will be moved to the new number.</value>
   </data>
   <data name="PhotoForRestDescription" xml:space="preserve">
     <value>You can upload a public photo for users who are restricted from seeing your real profile photos.</value>

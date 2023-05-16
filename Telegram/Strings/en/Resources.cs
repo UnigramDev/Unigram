@@ -5622,6 +5622,16 @@ namespace Telegram
         public static string HistoryClearedUndo => Resource.GetString("HistoryClearedUndo");
         
         /// <summary>
+        /// Localized resource similar to "Hold to record audio. Tap to switch to video."
+        /// </summary>
+        public static string HoldToAudio => Resource.GetString("HoldToAudio");
+        
+        /// <summary>
+        /// Localized resource similar to "Hold to record video. Tap to switch to audio."
+        /// </summary>
+        public static string HoldToVideo => Resource.GetString("HoldToVideo");
+        
+        /// <summary>
         /// Localized resource similar to "If inactive for"
         /// </summary>
         public static string IfInactiveFor => Resource.GetString("IfInactiveFor");
@@ -7609,7 +7619,7 @@ namespace Telegram
         public static string PhoneNumberFlood => Resource.GetString("PhoneNumberFlood");
         
         /// <summary>
-        /// Localized resource similar to "You can change your Telegram number from the official Telegram app for Android and iPhone. Your account and all your cloud data — messages, media, contacts, etc. will be moved to the new number."
+        /// Localized resource similar to "You can change your Telegram number from the official Telegram app for Android and iOS. Your account and all your cloud data — messages, media, contacts, etc. will be moved to the new number."
         /// </summary>
         public static string PhoneNumberHelp => Resource.GetString("PhoneNumberHelp");
         

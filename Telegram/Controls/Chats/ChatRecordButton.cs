@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Devices.Enumeration;
@@ -333,7 +334,9 @@ namespace Telegram.Controls.Chats
                         ? Strings.VideoMessagesRestrictedByPrivacy
                         : Strings.VoiceMessagesRestrictedByPrivacy;
 
-                    await MessagePopup.ShowAsync(string.Format(message, ViewModel.Chat.Title), Strings.AppName, Strings.OK);
+                    var formatted = string.Format(message, ViewModel.Chat.Title);
+                    var markdown = Client.Execute(new ParseMarkdown(new FormattedText(formatted, new TextEntity[0]))) as FormattedText;
+                    Window.Current.ShowTeachingTip(this, markdown, TeachingTipPlacementMode.TopLeft);
                     return;
                 }
 
@@ -417,6 +420,12 @@ namespace Telegram.Controls.Chats
 
                 _timer.Stop();
                 Mode = Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video;
+
+                var message = Mode == ChatRecordMode.Video
+                    ? Strings.HoldToVideo
+                    : Strings.HoldToAudio;
+
+                Window.Current.ShowTeachingTip(this, message, TeachingTipPlacementMode.TopLeft);
             }
             else if (!_hasRecordVideo || _calledRecordRunnable)
             {
