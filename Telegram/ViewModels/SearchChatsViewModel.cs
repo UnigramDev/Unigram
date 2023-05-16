@@ -33,6 +33,7 @@ namespace Telegram.ViewModels
             : base(clientService, settingsService, aggregator)
         {
             _query = new(Constants.TypingTimeout, UpdateQuery, CanUpdateQuery);
+            _query.Value = string.Empty;
 
             TopChats = new DiffObservableCollection<Chat>(new ChatDiffHandler(), Constants.DiffOptions);
             Items = new FlatteningCollection(this, _recent, _chatsAndContacts, _globalSearch, _messages);
@@ -64,13 +65,14 @@ namespace Telegram.ViewModels
 
         public async void UpdateQuery(string value)
         {
-            _query.Value = value;
-
+            var query = value ?? string.Empty;
             var token = _cancellation.Token;
 
-            await LoadChatsAndContactsPart2Async(value, token);
-            await LoadGlobalSearchAsync(value, token);
-            await LoadMessagesAsync(value, token);
+            _query.Value = query;
+
+            await LoadChatsAndContactsPart2Async(query, token);
+            await LoadGlobalSearchAsync(query, token);
+            await LoadMessagesAsync(query, token);
         }
 
         private bool CanUpdateQuery(string value)
@@ -89,9 +91,10 @@ namespace Telegram.ViewModels
             _knownChats.Clear();
             _knownUsers.Clear();
 
+            var query = value ?? string.Empty;
             var token = _cancellation.Token;
 
-            if (string.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(query))
             {
                 IsTopChatsVisible = true;
                 await LoadTopChatsAsync(token);
@@ -101,8 +104,8 @@ namespace Telegram.ViewModels
                 IsTopChatsVisible = false;
             }
 
-            await LoadRecentAsync(value, token);
-            await LoadChatsAndContactsPart1Async(value, token);
+            await LoadRecentAsync(query, token);
+            await LoadChatsAndContactsPart1Async(query, token);
         }
 
         private void Track(Chat chat)
