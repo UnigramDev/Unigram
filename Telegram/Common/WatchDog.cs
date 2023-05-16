@@ -205,12 +205,15 @@ namespace Telegram
             var count = SettingsService.Current.Diagnostics.UpdateCount;
 
             var memoryUsage = FileSizeConverter.Convert((long)MemoryManager.AppMemoryUsage);
+            var memoryUsageLimit = FileSizeConverter.Convert((long)MemoryManager.AppMemoryUsageLimit);
+            var expectUsageLimit = FileSizeConverter.Convert((long)MemoryManager.ExpectedAppMemoryUsageLimit);
 
             var info =
                 $"Current version: {version}\n" +
                 $"Memory usage: {memoryUsage}\n" +
                 $"Memory usage level: {MemoryManager.AppMemoryUsageLevel}\n" +
-                $"Memory usage limit: {MemoryManager.AppMemoryUsageLimit}\n" +
+                $"Memory usage limit: {memoryUsageLimit}\n" +
+                $"Expected memory usage limit: {expectUsageLimit}\n" +
                 $"Time since last update: {next - prev}s\n" +
                 $"Update count: {count}\n\n";
 
