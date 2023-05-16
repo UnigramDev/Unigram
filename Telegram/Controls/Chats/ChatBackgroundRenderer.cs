@@ -35,7 +35,7 @@ namespace Telegram.Controls.Chats
         private BackgroundFill _backgroundFill;
 
         private bool _thumbnail;
-        private string _fileToken;
+        private long _fileToken;
 
         public ChatBackgroundRenderer()
             : base(false, false)
@@ -308,10 +308,9 @@ namespace Telegram.Controls.Chats
 
         public void UpdateSource(IClientService clientService, Background background, bool thumbnail)
         {
-            if (_fileToken is string fileToken)
+            if (_fileToken != 0)
             {
-                _fileToken = null;
-                UpdateManager.Unsubscribe(this);
+                UpdateManager.Unsubscribe(this, ref _fileToken);
             }
 
             if (background.Type is BackgroundTypeFill typeFill)

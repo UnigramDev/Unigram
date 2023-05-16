@@ -28,8 +28,8 @@ namespace Telegram.Controls.Gallery
 
         public Border Presenter => Panel;
 
-        private string _fileToken;
-        private string _thumbnailToken;
+        private long _fileToken;
+        private long _thumbnailToken;
 
         private Stretch _lastStretch;
 

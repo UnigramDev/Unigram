@@ -14,20 +14,20 @@ namespace Telegram.Common
     {
         #region Subscribe by ref
 
-        public static void Subscribe(object sender, MessageWithOwner message, File file, ref string token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
+        public static void Subscribe(object sender, MessageWithOwner message, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
         {
             Subscribe(sender, message.ClientService.SessionId, file, ref token, handler, completionOnly, keepTargetAlive);
         }
 
-        public static void Subscribe(object sender, IClientService clientService, File file, ref string token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
+        public static void Subscribe(object sender, IClientService clientService, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
         {
             Subscribe(sender, clientService.SessionId, file, ref token, handler, completionOnly, keepTargetAlive);
         }
 
-        public static void Subscribe(object sender, int sessionId, File file, ref string token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
+        public static void Subscribe(object sender, int sessionId, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
         {
-            var value = $"{sessionId}_{file.Id}";
-            if (token != value && token != null)
+            var value = (sessionId << 16) | file.Id;
+            if (value != token && token != 0)
             {
                 EventAggregator.Default.Unregister<File>(sender, token);
             }
@@ -56,7 +56,7 @@ namespace Telegram.Common
                 EventAggregator.Default.Unregister<File>(sender);
             }
 
-            EventAggregator.Default.Register(sender, $"{sessionId}_{file.Id}", handler, keepTargetAlive, completionOnly);
+            EventAggregator.Default.Register(sender, (sessionId << 16) | file.Id, handler, keepTargetAlive, completionOnly);
         }
 
         #endregion
@@ -66,10 +66,10 @@ namespace Telegram.Common
             EventAggregator.Default.Unregister<File>(sender);
         }
 
-        public static void Unsubscribe(object sender, ref string token)
+        public static void Unsubscribe(object sender, ref long token)
         {
             EventAggregator.Default.Unregister<File>(sender, token);
-            token = null;
+            token = 0;
         }
     }
 }

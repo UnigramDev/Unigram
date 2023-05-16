@@ -23,11 +23,11 @@ namespace Telegram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
-        private string _part1Token;
-        private string _part2Token;
-        private string _part3Token;
-        private string _part4Token;
-        private string _part5Token;
+        private long _part1Token;
+        private long _part2Token;
+        private long _part3Token;
+        private long _part4Token;
+        private long _part5Token;
 
         private CompositionAnimation _thumbnailShimmer;
 

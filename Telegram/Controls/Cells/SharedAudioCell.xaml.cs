@@ -25,7 +25,7 @@ namespace Telegram.Controls.Cells
         private MessageWithOwner _message;
         public MessageWithOwner Message => _message;
 
-        private string _fileToken;
+        private long _fileToken;
 
         public SharedAudioCell()
         {

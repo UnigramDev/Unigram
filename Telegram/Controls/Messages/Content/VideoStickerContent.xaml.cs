@@ -21,7 +21,7 @@ namespace Telegram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
-        private string _fileToken;
+        private long _fileToken;
 
         private CompositionAnimation _thumbnailShimmer;
 
@@ -136,12 +136,12 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = null;
 
-            if (_fileToken != null)
+            if (_fileToken != 0)
             {
                 UpdateManager.Unsubscribe(this);
             }
 
-            _fileToken = null;
+            _fileToken = 0;
 
             if (_templateApplied)
             {

@@ -27,7 +27,7 @@ namespace Telegram.Controls
 
     public class ProfilePicture : HyperlinkButton
     {
-        private string _fileToken;
+        private long _fileToken;
         private int? _fileId;
         private long? _referenceId;
 
@@ -128,10 +128,9 @@ namespace Telegram.Controls
 
         public void Clear()
         {
-            if (_fileToken is string fileToken)
+            if (_fileToken != 0)
             {
-                _fileToken = null;
-                EventAggregator.Default.Unregister<File>(this, fileToken);
+                UpdateManager.Unsubscribe(this, ref _fileToken);
             }
 
             _fileId = null;
@@ -255,10 +254,9 @@ namespace Telegram.Controls
 
         private void SetChat(IClientService clientService, Chat chat, File file, int side, bool download = true)
         {
-            if (_fileToken is string fileToken)
+            if (_fileToken != 0)
             {
-                _fileToken = null;
-                EventAggregator.Default.Unregister<File>(this, fileToken);
+                UpdateManager.Unsubscribe(this, ref _fileToken);
             }
 
             if (_referenceId != chat.Id || _fileId != file?.Id || Source == null || !download)
@@ -273,6 +271,8 @@ namespace Telegram.Controls
 
         private object GetChat(IClientService clientService, Chat chat, File file, int side, out ProfilePictureShape shape, bool download = true)
         {
+            // TODO: this method may throw a NullReferenceException in some conditions
+
             System.Diagnostics.Debug.Assert(side == Width);
 
             shape = ProfilePictureShape.Ellipse;
@@ -346,10 +346,9 @@ namespace Telegram.Controls
 
         public void SetUser(IClientService clientService, User user, File file, int side, bool download = true)
         {
-            if (_fileToken is string fileToken)
+            if (_fileToken != 0)
             {
-                _fileToken = null;
-                EventAggregator.Default.Unregister<File>(this, fileToken);
+                UpdateManager.Unsubscribe(this, ref _fileToken);
             }
 
             if (_referenceId != user.Id || _fileId != file?.Id || Source == null || !download)
@@ -422,10 +421,9 @@ namespace Telegram.Controls
 
         private void SetChat(IClientService clientService, ChatInviteLinkInfo chat, File file, int side, bool download = true)
         {
-            if (_fileToken is string fileToken)
+            if (_fileToken != 0)
             {
-                _fileToken = null;
-                EventAggregator.Default.Unregister<File>(this, fileToken);
+                UpdateManager.Unsubscribe(this, ref _fileToken);
             }
 
             Source = GetChat(clientService, chat, file, side, download);
@@ -485,10 +483,9 @@ namespace Telegram.Controls
 
         private void SetChatPhoto(IClientService clientService, ChatPhoto photo, File file, int side, bool download = true)
         {
-            if (_fileToken is string fileToken)
+            if (_fileToken != 0)
             {
-                _fileToken = null;
-                EventAggregator.Default.Unregister<File>(this, fileToken);
+                UpdateManager.Unsubscribe(this, ref _fileToken);
             }
 
             Source = GetChatPhoto(clientService, photo, file, side, download);

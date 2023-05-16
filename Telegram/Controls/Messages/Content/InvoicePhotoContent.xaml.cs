@@ -17,7 +17,7 @@ namespace Telegram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
-        private string _thumbnailToken;
+        private long _thumbnailToken;
 
         public InvoicePhotoContent(MessageViewModel message)
         {
@@ -115,12 +115,12 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = null;
 
-            if (_thumbnailToken != null)
+            if (_thumbnailToken != 0)
             {
                 UpdateManager.Unsubscribe(this);
             }
 
-            _thumbnailToken = null;
+            _thumbnailToken = 0;
         }
 
         public bool IsValid(MessageContent content, bool primary)

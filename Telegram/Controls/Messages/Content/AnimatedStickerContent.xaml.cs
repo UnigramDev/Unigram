@@ -25,8 +25,8 @@ namespace Telegram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
-        private string _fileToken;
-        private string _interactionToken;
+        private long _fileToken;
+        private long _interactionToken;
 
         private bool _isEmoji;
 
@@ -185,12 +185,13 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = null;
 
-            if (_fileToken != null)
+            if (_fileToken != 0 || _interactionToken != 0)
             {
                 UpdateManager.Unsubscribe(this);
             }
 
-            _fileToken = null;
+            _fileToken = 0;
+            _interactionToken = 0;
 
             if (_templateApplied)
             {

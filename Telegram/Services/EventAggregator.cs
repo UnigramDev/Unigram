@@ -97,7 +97,7 @@ namespace Telegram.Services
         /// http://galasoft.ch/s/mvvmweakaction. </param>
         void Register<TMessage>(
             object recipient,
-            object token,
+            long token,
             UpdateHandler<TMessage> action,
             bool keepTargetAlive = false,
             bool completionOnly = false);
@@ -137,7 +137,7 @@ namespace Telegram.Services
         /// use a token when registering (or who used a different token) will not
         /// get the message. Similarly, messages sent without any token, or with a different
         /// token, will not be delivered to that recipient.</param>
-        void Send<TMessage>(TMessage message, object token, bool completion = false);
+        void Send<TMessage>(TMessage message, long token, bool completion = false);
 
         /// <summary>
         /// Unregisters a messager recipient completely. After this method
@@ -167,7 +167,7 @@ namespace Telegram.Services
         /// <param name="token">The token for which the recipient must be unregistered.</param>
         /// <typeparam name="TMessage">The type of messages that the recipient wants
         /// to unregister from.</typeparam>
-        void Unregister<TMessage>(object recipient, object token);
+        void Unregister<TMessage>(object recipient, long token);
 
         /// <summary>
         /// Unregisters a message recipient for a given type of messages and for
@@ -196,7 +196,7 @@ namespace Telegram.Services
         /// <param name="token">The token for which the recipient must be unregistered.</param>
         /// <param name="action">The action that must be unregistered for
         /// the recipient and for the message type TMessage.</param>
-        void Unregister<TMessage>(object recipient, object token, Action<TMessage> action);
+        void Unregister<TMessage>(object recipient, long token, Action<TMessage> action);
 
         #endregion
     }
@@ -376,7 +376,7 @@ namespace Telegram.Services
             bool keepTargetAlive = false,
             bool completionOnly = false)
         {
-            Register(recipient, null, action, keepTargetAlive, completionOnly);
+            Register(recipient, 0, action, keepTargetAlive, completionOnly);
         }
 
         /// <summary>
@@ -408,7 +408,7 @@ namespace Telegram.Services
         /// http://galasoft.ch/s/mvvmweakaction. </param>
         public virtual void Register<TMessage>(
             object recipient,
-            object token,
+            long token,
             UpdateHandler<TMessage> action,
             bool keepTargetAlive = false,
             bool completionOnly = false)
@@ -465,7 +465,7 @@ namespace Telegram.Services
         /// <param name="message">The message to send to registered recipients.</param>
         public virtual void Send<TMessage>(TMessage message, bool completion = false)
         {
-            SendToTargetOrType(message, null, null, completion);
+            SendToTargetOrType(message, null, 0, completion);
         }
 
         /// <summary>
@@ -480,7 +480,7 @@ namespace Telegram.Services
         /// <param name="message">The message to send to registered recipients.</param>
         public virtual void Send<TMessage, TTarget>(TMessage message, bool completion = false)
         {
-            SendToTargetOrType(message, typeof(TTarget), null, completion);
+            SendToTargetOrType(message, typeof(TTarget), 0, completion);
         }
 
         /// <summary>
@@ -497,7 +497,7 @@ namespace Telegram.Services
         /// use a token when registering (or who used a different token) will not
         /// get the message. Similarly, messages sent without any token, or with a different
         /// token, will not be delivered to that recipient.</param>
-        public virtual void Send<TMessage>(TMessage message, object token, bool completion = false)
+        public virtual void Send<TMessage>(TMessage message, long token, bool completion = false)
         {
             SendToTargetOrType(message, null, token, completion);
         }
@@ -523,7 +523,7 @@ namespace Telegram.Services
         /// to unregister from.</typeparam>
         public virtual void Unregister<TMessage>(object recipient)
         {
-            Unregister<TMessage>(recipient, null, null);
+            Unregister<TMessage>(recipient, 0, null);
         }
 
         /// <summary>
@@ -536,7 +536,7 @@ namespace Telegram.Services
         /// <param name="token">The token for which the recipient must be unregistered.</param>
         /// <typeparam name="TMessage">The type of messages that the recipient wants
         /// to unregister from.</typeparam>
-        public virtual void Unregister<TMessage>(object recipient, object token)
+        public virtual void Unregister<TMessage>(object recipient, long token)
         {
             Unregister<TMessage>(recipient, token, null);
         }
@@ -555,7 +555,7 @@ namespace Telegram.Services
         /// the recipient and for the message type TMessage.</param>
         public virtual void Unregister<TMessage>(object recipient, Action<TMessage> action)
         {
-            Unregister(recipient, null, action);
+            Unregister(recipient, 0, action);
         }
 
         /// <summary>
@@ -571,7 +571,7 @@ namespace Telegram.Services
         /// <param name="token">The token for which the recipient must be unregistered.</param>
         /// <param name="action">The action that must be unregistered for
         /// the recipient and for the message type TMessage.</param>
-        public virtual void Unregister<TMessage>(object recipient, object token, Action<TMessage> action)
+        public virtual void Unregister<TMessage>(object recipient, long token, Action<TMessage> action)
         {
             UnregisterFromLists(recipient, token, action, _recipientsStrictAction);
             RequestCleanup();
@@ -644,7 +644,7 @@ namespace Telegram.Services
             TMessage message,
             IList<WeakActionAndToken> weakActionsAndTokens,
             Type messageTargetType,
-            object token,
+            long token,
             bool completion)
         {
             if (weakActionsAndTokens != null)
@@ -672,8 +672,8 @@ namespace Telegram.Services
                         && (messageTargetType == null
                             || item.Action.Target.GetType() == messageTargetType
                             || messageTargetType.IsAssignableFrom(item.Action.Target.GetType()))
-                        && ((item.Token == null && token == null)
-                            || item.Token != null && item.Token.Equals(token)))
+                        && ((item.Token == 0 && token == 0)
+                            || item.Token != 0 && item.Token.Equals(token)))
                     {
                         if (item.Action.DispatcherQueue != null)
                         {
@@ -724,7 +724,7 @@ namespace Telegram.Services
 
         private static void UnregisterFromLists<TMessage>(
             object recipient,
-            object token,
+            long token,
             Action<TMessage> action,
             Dictionary<Type, List<WeakActionAndToken>> lists)
         {
@@ -749,7 +749,7 @@ namespace Telegram.Services
                             && recipient == weakActionCasted.Target
                             && (action == null
                                 || action.Method.Name == weakActionCasted.MethodName)
-                            && (token == null
+                            && (token == 0
                                 || token.Equals(item.Token)))
                         {
                             item.Action.MarkForDeletion();
@@ -800,7 +800,7 @@ namespace Telegram.Services
             _isCleanupRegistered = false;
         }
 
-        private void SendToTargetOrType<TMessage>(TMessage message, Type messageTargetType, object token, bool completion = false)
+        private void SendToTargetOrType<TMessage>(TMessage message, Type messageTargetType, long token, bool completion = false)
         {
             var messageType = typeof(TMessage);
 
@@ -835,7 +835,7 @@ namespace Telegram.Services
         {
             public WeakAction Action;
 
-            public object Token;
+            public long Token;
 
             public bool CompletionOnly;
         }

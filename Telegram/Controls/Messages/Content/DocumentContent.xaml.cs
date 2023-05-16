@@ -23,8 +23,8 @@ namespace Telegram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
-        private string _fileToken;
-        private string _thumbnailToken;
+        private long _fileToken;
+        private long _thumbnailToken;
 
         public DocumentContent(MessageViewModel message)
         {
@@ -200,13 +200,13 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = null;
 
-            if (_fileToken != null || _thumbnailToken != null)
+            if (_fileToken != 0 || _thumbnailToken != 0)
             {
                 UpdateManager.Unsubscribe(this);
             }
 
-            _fileToken = null;
-            _thumbnailToken = null;
+            _fileToken = 0;
+            _thumbnailToken = 0;
         }
 
         public bool IsValid(MessageContent content, bool primary)

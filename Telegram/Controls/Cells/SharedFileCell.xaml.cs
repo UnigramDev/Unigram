@@ -23,7 +23,7 @@ namespace Telegram.Controls.Cells
         private IMessageDelegate _delegate;
         private MessageWithOwner _message;
 
-        private string _fileToken;
+        private long _fileToken;
 
         public SharedFileCell()
         {
