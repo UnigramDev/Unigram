@@ -736,21 +736,24 @@ namespace Telegram.Views
         {
             Logger.Debug();
 
+            var next = e.NewSize.ToVector2();
+            var prev = e.PreviousSize.ToVector2();
+
+            var diff = next.Y - prev.Y;
+
             var panel = Messages.ItemsStack;
-            if (panel == null || e.PreviousSize.Height == e.NewSize.Height)
+            if (panel == null || prev.Y == next.Y || Math.Abs(diff) <= 2)
             {
                 return;
             }
 
-            var selector = sender as SelectorItem;
-
-            var index = Messages.IndexFromContainer(selector);
+            var index = Messages.IndexFromContainer(sender as SelectorItem);
             if (index < panel.LastVisibleIndex && e.PreviousSize.Width < 1 && e.PreviousSize.Height < 1)
             {
                 return;
             }
 
-            var message = Messages.ItemFromContainer(selector) as MessageViewModel;
+            var message = Messages.ItemFromContainer(sender as SelectorItem) as MessageViewModel;
             if (message == null || message.IsInitial)
             {
                 if (message != null && e.PreviousSize.Width > 0 && e.PreviousSize.Height > 0)
@@ -765,23 +768,15 @@ namespace Telegram.Views
 
             if (index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex)
             {
-                var diff = (float)e.NewSize.Height - (float)e.PreviousSize.Height;
-                if (Math.Abs(diff) < 2)
-                {
-                    return;
-                }
-
-                var direction = Messages.ScrollingDirection == PanelScrollingDirection.Backward ? -1 : 1;
+                var direction = Messages.ScrollingMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
                 var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
                 var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                anim.InsertKeyFrame(0, (float)(diff * direction));
+                anim.InsertKeyFrame(0, diff * direction);
                 anim.InsertKeyFrame(1, 0);
                 //anim.Duration = TimeSpan.FromSeconds(5);
 
-                System.Diagnostics.Debug.WriteLine(diff);
-
-                var first = direction == 1 ? panel.FirstCacheIndex : index;
+                var first = direction == 1 ? panel.FirstCacheIndex : index + 1;
                 var last = direction == 1 ? index : panel.LastCacheIndex;
 
                 for (int i = first; i <= last; i++)

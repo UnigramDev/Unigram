@@ -410,7 +410,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            field.SetScrollMode(mode, force);
+            field.SetScrollingMode(mode, force);
         }
 
         public string GetText(TextGetOptions options = TextGetOptions.NoHidden)
@@ -1336,7 +1336,7 @@ namespace Telegram.ViewModels
                 }
 
                 field.ScrollToBottom();
-                field.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                field.SetScrollingMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
             }
         }
 

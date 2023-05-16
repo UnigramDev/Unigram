@@ -76,7 +76,7 @@ namespace Telegram.Controls.Chats
                 ItemsStack.SizeChanged += OnSizeChanged;
 
                 _waitItemsPanelRoot.TrySetResult(panel);
-                SetScrollMode();
+                SetScrollingMode();
             }
 
             ViewChanged();
@@ -193,7 +193,7 @@ namespace Telegram.Controls.Chats
                 return ViewModel.LoadPreviousSliceAsync(direction != PanelScrollingDirection.None);
             }
 
-            SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+            SetScrollingMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
             return Task.CompletedTask;
         }
 
@@ -201,20 +201,20 @@ namespace Telegram.Controls.Chats
         private ItemsUpdatingScrollMode? _pendingMode;
         private bool? _pendingForce;
 
-        public ItemsUpdatingScrollMode ScrollMode => ItemsStack?.ItemsUpdatingScrollMode ?? _currentMode;
+        public ItemsUpdatingScrollMode ScrollingMode => ItemsStack?.ItemsUpdatingScrollMode ?? _currentMode;
 
-        public void SetScrollMode()
+        public void SetScrollingMode()
         {
             if (_pendingMode is ItemsUpdatingScrollMode mode && _pendingForce is bool force)
             {
                 _pendingMode = null;
                 _pendingForce = null;
 
-                SetScrollMode(mode, force);
+                SetScrollingMode(mode, force);
             }
         }
 
-        public void SetScrollMode(ItemsUpdatingScrollMode mode, bool force)
+        public void SetScrollingMode(ItemsUpdatingScrollMode mode, bool force)
         {
             var panel = ItemsPanelRoot as ItemsStackPanel;
             if (panel == null)
@@ -357,6 +357,8 @@ namespace Telegram.Controls.Chats
 
             void viewChanged(object s1, ScrollViewerViewChangedEventArgs e1)
             {
+                LayoutUpdated -= layoutUpdated;
+
                 if (e1.IsIntermediate is false)
                 {
                     LayoutUpdated += layoutUpdated;
@@ -367,6 +369,7 @@ namespace Telegram.Controls.Chats
             try
             {
                 ScrollIntoView(item, alignment);
+                LayoutUpdated += layoutUpdated;
                 ScrollingHost.ViewChanged += viewChanged;
 
                 await tcs.Task;
@@ -374,6 +377,7 @@ namespace Telegram.Controls.Chats
             finally
             {
                 LayoutUpdated -= layoutUpdated;
+                ScrollingHost.ViewChanged -= viewChanged;
             }
         }
 
