@@ -30,7 +30,7 @@
 
 
 
-		<Type Name="Telegram.Common.RemoteVideoSource">
+		<Type Name="Telegram.Streams.RemoteFileSource">
 			<Method Name="UpdateFile" Dynamic="Required"/>
 		</Type>
 
