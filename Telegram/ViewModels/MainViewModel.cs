@@ -78,13 +78,14 @@ namespace Telegram.ViewModels
 
             // This must represent pivot tabs
             Children.Add(Chats);
-            Children.Add(SearchChats);
             Children.Add(Contacts);
             Children.Add(Calls);
             Children.Add(Settings);
 
             // Any additional child
             Children.Add(_voipService as ViewModelBase);
+            Children.Add(SearchChats);
+            Children.Add(Topics);
 
             Subscribe();
         }
