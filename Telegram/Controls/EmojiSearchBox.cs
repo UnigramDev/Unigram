@@ -2,6 +2,7 @@
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -188,7 +189,7 @@ namespace Telegram.Controls
                     var file = item.Icon.StickerValue;
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        view.Source = UriEx.ToLocal(file.Local.Path);
+                        view.Source = new LocalFileSource(file);
                     }
                     else
                     {
@@ -278,7 +279,7 @@ namespace Telegram.Controls
         {
             if (target is LottieView lottie)
             {
-                lottie.Source = UriEx.ToLocal(file.Local.Path);
+                lottie.Source = new LocalFileSource(file);
             }
         }
 

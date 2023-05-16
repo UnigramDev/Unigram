@@ -13,6 +13,7 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Drawers;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
@@ -307,11 +308,11 @@ namespace Telegram.Controls.Messages
         {
             if (target is LottieView lottie)
             {
-                lottie.Source = UriEx.ToLocal(file.Local.Path);
+                lottie.Source = new LocalFileSource(file);
             }
             else if (target is AnimationView animation)
             {
-                animation.Source = new LocalVideoSource(file);
+                animation.Source = new LocalFileSource(file);
             }
             else if (target is Image image)
             {

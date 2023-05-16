@@ -13,6 +13,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Navigation;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Composition;
@@ -262,11 +263,11 @@ namespace Telegram.Views.Popups
                         lottie.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
                     }
 
-                    lottie.Source = UriEx.ToLocal(file.Local.Path);
+                    lottie.Source = new LocalFileSource(file);
                 }
                 else if (args.Phase == 0 && content.Children[0] is AnimationView video)
                 {
-                    video.Source = new LocalVideoSource(file);
+                    video.Source = new LocalFileSource(file);
                 }
 
                 UpdateManager.Unsubscribe(content);
@@ -375,12 +376,12 @@ namespace Telegram.Views.Popups
             }
             else if (content.Children[0] is LottieView lottie)
             {
-                lottie.Source = UriEx.ToLocal(file.Local.Path);
+                lottie.Source = new LocalFileSource(file);
                 _handler.ThrottleVisibleItems();
             }
             else if (content.Children[0] is AnimationView video)
             {
-                video.Source = new LocalVideoSource(file);
+                video.Source = new LocalFileSource(file);
                 _handler.ThrottleVisibleItems();
             }
         }

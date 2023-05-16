@@ -6,6 +6,7 @@
 //
 using System;
 using Telegram.Common;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Composition;
@@ -164,7 +165,7 @@ namespace Telegram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                     Button.Progress = 1;
 
-                    Player.Source = new LocalVideoSource(file);
+                    Player.Source = new LocalFileSource(file);
                     message.Delegate.ViewVisibleMessages();
                 }
             }

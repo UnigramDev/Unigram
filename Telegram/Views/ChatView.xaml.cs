@@ -28,6 +28,7 @@ using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
+using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -3717,11 +3718,11 @@ namespace Telegram.Views
                     }
                     else if (content.Children[0] is LottieView lottie)
                     {
-                        lottie.Source = UriEx.ToLocal(file.Local.Path);
+                        lottie.Source = new LocalFileSource(file);
                     }
                     else if (content.Children[0] is AnimationView video)
                     {
-                        video.Source = new LocalVideoSource(file);
+                        video.Source = new LocalFileSource(file);
                     }
                 }
                 else
@@ -5026,12 +5027,12 @@ namespace Telegram.Views
             }
             else if (content.Children[0] is LottieView lottie)
             {
-                lottie.Source = UriEx.ToLocal(file.Local.Path);
+                lottie.Source = new LocalFileSource(file);
                 _autocompleteHandler.ThrottleVisibleItems();
             }
             else if (content.Children[0] is AnimationView video)
             {
-                video.Source = new LocalVideoSource(file);
+                video.Source = new LocalFileSource(file);
                 _autocompleteHandler.ThrottleVisibleItems();
             }
         }

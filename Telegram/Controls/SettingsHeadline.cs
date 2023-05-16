@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Telegram.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -49,14 +49,14 @@ namespace Telegram.Controls
 
         #region Source
 
-        public Uri Source
+        public AnimatedImageSource Source
         {
-            get { return (Uri)GetValue(SourceProperty); }
+            get { return (AnimatedImageSource)GetValue(SourceProperty); }
             set { SetValue(SourceProperty, value); }
         }
 
         public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(Uri), typeof(SettingsHeadline), new PropertyMetadata(null));
+            DependencyProperty.Register("Source", typeof(AnimatedImageSource), typeof(SettingsHeadline), new PropertyMetadata(null));
 
         #endregion
 

@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native;
+using Telegram.Streams;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.System;
@@ -24,6 +25,26 @@ namespace Telegram.Controls
     public abstract class AnimatedImage : Control
     {
         public abstract void Display();
+
+        #region Source
+
+        public AnimatedImageSource Source
+        {
+            get => (AnimatedImageSource)GetValue(SourceProperty);
+            set => SetValue(SourceProperty, value);
+        }
+
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.Register("Source", typeof(AnimatedImageSource), typeof(AnimatedImage), new PropertyMetadata(null, OnSourceChanged));
+
+        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AnimatedImage)d).OnSourceChanged((AnimatedImageSource)e.NewValue, (AnimatedImageSource)e.OldValue);
+        }
+
+        protected abstract void OnSourceChanged(AnimatedImageSource newValue, AnimatedImageSource oldValue);
+
+        #endregion
     }
 
     // This is a lightweight fork of AnimatedControl

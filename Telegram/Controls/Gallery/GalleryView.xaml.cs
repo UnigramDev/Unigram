@@ -17,6 +17,7 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Services.ViewService;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;

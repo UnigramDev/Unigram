@@ -5,8 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Collections.Generic;
-using Telegram.Common;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
@@ -57,8 +57,8 @@ namespace Telegram.Controls.Cells.Premium
                 var sticker = _stickers[index];
                 if (sticker.FullType is StickerFullTypeRegular regular)
                 {
-                    Animation1.Source = UriEx.ToLocal(sticker.StickerValue.Local.Path);
-                    PremiumAnimation1.Source = UriEx.ToLocal(regular.PremiumAnimation.Local.Path);
+                    Animation1.Source = new LocalFileSource(sticker.StickerValue);
+                    PremiumAnimation1.Source = new LocalFileSource(regular.PremiumAnimation);
                 }
 
                 _index = index;

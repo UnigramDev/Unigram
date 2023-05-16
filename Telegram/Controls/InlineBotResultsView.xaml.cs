@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
@@ -82,11 +83,11 @@ namespace Telegram.Controls
             {
                 if (content.Children[0] is LottieView stickerView)
                 {
-                    stickerView.Source = UriEx.ToLocal(file.Local.Path);
+                    stickerView.Source = new LocalFileSource(file);
                 }
                 else if (content.Children[0] is AnimationView animationView)
                 {
-                    animationView.Source = new LocalVideoSource(file);
+                    animationView.Source = new LocalFileSource(file);
                 }
             }
 
@@ -266,7 +267,7 @@ namespace Telegram.Controls
 
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        stickerView.Source = UriEx.ToLocal(file.Local.Path);
+                        stickerView.Source = new LocalFileSource(file);
                     }
                     else
                     {
@@ -291,7 +292,7 @@ namespace Telegram.Controls
 
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        animationView.Source = new LocalVideoSource(file);
+                        animationView.Source = new LocalFileSource(file);
                     }
                     else
                     {
@@ -317,7 +318,7 @@ namespace Telegram.Controls
 
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    animationView.Source = new LocalVideoSource(file);
+                    animationView.Source = new LocalFileSource(file);
                 }
                 else
                 {

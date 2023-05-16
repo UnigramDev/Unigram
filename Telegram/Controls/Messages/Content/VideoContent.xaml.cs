@@ -7,6 +7,7 @@
 using System;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
@@ -21,7 +22,7 @@ namespace Telegram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
-        private RemoteVideoSource _source;
+        private RemoteFileSource _source;
 
         private string _fileToken;
         private string _thumbnailToken;
@@ -296,7 +297,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 if (_source?.Id != file.Id)
                 {
-                    Player.Source = _source = new RemoteVideoSource(message.ClientService, file, duration);
+                    Player.Source = _source = new RemoteFileSource(message.ClientService, file, duration);
                     message.Delegate.ViewVisibleMessages();
                 }
             }

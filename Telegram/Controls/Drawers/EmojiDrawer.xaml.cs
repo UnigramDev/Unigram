@@ -11,6 +11,7 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Services.Settings;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.Foundation;
@@ -712,11 +713,11 @@ namespace Telegram.Controls.Drawers
                     }
 
                     lottie.TintColor = GetTintColor(sticker.FullType);
-                    lottie.Source = UriEx.ToLocal(file.Local.Path);
+                    lottie.Source = new LocalFileSource(file);
                 }
                 else if (content.Children[0] is AnimationView video)
                 {
-                    video.Source = new LocalVideoSource(file);
+                    video.Source = new LocalFileSource(file);
                 }
 
                 content.Tag = sticker;
@@ -753,12 +754,12 @@ namespace Telegram.Controls.Drawers
             }
             else if (content.Children[0] is LottieView lottie)
             {
-                lottie.Source = UriEx.ToLocal(file.Local.Path);
+                lottie.Source = new LocalFileSource(file);
                 _handler.ThrottleVisibleItems();
             }
             else if (content.Children[0] is AnimationView video)
             {
-                video.Source = new LocalVideoSource(file);
+                video.Source = new LocalFileSource(file);
                 _handler.ThrottleVisibleItems();
             }
         }
@@ -827,12 +828,12 @@ namespace Telegram.Controls.Drawers
             }
             else if (content.Children[0] is LottieView lottie)
             {
-                lottie.Source = UriEx.ToLocal(file.Local.Path);
+                lottie.Source = new LocalFileSource(file);
                 _toolbarHandler.ThrottleVisibleItems();
             }
             else if (content.Children[0] is AnimationView video)
             {
-                video.Source = new LocalVideoSource(file);
+                video.Source = new LocalFileSource(file);
                 _toolbarHandler.ThrottleVisibleItems();
             }
         }

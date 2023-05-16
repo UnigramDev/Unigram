@@ -7,6 +7,7 @@
 using System;
 using Telegram.Common;
 using Telegram.Converters;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
@@ -159,7 +160,7 @@ namespace Telegram.Controls.Messages.Content
                     Subtitle.Text = Strings.AttachGif;
                     Overlay.Opacity = 1;
 
-                    Player.Source = new LocalVideoSource(file);
+                    Player.Source = new LocalFileSource(file);
                     message.Delegate.ViewVisibleMessages();
                 }
             }

@@ -11,6 +11,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Converters;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI.Xaml;
@@ -35,7 +36,7 @@ namespace Telegram.Views.Settings.Popups
                 Icon.ColorReplacements = new Dictionary<int, int> { { 0x000000, icon.Backgroud.ToValue() } };
                 Icon.FrameSize = new Size(50, 50);
                 Icon.DecodeFrameType = DecodePixelType.Logical;
-                Icon.Source = new Uri($"ms-appx:///Assets/Animations/Device{icon.Animation}.json");
+                Icon.Source = new LocalFileSource($"ms-appx:///Assets/Animations/Device{icon.Animation}.json");
             }
             else
             {

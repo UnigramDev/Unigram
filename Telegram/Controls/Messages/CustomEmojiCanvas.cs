@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.Storage.Streams;
@@ -667,7 +668,7 @@ namespace Telegram.Controls.Messages
                 }
                 else if (_sticker.Format is StickerFormatWebm)
                 {
-                    var animation = CachedVideoAnimation.LoadFromFile(new LocalVideoSource(file), _size, _size, true);
+                    var animation = CachedVideoAnimation.LoadFromFile(new LocalFileSource(file), _size, _size, true);
                     if (animation != null)
                     {
                         var frameRate = Math.Clamp(animation.FrameRate, 1, 30);

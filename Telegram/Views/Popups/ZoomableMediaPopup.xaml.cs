@@ -7,6 +7,7 @@
 using System;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
@@ -135,13 +136,13 @@ namespace Telegram.Views.Popups
                 {
                     Thumbnail.Opacity = 0;
                     Texture.Source = null;
-                    Container.Child = new LottieView { Source = UriEx.ToLocal(file.Local.Path) };
+                    Container.Child = new LottieView { Source = new LocalFileSource(file) };
                 }
                 else if (sticker.Format is StickerFormatWebm)
                 {
                     Thumbnail.Opacity = 0;
                     Texture.Source = null;
-                    Container.Child = new AnimationView { Source = new LocalVideoSource(file) };
+                    Container.Child = new AnimationView { Source = new LocalFileSource(file) };
                 }
                 else
                 {
@@ -171,7 +172,7 @@ namespace Telegram.Views.Popups
             {
                 Thumbnail.Opacity = 0;
                 Texture.Source = null;
-                Container.Child = new AnimationView { Source = new LocalVideoSource(file) };
+                Container.Child = new AnimationView { Source = new LocalFileSource(file) };
             }
             else
             {

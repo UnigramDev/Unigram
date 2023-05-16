@@ -10,6 +10,7 @@ using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Composition;
@@ -155,11 +156,11 @@ namespace Telegram.Views.Settings
                 }
                 else if (args.Phase == 0 && content.Children[0] is LottieView lottie)
                 {
-                    lottie.Source = UriEx.ToLocal(file.Local.Path);
+                    lottie.Source = new LocalFileSource(file);
                 }
                 else if (args.Phase == 0 && content.Children[0] is AnimationView animation)
                 {
-                    animation.Source = new LocalVideoSource(file);
+                    animation.Source = new LocalFileSource(file);
                 }
             }
             else
@@ -219,12 +220,12 @@ namespace Telegram.Views.Settings
             }
             else if (content.Children[0] is LottieView lottie)
             {
-                lottie.Source = UriEx.ToLocal(file.Local.Path);
+                lottie.Source = new LocalFileSource(file);
                 _handler.ThrottleVisibleItems();
             }
             else if (content.Children[0] is AnimationView animation)
             {
-                animation.Source = new LocalVideoSource(file);
+                animation.Source = new LocalFileSource(file);
                 _handler.ThrottleVisibleItems();
             }
         }

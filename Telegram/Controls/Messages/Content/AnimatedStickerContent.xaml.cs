@@ -7,6 +7,7 @@
 using RLottie;
 using System;
 using Telegram.Common;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
@@ -150,7 +151,7 @@ namespace Telegram.Controls.Messages.Content
             if (file.Local.IsDownloadingCompleted)
             {
                 Player.IsLoopingEnabled = message.Content is MessageSticker && PowerSavingPolicy.AutoPlayStickersInChats;
-                Player.Source = UriEx.ToLocal(file.Local.Path);
+                Player.Source = new LocalFileSource(file);
 
                 message.Delegate.ViewVisibleMessages();
             }
@@ -312,7 +313,7 @@ namespace Telegram.Controls.Messages.Content
                 player.IsLoopingEnabled = false;
                 player.IsHitTestVisible = false;
                 player.FrameSize = new Size(512, 512);
-                player.Source = UriEx.ToLocal(file.Local.Path);
+                player.Source = new LocalFileSource(file);
                 player.PositionChanged += (s, args) =>
                 {
                     if (args == 1)
@@ -387,7 +388,7 @@ namespace Telegram.Controls.Messages.Content
                 player.IsLoopingEnabled = false;
                 player.IsHitTestVisible = false;
                 player.FrameSize = new Size(270 * 2, 270 * 2);
-                player.Source = UriEx.ToLocal(file.Local.Path);
+                player.Source = new LocalFileSource(file);
                 player.PositionChanged += (s, args) =>
                 {
                     if (args == 1)

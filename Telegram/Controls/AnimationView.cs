@@ -7,6 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Native;
+using Telegram.Streams;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -36,7 +37,7 @@ namespace Telegram.Controls
         private bool _isCachingEnabled;
         private bool _shouldStopNextFrame;
 
-        private IVideoAnimationSource _source;
+        private AnimatedImageSource _source;
 
         public AnimationView()
             : this(null)
@@ -144,7 +145,7 @@ namespace Telegram.Controls
             return true;
         }
 
-        private async void OnSourceChanged(IVideoAnimationSource newValue, IVideoAnimationSource oldValue)
+        protected override async void OnSourceChanged(AnimatedImageSource newValue, AnimatedImageSource oldValue)
         {
             //var canvas = _canvas;
             //if (canvas == null && !Load())
@@ -208,24 +209,6 @@ namespace Telegram.Controls
         public event EventHandler<int> PositionChanged;
 
         public event EventHandler FirstFrameRendered;
-
-        #region Source
-
-        public IVideoAnimationSource Source
-        {
-            get => (IVideoAnimationSource)GetValue(SourceProperty);
-            set => SetValue(SourceProperty, value);
-        }
-
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(IVideoAnimationSource), typeof(AnimationView), new PropertyMetadata(null, OnSourceChanged));
-
-        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((AnimationView)d).OnSourceChanged((IVideoAnimationSource)e.NewValue, (IVideoAnimationSource)e.OldValue);
-        }
-
-        #endregion
 
         #region Thumbnail
 

@@ -6,6 +6,7 @@
 //
 using System;
 using Telegram.Common;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Composition;
@@ -108,7 +109,7 @@ namespace Telegram.Controls.Messages.Content
             if (file.Local.IsDownloadingCompleted)
             {
                 Player.IsLoopingEnabled = PowerSavingPolicy.AutoPlayStickersInChats;
-                Player.Source = new LocalVideoSource(file);
+                Player.Source = new LocalFileSource(file);
 
                 message.Delegate.ViewVisibleMessages();
             }

@@ -4,8 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using Telegram.Common;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Authorization;
 using Windows.UI.Xaml;
@@ -51,12 +51,12 @@ namespace Telegram.Views.Authorization
 
         #region Binding
 
-        private Uri ConvertAnimation(AuthenticationCodeInfo codeInfo)
+        private LocalFileSource ConvertAnimation(AuthenticationCodeInfo codeInfo)
         {
             return codeInfo?.Type switch
             {
-                AuthenticationCodeTypeFragment => new Uri("ms-appx:///Assets/Animations/AuthorizationStateWaitFragment.tgs"),
-                _ => new Uri("ms-appx:///Assets/Animations/AuthorizationStateWaitCode.tgs")
+                AuthenticationCodeTypeFragment => new LocalFileSource("ms-appx:///Assets/Animations/AuthorizationStateWaitFragment.tgs"),
+                _ => new LocalFileSource("ms-appx:///Assets/Animations/AuthorizationStateWaitCode.tgs")
             };
         }
 

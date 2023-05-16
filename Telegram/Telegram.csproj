@@ -202,6 +202,9 @@
     <Compile Include="Collections\Handlers\ChatDiffHandler.cs" />
     <Compile Include="Controls\Chats\ChatHistoryView.cs" />
     <Compile Include="Controls\Chats\ChatHistoryViewItem.cs" />
+    <Compile Include="Streams\AnimatedImageSource.cs" />
+    <Compile Include="Streams\LocalFileSource.cs" />
+    <Compile Include="Streams\RemoteFileSource.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
     <Compile Include="Collections\LegacyIncrementalCollection.cs" />
@@ -255,7 +258,7 @@
     <Compile Include="Common\LoopThreadPool.cs" />
     <Compile Include="Common\MenuFlyoutHelper.cs" />
     <Compile Include="Td\Api\PremiumLimitTypeConnectedAccounts.cs" />
-    <Compile Include="Common\RemoteFileStream.cs" />
+    <Compile Include="Streams\RemoteFileStream.cs" />
     <Compile Include="Common\Scrim.cs" />
     <Compile Include="Common\SoundEffects.cs" />
     <Compile Include="Common\UpdateManager.cs" />

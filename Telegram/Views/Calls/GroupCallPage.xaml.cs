@@ -20,6 +20,7 @@ using Telegram.Converters;
 using Telegram.Native.Calls;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
@@ -1264,25 +1265,25 @@ namespace Telegram.Views.Calls
                     colors = ButtonColors.Disabled;
                     AudioInfo.Text = Strings.VoipGroupCancelReminder;
                     Lottie.AutoPlay = true;
-                    Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceCancelReminder.tgs");
+                    Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceCancelReminder.tgs");
                     break;
                 case ButtonState.SetReminder:
                     colors = ButtonColors.Disabled;
                     AudioInfo.Text = Strings.VoipGroupSetReminder;
                     Lottie.AutoPlay = true;
-                    Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceSetReminder.tgs");
+                    Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceSetReminder.tgs");
                     break;
                 case ButtonState.Start:
                     colors = ButtonColors.Disabled;
                     AudioInfo.Text = Strings.VoipGroupStartNow;
                     Lottie.AutoPlay = false;
-                    Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceStart.tgs");
+                    Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceStart.tgs");
                     break;
                 case ButtonState.Unmute:
                     colors = ButtonColors.Unmute;
                     AudioInfo.Text = Strings.VoipTapToMute;
                     Lottie.AutoPlay = true;
-                    Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceUnmute.tgs");
+                    Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceUnmute.tgs");
                     break;
                 case ButtonState.Mute:
                     colors = ButtonColors.Mute;
@@ -1291,24 +1292,24 @@ namespace Telegram.Views.Calls
                     {
                         case ButtonState.CancelReminder:
                             Lottie.AutoPlay = true;
-                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceCancelReminderToMute.tgs");
+                            Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceCancelReminderToMute.tgs");
                             break;
                         case ButtonState.RaiseHand:
                             Lottie.AutoPlay = true;
-                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceRaiseHandToMute.tgs");
+                            Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceRaiseHandToMute.tgs");
                             break;
                         case ButtonState.SetReminder:
                             Lottie.AutoPlay = true;
-                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceSetReminderToMute.tgs");
+                            Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceSetReminderToMute.tgs");
                             break;
                         case ButtonState.Start:
                             Lottie.AutoPlay = true;
-                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceStart.tgs");
+                            Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceStart.tgs");
                             Lottie.Play();
                             break;
                         default:
                             Lottie.AutoPlay = true;
-                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceMute.tgs");
+                            Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceMute.tgs");
                             break;
                     }
                     break;
@@ -1322,23 +1323,23 @@ namespace Telegram.Views.Calls
                     {
                         case ButtonState.CancelReminder:
                             Lottie.AutoPlay = true;
-                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceCancelReminderToRaiseHand.tgs");
+                            Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceCancelReminderToRaiseHand.tgs");
                             break;
                         case ButtonState.Mute:
                             Lottie.AutoPlay = true;
-                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceMuteToRaiseHand.tgs");
+                            Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceMuteToRaiseHand.tgs");
                             break;
                         case ButtonState.Unmute:
                             Lottie.AutoPlay = true;
-                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceUnmuteToRaiseHand.tgs");
+                            Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceUnmuteToRaiseHand.tgs");
                             break;
                         case ButtonState.SetReminder:
                             Lottie.AutoPlay = true;
-                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceSetReminderToRaiseHand.tgs");
+                            Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceSetReminderToRaiseHand.tgs");
                             break;
                         default:
                             Lottie.AutoPlay = true;
-                            Lottie.Source = new Uri("ms-appx:///Assets/Animations/VoiceHand_1.tgs");
+                            Lottie.Source = new LocalFileSource("ms-appx:///Assets/Animations/VoiceHand_1.tgs");
                             break;
                     }
                     break;

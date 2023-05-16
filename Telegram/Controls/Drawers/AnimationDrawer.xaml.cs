@@ -7,6 +7,7 @@
 using System;
 using Telegram.Common;
 using Telegram.Services.Settings;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.Foundation;
@@ -174,7 +175,7 @@ namespace Telegram.Controls.Drawers
 
             if (args.Phase == 2 && file.Local.IsDownloadingCompleted)
             {
-                view.Source = new LocalVideoSource(file);
+                view.Source = new LocalFileSource(file);
                 view.Thumbnail = null;
             }
             else if (args.Phase == 0)
@@ -246,7 +247,7 @@ namespace Telegram.Controls.Drawers
         {
             if (target is AnimationView view)
             {
-                view.Source = new LocalVideoSource(file);
+                view.Source = new LocalFileSource(file);
                 _handler.ThrottleVisibleItems();
             }
         }

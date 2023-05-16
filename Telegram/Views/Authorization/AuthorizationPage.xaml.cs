@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Streams;
 using Telegram.ViewModels.Authorization;
 using Telegram.ViewModels.Delegates;
 using Windows.Foundation;
@@ -253,7 +254,7 @@ namespace Telegram.Views.Authorization
 
                 if (mode == QrCodeMode.Loading)
                 {
-                    TokenPlaceholder.Source = new Uri("ms-appx:///Assets/Animations/Qr.tgs");
+                    TokenPlaceholder.Source = new LocalFileSource("ms-appx:///Assets/Animations/Qr.tgs");
                 }
             }
             else if (mode is QrCodeMode.Disabled or QrCodeMode.Secondary)

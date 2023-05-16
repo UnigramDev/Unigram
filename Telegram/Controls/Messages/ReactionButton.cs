@@ -11,6 +11,7 @@ using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Native;
 using Telegram.Navigation;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
@@ -321,7 +322,7 @@ namespace Telegram.Controls.Messages
                         aroundView.IsLoopingEnabled = false;
                         aroundView.FrameSize = new Size(32 * 3, 32 * 3);
                         aroundView.DecodeFrameType = DecodePixelType.Logical;
-                        aroundView.Source = UriEx.ToLocal(around.Local.Path);
+                        aroundView.Source = new LocalFileSource(around);
                         aroundView.PositionChanged += (s, args) =>
                         {
                             if (args == 1)
@@ -372,7 +373,7 @@ namespace Telegram.Controls.Messages
                 centerView.IsLoopingEnabled = false;
                 centerView.FrameSize = new Size(32, 32);
                 centerView.DecodeFrameType = DecodePixelType.Logical;
-                centerView.Source = UriEx.ToLocal(center.Local.Path);
+                centerView.Source = new LocalFileSource(center);
                 centerView.FirstFrameRendered += (s, args) =>
                 {
                     dispatcher.TryEnqueue(Start);
@@ -392,7 +393,7 @@ namespace Telegram.Controls.Messages
                 aroundView.IsLoopingEnabled = false;
                 aroundView.FrameSize = new Size(32 * 3, 32 * 3);
                 aroundView.DecodeFrameType = DecodePixelType.Logical;
-                aroundView.Source = UriEx.ToLocal(around.Local.Path);
+                aroundView.Source = new LocalFileSource(around);
                 aroundView.PositionChanged += (s, args) =>
                 {
                     if (args == 1)

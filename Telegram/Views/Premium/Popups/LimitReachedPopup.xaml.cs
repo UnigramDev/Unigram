@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml.Controls;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -14,6 +13,7 @@ using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -47,7 +47,7 @@ namespace Telegram.Views.Premium.Popups
                 var lockedValue = string.Empty;
                 var premiumValue = string.Empty;
 
-                var animatedValue = new Uri("ms-appx:///Assets/Animations/Double.json");
+                var animatedValue = new LocalFileSource("ms-appx:///Assets/Animations/Double.json");
 
                 switch (type)
                 {
@@ -100,7 +100,7 @@ namespace Telegram.Views.Premium.Popups
                         lockedValue = Strings.LimitReachedAccountsPremium;
                         premiumValue = Strings.LimitReachedAccountsPremium;
 
-                        animatedValue = new Uri("ms-appx:///Assets/Animations/AddOne.json");
+                        animatedValue = new LocalFileSource("ms-appx:///Assets/Animations/AddOne.json");
                         break;
                 }
 

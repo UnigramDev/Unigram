@@ -4,8 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using Telegram.Common;
+using Telegram.Streams;
 using Telegram.ViewModels.Settings.Password;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -50,13 +50,13 @@ namespace Telegram.Views.Settings.Password
                 if (_current == State.Close)
                 {
                     _next = State.Idle;
-                    Walkthrough.Header.Source = new Uri("ms-appx:///Assets/Animations/TwoFactorSetupMonkeyClose.tgs");
+                    Walkthrough.Header.Source = new LocalFileSource("ms-appx:///Assets/Animations/TwoFactorSetupMonkeyClose.tgs");
                     Walkthrough.Header.Seek(0.5);
                 }
                 else if (_current == State.Peek)
                 {
                     _next = State.Close;
-                    Walkthrough.Header.Source = new Uri("ms-appx:///Assets/Animations/TwoFactorSetupMonkeyPeek.tgs");
+                    Walkthrough.Header.Source = new LocalFileSource("ms-appx:///Assets/Animations/TwoFactorSetupMonkeyPeek.tgs");
                 }
 
                 Walkthrough.Header.Play();
@@ -66,12 +66,12 @@ namespace Telegram.Views.Settings.Password
                 if (_current == State.Idle)
                 {
                     _next = State.Close;
-                    Walkthrough.Header.Source = new Uri("ms-appx:///Assets/Animations/TwoFactorSetupMonkeyClose.tgs");
+                    Walkthrough.Header.Source = new LocalFileSource("ms-appx:///Assets/Animations/TwoFactorSetupMonkeyClose.tgs");
                 }
                 else if (_current == State.Peek)
                 {
                     _next = State.Close;
-                    Walkthrough.Header.Source = new Uri("ms-appx:///Assets/Animations/TwoFactorSetupMonkeyPeek.tgs");
+                    Walkthrough.Header.Source = new LocalFileSource("ms-appx:///Assets/Animations/TwoFactorSetupMonkeyPeek.tgs");
                 }
 
                 Walkthrough.Header.Play();
@@ -81,12 +81,12 @@ namespace Telegram.Views.Settings.Password
                 if (_current == State.Close)
                 {
                     _next = State.Peek;
-                    Walkthrough.Header.Source = new Uri("ms-appx:///Assets/Animations/TwoFactorSetupMonkeyPeek.tgs");
+                    Walkthrough.Header.Source = new LocalFileSource("ms-appx:///Assets/Animations/TwoFactorSetupMonkeyPeek.tgs");
                 }
                 else if (_current == State.Idle)
                 {
                     _next = State.Close;
-                    Walkthrough.Header.Source = new Uri("ms-appx:///Assets/Animations/TwoFactorSetupMonkeyClose.tgs");
+                    Walkthrough.Header.Source = new LocalFileSource("ms-appx:///Assets/Animations/TwoFactorSetupMonkeyClose.tgs");
                 }
 
                 Walkthrough.Header.Play();

@@ -7,18 +7,13 @@
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using RLottie;
 using System;
-using System.Buffers;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Native;
 using Telegram.Navigation;
-using Windows.ApplicationModel;
+using Telegram.Streams;
 using Windows.Foundation;
 using Windows.Graphics;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
@@ -82,7 +77,7 @@ namespace Telegram.Controls
         {
             if (Source != null)
             {
-                OnSourceChanged(UriToPath(Source), _source);
+                OnSourceChanged(Source.FilePath, _source);
             }
         }
 
@@ -255,9 +250,9 @@ namespace Telegram.Controls
 
         public double Offset => _index == int.MaxValue || _animation == null ? 0 : (double)_index / (_animation.TotalFrame - 1);
 
-        private void OnSourceChanged(Uri newValue, Uri oldValue)
+        protected override void OnSourceChanged(AnimatedImageSource newValue, AnimatedImageSource oldValue)
         {
-            OnSourceChanged(UriToPath(newValue), UriToPath(oldValue));
+            OnSourceChanged(newValue?.FilePath, oldValue?.FilePath);
         }
 
         private async void OnSourceChanged(string newValue, string oldValue)
@@ -339,33 +334,6 @@ namespace Telegram.Controls
 
 
             return base.Play();
-        }
-
-        private string UriToPath(Uri uri)
-        {
-            if (uri == null)
-            {
-                return null;
-            }
-
-            switch (uri.Scheme)
-            {
-                case "ms-appx":
-                    return Path.Combine(new[] { Package.Current.InstalledLocation.Path }.Union(uri.Segments.Select(x => x.Trim('/'))).ToArray());
-                case "ms-appdata":
-                    switch (uri.Host)
-                    {
-                        case "local":
-                            return Path.Combine(new[] { ApplicationData.Current.LocalFolder.Path }.Union(uri.Segments.Select(x => x.Trim('/'))).ToArray());
-                        case "temp":
-                            return Path.Combine(new[] { ApplicationData.Current.TemporaryFolder.Path }.Union(uri.Segments.Select(x => x.Trim('/'))).ToArray());
-                    }
-                    break;
-                case "file":
-                    return uri.LocalPath;
-            }
-
-            return null;
         }
 
         #region IsCachingEnabled
@@ -497,24 +465,6 @@ namespace Telegram.Controls
                 };
             }
         }
-
-        #region Source
-
-        public Uri Source
-        {
-            get => (Uri)GetValue(SourceProperty);
-            set => SetValue(SourceProperty, value);
-        }
-
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(Uri), typeof(LottieView), new PropertyMetadata(null, OnSourceChanged));
-
-        private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((LottieView)d).OnSourceChanged((Uri)e.NewValue, (Uri)e.OldValue);
-        }
-
-        #endregion
 
         public event EventHandler<double> PositionChanged;
         public event EventHandler<int> IndexChanged;

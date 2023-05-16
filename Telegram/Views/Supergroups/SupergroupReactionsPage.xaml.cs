@@ -6,6 +6,7 @@
 //
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Supergroups;
 using Windows.Foundation;
@@ -43,7 +44,7 @@ namespace Telegram.Views.Supergroups
                 var file = reaction.Reaction.CenterAnimation.StickerValue;
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    player.Source = UriEx.ToLocal(file.Local.Path);
+                    player.Source = new LocalFileSource(file);
                 }
                 else
                 {
@@ -63,7 +64,7 @@ namespace Telegram.Views.Supergroups
         {
             if (target is LottieView player && player.IsLoaded)
             {
-                player.Source = UriEx.ToLocal(file.Local.Path);
+                player.Source = new LocalFileSource(file);
             }
         }
 

@@ -4,8 +4,8 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Common;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -110,7 +110,7 @@ namespace Telegram.Controls.Cells.Premium
 
             if (value != null)
             {
-                Player.Source = new RemoteVideoSource(clientService, value.AnimationValue, value.Duration);
+                Player.Source = new RemoteFileSource(clientService, value.AnimationValue, value.Duration);
             }
             else
             {
