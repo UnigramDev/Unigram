@@ -1025,7 +1025,7 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    func = new GetChatHistory(chat.Id, maxId, -25, 50, false);
+                    func = new GetChatHistory(chat.Id, maxId, -25, 50, alignment == VerticalAlignment.Top);
                 }
 
                 var send = ClientService.SendAsync(func);
@@ -1048,6 +1048,15 @@ namespace Telegram.ViewModels
 
                 if (response is Messages messages)
                 {
+                    if (messages.MessagesValue.Count < 5 && func is GetChatHistory getChatHistory && getChatHistory.OnlyLocal)
+                    {
+                        var force = await ClientService.SendAsync(new GetChatHistory(chat.Id, maxId, -25, 50, messages.MessagesValue.Count > 0));
+                        if (force is Messages forceMessages)
+                        {
+                            messages = forceMessages;
+                        }
+                    }
+
                     if (_chat?.Id != chat.Id)
                     {
                         _isLoadingNextSlice = false;
