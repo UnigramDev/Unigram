@@ -518,7 +518,7 @@ namespace Telegram.Views
                     UpdatePlaybackHidden(true);
                     FindName(nameof(GroupCallBanner));
 
-                    GroupCallBanner.Update(ViewModel.GroupCallService);
+                    GroupCallBanner.Update(ViewModel.VoipGroupService);
                 }
                 else
                 {

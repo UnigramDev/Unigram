@@ -32,7 +32,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Services
 {
-    public interface IGroupCallService : INotifyPropertyChanged
+    public interface IVoipGroupService : INotifyPropertyChanged
     {
         event EventHandler AvailableStreamsChanged;
         int AvailableStreamsCount { get; }
@@ -92,7 +92,7 @@ namespace Telegram.Services
         Task ConsolidateAsync();
     }
 
-    public class GroupCallService : ViewModelBase, IGroupCallService
+    public class VoipGroupService : ViewModelBase, IVoipGroupService
     {
         private readonly IViewService _viewService;
 
@@ -138,7 +138,7 @@ namespace Telegram.Services
 
         private int _availableStreamsCount = 0;
 
-        public GroupCallService(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
+        public VoipGroupService(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IViewService viewService)
             : base(clientService, settingsService, aggregator)
         {
             _viewService = viewService;

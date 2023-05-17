@@ -27,14 +27,14 @@ namespace Telegram.Controls
     {
         private FragmentContextViewWavesDrawable _drawable;
 
-        private IGroupCallService _service;
+        private IVoipGroupService _service;
 
         public GroupCallActiveHeader()
         {
             InitializeComponent();
         }
 
-        public void Update(IGroupCallService service)
+        public void Update(IVoipGroupService service)
         {
 #if ENABLE_CALLS
             if (_service?.Manager != null)

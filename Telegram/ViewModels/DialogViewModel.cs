@@ -64,7 +64,7 @@ namespace Telegram.ViewModels
         protected readonly INotificationsService _notificationsService;
         protected readonly IPlaybackService _playbackService;
         protected readonly IVoipService _voipService;
-        protected readonly IGroupCallService _groupCallService;
+        protected readonly IVoipGroupService _voipGroupService;
         protected readonly INetworkService _networkService;
         protected readonly IStorageService _storageService;
         protected readonly ITranslateService _translateService;
@@ -82,14 +82,14 @@ namespace Telegram.ViewModels
 
         public IDialogDelegate Delegate { get; set; }
 
-        public DialogViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IGroupCallService groupCallService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
+        public DialogViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ILocationService locationService, INotificationsService pushService, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INetworkService networkService, IStorageService storageService, ITranslateService translateService, IMessageFactory messageFactory)
             : base(clientService, settingsService, aggregator)
         {
             _locationService = locationService;
             _notificationsService = pushService;
             _playbackService = playbackService;
             _voipService = voipService;
-            _groupCallService = groupCallService;
+            _voipGroupService = voipGroupService;
             _networkService = networkService;
             _storageService = storageService;
             _translateService = translateService;
@@ -2634,7 +2634,7 @@ namespace Telegram.ViewModels
             }
             else
             {
-                await _groupCallService.JoinAsync(chat.Id);
+                await _voipGroupService.JoinAsync(chat.Id);
             }
         }
 
@@ -3320,7 +3320,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            await _groupCallService.JoinAsync(chat.Id);
+            await _voipGroupService.JoinAsync(chat.Id);
         }
 
         #endregion

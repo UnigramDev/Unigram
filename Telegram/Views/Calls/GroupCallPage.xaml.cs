@@ -45,7 +45,7 @@ namespace Telegram.Views.Calls
         private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
 
-        private IGroupCallService _service;
+        private IVoipGroupService _service;
 
         private VoipGroupManager _manager;
         private bool _disposed;
@@ -70,7 +70,7 @@ namespace Telegram.Views.Calls
         private ParticipantsGridMode _mode = ParticipantsGridMode.Compact;
         private bool _docked = true;
 
-        public GroupCallPage(IClientService clientService, IEventAggregator aggregator, IGroupCallService voipService)
+        public GroupCallPage(IClientService clientService, IEventAggregator aggregator, IVoipGroupService voipService)
         {
             InitializeComponent();
 

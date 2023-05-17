@@ -38,18 +38,18 @@ namespace Telegram.ViewModels
         public IProfileDelegate Delegate { get; set; }
 
         private readonly IVoipService _voipService;
-        private readonly IGroupCallService _groupCallService;
+        private readonly IVoipGroupService _voipGroupService;
         private readonly INotificationsService _notificationsService;
         private readonly ITranslateService _translateService;
 
         private readonly UserCommonChatsViewModel _userCommonChatsViewModel;
         private readonly SupergroupMembersViewModel _supergroupMembersVieModel;
 
-        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IGroupCallService groupCallService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
+        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
             : base(clientService, settingsService, storageService, aggregator, playbackService)
         {
             _voipService = voipService;
-            _groupCallService = groupCallService;
+            _voipGroupService = voipGroupService;
             _notificationsService = notificationsService;
             _translateService = translateService;
 
@@ -755,11 +755,11 @@ namespace Telegram.ViewModels
             }
             else if (chat.VideoChat.GroupCallId == 0)
             {
-                await _groupCallService.CreateAsync(chat.Id);
+                await _voipGroupService.CreateAsync(chat.Id);
             }
             else
             {
-                await _groupCallService.JoinAsync(chat.Id);
+                await _voipGroupService.JoinAsync(chat.Id);
             }
         }
 

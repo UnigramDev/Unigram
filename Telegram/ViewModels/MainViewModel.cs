@@ -33,14 +33,14 @@ namespace Telegram.ViewModels
         private readonly ILifetimeService _lifetimeService;
         private readonly ISessionService _sessionService;
         private readonly IVoipService _voipService;
-        private readonly IGroupCallService _groupCallService;
+        private readonly IVoipGroupService _voipGroupService;
         private readonly ICloudUpdateService _cloudUpdateService;
         private readonly IPlaybackService _playbackService;
         private readonly IShortcutsService _shortcutService;
 
         public bool Refresh { get; set; }
 
-        public MainViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, IGroupCallService groupCallService, ISettingsSearchService settingsSearchService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
+        public MainViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, INotificationsService pushService, IContactsService contactsService, IPasscodeService passcodeService, ILifetimeService lifecycle, ISessionService session, IVoipService voipService, IVoipGroupService voipGroupService, ISettingsSearchService settingsSearchService, ICloudUpdateService cloudUpdateService, IPlaybackService playbackService, IShortcutsService shortcutService)
             : base(clientService, settingsService, aggregator)
         {
             _contactsService = contactsService;
@@ -48,7 +48,7 @@ namespace Telegram.ViewModels
             _lifetimeService = lifecycle;
             _sessionService = session;
             _voipService = voipService;
-            _groupCallService = groupCallService;
+            _voipGroupService = voipGroupService;
             _cloudUpdateService = cloudUpdateService;
             _playbackService = playbackService;
             _shortcutService = shortcutService;
@@ -113,7 +113,7 @@ namespace Telegram.ViewModels
         public IShortcutsService ShortcutService => _shortcutService;
 
         public IVoipService VoipService => _voipService;
-        public IGroupCallService GroupCallService => _groupCallService;
+        public IVoipGroupService VoipGroupService => _voipGroupService;
 
         public void ToggleArchive()
         {
@@ -390,9 +390,9 @@ namespace Telegram.ViewModels
             {
                 Aggregator.Publish(new UpdateCallDialog(_voipService.Call));
             }
-            else if (_groupCallService.Call != null)
+            else if (_voipGroupService.Call != null)
             {
-                Aggregator.Publish(new UpdateCallDialog(_groupCallService.Call));
+                Aggregator.Publish(new UpdateCallDialog(_voipGroupService.Call));
             }
 
             if (mode == NavigationMode.New)

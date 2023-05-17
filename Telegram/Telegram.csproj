@@ -202,6 +202,8 @@
     <Compile Include="Collections\Handlers\ChatDiffHandler.cs" />
     <Compile Include="Controls\Chats\ChatHistoryView.cs" />
     <Compile Include="Controls\Chats\ChatHistoryViewItem.cs" />
+    <Compile Include="Services\VoipGroupService.cs" />
+    <Compile Include="Services\VoipService.cs" />
     <Compile Include="Streams\AnimatedImageSource.cs" />
     <Compile Include="Streams\LocalFileSource.cs" />
     <Compile Include="Streams\RemoteFileSource.cs" />

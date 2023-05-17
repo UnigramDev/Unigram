@@ -29,7 +29,7 @@ namespace Telegram.Views
         private Telegram.Services.ISettingsSearchService _settingsSearchService;
         private Telegram.Services.ICloudUpdateService _cloudUpdateService;
         private Telegram.Services.IShortcutsService _shortcutsService;
-        private Telegram.Services.IGroupCallService _groupCallService;
+        private Telegram.Services.IVoipGroupService _voipGroupService;
         private Telegram.Services.IContactsService _contactsService;
         private Telegram.Services.ILocationService _locationService;
         private Telegram.Services.IThemeService _themeService;
@@ -155,7 +155,7 @@ namespace Telegram.Views
                     _lifetimeService,
                     _sessionService,
                     _voipService,
-                    _groupCallService ??= new Telegram.Services.GroupCallService(
+                    _voipGroupService ??= new Telegram.Services.VoipGroupService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
@@ -196,7 +196,7 @@ namespace Telegram.Views
                     _notificationsService,
                     _playbackService,
                     _voipService,
-                    _groupCallService ??= new Telegram.Services.GroupCallService(
+                    _voipGroupService ??= new Telegram.Services.VoipGroupService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
@@ -220,7 +220,7 @@ namespace Telegram.Views
                     _notificationsService,
                     _playbackService,
                     _voipService,
-                    _groupCallService ??= new Telegram.Services.GroupCallService(
+                    _voipGroupService ??= new Telegram.Services.VoipGroupService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
@@ -244,7 +244,7 @@ namespace Telegram.Views
                     _notificationsService,
                     _playbackService,
                     _voipService,
-                    _groupCallService ??= new Telegram.Services.GroupCallService(
+                    _voipGroupService ??= new Telegram.Services.VoipGroupService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
@@ -268,7 +268,7 @@ namespace Telegram.Views
                     _notificationsService,
                     _playbackService,
                     _voipService,
-                    _groupCallService ??= new Telegram.Services.GroupCallService(
+                    _voipGroupService ??= new Telegram.Services.VoipGroupService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
@@ -292,7 +292,7 @@ namespace Telegram.Views
                     _notificationsService,
                     _playbackService,
                     _voipService,
-                    _groupCallService ??= new Telegram.Services.GroupCallService(
+                    _voipGroupService ??= new Telegram.Services.VoipGroupService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
@@ -342,7 +342,7 @@ namespace Telegram.Views
                     _eventAggregator,
                     _playbackService,
                     _voipService,
-                    _groupCallService ??= new Telegram.Services.GroupCallService(
+                    _voipGroupService ??= new Telegram.Services.VoipGroupService(
                         _clientService,
                         _settingsService,
                         _eventAggregator,
@@ -1069,9 +1069,9 @@ namespace Telegram.Views
                     _settingsService,
                     _eventAggregator));
             }
-            else if (type == typeof(Telegram.Services.IGroupCallService))
+            else if (type == typeof(Telegram.Services.IVoipGroupService))
             {
-                return (T)(_groupCallService ??= new Telegram.Services.GroupCallService(
+                return (T)(_voipGroupService ??= new Telegram.Services.VoipGroupService(
                     _clientService,
                     _settingsService,
                     _eventAggregator,

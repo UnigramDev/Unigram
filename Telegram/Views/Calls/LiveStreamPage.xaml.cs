@@ -31,7 +31,7 @@ namespace Telegram.Views.Calls
         private readonly IClientService _clientService;
         private readonly IEventAggregator _aggregator;
 
-        private IGroupCallService _service;
+        private IVoipGroupService _service;
 
         private VoipGroupManager _manager;
         private bool _disposed;
@@ -43,7 +43,7 @@ namespace Telegram.Views.Calls
 
         private readonly DisplayRequest _displayRequest = new();
 
-        public LiveStreamPage(IClientService clientService, IEventAggregator aggregator, IGroupCallService voipService)
+        public LiveStreamPage(IClientService clientService, IEventAggregator aggregator, IVoipGroupService voipService)
         {
             InitializeComponent();
 

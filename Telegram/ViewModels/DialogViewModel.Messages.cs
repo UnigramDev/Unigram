@@ -1403,7 +1403,7 @@ namespace Telegram.ViewModels
             }
             else if (message.Content is MessageVideoChatStarted or MessageVideoChatScheduled)
             {
-                await _groupCallService.JoinAsync(message.ChatId);
+                await _voipGroupService.JoinAsync(message.ChatId);
             }
             else if (message.Content is MessagePaymentSuccessful)
             {
