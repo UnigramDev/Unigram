@@ -231,14 +231,17 @@ namespace Telegram.Controls.Messages.Content
 
         private void OnPlaybackStateChanged(IPlaybackService sender, object args)
         {
-            var voiceNote = GetContent(_message);
-            if (voiceNote == null)
+            this.BeginOnUIThread(() =>
             {
-                Recycle(sender);
-                return;
-            }
+                var voiceNote = GetContent(_message);
+                if (voiceNote == null)
+                {
+                    Recycle(sender);
+                    return;
+                }
 
-            this.BeginOnUIThread(() => UpdateFile(_message, voiceNote.Voice));
+                UpdateFile(_message, voiceNote.Voice);
+            });
         }
 
         private void OnPositionChanged(IPlaybackService sender, object args)

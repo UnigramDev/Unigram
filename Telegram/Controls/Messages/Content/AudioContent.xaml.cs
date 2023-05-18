@@ -126,14 +126,17 @@ namespace Telegram.Controls.Messages.Content
 
         private void OnPlaybackStateChanged(IPlaybackService sender, object args)
         {
-            var audio = GetContent(_message);
-            if (audio == null)
+            this.BeginOnUIThread(() =>
             {
-                Recycle(sender);
-                return;
-            }
+                var audio = GetContent(_message);
+                if (audio == null)
+                {
+                    Recycle(sender);
+                    return;
+                }
 
-            this.BeginOnUIThread(() => UpdateFile(_message, audio.AudioValue));
+                UpdateFile(_message, audio.AudioValue);
+            });
         }
 
         private void OnPositionChanged(IPlaybackService sender, object args)
