@@ -211,15 +211,22 @@ namespace Telegram.Controls.Chats
 
         public void PrepareForItemOverride(MessageViewModel message, bool canReply)
         {
-            _share = SettingsService.Current.SwipeToShare && message.CanBeForwarded;
-            _reply = SettingsService.Current.SwipeToReply && canReply && ContentTemplateRoot is MessageSelector;
+            var share = SettingsService.Current.SwipeToShare && message.CanBeForwarded;
+            var reply = SettingsService.Current.SwipeToReply && canReply && ContentTemplateRoot is MessageSelector;
 
             if (_tracker != null)
             {
-                _tracker.Properties.InsertBoolean("CanReply", _reply);
-                _tracker.Properties.InsertBoolean("CanShare", _share);
-                _tracker.MaxPosition = new Vector3(_reply ? 72 : 0);
-                _tracker.MinPosition = new Vector3(_share ? -72 : 0);
+                if (_share != share)
+                {
+                    _tracker.Properties.InsertBoolean("CanShare", _share);
+                    _tracker.MinPosition = new Vector3(_share ? -72 : 0);
+                }
+
+                if (_reply != reply)
+                {
+                    _tracker.Properties.InsertBoolean("CanReply", _reply);
+                    _tracker.MaxPosition = new Vector3(_reply ? 72 : 0);
+                }
 
                 if (_tracker.Position.X != 0)
                 {
@@ -231,6 +238,9 @@ namespace Telegram.Controls.Chats
                     _visual.Offset = new Vector3();
                 }
             }
+
+            _share = share;
+            _reply = reply;
         }
 
         public void ValuesChanged(InteractionTracker sender, InteractionTrackerValuesChangedArgs args)
