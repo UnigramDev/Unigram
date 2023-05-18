@@ -138,7 +138,7 @@
 
     <Style TargetType="controls:ProgressVoice">
         <Setter Property="Foreground"
-                Value="{ThemeResource MessageHeaderBorderBrush}" />
+                Value="{ThemeResource MessageMediaBackgroundBrush}" />
         <Setter Property="Background"
                 Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
         <Setter Property="BorderThickness"
@@ -168,10 +168,11 @@
                     <Grid>
                         <Path x:Name="HorizontalTrackRect"
                               Margin="{TemplateBinding Padding}"
-                              Fill="{TemplateBinding Background}"
+                              Fill="{TemplateBinding Foreground}"
                               StrokeStartLineCap="Round"
                               StrokeEndLineCap="Round"
-                              HorizontalAlignment="Stretch" />
+                              HorizontalAlignment="Stretch"
+                              Opacity="0.4" />
                         <Path x:Name="ProgressBarIndicator"
                               Margin="{TemplateBinding Padding}"
                               Fill="{TemplateBinding Foreground}"
