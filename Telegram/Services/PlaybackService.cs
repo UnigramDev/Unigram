@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Telegram.Common;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
@@ -423,7 +423,7 @@ namespace Telegram.Services
                 }
                 catch
                 {
-
+                    // All the remote procedure calls must be wrapped in a try-catch block
                 }
             }
         }

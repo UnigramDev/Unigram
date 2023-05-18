@@ -409,7 +409,14 @@ namespace Telegram.Services
                 ClientService.Send(new AcceptCall(call.Id, Protocol));
             }
 
-            sender.TryShowAppUI();
+            try
+            {
+                sender.TryShowAppUI();
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         private void OnRejectRequested(VoipPhoneCall sender, CallRejectEventArgs args)

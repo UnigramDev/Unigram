@@ -83,18 +83,25 @@ namespace Telegram.Services
 
         public async Task JumpListAsync()
         {
-            if (JumpList.IsSupported())
+            try
             {
-                var current = await JumpList.LoadCurrentAsync();
-                current.SystemGroupKind = JumpListSystemGroupKind.None;
-                current.Items.Clear();
+                if (JumpList.IsSupported())
+                {
+                    var current = await JumpList.LoadCurrentAsync();
+                    current.SystemGroupKind = JumpListSystemGroupKind.None;
+                    current.Items.Clear();
 
-                var cloud = JumpListItem.CreateWithArguments(string.Format("from_id={0}", _clientService.Options.MyId), Strings.SavedMessages);
-                cloud.Logo = new Uri("ms-appx:///Assets/JumpList/SavedMessages/SavedMessages.png");
+                    var cloud = JumpListItem.CreateWithArguments(string.Format("from_id={0}", _clientService.Options.MyId), Strings.SavedMessages);
+                    cloud.Logo = new Uri("ms-appx:///Assets/JumpList/SavedMessages/SavedMessages.png");
 
-                current.Items.Add(cloud);
+                    current.Items.Add(cloud);
 
-                await current.SaveAsync();
+                    await current.SaveAsync();
+                }
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
             }
         }
 

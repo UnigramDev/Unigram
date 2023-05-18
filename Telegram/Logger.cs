@@ -94,7 +94,7 @@ namespace Telegram
 
             if (SettingsService.Current.Diagnostics.LoggerSink && (level != LogLevel.Debug || message != null))
             {
-                Client.Execute(new AddLogMessage(2, string.Format("[{0}:{1}][{2}] {3}", level, Path.GetFileName(filePath), line, member, message)));
+                Client.Execute(new AddLogMessage(2, string.Format("[{0}:{1}][{2}] {3}", Path.GetFileName(filePath), line, member, message)));
             }
 
             if (level != LogLevel.Debug || message != null)

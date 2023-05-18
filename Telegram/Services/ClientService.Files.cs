@@ -226,17 +226,17 @@ namespace Telegram.Services
             try
             {
                 var destination = await Future.GetFileAsync(file.Remote.UniqueId, true);
+
+                Future.Remove(file.Remote.UniqueId, true);
+
                 if (destination != null)
                 {
-                    Future.Remove(file.Remote.UniqueId, true);
-
                     await destination.DeleteAsync(StorageDeleteOption.PermanentDelete);
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                // TODO, but high chances to happen
-                Logger.Error(ex);
+                // All the remote procedure calls must be wrapped in a try-catch block
             }
         }
 
