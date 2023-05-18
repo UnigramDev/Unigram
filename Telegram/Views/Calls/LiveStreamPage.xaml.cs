@@ -588,7 +588,7 @@ namespace Telegram.Views.Calls
                 return;
             }
 
-            await SharePopup.GetForCurrentView().ShowAsync(call);
+            await new ChooseChatsPopup().ShowAsync(call);
         }
 
         private void AudioCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)

@@ -1310,7 +1310,7 @@ namespace Telegram.Views
         {
             if (App.DataPackages.TryRemove(0, out DataPackageView package))
             {
-                await SharePopup.GetForCurrentView().ShowAsync(package);
+                await new ChooseChatsPopup().ShowAsync(package);
             }
 
             if (MessageHelper.IsTelegramUrl(scheme))

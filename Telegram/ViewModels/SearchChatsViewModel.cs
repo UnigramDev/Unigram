@@ -23,7 +23,7 @@ namespace Telegram.ViewModels
         private readonly KeyedCollection<SearchResult> _globalSearch = new(Strings.GlobalSearch, new SearchResultDiffHandler());
         private readonly KeyedCollection<Message> _messages = new(Strings.SearchMessages, null);
 
-        private readonly SearchChatsTracker _tracker;
+        private readonly ChooseChatsTracker _tracker;
 
         private CancellationTokenSource _cancellation = new();
 
@@ -32,7 +32,7 @@ namespace Telegram.ViewModels
         public SearchChatsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            _tracker = new SearchChatsTracker(clientService, true);
+            _tracker = new ChooseChatsTracker(clientService, true);
             _tracker.Options = ChooseChatsOptions.All;
 
             _query = new(Constants.TypingTimeout, UpdateQuery, CanUpdateQuery);
@@ -344,144 +344,6 @@ namespace Telegram.ViewModels
         }
 
         #endregion
-    }
-
-    public class SearchChatsTracker
-    {
-        private readonly IClientService _clientService;
-
-        private readonly HashSet<long> _knownChats;
-        private readonly HashSet<long> _knownUsers;
-
-        public SearchChatsTracker(IClientService clientService, bool track)
-        {
-            _clientService = clientService;
-
-            if (track)
-            {
-                _knownChats = new();
-                _knownUsers = new();
-            }
-        }
-
-        public ChooseChatsOptions Options { get; set; }
-
-        public void Clear()
-        {
-            _knownChats?.Clear();
-            _knownUsers?.Clear();
-        }
-
-        public bool Filter(Chat chat)
-        {
-            if (_knownChats != null && _knownChats.Contains(chat.Id))
-            {
-                return false;
-            }
-            else if (_knownUsers != null && chat.Type is ChatTypePrivate privata && _knownUsers.Contains(privata.UserId))
-            {
-                return false;
-            }
-
-            if (Options.AllowAll || Allow(chat))
-            {
-                Track(chat);
-                return true;
-            }
-
-            return false;
-        }
-
-        private void Track(Chat chat)
-        {
-            _knownChats?.Add(chat.Id);
-
-            if (chat.Type is ChatTypePrivate privata)
-            {
-                _knownUsers?.Add(privata.UserId);
-            }
-        }
-
-        private bool Allow(Chat chat)
-        {
-            switch (chat.Type)
-            {
-                case ChatTypeBasicGroup:
-                    if (Options.AllowGroupChats)
-                    {
-                        if (Options.CanPostMessages)
-                        {
-                            return _clientService.CanPostMessages(chat);
-                        }
-                        else if (Options.CanInviteUsers)
-                        {
-                            return _clientService.CanInviteUsers(chat);
-                        }
-
-                        return true;
-                    }
-                    return false;
-                case ChatTypePrivate privata:
-                    if (_clientService.TryGetUser(privata.UserId, out User user))
-                    {
-                        if (user.Type is UserTypeBot)
-                        {
-                            return Options.AllowBotChats;
-                        }
-                    }
-                    return Options.AllowUserChats;
-                case ChatTypeSecret:
-                    return Options.AllowSecretChats;
-                case ChatTypeSupergroup supergroup:
-                    if (supergroup.IsChannel ? Options.AllowChannelChats : Options.AllowGroupChats)
-                    {
-                        if (Options.CanPostMessages)
-                        {
-                            return _clientService.CanPostMessages(chat);
-                        }
-                        else if (Options.CanInviteUsers)
-                        {
-                            return _clientService.CanInviteUsers(chat);
-                        }
-
-                        return true;
-                    }
-                    return false;
-                default:
-                    return false;
-            }
-        }
-
-        public bool Filter(User user)
-        {
-            if (_knownUsers != null && _knownUsers.Contains(user.Id))
-            {
-                return false;
-            }
-
-            if (Options.AllowAll || Allow(user))
-            {
-                Track(user);
-                return true;
-            }
-
-            return false;
-        }
-
-        private void Track(User user)
-        {
-            _knownUsers?.Add(user.Id);
-        }
-
-        private bool Allow(User user)
-        {
-            if (user.Type is UserTypeBot)
-            {
-                return Options.AllowBotChats;
-            }
-
-            return Options.AllowUserChats;
-        }
     }
 
     public class KeyedCollection<T> : DiffObservableCollection<T>, IKeyedCollection

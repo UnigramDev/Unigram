@@ -64,19 +64,19 @@ namespace Telegram.Views
 
         private async void Share_Click(object sender, RoutedEventArgs e)
         {
-            await SharePopup.GetForCurrentView().ShowAsync(_shareMessage);
+            await new ChooseChatsPopup().ShowAsync(_shareMessage);
         }
 
         private async void View_EventReceived(object sender, WebViewerEventReceivedEventArgs e)
         {
             if (e.EventName == "share_game")
             {
-                await SharePopup.GetForCurrentView().ShowAsync(_shareMessage, false);
+                await new ChooseChatsPopup().ShowAsync(_shareMessage, false);
             }
 
             else if (e.EventName == "share_score")
             {
-                await SharePopup.GetForCurrentView().ShowAsync(_shareMessage, true);
+                await new ChooseChatsPopup().ShowAsync(_shareMessage, true);
             }
         }
     }

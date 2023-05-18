@@ -206,7 +206,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void ShareTheme(ThemeCustomInfo theme)
         {
-            await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(theme.Path), null, false, null));
+            await new ChooseChatsPopup().ShowAsync(new InputMessageDocument(new InputFileLocal(theme.Path), null, false, null));
         }
 
         public async void EditTheme(ThemeCustomInfo theme)

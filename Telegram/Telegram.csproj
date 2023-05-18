@@ -208,6 +208,7 @@
     <Compile Include="Streams\AnimatedImageSource.cs" />
     <Compile Include="Streams\LocalFileSource.cs" />
     <Compile Include="Streams\RemoteFileSource.cs" />
+    <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
     <Compile Include="Collections\LegacyIncrementalCollection.cs" />
@@ -776,6 +777,9 @@
       <DependentUpon>ChatJoinRequestsPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\ChatJoinRequestsViewModel.cs" />
+    <Compile Include="Views\Popups\ChooseChatsPopup.xaml.cs">
+      <DependentUpon>ChooseChatsPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\ChooseStatusDurationPopup.xaml.cs">
       <DependentUpon>ChooseStatusDurationPopup.xaml</DependentUpon>
     </Compile>
@@ -991,7 +995,6 @@
     <Compile Include="ViewModels\Settings\SettingsShortcutsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsThemesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
-    <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
     <Compile Include="ViewModels\SingleGalleryViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IMemberDelegate.cs" />
@@ -1113,9 +1116,6 @@
     </Compile>
     <Compile Include="Views\Popups\SendLocationPopup.xaml.cs">
       <DependentUpon>SendLocationPopup.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Popups\SharePopup.xaml.cs">
-      <DependentUpon>SharePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\SupergroupEditRestrictedUntilPopup.xaml.cs">
       <DependentUpon>SupergroupEditRestrictedUntilPopup.xaml</DependentUpon>
@@ -2120,6 +2120,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Popups\ChooseChatsPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Popups\ChooseStatusDurationPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2345,10 +2349,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\SendLocationPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Popups\SharePopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -439,7 +439,7 @@ namespace Telegram.ViewModels
                 var user = ClientService.GetUser(chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0);
                 if (user != null)
                 {
-                    await SharePopup.GetForCurrentView().ShowAsync(new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id)));
+                    await new ChooseChatsPopup().ShowAsync(new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id)));
                 }
             }
         }
@@ -631,7 +631,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                await SharePopup.GetForCurrentView().ShowAsync(user);
+                await new ChooseChatsPopup().ShowAsync(user);
             }
             else
             {
@@ -639,7 +639,7 @@ namespace Telegram.ViewModels
                     ? Strings.AddSubscriber
                     : Strings.AddMember;
 
-                var selected = await SharePopup.PickUsersAsync(ClientService, header);
+                var selected = await ChooseChatsPopup.PickUsersAsync(ClientService, header);
                 if (selected == null || selected.Count == 0)
                 {
                     return;

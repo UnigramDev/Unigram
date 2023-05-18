@@ -55,7 +55,7 @@ namespace Telegram.ViewModels.BasicGroups
         public RelayCommand AddCommand { get; }
         private async void AddExecute()
         {
-            var chats = await SharePopup.PickChatsAsync(Strings.SelectContacts, Items.Select(x => x.Id).ToArray(), ChooseChatsOptions.Contacts);
+            var chats = await ChooseChatsPopup.PickChatsAsync(Strings.SelectContacts, Items.Select(x => x.Id).ToArray(), ChooseChatsOptions.Contacts);
             if (chats != null)
             {
                 Items.ReplaceWith(chats);

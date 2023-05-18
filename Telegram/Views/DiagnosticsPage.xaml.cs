@@ -44,7 +44,7 @@ namespace Telegram.Views
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls.txt") as StorageFile;
             if (log != null)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
+                await new ChooseChatsPopup().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
             }
         }
 
@@ -53,7 +53,7 @@ namespace Telegram.Views
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tgcalls_group.txt") as StorageFile;
             if (log != null)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
+                await new ChooseChatsPopup().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
             }
         }
 
@@ -62,7 +62,7 @@ namespace Telegram.Views
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt") as StorageFile;
             if (log != null)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
+                await new ChooseChatsPopup().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
             }
         }
 
@@ -71,13 +71,13 @@ namespace Telegram.Views
             var log = await ApplicationData.Current.LocalFolder.TryGetItemAsync("tdlib_log.txt.old") as StorageFile;
             if (log != null)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
+                await new ChooseChatsPopup().ShowAsync(new InputMessageDocument(new InputFileLocal(log.Path), null, true, null));
             }
         }
 
         private async void Dump_Click(object sender, RoutedEventArgs e)
         {
-            await SharePopup.GetForCurrentView().ShowAsync(new FormattedText(Logger.Dump(), Array.Empty<TextEntity>()));
+            await new ChooseChatsPopup().ShowAsync(new FormattedText(Logger.Dump(), Array.Empty<TextEntity>()));
         }
 
         private void Crash_Click(object sender, RoutedEventArgs e)

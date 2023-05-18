@@ -242,7 +242,7 @@ namespace Telegram.ViewModels.Settings
                 chats.Add(id);
             }
 
-            var dialog = SharePopup.GetForCurrentView();
+            var dialog = new ChooseChatsPopup();
             dialog.PrimaryButtonText = Strings.OK;
             dialog.ViewModel.AllowEmptySelection = true;
 
@@ -313,7 +313,7 @@ namespace Telegram.ViewModels.Settings
                 chats.Add(id);
             }
 
-            var dialog = SharePopup.GetForCurrentView();
+            var dialog = new ChooseChatsPopup();
             dialog.PrimaryButtonText = Strings.OK;
             dialog.ViewModel.AllowEmptySelection = true;
 

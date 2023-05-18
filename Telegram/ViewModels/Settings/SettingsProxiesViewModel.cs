@@ -296,7 +296,7 @@ namespace Telegram.ViewModels.Settings
             var response = await ClientService.SendAsync(new GetProxyLink(proxy.Id));
             if (response is HttpUrl httpUrl && Uri.TryCreate(httpUrl.Url, UriKind.Absolute, out Uri uri))
             {
-                await SharePopup.GetForCurrentView().ShowAsync(uri, Strings.Proxy);
+                await new ChooseChatsPopup().ShowAsync(uri, Strings.Proxy);
             }
         }
 

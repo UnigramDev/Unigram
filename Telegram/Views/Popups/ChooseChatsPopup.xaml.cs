@@ -145,14 +145,14 @@ namespace Telegram.Views.Popups
         #endregion
     }
 
-    public sealed partial class SharePopup : ContentPopup
+    public sealed partial class ChooseChatsPopup : ContentPopup
     {
-        public ShareViewModel ViewModel => DataContext as ShareViewModel;
+        public ChooseChatsViewModel ViewModel => DataContext as ChooseChatsViewModel;
 
-        private SharePopup()
+        public ChooseChatsPopup()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ShareViewModel>();
+            DataContext = TLContainer.Current.Resolve<ChooseChatsViewModel>();
 
             //Title = Strings.ShareSendTo;
             PrimaryButtonText = Strings.Send;
@@ -203,14 +203,9 @@ namespace Telegram.Views.Popups
 
         #region Show
 
-        public static SharePopup GetForCurrentView()
-        {
-            return new SharePopup();
-        }
-
         public static async Task<Chat> PickChatAsync(string title, ChooseChatsOptions options)
         {
-            var dialog = GetForCurrentView();
+            var dialog = new ChooseChatsPopup();
             dialog.ViewModel.Title = title;
 
             var confirm = await dialog.PickAsync(new long[0], options, ListViewSelectionMode.Single);
@@ -229,17 +224,17 @@ namespace Telegram.Views.Popups
 
         public static async Task<IList<Chat>> PickChatsAsync(string title, long[] selected, ChooseChatsOptions options)
         {
-            var dialog = GetForCurrentView();
-            dialog.ViewModel.Title = title;
-            dialog.PrimaryButtonText = Strings.OK;
+            var popup = new ChooseChatsPopup();
+            popup.ViewModel.Title = title;
+            popup.PrimaryButtonText = Strings.OK;
 
-            var confirm = await dialog.PickAsync(selected, options);
+            var confirm = await popup.PickAsync(selected, options);
             if (confirm != ContentDialogResult.Primary)
             {
                 return null;
             }
 
-            return dialog.ViewModel.SelectedItems.ToList();
+            return popup.ViewModel.SelectedItems.ToList();
         }
 
         public static async Task<IList<User>> PickUsersAsync(IClientService clientService, string title)
@@ -499,14 +494,14 @@ namespace Telegram.Views.Popups
                     }
                 });
 
-                var dialog = GetForCurrentView();
-                dialog.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
-                dialog.ViewModel.AllowEmptySelection = true;
-                dialog.Header = panel;
-                dialog.PrimaryButtonText = Strings.OK;
-                dialog.IsPrimaryButtonEnabled = true;
+                var popup = new ChooseChatsPopup();
+                popup.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
+                popup.ViewModel.AllowEmptySelection = true;
+                popup.Header = panel;
+                popup.PrimaryButtonText = Strings.OK;
+                popup.IsPrimaryButtonEnabled = true;
 
-                var confirm = await dialog.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), ChooseChatsOptions.All);
+                var confirm = await popup.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), ChooseChatsOptions.All);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return null;
@@ -519,7 +514,7 @@ namespace Telegram.Views.Popups
                     target.Add(folder);
                 }
 
-                foreach (var chat in dialog.ViewModel.SelectedItems)
+                foreach (var chat in popup.ViewModel.SelectedItems)
                 {
                     if (chat == null)
                     {
@@ -533,13 +528,13 @@ namespace Telegram.Views.Popups
             }
             else
             {
-                var dialog = GetForCurrentView();
-                dialog.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
-                dialog.ViewModel.AllowEmptySelection = true;
-                dialog.PrimaryButtonText = Strings.OK;
-                dialog.IsPrimaryButtonEnabled = true;
+                var popup = new ChooseChatsPopup();
+                popup.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
+                popup.ViewModel.AllowEmptySelection = true;
+                popup.PrimaryButtonText = Strings.OK;
+                popup.IsPrimaryButtonEnabled = true;
 
-                var confirm = await dialog.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), ChooseChatsOptions.All);
+                var confirm = await popup.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), ChooseChatsOptions.All);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return null;
@@ -547,7 +542,7 @@ namespace Telegram.Views.Popups
 
                 target.Clear();
 
-                foreach (var chat in dialog.ViewModel.SelectedItems)
+                foreach (var chat in popup.ViewModel.SelectedItems)
                 {
                     if (chat == null)
                     {

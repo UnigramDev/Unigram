@@ -171,9 +171,9 @@ namespace Telegram.Views
                         _settingsService,
                         _eventAggregator));
             }
-            else if (type == typeof(Telegram.ViewModels.ShareViewModel))
+            else if (type == typeof(Telegram.ViewModels.ChooseChatsViewModel))
             {
-                return (T)(object)new Telegram.ViewModels.ShareViewModel(
+                return (T)(object)new Telegram.ViewModels.ChooseChatsViewModel(
                     _clientService,
                     _settingsService,
                     _eventAggregator);

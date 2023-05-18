@@ -2834,7 +2834,7 @@ namespace Telegram.ViewModels
                     ? Strings.AddSubscriber
                     : Strings.AddMember;
 
-                var selected = await SharePopup.PickUsersAsync(ClientService, header);
+                var selected = await ChooseChatsPopup.PickUsersAsync(ClientService, header);
                 if (selected == null || selected.Count == 0)
                 {
                     return;

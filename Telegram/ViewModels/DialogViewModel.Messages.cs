@@ -189,11 +189,11 @@ namespace Telegram.ViewModels
 
             if (message.Content is MessageAlbum album)
             {
-                await SharePopup.GetForCurrentView().ShowAsync(album.Messages.Select(x => x.Get()).ToList());
+                await new ChooseChatsPopup().ShowAsync(album.Messages.Select(x => x.Get()).ToList());
             }
             else
             {
-                await SharePopup.GetForCurrentView().ShowAsync(message.Get());
+                await new ChooseChatsPopup().ShowAsync(message.Get());
             }
 
             TextField?.Focus(FocusState.Programmatic);
@@ -235,7 +235,7 @@ namespace Telegram.ViewModels
             {
                 IsSelectionEnabled = false;
 
-                await SharePopup.GetForCurrentView().ShowAsync(messages);
+                await new ChooseChatsPopup().ShowAsync(messages);
                 TextField?.Focus(FocusState.Programmatic);
             }
         }
@@ -948,7 +948,7 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    await SharePopup.GetForCurrentView().ShowAsync(switchInline, bot);
+                    await new ChooseChatsPopup().ShowAsync(switchInline, bot);
                 }
             }
             else if (inline.Type is InlineKeyboardButtonTypeUrl urlButton)
