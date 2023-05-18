@@ -62,6 +62,7 @@
                             </VisualStateManager.VisualStateGroups>
                             <ContentControl Content="{TemplateBinding Banner}"
                                             IsTabStop="False"
+                                            TabIndex="3"
                                             HorizontalContentAlignment="Stretch"
                                             VerticalContentAlignment="Stretch"
                                             VerticalAlignment="Top"
@@ -85,6 +86,33 @@
                                                                Loading="ChatBackgroundPresenter_Loading"
                                                                Grid.RowSpan="2" />
 
+                                <Grid MaxWidth="1000"
+                                      Margin="24,0"
+                                      Canvas.ZIndex="1">
+                                    <muxc:BreadcrumbBar x:Name="DetailHeaderPresenter"
+                                                        Visibility="Collapsed"
+                                                        Margin="0,20,0,0"
+                                                        VerticalAlignment="Top"
+                                                        TabIndex="1">
+                                        <muxc:BreadcrumbBar.ItemTemplate>
+                                            <DataTemplate x:DataType="navigation:NavigationStackItem">
+                                                <TextBlock Text="{x:Bind Title, Mode=OneWay}" />
+                                            </DataTemplate>
+                                        </muxc:BreadcrumbBar.ItemTemplate>
+                                    </muxc:BreadcrumbBar>
+
+                                    <ContentControl x:Name="DetailAction"
+                                                    Content="{TemplateBinding DetailFooter}"
+                                                    IsTabStop="False"
+                                                    TabIndex="2"
+                                                    VerticalContentAlignment="Stretch"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Top"
+                                                    Height="48"
+                                                    Margin="0,16,0,0"
+                                                    Canvas.ZIndex="1" />
+                                </Grid>
+
                                 <Grid x:Name="DetailPresenter"
                                       Grid.RowSpan="2" />
 
@@ -97,30 +125,6 @@
                                         BackgroundSizing="InnerBorderEdge"
                                         VerticalAlignment="Top" />
 
-                                <Grid MaxWidth="1000"
-                                      Margin="24,0">
-                                    <muxc:BreadcrumbBar x:Name="DetailHeaderPresenter"
-                                                        Visibility="Collapsed"
-                                                        Margin="0,20,0,0"
-                                                        VerticalAlignment="Top">
-                                        <muxc:BreadcrumbBar.ItemTemplate>
-                                            <DataTemplate x:DataType="navigation:NavigationStackItem">
-                                                <TextBlock Text="{x:Bind Title, Mode=OneWay}" />
-                                            </DataTemplate>
-                                        </muxc:BreadcrumbBar.ItemTemplate>
-                                    </muxc:BreadcrumbBar>
-
-                                    <ContentControl x:Name="DetailAction"
-                                                    Content="{TemplateBinding DetailFooter}"
-                                                    IsTabStop="False"
-                                                    VerticalContentAlignment="Stretch"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Top"
-                                                    Height="48"
-                                                    Margin="0,16,0,0"
-                                                    Canvas.ZIndex="1" />
-                                </Grid>
-
                                 <Border x:Name="BorderPart"
                                         BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                                         BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
@@ -128,13 +132,15 @@
                                         Grid.RowSpan="2" />
                             </Grid>
 
-                            <ContentPresenter x:Name="MasterFrame"
-                                              Content="{TemplateBinding Content}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                              HorizontalContentAlignment="Stretch"
-                                              VerticalContentAlignment="Stretch" />
+                            <ContentControl x:Name="MasterFrame"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
+                                            IsTabStop="False"
+                                            TabIndex="0" />
 
                             <UserControl Canvas.ZIndex="2">
                                 <Border x:Name="Grip"
@@ -429,6 +435,20 @@
             </controls:TopNavView>
         </Grid>
 
+        <controls:ProfilePicture x:Name="Photo"
+                                 Click="Photo_Click"
+                                 TabIndex="0"
+                                 HorizontalAlignment="Left"
+                                 VerticalAlignment="Top"
+                                 Margin="12,2,12,0"
+                                 Width="28"
+                                 Height="28"
+                                 AutomationProperties.LandmarkType="Navigation"
+                                 AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
+                                 ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"
+                                 Grid.ColumnSpan="2"
+                                 Grid.Row="1" />
+
         <controls:MasterDetailView x:Name="MasterDetail"
                                    ViewStateChanged="OnStateChanged"
                                    Grid.Column="1"
@@ -500,7 +520,6 @@
                                                  AutomationProperties.LandmarkType="Search"
                                                  StartingIndex="1"
                                                  VerticalAlignment="Center"
-                                                 GettingFocus="Search_GettingFocus"
                                                  GotFocus="Search_Click"
                                                  TextChanged="Search_TextChanged"
                                                  Grid.Column="1">
@@ -1071,20 +1090,6 @@
                 </Pivot>
             </Grid>
         </controls:MasterDetailView>
-
-        <controls:ProfilePicture x:Name="Photo"
-                                 Click="Photo_Click"
-                                 TabIndex="0"
-                                 HorizontalAlignment="Left"
-                                 VerticalAlignment="Top"
-                                 Margin="12,2,12,0"
-                                 Width="28"
-                                 Height="28"
-                                 AutomationProperties.LandmarkType="Navigation"
-                                 AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
-                                 ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"
-                                 Grid.ColumnSpan="2"
-                                 Grid.Row="1" />
 
         <controls:ConfettiView x:Name="Confetti"
                                x:Load="False"

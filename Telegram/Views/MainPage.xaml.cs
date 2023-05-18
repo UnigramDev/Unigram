@@ -1331,13 +1331,8 @@ namespace Telegram.Views
             }
         }
 
-        private bool _navigating;
-
         private void OnNavigating(object sender, NavigatingEventArgs e)
         {
-            _navigating = true;
-
-            var frame = sender as Frame;
             var allowed = e.SourcePageType == typeof(ChatPage) ||
                 e.SourcePageType == typeof(ChatPinnedPage) ||
                 e.SourcePageType == typeof(ChatThreadPage) ||
@@ -1366,8 +1361,6 @@ namespace Telegram.Views
 
         private void OnNavigated(object sender, NavigatedEventArgs e)
         {
-            _navigating = false;
-
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
                 MasterDetail.AllowCompact = true;
@@ -1873,14 +1866,6 @@ namespace Telegram.Views
             chats.StartAnimation("Opacity", opacity2);
 
             batch.End();
-        }
-
-        private void Search_GettingFocus(UIElement sender, GettingFocusEventArgs args)
-        {
-            if (args.NewFocusedElement == SearchField && _navigating)
-            {
-                args.TrySetNewFocusedElement(Photo);
-            }
         }
 
         private void Search_Click(object sender, RoutedEventArgs e)

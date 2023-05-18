@@ -33,7 +33,7 @@ namespace Telegram.Controls
     {
         private MasterDetailPanel AdaptivePanel;
         private Frame DetailFrame;
-        private ContentPresenter MasterPresenter;
+        private ContentControl MasterPresenter;
         private Grid DetailPresenter;
         private BreadcrumbBar DetailHeaderPresenter;
         private Border DetailHeaderBackground;
@@ -281,7 +281,7 @@ namespace Telegram.Controls
         {
             VisualStateManager.GoToState(this, "ResetState", false);
 
-            MasterPresenter = GetTemplateChild("MasterFrame") as ContentPresenter;
+            MasterPresenter = GetTemplateChild("MasterFrame") as ContentControl;
             DetailPresenter = GetTemplateChild(nameof(DetailPresenter)) as Grid;
             DetailHeaderPresenter = GetTemplateChild(nameof(DetailHeaderPresenter)) as BreadcrumbBar;
             DetailHeaderBackground = GetTemplateChild(nameof(DetailHeaderBackground)) as Border;
