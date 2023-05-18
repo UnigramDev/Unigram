@@ -78,6 +78,8 @@ namespace winrt::Telegram::Native::implementation
 		bool LoadAnimation();
 		void RenderSync(uint8_t* pixels, size_t w, size_t h, int32_t& seconds, bool& completed, bool* rendered);
 
+		bool ReadHeader(HANDLE precacheFile);
+
 		static void CompressThreadProc();
 
 		static winrt::slim_mutex s_compressLock;

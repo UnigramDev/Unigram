@@ -10,6 +10,8 @@
 #include <lz4.h>
 #include <qoi.h>
 
+#define RETURNFALSE(x) if (!x) return false;
+
 namespace winrt::Telegram::Native::implementation
 {
     std::map<std::string, winrt::slim_mutex> CachedVideoAnimation::s_locks;
@@ -19,18 +21,59 @@ namespace winrt::Telegram::Native::implementation
     std::thread CachedVideoAnimation::s_compressWorker;
     WorkQueue CachedVideoAnimation::s_compressQueue;
 
+    inline bool ReadFileReturn(HANDLE hFile, LPVOID lpBuffer, DWORD nNumberOfBytesToRead, LPDWORD lpNumberOfBytesRead)
+    {
+        if (ReadFile(hFile, lpBuffer, nNumberOfBytesToRead, lpNumberOfBytesRead, NULL))
+        {
+            return nNumberOfBytesToRead == *lpNumberOfBytesRead;
+        }
+
+        return false;
+    }
+
+    bool CachedVideoAnimation::ReadHeader(HANDLE precacheFile)
+    {
+        DWORD read;
+        uint8_t version = 0;
+        RETURNFALSE(ReadFileReturn(precacheFile, &version, sizeof(uint8_t), &read));
+        if (version == CACHED_VERSION)
+        {
+            uint32_t headerOffset;
+            RETURNFALSE(ReadFileReturn(precacheFile, &headerOffset, sizeof(uint32_t), &read));
+            if (headerOffset != 0)
+            {
+                SetFilePointer(precacheFile, headerOffset, NULL, FILE_BEGIN);
+                RETURNFALSE(ReadFileReturn(precacheFile, &m_maxFrameSize, sizeof(uint32_t), &read));
+                RETURNFALSE(ReadFileReturn(precacheFile, &m_imageSize, sizeof(uint32_t), &read));
+                RETURNFALSE(ReadFileReturn(precacheFile, &m_pixelWidth, sizeof(int32_t), &read));
+                RETURNFALSE(ReadFileReturn(precacheFile, &m_pixelHeight, sizeof(int32_t), &read));
+                RETURNFALSE(ReadFileReturn(precacheFile, &m_fps, sizeof(int32_t), &read));
+                RETURNFALSE(ReadFileReturn(precacheFile, &m_frameCount, sizeof(size_t), &read));
+                m_fileOffsets = std::vector<uint32_t>(m_frameCount, 0);
+                RETURNFALSE(ReadFileReturn(precacheFile, &m_fileOffsets[0], sizeof(uint32_t) * m_frameCount, &read));
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     winrt::Telegram::Native::CachedVideoAnimation CachedVideoAnimation::LoadFromFile(IVideoAnimationSource file, int32_t width, int32_t height, bool createCache)
     {
         auto info = winrt::make_self<CachedVideoAnimation>();
         file.SeekCallback(0);
 
-        if (createCache) {
+        if (createCache)
+        {
             auto path = file.FilePath();
-            if (path.size()) {
+            if (path.size())
+            {
                 info->m_cacheFile = path;
                 info->m_cacheKey = to_string(path);
 
-                if (width != 0 && height != 0) {
+                if (width != 0 && height != 0)
+                {
                     info->m_cacheFile += L".";
                     info->m_cacheFile += std::to_wstring(width);
                     info->m_cacheFile += L"x";
@@ -47,35 +90,22 @@ namespace winrt::Telegram::Native::implementation
 
                 slim_lock_guard const guard(s_locks[info->m_cacheKey]);
 
-                FILE* precacheFile = _wfopen(info->m_cacheFile.c_str(), L"r+b");
-                if (precacheFile != nullptr) {
-                    uint8_t temp;
-                    size_t read = fread(&temp, sizeof(uint8_t), 1, precacheFile);
-                    if (read == 1 && temp == CACHED_VERSION) {
-                        uint32_t headerOffset;
-                        fread(&headerOffset, sizeof(uint32_t), 1, precacheFile);
-                        if (headerOffset != 0)
-                        {
-                            fseek(precacheFile, headerOffset, SEEK_SET);
-                            fread(&info->m_maxFrameSize, sizeof(uint32_t), 1, precacheFile);
-                            fread(&info->m_imageSize, sizeof(uint32_t), 1, precacheFile);
-                            fread(&info->m_pixelWidth, sizeof(int32_t), 1, precacheFile);
-                            fread(&info->m_pixelHeight, sizeof(int32_t), 1, precacheFile);
-                            fread(&info->m_fps, sizeof(int32_t), 1, precacheFile);
-                            fread(&info->m_frameCount, sizeof(size_t), 1, precacheFile);
-                            info->m_fileOffsets = std::vector<uint32_t>(info->m_frameCount, 0);
-                            fread(&info->m_fileOffsets[0], sizeof(uint32_t), info->m_frameCount, precacheFile);
-
-                            createCache = false;
-                        }
+                HANDLE precacheFile = CreateFile2(info->m_cacheFile.c_str(), GENERIC_READ, 0, OPEN_EXISTING, NULL);
+                if (precacheFile != INVALID_HANDLE_VALUE)
+                {
+                    if (info->ReadHeader(precacheFile))
+                    {
+                        createCache = false;
                     }
 
-                    fclose(precacheFile);
+                    CloseHandle(precacheFile);
                 }
 
-                if (createCache) {
+                if (createCache)
+                {
                     info->m_animation = VideoAnimation::LoadFromFile(file, false, false).as<VideoAnimation>();
-                    if (info->m_animation == nullptr) {
+                    if (info->m_animation == nullptr)
+                    {
                         return nullptr;
                     }
 
@@ -93,23 +123,26 @@ namespace winrt::Telegram::Native::implementation
                     info->m_fps = info->m_animation->FrameRate();
                     info->m_precache = true;
 
-                    FILE* precacheFile = _wfopen(info->m_cacheFile.c_str(), L"w+b");
-                    if (precacheFile != nullptr) {
+                    precacheFile = CreateFile2(info->m_cacheFile.c_str(), GENERIC_WRITE, 0, CREATE_ALWAYS, NULL);
+                    if (precacheFile != INVALID_HANDLE_VALUE)
+                    {
+                        DWORD write;
                         uint8_t version = CACHED_VERSION;
                         uint32_t offset = 0;
-                        fseek(precacheFile, 0, SEEK_SET);
-                        fwrite(&version, sizeof(uint8_t), 1, precacheFile);
-                        fwrite(&offset, sizeof(uint32_t), 1, precacheFile);
+                        SetFilePointer(precacheFile, 0, NULL, FILE_BEGIN);
+                        WriteFile(precacheFile, &version, sizeof(uint8_t), &write, NULL);
+                        WriteFile(precacheFile, &offset, sizeof(uint32_t), &write, NULL);
 
-                        fflush(precacheFile);
-                        fclose(precacheFile);
+                        CloseHandle(precacheFile);
                     }
                 }
             }
         }
-        else {
+        else
+        {
             info->m_animation = VideoAnimation::LoadFromFile(file, false, false).as<VideoAnimation>();
-            if (info->m_animation == nullptr) {
+            if (info->m_animation == nullptr)
+            {
                 return nullptr;
             }
 
@@ -128,8 +161,10 @@ namespace winrt::Telegram::Native::implementation
         return info.as<winrt::Telegram::Native::CachedVideoAnimation>();
     }
 
-    void CachedVideoAnimation::Stop() {
-        if (m_animation != nullptr) {
+    void CachedVideoAnimation::Stop()
+    {
+        if (m_animation != nullptr)
+        {
             m_animation->SeekToMilliseconds(0, false);
         }
 
@@ -146,41 +181,53 @@ namespace winrt::Telegram::Native::implementation
     void CachedVideoAnimation::RenderSync(uint8_t* pixels, size_t w, size_t h, int32_t& seconds, bool& completed, bool* rendered)
     {
         bool loadedFromCache = false;
-        if (rendered) {
+        if (rendered)
+        {
             *rendered = false;
         }
 
-        if (m_precache && m_maxFrameSize <= w * h * 4 && m_imageSize == w * h * 4) {
+        if (m_precache && m_maxFrameSize <= w * h * 4 && m_imageSize == w * h * 4)
+        {
             uint32_t offset = m_fileOffsets[m_frameIndex];
-            if (offset > 0) {
+            if (offset > 0)
+            {
                 slim_lock_guard const guard(s_locks[m_cacheKey]);
 
-                FILE* precacheFile = _wfopen(m_cacheFile.c_str(), L"rb");
-                if (precacheFile != nullptr) {
-                    fseek(precacheFile, offset, SEEK_SET);
-                    if (m_decompressBuffer == nullptr) {
+                HANDLE precacheFile = CreateFile2(m_cacheFile.c_str(), GENERIC_READ, 0, OPEN_EXISTING, NULL);
+                if (precacheFile != INVALID_HANDLE_VALUE)
+                {
+                    SetFilePointer(precacheFile, offset, NULL, FILE_BEGIN);
+                    if (m_decompressBuffer == nullptr)
+                    {
                         m_decompressBuffer = new uint8_t[m_maxFrameSize];
                     }
+                    DWORD read;
                     uint32_t frameSize;
-                    fread(&frameSize, sizeof(uint32_t), 1, precacheFile);
-                    if (frameSize <= m_maxFrameSize) {
-                        fread(m_decompressBuffer, sizeof(uint8_t), frameSize, precacheFile);
-                        LZ4_decompress_safe((const char*)m_decompressBuffer, (char*)pixels, frameSize, w * h * 4);
-                        //qoi_desc desc;
-                        //qoi_decode_2((const void*)m_decompressBuffer, frameSize, &desc, 4, pixels);
-                        loadedFromCache = true;
+                    auto completed = ReadFileReturn(precacheFile, &frameSize, sizeof(uint32_t), &read);
+                    if (completed && frameSize <= m_maxFrameSize)
+                    {
+                        if (ReadFileReturn(precacheFile, m_decompressBuffer, sizeof(uint8_t) * frameSize, &read))
+                        {
+                            LZ4_decompress_safe((const char*)m_decompressBuffer, (char*)pixels, frameSize, w * h * 4);
+                            //qoi_desc desc;
+                            //qoi_decode_2((const void*)m_decompressBuffer, frameSize, &desc, 4, pixels);
+                            loadedFromCache = true;
 
-                        if (rendered) {
-                            *rendered = true;
+                            if (rendered)
+                            {
+                                *rendered = true;
+                            }
                         }
                     }
-                    fclose(precacheFile);
+                    CloseHandle(precacheFile);
                     int framesPerUpdate = /*limitFps ? fps < 60 ? 1 : 2 :*/ 1;
-                    if (m_frameIndex + framesPerUpdate >= m_frameCount) {
+                    if (m_frameIndex + framesPerUpdate >= m_frameCount)
+                    {
                         m_frameIndex = 0;
                         completed = true;
                     }
-                    else {
+                    else
+                    {
                         m_frameIndex += framesPerUpdate;
                         completed = false;
                     }
@@ -188,25 +235,31 @@ namespace winrt::Telegram::Native::implementation
             }
         }
 
-        if (!loadedFromCache && !m_caching) {
-            if (m_animation == nullptr) {
+        if (!loadedFromCache && !m_caching)
+        {
+            if (m_animation == nullptr)
+            {
                 return;
             }
 
             auto result = m_animation->RenderSync(pixels, w, h, false, seconds, completed);
 
-            if (result && rendered) {
+            if (result && rendered)
+            {
                 *rendered = true;
             }
 
-            if (m_precache) {
+            if (m_precache)
+            {
                 m_caching = true;
                 s_compressQueue.push_work(WorkItem(get_weak(), w, h));
 
                 slim_lock_guard const guard(s_compressLock);
 
-                if (!s_compressStarted) {
-                    if (s_compressWorker.joinable()) {
+                if (!s_compressStarted)
+                {
+                    if (s_compressWorker.joinable())
+                    {
                         s_compressWorker.join();
                     }
 
@@ -217,10 +270,13 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
-    void CachedVideoAnimation::CompressThreadProc() {
-        while (s_compressStarted) {
+    void CachedVideoAnimation::CompressThreadProc()
+    {
+        while (s_compressStarted)
+        {
             auto work = s_compressQueue.wait_and_pop();
-            if (work == std::nullopt) {
+            if (work == std::nullopt)
+            {
                 s_compressStarted = false;
                 return;
             }
@@ -232,40 +288,28 @@ namespace winrt::Telegram::Native::implementation
             uint8_t* compressBuffer = nullptr;
             uint8_t* pixels = nullptr;
 
-            if (auto item{ work->animation.get() }) {
+            if (auto item{ work->animation.get() })
+            {
                 auto w = work->w;
                 auto h = work->h;
 
                 slim_lock_guard const guard(s_locks[item->m_cacheKey]);
 
-                FILE* precacheFile = _wfopen(item->m_cacheFile.c_str(), L"r+b");
-                if (precacheFile != nullptr) {
-                    uint8_t temp;
-                    size_t read = fread(&temp, sizeof(uint8_t), 1, precacheFile);
-                    if (read == 1 && temp == CACHED_VERSION) {
-                        uint32_t headerOffset;
-                        fread(&headerOffset, sizeof(uint32_t), 1, precacheFile);
-                        if (headerOffset != 0)
-                        {
-                            fseek(precacheFile, headerOffset, SEEK_SET);
-                            fread(&item->m_maxFrameSize, sizeof(uint32_t), 1, precacheFile);
-                            fread(&item->m_imageSize, sizeof(uint32_t), 1, precacheFile);
-                            fread(&item->m_pixelWidth, sizeof(int32_t), 1, precacheFile);
-                            fread(&item->m_pixelHeight, sizeof(int32_t), 1, precacheFile);
-                            fread(&item->m_fps, sizeof(int32_t), 1, precacheFile);
-                            fread(&item->m_frameCount, sizeof(size_t), 1, precacheFile);
-                            item->m_fileOffsets = std::vector<uint32_t>(item->m_frameCount, 0);
-                            fread(&item->m_fileOffsets[0], sizeof(uint32_t), item->m_frameCount, precacheFile);
-
-                            item->m_caching = false;
-                            continue;
-                        }
+                HANDLE precacheFile = CreateFile2(item->m_cacheFile.c_str(), GENERIC_READ | GENERIC_WRITE, 0, OPEN_EXISTING, NULL);
+                if (precacheFile != INVALID_HANDLE_VALUE)
+                {
+                    if (item->ReadHeader(precacheFile))
+                    {
+                        CloseHandle(precacheFile);
+                        item->m_caching = false;
+                        continue;
                     }
 
-                    fseek(precacheFile, sizeof(uint8_t) + sizeof(uint32_t), SEEK_SET);
-                    size_t totalSize = ftell(precacheFile);
+                    DWORD write;
+                    size_t totalSize = SetFilePointer(precacheFile, sizeof(uint8_t) + sizeof(uint32_t), NULL, FILE_BEGIN);
 
-                    if (w + h > oldW + oldH) {
+                    if (w + h > oldW + oldH)
+                    {
                         //bound = w * h * (4 + 1) + QOI_HEADER_SIZE + sizeof(qoi_padding);
                         bound = LZ4_compressBound(w * h * 4);
                         compressBuffer = new uint8_t[bound];
@@ -292,37 +336,37 @@ namespace winrt::Telegram::Native::implementation
                         //qoi_encode_2((const void*)pixels, &desc, compressBuffer, &size);
                         uint32_t size = (uint32_t)LZ4_compress_default((const char*)pixels, (char*)compressBuffer, w * h * 4, bound);
 
-                        if (size > item->m_maxFrameSize && item->m_decompressBuffer != nullptr) {
+                        if (size > item->m_maxFrameSize && item->m_decompressBuffer != nullptr)
+                        {
                             delete[] item->m_decompressBuffer;
                             item->m_decompressBuffer = nullptr;
                         }
 
                         item->m_maxFrameSize = std::max(item->m_maxFrameSize, size);
 
-                        fwrite(&size, sizeof(uint32_t), 1, precacheFile);
-                        fwrite(compressBuffer, sizeof(uint8_t), size, precacheFile);
+                        WriteFile(precacheFile, &size, sizeof(uint32_t), &write, NULL);
+                        WriteFile(precacheFile, compressBuffer, sizeof(uint8_t) * size, &write, NULL);
                         totalSize += size;
                         totalSize += 4;
                     } while (!completed);
 
-                    fseek(precacheFile, 0, SEEK_SET);
+                    SetFilePointer(precacheFile, 0, NULL, FILE_BEGIN);
                     uint8_t version = CACHED_VERSION;
                     item->m_fileOffsets = offsets;
                     item->m_frameCount = offsets.size();
                     item->m_imageSize = (uint32_t)w * h * 4;
-                    fwrite(&version, sizeof(uint8_t), 1, precacheFile);
-                    fwrite(&totalSize, sizeof(uint32_t), 1, precacheFile);
-                    fseek(precacheFile, 0, SEEK_END);
-                    fwrite(&item->m_maxFrameSize, sizeof(uint32_t), 1, precacheFile);
-                    fwrite(&item->m_imageSize, sizeof(uint32_t), 1, precacheFile);
-                    fwrite(&item->m_pixelWidth, sizeof(int32_t), 1, precacheFile);
-                    fwrite(&item->m_pixelHeight, sizeof(int32_t), 1, precacheFile);
-                    fwrite(&item->m_fps, sizeof(int32_t), 1, precacheFile);
-                    fwrite(&item->m_frameCount, sizeof(size_t), 1, precacheFile);
-                    fwrite(&item->m_fileOffsets[0], sizeof(uint32_t), item->m_frameCount, precacheFile);
+                    WriteFile(precacheFile, &version, sizeof(uint8_t), &write, NULL);
+                    WriteFile(precacheFile, &totalSize, sizeof(uint32_t), &write, NULL);
+                    SetFilePointer(precacheFile, 0, NULL, FILE_END);
+                    WriteFile(precacheFile, &item->m_maxFrameSize, sizeof(uint32_t), &write, NULL);
+                    WriteFile(precacheFile, &item->m_imageSize, sizeof(uint32_t), &write, NULL);
+                    WriteFile(precacheFile, &item->m_pixelWidth, sizeof(int32_t), &write, NULL);
+                    WriteFile(precacheFile, &item->m_pixelHeight, sizeof(int32_t), &write, NULL);
+                    WriteFile(precacheFile, &item->m_fps, sizeof(int32_t), &write, NULL);
+                    WriteFile(precacheFile, &item->m_frameCount, sizeof(size_t), &write, NULL);
+                    WriteFile(precacheFile, &item->m_fileOffsets[0], sizeof(uint32_t) * item->m_frameCount, &write, NULL);
 
-                    fflush(precacheFile);
-                    fclose(precacheFile);
+                    CloseHandle(precacheFile);
                 }
 
                 item->m_caching = false;
@@ -331,11 +375,13 @@ namespace winrt::Telegram::Native::implementation
                 oldH = h;
             }
 
-            if (compressBuffer) {
+            if (compressBuffer)
+            {
                 delete[] compressBuffer;
             }
 
-            if (pixels) {
+            if (pixels)
+            {
                 delete[] pixels;
             }
         }
@@ -345,7 +391,8 @@ namespace winrt::Telegram::Native::implementation
 
     double CachedVideoAnimation::FrameRate()
     {
-        if (m_animation) {
+        if (m_animation)
+        {
             return m_animation->FrameRate();
         }
 
@@ -366,11 +413,13 @@ namespace winrt::Telegram::Native::implementation
         return winrt::Windows::Foundation::Size(width, height);
     }
 
-    bool CachedVideoAnimation::IsCaching() {
+    bool CachedVideoAnimation::IsCaching()
+    {
         return m_caching;
     }
 
-    void CachedVideoAnimation::IsCaching(bool value) {
+    void CachedVideoAnimation::IsCaching(bool value)
+    {
         m_caching = value;
     }
 
