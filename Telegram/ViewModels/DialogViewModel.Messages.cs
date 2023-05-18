@@ -860,14 +860,39 @@ namespace Telegram.ViewModels
 
         public async void TranslateMessage(MessageViewModel message)
         {
-            var caption = message.GetCaption();
-            if (string.IsNullOrEmpty(caption?.Text))
+            string text;
+            long chatId;
+            long messageId;
+
+            if (message.Content is MessagePoll poll)
             {
-                return;
+                var builder = new StringBuilder(poll.Poll.Question);
+
+                foreach (var option in poll.Poll.Options)
+                {
+                    builder.AppendLine();
+                    builder.AppendFormat("\U0001F518 {0}", option.Text);
+                }
+
+                text = builder.ToString();
+                chatId = 0;
+                messageId = 0;
+            }
+            else
+            {
+                var caption = message.GetCaption();
+                if (string.IsNullOrEmpty(caption?.Text))
+                {
+                    return;
+                }
+
+                text = caption.Text;
+                chatId = message.ChatId;
+                messageId = message.Id;
             }
 
-            var language = LanguageIdentification.IdentifyLanguage(caption.Text);
-            var popup = new TranslatePopup(_translateService, message.ChatId, message.Id, caption.Text, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, !message.CanBeSaved);
+            var language = LanguageIdentification.IdentifyLanguage(text);
+            var popup = new TranslatePopup(_translateService, chatId, messageId, text, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, !message.CanBeSaved);
             await ShowPopupAsync(popup);
         }
 

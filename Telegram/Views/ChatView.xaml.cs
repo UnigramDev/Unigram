@@ -2737,6 +2737,10 @@ namespace Telegram.Views
             {
                 return ViewModel.TranslateService.CanTranslate(speechVideoText.Text);
             }
+            else if (message.Content is MessagePoll poll)
+            {
+                return ViewModel.TranslateService.CanTranslate(poll.Poll.Question);
+            }
 
             return false;
         }
