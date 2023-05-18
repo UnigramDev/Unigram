@@ -580,10 +580,10 @@ namespace Telegram.ViewModels
 
                         stream.Seek(0);
                         dataPackage.SetData("application/x-tl-field-tags", stream.CloneStream());
-
-                        ClipboardEx.TrySetContent(dataPackage);
                     }
                 }
+
+                ClipboardEx.TrySetContent(dataPackage);
             }
         }
 
