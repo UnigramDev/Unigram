@@ -14,6 +14,7 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -22,27 +23,31 @@ namespace Telegram.ViewModels
 {
     public class ShareViewModel : ViewModelBase
     {
+        private readonly SearchChatsTracker _tracker;
+
         public ShareViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            _tracker = new SearchChatsTracker(clientService, false);
+            SearchChats = new SearchChatsViewModel(clientService, settingsService, aggregator);
+            SearchChats.Options = _tracker.Options;
+
             Items = new MvxObservableCollection<Chat>();
             SelectedItems = new MvxObservableCollection<Chat>();
 
             SendCommand = new RelayCommand(SendExecute, () => SelectedItems?.Count > 0);
         }
 
-        private SearchChatsCollection _search;
-        public SearchChatsCollection Search
-        {
-            get => _search;
-            set => Set(ref _search, value);
-        }
+        public SearchChatsViewModel SearchChats { get; }
 
-        private TopChatsCollection _topChats;
-        public TopChatsCollection TopChats
+        public ChooseChatsOptions Options
         {
-            get => _topChats;
-            set => Set(ref _topChats, value);
+            get => _tracker.Options;
+            set
+            {
+                _tracker.Options = value;
+                SearchChats.Options = value;
+            }
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -53,7 +58,7 @@ namespace Telegram.ViewModels
                 var list = ClientService.GetChats(chats.ChatIds).ToList();
                 Items.Clear();
 
-                if (_searchType is SearchChatsType.Post or SearchChatsType.All)
+                if (Options.AllowAll || Options.CanPostMessages)
                 {
                     var myId = ClientService.Options.MyId;
                     var self = list.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == myId);
@@ -68,64 +73,7 @@ namespace Telegram.ViewModels
 
                 foreach (var chat in list)
                 {
-                    if (_searchType == SearchChatsType.BasicAndSupergroups)
-                    {
-                        if (chat.Type is ChatTypeBasicGroup basic)
-                        {
-                            var basicGroup = ClientService.GetBasicGroup(basic.BasicGroupId);
-                            if (basicGroup == null)
-                            {
-                                continue;
-                            }
-
-                            if (basicGroup.CanInviteUsers())
-                            {
-                                Items.Add(chat);
-                            }
-                        }
-                        else if (chat.Type is ChatTypeSupergroup super)
-                        {
-                            var supergroup = ClientService.GetSupergroup(super.SupergroupId);
-                            if (supergroup == null)
-                            {
-                                continue;
-                            }
-
-                            if (supergroup.CanInviteUsers())
-                            {
-                                Items.Add(chat);
-                            }
-                        }
-                    }
-                    else if (_searchType == SearchChatsType.PrivateAndGroups)
-                    {
-                        if (chat.Type is ChatTypePrivate || chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
-                        {
-                            Items.Add(chat);
-                        }
-                    }
-                    else if (_searchType == SearchChatsType.Private)
-                    {
-                        if (chat.Type is ChatTypePrivate)
-                        {
-                            Items.Add(chat);
-                        }
-                    }
-                    else if (_searchType == SearchChatsType.Contacts)
-                    {
-                        if (ClientService.TryGetUser(chat, out User user) && user.PhoneNumber.Length > 0)
-                        {
-                            Items.Add(chat);
-                        }
-                    }
-                    else if (_searchType == SearchChatsType.Post)
-                    {
-                        if (ClientService.CanPostMessages(chat))
-                        {
-                            Items.Add(chat);
-                        }
-                    }
-                    else
+                    if (_tracker.Filter(chat))
                     {
                         Items.Add(chat);
                     }
@@ -309,13 +257,6 @@ namespace Telegram.ViewModels
         {
             get => _isSendCopyEnabled;
             set => Set(ref _isSendCopyEnabled, value);
-        }
-
-        private SearchChatsType _searchType;
-        public SearchChatsType SearchType
-        {
-            get => _searchType;
-            set => Set(ref _searchType, value);
         }
 
         private InlineKeyboardButtonTypeSwitchInline _switchInline;

@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -21,20 +22,129 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Folders;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
-using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Popups
 {
+    public class ChooseChatsOptions
+    {
+        public bool AllowAll => AllowChannelChats && AllowGroupChats && AllowBotChats && AllowUserChats && AllowSecretChats && !CanPostMessages && !CanInviteUsers;
+
+        public bool AllowChannelChats { get; set; } = true;
+        public bool AllowGroupChats { get; set; } = true;
+        public bool AllowBotChats { get; set; } = true;
+        public bool AllowUserChats { get; set; } = true;
+        public bool AllowSecretChats { get; set; } = true;
+
+        public bool CanPostMessages { get; set; } = false;
+        public bool CanInviteUsers { get; set; } = false;
+
+        public bool ShowChats { get; set; } = true;
+        public bool ShowContacts { get; set; } = false;
+
+        #region Predefined
+
+        public static readonly ChooseChatsOptions All = new()
+        {
+            AllowChannelChats = true,
+            AllowGroupChats = true,
+            AllowBotChats = true,
+            AllowUserChats = true,
+            AllowSecretChats = true,
+            CanPostMessages = false,
+            CanInviteUsers = false,
+            ShowChats = true,
+            ShowContacts = false
+        };
+
+        public static readonly ChooseChatsOptions Contacts = new()
+        {
+            AllowChannelChats = false,
+            AllowGroupChats = false,
+            AllowBotChats = true,
+            AllowUserChats = true,
+            AllowSecretChats = false,
+            CanPostMessages = false,
+            CanInviteUsers = false,
+            ShowChats = false,
+            ShowContacts = true
+        };
+
+        public static readonly ChooseChatsOptions ContactsOnly = new()
+        {
+            AllowChannelChats = false,
+            AllowGroupChats = false,
+            AllowBotChats = false,
+            AllowUserChats = true,
+            AllowSecretChats = false,
+            CanPostMessages = false,
+            CanInviteUsers = false,
+            ShowChats = false,
+            ShowContacts = true
+        };
+
+        public static readonly ChooseChatsOptions Users = new()
+        {
+            AllowChannelChats = false,
+            AllowGroupChats = false,
+            AllowBotChats = true,
+            AllowUserChats = true,
+            AllowSecretChats = false,
+            CanPostMessages = false,
+            CanInviteUsers = false,
+            ShowChats = true,
+            ShowContacts = false
+        };
+
+        public static readonly ChooseChatsOptions PostMessages = new()
+        {
+            AllowChannelChats = true,
+            AllowGroupChats = true,
+            AllowBotChats = true,
+            AllowUserChats = true,
+            AllowSecretChats = true,
+            CanPostMessages = true,
+            CanInviteUsers = false,
+            ShowChats = true,
+            ShowContacts = false
+        };
+
+        public static readonly ChooseChatsOptions InviteUsers = new()
+        {
+            AllowChannelChats = true,
+            AllowGroupChats = true,
+            AllowBotChats = false,
+            AllowUserChats = false,
+            AllowSecretChats = false,
+            CanPostMessages = false,
+            CanInviteUsers = true,
+            ShowChats = true,
+            ShowContacts = false
+        };
+
+        public static readonly ChooseChatsOptions Privacy = new()
+        {
+            AllowChannelChats = false,
+            AllowGroupChats = true,
+            AllowBotChats = true,
+            AllowUserChats = true,
+            AllowSecretChats = false,
+            CanPostMessages = false,
+            CanInviteUsers = false,
+            ShowChats = false,
+            ShowContacts = true
+        };
+
+        #endregion
+    }
+
     public sealed partial class SharePopup : ContentPopup
     {
         public ShareViewModel ViewModel => DataContext as ShareViewModel;
@@ -52,17 +162,6 @@ namespace Telegram.Views.Popups
             CaptionInput.CustomEmoji = CustomEmoji;
 
             ViewModel.PropertyChanged += OnPropertyChanged;
-
-            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            debouncer.Invoked += async (s, args) =>
-            {
-                var items = ViewModel.Search;
-                if (items != null && string.Equals(SearchField.Text, items.Query))
-                {
-                    await items.LoadMoreItemsAsync(2);
-                    await items.LoadMoreItemsAsync(3);
-                }
-            };
         }
 
         protected override void OnApplyTemplate()
@@ -109,12 +208,12 @@ namespace Telegram.Views.Popups
             return new SharePopup();
         }
 
-        public static async Task<Chat> PickChatAsync(string title, SearchChatsType type = SearchChatsType.Private)
+        public static async Task<Chat> PickChatAsync(string title, ChooseChatsOptions options)
         {
             var dialog = GetForCurrentView();
             dialog.ViewModel.Title = title;
 
-            var confirm = await dialog.PickAsync(new long[0], type, ListViewSelectionMode.Single);
+            var confirm = await dialog.PickAsync(new long[0], options, ListViewSelectionMode.Single);
             if (confirm != ContentDialogResult.Primary)
             {
                 return null;
@@ -125,16 +224,16 @@ namespace Telegram.Views.Popups
 
         public static async Task<User> PickUserAsync(IClientService clientService, string title, bool contact)
         {
-            return clientService.GetUser(await PickChatAsync(title, contact ? SearchChatsType.Contacts : SearchChatsType.Private));
+            return clientService.GetUser(await PickChatAsync(title, ChooseChatsOptions.ContactsOnly));
         }
 
-        public static async Task<IList<Chat>> PickChatsAsync(string title, long[] selected)
+        public static async Task<IList<Chat>> PickChatsAsync(string title, long[] selected, ChooseChatsOptions options)
         {
             var dialog = GetForCurrentView();
             dialog.ViewModel.Title = title;
             dialog.PrimaryButtonText = Strings.OK;
 
-            var confirm = await dialog.PickAsync(selected, SearchChatsType.Private);
+            var confirm = await dialog.PickAsync(selected, options);
             if (confirm != ContentDialogResult.Primary)
             {
                 return null;
@@ -145,13 +244,13 @@ namespace Telegram.Views.Popups
 
         public static async Task<IList<User>> PickUsersAsync(IClientService clientService, string title)
         {
-            return (await PickChatsAsync(title, new long[0]))?.Select(x => clientService.GetUser(x)).Where(x => x != null).ToList();
+            return (await PickChatsAsync(title, new long[0], ChooseChatsOptions.InviteUsers))?.Select(x => clientService.GetUser(x)).Where(x => x != null).ToList();
         }
 
         public Task<ContentDialogResult> ShowAsync(GroupCall call)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
-            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.Options = ChooseChatsOptions.PostMessages;
             ViewModel.IsCommentEnabled = true;
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
@@ -164,7 +263,7 @@ namespace Telegram.Views.Popups
         public Task<ContentDialogResult> ShowAsync(DataPackageView package)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
-            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.Options = ChooseChatsOptions.PostMessages;
             ViewModel.IsCommentEnabled = false;
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
@@ -177,7 +276,7 @@ namespace Telegram.Views.Popups
         public Task<ContentDialogResult> ShowAsync(InlineKeyboardButtonTypeSwitchInline switchInline, User bot)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
-            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.Options = ChooseChatsOptions.PostMessages;
             ViewModel.IsCommentEnabled = false;
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
@@ -191,7 +290,7 @@ namespace Telegram.Views.Popups
         public Task<ContentDialogResult> ShowAsync(FormattedText message)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
-            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.Options = ChooseChatsOptions.PostMessages;
             ViewModel.IsCommentEnabled = true;
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
@@ -204,7 +303,7 @@ namespace Telegram.Views.Popups
         public Task<ContentDialogResult> ShowAsync(Message message, bool withMyScore = false)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
-            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.Options = ChooseChatsOptions.PostMessages;
             ViewModel.IsCommentEnabled = true;
             ViewModel.IsSendAsCopyEnabled = true;
             ViewModel.IsChatSelection = false;
@@ -252,7 +351,7 @@ namespace Telegram.Views.Popups
         public Task<ContentDialogResult> ShowAsync(IList<Message> messages, bool withMyScore = false)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
-            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.Options = ChooseChatsOptions.PostMessages;
             ViewModel.IsCommentEnabled = true;
             ViewModel.IsSendAsCopyEnabled = true;
             ViewModel.IsChatSelection = false;
@@ -266,7 +365,7 @@ namespace Telegram.Views.Popups
         public Task<ContentDialogResult> ShowAsync(Uri link, string title)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
-            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.Options = ChooseChatsOptions.PostMessages;
             ViewModel.IsCommentEnabled = true;
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
@@ -280,7 +379,7 @@ namespace Telegram.Views.Popups
         public Task<ContentDialogResult> ShowAsync(InputMessageContent inputMedia)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
-            ViewModel.SearchType = SearchChatsType.Post;
+            ViewModel.Options = ChooseChatsOptions.PostMessages;
             ViewModel.IsCommentEnabled = true;
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
@@ -298,7 +397,7 @@ namespace Telegram.Views.Popups
         public Task<ContentDialogResult> ShowAsync(User bot, string token = null)
         {
             ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
-            ViewModel.SearchType = SearchChatsType.BasicAndSupergroups;
+            ViewModel.Options = ChooseChatsOptions.InviteUsers;
             ViewModel.IsCommentEnabled = false;
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = false;
@@ -309,10 +408,10 @@ namespace Telegram.Views.Popups
             return ShowAsync();
         }
 
-        public Task<ContentDialogResult> PickAsync(IList<long> selectedItems, SearchChatsType type, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)
+        public Task<ContentDialogResult> PickAsync(IList<long> selectedItems, ChooseChatsOptions options, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)
         {
             ChatsPanel.SelectionMode = selectionMode;
-            ViewModel.SearchType = type;
+            ViewModel.Options = options;
             ViewModel.IsCommentEnabled = false;
             ViewModel.IsSendAsCopyEnabled = false;
             ViewModel.IsChatSelection = true;
@@ -407,7 +506,7 @@ namespace Telegram.Views.Popups
                 dialog.PrimaryButtonText = Strings.OK;
                 dialog.IsPrimaryButtonEnabled = true;
 
-                var confirm = await dialog.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), SearchChatsType.All);
+                var confirm = await dialog.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), ChooseChatsOptions.All);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return null;
@@ -440,7 +539,7 @@ namespace Telegram.Views.Popups
                 dialog.PrimaryButtonText = Strings.OK;
                 dialog.IsPrimaryButtonEnabled = true;
 
-                var confirm = await dialog.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), SearchChatsType.All);
+                var confirm = await dialog.PickAsync(target.OfType<FolderChat>().Select(x => x.Chat.Id).ToArray(), ChooseChatsOptions.All);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return null;
@@ -523,247 +622,112 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void DialogsSearchListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.Item is SearchResult result)
-            {
-                var content = args.ItemContainer.ContentTemplateRoot as Grid;
-                if (content == null)
-                {
-                    return;
-                }
-
-                if (args.Phase == 0)
-                {
-                    var grid = content.Children[1] as Grid;
-
-                    var title = grid.Children[0] as TextBlock;
-                    if (result.Chat != null)
-                    {
-                        title.Text = ViewModel.ClientService.GetTitle(result.Chat);
-                    }
-                    else if (result.User != null)
-                    {
-                        title.Text = result.User.FullName();
-                    }
-
-                    var verified = grid.Children[1] as FrameworkElement;
-
-                    if (result.User != null || result.Chat.Type is ChatTypePrivate || result.Chat.Type is ChatTypeSecret)
-                    {
-                        var user = result.User ?? ViewModel.ClientService.GetUser(result.Chat);
-                        verified.Visibility = user != null && user.IsVerified ? Visibility.Visible : Visibility.Collapsed;
-                    }
-                    else if (result.Chat != null && result.Chat.Type is ChatTypeSupergroup supergroup)
-                    {
-                        var group = ViewModel.ClientService.GetSupergroup(supergroup.SupergroupId);
-                        verified.Visibility = group != null && group.IsVerified ? Visibility.Visible : Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        verified.Visibility = Visibility.Collapsed;
-                    }
-                }
-                else if (args.Phase == 1)
-                {
-                    var subtitle = content.Children[2] as TextBlock;
-                    if (result.User != null || result.Chat != null && result.Chat.Type is ChatTypePrivate privata)
-                    {
-                        var user = result.User ?? ViewModel.ClientService.GetUser(result.Chat);
-                        if (result.IsPublic)
-                        {
-                            subtitle.Text = $"@{user.ActiveUsername(result.Query)}";
-                        }
-                        else
-                        {
-                            subtitle.Text = LastSeenConverter.GetLabel(user, true);
-                        }
-                    }
-                    else if (result.Chat != null && result.Chat.Type is ChatTypeSupergroup super)
-                    {
-                        var supergroup = ViewModel.ClientService.GetSupergroup(super.SupergroupId);
-                        if (result.IsPublic)
-                        {
-                            if (supergroup.MemberCount > 0)
-                            {
-                                subtitle.Text = string.Format("@{0}, {1}", supergroup.ActiveUsername(result.Query), Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroup.MemberCount));
-                            }
-                            else
-                            {
-                                subtitle.Text = $"@{supergroup.ActiveUsername(result.Query)}";
-                            }
-                        }
-                        else if (supergroup.MemberCount > 0)
-                        {
-                            subtitle.Text = Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroup.MemberCount);
-                        }
-                        else
-                        {
-                            subtitle.Text = string.Empty;
-                        }
-                    }
-                    else
-                    {
-                        subtitle.Text = string.Empty;
-                    }
-
-                    if (subtitle.Text.StartsWith($"@{result.Query}", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var highligher = new TextHighlighter();
-                        highligher.Foreground = new SolidColorBrush(Colors.Red);
-                        highligher.Background = new SolidColorBrush(Colors.Transparent);
-                        highligher.Ranges.Add(new TextRange { StartIndex = 1, Length = result.Query.Length });
-
-                        subtitle.TextHighlighters.Add(highligher);
-                    }
-                    else
-                    {
-                        subtitle.TextHighlighters.Clear();
-                    }
-                }
-                else if (args.Phase == 2)
-                {
-                    var photo = content.Children[0] as ProfilePicture;
-                    if (result.Chat != null)
-                    {
-                        photo.SetChat(ViewModel.ClientService, result.Chat, 36);
-                    }
-                    else if (result.User != null)
-                    {
-                        photo.SetUser(ViewModel.ClientService, result.User, 36);
-                    }
-                }
-
-                if (args.Phase < 2)
-                {
-                    args.RegisterUpdateCallback(DialogsSearchListView_ContainerContentChanging);
-                }
-            }
-
-            args.Handled = true;
-        }
-
-        private void TopChats_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
-            var content = args.ItemContainer.ContentTemplateRoot as StackPanel;
-            var chat = args.Item as Chat;
-
-            var grid = content.Children[0] as Grid;
-
-            var photo = grid.Children[0] as ProfilePicture;
-            var title = content.Children[1] as TextBlock;
-
-            photo.SetChat(ViewModel.ClientService, chat, 48);
-            title.Text = ViewModel.ClientService.GetTitle(chat, true);
-
-            var badge = grid.Children[1] as Border;
-            var text = badge.Child as TextBlock;
-
-            badge.Visibility = chat.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-            text.Text = chat.UnreadCount.ToString();
-        }
-
         #endregion
 
         #region Search
 
-        private void Search_Click(object sender, RoutedEventArgs e)
+        private bool _searchCollapsed = true;
+
+        private void ShowHideSearch(bool show)
         {
-            if (SearchField.FocusState == FocusState.Keyboard && sender == SearchField)
+            if (_searchCollapsed != show)
             {
                 return;
             }
 
-            Search_TextChanged(null, null);
+            _searchCollapsed = !show;
+
+            FindName(nameof(SearchPanel));
+            ChatListPanel.Visibility = Visibility.Visible;
+            SearchPanel.Visibility = Visibility.Visible;
+
+            SearchClear.Visibility = show
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            if (show)
+            {
+                SearchField.ControlledList = SearchPanel.Root;
+            }
+
+            var chats = ElementCompositionPreview.GetElementVisual(ChatListPanel);
+            var panel = ElementCompositionPreview.GetElementVisual(SearchPanel);
+
+            chats.CenterPoint = panel.CenterPoint = new Vector3(ChatListPanel.ActualSize / 2, 0);
+
+            var batch = panel.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                ChatListPanel.Visibility = _searchCollapsed ? Visibility.Visible : Visibility.Collapsed;
+                SearchPanel.Visibility = _searchCollapsed ? Visibility.Collapsed : Visibility.Visible;
+
+                if (_searchCollapsed)
+                {
+                    ChatsPanel.Focus(FocusState.Pointer);
+                }
+            };
+
+            var scale1 = panel.Compositor.CreateVector3KeyFrameAnimation();
+            scale1.InsertKeyFrame(show ? 0 : 1, new Vector3(1.05f, 1.05f, 1));
+            scale1.InsertKeyFrame(show ? 1 : 0, new Vector3(1));
+            scale1.Duration = TimeSpan.FromMilliseconds(200);
+
+            var scale2 = panel.Compositor.CreateVector3KeyFrameAnimation();
+            scale2.InsertKeyFrame(show ? 0 : 1, new Vector3(1));
+            scale2.InsertKeyFrame(show ? 1 : 0, new Vector3(0.95f, 0.95f, 1));
+            scale2.Duration = TimeSpan.FromMilliseconds(200);
+
+            var opacity1 = panel.Compositor.CreateScalarKeyFrameAnimation();
+            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
+            opacity1.Duration = TimeSpan.FromMilliseconds(200);
+
+            var opacity2 = panel.Compositor.CreateScalarKeyFrameAnimation();
+            opacity2.InsertKeyFrame(show ? 0 : 1, 1);
+            opacity2.InsertKeyFrame(show ? 1 : 0, 0);
+            opacity2.Duration = TimeSpan.FromMilliseconds(200);
+
+            panel.StartAnimation("Scale", scale1);
+            panel.StartAnimation("Opacity", opacity1);
+
+            chats.StartAnimation("Scale", scale2);
+            chats.StartAnimation("Opacity", opacity2);
+
+            batch.End();
         }
 
-        private void Search_LostFocus(object sender, RoutedEventArgs e)
+        private void Search_GettingFocus(UIElement sender, GettingFocusEventArgs args)
+        {
+            if (args.FocusState == FocusState.Programmatic)
+            {
+                args.Cancel = true;
+            }
+        }
+
+        private void Search_Click(object sender, RoutedEventArgs e)
+        {
+            if (SearchField.FocusState == FocusState.Pointer && _searchCollapsed)
+            {
+                ShowHideSearch(true);
+                ViewModel.SearchChats.Query = SearchField.Text;
+            }
+        }
+
+        private void Search_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ShowHideSearch(true);
+            ViewModel.SearchChats.Query = SearchField.Text;
+        }
+
+        private void SearchClear_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(SearchField.Text))
             {
-                Focus(FocusState.Programmatic);
+                ShowHideSearch(false);
             }
-
-            Search_TextChanged(null, null);
-        }
-
-        private async void Search_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (SearchField.FocusState == FocusState.Unfocused && string.IsNullOrEmpty(SearchField.Text))
+            else
             {
-                if (SearchPanel != null)
-                {
-                    SearchPanel.Visibility = Visibility.Collapsed;
-                }
-
-                ViewModel.TopChats = null;
-                ViewModel.Search = null;
-            }
-            else if (SearchField.FocusState != FocusState.Unfocused)
-            {
-                if (SearchPanel == null)
-                {
-                    FindName(nameof(SearchPanel));
-                    SearchPanel.Width = ChatsPanel.ActualWidth;
-                    SearchPanel.Height = ChatsPanel.ActualHeight;
-                }
-
-                SearchPanel.Visibility = Visibility.Visible;
-
-                if (string.IsNullOrEmpty(SearchField.Text))
-                {
-                    var top = ViewModel.TopChats = new TopChatsCollection(ViewModel.ClientService, new TopChatCategoryUsers(), 30);
-                    await top.LoadMoreItemsAsync(0);
-                }
-                else
-                {
-                    ViewModel.TopChats = null;
-                }
-
-                ViewModel.Search = new SearchChatsCollection(ViewModel.ClientService, SearchField.Text, null, ViewModel.SearchType);
-            }
-        }
-
-        private void Search_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            var activePanel = ChatsPanel;
-            var activeList = DialogsSearchListView;
-            var activeResults = ViewModel.Search;
-
-            if (activePanel.Visibility == Visibility.Visible || activeResults == null)
-            {
-                return;
-            }
-
-            if (e.Key is Windows.System.VirtualKey.Up or Windows.System.VirtualKey.Down)
-            {
-                var index = e.Key == Windows.System.VirtualKey.Up ? -1 : 1;
-                var next = activeList.SelectedIndex + index;
-                if (next >= 0 && next < activeResults.Count)
-                {
-                    activeList.SelectedIndex = next;
-                    activeList.ScrollIntoView(activeList.SelectedItem);
-                }
-
-                e.Handled = true;
-            }
-            else if (e.Key == Windows.System.VirtualKey.Enter)
-            {
-                var index = Math.Max(activeList.SelectedIndex, 0);
-                var container = activeList.ContainerFromIndex(index) as ListViewItem;
-                if (container != null)
-                {
-                    var peer = new ListViewItemAutomationPeer(container);
-                    var invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-                    invokeProv.Invoke();
-                }
-
-                e.Handled = true;
+                SearchField.Text = string.Empty;
             }
         }
 
@@ -795,12 +759,7 @@ namespace Telegram.Views.Popups
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (ViewModel.SearchType != SearchChatsType.Post)
-            {
-                return;
-            }
-
-            if (e.ClickedItem is Chat chat && ViewModel.ClientService.IsSavedMessages(chat))
+            if (ViewModel.Options.CanPostMessages && e.ClickedItem is Chat chat && ViewModel.ClientService.IsSavedMessages(chat))
             {
                 if (ViewModel.SelectedItems.Empty())
                 {
@@ -845,7 +804,7 @@ namespace Telegram.Views.Popups
 
             chat = ViewModel.Items.FirstOrDefault(x => x.Id == chat.Id) ?? chat;
             SearchField.Text = string.Empty;
-            Search_TextChanged(null, null);
+            ShowHideSearch(false);
 
             var items = ViewModel.Items;
             var selectedItems = ViewModel.SelectedItems;
@@ -986,14 +945,6 @@ namespace Telegram.Views.Popups
         private void CaptionInput_Accept(FormattedTextBox sender, EventArgs args)
         {
             Accept();
-        }
-
-        private void Search_GettingFocus(UIElement sender, GettingFocusEventArgs args)
-        {
-            if (args.FocusState == FocusState.Programmatic)
-            {
-                args.Cancel = true;
-            }
         }
     }
 }

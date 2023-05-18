@@ -6,7 +6,6 @@
 //
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -21,8 +20,6 @@ namespace Telegram.ViewModels.Settings
     public class SettingsPrivacyViewModelBase : MultiViewModelBase, IHandle
     {
         private readonly UserPrivacySetting _inputKey;
-
-        private UserPrivacySettingRules _rules;
 
         public SettingsPrivacyViewModelBase(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, UserPrivacySetting inputKey)
             : base(clientService, settingsService, aggregator)
@@ -64,9 +61,9 @@ namespace Telegram.ViewModels.Settings
 
         private void UpdatePrivacy(UserPrivacySettingRules rules)
         {
-            _rules = rules;
-            var badge = string.Empty;
             PrivacyValue? primary = null;
+            var badge = string.Empty;
+
             var restricted = 0;
             var allowed = 0;
             UserPrivacySettingRuleAllowUsers allowedUsers = null;
@@ -264,7 +261,7 @@ namespace Telegram.ViewModels.Settings
                     break;
             }
 
-            var confirm = await dialog.PickAsync(chats, SearchChatsType.PrivateAndGroups);
+            var confirm = await dialog.PickAsync(chats, ChooseChatsOptions.Privacy);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -335,7 +332,7 @@ namespace Telegram.ViewModels.Settings
                     break;
             }
 
-            var confirm = await dialog.PickAsync(chats, SearchChatsType.PrivateAndGroups);
+            var confirm = await dialog.PickAsync(chats, ChooseChatsOptions.Privacy);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;

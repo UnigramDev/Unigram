@@ -10,6 +10,7 @@ using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
@@ -22,8 +23,7 @@ namespace Telegram.ViewModels
         private readonly KeyedCollection<SearchResult> _globalSearch = new(Strings.GlobalSearch, new SearchResultDiffHandler());
         private readonly KeyedCollection<Message> _messages = new(Strings.SearchMessages, null);
 
-        private readonly HashSet<long> _knownChats = new();
-        private readonly HashSet<long> _knownUsers = new();
+        private readonly SearchChatsTracker _tracker;
 
         private CancellationTokenSource _cancellation = new();
 
@@ -32,11 +32,20 @@ namespace Telegram.ViewModels
         public SearchChatsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            _tracker = new SearchChatsTracker(clientService, true);
+            _tracker.Options = ChooseChatsOptions.All;
+
             _query = new(Constants.TypingTimeout, UpdateQuery, CanUpdateQuery);
             _query.Value = string.Empty;
 
             TopChats = new DiffObservableCollection<Chat>(new ChatDiffHandler(), Constants.DiffOptions);
             Items = new FlatteningCollection(this, _recent, _chatsAndContacts, _globalSearch, _messages);
+        }
+
+        public ChooseChatsOptions Options
+        {
+            get => _tracker.Options;
+            set => _tracker.Options = value;
         }
 
         public DiffObservableCollection<Chat> TopChats { get; }
@@ -88,8 +97,7 @@ namespace Telegram.ViewModels
 
             _nextOffset = null;
 
-            _knownChats.Clear();
-            _knownUsers.Clear();
+            _tracker.Clear();
 
             var query = value ?? string.Empty;
             var token = _cancellation.Token;
@@ -106,51 +114,6 @@ namespace Telegram.ViewModels
 
             await LoadRecentAsync(query, token);
             await LoadChatsAndContactsPart1Async(query, token);
-        }
-
-        private void Track(Chat chat)
-        {
-            _knownChats.Add(chat.Id);
-
-            if (chat.Type is ChatTypePrivate privata)
-            {
-                _knownUsers.Add(privata.UserId);
-            }
-        }
-
-        private bool Filter(Chat chat)
-        {
-            if (_knownChats.Contains(chat.Id))
-            {
-                return false;
-            }
-            else if (chat.Type is ChatTypePrivate privata && _knownUsers.Contains(privata.UserId))
-            {
-                return false;
-            }
-
-            // TODO: additional filters for SharePopup
-
-            Track(chat);
-            return true;
-        }
-
-        private void Track(User user)
-        {
-            _knownUsers.Add(user.Id);
-        }
-
-        private bool Filter(User user)
-        {
-            if (_knownUsers.Contains(user.Id))
-            {
-                return false;
-            }
-
-            // TODO: additional filters for SharePopup
-
-            Track(user);
-            return true;
         }
 
         private async Task LoadTopChatsAsync(CancellationToken cancellationToken)
@@ -185,7 +148,7 @@ namespace Telegram.ViewModels
                         continue;
                     }
 
-                    if (Filter(chat))
+                    if (_tracker.Filter(chat))
                     {
                         temp.Add(new SearchResult(chat, query, SearchResultType.Recent));
                     }
@@ -233,7 +196,7 @@ namespace Telegram.ViewModels
             var response1 = await task1;
             if (response1 is Chat savedMessages && !cancellationToken.IsCancellationRequested)
             {
-                if (Filter(savedMessages))
+                if (_tracker.Filter(savedMessages))
                 {
                     temp.Add(new SearchResult(savedMessages, query, SearchResultType.Chats));
                 }
@@ -244,7 +207,7 @@ namespace Telegram.ViewModels
             {
                 foreach (var chat in ClientService.GetChats(chats.ChatIds))
                 {
-                    if (Filter(chat))
+                    if (_tracker.Filter(chat))
                     {
                         temp.Add(new SearchResult(chat, query, SearchResultType.Chats));
                     }
@@ -256,7 +219,7 @@ namespace Telegram.ViewModels
             {
                 foreach (var user in ClientService.GetUsers(users.UserIds))
                 {
-                    if (Filter(user))
+                    if (_tracker.Filter(user))
                     {
                         temp.Add(new SearchResult(user, query, SearchResultType.Contacts));
                     }
@@ -278,7 +241,7 @@ namespace Telegram.ViewModels
             {
                 foreach (var chat in ClientService.GetChats(chats.ChatIds))
                 {
-                    if (Filter(chat))
+                    if (_tracker.Filter(chat))
                     {
                         _chatsAndContacts.Add(new SearchResult(chat, query, SearchResultType.ChatsOnServer));
                     }
@@ -293,7 +256,7 @@ namespace Telegram.ViewModels
             {
                 foreach (var chat in ClientService.GetChats(chats.ChatIds))
                 {
-                    if (Filter(chat))
+                    if (_tracker.Filter(chat))
                     {
                         _globalSearch.Add(new SearchResult(chat, query, SearchResultType.PublicChats));
                     }
@@ -381,6 +344,144 @@ namespace Telegram.ViewModels
         }
 
         #endregion
+    }
+
+    public class SearchChatsTracker
+    {
+        private readonly IClientService _clientService;
+
+        private readonly HashSet<long> _knownChats;
+        private readonly HashSet<long> _knownUsers;
+
+        public SearchChatsTracker(IClientService clientService, bool track)
+        {
+            _clientService = clientService;
+
+            if (track)
+            {
+                _knownChats = new();
+                _knownUsers = new();
+            }
+        }
+
+        public ChooseChatsOptions Options { get; set; }
+
+        public void Clear()
+        {
+            _knownChats?.Clear();
+            _knownUsers?.Clear();
+        }
+
+        public bool Filter(Chat chat)
+        {
+            if (_knownChats != null && _knownChats.Contains(chat.Id))
+            {
+                return false;
+            }
+            else if (_knownUsers != null && chat.Type is ChatTypePrivate privata && _knownUsers.Contains(privata.UserId))
+            {
+                return false;
+            }
+
+            if (Options.AllowAll || Allow(chat))
+            {
+                Track(chat);
+                return true;
+            }
+
+            return false;
+        }
+
+        private void Track(Chat chat)
+        {
+            _knownChats?.Add(chat.Id);
+
+            if (chat.Type is ChatTypePrivate privata)
+            {
+                _knownUsers?.Add(privata.UserId);
+            }
+        }
+
+        private bool Allow(Chat chat)
+        {
+            switch (chat.Type)
+            {
+                case ChatTypeBasicGroup:
+                    if (Options.AllowGroupChats)
+                    {
+                        if (Options.CanPostMessages)
+                        {
+                            return _clientService.CanPostMessages(chat);
+                        }
+                        else if (Options.CanInviteUsers)
+                        {
+                            return _clientService.CanInviteUsers(chat);
+                        }
+
+                        return true;
+                    }
+                    return false;
+                case ChatTypePrivate privata:
+                    if (_clientService.TryGetUser(privata.UserId, out User user))
+                    {
+                        if (user.Type is UserTypeBot)
+                        {
+                            return Options.AllowBotChats;
+                        }
+                    }
+                    return Options.AllowUserChats;
+                case ChatTypeSecret:
+                    return Options.AllowSecretChats;
+                case ChatTypeSupergroup supergroup:
+                    if (supergroup.IsChannel ? Options.AllowChannelChats : Options.AllowGroupChats)
+                    {
+                        if (Options.CanPostMessages)
+                        {
+                            return _clientService.CanPostMessages(chat);
+                        }
+                        else if (Options.CanInviteUsers)
+                        {
+                            return _clientService.CanInviteUsers(chat);
+                        }
+
+                        return true;
+                    }
+                    return false;
+                default:
+                    return false;
+            }
+        }
+
+        public bool Filter(User user)
+        {
+            if (_knownUsers != null && _knownUsers.Contains(user.Id))
+            {
+                return false;
+            }
+
+            if (Options.AllowAll || Allow(user))
+            {
+                Track(user);
+                return true;
+            }
+
+            return false;
+        }
+
+        private void Track(User user)
+        {
+            _knownUsers?.Add(user.Id);
+        }
+
+        private bool Allow(User user)
+        {
+            if (user.Type is UserTypeBot)
+            {
+                return Options.AllowBotChats;
+            }
+
+            return Options.AllowUserChats;
+        }
     }
 
     public class KeyedCollection<T> : DiffObservableCollection<T>, IKeyedCollection

@@ -79,13 +79,6 @@ namespace Telegram.ViewModels
 
         public bool IsLastSliceLoaded { get; set; }
 
-        private SearchChatsCollection _search;
-        public SearchChatsCollection Search
-        {
-            get => _search;
-            set => Set(ref _search, value);
-        }
-
         public MvxObservableCollection<ISearchChatsFilter> SearchFilters { get; private set; }
 
         #region Open
