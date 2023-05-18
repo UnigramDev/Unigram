@@ -112,22 +112,27 @@ namespace Telegram.Controls.Messages.Content
 
             try
             {
-                var stream = new InMemoryRandomAccessStream();
-                var writer = new DataWriter(stream.GetOutputStreamAt(0));
+                using (var stream = new InMemoryRandomAccessStream())
+                {
+                    using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                    {
+                        writer.WriteString(contact.Contact.Vcard);
+                        await writer.StoreAsync();
+                    }
 
-                var reference = RandomAccessStreamReference.CreateFromStream(stream);
+                    var reference = RandomAccessStreamReference.CreateFromStream(stream);
+                    var system = await Windows.ApplicationModel.Contacts.ContactManager.ConvertVCardToContactAsync(reference);
 
-                writer.WriteString(contact.Contact.Vcard);
-                await writer.StoreAsync();
+                    var transform = TransformToVisual(Window.Current.Content);
+                    var point = transform.TransformPoint(new Point());
 
-                var system = await Windows.ApplicationModel.Contacts.ContactManager.ConvertVCardToContactAsync(reference);
-
-                var transform = TransformToVisual(Window.Current.Content);
-                var point = transform.TransformPoint(new Point());
-
-                Windows.ApplicationModel.Contacts.ContactManager.ShowContactCard(system, new Rect(point.X, point.Y, ActualWidth, ActualHeight));
+                    Windows.ApplicationModel.Contacts.ContactManager.ShowContactCard(system, new Rect(point.X, point.Y, ActualWidth, ActualHeight));
+                }
             }
-            catch { }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
     }
 }

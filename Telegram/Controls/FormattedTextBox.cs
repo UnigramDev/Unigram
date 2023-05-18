@@ -859,7 +859,7 @@ namespace Telegram.Controls
 
             if (clear)
             {
-                Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
+                Document.Clear();
                 SelectionFlyout.Hide();
             }
 
@@ -927,7 +927,7 @@ namespace Telegram.Controls
             {
                 OnSettingText();
 
-                Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
+                Document.Clear();
                 SelectionFlyout.Hide();
             }
         }
@@ -940,7 +940,7 @@ namespace Telegram.Controls
 
             Document.BeginUndoGroup();
             Document.BatchDisplayUpdates();
-            Document.LoadFromStream(TextSetOptions.None, new InMemoryRandomAccessStream());
+            Document.Clear();
 
             if (!string.IsNullOrEmpty(text))
             {

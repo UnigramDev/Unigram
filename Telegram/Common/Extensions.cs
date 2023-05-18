@@ -28,8 +28,10 @@ using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -138,6 +140,14 @@ namespace Telegram.Common
             catch
             {
                 // All the remote procedure calls must be wrapped in a try-catch block
+            }
+        }
+
+        public static void Clear(this ITextDocument document)
+        {
+            using (var stream = new InMemoryRandomAccessStream())
+            {
+                document.LoadFromStream(TextSetOptions.None, stream);
             }
         }
 

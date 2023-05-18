@@ -538,50 +538,52 @@ namespace Telegram.ViewModels
 
                 if (input.Entities.Count > 0)
                 {
-                    var stream = new InMemoryRandomAccessStream();
-                    using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                    using (var stream = new InMemoryRandomAccessStream())
                     {
-                        writer.WriteInt32(input.Entities.Count(x => x.IsEditable()));
-
-                        foreach (var entity in input.Entities.Where(x => x.IsEditable()))
+                        using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
                         {
-                            writer.WriteInt32(entity.Offset);
-                            writer.WriteInt32(entity.Length);
+                            writer.WriteInt32(input.Entities.Count(x => x.IsEditable()));
 
-                            switch (entity.Type)
+                            foreach (var entity in input.Entities.Where(x => x.IsEditable()))
                             {
-                                case TextEntityTypeBold bold:
-                                    writer.WriteByte(1);
-                                    break;
-                                case TextEntityTypeItalic italic:
-                                    writer.WriteByte(2);
-                                    break;
-                                case TextEntityTypeCode code:
-                                case TextEntityTypePre pre:
-                                case TextEntityTypePreCode preCode:
-                                    writer.WriteByte(3);
-                                    break;
-                                case TextEntityTypeTextUrl textUrl:
-                                    writer.WriteByte(4);
-                                    writer.WriteInt32(textUrl.Url.Length);
-                                    writer.WriteString(textUrl.Url);
-                                    break;
-                                case TextEntityTypeMentionName mentionName:
-                                    writer.WriteByte(5);
-                                    writer.WriteInt64(mentionName.UserId);
-                                    break;
+                                writer.WriteInt32(entity.Offset);
+                                writer.WriteInt32(entity.Length);
+
+                                switch (entity.Type)
+                                {
+                                    case TextEntityTypeBold bold:
+                                        writer.WriteByte(1);
+                                        break;
+                                    case TextEntityTypeItalic italic:
+                                        writer.WriteByte(2);
+                                        break;
+                                    case TextEntityTypeCode code:
+                                    case TextEntityTypePre pre:
+                                    case TextEntityTypePreCode preCode:
+                                        writer.WriteByte(3);
+                                        break;
+                                    case TextEntityTypeTextUrl textUrl:
+                                        writer.WriteByte(4);
+                                        writer.WriteInt32(textUrl.Url.Length);
+                                        writer.WriteString(textUrl.Url);
+                                        break;
+                                    case TextEntityTypeMentionName mentionName:
+                                        writer.WriteByte(5);
+                                        writer.WriteInt64(mentionName.UserId);
+                                        break;
+                                }
                             }
+
+                            await writer.FlushAsync();
+                            await writer.StoreAsync();
                         }
 
-                        await writer.FlushAsync();
-                        await writer.StoreAsync();
+                        stream.Seek(0);
+                        dataPackage.SetData("application/x-tl-field-tags", stream.CloneStream());
+
+                        ClipboardEx.TrySetContent(dataPackage);
                     }
-
-                    stream.Seek(0);
-                    dataPackage.SetData("application/x-tl-field-tags", stream.CloneStream());
                 }
-
-                ClipboardEx.TrySetContent(dataPackage);
             }
         }
 

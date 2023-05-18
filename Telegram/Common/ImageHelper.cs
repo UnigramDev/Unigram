@@ -439,16 +439,16 @@ namespace Telegram.Common
 
             if (editState.Strokes != null)
             {
-                var stream = await DrawStrokesAsync(pixelData, editState.Strokes, editState.Rectangle, editState.Rotation, editState.Flip);
+                using (var stream = await DrawStrokesAsync(pixelData, editState.Strokes, editState.Rectangle, editState.Rotation, editState.Flip))
+                {
+                    var bitmapImage = new BitmapImage();
+                    await bitmapImage.SetSourceAsync(stream);
 
-                var bitmapImage = new BitmapImage();
-                await bitmapImage.SetSourceAsync(stream);
-
-                return bitmapImage;
+                    return bitmapImage;
+                }
             }
             else
             {
-
                 var bitmapImage = new SoftwareBitmapSource();
                 await bitmapImage.SetBitmapAsync(pixelData);
 
