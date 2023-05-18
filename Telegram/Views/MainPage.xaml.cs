@@ -631,8 +631,9 @@ namespace Telegram.Views
             Root?.SetSidebarEnabled(show);
             MasterDetail.IsOnlyChild = !show;
 
-            Photo.Margin = new Thickness(show ? -62 : 0, 0, show ? 0 : 12, 0);
-            Photo.Visibility = show || rpMasterTitlebar.SelectedIndex != 3
+            PhotoPlaceholder.Margin = new Thickness(show ? -62 : 0, 0, show ? 0 : 12, 0);
+            Photo.Margin = new Thickness(show ? 22 : 12, 2, 12, 0);
+            Photo.Visibility = PhotoPlaceholder.Visibility = show || rpMasterTitlebar.SelectedIndex != 3
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
@@ -1330,8 +1331,12 @@ namespace Telegram.Views
             }
         }
 
+        private bool _navigating;
+
         private void OnNavigating(object sender, NavigatingEventArgs e)
         {
+            _navigating = true;
+
             var frame = sender as Frame;
             var allowed = e.SourcePageType == typeof(ChatPage) ||
                 e.SourcePageType == typeof(ChatPinnedPage) ||
@@ -1361,6 +1366,8 @@ namespace Telegram.Views
 
         private void OnNavigated(object sender, NavigatedEventArgs e)
         {
+            _navigating = false;
+
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
                 MasterDetail.AllowCompact = true;
@@ -1792,7 +1799,7 @@ namespace Telegram.Views
                 }
             }
 
-            Photo.Visibility = _tabsLeftCollapsed || rpMasterTitlebar.SelectedIndex != 3
+            Photo.Visibility = PhotoPlaceholder.Visibility = _tabsLeftCollapsed || rpMasterTitlebar.SelectedIndex != 3
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
@@ -1866,6 +1873,14 @@ namespace Telegram.Views
             chats.StartAnimation("Opacity", opacity2);
 
             batch.End();
+        }
+
+        private void Search_GettingFocus(UIElement sender, GettingFocusEventArgs args)
+        {
+            if (args.NewFocusedElement == SearchField && _navigating)
+            {
+                args.TrySetNewFocusedElement(Photo);
+            }
         }
 
         private void Search_Click(object sender, RoutedEventArgs e)
@@ -1946,7 +1961,7 @@ namespace Telegram.Views
             //DialogsPanel.Visibility = Visibility.Visible;
             ShowHideSearch(false);
 
-            if (SearchField.FocusState != FocusState.Unfocused)
+            if (rpMasterTitlebar.SelectedIndex == 0 && SearchField.FocusState != FocusState.Unfocused)
             {
                 Photo.Focus(FocusState.Programmatic);
             }

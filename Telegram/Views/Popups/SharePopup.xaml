@@ -26,15 +26,10 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Button x:Name="FocusTarget"
-                Content="Nothing to see here, tab further"
-                Width="12"
-                Height="12"
-                Opacity="0" />
-
         <TextBox x:Name="SearchField"
                  PlaceholderText="{CustomResource Search}"
                  PreventKeyboardDisplayOnProgrammaticFocus="True"
+                 GettingFocus="Search_GettingFocus"
                  VerticalAlignment="Center"
                  GotFocus="Search_Click"
                  TextChanged="Search_TextChanged"

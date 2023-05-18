@@ -480,6 +480,8 @@ namespace Telegram.Views.Popups
 
         #region Recycle
 
+        private bool _focused = true;
+
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             if (args.ItemContainer == null)
@@ -489,7 +491,23 @@ namespace Telegram.Views.Popups
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
             }
 
+            if (_focused)
+            {
+                _focused = false;
+                args.ItemContainer.Loaded += ItemContainer_Loaded;
+
+            }
+
             args.IsContainerPrepared = true;
+        }
+
+        private void ItemContainer_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is SelectorItem container)
+            {
+                container.Loaded -= ItemContainer_Loaded;
+                container.Focus(FocusState.Pointer);
+            }
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -968,6 +986,14 @@ namespace Telegram.Views.Popups
         private void CaptionInput_Accept(FormattedTextBox sender, EventArgs args)
         {
             Accept();
+        }
+
+        private void Search_GettingFocus(UIElement sender, GettingFocusEventArgs args)
+        {
+            if (args.FocusState == FocusState.Programmatic)
+            {
+                args.Cancel = true;
+            }
         }
     }
 }
