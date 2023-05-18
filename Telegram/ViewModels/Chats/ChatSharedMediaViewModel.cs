@@ -434,7 +434,7 @@ namespace Telegram.ViewModels.Chats
         public async void ForwardMessage(MessageWithOwner message)
         {
             SelectionMode = ListViewSelectionMode.None;
-            await new ChooseChatsPopup().ShowAsync(message.Get());
+            await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(message.Get()));
         }
 
         #endregion
@@ -472,7 +472,7 @@ namespace Telegram.ViewModels.Chats
             if (messages.Count > 0)
             {
                 SelectionMode = ListViewSelectionMode.None;
-                await new ChooseChatsPopup().ShowAsync(messages);
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(messages));
             }
         }
 

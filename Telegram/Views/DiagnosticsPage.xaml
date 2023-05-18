@@ -4,6 +4,7 @@
                   xmlns:local="using:Telegram.Views"
                   xmlns:common="using:Telegram.Common"
                   xmlns:controls="using:Telegram.Controls"
+                  xmlns:services="using:Telegram.Services"
                   xmlns:viewModels="using:Telegram.ViewModels"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -18,6 +19,14 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.UseTestDC, Mode=TwoWay}"
                               Visibility="{x:Bind ViewModel.CanUseTestDC}"
                               Content="Use Test DC"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.DisableRendering, Mode=TwoWay}"
+                              Content="Disable D2D1 rendering"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.DisableClipping, Mode=TwoWay}"
+                              Content="Disable DComp clipping"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.AllowRightToLeft, Mode=TwoWay}"
@@ -44,17 +53,6 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="In-Memory Logs">
-                    <controls:SettingsExpander IsExpanded="{x:Bind ViewModel.ShowInMemoryLogs, Mode=TwoWay}">
-                        <controls:SettingsExpander.Header>
-                            <controls:BadgeButton Content="Dump"
-                                                  Click="Dump_Click" />
-                        </controls:SettingsExpander.Header>
-                        <TextBlock Text="{x:Bind ViewModel.InMemoryLogs, Mode=OneWay}"
-                                   TextWrapping="Wrap"
-                                   FontFamily="Consolas"
-                                   IsTextSelectionEnabled="True"
-                                   Margin="0,8,16,8" />
-                    </controls:SettingsExpander>
                     <CheckBox IsChecked="{x:Bind ViewModel.LoggerSink, Mode=TwoWay}"
                               Content="Write app logs to tdlib_log.txt"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
@@ -62,10 +60,10 @@
 
                 <controls:HeaderedControl Header="Calls Logs">
                     <controls:BadgeButton Content="tgcalls.txt"
-                                          Click="Calls_Click"
+                                          Click="{x:Bind ViewModel.SendCalls}"
                                           Badge="{x:Bind ConvertSize(ViewModel.LogCallsSize), Mode=OneWay}" />
                     <controls:BadgeButton Content="tgcalls_group.txt"
-                                          Click="GroupCalls_Click"
+                                          Click="{x:Bind ViewModel.SendGroupCalls}"
                                           Badge="{x:Bind ConvertSize(ViewModel.LogGroupCallsSize), Mode=OneWay}" />
                     <controls:BadgeButton Content="Video informations"
                                           Command="{x:Bind ViewModel.VideoInfoCommand}" />
@@ -81,10 +79,10 @@
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
                     <controls:BadgeButton Content="tdlib_log.txt"
-                                          Click="Log_Click"
+                                          Click="{x:Bind ViewModel.SendLog}"
                                           Badge="{x:Bind ConvertSize(ViewModel.LogSize), Mode=OneWay}" />
                     <controls:BadgeButton Content="tdlib_log.txt.old"
-                                          Click="LogOld_Click"
+                                          Click="{x:Bind ViewModel.SendLogOld}"
                                           Badge="{x:Bind ConvertSize(ViewModel.LogOldSize), Mode=OneWay}" />
                 </controls:HeaderedControl>
 

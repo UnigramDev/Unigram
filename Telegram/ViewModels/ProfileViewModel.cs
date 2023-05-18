@@ -439,7 +439,7 @@ namespace Telegram.ViewModels
                 var user = ClientService.GetUser(chat.Type is ChatTypePrivate privata ? privata.UserId : chat.Type is ChatTypeSecret secret ? secret.UserId : 0);
                 if (user != null)
                 {
-                    await new ChooseChatsPopup().ShowAsync(new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id)));
+                    await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostMessage(new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id))));
                 }
             }
         }
@@ -492,7 +492,7 @@ namespace Telegram.ViewModels
                 }
 
                 var dataPackage = new DataPackage();
-                dataPackage.SetText(user.Bio.Text);
+                dataPackage.SetText(user.BotInfo?.ShortDescription ?? user.Bio.Text);
                 ClipboardEx.TrySetContent(dataPackage);
             }
         }
@@ -588,7 +588,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var confirm = await ShowPopupAsync(Strings.AreYouSureSecretChat, Strings.AppName, Strings.OK, Strings.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSureSecretChat, Strings.AreYouSureSecretChatTitle, Strings.Start, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -626,12 +626,12 @@ namespace Telegram.ViewModels
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = ClientService.GetUser(chat);
-                if (user == null)
+                if (user == null || user.Type is not UserTypeBot)
                 {
                     return;
                 }
 
-                await new ChooseChatsPopup().ShowAsync(user);
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationStartBot(user));
             }
             else
             {

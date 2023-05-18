@@ -84,7 +84,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            await new ChooseChatsPopup().ShowAsync(link, ShareTitle);
+            await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostLink(new HttpUrl(link.ToString())));
         }
 
         public RelayCommand FeedbackCommand { get; }

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Telegram.Controls;
 using Telegram.Controls.Messages;
 using Telegram.Entities;
 using Telegram.Native;
@@ -39,6 +40,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
 using static Telegram.Services.GenerationService;
 using Point = Windows.Foundation.Point;
 
@@ -46,6 +48,42 @@ namespace Telegram.Common
 {
     public static class Extensions
     {
+        // TODO: this is a duplicat of INavigationService.ShowPopupAsync, and it's needed by GamePage, GroupCallPage and LiveStreamPage.
+        // Must be removed at some point.
+        public static Task<ContentDialogResult> ShowPopupAsync(this Page frame, int sessionId, Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)
+        {
+            var popup = (tsc != null ? Activator.CreateInstance(sourcePopupType, tsc) : Activator.CreateInstance(sourcePopupType)) as ContentPopup;
+            if (popup != null)
+            {
+                var viewModel = BootStrapper.Current.ViewModelForPage(popup, sessionId);
+                if (viewModel != null)
+                {
+                    //viewModel.NavigationService = this;
+
+                    void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+                    {
+                        popup.Opened -= OnOpened;
+                    }
+
+                    void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+                    {
+                        _ = viewModel.NavigatedFromAsync(null, false);
+                        popup.Closed -= OnClosed;
+                    }
+
+                    popup.DataContext = viewModel;
+                    popup.OnNavigatedTo();
+
+                    _ = viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
+                    popup.Closed += OnClosed;
+                }
+
+                return popup.ShowQueuedAsync();
+            }
+
+            return Task.FromResult(ContentDialogResult.None);
+        }
+
         public static void ForEach<T>(this ListViewBase listView, Action<SelectorItem, T> handler) where T : class
         {
             int lastCacheIndex;

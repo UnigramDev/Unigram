@@ -63,7 +63,7 @@
                 <ListView x:Name="ChatsPanel"
                           IsItemClickEnabled="True"
                           ItemsSource="{x:Bind ViewModel.Items}"
-                          SelectionMode="Multiple"
+                          SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=TwoWay}"
                           SelectionChanged="List_SelectionChanged"
                           ItemClick="List_ItemClick"
                           ChoosingItemContainer="OnChoosingItemContainer"

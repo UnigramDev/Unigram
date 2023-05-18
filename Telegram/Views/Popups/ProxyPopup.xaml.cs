@@ -137,7 +137,8 @@ namespace Telegram.Views.Popups
             var title = Strings.ProxySettings;
             var link = new Uri(MeUrlPrefixConverter.Convert(TLContainer.Current.Resolve<IClientService>(), $"socks?{string.Join("&", builder)}"));
 
-            await new ChooseChatsPopup().ShowAsync(link, title);
+            // TODO: currently not used
+            //await new ChooseChatsPopup().ShowAsync(link, title);
         }
 
         private void Type_Toggled(object sender, RoutedEventArgs e)

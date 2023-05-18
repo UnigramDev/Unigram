@@ -189,11 +189,11 @@ namespace Telegram.ViewModels
 
             if (message.Content is MessageAlbum album)
             {
-                await new ChooseChatsPopup().ShowAsync(album.Messages.Select(x => x.Get()).ToList());
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(album.Messages.Select(x => x.Get()).ToList()));
             }
             else
             {
-                await new ChooseChatsPopup().ShowAsync(message.Get());
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(message.Get()));
             }
 
             TextField?.Focus(FocusState.Programmatic);
@@ -235,7 +235,7 @@ namespace Telegram.ViewModels
             {
                 IsSelectionEnabled = false;
 
-                await new ChooseChatsPopup().ShowAsync(messages);
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(messages));
                 TextField?.Focus(FocusState.Programmatic);
             }
         }
@@ -948,7 +948,7 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    await new ChooseChatsPopup().ShowAsync(switchInline, bot);
+                    await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationSwitchInline(switchInline, bot));
                 }
             }
             else if (inline.Type is InlineKeyboardButtonTypeUrl urlButton)
@@ -1090,20 +1090,17 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadGame(game.Game.ShortName)));
                 if (response is CallbackQueryAnswer answer && !string.IsNullOrEmpty(answer.Url))
                 {
-                    var bundle = new Dictionary<string, object>();
-                    bundle.Add("title", game.Game.Title);
-                    bundle.Add("url", answer.Url);
-                    bundle.Add("message", message.Id);
-                    bundle.Add("chat", message.ChatId);
+                    ChatActionManager.SetTyping(new ChatActionStartPlayingGame());
 
                     var viaBot = message.GetViaBotUser();
                     if (viaBot != null && viaBot.HasActiveUsername(out string username))
                     {
-                        bundle.Add("username", username);
+                        NavigationService.Navigate(typeof(GamePage), new GameConfiguration(message, answer.Url, game.Game.Title, username));
                     }
-
-                    ChatActionManager.SetTyping(new ChatActionStartPlayingGame());
-                    NavigationService.Navigate(typeof(GamePage), bundle);
+                    else
+                    {
+                        NavigationService.Navigate(typeof(GamePage), new GameConfiguration(message, answer.Url, game.Game.Title, string.Empty));
+                    }
                 }
             }
             else if (inline.Type is InlineKeyboardButtonTypeWebApp webApp)

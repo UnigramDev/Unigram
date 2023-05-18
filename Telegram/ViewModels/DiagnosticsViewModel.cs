@@ -23,6 +23,7 @@ using Windows.Devices.Enumeration;
 using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
 using Windows.Storage;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -187,23 +188,6 @@ namespace Telegram.ViewModels
 
         public bool DisableDatabase => Settings.Diagnostics.DisableDatabase;
 
-        private bool _showInMemoryLogs = false;
-        public bool ShowInMemoryLogs
-        {
-            get => _showInMemoryLogs;
-            set
-            {
-                if (Set(ref _showInMemoryLogs, value))
-                {
-                    RaisePropertyChanged(nameof(InMemoryLogs));
-                }
-            }
-        }
-
-        public string InMemoryLogs => _showInMemoryLogs
-            ? Logger.Dump()
-            : null;
-
         public bool LoggerSink
         {
             get => SettingsService.Current.Diagnostics.LoggerSink;
@@ -286,6 +270,39 @@ namespace Telegram.ViewModels
             new SettingsOptionItem<int>(5, nameof(VerbosityLevel.Verbose)),
         };
 
+        #region Send logs
+
+        public void SendCalls()
+        {
+            SendFile("tgcalls.txt");
+        }
+
+        public void SendGroupCalls(object sender, RoutedEventArgs e)
+        {
+            SendFile("tgcalls_group.txt");
+        }
+
+        public void SendLog()
+        {
+            SendFile("tdlib_log.txt");
+        }
+
+        public void SendLogOld(object sender, RoutedEventArgs e)
+        {
+            SendFile("tdlib_log.txt.old");
+        }
+
+        private async void SendFile(string fileName)
+        {
+            var file = await ApplicationData.Current.LocalFolder.TryGetItemAsync(fileName) as StorageFile;
+            if (file != null)
+            {
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostMessage(new InputMessageDocument(new InputFileLocal(file.Path), null, true, null)));
+            }
+        }
+
+        #endregion
+
         public RelayCommand VideoInfoCommand { get; }
         public async void VideoInfoExecute()
         {
@@ -310,7 +327,7 @@ namespace Telegram.ViewModels
                 var file = await ApplicationData.Current.LocalFolder.CreateFileAsync("video_info.txt", CreationCollisionOption.ReplaceExisting);
 
                 await FileIO.WriteTextAsync(file, builder.ToString());
-                await new ChooseChatsPopup().ShowAsync(new InputMessageDocument(new InputFileLocal(file.Path), null, true, null));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostMessage(new InputMessageDocument(new InputFileLocal(file.Path), null, true, null)));
             }
             catch { }
         }

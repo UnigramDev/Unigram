@@ -242,9 +242,10 @@ namespace Telegram.ViewModels.Settings
                 chats.Add(id);
             }
 
-            var dialog = new ChooseChatsPopup();
-            dialog.PrimaryButtonText = Strings.OK;
-            dialog.ViewModel.AllowEmptySelection = true;
+            var popup = new ChooseChatsPopup();
+            popup.Legacy();
+            popup.PrimaryButtonText = Strings.OK;
+            popup.ViewModel.AllowEmptySelection = true;
 
             switch (_inputKey)
             {
@@ -254,14 +255,14 @@ namespace Telegram.ViewModels.Settings
                 case UserPrivacySettingShowProfilePhoto:
                 case UserPrivacySettingShowLinkInForwardedMessages:
                 default:
-                    dialog.ViewModel.Title = Strings.AlwaysAllow;
+                    popup.ViewModel.Title = Strings.AlwaysAllow;
                     break;
                 case UserPrivacySettingShowStatus:
-                    dialog.ViewModel.Title = Strings.AlwaysShareWithTitle;
+                    popup.ViewModel.Title = Strings.AlwaysShareWithTitle;
                     break;
             }
 
-            var confirm = await dialog.PickAsync(chats, ChooseChatsOptions.Privacy);
+            var confirm = await popup.PickAsync(chats, ChooseChatsOptions.Privacy);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -270,7 +271,7 @@ namespace Telegram.ViewModels.Settings
             chats.Clear();
             users.Clear();
 
-            foreach (var chat in dialog.ViewModel.SelectedItems)
+            foreach (var chat in popup.ViewModel.SelectedItems)
             {
                 if (chat.Type is ChatTypePrivate privata)
                 {
@@ -313,9 +314,10 @@ namespace Telegram.ViewModels.Settings
                 chats.Add(id);
             }
 
-            var dialog = new ChooseChatsPopup();
-            dialog.PrimaryButtonText = Strings.OK;
-            dialog.ViewModel.AllowEmptySelection = true;
+            var popup = new ChooseChatsPopup();
+            popup.Legacy();
+            popup.PrimaryButtonText = Strings.OK;
+            popup.ViewModel.AllowEmptySelection = true;
 
             switch (_inputKey)
             {
@@ -325,14 +327,14 @@ namespace Telegram.ViewModels.Settings
                 case UserPrivacySettingShowProfilePhoto:
                 case UserPrivacySettingShowLinkInForwardedMessages:
                 default:
-                    dialog.ViewModel.Title = Strings.NeverAllow;
+                    popup.ViewModel.Title = Strings.NeverAllow;
                     break;
                 case UserPrivacySettingShowStatus:
-                    dialog.ViewModel.Title = Strings.NeverShareWithTitle;
+                    popup.ViewModel.Title = Strings.NeverShareWithTitle;
                     break;
             }
 
-            var confirm = await dialog.PickAsync(chats, ChooseChatsOptions.Privacy);
+            var confirm = await popup.PickAsync(chats, ChooseChatsOptions.Privacy);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -341,7 +343,7 @@ namespace Telegram.ViewModels.Settings
             chats.Clear();
             users.Clear();
 
-            foreach (var chat in dialog.ViewModel.SelectedItems)
+            foreach (var chat in popup.ViewModel.SelectedItems)
             {
                 if (chat.Type is ChatTypePrivate privata)
                 {

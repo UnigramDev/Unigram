@@ -257,7 +257,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypeMessageDraft messageDraft)
             {
-                NavigateToShare(messageDraft.Text, messageDraft.ContainsLink);
+                NavigateToShare(navigation, messageDraft.Text, messageDraft.ContainsLink);
             }
             else if (internalLink is InternalLinkTypePassportDataRequest)
             {
@@ -545,9 +545,9 @@ namespace Telegram.Common
             }
         }
 
-        public static async void NavigateToShare(FormattedText text, bool hasUrl)
+        public static async void NavigateToShare(INavigationService navigation, FormattedText text, bool hasUrl)
         {
-            await SharePopup.GetForCurrentView().ShowAsync(text);
+            await navigation.ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostText(text));
         }
 
         public static async void NavigateToProxy(IClientService clientService, string server, int port, ProxyType type)
@@ -655,7 +655,7 @@ namespace Telegram.Common
             {
                 if (group)
                 {
-                    await SharePopup.GetForCurrentView().ShowAsync(user, startParameter);
+                    await navigation.ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationStartBot(user, startParameter));
                 }
                 else if (autoStart)
                 {

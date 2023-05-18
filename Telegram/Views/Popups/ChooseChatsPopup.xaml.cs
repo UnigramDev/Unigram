@@ -33,6 +33,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Popups
 {
+    #region Options
+
     public class ChooseChatsOptions
     {
         public bool AllowAll => AllowChannelChats && AllowGroupChats && AllowBotChats && AllowUserChats && AllowSecretChats && !CanPostMessages && !CanInviteUsers;
@@ -145,6 +147,116 @@ namespace Telegram.Views.Popups
         #endregion
     }
 
+    #endregion
+
+    #region Configurations
+
+    public class ChooseChatsConfigurationGroupCall : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationGroupCall(GroupCall call)
+        {
+            GroupCall = call;
+        }
+
+        public GroupCall GroupCall { get; }
+    }
+
+    public class ChooseChatsConfigurationDataPackage : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationDataPackage(DataPackageView package)
+        {
+            Package = package;
+        }
+
+        public DataPackageView Package { get; }
+    }
+
+    public class ChooseChatsConfigurationSwitchInline : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationSwitchInline(InlineKeyboardButtonTypeSwitchInline switchInline, User bot)
+        {
+            SwitchInline = switchInline;
+            Bot = bot;
+        }
+
+        public InlineKeyboardButtonTypeSwitchInline SwitchInline { get; }
+
+        public User Bot { get; }
+    }
+
+    public class ChooseChatsConfigurationPostText : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationPostText(FormattedText text)
+        {
+            Text = text;
+        }
+
+        public FormattedText Text { get; }
+    }
+
+    public class ChooseChatsConfigurationShareMessage : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationShareMessage(Message message, bool withMyScore = false)
+        {
+            Message = message;
+            WithMyScore = withMyScore;
+        }
+
+        public Message Message { get; }
+
+        public bool WithMyScore { get; }
+    }
+
+    public class ChooseChatsConfigurationShareMessages : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationShareMessages(IList<Message> messages)
+        {
+            Messages = messages;
+        }
+
+        public IList<Message> Messages { get; }
+    }
+
+    public class ChooseChatsConfigurationPostLink : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationPostLink(HttpUrl url)
+        {
+            Url = url;
+        }
+
+        public HttpUrl Url { get; }
+    }
+
+    public class ChooseChatsConfigurationPostMessage : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationPostMessage(InputMessageContent content)
+        {
+            Content = content;
+        }
+
+        public InputMessageContent Content { get; }
+    }
+
+    public class ChooseChatsConfigurationStartBot : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationStartBot(User bot, string token = null)
+        {
+            Bot = bot;
+            Token = token;
+        }
+
+        public User Bot { get; }
+
+        public string Token { get; }
+    }
+
+    public abstract class ChooseChatsConfiguration
+    {
+
+    }
+
+    #endregion
+
     public sealed partial class ChooseChatsPopup : ContentPopup
     {
         public ChooseChatsViewModel ViewModel => DataContext as ChooseChatsViewModel;
@@ -152,26 +264,38 @@ namespace Telegram.Views.Popups
         public ChooseChatsPopup()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<ChooseChatsViewModel>();
 
-            //Title = Strings.ShareSendTo;
             PrimaryButtonText = Strings.Send;
             SecondaryButtonText = Strings.Close;
 
-            EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
             CaptionInput.CustomEmoji = CustomEmoji;
-
-            ViewModel.PropertyChanged += OnPropertyChanged;
         }
 
-        protected override void OnApplyTemplate()
+        [Obsolete]
+        public void Legacy()
         {
-            IsPrimaryButtonSplit = ViewModel.IsSendAsCopyEnabled;
+            DataContext = TLContainer.Current.Resolve<ChooseChatsViewModel>();
+        }
+
+        public override void OnNavigatedTo()
+        {
+            VisualStateManager.GoToState(this, ViewModel.IsSendAsCopyEnabled ? "PrimaryAsSplitButton" : "NoSplitButton", false);
 
             var button = GetTemplateChild("PrimarySplitButton") as Button;
             if (button != null && ViewModel.IsSendAsCopyEnabled)
             {
                 button.Click += PrimaryButton_ContextRequested;
+            }
+
+            EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
+            ViewModel.PropertyChanged += OnPropertyChanged;
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            if (ViewModel != null)
+            {
+                OnNavigatedTo();
             }
 
             base.OnApplyTemplate();
@@ -205,16 +329,17 @@ namespace Telegram.Views.Popups
 
         public static async Task<Chat> PickChatAsync(string title, ChooseChatsOptions options)
         {
-            var dialog = new ChooseChatsPopup();
-            dialog.ViewModel.Title = title;
+            var popup = new ChooseChatsPopup();
+            popup.Legacy();
+            popup.ViewModel.Title = title;
 
-            var confirm = await dialog.PickAsync(new long[0], options, ListViewSelectionMode.Single);
+            var confirm = await popup.PickAsync(new long[0], options, ListViewSelectionMode.Single);
             if (confirm != ContentDialogResult.Primary)
             {
                 return null;
             }
 
-            return dialog.ViewModel.SelectedItems.FirstOrDefault();
+            return popup.ViewModel.SelectedItems.FirstOrDefault();
         }
 
         public static async Task<User> PickUserAsync(IClientService clientService, string title, bool contact)
@@ -225,6 +350,7 @@ namespace Telegram.Views.Popups
         public static async Task<IList<Chat>> PickChatsAsync(string title, long[] selected, ChooseChatsOptions options)
         {
             var popup = new ChooseChatsPopup();
+            popup.Legacy();
             popup.ViewModel.Title = title;
             popup.PrimaryButtonText = Strings.OK;
 
@@ -242,170 +368,9 @@ namespace Telegram.Views.Popups
             return (await PickChatsAsync(title, new long[0], ChooseChatsOptions.InviteUsers))?.Select(x => clientService.GetUser(x)).Where(x => x != null).ToList();
         }
 
-        public Task<ContentDialogResult> ShowAsync(GroupCall call)
-        {
-            ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
-            ViewModel.Options = ChooseChatsOptions.PostMessages;
-            ViewModel.IsCommentEnabled = true;
-            ViewModel.IsSendAsCopyEnabled = false;
-            ViewModel.IsChatSelection = false;
-
-            ViewModel.GroupCall = call;
-
-            return ShowAsync();
-        }
-
-        public Task<ContentDialogResult> ShowAsync(DataPackageView package)
-        {
-            ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
-            ViewModel.Options = ChooseChatsOptions.PostMessages;
-            ViewModel.IsCommentEnabled = false;
-            ViewModel.IsSendAsCopyEnabled = false;
-            ViewModel.IsChatSelection = false;
-
-            ViewModel.Package = package;
-
-            return ShowAsync();
-        }
-
-        public Task<ContentDialogResult> ShowAsync(InlineKeyboardButtonTypeSwitchInline switchInline, User bot)
-        {
-            ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
-            ViewModel.Options = ChooseChatsOptions.PostMessages;
-            ViewModel.IsCommentEnabled = false;
-            ViewModel.IsSendAsCopyEnabled = false;
-            ViewModel.IsChatSelection = false;
-
-            ViewModel.SwitchInline = switchInline;
-            ViewModel.SwitchInlineBot = bot;
-
-            return ShowAsync();
-        }
-
-        public Task<ContentDialogResult> ShowAsync(FormattedText message)
-        {
-            ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
-            ViewModel.Options = ChooseChatsOptions.PostMessages;
-            ViewModel.IsCommentEnabled = true;
-            ViewModel.IsSendAsCopyEnabled = false;
-            ViewModel.IsChatSelection = false;
-
-            ViewModel.SendMessage = message;
-
-            return ShowAsync();
-        }
-
-        public Task<ContentDialogResult> ShowAsync(Message message, bool withMyScore = false)
-        {
-            ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
-            ViewModel.Options = ChooseChatsOptions.PostMessages;
-            ViewModel.IsCommentEnabled = true;
-            ViewModel.IsSendAsCopyEnabled = true;
-            ViewModel.IsChatSelection = false;
-
-            ViewModel.Messages = new[] { message };
-            ViewModel.IsWithMyScore = withMyScore;
-
-            var chat = ViewModel.ClientService.GetChat(message.ChatId);
-            if (ViewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup)
-                && supergroup.HasActiveUsername(out string username))
-            {
-                var link = $"{username}/{message.Id}";
-
-                if (message.Content is MessageVideoNote)
-                {
-                    link = $"https://telesco.pe/{link}";
-                }
-                else
-                {
-                    link = MeUrlPrefixConverter.Convert(ViewModel.ClientService, link);
-                }
-
-                var title = message.Content.GetCaption()?.Text;
-                if (message.Content is MessageText text)
-                {
-                    title = text.Text.Text;
-                }
-
-                ViewModel.ShareLink = new Uri(link);
-                ViewModel.ShareTitle = title ?? ViewModel.ClientService.GetTitle(chat);
-            }
-            else if (message.Content is MessageGame game)
-            {
-                var viaBot = ViewModel.ClientService.GetUser(message.ViaBotUserId);
-                if (viaBot != null && viaBot.HasActiveUsername(out username))
-                {
-                    ViewModel.ShareLink = new Uri(MeUrlPrefixConverter.Convert(ViewModel.ClientService, $"{username}?game={game.Game.ShortName}"));
-                    ViewModel.ShareTitle = game.Game.Title;
-                }
-            }
-
-            return ShowAsync();
-        }
-
-        public Task<ContentDialogResult> ShowAsync(IList<Message> messages, bool withMyScore = false)
-        {
-            ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
-            ViewModel.Options = ChooseChatsOptions.PostMessages;
-            ViewModel.IsCommentEnabled = true;
-            ViewModel.IsSendAsCopyEnabled = true;
-            ViewModel.IsChatSelection = false;
-
-            ViewModel.Messages = messages;
-            ViewModel.IsWithMyScore = withMyScore;
-
-            return ShowAsync();
-        }
-
-        public Task<ContentDialogResult> ShowAsync(Uri link, string title)
-        {
-            ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
-            ViewModel.Options = ChooseChatsOptions.PostMessages;
-            ViewModel.IsCommentEnabled = true;
-            ViewModel.IsSendAsCopyEnabled = false;
-            ViewModel.IsChatSelection = false;
-
-            ViewModel.ShareLink = link;
-            ViewModel.ShareTitle = title;
-
-            return ShowAsync();
-        }
-
-        public Task<ContentDialogResult> ShowAsync(InputMessageContent inputMedia)
-        {
-            ChatsPanel.SelectionMode = ListViewSelectionMode.Multiple;
-            ViewModel.Options = ChooseChatsOptions.PostMessages;
-            ViewModel.IsCommentEnabled = true;
-            ViewModel.IsSendAsCopyEnabled = false;
-            ViewModel.IsChatSelection = false;
-
-            ViewModel.InputMedia = inputMedia;
-
-            //if (inputMedia is TLInputMediaGame gameMedia && gameMedia.Id is TLInputGameShortName shortName)
-            //{
-            //    // TODO: maybe?
-            //}
-
-            return ShowAsync();
-        }
-
-        public Task<ContentDialogResult> ShowAsync(User bot, string token = null)
-        {
-            ChatsPanel.SelectionMode = ListViewSelectionMode.Single;
-            ViewModel.Options = ChooseChatsOptions.InviteUsers;
-            ViewModel.IsCommentEnabled = false;
-            ViewModel.IsSendAsCopyEnabled = false;
-            ViewModel.IsChatSelection = false;
-
-            ViewModel.InviteBot = bot;
-            ViewModel.InviteToken = token;
-
-            return ShowAsync();
-        }
-
         public Task<ContentDialogResult> PickAsync(IList<long> selectedItems, ChooseChatsOptions options, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)
         {
-            ChatsPanel.SelectionMode = selectionMode;
+            ViewModel.SelectionMode = selectionMode;
             ViewModel.Options = options;
             ViewModel.IsCommentEnabled = false;
             ViewModel.IsSendAsCopyEnabled = false;
@@ -495,6 +460,7 @@ namespace Telegram.Views.Popups
                 });
 
                 var popup = new ChooseChatsPopup();
+                popup.Legacy();
                 popup.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
                 popup.ViewModel.AllowEmptySelection = true;
                 popup.Header = panel;
@@ -529,6 +495,7 @@ namespace Telegram.Views.Popups
             else
             {
                 var popup = new ChooseChatsPopup();
+                popup.Legacy();
                 popup.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
                 popup.ViewModel.AllowEmptySelection = true;
                 popup.PrimaryButtonText = Strings.OK;

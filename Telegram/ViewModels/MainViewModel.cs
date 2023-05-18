@@ -439,12 +439,6 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var confirm = await ShowPopupAsync(Strings.AreYouSureSecretChat, Strings.AppName, Strings.OK, Strings.Cancel);
-            if (confirm != ContentDialogResult.Primary)
-            {
-                return;
-            }
-
             var response = await ClientService.SendAsync(new CreateNewSecretChat(user.Id));
             if (response is Chat chat)
             {

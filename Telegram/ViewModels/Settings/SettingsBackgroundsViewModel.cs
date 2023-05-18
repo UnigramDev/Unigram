@@ -193,7 +193,7 @@ namespace Telegram.ViewModels.Settings
             var response = await ClientService.SendAsync(new GetBackgroundUrl(background.Name, background.Type));
             if (response is HttpUrl url)
             {
-                await new ChooseChatsPopup().ShowAsync(new Uri(url.Url), null);
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostLink(url));
             }
         }
 

@@ -407,7 +407,8 @@ namespace Telegram.Views.Popups
             var text = builder.ToString();
             var formatted = new FormattedText(text, new TextEntity[0]);
 
-            await new ChooseChatsPopup().ShowAsync(formatted);
+            // TODO: currently not used
+            //await new ChooseChatsPopup().ShowAsync(formatted);
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -52,6 +53,140 @@ namespace Telegram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
+            // The following is absolutely awful
+
+            #region Configuration
+
+            if (parameter is ChooseChatsConfigurationGroupCall configurationGroupCall)
+            {
+                SelectionMode = ListViewSelectionMode.Multiple;
+                Options = ChooseChatsOptions.PostMessages;
+                IsCommentEnabled = true;
+                IsSendAsCopyEnabled = false;
+                IsChatSelection = false;
+
+                GroupCall = configurationGroupCall.GroupCall;
+            }
+            else if (parameter is ChooseChatsConfigurationDataPackage configurationDataPackage)
+            {
+                SelectionMode = ListViewSelectionMode.Single;
+                Options = ChooseChatsOptions.PostMessages;
+                IsCommentEnabled = false;
+                IsSendAsCopyEnabled = false;
+                IsChatSelection = false;
+
+                Package = configurationDataPackage.Package;
+            }
+            else if (parameter is ChooseChatsConfigurationSwitchInline configurationSwitchInline)
+            {
+                SelectionMode = ListViewSelectionMode.Single;
+                Options = ChooseChatsOptions.PostMessages;
+                IsCommentEnabled = false;
+                IsSendAsCopyEnabled = false;
+                IsChatSelection = false;
+
+                SwitchInline = configurationSwitchInline.SwitchInline;
+                SwitchInlineBot = configurationSwitchInline.Bot;
+            }
+            else if (parameter is ChooseChatsConfigurationPostText configurationPostText)
+            {
+                SelectionMode = ListViewSelectionMode.Single;
+                Options = ChooseChatsOptions.PostMessages;
+                IsCommentEnabled = true;
+                IsSendAsCopyEnabled = false;
+                IsChatSelection = false;
+
+                SendMessage = configurationPostText.Text;
+            }
+            else if (parameter is ChooseChatsConfigurationShareMessage configurationShareMessage)
+            {
+                SelectionMode = ListViewSelectionMode.Multiple;
+                Options = ChooseChatsOptions.PostMessages;
+                IsCommentEnabled = true;
+                IsSendAsCopyEnabled = true;
+                IsChatSelection = false;
+
+                Messages = new[] { configurationShareMessage.Message };
+                IsWithMyScore = configurationShareMessage.WithMyScore;
+
+                var message = configurationShareMessage.Message;
+                var chat = ClientService.GetChat(message.ChatId);
+
+                if (ClientService.TryGetSupergroup(chat, out Supergroup supergroup)
+                    && supergroup.HasActiveUsername(out string username))
+                {
+                    var link = $"{username}/{message.Id}";
+
+                    if (message.Content is MessageVideoNote)
+                    {
+                        link = $"https://telesco.pe/{link}";
+                    }
+                    else
+                    {
+                        link = MeUrlPrefixConverter.Convert(ClientService, link);
+                    }
+
+                    var title = message.Content.GetCaption()?.Text;
+                    if (message.Content is MessageText text)
+                    {
+                        title = text.Text.Text;
+                    }
+
+                    ShareLink = new HttpUrl(link);
+                }
+                else if (message.Content is MessageGame game)
+                {
+                    var viaBot = ClientService.GetUser(message.ViaBotUserId);
+                    if (viaBot != null && viaBot.HasActiveUsername(out username))
+                    {
+                        ShareLink = new HttpUrl(MeUrlPrefixConverter.Convert(ClientService, $"{username}?game={game.Game.ShortName}"));
+                    }
+                }
+            }
+            else if (parameter is ChooseChatsConfigurationShareMessages configurationShareMessages)
+            {
+                SelectionMode = ListViewSelectionMode.Multiple;
+                Options = ChooseChatsOptions.PostMessages;
+                IsCommentEnabled = true;
+                IsSendAsCopyEnabled = true;
+                IsChatSelection = false;
+
+                Messages = configurationShareMessages.Messages;
+            }
+            else if (parameter is ChooseChatsConfigurationPostLink configurationPostLink)
+            {
+                SelectionMode = ListViewSelectionMode.Multiple;
+                Options = ChooseChatsOptions.PostMessages;
+                IsCommentEnabled = true;
+                IsSendAsCopyEnabled = false;
+                IsChatSelection = false;
+
+                ShareLink = configurationPostLink.Url;
+            }
+            else if (parameter is ChooseChatsConfigurationPostMessage configurationPostMessage)
+            {
+                SelectionMode = ListViewSelectionMode.Multiple;
+                Options = ChooseChatsOptions.PostMessages;
+                IsCommentEnabled = true;
+                IsSendAsCopyEnabled = false;
+                IsChatSelection = false;
+
+                InputMedia = configurationPostMessage.Content;
+            }
+            else if (parameter is ChooseChatsConfigurationStartBot configurationStartBot)
+            {
+                SelectionMode = ListViewSelectionMode.Single;
+                Options = ChooseChatsOptions.InviteUsers;
+                IsCommentEnabled = false;
+                IsSendAsCopyEnabled = false;
+                IsChatSelection = false;
+
+                InviteBot = configurationStartBot.Bot;
+                InviteToken = configurationStartBot.Token;
+            }
+
+            #endregion
+
             var response = await ClientService.GetChatListAsync(new ChatListMain(), 0, 200);
             if (response is Telegram.Td.Api.Chats chats)
             {
@@ -209,7 +344,7 @@ namespace Telegram.ViewModels
         {
             get
             {
-                return _shareLink != null && DataTransferManager.IsSupported();
+                return ShareLink != null && DataTransferManager.IsSupported();
             }
         }
 
@@ -227,8 +362,8 @@ namespace Telegram.ViewModels
             set => Set(ref _removeCaptions, value);
         }
 
-        private Uri _shareLink;
-        public Uri ShareLink
+        private HttpUrl _shareLink;
+        public HttpUrl ShareLink
         {
             get => _shareLink;
             set
@@ -236,13 +371,6 @@ namespace Telegram.ViewModels
                 Set(ref _shareLink, value);
                 RaisePropertyChanged(nameof(IsCopyLinkEnabled));
             }
-        }
-
-        private string _shareTitle;
-        public string ShareTitle
-        {
-            get => _shareTitle;
-            set => Set(ref _shareTitle, value);
         }
 
         private bool _isCommentEnabled;
@@ -336,18 +464,18 @@ namespace Telegram.ViewModels
 
                 //NavigationService.GoBack();
             }
-            else if (_inputMedia != null)
+            else if (InputMedia != null)
             {
                 foreach (var chat in chats)
                 {
-                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, _inputMedia));
+                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, InputMedia));
                 }
 
                 //NavigationService.GoBack();
             }
-            else if (_shareLink != null)
+            else if (ShareLink != null)
             {
-                var formatted = new FormattedText(_shareLink.AbsoluteUri, new TextEntity[0]);
+                var formatted = new FormattedText(ShareLink.Url, new TextEntity[0]);
 
                 foreach (var chat in chats)
                 {
@@ -420,16 +548,12 @@ namespace Telegram.ViewModels
             //NavigationService.GoBackAt(0);
         }
 
-        #region Search
-
         private ListViewSelectionMode _selectionMode = ListViewSelectionMode.Multiple;
         public ListViewSelectionMode SelectionMode
         {
             get => _selectionMode;
             set => Set(ref _selectionMode, value);
         }
-
-        #endregion
     }
 
     public class ChooseChatsTracker
