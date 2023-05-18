@@ -279,14 +279,7 @@ namespace Telegram.Views.Popups
 
         public override void OnNavigatedTo()
         {
-            VisualStateManager.GoToState(this, ViewModel.IsSendAsCopyEnabled ? "PrimaryAsSplitButton" : "NoSplitButton", false);
-
-            var button = GetTemplateChild("PrimarySplitButton") as Button;
-            if (button != null && ViewModel.IsSendAsCopyEnabled)
-            {
-                button.Click += PrimaryButton_ContextRequested;
-            }
-
+            IsPrimaryButtonSplit = ViewModel.IsSendAsCopyEnabled;
             EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
             ViewModel.PropertyChanged += OnPropertyChanged;
         }

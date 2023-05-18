@@ -62,7 +62,6 @@ namespace Telegram.ViewModels
                 SelectionMode = ListViewSelectionMode.Multiple;
                 Options = ChooseChatsOptions.PostMessages;
                 IsCommentEnabled = true;
-                IsSendAsCopyEnabled = false;
                 IsChatSelection = false;
 
                 GroupCall = configurationGroupCall.GroupCall;
@@ -72,7 +71,6 @@ namespace Telegram.ViewModels
                 SelectionMode = ListViewSelectionMode.Single;
                 Options = ChooseChatsOptions.PostMessages;
                 IsCommentEnabled = false;
-                IsSendAsCopyEnabled = false;
                 IsChatSelection = false;
 
                 Package = configurationDataPackage.Package;
@@ -82,7 +80,6 @@ namespace Telegram.ViewModels
                 SelectionMode = ListViewSelectionMode.Single;
                 Options = ChooseChatsOptions.PostMessages;
                 IsCommentEnabled = false;
-                IsSendAsCopyEnabled = false;
                 IsChatSelection = false;
 
                 SwitchInline = configurationSwitchInline.SwitchInline;
@@ -93,7 +90,6 @@ namespace Telegram.ViewModels
                 SelectionMode = ListViewSelectionMode.Single;
                 Options = ChooseChatsOptions.PostMessages;
                 IsCommentEnabled = true;
-                IsSendAsCopyEnabled = false;
                 IsChatSelection = false;
 
                 SendMessage = configurationPostText.Text;
@@ -158,7 +154,6 @@ namespace Telegram.ViewModels
                 SelectionMode = ListViewSelectionMode.Multiple;
                 Options = ChooseChatsOptions.PostMessages;
                 IsCommentEnabled = true;
-                IsSendAsCopyEnabled = false;
                 IsChatSelection = false;
 
                 ShareLink = configurationPostLink.Url;
@@ -168,7 +163,6 @@ namespace Telegram.ViewModels
                 SelectionMode = ListViewSelectionMode.Multiple;
                 Options = ChooseChatsOptions.PostMessages;
                 IsCommentEnabled = true;
-                IsSendAsCopyEnabled = false;
                 IsChatSelection = false;
 
                 InputMedia = configurationPostMessage.Content;
@@ -178,7 +172,6 @@ namespace Telegram.ViewModels
                 SelectionMode = ListViewSelectionMode.Single;
                 Options = ChooseChatsOptions.InviteUsers;
                 IsCommentEnabled = false;
-                IsSendAsCopyEnabled = false;
                 IsChatSelection = false;
 
                 InviteBot = configurationStartBot.Bot;
