@@ -108,7 +108,7 @@ namespace Telegram.ViewModels
         private readonly ChooseSoundViewModel _parent;
 
         private readonly NotificationSound _notificationSound;
-        private string _soundToken;
+        private long _soundToken;
 
         public NotificationSoundViewModel(ChooseSoundViewModel parent, NotificationSound notificationSound, bool selected)
         {

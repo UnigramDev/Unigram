@@ -20,8 +20,8 @@ namespace Telegram.Views.Popups
     {
         private ApplicationView _applicationView;
 
-        private string _fileToken;
-        private string _thumbnailToken;
+        private long _fileToken;
+        private long _thumbnailToken;
 
         private object _lastItem;
 
@@ -132,6 +132,8 @@ namespace Telegram.Views.Popups
         {
             if (file.Local.IsDownloadingCompleted)
             {
+                UpdateManager.Unsubscribe(this, ref _fileToken, true);
+
                 if (sticker.Format is StickerFormatTgs)
                 {
                     Thumbnail.Opacity = 0;
@@ -170,6 +172,8 @@ namespace Telegram.Views.Popups
         {
             if (file.Local.IsDownloadingCompleted)
             {
+                UpdateManager.Unsubscribe(this, ref _fileToken, true);
+
                 Thumbnail.Opacity = 0;
                 Texture.Source = null;
                 Container.Child = new AnimationView { Source = new LocalFileSource(file) };

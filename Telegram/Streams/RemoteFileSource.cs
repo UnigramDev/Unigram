@@ -32,6 +32,8 @@ namespace Telegram.Streams
 
         private bool _disposed;
 
+        private long _fileToken;
+
         public RemoteFileSource(IClientService clientService, File file, int duration)
         {
             _event = new ManualResetEvent(false);
@@ -43,7 +45,7 @@ namespace Telegram.Streams
 
             if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                UpdateManager.Subscribe(this, clientService, file, UpdateFile);
+                UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile);
             }
         }
 
@@ -146,7 +148,7 @@ namespace Telegram.Streams
             _disposed = true;
 
             //Logger.Debug($"Disposing the stream");
-            EventAggregator.Default.Unsubscribe(this);
+            UpdateManager.Unsubscribe(this, ref _fileToken);
 
             _canceled = true;
             _clientService.Send(new CancelDownloadFile(_file.Id, false));

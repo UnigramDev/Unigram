@@ -36,6 +36,8 @@ namespace Telegram.Services
 
         private static readonly SemaphoreSlim _updateLock = new(1, 1);
 
+        private long _fileToken;
+
         private long? _chatId;
         private CloudUpdate _nextUpdate;
 
@@ -159,7 +161,7 @@ namespace Telegram.Services
                     if (epoch.TotalDays >= 3 || !_networkService.IsMetered)
                     {
                         _clientService.DownloadFile(cloud.Document.Id, 16);
-                        UpdateManager.Subscribe(cloud, _clientService, cloud.Document, UpdateFile, true);
+                        UpdateManager.Subscribe(cloud, _clientService, cloud.Document, ref _fileToken, UpdateFile, true);
                     }
                 }
             }

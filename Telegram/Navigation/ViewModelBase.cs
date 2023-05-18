@@ -143,7 +143,7 @@ namespace Telegram.Navigation
 
         #endregion
 
-        protected virtual void BeginOnUIThread(DispatcherQueueHandler action, Action fallback = null)
+        public virtual void BeginOnUIThread(DispatcherQueueHandler action, Action fallback = null)
         {
             var dispatcher = Dispatcher;
             dispatcher ??= WindowContext.Default()?.Dispatcher;

@@ -81,7 +81,11 @@ namespace Telegram.Controls
         {
             if (target is Grid content)
             {
-                if (content.Children[0] is LottieView stickerView)
+                if (content.Children[0] is Image image)
+                {
+                    image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                }
+                else if (content.Children[0] is LottieView stickerView)
                 {
                     stickerView.Source = new LocalFileSource(file);
                 }
@@ -221,7 +225,7 @@ namespace Telegram.Controls
                     else
                     {
                         image.Source = null;
-                        UpdateManager.Subscribe(image, ViewModel.ClientService, file, UpdateThumbnail, true);
+                        UpdateManager.Subscribe(content, ViewModel.ClientService, file, UpdateThumbnail, true);
 
                         if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                         {
@@ -244,7 +248,7 @@ namespace Telegram.Controls
                     else
                     {
                         image.Source = null;
-                        UpdateManager.Subscribe(image, ViewModel.ClientService, file, UpdateThumbnail, true);
+                        UpdateManager.Subscribe(content, ViewModel.ClientService, file, UpdateThumbnail, true);
 
                         if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                         {

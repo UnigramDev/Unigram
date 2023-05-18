@@ -699,6 +699,8 @@ namespace Telegram.Controls.Drawers
 
             if (file.Local.IsDownloadingCompleted)
             {
+                UpdateManager.Unsubscribe(content);
+
                 if (content.Children[0] is Border border && border.Child is Image photo)
                 {
                     photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
@@ -721,7 +723,6 @@ namespace Telegram.Controls.Drawers
                 }
 
                 content.Tag = sticker;
-                UpdateManager.Unsubscribe(content);
             }
             else
             {
@@ -734,7 +735,7 @@ namespace Telegram.Controls.Drawers
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive /*&& args.Phase == 0*/)
                 {
-                    ViewModel.ClientService.DownloadFile(file.Id, 1);
+                    ViewModel.ClientService.DownloadFile(file.Id, 16);
                 }
             }
         }

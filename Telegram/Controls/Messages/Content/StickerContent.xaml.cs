@@ -77,10 +77,10 @@ namespace Telegram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
+                UpdateManager.Unsubscribe(this, ref _fileToken, true);
+
                 Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 180);
                 ElementCompositionPreview.SetElementChildVisual(this, null);
-
-                UpdateManager.Unsubscribe(this, ref _fileToken);
             }
             else
             {
@@ -106,12 +106,7 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = null;
 
-            if (_fileToken != 0)
-            {
-                UpdateManager.Unsubscribe(this);
-            }
-
-            _fileToken = 0;
+            UpdateManager.Unsubscribe(this, ref _fileToken, true);
         }
 
         public bool IsValid(MessageContent content, bool primary)

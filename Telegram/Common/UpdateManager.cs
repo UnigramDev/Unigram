@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -14,62 +15,79 @@ namespace Telegram.Common
     {
         #region Subscribe by ref
 
-        public static void Subscribe(object sender, MessageWithOwner message, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
+        public static void Subscribe(object sender, MessageWithOwner message, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false)
         {
-            Subscribe(sender, message.ClientService.SessionId, file, ref token, handler, completionOnly, keepTargetAlive);
+            Subscribe(sender, message.ClientService.SessionId, file, ref token, handler, completionOnly);
         }
 
-        public static void Subscribe(object sender, IClientService clientService, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
+        public static void Subscribe(object sender, IClientService clientService, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false)
         {
-            Subscribe(sender, clientService.SessionId, file, ref token, handler, completionOnly, keepTargetAlive);
+            Subscribe(sender, clientService.SessionId, file, ref token, handler, completionOnly);
         }
 
-        public static void Subscribe(object sender, int sessionId, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false)
+        public static void Subscribe(object sender, int sessionId, File file, ref long token, UpdateHandler<File> handler, bool completionOnly = false)
         {
             var value = (sessionId << 16) | file.Id;
-            if (value != token && token != 0)
+            if (completionOnly)
             {
-                EventAggregator.Default.Unregister<File>(sender, token);
+                value |= 0x01000000;
             }
 
-            EventAggregator.Default.Register(sender, token = value, handler, keepTargetAlive, completionOnly);
+            if (value == token)
+            {
+                return;
+            }
+            else if (token != 0)
+            {
+                EventAggregator.Current.Unsubscribe(sender, token, false);
+            }
+
+            EventAggregator.Current.Subscribe(sender, token = value, handler, false);
         }
 
         #endregion
 
         #region Subscribe
 
-        public static void Subscribe(object sender, MessageViewModel message, File file, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false, bool unsubscribe = true)
+        [Obsolete("Always use token subscription")]
+        public static void Subscribe(object sender, MessageViewModel message, File file, UpdateHandler<File> handler, bool completionOnly = false)
         {
-            Subscribe(sender, message.ClientService.SessionId, file, handler, completionOnly, keepTargetAlive, unsubscribe);
+            Subscribe(sender, message.ClientService.SessionId, file, handler, completionOnly);
         }
 
-        public static void Subscribe(object sender, IClientService clientService, File file, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false, bool unsubscribe = true)
+        [Obsolete("Always use token subscription")]
+        public static void Subscribe(object sender, IClientService clientService, File file, UpdateHandler<File> handler, bool completionOnly = false)
         {
-            Subscribe(sender, clientService.SessionId, file, handler, completionOnly, keepTargetAlive, unsubscribe);
+            Subscribe(sender, clientService.SessionId, file, handler, completionOnly);
         }
 
-        public static void Subscribe(object sender, int sessionId, File file, UpdateHandler<File> handler, bool completionOnly = false, bool keepTargetAlive = false, bool unsubscribe = true)
+        [Obsolete("Always use token subscription")]
+        public static void Subscribe(object sender, int sessionId, File file, UpdateHandler<File> handler, bool completionOnly = false)
         {
-            if (unsubscribe)
+            var value = (sessionId << 16) | file.Id;
+            if (completionOnly)
             {
-                EventAggregator.Default.Unregister<File>(sender);
+                value |= 0x01000000;
             }
 
-            EventAggregator.Default.Register(sender, (sessionId << 16) | file.Id, handler, keepTargetAlive, completionOnly);
+            EventAggregator.Current.Subscribe(sender, value, handler, true);
         }
 
         #endregion
 
-        public static void Unsubscribe(object sender)
+        public static void Unsubscribe(object sender, ref long token, bool completionOnly = false)
         {
-            EventAggregator.Default.Unregister<File>(sender);
+            if (token != 0)
+            {
+                EventAggregator.Current.Unsubscribe(sender, token, false);
+                token = 0;
+            }
         }
 
-        public static void Unsubscribe(object sender, ref long token)
+        [Obsolete("Always use token subscription")]
+        public static void Unsubscribe(object sender)
         {
-            EventAggregator.Default.Unregister<File>(sender, token);
-            token = 0;
+            EventAggregator.Current.Unsubscribe(sender);
         }
     }
 }

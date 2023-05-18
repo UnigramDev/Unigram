@@ -44,6 +44,8 @@ namespace Telegram.Controls.Messages
         private Sticker _sticker;
         private UnreadReaction _unread;
 
+        private long _fileToken;
+
         public MessageReaction Reaction => _interaction;
         public EmojiReaction EmojiReaction => _reaction;
         public Sticker CustomReaction => _sticker;
@@ -108,7 +110,7 @@ namespace Telegram.Controls.Messages
             {
                 Presenter.Source = null;
 
-                UpdateManager.Subscribe(this, _message, center, UpdateFile, true);
+                UpdateManager.Subscribe(this, _message, center, ref _fileToken, UpdateFile, true);
 
                 if (center.Local.CanBeDownloaded && !center.Local.IsDownloadingActive)
                 {

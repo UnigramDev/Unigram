@@ -128,10 +128,7 @@ namespace Telegram.Controls
 
         public void Clear()
         {
-            if (_fileToken != 0)
-            {
-                UpdateManager.Unsubscribe(this, ref _fileToken);
-            }
+            UpdateManager.Unsubscribe(this, ref _fileToken, true);
 
             _fileId = null;
             _referenceId = null;
@@ -254,10 +251,7 @@ namespace Telegram.Controls
 
         private void SetChat(IClientService clientService, Chat chat, File file, int side, bool download = true)
         {
-            if (_fileToken != 0)
-            {
-                UpdateManager.Unsubscribe(this, ref _fileToken);
-            }
+            UpdateManager.Unsubscribe(this, ref _fileToken, true);
 
             if (_referenceId != chat.Id || _fileId != file?.Id || Source == null || !download)
             {
@@ -346,10 +340,7 @@ namespace Telegram.Controls
 
         public void SetUser(IClientService clientService, User user, File file, int side, bool download = true)
         {
-            if (_fileToken != 0)
-            {
-                UpdateManager.Unsubscribe(this, ref _fileToken);
-            }
+            UpdateManager.Unsubscribe(this, ref _fileToken, true);
 
             if (_referenceId != user.Id || _fileId != file?.Id || Source == null || !download)
             {
@@ -421,10 +412,7 @@ namespace Telegram.Controls
 
         private void SetChat(IClientService clientService, ChatInviteLinkInfo chat, File file, int side, bool download = true)
         {
-            if (_fileToken != 0)
-            {
-                UpdateManager.Unsubscribe(this, ref _fileToken);
-            }
+            UpdateManager.Unsubscribe(this, ref _fileToken, true);
 
             Source = GetChat(clientService, chat, file, side, download);
             Shape = ProfilePictureShape.Ellipse;
@@ -483,10 +471,7 @@ namespace Telegram.Controls
 
         private void SetChatPhoto(IClientService clientService, ChatPhoto photo, File file, int side, bool download = true)
         {
-            if (_fileToken != 0)
-            {
-                UpdateManager.Unsubscribe(this, ref _fileToken);
-            }
+            UpdateManager.Unsubscribe(this, ref _fileToken, true);
 
             Source = GetChatPhoto(clientService, photo, file, side, download);
             Shape = ProfilePictureShape.Ellipse;

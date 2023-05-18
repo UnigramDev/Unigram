@@ -1665,9 +1665,15 @@ namespace Telegram.Services
             else if (update is UpdateFile updateFile)
             {
                 // TODO: move the message after track when figured out why WeakAction throws a NRE
-                EventAggregator.Default.Send(updateFile.File, (SessionId << 16) | updateFile.File.Id, updateFile.File.Local.IsDownloadingCompleted);
+                var token = (SessionId << 16) | updateFile.File.Id;
+                if (updateFile.File.Local.IsDownloadingCompleted)
+                {
+                    EventAggregator.Current.Publish(updateFile.File, token | 0x01000000, true);
+                }
+
+                EventAggregator.Current.Publish(updateFile.File, token, false);
                 TrackDownloadedFile(updateFile.File);
-                //return;
+                return;
             }
             else if (update is UpdateFileGenerationStart updateFileGenerationStart)
             {

@@ -19,7 +19,7 @@
 
     <ContentDialog.Resources>
         <DataTemplate x:Key="AnimatedItemTemplate">
-            <Grid Margin="2">
+            <controls:ClrGrid Margin="2">
                 <controls:LottieView30Fps x:Name="Player"
                                           AutoPlay="False" />
 
@@ -37,23 +37,23 @@
                                FontSize="16"
                                Text="&#xE9BE;" />
                 </Border>
-            </Grid>
+            </controls:ClrGrid>
         </DataTemplate>
 
         <DataTemplate x:Key="VideoItemTemplate">
-            <Grid Margin="2">
+            <controls:ClrGrid Margin="2">
                 <controls:AnimationView30Fps x:Name="Player"
                                              AutoPlay="False"
                                              IsCachingEnabled="True" />
-            </Grid>
+            </controls:ClrGrid>
         </DataTemplate>
 
         <DataTemplate x:Key="ItemTemplate">
-            <Grid Margin="2">
+            <controls:ClrGrid Margin="2">
                 <Border>
                     <Image />
                 </Border>
-            </Grid>
+            </controls:ClrGrid>
         </DataTemplate>
     </ContentDialog.Resources>
 

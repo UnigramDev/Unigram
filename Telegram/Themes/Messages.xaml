@@ -102,34 +102,34 @@
         </selectors:AutocompleteTemplateSelector.ItemTemplate>
         <selectors:AutocompleteTemplateSelector.StickerTemplate>
             <DataTemplate>
-                <Grid Padding="4"
-                      Width="72"
-                      Height="72">
+                <controls:ClrGrid Padding="4"
+                                  Width="72"
+                                  Height="72">
                     <Border>
                         <Image />
                     </Border>
-                </Grid>
+                </controls:ClrGrid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.StickerTemplate>
         <selectors:AutocompleteTemplateSelector.AnimatedStickerTemplate>
             <DataTemplate>
-                <Grid Padding="4"
-                      Width="72"
-                      Height="72">
+                <controls:ClrGrid Padding="4"
+                                  Width="72"
+                                  Height="72">
                     <controls:LottieView30Fps x:Name="Player"
                                               AutoPlay="False" />
-                </Grid>
+                </controls:ClrGrid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.AnimatedStickerTemplate>
         <selectors:AutocompleteTemplateSelector.VideoStickerTemplate>
             <DataTemplate>
-                <Grid Padding="4"
-                      Width="72"
-                      Height="72">
+                <controls:ClrGrid Padding="4"
+                                  Width="72"
+                                  Height="72">
                     <controls:AnimationView30Fps x:Name="Player"
                                                  AutoPlay="False"
                                                  IsCachingEnabled="True" />
-                </Grid>
+                </controls:ClrGrid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.VideoStickerTemplate>
         <selectors:AutocompleteTemplateSelector.EmojiTemplate>

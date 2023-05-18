@@ -310,7 +310,7 @@ namespace Telegram.Controls.Chats
         {
             if (_fileToken != 0)
             {
-                UpdateManager.Unsubscribe(this, ref _fileToken);
+                UpdateManager.Unsubscribe(this, ref _fileToken, true);
             }
 
             if (background.Type is BackgroundTypeFill typeFill)

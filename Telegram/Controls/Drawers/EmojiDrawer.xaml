@@ -40,28 +40,28 @@
         </DataTemplate>
 
         <DataTemplate x:Key="AnimatedItemTemplate">
-            <Grid>
+            <controls:ClrGrid>
                 <controls:LottieView30Fps x:Name="Player"
                                           AutoPlay="False"
                                           FrameSize="100,100"
                                           DecodeFrameType="Physical" />
-            </Grid>
+            </controls:ClrGrid>
         </DataTemplate>
 
         <DataTemplate x:Key="VideoItemTemplate">
-            <Grid>
+            <controls:ClrGrid>
                 <controls:AnimationView30Fps x:Name="Player"
                                              AutoPlay="False"
                                              IsCachingEnabled="True" />
-            </Grid>
+            </controls:ClrGrid>
         </DataTemplate>
 
         <DataTemplate x:Key="ItemTemplate">
-            <Grid>
+            <controls:ClrGrid>
                 <Border>
                     <Image />
                 </Border>
-            </Grid>
+            </controls:ClrGrid>
         </DataTemplate>
 
         <DataTemplate x:Key="MoreTemplate">

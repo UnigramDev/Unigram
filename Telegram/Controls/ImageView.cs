@@ -347,6 +347,8 @@ namespace Telegram.Controls
         private int _width;
         private int _height;
 
+        private long _fileToken;
+
         public void SetSource(IClientService clientService, File file, int width = 0, int height = 0)
         {
             _clientService = clientService;
@@ -365,7 +367,7 @@ namespace Telegram.Controls
             }
             else if (download)
             {
-                UpdateManager.Subscribe(this, clientService, file, UpdateSource, true);
+                UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateSource, true);
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {

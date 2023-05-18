@@ -115,12 +115,7 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = null;
 
-            if (_thumbnailToken != 0)
-            {
-                UpdateManager.Unsubscribe(this);
-            }
-
-            _thumbnailToken = 0;
+            UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
         }
 
         public bool IsValid(MessageContent content, bool primary)

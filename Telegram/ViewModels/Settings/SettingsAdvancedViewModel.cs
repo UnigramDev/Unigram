@@ -23,7 +23,7 @@ namespace Telegram.ViewModels.Settings
         private readonly ICloudUpdateService _cloudUpdateService;
         private CloudUpdate _update;
 
-        private string _fileToken;
+        private long _fileToken;
 
         public SettingsAdvancedViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, ICloudUpdateService cloudUpdateService)
             : base(clientService, settingsService, aggregator)
@@ -42,6 +42,12 @@ namespace Telegram.ViewModels.Settings
         public override void Subscribe()
         {
             Aggregator.Subscribe<UpdateAppVersion>(this, Handle);
+        }
+
+        protected override Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)
+        {
+            UpdateManager.Unsubscribe(this, ref _fileToken);
+            return Task.CompletedTask;
         }
 
         #region Updates

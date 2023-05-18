@@ -220,13 +220,8 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = null;
 
-            if (_fileToken != 0 || _thumbnailToken != 0)
-            {
-                UpdateManager.Unsubscribe(this);
-            }
-
-            _fileToken = 0;
-            _thumbnailToken = 0;
+            UpdateManager.Unsubscribe(this, ref _fileToken);
+            UpdateManager.Unsubscribe(this, ref _thumbnailToken, true);
 
             if (_templateApplied)
             {

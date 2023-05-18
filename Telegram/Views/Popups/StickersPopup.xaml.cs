@@ -245,6 +245,8 @@ namespace Telegram.Views.Popups
 
             if (file.Local.IsDownloadingCompleted)
             {
+                UpdateManager.Unsubscribe(content);
+
                 if (content.Children[0] is Border border && border.Child is Image photo)
                 {
                     photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 60);
@@ -269,8 +271,6 @@ namespace Telegram.Views.Popups
                 {
                     video.Source = new LocalFileSource(file);
                 }
-
-                UpdateManager.Unsubscribe(content);
             }
             else
             {
@@ -305,7 +305,7 @@ namespace Telegram.Views.Popups
 
                 if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    ViewModel.ClientService.DownloadFile(file.Id, 1);
+                    ViewModel.ClientService.DownloadFile(file.Id, 16);
                 }
             }
 
