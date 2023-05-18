@@ -2876,12 +2876,10 @@ namespace Telegram.Views
 
             return message.Content switch
             {
-                MessageAudio audio => audio.Audio.AudioValue.Local.IsDownloadingCompleted
-                    && ViewModel.StorageService.CheckAccessToFolder(audio.Audio.AudioValue),
-                MessageDocument document => document.Document.DocumentValue.Local.IsDownloadingCompleted
-                    && ViewModel.StorageService.CheckAccessToFolder(document.Document.DocumentValue),
-                MessageVideo video => video.Video.VideoValue.Local.IsDownloadingCompleted
-                    && ViewModel.StorageService.CheckAccessToFolder(video.Video.VideoValue),
+                MessagePhoto photo => ViewModel.StorageService.CheckAccessToFolder(photo.Photo.GetBig()?.Photo),
+                MessageAudio audio => ViewModel.StorageService.CheckAccessToFolder(audio.Audio.AudioValue),
+                MessageDocument document => ViewModel.StorageService.CheckAccessToFolder(document.Document.DocumentValue),
+                MessageVideo video => ViewModel.StorageService.CheckAccessToFolder(video.Video.VideoValue),
                 _ => false
             };
         }

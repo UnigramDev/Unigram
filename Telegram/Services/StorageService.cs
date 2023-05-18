@@ -204,12 +204,17 @@ namespace Telegram.Services
 
         public bool CheckAccessToFolder(File file)
         {
-            if (ApiInfo.HasKnownFolders)
+            if (file != null && file.Local.IsDownloadingCompleted)
             {
-                return true;
+                if (ApiInfo.HasKnownFolders)
+                {
+                    return true;
+                }
+
+                return Future.Contains(Future.DownloadFolder);
             }
 
-            return Future.Contains(Future.DownloadFolder);
+            return false;
         }
 
         public Task<DownloadFolder> GetDownloadFolderAsync()
