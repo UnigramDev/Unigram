@@ -162,15 +162,15 @@ namespace Telegram.Controls
         {
             if (CurrentState == MasterDetailState.Minimal && DetailFrame?.CurrentSourcePageType == BlankPageType)
             {
-                MasterPresenter.Visibility = Visibility.Visible;
+                MasterVisibility = Visibility.Visible;
             }
             else if (CurrentState is MasterDetailState.Compact or MasterDetailState.Expanded)
             {
-                MasterPresenter.Visibility = Visibility.Visible;
+                MasterVisibility = Visibility.Visible;
             }
             else
             {
-                MasterPresenter.Visibility = Visibility.Collapsed;
+                MasterVisibility = Visibility.Collapsed;
             }
         }
 
@@ -699,6 +699,19 @@ namespace Telegram.Controls
 
         public static readonly DependencyProperty BackgroundMarginProperty =
             DependencyProperty.Register("BackgroundMargin", typeof(Thickness), typeof(MasterDetailView), new PropertyMetadata(default(Thickness)));
+
+        #endregion
+
+        #region MasterVisibility
+
+        public Visibility MasterVisibility
+        {
+            get { return (Visibility)GetValue(MasterVisibilityProperty); }
+            set { SetValue(MasterVisibilityProperty, value); }
+        }
+
+        public static readonly DependencyProperty MasterVisibilityProperty =
+            DependencyProperty.Register("MasterVisibility", typeof(Visibility), typeof(MasterDetailView), new PropertyMetadata(Visibility.Visible));
 
         #endregion
     }
