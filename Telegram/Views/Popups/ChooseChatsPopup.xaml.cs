@@ -676,7 +676,11 @@ namespace Telegram.Views.Popups
 
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ShowHideSearch(true);
+            if (SearchField.FocusState != FocusState.Unfocused)
+            {
+                ShowHideSearch(true);
+            }
+
             ViewModel.SearchChats.Query = SearchField.Text;
         }
 
