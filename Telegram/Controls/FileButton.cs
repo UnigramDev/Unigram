@@ -171,7 +171,7 @@ namespace Telegram.Controls
                 case MessageContentState.Downloading:
                     if (IsSmall || (_state != MessageContentState.Download && _state != MessageContentState.Downloading))
                     {
-                        OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload, false);
+                        OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.DismissFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload, false);
                     }
                     else if (_state != MessageContentState.Downloading)
                     {
@@ -179,34 +179,34 @@ namespace Telegram.Controls
                     }
                     break;
                 case MessageContentState.Uploading:
-                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.Cancel, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload);
+                    OnGlyphChanged(IsSmall ? Icons.CancelSmall : Icons.DismissFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload);
                     break;
                 case MessageContentState.Confirm:
-                    OnGlyphChanged(Icons.Checkmark, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload);
+                    OnGlyphChanged(Icons.CheckmarkFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionCancelDownload);
                     break;
                 case MessageContentState.Document:
-                    OnGlyphChanged(Icons.Document, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
+                    OnGlyphChanged(Icons.DocumentFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Animation:
                     OnGlyphChanged(Icons.Animation, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPlay);
                     break;
                 case MessageContentState.Photo:
-                    OnGlyphChanged(Icons.Image, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
+                    OnGlyphChanged(Icons.ImageFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Play:
-                    OnGlyphChanged(Icons.Play, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPlay);
+                    OnGlyphChanged(Icons.PlayFilled, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPlay);
                     break;
                 case MessageContentState.Pause:
-                    OnGlyphChanged(Icons.Pause, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPause);
+                    OnGlyphChanged(Icons.PauseFilled, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPause);
                     break;
                 case MessageContentState.Ttl:
-                    OnGlyphChanged(Icons.Ttl, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
+                    OnGlyphChanged(Icons.TtlFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Unlock:
-                    OnGlyphChanged(Icons.LockClosed, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
+                    OnGlyphChanged(Icons.LockClosedFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Theme:
-                    OnGlyphChanged(Icons.Color, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
+                    OnGlyphChanged(Icons.ColorFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
             }
 

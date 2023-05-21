@@ -40,15 +40,21 @@ namespace Telegram.Converters
         public const string ArrowDownload = "\uE118";
         public const string DownloadSmall = "\uE92A";
         public const string Dismiss = "\uE711";
+        public const string DismissFilled24 = "\uEA1F";
         public const string Cancel = "\uE978";
         public const string CancelSmall = "\uE928";
         public const string Play = "\uE768";
+        public const string PlayFilled = "\uEA17";
         public const string Pause = "\uE769";
+        public const string PauseFilled = "\uEA18";
         public const string Checkmark = "\uE10B";
-        public const string Ttl = "\uE60E";
+        public const string CheckmarkFilled24 = "\uEA20";
+        public const string TtlFilled24 = "\uEA21";
         public const string Document = "\uE7C3";
+        public const string DocumentFilled24 = "\uEA1C";
         public const string Animation = "\uE906";
         public const string Color = "\uE2B1";
+        public const string ColorFilled24 = "\uEA1B";
 
         public const string Retry = "\uE72C";
 
@@ -76,6 +82,7 @@ namespace Telegram.Converters
         public const string People = "\uE716";
         public const string Megaphone = "\uE789";
         public const string LockClosed = "\uE72E";
+        public const string LockClosedFilled24 = "\uEA1E";
         public const string Bot = "\uE99A";
 
         public const string Gift = "\uE9D3";
@@ -120,6 +127,7 @@ namespace Telegram.Converters
         public const string MarkAsUnread = "\uE91C";
 
         public const string Image = "\uEB9F";
+        public const string ImageFilled24 = "\uEA1D";
 
         public const string ArrowUpload = "\uEA01";
 
@@ -252,17 +260,17 @@ namespace Telegram.Converters
 
         public const string Seen = "\uE96B";
 
-        public const string Multiplier2xFilled24 = "\uE9AC";
-        public const string PlayCircleFilled24 = "\uE9AD";
-        public const string ChatFilled24 = "\uE9AE";
-        public const string StickerFilled24 = "\uE9AF";
-        public const string HeartFilled24 = "\uE9B0";
-        public const string MegaphoneFilled24 = "\uE9B1";
-        public const string MicFilled24 = "\uE9B2";
-        public const string TopSpeedFilled24 = "\uE9B3";
-        public const string DocumentFilled24 = "\uE9B4";
-        public const string PremiumFilled24 = "\uE9B6";
-        public const string EmojiFilled24 = "\uE9D2";
+        public const string PremiumMultiplier2x = "\uE9AC";
+        public const string PremiumPlayCircle = "\uE9AD";
+        public const string PremiumChat = "\uE9AE";
+        public const string PremiumSticker = "\uE9AF";
+        public const string PremiumHeart = "\uE9B0";
+        public const string PremiumMegaphone = "\uE9B1";
+        public const string PremiumMic = "\uE9B2";
+        public const string PremiumTopSpeed = "\uE9B3";
+        public const string PremiumDocument = "\uE9B4";
+        public const string PremiumPremium = "\uE9B6";
+        public const string PremiumEmoji = "\uE9D2";
 
         public const string Premium16 = "\uE9B5";
         public const string LockClosed16 = "\uE9BE";

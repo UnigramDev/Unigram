@@ -74,12 +74,12 @@ namespace Telegram.Views.Premium.Popups
             switch (feature)
             {
                 case PremiumFeatureAdvancedChatManagement:
-                    iconValue = Icons.ChatFilled24;
+                    iconValue = Icons.PremiumChat;
                     titleValue = Strings.PremiumPreviewAdvancedChatManagement;
                     subtitleValue = Strings.PremiumPreviewAdvancedChatManagementDescription;
                     break;
                 case PremiumFeatureAnimatedProfilePhoto:
-                    iconValue = Icons.PlayCircleFilled24;
+                    iconValue = Icons.PremiumPlayCircle;
                     titleValue = Strings.PremiumPreviewAnimatedProfiles;
                     subtitleValue = Strings.PremiumPreviewAnimatedProfilesDescription;
                     break;
@@ -88,12 +88,12 @@ namespace Telegram.Views.Premium.Popups
                     subtitleValue = Strings.PremiumPreviewAppIconDescription;
                     break;
                 case PremiumFeatureCustomEmoji:
-                    iconValue = Icons.EmojiFilled24;
+                    iconValue = Icons.PremiumEmoji;
                     titleValue = Strings.PremiumPreviewEmoji;
                     subtitleValue = Strings.PremiumPreviewEmojiDescription;
                     break;
                 case PremiumFeatureDisabledAds:
-                    iconValue = Icons.MegaphoneFilled24;
+                    iconValue = Icons.PremiumMegaphone;
                     titleValue = Strings.PremiumPreviewNoAds;
                     subtitleValue = Strings.PremiumPreviewNoAdsDescription;
                     break;
@@ -103,22 +103,22 @@ namespace Telegram.Views.Premium.Popups
                     subtitleValue = Strings.PremiumPreviewEmojiStatusDescription;
                     break;
                 case PremiumFeatureImprovedDownloadSpeed:
-                    iconValue = Icons.TopSpeedFilled24;
+                    iconValue = Icons.PremiumTopSpeed;
                     titleValue = Strings.PremiumPreviewDownloadSpeed;
                     subtitleValue = Strings.PremiumPreviewDownloadSpeedDescription;
                     break;
                 case PremiumFeatureIncreasedLimits:
-                    iconValue = Icons.Multiplier2xFilled24;
+                    iconValue = Icons.PremiumMultiplier2x;
                     titleValue = Strings.PremiumPreviewLimits;
                     subtitleValue = ViewModel.PremiumPreviewLimitsDescription;
                     break;
                 case PremiumFeatureIncreasedUploadFileSize:
-                    iconValue = Icons.DocumentFilled24;
+                    iconValue = Icons.PremiumDocument;
                     titleValue = Strings.PremiumPreviewUploads;
                     subtitleValue = Strings.PremiumPreviewUploadsDescription;
                     break;
                 case PremiumFeatureProfileBadge:
-                    iconValue = Icons.PremiumFilled24;
+                    iconValue = Icons.PremiumPremium;
                     titleValue = Strings.PremiumPreviewProfileBadge;
                     subtitleValue = Strings.PremiumPreviewProfileBadgeDescription;
                     break;
@@ -128,17 +128,17 @@ namespace Telegram.Views.Premium.Popups
                     subtitleValue = Strings.PremiumPreviewTranslationsDescription;
                     break;
                 case PremiumFeatureUniqueReactions:
-                    iconValue = Icons.HeartFilled24;
+                    iconValue = Icons.PremiumHeart;
                     titleValue = Strings.PremiumPreviewReactions2;
                     subtitleValue = Strings.PremiumPreviewReactions2Description;
                     break;
                 case PremiumFeatureUniqueStickers:
-                    iconValue = Icons.StickerFilled24;
+                    iconValue = Icons.PremiumSticker;
                     titleValue = Strings.PremiumPreviewStickers;
                     subtitleValue = Strings.PremiumPreviewStickersDescription;
                     break;
                 case PremiumFeatureVoiceRecognition:
-                    iconValue = Icons.MicFilled24;
+                    iconValue = Icons.PremiumMic;
                     titleValue = Strings.PremiumPreviewVoiceToText;
                     subtitleValue = Strings.PremiumPreviewVoiceToTextDescription;
                     break;
