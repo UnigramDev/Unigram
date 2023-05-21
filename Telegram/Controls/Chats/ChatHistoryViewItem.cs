@@ -218,14 +218,14 @@ namespace Telegram.Controls.Chats
             {
                 if (_share != share)
                 {
-                    _tracker.Properties.InsertBoolean("CanShare", _share);
-                    _tracker.MinPosition = new Vector3(_share ? -72 : 0);
+                    _tracker.Properties.InsertBoolean("CanShare", share);
+                    _tracker.MinPosition = new Vector3(share ? -72 : 0);
                 }
 
                 if (_reply != reply)
                 {
-                    _tracker.Properties.InsertBoolean("CanReply", _reply);
-                    _tracker.MaxPosition = new Vector3(_reply ? 72 : 0);
+                    _tracker.Properties.InsertBoolean("CanReply", reply);
+                    _tracker.MaxPosition = new Vector3(reply ? 72 : 0);
                 }
 
                 if (_tracker.Position.X != 0)
