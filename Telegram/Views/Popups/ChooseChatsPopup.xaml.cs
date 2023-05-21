@@ -291,6 +291,12 @@ namespace Telegram.Views.Popups
                 OnNavigatedTo();
             }
 
+            var button = GetTemplateChild("PrimarySplitButton") as Button;
+            if (button != null && IsPrimaryButtonSplit)
+            {
+                button.Click += PrimaryButton_ContextRequested;
+            }
+
             base.OnApplyTemplate();
         }
 
