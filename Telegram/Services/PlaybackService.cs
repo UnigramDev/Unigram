@@ -496,22 +496,34 @@ namespace Telegram.Services
             }
         }
 
-        private void SetSource(PlaybackItem item, bool play = false)
+        private async void SetSource(PlaybackItem item, bool play = false)
         {
-            Execute(async player =>
+            try
             {
+                if (_mediaPlayer == null)
+                {
+                    return;
+                }
+
                 var source = await item.GetSourceAsync();
                 if (source != null)
                 {
-                    _mapping.AddOrUpdate(source, item);
-                    player.Source = source;
-
-                    if (play)
+                    if (_mediaPlayer != null)
                     {
-                        Play();
+                        _mapping.AddOrUpdate(source, item);
+                        _mediaPlayer.Source = source;
+
+                        if (play)
+                        {
+                            Play();
+                        }
                     }
                 }
-            });
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
         }
 
         public void Clear()
@@ -759,10 +771,8 @@ namespace Telegram.Services
 
                 return _source;
             }
-            catch (Exception ex)
+            catch
             {
-                Logger.Error(ex);
-
                 Dispose();
                 return null;
             }
