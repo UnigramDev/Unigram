@@ -51,6 +51,7 @@ namespace Telegram.Controls
             Unloaded += OnUnloaded;
 
             Opened += OnOpened;
+            Closing += OnClosing;
             Closed += OnClosed;
         }
 
@@ -64,6 +65,21 @@ namespace Telegram.Controls
             if (Window.Current.Content is RootPage root)
             {
                 root.PopupOpened();
+            }
+        }
+
+        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        {
+            var canvas = VisualTreeHelper.GetParent(this) as Canvas;
+            if (canvas != null)
+            {
+                foreach (var child in canvas.Children)
+                {
+                    if (child is Rectangle rectangle)
+                    {
+                        rectangle.Visibility = Visibility.Collapsed;
+                    }
+                }
             }
         }
 
@@ -90,6 +106,7 @@ namespace Telegram.Controls
                 {
                     if (child is Rectangle rectangle)
                     {
+                        rectangle.Visibility = Visibility.Visible;
                         rectangle.Fill = new SolidColorBrush(ActualTheme == ElementTheme.Light
                             ? Color.FromArgb(0x99, 0xFF, 0xFF, 0xFF)
                             : Color.FromArgb(0x99, 0x00, 0x00, 0x00));
@@ -114,7 +131,7 @@ namespace Telegram.Controls
             }
 
             var focused = FocusManager.GetFocusedElement();
-            if (focused is null or (not TextBox and not RichEditBox))
+            if (focused is null or (not TextBox and not RichEditBox and not Button))
             {
                 Hide(ContentDialogResult.Primary);
                 args.Handled = true;
