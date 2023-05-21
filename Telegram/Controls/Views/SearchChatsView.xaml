@@ -13,7 +13,7 @@
              d:DesignWidth="400">
 
     <UserControl.Resources>
-        <Style x:Name="HeaderListViewItemStyle"
+        <Style x:Key="HeaderListViewItemStyle"
                TargetType="ListViewItem">
             <Setter Property="MinHeight"
                     Value="0" />

@@ -20,7 +20,7 @@
                       Unloaded="OnUnloaded">
 
     <Control.Resources>
-        <Style x:Name="TransportLessMediaPlayerStyle"
+        <Style x:Key="TransportLessMediaPlayerStyle"
                TargetType="MediaPlayerElement">
             <Setter Property="HorizontalAlignment"
                     Value="Stretch" />

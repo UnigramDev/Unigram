@@ -6,7 +6,7 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     mc:Ignorable="d">
 
-    <Style x:Name="InvoiceFileButtonStyle"
+    <Style x:Key="InvoiceFileButtonStyle"
            TargetType="controls:FileButton">
         <!--<Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}" />-->
         <Setter Property="Foreground"

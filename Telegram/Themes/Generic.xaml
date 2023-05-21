@@ -3050,10 +3050,10 @@
                                           VerticalContentAlignment="Stretch"
                                           Grid.Column="1" />
                         <muxc:ProgressBar IsIndeterminate="{TemplateBinding IsLoading}"
-                                               Background="Transparent"
-                                               VerticalAlignment="Bottom"
-                                               IsHitTestVisible="False"
-                                               Grid.ColumnSpan="2" />
+                                          Background="Transparent"
+                                          VerticalAlignment="Bottom"
+                                          IsHitTestVisible="False"
+                                          Grid.ColumnSpan="2" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

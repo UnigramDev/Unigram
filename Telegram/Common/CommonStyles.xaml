@@ -3362,7 +3362,7 @@
         </Setter>
     </Style>
 
-    <Style x:Name="PollOptionProgressBarStyle"
+    <Style x:Key="PollOptionProgressBarStyle"
            TargetType="ProgressBar">
         <Setter Property="Foreground"
                 Value="{ThemeResource SystemControlHighlightAccentBrush}" />

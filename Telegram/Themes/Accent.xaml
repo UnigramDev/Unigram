@@ -99,7 +99,7 @@
 
 
 
-    <Style x:Name="InlineFileButtonStyle"
+    <Style x:Key="InlineFileButtonStyle"
            TargetType="controls:FileButton">
         <Setter Property="Background"
                 Value="Transparent" />
@@ -223,7 +223,7 @@
         </Setter>
     </Style>
 
-    <Style x:Name="StreamFileButtonStyle"
+    <Style x:Key="StreamFileButtonStyle"
            TargetType="controls:FileButton">
         <Setter Property="Background"
                 Value="Transparent" />
@@ -353,6 +353,7 @@
 
 
     <Style x:Name="ImmersiveFileButtonStyle"
+    <Style x:Key="ImmersiveFileButtonStyle"
            TargetType="controls:FileButton">
         <!--<Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}" />-->
         <Setter Property="Foreground"
@@ -490,7 +491,7 @@
         </Setter>
     </Style>
 
-    <Style x:Name="SmallImmersiveFileButtonStyle"
+    <Style x:Key="SmallImmersiveFileButtonStyle"
            TargetType="controls:FileButton">
         <!--<Setter Property="Background" Value="{ThemeResource MessageOverlayBackgroundBrush}" />-->
         <Setter Property="Foreground"

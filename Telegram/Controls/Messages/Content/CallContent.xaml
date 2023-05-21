@@ -8,7 +8,7 @@
                     d:DesignHeight="300"
                     d:DesignWidth="400">
 
-    <Style x:Name="InlineButtonStyle"
+    <Style x:Key="InlineButtonStyle"
            TargetType="controls:GlyphHyperlinkButton">
         <Setter Property="Background"
                 Value="Transparent" />

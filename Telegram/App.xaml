@@ -309,7 +309,7 @@
                         Value="{StaticResource GlyphMediumFontSize}" />
             </Style>
 
-            <Style x:Name="PremiumStar"
+            <Style x:Key="PremiumStar"
                    TargetType="Path">
                 <Setter Property="Fill">
                     <Setter.Value>

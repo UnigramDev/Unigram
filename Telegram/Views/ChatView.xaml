@@ -108,7 +108,7 @@
             </Setter>
         </Style>
 
-        <Style x:Name="BubbleListViewStyle"
+        <Style x:Key="BubbleListViewStyle"
                TargetType="ListView">
             <Setter Property="IsTabStop"
                     Value="False" />
@@ -614,16 +614,16 @@
               SizeChanged="ContentPanel_SizeChanged"
               Grid.Row="2">
             <chats:ChatHistoryView x:Name="Messages"
-                                Style="{StaticResource BubbleListViewStyle}"
-                                ItemContainerTransitions="{x:Null}"
-                                ShowsScrollingPlaceholders="False"
-                                IsItemClickEnabled="False"
-                                IsSelectionEnabled="{x:Bind ViewModel.IsSelectionEnabled, Mode=TwoWay}"
-                                SelectionMode="None"
-                                ChoosingItemContainer="OnChoosingItemContainer"
-                                ContainerContentChanging="OnContainerContentChanging"
-                                Margin="0,0,0,8"
-                                Grid.ColumnSpan="2">
+                                   Style="{StaticResource BubbleListViewStyle}"
+                                   ItemContainerTransitions="{x:Null}"
+                                   ShowsScrollingPlaceholders="False"
+                                   IsItemClickEnabled="False"
+                                   IsSelectionEnabled="{x:Bind ViewModel.IsSelectionEnabled, Mode=TwoWay}"
+                                   SelectionMode="None"
+                                   ChoosingItemContainer="OnChoosingItemContainer"
+                                   ContainerContentChanging="OnContainerContentChanging"
+                                   Margin="0,0,0,8"
+                                   Grid.ColumnSpan="2">
                 <ListView.Resources>
                     <CornerRadius x:Key="ListViewItemCornerRadius">0</CornerRadius>
                     <CornerRadius x:Key="ListViewItemCheckBoxCornerRadius">0</CornerRadius>
