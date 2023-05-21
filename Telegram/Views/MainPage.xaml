@@ -560,21 +560,6 @@
                             </TextBox.Header>-->
                         </controls:SuggestTextBox>
 
-                        <StackPanel x:Name="ContactsOptions"
-                                    Orientation="Horizontal"
-                                    VerticalAlignment="Center"
-                                    Grid.Column="2">
-                            <controls:GlyphToggleButton Glyph="&#xE91B;"
-                                                        CheckedGlyph="&#xE91E;"
-                                                        IsChecked="{x:Bind ViewModel.Contacts.IsSortedByEpoch, Mode=TwoWay}"
-                                                        Style="{StaticResource HeaderGlyphToggleButtonStyle}"
-                                                        FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                                        AutomationProperties.Name="{CustomResource AccDescrContactSorting}"
-                                                        ToolTipService.ToolTip="{CustomResource AccDescrContactSorting}"
-                                                        IsOneWay="False"
-                                                        Width="40"
-                                                        Height="40" />
-                        </StackPanel>
                         <StackPanel x:Name="ChatsOptions"
                                     Orientation="Horizontal"
                                     VerticalAlignment="Center"
@@ -1027,11 +1012,35 @@
                                                 </controls:BadgeButton.IconSource>
                                             </controls:BadgeButton>
 
-                                            <Border>
-                                                <TextBlock Text="{x:Bind ConvertSortedBy(ViewModel.Contacts.IsSortedByEpoch), Mode=OneWay}"
-                                                           Padding="12,8,0,8"
-                                                           Style="{StaticResource BaseTextBlockStyle}" />
-                                            </Border>
+                                            <Grid>
+                                                <Grid.ChildrenTransitions>
+                                                    <TransitionCollection>
+                                                        <RepositionThemeTransition />
+                                                    </TransitionCollection>
+                                                </Grid.ChildrenTransitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <controls:AnimatedTextBlock Text="{x:Bind ConvertSortedBy(ViewModel.Contacts.IsSortedByEpoch), Mode=OneWay}"
+                                                                            TextStyle="{StaticResource BaseTextBlockStyle}"
+                                                                            TextWrapping="WrapWholeWords"
+                                                                            Margin="12,8,0,4" />
+
+                                                <controls:GlyphToggleButton HorizontalAlignment="Left"
+                                                                            VerticalAlignment="Bottom"
+                                                                            IsOneWay="False"
+                                                                            IsChecked="{x:Bind ViewModel.Contacts.IsSortedByEpoch, Mode=TwoWay}"
+                                                                            AutomationProperties.Name="{CustomResource AccDescrContactSorting}"
+                                                                            ToolTipService.ToolTip="{CustomResource AccDescrContactSorting}"
+                                                                            Margin="0,0,0,-4"
+                                                                            CheckedGlyph="&#xE8CB;"
+                                                                            Glyph="&#xE8CB;"
+                                                                            FontSize="16"
+                                                                            Width="36"
+                                                                            Height="32"
+                                                                            Grid.Column="1" />
+                                            </Grid>
                                         </StackPanel>
                                     </ListView.Header>
                                     <!--<ListView.ItemContainerTransitions>

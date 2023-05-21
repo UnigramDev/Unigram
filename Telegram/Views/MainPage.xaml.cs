@@ -1800,8 +1800,6 @@ namespace Telegram.Views
         private void UpdateHeader()
         {
             ChatsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
-            ContactsOptions.Visibility = rpMasterTitlebar.SelectedIndex == 1 ? Visibility.Visible : Visibility.Collapsed;
-
             SearchField.PlaceholderText = rpMasterTitlebar.SelectedIndex == 3 ? Strings.SearchInSettings : Strings.Search;
         }
 

@@ -6344,26 +6344,22 @@
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
-                                   FontWeight="{TemplateBinding FontWeight}"
                                    Typography.NumeralAlignment="Tabular" />
                         <TextBlock x:Name="SuffixPart"
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
-                                   FontWeight="{TemplateBinding FontWeight}"
                                    Typography.NumeralAlignment="Tabular"
                                    Grid.Column="2" />
                         <TextBlock x:Name="PrevPart"
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
-                                   FontWeight="{TemplateBinding FontWeight}"
                                    Typography.NumeralAlignment="Tabular"
                                    Grid.ColumnSpan="2" />
                         <TextBlock x:Name="NextPart"
                                    Style="{TemplateBinding TextStyle}"
                                    Foreground="{TemplateBinding Foreground}"
-                                   FontWeight="{TemplateBinding FontWeight}"
                                    Typography.NumeralAlignment="Tabular"
                                    Grid.Column="1" />
                     </local:AnimatedTextBlockPresenter>

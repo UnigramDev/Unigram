@@ -1414,6 +1414,7 @@
                             </Viewbox>
                             <local:AnimatedTextBlock x:Name="TextBlock"
                                                      Text="{TemplateBinding Text}"
+                                                     TextStyle="{StaticResource BaseTextBlockStyle}"
                                                      Foreground="{TemplateBinding Foreground}"
                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
