@@ -45,6 +45,7 @@ namespace Telegram.Views.Settings.Privacy
                 MessagePreview.Mockup(Strings.PrivacyForwardsMessageLine, user.FullName(), true, false, DateTime.Now);
             }
 
+            BackgroundControl.XamlRoot = Frame.XamlRoot;
             BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
         }
 

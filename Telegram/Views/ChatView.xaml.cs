@@ -270,18 +270,6 @@ namespace Telegram.Views
 
         private void OnNavigatedTo()
         {
-            if (WindowContext.Current.ContactPanel != null)
-            {
-                Header.Visibility = Visibility.Collapsed;
-                FindName(nameof(BackgroundControl));
-                BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
-            }
-            else if (!Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().IsMain)
-            {
-                FindName(nameof(BackgroundControl));
-                BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
-            }
-
             GroupCall.InitializeParent(ClipperOuter, ViewModel.ClientService);
             JoinRequests.InitializeParent(ClipperJoinRequests, ViewModel.ClientService);
             ActionBar.InitializeParent(ClipperActionBar);
@@ -957,6 +945,18 @@ namespace Telegram.Views
 
 
             _focusState.Set(FocusState.Programmatic);
+
+            if (WindowContext.Current.ContactPanel != null)
+            {
+                Header.Visibility = Visibility.Collapsed;
+                FindName(nameof(BackgroundControl));
+                BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
+            }
+            else if (!Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().IsMain)
+            {
+                FindName(nameof(BackgroundControl));
+                BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
+            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)

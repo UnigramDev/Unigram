@@ -48,7 +48,7 @@ namespace Telegram.Views.Popups
             }
 
             var wallpaper = args.Item as Background;
-            var content = args.ItemContainer.ContentTemplateRoot as ChatBackgroundRenderer;
+            var content = args.ItemContainer.ContentTemplateRoot as ChatBackgroundPresenter;
 
             content.UpdateSource(ViewModel.ClientService, wallpaper, true);
         }

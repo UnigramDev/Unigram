@@ -75,7 +75,7 @@ namespace Telegram.Views.Popups
             var wallpaper = args.Item as Background;
             var root = args.ItemContainer.ContentTemplateRoot as Grid;
 
-            var preview = root.Children[0] as ChatBackgroundRenderer;
+            var preview = root.Children[0] as ChatBackgroundPresenter;
             var check = root.Children[1];
 
             preview.UpdateSource(ViewModel.ClientService, wallpaper, true);

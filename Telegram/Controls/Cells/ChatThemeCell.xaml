@@ -17,8 +17,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <chats:ChatBackgroundRenderer x:Name="Preview"
-                                      Grid.RowSpan="3" />
+        <chats:ChatBackgroundPresenter x:Name="Preview"
+                                       Grid.RowSpan="3" />
 
         <chats:ChatBackgroundPreview x:Name="Outgoing"
                                      HorizontalAlignment="Stretch"

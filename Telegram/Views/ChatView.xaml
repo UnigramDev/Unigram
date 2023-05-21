@@ -241,7 +241,7 @@
                                      Padding="12,2,12,0"
                                      Width="216">
                 <StackPanel>
-                    <chats:ChatBackgroundRenderer x:Name="Photo"
+                    <chats:ChatBackgroundPresenter x:Name="Photo"
                                                   IsEnabled="False"
                                                   Width="120"
                                                   Height="120"

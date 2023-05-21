@@ -80,7 +80,7 @@
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="td:Background">
                     <controls:AspectView Constraint="{x:Bind}">
-                        <chats:ChatBackgroundRenderer />
+                        <chats:ChatBackgroundPresenter />
 
                         <Grid VerticalAlignment="Center">
                             <Rectangle x:Name="NormalRectangle"

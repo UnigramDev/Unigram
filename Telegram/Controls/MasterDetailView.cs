@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls.Chats;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Views;
@@ -37,11 +38,12 @@ namespace Telegram.Controls
         private Grid DetailPresenter;
         private BreadcrumbBar DetailHeaderPresenter;
         private Border DetailHeaderBackground;
-        private FrameworkElement BackgroundPart;
+        private ChatBackgroundControl BackgroundPart;
         private ContentControl DetailAction;
         private Border BorderPart;
         private Border MaterialPart;
 
+        public ViewModelBase ViewModel { get; private set; }
         public NavigationService NavigationService { get; private set; }
         public Frame ParentFrame { get; private set; }
 
@@ -59,18 +61,19 @@ namespace Telegram.Controls
 
         #region Initialize
 
-        public void Initialize(string key, Frame parent, int session)
+        public void Initialize(string key, Frame parent, ViewModelBase viewModel)
         {
-            var service = WindowContext.Current.NavigationServices.GetByFrameId(key + session) as NavigationService;
+            var service = WindowContext.Current.NavigationServices.GetByFrameId(key + viewModel.SessionId) as NavigationService;
             if (service == null)
             {
-                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, key + session, false) as NavigationService;
+                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, viewModel.SessionId, key + viewModel.SessionId, false) as NavigationService;
                 service.Frame.DataContext = new object();
                 service.FrameFacade.BackRequested += OnBackRequested;
                 service.BackStackChanged += OnBackStackChanged;
             }
 
             NavigationService = service;
+            ViewModel = viewModel;
             DetailFrame = NavigationService.Frame;
             ParentFrame = parent;
         }
@@ -286,7 +289,7 @@ namespace Telegram.Controls
             DetailHeaderPresenter = GetTemplateChild(nameof(DetailHeaderPresenter)) as BreadcrumbBar;
             DetailHeaderBackground = GetTemplateChild(nameof(DetailHeaderBackground)) as Border;
             DetailAction = GetTemplateChild(nameof(DetailAction)) as ContentControl;
-            BackgroundPart = GetTemplateChild(nameof(BackgroundPart)) as FrameworkElement;
+            BackgroundPart = GetTemplateChild(nameof(BackgroundPart)) as ChatBackgroundControl;
             BorderPart = GetTemplateChild(nameof(BorderPart)) as Border;
             MaterialPart = GetTemplateChild(nameof(MaterialPart)) as Border;
             AdaptivePanel = GetTemplateChild(nameof(AdaptivePanel)) as MasterDetailPanel;
@@ -295,6 +298,7 @@ namespace Telegram.Controls
             DetailHeaderPresenter.ItemsSource = _backStack;
             DetailHeaderPresenter.ItemClicked += DetailHeaderPresenter_ItemClicked;
 
+            BackgroundPart.Update(ViewModel.ClientService, ViewModel.Aggregator);
             BackgroundPart.Visibility = _backgroundType == BackgroundKind.Background ? Visibility.Visible : Visibility.Collapsed;
             BorderPart.Visibility = _backgroundType != BackgroundKind.None ? Visibility.Visible : Visibility.Collapsed;
             MaterialPart.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;

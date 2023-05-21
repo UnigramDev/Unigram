@@ -34,8 +34,6 @@ namespace Telegram.Controls.Cells
             {
                 NoTheme.Visibility = Visibility.Visible;
 
-                // TODO: find some way to prevent this from playing
-                Preview.Unload();
                 Preview.Visibility = Visibility.Collapsed;
 
                 Outgoing.Fill = null;

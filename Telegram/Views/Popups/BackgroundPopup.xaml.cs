@@ -95,10 +95,12 @@ namespace Telegram.Views.Popups
         {
             if (background != null)
             {
+                Preview.XamlRoot = XamlRoot;
                 Preview.UpdateSource(ViewModel.ClientService, background, false);
+
                 PatternList.ForEach<Document>((container, document) =>
                 {
-                    var content = container.ContentTemplateRoot as ChatBackgroundRenderer;
+                    var content = container.ContentTemplateRoot as ChatBackgroundPresenter;
                     var background = ViewModel.GetPattern(document);
 
                     content.UpdateSource(ViewModel.ClientService, background, true);
@@ -204,7 +206,7 @@ namespace Telegram.Views.Popups
             }
 
             var pattern = args.Item as PatternInfo;
-            var content = args.ItemContainer.ContentTemplateRoot as ChatBackgroundRenderer;
+            var content = args.ItemContainer.ContentTemplateRoot as ChatBackgroundPresenter;
 
             var background = ViewModel.GetPattern(pattern?.Document);
 

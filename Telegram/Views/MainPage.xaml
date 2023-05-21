@@ -83,7 +83,6 @@
                                 <chats:ChatBackgroundControl x:Name="BackgroundPart"
                                                              Margin="{TemplateBinding BackgroundMargin}"
                                                              CornerRadius="9,0,0,0"
-                                                             Loading="ChatBackgroundPresenter_Loading"
                                                              Grid.RowSpan="2" />
 
                                 <Grid MaxWidth="1000"

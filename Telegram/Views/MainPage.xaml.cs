@@ -1227,7 +1227,7 @@ namespace Telegram.Views
 
             if (MasterDetail.NavigationService == null)
             {
-                MasterDetail.Initialize("Main", Frame, ViewModel.ClientService.SessionId);
+                MasterDetail.Initialize("Main", Frame, ViewModel);
                 MasterDetail.NavigationService.FrameFacade.Navigating += OnNavigating;
                 MasterDetail.NavigationService.FrameFacade.Navigated += OnNavigated;
             }
@@ -2150,14 +2150,6 @@ namespace Telegram.Views
         private void Proxy_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsProxiesPage));
-        }
-
-        private void ChatBackgroundPresenter_Loading(FrameworkElement sender, object args)
-        {
-            if (sender is ChatBackgroundControl presenter)
-            {
-                presenter.Update(ViewModel.ClientService, ViewModel.Aggregator);
-            }
         }
 
         private void ChatsNearby_Click(object sender, RoutedEventArgs e)

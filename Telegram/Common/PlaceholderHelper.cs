@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.Graphics.Canvas;
 using RLottie;
 using System;
 using System.Collections.Generic;
@@ -62,16 +61,26 @@ namespace Telegram.Common
             return null;
         }
 
-        private static readonly DisposableMutex _patternSurfaceLock = new DisposableMutex();
+        public static async Task<LoadedImageSurface> LoadBitmapAsync(File file)
+        {
+            var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+            using (var stream = await item.OpenReadAsync())
+            {
+                return LoadedImageSurface.StartLoadFromStream(stream);
+            }
+        }
 
-        public static async Task<CanvasBitmap> GetPatternBitmapAsync(ICanvasResourceCreator resourceCreator, File file)
+        private static readonly DisposableMutex _patternSurfaceLock = new();
+
+        public static async Task<LoadedImageSurface> LoadPatternBitmapAsync(File file, double rasterizationScale)
         {
             using var locked = await _patternSurfaceLock.WaitAsync();
 
-            var bitmap = default(CanvasBitmap);
+            var bitmap = default(LoadedImageSurface);
+            var dpi = (int)(rasterizationScale * 96);
 
-            var cache = $"{file.Remote.UniqueId}.cache.png";
-            var relative = System.IO.Path.Combine("wallpapers", cache);
+            var cache = $"{file.Remote.UniqueId}.{dpi}.png";
+            var relative = System.IO.Path.Combine("Wallpapers", cache);
 
             var delete = false;
 
@@ -85,9 +94,9 @@ namespace Telegram.Common
                     using (var stream = await item.OpenAsync(FileAccessMode.ReadWrite))
                     {
                         var text = await ProcessSvgXmlAsync(file.Local.Path);
-                        await PlaceholderImageHelper.Current.DrawSvgAsync(text, Colors.White, stream);
+                        await PlaceholderImageHelper.Current.DrawSvgAsync(text, Colors.White, stream, dpi);
 
-                        bitmap = await CanvasBitmap.LoadAsync(resourceCreator, stream);
+                        bitmap = LoadedImageSurface.StartLoadFromStream(stream);
                     }
                 }
                 catch
@@ -101,7 +110,7 @@ namespace Telegram.Common
                 {
                     using (var stream = await item.OpenReadAsync())
                     {
-                        bitmap = await CanvasBitmap.LoadAsync(resourceCreator, stream);
+                        bitmap = LoadedImageSurface.StartLoadFromStream(stream);
                     }
                 }
                 catch

@@ -37,6 +37,7 @@ namespace Telegram.Views.Settings
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            BackgroundControl.XamlRoot = Frame.XamlRoot;
             BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
 
             ViewModel.PropertyChanged += OnPropertyChanged;

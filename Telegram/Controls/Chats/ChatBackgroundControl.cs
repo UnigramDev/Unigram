@@ -18,7 +18,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
@@ -32,13 +31,13 @@ namespace Telegram.Controls.Chats
         private Background _oldBackground = new Background();
         private bool? _oldDark;
 
-        private readonly ChatBackgroundRenderer _presenter;
+        private readonly ChatBackgroundPresenter _presenter;
 
         private readonly Compositor _compositor;
 
         public ChatBackgroundControl()
         {
-            _presenter = new ChatBackgroundRenderer();
+            _presenter = new ChatBackgroundPresenter();
             _compositor = Window.Current.Compositor;
 
             ElementCompositionPreview.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
@@ -119,7 +118,7 @@ namespace Telegram.Controls.Chats
         {
             if (background == null)
             {
-                var freeform = dark ? new[] { 0x0D0E17, 0x090A0C, 0x181C28, 0x0E0F12 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
+                var freeform = dark ? new[] { 0x6C7FA6, 0x2E344B, 0x7874A7, 0x333258 } : new[] { 0xDBDDBB, 0x6BA587, 0xD5D88D, 0x88B884 };
                 background = new Background(0, true, dark, string.Empty,
                     new Document(string.Empty, "application/x-tgwallpattern", null, null, TdExtensions.GetLocalFile("Assets\\Background.tgv", "Background")),
                     new BackgroundTypePattern(new BackgroundFillFreeformGradient(freeform), dark ? 100 : 50, dark, false));
@@ -208,14 +207,6 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        public void Play()
-        {
-            if (_fill is BackgroundFillFreeformGradient freeform)
-            {
-                _background.UpdateLayout(Background as ImageBrush, ActualWidth, ActualHeight, freeform, true);
-            }
-        }
-
         private BackgroundFill _fill;
         public BackgroundFill Fill
         {
@@ -268,6 +259,7 @@ namespace Telegram.Controls.Chats
         };
 
         private int _phase;
+        public int Phase => _phase;
 
         public ChatBackgroundFreeform(bool random = true)
         {
@@ -277,24 +269,19 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        public void UpdateLayout(Rectangle target, BackgroundFillFreeformGradient freeform = null, bool animate = false)
+        public void UpdateLayout(Rectangle target, BackgroundFillFreeformGradient freeform = null)
         {
             if (target.Fill is ImageBrush brush)
             {
-                UpdateLayout(brush, target.ActualWidth, target.ActualHeight, freeform, animate);
+                UpdateLayout(brush, target.ActualWidth, target.ActualHeight, freeform);
             }
         }
 
-        public void UpdateLayout(ImageBrush target, double actualWidth, double actualHeight, BackgroundFillFreeformGradient freeform = null, bool animate = false)
+        public void UpdateLayout(ImageBrush target, double actualWidth, double actualHeight, BackgroundFillFreeformGradient freeform = null)
         {
             if (target == null || actualWidth == 0 || actualHeight == 0)
             {
                 return;
-            }
-
-            if (animate)
-            {
-                _phase++;
             }
 
             var colors = freeform?.GetColors() ?? _colors;
@@ -307,50 +294,57 @@ namespace Telegram.Controls.Chats
             var height = (int)(actualHeight * ratio);
 
             var next = Gather(_positions, _phase % 8);
-            if (next.Length > 0 && animate)
+            target.ImageSource = GenerateGradient(width, height, colors, next);
+        }
+
+        public static ImageSource Create(BackgroundFillFreeformGradient freeform, int offset = 0)
+        {
+            var colors = freeform.GetColors();
+
+            var next = Gather(_positions, offset % 8);
+            var bitmap = GenerateGradient(50, 50, colors, next);
+
+            return bitmap;
+        }
+
+        public void Next(BackgroundFillFreeformGradient freeform, WriteableBitmap bitmap, Vector2[] positions)
+        {
+            var colors = freeform.GetColors();
+            GenerateGradient(bitmap, colors, positions);
+            bitmap.Invalidate();
+        }
+
+        public Vector2[][] Next()
+        {
+            _phase++;
+
+            var next = Gather(_positions, _phase % 8);
+            var prev = Gather(_positions, (_phase - 1) % 8);
+
+            const float h = 27f;
+            var d1x = (next[0].X - prev[0].X) / h;
+            var d1y = (next[0].Y - prev[0].Y) / h;
+            var d2x = (next[1].X - prev[1].X) / h;
+            var d2y = (next[1].Y - prev[1].Y) / h;
+            var d3x = (next[2].X - prev[2].X) / h;
+            var d3y = (next[2].Y - prev[2].Y) / h;
+            var d4x = (next[3].X - prev[3].X) / h;
+            var d4y = (next[3].Y - prev[3].Y) / h;
+
+            var stops = new Vector2[30][];
+
+            for (int i = 0; i < 30; i++)
             {
-                var prev = Gather(_positions, (_phase - 1) % 8);
-
-                var animation = new ObjectAnimationUsingKeyFrames();
-
-                const float h = 27f;
-                var d1x = (next[0].X - prev[0].X) / h;
-                var d1y = (next[0].Y - prev[0].Y) / h;
-                var d2x = (next[1].X - prev[1].X) / h;
-                var d2y = (next[1].Y - prev[1].Y) / h;
-                var d3x = (next[2].X - prev[2].X) / h;
-                var d3y = (next[2].Y - prev[2].Y) / h;
-                var d4x = (next[3].X - prev[3].X) / h;
-                var d4y = (next[3].Y - prev[3].Y) / h;
-
-                for (int i = 0; i < 30; i++)
+                stops[i] = new Vector2[]
                 {
-                    var current = new Vector2[]
-                    {
-                        new Vector2(prev[0].X + d1x * _curve[i * 2]!, prev[0].Y + d1y * _curve[i * 2]!),
-                        new Vector2(prev[1].X + d2x * _curve[i * 2]!, prev[1].Y + d2y * _curve[i * 2]!),
-                        new Vector2(prev[2].X + d3x * _curve[i * 2]!, prev[2].Y + d3y * _curve[i * 2]!),
-                        new Vector2(prev[3].X + d4x * _curve[i * 2]!, prev[3].Y + d4y * _curve[i * 2]!)
-                    };
-
-                    animation.KeyFrames.Add(new DiscreteObjectKeyFrame
-                    {
-                        Value = GenerateGradient(width, height, colors, current),
-                        KeyTime = TimeSpan.FromMilliseconds(500 / 30f * i),
-                    });
-                }
-
-                Storyboard.SetTarget(animation, target);
-                Storyboard.SetTargetProperty(animation, "ImageSource");
-
-                var storyboard = new Storyboard();
-                storyboard.Children.Add(animation);
-                storyboard.Begin();
+                    new Vector2(prev[0].X + d1x * _curve[i * 2]!, prev[0].Y + d1y * _curve[i * 2]!),
+                    new Vector2(prev[1].X + d2x * _curve[i * 2]!, prev[1].Y + d2y * _curve[i * 2]!),
+                    new Vector2(prev[2].X + d3x * _curve[i * 2]!, prev[2].Y + d3y * _curve[i * 2]!),
+                    new Vector2(prev[3].X + d4x * _curve[i * 2]!, prev[3].Y + d4y * _curve[i * 2]!)
+                };
             }
-            else
-            {
-                target.ImageSource = GenerateGradient(width, height, colors, next);
-            }
+
+            return stops;
         }
 
         private static Vector2[] Gather(Vector2[] list, int offset)
@@ -379,6 +373,14 @@ namespace Telegram.Controls.Chats
         private static unsafe WriteableBitmap GenerateGradient(int width, int height, Color[] colors, Vector2[] positions)
         {
             var context = new WriteableBitmap(width, height);
+            GenerateGradient(context, colors, positions);
+            return context;
+        }
+
+        private static unsafe WriteableBitmap GenerateGradient(WriteableBitmap context, Color[] colors, Vector2[] positions)
+        {
+            var width = context.PixelWidth;
+            var height = context.PixelHeight;
             var buffer = (IBufferByteAccess)context.PixelBuffer;
             buffer.Buffer(out byte* imageBytes);
 

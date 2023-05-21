@@ -591,8 +591,9 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <chats:ChatBackgroundRenderer x:Name="Preview"
+        <chats:ChatBackgroundPresenter x:Name="Preview"
                                       Tag="{x:Bind ConvertBackground(ViewModel.Item), Mode=OneWay}"
+                                      CornerRadius="6"
                                       Margin="0,-24,0,0"
                                       Grid.RowSpan="3" />
 
@@ -845,7 +846,7 @@
                           Grid.Row="1">
                     <GridView.ItemTemplate>
                         <DataTemplate>
-                            <chats:ChatBackgroundRenderer Width="72"
+                            <chats:ChatBackgroundPresenter Width="72"
                                                           Height="72" />
                         </DataTemplate>
                     </GridView.ItemTemplate>

@@ -789,19 +789,21 @@
         </Setter>
     </Style>
 
-    <Style TargetType="chats:ChatBackgroundRenderer">
+    <Style TargetType="chats:ChatBackgroundPresenter">
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="chats:ChatBackgroundRenderer">
-                    <Grid x:Name="LayoutRoot"
-                          CornerRadius="{TemplateBinding CornerRadius}">
+                <ControlTemplate TargetType="chats:ChatBackgroundPresenter">
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
                         <Border x:Name="Canvas"
-                                AutomationProperties.AccessibilityView="Raw"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch" />
-                    </Grid>
+                                Background="{TemplateBinding Foreground}"
+                                CornerRadius="{TemplateBinding CornerRadius}">
+                            <Border Background="{TemplateBinding BorderBrush}"
+                                    CornerRadius="{TemplateBinding CornerRadius}" />
+                        </Border>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
