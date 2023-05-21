@@ -47,13 +47,13 @@ namespace Telegram.Navigation
             }
             else
             {
-                var tcs = new TaskCompletionSource<object>();
+                var tcs = new TaskCompletionSource<bool>();
                 var result = _dispatcher.TryEnqueue(priority, () =>
                 {
                     try
                     {
                         action();
-                        tcs.TrySetResult(null);
+                        tcs.TrySetResult(true);
                     }
                     catch (Exception ex)
                     {
@@ -79,13 +79,13 @@ namespace Telegram.Navigation
             }
             else
             {
-                var tcs = new TaskCompletionSource<object>();
+                var tcs = new TaskCompletionSource<bool>();
                 var result = _dispatcher.TryEnqueue(priority, async () =>
                 {
                     try
                     {
                         await func();
-                        tcs.TrySetResult(null);
+                        tcs.TrySetResult(true);
                     }
                     catch (Exception ex)
                     {
@@ -176,14 +176,13 @@ namespace Telegram.Navigation
             }
             else
             {
-                //dispatcher.RunAsync(priority, () => action()).AsTask().ConfigureAwait(false).GetAwaiter().GetResult();
                 try
                 {
                     _dispatcher.TryEnqueue(priority, action);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    throw ex;
+                    // Most likey Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
                 }
             }
         }

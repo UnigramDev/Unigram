@@ -204,17 +204,20 @@ namespace Telegram.Services
 
                 foreach (var value in _delegates)
                 {
-                    if (value.Key is UIElement uiElement)
+                    var subscriber = value.Key;
+                    var delegato = value.Value;
+
+                    if (value.Key is FrameworkElement element)
                     {
-                        uiElement.BeginOnUIThread(() => value.Value.DynamicInvoke(value.Key, message));
+                        element.BeginOnUIThread(() => delegato.DynamicInvoke(subscriber, message));
                     }
                     else if (value.Key is ViewModelBase navigable && navigable.Dispatcher != null)
                     {
-                        navigable.BeginOnUIThread(() => value.Value.DynamicInvoke(value.Key, message));
+                        navigable.BeginOnUIThread(() => delegato.DynamicInvoke(subscriber, message));
                     }
                     else
                     {
-                        value.Value.DynamicInvoke(value.Key, message);
+                        delegato.DynamicInvoke(subscriber, message);
                     }
 
                     count++;
