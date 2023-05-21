@@ -27,7 +27,7 @@ using Windows.UI;
 
 namespace Telegram.Controls.Messages
 {
-    public class CustomEmojiCanvas : AnimatedControl<object>
+    public class CustomEmojiCanvas : AnimatedControl
     {
         private readonly object _cacheLock = new();
 

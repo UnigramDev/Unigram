@@ -27,7 +27,7 @@ using Windows.UI.Xaml.Media;
 namespace Telegram.Controls
 {
     [TemplatePart(Name = "Canvas", Type = typeof(Image))]
-    public abstract class AnimatedControl<TAnimation> : Control, IPlayerView
+    public abstract class AnimatedControl : Control, IPlayerView
     {
         protected Vector2 _currentSize;
         protected double _rasterizationScale;
@@ -44,7 +44,7 @@ namespace Telegram.Controls
         protected Panel _layoutRoot;
         protected Border _canvas;
 
-        protected TAnimation _animation;
+        protected object _animation;
 
         protected bool? _playing;
 
@@ -666,11 +666,11 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty IsLoopingEnabledProperty =
-            DependencyProperty.Register("IsLoopingEnabled", typeof(bool), typeof(AnimatedControl<TAnimation>), new PropertyMetadata(true, OnLoopingEnabledChanged));
+            DependencyProperty.Register("IsLoopingEnabled", typeof(bool), typeof(AnimatedControl), new PropertyMetadata(true, OnLoopingEnabledChanged));
 
         private static void OnLoopingEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AnimatedControl<TAnimation>)d)._isLoopingEnabled = (bool)e.NewValue;
+            ((AnimatedControl)d)._isLoopingEnabled = (bool)e.NewValue;
         }
 
         #endregion
@@ -684,11 +684,11 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty AutoPlayProperty =
-            DependencyProperty.Register("AutoPlay", typeof(bool), typeof(AnimatedControl<TAnimation>), new PropertyMetadata(true, OnAutoPlayChanged));
+            DependencyProperty.Register("AutoPlay", typeof(bool), typeof(AnimatedControl), new PropertyMetadata(true, OnAutoPlayChanged));
 
         private static void OnAutoPlayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AnimatedControl<TAnimation>)d).OnAutoPlayChanged((bool)e.NewValue, (bool)e.OldValue);
+            ((AnimatedControl)d).OnAutoPlayChanged((bool)e.NewValue, (bool)e.OldValue);
         }
 
         protected virtual void OnAutoPlayChanged(bool newValue, bool oldValue)
@@ -708,17 +708,17 @@ namespace Telegram.Controls
 
         // Using a DependencyProperty as the backing store for Stretch.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty StretchProperty =
-            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(AnimatedControl<TAnimation>), new PropertyMetadata(Stretch.Uniform, OnStretchChanged));
+            DependencyProperty.Register("Stretch", typeof(Stretch), typeof(AnimatedControl), new PropertyMetadata(Stretch.Uniform, OnStretchChanged));
 
         private static void OnStretchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AnimatedControl<TAnimation>)d)._stretch = (Stretch)e.NewValue;
+            ((AnimatedControl)d)._stretch = (Stretch)e.NewValue;
         }
 
         #endregion
     }
 
-    public abstract class IndividualAnimatedControl<TAnimation> : AnimatedControl<TAnimation>
+    public abstract class IndividualAnimatedControl : AnimatedControl
     {
         private LoopThread _timer;
 

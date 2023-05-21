@@ -19,7 +19,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Controls
 {
-    public class CustomEmojiIcon : AnimatedControl<object>
+    public class CustomEmojiIcon : AnimatedControl
     {
         private Sticker _sticker;
         private long? _cache;

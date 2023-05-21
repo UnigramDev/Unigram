@@ -18,7 +18,7 @@ using Windows.UI;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatBackgroundRenderer : IndividualAnimatedControl<object>
+    public class ChatBackgroundRenderer : IndividualAnimatedControl
     {
         private readonly SemaphoreSlim _additionalResourcesLock = new(1, 1);
 
