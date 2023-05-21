@@ -67,7 +67,6 @@ namespace Telegram.Controls
         private bool _bitmapClean = true;
         protected bool _needToCreateBitmap = true;
 
-        protected Border _layoutRoot;
         protected ImageBrush _canvas;
 
         protected TAnimation _animation;
@@ -94,6 +93,8 @@ namespace Telegram.Controls
         protected readonly DispatcherQueue _dispatcher;
         private LoopThread _timer;
 
+        private int _loaded;
+
         protected AnimatedImage(bool? limitFps, bool autoPause = true)
         {
             _interval = TimeSpan.FromMilliseconds(Math.Floor(1000d / 30));
@@ -101,6 +102,9 @@ namespace Telegram.Controls
 
             _limitFps = limitFps ?? !Windows.UI.Composition.CompositionCapabilities.GetForCurrentView().AreEffectsFast();
             _dispatcher = DispatcherQueue.GetForCurrentThread();
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
 
         protected override void OnApplyTemplate()
@@ -116,11 +120,6 @@ namespace Telegram.Controls
             _canvas = canvas;
             _canvas.Stretch = Stretch;
 
-            _layoutRoot = GetTemplateChild("LayoutRoot") as Border;
-            _layoutRoot.Loaded += OnLoaded;
-            _layoutRoot.Loading += OnLoading;
-            _layoutRoot.Unloaded += OnUnloaded;
-
             OnLoaded();
             base.OnApplyTemplate();
         }
@@ -129,7 +128,7 @@ namespace Telegram.Controls
         {
             _rasterizationScale = XamlRoot.RasterizationScale;
             _visible = XamlRoot.IsHostVisible;
-            _active = !_autoPause || Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
+            _active = !_autoPause || Window.Current.CoreWindow.ActivationMode != CoreWindowActivationMode.Deactivated || !_isLoopingEnabled;
 
             if (_hasInitialLoadedEventFired)
             {
@@ -248,7 +247,7 @@ namespace Telegram.Controls
 
         protected bool Load()
         {
-            if (_unloaded && _layoutRoot != null && _layoutRoot.IsLoaded)
+            if (/*_unloaded && _layoutRoot != null &&*/ _loaded > 0)
             {
                 Changed(tryLoad: false);
 
@@ -273,20 +272,19 @@ namespace Telegram.Controls
             }
         }
 
-        private void OnLoading(FrameworkElement sender, object args)
-        {
-            Load();
-        }
-
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            _loaded++;
+
             Load();
             RegisterEventHandlers();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (IsLoaded)
+            _loaded--;
+
+            if (_loaded > 0)
             {
                 return;
             }
@@ -390,10 +388,10 @@ namespace Telegram.Controls
                         _backgroundQueue.Enqueue(new PixelBuffer(bitmap));
                     }
 
-                    pixels.Visual.Invalidate();
+                    pixels.Source.Invalidate();
 
-                    _canvas.ImageSource = pixels.Visual;
-                    DrawFrame(pixels.Visual);
+                    _canvas.ImageSource = pixels.Source;
+                    DrawFrame(pixels.Source);
                 }
             }
         }
@@ -574,7 +572,7 @@ namespace Telegram.Controls
                 return false;
             }
 
-            if (_layoutRoot.IsLoaded)
+            if (_loaded > 0)
             {
                 if (tryLoad is false)
                 {
