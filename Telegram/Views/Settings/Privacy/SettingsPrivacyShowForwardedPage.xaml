@@ -30,7 +30,7 @@
             <controls:SettingsPanel>
                 <controls:HeaderedControl>
                     <Grid>
-                        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" />
+                        <chats:ChatBackgroundControl x:Name="BackgroundControl" />
                         <Grid Padding="0,10">
                             <messages:MessageBubble x:Name="MessagePreview"
                                                     HorizontalAlignment="Left" />

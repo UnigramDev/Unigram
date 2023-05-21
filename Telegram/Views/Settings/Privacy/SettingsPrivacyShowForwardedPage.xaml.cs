@@ -32,7 +32,7 @@ namespace Telegram.Views.Settings.Privacy
                 ToolTip.Shadow = themeShadow;
                 ToolTip.Translation += new Vector3(0, 0, 32);
 
-                themeShadow.Receivers.Add(BackgroundPresenter);
+                themeShadow.Receivers.Add(BackgroundControl);
                 themeShadow.Receivers.Add(MessagePreview);
             }
         }
@@ -45,7 +45,7 @@ namespace Telegram.Views.Settings.Privacy
                 MessagePreview.Mockup(Strings.PrivacyForwardsMessageLine, user.FullName(), true, false, DateTime.Now);
             }
 
-            BackgroundPresenter.Update(ViewModel.ClientService, ViewModel.Aggregator);
+            BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
         }
 
         #region Binding

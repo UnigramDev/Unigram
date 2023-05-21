@@ -112,7 +112,7 @@
                     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                           Grid.Column="1"
                           Grid.Row="2">
-                        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter" />
+                        <chats:ChatBackgroundControl x:Name="BackgroundControl" />
                         <StackPanel Padding="0,2,0,2"
                                     VerticalAlignment="Bottom">
                             <messages:MessageBubble x:Name="Message1"

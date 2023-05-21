@@ -226,7 +226,7 @@ namespace Telegram.ViewModels.Settings
     {
         public bool CompareItems(Background oldItem, Background newItem)
         {
-            return ChatBackgroundPresenter.BackgroundEquals(oldItem, newItem, true);
+            return ChatBackgroundControl.BackgroundEquals(oldItem, newItem, true);
         }
 
         public void UpdateItem(Background oldItem, Background newItem)

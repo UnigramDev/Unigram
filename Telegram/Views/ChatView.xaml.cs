@@ -92,7 +92,7 @@ namespace Telegram.Views
         private TaskCompletionSource<bool> _updateThemeTask;
         private readonly TaskCompletionSource<bool> _loadedThemeTask;
 
-        private ChatBackgroundPresenter _backgroundPresenter;
+        private ChatBackgroundControl _backgroundControl;
 
         private readonly DebouncedProperty<FocusState> _focusState;
         private bool _useSystemSpellChecker = true;
@@ -273,13 +273,13 @@ namespace Telegram.Views
             if (WindowContext.Current.ContactPanel != null)
             {
                 Header.Visibility = Visibility.Collapsed;
-                FindName("BackgroundPresenter");
-                BackgroundPresenter.Update(ViewModel.ClientService, ViewModel.Aggregator);
+                FindName(nameof(BackgroundControl));
+                BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
             }
             else if (!Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().IsMain)
             {
-                FindName("BackgroundPresenter");
-                BackgroundPresenter.Update(ViewModel.ClientService, ViewModel.Aggregator);
+                FindName(nameof(BackgroundControl));
+                BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
             }
 
             GroupCall.InitializeParent(ClipperOuter, ViewModel.ClientService);
@@ -472,22 +472,22 @@ namespace Telegram.Views
             {
                 var background = ViewModel.ClientService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
 
-                _backgroundPresenter ??= FindBackgroundPresenter();
-                _backgroundPresenter?.Update(background, ActualTheme == ElementTheme.Dark);
+                _backgroundControl ??= FindBackgroundControl();
+                _backgroundControl?.Update(background, ActualTheme == ElementTheme.Dark);
             }
         }
 
-        private ChatBackgroundPresenter FindBackgroundPresenter()
+        private ChatBackgroundControl FindBackgroundControl()
         {
-            if (BackgroundPresenter != null)
+            if (BackgroundControl != null)
             {
-                return BackgroundPresenter;
+                return BackgroundControl;
             }
 
             var masterDetailPanel = this.Ancestors<MasterDetailPanel>().FirstOrDefault();
             if (masterDetailPanel != null)
             {
-                return masterDetailPanel.Descendants<ChatBackgroundPresenter>().FirstOrDefault();
+                return masterDetailPanel.Descendants<ChatBackgroundControl>().FirstOrDefault();
             }
 
             return null;
@@ -872,8 +872,8 @@ namespace Telegram.Views
 
                 if (message.IsOutgoing && message.SendingState is MessageSendingStatePending)
                 {
-                    _backgroundPresenter ??= FindBackgroundPresenter();
-                    _backgroundPresenter?.UpdateBackground();
+                    _backgroundControl ??= FindBackgroundControl();
+                    _backgroundControl?.UpdateBackground();
                 }
             }
         }
@@ -3875,8 +3875,8 @@ namespace Telegram.Views
                     await _loadedThemeTask.Task;
                 }
 
-                _backgroundPresenter ??= FindBackgroundPresenter();
-                _backgroundPresenter?.Update(current, ActualTheme == ElementTheme.Dark);
+                _backgroundControl ??= FindBackgroundControl();
+                _backgroundControl?.Update(current, ActualTheme == ElementTheme.Dark);
             }
         }
 

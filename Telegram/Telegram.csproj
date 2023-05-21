@@ -376,7 +376,7 @@
       <DependentUpon>ChatActionBarView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Chats\ChatActionIndicator.cs" />
-    <Compile Include="Controls\Chats\ChatBackgroundPresenter.cs" />
+    <Compile Include="Controls\Chats\ChatBackgroundControl.cs" />
     <Compile Include="Controls\Chats\ChatBackgroundRenderer.cs" />
     <Compile Include="Controls\Chats\ChatBottomButton.cs" />
     <Compile Include="Controls\Chats\ChatRecordButton.cs" />

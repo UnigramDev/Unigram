@@ -1607,23 +1607,23 @@ namespace Telegram.Controls.Cells
 
                     if (bubble.HasFloatingElements)
                     {
-                        var presenter = new ChatBackgroundPresenter();
-                        presenter.Update(_clientService, null);
-                        presenter.CornerRadius = new CornerRadius(15);
+                        var background = new ChatBackgroundControl();
+                        background.Update(_clientService, null);
+                        background.CornerRadius = new CornerRadius(15);
 
                         void handler(object sender, SizeChangedEventArgs args)
                         {
                             Logger.Debug();
 
                             bubble.SizeChanged -= handler;
-                            presenter.Width = args.NewSize.Width;
-                            presenter.Height = args.NewSize.Height;
+                            background.Width = args.NewSize.Width;
+                            background.Height = args.NewSize.Height;
                         }
 
                         bubble.SizeChanged += handler;
 
                         var canvas = new Canvas();
-                        canvas.Children.Add(presenter);
+                        canvas.Children.Add(background);
                         grid.Children.Insert(0, canvas);
                     }
 

@@ -24,8 +24,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatBackgroundPresenter : Grid
-    //, IHandle<UpdateSelectedBackground>
+    public class ChatBackgroundControl : Grid
     {
         private IClientService _clientService;
         private IEventAggregator _aggregator;
@@ -33,18 +32,18 @@ namespace Telegram.Controls.Chats
         private Background _oldBackground = new Background();
         private bool? _oldDark;
 
-        private readonly ChatBackgroundRenderer _renderer;
+        private readonly ChatBackgroundRenderer _presenter;
 
         private readonly Compositor _compositor;
 
-        public ChatBackgroundPresenter()
+        public ChatBackgroundControl()
         {
-            _renderer = new ChatBackgroundRenderer();
+            _presenter = new ChatBackgroundRenderer();
             _compositor = Window.Current.Compositor;
 
             ElementCompositionPreview.GetElementVisual(this).Clip = _compositor.CreateInsetClip();
 
-            Children.Add(_renderer);
+            Children.Add(_presenter);
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
@@ -108,11 +107,11 @@ namespace Telegram.Controls.Chats
         {
             if (_oldBackground?.Type is BackgroundTypeFill updateFill && updateFill.Fill is BackgroundFillFreeformGradient)
             {
-                _renderer.Next();
+                _presenter.Next();
             }
             else if (_oldBackground?.Type is BackgroundTypePattern updatePattern && updatePattern.Fill is BackgroundFillFreeformGradient)
             {
-                _renderer.Next();
+                _presenter.Next();
             }
         }
 
@@ -134,7 +133,7 @@ namespace Telegram.Controls.Chats
             _oldBackground = background;
             _oldDark = dark;
 
-            _renderer.UpdateSource(_clientService, background, false);
+            _presenter.UpdateSource(_clientService, background, false);
         }
 
         public static bool BackgroundEquals(Background prev, Background next, bool fast = false)

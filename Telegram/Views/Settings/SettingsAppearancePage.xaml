@@ -25,8 +25,8 @@
                 <controls:HeaderedControl>
                     <Grid x:Name="Preview"
                           CornerRadius="4,4,0,0">
-                        <chats:ChatBackgroundPresenter x:Name="BackgroundPresenter"
-                                                       CornerRadius="4,4,0,0" />
+                        <chats:ChatBackgroundControl x:Name="BackgroundControl"
+                                                     CornerRadius="4,4,0,0" />
                         <StackPanel Padding="0,10">
                             <messages:MessageBubble x:Name="Message1"
                                                     HorizontalAlignment="Left" />

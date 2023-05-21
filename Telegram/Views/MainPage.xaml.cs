@@ -2154,7 +2154,7 @@ namespace Telegram.Views
 
         private void ChatBackgroundPresenter_Loading(FrameworkElement sender, object args)
         {
-            if (sender is ChatBackgroundPresenter presenter)
+            if (sender is ChatBackgroundControl presenter)
             {
                 presenter.Update(ViewModel.ClientService, ViewModel.Aggregator);
             }
