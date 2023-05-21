@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 using Telegram.Common;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.ViewModels.Settings;

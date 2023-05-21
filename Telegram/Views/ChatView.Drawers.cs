@@ -6,7 +6,7 @@
 //
 using Telegram.Common;
 using Telegram.Controls.Drawers;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

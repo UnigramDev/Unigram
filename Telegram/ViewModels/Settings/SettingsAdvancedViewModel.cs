@@ -7,6 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;

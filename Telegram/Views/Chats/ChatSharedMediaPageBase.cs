@@ -8,6 +8,7 @@ using System;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Chats;
+using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.ViewModels;

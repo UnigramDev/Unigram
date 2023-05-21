@@ -12,6 +12,7 @@ using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Gallery;
+using Telegram.Controls.Media;
 using Telegram.Controls.Messages.Content;
 using Telegram.Converters;
 using Telegram.Navigation;

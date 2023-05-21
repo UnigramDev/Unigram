@@ -7,7 +7,7 @@
 using Microsoft.UI.Xaml.Controls;
 using System.Numerics;
 using Telegram.Assets.Icons;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Telegram.Services.Settings;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;

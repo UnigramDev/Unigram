@@ -10,7 +10,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Telegram.Native.Calls;
 using Telegram.Services;
 using Telegram.Td.Api;

@@ -7,7 +7,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Telegram.Common;
 using Telegram.Controls.Cells;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Folders;

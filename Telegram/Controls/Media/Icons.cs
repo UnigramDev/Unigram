@@ -9,7 +9,7 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 
-namespace Telegram.Converters
+namespace Telegram.Controls.Media
 {
     public class Icons
     {

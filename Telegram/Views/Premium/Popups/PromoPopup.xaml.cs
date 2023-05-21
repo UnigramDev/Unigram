@@ -7,7 +7,7 @@
 using System;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Premium;
 using Windows.UI;

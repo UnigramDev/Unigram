@@ -7,7 +7,7 @@
 using System;
 using Telegram.Common;
 using Telegram.Controls.Cells;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;

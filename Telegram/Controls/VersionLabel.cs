@@ -1,7 +1,7 @@
 ﻿using LinqToVisualTree;
 using System.Linq;
 using Telegram.Common;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Telegram.Views;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml;

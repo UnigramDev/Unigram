@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Collections;
 using Telegram.Common;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;

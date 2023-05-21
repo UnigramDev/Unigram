@@ -8,7 +8,7 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;

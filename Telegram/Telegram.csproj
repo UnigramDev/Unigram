@@ -1364,7 +1364,7 @@
     <Compile Include="Converters\FileSizeConverter.cs" />
     <Compile Include="Converters\InitialNameStringConverter.cs" />
     <Compile Include="Converters\NullToVisibilityConverter.cs" />
-    <Compile Include="Converters\Icons.cs" />
+    <Compile Include="Controls\Media\Icons.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Selectors\MessageStyleSelector.cs" />
     <Compile Include="Themes\Messages.xaml.cs">

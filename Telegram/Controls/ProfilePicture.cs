@@ -6,6 +6,7 @@
 //
 using System;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;

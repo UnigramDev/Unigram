@@ -13,7 +13,7 @@ using System.Numerics;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;

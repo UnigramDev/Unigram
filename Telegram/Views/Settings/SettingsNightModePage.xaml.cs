@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Services.Settings;

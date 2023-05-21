@@ -13,6 +13,7 @@ using System.Text;
 using Telegram.Common;
 using Telegram.Common.Chats;
 using Telegram.Controls.Chats;
+using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.Native;

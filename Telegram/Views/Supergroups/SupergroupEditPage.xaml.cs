@@ -6,6 +6,7 @@
 //
 using System.Linq;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;

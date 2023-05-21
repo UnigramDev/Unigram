@@ -8,6 +8,7 @@ using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Native.Calls;
 using Telegram.Navigation;

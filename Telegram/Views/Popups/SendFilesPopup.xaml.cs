@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Td.Api;

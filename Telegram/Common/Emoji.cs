@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Converters;
+using Telegram.Controls.Media;
 using Telegram.Native;
 using Telegram.Services;
 using Telegram.Services.Settings;

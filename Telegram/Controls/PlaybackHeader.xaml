@@ -365,13 +365,14 @@
                                      Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
                                      Width="40"
                                      Height="40"
+                                     Margin="0,0,-4,0"
                                      AutomationProperties.Name="{CustomResource AccDescrPrevious}"
                                      ToolTipService.ToolTip="{CustomResource AccDescrPrevious}" />
         <controls:AnimatedGlyphButton x:Name="PlaybackButton"
                                       Click="Toggle_Click"
                                       Glyph="&#xE768;"
                                       Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
-                                      Width="40"
+                                      Width="48"
                                       Height="40"
                                       Grid.Column="1" />
         <controls:PlaybackNextButton x:Name="NextButton"
@@ -381,6 +382,7 @@
                                      Foreground="{ThemeResource SystemControlBackgroundAccentBrush}"
                                      Width="40"
                                      Height="40"
+                                     Margin="-4,0,0,0"
                                      Grid.Column="2"
                                      AutomationProperties.Name="{CustomResource Next}"
                                      ToolTipService.ToolTip="{CustomResource Next}" />
