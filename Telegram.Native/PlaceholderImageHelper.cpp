@@ -96,7 +96,8 @@ namespace winrt::Telegram::Native::implementation
         size = Windows::Foundation::Size{ 0,0 };
 
         FILE* file = _wfopen(fileName.data(), L"rb");
-        if (file == NULL) {
+        if (file == NULL)
+        {
             return;
         }
 
@@ -161,7 +162,8 @@ namespace winrt::Telegram::Native::implementation
 
             uint8_t* pixels = new uint8_t[(width * 4) * height];
 
-            if (width != iter.width || height != iter.height) {
+            if (width != iter.width || height != iter.height)
+            {
                 config.options.scaled_width = width;
                 config.options.scaled_height = height;
                 config.options.use_scaling = 1;
@@ -222,7 +224,8 @@ namespace winrt::Telegram::Native::implementation
         size = Windows::Foundation::Size{ 0,0 };
 
         FILE* file = _wfopen(fileName.data(), L"rb");
-        if (file == NULL) {
+        if (file == NULL)
+        {
             return nullptr;
         }
 
@@ -290,7 +293,8 @@ namespace winrt::Telegram::Native::implementation
             auto pixels = surface.data();
             //uint8_t* pixels = new uint8_t[(width * 4) * height];
 
-            if (width != iter.width || height != iter.height) {
+            if (width != iter.width || height != iter.height)
+            {
                 config.options.scaled_width = width;
                 config.options.scaled_height = height;
                 config.options.use_scaling = 1;
@@ -322,21 +326,21 @@ namespace winrt::Telegram::Native::implementation
         return surface;
     }
 
-    winrt::Windows::Foundation::IAsyncAction PlaceholderImageHelper::DrawSvgAsync(hstring path, Color foreground, IRandomAccessStream randomAccessStream)
+    winrt::Windows::Foundation::IAsyncAction PlaceholderImageHelper::DrawSvgAsync(hstring path, Color foreground, IRandomAccessStream randomAccessStream, int32_t dpi)
     {
         winrt::apartment_context ui_thread;
         co_await winrt::resume_background();
 
         Windows::Foundation::Size size;
-        winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, size));
+        winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, dpi, size));
         randomAccessStream.Seek(0);
 
         co_await ui_thread;
     }
 
-    void PlaceholderImageHelper::DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size)
+    void PlaceholderImageHelper::DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, int32_t dpi, Windows::Foundation::Size& size)
     {
-        winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, size));
+        winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, dpi, size));
     }
 
     void PlaceholderImageHelper::DrawIdenticon(IVector<uint8_t> hash, int side, IRandomAccessStream randomAccessStream)
@@ -354,13 +358,13 @@ namespace winrt::Telegram::Native::implementation
         winrt::check_hresult(InternalDrawThumbnailPlaceholder(bytes, blurAmount, randomAccessStream));
     }
 
-    HRESULT PlaceholderImageHelper::InternalDrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size)
+    HRESULT PlaceholderImageHelper::InternalDrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, int32_t dpi, Windows::Foundation::Size& size)
     {
         auto lock = critical_section::scoped_lock(m_criticalSection);
 
         HRESULT result;
 
-        auto data = string_to_unmanaged(path);
+        auto data = winrt::to_string(path);
 
         struct NSVGimage* image;
         image = nsvgParse((char*)data.c_str(), "px", 96);
@@ -375,7 +379,7 @@ namespace winrt::Telegram::Native::implementation
         size = Windows::Foundation::Size(imageWidth, imageHeight);
 
         winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
-        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
+        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, dpi, dpi, D2D1_BITMAP_OPTIONS_TARGET, 0 };
         ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ (uint32_t)imageWidth, (uint32_t)imageHeight }, nullptr, 0, &properties, targetBitmap.put()));
 
         m_d2dContext->SetTarget(targetBitmap.get());
@@ -479,7 +483,7 @@ namespace winrt::Telegram::Native::implementation
         if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
         {
             ReturnIfFailed(result, CreateDeviceResources());
-            return InternalDrawSvg(path, foreground, randomAccessStream, size);
+            return InternalDrawSvg(path, foreground, randomAccessStream, dpi, size);
         }
 
         return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
@@ -834,7 +838,8 @@ namespace winrt::Telegram::Native::implementation
             textLayout.put()				// The IDWriteTextLayout interface pointer.
         ));
 
-        for (const PlaceholderEntity& entity : entities) {
+        for (const PlaceholderEntity& entity : entities)
+        {
             UINT32 startPosition = entity.Offset;
             UINT32 length = entity.Length;
 
@@ -905,7 +910,8 @@ namespace winrt::Telegram::Native::implementation
 
         std::vector<Windows::Foundation::Rect> rects;
 
-        for (int i = 0; i < actualTestsCount; i++) {
+        for (int i = 0; i < actualTestsCount; i++)
+        {
             float left = ranges[i].left;
             float top = ranges[i].top;
             float right = ranges[i].left + ranges[i].width;
@@ -988,7 +994,8 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<IStream> stream;
         ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
 
-        if (randomAccessStream.Size()) {
+        if (randomAccessStream.Size())
+        {
             stream->SetSize({ 0 });
         }
 

@@ -8,6 +8,6 @@ namespace Telegram.Native
         Int32 PixelWidth { get; };
         Int32 PixelHeight { get; };
 
-        Windows.UI.Xaml.Media.Imaging.WriteableBitmap Visual { get; };
+        Windows.UI.Xaml.Media.Imaging.WriteableBitmap Source { get; };
     }
 }

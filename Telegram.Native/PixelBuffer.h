@@ -27,7 +27,7 @@ namespace winrt::Telegram::Native::implementation
         int32_t PixelWidth();
         int32_t PixelHeight();
 
-        WriteableBitmap Visual();
+        WriteableBitmap Source();
 
     private:
         WriteableBitmap m_bitmap;

@@ -24,9 +24,18 @@ namespace winrt::Telegram::Native::implementation
         {
         }
 
-        static IBuffer Create(uint32_t size) {
+        static IBuffer Create(uint32_t size)
+        {
             auto info = winrt::make_self<winrt::Telegram::Native::implementation::BufferSurface>(size);
             return info.as<IBuffer>();
+        }
+
+        static void Copy(IBuffer a, IBuffer b)
+        {
+            auto ad = a.data();
+            auto bd = b.data();
+
+            memcpy(bd, ad, a.Length());
         }
 
         uint32_t Capacity() const
