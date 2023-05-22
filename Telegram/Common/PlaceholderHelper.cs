@@ -77,9 +77,11 @@ namespace Telegram.Common
             using var locked = await _patternSurfaceLock.WaitAsync();
 
             var bitmap = default(LoadedImageSurface);
-            var dpi = (int)(rasterizationScale * 96);
+            var scale = (int)(rasterizationScale * 100);
 
-            var cache = $"{file.Remote.UniqueId}.{dpi}.png";
+            rasterizationScale = 0.25 * rasterizationScale;
+
+            var cache = $"{file.Remote.UniqueId}.scale-{scale}.png";
             var relative = System.IO.Path.Combine("Wallpapers", cache);
 
             var delete = false;
@@ -94,9 +96,9 @@ namespace Telegram.Common
                     using (var stream = await item.OpenAsync(FileAccessMode.ReadWrite))
                     {
                         var text = await ProcessSvgXmlAsync(file.Local.Path);
-                        await PlaceholderImageHelper.Current.DrawSvgAsync(text, Colors.White, stream, dpi);
+                        await PlaceholderImageHelper.Current.DrawSvgAsync(text, Colors.White, stream, rasterizationScale);
 
-                        bitmap = LoadedImageSurface.StartLoadFromStream(stream);
+                        bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Size(360, 740));
                     }
                 }
                 catch
@@ -110,7 +112,7 @@ namespace Telegram.Common
                 {
                     using (var stream = await item.OpenReadAsync())
                     {
-                        bitmap = LoadedImageSurface.StartLoadFromStream(stream);
+                        bitmap = LoadedImageSurface.StartLoadFromStream(stream, new Size(360, 740));
                     }
                 }
                 catch

@@ -37,7 +37,6 @@ namespace Telegram.Views.Settings
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            BackgroundControl.XamlRoot = Frame.XamlRoot;
             BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
@@ -121,7 +120,7 @@ namespace Telegram.Views.Settings
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is ChatThemeCell content && args.Item is ChatTheme theme)
+            else if (args.ItemContainer.ContentTemplateRoot is ChatThemeCell content && args.Item is ChatThemeViewModel theme)
             {
                 content.Update(theme);
             }

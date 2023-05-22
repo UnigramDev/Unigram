@@ -7,7 +7,7 @@
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Services.Settings;
-using Telegram.Td.Api;
+using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -16,14 +16,14 @@ namespace Telegram.Controls.Cells
 {
     public sealed partial class ChatThemeCell : UserControl
     {
-        private ChatTheme _theme;
+        private ChatThemeViewModel _theme;
 
         public ChatThemeCell()
         {
             InitializeComponent();
         }
 
-        public void Update(ChatTheme theme)
+        public void Update(ChatThemeViewModel theme)
         {
             _theme = theme;
 
@@ -44,7 +44,7 @@ namespace Telegram.Controls.Cells
             NoTheme.Visibility = Visibility.Collapsed;
 
             Preview.Visibility = Visibility.Visible;
-            Preview.UpdateSource(null, settings.Background, true);
+            Preview.UpdateSource(theme.ClientService, settings.Background, true);
 
             Outgoing.Fill = settings.OutgoingMessageFill;
             Incoming.Fill = new SolidColorBrush(ThemeAccentInfo.Colorize(ActualTheme == ElementTheme.Light ? TelegramThemeType.Day : TelegramThemeType.Tinted, settings.AccentColor.ToColor(), "MessageBackgroundBrush"));

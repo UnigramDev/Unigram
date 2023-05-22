@@ -14,6 +14,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading;
 using Telegram.Common;
+using Telegram.Controls.Chats;
 using Telegram.Native;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -319,17 +320,17 @@ namespace Telegram.Td.Api
             return Color.FromArgb(0x66, 0xFF, 0xFF, 0xFF);
         }
 
-        public static Brush ToBrush(this BackgroundTypeFill fill)
+        public static Brush ToBrush(this BackgroundTypeFill fill, int offset = 0)
         {
-            return fill.Fill.ToBrush();
+            return fill.Fill.ToBrush(offset);
         }
 
-        public static Brush ToBrush(this BackgroundTypePattern pattern)
+        public static Brush ToBrush(this BackgroundTypePattern pattern, int offset = 0)
         {
-            return pattern.Fill.ToBrush();
+            return pattern.Fill.ToBrush(offset);
         }
 
-        public static Brush ToBrush(this BackgroundFill fill)
+        public static Brush ToBrush(this BackgroundFill fill, int offset = 0)
         {
             if (fill is BackgroundFillSolid solid)
             {
@@ -338,6 +339,14 @@ namespace Telegram.Td.Api
             else if (fill is BackgroundFillGradient gradient)
             {
                 return TdBackground.GetGradient(gradient.TopColor, gradient.BottomColor, gradient.RotationAngle);
+            }
+            else if (fill is BackgroundFillFreeformGradient freeformGradient)
+            {
+                return new ImageBrush
+                {
+                    ImageSource = ChatBackgroundFreeform.Create(freeformGradient, offset),
+                    Stretch = Stretch.UniformToFill
+                };
             }
 
             return null;

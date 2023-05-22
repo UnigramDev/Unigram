@@ -18,8 +18,6 @@ namespace Telegram.Controls.Media
     {
         public LoadedImageSurface ImageSource { get; set; }
 
-        public float RasterizationScale { get; set; }
-
         public bool IsNegative { get; set; }
 
         public byte Intensity { get; set; } = 255;
@@ -34,9 +32,13 @@ namespace Telegram.Controls.Media
                 _recreate = false;
 
                 var surface = ImageSource;
+                var logical = surface.DecodedSize.ToVector2();
+                var physical = surface.DecodedPhysicalSize.ToVector2();
+
                 var surfaceBrush = Window.Current.Compositor.CreateSurfaceBrush(surface);
                 surfaceBrush.Stretch = CompositionStretch.None;
-                surfaceBrush.Scale = new Vector2(1 / RasterizationScale);
+                surfaceBrush.SnapToPixels = true;
+                surfaceBrush.Scale = logical / physical;
 
                 var borderEffect = new BorderEffect()
                 {
@@ -139,9 +141,13 @@ namespace Telegram.Controls.Media
                 }
 
                 var surface = ImageSource;
+                var logical = surface.DecodedSize.ToVector2();
+                var physical = surface.DecodedPhysicalSize.ToVector2();
+
                 var surfaceBrush = Window.Current.Compositor.CreateSurfaceBrush(surface);
                 surfaceBrush.Stretch = CompositionStretch.None;
-                surfaceBrush.Scale = new Vector2(1 / RasterizationScale);
+                surfaceBrush.SnapToPixels = true;
+                surfaceBrush.Scale = logical / physical;
 
                 if (CompositionBrush is CompositionEffectBrush effectBrush)
                 {

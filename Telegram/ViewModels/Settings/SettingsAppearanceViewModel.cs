@@ -33,10 +33,10 @@ namespace Telegram.ViewModels.Settings
         {
             _themeService = themeService;
 
-            ChatThemes = new ObservableCollection<ChatTheme>();
+            ChatThemes = new ObservableCollection<ChatThemeViewModel>();
         }
 
-        public ObservableCollection<ChatTheme> ChatThemes { get; }
+        public ObservableCollection<ChatThemeViewModel> ChatThemes { get; }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
@@ -64,8 +64,8 @@ namespace Telegram.ViewModels.Settings
                 Background = GetDefaultBackground(true)
             };
 
-            var defaultTheme = new ChatTheme("\U0001F3E0", defaultLight, defaultDark);
-            var themes = ClientService.GetChatThemes();
+            var defaultTheme = new ChatThemeViewModel(ClientService, "\U0001F3E0", defaultLight, defaultDark);
+            var themes = ClientService.GetChatThemes().Select(x => new ChatThemeViewModel(ClientService, x));
 
             ChatThemes.AddRange(new[] { defaultTheme }.Union(themes));
 
@@ -75,14 +75,14 @@ namespace Telegram.ViewModels.Settings
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
-        private ChatTheme _selectedChatTheme;
-        public ChatTheme SelectedChatTheme
+        private ChatThemeViewModel _selectedChatTheme;
+        public ChatThemeViewModel SelectedChatTheme
         {
             get => _selectedChatTheme;
             set => SetChatTheme(value);
         }
 
-        private void SetChatTheme(ChatTheme chatTheme)
+        private void SetChatTheme(ChatThemeViewModel chatTheme)
         {
             if (chatTheme == null || chatTheme.Name == _selectedChatTheme?.Name)
             {
@@ -316,6 +316,38 @@ namespace Telegram.ViewModels.Settings
         public void OpenStickers()
         {
             NavigationService.Navigate(typeof(SettingsStickersPage));
+        }
+    }
+
+    public class ChatThemeViewModel
+    {
+        public IClientService ClientService { get; }
+
+        public ThemeSettings DarkSettings { get; }
+
+        public ThemeSettings LightSettings { get; }
+
+        public string Name { get; }
+
+        public ChatThemeViewModel(IClientService clientService, ChatTheme chatTheme)
+        {
+            ClientService = clientService;
+            DarkSettings = chatTheme.DarkSettings;
+            LightSettings = chatTheme.LightSettings;
+            Name = chatTheme.Name;
+        }
+
+        public ChatThemeViewModel(IClientService clientService, string name, ThemeSettings lightSettings, ThemeSettings darkSettings)
+        {
+            ClientService = clientService;
+            DarkSettings = darkSettings;
+            LightSettings = lightSettings;
+            Name = name;
+        }
+
+        public static implicit operator ChatTheme(ChatThemeViewModel chatTheme)
+        {
+            return new ChatTheme(chatTheme.Name, chatTheme.LightSettings, chatTheme.DarkSettings);
         }
     }
 }

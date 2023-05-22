@@ -5,13 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Controls.Cells;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Settings;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -42,7 +42,7 @@ namespace Telegram.Controls.Chats
     {
         private readonly DialogViewModel _viewModel;
 
-        private readonly ChatTheme _selectedTheme;
+        private readonly ChatThemeViewModel _selectedTheme;
         private readonly ChatBackground _background;
 
         public event EventHandler<ChatThemeChangedEventArgs> ThemeChanged;
@@ -55,8 +55,10 @@ namespace Telegram.Controls.Chats
             _viewModel = viewModel;
 
             var chat = _viewModel.Chat;
-            var items = new List<ChatTheme>(viewModel.ClientService.GetChatThemes());
-            items.Insert(0, new ChatTheme("\u274C", null, null));
+            var defaultTheme = new ChatThemeViewModel(viewModel.ClientService, "\U0001F3E0", null, null);
+            var themes = viewModel.ClientService.GetChatThemes().Select(x => new ChatThemeViewModel(viewModel.ClientService, x));
+
+            var items = new[] { defaultTheme }.Union(themes).ToList();
 
             _selectedTheme = string.IsNullOrEmpty(chat.ThemeName) ? items[0] : items.FirstOrDefault(x => x.Name == chat.ThemeName);
             _background = chat.Background;
@@ -89,7 +91,7 @@ namespace Telegram.Controls.Chats
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is ChatThemeCell content && args.Item is ChatTheme theme)
+            else if (args.ItemContainer.ContentTemplateRoot is ChatThemeCell content && args.Item is ChatThemeViewModel theme)
             {
                 content.Update(theme);
             }
@@ -97,7 +99,7 @@ namespace Telegram.Controls.Chats
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ScrollingHost.SelectedItem is ChatTheme theme)
+            if (ScrollingHost.SelectedItem is ChatThemeViewModel theme)
             {
                 ThemeChanged?.Invoke(this, new ChatThemeChangedEventArgs(theme.LightSettings != null ? theme : null));
 
@@ -124,7 +126,7 @@ namespace Telegram.Controls.Chats
 
         private async void Close_Click(object sender, RoutedEventArgs e)
         {
-            if (ScrollingHost.SelectedItem is ChatTheme theme)
+            if (ScrollingHost.SelectedItem is ChatThemeViewModel theme)
             {
                 if (theme != _selectedTheme)
                 {

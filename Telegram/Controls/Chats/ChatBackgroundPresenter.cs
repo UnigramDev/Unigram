@@ -9,6 +9,7 @@ using System;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Media;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI;
@@ -41,7 +42,7 @@ namespace Telegram.Controls.Chats
         private bool _thumbnail;
         private long _fileToken;
 
-        private float _rasterizationScale;
+        private double _rasterizationScale;
 
         public ChatBackgroundPresenter()
         {
@@ -66,15 +67,10 @@ namespace Telegram.Controls.Chats
 
         private void OnRasterizationScaleChanged(XamlRoot sender, XamlRootChangedEventArgs args)
         {
-            var value = (float)sender.RasterizationScale;
-            if (value != _rasterizationScale)
+            var value = sender.RasterizationScale;
+            if (value != _rasterizationScale && _background?.Type is BackgroundTypePattern && _background?.Document?.DocumentValue != null)
             {
-                _rasterizationScale = value;
-
-                if (_background != null)
-                {
-                    UpdateSource(null, _background, _thumbnail);
-                }
+                UpdatePattern(_background.Document.DocumentValue, value);
             }
         }
 
@@ -166,7 +162,7 @@ namespace Telegram.Controls.Chats
 
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    UpdatePattern(file);
+                    UpdatePattern(file, WindowContext.Current.RasterizationScale);
                 }
                 else if (clientService != null)
                 {
@@ -248,35 +244,46 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private async void UpdatePattern(File file)
+        private async void UpdatePattern(File file, double scale)
         {
-            if (_pattern == null || _patternPath != file.Local.Path)
+            if (_pattern == null || _patternPath != file.Local.Path || _rasterizationScale != scale)
             {
                 if (_negative)
                 {
                     BorderBrush = new SolidColorBrush(Colors.Black);
                 }
 
-                _rasterizationScale = (float)XamlRoot.RasterizationScale;
                 _patternPath = file.Local.Path;
+                _rasterizationScale = scale;
 
                 if (_vector)
                 {
-                    _pattern = await PlaceholderHelper.LoadPatternBitmapAsync(file, XamlRoot.RasterizationScale);
+                    _pattern = await PlaceholderHelper.LoadPatternBitmapAsync(file, scale);
                 }
                 else
                 {
                     _pattern = await PlaceholderHelper.LoadBitmapAsync(file);
                 }
 
-                _pattern.LoadCompleted += (s, args) =>
+                void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
                 {
+                    s.LoadCompleted -= handler;
+
                     if (_backgroundId == file.Id)
                     {
                         BorderBrush = null;
                         UpdatePattern();
                     }
-                };
+                }
+
+                if (_pattern != null)
+                {
+                    _pattern.LoadCompleted += handler;
+                }
+                else if (_backgroundId == file.Id)
+                {
+                    BorderBrush = null;
+                }
             }
             else
             {
@@ -288,7 +295,6 @@ namespace Telegram.Controls.Chats
         {
             if (Foreground is TiledBrush tiledBrush)
             {
-                tiledBrush.RasterizationScale = _rasterizationScale;
                 tiledBrush.ImageSource = _pattern;
                 tiledBrush.Intensity = _intensity;
                 tiledBrush.IsNegative = _negative;
@@ -299,7 +305,6 @@ namespace Telegram.Controls.Chats
             {
                 Foreground = new TiledBrush
                 {
-                    RasterizationScale = _rasterizationScale,
                     ImageSource = _pattern,
                     Intensity = _intensity,
                     IsNegative = _negative,
@@ -349,7 +354,7 @@ namespace Telegram.Controls.Chats
 
         private void UpdateFile(object target, File file)
         {
-            if (file.Id == _background?.Document?.DocumentValue.Id)
+            if (file.Id == _backgroundId)
             {
                 this.BeginOnUIThread(() => UpdateSource(null, _background, _thumbnail));
             }
