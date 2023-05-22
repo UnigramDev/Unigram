@@ -237,8 +237,8 @@ namespace Telegram.Controls.Chats
                     {
                         ImageSource = UriEx.ToBitmap(file.Local.Path, 0, 0),
                         Stretch = Stretch.UniformToFill,
-                        AlignmentX = AlignmentX.Left,
-                        AlignmentY = AlignmentY.Top
+                        AlignmentX = AlignmentX.Center,
+                        AlignmentY = AlignmentY.Center
                     };
                 }
             }
