@@ -322,16 +322,16 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateFile(MessageViewModel message, File file)
         {
-            message.PlaybackService.StateChanged -= OnPlaybackStateChanged;
-            message.PlaybackService.PositionChanged -= OnPositionChanged;
-
             var voiceNote = GetContent(message);
             if (voiceNote == null || !_templateApplied)
             {
                 return;
             }
 
-            else if (voiceNote.Voice.Id != file.Id)
+            message.PlaybackService.StateChanged -= OnPlaybackStateChanged;
+            message.PlaybackService.PositionChanged -= OnPositionChanged;
+
+            if (voiceNote.Voice.Id != file.Id)
             {
                 return;
             }
@@ -339,19 +339,16 @@ namespace Telegram.Controls.Messages.Content
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)
             {
-                //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
-                //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                //Button.Glyph = Icons.Download;
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 

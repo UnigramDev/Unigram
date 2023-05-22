@@ -111,98 +111,104 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateContent(MessageViewModel message, WebPage webPage)
         {
-            if (Media.Child is IContent content && content.IsValid(message.Content, false))
+            if (Media.Child is IContent media)
             {
-                content.UpdateMessage(message);
-            }
-            else
-            {
-                var maxWidth = (double)BootStrapper.Current.Resources["MessageMaxWidth"];
-                maxWidth -= 10 + 8 + 2 + 10;
-
-                if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
+                if (media.IsValid(message.Content, false))
                 {
-                    if (Uri.TryCreate(webPage.Url, UriKind.Absolute, out Uri result))
-                    {
-                        var background = TdBackground.FromUri(result);
-                        if (background is BackgroundTypeFill typeFill)
-                        {
-                            var aspect = new AspectView { MaxWidth = 320, Constraint = new Size(1, 1) };
-                            aspect.Children.Add(new ChatBackgroundPreview { Fill = typeFill.Fill });
-
-                            Media.Child = aspect;
-                        }
-                        else if (background is BackgroundTypePattern typePattern)
-                        {
-                            if (webPage.Document != null)
-                            {
-                                var preview = new ChatBackgroundPreview { Fill = typePattern.Fill };
-                                preview.Children.Add(new DocumentPhotoContent(message));
-
-                                Media.Child = preview;
-                            }
-                            else
-                            {
-                                var aspect = new AspectView { MaxWidth = 320, Constraint = new Size(1, 1) };
-                                aspect.Children.Add(new ChatBackgroundPreview { Fill = typePattern.Fill });
-
-                                Media.Child = aspect;
-                            }
-                        }
-                        else if (webPage.Document != null)
-                        {
-                            Media.Child = new DocumentPhotoContent(message);
-                        }
-                    }
-                }
-                else if (webPage.Animation != null)
-                {
-                    Media.Child = new AnimationContent(message) { MaxWidth = maxWidth };
-                }
-                else if (webPage.Audio != null)
-                {
-                    Media.Child = new AudioContent(message);
-                }
-                else if (webPage.Document != null)
-                {
-                    Media.Child = new DocumentContent(message);
-                }
-                else if (webPage.Sticker != null)
-                {
-                    if (webPage.Sticker.Format is StickerFormatTgs)
-                    {
-                        Media.Child = new AnimatedStickerContent(message);
-                    }
-                    else if (webPage.Sticker.Format is StickerFormatWebm)
-                    {
-                        Media.Child = new VideoStickerContent(message);
-                    }
-                    else
-                    {
-                        Media.Child = new StickerContent(message);
-                    }
-                }
-                else if (webPage.Video != null)
-                {
-                    Media.Child = new VideoContent(message) { MaxWidth = maxWidth };
-                }
-                else if (webPage.VideoNote != null)
-                {
-                    Media.Child = new VideoNoteContent(message);
-                }
-                else if (webPage.VoiceNote != null)
-                {
-                    Media.Child = new VoiceNoteContent(message);
-                }
-                else if (webPage.Photo != null)
-                {
-                    // Photo at last: web page preview might have both a file and a thumbnail
-                    Media.Child = new PhotoContent(message) { MaxWidth = maxWidth };
+                    media.UpdateMessage(message);
+                    return;
                 }
                 else
                 {
-                    Media.Child = null;
+                    media.Recycle();
                 }
+            }
+
+            var maxWidth = (double)BootStrapper.Current.Resources["MessageMaxWidth"];
+            maxWidth -= 10 + 8 + 2 + 10;
+
+            if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
+            {
+                if (Uri.TryCreate(webPage.Url, UriKind.Absolute, out Uri result))
+                {
+                    var background = TdBackground.FromUri(result);
+                    if (background is BackgroundTypeFill typeFill)
+                    {
+                        var aspect = new AspectView { MaxWidth = 320, Constraint = new Size(1, 1) };
+                        aspect.Children.Add(new ChatBackgroundPreview { Fill = typeFill.Fill });
+
+                        Media.Child = aspect;
+                    }
+                    else if (background is BackgroundTypePattern typePattern)
+                    {
+                        if (webPage.Document != null)
+                        {
+                            var preview = new ChatBackgroundPreview { Fill = typePattern.Fill };
+                            preview.Children.Add(new DocumentPhotoContent(message));
+
+                            Media.Child = preview;
+                        }
+                        else
+                        {
+                            var aspect = new AspectView { MaxWidth = 320, Constraint = new Size(1, 1) };
+                            aspect.Children.Add(new ChatBackgroundPreview { Fill = typePattern.Fill });
+
+                            Media.Child = aspect;
+                        }
+                    }
+                    else if (webPage.Document != null)
+                    {
+                        Media.Child = new DocumentPhotoContent(message);
+                    }
+                }
+            }
+            else if (webPage.Animation != null)
+            {
+                Media.Child = new AnimationContent(message) { MaxWidth = maxWidth };
+            }
+            else if (webPage.Audio != null)
+            {
+                Media.Child = new AudioContent(message);
+            }
+            else if (webPage.Document != null)
+            {
+                Media.Child = new DocumentContent(message);
+            }
+            else if (webPage.Sticker != null)
+            {
+                if (webPage.Sticker.Format is StickerFormatTgs)
+                {
+                    Media.Child = new AnimatedStickerContent(message);
+                }
+                else if (webPage.Sticker.Format is StickerFormatWebm)
+                {
+                    Media.Child = new VideoStickerContent(message);
+                }
+                else
+                {
+                    Media.Child = new StickerContent(message);
+                }
+            }
+            else if (webPage.Video != null)
+            {
+                Media.Child = new VideoContent(message) { MaxWidth = maxWidth };
+            }
+            else if (webPage.VideoNote != null)
+            {
+                Media.Child = new VideoNoteContent(message);
+            }
+            else if (webPage.VoiceNote != null)
+            {
+                Media.Child = new VoiceNoteContent(message);
+            }
+            else if (webPage.Photo != null)
+            {
+                // Photo at last: web page preview might have both a file and a thumbnail
+                Media.Child = new PhotoContent(message) { MaxWidth = maxWidth };
+            }
+            else
+            {
+                Media.Child = null;
             }
         }
 

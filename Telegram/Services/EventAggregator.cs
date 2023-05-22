@@ -207,17 +207,31 @@ namespace Telegram.Services
                     var subscriber = value.Key;
                     var delegato = value.Value;
 
+                    void DynamicInvoke(Delegate delegato, object subscriber, object message)
+                    {
+                        try
+                        {
+                            delegato.DynamicInvoke(subscriber, message);
+                        }
+                        catch
+                        {
+                            // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
+                            // TODO: would be great to remove the subscriber from the delegates here.
+                            Unsubscribe(subscriber);
+                        }
+                    }
+
                     if (value.Key is FrameworkElement element)
                     {
-                        element.BeginOnUIThread(() => delegato.DynamicInvoke(subscriber, message));
+                        element.BeginOnUIThread(() => DynamicInvoke(delegato, subscriber, message));
                     }
                     else if (value.Key is ViewModelBase navigable && navigable.Dispatcher != null)
                     {
-                        navigable.BeginOnUIThread(() => delegato.DynamicInvoke(subscriber, message));
+                        navigable.BeginOnUIThread(() => DynamicInvoke(delegato, subscriber, message));
                     }
                     else
                     {
-                        delegato.DynamicInvoke(subscriber, message);
+                        DynamicInvoke(delegato, subscriber, message);
                     }
 
                     count++;

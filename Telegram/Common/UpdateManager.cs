@@ -50,21 +50,9 @@ namespace Telegram.Common
         #region Subscribe
 
         [Obsolete("Always use token subscription")]
-        public static void Subscribe(object sender, MessageViewModel message, File file, UpdateHandler<File> handler, bool completionOnly = false)
-        {
-            Subscribe(sender, message.ClientService.SessionId, file, handler, completionOnly);
-        }
-
-        [Obsolete("Always use token subscription")]
         public static void Subscribe(object sender, IClientService clientService, File file, UpdateHandler<File> handler, bool completionOnly = false)
         {
-            Subscribe(sender, clientService.SessionId, file, handler, completionOnly);
-        }
-
-        [Obsolete("Always use token subscription")]
-        public static void Subscribe(object sender, int sessionId, File file, UpdateHandler<File> handler, bool completionOnly = false)
-        {
-            var value = (sessionId << 16) | file.Id;
+            var value = (clientService.SessionId << 16) | file.Id;
             if (completionOnly)
             {
                 value |= 0x01000000;

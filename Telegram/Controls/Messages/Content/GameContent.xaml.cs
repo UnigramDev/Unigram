@@ -80,25 +80,31 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateContent(MessageViewModel message, Game game)
         {
-            if (Media.Child is IContent content && content.IsValid(message.Content, false))
+            if (Media.Child is IContent media)
             {
-                content.UpdateMessage(message);
-            }
-            else
-            {
-                if (game.Animation != null)
+                if (media.IsValid(message.Content, false))
                 {
-                    Media.Child = new AnimationContent(message);
-                }
-                else if (game.Photo != null)
-                {
-                    // Photo at last: web page preview might have both a file and a thumbnail
-                    Media.Child = new PhotoContent(message);
+                    media.UpdateMessage(message);
+                    return;
                 }
                 else
                 {
-                    Media.Child = null;
+                    media.Recycle();
                 }
+            }
+
+            if (game.Animation != null)
+            {
+                Media.Child = new AnimationContent(message);
+            }
+            else if (game.Photo != null)
+            {
+                // Photo at last: web page preview might have both a file and a thumbnail
+                Media.Child = new PhotoContent(message);
+            }
+            else
+            {
+                Media.Child = null;
             }
         }
 

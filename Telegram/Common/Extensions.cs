@@ -712,7 +712,7 @@ namespace Telegram.Common
             }
             catch
             {
-                // Most likey Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
+                // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
             }
         }
 

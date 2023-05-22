@@ -39,6 +39,7 @@ namespace Telegram.Controls.Messages
         public MessageSelector()
         {
             DefaultStyleKey = typeof(MessageSelector);
+            Unloaded += OnUnloaded;
         }
 
         public MessageSelector(MessageViewModel message, UIElement child)
@@ -48,6 +49,14 @@ namespace Telegram.Controls.Messages
             Content = child;
         }
 
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (_message != null)
+            {
+                Recycle();
+            }
+        }
+
         public MessageViewModel Message => _message;
 
         public void Recycle()
@@ -55,6 +64,10 @@ namespace Telegram.Controls.Messages
             if (Content is MessageBubble bubble)
             {
                 bubble.Recycle();
+            }
+            else if (Content is IContent content)
+            {
+                content.Recycle();
             }
 
             _message?.UpdateSelectionCallback(null);

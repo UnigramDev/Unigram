@@ -182,14 +182,14 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateFile(MessageViewModel message, File file)
         {
-            message.PlaybackService.StateChanged -= OnPlaybackStateChanged;
-            message.PlaybackService.PositionChanged -= OnPositionChanged;
-
             var audio = GetContent(message);
             if (audio == null || !_templateApplied)
             {
                 return;
             }
+
+            message.PlaybackService.StateChanged -= OnPlaybackStateChanged;
+            message.PlaybackService.PositionChanged -= OnPositionChanged;
 
             if (audio.AudioValue.Id != file.Id)
             {

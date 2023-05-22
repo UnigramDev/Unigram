@@ -1470,136 +1470,142 @@ namespace Telegram.Controls.Messages
 
             if (Media.Child is IContent media && media.IsValid(content, true))
             {
-                media.UpdateMessage(message);
-            }
-            else
-            {
-                if (Media.Child is StickerContent or AnimatedStickerContent or VideoStickerContent or VideoNoteContent)
+                if (media.IsValid(content, true))
                 {
-                    UpdateAttach(message);
-                }
-
-                if (content is MessageText textMessage && textMessage.WebPage != null)
-                {
-                    if (textMessage.WebPage.IsSmallPhoto())
-                    {
-                        Media.Child = new WebPageSmallPhotoContent(message);
-                    }
-                    else
-                    {
-                        Media.Child = new WebPageContent(message);
-                    }
-                }
-                else if (content is MessageAlbum)
-                {
-                    Media.Child = new AlbumContent(message);
-                }
-                else if (content is MessageAnimation)
-                {
-                    Media.Child = new AnimationContent(message);
-                }
-                else if (content is MessageAudio)
-                {
-                    Media.Child = new AudioContent(message);
-                }
-                else if (content is MessageCall)
-                {
-                    Media.Child = new CallContent(message);
-                }
-                else if (content is MessageContact)
-                {
-                    Media.Child = new ContactContent(message);
-                }
-                else if (content is MessageDice)
-                {
-                    Media.Child = new DiceContent(message);
-                }
-                else if (content is MessageDocument)
-                {
-                    Media.Child = new DocumentContent(message);
-                }
-                else if (content is MessageGame)
-                {
-                    Media.Child = new GameContent(message);
-                }
-                else if (content is MessageInvoice invoice)
-                {
-                    if (invoice.ExtendedMedia is MessageExtendedMediaPhoto)
-                    {
-                        Media.Child = new PhotoContent(message);
-                    }
-                    else if (invoice.ExtendedMedia is MessageExtendedMediaVideo)
-                    {
-                        Media.Child = new VideoContent(message);
-                    }
-                    else if (invoice.ExtendedMedia is MessageExtendedMediaPreview)
-                    {
-                        Media.Child = new InvoicePreviewContent(message);
-                    }
-                    else if (invoice.Photo != null)
-                    {
-                        Media.Child = new InvoicePhotoContent(message);
-                    }
-                    else
-                    {
-                        Media.Child = new InvoiceContent(message);
-                    }
-                }
-                else if (content is MessageLocation)
-                {
-                    Media.Child = new LocationContent(message);
-                }
-                else if (content is MessagePhoto)
-                {
-                    Media.Child = new PhotoContent(message);
-                }
-                else if (content is MessagePoll)
-                {
-                    Media.Child = new PollContent(message);
-                }
-                else if (content is MessageSticker sticker)
-                {
-                    if (sticker.Sticker.Format is StickerFormatTgs)
-                    {
-                        Media.Child = new AnimatedStickerContent(message);
-                    }
-                    else if (sticker.Sticker.Format is StickerFormatWebm)
-                    {
-                        Media.Child = new VideoStickerContent(message);
-                    }
-                    else
-                    {
-                        Media.Child = new StickerContent(message);
-                    }
-                }
-                else if (content is MessageVenue)
-                {
-                    Media.Child = new VenueContent(message);
-                }
-                else if (content is MessageVideo)
-                {
-                    Media.Child = new VideoContent(message);
-                }
-                else if (content is MessageVideoNote)
-                {
-                    Media.Child = new VideoNoteContent(message);
-                }
-                else if (content is MessageVoiceNote)
-                {
-                    Media.Child = new VoiceNoteContent(message);
-                }
-                else if (content is MessageAnimatedEmoji)
-                {
-                    Media.Child = new Border
-                    {
-                        Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f),
-                        Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f)
-                    };
+                    media.UpdateMessage(message);
+                    return;
                 }
                 else
                 {
-                    Media.Child = null;
+                    media.Recycle();
                 }
+            }
+
+            if (Media.Child is StickerContent or AnimatedStickerContent or VideoStickerContent or VideoNoteContent)
+            {
+                UpdateAttach(message);
+            }
+
+            if (content is MessageText textMessage && textMessage.WebPage != null)
+            {
+                if (textMessage.WebPage.IsSmallPhoto())
+                {
+                    Media.Child = new WebPageSmallPhotoContent(message);
+                }
+                else
+                {
+                    Media.Child = new WebPageContent(message);
+                }
+            }
+            else if (content is MessageAlbum)
+            {
+                Media.Child = new AlbumContent(message);
+            }
+            else if (content is MessageAnimation)
+            {
+                Media.Child = new AnimationContent(message);
+            }
+            else if (content is MessageAudio)
+            {
+                Media.Child = new AudioContent(message);
+            }
+            else if (content is MessageCall)
+            {
+                Media.Child = new CallContent(message);
+            }
+            else if (content is MessageContact)
+            {
+                Media.Child = new ContactContent(message);
+            }
+            else if (content is MessageDice)
+            {
+                Media.Child = new DiceContent(message);
+            }
+            else if (content is MessageDocument)
+            {
+                Media.Child = new DocumentContent(message);
+            }
+            else if (content is MessageGame)
+            {
+                Media.Child = new GameContent(message);
+            }
+            else if (content is MessageInvoice invoice)
+            {
+                if (invoice.ExtendedMedia is MessageExtendedMediaPhoto)
+                {
+                    Media.Child = new PhotoContent(message);
+                }
+                else if (invoice.ExtendedMedia is MessageExtendedMediaVideo)
+                {
+                    Media.Child = new VideoContent(message);
+                }
+                else if (invoice.ExtendedMedia is MessageExtendedMediaPreview)
+                {
+                    Media.Child = new InvoicePreviewContent(message);
+                }
+                else if (invoice.Photo != null)
+                {
+                    Media.Child = new InvoicePhotoContent(message);
+                }
+                else
+                {
+                    Media.Child = new InvoiceContent(message);
+                }
+            }
+            else if (content is MessageLocation)
+            {
+                Media.Child = new LocationContent(message);
+            }
+            else if (content is MessagePhoto)
+            {
+                Media.Child = new PhotoContent(message);
+            }
+            else if (content is MessagePoll)
+            {
+                Media.Child = new PollContent(message);
+            }
+            else if (content is MessageSticker sticker)
+            {
+                if (sticker.Sticker.Format is StickerFormatTgs)
+                {
+                    Media.Child = new AnimatedStickerContent(message);
+                }
+                else if (sticker.Sticker.Format is StickerFormatWebm)
+                {
+                    Media.Child = new VideoStickerContent(message);
+                }
+                else
+                {
+                    Media.Child = new StickerContent(message);
+                }
+            }
+            else if (content is MessageVenue)
+            {
+                Media.Child = new VenueContent(message);
+            }
+            else if (content is MessageVideo)
+            {
+                Media.Child = new VideoContent(message);
+            }
+            else if (content is MessageVideoNote)
+            {
+                Media.Child = new VideoNoteContent(message);
+            }
+            else if (content is MessageVoiceNote)
+            {
+                Media.Child = new VoiceNoteContent(message);
+            }
+            else if (content is MessageAnimatedEmoji)
+            {
+                Media.Child = new Border
+                {
+                    Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f),
+                    Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f)
+                };
+            }
+            else
+            {
+                Media.Child = null;
             }
         }
 
