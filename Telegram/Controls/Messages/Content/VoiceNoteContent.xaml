@@ -23,7 +23,7 @@
         <Setter Property="VerticalAlignment"
                 Value="Center" />
         <Setter Property="FontFamily"
-                Value="{ThemeResource ContentControlThemeFontFamily}" />
+                Value="{ThemeResource SymbolThemeFontFamily}" />
         <Setter Property="FontWeight"
                 Value="Normal" />
         <Setter Property="FontSize"
@@ -121,6 +121,19 @@
                         <Border x:Name="ContentPresenter"
                                 Background="{TemplateBinding Foreground}"
                                 Opacity="0.2" />
+
+                        <TextBlock x:Name="ContentPresenter1"
+                                   Margin="{TemplateBinding Padding}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   FontSize="30" />
+                        <TextBlock x:Name="ContentPresenter2"
+                                   Margin="{TemplateBinding Padding}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   FontSize="30" />
 
                         <muxc:AnimatedIcon x:Name="Icon"
                                            Source="{TemplateBinding Source}"
@@ -226,6 +239,8 @@
                                                            x:Load="False"
                                                            Style="{StaticResource RecognizeButtonStyle}"
                                                            Foreground="{ThemeResource MessageMediaBackgroundBrush}"
+                                                           CheckedGlyph="&#xE90B;"
+                                                           Glyph="&#xE906;"
                                                            VerticalAlignment="Top"
                                                            Margin="8,0,0,0"
                                                            Width="28"
