@@ -636,6 +636,7 @@ namespace Telegram.Navigation
         private void OnResuming(object sender, object e)
         {
             Logger.Info();
+            SoundEffects.Resume();
 
             try
             {
@@ -673,6 +674,8 @@ namespace Telegram.Navigation
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             Logger.Info();
+            SoundEffects.Suspend();
+
             var deferral = e.SuspendingOperation.GetDeferral();
             try
             {

@@ -30,6 +30,19 @@ namespace Telegram.Common
 
         private static readonly DisposableMutex _lock = new();
 
+        private static bool _suspended;
+
+        public static void Suspend()
+        {
+            _suspended = true;
+            Stop();
+        }
+
+        public static void Resume()
+        {
+            _suspended = false;
+        }
+
         public static async void Stop()
         {
             using (await _lock.WaitAsync())
@@ -65,6 +78,11 @@ namespace Telegram.Common
 
         public static void Play(SoundEffect effect)
         {
+            if (_suspended)
+            {
+                return;
+            }
+
             switch (effect)
             {
                 case SoundEffect.Sent:
@@ -103,6 +121,11 @@ namespace Telegram.Common
         {
             try
             {
+                if (_suspended)
+                {
+                    return;
+                }
+
                 var file = await fileTask;
 
                 // This seems to fail in some conditions.
