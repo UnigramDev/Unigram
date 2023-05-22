@@ -45,8 +45,13 @@ namespace Telegram.Navigation
         public BootStrapper()
         {
             Current = this;
-            Resuming += CallResuming;
-            Suspending += CallHandleSuspendingAsync;
+            Resuming += OnResuming;
+            Suspending += OnSuspending;
+        }
+
+        public static Task ConsolidateAsync()
+        {
+            return WindowContext.ForEachAsync(window => WindowContext.Current.ConsolidateAsync());
         }
 
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
@@ -628,7 +633,7 @@ namespace Telegram.Navigation
 
         private readonly LifecycleLogic _LifecycleLogic = new LifecycleLogic();
 
-        private void CallResuming(object sender, object e)
+        private void OnResuming(object sender, object e)
         {
             Logger.Info();
 
@@ -665,15 +670,13 @@ namespace Telegram.Navigation
             return await _LifecycleLogic.AutoRestoreAsync(e, NavigationService);
         }
 
-        private async void CallHandleSuspendingAsync(object sender, SuspendingEventArgs e)
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
+            Logger.Info();
             var deferral = e.SuspendingOperation.GetDeferral();
             try
             {
-                //if (AutoSuspendAllFrames)
-                //{
-                //    await _LifecycleLogic.AutoSuspendAllFramesAsync(sender, e, AutoExtendExecutionSession);
-                //}
+                // TODO: should we have Task.WaitAny with a Delay?
                 await OnSuspendingAsync(sender, e);
             }
             catch

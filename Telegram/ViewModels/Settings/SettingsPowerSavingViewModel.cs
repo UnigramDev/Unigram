@@ -11,7 +11,6 @@ using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
-using Windows.ApplicationModel;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -254,39 +253,6 @@ namespace Telegram.ViewModels.Settings
             {
                 PowerSavingPolicy.AreSmoothTransitionsEnabled = value;
                 RaisePropertyChanged();
-            }
-        }
-
-        public bool IsTrayVisible
-        {
-            get => Settings.IsTrayVisible;
-            set => SetTrayVisible(value);
-        }
-
-        private async void SetTrayVisible(bool value)
-        {
-            if (Settings.IsTrayVisible == value)
-            {
-                return;
-            }
-
-            Settings.IsTrayVisible = value;
-            RaisePropertyChanged();
-
-            if (value)
-            {
-                try
-                {
-                    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-                }
-                catch
-                {
-                    // The app has been compiled without desktop bridge
-                }
-            }
-            else if (App.Connection != null)
-            {
-                await App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet { { "Exit", string.Empty } });
             }
         }
     }

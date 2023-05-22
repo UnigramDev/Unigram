@@ -33,7 +33,6 @@ using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Text;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -1072,21 +1071,6 @@ namespace Telegram.Common
         {
             var scrollViewer = GetScrollViewer(listViewBase);
             scrollViewer?.ChangeView(null, 0, null);
-        }
-
-        public static async Task ConsolidateAsync(this ApplicationView view)
-        {
-            if (await view.TryConsolidateAsync())
-            {
-                return;
-            }
-
-            Window.Current.Close();
-        }
-
-        public static Task ConsolidateAsync(this Application app)
-        {
-            return WindowContext.ForEachAsync(window => ApplicationView.GetForCurrentView().ConsolidateAsync());
         }
     }
 

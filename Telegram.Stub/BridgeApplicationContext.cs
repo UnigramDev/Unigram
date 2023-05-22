@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -21,11 +22,15 @@ namespace Telegram.Stub
         private AppServiceConnection _connection = null;
         private NotifyIcon _notifyIcon = null;
 
+        private bool _closeRequested;
+
         //private InterceptKeys _intercept;
 
         public BridgeApplicationContext()
         {
             //_intercept = new InterceptKeys();
+
+            SystemEvents.SessionEnded += OnSessionEnded;
 
             MenuItem openMenuItem = new MenuItem("Open Unigram", new EventHandler(OpenApp));
             MenuItem exitMenuItem = new MenuItem("Quit Unigram", new EventHandler(Exit));
@@ -61,6 +66,21 @@ namespace Telegram.Stub
             }
         }
 
+        private void OnSessionEnded(object sender, SessionEndedEventArgs e)
+        {
+            SystemEvents.SessionEnded -= OnSessionEnded;
+
+            if (_connection != null)
+            {
+                _connection.ServiceClosed -= OnServiceClosed;
+                _connection.Dispose();
+                _connection = null;
+            }
+
+            _notifyIcon.Dispose();
+            Application.Exit();
+        }
+
         private async void OpenApp(object sender, EventArgs e)
         {
             try
@@ -77,12 +97,21 @@ namespace Telegram.Stub
         {
             if (_connection != null)
             {
+                _connection.ServiceClosed -= OnServiceClosed;
+
                 try
                 {
-                    _connection.ServiceClosed -= Connection_ServiceClosed;
                     await _connection.SendMessageAsync(new ValueSet { { "Exit", string.Empty } });
                 }
-                catch { }
+                catch
+                {
+
+                }
+                finally
+                {
+                    _connection.Dispose();
+                    _connection = null;
+                }
             }
 
             _notifyIcon.Dispose();
@@ -102,68 +131,64 @@ namespace Telegram.Stub
                 AppServiceName = "org.telegram.bridge"
             };
 
-            _connection.RequestReceived += Connection_RequestReceived;
-            _connection.ServiceClosed += Connection_ServiceClosed;
+            _connection.RequestReceived += OnRequestReceived;
+            _connection.ServiceClosed += OnServiceClosed;
 
-            var connectionStatus = await _connection.OpenAsync();
-            if (connectionStatus != AppServiceConnectionStatus.Success)
-            {
-                //MessageBox.Show("Status: " + connectionStatus.ToString());
-            }
+            await _connection.OpenAsync();
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct FLASHWINFO
-        {
-            public UInt32 cbSize;
-            public IntPtr hwnd;
-            public FlashWindow dwFlags;
-            public UInt32 uCount;
-            public UInt32 dwTimeout;
-        }
+        //[StructLayout(LayoutKind.Sequential)]
+        //public struct FLASHWINFO
+        //{
+        //    public UInt32 cbSize;
+        //    public IntPtr hwnd;
+        //    public FlashWindow dwFlags;
+        //    public UInt32 uCount;
+        //    public UInt32 dwTimeout;
+        //}
 
-        public enum FlashWindow : uint
-        {
-            /// <summary>
-            /// Stop flashing. The system restores the window to its original state.
-            /// </summary>    
-            FLASHW_STOP = 0,
+        //public enum FlashWindow : uint
+        //{
+        //    /// <summary>
+        //    /// Stop flashing. The system restores the window to its original state.
+        //    /// </summary>    
+        //    FLASHW_STOP = 0,
 
-            /// <summary>
-            /// Flash the window caption
-            /// </summary>
-            FLASHW_CAPTION = 1,
+        //    /// <summary>
+        //    /// Flash the window caption
+        //    /// </summary>
+        //    FLASHW_CAPTION = 1,
 
-            /// <summary>
-            /// Flash the taskbar button.
-            /// </summary>
-            FLASHW_TRAY = 2,
+        //    /// <summary>
+        //    /// Flash the taskbar button.
+        //    /// </summary>
+        //    FLASHW_TRAY = 2,
 
-            /// <summary>
-            /// Flash both the window caption and taskbar button.
-            /// This is equivalent to setting the FLASHW_CAPTION | FLASHW_TRAY flags.
-            /// </summary>
-            FLASHW_ALL = 3,
+        //    /// <summary>
+        //    /// Flash both the window caption and taskbar button.
+        //    /// This is equivalent to setting the FLASHW_CAPTION | FLASHW_TRAY flags.
+        //    /// </summary>
+        //    FLASHW_ALL = 3,
 
-            /// <summary>
-            /// Flash continuously, until the FLASHW_STOP flag is set.
-            /// </summary>
-            FLASHW_TIMER = 4,
+        //    /// <summary>
+        //    /// Flash continuously, until the FLASHW_STOP flag is set.
+        //    /// </summary>
+        //    FLASHW_TIMER = 4,
 
-            /// <summary>
-            /// Flash continuously until the window comes to the foreground.
-            /// </summary>
-            FLASHW_TIMERNOFG = 12
-        }
+        //    /// <summary>
+        //    /// Flash continuously until the window comes to the foreground.
+        //    /// </summary>
+        //    FLASHW_TIMERNOFG = 12
+        //}
 
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
+        //[DllImport("user32.dll")]
+        //[return: MarshalAs(UnmanagedType.Bool)]
+        //static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
 
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        //[DllImport("user32.dll", SetLastError = true)]
+        //static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-        private void Connection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        private void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
             if (args.Request.Message.TryGetValue("FlashWindow", out object flash))
             {
@@ -195,13 +220,17 @@ namespace Telegram.Stub
                     }
                 }
             }
-            else if (args.Request.Message.TryGetValue("LoopbackExempt", out object loopbackExempt))
+            else if (args.Request.Message.ContainsKey("LoopbackExempt"))
             {
                 AddLocalhostExemption();
             }
-            else if (args.Request.Message.TryGetValue("Exit", out object exit))
+            else if (args.Request.Message.ContainsKey("CloseRequested"))
             {
-                _connection.ServiceClosed -= Connection_ServiceClosed;
+                _closeRequested = true;
+            }
+            else if (args.Request.Message.ContainsKey("Exit"))
+            {
+                _connection.ServiceClosed -= OnServiceClosed;
                 _connection.Dispose();
 
                 _notifyIcon.Dispose();
@@ -209,16 +238,22 @@ namespace Telegram.Stub
             }
         }
 
-        private void Connection_ServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
+        private void OnServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
         {
-            _connection.ServiceClosed -= Connection_ServiceClosed;
+            _connection.ServiceClosed -= OnServiceClosed;
             _connection.Dispose();
             _connection = null;
 
-            //Application.Exit();
-            Connect();
-
-            //MessageBox.Show(args.Status.ToString());
+            if (_closeRequested)
+            {
+                _closeRequested = false;
+                Connect();
+            }
+            else
+            {
+                _notifyIcon.Dispose();
+                Application.Exit();
+            }
         }
 
         private static void AddLocalhostExemption()

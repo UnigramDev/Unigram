@@ -102,6 +102,7 @@
     <uap6:Capability Name="graphicsCapture" />
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="oneProcessVoIP" />
+    <rescap:Capability Name="confirmAppClose" />
     <DeviceCapability Name="location" />
     <DeviceCapability Name="microphone" />
     <DeviceCapability Name="webcam" />

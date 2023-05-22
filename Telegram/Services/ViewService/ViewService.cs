@@ -118,11 +118,6 @@ namespace Telegram.Services.ViewService
                 newAppView.PersistedStateId = parameters.PersistentId ?? string.Empty;
 
                 var control = ViewLifetimeControl.GetForCurrentView();
-                control.Released += (s, args) =>
-                {
-                    newWindow.Close();
-                };
-
                 newWindow.Content = parameters.Content(control);
                 newWindow.Activate();
 

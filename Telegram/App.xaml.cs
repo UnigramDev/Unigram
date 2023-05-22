@@ -48,7 +48,6 @@ using Telegram.Views.Users;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
-using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
@@ -66,9 +65,6 @@ namespace Telegram
         public static Window ShareWindow { get; set; }
 
         public static ConcurrentDictionary<long, DataPackageView> DataPackages { get; } = new ConcurrentDictionary<long, DataPackageView>();
-
-        public static AppServiceConnection Connection { get; private set; }
-        public static BackgroundTaskDeferral Deferral { get; private set; }
 
         private ExtendedExecutionSession _extendedSession;
 
@@ -134,13 +130,11 @@ namespace Telegram
 
             if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
             {
-                Connection = appService.AppServiceConnection;
-                Deferral = args.TaskInstance.GetDeferral();
+                SystemTray.Connect(appService.AppServiceConnection, args.TaskInstance.GetDeferral());
 
-                appService.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
                 args.TaskInstance.Canceled += (s, e) =>
                 {
-                    Deferral.Complete();
+                    SystemTray.Cancel();
                 };
             }
             else
@@ -169,14 +163,6 @@ namespace Telegram
                 }
 
                 deferral.Complete();
-            }
-        }
-
-        private async void AppServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
-        {
-            if (args.Request.Message.TryGetValue("Exit", out _))
-            {
-                await Application.Current.ConsolidateAsync();
             }
         }
 
@@ -276,11 +262,6 @@ namespace Telegram
         private async void OnStartSync(IDispatcherContext context)
         {
             await RequestExtendedExecutionSessionAsync();
-
-            //#if DEBUG
-            //await VoIPConnection.Current.ConnectAsync();
-            //#endif
-
             await Toast.RegisterBackgroundTasks();
 
             try
@@ -301,17 +282,9 @@ namespace Telegram
                 return;
             }
 
-            if (SettingsService.Current.IsTrayVisible
-                && Windows.Foundation.Metadata.ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
+            if (SettingsService.Current.IsTrayVisible)
             {
-                try
-                {
-                    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-                }
-                catch
-                {
-                    // The app has been compiled without desktop bridge
-                }
+                await SystemTray.LaunchAsync();
             }
 #endif
 
@@ -352,8 +325,6 @@ namespace Telegram
                 _extendedSession.Dispose();
                 _extendedSession = null;
             }
-
-            // TODO: consider killing the tray icon here
         }
 
         public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)

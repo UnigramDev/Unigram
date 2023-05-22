@@ -1022,16 +1022,12 @@ namespace Telegram.Views
             }
             else if (command is ShortcutCommand.Quit)
             {
-                if (App.Connection != null)
-                {
-                    await App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet { { "Exit", string.Empty } });
-                }
-
-                await Application.Current.ConsolidateAsync();
+                await SystemTray.ExitAsync();
+                await BootStrapper.ConsolidateAsync();
             }
             else if (command is ShortcutCommand.Close)
             {
-                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                await WindowContext.Current.ConsolidateAsync();
             }
             else if (command == ShortcutCommand.Lock)
             {

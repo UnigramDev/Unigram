@@ -142,7 +142,7 @@ namespace Telegram.Views.Host
             }
             else if (command == ShortcutCommand.Close)
             {
-                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                await WindowContext.Current.ConsolidateAsync();
             }
         }
     }

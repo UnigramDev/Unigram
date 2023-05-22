@@ -26,6 +26,7 @@ using Windows.Foundation;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -82,6 +83,43 @@ namespace Telegram.Navigation
             if (TLContainer.Current.Passcode.IsLockscreenRequired)
             {
                 Lock(true);
+            }
+
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+            ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
+        }
+
+        private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        {
+            if (IsInMainView && SystemTray.IsConnected)
+            {
+                var deferral = e.GetDeferral();
+                await SystemTray.CloseRequestedAsync();
+                deferral.Complete();
+            }
+        }
+
+        public async Task ConsolidateAsync()
+        {
+            if (await ApplicationView.GetForCurrentView().TryConsolidateAsync())
+            {
+                return;
+            }
+
+            OnConsolidated();
+        }
+
+        private void OnConsolidated(ApplicationView sender, ApplicationViewConsolidatedEventArgs args)
+        {
+            OnConsolidated();
+        }
+
+        private void OnConsolidated()
+        {
+            if (!IsInMainView)
+            {
+                Window.Current.Content = null;
+                Window.Current.Close();
             }
         }
 
@@ -159,8 +197,6 @@ namespace Telegram.Navigation
                 element.VerticalAlignment = VerticalAlignment.Stretch;
             }
         }
-
-        public void Close() => _window.Close();
 
         public DispatcherContext Dispatcher { get; }
         public NavigationServiceList NavigationServices { get; } = new NavigationServiceList();

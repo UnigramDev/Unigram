@@ -19,9 +19,7 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views;
-using Windows.ApplicationModel.AppService;
 using Windows.Data.Xml.Dom;
-using Windows.Foundation.Collections;
 using Windows.Networking.PushNotifications;
 using Windows.Storage;
 using Windows.UI.Notifications;
@@ -261,10 +259,7 @@ namespace Telegram.Services
                     _unreadCount.Set(update.UnreadUnmutedCount);
                 }
 
-                if (App.Connection is AppServiceConnection connection)
-                {
-                    await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
-                }
+                await SystemTray.SendUnreadCountAsync(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
             }
         }
 
@@ -286,10 +281,7 @@ namespace Telegram.Services
                     _unreadCount.Set(update.UnreadUnmutedCount);
                 }
 
-                if (App.Connection is AppServiceConnection connection)
-                {
-                    await connection.SendMessageAsync(new ValueSet { { "UnreadCount", _settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0 }, { "UnreadUnmutedCount", update.UnreadUnmutedCount } });
-                }
+                await SystemTray.SendUnreadCountAsync(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
             }
         }
 
@@ -524,11 +516,6 @@ namespace Telegram.Services
             }
 
             await UpdateAsync(chat, () => UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply));
-
-            if (App.Connection is AppServiceConnection connection && _settings.Notifications.InAppFlash)
-            {
-                await connection.SendMessageAsync(new ValueSet { { "FlashWindow", string.Empty } });
-            }
         }
 
         private async Task UpdateAsync(Chat chat, Func<Task> action)

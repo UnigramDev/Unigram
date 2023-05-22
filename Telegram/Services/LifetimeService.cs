@@ -164,7 +164,7 @@ namespace Telegram.Services
             // but most likely not (because of Close)
             foreach (var window in WindowContext.All.ToArray())
             {
-                await window.Dispatcher.DispatchAsync(() =>
+                await window.Dispatcher.DispatchAsync(async () =>
                 {
                     if (window.Content is RootPage root && replace != null)
                     {
@@ -178,7 +178,7 @@ namespace Telegram.Services
                     }
                     else
                     {
-                        window.Close();
+                        await WindowContext.Current.ConsolidateAsync();
                     }
                 });
             }

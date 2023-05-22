@@ -8,13 +8,13 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
+using Telegram.Common;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -34,10 +34,7 @@ namespace Telegram.ViewModels.Settings
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (App.Connection != null)
-            {
-                await App.Connection.SendMessageAsync(new ValueSet { { "LoopbackExempt", true } });
-            }
+            await SystemTray.LoopbackExemptAsync(true);
 
             var systemId = await _networkService.GetSystemProxyId();
 

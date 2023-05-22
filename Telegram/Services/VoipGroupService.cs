@@ -1186,7 +1186,7 @@ namespace Telegram.Services
                 if (lifetime != null)
                 {
                     _lifetime = null;
-                    await lifetime.Dispatcher.DispatchAsync(() => ApplicationView.GetForCurrentView().ConsolidateAsync());
+                    await lifetime.Dispatcher.DispatchAsync(() => WindowContext.Current.ConsolidateAsync());
                 }
             }
         }

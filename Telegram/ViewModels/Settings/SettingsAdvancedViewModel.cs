@@ -212,18 +212,11 @@ namespace Telegram.ViewModels.Settings
 
             if (value)
             {
-                try
-                {
-                    await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-                }
-                catch
-                {
-                    // The app has been compiled without desktop bridge
-                }
+                await SystemTray.LaunchAsync();
             }
-            else if (App.Connection != null)
+            else
             {
-                await App.Connection.SendMessageAsync(new Windows.Foundation.Collections.ValueSet { { "Exit", string.Empty } });
+                await SystemTray.ExitAsync();
             }
         }
     }

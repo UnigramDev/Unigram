@@ -200,6 +200,7 @@
     <Compile Include="Collections\CollectionSeparator.cs" />
     <Compile Include="Collections\FlatteningCollection.cs" />
     <Compile Include="Collections\Handlers\ChatDiffHandler.cs" />
+    <Compile Include="Common\SystemTray.cs" />
     <Compile Include="Controls\Chats\ChatHistoryView.cs" />
     <Compile Include="Controls\Chats\ChatHistoryViewItem.cs" />
     <Compile Include="Controls\ClrGrid.cs" />

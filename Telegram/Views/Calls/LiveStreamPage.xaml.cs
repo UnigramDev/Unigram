@@ -76,7 +76,6 @@ namespace Telegram.Views.Calls
             titleBar.ButtonPressedForegroundColor = ColorEx.FromHex(0x99FFFFFF);
 
             Window.Current.SetTitleBar(TitleArea);
-            Window.Current.Closed += OnClosed;
 
             if (voipService.Call != null)
             {
@@ -134,11 +133,6 @@ namespace Telegram.Views.Calls
             {
                 _scheduledTimer.Stop();
             }
-        }
-
-        private void OnClosed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
-        {
-            WindowContext.Current.Content = null;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -345,7 +339,7 @@ namespace Telegram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                await WindowContext.Current.ConsolidateAsync();
                 return;
             }
 
@@ -365,13 +359,13 @@ namespace Telegram.Views.Calls
                 if (confirm == ContentDialogResult.Primary)
                 {
                     Dispose(popup.IsChecked == true);
-                    await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                    await WindowContext.Current.ConsolidateAsync();
                 }
             }
             else
             {
                 Dispose(false);
-                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                await WindowContext.Current.ConsolidateAsync();
             }
         }
 
@@ -382,7 +376,7 @@ namespace Telegram.Views.Calls
 
             if (chat == null || call == null)
             {
-                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                await WindowContext.Current.ConsolidateAsync();
                 return;
             }
 
@@ -397,7 +391,7 @@ namespace Telegram.Views.Calls
             if (confirm == ContentDialogResult.Primary)
             {
                 Dispose(true);
-                await ApplicationView.GetForCurrentView().ConsolidateAsync();
+                await WindowContext.Current.ConsolidateAsync();
             }
         }
 

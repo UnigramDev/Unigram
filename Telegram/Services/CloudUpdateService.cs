@@ -15,10 +15,8 @@ using Telegram.Navigation;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Windows.ApplicationModel;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.System;
-using Windows.UI.Xaml;
 
 namespace Telegram.Services
 {
@@ -98,13 +96,9 @@ namespace Telegram.Services
 
                     // As soon as we find a valid update, we launch it
 
-                    if (App.Connection != null)
-                    {
-                        await App.Connection.SendMessageAsync(new ValueSet { { "Exit", string.Empty } });
-                    }
-
+                    await SystemTray.ExitAsync();
                     await context.DispatchAsync(() => Launcher.LaunchFileAsync(update.File));
-                    await Application.Current.ConsolidateAsync();
+                    await BootStrapper.ConsolidateAsync();
 
                     // This line will never be reached
                     return true;

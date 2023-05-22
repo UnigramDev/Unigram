@@ -774,14 +774,14 @@ namespace Telegram.Services
             {
                 _callLifetime = null;
 
-                await lifetime.Dispatcher.DispatchAsync(() =>
+                await lifetime.Dispatcher.DispatchAsync(async () =>
                 {
                     if (lifetime.Window.Content is CallPage callPage)
                     {
                         callPage.Dispose();
                     }
 
-                    lifetime.Window.Close();
+                    await WindowContext.Current.ConsolidateAsync();
                 });
             }
         }
