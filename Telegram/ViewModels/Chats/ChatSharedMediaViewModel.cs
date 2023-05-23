@@ -329,14 +329,40 @@ namespace Telegram.ViewModels.Chats
 
         #endregion
 
-        #region Save
+        #region Save file as
 
-        public async void SaveMessage(MessageWithOwner message)
+        public async void SaveMessageMedia(MessageWithOwner message)
         {
             var file = message.GetFile();
             if (file != null)
             {
                 await _storageService.SaveFileAsAsync(file);
+            }
+        }
+
+        #endregion
+
+        #region Open with
+
+        public async void OpenMessageWith(MessageWithOwner message)
+        {
+            var file = message.GetFile();
+            if (file != null)
+            {
+                await _storageService.OpenFileWithAsync(file);
+            }
+        }
+
+        #endregion
+
+        #region Show in folder
+
+        public async void OpenMessageFolder(MessageWithOwner message)
+        {
+            var file = message.GetFile();
+            if (file != null)
+            {
+                await _storageService.OpenFolderAsync(file);
             }
         }
 

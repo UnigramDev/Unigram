@@ -401,13 +401,13 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                if (_message.Content is not MessageVideo)
+                if (_message.CanBeAddedToDownloads)
                 {
-                    _message.ClientService.DownloadFile(file.Id, 30);
+                    _message.ClientService.AddFileToDownloads(file, _message.ChatId, _message.Id);
                 }
                 else
                 {
-                    _message.ClientService.AddFileToDownloads(file, _message.ChatId, _message.Id);
+                    _message.ClientService.DownloadFile(file.Id, 30);
                 }
             }
             else
@@ -437,13 +437,13 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
                 {
-                    if (_message.Content is not MessageVideo)
+                    if (_message.CanBeAddedToDownloads)
                     {
-                        _message.ClientService.DownloadFile(file.Id, 30);
+                        _message.ClientService.AddFileToDownloads(file, _message.ChatId, _message.Id);
                     }
                     else
                     {
-                        _message.ClientService.AddFileToDownloads(file, _message.ChatId, _message.Id);
+                        _message.ClientService.DownloadFile(file.Id, 30);
                     }
                 }
                 else

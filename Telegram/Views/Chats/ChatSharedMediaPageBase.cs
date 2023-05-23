@@ -11,6 +11,7 @@ using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Converters;
+using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
 using Windows.UI.Composition;
@@ -128,7 +129,9 @@ namespace Telegram.Views.Chats
                 flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.DeleteMessage, message, Strings.Delete, Icons.Delete, dangerous: true);
                 flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.ForwardMessage, message, Strings.Forward, Icons.Share);
                 flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.SelectMessage, message, Strings.Select, Icons.CheckmarkCircle);
-                flyout.CreateFlyoutItem(MessageSave_Loaded, ViewModel.SaveMessage, message, Strings.SaveAs, Icons.SaveAs);
+                flyout.CreateFlyoutItem(MessageSaveMedia_Loaded, ViewModel.SaveMessageMedia, message, Strings.SaveAs, Icons.SaveAs);
+                flyout.CreateFlyoutItem(MessageOpenMedia_Loaded, ViewModel.OpenMessageWith, message, Strings.OpenWith, Icons.OpenIn);
+                flyout.CreateFlyoutItem(MessageOpenFolder_Loaded, ViewModel.OpenMessageFolder, message, Strings.ShowInFolder, Icons.FolderOpen);
             }
 
             args.ShowAt(flyout, element);
@@ -139,9 +142,62 @@ namespace Telegram.Views.Chats
             return true;
         }
 
-        private bool MessageSave_Loaded(MessageWithOwner message)
+        private bool MessageSaveMedia_Loaded(MessageWithOwner message)
         {
-            return true;
+            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            {
+                return false;
+            }
+
+            var file = message.GetFile();
+            if (file != null)
+            {
+                return file.Local.IsDownloadingCompleted;
+            }
+
+            return false;
+
+            return message.Content switch
+            {
+                MessagePhoto photo => photo.Photo.GetBig()?.Photo.Local.IsDownloadingCompleted ?? false,
+                MessageAudio audio => audio.Audio.AudioValue.Local.IsDownloadingCompleted,
+                MessageDocument document => document.Document.DocumentValue.Local.IsDownloadingCompleted,
+                MessageVideo video => video.Video.VideoValue.Local.IsDownloadingCompleted,
+                _ => false
+            };
+        }
+
+        private bool MessageOpenMedia_Loaded(MessageWithOwner message)
+        {
+            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            {
+                return false;
+            }
+
+            return message.Content switch
+            {
+                MessageAudio audio => audio.Audio.AudioValue.Local.IsDownloadingCompleted,
+                MessageDocument document => document.Document.DocumentValue.Local.IsDownloadingCompleted,
+                MessageVideo video => video.Video.VideoValue.Local.IsDownloadingCompleted,
+                _ => false
+            };
+        }
+
+        private bool MessageOpenFolder_Loaded(MessageWithOwner message)
+        {
+            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            {
+                return false;
+            }
+
+            return message.Content switch
+            {
+                MessagePhoto photo => ViewModel.StorageService.CheckAccessToFolder(photo.Photo.GetBig()?.Photo),
+                MessageAudio audio => ViewModel.StorageService.CheckAccessToFolder(audio.Audio.AudioValue),
+                MessageDocument document => ViewModel.StorageService.CheckAccessToFolder(document.Document.DocumentValue),
+                MessageVideo video => ViewModel.StorageService.CheckAccessToFolder(video.Video.VideoValue),
+                _ => false
+            };
         }
 
         private bool MessageDelete_Loaded(MessageWithOwner message)

@@ -130,6 +130,9 @@ namespace Telegram.ViewModels
             return null;
         }
 
+
+        public override bool CanBeAddedToDownloads => CanBeSaved && !Chat.HasProtectedContent && Content is MessageAudio or MessageDocument or MessageVideo;
+
         public void Replace(Message message)
         {
             _message = message;
@@ -378,6 +381,19 @@ namespace Telegram.ViewModels
         public Message Get()
         {
             return _message;
+        }
+
+        public virtual bool CanBeAddedToDownloads
+        {
+            get
+            {
+                if (ClientService.TryGetChat(ChatId, out var chat))
+                {
+                    return CanBeSaved && !chat.HasProtectedContent && Content is MessageAudio or MessageDocument or MessageVideo;
+                }
+
+                return false;
+            }
         }
     }
 

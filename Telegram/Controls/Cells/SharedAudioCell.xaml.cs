@@ -363,7 +363,14 @@ namespace Telegram.Controls.Cells
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
-                _message.ClientService.AddFileToDownloads(file, _message.ChatId, _message.Id);
+                if (_message.CanBeAddedToDownloads)
+                {
+                    _message.ClientService.AddFileToDownloads(file, _message.ChatId, _message.Id);
+                }
+                else
+                {
+                    _message.ClientService.DownloadFile(file.Id, 30);
+                }
             }
             else
             {
