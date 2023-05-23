@@ -240,7 +240,7 @@
                                                            Style="{StaticResource RecognizeButtonStyle}"
                                                            Foreground="{ThemeResource MessageMediaBackgroundBrush}"
                                                            CheckedGlyph="&#xE90B;"
-                                                           Glyph="&#xE906;"
+                                                           Glyph="&#xE913;"
                                                            VerticalAlignment="Top"
                                                            Margin="8,0,0,0"
                                                            Width="28"
