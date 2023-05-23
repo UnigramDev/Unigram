@@ -527,6 +527,10 @@ namespace Telegram.Views
                 }
 
                 Cleanup(ref _cleanup);
+
+                _albumIdToSelector.Clear();
+                _messageIdToSelector.Clear();
+                _messageIdToMessageIds.Clear();
             }
         }
 
