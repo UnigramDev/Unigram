@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using Telegram.Common;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -51,7 +52,7 @@ namespace Telegram.Controls
                 if (FocusFollowsSingleSelection)
                 {
                     // TODO: would be cool to do this only on programmatic changes, but I'm afraid it's not possible.
-                    ScrollIntoView(SelectedItem);
+                    _ = this.ScrollToItem2(SelectedItem, VerticalAlignment.Center);
                 }
             }
             else
@@ -79,7 +80,7 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty FocusFollowsSingleSelectionProperty =
-            DependencyProperty.Register("FocusFollowsSingleSelection", typeof(bool), typeof(TopNavView), new PropertyMetadata(true));
+            DependencyProperty.Register("FocusFollowsSingleSelection", typeof(bool), typeof(TopNavView), new PropertyMetadata(false));
 
         #endregion
 

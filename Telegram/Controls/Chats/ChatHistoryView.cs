@@ -338,9 +338,9 @@ namespace Telegram.Controls.Chats
             ViewChanged();
         }
 
-        public async Task ScrollIntoViewAsync(MessageViewModel item, ScrollIntoViewAlignment alignment)
+        private async Task ScrollIntoViewAsync(MessageViewModel item, ScrollIntoViewAlignment alignment)
         {
-            var index = ViewModel.Items.IndexOf(item);
+            var index = Items.IndexOf(item);
             var stack = await _waitItemsPanelRoot.Task;
 
             if (stack == null || index >= ItemsStack.FirstCacheIndex && index <= ItemsStack.LastCacheIndex)
