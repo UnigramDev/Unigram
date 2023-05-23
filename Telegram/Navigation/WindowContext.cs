@@ -89,13 +89,11 @@ namespace Telegram.Navigation
             ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
         }
 
-        private async void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        private void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
         {
-            if (IsInMainView && SystemTray.IsConnected)
+            if (IsInMainView)
             {
-                var deferral = e.GetDeferral();
-                await SystemTray.CloseRequestedAsync();
-                deferral.Complete();
+                SystemTray.CloseRequested(e);
             }
         }
 

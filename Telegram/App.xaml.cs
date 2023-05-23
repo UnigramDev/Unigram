@@ -94,6 +94,13 @@ namespace Telegram
                     is not LayoutCycleException
                     and not OutOfMemoryException;
             };
+
+            EnteredBackground += OnEnteringBackground;
+        }
+
+        private void OnEnteringBackground(object sender, EnteredBackgroundEventArgs e)
+        {
+            SystemTray.EnteringBackground(e);
         }
 
         protected override void OnWindowCreated(WindowCreatedEventArgs args)
@@ -327,7 +334,7 @@ namespace Telegram
             }
         }
 
-        public override async void OnResuming(object s, object e, AppExecutionState previousExecutionState)
+        public override void OnResuming(object s, object e, AppExecutionState previousExecutionState)
         {
             Logger.Info("OnResuming");
 
@@ -340,7 +347,7 @@ namespace Telegram
             // #2034: Will this work? No one knows.
             SettingsService.Current.Appearance.UpdateNightMode(null);
 
-            await RequestExtendedExecutionSessionAsync();
+            OnStartSync(WindowContext.Current.Dispatcher);
         }
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e)

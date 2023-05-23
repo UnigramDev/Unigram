@@ -6,6 +6,7 @@ using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
+using Windows.UI.Core.Preview;
 
 namespace Telegram.Common
 {
@@ -45,9 +46,26 @@ namespace Telegram.Common
             return SendAsync("Exit");
         }
 
-        public static Task CloseRequestedAsync()
+        public static async void CloseRequested(SystemNavigationCloseRequestedPreviewEventArgs args)
         {
-            return SendAsync("CloseRequested");
+            if (_connection != null)
+            {
+                using (args.GetDeferral())
+                {
+                    await SendAsync("CloseRequested");
+                }
+            }
+        }
+
+        public static async void EnteringBackground(EnteredBackgroundEventArgs args)
+        {
+            if (_connection != null)
+            {
+                using (args.GetDeferral())
+                {
+                    await SendAsync("CloseRequested");
+                }
+            }
         }
 
         public static Task LoopbackExemptAsync(bool enabled)
@@ -59,7 +77,7 @@ namespace Telegram.Common
         {
             if (_connection != null)
             {
-                return _connection.SendMessageAsync(new ValueSet { { message, parameter ?? string.Empty } }).AsTask();
+                return _connection.SendMessageAsync(new ValueSet { { message, parameter ?? true } }).AsTask();
             }
 
             return Task.CompletedTask;
