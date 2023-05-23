@@ -1249,6 +1249,9 @@ namespace Telegram.Controls.Gallery
             var neutral = ScrollingHost.ZoomFactor.AlmostEquals(1);
             if (neutral == _areInteractionsEnabled)
             {
+                Element2.Opacity = 1;
+                Element0.Opacity = 1;
+                Element1.Opacity = 1;
                 return;
             }
 
