@@ -369,13 +369,11 @@ namespace Telegram.Common
 
         private static async void NavigateToBackground(IClientService clientService, INavigationService navigation, string slug)
         {
-            await navigation.ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(slug));
-
-            //var response = await clientService.SendAsync(new SearchBackground(slug));
-            //if (response is Background background)
-            //{
-
-            //}
+            var response = await clientService.SendAsync(new SearchBackground(slug));
+            if (response is Background background)
+            {
+                await navigation.ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(background));
+            }
         }
 
         private static async void NavigateToMessage(IClientService clientService, INavigationService navigation, string url)
