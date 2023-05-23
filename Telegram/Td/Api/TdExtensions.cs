@@ -2144,7 +2144,7 @@ namespace Telegram.Td.Api
         private static bool TryGetColors(string slug, char separator, int minimum, int maximum, out int[] colors)
         {
             var split = slug?.Split(separator);
-            if (split != null && split.Length >= minimum && split.Length >= maximum)
+            if (split != null && split.Length >= minimum && split.Length <= maximum)
             {
                 colors = new int[split.Length];
 
