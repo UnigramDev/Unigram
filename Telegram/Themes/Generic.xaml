@@ -36,6 +36,7 @@
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/VideoNoteContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/VideoStickerContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/VoiceNoteContent.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/WallpaperContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/WebPageContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/WebPageSmallPhotoContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageBubble.xaml" />

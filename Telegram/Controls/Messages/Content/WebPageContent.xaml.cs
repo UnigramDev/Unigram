@@ -6,11 +6,9 @@
 //
 using System;
 using System.Threading;
-using Telegram.Controls.Chats;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -129,38 +127,7 @@ namespace Telegram.Controls.Messages.Content
 
             if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
             {
-                if (Uri.TryCreate(webPage.Url, UriKind.Absolute, out Uri result))
-                {
-                    var background = TdBackground.FromUri(result);
-                    if (background is BackgroundTypeFill typeFill)
-                    {
-                        var aspect = new AspectView { MaxWidth = 320, Constraint = new Size(1, 1) };
-                        aspect.Children.Add(new ChatBackgroundPreview { Fill = typeFill.Fill });
-
-                        Media.Child = aspect;
-                    }
-                    else if (background is BackgroundTypePattern typePattern)
-                    {
-                        if (webPage.Document != null)
-                        {
-                            var preview = new ChatBackgroundPreview { Fill = typePattern.Fill };
-                            preview.Children.Add(new DocumentPhotoContent(message));
-
-                            Media.Child = preview;
-                        }
-                        else
-                        {
-                            var aspect = new AspectView { MaxWidth = 320, Constraint = new Size(1, 1) };
-                            aspect.Children.Add(new ChatBackgroundPreview { Fill = typePattern.Fill });
-
-                            Media.Child = aspect;
-                        }
-                    }
-                    else if (webPage.Document != null)
-                    {
-                        Media.Child = new DocumentPhotoContent(message);
-                    }
-                }
+                Media.Child = new WallpaperContent(message);
             }
             else if (webPage.Animation != null)
             {

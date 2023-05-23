@@ -480,8 +480,8 @@
     <Compile Include="Controls\Messages\Content\DiceContent.xaml.cs">
       <DependentUpon>DiceContent.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\Content\DocumentPhotoContent.xaml.cs">
-      <DependentUpon>DocumentPhotoContent.xaml</DependentUpon>
+    <Compile Include="Controls\Messages\Content\WallpaperContent.xaml.cs">
+      <DependentUpon>WallpaperContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\Content\PollContent.xaml.cs">
       <DependentUpon>PollContent.xaml</DependentUpon>
@@ -1849,7 +1849,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Messages\Content\DocumentPhotoContent.xaml">
+    <Page Include="Controls\Messages\Content\WallpaperContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
