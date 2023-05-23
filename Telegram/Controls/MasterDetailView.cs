@@ -708,6 +708,8 @@ namespace Telegram.Controls
 
         #region MasterVisibility
 
+        public event EventHandler MasterVisibilityChanged;
+
         public Visibility MasterVisibility
         {
             get { return (Visibility)GetValue(MasterVisibilityProperty); }
@@ -715,7 +717,12 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty MasterVisibilityProperty =
-            DependencyProperty.Register("MasterVisibility", typeof(Visibility), typeof(MasterDetailView), new PropertyMetadata(Visibility.Visible));
+            DependencyProperty.Register("MasterVisibility", typeof(Visibility), typeof(MasterDetailView), new PropertyMetadata(Visibility.Visible, OnMasterVisibilityChanged));
+
+        private static void OnMasterVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((MasterDetailView)d).MasterVisibilityChanged?.Invoke(d, EventArgs.Empty);
+        }
 
         #endregion
     }

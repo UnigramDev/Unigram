@@ -446,13 +446,13 @@
                                  AutomationProperties.LandmarkType="Navigation"
                                  AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
                                  ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"
-                                 Visibility="{x:Bind MasterDetail.MasterVisibility, Mode=OneWay}"
                                  Canvas.ZIndex="1"
                                  Grid.ColumnSpan="2"
                                  Grid.Row="1" />
 
         <controls:MasterDetailView x:Name="MasterDetail"
                                    ViewStateChanged="OnStateChanged"
+                                   MasterVisibilityChanged="OnMasterVisibilityChanged"
                                    Grid.Column="1"
                                    Grid.Row="1">
             <controls:MasterDetailView.Banner>

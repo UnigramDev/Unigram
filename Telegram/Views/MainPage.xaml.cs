@@ -632,7 +632,7 @@ namespace Telegram.Views
 
             PhotoPlaceholder.Margin = new Thickness(show ? -62 : 0, 0, show ? 0 : 12, 0);
             Photo.Margin = new Thickness(show ? 22 : 12, 2, 12, 0);
-            Photo.Visibility = PhotoPlaceholder.Visibility = show || rpMasterTitlebar.SelectedIndex != 3
+            Photo.Visibility = PhotoPlaceholder.Visibility = show || MasterDetail.MasterVisibility == Visibility.Visible
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
@@ -1421,6 +1421,13 @@ namespace Telegram.Views
             }
         }
 
+        private void OnMasterVisibilityChanged(object sender, EventArgs e)
+        {
+            Photo.Visibility = PhotoPlaceholder.Visibility = MasterDetail.MasterVisibility == Visibility.Visible || !_tabsLeftCollapsed
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
         private void UpdatePaneToggleButtonVisibility()
         {
             var visible = rpMasterTitlebar.SelectedIndex != 0
@@ -1786,10 +1793,6 @@ namespace Telegram.Views
                     }
                 }
             }
-
-            Photo.Visibility = PhotoPlaceholder.Visibility = _tabsLeftCollapsed || rpMasterTitlebar.SelectedIndex != 3
-                ? Visibility.Visible
-                : Visibility.Collapsed;
         }
 
         private void UpdateHeader()
