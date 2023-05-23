@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -24,6 +25,7 @@ namespace Telegram.Services
         IReadOnlyList<PlaybackItem> Items { get; }
 
         MessageWithOwner CurrentItem { get; }
+        PlaybackItem CurrentPlayback { get; }
 
         double PlaybackSpeed { get; set; }
 
@@ -70,6 +72,7 @@ namespace Telegram.Services
         private double _lastTotalSeconds = double.MinValue;
 
         private readonly ConditionalWeakTable<IMediaPlaybackSource, PlaybackItem> _mapping;
+        private CancellationTokenSource _nextToken;
 
         private long _threadId;
 
@@ -281,7 +284,7 @@ namespace Telegram.Services
             transport.DisplayUpdater.Update();
         }
 
-        public IReadOnlyList<PlaybackItem> Items => _items ?? (IReadOnlyList<PlaybackItem>)new PlaybackItem[0];
+        public IReadOnlyList<PlaybackItem> Items => _items ?? (IReadOnlyList<PlaybackItem>)Array.Empty<PlaybackItem>();
 
         private PlaybackItem _currentPlayback;
         public PlaybackItem CurrentPlayback
@@ -305,7 +308,7 @@ namespace Telegram.Services
         private MediaPlaybackState _playbackState;
         public MediaPlaybackState PlaybackState
         {
-            get { return _playbackState; }
+            get => _playbackState;
             private set
             {
                 if (_playbackState != value)
@@ -314,17 +317,6 @@ namespace Telegram.Services
                     StateChanged?.Invoke(this, null);
                 }
             }
-            //get
-            //{
-            //    try
-            //    {
-            //        return _mediaPlayer?.PlaybackSession?.PlaybackState ?? MediaPlaybackState.None;
-            //    }
-            //    catch
-            //    {
-            //        return MediaPlaybackState.None;
-            //    }
-            //}
         }
 
         private bool? _isRepeatEnabled = false;
@@ -505,8 +497,20 @@ namespace Telegram.Services
                     return;
                 }
 
+                if (_mapping.TryGetValue(_mediaPlayer.Source, out PlaybackItem prevItem))
+                {
+                    _mapping.Remove(_mediaPlayer.Source);
+                    prevItem.Dispose();
+                }
+
+                _nextToken?.Cancel();
+                _mediaPlayer.Source = null;
+                CurrentPlayback = item;
+
+                var token = _nextToken = new CancellationTokenSource();
+
                 var source = await item.GetSourceAsync();
-                if (source != null)
+                if (source != null && !token.IsCancellationRequested)
                 {
                     if (_mediaPlayer != null)
                     {
@@ -517,8 +521,12 @@ namespace Telegram.Services
                         {
                             Play();
                         }
+
+                        return;
                     }
                 }
+
+                item.Dispose();
             }
             catch
             {
@@ -705,6 +713,7 @@ namespace Telegram.Services
                 foreach (var item in _items)
                 {
                     item.Dispose();
+                    item.Stream.Dispose();
                 }
 
                 _items = null;
