@@ -347,6 +347,11 @@ namespace Telegram.ViewModels.Settings
 
         public static implicit operator ChatTheme(ChatThemeViewModel chatTheme)
         {
+            if (chatTheme == null)
+            {
+                return null;
+            }
+
             return new ChatTheme(chatTheme.Name, chatTheme.LightSettings, chatTheme.DarkSettings);
         }
     }
