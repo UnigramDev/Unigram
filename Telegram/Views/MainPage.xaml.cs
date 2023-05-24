@@ -1029,9 +1029,13 @@ namespace Telegram.Views
             {
                 await WindowContext.Current.ConsolidateAsync();
             }
-            else if (command == ShortcutCommand.Lock)
+            else if (command is ShortcutCommand.Lock)
             {
                 Lock_Click(null, null);
+            }
+            else if (command is ShortcutCommand.Downloads)
+            {
+                Downloads_Click(null, null);
             }
         }
 

@@ -83,7 +83,7 @@ namespace Telegram.Services
             ShortcutCommand.ShowFolderLast,
         };
 
-        private readonly Dictionary<string, ShortcutCommand> _commandByName = new Dictionary<string, ShortcutCommand>
+        private readonly Dictionary<string, ShortcutCommand> _commandByName = new()
         {
             { "close_telegram"    , ShortcutCommand.Close },
             { "lock_telegram"     , ShortcutCommand.Lock },
@@ -120,7 +120,7 @@ namespace Telegram.Services
             { "show_archive"      , ShortcutCommand.ShowArchive },
 
             { "set_status"        , ShortcutCommand.SetStatus },
-            { "settings"          , ShortcutCommand.Settings },
+            { "downloads"         , ShortcutCommand.Downloads },
 
 			// Shortcuts that have no default values.
 			{ "message"           , ShortcutCommand.JustSendMessage },
@@ -129,7 +129,7 @@ namespace Telegram.Services
 			//
 		};
 
-        private readonly Dictionary<ShortcutCommand, string> _commandNames = new Dictionary<ShortcutCommand, string>
+        private readonly Dictionary<ShortcutCommand, string> _commandNames = new()
         {
             { ShortcutCommand.Close          , "close_telegram" },
             { ShortcutCommand.Lock           , "lock_telegram" },
@@ -165,12 +165,12 @@ namespace Telegram.Services
 
             { ShortcutCommand.ShowArchive    , "show_archive" },
             { ShortcutCommand.SetStatus      , "set_status" },
-            { ShortcutCommand.Settings       , "settings" },
+            { ShortcutCommand.Downloads      , "downloads" },
         };
 
         #endregion
 
-        private readonly Dictionary<Shortcut, List<ShortcutCommand>> _commands = new Dictionary<Shortcut, List<ShortcutCommand>>();
+        private readonly Dictionary<Shortcut, List<ShortcutCommand>> _commands = new();
 
         public ShortcutsService(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -420,7 +420,7 @@ namespace Telegram.Services
             Set("ctrl+9", ShortcutCommand.ShowArchive);
 
             Set("ctrl+shift+y", ShortcutCommand.SetStatus);
-            Set("ctrl+,", ShortcutCommand.Settings);
+            Set("ctrl+j", ShortcutCommand.Downloads);
         }
 
         private async void InitializeCustom()
@@ -725,7 +725,7 @@ namespace Telegram.Services
         ScheduleMessage,
 
         SetStatus,
-        Settings
+        Downloads
 
         //SupportReloadTemplates,
         //SupportToggleMuted,
