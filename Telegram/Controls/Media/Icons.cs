@@ -164,6 +164,7 @@ namespace Telegram.Controls.Media
 
         public const string Delete = "\uE74D";
         public const string Share = "\uE72D";
+        public const string ShareFilled = "\uE914";
         public const string CheckmarkCircle = "\uE97E";
         public const string Multiselect = "\uE762";
         public const string SaveAs = "\uE792";

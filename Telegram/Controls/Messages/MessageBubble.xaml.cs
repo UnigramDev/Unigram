@@ -669,7 +669,7 @@ namespace Telegram.Controls.Messages
                     ActionButton.Click += Action_Click;
                 }
 
-                ActionButton.Glyph = Icons.Share;
+                ActionButton.Glyph = Icons.ShareFilled;
                 Action.Visibility = Visibility.Visible;
 
                 Automation.SetToolTip(ActionButton, Strings.ShareFile);
