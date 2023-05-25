@@ -159,7 +159,7 @@
                                           Click="{x:Bind ViewModel.Banned}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           IsChevronVisible="True"
-                                          Glyph="&#xF140;" />
+                                          Glyph="&#xF166;" />
 
                     <controls:BadgeButton x:Name="EventLog"
                                           Content="{CustomResource EventLog}"

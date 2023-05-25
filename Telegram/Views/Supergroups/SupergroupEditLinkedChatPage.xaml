@@ -60,7 +60,7 @@
                                               Command="{x:Bind ViewModel.UnlinkCommand}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               BorderThickness="0,1,0,0"
-                                              Glyph="&#xF140;" />
+                                              Glyph="&#xF166;" />
 
                     </controls:HeaderedControl>
 

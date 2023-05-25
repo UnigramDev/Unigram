@@ -85,7 +85,6 @@ namespace Telegram.Controls.Media
         public const string LockClosedFilled24 = "\uEA1E";
         public const string Bot = "\uE99A";
 
-        public const string Gift = "\uE9D3";
         public const string GiftPremium = "\uE9D4";
 
         public const string HandRight = "\uE98B";
@@ -184,13 +183,15 @@ namespace Telegram.Controls.Media
         public const string EmojiEdit = "\uE9EC";
         public const string EmojiAdd = "\uE9ED";
 
-        public const string Block = "\uF140";
+        public const string Block = "\uF166";
         public const string Search = "\uE721";
         public const string Settings = "\uE713";
         public const string Phone = "\uE717";
+        public const string PhoneFilled24 = "\uE91B";
         public const string Video = "\uE714";
         public const string SmallVideoFilled = "\uE915";
         public const string VideoFilled = "\uE964";
+        public const string VideoFilled24 = "\uE91E";
         public const string VideoNoteFilled24 = "\uE9D6";
         public const string MicOnFilled24 = "\uE9D7";
         public const string VideoOffFilled = "\uE963";

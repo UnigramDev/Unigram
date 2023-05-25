@@ -80,14 +80,14 @@
                                           Visibility="{x:Bind ConvertAlways(ViewModel.ShowPhone.SelectedItem), Mode=OneWay}"
                                           Badge="{x:Bind ViewModel.ShowPhone.AllowedBadge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9E5;" />
+                                          Glyph="&#xF164;" />
 
                     <controls:BadgeButton Content="{CustomResource NeverAllow}"
                                           Click="{x:Bind ViewModel.ShowPhone.Never}"
                                           Visibility="{x:Bind ConvertNever(ViewModel.ShowPhone.SelectedItem), Mode=OneWay}"
                                           Badge="{x:Bind ViewModel.ShowPhone.RestrictedBadge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9D3;" />
+                                          Glyph="&#xF166;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

@@ -46,7 +46,7 @@
                         <controls:BadgeButton Content="{CustomResource ChannelBlockUser}"
                                               Click="{x:Bind ViewModel.Add}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xF140;" />
+                                              Glyph="&#xF166;" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Header>

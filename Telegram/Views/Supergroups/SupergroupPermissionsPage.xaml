@@ -191,7 +191,7 @@
                         <controls:BadgeButton Content="{CustomResource ChannelAddException}"
                                               Command="{x:Bind ViewModel.AddCommand}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              Glyph="&#xF140;" />
+                                              Glyph="&#xF166;" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ListView.Header>

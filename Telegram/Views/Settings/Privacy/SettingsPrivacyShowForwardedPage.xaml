@@ -67,14 +67,14 @@
                                           Visibility="{x:Bind ConvertAlways(ViewModel.SelectedItem), Mode=OneWay}"
                                           Badge="{x:Bind ViewModel.AllowedBadge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9E5;" />
+                                          Glyph="&#xF164;" />
 
                     <controls:BadgeButton Content="{CustomResource NeverAllow}"
                                           Click="{x:Bind ViewModel.Never}"
                                           Visibility="{x:Bind ConvertNever(ViewModel.SelectedItem), Mode=OneWay}"
                                           Badge="{x:Bind ViewModel.RestrictedBadge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE9D3;" />
+                                          Glyph="&#xF166;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>
