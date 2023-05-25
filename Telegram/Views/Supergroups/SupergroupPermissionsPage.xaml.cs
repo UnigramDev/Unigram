@@ -8,8 +8,8 @@ using System;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
+using Telegram.Controls.Media;
 using Telegram.Navigation;
-using Telegram.Navigation.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Supergroups;
@@ -61,25 +61,22 @@ namespace Telegram.Views.Supergroups
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var chat = ViewModel.Chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var member = e.ClickedItem as ChatMember;
-            if (member == null)
-            {
-                return;
-            }
-
-            ViewModel.NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
+            ViewModel.EditMember(e.ClickedItem as ChatMember);
         }
 
         #region Context menu
 
         private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var member = element.Tag as ChatMember;
+
+            flyout.CreateFlyoutItem(ViewModel.EditMember, member, Strings.ChannelEditPermissions, Icons.Key);
+            flyout.CreateFlyoutItem(ViewModel.UnbanMember, member, Strings.ChannelDeleteFromList, Icons.Delete, dangerous: true);
+
+            args.ShowAt(flyout, element);
         }
 
         #endregion

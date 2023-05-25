@@ -4,9 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
-using Telegram.Navigation.Services;
+using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Supergroups;
@@ -28,26 +29,22 @@ namespace Telegram.Views.Supergroups
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var chat = ViewModel.Chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            var member = e.ClickedItem as ChatMember;
-            if (member == null)
-            {
-                return;
-            }
-
-            ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
+            ViewModel.EditMember(e.ClickedItem as ChatMember);
         }
 
         #region Context menu
 
         private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
+            var flyout = new MenuFlyout();
 
+            var element = sender as FrameworkElement;
+            var member = element.Tag as ChatMember;
+
+            flyout.CreateFlyoutItem(ViewModel.EditMember, member, Strings.EditAdminRights, Icons.ShieldStar);
+            flyout.CreateFlyoutItem(ViewModel.DismissMember, member, Strings.ChannelRemoveUserAdmin, Icons.SubtractCircle, dangerous: true);
+
+            args.ShowAt(flyout, element);
         }
 
         #endregion

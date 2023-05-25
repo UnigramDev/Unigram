@@ -5,8 +5,10 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views;
 using Telegram.Views.Supergroups;
 
 namespace Telegram.ViewModels.Supergroups
@@ -31,7 +33,29 @@ namespace Telegram.ViewModels.Supergroups
 
         #region Context menu
 
+        public void OpenMember(ChatMember member)
+        {
+            if (member?.MemberId is MessageSenderChat senderChat)
+            {
+                NavigationService.Navigate(typeof(ProfilePage), senderChat.ChatId);
+            }
+            else if (member?.MemberId is MessageSenderUser senderUser)
+            {
+                NavigationService.Navigate(typeof(ProfilePage), senderUser.UserId);
+            }
+        }
+
+        public async void AddMember(ChatMember member)
+        {
+            await SetMemberStatusAsync(member, new ChatMemberStatusMember());
+        }
+
         public async void UnbanMember(ChatMember member)
+        {
+            await SetMemberStatusAsync(member, new ChatMemberStatusLeft());
+        }
+
+        private async Task SetMemberStatusAsync(ChatMember member, ChatMemberStatus status)
         {
             var chat = _chat;
             if (chat == null || Members == null)
@@ -47,7 +71,7 @@ namespace Telegram.ViewModels.Supergroups
 
             Members.Remove(member);
 
-            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusLeft()));
+            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
             if (response is Error)
             {
                 Members.Insert(index, member);

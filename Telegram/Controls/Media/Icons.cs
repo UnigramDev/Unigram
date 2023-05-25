@@ -34,8 +34,8 @@ namespace Telegram.Controls.Media
         public const string Poll = "\uE91F";
         public const string Crop = "\uE7A8";
 
-        public const string Expand = "\uF164";
-        public const string Collapse = "\uF166";
+        public const string AddCircle = "\uF164";
+        public const string SubtractCircle = "\uF166";
 
         public const string ArrowDownload = "\uE118";
         public const string DownloadSmall = "\uE92A";
@@ -229,6 +229,7 @@ namespace Telegram.Controls.Media
         public const string ChevronDown = "\uE0E5";
         public const string ChevronRight = "\uE0E3";
         public const string ShieldCheckmark = "\uEA1A";
+        public const string ShieldStar = "\uE983";
         public const string Bug = "\uE825";
         public const string Bookmark = "\uE907";
         public const string BookmarkFilled = "\uEA0F";

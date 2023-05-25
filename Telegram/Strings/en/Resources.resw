@@ -1535,6 +1535,12 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChannelAddMembers" xml:space="preserve">
     <value>Add members</value>
   </data>
+  <data name="ChannelAddToChannel" xml:space="preserve">
+    <value>Add to channel</value>
+  </data>
+  <data name="ChannelAddToGroup" xml:space="preserve">
+    <value>Add to group</value>
+  </data>
   <data name="ChannelAdmin" xml:space="preserve">
     <value>Admin</value>
   </data>
@@ -1589,6 +1595,9 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChannelDeletedUndo" xml:space="preserve">
     <value>Channel deleted.</value>
   </data>
+  <data name="ChannelDeleteFromList" xml:space="preserve">
+    <value>Delete from this list</value>
+  </data>
   <data name="ChannelDeleteInfo" xml:space="preserve">
     <value>This will delete all messages in the channel for all subscribers.</value>
   </data>
@@ -1597,6 +1606,9 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   </data>
   <data name="ChannelEdit" xml:space="preserve">
     <value>Edit</value>
+  </data>
+  <data name="ChannelEditPermissions" xml:space="preserve">
+    <value>Edit permissions</value>
   </data>
   <data name="ChannelHideMembers" xml:space="preserve">
     <value>Hide Members</value>
@@ -1666,6 +1678,9 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   </data>
   <data name="ChannelPublicInfo" xml:space="preserve">
     <value>Public channels can be found in search, anyone can join them.</value>
+  </data>
+  <data name="ChannelRemoveUserAdmin" xml:space="preserve">
+    <value>Dismiss admin</value>
   </data>
   <data name="Channels_one" xml:space="preserve">
     <value>{0} channel</value>
@@ -2531,6 +2546,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   </data>
   <data name="EditAdminRemoveAdmin" xml:space="preserve">
     <value>Dismiss Admin</value>
+  </data>
+  <data name="EditAdminRights" xml:space="preserve">
+    <value>Edit admin rights</value>
   </data>
   <data name="EditAdminSendAnonymously" xml:space="preserve">
     <value>Remain Anonymous</value>

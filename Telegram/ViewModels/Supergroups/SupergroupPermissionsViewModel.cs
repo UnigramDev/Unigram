@@ -22,8 +22,6 @@ namespace Telegram.ViewModels.Supergroups
             SendCommand = new RelayCommand(SendExecute);
             AddCommand = new RelayCommand(AddExecute);
             BannedCommand = new RelayCommand(BannedExecute);
-
-            ParticipantDismissCommand = new RelayCommand<ChatMember>(ParticipantDismissExecute);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -378,26 +376,38 @@ namespace Telegram.ViewModels.Supergroups
 
         #region Context menu
 
-        public RelayCommand<ChatMember> ParticipantDismissCommand { get; }
-        private async void ParticipantDismissExecute(ChatMember participant)
+        public void EditMember(ChatMember member)
         {
-            //if (_item == null)
-            //{
-            //    return;
-            //}
+            var chat = _chat;
+            if (chat == null || member == null)
+            {
+                return;
+            }
 
-            //if (participant.User == null)
-            //{
-            //    return;
-            //}
+            NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
+        }
 
-            //var rights = new TLChannelBannedRights();
+        public async void UnbanMember(ChatMember member)
+        {
+            var chat = _chat;
+            if (chat == null || Members == null)
+            {
+                return;
+            }
 
-            //var response = await LegacyService.EditBannedAsync(_item, participant.User.ToInputUser(), rights);
-            //if (response.IsSucceeded)
-            //{
-            //    Participants.Remove(participant);
-            //}
+            var index = Members.IndexOf(member);
+            if (index == -1)
+            {
+                return;
+            }
+
+            Members.Remove(member);
+
+            var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusMember()));
+            if (response is Error)
+            {
+                Members.Insert(index, member);
+            }
         }
 
         #endregion
