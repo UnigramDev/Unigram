@@ -234,25 +234,20 @@ namespace Telegram.Controls.Messages
             List<long> request = null;
             var hash = GetHashCode();
 
-            foreach (var emoji in customEmoji)
+            lock (_cacheLock)
             {
-                //if (_cache.Contains(emoji))
-                //{
-                //    continue;
-                //}
-
-                if (_pool.TryMerge(clientService, emoji, hash, _subscribed, out _))
+                foreach (var emoji in customEmoji)
                 {
-                    lock (_cacheLock)
+                    if (_pool.TryMerge(clientService, emoji, hash, _subscribed, out _))
                     {
                         _cache.Add(emoji);
+
+                        continue;
                     }
 
-                    continue;
+                    request ??= new();
+                    request.Add(emoji);
                 }
-
-                request ??= new();
-                request.Add(emoji);
             }
 
             if (request == null)
