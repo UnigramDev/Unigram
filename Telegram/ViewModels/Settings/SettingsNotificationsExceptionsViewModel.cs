@@ -115,7 +115,7 @@ namespace Telegram.ViewModels.Settings
             if (selected is NotificationSound sound)
             {
                 Scope.SoundId = sound.Id;
-                Scope.SendExecute();
+                Scope.Save();
             }
         }
 

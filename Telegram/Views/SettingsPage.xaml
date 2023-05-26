@@ -245,7 +245,7 @@
 
                 <StackPanel>
                     <controls:BadgeButton Content="{CustomResource AskAQuestion}"
-                                          Command="{x:Bind ViewModel.AskCommand}"
+                                          Click="{x:Bind ViewModel.Ask}"
                                           Style="{StaticResource IconBadgeButtonStyle}">
                         <controls:BadgeButton.IconSource>
                             <icons:AskQ />

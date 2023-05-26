@@ -7,7 +7,7 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        Title="{x:Bind ViewModel.Title, Mode=OneWay}"
-                       PrimaryButtonCommand="{x:Bind ViewModel.SendCommand}">
+                       PrimaryButtonClick="{x:Bind ViewModel.Save}">
 
     <Grid>
         <ScrollViewer x:Name="ScrollingHost"

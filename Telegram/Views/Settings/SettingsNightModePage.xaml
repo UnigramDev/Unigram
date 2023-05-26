@@ -83,7 +83,7 @@
                     </controls:BadgeButton>
 
                     <controls:BadgeButton Content="{CustomResource AutoNightUpdateLocation}"
-                                          Command="{x:Bind ViewModel.UpdateLocationCommand}"
+                                          Click="{x:Bind ViewModel.UpdateLocation}"
                                           Badge="{x:Bind ViewModel.Town, Mode=OneWay}"
                                           Visibility="{x:Bind ViewModel.IsLocationBased, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </controls:HeaderedControl>

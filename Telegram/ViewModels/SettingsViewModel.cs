@@ -33,8 +33,7 @@ namespace Telegram.ViewModels
             _searchService = searchService;
             _storageService = storageService;
 
-            AskCommand = new RelayCommand(AskExecute);
-            NavigateCommand = new RelayCommand<SettingsSearchEntry>(NavigateExecute);
+            NavigateCommand = new RelayCommand<SettingsSearchEntry>(Navigate);
 
             Results = new MvxObservableCollection<SettingsSearchEntry>();
         }
@@ -136,8 +135,7 @@ namespace Telegram.ViewModels
 
 
 
-        public RelayCommand AskCommand { get; }
-        private async void AskExecute()
+        public async void Ask()
         {
             var text = Regex.Replace(Strings.AskAQuestionInfo, "<!\\[CDATA\\[(.*?)\\]\\]>", "$1");
 
@@ -162,7 +160,7 @@ namespace Telegram.ViewModels
         }
 
         public RelayCommand<SettingsSearchEntry> NavigateCommand { get; }
-        private void NavigateExecute(SettingsSearchEntry entry)
+        public void Navigate(SettingsSearchEntry entry)
         {
             if (entry is SettingsSearchPage page && page.Page != null)
             {

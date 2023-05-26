@@ -25,8 +25,6 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             _inputKey = inputKey;
-
-            SendCommand = new RelayCommand(SendExecute);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -360,8 +358,7 @@ namespace Telegram.ViewModels.Settings
             RestrictedBadge = GetBadge(_restrictedUsers.UserIds, _restrictedChatMembers.ChatIds);
         }
 
-        public RelayCommand SendCommand { get; }
-        public async void SendExecute()
+        public async void Save()
         {
             var response = await SendAsync();
             if (response is Ok)

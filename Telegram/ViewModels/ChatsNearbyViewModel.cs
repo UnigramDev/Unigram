@@ -34,7 +34,6 @@ namespace Telegram.ViewModels
             Chats = new MvxObservableCollection<ChatNearby>();
 
             OpenChatCommand = new RelayCommand<ChatNearby>(OpenChatExecute);
-            LoadMoreCommand = new RelayCommand(LoadMoreExecute);
         }
 
         private bool _loadedMore;
@@ -124,8 +123,7 @@ namespace Telegram.ViewModels
             NavigationService.NavigateToChat(nearby.ChatId);
         }
 
-        public RelayCommand LoadMoreCommand { get; }
-        private void LoadMoreExecute()
+        public void LoadMore()
         {
             if (_remainingUsers != null)
             {

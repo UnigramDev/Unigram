@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Telegram.Common;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
@@ -24,12 +23,9 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator, themeService, true)
         {
             _locationService = locationService;
-
-            UpdateLocationCommand = new RelayCommand(UpdateLocationExecute);
         }
 
-        public RelayCommand UpdateLocationCommand { get; }
-        private async void UpdateLocationExecute()
+        public async void UpdateLocation()
         {
             var location = await _locationService.GetPositionAsync();
             if (location == null)
@@ -86,7 +82,7 @@ namespace Telegram.ViewModels.Settings
                 {
                     if (value && Location.Latitude == 0 && Location.Longitude == 0)
                     {
-                        UpdateLocationExecute();
+                        UpdateLocation();
                     }
                     else
                     {

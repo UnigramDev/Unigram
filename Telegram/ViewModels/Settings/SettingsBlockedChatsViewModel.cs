@@ -5,27 +5,23 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Collections.ObjectModel;
-using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
-using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsBlockedChatsViewModel : ViewModelBase
+    public class SettingsBlockedChatsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         public SettingsBlockedChatsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new ItemsCollection(clientService);
-
-            UnblockCommand = new RelayCommand<MessageSender>(UnblockExecute);
+            Items = new IncrementalCollection<MessageSender>(this);
         }
 
         public ObservableCollection<MessageSender> Items { get; private set; }
@@ -50,8 +46,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand<MessageSender> UnblockCommand { get; }
-        private async void UnblockExecute(MessageSender sender)
+        public async void Unblock(MessageSender sender)
         {
             var confirm = await ShowPopupAsync(Strings.AreYouSureUnblockContact, Strings.AppName, Strings.OK, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
@@ -61,35 +56,24 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public class ItemsCollection : MvxObservableCollection<MessageSender>, ISupportIncrementalLoading
+        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            private readonly IClientService _clientService;
-
-            public ItemsCollection(IClientService clientService)
+            var response = await ClientService.SendAsync(new GetBlockedMessageSenders(Items.Count, 20));
+            if (response is MessageSenders chats)
             {
-                _clientService = clientService;
-            }
-
-            public IAsyncOperation<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-            {
-                return AsyncInfo.Run(async task =>
+                foreach (var sender in chats.Senders)
                 {
-                    var response = await _clientService.SendAsync(new GetBlockedMessageSenders(Count, 20));
-                    if (response is MessageSenders chats)
-                    {
-                        foreach (var sender in chats.Senders)
-                        {
-                            Add(sender);
-                        }
+                    Items.Add(sender);
+                }
 
-                        return new LoadMoreItemsResult { Count = (uint)chats.Senders.Count };
-                    }
-
-                    return new LoadMoreItemsResult();
-                });
+                HasMoreItems = chats.Senders.Count > 0;
+                return new LoadMoreItemsResult { Count = (uint)chats.Senders.Count };
             }
 
-            public bool HasMoreItems => true;
+            HasMoreItems = false;
+            return new LoadMoreItemsResult();
         }
+
+        public bool HasMoreItems { get; private set; } = true;
     }
 }

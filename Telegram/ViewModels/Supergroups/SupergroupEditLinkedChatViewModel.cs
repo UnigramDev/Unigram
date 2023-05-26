@@ -28,7 +28,6 @@ namespace Telegram.ViewModels.Supergroups
             Items = new MvxObservableCollection<Chat>();
 
             LinkCommand = new RelayCommand<Chat>(LinkExecute);
-            UnlinkCommand = new RelayCommand(UnlinkExecute);
         }
 
         protected Chat _chat;
@@ -272,8 +271,7 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public RelayCommand UnlinkCommand { get; }
-        private async void UnlinkExecute()
+        public async void Unlink()
         {
             var chat = _chat;
             if (chat == null)

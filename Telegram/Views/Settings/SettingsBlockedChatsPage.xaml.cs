@@ -5,14 +5,15 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
+using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Settings
 {
@@ -76,22 +77,13 @@ namespace Telegram.Views.Settings
 
         private void User_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
-
             var element = sender as FrameworkElement;
             var messageSender = ScrollingHost.ItemFromContainer(element) as MessageSender;
 
-            flyout.Items.Add(new MenuFlyoutItem { Text = Strings.Unblock, Command = ViewModel.UnblockCommand, CommandParameter = messageSender });
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(ViewModel.Unblock, messageSender, Strings.Unblock, Icons.SubtractCircle);
 
-            if (args.TryGetPosition(sender, out Point point))
-            {
-                if (point.X < 0 || point.Y < 0)
-                {
-                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
-                }
-
-                flyout.ShowAt(sender, point);
-            }
+            args.ShowAt(flyout, element);
         }
     }
 }

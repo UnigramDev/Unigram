@@ -40,7 +40,7 @@ namespace Telegram.Views.Settings
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.EditBrushCommand.Execute(e.ClickedItem);
+            ViewModel.EditBrush(e.ClickedItem as ThemeBrush);
         }
     }
 }

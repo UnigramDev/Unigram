@@ -343,8 +343,7 @@ namespace Telegram.ViewModels
 
         #region Clear
 
-        public RelayCommand<ForumTopic> ChatClearCommand { get; }
-        private async void ChatClearExecute(ForumTopic chat)
+        private async void ClearTopic(ForumTopic chat)
         {
             //var updated = await ClientService.SendAsync(new GetChat(chat.Id)) as Chat ?? chat;
             //var dialog = new DeleteChatPopup(ClientService, updated, Items.ChatList, true);

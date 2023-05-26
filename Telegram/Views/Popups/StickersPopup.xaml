@@ -10,7 +10,7 @@
                        mc:Ignorable="d"
                        PrimaryButtonStyle="{x:Bind ConvertIsInstalledStyle(ViewModel.IsInstalled, ViewModel.IsArchived), Mode=OneWay}"
                        PrimaryButtonText="{x:Bind ConvertIsInstalled(ViewModel.IsInstalled, ViewModel.IsArchived, ViewModel.IsOfficial, ViewModel.StickerType), Mode=OneWay}"
-                       PrimaryButtonCommand="{x:Bind ViewModel.SendCommand}"
+                       PrimaryButtonClick="{x:Bind ViewModel.Execute}"
                        VerticalContentAlignment="Stretch"
                        ContentMaxHeight="500"
                        Closing="OnClosing"

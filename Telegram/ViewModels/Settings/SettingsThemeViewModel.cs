@@ -37,9 +37,6 @@ namespace Telegram.ViewModels.Settings
             _themeService = themeService;
 
             Items = new DiffObservableCollection<ThemeBrush>(new ThemeBrushDiffHandler(), Constants.DiffOptions);
-
-            EditTitleCommand = new RelayCommand(EditTitleExecute);
-            EditBrushCommand = new RelayCommand<ThemeBrush>(EditBrushExecute);
         }
 
         private string _title;
@@ -140,41 +137,39 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand EditTitleCommand { get; }
-        private async void EditTitleExecute()
+        public async void EditName()
         {
-            var dialog = new InputPopup();
-            dialog.Title = Strings.EditName;
-            dialog.Text = _theme.Name;
-            dialog.PrimaryButtonText = Strings.OK;
-            dialog.SecondaryButtonText = Strings.Cancel;
+            var popup = new InputPopup();
+            popup.Title = Strings.EditName;
+            popup.Text = _theme.Name;
+            popup.PrimaryButtonText = Strings.OK;
+            popup.SecondaryButtonText = Strings.Cancel;
 
-            var confirm = await ShowPopupAsync(dialog);
+            var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
-                _theme.Name = dialog.Text;
-                Title = dialog.Text;
+                _theme.Name = popup.Text;
+                Title = popup.Text;
 
                 await CommitAsync();
             }
 
         }
 
-        public RelayCommand<ThemeBrush> EditBrushCommand { get; }
-        private async void EditBrushExecute(ThemeBrush brush)
+        public async void EditBrush(ThemeBrush brush)
         {
-            var dialog = new ChooseColorPopup();
-            dialog.IsTransparencyEnabled = brush.HasTransparency;
-            dialog.IsAccentColorVisible = false;
-            dialog.Title = brush.Key;
-            dialog.Color = brush.Color;
+            var popup = new ChooseColorPopup();
+            popup.IsTransparencyEnabled = brush.HasTransparency;
+            popup.IsAccentColorVisible = false;
+            popup.Title = brush.Key;
+            popup.Color = brush.Color;
 
-            var confirm = await ShowPopupAsync(dialog);
+            var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary)
             {
-                brush.Color = dialog.Color;
+                brush.Color = popup.Color;
 
-                _theme.Values[brush.Key] = dialog.Color;
+                _theme.Values[brush.Key] = popup.Color;
                 Theme.Current.Update(_theme);
 
                 await CommitAsync();

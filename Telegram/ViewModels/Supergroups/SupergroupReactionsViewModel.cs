@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -31,8 +30,6 @@ namespace Telegram.ViewModels.Supergroups
             : base(clientService, settingsService, aggregator)
         {
             Items = new MvxObservableCollection<SupergroupReactionOption>();
-
-            SendCommand = new RelayCommand(SendExecute);
         }
 
         protected Chat _chat;
@@ -120,8 +117,7 @@ namespace Telegram.ViewModels.Supergroups
             Available = available;
         }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public async void Execute()
         {
             if (_chat is not Chat chat || chat.Type is not ChatTypeSupergroup supergroup)
             {

@@ -48,7 +48,6 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             Items = new DiffObservableCollection<StickerSetInfo>(new StickerSetInfoDiffHandler());
-            ReorderCommand = new RelayCommand<StickerSetInfo>(ReorderExecute);
 
             //StickerSetShareCommand = new RelayCommand<StickerSetInfo>(StickerSetShareExecute);
             //StickerSetCopyCommand = new RelayCommand<StickerSetInfo>(StickerSetCopyExecute);
@@ -244,8 +243,7 @@ namespace Telegram.ViewModels.Settings
 
         public DiffObservableCollection<StickerSetInfo> Items { get; private set; }
 
-        public RelayCommand<StickerSetInfo> ReorderCommand { get; }
-        private void ReorderExecute(StickerSetInfo set)
+        public void Reorder(StickerSetInfo set)
         {
             _needReorder = true;
             _newOrder = Items.Where(x => x.Id != 0).Select(x => x.Id).ToList();

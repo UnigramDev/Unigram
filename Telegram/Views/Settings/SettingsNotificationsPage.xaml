@@ -29,7 +29,7 @@
                                                   Content="{x:Bind Title}"
                                                   Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
                                                   Glyph="{x:Bind Glyph}"
-                                                  Click="{x:Bind ExceptionsExecute}"
+                                                  Click="{x:Bind Exceptions}"
                                                   IsChevronVisible="True" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

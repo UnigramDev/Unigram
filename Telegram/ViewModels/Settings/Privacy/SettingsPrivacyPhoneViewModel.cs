@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Threading.Tasks;
-using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -28,8 +27,6 @@ namespace Telegram.ViewModels.Settings.Privacy
 
             Children.Add(showPhone);
             Children.Add(allowFindingByPhoneNumber);
-
-            SendCommand = new RelayCommand(SendExecute);
         }
 
         public SettingsPrivacyShowPhoneViewModel ShowPhone => _showPhone;
@@ -52,8 +49,7 @@ namespace Telegram.ViewModels.Settings.Privacy
             return Task.CompletedTask;
         }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public async void Save()
         {
             var response1 = await ShowPhone.SendAsync();
             var response2 = await AllowFindingByPhoneNumber.SendAsync();

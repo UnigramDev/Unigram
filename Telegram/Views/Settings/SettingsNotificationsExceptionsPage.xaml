@@ -29,7 +29,7 @@
                 <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl>
                         <CheckBox x:Name="Alert"
-                                  Click="{x:Bind ViewModel.Scope.SendExecute}"
+                                  Click="{x:Bind ViewModel.Scope.Save}"
                                   IsChecked="{x:Bind ViewModel.Scope.Alert, Mode=TwoWay}"
                                   Content="{CustomResource Alert}"
                                   Style="{StaticResource SettingsCheckBoxStyle}" />
@@ -37,7 +37,7 @@
 
                     <controls:HeaderedControl Header="{CustomResource Settings}">
                         <CheckBox x:Name="Preview"
-                                  Click="{x:Bind ViewModel.Scope.SendExecute}"
+                                  Click="{x:Bind ViewModel.Scope.Save}"
                                   IsChecked="{x:Bind ViewModel.Scope.Preview, Mode=TwoWay}"
                                   Content="{CustomResource MessagePreview}"
                                   Style="{StaticResource SettingsCheckBoxStyle}" />

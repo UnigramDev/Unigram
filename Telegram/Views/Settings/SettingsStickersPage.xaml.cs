@@ -54,9 +54,9 @@ namespace Telegram.Views.Settings
 
         private void ListView_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
         {
-            if (args.DropResult == Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move)
+            if (args.DropResult == Windows.ApplicationModel.DataTransfer.DataPackageOperation.Move && args.Items.Count > 0)
             {
-                ViewModel.ReorderCommand.Execute(args.Items.FirstOrDefault());
+                ViewModel.Reorder(args.Items[0] as StickerSetInfo);
             }
         }
 

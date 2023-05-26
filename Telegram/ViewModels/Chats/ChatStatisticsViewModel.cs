@@ -34,7 +34,6 @@ namespace Telegram.ViewModels.Chats
             TopSenders = new MvxObservableCollection<ChatStatisticsMessageSenderInfo>();
             TopSendersLeft = new MvxObservableCollection<ChatStatisticsMessageSenderInfo>();
 
-            TopSendersCommand = new RelayCommand(TopSendersExecute);
             OpenProfileCommand = new RelayCommand<long>(OpenProfileExecute);
             OpenPostCommand = new RelayCommand<Message>(OpenPostExecute);
         }
@@ -79,8 +78,7 @@ namespace Telegram.ViewModels.Chats
         public MvxObservableCollection<ChatStatisticsMessageSenderInfo> TopSenders { get; private set; }
         public MvxObservableCollection<ChatStatisticsMessageSenderInfo> TopSendersLeft { get; private set; }
 
-        public RelayCommand TopSendersCommand { get; }
-        private void TopSendersExecute()
+        public void ExpandTopSenders()
         {
             TopSenders.AddRange(TopSendersLeft);
             TopSendersLeft.Clear();

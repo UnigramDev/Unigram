@@ -49,7 +49,7 @@
                           VerticalScrollMode="Auto">
                 <controls:SettingsPanel>
                     <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/Compass.tgs"
-                                             Text="{CustomResource PeopleNearbyInfo}" />
+                                               Text="{CustomResource PeopleNearbyInfo}" />
 
                     <controls:HeaderedControl Header="{CustomResource PeopleNearbyHeader}">
 
@@ -61,11 +61,11 @@
                         </Border>
 
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
-                                                 ItemsSource="{x:Bind ViewModel.Users}"
-                                                 ItemTemplate="{StaticResource ChatTemplate}"
-                                                 ElementPrepared="OnElementPrepared" />
+                                            ItemsSource="{x:Bind ViewModel.Users}"
+                                            ItemTemplate="{StaticResource ChatTemplate}"
+                                            ElementPrepared="OnElementPrepared" />
 
-                        <controls:BadgeButton Command="{x:Bind ViewModel.LoadMoreCommand}"
+                        <controls:BadgeButton Click="{x:Bind ViewModel.LoadMore}"
                                               Content="{x:Bind ViewModel.LoadMoreLabel, Mode=OneWay}"
                                               Visibility="{x:Bind ViewModel.LoadMoreVisibility, Mode=OneWay}"
                                               Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />
@@ -78,9 +78,9 @@
                             Glyph="&#xE716;"/>-->
 
                         <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
-                                                 ItemsSource="{x:Bind ViewModel.Chats}"
-                                                 ItemTemplate="{StaticResource ChatTemplate}"
-                                                 ElementPrepared="OnElementPrepared" />
+                                            ItemsSource="{x:Bind ViewModel.Chats}"
+                                            ItemTemplate="{StaticResource ChatTemplate}"
+                                            ElementPrepared="OnElementPrepared" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
             </ScrollViewer>

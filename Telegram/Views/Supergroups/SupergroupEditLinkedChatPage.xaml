@@ -57,7 +57,7 @@
 
                         <controls:BadgeButton x:Name="Unlink"
                                               Content="{CustomResource DiscussionUnlinkGroup}"
-                                              Command="{x:Bind ViewModel.UnlinkCommand}"
+                                              Click="{x:Bind ViewModel.Unlink}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               BorderThickness="0,1,0,0"
                                               Glyph="&#xF166;" />

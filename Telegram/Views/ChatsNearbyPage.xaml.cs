@@ -53,8 +53,8 @@ namespace Telegram.Views
             var photo = content.Children[0] as ProfilePicture;
             photo.SetChat(ViewModel.ClientService, chat, 36);
 
-            button.Command = ViewModel.OpenChatCommand;
             button.CommandParameter = nearby;
+            button.Command = ViewModel.OpenChatCommand;
         }
     }
 }

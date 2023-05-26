@@ -215,7 +215,7 @@
                                             ItemTemplate="{StaticResource UserTemplate}"
                                             ElementPrepared="OnElementPrepared" />
 
-                        <controls:BadgeButton Command="{x:Bind ViewModel.TopSendersCommand}"
+                        <controls:BadgeButton Click="{x:Bind ViewModel.ExpandTopSenders}"
                                               Content="{x:Bind ConvertShowMore(ViewModel.TopSendersLeft.Count), Mode=OneWay}"
                                               Visibility="{x:Bind ViewModel.TopSendersLeft.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                                               Foreground="{ThemeResource SystemControlForegroundAccentBrush}" />

@@ -135,7 +135,6 @@ namespace Telegram.ViewModels.Settings
             set => Set(ref _current, value);
         }
 
-        public RelayCommand RenameCommand { get; }
         public async void Rename()
         {
             if (_current is not Session session)

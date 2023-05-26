@@ -41,7 +41,7 @@
                     <Button.Flyout>
                         <MenuFlyout Placement="BottomEdgeAlignedRight">
                             <MenuFlyoutItem Text="{CustomResource EditName}"
-                                            Command="{x:Bind ViewModel.EditTitleCommand}">
+                                            Click="{x:Bind ViewModel.EditName}">
                                 <MenuFlyoutItem.Icon>
                                     <FontIcon Glyph="&#xE104;"
                                               FontFamily="{StaticResource TelegramThemeFontFamily}" />

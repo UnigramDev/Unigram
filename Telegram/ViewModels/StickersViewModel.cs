@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -30,8 +29,6 @@ namespace Telegram.ViewModels
                 IsSourceGrouped = true,
                 ItemsPath = new Windows.UI.Xaml.PropertyPath("Stickers")
             };
-
-            SendCommand = new RelayCommand(SendExecute);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -204,8 +201,7 @@ namespace Telegram.ViewModels
 
         public object ItemsView => Items.Count == 1 ? Items[0] : ItemsSource.View;
 
-        public RelayCommand SendCommand { get; }
-        private void SendExecute()
+        public void Execute()
         {
             IsLoading = true;
 

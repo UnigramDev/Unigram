@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Threading.Tasks;
-using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -21,7 +20,6 @@ namespace Telegram.ViewModels.Settings
         public SettingsDataAutoViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            SendCommand = new RelayCommand(SendExecute);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode navigationMode, NavigationState state)
@@ -114,8 +112,7 @@ namespace Telegram.ViewModels.Settings
 
         public bool IsLimitSupported => _type != AutoDownloadType.Photos;
 
-        public RelayCommand SendCommand { get; }
-        private void SendExecute()
+        public void Save()
         {
             var preferences = Settings.AutoDownload;
             var mode = (AutoDownloadMode)0;

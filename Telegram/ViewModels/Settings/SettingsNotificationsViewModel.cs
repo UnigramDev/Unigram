@@ -283,8 +283,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand SendCommand { get; }
-        public async void SendExecute()
+        public async void Save()
         {
             var settings = await ClientService.SendAsync(new GetScopeNotificationSettings(GetScope())) as ScopeNotificationSettings;
             if (settings != null)
@@ -304,8 +303,7 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public RelayCommand ExceptionsCommand { get; }
-        public void ExceptionsExecute()
+        public void Exceptions()
         {
             switch (GetScope())
             {

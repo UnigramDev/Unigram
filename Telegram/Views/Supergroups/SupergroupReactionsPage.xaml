@@ -18,7 +18,7 @@
 
     <local:HostedPage.Action>
         <Button Content="{CustomResource Save}"
-                Command="{x:Bind ViewModel.SendCommand}"
+                Click="{x:Bind ViewModel.Execute}"
                 Style="{StaticResource AccentButtonStyle}" />
     </local:HostedPage.Action>
 
