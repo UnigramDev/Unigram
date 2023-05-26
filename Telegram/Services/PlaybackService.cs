@@ -492,12 +492,9 @@ namespace Telegram.Services
         {
             try
             {
-                if (_mediaPlayer == null)
-                {
-                    return;
-                }
+                Create();
 
-                if (_mapping.TryGetValue(_mediaPlayer.Source, out PlaybackItem prevItem))
+                if (_mediaPlayer.Source != null && _mapping.TryGetValue(_mediaPlayer.Source, out PlaybackItem prevItem))
                 {
                     _mapping.Remove(_mediaPlayer.Source);
                     prevItem.Dispose();
@@ -569,8 +566,7 @@ namespace Telegram.Services
             _items.Add(item);
             _threadId = threadId;
 
-            Create(item, await item.GetSourceAsync());
-            Play();
+            SetSource(item, true);
 
             if (message.Content is MessageText)
             {
@@ -719,17 +715,12 @@ namespace Telegram.Services
                 _items = null;
             }
 
+            _nextToken?.Cancel();
             _mapping?.Clear();
         }
 
-        private void Create(PlaybackItem item, IMediaPlaybackSource source)
+        private void Create()
         {
-            if (source == null)
-            {
-                // TODO: dispose?
-                return;
-            }
-
             if (_mediaPlayer == null)
             {
                 _mediaPlayer = new MediaPlayer();
@@ -743,9 +734,6 @@ namespace Telegram.Services
                 _mediaPlayer.CommandManager.IsEnabled = false;
                 _mediaPlayer.Volume = _settingsService.VolumeLevel;
             }
-
-            _mapping.AddOrUpdate(source, item);
-            _mediaPlayer.Source = source;
         }
     }
 
