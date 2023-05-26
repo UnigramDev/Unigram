@@ -1358,7 +1358,93 @@ namespace Telegram.Services
         {
             ProcessFiles(update);
 
-            if (update is UpdateAuthorizationState updateAuthorizationState)
+            if (update is UpdateFile updateFile)
+            {
+                // TODO: move the message after track when figured out why WeakAction throws a NRE
+                var token = (SessionId << 16) | updateFile.File.Id;
+                if (updateFile.File.Local.IsDownloadingCompleted)
+                {
+                    EventAggregator.Current.Publish(updateFile.File, token | 0x01000000, true);
+                }
+
+                EventAggregator.Current.Publish(updateFile.File, token, false);
+                TrackDownloadedFile(updateFile.File);
+                return;
+            }
+            else if (update is UpdateChatPosition updateChatPosition)
+            {
+                if (_chats.TryGetValue(updateChatPosition.ChatId, out Chat value))
+                {
+                    Monitor.Enter(value);
+
+                    int i;
+                    for (i = 0; i < value.Positions.Count; i++)
+                    {
+                        if (value.Positions[i].List.ToId() == updateChatPosition.Position.List.ToId())
+                        {
+                            break;
+                        }
+                    }
+
+                    var newPositions = new List<ChatPosition>(value.Positions.Count + (updateChatPosition.Position.Order == 0 ? 0 : 1) - (i < value.Positions.Count ? 1 : 0));
+                    if (updateChatPosition.Position.Order != 0)
+                    {
+                        newPositions.Add(updateChatPosition.Position);
+                    }
+
+                    for (int j = 0; j < value.Positions.Count; j++)
+                    {
+                        if (j != i)
+                        {
+                            newPositions.Add(value.Positions[j]);
+                        }
+                    }
+
+                    SetChatPositions(value, newPositions);
+
+                    Monitor.Exit(value);
+                }
+            }
+            else if (update is UpdateChatLastMessage updateChatLastMessage)
+            {
+                if (_chats.TryGetValue(updateChatLastMessage.ChatId, out Chat value))
+                {
+                    Monitor.Enter(value);
+
+                    value.LastMessage = updateChatLastMessage.LastMessage;
+                    SetChatPositions(value, updateChatLastMessage.Positions);
+
+                    Monitor.Exit(value);
+                }
+            }
+            else if (update is UpdateUser updateUser)
+            {
+                _users.TryGetValue(updateUser.User.Id, out User value);
+                _users[updateUser.User.Id] = updateUser.User;
+
+                if (value != null && value.IsContact != updateUser.User.IsContact)
+                {
+                    _aggregator.Publish(new UpdateUserIsContact(updateUser.User.Id));
+                }
+            }
+            else if (update is UpdateUnreadMessageCount updateUnreadMessageCount)
+            {
+                SetUnreadCount(updateUnreadMessageCount.ChatList, messageCount: updateUnreadMessageCount);
+            }
+            else if (update is UpdateNewChat updateNewChat)
+            {
+                _chats[updateNewChat.Chat.Id] = updateNewChat.Chat;
+
+                Monitor.Enter(updateNewChat.Chat);
+                SetChatPositions(updateNewChat.Chat, updateNewChat.Chat.Positions);
+                Monitor.Exit(updateNewChat.Chat);
+
+                if (updateNewChat.Chat.Type is ChatTypePrivate privata)
+                {
+                    _usersToChats[privata.UserId] = updateNewChat.Chat.Id;
+                }
+            }
+            else if (update is UpdateAuthorizationState updateAuthorizationState)
             {
                 switch (updateAuthorizationState.AuthorizationState)
                 {
@@ -1500,18 +1586,6 @@ namespace Telegram.Services
                     value.IsMarkedAsUnread = updateChatIsMarkedAsUnread.IsMarkedAsUnread;
                 }
             }
-            else if (update is UpdateChatLastMessage updateChatLastMessage)
-            {
-                if (_chats.TryGetValue(updateChatLastMessage.ChatId, out Chat value))
-                {
-                    Monitor.Enter(value);
-
-                    value.LastMessage = updateChatLastMessage.LastMessage;
-                    SetChatPositions(value, updateChatLastMessage.Positions);
-
-                    Monitor.Exit(value);
-                }
-            }
             else if (update is UpdateChatNotificationSettings updateNotificationSettings)
             {
                 if (_chats.TryGetValue(updateNotificationSettings.ChatId, out Chat value))
@@ -1538,40 +1612,6 @@ namespace Telegram.Services
                 if (_chats.TryGetValue(updateChatPhoto.ChatId, out Chat value))
                 {
                     value.Photo = updateChatPhoto.Photo;
-                }
-            }
-            else if (update is UpdateChatPosition updateChatPosition)
-            {
-                if (_chats.TryGetValue(updateChatPosition.ChatId, out Chat value))
-                {
-                    Monitor.Enter(value);
-
-                    int i;
-                    for (i = 0; i < value.Positions.Count; i++)
-                    {
-                        if (value.Positions[i].List.ToId() == updateChatPosition.Position.List.ToId())
-                        {
-                            break;
-                        }
-                    }
-
-                    var newPositions = new List<ChatPosition>(value.Positions.Count + (updateChatPosition.Position.Order == 0 ? 0 : 1) - (i < value.Positions.Count ? 1 : 0));
-                    if (updateChatPosition.Position.Order != 0)
-                    {
-                        newPositions.Add(updateChatPosition.Position);
-                    }
-
-                    for (int j = 0; j < value.Positions.Count; j++)
-                    {
-                        if (j != i)
-                        {
-                            newPositions.Add(value.Positions[j]);
-                        }
-                    }
-
-                    SetChatPositions(value, newPositions);
-
-                    Monitor.Exit(value);
                 }
             }
             else if (update is UpdateChatReadInbox updateChatReadInbox)
@@ -1662,19 +1702,6 @@ namespace Telegram.Services
             {
                 _favoriteStickers = updateFavoriteStickers.StickerIds;
             }
-            else if (update is UpdateFile updateFile)
-            {
-                // TODO: move the message after track when figured out why WeakAction throws a NRE
-                var token = (SessionId << 16) | updateFile.File.Id;
-                if (updateFile.File.Local.IsDownloadingCompleted)
-                {
-                    EventAggregator.Current.Publish(updateFile.File, token | 0x01000000, true);
-                }
-
-                EventAggregator.Current.Publish(updateFile.File, token, false);
-                TrackDownloadedFile(updateFile.File);
-                return;
-            }
             else if (update is UpdateFileGenerationStart updateFileGenerationStart)
             {
 
@@ -1738,19 +1765,6 @@ namespace Telegram.Services
                 if (_chats.TryGetValue(updateMessageUnreadReactions.ChatId, out Chat value))
                 {
                     value.UnreadReactionCount = updateMessageUnreadReactions.UnreadReactionCount;
-                }
-            }
-            else if (update is UpdateNewChat updateNewChat)
-            {
-                _chats[updateNewChat.Chat.Id] = updateNewChat.Chat;
-
-                Monitor.Enter(updateNewChat.Chat);
-                SetChatPositions(updateNewChat.Chat, updateNewChat.Chat.Positions);
-                Monitor.Exit(updateNewChat.Chat);
-
-                if (updateNewChat.Chat.Type is ChatTypePrivate privata)
-                {
-                    _usersToChats[privata.UserId] = updateNewChat.Chat.Id;
                 }
             }
             else if (update is UpdateOption updateOption)
@@ -1831,20 +1845,6 @@ namespace Telegram.Services
             else if (update is UpdateUnreadChatCount updateUnreadChatCount)
             {
                 SetUnreadCount(updateUnreadChatCount.ChatList, chatCount: updateUnreadChatCount);
-            }
-            else if (update is UpdateUnreadMessageCount updateUnreadMessageCount)
-            {
-                SetUnreadCount(updateUnreadMessageCount.ChatList, messageCount: updateUnreadMessageCount);
-            }
-            else if (update is UpdateUser updateUser)
-            {
-                _users.TryGetValue(updateUser.User.Id, out User value);
-                _users[updateUser.User.Id] = updateUser.User;
-
-                if (value != null && value.IsContact != updateUser.User.IsContact)
-                {
-                    _aggregator.Publish(new UpdateUserIsContact(updateUser.User.Id));
-                }
             }
             else if (update is UpdateUserFullInfo updateUserFullInfo)
             {
