@@ -69,8 +69,12 @@ namespace Telegram.Views
             if (args.DropResult == DataPackageOperation.Move && args.Items.Count == 1 && args.Items[0] is Chat chat)
             {
                 var items = ViewModel.Items;
-                var index = items.IndexOf(chat);
+                if (items.Count == 1)
+                {
+                    return;
+                }
 
+                var index = items.IndexOf(chat);
                 var compare = items[index > 0 ? index - 1 : index + 1];
 
                 var position = compare.GetPosition(items.ChatList);

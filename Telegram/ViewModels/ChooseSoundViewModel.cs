@@ -60,14 +60,6 @@ namespace Telegram.ViewModels
             Aggregator.Subscribe<UpdateSavedNotificationSounds>(this, Handle);
         }
 
-        public void UpdateFile(object sender, File file)
-        {
-            if (sender is NotificationSoundViewModel notificationSound && notificationSound.IsSelected)
-            {
-                SoundEffects.Play(file);
-            }
-        }
-
         public RelayCommand UploadCommand { get; }
         private async void Upload()
         {
@@ -141,13 +133,25 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    UpdateManager.Subscribe(this, _parent.ClientService, file, ref _soundToken, _parent.UpdateFile, true);
+                    UpdateManager.Subscribe(this, _parent.ClientService, file, ref _soundToken, UpdateFile, true);
 
                     if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
                     {
                         _parent.ClientService.DownloadFile(file.Id, 16);
                     }
                 }
+            }
+            else
+            {
+                UpdateManager.Unsubscribe(this, ref _soundToken, true);
+            }
+        }
+
+        private void UpdateFile(object sender, File file)
+        {
+            if (sender is NotificationSoundViewModel notificationSound && notificationSound.IsSelected)
+            {
+                SoundEffects.Play(file);
             }
         }
 

@@ -1138,6 +1138,12 @@ namespace Telegram.Views.Calls
 
         private async void Audio_Click(object sender, RoutedEventArgs e)
         {
+            if (_service == null)
+            {
+                await WindowContext.Current.ConsolidateAsync();
+                return;
+            }
+
             var call = _service.Call;
             var currentUser = _service.CurrentUser;
 

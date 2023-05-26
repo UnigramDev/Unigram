@@ -401,7 +401,7 @@ namespace Telegram.ViewModels.Chats
                 return;
             }
 
-            var items = messages.Select(x => x.Get()).ToArray();
+            var items = messages.Select(x => x.Get()).ToList();
 
             var response = await ClientService.SendAsync(new GetMessages(chat.Id, items.Select(x => x.Id).ToArray()));
             if (response is Messages updated)
@@ -414,12 +414,17 @@ namespace Telegram.ViewModels.Chats
                     }
                     else
                     {
-                        messages.RemoveAt(i);
+                        items.RemoveAt(i);
                         updated.MessagesValue.RemoveAt(i);
 
                         i--;
                     }
                 }
+            }
+
+            if (items.Count == 0)
+            {
+                return;
             }
 
             var sameUser = messages.All(x => x.SenderId.AreTheSame(first.SenderId));

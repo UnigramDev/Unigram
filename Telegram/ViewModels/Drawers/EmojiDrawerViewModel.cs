@@ -380,6 +380,11 @@ namespace Telegram.ViewModels.Drawers
 
         public async Task UpdateReactions(AvailableReactions available, IList<AvailableReaction> visible)
         {
+            if (available == null)
+            {
+                return;
+            }
+
             available.TopReactions
                 .Union(available.PopularReactions)
                 .Union(available.RecentReactions)

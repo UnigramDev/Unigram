@@ -105,7 +105,7 @@ namespace Telegram.ViewModels.Folders
         private string _inviteLink;
         public string InviteLink
         {
-            get => _inviteLink.Replace("https://", string.Empty);
+            get => _inviteLink?.Replace("https://", string.Empty);
             set => Set(ref _inviteLink, value);
         }
 
