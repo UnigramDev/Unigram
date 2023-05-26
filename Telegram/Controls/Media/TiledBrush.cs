@@ -86,7 +86,7 @@ namespace Telegram.Controls.Media
                     {
                         Background = tintEffect,
                         Foreground = new CompositionEffectSourceParameter("Backdrop"),
-                        Mode = BlendEffectMode.SoftLight
+                        Mode = BlendEffectMode.Overlay
                     };
 
                     //effect = borderEffect;
