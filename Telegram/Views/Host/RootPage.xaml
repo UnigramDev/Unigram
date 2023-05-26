@@ -16,7 +16,7 @@
       d:DesignWidth="400">
 
     <Page.Resources>
-        <Style x:Name="NavigationViewExpanderStyle"
+        <Style x:Key="NavigationViewExpanderStyle"
                TargetType="CheckBox">
             <Setter Property="Background"
                     Value="{ThemeResource CheckBoxBackgroundUnchecked}" />
@@ -189,6 +189,8 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Margin="0,32,0,0"
+                AutomationProperties.AccessibilityView="Raw"
+                IsTabStop="False"
                 Width="240">
             <Button.Template>
                 <ControlTemplate>

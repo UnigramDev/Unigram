@@ -333,7 +333,6 @@ namespace Telegram.Views.Host
             }
 #endif
             Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
-            Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.AccDescrHideAccounts : Strings.AccDescrShowAccounts);
         }
 
         private void InitializeSessions(bool show, IList<ISessionService> items)
@@ -611,8 +610,6 @@ namespace Telegram.Views.Host
 
             InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
             Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
-
-            Automation.SetToolTip(Accounts, SettingsService.Current.IsAccountsSelectorExpanded ? Strings.AccDescrHideAccounts : Strings.AccDescrShowAccounts);
 
             var selector = NavigationViewList.ContainerFromIndex(0);
             if (selector != null)
