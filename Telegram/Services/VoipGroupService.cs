@@ -494,6 +494,11 @@ namespace Telegram.Services
             _manager?.SetConnectionMode(VoipGroupConnectionMode.None, false, groupCall.IsRtmpStream);
             _manager?.EmitJoinPayload(async (ssrc, payload) =>
             {
+                if (_manager == null)
+                {
+                    return;
+                }
+
                 if (groupCall.IsRtmpStream)
                 {
                     Participants = null;
@@ -987,8 +992,16 @@ namespace Telegram.Services
 
         public bool IsNoiseSuppressionEnabled
         {
-            get => _manager.IsNoiseSuppressionEnabled;
-            set => _manager.IsNoiseSuppressionEnabled = Settings.VoIP.IsNoiseSuppressionEnabled = value;
+            get => _manager?.IsNoiseSuppressionEnabled ?? false;
+            set
+            {
+                if (_manager != null)
+                {
+                    _manager.IsNoiseSuppressionEnabled = value;
+                }
+
+                Settings.VoIP.IsNoiseSuppressionEnabled = value;
+            }
         }
 
 #endif
