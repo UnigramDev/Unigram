@@ -90,9 +90,7 @@ namespace Telegram
 
             UnhandledException += (s, args) =>
             {
-                args.Handled = args.Exception
-                    is not LayoutCycleException
-                    and not OutOfMemoryException;
+                args.Handled = args.Exception is not LayoutCycleException;
             };
 
             EnteredBackground += OnEnteringBackground;
