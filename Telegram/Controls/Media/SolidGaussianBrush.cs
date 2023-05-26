@@ -10,6 +10,7 @@ using System;
 using Telegram.Common;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -25,18 +26,30 @@ namespace Telegram.Controls.Media
             PowerSavingPolicy.Changed += PowerSavingPolicy_Changed;
         }
 
-        private void PowerSavingPolicy_Changed(object sender, System.EventArgs e)
+        private void PowerSavingPolicy_Changed(object sender, EventArgs e)
         {
             if (m_isConnected)
             {
                 try
                 {
-                    UpdateBrush();
+                    UpdateBrushByDispatcher();
                 }
                 catch (Exception ex)
                 {
                     Logger.Error(ex);
                 }
+            }
+        }
+
+        private void UpdateBrushByDispatcher()
+        {
+            if (Dispatcher.HasThreadAccess)
+            {
+                UpdateBrush();
+            }
+            else
+            {
+                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateBrush);
             }
         }
 
@@ -68,7 +81,7 @@ namespace Telegram.Controls.Media
                         BlurAmount = 30,
                         Optimization = EffectOptimization.Speed,
                         BorderMode = EffectBorderMode.Hard,
-                        Source = new CompositionEffectSourceParameter("Backdrop")
+                        Source = new CompositionEffectSourceParameter("Backdrop"),
                     };
 
                     var saturationEffect = new SaturationEffect
