@@ -30,12 +30,9 @@ namespace winrt::Telegram::Native::implementation
             return info.as<IBuffer>();
         }
 
-        static void Copy(IBuffer a, IBuffer b)
+        static void Copy(IBuffer source, IBuffer destination)
         {
-            auto ad = a.data();
-            auto bd = b.data();
-
-            memcpy(bd, ad, a.Length());
+            memcpy(destination.data(), source.data(), source.Length());
         }
 
         uint32_t Capacity() const

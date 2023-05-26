@@ -610,7 +610,7 @@ namespace Telegram.Views
 
             ViewModel.SetText(null, false);
 
-            Messages.SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+            Messages.SetScrollingMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
 
             CheckMessageBoxEmpty();
 
@@ -3579,7 +3579,7 @@ namespace Telegram.Views
         private void ItemsStackPanel_Loading(FrameworkElement sender, object args)
         {
             sender.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 664 : double.PositiveInfinity;
-            Messages.SetScrollMode();
+            Messages.SetScrollingMode();
         }
 
         private void ServiceMessage_Click(object sender, RoutedEventArgs e)

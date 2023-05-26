@@ -261,7 +261,7 @@
                                   Content="{CustomResource ChannelBlockedUsers}"
                                   Click="{x:Bind ViewModel.OpenBanned}"
                                   Style="{StaticResource GlyphBadgeButtonStyle}"
-                                  Glyph="&#xF140;" />
+                                  Glyph="&#xF166;" />
         </controls:HeaderedControl>
 
         <controls:HeaderedControl x:Name="MiscPanel">

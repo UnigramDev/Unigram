@@ -1478,11 +1478,11 @@ namespace Telegram.Views
         {
             if (string.IsNullOrEmpty(anchorLinkText.AnchorName))
             {
-                ScrollingHost.GetScrollViewer().ChangeView(null, 0, null);
+                ScrollingHost.ScrollToTop();
             }
             else if (_anchors.TryGetValue(anchorLinkText.AnchorName, out Border anchor))
             {
-                await ScrollingHost.ScrollToItem2(anchor, VerticalAlignment.Top, false);
+                await ScrollingHost.ScrollToItem2(anchor, VerticalAlignment.Top);
             }
         }
 

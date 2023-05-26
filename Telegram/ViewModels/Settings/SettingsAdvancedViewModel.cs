@@ -14,7 +14,6 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
-using Windows.ApplicationModel;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings

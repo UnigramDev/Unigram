@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright Fela Ameghino 2015-2023
 //
 // Distributed under the GNU General Public License v3.0. (See accompanying
@@ -96,7 +96,7 @@ namespace Telegram.Views
             }
 
             var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
-            if (panel == null || panel.FirstVisibleIndex < 0)
+            if (panel == null || panel.FirstVisibleIndex < 0 || panel.LastVisibleIndex >= _messages.Count)
             {
                 return;
             }
@@ -114,6 +114,16 @@ namespace Telegram.Views
 
             for (int i = panel.FirstVisibleIndex; i <= panel.LastVisibleIndex; i++)
             {
+                // TODO: this would be preferable, but it can't be done because
+                // date service messages aren't mapped in the array
+                //var message = _messages[i];
+                //_messageIdToSelector.TryGetValue(message.Id, out SelectorItem container);
+
+                //if (container == null)
+                //{
+                //    continue;
+                //}
+
                 var container = Messages.ContainerFromIndex(i) as SelectorItem;
                 if (container == null)
                 {
@@ -147,18 +157,15 @@ namespace Telegram.Views
 
                         if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
                         {
-                            DateHeader.CommandParameter = null;
-                            DateHeaderLabel.Text = string.Format(Strings.MessageScheduledOn, Formatter.DayGrouping(Formatter.ToLocalTime(sendAtDate.SendDate)));
+                            UpdateDateHeader(sendAtDate.SendDate, true);
                         }
                         else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
                         {
-                            DateHeader.CommandParameter = null;
-                            DateHeaderLabel.Text = Strings.MessageScheduledUntilOnline;
+                            UpdateDateHeader(0, true);
                         }
                         else if (message.Date > 0)
                         {
-                            DateHeader.CommandParameter = message.Date;
-                            DateHeaderLabel.Text = Formatter.DayGrouping(Formatter.ToLocalTime(message.Date));
+                            UpdateDateHeader(message.Date, false);
                         }
                     }
                 }
@@ -344,6 +351,41 @@ namespace Telegram.Views
             _dateHeaderPanel.StartAnimation("Opacity", opacity);
 
             batch.End();
+        }
+
+        private int _dateHeaderDate;
+        private bool _dateHeaderScheduled;
+
+        private void UpdateDateHeader(int date, bool scheduled)
+        {
+            // TODO: this makes little sense since date will be always
+            // different, until time is removed from it.
+            if (_dateHeaderDate == date && _dateHeaderScheduled == scheduled)
+            {
+                return;
+            }
+
+            _dateHeaderDate = date;
+            _dateHeaderScheduled = scheduled;
+
+            if (scheduled)
+            {
+                if (date != 0)
+                {
+                    DateHeader.CommandParameter = null;
+                    DateHeaderLabel.Text = string.Format(Strings.MessageScheduledOn, Formatter.DayGrouping(Formatter.ToLocalTime(date)));
+                }
+                else
+                {
+                    DateHeader.CommandParameter = null;
+                    DateHeaderLabel.Text = Strings.MessageScheduledUntilOnline;
+                }
+            }
+            else
+            {
+                DateHeader.CommandParameter = date;
+                DateHeaderLabel.Text = Formatter.DayGrouping(Formatter.ToLocalTime(date));
+            }
         }
 
         private readonly Dictionary<long, WeakReference> _prev = new Dictionary<long, WeakReference>();
@@ -621,7 +663,7 @@ namespace Telegram.Views
                     }
                     else if (message.Content is MessageChatSetBackground chatSetBackground)
                     {
-                        var photo = service.FindName("Photo") as ChatBackgroundRenderer;
+                        var photo = service.FindName("Photo") as ChatBackgroundPresenter;
                         photo?.UpdateSource(_viewModel.ClientService, chatSetBackground.Background.Background, true);
 
                         var view = service.FindName("View") as Border;

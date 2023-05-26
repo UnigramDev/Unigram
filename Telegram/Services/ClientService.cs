@@ -91,6 +91,7 @@ namespace Telegram.Services
         bool IsChatAccessible(Chat chat);
 
         bool CanPostMessages(Chat chat);
+        bool CanInviteUsers(Chat chat);
 
         BaseObject GetMessageSender(MessageSender sender);
 
@@ -903,6 +904,22 @@ namespace Telegram.Services
             else if (TryGetBasicGroup(chat, out BasicGroup basicGroup))
             {
                 return basicGroup.CanPostMessages();
+            }
+
+            // TODO: secret chats maybe?
+
+            return true;
+        }
+
+        public bool CanInviteUsers(Chat chat)
+        {
+            if (TryGetSupergroup(chat, out Supergroup supergroup))
+            {
+                return supergroup.CanInviteUsers();
+            }
+            else if (TryGetBasicGroup(chat, out BasicGroup basicGroup))
+            {
+                return basicGroup.CanInviteUsers();
             }
 
             // TODO: secret chats maybe?

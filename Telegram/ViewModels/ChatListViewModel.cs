@@ -624,10 +624,11 @@ namespace Telegram.ViewModels
             {
                 using (await _loadMoreLock.WaitAsync())
                 {
-                    //var response = await _clientService.SendAsync(new GetChats(_chatList, _internalOrder, _internalChatId, 20));
                     var response = await _clientService.GetChatListAsync(_chatList, Count, 20);
                     if (response is Telegram.Td.Api.Chats chats)
                     {
+                        var totalCount = 0u;
+
                         foreach (var chat in _clientService.GetChats(chats.ChatIds))
                         {
                             var order = chat.GetOrder(_chatList);
@@ -649,6 +650,8 @@ namespace Telegram.ViewModels
                                     {
                                         _viewModel.Delegate?.SetSelectedItem(chat);
                                     }
+
+                                    totalCount++;
                                 }
 
                                 _lastChatId = chat.Id;
@@ -669,7 +672,7 @@ namespace Telegram.ViewModels
                             OnPropertyChanged(new PropertyChangedEventArgs("HasMoreItems"));
                         }
 
-                        return new LoadMoreItemsResult { Count = (uint)chats.ChatIds.Count };
+                        return new LoadMoreItemsResult { Count = totalCount };
                     }
 
                     return new LoadMoreItemsResult { Count = 0 };

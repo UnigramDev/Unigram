@@ -367,12 +367,10 @@ namespace Telegram.Controls.Messages.Content
                 {
                     if (message.PlaybackService.PlaybackState == MediaPlaybackState.Paused)
                     {
-                        //Button.Glyph = Icons.Play;
                         Button.SetGlyph(file.Id, MessageContentState.Play);
                     }
                     else
                     {
-                        //Button.Glyph = Icons.Pause;
                         Button.SetGlyph(file.Id, MessageContentState.Pause);
                     }
 
@@ -383,7 +381,6 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else
                 {
-                    //Button.Glyph = Icons.Play;
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                     UpdateDuration();
                 }

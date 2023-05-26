@@ -479,7 +479,7 @@ namespace Telegram.Views.Host
                 {
                     var flyout = new MenuFlyout();
 
-                    flyout.CreateFlyoutItem(ToggleArchive, Strings.ArchiveMoveToChatList, Icons.Expand);
+                    flyout.CreateFlyoutItem(ToggleArchive, Strings.ArchiveMoveToChatList, Icons.AddCircle);
                     flyout.CreateFlyoutItem(page.ViewModel.MarkFolderAsRead, ChatFolderViewModel.Archive, Strings.MarkAllAsRead, Icons.MarkAsRead);
 
                     args.ShowAt(flyout, container);

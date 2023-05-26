@@ -37,7 +37,7 @@ namespace winrt::Telegram::Native::implementation
 
         static winrt::Telegram::Native::PlaceholderImageHelper Current()
         {
-            auto lock = critical_section::scoped_lock(s_criticalSection);
+            slim_lock_guard const guard(s_criticalSection);
 
             if (s_current == nullptr)
             {
@@ -53,8 +53,8 @@ namespace winrt::Telegram::Native::implementation
         void DrawWebP(hstring fileName, int32_t maxWidth, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size);
         IBuffer DrawWebP(hstring fileName, int32_t maxWidth, Windows::Foundation::Size& size);
 
-        winrt::Windows::Foundation::IAsyncAction DrawSvgAsync(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, int32_t dpi);
-        void DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, int32_t dpi, Windows::Foundation::Size& size);
+        winrt::Windows::Foundation::IAsyncAction DrawSvgAsync(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, double dpi);
+        void DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size);
         void DrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);
 
         void DrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
@@ -70,7 +70,7 @@ namespace winrt::Telegram::Native::implementation
     private:
         //PlaceholderImageHelper();
 
-        HRESULT InternalDrawSvg(hstring data, _In_ Color foreground, _In_ IRandomAccessStream randomAccessStream, int32_t dpi, _Out_ Windows::Foundation::Size& size);
+        HRESULT InternalDrawSvg(hstring data, _In_ Color foreground, _In_ IRandomAccessStream randomAccessStream, double dpi, _Out_ Windows::Foundation::Size& size);
         HRESULT InternalDrawQr(hstring data, _In_ Color foreground, _In_ Color background, double scale, _In_ IRandomAccessStream randomAccessStream);
         HRESULT InternalDrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);
         HRESULT InternalDrawProfilePlaceholder(hstring glyph, Color top, Color bottom, float offset, IDWriteTextFormat* format, IRandomAccessStream randomAccessStream);
@@ -85,7 +85,7 @@ namespace winrt::Telegram::Native::implementation
     private:
         //static std::map<int, WeakReference> s_windowContext;
 
-        static critical_section s_criticalSection;
+        static winrt::slim_mutex s_criticalSection;
         static winrt::com_ptr<PlaceholderImageHelper> s_current;
 
         winrt::com_ptr<ID2D1Factory1> m_d2dFactory;
@@ -109,7 +109,7 @@ namespace winrt::Telegram::Native::implementation
         std::vector<winrt::com_ptr<ID2D1SolidColorBrush>> m_identiconBrushes;
         winrt::com_ptr<ID2D1Effect> m_gaussianBlurEffect;
         winrt::com_ptr<ID2D1Bitmap1> m_targetBitmap;
-        critical_section m_criticalSection;
+        winrt::slim_mutex m_criticalSection;
     };
 } // namespace winrt::Telegram::Native::implementation
 

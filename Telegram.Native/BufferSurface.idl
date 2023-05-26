@@ -5,6 +5,6 @@ namespace Telegram.Native
     {
         static Windows.Storage.Streams.IBuffer Create(UInt32 size);
 
-        static void Copy(Windows.Storage.Streams.IBuffer a, Windows.Storage.Streams.IBuffer b);
+        static void Copy(Windows.Storage.Streams.IBuffer source, Windows.Storage.Streams.IBuffer destination);
     }
 }

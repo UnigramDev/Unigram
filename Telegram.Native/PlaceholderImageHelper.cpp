@@ -23,7 +23,7 @@ using namespace winrt::Windows::ApplicationModel;
 
 namespace winrt::Telegram::Native::implementation
 {
-    critical_section PlaceholderImageHelper::s_criticalSection;
+    winrt::slim_mutex PlaceholderImageHelper::s_criticalSection;
     winrt::com_ptr<PlaceholderImageHelper> PlaceholderImageHelper::s_current{ nullptr };
 
     class CustomFontFileEnumerator
@@ -326,7 +326,7 @@ namespace winrt::Telegram::Native::implementation
         return surface;
     }
 
-    winrt::Windows::Foundation::IAsyncAction PlaceholderImageHelper::DrawSvgAsync(hstring path, Color foreground, IRandomAccessStream randomAccessStream, int32_t dpi)
+    winrt::Windows::Foundation::IAsyncAction PlaceholderImageHelper::DrawSvgAsync(hstring path, Color foreground, IRandomAccessStream randomAccessStream, double dpi)
     {
         winrt::apartment_context ui_thread;
         co_await winrt::resume_background();
@@ -338,7 +338,7 @@ namespace winrt::Telegram::Native::implementation
         co_await ui_thread;
     }
 
-    void PlaceholderImageHelper::DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, int32_t dpi, Windows::Foundation::Size& size)
+    void PlaceholderImageHelper::DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size)
     {
         winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, dpi, size));
     }
@@ -358,9 +358,9 @@ namespace winrt::Telegram::Native::implementation
         winrt::check_hresult(InternalDrawThumbnailPlaceholder(bytes, blurAmount, randomAccessStream));
     }
 
-    HRESULT PlaceholderImageHelper::InternalDrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, int32_t dpi, Windows::Foundation::Size& size)
+    HRESULT PlaceholderImageHelper::InternalDrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size)
     {
-        auto lock = critical_section::scoped_lock(m_criticalSection);
+        slim_lock_guard const guard(m_criticalSection);
 
         HRESULT result;
 
@@ -374,18 +374,18 @@ namespace winrt::Telegram::Native::implementation
                 nsvgDelete(p);
             });
 
-        auto imageWidth = image->width / 2;
-        auto imageHeight = image->height / 2;
+        auto imageWidth = image->width * dpi;
+        auto imageHeight = image->height * dpi;
         size = Windows::Foundation::Size(imageWidth, imageHeight);
 
         winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
-        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, dpi, dpi, D2D1_BITMAP_OPTIONS_TARGET, 0 };
+        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
         ReturnIfFailed(result, m_d2dContext->CreateBitmap(D2D1_SIZE_U{ (uint32_t)imageWidth, (uint32_t)imageHeight }, nullptr, 0, &properties, targetBitmap.put()));
 
         m_d2dContext->SetTarget(targetBitmap.get());
         m_d2dContext->BeginDraw();
         m_d2dContext->Clear(D2D1::ColorF(0, 0, 0, 0));
-        m_d2dContext->SetTransform(D2D1::Matrix3x2F::Scale(0.5f, 0.5f));
+        m_d2dContext->SetTransform(D2D1::Matrix3x2F::Scale(1 * dpi, 1 * dpi));
 
         winrt::com_ptr<ID2D1SolidColorBrush> blackBrush;
         ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(
@@ -491,7 +491,7 @@ namespace winrt::Telegram::Native::implementation
 
     HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8_t> hash, int side, IRandomAccessStream randomAccessStream)
     {
-        auto lock = critical_section::scoped_lock(m_criticalSection);
+        slim_lock_guard const guard(m_criticalSection);
 
         HRESULT result;
 
@@ -549,7 +549,7 @@ namespace winrt::Telegram::Native::implementation
 
     HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(hstring fileName, float blurAmount, IRandomAccessStream randomAccessStream)
     {
-        auto lock = critical_section::scoped_lock(m_criticalSection);
+        slim_lock_guard const guard(m_criticalSection);
 
         HANDLE file = CreateFile2FromAppW(fileName.data(), GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr);
 
@@ -579,7 +579,7 @@ namespace winrt::Telegram::Native::implementation
 
     HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IRandomAccessStream randomAccessStream)
     {
-        auto lock = critical_section::scoped_lock(m_criticalSection);
+        slim_lock_guard const guard(m_criticalSection);
 
         HRESULT result;
         winrt::com_ptr<IStream> stream;

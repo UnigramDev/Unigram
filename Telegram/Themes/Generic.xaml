@@ -1,8 +1,5 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
-                    xmlns:contract8Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
-                    xmlns:contract7NotPresent="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractNotPresent(Windows.Foundation.UniversalApiContract, 7)"
                     xmlns:chats="using:Telegram.Controls.Chats"
                     xmlns:messages="using:Telegram.Controls.Messages"
                     xmlns:gallery="using:Telegram.Controls.Gallery"
@@ -513,9 +510,8 @@
                           BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
                           BorderThickness="{TemplateBinding BorderThickness}"
                           Background="{ThemeResource TextControlButtonBackground}"
-                          contract7Present:BackgroundSizing="{TemplateBinding BackgroundSizing}"
-                          contract7Present:CornerRadius="{StaticResource ControlCornerRadius}"
-                          contract7NotPresent:CornerRadius="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}">
+                          BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                          CornerRadius="{StaticResource ControlCornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -3034,9 +3030,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentPageHeader">
                     <Grid Background="{TemplateBinding Background}">
-                        <contract7Present:Grid.BackgroundTransition>
-                            <contract7Present:BrushTransition />
-                        </contract7Present:Grid.BackgroundTransition>
+                        <Grid.BackgroundTransition>
+                            <BrushTransition />
+                        </Grid.BackgroundTransition>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
