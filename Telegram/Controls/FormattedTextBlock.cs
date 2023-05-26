@@ -112,7 +112,7 @@ namespace Telegram.Controls
             {
                 SetText(_clientService, _text, _entities, _fontSize);
 
-                if (_query != null)
+                if (_query != null || _spoiler != null)
                 {
                     SetQuery(string.Empty);
                 }
@@ -203,6 +203,11 @@ namespace Telegram.Controls
 
         public void SetQuery(string query)
         {
+            if ((_query ?? string.Empty) == (query ?? string.Empty) && _isHighlighted == (_spoiler != null))
+            {
+                return;
+            }
+
             _query = query;
 
             if (_text != null && TextBlock != null && TextBlock.IsLoaded)
