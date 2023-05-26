@@ -6,7 +6,6 @@
 //
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -67,7 +66,7 @@ namespace Telegram.Controls
             }
             else if (pointer.Properties.IsLeftButtonPressed && IsLightDismissEnabled && e.Pointer.PointerDeviceType == PointerDeviceType.Mouse)
             {
-                OnBackRequestedOverride(this, new HandledEventArgs());
+                OnBackRequested(new BackRequestedRoutedEventArgs());
             }
 
             base.OnPointerPressed(e);
@@ -245,7 +244,12 @@ namespace Telegram.Controls
             OnBackRequestedOverride(this, e);
         }
 
-        protected virtual void OnBackRequestedOverride(object sender, HandledEventArgs e)
+        protected void Cancel()
+        {
+            _closing = false;
+        }
+
+        protected virtual void OnBackRequestedOverride(object sender, BackRequestedRoutedEventArgs e)
         {
             e.Handled = true;
             Hide(ContentDialogResult.None);
@@ -259,7 +263,7 @@ namespace Telegram.Controls
 
         public void TryHide(ContentDialogResult result)
         {
-            var e = new HandledEventArgs();
+            var e = new BackRequestedRoutedEventArgs();
             OnBackRequestedOverride(this, e);
 
             if (e.Handled)

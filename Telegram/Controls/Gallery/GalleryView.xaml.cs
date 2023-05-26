@@ -6,7 +6,6 @@
 //
 using System;
 using System.Collections.Concurrent;
-using System.ComponentModel;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -213,7 +212,7 @@ namespace Telegram.Controls.Gallery
                 var viewModel = ViewModel;
                 if (viewModel != null && viewModel.SelectedItem is GalleryMessage message && message.ChatId == update.ChatId && update.MessageIds.Any(x => x == message.Id))
                 {
-                    OnBackRequestedOverride(this, new HandledEventArgs());
+                    OnBackRequestedOverride(this, new BackRequestedRoutedEventArgs());
                 }
             });
         }
@@ -225,7 +224,7 @@ namespace Telegram.Controls.Gallery
                 var viewModel = ViewModel;
                 if (viewModel != null && viewModel.SelectedItem is GalleryMessage message && message.Id == update.MessageId && message.ChatId == update.ChatId && update.NewContent is MessageExpiredPhoto or MessageExpiredVideo)
                 {
-                    OnBackRequestedOverride(this, new HandledEventArgs());
+                    OnBackRequestedOverride(this, new BackRequestedRoutedEventArgs());
                 }
             });
         }
@@ -469,16 +468,23 @@ namespace Telegram.Controls.Gallery
             PrepareNext(0, true);
         }
 
-        protected override void OnBackRequestedOverride(object sender, HandledEventArgs e)
+        protected override void OnBackRequestedOverride(object sender, BackRequestedRoutedEventArgs e)
         {
             e.Handled = true;
 
-            if (!_wasFullScreen)
+            var applicationView = ApplicationView.GetForCurrentView();
+            if (applicationView.IsFullScreenMode && !_wasFullScreen)
             {
-                ApplicationView.GetForCurrentView().ExitFullScreenMode();
+                applicationView.ExitFullScreenMode();
+
+                if (e.Key == VirtualKey.Escape)
+                {
+                    Cancel();
+                    return;
+                }
             }
 
-            ApplicationView.GetForCurrentView().VisibleBoundsChanged -= OnVisibleBoundsChanged;
+            applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
 
             var translate = true;
 
@@ -1222,14 +1228,14 @@ namespace Telegram.Controls.Gallery
                 await viewService.OpenAsync(parameters);
             }
 
-            OnBackRequestedOverride(this, new HandledEventArgs());
+            OnBackRequestedOverride(this, new BackRequestedRoutedEventArgs());
         }
 
         #endregion
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            OnBackRequestedOverride(this, new HandledEventArgs());
+            OnBackRequestedOverride(this, new BackRequestedRoutedEventArgs());
         }
 
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
