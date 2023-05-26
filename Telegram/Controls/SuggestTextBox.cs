@@ -57,7 +57,7 @@ namespace Telegram.Controls
             else if (e.Key == VirtualKey.Enter && ControlledList != null)
             {
                 var index = Math.Max(ControlledList.SelectedIndex, StartingIndex);
-                if (index < ControlledList.Items.Count - 1)
+                if (index < ControlledList.Items.Count)
                 {
                     var container = ControlledList.ContainerFromIndex(index) as ListViewItem;
                     if (container != null)
