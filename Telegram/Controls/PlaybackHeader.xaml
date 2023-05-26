@@ -283,8 +283,8 @@
                 AutomationProperties.Name="{CustomResource AccDescrOpenChat}"
                 Grid.ColumnSpan="7">
             <FlyoutBase.AttachedFlyout>
-                <Flyout contract7Present:Placement="BottomEdgeAlignedLeft"
-                        contract7NotPresent:Placement="Bottom">
+                <Flyout Placement="BottomEdgeAlignedLeft"
+                        Opened="Flyout_Opened">
                     <Flyout.FlyoutPresenterStyle>
                         <Style TargetType="FlyoutPresenter">
                             <Setter Property="MaxWidth"
@@ -298,7 +298,8 @@
                                     <ControlTemplate TargetType="FlyoutPresenter">
                                         <Border Background="{TemplateBinding Background}"
                                                 BorderBrush="{TemplateBinding BorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}">
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="8">
                                             <ContentPresenter Content="{TemplateBinding Content}"
                                                               ContentTemplate="{TemplateBinding ContentTemplate}"
                                                               ContentTransitions="{TemplateBinding ContentTransitions}"

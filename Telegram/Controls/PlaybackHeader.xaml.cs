@@ -521,5 +521,10 @@ namespace Telegram.Controls
             var flyout = FlyoutBase.GetAttachedFlyout(ViewButton);
             flyout?.Hide();
         }
+
+        private async void Flyout_Opened(object sender, object e)
+        {
+            await Items.ScrollToItem2(_playbackService?.CurrentPlayback, VerticalAlignment.Center);
+        }
     }
 }
