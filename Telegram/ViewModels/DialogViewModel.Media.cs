@@ -427,11 +427,10 @@ namespace Telegram.ViewModels
                 ? items.All(x => x is StorageVideo)
                 : false;
 
-            var dialog = new SendFilesPopup(SessionId, items, media, mediaAllowed, permissions.CanSendDocuments || permissions.CanSendAudios, _chat.Type is ChatTypePrivate && !self, _type == DialogType.History, self);
-            dialog.ViewModel = this;
-            dialog.Caption = caption;
+            var popup = new SendFilesPopup(this, items, media, mediaAllowed, permissions.CanSendDocuments || permissions.CanSendAudios, _chat.Type is ChatTypePrivate && !self, _type == DialogType.History, self);
+            popup.Caption = caption;
 
-            var confirm = await dialog.OpenAsync();
+            var confirm = await popup.OpenAsync();
             if (confirm != ContentDialogResult.Primary)
             {
                 if (formattedText != null)
@@ -442,49 +441,49 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var options = await PickMessageSendOptionsAsync(dialog.Schedule, dialog.Silent);
+            var options = await PickMessageSendOptionsAsync(popup.Schedule, popup.Silent);
             if (options == null)
             {
                 return;
             }
 
-            if (dialog.Items.Count == 1)
+            if (popup.Items.Count == 1)
             {
-                dialog.Items[0].HasSpoiler = dialog.Spoiler && !dialog.IsFilesSelected;
-                await SendStorageMediaAsync(chat, dialog.Items[0], dialog.Caption, dialog.IsFilesSelected, options);
+                popup.Items[0].HasSpoiler = popup.Spoiler && !popup.IsFilesSelected;
+                await SendStorageMediaAsync(chat, popup.Items[0], popup.Caption, popup.IsFilesSelected, options);
             }
-            else if (dialog.Items.Count > 1 && dialog.IsAlbum && dialog.IsAlbumAvailable)
+            else if (popup.Items.Count > 1 && popup.IsAlbum && popup.IsAlbumAvailable)
             {
-                var group = new List<StorageMedia>(Math.Min(dialog.Items.Count, 10));
+                var group = new List<StorageMedia>(Math.Min(popup.Items.Count, 10));
 
-                foreach (var item in dialog.Items)
+                foreach (var item in popup.Items)
                 {
-                    item.HasSpoiler = dialog.Spoiler && !dialog.IsFilesSelected;
+                    item.HasSpoiler = popup.Spoiler && !popup.IsFilesSelected;
                     group.Add(item);
 
                     if (group.Count == 10)
                     {
-                        await SendGroupedAsync(group, dialog.Caption, options, dialog.IsFilesSelected);
-                        group = new List<StorageMedia>(Math.Min(dialog.Items.Count, 10));
+                        await SendGroupedAsync(group, popup.Caption, options, popup.IsFilesSelected);
+                        group = new List<StorageMedia>(Math.Min(popup.Items.Count, 10));
                     }
                 }
 
                 if (group.Count > 0)
                 {
-                    await SendGroupedAsync(group, dialog.Caption, options, dialog.IsFilesSelected);
+                    await SendGroupedAsync(group, popup.Caption, options, popup.IsFilesSelected);
                 }
             }
-            else if (dialog.Items.Count > 0)
+            else if (popup.Items.Count > 0)
             {
-                if (dialog.Caption != null)
+                if (popup.Caption != null)
                 {
-                    await SendMessageAsync(dialog.Caption, options);
+                    await SendMessageAsync(popup.Caption, options);
                 }
 
-                foreach (var file in dialog.Items)
+                foreach (var file in popup.Items)
                 {
-                    file.HasSpoiler = dialog.Spoiler && !dialog.IsFilesSelected;
-                    await SendStorageMediaAsync(chat, file, null, dialog.IsFilesSelected, options);
+                    file.HasSpoiler = popup.Spoiler && !popup.IsFilesSelected;
+                    await SendStorageMediaAsync(chat, file, null, popup.IsFilesSelected, options);
                 }
             }
         }
@@ -1107,7 +1106,10 @@ namespace Telegram.ViewModels
 
             var formattedText = GetFormattedText(true);
 
-            var popup = new SendFilesPopup(SessionId, new[] { storage }, true, false, false, false, false, false);
+            var mediaAllowed = header.EditingMessage.Content is not MessageDocument;
+
+            var items = new[] { storage };
+            var popup = new SendFilesPopup(this, items, mediaAllowed, mediaAllowed, true, false, false, false);
             popup.Caption = formattedText
                 .Substring(0, ClientService.Options.MessageCaptionLengthMax);
 
