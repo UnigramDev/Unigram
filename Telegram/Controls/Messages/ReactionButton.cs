@@ -16,6 +16,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -36,6 +37,12 @@ namespace Telegram.Controls.Messages
         {
             DefaultStyleKey = typeof(ReactionButton);
             Click += OnClick;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            UpdateManager.Unsubscribe(this, ref _fileToken, true);
         }
 
         private MessageViewModel _message;
