@@ -3649,7 +3649,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                photo.SetUser(ViewModel.ClientService, user, 36);
+                photo.SetUser(ViewModel.ClientService, user, 32);
             }
             else if (args.Item is User user)
             {
@@ -3672,7 +3672,7 @@ namespace Telegram.Views
                     username.Text = string.Empty;
                 }
 
-                photo.SetUser(ViewModel.ClientService, user, 36);
+                photo.SetUser(ViewModel.ClientService, user, 32);
             }
             else if (args.Item is string hashtag)
             {
@@ -4956,31 +4956,6 @@ namespace Telegram.Views
 
                 Call.Glyph = Icons.VideoChat;
                 Call.Visibility = Visibility.Visible;
-            }
-        }
-
-        private void UpdateSticker(object target, File file)
-        {
-            var content = target as Grid;
-            if (content == null)
-            {
-                return;
-            }
-
-            if (content.Children[0] is Border border && border.Child is Image photo)
-            {
-                photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 68);
-                ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
-            }
-            else if (content.Children[0] is LottieView lottie)
-            {
-                lottie.Source = new LocalFileSource(file);
-                _autocompleteHandler.ThrottleVisibleItems();
-            }
-            else if (content.Children[0] is AnimationView video)
-            {
-                video.Source = new LocalFileSource(file);
-                _autocompleteHandler.ThrottleVisibleItems();
             }
         }
 
