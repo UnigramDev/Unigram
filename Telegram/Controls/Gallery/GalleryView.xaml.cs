@@ -51,6 +51,8 @@ namespace Telegram.Controls.Gallery
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
+        public override int SessionId => ViewModel.SessionId;
+
         public IClientService ClientService => ViewModel.ClientService;
 
         private Func<FrameworkElement> _closing;

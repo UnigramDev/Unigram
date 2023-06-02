@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -24,10 +25,11 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Controls
 {
-    public class OverlayPage : ContentControl, INavigablePage
+    public abstract class OverlayPage : ContentControl, INavigablePage
     {
         private ApplicationView _applicationView;
 
@@ -54,6 +56,8 @@ namespace Telegram.Controls
             //Opened += OnOpened;
             //Closed += OnClosed;
         }
+
+        public abstract int SessionId { get; }
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
@@ -409,7 +413,7 @@ namespace Telegram.Controls
 
         public bool IsInMainView => throw new NotImplementedException();
 
-        public int SessionId => throw new NotImplementedException();
+        public int SessionId => _contentDialog.SessionId;
 
         public IDictionary<string, long> CacheKeyToChatId => throw new NotImplementedException();
 
@@ -509,7 +513,36 @@ namespace Telegram.Controls
 
         public Task<ContentDialogResult> ShowPopupAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)
         {
-            throw new NotImplementedException();
+            var popup = (tsc != null ? Activator.CreateInstance(sourcePopupType, tsc) : Activator.CreateInstance(sourcePopupType)) as ContentPopup;
+            if (popup != null)
+            {
+                var viewModel = BootStrapper.Current.ViewModelForPage(popup, SessionId);
+                if (viewModel != null)
+                {
+                    viewModel.NavigationService = this;
+
+                    void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+                    {
+                        popup.Opened -= OnOpened;
+                    }
+
+                    void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+                    {
+                        _ = viewModel.NavigatedFromAsync(null, false);
+                        popup.Closed -= OnClosed;
+                    }
+
+                    popup.DataContext = viewModel;
+
+                    _ = viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
+                    popup.OnNavigatedTo();
+                    popup.Closed += OnClosed;
+                }
+
+                return popup.ShowQueuedAsync();
+            }
+
+            return Task.FromResult(ContentDialogResult.None);
         }
     }
 }

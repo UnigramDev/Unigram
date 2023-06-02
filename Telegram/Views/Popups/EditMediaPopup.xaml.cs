@@ -30,6 +30,8 @@ namespace Telegram.Views.Popups
     {
         public StorageMedia ResultMedia { get; private set; }
 
+        public override int SessionId => throw new NotImplementedException();
+
         private readonly StorageFile _file;
         private readonly StorageMedia _media;
 
