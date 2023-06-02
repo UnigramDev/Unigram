@@ -27,7 +27,6 @@ namespace Telegram.ViewModels.BasicGroups
         {
             Items = new MvxObservableCollection<Chat>();
 
-            AddCommand = new RelayCommand(AddExecute);
             SendCommand = new RelayCommand(SendExecute, () => !string.IsNullOrWhiteSpace(Title));
             EditPhotoCommand = new RelayCommand<StorageFile>(EditPhotoExecute);
         }
@@ -52,8 +51,7 @@ namespace Telegram.ViewModels.BasicGroups
 
         public MvxObservableCollection<Chat> Items { get; private set; }
 
-        public RelayCommand AddCommand { get; }
-        private async void AddExecute()
+        public async void AddMembers()
         {
             var chats = await ChooseChatsPopup.PickChatsAsync(Strings.SelectContacts, Items.Select(x => x.Id).ToArray(), ChooseChatsOptions.Contacts);
             if (chats != null)

@@ -36,10 +36,6 @@ namespace Telegram.ViewModels
         {
             Options = new MvxObservableCollection<DiagnosticsOption>();
             Tags = new MvxObservableCollection<DiagnosticsTag>();
-
-            VideoInfoCommand = new RelayCommand(VideoInfoExecute);
-
-            DisableDatabaseCommand = new RelayCommand(DisableDatabaseExecute);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -186,7 +182,7 @@ namespace Telegram.ViewModels
 
         public bool CanUseTestDC => ClientService.AuthorizationState is not AuthorizationStateReady;
 
-        public bool DisableDatabase => Settings.Diagnostics.DisableDatabase;
+        public bool IsDatabaseDisabled => Settings.Diagnostics.DisableDatabase;
 
         public bool LoggerSink
         {
@@ -303,8 +299,7 @@ namespace Telegram.ViewModels
 
         #endregion
 
-        public RelayCommand VideoInfoCommand { get; }
-        public async void VideoInfoExecute()
+        public async void VideoInfo()
         {
             var devices = await DeviceInformation.FindAllAsync(DeviceClass.VideoCapture);
             var builder = new StringBuilder();
@@ -378,8 +373,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand DisableDatabaseCommand { get; }
-        private async void DisableDatabaseExecute()
+        public async void DisableDatabase()
         {
             if (Settings.Diagnostics.DisableDatabase)
             {

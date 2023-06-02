@@ -51,9 +51,9 @@
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl>
-                        <controls:BadgeButton Command="{x:Bind ViewModel.CopyCommand}"
+                        <controls:BadgeButton Click="{x:Bind ViewModel.Copy}"
                                               Content="{CustomResource CopyLink}" />
-                        <controls:BadgeButton Command="{x:Bind ViewModel.RevokeCommand}"
+                        <controls:BadgeButton Click="{x:Bind ViewModel.Revoke}"
                                               Content="{CustomResource RevokeLink}" />
                         <controls:BadgeButton Click="Share_Click"
                                               Content="{CustomResource ShareLink}" />

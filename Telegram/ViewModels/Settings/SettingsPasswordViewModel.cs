@@ -38,9 +38,6 @@ namespace Telegram.ViewModels.Settings
             Input = new InputViewModel(this, clientService, settingsService, aggregator);
 
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
-            ForgotCommand = new RelayCommand(ForgotExecute);
-            EnableCommand = new RelayCommand(EnableExecute);
-            DisableCommand = new RelayCommand(DisableExecute);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -144,8 +141,7 @@ namespace Telegram.ViewModels.Settings
             //}
         }
 
-        public RelayCommand ForgotCommand { get; }
-        private async void ForgotExecute()
+        public async void Forgot()
         {
             //if (_passwordBase == null)
             //{
@@ -177,14 +173,12 @@ namespace Telegram.ViewModels.Settings
 
         #region Manage
 
-        public RelayCommand EnableCommand { get; }
-        private void EnableExecute()
+        public void Enable()
         {
             State = SettingsPasswordState.Input;
         }
 
-        public RelayCommand DisableCommand { get; }
-        private async void DisableExecute()
+        public async void Disable()
         {
             var state = _passwordState;
             if (state == null)
@@ -225,8 +219,6 @@ namespace Telegram.ViewModels.Settings
                 : base(clientService, settingsService, aggregator)
             {
                 _viewModel = viewModel;
-
-                SendCommand = new RelayCommand(SendExecute);
             }
 
             private string _password;
@@ -257,8 +249,7 @@ namespace Telegram.ViewModels.Settings
                 set => Set(ref _emailAddress, value);
             }
 
-            public RelayCommand SendCommand { get; }
-            private async void SendExecute()
+            public async void Continue()
             {
                 var oldPassword = _viewModel.Password ?? string.Empty;
                 var password = _password ?? string.Empty;

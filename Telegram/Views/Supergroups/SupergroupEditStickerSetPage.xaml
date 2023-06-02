@@ -18,7 +18,7 @@
 
     <local:HostedPage.Action>
         <Button Content="{CustomResource Save}"
-                Command="{x:Bind ViewModel.SendCommand}"
+                Click="{x:Bind ViewModel.Continue}"
                 Style="{StaticResource AccentButtonStyle}" />
     </local:HostedPage.Action>
 
@@ -85,7 +85,7 @@
                                 </ContentControl>
 
 
-                                <controls:GlyphButton Command="{x:Bind ViewModel.CancelCommand}"
+                                <controls:GlyphButton Click="{x:Bind ViewModel.Cancel}"
                                                       FontSize="{StaticResource GlyphLargeFontSize}"
                                                       Glyph="&#xE711;"
                                                       VerticalAlignment="Center"

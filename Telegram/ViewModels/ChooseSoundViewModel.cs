@@ -24,8 +24,6 @@ namespace Telegram.ViewModels
             : base(clientService, settingsService, aggregator)
         {
             Items = new DiffObservableCollection<NotificationSoundViewModel>(new NotificationSoundDiffHandler());
-
-            UploadCommand = new RelayCommand(Upload);
         }
 
         public DiffObservableCollection<NotificationSoundViewModel> Items { get; }
@@ -60,8 +58,7 @@ namespace Telegram.ViewModels
             Aggregator.Subscribe<UpdateSavedNotificationSounds>(this, Handle);
         }
 
-        public RelayCommand UploadCommand { get; }
-        private async void Upload()
+        public async void Upload()
         {
             try
             {

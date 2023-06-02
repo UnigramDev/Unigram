@@ -28,7 +28,7 @@
             </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <HyperlinkButton Command="{x:Bind ViewModel.UploadCommand}"
+        <HyperlinkButton Click="{x:Bind ViewModel.Upload}"
                          Visibility="{x:Bind ViewModel.CanUploadMore, Mode=OneWay}"
                          Margin="-12,0">
             <StackPanel Orientation="Horizontal">

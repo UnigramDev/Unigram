@@ -19,7 +19,7 @@
     <local:HostedPage.Action>
         <Button x:Name="Done"
                 Content="{CustomResource Done}"
-                Command="{x:Bind ViewModel.SendCommand}"
+                Click="{x:Bind ViewModel.Continue}"
                 Style="{StaticResource AccentButtonStyle}" />
     </local:HostedPage.Action>
 
@@ -104,11 +104,11 @@
 
                 <controls:HeaderedControl Visibility="{x:Bind ConvertActionVisibility(TransferOwnership.Visibility, Dismiss.Visibility), Mode=OneWay}">
                     <controls:BadgeButton x:Name="TransferOwnership"
-                                          Command="{x:Bind ViewModel.TransferCommand}"
+                                          Click="{x:Bind ViewModel.Transfer}"
                                           Content="{CustomResource EditAdminGroupTransfer}"
                                           Visibility="{x:Bind ViewModel.CanTransferOwnership, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
                     <controls:BadgeButton x:Name="Dismiss"
-                                          Command="{x:Bind ViewModel.DismissCommand}"
+                                          Click="{x:Bind ViewModel.Dismiss}"
                                           Content="{CustomResource EditAdminRemoveAdmin}"
                                           Foreground="{ThemeResource DangerButtonBackground}"
                                           Visibility="Collapsed" />

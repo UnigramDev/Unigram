@@ -154,6 +154,8 @@ namespace Telegram.Views.Authorization
 
         private async void Switch2_Click(object sender, RoutedEventArgs e)
         {
+            ViewModel.Switch();
+
             _waiting = true;
             TokenPanel.Visibility = Visibility.Visible;
             PhonePanel.Visibility = Visibility.Visible;

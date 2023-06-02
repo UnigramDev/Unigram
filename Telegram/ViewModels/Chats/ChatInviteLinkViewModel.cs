@@ -27,9 +27,6 @@ namespace Telegram.ViewModels.Chats
         {
             Members = new MvxObservableCollection<User>();
             Administrators = new MvxObservableCollection<ChatInviteLinkCount>();
-
-            CopyCommand = new RelayCommand(CopyExecute);
-            RevokeCommand = new RelayCommand(RevokeExecute);
         }
 
         protected Chat _chat;
@@ -165,8 +162,7 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        public RelayCommand CopyCommand { get; }
-        private async void CopyExecute()
+        public async void Copy()
         {
             var dataPackage = new DataPackage();
             dataPackage.SetText(_inviteLink);
@@ -175,8 +171,7 @@ namespace Telegram.ViewModels.Chats
             await ShowPopupAsync(Strings.LinkCopied, Strings.AppName, Strings.OK);
         }
 
-        public RelayCommand RevokeCommand { get; }
-        private async void RevokeExecute()
+        public async void Revoke()
         {
             var chat = _chat;
             if (chat == null)

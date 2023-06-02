@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Threading.Tasks;
-using Telegram.Common;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -19,9 +18,6 @@ namespace Telegram.ViewModels.Supergroups
         public SupergroupPermissionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator, new SupergroupMembersFilterRestricted(), query => new SupergroupMembersFilterRestricted(query))
         {
-            SendCommand = new RelayCommand(SendExecute);
-            AddCommand = new RelayCommand(AddExecute);
-            BannedCommand = new RelayCommand(BannedExecute);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -280,8 +276,7 @@ namespace Telegram.ViewModels.Supergroups
             set => Set(ref _slowModeDelay, value);
         }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public async void Continue()
         {
             var chat = _chat;
             if (chat == null)
@@ -350,8 +345,7 @@ namespace Telegram.ViewModels.Supergroups
             NavigationService.Frame.ForwardStack.Clear();
         }
 
-        public RelayCommand AddCommand { get; }
-        private void AddExecute()
+        public void AddRestricted()
         {
             var chat = _chat;
             if (chat == null)
@@ -362,8 +356,7 @@ namespace Telegram.ViewModels.Supergroups
             NavigationService.Navigate(typeof(SupergroupAddRestrictedPage), chat.Id);
         }
 
-        public RelayCommand BannedCommand { get; }
-        private void BannedExecute()
+        public void Banned()
         {
             var chat = _chat;
             if (chat == null)

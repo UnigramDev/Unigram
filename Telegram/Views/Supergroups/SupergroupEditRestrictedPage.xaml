@@ -19,7 +19,7 @@
 
     <local:HostedPage.Action>
         <Button Content="{CustomResource Done}"
-                Command="{x:Bind ViewModel.SendCommand}"
+                Click="{x:Bind ViewModel.Continue}"
                 Style="{StaticResource AccentButtonStyle}" />
     </local:HostedPage.Action>
 
@@ -150,14 +150,14 @@
                 <controls:HeaderedControl>
                     <controls:BadgeButton Content="{CustomResource UserRestrictionsDuration}"
                                           Badge="{x:Bind ConvertUntilDate(ViewModel.UntilDate), Mode=OneWay}"
-                                          Command="{x:Bind ViewModel.EditUntilCommand}" />
+                                          Click="{x:Bind ViewModel.EditUntil}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="DismissPanel"
                                           Visibility="Collapsed">
-                    <controls:BadgeButton Command="{x:Bind ViewModel.DismissCommand}"
+                    <controls:BadgeButton Click="{x:Bind ViewModel.Dismiss}"
                                           Content="{CustomResource UserRestrictionsBlock}"
-                                          Foreground="Red" />
+                                          Foreground="{ThemeResource DangerButtonBackground}" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>

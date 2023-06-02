@@ -77,7 +77,7 @@
 
                     <controls:HeaderedControl Header="{CustomResource ChannelMembers}">
                         <controls:BadgeButton Content="{CustomResource ChannelAddMembers}"
-                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Click="{x:Bind ViewModel.AddMembers}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               Glyph="&#xE8FA;" />
                     </controls:HeaderedControl>
@@ -86,7 +86,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <cells:ProfileCell BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                    Background="{ThemeResource SettingsItemBackground}" />
+                                       Background="{ThemeResource SettingsItemBackground}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
         </controls:TableListView>

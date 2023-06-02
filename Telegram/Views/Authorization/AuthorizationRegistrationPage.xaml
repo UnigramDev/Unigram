@@ -63,7 +63,7 @@
                      PlaceholderText="{CustomResource LastName}" />
 
             <muxc:ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                                   Background="Transparent" />
+                              Background="Transparent" />
 
             <Button x:Name="NextButton"
                     Content="{CustomResource OK}"

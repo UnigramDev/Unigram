@@ -35,11 +35,6 @@ namespace Telegram.ViewModels
             _gallery = new InstantGalleryViewModel(clientService, storageService, aggregator);
 
             _messageDelegate = new InstantMessageDelegate(this);
-
-            ShareCommand = new RelayCommand(ShareExecute);
-            FeedbackCommand = new RelayCommand(FeedbackExecute);
-            BrowserCommand = new RelayCommand(BrowserExecute);
-            CopyCommand = new RelayCommand(CopyExecute);
         }
 
         public ITranslateService TranslateService => _translateService;
@@ -75,8 +70,7 @@ namespace Telegram.ViewModels
             set => Set(ref _title, value);
         }
 
-        public RelayCommand ShareCommand { get; }
-        private async void ShareExecute()
+        public async void Share()
         {
             var link = ShareLink;
             if (link == null)
@@ -87,8 +81,7 @@ namespace Telegram.ViewModels
             await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationPostLink(new HttpUrl(link.ToString())));
         }
 
-        public RelayCommand FeedbackCommand { get; }
-        private async void FeedbackExecute()
+        public async void Feedback()
         {
             var response = await ClientService.SendAsync(new SearchPublicChat("previews"));
             if (response is Chat chat)
@@ -97,8 +90,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public RelayCommand BrowserCommand { get; }
-        private async void BrowserExecute()
+        public async void Browser()
         {
             var link = ShareLink;
             if (link == null)
@@ -109,8 +101,7 @@ namespace Telegram.ViewModels
             await Launcher.LaunchUriAsync(link);
         }
 
-        public RelayCommand CopyCommand { get; }
-        private async void CopyExecute()
+        public async void Copy()
         {
             var link = ShareLink;
             if (link == null)

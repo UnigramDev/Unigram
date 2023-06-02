@@ -23,8 +23,6 @@ namespace Telegram.ViewModels.Authorization
             : base(clientService, settingsService, aggregator)
         {
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
-            ForgotCommand = new RelayCommand(ForgotExecute);
-            ResetCommand = new RelayCommand(ResetExecute);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -85,8 +83,7 @@ namespace Telegram.ViewModels.Authorization
             }
         }
 
-        public RelayCommand ForgotCommand { get; }
-        private async void ForgotExecute()
+        public async void Forgot()
         {
             if (_parameters == null)
             {
@@ -112,8 +109,7 @@ namespace Telegram.ViewModels.Authorization
             }
         }
 
-        public RelayCommand ResetCommand { get; }
-        private async void ResetExecute()
+        public async void Reset()
         {
             var confirm = await ShowPopupAsync(Strings.ResetMyAccountWarningText, Strings.ResetMyAccountWarning, Strings.ResetMyAccountWarningReset, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)

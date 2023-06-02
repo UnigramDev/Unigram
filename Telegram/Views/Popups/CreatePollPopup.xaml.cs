@@ -293,7 +293,6 @@ namespace Telegram.Views.Popups
             _isQuiz = quiz;
             _focusOnLoaded = focus;
             _remove = remove;
-            RemoveCommand = new RelayCommand(() => _remove(this));
         }
 
         private string _text;
@@ -324,6 +323,9 @@ namespace Telegram.Views.Popups
             set => Set(ref _focusOnLoaded, value);
         }
 
-        public RelayCommand RemoveCommand { get; }
+        public void Remove()
+        {
+            _remove(this);
+        }
     }
 }

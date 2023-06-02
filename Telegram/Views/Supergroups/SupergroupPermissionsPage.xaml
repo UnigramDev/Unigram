@@ -19,7 +19,7 @@
 
     <local:HostedPage.Action>
         <Button Content="{CustomResource Done}"
-                Command="{x:Bind ViewModel.SendCommand}"
+                Click="{x:Bind ViewModel.Continue}"
                 Style="{StaticResource AccentButtonStyle}" />
     </local:HostedPage.Action>
 
@@ -170,7 +170,7 @@
                     <controls:HeaderedControl>
                         <controls:BadgeButton x:Name="Blacklist"
                                               Content="{CustomResource ChannelBlacklist}"
-                                              Command="{x:Bind ViewModel.BannedCommand}"
+                                              Click="{x:Bind ViewModel.Banned}"
                                               IsChevronVisible="True" />
                     </controls:HeaderedControl>
 
@@ -189,7 +189,7 @@
                                               CornerRadius="4,4,0,0"
                                               BorderThickness="1,1,1,0">
                         <controls:BadgeButton Content="{CustomResource ChannelAddException}"
-                                              Command="{x:Bind ViewModel.AddCommand}"
+                                              Click="{x:Bind ViewModel.AddRestricted}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               Glyph="&#xF166;" />
                     </controls:HeaderedControl>

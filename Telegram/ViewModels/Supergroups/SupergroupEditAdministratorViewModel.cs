@@ -28,9 +28,6 @@ namespace Telegram.ViewModels.Supergroups
         public SupergroupEditAdministratorViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            SendCommand = new RelayCommand(SendExecute);
-            TransferCommand = new RelayCommand(TransferExecute);
-            DismissCommand = new RelayCommand(DismissExecute);
         }
 
         private Chat _chat;
@@ -286,8 +283,7 @@ namespace Telegram.ViewModels.Supergroups
             NavigationService.NavigateToSender(member.MemberId);
         }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public async void Continue()
         {
             var chat = _chat;
             if (chat == null)
@@ -342,8 +338,7 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public RelayCommand TransferCommand { get; }
-        private async void TransferExecute()
+        public async void Transfer()
         {
             var chat = _chat;
             if (chat == null)
@@ -427,8 +422,7 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public RelayCommand DismissCommand { get; }
-        private async void DismissExecute()
+        public async void Dismiss()
         {
             var chat = _chat;
             if (chat == null)

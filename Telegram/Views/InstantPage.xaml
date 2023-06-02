@@ -253,21 +253,21 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <controls:GlyphButton Glyph="&#xE72D;"
-                                  Command="{x:Bind ViewModel.ShareCommand}"
+                                  Click="{x:Bind ViewModel.Share}"
                                   Style="{StaticResource HeaderGlyphButtonStyle}"
                                   AutomationProperties.Name="{CustomResource ShareLink}"
                                   ToolTipService.ToolTip="{CustomResource ShareLink}" />
             <controls:MoreButton Grid.Column="1">
                 <Button.Flyout>
                     <MenuFlyout Placement="BottomEdgeAlignedRight">
-                        <MenuFlyoutItem Command="{x:Bind ViewModel.BrowserCommand}"
+                        <MenuFlyoutItem Click="{x:Bind ViewModel.Browser}"
                                         Text="{CustomResource OpenInExternalApp}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE7AC;"
                                           Style="{StaticResource DefaultFontIconStyle}" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Command="{x:Bind ViewModel.CopyCommand}"
+                        <MenuFlyoutItem Click="{x:Bind ViewModel.Copy}"
                                         Text="{CustomResource CopyLink}">
                             <MenuFlyoutItem.Icon>
                                 <FontIcon Glyph="&#xE8C8;"
@@ -306,7 +306,7 @@
             </ListView.ItemContainerStyle>
             <ListView.Footer>
                 <Grid Background="{ThemeResource PageBackgroundDarkBrush}">
-                    <Button Command="{x:Bind ViewModel.FeedbackCommand}"
+                    <Button Click="{x:Bind ViewModel.Feedback}"
                             Content="{CustomResource PreviewFeedback2}"
                             HorizontalContentAlignment="Right"
                             VerticalAlignment="Center"

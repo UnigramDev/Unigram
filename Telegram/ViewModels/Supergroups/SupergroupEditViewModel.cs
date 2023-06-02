@@ -32,8 +32,6 @@ namespace Telegram.ViewModels.Supergroups
             : base(clientService, settingsService, aggregator)
         {
             _profilePhotoService = profilePhotoService;
-
-            SendCommand = new RelayCommand(Send);
         }
 
         protected Chat _chat;
@@ -223,8 +221,7 @@ namespace Telegram.ViewModels.Supergroups
 
         #endregion
 
-        public RelayCommand SendCommand { get; }
-        private async void Send()
+        public async void Continue()
         {
             var chat = _chat;
             if (chat == null)

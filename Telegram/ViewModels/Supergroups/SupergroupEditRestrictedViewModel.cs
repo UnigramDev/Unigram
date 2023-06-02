@@ -25,9 +25,6 @@ namespace Telegram.ViewModels.Supergroups
         public SupergroupEditRestrictedViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            SendCommand = new RelayCommand(SendExecute);
-            EditUntilCommand = new RelayCommand(EditUntilExecute);
-            DismissCommand = new RelayCommand(DismissExecute);
         }
 
         private Chat _chat;
@@ -365,8 +362,7 @@ namespace Telegram.ViewModels.Supergroups
             NavigationService.NavigateToSender(member.MemberId);
         }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public async void Continue()
         {
             var chat = _chat;
             if (chat == null)
@@ -420,8 +416,7 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public RelayCommand EditUntilCommand { get; }
-        private async void EditUntilExecute()
+        public async void EditUntil()
         {
             var dialog = new SupergroupEditRestrictedUntilPopup(_untilDate);
             var confirm = await ShowPopupAsync(dialog);
@@ -435,8 +430,7 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public RelayCommand DismissCommand { get; }
-        private async void DismissExecute()
+        public async void Dismiss()
         {
             if (_chat is not Chat chat || _member is not ChatMember member)
             {

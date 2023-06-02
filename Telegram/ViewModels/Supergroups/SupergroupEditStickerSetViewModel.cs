@@ -7,7 +7,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
-using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -21,9 +20,6 @@ namespace Telegram.ViewModels.Supergroups
         public SupergroupEditStickerSetViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            SendCommand = new RelayCommand(SendExecute);
-            CancelCommand = new RelayCommand(CancelExecute);
-
             Items = new MvxObservableCollection<StickerSetInfo>();
         }
 
@@ -176,8 +172,7 @@ namespace Telegram.ViewModels.Supergroups
 
         public MvxObservableCollection<StickerSetInfo> Items { get; private set; }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public async void Continue()
         {
             if (_shortName != _selectedItem?.Name && !string.IsNullOrWhiteSpace(_shortName))
             {
@@ -204,8 +199,7 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        public RelayCommand CancelCommand { get; }
-        private void CancelExecute()
+        public void Cancel()
         {
             ShortName = null;
             SelectedItem = null;

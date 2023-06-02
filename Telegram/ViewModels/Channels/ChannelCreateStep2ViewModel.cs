@@ -18,7 +18,7 @@ namespace Telegram.ViewModels.Channels
         {
         }
 
-        protected override async void SendExecute()
+        public override async void Continue()
         {
             var chat = _chat;
             if (chat == null)

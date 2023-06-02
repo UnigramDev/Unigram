@@ -60,7 +60,7 @@
                                          GotFocus="Question_GotFocus"
                                          Grid.Column="1" />
 
-                                <controls:GlyphButton Command="{x:Bind RemoveCommand}"
+                                <controls:GlyphButton Click="{x:Bind Remove}"
                                                       Glyph="&#xE711;"
                                                       IsTabStop="False"
                                                       AutomationProperties.AccessibilityView="Raw"

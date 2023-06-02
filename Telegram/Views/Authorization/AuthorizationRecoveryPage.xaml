@@ -67,14 +67,14 @@
                     Margin="0,4,0,8"
                     Grid.Row="5" />
 
-            <HyperlinkButton Command="{x:Bind ViewModel.ForgotCommand}"
+            <HyperlinkButton Click="{x:Bind ViewModel.Forgot}"
                              Content="{x:Bind ConvertForgot(ViewModel.RecoveryEmailAddressPattern), Mode=OneWay}"
                              Grid.Row="6" />
 
             <StackPanel Visibility="{x:Bind (Visibility)ViewModel.IsResettable, Mode=OneWay}"
                         Margin="0,24,0,0"
                         Grid.Row="7">
-                <HyperlinkButton Command="{x:Bind ViewModel.ResetCommand}"
+                <HyperlinkButton Click="{x:Bind ViewModel.Reset}"
                                  Content="{CustomResource ResetMyAccount}"
                                  Foreground="Red" />
                 <TextBlock Text="{CustomResource ResetMyAccountText}"

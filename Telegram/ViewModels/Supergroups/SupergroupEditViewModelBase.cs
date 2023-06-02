@@ -28,8 +28,6 @@ namespace Telegram.ViewModels.Supergroups
         {
             _username = new DebouncedProperty<string>(Constants.TypingTimeout, CheckAvailability, UpdateIsValid);
             Items = new DiffObservableCollection<UsernameInfo>(new UsernameInfoDiffHandler(), new DiffOptions { AllowBatching = false, DetectMoves = true });
-
-            SendCommand = new RelayCommand(SendExecute);
         }
 
         protected Chat _chat;
@@ -313,8 +311,7 @@ namespace Telegram.ViewModels.Supergroups
             HasTooMuchUsernames = response is CheckChatUsernameResultPublicChatsTooMany;
         }
 
-        public RelayCommand SendCommand { get; }
-        protected abstract void SendExecute();
+        public abstract void Continue();
 
         public void ToggleUsername(UsernameInfo username)
         {

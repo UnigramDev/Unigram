@@ -66,7 +66,7 @@
                                           Click="{x:Bind ViewModel.SendGroupCalls}"
                                           Badge="{x:Bind ConvertSize(ViewModel.LogGroupCallsSize), Mode=OneWay}" />
                     <controls:BadgeButton Content="Video informations"
-                                          Command="{x:Bind ViewModel.VideoInfoCommand}" />
+                                          Click="{x:Bind ViewModel.VideoInfo}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="TDLib Logs"
@@ -88,12 +88,12 @@
 
                 <controls:HeaderedControl>
                     <controls:BadgeButton Content="Disable Database"
-                                          Command="{x:Bind ViewModel.DisableDatabaseCommand}"
+                                          Click="{x:Bind ViewModel.DisableDatabase}"
                                           Foreground="{ThemeResource DangerButtonBackground}"
-                                          Visibility="{x:Bind ViewModel.DisableDatabase, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" />
+                                          Visibility="{x:Bind ViewModel.IsDatabaseDisabled, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" />
                     <controls:BadgeButton Content="Enable Database"
-                                          Command="{x:Bind ViewModel.DisableDatabaseCommand}"
-                                          Visibility="{x:Bind ViewModel.DisableDatabase, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                          Click="{x:Bind ViewModel.DisableDatabase}"
+                                          Visibility="{x:Bind ViewModel.IsDatabaseDisabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="TDLib Modules"

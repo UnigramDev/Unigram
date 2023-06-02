@@ -35,9 +35,7 @@ namespace Telegram.ViewModels.Authorization
             _lifetimeService = lifecycleService;
             _notificationsService = notificationsService;
 
-            SwitchCommand = new RelayCommand(SwitchExecute);
             SendCommand = new RelayCommand(SendExecute, () => !IsLoading);
-            ProxyCommand = new RelayCommand(ProxyExecute);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -167,8 +165,7 @@ namespace Telegram.ViewModels.Authorization
             set => Set(ref _phoneNumber, value);
         }
 
-        public RelayCommand SwitchCommand { get; }
-        private void SwitchExecute()
+        public void Switch()
         {
             if (ClientService.AuthorizationState is AuthorizationStateWaitPhoneNumber)
             {
@@ -270,8 +267,7 @@ namespace Telegram.ViewModels.Authorization
             }
         }
 
-        public RelayCommand ProxyCommand { get; }
-        private void ProxyExecute()
+        public void Proxy()
         {
             NavigationService.Navigate(typeof(SettingsProxiesPage));
         }

@@ -60,7 +60,7 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
-        protected override async void SendExecute()
+        public override async void Continue()
         {
             var chat = _chat;
             if (chat == null)
