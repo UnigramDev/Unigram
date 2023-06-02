@@ -52,9 +52,12 @@
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Border>
-                        <controls:AnimationView30Fps x:Name="Player"
-                                                     AutoPlay="False"
-                                                     Stretch="UniformToFill" />
+                        <controls:AnimatedImage x:Name="Player"
+                                                AutoPlay="False"
+                                                IsCachingEnabled="False"
+                                                FrameSize="0,0"
+                                                Stretch="UniformToFill"
+                                                Ready="Player_Ready" />
                     </Border>
                 </DataTemplate>
             </GridView.ItemTemplate>

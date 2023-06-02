@@ -19,8 +19,6 @@ namespace Telegram.ViewModels.Settings.Password
         public SettingsPasswordConfirmViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            ResendCommand = new RelayCommand(ResendExecute);
-            SendCommand = new RelayCommand(SendExecute);
         }
 
         private int _length;
@@ -42,7 +40,7 @@ namespace Telegram.ViewModels.Settings.Password
 
                 if (_code.Length == _length && _length > 0)
                 {
-                    SendExecute();
+                    Continue();
                 }
             }
         }
@@ -66,14 +64,12 @@ namespace Telegram.ViewModels.Settings.Password
             return Task.CompletedTask;
         }
 
-        public RelayCommand ResendCommand { get; }
-        private async void ResendExecute()
+        public async void Resend()
         {
             var response = await ClientService.SendAsync(new ResendRecoveryEmailAddressCode());
         }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public async void Continue()
         {
             var code = _code;
             if (string.IsNullOrEmpty(code))

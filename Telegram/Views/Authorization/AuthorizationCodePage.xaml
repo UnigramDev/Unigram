@@ -29,14 +29,14 @@
                     Margin="0,-80,0,0"
                     MaxWidth="360"
                     Grid.Row="1">
-            <controls:LottieView FrameSize="160,160"
-                                 DecodeFrameType="Logical"
-                                 Source="{x:Bind ConvertAnimation(ViewModel.CodeInfo), FallbackValue=''}"
-                                 AutoPlay="True"
-                                 IsLoopingEnabled="False"
-                                 IsCachingEnabled="False"
-                                 Width="160"
-                                 Height="160" />
+            <controls:AnimatedImage FrameSize="160,160"
+                                    DecodeFrameType="Logical"
+                                    Source="{x:Bind ConvertAnimation(ViewModel.CodeInfo), FallbackValue=''}"
+                                    AutoPlay="True"
+                                    LoopCount="1"
+                                    IsCachingEnabled="False"
+                                    Width="160"
+                                    Height="160" />
 
             <TextBlock x:Name="TitleLabel"
                        Text="{CustomResource YourCode}"
@@ -55,7 +55,7 @@
                      PlaceholderText="{CustomResource Code}" />
 
             <muxc:ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                                   Background="Transparent" />
+                              Background="Transparent" />
 
             <Button x:Name="NextButton"
                     Content="{x:Bind ConvertNext(ViewModel.CodeInfo, ViewModel.Code), FallbackValue=''}"

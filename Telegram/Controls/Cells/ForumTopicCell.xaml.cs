@@ -560,7 +560,7 @@ namespace Telegram.Controls.Cells
 
         public bool IsAnimatable => CustomEmoji != null;
 
-        public bool IsLoopingEnabled => true;
+        public int LoopCount => 0;
 
         private bool _playing;
 

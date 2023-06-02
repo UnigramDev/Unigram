@@ -19,8 +19,8 @@
             <ColumnDefinition x:Name="PaddingLeftColumn"
                               Width="12" />
             <ColumnDefinition x:Name="ShowColumn"
-                              Width="362*"
-                              MaxWidth="362" />
+                              Width="322*"
+                              MaxWidth="322" />
             <ColumnDefinition x:Name="PaddingRightColumn"
                               Width="12" />
         </Grid.ColumnDefinitions>

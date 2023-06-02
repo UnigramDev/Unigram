@@ -4,16 +4,17 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Chats;
 using Telegram.Services;
 using Telegram.Services.Settings;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
+using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
@@ -173,9 +174,12 @@ namespace Telegram.Views.Popups
 
                 Icon.Width = width;
                 Icon.Height = height;
-                Icon.FrameSize = (int)Math.Max(width, height);
 
-                Icon.SetSticker(ViewModel.ClientService, foreground);
+                using (Icon.BeginBatchUpdate())
+                {
+                    Icon.FrameSize = new Size(width, height);
+                    Icon.Source = new DelayedFileSource(ViewModel.ClientService, foreground.StickerValue);
+                }
             }
 
             return null;

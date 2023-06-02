@@ -22,7 +22,6 @@ namespace Telegram.ViewModels.Settings.Password
         public SettingsPasswordEmailViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            SendCommand = new RelayCommand(SendExecute);
         }
 
         private string _password;
@@ -50,8 +49,7 @@ namespace Telegram.ViewModels.Settings.Password
             return Task.CompletedTask;
         }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public async void Continue()
         {
             var password = _password;
             var hint = _hint;

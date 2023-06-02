@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -17,7 +16,6 @@ namespace Telegram.ViewModels.Settings.Password
         public SettingsPasswordCreateViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            SendCommand = new RelayCommand(SendExecute);
         }
 
         private string _field1;
@@ -34,8 +32,7 @@ namespace Telegram.ViewModels.Settings.Password
             set => Set(ref _field2, value);
         }
 
-        public RelayCommand SendCommand { get; }
-        private async void SendExecute()
+        public async void Continue()
         {
             var field1 = _field1;
             var field2 = _field2;

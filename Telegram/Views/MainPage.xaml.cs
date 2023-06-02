@@ -23,6 +23,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Services.Updates;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
@@ -758,7 +759,7 @@ namespace Telegram.Views
                 LogoPremium.Visibility = Visibility.Collapsed;
 
                 FindName(nameof(LogoEmoji));
-                LogoEmoji?.SetCustomEmoji(_clientService, user.EmojiStatus.CustomEmojiId);
+                LogoEmoji.Source = new CustomEmojiFileSource(_clientService, user.EmojiStatus.CustomEmojiId);
             }
             else
             {

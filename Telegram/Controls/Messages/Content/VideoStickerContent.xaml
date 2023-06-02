@@ -21,9 +21,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:VideoStickerContent">
                     <controls:AspectView x:Name="LayoutRoot">
-                        <controls:AnimationView x:Name="Player"
+                        <controls:AnimatedImage x:Name="Player"
                                                 AutoPlay="False"
-                                                IsCachingEnabled="True" />
+                                                DecodeFrameType="Logical" />
                     </controls:AspectView>
                 </ControlTemplate>
             </Setter.Value>

@@ -4,24 +4,29 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
-using System.Windows.Input;
+using Telegram.Streams;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
     public class WalkthroughControl : ContentPageHeader
     {
-        public LottieView Header { get; private set; }
+        public AnimatedImage Header { get; private set; }
+        private Button Action;
 
         public WalkthroughControl()
         {
             DefaultStyleKey = typeof(WalkthroughControl);
         }
 
+        public event RoutedEventHandler ButtonClick;
+
         protected override void OnApplyTemplate()
         {
-            Header = GetTemplateChild("Header") as LottieView;
+            Header = GetTemplateChild("Header") as AnimatedImage;
+            Action = GetTemplateChild(nameof(Action)) as Button;
+            Action.Click += ButtonClick;
 
             base.OnApplyTemplate();
             VisualStateManager.GoToState(this, Content != null ? "ContentVisible" : "NoContent", false);
@@ -35,14 +40,14 @@ namespace Telegram.Controls
 
         #region HeaderSource
 
-        public Uri HeaderSource
+        public AnimatedImageSource HeaderSource
         {
-            get => (Uri)GetValue(HeaderSourceProperty);
+            get => (AnimatedImageSource)GetValue(HeaderSourceProperty);
             set => SetValue(HeaderSourceProperty, value);
         }
 
         public static readonly DependencyProperty HeaderSourceProperty =
-            DependencyProperty.Register("HeaderSource", typeof(Uri), typeof(WalkthroughControl), new PropertyMetadata(null));
+            DependencyProperty.Register("HeaderSource", typeof(AnimatedImageSource), typeof(WalkthroughControl), new PropertyMetadata(null));
 
         #endregion
 
@@ -82,19 +87,6 @@ namespace Telegram.Controls
 
         public static readonly DependencyProperty ButtonTextProperty =
             DependencyProperty.Register("ButtonText", typeof(string), typeof(WalkthroughControl), new PropertyMetadata(null));
-
-        #endregion
-
-        #region ButtonCommand
-
-        public ICommand ButtonCommand
-        {
-            get => (ICommand)GetValue(ButtonCommandProperty);
-            set => SetValue(ButtonCommandProperty, value);
-        }
-
-        public static readonly DependencyProperty ButtonCommandProperty =
-            DependencyProperty.Register("ButtonCommand", typeof(ICommand), typeof(WalkthroughControl), new PropertyMetadata(null));
 
         #endregion
 

@@ -21,12 +21,14 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <controls:LottieView Source="ms-appx:///Assets/Animations/Premium.tgs"
-                                         IsLoopingEnabled="True"
-                                         IsCachingEnabled="False"
-                                         Width="140"
-                                         Height="140"
-                                         Margin="0,16,0,0" />
+                    <controls:AnimatedImage Source="ms-appx:///Assets/Animations/Premium.tgs"
+                                            IsCachingEnabled="False"
+                                            AutoPlay="True"
+                                            FrameSize="120,120"
+                                            DecodeFrameType="Logical"
+                                            Width="120"
+                                            Height="120"
+                                            Margin="0,16,0,0" />
                     <TextBlock x:Name="Subtitle"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
                                TextAlignment="Center"

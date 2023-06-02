@@ -31,7 +31,8 @@
                                           x:Load="False"
                                           Width="128"
                                           Height="128"
-                                          FrameSize="128" />
+                                          FrameSize="128,128"
+                                          DecodeFrameType="Logical" />
             </Border>
 
             <Border VerticalAlignment="Bottom"

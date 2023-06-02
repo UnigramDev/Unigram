@@ -9,11 +9,12 @@ namespace Telegram.Native
 
         void RenderSync(Windows.Storage.Streams.IBuffer bitmap, Int32 width, Int32 height, out Int32 seconds, out Boolean completed);
         void Stop();
+        void Cache(Int32 width, Int32 height);
 
         Double FrameRate{ get; };
         Int32 TotalFrame{ get; };
-        Windows.Foundation.Size Size{ get; };
         Boolean IsCaching{ get; };
+        Boolean IsReadyToCache{ get; };
 
         Int32 PixelWidth{ get; };
         Int32 PixelHeight{ get; };

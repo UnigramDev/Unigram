@@ -19,138 +19,6 @@
         </TransitionCollection>
     </Page.Transitions>
 
-    <Page.Resources>
-        <DataTemplate x:Key="AnimatedItemTemplate">
-            <Grid Padding="12,6"
-                  Background="{ThemeResource SettingsItemBackground}"
-                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <controls:LottieView30Fps x:Name="Player"
-                                          AutoPlay="False"
-                                          FrameSize="36,36"
-                                          DecodeFrameType="Logical"
-                                          Width="36"
-                                          Height="36"
-                                          Margin="0,0,8,0"
-                                          VerticalAlignment="Top"
-                                          Grid.RowSpan="2" />
-
-                <TextBlock VerticalAlignment="Bottom"
-                           Style="{StaticResource BodyTextBlockStyle}"
-                           TextWrapping="NoWrap"
-                           TextTrimming="CharacterEllipsis"
-                           Grid.Column="1" />
-                <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           VerticalAlignment="Top"
-                           TextWrapping="NoWrap"
-                           TextTrimming="CharacterEllipsis"
-                           Grid.Column="1"
-                           Grid.Row="1" />
-
-                <TextBlock Text="&#xE9F6;"
-                           VerticalAlignment="Center"
-                           FontFamily="{StaticResource SymbolThemeFontFamily}"
-                           FontSize="16"
-                           Grid.Column="2"
-                           Grid.RowSpan="2" />
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="VideoItemTemplate">
-            <Grid Padding="12,6"
-                  Background="{ThemeResource SettingsItemBackground}"
-                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <controls:AnimationView30Fps x:Name="Player"
-                                             AutoPlay="False"
-                                             IsCachingEnabled="True"
-                                             Width="36"
-                                             Height="36"
-                                             Margin="0,0,8,0"
-                                             VerticalAlignment="Top"
-                                             Grid.RowSpan="2" />
-
-                <TextBlock VerticalAlignment="Bottom"
-                           Style="{StaticResource BodyTextBlockStyle}"
-                           TextWrapping="NoWrap"
-                           TextTrimming="CharacterEllipsis"
-                           Grid.Column="1" />
-                <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           VerticalAlignment="Top"
-                           TextWrapping="NoWrap"
-                           TextTrimming="CharacterEllipsis"
-                           Grid.Column="1"
-                           Grid.Row="1" />
-
-                <TextBlock Text="&#xE9F6;"
-                           VerticalAlignment="Center"
-                           FontFamily="{StaticResource SymbolThemeFontFamily}"
-                           FontSize="16"
-                           Grid.Column="2"
-                           Grid.RowSpan="2" />
-            </Grid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="ItemTemplate">
-            <Grid Padding="12,6"
-                  Background="{ThemeResource SettingsItemBackground}"
-                  BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <Image Width="36"
-                       Height="36"
-                       Margin="0,0,8,0"
-                       VerticalAlignment="Top"
-                       Grid.RowSpan="2" />
-
-                <TextBlock VerticalAlignment="Bottom"
-                           Style="{StaticResource BodyTextBlockStyle}"
-                           TextWrapping="NoWrap"
-                           TextTrimming="CharacterEllipsis"
-                           Grid.Column="1" />
-                <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           VerticalAlignment="Top"
-                           TextWrapping="NoWrap"
-                           TextTrimming="CharacterEllipsis"
-                           Grid.Column="1"
-                           Grid.Row="1" />
-
-                <TextBlock Text="&#xE9F6;"
-                           VerticalAlignment="Center"
-                           FontFamily="{StaticResource SymbolThemeFontFamily}"
-                           FontSize="16"
-                           Grid.Column="2"
-                           Grid.RowSpan="2" />
-            </Grid>
-        </DataTemplate>
-    </Page.Resources>
-
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ViewModel.Items}"
@@ -280,6 +148,53 @@
                                              Margin="24,80,24,8" />
                 </Grid>
             </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="12,6"
+                          Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <controls:AnimatedImage x:Name="Player"
+                                                 AutoPlay="False"
+                                                 LimitFps="True"
+                                                 FrameSize="36,36"
+                                                 DecodeFrameType="Logical"
+                                                 Width="36"
+                                                 Height="36"
+                                                 Margin="0,0,8,0"
+                                                 VerticalAlignment="Top"
+                                                 Grid.RowSpan="2" />
+
+                        <TextBlock VerticalAlignment="Bottom"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   Grid.Column="1" />
+                        <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   VerticalAlignment="Top"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   Grid.Column="1"
+                                   Grid.Row="1" />
+
+                        <TextBlock Text="&#xE9F6;"
+                                   VerticalAlignment="Center"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="16"
+                                   Grid.Column="2"
+                                   Grid.RowSpan="2" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
             <ListView.Footer>
                 <Border Height="32" />
             </ListView.Footer>

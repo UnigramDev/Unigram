@@ -28,12 +28,15 @@
                                 ContainerContentChanging="OnContainerContentChanging">
             <ListView.Header>
                 <StackPanel MaxWidth="640">
-                    <controls:LottieView Source="ms-appx:///Assets/Animations/Compass.tgs"
-                                         IsLoopingEnabled="False"
-                                         IsCachingEnabled="False"
-                                         Width="140"
-                                         Height="140"
-                                         Margin="0,24,0,0" />
+                    <controls:AnimatedImage Source="ms-appx:///Assets/Animations/Compass.tgs"
+                                            IsCachingEnabled="False"
+                                            LoopCount="1"
+                                            AutoPlay="True"
+                                            FrameSize="140,140"
+                                            DecodeFrameType="Logical"
+                                            Width="140"
+                                            Height="140"
+                                            Margin="0,24,0,0" />
                     <TextBlock Text="{CustomResource ChannelLinkInfo}"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
                                TextAlignment="Center"

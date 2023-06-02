@@ -339,8 +339,6 @@
                         <local:CustomEmojiIcon x:Name="Status"
                                                x:Load="False"
                                                VerticalAlignment="Bottom"
-                                               Width="20"
-                                               Height="20"
                                                Margin="0,-2,0,-2" />
                         <FontIcon x:Name="Icon"
                                   x:Load="False"
@@ -468,9 +466,7 @@
                                    Width="32"
                                    Height="32" />
                             <local:CustomEmojiIcon x:Name="Icon"
-                                                   x:Load="False"
-                                                   Width="20"
-                                                   Height="20" />
+                                                   x:Load="False" />
                             <Popup x:Name="Overlay"
                                    IsHitTestVisible="False"
                                    Margin="-32"
@@ -737,12 +733,13 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:LottieView">
+    <Style x:Key="DefaultAnimatedImageStyle"
+           TargetType="local:AnimatedImage">
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:LottieView">
+                <ControlTemplate TargetType="local:AnimatedImage">
                     <Border x:Name="LayoutRoot">
                         <Border.Background>
                             <ImageBrush x:Name="Canvas"
@@ -754,6 +751,29 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style TargetType="local:AnimatedImage"
+           BasedOn="{StaticResource DefaultAnimatedImageStyle}" />
+
+    <Style TargetType="local:CustomEmojiIcon"
+           BasedOn="{StaticResource DefaultAnimatedImageStyle}">
+        <Setter Property="IsViewportAware"
+                Value="True" />
+        <Setter Property="AutoPlay"
+                Value="False" />
+        <Setter Property="LoopCount"
+                Value="3" />
+        <Setter Property="FrameSize"
+                Value="20,20" />
+        <Setter Property="DecodeFrameType"
+                Value="Logical" />
+        <Setter Property="IsCachingEnabled"
+                Value="True" />
+        <Setter Property="Width"
+                Value="20" />
+        <Setter Property="Height"
+                Value="20" />
     </Style>
 
     <Style TargetType="local:FormattedTextBlock">
@@ -823,27 +843,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:CustomEmojiIcon">
-        <Setter Property="AutoPlay"
-                Value="False" />
-        <Setter Property="IsLoopingEnabled"
-                Value="False" />
-        <Setter Property="IsTabStop"
-                Value="False" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="local:CustomEmojiIcon">
-                    <Grid x:Name="LayoutRoot">
-                        <Border x:Name="Canvas"
-                                AutomationProperties.AccessibilityView="Raw"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style TargetType="local:DiceView">
         <Setter Property="IsTabStop"
                 Value="False" />
@@ -855,31 +854,6 @@
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Stretch" />
                     </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="local:AnimationView">
-        <Setter Property="IsTabStop"
-                Value="False" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="local:AnimationView">
-                    <Border x:Name="LayoutRoot">
-                        <Border.Background>
-                            <ImageBrush x:Name="Canvas"
-                                        Stretch="Uniform"
-                                        AlignmentX="Center"
-                                        AlignmentY="Center" />
-                        </Border.Background>
-                        <Image x:Name="Thumbnail"
-                               Source="{TemplateBinding Thumbnail}"
-                               Stretch="{TemplateBinding Stretch}"
-                               AutomationProperties.AccessibilityView="Raw"
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Stretch" />
-                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -950,14 +924,14 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <local:LottieView Source="{TemplateBinding Source}"
-                                          IsLoopingEnabled="{TemplateBinding IsLoopingEnabled}"
-                                          IsCachingEnabled="False"
-                                          DecodeFrameType="Logical"
-                                          FrameSize="140,140"
-                                          Width="140"
-                                          Height="140"
-                                          Margin="{TemplateBinding Padding}" />
+                        <local:AnimatedImage Source="{TemplateBinding Source}"
+                                             LoopCount="{TemplateBinding LoopCount}"
+                                             IsCachingEnabled="False"
+                                             DecodeFrameType="Logical"
+                                             FrameSize="140,140"
+                                             Width="140"
+                                             Height="140"
+                                             Margin="{TemplateBinding Padding}" />
                         <TextBlock x:Name="Headline"
                                    x:Load="False"
                                    common:TextBlockHelper.Markdown="{TemplateBinding Text}"
@@ -2852,11 +2826,16 @@
                                 </Grid.RowDefinitions>
                                 <StackPanel VerticalAlignment="Center"
                                             Grid.Row="1">
-                                    <local:LottieView x:Name="Header"
-                                                      Source="{TemplateBinding HeaderSource}"
-                                                      Margin="0,-24,0,12"
-                                                      Width="160"
-                                                      Height="160" />
+                                    <local:AnimatedImage x:Name="Header"
+                                                         Source="{TemplateBinding HeaderSource}"
+                                                         Margin="0,-24,0,12"
+                                                         AutoPlay="True"
+                                                         LoopCount="1"
+                                                         IsCachingEnabled="False"
+                                                         FrameSize="160,160"
+                                                         DecodeFrameType="Logical"
+                                                         Width="160"
+                                                         Height="160" />
 
                                     <TextBlock Text="{TemplateBinding Title}"
                                                Style="{StaticResource TitleTextBlockStyle}"
@@ -2877,8 +2856,8 @@
                                             Margin="0,0,0,24"
                                             Grid.Row="4">
 
-                                    <local:BadgeButton Content="{TemplateBinding ButtonText}"
-                                                       Command="{TemplateBinding ButtonCommand}"
+                                    <local:BadgeButton x:Name="Action"
+                                                       Content="{TemplateBinding ButtonText}"
                                                        Visibility="{TemplateBinding ButtonVisibility}"
                                                        Style="{StaticResource StartButtonStyle}"
                                                        Background="#2ca5e0"

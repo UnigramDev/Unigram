@@ -594,12 +594,13 @@
               Grid.Row="0">
             <chats:ChatBackgroundPreview x:Name="Renderer"
                                          Fill="{x:Bind ViewModel.SelectedBackground, Mode=OneWay}" />
-            <controls:CustomEmojiIcon x:Name="Icon"
-                                      Tag="{x:Bind ConvertForeground(ViewModel.SelectedForeground), Mode=OneWay}"
-                                      IsLoopingEnabled="True"
-                                      FrameSize="128"
-                                      Width="128"
-                                      Height="128" />
+            <controls:AnimatedImage x:Name="Icon"
+                                    Tag="{x:Bind ConvertForeground(ViewModel.SelectedForeground), Mode=OneWay}"
+                                    AutoPlay="True"
+                                    FrameSize="128,128"
+                                    DecodeFrameType="Logical"
+                                    Width="128"
+                                    Height="128" />
 
             <Ellipse Stroke="{ThemeResource NavigationViewContentGridBorderBrush}"
                      StrokeThickness="1" />

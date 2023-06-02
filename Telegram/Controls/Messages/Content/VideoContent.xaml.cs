@@ -39,7 +39,7 @@ namespace Telegram.Controls.Messages.Content
         private AspectView LayoutRoot;
         private Image Texture;
         private FileButton Button;
-        private AnimationView Player;
+        private AnimatedImage Player;
         private FileButton Overlay;
         private TextBlock Subtitle;
         private bool _templateApplied;
@@ -49,7 +49,7 @@ namespace Telegram.Controls.Messages.Content
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
             Texture = GetTemplateChild(nameof(Texture)) as Image;
             Button = GetTemplateChild(nameof(Button)) as FileButton;
-            Player = GetTemplateChild(nameof(Player)) as AnimationView;
+            Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
             Overlay = GetTemplateChild(nameof(Overlay)) as FileButton;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
 
@@ -303,7 +303,7 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void Player_PositionChanged(object sender, int seconds)
+        private void Player_PositionChanged(object sender, AnimatedImagePositionChangedEventArgs e)
         {
             var video = GetContent(_message, out _);
             if (video == null)
@@ -311,7 +311,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            var position = TimeSpan.FromSeconds(video.Duration - seconds);
+            var position = TimeSpan.FromSeconds(video.Duration - e.Position);
             if (position.TotalHours >= 1)
             {
                 Subtitle.Text = position.ToString("h\\:mm\\:ss");
@@ -472,11 +472,13 @@ namespace Telegram.Controls.Messages.Content
 
         #region IPlaybackView
 
-        public bool IsLoopingEnabled => Player?.IsLoopingEnabled ?? false;
+        public int LoopCount => Player?.LoopCount ?? 1;
 
         public bool Play()
         {
-            return Player?.Play() ?? false;
+            // TODO: returned value is not used
+            Player?.Play();
+            return true;
         }
 
         public void Pause()
@@ -486,7 +488,11 @@ namespace Telegram.Controls.Messages.Content
 
         public void Unload()
         {
-            Player?.Unload();
+            // TODO: this is not used
+            if (Player != null)
+            {
+                Player.Source = null;
+            }
         }
 
         #endregion

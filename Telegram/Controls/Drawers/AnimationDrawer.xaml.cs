@@ -15,7 +15,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media.Imaging;
 using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Drawers
@@ -157,15 +156,8 @@ namespace Telegram.Controls.Drawers
 
             if (args.InRecycleQueue)
             {
-                if (content.Child is AnimationView recycle)
-                {
-                    recycle.Source = null;
-                }
-
                 return;
             }
-
-            var view = content.Child as AnimationView;
 
             var file = animation.AnimationValue;
             if (file == null)
@@ -173,47 +165,8 @@ namespace Telegram.Controls.Drawers
                 return;
             }
 
-            if (args.Phase == 2 && file.Local.IsDownloadingCompleted)
-            {
-                view.Source = new LocalFileSource(file);
-                view.Thumbnail = null;
-            }
-            else if (args.Phase == 0)
-            {
-                view.Source = null;
-
-                UpdateManager.Subscribe(view, ViewModel.ClientService, file, UpdateFile, true);
-
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                {
-                    ViewModel.ClientService.DownloadFile(file.Id, 1);
-                }
-
-                var thumbnail = animation.Thumbnail?.File;
-                if (thumbnail != null)
-                {
-                    if (thumbnail.Local.IsDownloadingCompleted)
-                    {
-                        view.Thumbnail = new BitmapImage(UriEx.ToLocal(thumbnail.Local.Path));
-                    }
-                    else
-                    {
-                        view.Thumbnail = null;
-
-                        UpdateManager.Subscribe(content, ViewModel.ClientService, thumbnail, UpdateThumbnail, true);
-
-                        if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
-                        {
-                            ViewModel.ClientService.DownloadFile(thumbnail.Id, 1);
-                        }
-                    }
-                }
-            }
-
-            if (args.Phase == 0)
-            {
-                args.RegisterUpdateCallback(2, OnContainerContentChanging);
-            }
+            var animated = content.Child as AnimatedImage;
+            animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
         }
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -243,21 +196,9 @@ namespace Telegram.Controls.Drawers
             return items;
         }
 
-        private void UpdateFile(object target, File file)
+        private void Player_Ready(object sender, EventArgs e)
         {
-            if (target is AnimationView view)
-            {
-                view.Source = new LocalFileSource(file);
-                _handler.ThrottleVisibleItems();
-            }
-        }
-
-        private void UpdateThumbnail(object target, File file)
-        {
-            if (target is Border content && content.Child is AnimationView view)
-            {
-                view.Thumbnail = new BitmapImage(UriEx.ToLocal(file.Local.Path));
-            }
+            _handler.ThrottleVisibleItems();
         }
     }
 }

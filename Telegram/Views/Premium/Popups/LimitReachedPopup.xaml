@@ -12,12 +12,12 @@
 
     <Grid>
         <ListView x:Name="ScrollingHost"
-                                IsItemClickEnabled="True"
-                                ItemClick="OnItemClick"
-                                ContainerContentChanging="OnContainerContentChanging"
-                                SelectionMode="None"
-                                Margin="-24,0,-24,0"
-                                Padding="12,0,12,72">
+                  IsItemClickEnabled="True"
+                  ItemClick="OnItemClick"
+                  ContainerContentChanging="OnContainerContentChanging"
+                  SelectionMode="None"
+                  Margin="-24,0,-24,0"
+                  Padding="12,0,12,72">
             <ListView.Header>
                 <StackPanel Margin="12,0,12,0">
                     <Grid x:Name="LimitHeader"
@@ -183,15 +183,14 @@
                                VerticalAlignment="Center"
                                Margin="0,0,0,2" />
 
-                    <controls:LottieView x:Name="PurchaseIcon"
-                                         Width="26"
-                                         Height="26"
-                                         IsLoopingEnabled="True"
-                                         IsCachingEnabled="False"
-                                         FrameSize="26,26"
-                                         DecodeFrameType="Logical"
-                                         Margin="8,0,-4,0"
-                                         Grid.Column="1" />
+                    <controls:AnimatedImage x:Name="PurchaseIcon"
+                                            Width="26"
+                                            Height="26"
+                                            IsCachingEnabled="False"
+                                            FrameSize="26,26"
+                                            DecodeFrameType="Logical"
+                                            Margin="8,0,-4,0"
+                                            Grid.Column="1" />
                 </Grid>
             </controls:BadgeButton>
         </Grid>

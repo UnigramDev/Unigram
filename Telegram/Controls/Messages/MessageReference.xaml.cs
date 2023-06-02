@@ -465,7 +465,7 @@ namespace Telegram.Controls.Messages
 
         public bool IsAnimatable => CustomEmoji != null;
 
-        public bool IsLoopingEnabled => true;
+        public int LoopCount => 0;
 
         private bool _playing;
 

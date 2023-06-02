@@ -36,7 +36,7 @@ namespace Telegram.Controls.Messages.Content
         private AspectView LayoutRoot;
         private Image Texture;
         private FileButton Button;
-        private AnimationView Player;
+        private AnimatedImage Player;
         private Border Overlay;
         private TextBlock Subtitle;
         private bool _templateApplied;
@@ -46,7 +46,7 @@ namespace Telegram.Controls.Messages.Content
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
             Texture = GetTemplateChild(nameof(Texture)) as Image;
             Button = GetTemplateChild(nameof(Button)) as FileButton;
-            Player = GetTemplateChild(nameof(Player)) as AnimationView;
+            Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
 
@@ -102,7 +102,6 @@ namespace Telegram.Controls.Messages.Content
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)
             {
-                //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
@@ -113,7 +112,6 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
-                //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
@@ -124,7 +122,6 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
             {
-                //Button.Glyph = Icons.Download;
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
@@ -142,7 +139,6 @@ namespace Telegram.Controls.Messages.Content
             {
                 if (isSecret)
                 {
-                    //Button.Glyph = Icons.Ttl;
                     Button.SetGlyph(file.Id, MessageContentState.Ttl);
                     Button.Progress = 1;
 
@@ -153,7 +149,6 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else
                 {
-                    //Button.Glyph = Icons.Animation;
                     Button.SetGlyph(file.Id, MessageContentState.Animation);
                     Button.Progress = 1;
 
@@ -305,11 +300,13 @@ namespace Telegram.Controls.Messages.Content
 
         #region IPlaybackView
 
-        public bool IsLoopingEnabled => Player?.IsLoopingEnabled ?? false;
+        public int LoopCount => Player?.LoopCount ?? 1;
 
         public bool Play()
         {
-            return Player?.Play() ?? false;
+            // TODO: return value is not used
+            Player?.Play();
+            return true;
         }
 
         public void Pause()
@@ -319,7 +316,11 @@ namespace Telegram.Controls.Messages.Content
 
         public void Unload()
         {
-            Player?.Unload();
+            // TODO: this is not used
+            if (Player != null)
+            {
+                Player.Source = null;
+            }
         }
 
         #endregion

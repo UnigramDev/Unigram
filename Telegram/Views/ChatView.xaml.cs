@@ -3679,84 +3679,24 @@ namespace Telegram.Views
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
 
                 var title = content.Children[0] as TextBlock;
-
                 title.Text = hashtag;
             }
             else if (args.Item is Sticker sticker)
             {
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
+                var animated = content.Children[0] as AnimatedImage;
+
                 var file = sticker?.StickerValue;
-
-                if (file == null)
-                {
-                    if (content.Children[0] is Image photo)
-                    {
-                        photo.Source = null;
-                    }
-                    else if (content.Children[0] is LottieView lottie)
-                    {
-                        lottie.Source = null;
-                    }
-                    else if (content.Children[0] is AnimationView video)
-                    {
-                        video.Source = null;
-                    }
-
-                    return;
-                }
-
-                if (sticker.FullType is StickerFullTypeCustomEmoji)
-                {
-                    content.Width = 40;
-                    content.Height = 40;
-                }
-                else
-                {
-                    content.Width = 72;
-                    content.Height = 72;
-                }
-
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    if (content.Children[0] is Border border && border.Child is Image photo)
-                    {
-                        photo.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 68);
-                        ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
-                    }
-                    else if (content.Children[0] is LottieView lottie)
-                    {
-                        lottie.Source = new LocalFileSource(file);
-                    }
-                    else if (content.Children[0] is AnimationView video)
-                    {
-                        video.Source = new LocalFileSource(file);
-                    }
                 }
                 else
                 {
-                    if (content.Children[0] is Image photo)
-                    {
-                        photo.Source = null;
-                    }
-                    else if (content.Children[0] is LottieView lottie)
-                    {
-                        lottie.Source = null;
-                    }
-                    else if (content.Children[0] is AnimationView video)
-                    {
-                        video.Source = null;
-                    }
-
                     CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
                     ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
-
-                    UpdateManager.Subscribe(content, ViewModel.ClientService, file, UpdateSticker, true);
-
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        ViewModel.ClientService.DownloadFile(file.Id, 1);
-                    }
                 }
+
+                animated.Source = new DelayedFileSource(_viewModel.ClientService, file);
             }
         }
 
@@ -3953,7 +3893,7 @@ namespace Telegram.Views
                 if (ViewModel.Topic != null)
                 {
                     LoadObject(ref Icon, nameof(Icon));
-                    Icon.SetCustomEmoji(ViewModel.ClientService, ViewModel.Topic.Info.Icon.CustomEmojiId);
+                    Icon.Source = new CustomEmojiFileSource(ViewModel.ClientService, ViewModel.Topic.Info.Icon.CustomEmojiId);
                     Photo.Clear();
                 }
                 else

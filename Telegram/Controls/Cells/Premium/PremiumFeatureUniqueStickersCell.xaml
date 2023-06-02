@@ -19,17 +19,27 @@
               Height="320">
 
             <Grid>
-                <controls:LottieView x:Name="Animation1"
-                                     PositionChanged="OnPositionChanged"
-                                     Width="180"
-                                     Height="180"
-                                     VerticalAlignment="Center"
-                                     HorizontalAlignment="Right"
-                                     Margin="0,0,20,0" />
+                <controls:AnimatedImage x:Name="Animation1"
+                                        LoopCompleted="Animation1_LoopCompleted"
+                                        AutoPlay="True"
+                                        FrameSize="180,180"
+                                        DecodeFrameType="Logical"
+                                        IsCachingEnabled="False"
+                                        Width="180"
+                                        Height="180"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Right"
+                                        Margin="0,0,20,0" />
 
-                <controls:LottieView x:Name="PremiumAnimation1"
-                                     Width="360"
-                                     Height="360" />
+                <controls:AnimatedImage x:Name="PremiumAnimation1"
+                                        LoopCompleted="PremiumAnimation1_LoopCompleted"
+                                        LoopCount="1"
+                                        AutoPlay="True"
+                                        FrameSize="360,360"
+                                        DecodeFrameType="Logical"
+                                        IsCachingEnabled="False"
+                                        Width="360"
+                                        Height="360" />
             </Grid>
         </Grid>
 

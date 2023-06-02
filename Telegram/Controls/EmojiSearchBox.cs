@@ -176,32 +176,17 @@ namespace Telegram.Controls
 
                 foreach (var item in categories.Categories)
                 {
-                    var view = new LottieView();
-                    //view.AutoPlay = offset < visible;
-                    view.IsLoopingEnabled = false;
+                    var view = new AnimatedImage();
+                    view.AutoPlay = true;
+                    view.LoopCount = 1;
                     view.FrameSize = new Size(20, 20);
                     view.DecodeFrameType = DecodePixelType.Logical;
                     view.Width = 20;
                     view.Height = 20;
-                    view.TintColor = foreground.Color;
-                    //view.Tag = offset < visible ? null : new object();
-
-                    var file = item.Icon.StickerValue;
-                    if (file.Local.IsDownloadingCompleted)
+                    view.Source = new DelayedFileSource(clientService, item.Icon.StickerValue)
                     {
-                        view.Source = new LocalFileSource(file);
-                    }
-                    else
-                    {
-                        view.Source = null;
-
-                        UpdateManager.Subscribe(view, clientService, file, /*UpdateReaction*/UpdateFile, true);
-
-                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                        {
-                            clientService.DownloadFile(file.Id, 32);
-                        }
-                    }
+                        ReplacementColor = foreground.Color
+                    };
 
                     var button = new RadioButton
                     {
@@ -273,14 +258,6 @@ namespace Telegram.Controls
             TextField.TextChanged -= OnTextChanged;
             Text = string.Empty;
             TextField.TextChanged += OnTextChanged;
-        }
-
-        private void UpdateFile(object target, File file)
-        {
-            if (target is LottieView lottie)
-            {
-                lottie.Source = new LocalFileSource(file);
-            }
         }
 
         private void OnViewChanging(object sender, ScrollViewerViewChangingEventArgs e)

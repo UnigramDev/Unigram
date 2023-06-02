@@ -38,7 +38,7 @@ namespace Telegram.Controls.Messages.Content
         private Ellipse Holder;
         private ImageBrush Texture;
         private FileButton Button;
-        private AnimationView Player;
+        private AnimatedImage Player;
         private Border Overlay;
         private TextBlock Subtitle;
         private bool _templateApplied;
@@ -49,7 +49,7 @@ namespace Telegram.Controls.Messages.Content
             Holder = GetTemplateChild(nameof(Holder)) as Ellipse;
             Texture = GetTemplateChild(nameof(Texture)) as ImageBrush;
             Button = GetTemplateChild(nameof(Button)) as FileButton;
-            Player = GetTemplateChild(nameof(Player)) as AnimationView;
+            Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
 
@@ -306,11 +306,13 @@ namespace Telegram.Controls.Messages.Content
 
         #region IPlaybackView
 
-        public bool IsLoopingEnabled => Player?.IsLoopingEnabled ?? false;
+        public int LoopCount => Player?.LoopCount ?? 1;
 
         public bool Play()
         {
-            return Player?.Play() ?? false;
+            // TODO: returned value is not used
+            Player?.Play();
+            return true;
         }
 
         public void Pause()
@@ -320,7 +322,7 @@ namespace Telegram.Controls.Messages.Content
 
         public void Unload()
         {
-            Player?.Unload();
+            // TODO: this is not used
         }
 
         #endregion

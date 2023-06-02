@@ -102,36 +102,30 @@
         </selectors:AutocompleteTemplateSelector.ItemTemplate>
         <selectors:AutocompleteTemplateSelector.StickerTemplate>
             <DataTemplate>
-                <controls:ClrGrid Padding="4"
-                                  Width="72"
-                                  Height="72">
-                    <Border>
-                        <Image />
-                    </Border>
-                </controls:ClrGrid>
+                <Grid Padding="4"
+                      Width="72"
+                      Height="72">
+                    <controls:AnimatedImage x:Name="Player"
+                                            AutoPlay="False"
+                                            FrameSize="64,64"
+                                            DecodeFrameType="Logical"
+                                            LimitFps="True" />
+                </Grid>
             </DataTemplate>
         </selectors:AutocompleteTemplateSelector.StickerTemplate>
-        <selectors:AutocompleteTemplateSelector.AnimatedStickerTemplate>
+        <selectors:AutocompleteTemplateSelector.CustomEmojiTemplate>
             <DataTemplate>
-                <controls:ClrGrid Padding="4"
-                                  Width="72"
-                                  Height="72">
-                    <controls:LottieView30Fps x:Name="Player"
-                                              AutoPlay="False" />
-                </controls:ClrGrid>
+                <Grid Padding="4"
+                      Width="48"
+                      Height="48">
+                    <controls:AnimatedImage x:Name="Player"
+                                            AutoPlay="False"
+                                            FrameSize="40,40"
+                                            DecodeFrameType="Logical"
+                                            LimitFps="True" />
+                </Grid>
             </DataTemplate>
-        </selectors:AutocompleteTemplateSelector.AnimatedStickerTemplate>
-        <selectors:AutocompleteTemplateSelector.VideoStickerTemplate>
-            <DataTemplate>
-                <controls:ClrGrid Padding="4"
-                                  Width="72"
-                                  Height="72">
-                    <controls:AnimationView30Fps x:Name="Player"
-                                                 AutoPlay="False"
-                                                 IsCachingEnabled="True" />
-                </controls:ClrGrid>
-            </DataTemplate>
-        </selectors:AutocompleteTemplateSelector.VideoStickerTemplate>
+        </selectors:AutocompleteTemplateSelector.CustomEmojiTemplate>
         <selectors:AutocompleteTemplateSelector.EmojiTemplate>
             <DataTemplate x:DataType="common:EmojiData">
                 <!--<Grid>

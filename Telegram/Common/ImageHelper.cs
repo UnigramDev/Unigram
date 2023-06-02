@@ -25,6 +25,24 @@ namespace Telegram.Common
 {
     public static class ImageHelper
     {
+        public static Size Scale(this Size size, double requestedMaxSide)
+        {
+            double ratioX = (double)requestedMaxSide / size.Width;
+            double ratioY = (double)requestedMaxSide / size.Height;
+            double ratio = Math.Max(ratioX, ratioY);
+
+            return new Size(size.Width * ratio, size.Height * ratio);
+        }
+
+        public static Size Scale(double width, double height, double requestedMaxSide)
+        {
+            double ratioX = (double)requestedMaxSide / width;
+            double ratioY = (double)requestedMaxSide / height;
+            double ratio = Math.Max(ratioX, ratioY);
+
+            return new Size(width * ratio, height * ratio);
+        }
+
         public static async Task<SizeInt32> GetScaleAsync(StorageFile file, bool allowMultipleFrames = false, int requestedMinSide = 1280, BitmapEditState editState = null)
         {
             using (var source = await file.OpenReadAsync())

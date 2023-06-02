@@ -119,7 +119,7 @@ namespace Telegram.Views.Premium.Popups
                     PrevLimit.Text = limit.DefaultValue.ToString();
                     NextLimit.Text = string.Empty;
 
-                    PurchaseIcon.ColorReplacements = new Dictionary<int, int>
+                    animatedValue.ColorReplacements = new Dictionary<int, int>
                     {
                         { 0x000000, 0xffffff }
                     };
@@ -141,7 +141,7 @@ namespace Telegram.Views.Premium.Popups
                     PrevLimit.Text = string.Empty;
                     NextLimit.Text = limit.PremiumValue.ToString();
 
-                    PurchaseIcon.ColorReplacements = new Dictionary<int, int>
+                    animatedValue.ColorReplacements = new Dictionary<int, int>
                     {
                         { 0x000000, 0xffffff }
                     };

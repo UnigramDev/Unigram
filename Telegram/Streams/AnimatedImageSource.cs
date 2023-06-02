@@ -4,23 +4,57 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using RLottie;
+using System.Collections.Generic;
 using Telegram.Native;
 using Windows.Foundation.Metadata;
+using Windows.UI;
 
 namespace Telegram.Streams
 {
     [CreateFromString(MethodName = "Telegram.Streams.AnimatedImageSourceFactory.Create")]
     public abstract class AnimatedImageSource : IVideoAnimationSource
     {
+        #region Properties
+
+        public Color ReplacementColor { get; set; }
+
+        #endregion
+
+        #region Lottie specific
+
+        public IReadOnlyDictionary<string, int> Markers { get; set; }
+
+        public IReadOnlyDictionary<int, int> ColorReplacements { get; set; }
+
+        public FitzModifier FitzModifier { get; set; }
+
+        #endregion
+
         public abstract void SeekCallback(long offset);
         public abstract void ReadCallback(long count);
 
         public abstract string FilePath { get; }
         public abstract long FileSize { get; }
 
-        public abstract int Id { get; }
+        public abstract long Id { get; }
 
         public abstract long Offset { get; }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is AnimatedImageSource y)
+            {
+                return y.Id == Id;
+            }
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
     }
 
     public static class AnimatedImageSourceFactory

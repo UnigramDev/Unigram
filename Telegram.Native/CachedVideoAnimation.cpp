@@ -186,6 +186,11 @@ namespace winrt::Telegram::Native::implementation
             *rendered = false;
         }
 
+        if (m_readyToCache)
+        {
+            return;
+        }
+
         if (m_precache && m_maxFrameSize <= w * h * 4 && m_imageSize == w * h * 4)
         {
             uint32_t offset = m_fileOffsets[m_frameIndex];
@@ -251,21 +256,36 @@ namespace winrt::Telegram::Native::implementation
 
             if (m_precache)
             {
-                m_caching = true;
-                s_compressQueue.push_work(WorkItem(get_weak(), w, h));
+                m_readyToCache = true;
+            }
+        }
+    }
 
-                slim_lock_guard const guard(s_compressLock);
+    void CachedVideoAnimation::Cache(int w, int h)
+    {
+        if (m_animation == nullptr)
+        {
+            return;
+        }
 
-                if (!s_compressStarted)
+        if (m_precache)
+        {
+            m_readyToCache = false;
+
+            m_caching = true;
+            s_compressQueue.push_work(WorkItem(get_weak(), w, h));
+
+            slim_lock_guard const guard(s_compressLock);
+
+            if (!s_compressStarted)
+            {
+                if (s_compressWorker.joinable())
                 {
-                    if (s_compressWorker.joinable())
-                    {
-                        s_compressWorker.join();
-                    }
-
-                    s_compressStarted = true;
-                    s_compressWorker = std::thread(&CachedVideoAnimation::CompressThreadProc);
+                    s_compressWorker.join();
                 }
+
+                s_compressStarted = true;
+                s_compressWorker = std::thread(&CachedVideoAnimation::CompressThreadProc);
             }
         }
     }
@@ -401,16 +421,12 @@ namespace winrt::Telegram::Native::implementation
 
     int32_t CachedVideoAnimation::TotalFrame()
     {
-        return INT_MAX;
+        if (m_animation)
+        {
+            return INT_MAX;
+        }
+
         return m_frameCount;
-    }
-
-    winrt::Windows::Foundation::Size CachedVideoAnimation::Size()
-    {
-        size_t width = m_animation->PixelWidth();
-        size_t height = m_animation->PixelHeight();
-
-        return winrt::Windows::Foundation::Size(width, height);
     }
 
     bool CachedVideoAnimation::IsCaching()
@@ -418,9 +434,9 @@ namespace winrt::Telegram::Native::implementation
         return m_caching;
     }
 
-    void CachedVideoAnimation::IsCaching(bool value)
+    bool CachedVideoAnimation::IsReadyToCache()
     {
-        m_caching = value;
+        return m_readyToCache;
     }
 
 #pragma endregion

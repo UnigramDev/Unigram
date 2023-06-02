@@ -104,12 +104,13 @@
                     <Border Background="#FFFFFF"
                             CornerRadius="16,16,4,16"
                             Margin="-4" />
-                    <controls:LottieView x:Name="TokenPlaceholder"
-                                         AutoPlay="True"
-                                         IsLoopingEnabled="True"
-                                         IsCachingEnabled="False"
-                                         Width="259"
-                                         Height="259" />
+                    <controls:AnimatedImage x:Name="TokenPlaceholder"
+                                            AutoPlay="True"
+                                            IsCachingEnabled="False"
+                                            FrameSize="222,222"
+                                            DecodeFrameType="Logical"
+                                            Width="222"
+                                            Height="222" />
                     <controls:QrCode x:Name="Token"
                                      Foreground="#000000"
                                      Text="{x:Bind ViewModel.Token, Mode=OneWay}"

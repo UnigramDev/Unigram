@@ -13,7 +13,6 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Drawers;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
@@ -301,22 +300,6 @@ namespace Telegram.Controls.Messages
                     _bubble.UpdateMessageReactions(_message, true);
                     _message.UnreadReactions.Remove(unread);
                 }
-            }
-        }
-
-        private void UpdateFile(object target, File file)
-        {
-            if (target is LottieView lottie)
-            {
-                lottie.Source = new LocalFileSource(file);
-            }
-            else if (target is AnimationView animation)
-            {
-                animation.Source = new LocalFileSource(file);
-            }
-            else if (target is Image image)
-            {
-                image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path, 24);
             }
         }
 

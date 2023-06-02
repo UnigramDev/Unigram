@@ -62,37 +62,29 @@
         </DataTemplate>
 
         <local:InlineQueryTemplateSelector x:Name="MediaTemplateSelector">
-            <local:InlineQueryTemplateSelector.AnimatedStickerTemplate>
-                <DataTemplate>
-                    <controls:ClrGrid>
-                        <controls:LottieView30Fps x:Name="Player"
-                                                  AutoPlay="False" />
-                    </controls:ClrGrid>
-                </DataTemplate>
-            </local:InlineQueryTemplateSelector.AnimatedStickerTemplate>
-            <local:InlineQueryTemplateSelector.VideoStickerTemplate>
-                <DataTemplate>
-                    <controls:ClrGrid>
-                        <controls:AnimationView30Fps x:Name="Player"
-                                                     AutoPlay="False"
-                                                     IsCachingEnabled="True" />
-                    </controls:ClrGrid>
-                </DataTemplate>
-            </local:InlineQueryTemplateSelector.VideoStickerTemplate>
             <local:InlineQueryTemplateSelector.StickerTemplate>
                 <DataTemplate>
-                    <controls:ClrGrid>
-                        <Image Stretch="Uniform" />
-                    </controls:ClrGrid>
+                    <Grid>
+                        <controls:AnimatedImage x:Name="Player"
+                                                AutoPlay="False"
+                                                IsCachingEnabled="True"
+                                                FrameSize="96,96"
+                                                DecodeFrameType="Logical"
+                                                LimitFps="True"
+                                                Ready="Player_Ready" />
+                    </Grid>
                 </DataTemplate>
             </local:InlineQueryTemplateSelector.StickerTemplate>
             <local:InlineQueryTemplateSelector.AnimationTemplate>
                 <DataTemplate>
-                    <controls:ClrGrid>
-                        <controls:AnimationView30Fps x:Name="Player"
-                                                     AutoPlay="False"
-                                                     Stretch="UniformToFill" />
-                    </controls:ClrGrid>
+                    <Grid>
+                        <controls:AnimatedImage x:Name="Player"
+                                                AutoPlay="False"
+                                                IsCachingEnabled="False"
+                                                LimitFps="True"
+                                                Stretch="UniformToFill"
+                                                Ready="Player_Ready" />
+                    </Grid>
                 </DataTemplate>
             </local:InlineQueryTemplateSelector.AnimationTemplate>
             <local:InlineQueryTemplateSelector.MediaTemplate>

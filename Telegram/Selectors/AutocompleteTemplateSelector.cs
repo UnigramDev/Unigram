@@ -19,8 +19,7 @@ namespace Telegram.Selectors
         public DataTemplate CommandTemplate { get; set; }
         public DataTemplate HashtagTemplate { get; set; }
         public DataTemplate StickerTemplate { get; set; }
-        public DataTemplate AnimatedStickerTemplate { get; set; }
-        public DataTemplate VideoStickerTemplate { get; set; }
+        public DataTemplate CustomEmojiTemplate { get; set; }
         public DataTemplate EmojiTemplate { get; set; }
         public DataTemplate ItemTemplate { get; set; }
 
@@ -36,21 +35,21 @@ namespace Telegram.Selectors
             }
             else if (item is Sticker sticker)
             {
-                return sticker.Format switch
+                if (sticker.FullType is StickerFullTypeCustomEmoji)
                 {
-                    StickerFormatTgs => AnimatedStickerTemplate,
-                    StickerFormatWebm => VideoStickerTemplate,
-                    _ => StickerTemplate
-                };
+                    return CustomEmojiTemplate;
+                }
+
+                return StickerTemplate;
             }
             else if (item is StickerViewModel stickerViewModel)
             {
-                return stickerViewModel.Format switch
+                if (stickerViewModel.FullType is StickerFullTypeCustomEmoji)
                 {
-                    StickerFormatTgs => AnimatedStickerTemplate,
-                    StickerFormatWebm => VideoStickerTemplate,
-                    _ => StickerTemplate
-                };
+                    return CustomEmojiTemplate;
+                }
+
+                return StickerTemplate;
             }
             else if (item is EmojiData)
             {

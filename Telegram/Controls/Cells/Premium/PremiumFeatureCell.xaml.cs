@@ -120,7 +120,7 @@ namespace Telegram.Controls.Cells.Premium
 
         public void StopAnimation()
         {
-            Player.Stop();
+            Player.Pause();
         }
 
         public void PlayAnimation()

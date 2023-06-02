@@ -82,7 +82,7 @@ namespace Telegram.Views.Premium.Popups
             }
             else if (sender is PremiumFeatureUniqueStickersCell uniqueStickersCell)
             {
-                uniqueStickersCell.UpdateFature(_clientService, _stickers?.StickersValue);
+                uniqueStickersCell.UpdateFeature(_clientService, _stickers?.StickersValue);
             }
         }
 

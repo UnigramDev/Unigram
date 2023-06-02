@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Streams;
@@ -29,13 +28,6 @@ namespace Telegram.Views.Authorization
         {
             InitializeComponent();
             Window.Current.SetTitleBar(TitleBar);
-
-            TokenPlaceholder.FrameSize = new Size(259, 259);
-            TokenPlaceholder.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
-            TokenPlaceholder.ColorReplacements = new Dictionary<int, int>
-            {
-                { 0xffffff, 0x000000 }
-            };
         }
 
         private bool _waiting = true;
@@ -265,7 +257,7 @@ namespace Telegram.Views.Authorization
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
-                TokenPlaceholder.Unload();
+                TokenPlaceholder.Source = null;
             }
         }
 
@@ -279,7 +271,7 @@ namespace Telegram.Views.Authorization
             var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                TokenPlaceholder.Unload();
+                TokenPlaceholder.Source = null;
             };
 
             var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();

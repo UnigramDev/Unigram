@@ -19,14 +19,16 @@
                     CornerRadius="32"
                     Width="64"
                     Height="64">
-                <controls:LottieView x:Name="Icon"
-                                     AutoPlay="False"
-                                     IsCachingEnabled="False"
-                                     IsLoopingEnabled="False"
-                                     HorizontalAlignment="Center"
-                                     VerticalAlignment="Center"
-                                     Width="50"
-                                     Height="50" />
+                <controls:AnimatedImage x:Name="Icon"
+                                        AutoPlay="False"
+                                        IsCachingEnabled="False"
+                                        LoopCount="1"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FrameSize="50,50"
+                                        DecodeFrameType="Logical"
+                                        Width="50"
+                                        Height="50" />
             </Border>
 
             <TextBlock x:Name="Title"

@@ -6,9 +6,11 @@
 //
 using Telegram.Common;
 using Telegram.Controls.Messages;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Settings;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 
@@ -48,12 +50,26 @@ namespace Telegram.Views.Settings
                 var response = await ViewModel.ClientService.SendAsync(new GetEmojiReaction(emoji.Emoji));
                 if (response is EmojiReaction emojiReaction)
                 {
-                    Icon.SetReaction(ViewModel.ClientService, emojiReaction);
+                    Icon.Width = Icon.Height = 32;
+                    Icon.Margin = new Thickness(0, 0, -6, 0);
+
+                    using (Icon.BeginBatchUpdate())
+                    {
+                        Icon.FrameSize = new Size(32, 32);
+                        Icon.Source = new DelayedFileSource(ViewModel.ClientService, emojiReaction.CenterAnimation.StickerValue);
+                    }
                 }
             }
             else if (reaction is ReactionTypeCustomEmoji customEmoji)
             {
-                Icon.SetCustomEmoji(ViewModel.ClientService, customEmoji.CustomEmojiId);
+                Icon.Width = Icon.Height = 20;
+                Icon.Margin = new Thickness();
+
+                using (Icon.BeginBatchUpdate())
+                {
+                    Icon.FrameSize = new Size(20, 20);
+                    Icon.Source = new CustomEmojiFileSource(ViewModel.ClientService, customEmoji.CustomEmojiId);
+                }
             }
         }
 

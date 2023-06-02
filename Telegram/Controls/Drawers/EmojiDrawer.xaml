@@ -39,29 +39,15 @@
                        FontFamily="{ThemeResource EmojiThemeFontFamily}" />
         </DataTemplate>
 
-        <DataTemplate x:Key="AnimatedItemTemplate">
-            <controls:ClrGrid>
-                <controls:LottieView30Fps x:Name="Player"
-                                          AutoPlay="False"
-                                          FrameSize="100,100"
-                                          DecodeFrameType="Physical" />
-            </controls:ClrGrid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="VideoItemTemplate">
-            <controls:ClrGrid>
-                <controls:AnimationView30Fps x:Name="Player"
-                                             AutoPlay="False"
-                                             IsCachingEnabled="True" />
-            </controls:ClrGrid>
-        </DataTemplate>
-
         <DataTemplate x:Key="ItemTemplate">
-            <controls:ClrGrid>
-                <Border>
-                    <Image />
-                </Border>
-            </controls:ClrGrid>
+            <Grid>
+                <controls:AnimatedImage x:Name="Player"
+                                        AutoPlay="False"
+                                        LimitFps="True"
+                                        FrameSize="40,40"
+                                        DecodeFrameType="Logical"
+                                        Ready="Player_Ready" />
+            </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="MoreTemplate">
@@ -533,9 +519,19 @@
                     </Style>
                 </GridView.ItemContainerStyle>
                 <GridView.ItemTemplateSelector>
-                    <selectors:StickerSetTemplateSelector ItemTemplate="{StaticResource ItemTemplate}"
-                                                          AnimatedTemplate="{StaticResource AnimatedItemTemplate}"
-                                                          VideoTemplate="{StaticResource VideoItemTemplate}">
+                    <selectors:StickerSetTemplateSelector>
+                        <selectors:StickerSetTemplateSelector.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <controls:AnimatedImage x:Name="Player"
+                                                            AutoPlay="False"
+                                                            LimitFps="True"
+                                                            FrameSize="24,24"
+                                                            DecodeFrameType="Logical"
+                                                            Ready="Toolbar_Ready" />
+                                </Grid>
+                            </DataTemplate>
+                        </selectors:StickerSetTemplateSelector.ItemTemplate>
                         <selectors:StickerSetTemplateSelector.GroupTemplate>
                             <DataTemplate x:DataType="viewModels:StickerSetViewModel">
                                 <controls:ProfilePicture Margin="6"

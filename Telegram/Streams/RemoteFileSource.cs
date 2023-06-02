@@ -111,7 +111,7 @@ namespace Telegram.Streams
         public override string FilePath => _file.Local.Path;
         public override long FileSize => _file.Size;
 
-        public override int Id => _file.Id;
+        public override long Id => _file.Id;
 
         public override long Offset => _offset;
 

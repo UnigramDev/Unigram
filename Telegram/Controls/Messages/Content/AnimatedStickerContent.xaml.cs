@@ -42,15 +42,15 @@ namespace Telegram.Controls.Messages.Content
 
         #region InitializeComponent
 
-        private LottieView Player;
+        private AnimatedImage Player;
         private Popup InteractionsPopup;
         private Grid Interactions;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
         {
-            Player = GetTemplateChild(nameof(Player)) as LottieView;
-            Player.FirstFrameRendered += Player_FirstFrameRendered;
+            Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
+            Player.Ready += Player_Ready;
 
             _templateApplied = true;
 
@@ -76,17 +76,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 Width = Player.Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Height = Player.Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                Player.IsFlipped = false;
-                Player.FitzModifier = animatedEmoji.AnimatedEmoji.FitzpatrickType switch
-                {
-                    1 => FitzModifier.Type12,
-                    2 => FitzModifier.Type12,
-                    3 => FitzModifier.Type3,
-                    4 => FitzModifier.Type4,
-                    5 => FitzModifier.Type5,
-                    6 => FitzModifier.Type6,
-                    _ => FitzModifier.None
-                };
+                //Player.IsFlipped = false;
 
                 var sound = animatedEmoji.AnimatedEmoji.Sound;
                 if (sound != null && sound.Local.CanBeDownloaded && !sound.Local.IsDownloadingActive)
@@ -98,16 +88,14 @@ namespace Telegram.Controls.Messages.Content
             {
                 Width = Player.Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Height = Player.Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                Player.ColorReplacements = null;
-                Player.IsFlipped = false;
+                //Player.IsFlipped = false;
             }
             else
             {
                 var premiumAnimation = sticker.FullType is StickerFullTypeRegular regular && regular.PremiumAnimation != null;
                 Width = Player.Width = premiumAnimation ? 180 : 180;
                 Height = Player.Height = 180;
-                Player.ColorReplacements = null;
-                Player.IsFlipped = premium && premiumAnimation && !message.IsOutgoing;
+                //Player.IsFlipped = premium && premiumAnimation && !message.IsOutgoing;
             }
 
             _isEmoji = message.Content is not MessageSticker;
@@ -150,8 +138,23 @@ namespace Telegram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                Player.IsLoopingEnabled = message.Content is MessageSticker && PowerSavingPolicy.AutoPlayStickersInChats;
-                Player.Source = new LocalFileSource(file);
+                using (Player.BeginBatchUpdate())
+                {
+                    Player.LoopCount = message.Content is MessageSticker && PowerSavingPolicy.AutoPlayStickersInChats ? 0 : 1;
+                    Player.Source = new LocalFileSource(file)
+                    {
+                        FitzModifier = message.Content is MessageAnimatedEmoji animatedEmoji ? animatedEmoji.AnimatedEmoji.FitzpatrickType switch
+                        {
+                            1 => FitzModifier.Type12,
+                            2 => FitzModifier.Type12,
+                            3 => FitzModifier.Type3,
+                            4 => FitzModifier.Type4,
+                            5 => FitzModifier.Type5,
+                            6 => FitzModifier.Type6,
+                            _ => FitzModifier.None
+                        } : FitzModifier.None
+                    };
+                }
 
                 message.Delegate.ViewVisibleMessages();
             }
@@ -168,7 +171,7 @@ namespace Telegram.Controls.Messages.Content
             ElementCompositionPreview.SetElementChildVisual(Player, visual);
         }
 
-        private void Player_FirstFrameRendered(object sender, EventArgs e)
+        private void Player_Ready(object sender, EventArgs e)
         {
             _thumbnailShimmer = null;
             ElementCompositionPreview.SetElementChildVisual(Player, null);
@@ -243,15 +246,15 @@ namespace Telegram.Controls.Messages.Content
 
             if (_message.Content is MessageAnimatedEmoji animatedEmoji)
             {
-                var started = Player.Play();
-                if (started)
-                {
-                    var sound = animatedEmoji.AnimatedEmoji.Sound;
-                    if (sound != null && sound.Local.IsDownloadingCompleted)
-                    {
-                        SoundEffects.Play(sound);
-                    }
-                }
+                //var started = Player.Play();
+                //if (started)
+                //{
+                //    var sound = animatedEmoji.AnimatedEmoji.Sound;
+                //    if (sound != null && sound.Local.IsDownloadingCompleted)
+                //    {
+                //        SoundEffects.Play(sound);
+                //    }
+                //}
 
                 var response = await _message.ClientService.SendAsync(new ClickAnimatedEmojiMessage(_message.ChatId, _message.Id));
                 if (response is Sticker interaction)
@@ -276,7 +279,7 @@ namespace Telegram.Controls.Messages.Content
                         PlayPremium(_message, sticker);
                     }
                 }
-                else if (PowerSavingPolicy.AutoPlayStickersInChats || Player.IsPlaying)
+                else if (PowerSavingPolicy.AutoPlayStickersInChats /*|| Player.IsPlaying*/)
                 {
                     _message.Delegate.OpenSticker(sticker);
                 }
@@ -302,30 +305,28 @@ namespace Telegram.Controls.Messages.Content
             {
                 var dispatcher = DispatcherQueue.GetForCurrentThread();
 
-                var player = new LottieView();
+                var player = new AnimatedImage();
                 player.Width = Player.Height * 3;
                 player.Height = Player.Height * 3;
-                player.IsFlipped = !message.IsOutgoing;
-                player.IsLoopingEnabled = false;
+                //player.IsFlipped = !message.IsOutgoing;
+                player.LoopCount = 1;
                 player.IsHitTestVisible = false;
                 player.FrameSize = new Size(512, 512);
+                player.AutoPlay = true;
                 player.Source = new LocalFileSource(file);
-                player.PositionChanged += (s, args) =>
+                player.LoopCompleted += (s, args) =>
                 {
-                    if (args == 1)
+                    dispatcher.TryEnqueue(() =>
                     {
-                        dispatcher.TryEnqueue(() =>
+                        Interactions.Children.Remove(player);
+
+                        if (Interactions.Children.Count > 0)
                         {
-                            Interactions.Children.Remove(player);
+                            return;
+                        }
 
-                            if (Interactions.Children.Count > 0)
-                            {
-                                return;
-                            }
-
-                            InteractionsPopup.IsOpen = false;
-                        });
-                    }
+                        InteractionsPopup.IsOpen = false;
+                    });
                 };
 
                 var random = new Random();
@@ -377,24 +378,22 @@ namespace Telegram.Controls.Messages.Content
             {
                 var dispatcher = DispatcherQueue.GetForCurrentThread();
 
-                var player = new LottieView();
+                var player = new AnimatedImage();
                 player.Width = 270;
                 player.Height = 270;
-                player.IsFlipped = !message.IsOutgoing;
-                player.IsLoopingEnabled = false;
+                //player.IsFlipped = !message.IsOutgoing;
+                player.LoopCount = 1;
                 player.IsHitTestVisible = false;
                 player.FrameSize = new Size(270 * 2, 270 * 2);
+                player.AutoPlay = true;
                 player.Source = new LocalFileSource(file);
-                player.PositionChanged += (s, args) =>
+                player.LoopCompleted += (s, args) =>
                 {
-                    if (args == 1)
+                    dispatcher.TryEnqueue(() =>
                     {
-                        dispatcher.TryEnqueue(() =>
-                        {
-                            Interactions.Children.Remove(player);
-                            InteractionsPopup.IsOpen = false;
-                        });
-                    }
+                        Interactions.Children.Remove(player);
+                        InteractionsPopup.IsOpen = false;
+                    });
                 };
 
                 var left = 75;
@@ -423,20 +422,23 @@ namespace Telegram.Controls.Messages.Content
 
         #region IPlaybackView
 
-        public bool IsLoopingEnabled => Player?.IsLoopingEnabled ?? false;
+        public int LoopCount => Player?.LoopCount ?? 1;
 
         public bool Play()
         {
+            // TODO: return value is not used
+
             if (_isEmoji && PowerSavingPolicy.AutoPlayEmojiInChats)
             {
-                return Player?.Play() ?? false;
+                Player?.Play();
+                return true;
             }
             else if (PowerSavingPolicy.AutoPlayStickersInChats)
             {
-                return Player?.Play() ?? false;
+                Player?.Play();
+                return true;
             }
 
-            Player?.Display();
             return false;
         }
 
@@ -447,7 +449,7 @@ namespace Telegram.Controls.Messages.Content
 
         public void Unload()
         {
-            Player?.Unload();
+            // TODO: this is not used
         }
 
         #endregion

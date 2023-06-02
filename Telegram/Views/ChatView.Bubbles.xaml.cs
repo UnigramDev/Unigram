@@ -70,14 +70,6 @@ namespace Telegram.Views
 
         private void UnloadVisibleMessages()
         {
-            foreach (var item in _prev.Values)
-            {
-                if (item.Target is IPlayerView view)
-                {
-                    view.Unload();
-                }
-            }
-
             _prev.Clear();
         }
 
@@ -489,7 +481,7 @@ namespace Telegram.Views
                 foreach (var item in _prev.Keys.Except(skip).ToList())
                 {
                     var presenter = _prev[item].Target as IPlayerView;
-                    if (presenter != null && presenter.IsLoopingEnabled)
+                    if (presenter != null && presenter.LoopCount == 0)
                     {
                         presenter.Pause();
                     }

@@ -18,46 +18,6 @@
                               Source="{x:Bind ViewModel.Stickers, Mode=OneWay}"
                               ItemsPath="Stickers"
                               IsSourceGrouped="True" />
-
-        <DataTemplate x:Key="AnimatedItemTemplate">
-            <controls:ClrGrid>
-                <controls:LottieView30Fps x:Name="Player"
-                                          AutoPlay="False"
-                                          FrameSize="68,68"
-                                          DecodeFrameType="Logical" />
-
-                <Border HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom"
-                        Background="{StaticResource PremiumObliqueGradientBrush}"
-                        CornerRadius="10"
-                        Width="20"
-                        Height="20"
-                        Margin="-2,0,-2,-2">
-                    <TextBlock HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Foreground="#FFFFFF"
-                               FontFamily="{StaticResource SymbolThemeFontFamily}"
-                               FontSize="16"
-                               Text="&#xE9BE;" />
-                </Border>
-            </controls:ClrGrid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="VideoItemTemplate">
-            <controls:ClrGrid>
-                <controls:AnimationView30Fps x:Name="Player"
-                                             AutoPlay="False"
-                                             IsCachingEnabled="True" />
-            </controls:ClrGrid>
-        </DataTemplate>
-
-        <DataTemplate x:Key="ItemTemplate">
-            <controls:ClrGrid>
-                <Border>
-                    <Image />
-                </Border>
-            </controls:ClrGrid>
-        </DataTemplate>
     </UserControl.Resources>
 
     <Grid x:Name="StickersRoot"
@@ -90,6 +50,33 @@
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="5" />
             </common:FluidGridView.Triggers>
+            <GridView.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <controls:AnimatedImage x:Name="Player"
+                                                AutoPlay="False"
+                                                LimitFps="True"
+                                                FrameSize="64,64"
+                                                DecodeFrameType="Logical"
+                                                Ready="Player_Ready" />
+
+                        <Border HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom"
+                                Background="{StaticResource PremiumObliqueGradientBrush}"
+                                CornerRadius="10"
+                                Width="20"
+                                Height="20"
+                                Margin="-2,0,-2,-2">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="#FFFFFF"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="16"
+                                       Text="&#xE9BE;" />
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </GridView.ItemTemplate>
             <GridView.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
@@ -212,13 +199,26 @@
                     </Style>
                 </GridView.ItemContainerStyle>
                 <GridView.ItemTemplateSelector>
-                    <selectors:StickerSetTemplateSelector ItemTemplate="{StaticResource ItemTemplate}"
-                                                          AnimatedTemplate="{StaticResource AnimatedItemTemplate}"
-                                                          VideoTemplate="{StaticResource VideoItemTemplate}">
+                    <selectors:StickerSetTemplateSelector>
+                        <selectors:StickerSetTemplateSelector.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <controls:AnimatedImage x:Name="Player"
+                                                            AutoPlay="False"
+                                                            LimitFps="True"
+                                                            FrameSize="24,24"
+                                                            DecodeFrameType="Logical"
+                                                            Ready="Toolbar_Ready" />
+                                </Grid>
+                            </DataTemplate>
+
+                        </selectors:StickerSetTemplateSelector.ItemTemplate>
                         <selectors:StickerSetTemplateSelector.GroupTemplate>
                             <DataTemplate x:DataType="viewModels:StickerSetViewModel">
                                 <Border>
-                                    <controls:ProfilePicture IsEnabled="False" />
+                                    <controls:ProfilePicture IsEnabled="False"
+                                                             Width="24"
+                                                             Height="24" />
                                 </Border>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.GroupTemplate>

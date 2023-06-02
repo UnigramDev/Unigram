@@ -432,7 +432,8 @@
                                           AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
                                           Width="32"
                                           Height="32"
-                                          FrameSize="32"
+                                          FrameSize="32,32"
+                                          DecodeFrameType="Logical"
                                           HorizontalAlignment="Center" />
 
                 <HyperlinkButton x:Name="Profile"

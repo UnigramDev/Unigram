@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Collections.Generic;
 using Telegram.Services;
 using Telegram.Streams;
@@ -22,6 +23,8 @@ namespace Telegram.Controls.Cells.Premium
         private IList<Sticker> _stickers;
         private int _index;
 
+        private bool _premiumCompleted;
+
         public PremiumFeatureUniqueStickersCell()
         {
             InitializeComponent();
@@ -29,7 +32,7 @@ namespace Telegram.Controls.Cells.Premium
             _dispatcher = DispatcherQueue.GetForCurrentThread();
         }
 
-        public void UpdateFature(IClientService clientService, IList<Sticker> stickers)
+        public void UpdateFeature(IClientService clientService, IList<Sticker> stickers)
         {
             if (stickers == null)
             {
@@ -40,6 +43,16 @@ namespace Telegram.Controls.Cells.Premium
 
             _stickers = stickers;
             _index = 0;
+
+            for (int i = stickers.Count - 1; i >= 0; i--)
+            {
+                var sticker = _stickers[i];
+                if (sticker.FullType is StickerFullTypeRegular regular)
+                {
+                    _clientService.DownloadFile(sticker.StickerValue.Id, 32);
+                    _clientService.DownloadFile(regular.PremiumAnimation.Id, 32);
+                }
+            }
 
             UpdateSticker();
         }
@@ -54,40 +67,29 @@ namespace Telegram.Controls.Cells.Premium
 
             if (index < _stickers.Count)
             {
+                _index = index;
+                _premiumCompleted = false;
+
                 var sticker = _stickers[index];
                 if (sticker.FullType is StickerFullTypeRegular regular)
                 {
-                    Animation1.Source = new LocalFileSource(sticker.StickerValue);
-                    PremiumAnimation1.Source = new LocalFileSource(regular.PremiumAnimation);
+                    Animation1.Source = new DelayedFileSource(_clientService, sticker.StickerValue);
+                    PremiumAnimation1.Source = new DelayedFileSource(_clientService, regular.PremiumAnimation);
                 }
-
-                _index = index;
-                PreloadSticker();
             }
         }
 
-        private void PreloadSticker()
+        private void Animation1_LoopCompleted(object sender, EventArgs e)
         {
-            var index = _index;
-            if (index >= _stickers.Count)
-            {
-                index = 0;
-            }
-
-            var sticker = _stickers[index];
-            if (sticker.FullType is StickerFullTypeRegular regular)
-            {
-                _clientService.DownloadFile(sticker.StickerValue.Id, 32);
-                _clientService.DownloadFile(regular.PremiumAnimation.Id, 32);
-            }
-        }
-
-        private void OnPositionChanged(object sender, double e)
-        {
-            if (e == 1 && _stickers.Count > 1)
+            if (_premiumCompleted && _stickers.Count > 1)
             {
                 _dispatcher.TryEnqueue(UpdateSticker);
             }
+        }
+
+        private void PremiumAnimation1_LoopCompleted(object sender, EventArgs e)
+        {
+            _premiumCompleted = true;
         }
     }
 }

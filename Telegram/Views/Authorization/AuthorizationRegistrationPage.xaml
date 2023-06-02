@@ -29,14 +29,14 @@
                     Margin="0,-80,0,0"
                     MaxWidth="360"
                     Grid.Row="1">
-            <controls:LottieView FrameSize="160,160"
-                                 DecodeFrameType="Logical"
-                                 Source="ms-appx:///Assets/Animations/AuthorizationStateWaitRegistration.tgs"
-                                 AutoPlay="True"
-                                 IsLoopingEnabled="False"
-                                 IsCachingEnabled="False"
-                                 Width="160"
-                                 Height="160" />
+            <controls:AnimatedImage FrameSize="160,160"
+                                    DecodeFrameType="Logical"
+                                    Source="ms-appx:///Assets/Animations/AuthorizationStateWaitRegistration.tgs"
+                                    AutoPlay="True"
+                                    LoopCount="1"
+                                    IsCachingEnabled="False"
+                                    Width="160"
+                                    Height="160" />
 
             <TextBlock x:Name="TitleLabel"
                        Text="{CustomResource YourName}"

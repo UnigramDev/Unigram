@@ -17,6 +17,11 @@ namespace Telegram.Streams
 
         public LocalFileSource(File file)
         {
+            if (file == null)
+            {
+                return;
+            }
+
             FilePath = file.Local.Path;
             FileSize = file.Size;
 
@@ -45,7 +50,7 @@ namespace Telegram.Streams
         public override string FilePath { get; }
         public override long FileSize { get; }
 
-        public override int Id { get; }
+        public override long Id { get; }
 
         public override long Offset => _offset;
 
@@ -57,6 +62,21 @@ namespace Telegram.Streams
         public override void ReadCallback(long count)
         {
             // Nothing
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is LocalFileSource y)
+            {
+                return y.FilePath == FilePath;
+            }
+
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return FilePath.GetHashCode();
         }
     }
 }

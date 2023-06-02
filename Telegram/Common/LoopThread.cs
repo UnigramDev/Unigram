@@ -6,7 +6,6 @@
 //
 using System;
 using System.Threading;
-using Windows.System.Threading;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Common
@@ -17,15 +16,16 @@ namespace Telegram.Common
         private TimeSpan _elapsed;
 
         private readonly object _timerLock = new();
-        private ThreadPoolTimer _timer;
+        private readonly Timer _timer;
 
-        private readonly SemaphoreSlim _tickSemaphore;
         private bool _dropInvalidate;
+
+        public TimeSpan Interval => _interval;
 
         public LoopThread(TimeSpan interval)
         {
             _interval = interval;
-            _tickSemaphore = new SemaphoreSlim(1, 1);
+            _timer = new Timer(OnTick, null, Timeout.Infinite, Timeout.Infinite);
         }
 
         [ThreadStatic]
@@ -40,31 +40,12 @@ namespace Telegram.Common
         private static LoopThread _chats;
         public static LoopThread Chats => _chats ??= new LoopThread(TimeSpan.FromMilliseconds(1000 / 60));
 
-        private void OnTick(ThreadPoolTimer timer)
+        private unsafe void OnTick(object state)
         {
-            if (_tickSemaphore.Wait(0))
-            {
-                _tick?.Invoke(this, EventArgs.Empty);
-                _tickSemaphore.Release();
-            }
+            _tick?.Invoke(this, EventArgs.Empty);
         }
 
-        private void OnInvalidate(object sender, object e)
-        {
-            var args = e as RenderingEventArgs;
-            var diff = args.RenderingTime - _elapsed;
-
-            if (_dropInvalidate || diff < _interval)
-            {
-                return;
-            }
-
-            _elapsed = args.RenderingTime;
-
-            _dropInvalidate = true;
-            _invalidate?.Invoke(sender, EventArgs.Empty);
-            _dropInvalidate = false;
-        }
+        private int _count;
 
         private event EventHandler _tick;
         public event EventHandler Tick
@@ -73,24 +54,23 @@ namespace Telegram.Common
             {
                 lock (_timerLock)
                 {
+                    if (_tick == null) _timer.Change(TimeSpan.Zero, _interval);
                     _tick += value;
-                    _timer ??= ThreadPoolTimer.CreatePeriodicTimer(OnTick, _interval);
+                    _count++;
                 }
             }
             remove
             {
                 lock (_timerLock)
                 {
+                    _count--;
                     _tick -= value;
-
-                    if (_tick == null && _timer != null)
-                    {
-                        _timer.Cancel();
-                        _timer = null;
-                    }
+                    if (_tick == null) _timer.Change(Timeout.Infinite, Timeout.Infinite);
                 }
             }
         }
+
+        #region Legacy
 
         private event EventHandler _invalidate;
         public event EventHandler Invalidate
@@ -114,5 +94,24 @@ namespace Telegram.Common
                 }
             }
         }
+
+        private void OnInvalidate(object sender, object e)
+        {
+            var args = e as RenderingEventArgs;
+            var diff = args.RenderingTime - _elapsed;
+
+            if (_dropInvalidate || diff < _interval)
+            {
+                return;
+            }
+
+            _elapsed = args.RenderingTime;
+
+            _dropInvalidate = true;
+            _invalidate?.Invoke(sender, EventArgs.Empty);
+            _dropInvalidate = false;
+        }
+
+        #endregion
     }
 }

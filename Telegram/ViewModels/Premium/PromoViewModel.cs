@@ -102,7 +102,7 @@ namespace Telegram.ViewModels.Premium
 
             _animations = state.Animations.ToDictionary(x => x.Feature.GetType(), y => y.Animation);
 
-            _stickers = await ClientService.SendAsync(new GetPremiumStickers()) as Stickers;
+            _stickers = await ClientService.SendAsync(new GetPremiumStickerExamples()) as Stickers;
         }
 
         public string PremiumPreviewLimitsDescription

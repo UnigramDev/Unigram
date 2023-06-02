@@ -36,15 +36,15 @@ namespace Telegram.Controls.Messages.Content
         #region InitializeComponent
 
         private AspectView LayoutRoot;
-        private AnimationView Player;
+        private AnimatedImage Player;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
-            Player = GetTemplateChild(nameof(Player)) as AnimationView;
+            Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
 
-            Player.FirstFrameRendered += Player_FirstFrameRendered;
+            Player.Ready += Player_Ready;
 
             _templateApplied = true;
 
@@ -108,8 +108,12 @@ namespace Telegram.Controls.Messages.Content
 
             if (file.Local.IsDownloadingCompleted)
             {
-                Player.IsLoopingEnabled = PowerSavingPolicy.AutoPlayStickersInChats;
-                Player.Source = new LocalFileSource(file);
+                using (Player.BeginBatchUpdate())
+                {
+                    Player.LoopCount = PowerSavingPolicy.AutoPlayStickersInChats ? 0 : 1;
+                    Player.FrameSize = ImageHelper.Scale(sticker.Width, sticker.Height, 180);
+                    Player.Source = new LocalFileSource(file);
+                }
 
                 message.Delegate.ViewVisibleMessages();
             }
@@ -126,7 +130,7 @@ namespace Telegram.Controls.Messages.Content
             ElementCompositionPreview.SetElementChildVisual(Player, visual);
         }
 
-        private void Player_FirstFrameRendered(object sender, EventArgs e)
+        private void Player_Ready(object sender, EventArgs e)
         {
             _thumbnailShimmer = null;
             ElementCompositionPreview.SetElementChildVisual(Player, null);
@@ -186,7 +190,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            if (PowerSavingPolicy.AutoPlayStickersInChats || Player.IsPlaying)
+            if (PowerSavingPolicy.AutoPlayStickersInChats /*|| Player.IsPlaying*/)
             {
                 _message.Delegate.OpenSticker(sticker);
             }
@@ -198,16 +202,17 @@ namespace Telegram.Controls.Messages.Content
 
         #region IPlaybackView
 
-        public bool IsLoopingEnabled => Player?.IsLoopingEnabled ?? false;
+        public int LoopCount => Player?.LoopCount ?? 1;
 
         public bool Play()
         {
+            // TODO: returned value is not used
             if (PowerSavingPolicy.AutoPlayStickersInChats)
             {
-                return Player?.Play() ?? false;
+                Player?.Play();
+                return true;
             }
 
-            Player?.Display();
             return false;
         }
 
@@ -218,7 +223,7 @@ namespace Telegram.Controls.Messages.Content
 
         public void Unload()
         {
-            Player?.Unload();
+            // TODO: this is not used
         }
 
         #endregion

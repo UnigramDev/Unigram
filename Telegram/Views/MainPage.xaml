@@ -267,9 +267,6 @@
 
                     <controls:CustomEmojiIcon x:Name="LogoEmoji"
                                               x:Load="False"
-                                              Width="20"
-                                              Height="20"
-                                              AutoPlay="True"
                                               HorizontalAlignment="Center"
                                               VerticalAlignment="Center" />
                 </Grid>
@@ -850,14 +847,17 @@
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition />
                                         </Grid.RowDefinitions>
-                                        <controls:LottieView Source="ms-appx:///Assets/Animations/EmptyFolder.tgs"
-                                                             IsLoopingEnabled="False"
-                                                             IsCachingEnabled="False"
-                                                             VerticalAlignment="Top"
-                                                             Width="96"
-                                                             Height="96"
-                                                             Margin="0,-96,0,0"
-                                                             Grid.Row="1" />
+                                        <controls:AnimatedImage Source="ms-appx:///Assets/Animations/EmptyFolder.tgs"
+                                                                IsCachingEnabled="False"
+                                                                LoopCount="1"
+                                                                AutoPlay="True"
+                                                                FrameSize="96,96"
+                                                                DecodeFrameType="Logical"
+                                                                VerticalAlignment="Top"
+                                                                Width="96"
+                                                                Height="96"
+                                                                Margin="0,-96,0,0"
+                                                                Grid.Row="1" />
                                         <TextBlock Text="{CustomResource FilterNoChatsToDisplay}"
                                                    Style="{StaticResource BaseTextBlockStyle}"
                                                    TextAlignment="Center"

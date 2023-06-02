@@ -67,12 +67,14 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <controls:LottieView30Fps x:Name="Player"
-                                                          AutoPlay="False"
-                                                          IsLoopingEnabled="False"
-                                                          DecodeFrameType="Logical"
-                                                          Width="48"
-                                                          Height="48" />
+                                <controls:AnimatedImage x:Name="Player"
+                                                        AutoPlay="False"
+                                                        LimitFps="True"
+                                                        LoopCount="1"
+                                                        FrameSize="48,48"
+                                                        DecodeFrameType="Logical"
+                                                        Width="48"
+                                                        Height="48" />
 
                                 <TextBlock Text="{x:Bind Reaction.Title}"
                                            VerticalAlignment="Center"

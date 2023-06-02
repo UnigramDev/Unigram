@@ -60,16 +60,16 @@ namespace Telegram.Controls
 
         #endregion
 
-        #region IsLoopingEnabled
+        #region LoopCount
 
-        public bool IsLoopingEnabled
+        public int LoopCount
         {
-            get { return (bool)GetValue(IsLoopingEnabledProperty); }
-            set { SetValue(IsLoopingEnabledProperty, value); }
+            get { return (int)GetValue(LoopCountProperty); }
+            set { SetValue(LoopCountProperty, value); }
         }
 
-        public static readonly DependencyProperty IsLoopingEnabledProperty =
-            DependencyProperty.Register("IsLoopingEnabled", typeof(bool), typeof(SettingsHeadline), new PropertyMetadata(false));
+        public static readonly DependencyProperty LoopCountProperty =
+            DependencyProperty.Register("LoopCount", typeof(bool), typeof(SettingsHeadline), new PropertyMetadata(1));
 
         #endregion
     }

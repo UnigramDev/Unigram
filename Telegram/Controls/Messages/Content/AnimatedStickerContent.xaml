@@ -21,14 +21,15 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:AnimatedStickerContent">
                     <Grid x:Name="LayoutRoot">
-                        <controls:LottieView x:Name="Player"
-                                             AutoPlay="False"
-                                             FrameSize="180,180"
-                                             DecodeFrameType="Logical"
-                                             Width="180"
-                                             Height="180" />
+                        <controls:AnimatedImage x:Name="Player"
+                                                AutoPlay="False"
+                                                FrameSize="180,180"
+                                                DecodeFrameType="Logical"
+                                                Width="180"
+                                                Height="180" />
 
-                        <Popup x:Name="InteractionsPopup" x:Load="False">
+                        <Popup x:Name="InteractionsPopup"
+                               x:Load="False">
                             <Grid x:Name="Interactions" />
                         </Popup>
                     </Grid>

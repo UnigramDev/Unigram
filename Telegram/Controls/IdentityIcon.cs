@@ -6,6 +6,7 @@
 //
 using Telegram.Controls.Media;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -15,7 +16,7 @@ namespace Telegram.Controls
 {
     public class IdentityIcon : Control
     {
-        private CustomEmojiIcon Status;
+        private AnimatedImage Status;
         private FontIcon Icon;
 
         private bool _templateApplied;
@@ -89,7 +90,7 @@ namespace Telegram.Controls
             if (clientService.IsPremiumAvailable && user.EmojiStatus != null && (!chatList || user.Id != clientService.Options.MyId))
             {
                 LoadObject(ref Status, nameof(Status));
-                Status.SetCustomEmoji(clientService, user.EmojiStatus.CustomEmojiId);
+                Status.Source = new CustomEmojiFileSource(clientService, user.EmojiStatus.CustomEmojiId);
 
                 UnloadObject(ref Icon);
             }
@@ -125,7 +126,7 @@ namespace Telegram.Controls
             if (icon.CustomEmojiId != 0)
             {
                 LoadObject(ref Status, nameof(Status));
-                Status.SetCustomEmoji(clientService, icon.CustomEmojiId);
+                Status.Source = new CustomEmojiFileSource(clientService, icon.CustomEmojiId);
 
                 UnloadObject(ref Icon);
             }

@@ -38,15 +38,17 @@
                  PreventKeyboardDisplayOnProgrammaticFocus="True"
                  VerticalAlignment="Center" />
 
-        <controls:LottieView x:Name="Placeholder"
-                             x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
-                             Source="ms-appx:///Assets/Animations/DownloadsEmpty.tgs"
-                             IsLoopingEnabled="True"
-                             IsCachingEnabled="False"
-                             Width="140"
-                             Height="140"
-                             Margin="0,24,0,8"
-                             Grid.Row="1" />
+        <controls:AnimatedImage x:Name="Placeholder"
+                                x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
+                                Source="ms-appx:///Assets/Animations/DownloadsEmpty.tgs"
+                                IsCachingEnabled="False"
+                                AutoPlay="True"
+                                FrameSize="140,140"
+                                DecodeFrameType="Logical"
+                                Width="140"
+                                Height="140"
+                                Margin="0,24,0,8"
+                                Grid.Row="1" />
 
 
         <ListView ItemsSource="{x:Bind ViewModel.Items}"

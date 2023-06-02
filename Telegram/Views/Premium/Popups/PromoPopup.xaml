@@ -25,12 +25,14 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <controls:LottieView Source="ms-appx:///Assets/Animations/Premium.tgs"
-                                         IsLoopingEnabled="True"
-                                         IsCachingEnabled="False"
-                                         Width="120"
-                                         Height="120"
-                                         Margin="10,26,10,10" />
+                    <controls:AnimatedImage Source="ms-appx:///Assets/Animations/Premium.tgs"
+                                            IsCachingEnabled="False"
+                                            AutoPlay="True"
+                                            FrameSize="120,120"
+                                            DecodeFrameType="Logical"
+                                            Width="120"
+                                            Height="120"
+                                            Margin="10,26,10,10" />
                     <TextBlock common:TextBlockHelper.Markdown="{x:Bind ConvertTitle(ViewModel.IsPremium, x:False), Mode=OneWay}"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
                                TextAlignment="Center"
@@ -99,7 +101,7 @@
         </ListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                    ScrollingHost="{x:Bind ScrollingHost}"/>
+                                    ScrollingHost="{x:Bind ScrollingHost}" />
 
         <Grid x:Name="PurchasePanel"
               x:Load="{x:Bind ViewModel.CanPurchase, Mode=OneWay}"

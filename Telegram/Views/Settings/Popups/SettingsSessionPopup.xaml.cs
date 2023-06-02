@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -13,11 +12,9 @@ using Telegram.Controls.Cells;
 using Telegram.Converters;
 using Telegram.Streams;
 using Telegram.Td.Api;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Settings.Popups
 {
@@ -33,10 +30,10 @@ namespace Telegram.Views.Settings.Popups
 
             if (icon.Animation != null)
             {
-                Icon.ColorReplacements = new Dictionary<int, int> { { 0x000000, icon.Backgroud.ToValue() } };
-                Icon.FrameSize = new Size(50, 50);
-                Icon.DecodeFrameType = DecodePixelType.Logical;
-                Icon.Source = new LocalFileSource($"ms-appx:///Assets/Animations/Device{icon.Animation}.json");
+                Icon.Source = new LocalFileSource($"ms-appx:///Assets/Animations/Device{icon.Animation}.json")
+                {
+                    ColorReplacements = new Dictionary<int, int> { { 0x000000, icon.Backgroud.ToValue() } }
+                };
             }
             else
             {

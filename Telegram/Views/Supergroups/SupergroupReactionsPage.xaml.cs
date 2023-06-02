@@ -4,12 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Supergroups;
-using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -36,35 +34,18 @@ namespace Telegram.Views.Supergroups
             var element = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
             var reaction = args.Item as SupergroupReactionOption;
 
-            var player = element.FindName("Player") as LottieView;
-            if (player != null)
+            var animated = element.FindName("Player") as AnimatedImage;
+            if (animated != null)
             {
-                player.FrameSize = new Size(48, 48);
-
                 var file = reaction.Reaction.CenterAnimation.StickerValue;
+                animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
+
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    player.Source = new LocalFileSource(file);
                 }
                 else
                 {
-                    player.Source = null;
-
-                    UpdateManager.Subscribe(player, ViewModel.ClientService, file, UpdateFile, true);
-
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        ViewModel.ClientService.DownloadFile(file.Id, 16);
-                    }
                 }
-            }
-        }
-
-        private void UpdateFile(object target, File file)
-        {
-            if (target is LottieView player && player.IsLoaded)
-            {
-                player.Source = new LocalFileSource(file);
             }
         }
 
@@ -72,7 +53,7 @@ namespace Telegram.Views.Supergroups
         {
             if (sender is FrameworkElement element)
             {
-                var player = element.FindName("Player") as LottieView;
+                var player = element.FindName("Player") as AnimatedImage;
                 player?.Play();
             }
         }

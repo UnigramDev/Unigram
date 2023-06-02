@@ -17,6 +17,7 @@ namespace winrt::Telegram::Native::implementation
     struct PixelBuffer : PixelBufferT<PixelBuffer, IBufferByteAccess>
     {
         PixelBuffer(WriteableBitmap bitmap);
+        ~PixelBuffer();
 
         uint32_t Capacity();
         uint32_t Length();

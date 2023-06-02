@@ -716,6 +716,8 @@ namespace Telegram.Controls
         }
 
         #endregion
+
+        public int LoopCount => IsLoopingEnabled ? 0 : 1;
     }
 
     public abstract class IndividualAnimatedControl : AnimatedControl

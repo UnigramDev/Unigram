@@ -17,7 +17,7 @@ namespace Telegram.Views.Premium.Popups
         {
             InitializeComponent();
 
-            Presenter.UpdateFature(clientService, new[] { sticker });
+            Presenter.UpdateFeature(clientService, new[] { sticker });
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

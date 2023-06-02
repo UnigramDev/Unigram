@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls.Media;
-using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
@@ -18,7 +17,6 @@ using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
@@ -37,9 +35,6 @@ namespace Telegram.Controls.Drawers
 
         private readonly AnimatedListHandler _toolbarHandler;
 
-        private readonly Dictionary<string, DataTemplate> _typeToTemplateMapping = new Dictionary<string, DataTemplate>();
-        private readonly Dictionary<string, HashSet<SelectorItem>> _typeToItemHashSetMapping = new Dictionary<string, HashSet<SelectorItem>>();
-
         private bool _isActive;
 
         public StickerDrawer()
@@ -56,14 +51,6 @@ namespace Telegram.Controls.Drawers
             _zoomer.Closing = _handler.ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
             _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
-
-            _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("VideoItemTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("ItemTemplate", new HashSet<SelectorItem>());
-
-            _typeToTemplateMapping.Add("AnimatedItemTemplate", Resources["AnimatedItemTemplate"] as DataTemplate);
-            _typeToTemplateMapping.Add("VideoItemTemplate", Resources["VideoItemTemplate"] as DataTemplate);
-            _typeToTemplateMapping.Add("ItemTemplate", Resources["ItemTemplate"] as DataTemplate);
 
             //_toolbarHandler = new AnimatedStickerHandler<StickerSetViewModel>(Toolbar);
 
@@ -98,12 +85,14 @@ namespace Telegram.Controls.Drawers
             _handler.ThrottleVisibleItems();
             _toolbarHandler.ThrottleVisibleItems();
 
-            //SearchField.SetType(ViewModel.ClientService, type);
+            SearchField.SetType(ViewModel.ClientService, type);
             ViewModel.Update(chat);
         }
 
         public void Deactivate()
         {
+            _stickerIdToContent.Clear();
+
             _isActive = false;
             _handler.UnloadItems();
             _toolbarHandler.UnloadItems();
@@ -127,56 +116,6 @@ namespace Telegram.Controls.Drawers
         {
             _handler.UnloadVisibleItems();
             _toolbarHandler.UnloadVisibleItems();
-        }
-
-        private async void UpdateSticker(object target, File file)
-        {
-            var content = target as Grid;
-            if (content == null)
-            {
-                return;
-            }
-
-            if (content.Children[0] is Border border && border.Child is Image photo)
-            {
-                photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
-                ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
-            }
-            else if (content.Children[0] is LottieView lottie)
-            {
-                lottie.Source = new LocalFileSource(file);
-                _handler.ThrottleVisibleItems();
-            }
-            else if (content.Children[0] is AnimationView video)
-            {
-                video.Source = new LocalFileSource(file);
-                _handler.ThrottleVisibleItems();
-            }
-        }
-
-        private async void UpdateStickerSet(object target, File file)
-        {
-            var content = target as Grid;
-            if (content == null)
-            {
-                return;
-            }
-
-            if (content.Children[0] is Border border && border.Child is Image photo)
-            {
-                photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
-                ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
-            }
-            else if (content.Children[0] is LottieView lottie)
-            {
-                lottie.Source = new LocalFileSource(file);
-                _toolbarHandler.ThrottleVisibleItems();
-            }
-            else if (content.Children[0] is AnimationView video)
-            {
-                video.Source = new LocalFileSource(file);
-                _toolbarHandler.ThrottleVisibleItems();
-            }
         }
 
         private void Stickers_ItemClick(object sender, ItemClickEventArgs e)
@@ -273,13 +212,10 @@ namespace Telegram.Controls.Drawers
 
                     foreach (var sticker in group.Stickers)
                     {
-                        var container = List?.ContainerFromItem(sticker) as SelectorItem;
-                        if (container == null)
+                        if (_stickerIdToContent.TryGetValue(sticker, out Grid content))
                         {
-                            continue;
+                            UpdateContainerContent(sticker, content);
                         }
-
-                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, UpdateSticker);
                     }
                 }
             }
@@ -287,65 +223,21 @@ namespace Telegram.Controls.Drawers
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
-            var typeName = args.Item is StickerViewModel sticker ? sticker.Format switch
-            {
-                StickerFormatTgs => "AnimatedItemTemplate",
-                StickerFormatWebm => "VideoItemTemplate",
-                _ => "ItemTemplate"
-            } : "ItemTemplate";
-            var relevantHashSet = _typeToItemHashSetMapping[typeName];
-
-            // args.ItemContainer is used to indicate whether the ListView is proposing an
-            // ItemContainer (ListViewItem) to use. If args.Itemcontainer != null, then there was a
-            // recycled ItemContainer available to be reused.
-            if (args.ItemContainer != null)
-            {
-                if (args.ItemContainer.Tag.Equals(typeName))
-                {
-                    // Suggestion matches what we want, so remove it from the recycle queue
-                    relevantHashSet.Remove(args.ItemContainer);
-                }
-                else
-                {
-                    // The ItemContainer's datatemplate does not match the needed
-                    // datatemplate.
-                    // Don't remove it from the recycle queue, since XAML will resuggest it later
-                    args.ItemContainer = null;
-                }
-            }
-
-            // If there was no suggested container or XAML's suggestion was a miss, pick one up from the recycle queue
-            // or create a new one
             if (args.ItemContainer == null)
             {
-                // See if we can fetch from the correct list.
-                if (relevantHashSet.Count > 0)
-                {
-                    // Unfortunately have to resort to LINQ here. There's no efficient way of getting an arbitrary
-                    // item from a hashset without knowing the item. Queue isn't usable for this scenario
-                    // because you can't remove a specific element (which is needed in the block above).
-                    args.ItemContainer = relevantHashSet.First();
-                    relevantHashSet.Remove(args.ItemContainer);
-                }
-                else
-                {
-                    // There aren't any (recycled) ItemContainers available. So a new one
-                    // needs to be created.
-                    var item = new GridViewItem();
-                    item.ContentTemplate = _typeToTemplateMapping[typeName];
-                    item.Style = sender.ItemContainerStyle;
-                    item.Tag = typeName;
-                    item.ContextRequested += OnContextRequested;
-                    args.ItemContainer = item;
+                var item = new GridViewItem();
+                item.ContentTemplate = sender.ItemTemplate;
+                item.Style = sender.ItemContainerStyle;
+                item.ContextRequested += OnContextRequested;
+                args.ItemContainer = item;
 
-                    _zoomer.ElementPrepared(args.ItemContainer);
-                }
+                _zoomer.ElementPrepared(args.ItemContainer);
             }
 
-            // Indicate to XAML that we picked a container for it
             args.IsContainerPrepared = true;
-
         }
+
+        private readonly Dictionary<StickerViewModel, Grid> _stickerIdToContent = new();
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
@@ -354,22 +246,15 @@ namespace Telegram.Controls.Drawers
 
             if (args.InRecycleQueue || sticker == null)
             {
-                if (sticker != null)
-                {
-                    var tag = args.ItemContainer.Tag as string;
-                    var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
-
-                    ClearContainerContent(content);
-                }
-
                 return;
             }
 
-            UpdateContainerContent(sticker, content, UpdateSticker, args);
+            _stickerIdToContent[sticker] = content;
+            UpdateContainerContent(sticker, content);
             args.Handled = true;
         }
 
-        private async void UpdateContainerContent(Sticker sticker, Grid content, UpdateHandler<File> handler, ContainerContentChangingEventArgs args = null)
+        private void UpdateContainerContent(Sticker sticker, Grid content)
         {
             var file = sticker?.StickerValue;
             if (file == null)
@@ -391,50 +276,16 @@ namespace Telegram.Controls.Drawers
                 }
             }
 
-            if (content.Tag is not null
-                || content.Tag is Sticker prev && prev?.StickerValue.Id == file.Id)
+            var animation = content.Children[0] as AnimatedImage;
+            animation.Source = new DelayedFileSource(ViewModel.ClientService, file);
+
+            if (file.Local.IsDownloadingCompleted)
             {
-                return;
-            }
-
-            if ((args == null || args.Phase == 2) && file.Local.IsDownloadingCompleted)
-            {
-                UpdateManager.Unsubscribe(content);
-
-                if (content.Children[0] is Border border && border.Child is Image photo)
-                {
-                    photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
-                    ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
-                }
-                else if (content.Children[0] is LottieView lottie)
-                {
-                    lottie.Source = new LocalFileSource(file);
-                }
-                else if (content.Children[0] is AnimationView video)
-                {
-                    video.Source = new LocalFileSource(file);
-                }
-
-                content.Tag = sticker;
             }
             else
             {
-                ClearContainerContent(content);
-
                 CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
-
-                UpdateManager.Subscribe(content, ViewModel.ClientService, file, handler, true);
-
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive /*&& args.Phase == 0*/)
-                {
-                    ViewModel.ClientService.DownloadFile(file.Id, 16);
-                }
-            }
-
-            if (args?.Phase == 0)
-            {
-                args.RegisterUpdateCallback(2, OnContainerContentChanging);
             }
         }
 
@@ -477,29 +328,10 @@ namespace Telegram.Controls.Drawers
                 var cover = sticker.GetThumbnail();
                 if (cover == null)
                 {
-                    ClearContainerContent(content);
                     return;
                 }
 
-                UpdateContainerContent(cover, content, UpdateStickerSet);
-            }
-        }
-
-        private void ClearContainerContent(Grid content)
-        {
-            content.Tag = null;
-
-            if (content.Children[0] is Border border && border.Child is Image photo)
-            {
-                photo.Source = null;
-            }
-            else if (content.Children[0] is LottieView lottie)
-            {
-                lottie.Source = null;
-            }
-            else if (content.Children[0] is AnimationView video)
-            {
-                video.Source = null;
+                UpdateContainerContent(cover, content);
             }
         }
 
@@ -522,6 +354,16 @@ namespace Telegram.Controls.Drawers
             }
 
             ItemContextRequested?.Invoke(sender, new ItemContextRequestedEventArgs<Sticker>(sticker, args));
+        }
+
+        private void Player_Ready(object sender, EventArgs e)
+        {
+            _handler.ThrottleVisibleItems();
+        }
+
+        private void Toolbar_Ready(object sender, EventArgs e)
+        {
+            _toolbarHandler.ThrottleVisibleItems();
         }
     }
 }

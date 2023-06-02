@@ -85,17 +85,7 @@ namespace Telegram.Controls
                 {
                     image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                 }
-                else if (content.Children[0] is LottieView stickerView)
-                {
-                    stickerView.Source = new LocalFileSource(file);
-                }
-                else if (content.Children[0] is AnimationView animationView)
-                {
-                    animationView.Source = new LocalFileSource(file);
-                }
             }
-
-            _handler.ThrottleVisibleItems();
         }
 
         private void UpdateThumbnail(object target, File file)
@@ -110,10 +100,6 @@ namespace Telegram.Controls
                 {
                     image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                 }
-            }
-            else if (target is AnimationView animationView)
-            {
-                animationView.Thumbnail = new BitmapImage(UriEx.ToLocal(file.Local.Path));
             }
         }
 
@@ -233,35 +219,12 @@ namespace Telegram.Controls
                         }
                     }
                 }
-                else if (result is InlineQueryResultSticker sticker)
-                {
-                    var file = sticker.Sticker.StickerValue;
-                    if (file == null)
-                    {
-                        return;
-                    }
-
-                    if (file.Local.IsDownloadingCompleted)
-                    {
-                        image.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
-                    }
-                    else
-                    {
-                        image.Source = null;
-                        UpdateManager.Subscribe(content, ViewModel.ClientService, file, UpdateThumbnail, true);
-
-                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                        {
-                            ViewModel.ClientService.DownloadFile(file.Id, 1);
-                        }
-                    }
-                }
             }
             else if (result is InlineQueryResultSticker sticker)
             {
-                if (content.Children[0] is LottieView stickerView)
+                if (content.Children[0] is AnimatedImage animated)
                 {
-                    stickerView.Tag = args.Item;
+                    animated.Tag = args.Item;
 
                     var file = sticker.Sticker.StickerValue;
                     if (file == null)
@@ -269,50 +232,12 @@ namespace Telegram.Controls
                         return;
                     }
 
-                    if (file.Local.IsDownloadingCompleted)
-                    {
-                        stickerView.Source = new LocalFileSource(file);
-                    }
-                    else
-                    {
-                        stickerView.Source = null;
-                        UpdateManager.Subscribe(content, ViewModel.ClientService, file, UpdateFile, true);
-
-                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                        {
-                            ViewModel.ClientService.DownloadFile(file.Id, 1);
-                        }
-                    }
-                }
-                else if (content.Children[0] is AnimationView animationView)
-                {
-                    animationView.Tag = args.Item;
-
-                    var file = sticker.Sticker.StickerValue;
-                    if (file == null)
-                    {
-                        return;
-                    }
-
-                    if (file.Local.IsDownloadingCompleted)
-                    {
-                        animationView.Source = new LocalFileSource(file);
-                    }
-                    else
-                    {
-                        animationView.Source = null;
-                        UpdateManager.Subscribe(content, ViewModel.ClientService, file, UpdateFile, true);
-
-                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                        {
-                            ViewModel.ClientService.DownloadFile(file.Id, 1);
-                        }
-                    }
+                    animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
                 }
             }
-            else if (content.Children[0] is AnimationView animationView && result is InlineQueryResultAnimation animation)
+            else if (content.Children[0] is AnimatedImage animated && result is InlineQueryResultAnimation animation)
             {
-                animationView.Tag = args.Item;
+                animated.Tag = args.Item;
 
                 var file = animation.Animation.AnimationValue;
                 if (file == null)
@@ -320,39 +245,7 @@ namespace Telegram.Controls
                     return;
                 }
 
-                if (file.Local.IsDownloadingCompleted)
-                {
-                    animationView.Source = new LocalFileSource(file);
-                }
-                else
-                {
-                    animationView.Source = null;
-                    UpdateManager.Subscribe(content, ViewModel.ClientService, file, UpdateFile, true);
-
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-                    {
-                        ViewModel.ClientService.DownloadFile(file.Id, 1);
-                    }
-
-                    var thumbnail = animation.Animation.Thumbnail?.File;
-                    if (thumbnail != null)
-                    {
-                        if (thumbnail.Local.IsDownloadingCompleted)
-                        {
-                            animationView.Thumbnail = new BitmapImage(UriEx.ToLocal(thumbnail.Local.Path));
-                        }
-                        else
-                        {
-                            animationView.Thumbnail = null;
-                            UpdateManager.Subscribe(animationView, ViewModel.ClientService, thumbnail, UpdateThumbnail, true);
-
-                            if (thumbnail.Local.CanBeDownloaded && !thumbnail.Local.IsDownloadingActive)
-                            {
-                                ViewModel.ClientService.DownloadFile(thumbnail.Id, 1);
-                            }
-                        }
-                    }
-                }
+                animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
             }
             else if (content.Children[0] is Grid presenter)
             {
@@ -481,26 +374,24 @@ namespace Telegram.Controls
             await sender.UpdateLayoutAsync();
             FluidGridView.Update(ScrollingHost);
         }
+
+        private void Player_Ready(object sender, EventArgs e)
+        {
+            _handler.ThrottleVisibleItems();
+        }
     }
 
     public class InlineQueryTemplateSelector : DataTemplateSelector
     {
-        public DataTemplate AnimatedStickerTemplate { get; set; }
-        public DataTemplate VideoStickerTemplate { get; set; }
         public DataTemplate StickerTemplate { get; set; }
         public DataTemplate AnimationTemplate { get; set; }
         public DataTemplate MediaTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            if (item is InlineQueryResultSticker sticker)
+            if (item is InlineQueryResultSticker)
             {
-                return sticker.Sticker.Format switch
-                {
-                    StickerFormatTgs => AnimatedStickerTemplate,
-                    StickerFormatWebm => VideoStickerTemplate,
-                    _ => StickerTemplate
-                };
+                return StickerTemplate;
             }
             else if (item is InlineQueryResultAnimation)
             {

@@ -69,16 +69,15 @@
                                VerticalAlignment="Center"
                                Margin="0,0,0,2" />
 
-                    <controls:LottieView x:Name="PurchaseIcon"
-                                         Source="ms-appx:///Assets/Animations/Unlock.json"
-                                         Width="26"
-                                         Height="26"
-                                         IsLoopingEnabled="True"
-                                         IsCachingEnabled="False"
-                                         FrameSize="26,26"
-                                         DecodeFrameType="Logical"
-                                         Margin="8,0,-4,0"
-                                         Grid.Column="1" />
+                    <controls:AnimatedImage x:Name="PurchaseIcon"
+                                            Source="ms-appx:///Assets/Animations/Unlock.json"
+                                            Width="26"
+                                            Height="26"
+                                            IsCachingEnabled="False"
+                                            FrameSize="26,26"
+                                            DecodeFrameType="Logical"
+                                            Margin="8,0,-4,0"
+                                            Grid.Column="1" />
                 </Grid>
             </controls:BadgeButton>
         </Grid>

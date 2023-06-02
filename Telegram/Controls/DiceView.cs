@@ -609,5 +609,7 @@ namespace Telegram.Controls
         public event EventHandler<int> IndexChanged;
 
         public event EventHandler FirstFrameRendered;
+
+        public int LoopCount => IsLoopingEnabled ? 0 : 1;
     }
 }

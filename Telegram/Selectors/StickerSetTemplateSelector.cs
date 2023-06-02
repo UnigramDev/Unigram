@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -20,8 +19,6 @@ namespace Telegram.Selectors
         public DataTemplate FavedTemplate { get; set; }
         public DataTemplate PremiumTemplate { get; set; }
         public DataTemplate ItemTemplate { get; set; }
-        public DataTemplate AnimatedTemplate { get; set; }
-        public DataTemplate VideoTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
@@ -44,13 +41,7 @@ namespace Telegram.Selectors
                     return PremiumTemplate ?? ItemTemplate;
                 }
 
-                return stickerSet.StickerFormat switch
-                {
-                    StickerFormatWebp => ItemTemplate,
-                    StickerFormatTgs => AnimatedTemplate ?? ItemTemplate,
-                    StickerFormatWebm => VideoTemplate ?? ItemTemplate,
-                    _ => ItemTemplate
-                };
+                return ItemTemplate;
             }
             else if (item is AnimationsCollection animations)
             {

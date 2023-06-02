@@ -154,7 +154,7 @@ namespace Telegram.Controls.Messages
             _presenterId = value.StickerValue.Id;
 
             Icon ??= GetTemplateChild(nameof(Icon)) as CustomEmojiIcon;
-            Icon.SetSticker(message.ClientService, value);
+            Icon.Source = new DelayedFileSource(message.ClientService, value.StickerValue);
         }
 
         private void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)
@@ -317,28 +317,28 @@ namespace Telegram.Controls.Messages
                     var around = await _message.ClientService.DownloadFileAsync(stickers.StickersValue[next].StickerValue, 32);
                     if (around.Local.IsDownloadingCompleted && IsLoaded && _sticker?.FullType is StickerFullTypeCustomEmoji customEmoji)
                     {
-                        Icon?.SetCustomEmoji(_message.ClientService, customEmoji.CustomEmojiId);
-                        Icon?.Play();
+                        if (Icon != null)
+                        {
+                            Icon.Source = new CustomEmojiFileSource(_message.ClientService, customEmoji.CustomEmojiId);
+                            Icon.Play();
+                        }
 
                         var presenter = Presenter;
                         var popup = Overlay;
 
                         var dispatcher = DispatcherQueue.GetForCurrentThread();
 
-                        var aroundView = new LottieView();
+                        var aroundView = new AnimatedImage();
                         aroundView.Width = 32 * 3;
                         aroundView.Height = 32 * 3;
-                        aroundView.IsLoopingEnabled = false;
+                        aroundView.LoopCount = 1;
                         aroundView.FrameSize = new Size(32 * 3, 32 * 3);
                         aroundView.DecodeFrameType = DecodePixelType.Logical;
+                        aroundView.AutoPlay = true;
                         aroundView.Source = new LocalFileSource(around);
-                        aroundView.PositionChanged += (s, args) =>
+                        aroundView.LoopCompleted += (s, args) =>
                         {
-                            if (args == 1)
-                            {
-                                dispatcher.TryEnqueue(Continue2);
-                                //dispatcher.TryEnqueue(() => popup.IsOpen = false);
-                            }
+                            dispatcher.TryEnqueue(Continue2);
                         };
 
                         var root = new Grid();
@@ -376,40 +376,34 @@ namespace Telegram.Controls.Messages
 
                 var dispatcher = DispatcherQueue.GetForCurrentThread();
 
-                var centerView = new LottieView();
+                var centerView = new AnimatedImage();
                 centerView.Width = 32;
                 centerView.Height = 32;
-                centerView.IsLoopingEnabled = false;
+                centerView.LoopCount = 1;
                 centerView.FrameSize = new Size(32, 32);
                 centerView.DecodeFrameType = DecodePixelType.Logical;
+                centerView.AutoPlay = true;
                 centerView.Source = new LocalFileSource(center);
-                centerView.FirstFrameRendered += (s, args) =>
+                centerView.Ready += (s, args) =>
                 {
                     dispatcher.TryEnqueue(Start);
                 };
-                centerView.PositionChanged += (s, args) =>
+                centerView.LoopCompleted += (s, args) =>
                 {
-                    if (args == 1)
-                    {
-                        dispatcher.TryEnqueue(Continue1);
-                        //dispatcher.TryEnqueue(() => popup.IsOpen = false);
-                    }
+                    dispatcher.TryEnqueue(Continue1);
                 };
 
-                var aroundView = new LottieView();
+                var aroundView = new AnimatedImage();
                 aroundView.Width = 32 * 3;
                 aroundView.Height = 32 * 3;
-                aroundView.IsLoopingEnabled = false;
+                aroundView.LoopCount = 1;
                 aroundView.FrameSize = new Size(32 * 3, 32 * 3);
                 aroundView.DecodeFrameType = DecodePixelType.Logical;
+                aroundView.AutoPlay = true;
                 aroundView.Source = new LocalFileSource(around);
-                aroundView.PositionChanged += (s, args) =>
+                aroundView.LoopCompleted += (s, args) =>
                 {
-                    if (args == 1)
-                    {
-                        dispatcher.TryEnqueue(Continue2);
-                        //dispatcher.TryEnqueue(() => popup.IsOpen = false);
-                    }
+                    dispatcher.TryEnqueue(Continue2);
                 };
 
                 var root = new Grid();

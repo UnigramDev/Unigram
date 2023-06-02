@@ -22,11 +22,14 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <controls:LottieView Source="ms-appx:///Assets/Animations/StartLiveStream.tgs"
-                             IsCachingEnabled="False"
-                             Width="140"
-                             Height="140"
-                             Margin="0,0,0,12" />
+        <controls:AnimatedImage Source="ms-appx:///Assets/Animations/StartLiveStream.tgs"
+                                IsCachingEnabled="False"
+                                AutoPlay="True"
+                                FrameSize="140,140"
+                                DecodeFrameType="Logical"
+                                Width="140"
+                                Height="140"
+                                Margin="0,0,0,12" />
 
         <TextBlock Text="To stream video with another app, enter these Server URL and Stream Key in your streaming app."
                    Style="{StaticResource BodyTextBlockStyle}"

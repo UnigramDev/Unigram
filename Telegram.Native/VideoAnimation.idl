@@ -9,7 +9,7 @@ namespace Telegram.Native
 
 		Int64 Offset{ get; };
 
-		Int32 Id{ get; };
+		Int64 Id{ get; };
 	};
 
 	[default_interface]

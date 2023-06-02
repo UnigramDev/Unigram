@@ -202,12 +202,15 @@
     <Compile Include="Collections\Handlers\ChatDiffHandler.cs" />
     <Compile Include="Common\ListViewExtensions.cs" />
     <Compile Include="Common\SystemTray.cs" />
+    <Compile Include="Controls\AnimatedImage.cs" />
     <Compile Include="Controls\Chats\ChatHistoryView.cs" />
     <Compile Include="Controls\Chats\ChatHistoryViewItem.cs" />
     <Compile Include="Controls\ClrGrid.cs" />
     <Compile Include="Services\VoipGroupService.cs" />
     <Compile Include="Services\VoipService.cs" />
     <Compile Include="Streams\AnimatedImageSource.cs" />
+    <Compile Include="Streams\CustomEmojiFileSource.cs" />
+    <Compile Include="Streams\DelayedFileSource.cs" />
     <Compile Include="Streams\LocalFileSource.cs" />
     <Compile Include="Streams\RemoteFileSource.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
@@ -293,13 +296,11 @@
     <Compile Include="Common\ZoomableListHandler.cs" />
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\AnimatedIconButton.cs" />
-    <Compile Include="Controls\AnimatedImage.cs" />
     <Compile Include="Controls\AnimatedControl.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
     <Compile Include="Controls\AnimatedGlyphToggleButton.cs" />
     <Compile Include="Controls\AnimatedIconToggleButton.cs" />
     <Compile Include="Controls\AnimatedTextBlock.cs" />
-    <Compile Include="Controls\AnimationView.cs" />
     <Compile Include="Controls\BackButton.cs" />
     <Compile Include="Controls\CallHangupButton.cs" />
     <Compile Include="Controls\CallToggleButton.cs" />
@@ -1426,17 +1427,10 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <Content Include="Assets\Emoji\apple.ttf" />
-    <Content Include="Assets\Animations\SendingGrams.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupDone.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupHint.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupIntro.tgs" />
     <Content Include="Assets\Animations\TwoFactorSetupMail.tgs" />
-    <Content Include="Assets\Animations\TwoFactorSetupMonkeyClose.tgs" />
-    <Content Include="Assets\Animations\TwoFactorSetupMonkeyIdle.tgs" />
-    <Content Include="Assets\Animations\TwoFactorSetupMonkeyPeek.tgs" />
-    <Content Include="Assets\Animations\TwoFactorSetupMonkeyTracking.tgs" />
-    <Content Include="Assets\Animations\TwoFactorSetupMonkeyCloseAndPeek.tgs" />
-    <Content Include="Assets\Animations\TwoFactorSetupMonkeyCloseAndPeekToIdle.tgs" />
     <Content Include="Assets\Animations\Compass.tgs" />
     <Content Include="Assets\Animations\ChatListFolders.tgs" />
     <Content Include="Assets\Fonts\Telegram.ttf" />
@@ -1471,6 +1465,7 @@
     <Content Include="Assets\Animations\AutoDelete.tgs" />
     <Content Include="Assets\Animations\Premium.tgs" />
     <Content Include="Assets\Animations\ShareFolder.tgs" />
+    <Content Include="Assets\Animations\AuthorizationStateWaitPassword.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -2671,6 +2666,11 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="PolySharp">
+      <Version>1.13.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Rg.DiffUtils">
       <Version>1.0.0</Version>

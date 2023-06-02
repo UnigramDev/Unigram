@@ -12,6 +12,7 @@ using Telegram.Controls.Gallery;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
+using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -162,7 +163,7 @@ namespace Telegram.Controls
             if (ViewModel.Topic != null)
             {
                 FindName(nameof(Icon));
-                Icon.SetCustomEmoji(ViewModel.ClientService, ViewModel.Topic.Icon.CustomEmojiId);
+                Icon.Source = new CustomEmojiFileSource(ViewModel.ClientService, ViewModel.Topic.Icon.CustomEmojiId);
                 Photo.Clear();
             }
             else

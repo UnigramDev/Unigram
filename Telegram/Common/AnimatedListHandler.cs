@@ -241,10 +241,7 @@ namespace Telegram.Common
                 {
                     if (IsDisabledByPolicy)
                     {
-                        if (item.Value is AnimatedImage image)
-                        {
-                            image.Display();
-                        }
+                        // Nothing
                     }
                     else
                     {

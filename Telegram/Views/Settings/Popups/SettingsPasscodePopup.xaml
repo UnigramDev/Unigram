@@ -13,11 +13,14 @@
                        SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <StackPanel>
-        <controls:LottieView Source="ms-appx:///Assets/Animations/Passcode.tgs"
-                             IsCachingEnabled="False"
-                             Width="140"
-                             Height="140"
-                             Margin="0,0,0,12" />
+        <controls:AnimatedImage Source="ms-appx:///Assets/Animations/Passcode.tgs"
+                                IsCachingEnabled="False"
+                                AutoPlay="True"
+                                FrameSize="140,140"
+                                DecodeFrameType="Logical"
+                                Width="140"
+                                Height="140"
+                                Margin="0,0,0,12" />
 
         <TextBlock Text="{CustomResource ChangePasscodeInfo}"
                    Style="{StaticResource BodyTextBlockStyle}" />

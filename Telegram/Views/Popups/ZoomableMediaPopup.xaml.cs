@@ -13,6 +13,7 @@ using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Popups
 {
@@ -77,8 +78,8 @@ namespace Telegram.Views.Popups
             _lastItem = sticker;
 
             Title.Text = sticker.Emoji;
-            Aspect.MaxWidth = 200;
-            Aspect.MaxHeight = 200;
+            Aspect.MaxWidth = 180;
+            Aspect.MaxHeight = 180;
             Aspect.Constraint = sticker;
 
             if (sticker.Thumbnail != null)
@@ -138,13 +139,27 @@ namespace Telegram.Views.Popups
                 {
                     Thumbnail.Opacity = 0;
                     Texture.Source = null;
-                    Container.Child = new LottieView { Source = new LocalFileSource(file) };
+                    Container.Child = new AnimatedImage
+                    {
+                        AutoPlay = true,
+                        FrameSize = new Size(180, 180),
+                        DecodeFrameType = DecodePixelType.Logical,
+                        IsCachingEnabled = true,
+                        Source = new LocalFileSource(file)
+                    };
                 }
                 else if (sticker.Format is StickerFormatWebm)
                 {
                     Thumbnail.Opacity = 0;
                     Texture.Source = null;
-                    Container.Child = new AnimationView { Source = new LocalFileSource(file) };
+                    Container.Child = new AnimatedImage
+                    {
+                        AutoPlay = true,
+                        FrameSize = new Size(0, 0),
+                        DecodeFrameType = DecodePixelType.Physical,
+                        IsCachingEnabled = false,
+                        Source = new LocalFileSource(file)
+                    };
                 }
                 else
                 {
@@ -176,7 +191,14 @@ namespace Telegram.Views.Popups
 
                 Thumbnail.Opacity = 0;
                 Texture.Source = null;
-                Container.Child = new AnimationView { Source = new LocalFileSource(file) };
+                Container.Child = new AnimatedImage
+                {
+                    AutoPlay = true,
+                    FrameSize = new Size(0, 0),
+                    DecodeFrameType = DecodePixelType.Physical,
+                    IsCachingEnabled = false,
+                    Source = new LocalFileSource(file)
+                };
             }
             else
             {

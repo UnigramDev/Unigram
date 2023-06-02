@@ -18,6 +18,12 @@ namespace winrt::Telegram::Native::implementation
         m_bitmapHeight = bitmap.PixelHeight();
     }
 
+    PixelBuffer::~PixelBuffer()
+    {
+        //m_pixels = nullptr;
+        m_bitmap = nullptr;
+    }
+
     uint32_t PixelBuffer::Capacity()
     {
         return m_capacity;

@@ -82,10 +82,8 @@ namespace Telegram.Controls.Drawers
             _handler = new AnimatedListHandler(List, AnimatedListType.Emoji);
             _toolbarHandler = new AnimatedListHandler(Toolbar2, AnimatedListType.Emoji);
 
-            _typeToItemHashSetMapping["EmojiSkinTemplate"] = new HashSet<SelectorItem>();
-            _typeToItemHashSetMapping["EmojiTemplate"] = new HashSet<SelectorItem>();
-            _typeToItemHashSetMapping.Add("AnimatedItemTemplate", new HashSet<SelectorItem>());
-            _typeToItemHashSetMapping.Add("VideoItemTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("EmojiSkinTemplate", new HashSet<SelectorItem>());
+            _typeToItemHashSetMapping.Add("EmojiTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("ItemTemplate", new HashSet<SelectorItem>());
             _typeToItemHashSetMapping.Add("MoreTemplate", new HashSet<SelectorItem>());
 
@@ -318,7 +316,7 @@ namespace Telegram.Controls.Drawers
                                     continue;
                                 }
 
-                                UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, false, UpdateSticker);
+                                UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, false);
                             }
                         }
                     }
@@ -523,12 +521,7 @@ namespace Telegram.Controls.Drawers
             var typeName = args.Item is MoreStickerViewModel
                 ? "MoreTemplate"
                 : args.Item is StickerViewModel sticker
-                    ? sticker.Format switch
-                    {
-                        StickerFormatTgs => "AnimatedItemTemplate",
-                        StickerFormatWebm => "VideoItemTemplate",
-                        _ => "ItemTemplate"
-                    }
+                    ? "ItemTemplate"
                     : args.Item is EmojiSkinData ? "EmojiSkinTemplate" : "EmojiTemplate";
 
             var relevantHashSet = _typeToItemHashSetMapping[typeName];
@@ -614,7 +607,7 @@ namespace Telegram.Controls.Drawers
                             continue;
                         }
 
-                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, false, UpdateSticker);
+                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, false);
                     }
                 }
             }
@@ -622,47 +615,41 @@ namespace Telegram.Controls.Drawers
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.InRecycleQueue == true)
+            if (args.InRecycleQueue)
             {
                 // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
                 var tag = args.ItemContainer.Tag as string;
                 var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
+                return;
             }
 
             if (args.Item is StickerViewModel sticker)
             {
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
-
-                if (args.InRecycleQueue)
-                {
-                    ClearContainerContent(content);
-                    return;
-                }
-
                 if (content.Children[0] is TextBlock textBlock && sticker is MoreStickerViewModel more)
                 {
                     textBlock.Text = $"+{more.TotalCount}";
                 }
                 else
                 {
-                    UpdateContainerContent(sticker, content, false, UpdateSticker, args);
+                    UpdateContainerContent(sticker, content, false);
                 }
 
                 args.Handled = true;
             }
         }
 
-        private Color? GetTintColor(StickerFullType info)
+        private Color GetTintColor(StickerFullType info)
         {
             if (info is StickerFullTypeCustomEmoji customEmoji && customEmoji.NeedsRepainting)
             {
                 return Theme.Accent;
             }
 
-            return null;
+            return default;
         }
 
-        private async void UpdateContainerContent(Sticker sticker, Grid content, bool toolbar, UpdateHandler<File> handler, ContainerContentChangingEventArgs args = null)
+        private void UpdateContainerContent(Sticker sticker, Grid content, bool toolbar)
         {
             var file = sticker?.StickerValue;
             if (file == null)
@@ -676,6 +663,22 @@ namespace Telegram.Controls.Drawers
                 content.Height = 24;
             }
 
+            var animated = content.Children[0] as AnimatedImage;
+
+            using (animated.BeginBatchUpdate())
+            {
+                if (_mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.Chat)
+                {
+                    animated.FrameSize = new Size(24, 24);
+                    animated.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
+                }
+
+                animated.Source = new DelayedFileSource(ViewModel.ClientService, file)
+                {
+                    ReplacementColor = GetTintColor(sticker.FullType)
+                };
+            }
+
             //if (toolbar)
             //{
             //    content.Padding = new Thickness(4);
@@ -685,101 +688,13 @@ namespace Telegram.Controls.Drawers
             //    content.Padding = new Thickness(_mode == EmojiDrawerMode.Reactions ? 0 : 8);
             //}
 
-            if (content.Tag is not null
-                || content.Tag is Sticker prev && prev?.StickerValue.Id == file.Id)
-            {
-                return;
-            }
-
-            if (args != null && args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(2, OnContainerContentChanging);
-                return;
-            }
-
             if (file.Local.IsDownloadingCompleted)
             {
-                UpdateManager.Unsubscribe(content);
-
-                if (content.Children[0] is Border border && border.Child is Image photo)
-                {
-                    photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
-                    ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
-                }
-                else if (content.Children[0] is LottieView lottie)
-                {
-                    if (_mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.Chat)
-                    {
-                        lottie.FrameSize = new Windows.Foundation.Size(24, 24);
-                        lottie.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
-                    }
-
-                    lottie.TintColor = GetTintColor(sticker.FullType);
-                    lottie.Source = new LocalFileSource(file);
-                }
-                else if (content.Children[0] is AnimationView video)
-                {
-                    video.Source = new LocalFileSource(file);
-                }
-
-                content.Tag = sticker;
             }
             else
             {
-                ClearContainerContent(content);
-
                 CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
                 ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
-
-                UpdateManager.Subscribe(content, ViewModel.ClientService, file, handler, true);
-
-                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive /*&& args.Phase == 0*/)
-                {
-                    ViewModel.ClientService.DownloadFile(file.Id, 16);
-                }
-            }
-        }
-
-        private async void UpdateSticker(object target, File file)
-        {
-            var content = target as Grid;
-            if (content == null)
-            {
-                return;
-            }
-
-            if (content.Children[0] is Border border && border.Child is Image photo)
-            {
-                photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
-                ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
-            }
-            else if (content.Children[0] is LottieView lottie)
-            {
-                lottie.Source = new LocalFileSource(file);
-                _handler.ThrottleVisibleItems();
-            }
-            else if (content.Children[0] is AnimationView video)
-            {
-                video.Source = new LocalFileSource(file);
-                _handler.ThrottleVisibleItems();
-            }
-        }
-
-        private void ClearContainerContent(Grid content)
-        {
-            content.Tag = null;
-
-            if (content.Children[0] is Border border && border.Child is Image photo)
-            {
-                photo.Source = null;
-            }
-            else if (content.Children[0] is LottieView lottie)
-            {
-                lottie.Source = null;
-            }
-            else if (content.Children[0] is AnimationView video)
-            {
-                video.Source = null;
             }
         }
 
@@ -806,36 +721,10 @@ namespace Telegram.Controls.Drawers
                 var cover = sticker.GetThumbnail();
                 if (cover == null)
                 {
-                    ClearContainerContent(content);
                     return;
                 }
 
-                UpdateContainerContent(cover, content, true, UpdateStickerSet);
-            }
-        }
-
-        private async void UpdateStickerSet(object target, File file)
-        {
-            var content = target as Grid;
-            if (content == null)
-            {
-                return;
-            }
-
-            if (content.Children[0] is Border border && border.Child is Image photo)
-            {
-                photo.Source = await PlaceholderHelper.GetWebPFrameAsync(file.Local.Path, 68);
-                ElementCompositionPreview.SetElementChildVisual(content.Children[0], null);
-            }
-            else if (content.Children[0] is LottieView lottie)
-            {
-                lottie.Source = new LocalFileSource(file);
-                _toolbarHandler.ThrottleVisibleItems();
-            }
-            else if (content.Children[0] is AnimationView video)
-            {
-                video.Source = new LocalFileSource(file);
-                _toolbarHandler.ThrottleVisibleItems();
+                UpdateContainerContent(cover, content, true);
             }
         }
 
@@ -848,6 +737,16 @@ namespace Telegram.Controls.Drawers
             }
 
             ItemContextRequested?.Invoke(sender, new ItemContextRequestedEventArgs<Sticker>(sticker, args));
+        }
+
+        private void Player_Ready(object sender, System.EventArgs e)
+        {
+            _handler.ThrottleVisibleItems();
+        }
+
+        private void Toolbar_Ready(object sender, System.EventArgs e)
+        {
+            _toolbarHandler.ThrottleVisibleItems();
         }
     }
 }
