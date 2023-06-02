@@ -46,6 +46,11 @@ namespace Telegram.Common
             return SendAsync("Exit");
         }
 
+        public static Task CloseRequestedAsync()
+        {
+            return SendAsync("CloseRequested");
+        }
+
         public static async void CloseRequested(SystemNavigationCloseRequestedPreviewEventArgs args)
         {
             if (_connection != null)
