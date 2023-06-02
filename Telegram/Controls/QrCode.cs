@@ -73,7 +73,7 @@ namespace Telegram.Controls
             var replaceFrom = data.ReplaceFrom;
             var replaceTill = data.ReplaceTill;
 
-            var size = 259;
+            var size = 222;
             var pixel = size / data.Size;
 
             bool value(int row, int column)
@@ -273,15 +273,15 @@ namespace Telegram.Controls
             shape2.FillBrush = blackBrush;
 
             var visual1 = compositor.CreateShapeVisual();
-            visual1.Size = new Vector2(259, 259);
+            visual1.Size = new Vector2(size, size);
             visual1.Shapes.Add(shape1);
 
             var visual2 = compositor.CreateShapeVisual();
-            visual2.Size = new Vector2(259, 259);
+            visual2.Size = new Vector2(size, size);
             visual2.Shapes.Add(shape2);
 
             var container = compositor.CreateContainerVisual();
-            container.Size = new Vector2(259, 259);
+            container.Size = new Vector2(size, size);
             container.Children.InsertAtTop(visual1);
             container.Children.InsertAtTop(visual2);
 

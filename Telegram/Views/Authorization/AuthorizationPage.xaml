@@ -75,7 +75,7 @@
                                        Margin="0,12,0,4" />
 
                 <muxc:ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                                       Background="Transparent" />
+                                  Background="Transparent" />
 
                 <Button x:Name="NextButton"
                         Content="{x:Bind ViewModel.S.OK, Mode=OneWay}"
@@ -98,8 +98,8 @@
                     MaxWidth="360"
                     Grid.Row="1"
                     Grid.RowSpan="2">
-            <Grid Width="259"
-                  Height="259">
+            <Grid Width="222"
+                  Height="222">
                 <Grid x:Name="TokenRoot">
                     <Border Background="#FFFFFF"
                             CornerRadius="16,16,4,16"
@@ -114,8 +114,8 @@
                     <controls:QrCode x:Name="Token"
                                      Foreground="#000000"
                                      Text="{x:Bind ViewModel.Token, Mode=OneWay}"
-                                     Width="259"
-                                     Height="259" />
+                                     Width="222"
+                                     Height="222" />
                 </Grid>
                 <Border x:Name="Logo1Panel"
                         Width="48"
