@@ -157,12 +157,19 @@ namespace Telegram.Controls
             // TODO: same should be done for j too
             // What this does is to play the animation from the next space instead of right away
             // Example use case is animating between "Select All" and "Deselect All"
-            if (TextWrapping == TextWrapping.WrapWholeWords && k > 0)
+            if (TextWrapping == TextWrapping.WrapWholeWords)
             {
-                var next = newValue.IndexOf(' ', newValue.Length - k);
-                if (next >= newValue.Length - k)
+                if (k > 0)
                 {
-                    k = newValue.Length - next;
+                    var next = newValue.IndexOf(' ', newValue.Length - k);
+                    if (next >= newValue.Length - k)
+                    {
+                        k = newValue.Length - next;
+                    }
+                    else if (next == -1)
+                    {
+                        k = 0;
+                    }
                 }
             }
 
@@ -212,13 +219,13 @@ namespace Telegram.Controls
                 fadeIn.Duration = Constants.FastAnimation;
 
                 var slideOut = prevVisual.Compositor.CreateVector3KeyFrameAnimation();
-                slideOut.InsertKeyFrame(0, Vector3.One);
-                slideOut.InsertKeyFrame(1, Vector3.Zero, easing);
+                slideOut.InsertKeyFrame(0, new Vector3(1, 1, 1));
+                slideOut.InsertKeyFrame(1, new Vector3(1, 0, 1), easing);
                 slideOut.Duration = Constants.FastAnimation;
 
                 var slideIn = prevVisual.Compositor.CreateVector3KeyFrameAnimation();
-                slideIn.InsertKeyFrame(0, Vector3.Zero);
-                slideIn.InsertKeyFrame(1, Vector3.One, easing);
+                slideIn.InsertKeyFrame(0, new Vector3(1, 0, 1));
+                slideIn.InsertKeyFrame(1, new Vector3(1, 1, 1), easing);
                 slideIn.Duration = Constants.FastAnimation;
 
                 prevVisual.StartAnimation("Opacity", fadeOut);
