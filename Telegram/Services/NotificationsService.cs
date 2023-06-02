@@ -400,24 +400,31 @@ namespace Telegram.Services
             //ProcessNotification(update.NotificationGroupId, 0, update.Notification);
         }
 
-        private void ProcessNotification(int group, long soundId, long chatId, Telegram.Td.Api.Notification notification)
+        private void ProcessNotification(int group, long soundId, long chatId, Td.Api.Notification notification)
         {
+            var time = Formatter.ToLocalTime(notification.Date);
+            if (time < DateTime.Now.AddHours(-1))
+            {
+                _clientService.Send(new RemoveNotification(group, notification.Id));
+                return;
+            }
+
             switch (notification.Type)
             {
                 case NotificationTypeNewCall:
                     break;
                 case NotificationTypeNewMessage newMessage:
-                    ProcessNewMessage(group, notification.Id, newMessage.Message, notification.Date, soundId, notification.IsSilent);
+                    ProcessNewMessage(group, notification.Id, newMessage.Message, time, soundId, notification.IsSilent);
                     break;
                 case NotificationTypeNewPushMessage newPushMessage:
-                    ProcessNewPushMessage(group, notification.Id, chatId, newPushMessage, notification.Date, soundId, notification.IsSilent);
+                    ProcessNewPushMessage(group, notification.Id, chatId, newPushMessage, time, soundId, notification.IsSilent);
                     break;
                 case NotificationTypeNewSecretChat:
                     break;
             }
         }
 
-        private async void ProcessNewPushMessage(int groupId, int id, long chatId, NotificationTypeNewPushMessage message, int date, long soundId, bool silent)
+        private async void ProcessNewPushMessage(int groupId, int id, long chatId, NotificationTypeNewPushMessage message, DateTime date, long soundId, bool silent)
         {
             var chat = _clientService.GetChat(chatId);
             if (chat == null)
@@ -430,7 +437,7 @@ namespace Telegram.Services
             var sound = silent || soundId == 0 ? "silent" : string.Empty;
             var launch = GetLaunch(chat, message);
             var picture = GetPhoto(chat);
-            var dateTime = Formatter.ToLocalTime(date).ToUniversalTime().ToString("s") + "Z";
+            var dateTime = date.ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
             if (soundId != -1 && soundId != 0 && !silent)
@@ -469,7 +476,7 @@ namespace Telegram.Services
             });
         }
 
-        private async void ProcessNewMessage(int groupId, int id, Message message, int date, long soundId, bool silent)
+        private async void ProcessNewMessage(int groupId, int id, Message message, DateTime date, long soundId, bool silent)
         {
             var chat = _clientService.GetChat(message.ChatId);
             if (chat == null)
@@ -482,7 +489,7 @@ namespace Telegram.Services
             var sound = silent || soundId == 0 ? "silent" : string.Empty;
             var launch = GetLaunch(chat, message);
             var picture = GetPhoto(chat);
-            var dateTime = Formatter.ToLocalTime(date).ToUniversalTime().ToString("s") + "Z";
+            var dateTime = date.ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
             if (soundId != -1 && soundId != 0 && !silent)
