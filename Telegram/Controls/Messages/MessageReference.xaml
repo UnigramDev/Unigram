@@ -22,6 +22,10 @@
                 Value="Stretch" />
         <Setter Property="Padding"
                 Value="0,4,0,4" />
+        <Setter Property="UseSystemFocusVisuals"
+                Value="True" />
+        <Setter Property="FocusVisualMargin"
+                Value="-3,0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:MessageReference">
