@@ -33,7 +33,8 @@
                                  GettingFocus="Search_GettingFocus"
                                  VerticalAlignment="Center"
                                  GotFocus="Search_Click"
-                                 TextChanged="Search_TextChanged" />
+                                 TextChanged="Search_TextChanged"
+                                 StartingIndex="1" />
         <controls:GlyphButton x:Name="SearchClear"
                               Click="SearchClear_Click"
                               AllowFocusOnInteraction="False"

@@ -837,7 +837,7 @@ namespace Telegram.Views.Popups
                     CaptionInput.Focus(FocusState.Keyboard);
                     CaptionInput.PasteFromClipboard();
                 }
-                else if (character == "\r" && IsPrimaryButtonEnabled)
+                else if (character == "\r" && IsPrimaryButtonEnabled && (SearchPanel == null || SearchPanel.Visibility == Visibility.Collapsed))
                 {
                     Accept();
                 }
