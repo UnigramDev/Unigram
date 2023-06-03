@@ -116,11 +116,11 @@
         <selectors:AutocompleteTemplateSelector.CustomEmojiTemplate>
             <DataTemplate>
                 <Grid Padding="4"
-                      Width="48"
-                      Height="48">
+                      Width="40"
+                      Height="40">
                     <controls:AnimatedImage x:Name="Player"
                                             AutoPlay="False"
-                                            FrameSize="40,40"
+                                            FrameSize="32,32"
                                             DecodeFrameType="Logical"
                                             LimitFps="True" />
                 </Grid>

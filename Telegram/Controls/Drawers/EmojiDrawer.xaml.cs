@@ -669,6 +669,7 @@ namespace Telegram.Controls.Drawers
             {
                 if (_mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.Chat)
                 {
+                    animated.Width = animated.Height = 24;
                     animated.FrameSize = new Size(24, 24);
                     animated.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
                 }
