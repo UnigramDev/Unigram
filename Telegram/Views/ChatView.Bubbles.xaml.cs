@@ -15,7 +15,6 @@ using Telegram.Controls.Gallery;
 using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.Navigation;
-using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
@@ -585,11 +584,6 @@ namespace Telegram.Views
 
                 if (args.ItemContainer.ContentTemplateRoot is MessageSelector selector)
                 {
-                    if (_effectiveViewportHandler != null)
-                    {
-                        selector.EffectiveViewportChanged -= _effectiveViewportHandler;
-                    }
-
                     selector.Recycle();
                 }
 
@@ -688,71 +682,13 @@ namespace Telegram.Views
         {
             args.ItemContainer.SizeChanged += _sizeChangedHandler ??= new SizeChangedEventHandler(Item_SizeChanged);
 
-            if (args.ItemContainer.ContentTemplateRoot is MessageSelector selector
-                && selector.Content is MessageBubble bubble)
+            if (args.ItemContainer.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
             {
-                if (SettingsService.Current.Diagnostics.StickyPhotos)
-                {
-                    selector.EffectiveViewportChanged += _effectiveViewportHandler ??= new TypedEventHandler<FrameworkElement, EffectiveViewportChangedEventArgs>(Item_EffectiveViewportChanged);
-                }
-
                 bubble.RegisterEvents();
             }
         }
 
-        private void Item_EffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
-        {
-            if (StickyPhoto == null)
-            {
-                FindName(nameof(StickyPhoto));
-            }
-
-            if (sender is MessageSelector selector && selector.Content is MessageBubble bubble)
-            {
-                var message = selector.Message;
-
-                if (args.EffectiveViewport.Bottom <= sender.ActualHeight && args.EffectiveViewport.Bottom >= 0)
-                {
-                    if (message.HasSenderPhoto)
-                    {
-                        if (args.EffectiveViewport.Bottom < 34 && message.IsFirst)
-                        {
-                            bubble.UpdatePhoto(message, true);
-                            bubble.ShowHidePhoto(true, VerticalAlignment.Top);
-
-                            StickyPhoto.Visibility = Visibility.Collapsed;
-                        }
-                        else
-                        {
-                            bubble.ShowHidePhoto(false);
-
-                            var source = bubble.PhotoSource;
-                            if (source?.Source == null)
-                            {
-                                StickyPhoto.SetMessage(message);
-                            }
-                            else
-                            {
-                                StickyPhoto.CloneSource(source);
-                            }
-
-                            StickyPhoto.Visibility = Visibility.Visible;
-                        }
-                    }
-                    else
-                    {
-                        StickyPhoto.Visibility = Visibility.Collapsed;
-                    }
-                }
-                else
-                {
-                    bubble.ShowHidePhoto(message.IsLast && args.EffectiveViewport.Bottom > 0);
-                }
-            }
-        }
-
         private TypedEventHandler<UIElement, ContextRequestedEventArgs> _contextRequestedHandler;
-        private TypedEventHandler<FrameworkElement, EffectiveViewportChangedEventArgs> _effectiveViewportHandler;
         private SizeChangedEventHandler _sizeChangedHandler;
 
         private SelectorItem CreateSelectorItem(string typeName)

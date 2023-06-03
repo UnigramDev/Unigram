@@ -170,16 +170,6 @@ namespace Telegram.ViewModels
             }
         }
 
-        public bool StickyPhotos
-        {
-            get => SettingsService.Current.Diagnostics.StickyPhotos;
-            set
-            {
-                SettingsService.Current.Diagnostics.StickyPhotos = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool CanUseTestDC => ClientService.AuthorizationState is not AuthorizationStateReady;
 
         public bool IsDatabaseDisabled => Settings.Diagnostics.DisableDatabase;

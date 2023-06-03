@@ -36,10 +36,6 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.IsPointerOverEnabled, Mode=TwoWay}"
                               Content="Show stickers panel on pointer over"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
-
-                    <CheckBox IsChecked="{x:Bind ViewModel.StickyPhotos, Mode=TwoWay}"
-                              Content="Sticky photos in groups"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="Crash mitigation">

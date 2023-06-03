@@ -496,22 +496,11 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        public void ShowHidePhoto(bool show, VerticalAlignment alignment = VerticalAlignment.Bottom)
-        {
-            if (Photo != null)
-            {
-                Photo.Opacity = show ? 1 : 0;
-                Photo.VerticalAlignment = alignment;
-            }
-        }
-
-        public ProfilePicture PhotoSource => Photo;
-
-        public void UpdatePhoto(MessageViewModel message, bool force = false)
+        private void UpdatePhoto(MessageViewModel message)
         {
             if (message.HasSenderPhoto)
             {
-                if (message.IsLast || (message.IsFirst && force))
+                if (message.IsLast)
                 {
                     if (message.Id != _photoId || Photo == null || Photo.Visibility == Visibility.Collapsed)
                     {
