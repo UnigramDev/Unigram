@@ -2207,7 +2207,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(MessageSendNow_Loaded, ViewModel.SendNowMessage, message, Strings.MessageScheduleSend, Icons.Send);
                 flyout.CreateFlyoutItem(MessageReschedule_Loaded, ViewModel.RescheduleMessage, message, Strings.MessageScheduleEditTime, Icons.CalendarClock);
 
-                if (message.CanGetViewers && CanGetMessageViewers(chat, message))
+                if (CanGetMessageViewers(chat, message))
                 {
                     LoadMessageViewers(message, flyout);
                 }
@@ -2387,7 +2387,12 @@ namespace Telegram.Views
 
         private bool CanGetMessageViewers(Chat chat, MessageViewModel message)
         {
-            if (chat.LastReadOutboxMessageId < message.Id)
+            if (message.InteractionInfo?.Reactions.Count > 0)
+            {
+                return chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel;
+            }
+
+            if (chat.LastReadOutboxMessageId < message.Id || !message.CanGetViewers)
             {
                 return false;
             }
@@ -2413,25 +2418,68 @@ namespace Telegram.Views
 
         private async void LoadMessageViewers(MessageViewModel message, MenuFlyout flyout)
         {
-            var played = message.Content is MessageVoiceNote or MessageVideoNote;
+            static Task<BaseObject> GetMessageViewersAsync(MessageViewModel message)
+            {
+                var expirePeriod = message.ClientService.Config.GetNamedNumber("chat_read_mark_expire_period", 7 * 86400);
+            if (expirePeriod + message.Date > DateTime.UtcNow.ToTimestamp())
+            {
+                return message.ClientService.SendAsync(new GetMessageViewers(message.ChatId, message.Id));
+            }
 
-            var placeholder = flyout.CreateFlyoutItem(() => { }, "...", played ? Icons.Play : Icons.Seen);
+            return Task.FromResult<BaseObject>(new MessageViewers(Array.Empty<MessageViewer>()));
+        }
+
+            var played = message.Content is MessageVoiceNote or MessageVideoNote;
+            var reacted = message.InteractionInfo?.Reactions.Sum(x => x.TotalCount);
+
+            var placeholder = flyout.CreateFlyoutItem(ViewModel.ShowMessageInteractions, message, "...", reacted > 0 ? Icons.Heart : played ? Icons.Play : Icons.Seen);
             var separator = flyout.CreateFlyoutSeparator();
 
             // Width must be fixed because viewers are loaded asynchronously
-            placeholder.Width = 240;
+            placeholder.Width = 200;
+            placeholder.Style = BootStrapper.Current.Resources["MessageSeenMenuFlyoutItemStyle"] as Style;
 
             var final = new MenuFlyoutSubItem();
             final.Visibility = Visibility.Collapsed;
             flyout.Items.Insert(0, final);
 
-            var response = await message.ClientService.SendAsync(new GetMessageViewers(message.ChatId, message.Id));
-            if (response is MessageViewers viewers && viewers.Viewers.Count > 0)
+            var response = await GetMessageViewersAsync(message);
+            if (response is MessageViewers viewers && (viewers.Viewers.Count > 0 || reacted > 0))
             {
                 var profiles = message.ClientService.GetUsers(viewers.Viewers.Select(x => x.UserId));
 
+                string text;
+                if (reacted > 0)
+                {
+                    if (reacted < viewers.Viewers.Count)
+                    {
+                        text = string.Format(Locale.Declension(Strings.R.Reacted, message.InteractionInfo.Reactions.Count, false), string.Format("{0}/{1}", message.InteractionInfo.Reactions.Count, viewers.Viewers.Count));
+                    }
+                    else
+                    {
+                        text = Locale.Declension(Strings.R.Reacted, message.InteractionInfo.Reactions.Count);
+                    }
+                }
+                else if (viewers.Viewers.Count > 1)
+                {
+                    text = Locale.Declension(played ? Strings.R.MessagePlayed : Strings.R.MessageSeen, viewers.Viewers.Count);
+                }
+                else
+                {
+                    text = profiles[0].FullName();
+                }
+
                 var pictures = new StackPanel();
                 pictures.Orientation = Orientation.Horizontal;
+
+                var device = CanvasDevice.GetSharedDevice();
+                var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, 24, 24);
+                var elli1 = CanvasGeometry.CreateEllipse(device, -2, 12, 14, 14);
+                var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
+
+                var compositor = Window.Current.Compositor;
+                var geometry = compositor.CreatePathGeometry(new CompositionPath(group1));
+                var clip = compositor.CreateGeometricClip(geometry);
 
                 foreach (var user in profiles.Take(Math.Min(3, profiles.Count)))
                 {
@@ -2442,55 +2490,18 @@ namespace Telegram.Views
                     picture.SetUser(message.ClientService, user, 24);
                     picture.Margin = new Thickness(pictures.Children.Count > 0 ? -10 : 0, -2, 0, -2);
 
+                    if (pictures.Children.Count > 0)
+                    {
+                        var visual = ElementCompositionPreview.GetElementVisual(picture);
+                        visual.Clip = clip;
+                    }
+
                     Canvas.SetZIndex(picture, -pictures.Children.Count);
                     pictures.Children.Add(picture);
                 }
 
-                if (profiles.Count > 1)
-                {
-                    //var final = new MenuFlyoutSubItem();
-                    final.Style = BootStrapper.Current.Resources["MessageSeenMenuFlyoutSubItemStyle"] as Style;
-                    final.Text = Locale.Declension(played ? Strings.R.MessagePlayed : Strings.R.MessageSeen, viewers.Viewers.Count);
-                    final.Icon = MenuFlyoutHelper.CreateIcon(played ? Icons.Play : Icons.Seen);
-                    final.Tag = pictures;
-
-                    // Width must be fixed because viewers are loaded asynchronously
-                    final.Width = 240;
-
-                    foreach (var user in profiles)
-                    {
-                        var picture = new ProfilePicture();
-                        picture.Width = 24;
-                        picture.Height = 24;
-                        picture.IsEnabled = false;
-                        picture.SetUser(message.ClientService, user, 24);
-                        picture.Margin = new Thickness(-4, -2, 0, -2);
-
-                        var item = final.CreateFlyoutItem(ViewModel.OpenUser, user.Id, user.FullName());
-                        item.Style = BootStrapper.Current.Resources["ProfilePictureMenuFlyoutItemStyle"] as Style;
-                        item.Icon = new FontIcon();
-                        item.Tag = picture;
-                    }
-
-                    //flyout.Items.Remove(placeholder);
-                    //flyout.Items.Insert(0, final);
-                    placeholder.Visibility = Visibility.Collapsed;
-                    final.Visibility = Visibility.Visible;
-                }
-                else if (profiles.Count > 0)
-                {
-                    placeholder.Style = BootStrapper.Current.Resources["MessageSeenMenuFlyoutItemStyle"] as Style;
-                    placeholder.Text = profiles[0].FullName();
+                placeholder.Text = text;
                     placeholder.Tag = pictures;
-                    //placeholder.CommandParameter = profiles[0].Id;
-                    //placeholder.Command = ViewModel.OpenUserCommand;
-
-                    void handler(object sender, RoutedEventArgs e)
-                    {
-                        placeholder.Click -= handler;
-                        ViewModel.OpenUser(profiles[0].Id);
-                    }
-                }
             }
             else
             {

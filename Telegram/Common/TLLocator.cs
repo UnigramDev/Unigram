@@ -946,6 +946,13 @@ namespace Telegram.Views
                     _settingsService,
                     _eventAggregator);
             }
+            else if (type == typeof(Telegram.ViewModels.MessageInteractionsViewModel))
+            {
+                return (T)(object)new Telegram.ViewModels.MessageInteractionsViewModel(
+                    _clientService,
+                    _settingsService,
+                    _eventAggregator);
+            }
             else if (type == typeof(Telegram.ViewModels.ChatsNearbyViewModel))
             {
                 return (T)(object)new Telegram.ViewModels.ChatsNearbyViewModel(

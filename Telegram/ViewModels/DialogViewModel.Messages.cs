@@ -856,6 +856,15 @@ namespace Telegram.ViewModels
 
         #endregion
 
+        #region Interactions
+
+        public async void ShowMessageInteractions(MessageViewModel message)
+        {
+            await ShowPopupAsync(typeof(MessageInteractionsPopup), message);
+        }
+
+        #endregion
+
         #region Translate
 
         public async void TranslateMessage(MessageViewModel message)

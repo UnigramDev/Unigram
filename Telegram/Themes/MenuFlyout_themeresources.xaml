@@ -1095,7 +1095,7 @@
                                               FontSize="12"
                                               AutomationProperties.AccessibilityView="Raw"
                                               Foreground="{ThemeResource MenuFlyoutSubItemChevron}"
-                                              Margin="{StaticResource MenuFlyoutItemChevronMargin}" />
+                                              Margin="4,0,-4,-1" />
                         </Grid>
 
                     </Grid>

@@ -458,6 +458,7 @@ namespace Telegram
                 ChooseSoundPopup => TLContainer.Current.Resolve<ChooseSoundViewModel>(sessionId),
                 CreateChatPhotoPopup => TLContainer.Current.Resolve<CreateChatPhotoViewModel>(sessionId),
                 PromoPopup => TLContainer.Current.Resolve<PromoViewModel>(sessionId),
+                MessageInteractionsPopup => TLContainer.Current.Resolve<MessageInteractionsViewModel>(sessionId),
                 BackgroundsPopup => TLContainer.Current.Resolve<SettingsBackgroundsViewModel>(sessionId),
                 BackgroundPopup backgroundPopup => TLContainer.Current.Resolve<BackgroundViewModel, IBackgroundDelegate>(backgroundPopup, sessionId),
                 _ => null
