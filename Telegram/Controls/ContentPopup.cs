@@ -227,12 +227,13 @@ namespace Telegram.Controls
                 var button = GetTemplateChild("PrimaryButton") as Button;
                 if (button != null)
                 {
-                    var invoke = new ButtonAutomationPeer(button) as IInvokeProvider;
-                    if (invoke != null)
+                    if (button.IsEnabled)
                     {
-                        invoke.Invoke();
-                        return;
+                        var invoke = new ButtonAutomationPeer(button) as IInvokeProvider;
+                        invoke?.Invoke();
                     }
+
+                    return;
                 }
             }
             else if (result == ContentDialogResult.Secondary)
@@ -240,12 +241,13 @@ namespace Telegram.Controls
                 var button = GetTemplateChild("SecondaryButton") as Button;
                 if (button != null)
                 {
-                    var invoke = new ButtonAutomationPeer(button) as IInvokeProvider;
-                    if (invoke != null)
+                    if (button.IsEnabled)
                     {
-                        invoke.Invoke();
-                        return;
+                        var invoke = new ButtonAutomationPeer(button) as IInvokeProvider;
+                        invoke?.Invoke();
                     }
+
+                    return;
                 }
             }
 
