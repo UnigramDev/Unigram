@@ -9,7 +9,6 @@ using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Services.Settings;
-using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -81,7 +80,7 @@ namespace Telegram.Views.Settings
         private void Theme_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var element = sender as FrameworkElement;
-            var theme = List.ItemFromContainer(element) as ChatTheme;
+            var theme = List.ItemFromContainer(element) as ChatThemeViewModel;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.CreateTheme, theme, Strings.CreateNewThemeMenu, Icons.Color);
