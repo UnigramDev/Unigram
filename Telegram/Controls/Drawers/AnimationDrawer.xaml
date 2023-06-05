@@ -13,28 +13,11 @@
              d:DesignHeight="300"
              d:DesignWidth="400">
 
-    <Grid x:Name="AnimationsRoot"
-          Background="Transparent">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Border Grid.Row="1">
-            <controls:EmojiSearchBox x:Name="SearchField"
-                                     PlaceholderText="{CustomResource Search}"
-                                     TextChanged="SearchField_TextChanged"
-                                     CategorySelected="SearchField_CategorySelected"
-                                     Margin="12,8" />
-        </Border>
-
-        <muxc:ProgressRing IsActive="{x:Bind ViewModel.Items.IsLoading, Mode=OneWay}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Width="48"
-                           Height="48"
-                           Grid.Row="2" />
-
         <GridView x:Name="List"
                   ItemsSource="{x:Bind ConvertItems(ViewModel.Items), Mode=OneWay}"
                   common:FluidGridView.OrientationOnly="False"
@@ -44,11 +27,18 @@
                   SelectionMode="None"
                   ItemClick="OnItemClick"
                   Padding="2,0,0,0"
-                  Grid.Row="2">
+                  Grid.Row="1">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="3"
                                              Margin="2" />
             </common:FluidGridView.Triggers>
+            <GridView.Header>
+                <controls:EmojiSearchBox x:Name="SearchField"
+                                         PlaceholderText="{CustomResource Search}"
+                                         TextChanged="SearchField_TextChanged"
+                                         CategorySelected="SearchField_CategorySelected"
+                                         Margin="10,8,12,8" />
+            </GridView.Header>
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Border>

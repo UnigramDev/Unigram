@@ -93,13 +93,13 @@ namespace Telegram.Controls.Drawers
 
             if (mode != EmojiDrawerMode.Chat)
             {
-                SearchField.Margin = new Thickness(8, 8, 8, 0);
+                SearchField.Margin = new Thickness(0, 8, 8, 8);
                 Toolbar3.Visibility = Visibility.Collapsed;
                 Toolbar2.Header = null;
 
                 if (mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto)
                 {
-                    List.Padding = new Thickness(8, 8, 0, 0);
+                    List.Padding = new Thickness(8, 0, 0, 0);
                     List.ItemContainerStyle.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 4, 4)));
                     List.GroupStyle[0].HeaderContainerStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0, 0, 8, 0)));
 

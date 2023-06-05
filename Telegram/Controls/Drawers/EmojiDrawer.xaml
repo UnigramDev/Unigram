@@ -155,19 +155,11 @@
 
     </UserControl.Resources>
 
-    <Grid Background="Transparent">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Border Grid.Row="1">
-            <controls:EmojiSearchBox x:Name="SearchField"
-                                     PlaceholderText="{CustomResource Search}"
-                                     CategorySelected="SearchField_CategorySelected"
-                                     Margin="12,8,12,0" />
-        </Border>
-
         <GridView x:Name="List"
                   ItemsSource="{x:Bind EmojiCollection.View, Mode=OneWay}"
                   common:FluidGridView.OrientationOnly="False"
@@ -177,11 +169,16 @@
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
-                  Padding="0,8,0,0"
-                  Grid.Row="2">
+                  Grid.Row="1">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="8" />
             </common:FluidGridView.Triggers>
+            <GridView.Header>
+                <controls:EmojiSearchBox x:Name="SearchField"
+                                         PlaceholderText="{CustomResource Search}"
+                                         CategorySelected="SearchField_CategorySelected"
+                                         Margin="12,8,12,8" />
+            </GridView.Header>
             <GridView.ItemContainerStyle>
                 <Style TargetType="GridViewItem">
                     <Setter Property="MinWidth"

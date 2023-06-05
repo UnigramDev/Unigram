@@ -20,21 +20,11 @@
                               IsSourceGrouped="True" />
     </UserControl.Resources>
 
-    <Grid x:Name="StickersRoot"
-          Background="Transparent">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Border Grid.Row="1">
-            <controls:EmojiSearchBox x:Name="SearchField"
-                                     PlaceholderText="{CustomResource Search}"
-                                     TextChanged="SearchField_TextChanged"
-                                     CategorySelected="SearchField_CategorySelected"
-                                     Margin="12,8,12,0" />
-        </Border>
-
         <GridView x:Name="List"
                   ItemsSource="{x:Bind StickersSource.View, Mode=OneWay}"
                   common:FluidGridView.OrientationOnly="False"
@@ -46,10 +36,17 @@
                   ItemClick="Stickers_ItemClick"
                   Loaded="Stickers_Loaded"
                   Padding="2,0"
-                  Grid.Row="2">
+                  Grid.Row="1">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="5" />
             </common:FluidGridView.Triggers>
+            <GridView.Header>
+                <controls:EmojiSearchBox x:Name="SearchField"
+                                         PlaceholderText="{CustomResource Search}"
+                                         TextChanged="SearchField_TextChanged"
+                                         CategorySelected="SearchField_CategorySelected"
+                                         Margin="10,8,10,0" />
+            </GridView.Header>
             <GridView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
