@@ -277,7 +277,7 @@ namespace Telegram.ViewModels.Settings
             new SettingsOptionItem<DistanceUnits>(DistanceUnits.Miles, Strings.DistanceUnitsMiles),
         };
 
-        public async void CreateTheme(ChatTheme theme)
+        public async void CreateTheme(ChatThemeViewModel theme)
         {
             var dark = Settings.Appearance.IsDarkTheme();
             var settings = dark ? theme.DarkSettings : theme.LightSettings;
