@@ -634,8 +634,6 @@
     <Compile Include="Selectors\ChatStatisticsOverviewTemplateSelector.cs" />
     <Compile Include="Selectors\InviteLinkTemplateSelector.cs" />
     <Compile Include="Selectors\PremiumFeatureTemplateSelector.cs" />
-    <Compile Include="Services\CallsService.cs" />
-    <Compile Include="Services\GroupCallService.cs" />
     <Compile Include="Services\ClientService.ChatList.cs" />
     <Compile Include="Services\ClientService.Files.cs" />
     <Compile Include="Services\ProfilePhotoService.cs" />
@@ -663,6 +661,9 @@
     <Compile Include="ViewModels\Folders\ShareFolderViewModel.cs" />
     <Compile Include="Td\Api\MessageId.cs" />
     <Compile Include="Collections\Handlers\SearchResultDiffHandler.cs" />
+    <Compile Include="ViewModels\Settings\Password\SettingsPasswordCreateViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Password\SettingsPasswordHintViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Password\SettingsPasswordIntroViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
     <Compile Include="ViewModels\TopicListViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
@@ -817,6 +818,10 @@
     <Compile Include="Views\Popups\InputPopup.xaml.cs">
       <DependentUpon>InputPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\MessageInteractionsPopup.xaml.cs">
+      <DependentUpon>MessageInteractionsPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\MessageInteractionsViewModel.cs" />
     <Compile Include="Views\Popups\RecordVideoChatPopup.xaml.cs">
       <DependentUpon>RecordVideoChatPopup.xaml</DependentUpon>
     </Compile>
@@ -971,11 +976,8 @@
     <Compile Include="ViewModels\ProfileViewModel.cs" />
     <Compile Include="ViewModels\SendLocationViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordConfirmViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Password\SettingsPasswordCreateViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordDoneViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordEmailViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Password\SettingsPasswordHintViewModel.cs" />
-    <Compile Include="ViewModels\Settings\Password\SettingsPasswordIntroViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowCallsViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowChatInvitesViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyAllowFindingByPhoneNumberViewModel.cs" />
@@ -1163,14 +1165,14 @@
     <Compile Include="Views\Settings\Password\SettingsPasswordEmailPage.xaml.cs">
       <DependentUpon>SettingsPasswordEmailPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\Password\SettingsPasswordDonePage.xaml.cs">
+      <DependentUpon>SettingsPasswordDonePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\Password\SettingsPasswordHintPage.xaml.cs">
       <DependentUpon>SettingsPasswordHintPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Password\SettingsPasswordIntroPage.xaml.cs">
       <DependentUpon>SettingsPasswordIntroPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Settings\Password\SettingsPasswordDonePage.xaml.cs">
-      <DependentUpon>SettingsPasswordDonePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Phone\ChangePhoneNumberPopup.xaml.cs">
       <DependentUpon>ChangePhoneNumberPopup.xaml</DependentUpon>
@@ -2169,6 +2171,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Popups\MessageInteractionsPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Popups\RecordVideoChatPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2402,24 +2408,24 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\Password\SettingsPasswordCreatePage.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\Password\SettingsPasswordEmailPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\Password\SettingsPasswordHintPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Settings\Password\SettingsPasswordIntroPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\Password\SettingsPasswordDonePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordHintPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Password\SettingsPasswordIntroPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\Phone\ChangePhoneNumberPopup.xaml">
       <Generator>MSBuild:Compile</Generator>

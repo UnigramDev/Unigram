@@ -134,7 +134,7 @@
             <StackPanel x:Name="TokenInnerPanel"
                         Margin="0,12,0,0">
                 <TextBlock Text="{x:Bind ViewModel.S.LoginWithQrCodeTitle, Mode=OneWay}"
-                           Style="{StaticResource TitleTextBlockStyle}"
+                           Style="{StaticResource SubtitleTextBlockStyle}"
                            TextAlignment="Center" />
 
                 <Grid HorizontalAlignment="Center"

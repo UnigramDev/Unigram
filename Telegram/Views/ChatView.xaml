@@ -411,9 +411,8 @@
                     MinHeight="{ThemeResource TelegramToolBarHeight}" />
         </Grid>
 
-        <controls:ContentPageHeader x:Name="Header"
-                                    Background="Transparent"
-                                    BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+        <Grid x:Name="Header"
+              Height="{StaticResource NavigationViewTopPaneHeight}"
                                     Canvas.ZIndex="3">
             <Grid x:Name="InfoPanel">
                 <Grid.ColumnDefinitions>
@@ -537,7 +536,9 @@
                                          Grid.Column="3" />
                 </Grid>
             </Grid>
-        </controls:ContentPageHeader>
+            <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                    BorderThickness="0,0,0,1" />
+        </Grid>
 
         <StackPanel x:Name="ClipperOuter"
                     Canvas.ZIndex="2"
@@ -778,15 +779,6 @@
                     </Grid>
                 </ListView.Header>
             </chats:ChatHistoryView>
-
-            <controls:ProfilePicture x:Name="StickyPhoto"
-                                     x:Load="False"
-                                     Margin="12,0,0,8"
-                                     IsTabStop="False"
-                                     HorizontalAlignment="Left"
-                                     VerticalAlignment="Bottom"
-                                     Width="30"
-                                     Height="30" />
 
             <Border x:Name="Yolo2"
                     x:Load="False"
