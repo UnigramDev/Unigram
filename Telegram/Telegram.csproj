@@ -206,9 +206,13 @@
     <Compile Include="Controls\Chats\ChatHistoryView.cs" />
     <Compile Include="Controls\Chats\ChatHistoryViewItem.cs" />
     <Compile Include="Controls\ClrGrid.cs" />
+    <Compile Include="Controls\Messages\ReactionsMenuFlyout.xaml.cs">
+      <DependentUpon>ReactionsMenuFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Services\VoipGroupService.cs" />
     <Compile Include="Services\VoipService.cs" />
     <Compile Include="Streams\AnimatedImageSource.cs" />
+    <Compile Include="Streams\ReactionFileSource.cs" />
     <Compile Include="Streams\CustomEmojiFileSource.cs" />
     <Compile Include="Streams\DelayedFileSource.cs" />
     <Compile Include="Streams\LocalFileSource.cs" />
@@ -492,8 +496,8 @@
       <DependentUpon>VoiceNoteContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\CustomEmojiCanvas.cs" />
-    <Compile Include="Controls\Messages\MenuFlyoutReactions.xaml.cs">
-      <DependentUpon>MenuFlyoutReactions.xaml</DependentUpon>
+    <Compile Include="Controls\Messages\EmojiMenuFlyout.xaml.cs">
+      <DependentUpon>EmojiMenuFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\MessageBubble.xaml.cs">
       <DependentUpon>MessageBubble.xaml</DependentUpon>
@@ -1857,7 +1861,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\Messages\MenuFlyoutReactions.xaml">
+    <Page Include="Controls\Messages\ReactionsMenuFlyout.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\EmojiMenuFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

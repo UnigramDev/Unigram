@@ -177,6 +177,7 @@
                   ItemClick="ListView_ItemClick"
                   IsItemClickEnabled="True"
                   SelectionMode="None"
+                  Padding="0,8,0,0"
                   Grid.Row="2">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="8" />
@@ -208,12 +209,13 @@
                         </DataTemplate>-->
                         <DataTemplate>
                             <Grid Visibility="{Binding Title, Converter={StaticResource NullToVisibilityConverter}}"
-                                  Padding="0,6,0,0">
+                                  Padding="0,6,0,4">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Text="{Binding Title}"
+                                           TextWrapping="NoWrap"
                                            Style="{StaticResource InfoBodyTextBlockStyle}" />
 
                                 <controls:BadgeButton Content="{CustomResource Add}"
@@ -240,7 +242,7 @@
                             <Setter Property="Margin"
                                     Value="0,0,0,0" />
                             <Setter Property="Padding"
-                                    Value="10,0,10,6" />
+                                    Value="10,0,10,0" />
                             <Setter Property="HorizontalContentAlignment"
                                     Value="Stretch" />
                             <Setter Property="VerticalContentAlignment"
@@ -276,8 +278,7 @@
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsWrapGrid Orientation="Horizontal"
-                                   AreStickyGroupHeadersEnabled="False"
-                                   CacheLength="4" />
+                                   AreStickyGroupHeadersEnabled="False" />
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
         </GridView>
@@ -530,7 +531,9 @@
                                                             LimitFps="True"
                                                             FrameSize="24,24"
                                                             DecodeFrameType="Logical"
-                                                            Ready="Toolbar_Ready" />
+                                                            Ready="Toolbar_Ready"
+                                                            Width="24"
+                                                            Height="24" />
                                 </Grid>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.ItemTemplate>

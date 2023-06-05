@@ -601,6 +601,8 @@
                         <TextBox x:Name="TextField"
                                  PlaceholderText="{TemplateBinding PlaceholderText}"
                                  Style="{StaticResource NoDeleteTextBoxStyle}"
+                                 Background="{ThemeResource TextControlBackgroundPointerOver}"
+                                 BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                                  Padding="36,5,6,6" />
 
                         <local:AnimatedGlyphToggleButton x:Name="SearchButton"

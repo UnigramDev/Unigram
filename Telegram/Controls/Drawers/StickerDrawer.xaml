@@ -208,7 +208,9 @@
                                                             LimitFps="True"
                                                             FrameSize="24,24"
                                                             DecodeFrameType="Logical"
-                                                            Ready="Toolbar_Ready" />
+                                                            Ready="Toolbar_Ready"
+                                                            Width="24"
+                                                            Height="24" />
                                 </Grid>
                             </DataTemplate>
 

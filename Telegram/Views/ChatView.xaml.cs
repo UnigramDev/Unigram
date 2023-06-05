@@ -2317,7 +2317,7 @@ namespace Telegram.Views
                             || reactions.PopularReactions.Count > 0
                             || reactions.RecentReactions.Count > 0)
                         {
-                            MenuFlyoutReactions.ShowAt(reactions, message, bubble, flyout);
+                            ReactionsMenuFlyout.ShowAt(reactions, message, bubble, flyout);
                         }
                     }
                 };

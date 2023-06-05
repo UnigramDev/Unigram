@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Controls.Messages;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Streams;
@@ -91,18 +92,18 @@ namespace Telegram.Controls.Drawers
 
             if (mode != EmojiDrawerMode.Chat)
             {
-                SearchField.Visibility = Visibility.Collapsed;
+                SearchField.Margin = new Thickness(8, 8, 8, 0);
                 Toolbar3.Visibility = Visibility.Collapsed;
                 Toolbar2.Header = null;
 
                 if (mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto)
                 {
-                    List.Padding = new Thickness(8, 0, 0, 0);
+                    List.Padding = new Thickness(8, 8, 0, 0);
                     List.ItemContainerStyle.Setters.Add(new Setter(MarginProperty, new Thickness(0, 0, 4, 4)));
-                    List.GroupStyle[0].HeaderContainerStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0, 0, 8, 6)));
+                    List.GroupStyle[0].HeaderContainerStyle.Setters.Add(new Setter(PaddingProperty, new Thickness(0, 0, 8, 0)));
 
                     FluidGridView.GetTriggers(List).Clear();
-                    FluidGridView.GetTriggers(List).Add(new FixedGridViewTrigger { ItemLength = 28 });
+                    FluidGridView.GetTriggers(List).Add(new FixedGridViewTrigger { ItemLength = 36 });
                 }
             }
             else
@@ -657,28 +658,11 @@ namespace Telegram.Controls.Drawers
                 return;
             }
 
-            if (toolbar || _mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.Chat)
-            {
-                content.Width = 24;
-                content.Height = 24;
-            }
-
             var animated = content.Children[0] as AnimatedImage;
-
-            using (animated.BeginBatchUpdate())
+            animated.Source = new DelayedFileSource(ViewModel.ClientService, file)
             {
-                if (_mode is not EmojiDrawerMode.ChatPhoto and not EmojiDrawerMode.UserPhoto and not EmojiDrawerMode.Chat)
-                {
-                    animated.Width = animated.Height = 24;
-                    animated.FrameSize = new Size(24, 24);
-                    animated.DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical;
-                }
-
-                animated.Source = new DelayedFileSource(ViewModel.ClientService, file)
-                {
-                    ReplacementColor = GetTintColor(sticker.FullType)
-                };
-            }
+                ReplacementColor = GetTintColor(sticker.FullType)
+            };
 
             //if (toolbar)
             //{
