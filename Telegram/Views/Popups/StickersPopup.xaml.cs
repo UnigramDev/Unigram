@@ -148,6 +148,8 @@ namespace Telegram.Views.Popups
                 item.ContentTemplate = sender.ItemTemplate;
                 item.Style = sender.ItemContainerStyle;
                 args.ItemContainer = item;
+
+                _zoomer.ElementPrepared(args.ItemContainer);
             }
 
             args.IsContainerPrepared = true;
