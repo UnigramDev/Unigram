@@ -554,7 +554,7 @@ namespace Telegram.Views.Popups
             //var multiplier = NSMakePoint(imageSize.width / touch.canvasSize.width, imageSize.height / touch.canvasSize.height)
             var multiplier = canvasSize; //_imageSize / canvasSize;
 
-            var builder = new CanvasPathBuilder(resourceCreator);
+            using var builder = new CanvasPathBuilder(resourceCreator);
             builder.BeginFigure(_beginPoint * multiplier);
 
             for (int i = 0; i < _path.Count; i += 3)

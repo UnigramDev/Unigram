@@ -27,7 +27,7 @@ namespace Telegram.Common
             var segments = reader.read();
             if (segments != null)
             {
-                var builder = new CanvasPathBuilder(null);
+                using var builder = new CanvasPathBuilder(null);
                 renderPath(segments, builder);
 
                 return new CompositionPath(CanvasGeometry.CreatePath(builder));
@@ -43,26 +43,35 @@ namespace Telegram.Common
 
         public static CanvasGeometry Parse(ICanvasResourceCreator sender, IList<ClosedVectorPath> contours, float scale = 1.0f)
         {
-            var builder = new CanvasPathBuilder(sender);
+            using var builder = new CanvasPathBuilder(sender);
 
             foreach (var path in contours)
             {
-                var last = path.Commands.Last();
+                static void BeginFigure(CanvasPathBuilder builder, Point point, float scale)
+                {
+                    builder.BeginFigure((float)point.X * scale, (float)point.Y * scale);
+                }
+
+                static void AddLine(CanvasPathBuilder builder, Point point, float scale)
+                {
+                    builder.AddLine((float)point.X * scale, (float)point.Y * scale);
+                }
+
+                var last = path.Commands[^1];
                 if (last is VectorPathCommandLine lastLine)
                 {
-                    builder.BeginFigure(lastLine.EndPoint.ToVector2(scale));
+                    BeginFigure(builder, lastLine.EndPoint, scale);
                 }
                 else if (last is VectorPathCommandCubicBezierCurve lastCubicBezierCurve)
                 {
-                    builder.BeginFigure(lastCubicBezierCurve.EndPoint.ToVector2(scale));
+                    BeginFigure(builder, lastCubicBezierCurve.EndPoint, scale);
                 }
 
-                for (int i = 0; i < path.Commands.Count; i++)
+                foreach (var command in path.Commands)
                 {
-                    var command = path.Commands[i];
                     if (command is VectorPathCommandLine line)
                     {
-                        builder.AddLine(line.EndPoint.ToVector2(scale));
+                        AddLine(builder, line.EndPoint, scale);
                     }
                     else if (command is VectorPathCommandCubicBezierCurve cubicBezierCurve)
                     {

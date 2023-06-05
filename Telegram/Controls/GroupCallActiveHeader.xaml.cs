@@ -597,7 +597,7 @@ namespace Telegram.Controls
 
         public void Draw(float f, float f2, float f3, float f4, CanvasDrawingSession canvas, Color paint, float f5, float f6)
         {
-            var builder = new CanvasPathBuilder(canvas);
+            using var builder = new CanvasPathBuilder(canvas);
             builder.BeginFigure(f3, f4);
             builder.AddLine(f, f4);
             int i = 0;

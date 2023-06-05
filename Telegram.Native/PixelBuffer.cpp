@@ -47,17 +47,17 @@ namespace winrt::Telegram::Native::implementation
 
 
 
-    int32_t PixelBuffer::PixelWidth()
+    int32_t PixelBuffer::PixelWidth() noexcept
     {
         return m_bitmapWidth;
     }
 
-    int32_t PixelBuffer::PixelHeight()
+    int32_t PixelBuffer::PixelHeight() noexcept
     {
         return m_bitmapHeight;
     }
 
-    WriteableBitmap PixelBuffer::Source()
+    WriteableBitmap PixelBuffer::Source() noexcept
     {
         return m_bitmap;
     }

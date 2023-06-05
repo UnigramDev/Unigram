@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
-using Telegram.Controls.Messages;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Streams;
@@ -64,6 +63,8 @@ namespace Telegram.Controls.Drawers
 
         private readonly AnimatedListHandler _handler;
         private readonly AnimatedListHandler _toolbarHandler;
+
+        private readonly Dictionary<StickerViewModel, Grid> _itemIdToContent = new();
 
         public EmojiDrawer()
             : this(EmojiDrawerMode.Chat)
@@ -167,6 +168,8 @@ namespace Telegram.Controls.Drawers
 
         public void Deactivate()
         {
+            _itemIdToContent.Clear();
+
             _isActive = false;
             _handler.UnloadItems();
             _toolbarHandler.UnloadItems();
@@ -539,10 +542,6 @@ namespace Telegram.Controls.Drawers
                 }
                 else
                 {
-                    // Not sure if this belongs here
-                    var tag = args.ItemContainer.Tag as string;
-                    var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
-
                     // The ItemContainer's datatemplate does not match the needed
                     // datatemplate.
                     // Don't remove it from the recycle queue, since XAML will resuggest it later
@@ -602,13 +601,10 @@ namespace Telegram.Controls.Drawers
 
                     foreach (var sticker in group.Stickers)
                     {
-                        var container = List?.ContainerFromItem(sticker) as SelectorItem;
-                        if (container == null)
+                        if (_itemIdToContent.TryGetValue(sticker, out Grid content))
                         {
-                            continue;
+                            UpdateContainerContent(sticker, content, false);
                         }
-
-                        UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, false);
                     }
                 }
             }
@@ -616,17 +612,22 @@ namespace Telegram.Controls.Drawers
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.InRecycleQueue)
+            var content = args.ItemContainer.ContentTemplateRoot as Grid;
+            var sticker = args.Item as StickerViewModel;
+
+            if (args.InRecycleQueue || sticker == null)
             {
-                // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
-                var tag = args.ItemContainer.Tag as string;
-                var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
+                if (sticker != null)
+                {
+                    _itemIdToContent.Remove(sticker);
+                }
                 return;
             }
 
-            if (args.Item is StickerViewModel sticker)
+            if (sticker != null)
             {
-                var content = args.ItemContainer.ContentTemplateRoot as Grid;
+                _itemIdToContent[sticker] = content;
+
                 if (content.Children[0] is TextBlock textBlock && sticker is MoreStickerViewModel more)
                 {
                     textBlock.Text = $"+{more.TotalCount}";

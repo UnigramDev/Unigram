@@ -334,7 +334,7 @@ namespace Telegram.Controls
         {
             var multiplier = canvasSize;
 
-            var builder = new CanvasPathBuilder(resourceCreator);
+            using var builder = new CanvasPathBuilder(resourceCreator);
             builder.BeginFigure(_beginPoint * multiplier);
 
             for (int i = 0; i < _path.Count; i += 3)

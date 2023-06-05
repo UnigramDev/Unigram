@@ -139,8 +139,12 @@ namespace Telegram.Navigation
 
         public CoreWindowActivationMode ActivationMode => _window.CoreWindow.ActivationMode;
 
+        public EventHandler<WindowActivatedEventArgs> Activated;
+
         private void OnActivated(object sender, WindowActivatedEventArgs e)
         {
+            Activated?.Invoke(sender, e);
+
             lock (_activeLock)
             {
                 if (e.WindowActivationState != CoreWindowActivationState.Deactivated)

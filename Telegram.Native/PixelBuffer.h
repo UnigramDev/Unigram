@@ -25,10 +25,10 @@ namespace winrt::Telegram::Native::implementation
 
         HRESULT __stdcall Buffer(uint8_t** value);
 
-        int32_t PixelWidth();
-        int32_t PixelHeight();
+        int32_t PixelWidth() noexcept;
+        int32_t PixelHeight() noexcept;
 
-        WriteableBitmap Source();
+        WriteableBitmap Source() noexcept;
 
     private:
         WriteableBitmap m_bitmap;

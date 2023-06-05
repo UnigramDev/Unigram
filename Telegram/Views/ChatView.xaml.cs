@@ -5374,7 +5374,7 @@ namespace Telegram.Views
 
         public void Draw(CanvasDrawingSession canvas, float x, float y)
         {
-            var path = new CanvasPathBuilder(canvas);
+            using var path = new CanvasPathBuilder(canvas);
             int i = 0;
             while (true)
             {

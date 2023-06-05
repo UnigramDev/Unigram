@@ -35,6 +35,8 @@ namespace Telegram.Controls.Drawers
 
         private readonly AnimatedListHandler _toolbarHandler;
 
+        private readonly Dictionary<StickerViewModel, Grid> _itemIdToContent = new();
+
         private bool _isActive;
 
         public StickerDrawer()
@@ -91,7 +93,7 @@ namespace Telegram.Controls.Drawers
 
         public void Deactivate()
         {
-            _stickerIdToContent.Clear();
+            _itemIdToContent.Clear();
 
             _isActive = false;
             _handler.UnloadItems();
@@ -212,7 +214,7 @@ namespace Telegram.Controls.Drawers
 
                     foreach (var sticker in group.Stickers)
                     {
-                        if (_stickerIdToContent.TryGetValue(sticker, out Grid content))
+                        if (_itemIdToContent.TryGetValue(sticker, out Grid content))
                         {
                             UpdateContainerContent(sticker, content);
                         }
@@ -237,8 +239,6 @@ namespace Telegram.Controls.Drawers
             args.IsContainerPrepared = true;
         }
 
-        private readonly Dictionary<StickerViewModel, Grid> _stickerIdToContent = new();
-
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
@@ -246,10 +246,15 @@ namespace Telegram.Controls.Drawers
 
             if (args.InRecycleQueue || sticker == null)
             {
+                if (sticker != null)
+                {
+                    _itemIdToContent.Remove(sticker);
+                }
+
                 return;
             }
 
-            _stickerIdToContent[sticker] = content;
+            _itemIdToContent[sticker] = content;
             UpdateContainerContent(sticker, content);
             args.Handled = true;
         }
