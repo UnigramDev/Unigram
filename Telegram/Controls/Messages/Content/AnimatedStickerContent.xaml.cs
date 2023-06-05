@@ -246,15 +246,16 @@ namespace Telegram.Controls.Messages.Content
 
             if (_message.Content is MessageAnimatedEmoji animatedEmoji)
             {
-                //var started = Player.Play();
-                //if (started)
-                //{
-                //    var sound = animatedEmoji.AnimatedEmoji.Sound;
-                //    if (sound != null && sound.Local.IsDownloadingCompleted)
-                //    {
-                //        SoundEffects.Play(sound);
-                //    }
-                //}
+                if (Player.IsPlaying == false)
+                {
+                    Player.Play();
+
+                    var sound = animatedEmoji.AnimatedEmoji.Sound;
+                    if (sound != null && sound.Local.IsDownloadingCompleted)
+                    {
+                        SoundEffects.Play(sound);
+                    }
+                }
 
                 var response = await _message.ClientService.SendAsync(new ClickAnimatedEmojiMessage(_message.ChatId, _message.Id));
                 if (response is Sticker interaction)
@@ -279,7 +280,7 @@ namespace Telegram.Controls.Messages.Content
                         PlayPremium(_message, sticker);
                     }
                 }
-                else if (PowerSavingPolicy.AutoPlayStickersInChats /*|| Player.IsPlaying*/)
+                else if (PowerSavingPolicy.AutoPlayStickersInChats || Player.IsPlaying)
                 {
                     _message.Delegate.OpenSticker(sticker);
                 }
