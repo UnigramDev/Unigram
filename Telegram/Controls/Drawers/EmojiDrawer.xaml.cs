@@ -615,12 +615,17 @@ namespace Telegram.Controls.Drawers
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var sticker = args.Item as StickerViewModel;
 
-            if (args.InRecycleQueue || sticker == null)
+            if (args.InRecycleQueue)
             {
                 if (sticker != null)
                 {
                     _itemIdToContent.Remove(sticker);
                 }
+
+                return;
+            }
+            else if (sticker == null)
+            {
                 return;
             }
 
