@@ -285,5 +285,10 @@ namespace Telegram.Views.Popups
                 Hide();
             }
         }
+
+        private void Player_Ready(object sender, EventArgs e)
+        {
+            _handler.ThrottleVisibleItems();
+        }
     }
 }

@@ -57,9 +57,10 @@
                 <DataTemplate>
                     <Grid Margin="2">
                         <controls:AnimatedImage x:Name="Player"
-                                                 AutoPlay="False"
-                                                 LimitFps="True"
-                                                 DecodeFrameType="Logical" />
+                                                AutoPlay="False"
+                                                LimitFps="True"
+                                                DecodeFrameType="Logical"
+                                                Ready="Player_Ready" />
 
                         <Border x:Load="True"
                                 x:Name="PremiumBadge"
