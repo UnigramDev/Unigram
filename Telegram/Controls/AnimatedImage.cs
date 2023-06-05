@@ -910,7 +910,6 @@ namespace Telegram.Controls
 
             _dispatcherQueue.TryEnqueue(UnregisterEvents);
 
-            _task.Dispose();
             _task = null;
             _timer = null;
             _disposing = false;
@@ -1082,23 +1081,6 @@ namespace Telegram.Controls
                 _index = index + 1;
             }
         }
-
-        #region IDisposable
-
-        private bool _disposed;
-
-        public override void Dispose()
-        {
-            if (!_disposed)
-            {
-                _animation.Dispose();
-                _disposed = true;
-            }
-
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
     }
 
     public class VideoAnimatedImageTask : AnimatedImageTask
@@ -1152,23 +1134,6 @@ namespace Telegram.Controls
             position = seconds;
             return AnimatedImageTaskState.None;
         }
-
-        #region IDisposable
-
-        private bool _disposed;
-
-        public override void Dispose()
-        {
-            if (!_disposed)
-            {
-                _animation.Dispose();
-                _disposed = true;
-            }
-
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
     }
 
     public class WebpAnimatedImageTask : AnimatedImageTask
@@ -1193,26 +1158,9 @@ namespace Telegram.Controls
             BufferSurface.Copy(_animation, frame);
             return AnimatedImageTaskState.Stop;
         }
-
-        #region IDisposable
-
-        private bool _disposed;
-
-        public override void Dispose()
-        {
-            if (!_disposed)
-            {
-                //_animation.Dispose();
-                _disposed = true;
-            }
-
-            GC.SuppressFinalize(this);
-        }
-
-        #endregion
     }
 
-    public abstract class AnimatedImageTask : IDisposable
+    public abstract class AnimatedImageTask
     {
         protected readonly AnimatedImagePresentation _presentation;
 
@@ -1232,8 +1180,6 @@ namespace Telegram.Controls
         {
 
         }
-
-        public abstract void Dispose();
     }
 
     public record AnimatedImagePresentation(AnimatedImageSource Source, int PixelWidth, int PixelHeight, bool LimitFps, int LoopCount, bool AutoPlay, bool IsCachingEnabled);
