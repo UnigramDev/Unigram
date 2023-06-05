@@ -25,7 +25,6 @@ using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage;
-using Windows.Storage.AccessCache;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
@@ -529,62 +528,9 @@ namespace Telegram.Common
             return string.Equals(relativeFull, pathFull, StringComparison.OrdinalIgnoreCase);
         }
 
-        public static string Enqueue(this StorageItemAccessList list, IStorageItem item)
-        {
-            try
-            {
-                if (list.Entries.Count >= list.MaximumItemsAllowed - 10)
-                {
-                    for (int i = list.Entries.Count - 1; i >= 0; i--)
-                    {
-                        var entry = list.Entries[i];
-                        if (entry.Token != "FilesDirectory")
-                        {
-                            list.Remove(entry.Token);
-                        }
-                    }
-                }
-            }
-            catch { }
-
-            try
-            {
-                return list.Add(item);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public static void EnqueueOrReplace(this StorageItemAccessList list, string token, IStorageItem item)
-        {
-            try
-            {
-                if (list.Entries.Count >= list.MaximumItemsAllowed - 10)
-                {
-                    for (int i = list.Entries.Count - 1; i >= 0; i--)
-                    {
-                        var entry = list.Entries[i];
-                        if (entry.Token != "FilesDirectory")
-                        {
-                            list.Remove(entry.Token);
-                        }
-                    }
-                }
-            }
-            catch { }
-
-            try
-            {
-                list.AddOrReplace(token, item);
-            }
-            catch { }
-        }
-
         public static async Task<InputFile> ToGeneratedAsync(this StorageFile file, ConversionType conversion = ConversionType.Copy, string arguments = null, bool forceCopy = false)
         {
-            var token = StorageApplicationPermissions.FutureAccessList.Enqueue(file);
+            var token = StorageService.Future.Add(file);
             var path = file.Path;
 
             if (NativeUtils.IsFileReadable(path, out long fileSize, out long fileTime))

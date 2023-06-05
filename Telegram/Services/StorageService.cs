@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -260,6 +261,16 @@ namespace Telegram.Services
         {
             public const string DownloadFolder = "FilesDirectory";
 
+            private static readonly HashSet<string> _tokens = new();
+
+            static Future()
+            {
+                foreach (var item in SAP.FutureAccessList.Entries)
+                {
+                    _tokens.Add(item.Token);
+                }
+            }
+
             public static bool Contains(string token, bool temp = false)
             {
                 if (string.IsNullOrEmpty(token))
@@ -269,7 +280,7 @@ namespace Telegram.Services
 
                 try
                 {
-                    return SAP.FutureAccessList.ContainsItem(temp ? token + "temp" : token);
+                    return _tokens.Contains(temp ? token + "temp" : token);
                 }
                 catch
                 {
@@ -281,9 +292,12 @@ namespace Telegram.Services
             {
                 try
                 {
-                    if (SAP.FutureAccessList.ContainsItem(temp ? token + "temp" : token))
+                    token = temp ? token + "temp" : token;
+
+                    if (SAP.FutureAccessList.ContainsItem(token))
                     {
-                        SAP.FutureAccessList.Remove(temp ? token + "temp" : token);
+                        _tokens.Remove(token);
+                        SAP.FutureAccessList.Remove(token);
                     }
                 }
                 catch
@@ -294,7 +308,7 @@ namespace Telegram.Services
 
             public static void AddOrReplace(string token, IStorageItem item, bool temp = false)
             {
-                SAP.FutureAccessList.EnqueueOrReplace(temp ? token + "temp" : token, item);
+                AddOrReplace(temp ? token + "temp" : token, item);
             }
 
             public static bool CheckAccess(IStorageItem item)
@@ -422,7 +436,7 @@ namespace Telegram.Services
                         try
                         {
                             StorageFolder folder = await SAP.MostRecentlyUsedList.GetFolderAsync(DownloadFolder);
-                            SAP.FutureAccessList.EnqueueOrReplace(DownloadFolder, folder);
+                            AddOrReplace(DownloadFolder, folder);
                         }
                         catch
                         {
@@ -431,6 +445,63 @@ namespace Telegram.Services
                         }
 
                         SAP.MostRecentlyUsedList.Remove(DownloadFolder);
+                    }
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
+            }
+
+            public static void AddOrReplace(string token, IStorageItem item)
+            {
+                RemoveOverflow();
+
+                try
+                {
+                    _tokens.Add(token);
+                    SAP.FutureAccessList.AddOrReplace(token, item);
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
+            }
+
+
+            public static string Add(IStorageItem item)
+            {
+                RemoveOverflow();
+
+                try
+                {
+                    var token = SAP.FutureAccessList.Add(item);
+
+                    _tokens.Add(token);
+                    return token;
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                    return null;
+                }
+            }
+
+            private static void RemoveOverflow()
+            {
+                try
+                {
+                    if (SAP.FutureAccessList.Entries.Count >= SAP.FutureAccessList.MaximumItemsAllowed - 10)
+                    {
+                        for (int i = SAP.FutureAccessList.Entries.Count - 1; i >= 0; i--)
+                        {
+                            var entry = SAP.FutureAccessList.Entries[i];
+                            if (entry.Token != "FilesDirectory")
+                            {
+                                _tokens.Remove(entry.Token);
+                                SAP.FutureAccessList.Remove(entry.Token);
+                            }
+                        }
                     }
                 }
                 catch
