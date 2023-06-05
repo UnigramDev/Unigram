@@ -2421,16 +2421,16 @@ namespace Telegram.Views
             static Task<BaseObject> GetMessageViewersAsync(MessageViewModel message)
             {
                 var expirePeriod = message.ClientService.Config.GetNamedNumber("chat_read_mark_expire_period", 7 * 86400);
-            if (expirePeriod + message.Date > DateTime.UtcNow.ToTimestamp())
-            {
-                return message.ClientService.SendAsync(new GetMessageViewers(message.ChatId, message.Id));
+                if (expirePeriod + message.Date > DateTime.UtcNow.ToTimestamp())
+                {
+                    return message.ClientService.SendAsync(new GetMessageViewers(message.ChatId, message.Id));
+                }
+
+                return Task.FromResult<BaseObject>(new MessageViewers(Array.Empty<MessageViewer>()));
             }
 
-            return Task.FromResult<BaseObject>(new MessageViewers(Array.Empty<MessageViewer>()));
-        }
-
             var played = message.Content is MessageVoiceNote or MessageVideoNote;
-            var reacted = message.InteractionInfo?.Reactions.Sum(x => x.TotalCount);
+            var reacted = (int)message.InteractionInfo?.Reactions.Sum(x => x.TotalCount);
 
             var placeholder = flyout.CreateFlyoutItem(ViewModel.ShowMessageInteractions, message, "...", reacted > 0 ? Icons.Heart : played ? Icons.Play : Icons.Seen);
             var separator = flyout.CreateFlyoutSeparator();
@@ -2453,11 +2453,11 @@ namespace Telegram.Views
                 {
                     if (reacted < viewers.Viewers.Count)
                     {
-                        text = string.Format(Locale.Declension(Strings.R.Reacted, message.InteractionInfo.Reactions.Count, false), string.Format("{0}/{1}", message.InteractionInfo.Reactions.Count, viewers.Viewers.Count));
+                        text = string.Format(Locale.Declension(Strings.R.Reacted, reacted, false), string.Format("{0}/{1}", message.InteractionInfo.Reactions.Count, viewers.Viewers.Count));
                     }
                     else
                     {
-                        text = Locale.Declension(Strings.R.Reacted, message.InteractionInfo.Reactions.Count);
+                        text = Locale.Declension(Strings.R.Reacted, reacted);
                     }
                 }
                 else if (viewers.Viewers.Count > 1)
@@ -2501,7 +2501,7 @@ namespace Telegram.Views
                 }
 
                 placeholder.Text = text;
-                    placeholder.Tag = pictures;
+                placeholder.Tag = pictures;
             }
             else
             {
