@@ -42,5 +42,11 @@ namespace Telegram.Views.Popups
                 }
             }
         }
+
+        private void OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            ViewModel.OpenChat(e.ClickedItem);
+            Hide();
+        }
     }
 }

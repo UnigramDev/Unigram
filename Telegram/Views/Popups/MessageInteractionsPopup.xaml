@@ -17,6 +17,7 @@
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
                   IsItemClickEnabled="True"
+                  ItemClick="OnItemClick"
                   Padding="12,0,12,24">
             <ListView.ItemTemplate>
                 <DataTemplate>

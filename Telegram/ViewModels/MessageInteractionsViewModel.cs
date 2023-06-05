@@ -6,6 +6,7 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
 
@@ -88,5 +89,32 @@ namespace Telegram.ViewModels
         }
 
         public bool HasMoreItems { get; private set; } = true;
+
+        public async void OpenChat(object clickedItem)
+        {
+            if (clickedItem is AddedReaction addedReaction)
+            {
+                if (addedReaction.SenderId is MessageSenderChat senderChat)
+                {
+                    NavigationService.Navigate(typeof(ProfilePage), senderChat.ChatId);
+                }
+                else if (addedReaction.SenderId is MessageSenderUser senderUser)
+                {
+                    var response = await ClientService.SendAsync(new CreatePrivateChat(senderUser.UserId, true));
+                    if (response is Chat chat)
+                    {
+                        NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+                    }
+                }
+            }
+            else if (clickedItem is MessageViewer messageViewer)
+            {
+                var response = await ClientService.SendAsync(new CreatePrivateChat(messageViewer.UserId, true));
+                if (response is Chat chat)
+                {
+                    NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+                }
+            }
+        }
     }
 }
