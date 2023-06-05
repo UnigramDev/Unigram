@@ -73,7 +73,7 @@ namespace Telegram.Views.Supergroups
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var member = element.Tag as ChatMember;
+            var member = ScrollingHost.ItemFromContainer(sender) as ChatMember;
 
             var chat = ViewModel.Chat;
             if (chat == null || member == null)
@@ -202,9 +202,6 @@ namespace Telegram.Views.Supergroups
             {
                 return;
             }
-
-            args.ItemContainer.Tag = args.Item;
-            content.Tag = args.Item;
 
             var user = ViewModel.ClientService.GetMessageSender(member.MemberId) as User;
             if (user == null)

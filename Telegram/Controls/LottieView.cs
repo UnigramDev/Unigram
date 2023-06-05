@@ -15,7 +15,5 @@ namespace Telegram.Controls
         void Unload();
 
         int LoopCount { get; }
-
-        object Tag { get; set; }
     }
 }

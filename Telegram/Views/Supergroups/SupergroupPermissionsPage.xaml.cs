@@ -71,7 +71,7 @@ namespace Telegram.Views.Supergroups
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var member = element.Tag as ChatMember;
+            var member = ScrollingHost.ItemFromContainer(sender) as ChatMember;
 
             flyout.CreateFlyoutItem(ViewModel.EditMember, member, Strings.ChannelEditPermissions, Icons.Key);
             flyout.CreateFlyoutItem(ViewModel.UnbanMember, member, Strings.ChannelDeleteFromList, Icons.Delete, dangerous: true);

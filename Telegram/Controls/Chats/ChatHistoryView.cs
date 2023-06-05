@@ -259,11 +259,6 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        protected override DependencyObject GetContainerForItemOverride()
-        {
-            return new ChatHistoryViewItem(this);
-        }
-
         public async Task ScrollToItem(MessageViewModel item, VerticalAlignment alignment, bool highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
         {
             var scrollViewer = ScrollingHost;

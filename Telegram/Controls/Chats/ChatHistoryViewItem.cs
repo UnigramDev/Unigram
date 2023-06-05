@@ -27,6 +27,7 @@ namespace Telegram.Controls.Chats
     public class ChatHistoryViewItem : ListViewItem, IInteractionTrackerOwner
     {
         private readonly ChatHistoryView _owner;
+        private readonly string _typeName;
 
         private SpriteVisual _hitTest;
         private ContainerVisual _container;
@@ -44,11 +45,15 @@ namespace Telegram.Controls.Chats
 
         private FrameworkElement _presenter;
 
-        public ChatHistoryViewItem(ChatHistoryView owner)
+        public ChatHistoryViewItem(ChatHistoryView owner, string typeName)
         {
             _owner = owner;
+            _typeName = typeName;
+
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
         }
+
+        public string TypeName => _typeName;
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {

@@ -46,7 +46,7 @@ namespace Telegram.Views.Supergroups
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var member = element.Tag as ChatMember;
+            var member = ScrollingHost.ItemFromContainer(sender) as ChatMember;
 
             var channel = ViewModel.Chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
 
@@ -97,9 +97,6 @@ namespace Telegram.Views.Supergroups
 
             var content = args.ItemContainer.ContentTemplateRoot as ProfileCell;
             var member = args.Item as ChatMember;
-
-            args.ItemContainer.Tag = args.Item;
-            content.Tag = args.Item;
 
             content.UpdateSupergroupBanned(ViewModel.ClientService, args, OnContainerContentChanging);
         }

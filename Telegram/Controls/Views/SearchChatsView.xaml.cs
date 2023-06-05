@@ -70,7 +70,6 @@ namespace Telegram.Controls.Views
                     return;
                 }
 
-                args.ItemContainer.Tag = result.Chat;
                 content.UpdateSearchResult(ViewModel.ClientService, args, OnContainerContentChanging);
             }
             else if (args.Item is Message message)
@@ -81,7 +80,6 @@ namespace Telegram.Controls.Views
                     return;
                 }
 
-                args.ItemContainer.Tag = null;
                 content.UpdateMessage(ViewModel.ClientService, message);
             }
 

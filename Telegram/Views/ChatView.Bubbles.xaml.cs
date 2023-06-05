@@ -462,8 +462,6 @@ namespace Telegram.Views
                     var player = bubble.GetPlaybackElement();
                     if (player != null)
                     {
-                        player.Tag = message;
-
                         next ??= new Dictionary<long, IPlayerView>();
                         next[message.AnimationHash()] = player;
                     }
@@ -524,9 +522,9 @@ namespace Telegram.Views
             // args.ItemContainer is used to indicate whether the ListView is proposing an
             // ItemContainer (ListViewItem) to use. If args.Itemcontainer != null, then there was a
             // recycled ItemContainer available to be reused.
-            if (args.ItemContainer != null)
+            if (args.ItemContainer is ChatHistoryViewItem selector)
             {
-                if (args.ItemContainer.Tag.Equals(typeName))
+                if (selector.TypeName.Equals(typeName))
                 {
                     // Suggestion matches what we want, so remove it from the recycle queue
                     relevantHashSet.Remove(args.ItemContainer);
@@ -569,7 +567,7 @@ namespace Telegram.Views
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            if (args.Item is not MessageViewModel message)
+            if (args.Item is not MessageViewModel message || args.ItemContainer is not ChatHistoryViewItem container)
             {
                 return;
             }
@@ -579,8 +577,7 @@ namespace Telegram.Views
             if (args.InRecycleQueue)
             {
                 // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
-                var tag = args.ItemContainer.Tag as string;
-                var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
+                _typeToItemHashSetMapping[container.TypeName].Add(args.ItemContainer);
 
                 if (args.ItemContainer.ContentTemplateRoot is MessageSelector selector)
                 {
@@ -604,13 +601,10 @@ namespace Telegram.Views
 
                 _updateThemeTask?.TrySetResult(true);
 
-                if (args.ItemContainer is ChatHistoryViewItem selector)
-                {
-                    // TODO: are there chances that at this point TextArea is not up to date yet?
-                    selector.PrepareForItemOverride(message,
-                        _viewModel.Type is DialogType.History or DialogType.Thread or DialogType.ScheduledMessages
-                        && TextArea.Visibility == Visibility.Visible);
-                }
+                // TODO: are there chances that at this point TextArea is not up to date yet?
+                container.PrepareForItemOverride(message,
+                    _viewModel.Type is DialogType.History or DialogType.Thread or DialogType.ScheduledMessages
+                    && TextArea.Visibility == Visibility.Visible);
 
                 if (content is MessageSelector checkbox)
                 {
@@ -693,10 +687,8 @@ namespace Telegram.Views
 
         private SelectorItem CreateSelectorItem(string typeName)
         {
-            SelectorItem item = new ChatHistoryViewItem(Messages);
+            SelectorItem item = new ChatHistoryViewItem(Messages, typeName);
             item.ContentTemplate = _typeToTemplateMapping[typeName];
-            item.Tag = typeName;
-
             item.AddHandler(ContextRequestedEvent, _contextRequestedHandler ??= new TypedEventHandler<UIElement, ContextRequestedEventArgs>(Message_ContextRequested), true);
 
             return item;

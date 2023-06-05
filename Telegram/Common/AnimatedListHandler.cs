@@ -221,8 +221,6 @@ namespace Telegram.Common
                     var lottie = final as IPlayerView ?? final.FindName("Player") as IPlayerView;
                     if (lottie != null)
                     {
-                        lottie.Tag = item;
-
                         next ??= new();
                         next[item.GetHashCode()] = lottie;
                     }
