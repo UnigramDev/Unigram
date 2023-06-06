@@ -103,31 +103,12 @@ namespace winrt::Telegram::Native::implementation
 
                 if (createCache)
                 {
-                    info->m_animation = VideoAnimation::LoadFromFile(file, false, false).as<VideoAnimation>();
-                    if (info->m_animation == nullptr)
+                    if (!info->Load(file, width, height))
                     {
                         return nullptr;
                     }
 
-                    auto pixelWidth = info->m_animation->PixelWidth();
-                    auto pixelHeight = info->m_animation->PixelHeight();
-
-                    if (width != 0 || height != 0)
-                    {
-                        double ratioX = (double)width / width;
-                        double ratioY = (double)height / height;
-                        double ratio = std::max(ratioX, ratioY);
-
-                        pixelWidth *= ratio;
-                        pixelHeight *= ratio;
-                    }
-
-                    info->m_pixelWidth = pixelWidth;
-                    info->m_pixelHeight = pixelHeight;
-
-                    info->m_fps = info->m_animation->FrameRate();
                     info->m_precache = true;
-
                     precacheFile = CreateFile2(info->m_cacheFile.c_str(), GENERIC_WRITE, 0, CREATE_ALWAYS, NULL);
                     if (precacheFile != INVALID_HANDLE_VALUE)
                     {
@@ -145,25 +126,41 @@ namespace winrt::Telegram::Native::implementation
         }
         else
         {
-            info->m_animation = VideoAnimation::LoadFromFile(file, false, false).as<VideoAnimation>();
-            if (info->m_animation == nullptr)
+            if (!info->Load(file, width, height))
             {
                 return nullptr;
-            }
-
-            if (width == 0 && height == 0)
-            {
-                info->m_pixelWidth = info->m_animation->PixelWidth();
-                info->m_pixelHeight = info->m_animation->PixelHeight();
-            }
-            else
-            {
-                info->m_pixelWidth = width;
-                info->m_pixelHeight = height;
             }
         }
 
         return info.as<winrt::Telegram::Native::CachedVideoAnimation>();
+    }
+
+    bool CachedVideoAnimation::Load(IVideoAnimationSource file, int32_t width, int32_t height)
+    {
+        m_animation = VideoAnimation::LoadFromFile(file, false, false).as<VideoAnimation>();
+        if (m_animation == nullptr)
+        {
+            return false;
+        }
+
+        auto pixelWidth = m_animation->PixelWidth();
+        auto pixelHeight = m_animation->PixelHeight();
+
+        if (width <= pixelWidth && height <= pixelHeight && (width != 0 || height != 0))
+        {
+            double ratioX = (double)width / pixelWidth;
+            double ratioY = (double)height / pixelHeight;
+            double ratio = std::max(ratioX, ratioY);
+
+            pixelWidth *= ratio;
+            pixelHeight *= ratio;
+        }
+
+        m_pixelWidth = pixelWidth;
+        m_pixelHeight = pixelHeight;
+
+        m_fps = m_animation->FrameRate();
+        return true;
     }
 
     void CachedVideoAnimation::Stop()

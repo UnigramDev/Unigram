@@ -14,7 +14,7 @@ using namespace winrt::Microsoft::Graphics::Canvas;
 using namespace winrt::Windows::Storage::Streams;
 using namespace winrt::Windows::UI::Xaml::Media::Imaging;
 
-#define CACHED_VERSION 5
+#define CACHED_VERSION 7
 
 namespace winrt::Telegram::Native::implementation
 {
@@ -62,26 +62,16 @@ namespace winrt::Telegram::Native::implementation
 
         int PixelWidth()
         {
-            if (m_animation)
-            {
-                return m_animation->PixelWidth();
-            }
-
             return m_pixelWidth;
         }
 
         int PixelHeight()
         {
-            if (m_animation)
-            {
-                return m_animation->PixelHeight();
-            }
-
             return m_pixelHeight;
         }
 
     private:
-        bool LoadAnimation();
+        bool Load(IVideoAnimationSource file, int32_t width, int32_t height);
         void RenderSync(uint8_t* pixels, int32_t& seconds, bool& completed, bool* rendered);
 
         bool ReadHeader(HANDLE precacheFile);
