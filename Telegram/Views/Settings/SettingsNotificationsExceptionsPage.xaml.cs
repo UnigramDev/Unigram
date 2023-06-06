@@ -10,6 +10,7 @@ using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
+using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -29,7 +30,7 @@ namespace Telegram.Views.Settings
         {
             if (e.ClickedItem is Chat chat)
             {
-                ViewModel.NavigationService.NavigateToChat(chat);
+                ViewModel.ShowPopupAsync(typeof(ChatNotificationsPopup), chat.Id);
             }
         }
 

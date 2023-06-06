@@ -217,6 +217,7 @@
     <Compile Include="Streams\DelayedFileSource.cs" />
     <Compile Include="Streams\LocalFileSource.cs" />
     <Compile Include="Streams\RemoteFileSource.cs" />
+    <Compile Include="ViewModels\ChatNotificationsViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
@@ -787,6 +788,9 @@
     <Compile Include="ViewModels\ChatJoinRequestsViewModel.cs" />
     <Compile Include="Views\Popups\ChooseChatsPopup.xaml.cs">
       <DependentUpon>ChooseChatsPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ChatNotificationsPopup.xaml.cs">
+      <DependentUpon>ChatNotificationsPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ChooseStatusDurationPopup.xaml.cs">
       <DependentUpon>ChooseStatusDurationPopup.xaml</DependentUpon>
@@ -2128,6 +2132,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ChooseChatsPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ChatNotificationsPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

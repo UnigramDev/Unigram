@@ -4495,6 +4495,27 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
   <data name="NotificationContactJoined" xml:space="preserve">
     <value>{0} joined Telegram!</value>
   </data>
+  <data name="NotificationExceptionsAlwaysOff" xml:space="preserve">
+    <value>Always Off</value>
+  </data>
+  <data name="NotificationExceptionsAlwaysOn" xml:space="preserve">
+    <value>Always On</value>
+  </data>
+  <data name="NotificationExceptionsPreviewAlwaysOff" xml:space="preserve">
+    <value>Always Off</value>
+  </data>
+  <data name="NotificationExceptionsPreviewAlwaysOn" xml:space="preserve">
+    <value>Always On</value>
+  </data>
+  <data name="NotificationExceptionsPreviewHide" xml:space="preserve">
+    <value>Hide Preview</value>
+  </data>
+  <data name="NotificationExceptionsPreviewShow" xml:space="preserve">
+    <value>Show Preview</value>
+  </data>
+  <data name="NotificationExceptionsSoundCustom" xml:space="preserve">
+    <value>Sound: Custom</value>
+  </data>
   <data name="NotificationInvitedToGroup" xml:space="preserve">
     <value>{0} invited you to the group {1}</value>
   </data>

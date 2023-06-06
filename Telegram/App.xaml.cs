@@ -456,6 +456,7 @@ namespace Telegram
                 SettingsDataAutoPopup => TLContainer.Current.Resolve<SettingsDataAutoViewModel>(sessionId),
                 ChooseChatsPopup => TLContainer.Current.Resolve<ChooseChatsViewModel>(sessionId),
                 ChooseSoundPopup => TLContainer.Current.Resolve<ChooseSoundViewModel>(sessionId),
+                ChatNotificationsPopup => TLContainer.Current.Resolve<ChatNotificationsViewModel>(sessionId),
                 CreateChatPhotoPopup => TLContainer.Current.Resolve<CreateChatPhotoViewModel>(sessionId),
                 PromoPopup => TLContainer.Current.Resolve<PromoViewModel>(sessionId),
                 MessageInteractionsPopup => TLContainer.Current.Resolve<MessageInteractionsViewModel>(sessionId),

@@ -6,6 +6,7 @@
 //
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Text;
 using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation;
@@ -412,16 +413,11 @@ namespace Telegram.Controls.Cells
 
         public void UpdateNotificationException(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
-            UpdateStyleNoSubtitle();
-
             var chat = args.Item as Chat;
             if (chat == null)
             {
                 return;
             }
-
-            args.ItemContainer.Tag = args.Item;
-            Tag = args.Item;
 
             if (args.Phase == 0)
             {
@@ -429,12 +425,123 @@ namespace Telegram.Controls.Cells
             }
             else if (args.Phase == 1)
             {
-                //SubtitleLabel.Text = LastSeenConverter.GetLabel(user, false);
+                var value = clientService.Notifications.GetMutedFor(chat);
+                if (value == 0)
+                {
+                    var builder = new StringBuilder(Strings.NotificationExceptionsAlwaysOn);
+
+                    if (!chat.NotificationSettings.UseDefaultShowPreview)
+                    {
+                        if (builder.Length > 0)
+                        {
+                            builder.Append(", ");
+                        }
+
+                        builder.Append(chat.NotificationSettings.ShowPreview
+                            ? Strings.NotificationExceptionsPreviewShow
+                            : Strings.NotificationExceptionsPreviewHide);
+                    }
+
+                    if (!chat.NotificationSettings.UseDefaultSound)
+                    {
+                        if (builder.Length > 0)
+                        {
+                            builder.Append(", ");
+                        }
+
+                        builder.Append(Strings.NotificationExceptionsSoundCustom);
+                    }
+
+                    SubtitleLabel.Text = builder.ToString();
+                }
+                else
+                {
+                    SubtitleLabel.Text = Strings.NotificationExceptionsAlwaysOff;
+                }
             }
             else if (args.Phase == 2)
             {
                 Photo.SetChat(clientService, chat, 36);
                 Identity.SetStatus(clientService, chat);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
+        public void UpdateAddedReaction(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var reaction = args.Item as AddedReaction;
+
+            var messageSender = clientService.GetMessageSender(reaction.SenderId);
+            if (messageSender == null)
+            {
+                return;
+            }
+
+            if (args.Phase == 0)
+            {
+                if (messageSender is User user)
+                {
+                    TitleLabel.Text = user.FullName();
+                }
+                else if (messageSender is Chat chat)
+                {
+                    TitleLabel.Text = chat.Title;
+                }
+            }
+            else if (args.Phase == 1)
+            {
+                SubtitleLabel.Text = Locale.FormatDateAudio(reaction.Date);
+            }
+            else if (args.Phase == 2)
+            {
+                if (messageSender is User user)
+                {
+                    Photo.SetUser(clientService, user, 36);
+                    Identity.SetStatus(clientService, user);
+                }
+                else if (messageSender is Chat chat)
+                {
+                    Photo.SetChat(clientService, chat, 36);
+                    Identity.SetStatus(clientService, chat);
+                }
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
+        public void UpdateMessageViewer(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var viewer = args.Item as MessageViewer;
+
+            var user = clientService.GetUser(viewer.UserId);
+            if (user == null)
+            {
+                return;
+            }
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = user.FullName();
+            }
+            else if (args.Phase == 1)
+            {
+                SubtitleLabel.Text = Locale.FormatDateAudio(viewer.ViewDate);
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetUser(clientService, user, 36);
+                Identity.SetStatus(clientService, user);
             }
 
             if (args.Phase < 2)
