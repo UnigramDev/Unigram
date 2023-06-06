@@ -355,6 +355,19 @@ namespace Telegram.Services
 
         public async void Handle(UpdateNotificationGroup update)
         {
+            try
+            {
+                var collectionHistory = await GetCollectionHistoryAsync();
+                foreach (var removed in update.RemovedNotificationIds)
+                {
+                    collectionHistory.Remove($"{removed}", $"{update.NotificationGroupId}");
+                }
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+
             if (_suppress == true)
             {
                 // This is an unsynced message, we don't want to show a notification for it as it has been probably pushed already by WNS
@@ -371,16 +384,6 @@ namespace Telegram.Services
             {
                 return;
             }
-
-            try
-            {
-                var collectionHistory = await GetCollectionHistoryAsync();
-                foreach (var removed in update.RemovedNotificationIds)
-                {
-                    collectionHistory.Remove($"{removed}", $"{update.NotificationGroupId}");
-                }
-            }
-            catch { }
 
             foreach (var notification in update.AddedNotifications)
             {
