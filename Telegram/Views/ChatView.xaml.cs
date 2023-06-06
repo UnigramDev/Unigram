@@ -2207,7 +2207,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(MessageSendNow_Loaded, ViewModel.SendNowMessage, message, Strings.MessageScheduleSend, Icons.Send);
                 flyout.CreateFlyoutItem(MessageReschedule_Loaded, ViewModel.RescheduleMessage, message, Strings.MessageScheduleEditTime, Icons.CalendarClock);
 
-                if (CanGetMessageViewers(chat, message))
+                if (CanGetMessageViewers(message))
                 {
                     LoadMessageViewers(message, flyout);
                 }
@@ -2385,14 +2385,14 @@ namespace Telegram.Views
             }
         }
 
-        private bool CanGetMessageViewers(Chat chat, MessageViewModel message)
+        private static bool CanGetMessageViewers(MessageViewModel message, bool reactions = true)
         {
-            if (message.InteractionInfo?.Reactions.Count > 0)
+            if (reactions && message.InteractionInfo?.Reactions.Count > 0)
             {
-                return chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel;
+                return message.Chat.Type is ChatTypeBasicGroup || message.Chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel;
             }
 
-            if (chat.LastReadOutboxMessageId < message.Id || !message.CanGetViewers)
+            if (message.Chat.LastReadOutboxMessageId < message.Id || !message.CanGetViewers)
             {
                 return false;
             }
@@ -2406,7 +2406,7 @@ namespace Telegram.Views
 
             if (viewed)
             {
-                var expirePeriod = ViewModel.ClientService.Config.GetNamedNumber("chat_read_mark_expire_period", 7 * 86400);
+                var expirePeriod = message.ClientService.Config.GetNamedNumber("chat_read_mark_expire_period", 7 * 86400);
                 if (expirePeriod + message.Date > DateTime.UtcNow.ToTimestamp())
                 {
                     return true;
@@ -2418,15 +2418,18 @@ namespace Telegram.Views
 
         private async void LoadMessageViewers(MessageViewModel message, MenuFlyout flyout)
         {
-            static Task<BaseObject> GetMessageViewersAsync(MessageViewModel message)
+            static async Task<IList<User>> GetMessageViewersAsync(MessageViewModel message)
             {
-                var expirePeriod = message.ClientService.Config.GetNamedNumber("chat_read_mark_expire_period", 7 * 86400);
-                if (expirePeriod + message.Date > DateTime.UtcNow.ToTimestamp())
+                if (CanGetMessageViewers(message, false))
                 {
-                    return message.ClientService.SendAsync(new GetMessageViewers(message.ChatId, message.Id));
+                    var response = await message.ClientService.SendAsync(new GetMessageViewers(message.ChatId, message.Id));
+                    if (response is MessageViewers viewers && viewers.Viewers.Count > 0)
+                    {
+                        return message.ClientService.GetUsers(viewers.Viewers.Select(x => x.UserId));
+                    }
                 }
 
-                return Task.FromResult<BaseObject>(new MessageViewers(Array.Empty<MessageViewer>()));
+                return Array.Empty<User>();
             }
 
             var played = message.Content is MessageVoiceNote or MessageVideoNote;
@@ -2443,30 +2446,32 @@ namespace Telegram.Views
             final.Visibility = Visibility.Collapsed;
             flyout.Items.Insert(0, final);
 
-            var response = await GetMessageViewersAsync(message);
-            if (response is MessageViewers viewers && (viewers.Viewers.Count > 0 || reacted > 0))
+            var viewers = await GetMessageViewersAsync(message);
+            if (viewers.Count > 0 || reacted > 0)
             {
-                var profiles = message.ClientService.GetUsers(viewers.Viewers.Select(x => x.UserId));
-
                 string text;
                 if (reacted > 0)
                 {
-                    if (reacted < viewers.Viewers.Count)
+                    if (reacted < viewers.Count)
                     {
-                        text = string.Format(Locale.Declension(Strings.R.Reacted, reacted, false), string.Format("{0}/{1}", message.InteractionInfo.Reactions.Count, viewers.Viewers.Count));
+                        text = string.Format(Locale.Declension(Strings.R.Reacted, reacted, false), string.Format("{0}/{1}", message.InteractionInfo.Reactions.Count, viewers.Count));
                     }
                     else
                     {
                         text = Locale.Declension(Strings.R.Reacted, reacted);
                     }
                 }
-                else if (viewers.Viewers.Count > 1)
+                else if (viewers.Count > 1)
                 {
-                    text = Locale.Declension(played ? Strings.R.MessagePlayed : Strings.R.MessageSeen, viewers.Viewers.Count);
+                    text = Locale.Declension(played ? Strings.R.MessagePlayed : Strings.R.MessageSeen, viewers.Count);
+                }
+                else if (viewers.Count > 0)
+                {
+                    text = viewers[0].FullName();
                 }
                 else
                 {
-                    text = profiles[0].FullName();
+                    text = Strings.NobodyViewed;
                 }
 
                 var pictures = new StackPanel();
@@ -2481,8 +2486,9 @@ namespace Telegram.Views
                 var geometry = compositor.CreatePathGeometry(new CompositionPath(group1));
                 var clip = compositor.CreateGeometricClip(geometry);
 
-                foreach (var user in profiles.Take(Math.Min(3, profiles.Count)))
+                for (int i = 0; i < Math.Min(3, viewers.Count); i++)
                 {
+                    var user = viewers[i];
                     var picture = new ProfilePicture();
                     picture.Width = 24;
                     picture.Height = 24;

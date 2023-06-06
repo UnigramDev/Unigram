@@ -60,15 +60,18 @@ namespace Telegram.ViewModels
                         Items.Add(item);
                     }
                 }
+                else
+                {
+                    _nextOffset = null;
+                }
             }
             else
             {
+                HasMoreItems = false;
+
                 var response = await ClientService.SendAsync(new GetMessageViewers(_message.ChatId, _message.Id));
                 if (response is MessageViewers viewers)
                 {
-                    HasMoreItems = false;
-                    //Items.AddRange(viewers.Viewers);
-
                     foreach (var item in viewers.Viewers)
                     {
                         if (_users.Contains(item.UserId))
