@@ -416,64 +416,9 @@ namespace Telegram.Services
                 case NotificationTypeNewMessage newMessage:
                     ProcessNewMessage(group, notification.Id, newMessage.Message, time, soundId, notification.IsSilent);
                     break;
-                case NotificationTypeNewPushMessage newPushMessage:
-                    ProcessNewPushMessage(group, notification.Id, chatId, newPushMessage, time, soundId, notification.IsSilent);
-                    break;
                 case NotificationTypeNewSecretChat:
                     break;
             }
-        }
-
-        private async void ProcessNewPushMessage(int groupId, int id, long chatId, NotificationTypeNewPushMessage message, DateTime date, long soundId, bool silent)
-        {
-            var chat = _clientService.GetChat(chatId);
-            if (chat == null)
-            {
-                return;
-            }
-
-            var caption = GetCaption(chat);
-            var content = GetContent(chat, message);
-            var sound = silent || soundId == 0 ? "silent" : string.Empty;
-            var launch = GetLaunch(chat, message);
-            var picture = GetPhoto(chat);
-            var dateTime = date.ToUniversalTime().ToString("s") + "Z";
-            var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
-
-            if (soundId != -1 && soundId != 0 && !silent)
-            {
-                var response = await _clientService.SendAsync(new GetSavedNotificationSound(soundId));
-                if (response is NotificationSound notificationSound)
-                {
-                    if (notificationSound.Sound.Local.IsDownloadingCompleted)
-                    {
-                        sound = "ms-appdata:///local/" + Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, notificationSound.Sound.Local.Path);
-                    }
-                    else
-                    {
-                        _clientService.DownloadFile(notificationSound.Sound.Id, 32);
-                    }
-                }
-            }
-
-            var user = _clientService.GetUser(_clientService.Options.MyId);
-            var attribution = user?.FullName() ?? string.Empty;
-
-            var showPreview = _settings.Notifications.GetShowPreview(chat);
-
-            if (chat.Type is ChatTypeSecret || !showPreview || TLContainer.Current.Passcode.IsLockscreenRequired)
-            {
-                caption = Strings.AppName;
-                content = Strings.YouHaveNewMessage;
-                picture = string.Empty;
-
-                canReply = false;
-            }
-
-            await UpdateAsync(chat, async () =>
-            {
-                await UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
-            });
         }
 
         private async void ProcessNewMessage(int groupId, int id, Message message, DateTime date, long soundId, bool silent)
@@ -644,12 +589,6 @@ namespace Telegram.Services
             catch (Exception) { }
         }
 
-
-        private string GetTag(Message message)
-        {
-            return $"{message.Id >> 20}";
-        }
-
         private string GetGroup(Chat chat)
         {
             var group = string.Empty;
@@ -676,30 +615,6 @@ namespace Telegram.Services
         public string GetLaunch(Chat chat, Message message)
         {
             var launch = string.Format(CultureInfo.InvariantCulture, "msg_id={0}", message.Id >> 20);
-
-            if (chat.Type is ChatTypePrivate privata)
-            {
-                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;from_id={1}", launch, privata.UserId);
-            }
-            else if (chat.Type is ChatTypeSecret secret)
-            {
-                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;secret_id={1}", launch, secret.SecretChatId);
-            }
-            else if (chat.Type is ChatTypeSupergroup supergroup)
-            {
-                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;channel_id={1}", launch, supergroup.SupergroupId);
-            }
-            else if (chat.Type is ChatTypeBasicGroup basicGroup)
-            {
-                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;chat_id={1}", launch, basicGroup.BasicGroupId);
-            }
-
-            return string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _clientService.SessionId);
-        }
-
-        public string GetLaunch(Chat chat, NotificationTypeNewPushMessage message)
-        {
-            var launch = string.Format(CultureInfo.InvariantCulture, "msg_id={0}", message.MessageId >> 20);
 
             if (chat.Type is ChatTypePrivate privata)
             {
@@ -857,16 +772,6 @@ namespace Telegram.Services
             return UpdateFromLabel(chat, message) + GetBriefLabel(chat, message);
         }
 
-        private string GetContent(Chat chat, NotificationTypeNewPushMessage message)
-        {
-            if (chat.Type is ChatTypeSecret)
-            {
-                return Strings.YouHaveNewMessage;
-            }
-
-            return UpdateFromLabel(chat, message) + GetBriefLabel(chat, message);
-        }
-
         private string GetPhoto(Chat chat)
         {
             if (chat.Photo != null && chat.Photo.Small.Local.IsDownloadingCompleted)
@@ -904,24 +809,6 @@ namespace Telegram.Services
                     return animatedEmoji.Emoji;
                 case MessageDice dice:
                     return dice.Emoji;
-            }
-
-            return string.Empty;
-        }
-
-        private string GetBriefLabel(Chat chat, NotificationTypeNewPushMessage value)
-        {
-            switch (value.Content)
-            {
-                case PushMessageContentAnimation animation:
-                    return animation.Caption;
-                case PushMessageContentPhoto photo:
-                    return photo.Caption;
-                case PushMessageContentVideo video:
-                    return video.Caption;
-
-                case PushMessageContentText text:
-                    return text.Text;
             }
 
             return string.Empty;
@@ -1053,264 +940,6 @@ namespace Telegram.Services
             else if (message.Content is MessageUnsupported)
             {
                 return result + Strings.UnsupportedAttachment;
-            }
-
-            return result;
-        }
-
-        private string UpdateFromLabel(Chat chat, NotificationTypeNewPushMessage message)
-        {
-            //if (message.IsService())
-            //{
-            //return MessageService.GetText(new ViewModels.MessageViewModel(_clientService, null, null, message));
-            //}
-
-            var result = string.Empty;
-
-            if (_clientService.TryGetUser(message.SenderId, out User senderUser))
-            {
-                if (ShowFrom(chat))
-                {
-                    if (!string.IsNullOrEmpty(senderUser.FirstName))
-                    {
-                        result = $"{senderUser.FirstName.Trim()}: ";
-                    }
-                    else if (!string.IsNullOrEmpty(senderUser.LastName))
-                    {
-                        result = $"{senderUser.LastName.Trim()}: ";
-                    }
-                    else if (senderUser.Type is UserTypeDeleted)
-                    {
-                        result = $"{Strings.HiddenName}: ";
-                    }
-                    else
-                    {
-                        result = $"{senderUser.Id}: ";
-                    }
-                }
-            }
-            else if (ShowFrom(chat))
-            {
-                result = $"{message.SenderName}: ";
-            }
-
-            string FormatPinned(string key)
-            {
-                if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
-                {
-                    return string.Format(key, string.Empty).Trim(' ');
-                }
-
-                return string.Format(key, message.SenderName);
-            }
-
-            if (message.Content is PushMessageContentGame gameMedia)
-            {
-                if (gameMedia.IsPinned)
-                {
-                    return FormatPinned(Strings.NotificationActionPinnedGameChannel);
-                }
-
-                return result + "\uD83C\uDFAE " + gameMedia.Title;
-            }
-            else if (message.Content is PushMessageContentVideoNote videoNote)
-            {
-                if (videoNote.IsPinned)
-                {
-                    return FormatPinned(Strings.NotificationActionPinnedRoundChannel);
-                }
-
-                return result + Strings.AttachRound;
-            }
-            else if (message.Content is PushMessageContentSticker sticker)
-            {
-                if (sticker.IsPinned)
-                {
-                    if (string.IsNullOrEmpty(sticker.Sticker?.Emoji))
-                    {
-                        return FormatPinned(Strings.NotificationActionPinnedStickerChannel);
-                    }
-
-                    return FormatPinned(string.Format(Strings.NotificationActionPinnedStickerEmojiChannel, "{0}", sticker.Emoji));
-                }
-
-                if (string.IsNullOrEmpty(sticker.Sticker?.Emoji))
-                {
-                    return result + Strings.AttachSticker;
-                }
-
-                return result + $"{sticker.Sticker.Emoji} {Strings.AttachSticker}";
-            }
-
-            string GetCaption(string caption)
-            {
-                return string.IsNullOrEmpty(caption) ? string.Empty : $", {caption}";
-            }
-
-            if (message.Content is PushMessageContentVoiceNote voiceNote)
-            {
-                if (voiceNote.IsPinned)
-                {
-                    return FormatPinned(Strings.NotificationActionPinnedVoiceChannel);
-                }
-
-                return result + Strings.AttachAudio;
-            }
-            else if (message.Content is PushMessageContentVideo video)
-            {
-                if (video.IsPinned)
-                {
-                    return FormatPinned(Strings.NotificationActionPinnedVideoChannel);
-                }
-
-                return result + (video.IsSecret ? Strings.AttachDestructingVideo : Strings.AttachVideo) + GetCaption(video.Caption);
-            }
-            else if (message.Content is PushMessageContentAnimation animation)
-            {
-                if (animation.IsPinned)
-                {
-                    return FormatPinned(Strings.NotificationActionPinnedGifChannel);
-                }
-
-                return result + Strings.AttachGif + GetCaption(animation.Caption);
-            }
-            else if (message.Content is PushMessageContentAudio audio)
-            {
-                if (audio.IsPinned)
-                {
-                    return FormatPinned(Strings.NotificationActionPinnedMusicChannel);
-                }
-
-                var performer = string.IsNullOrEmpty(audio.Audio?.Performer) ? null : audio.Audio.Performer;
-                var title = string.IsNullOrEmpty(audio.Audio?.Title) ? null : audio.Audio.Title;
-
-                if (performer == null || title == null)
-                {
-                    return result + Strings.AttachMusic;
-                }
-                else
-                {
-                    return $"{result}{performer} - {title}";
-                }
-            }
-            else if (message.Content is PushMessageContentDocument document)
-            {
-                if (document.IsPinned)
-                {
-                    return FormatPinned(Strings.NotificationActionPinnedFileChannel);
-                }
-
-                if (string.IsNullOrEmpty(document.Document?.FileName))
-                {
-                    return result + Strings.AttachDocument;
-                }
-
-                return result + document.Document.FileName;
-            }
-            else if (message.Content is PushMessageContentInvoice invoice)
-            {
-                if (invoice.IsPinned)
-                {
-                    return FormatPinned(Strings.NotificationActionPinnedInvoiceChannel);
-                }
-
-                return result + invoice.Price;
-            }
-            else if (message.Content is PushMessageContentContact contact)
-            {
-                if (contact.IsPinned)
-                {
-                    return FormatPinned(Strings.NotificationActionPinnedContactChannel);
-                }
-
-                return result + Strings.AttachContact;
-            }
-            else if (message.Content is PushMessageContentLocation location)
-            {
-                if (location.IsPinned)
-                {
-                    return FormatPinned(location.IsLive ? Strings.NotificationActionPinnedGeoLiveChannel : Strings.NotificationActionPinnedGeoChannel);
-                }
-
-                return result + (location.IsLive ? Strings.AttachLiveLocation : Strings.AttachLocation);
-            }
-            else if (message.Content is PushMessageContentPhoto photo)
-            {
-                if (photo.IsPinned)
-                {
-                    return FormatPinned(Strings.NotificationActionPinnedPhotoChannel);
-                }
-
-                return result + (photo.IsSecret ? Strings.AttachDestructingPhoto : Strings.AttachPhoto) + GetCaption(photo.Caption);
-            }
-            else if (message.Content is PushMessageContentPoll poll)
-            {
-                if (poll.IsPinned)
-                {
-                    return FormatPinned(Strings.NotificationActionPinnedPollChannel);
-                }
-
-                return result + "\uD83D\uDCCA " + poll.Question;
-            }
-            // Service messages
-            else if (message.Content is PushMessageContentBasicGroupChatCreate)
-            {
-                return Strings.NotificationInvitedToGroup;
-            }
-            else if (message.Content is PushMessageContentChatAddMembers)
-            {
-
-            }
-            else if (message.Content is PushMessageContentChatChangePhoto)
-            {
-                if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
-                {
-                    return Strings.ActionChannelChangedPhoto;
-                }
-
-                //Strings.NotificationMessageAlbum
-                //return Strings.ActionChangedPhoto.Replace("un1", from.GetFullName());
-            }
-            else if (message.Content is PushMessageContentChatChangeTitle chatChangeTitle)
-            {
-                if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
-                {
-                    return Strings.ActionChannelChangedTitle.Replace("un2", chatChangeTitle.Title);
-                }
-
-                //return Strings.ActionChangedTitle.Replace("un1", from.GetFullName()).Replace("un2", chatChangeTitle.Title);
-            }
-            else if (message.Content is PushMessageContentChatDeleteMember)
-            {
-
-            }
-            else if (message.Content is PushMessageContentChatJoinByLink)
-            {
-                //return Strings.ActionInviteUser.Replace("un1", from.GetFullName());
-            }
-            else if (message.Content is PushMessageContentContactRegistered)
-            {
-                //return string.Format(Strings.NotificationContactJoined, from.GetFullName());
-            }
-            else if (message.Content is PushMessageContentGameScore)
-            {
-                return Strings.NotificationMessageGame;
-            }
-            else if (message.Content is PushMessageContentHidden)
-            {
-                return Strings.YouHaveNewMessage;
-            }
-            else if (message.Content is PushMessageContentMediaAlbum)
-            {
-                return Strings.NotificationMessageAlbum;
-            }
-            else if (message.Content is PushMessageContentMessageForwards)
-            {
-                //return string.Format(Strings.NotificationMessageForwardFew, Locale.Declension("messages", forwards.TotalCount));
-            }
-            else if (message.Content is PushMessageContentScreenshotTaken)
-            {
-                return Strings.ActionTakeScreenshoot;
             }
 
             return result;
