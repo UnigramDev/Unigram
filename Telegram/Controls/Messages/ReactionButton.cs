@@ -240,12 +240,10 @@ namespace Telegram.Controls.Messages
 
             await Task.Run(() =>
             {
-                var frameSize = new Windows.Graphics.SizeInt32 { Width = width, Height = height };
-
-                var animation = LottieAnimation.LoadFromFile(path, frameSize, false, null);
+                var animation = LottieAnimation.LoadFromFile(path, width, height, false, null);
                 if (animation != null)
                 {
-                    animation.RenderSync(buffer, width, height, frame);
+                    animation.RenderSync(buffer, frame);
                     animation.Dispose();
                 }
             });

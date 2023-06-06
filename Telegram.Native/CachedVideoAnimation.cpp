@@ -109,16 +109,21 @@ namespace winrt::Telegram::Native::implementation
                         return nullptr;
                     }
 
-                    if (width == 0 && height == 0)
+                    auto pixelWidth = info->m_animation->PixelWidth();
+                    auto pixelHeight = info->m_animation->PixelHeight();
+
+                    if (width != 0 || height != 0)
                     {
-                        info->m_pixelWidth = info->m_animation->PixelWidth();
-                        info->m_pixelHeight = info->m_animation->PixelHeight();
+                        double ratioX = (double)width / width;
+                        double ratioY = (double)height / height;
+                        double ratio = std::max(ratioX, ratioY);
+
+                        pixelWidth *= ratio;
+                        pixelHeight *= ratio;
                     }
-                    else
-                    {
-                        info->m_pixelWidth = width;
-                        info->m_pixelHeight = height;
-                    }
+
+                    info->m_pixelWidth = pixelWidth;
+                    info->m_pixelHeight = pixelHeight;
 
                     info->m_fps = info->m_animation->FrameRate();
                     info->m_precache = true;
@@ -171,14 +176,14 @@ namespace winrt::Telegram::Native::implementation
         m_frameIndex = 0;
     }
 
-    void CachedVideoAnimation::RenderSync(IBuffer bitmap, int32_t width, int32_t height, int32_t& seconds, bool& completed)
+    void CachedVideoAnimation::RenderSync(IBuffer bitmap, int32_t& seconds, bool& completed)
     {
         uint8_t* pixels = bitmap.data();
         bool rendered;
-        RenderSync(pixels, width, height, seconds, completed, &rendered);
+        RenderSync(pixels, seconds, completed, &rendered);
     }
 
-    void CachedVideoAnimation::RenderSync(uint8_t* pixels, size_t w, size_t h, int32_t& seconds, bool& completed, bool* rendered)
+    void CachedVideoAnimation::RenderSync(uint8_t* pixels, int32_t& seconds, bool& completed, bool* rendered)
     {
         bool loadedFromCache = false;
         if (rendered)
@@ -191,7 +196,7 @@ namespace winrt::Telegram::Native::implementation
             return;
         }
 
-        if (m_precache && m_maxFrameSize <= w * h * 4 && m_imageSize == w * h * 4)
+        if (m_precache && m_maxFrameSize <= m_pixelWidth * m_pixelHeight * 4 && m_imageSize == m_pixelWidth * m_pixelHeight * 4)
         {
             uint32_t offset = m_fileOffsets[m_frameIndex];
             if (offset > 0)
@@ -213,7 +218,7 @@ namespace winrt::Telegram::Native::implementation
                     {
                         if (ReadFileReturn(precacheFile, m_decompressBuffer, sizeof(uint8_t) * frameSize, &read))
                         {
-                            LZ4_decompress_safe((const char*)m_decompressBuffer, (char*)pixels, frameSize, w * h * 4);
+                            LZ4_decompress_safe((const char*)m_decompressBuffer, (char*)pixels, frameSize, m_pixelWidth * m_pixelHeight * 4);
                             //qoi_desc desc;
                             //qoi_decode_2((const void*)m_decompressBuffer, frameSize, &desc, 4, pixels);
                             loadedFromCache = true;
@@ -247,7 +252,7 @@ namespace winrt::Telegram::Native::implementation
                 return;
             }
 
-            auto result = m_animation->RenderSync(pixels, w, h, false, seconds, completed);
+            auto result = m_animation->RenderSync(pixels, m_pixelWidth, m_pixelHeight, false, seconds, completed);
 
             if (result && rendered)
             {
@@ -261,7 +266,7 @@ namespace winrt::Telegram::Native::implementation
         }
     }
 
-    void CachedVideoAnimation::Cache(int w, int h)
+    void CachedVideoAnimation::Cache()
     {
         if (m_animation == nullptr)
         {
@@ -273,7 +278,7 @@ namespace winrt::Telegram::Native::implementation
             m_readyToCache = false;
 
             m_caching = true;
-            s_compressQueue.push_work(WorkItem(get_weak(), w, h));
+            s_compressQueue.push_work(WorkItem(get_weak(), m_pixelWidth, m_pixelHeight));
 
             slim_lock_guard const guard(s_compressLock);
 

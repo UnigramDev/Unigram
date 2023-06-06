@@ -325,9 +325,7 @@ namespace Telegram.Common
         public static ImageSource GetLottieFrame(string path, int frame, int width, int height, bool webp = true)
         {
             // Frame size affects disk cache, so we always use 256.
-            var frameSize = new Windows.Graphics.SizeInt32 { Width = 256, Height = 256 };
-
-            var animation = LottieAnimation.LoadFromFile(path, frameSize, false, null);
+            var animation = LottieAnimation.LoadFromFile(path, width, height, false, null);
             if (animation == null)
             {
                 if (webp)
@@ -339,7 +337,7 @@ namespace Telegram.Common
             }
 
             var bitmap = new WriteableBitmap(width, height);
-            animation.RenderSync(bitmap.PixelBuffer, bitmap.PixelWidth, bitmap.PixelHeight, frame);
+            animation.RenderSync(bitmap.PixelBuffer, frame);
             animation.Dispose();
 
             return bitmap;

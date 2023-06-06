@@ -645,7 +645,7 @@ namespace Telegram.Controls.Messages
             {
                 if (_sticker.Format is StickerFormatTgs)
                 {
-                    var animation = LottieAnimation.LoadFromFile(file.Local.Path, new Windows.Graphics.SizeInt32 { Width = _size, Height = _size }, true, GetColorReplacements(_sticker.FullType));
+                    var animation = LottieAnimation.LoadFromFile(file.Local.Path, _size, _size, true, GetColorReplacements(_sticker.FullType));
                     if (animation != null)
                     {
                         var frameRate = Math.Clamp(animation.FrameRate, 30, 30);
@@ -711,7 +711,7 @@ namespace Telegram.Controls.Messages
             var index = _index;
             var framesPerUpdate = _limitFps ? _animationFrameRate < 60 ? 1 : 2 : 1;
 
-            animation.RenderSync(_buffer, _size, _size, index);
+            animation.RenderSync(_buffer, index);
 
             if (index + framesPerUpdate < _animationTotalFrame)
             {
@@ -738,7 +738,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            animation.RenderSync(_buffer, _size, _size, out _, out bool completed);
+            animation.RenderSync(_buffer, out _, out bool completed);
 
             if (completed)
             {

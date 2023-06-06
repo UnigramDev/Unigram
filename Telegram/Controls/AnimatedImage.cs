@@ -12,7 +12,6 @@ using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Streams;
 using Windows.Foundation;
-using Windows.Graphics;
 using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Core;
@@ -1033,7 +1032,7 @@ namespace Telegram.Controls
 
             if (_animation.IsReadyToCache)
             {
-                _animation.Cache(PixelWidth, PixelHeight);
+                _animation.Cache();
                 return AnimatedImageTaskState.Skip;
             }
             else if (_animation.IsCaching)
@@ -1047,7 +1046,7 @@ namespace Telegram.Controls
 
             var framesPerUpdate = _presentation.LimitFps ? _animation.FrameRate < 60 ? 1 : 2 : 1;
 
-            _animation.RenderSync(frame, PixelWidth, PixelHeight, _index);
+            _animation.RenderSync(frame, _index);
             _index = Math.Min(_animation.TotalFrame, _index + framesPerUpdate);
 
             if (_animation.TotalFrame == 1)
@@ -1083,8 +1082,8 @@ namespace Telegram.Controls
         {
             _animation = animation;
 
-            PixelWidth = presentation.IsCachingEnabled ? presentation.PixelWidth : animation.PixelWidth;
-            PixelHeight = presentation.IsCachingEnabled ? presentation.PixelHeight : animation.PixelHeight;
+            PixelWidth = animation.PixelWidth;
+            PixelHeight = animation.PixelHeight;
 
             var frameRate = Math.Clamp(animation.FrameRate, 1, 30 /*presentation.LimitFps ? 30 : 60*/);
             var interval = TimeSpan.FromMilliseconds(Math.Floor(1000 / frameRate));
@@ -1100,7 +1099,7 @@ namespace Telegram.Controls
 
             if (_animation.IsReadyToCache)
             {
-                _animation.Cache(PixelWidth, PixelHeight);
+                _animation.Cache();
                 return AnimatedImageTaskState.Skip;
             }
             else if (_animation.IsCaching)
@@ -1108,7 +1107,7 @@ namespace Telegram.Controls
                 return AnimatedImageTaskState.Skip;
             }
 
-            _animation.RenderSync(frame, PixelWidth, PixelHeight, out int seconds, out bool completed);
+            _animation.RenderSync(frame, out int seconds, out bool completed);
             _index++;
 
             if (_animation.TotalFrame == 1 || (completed && _index == 1))
@@ -1307,7 +1306,7 @@ namespace Telegram.Controls
                     var extension = System.IO.Path.GetExtension(local.FilePath);
                     if (string.Equals(extension, ".tgs", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".json", StringComparison.OrdinalIgnoreCase))
                     {
-                        var animation = LottieAnimation.LoadFromFile(local.FilePath, new SizeInt32 { Width = work.Presentation.PixelWidth, Height = work.Presentation.PixelHeight }, work.Presentation.IsCachingEnabled, work.Presentation.Source.ColorReplacements, work.Presentation.Source.FitzModifier);
+                        var animation = LottieAnimation.LoadFromFile(local.FilePath, work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.IsCachingEnabled, work.Presentation.Source.ColorReplacements, work.Presentation.Source.FitzModifier);
                         if (animation != null)
                         {
                             // TODO: check if animation is valid
