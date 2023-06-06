@@ -48,10 +48,8 @@ namespace winrt::Telegram::Native::implementation
             return s_current.as<winrt::Telegram::Native::PlaceholderImageHelper>();
         }
 
-        void WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream);
-
-        void DrawWebP(hstring fileName, int32_t maxWidth, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size);
-        IBuffer DrawWebP(hstring fileName, int32_t maxWidth, Windows::Foundation::Size& size);
+        static void WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept;
+        static IBuffer DrawWebP(hstring fileName, int32_t maxWidth, Windows::Foundation::Size& size) noexcept;
 
         winrt::Windows::Foundation::IAsyncAction DrawSvgAsync(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, double dpi);
         void DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size);

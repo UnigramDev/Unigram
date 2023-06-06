@@ -453,7 +453,7 @@ namespace Telegram.Controls.Cells
 
                 using (var stream = new InMemoryRandomAccessStream())
                 {
-                    PlaceholderImageHelper.Current.WriteBytes(thumbnail.Data, stream);
+                    PlaceholderImageHelper.WriteBytes(thumbnail.Data, stream);
                     bitmap.SetSource(stream);
                 }
 

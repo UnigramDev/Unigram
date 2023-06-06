@@ -8,7 +8,6 @@ using RLottie;
 using System;
 using System.Collections.Generic;
 using System.IO.Compression;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Telegram.Native;
@@ -263,7 +262,7 @@ namespace Telegram.Common
                 try
                 {
                     await Task.Run(() => PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(bytes, amount, stream));
-                    bitmap.SetSource(stream);
+                    await bitmap.SetSourceAsync(stream);
                 }
                 catch { }
             }
@@ -275,13 +274,11 @@ namespace Telegram.Common
         {
             try
             {
-                Size size;
-                var buffer = PlaceholderImageHelper.Current.DrawWebP(path, (int)maxWidth, out size);
-
+                var buffer = PlaceholderImageHelper.DrawWebP(path, (int)maxWidth, out Size size);
                 if (size.Width > 0 && size.Height > 0)
                 {
                     var bitmap = new WriteableBitmap((int)size.Width, (int)size.Height);
-                    buffer.CopyTo(bitmap.PixelBuffer);
+                    BufferSurface.Copy(buffer, bitmap.PixelBuffer);
 
                     return bitmap;
                 }
@@ -303,12 +300,12 @@ namespace Telegram.Common
                 maxWidth = Math.Min(maxWidth, 512);
 
                 Size size;
-                var buffer = await Task.Run(() => PlaceholderImageHelper.Current.DrawWebP(path, (int)maxWidth, out size));
 
+                var buffer = await Task.Run(() => PlaceholderImageHelper.DrawWebP(path, (int)maxWidth, out size));
                 if (size.Width > 0 && size.Height > 0)
                 {
                     var bitmap = new WriteableBitmap((int)size.Width, (int)size.Height);
-                    buffer.CopyTo(bitmap.PixelBuffer);
+                    BufferSurface.Copy(buffer, bitmap.PixelBuffer);
 
                     return bitmap;
                 }

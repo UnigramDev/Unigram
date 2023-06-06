@@ -1347,7 +1347,7 @@ namespace Telegram.Controls
                     }
                     else if (string.Equals(extension, ".webp", StringComparison.OrdinalIgnoreCase))
                     {
-                        var animation = PlaceholderImageHelper.Current.DrawWebP(local.FilePath, work.Presentation.PixelWidth, out Size size);
+                        var animation = PlaceholderImageHelper.DrawWebP(local.FilePath, work.Presentation.PixelWidth, out Size size);
                         if (animation != null)
                         {
                             // TODO: check if animation is valid

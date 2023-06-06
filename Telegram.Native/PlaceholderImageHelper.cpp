@@ -91,135 +91,7 @@ namespace winrt::Telegram::Native::implementation
         }
     };
 
-    void PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth, IRandomAccessStream randomAccessStream, Windows::Foundation::Size& size)
-    {
-        size = Windows::Foundation::Size{ 0,0 };
-
-        FILE* file = _wfopen(fileName.data(), L"rb");
-        if (file == NULL)
-        {
-            return;
-        }
-
-        fseek(file, 0, SEEK_END);
-        size_t length = ftell(file);
-        fseek(file, 0, SEEK_SET);
-        char* buffer = (char*)malloc(length);
-        fread(buffer, 1, length, file);
-        fclose(file);
-
-        WebPData webPData;
-        webPData.bytes = (uint8_t*)buffer;
-        webPData.size = length;
-
-        auto spDemuxer = std::unique_ptr<WebPDemuxer, decltype(&WebPDemuxDelete)>
-        {
-            WebPDemux(&webPData),
-            WebPDemuxDelete
-        };
-        if (!spDemuxer)
-        {
-            //throw ref new InvalidArgumentException(ref new String(L"Failed to create demuxer"));
-            free(buffer);
-            return;
-        }
-
-        WebPIterator iter;
-        if (WebPDemuxGetFrame(spDemuxer.get(), 1, &iter))
-        {
-            WebPDecoderConfig config;
-            int ret = WebPInitDecoderConfig(&config);
-            if (!ret)
-            {
-                //throw ref new FailureException(ref new String(L"WebPInitDecoderConfig failed"));
-                free(buffer);
-                return;
-            }
-
-            ret = (WebPGetFeatures(iter.fragment.bytes, iter.fragment.size, &config.input) == VP8_STATUS_OK);
-            if (!ret)
-            {
-                //throw ref new FailureException(ref new String(L"WebPGetFeatures failed"));
-                free(buffer);
-                return;
-            }
-
-            int width = iter.width;
-            int height = iter.height;
-
-            if (iter.width > maxWidth || iter.height > maxWidth)
-            {
-                auto ratioX = (double)maxWidth / iter.width;
-                auto ratioY = (double)maxWidth / iter.height;
-                auto ratio = std::min(ratioX, ratioY);
-
-                width = (int)(iter.width * ratio);
-                height = (int)(iter.height * ratio);
-            }
-
-            size.Width = width;
-            size.Height = height;
-
-            uint8_t* pixels = new uint8_t[(width * 4) * height];
-
-            if (width != iter.width || height != iter.height)
-            {
-                config.options.scaled_width = width;
-                config.options.scaled_height = height;
-                config.options.use_scaling = 1;
-                config.options.no_fancy_upsampling = 1;
-            }
-
-            config.output.colorspace = MODE_BGRA;
-            config.output.is_external_memory = 1;
-            config.output.u.RGBA.rgba = pixels;
-            config.output.u.RGBA.stride = width * 4;
-            config.output.u.RGBA.size = (width * 4) * height;
-
-            ret = WebPDecode(iter.fragment.bytes, iter.fragment.size, &config);
-
-            if (ret != VP8_STATUS_OK)
-            {
-                //throw ref new FailureException(ref new String(L"Failed to decode frame"));
-                delete[] pixels;
-
-                free(buffer);
-                return;
-            }
-
-            winrt::com_ptr<IWICImagingFactory> piFactory;
-            winrt::com_ptr<IWICBitmapEncoder> piEncoder;
-            winrt::com_ptr<IStream> piStream;
-
-            CoCreateInstance(CLSID_WICImagingFactory, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&piFactory));
-
-            HRESULT hr = CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&piStream));
-
-            piFactory->CreateEncoder(GUID_ContainerFormatPng, NULL, piEncoder.put());
-            piEncoder->Initialize(piStream.get(), WICBitmapEncoderNoCache);
-
-            winrt::com_ptr<IPropertyBag2> propertyBag;
-            winrt::com_ptr<IWICBitmapFrameEncode> frame;
-            piEncoder->CreateNewFrame(frame.put(), propertyBag.put());
-
-            frame->Initialize(propertyBag.get());
-            frame->SetSize(width, height);
-
-            WICPixelFormatGUID format = GUID_WICPixelFormat32bppPBGRA;
-            frame->SetPixelFormat(&format);
-            frame->WritePixels(height, width * 4, (width * 4) * height, pixels);
-
-            frame->Commit();
-            piEncoder->Commit();
-            piStream->Seek({ 0 }, STREAM_SEEK_SET, nullptr);
-
-            delete[] pixels;
-        }
-
-        free(buffer);
-    }
-
-    IBuffer PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth, Windows::Foundation::Size& size)
+    IBuffer PlaceholderImageHelper::DrawWebP(hstring fileName, int32_t maxWidth, Windows::Foundation::Size& size) noexcept
     {
         size = Windows::Foundation::Size{ 0,0 };
 
@@ -977,7 +849,7 @@ namespace winrt::Telegram::Native::implementation
     //	return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(rects));
     //}
 
-    void PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream)
+    void PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept
     {
         winrt::com_ptr<IStream> stream;
         winrt::check_hresult(CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));

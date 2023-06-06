@@ -21,10 +21,8 @@ namespace Telegram.Native
 	{
 		static PlaceholderImageHelper Current{ get; };
 
-		void WriteBytes(Windows.Foundation.Collections.IVector<byte> hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
-
-		void DrawWebP(String fileName, Int32 maxWidth, Windows.Storage.Streams.IRandomAccessStream randomAccessStream, out Windows.Foundation.Size size);
-		Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Windows.Foundation.Size size);
+		static void WriteBytes(Windows.Foundation.Collections.IVector<byte> hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		static Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Windows.Foundation.Size size);
 
 		Windows.Foundation.IAsyncAction DrawSvgAsync(String path, Windows.UI.Color foreground, Windows.Storage.Streams.IRandomAccessStream randomAccessStream, Double dpi);
 		void DrawSvg(String path, Windows.UI.Color foreground, Windows.Storage.Streams.IRandomAccessStream randomAccessStream, Double dpi, out Windows.Foundation.Size size);

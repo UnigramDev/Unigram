@@ -680,7 +680,7 @@ namespace Telegram.Controls.Messages
                 }
                 else if (_sticker.Format is StickerFormatWebp)
                 {
-                    _buffer = PlaceholderImageHelper.Current.DrawWebP(file.Local.Path, _size, out Size size);
+                    _buffer = PlaceholderImageHelper.DrawWebP(file.Local.Path, _size, out Size size);
                     _hasRenderedFirstFrame = true;
 
                     PixelWidth = (int)size.Width;
