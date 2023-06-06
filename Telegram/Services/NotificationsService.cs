@@ -431,12 +431,12 @@ namespace Telegram.Services
 
             var caption = GetCaption(chat);
             var content = GetContent(chat, message);
-            var sound = silent || soundId == 0 ? "silent" : string.Empty;
             var launch = GetLaunch(chat, message);
             var picture = GetPhoto(chat);
             var dateTime = date.ToUniversalTime().ToString("s") + "Z";
             var canReply = !(chat.Type is ChatTypeSupergroup super && super.IsChannel);
 
+            Td.Api.File soundFile = null;
             if (soundId != -1 && soundId != 0 && !silent)
             {
                 var response = await _clientService.SendAsync(new GetSavedNotificationSound(soundId));
@@ -444,11 +444,15 @@ namespace Telegram.Services
                 {
                     if (notificationSound.Sound.Local.IsDownloadingCompleted)
                     {
-                        sound = "ms-appdata:///local/" + Path.GetRelativePath(ApplicationData.Current.LocalFolder.Path, notificationSound.Sound.Local.Path);
+                        soundFile = notificationSound.Sound;
                     }
                     else
                     {
+                        // If notification sound is not yet available
+                        // download it and show the notification without sound.
+
                         _clientService.DownloadFile(notificationSound.Sound.Id, 32);
+                        silent = true;
                     }
                 }
             }
@@ -467,91 +471,68 @@ namespace Telegram.Services
                 canReply = false;
             }
 
-            await UpdateAsync(chat, () => UpdateToast(caption, content, $"{_sessionService.Id}", sound, launch, $"{id}", $"{groupId}", picture, dateTime, canReply));
+            if (UpdateAsync(chat))
+            {
+                await UpdateToast(caption, content, $"{_sessionService.Id}", silent || soundId == 0, soundFile, launch, $"{id}", $"{groupId}", picture, dateTime, canReply);
+            }
         }
 
-        private async Task UpdateAsync(Chat chat, Func<Task> action)
+        private bool UpdateAsync(Chat chat)
         {
             try
             {
                 var active = WindowContext.Active;
                 if (active == null)
                 {
-                    await action();
-                    return;
+                    return true;
                 }
 
                 var service = active.NavigationServices?.GetByFrameId($"Main{_clientService.SessionId}");
                 if (service == null)
                 {
-                    await action();
-                    return;
+                    return true;
                 }
 
                 if (service.CurrentPageType == typeof(ChatPage) && (long)service.CurrentPageParam == chat.Id)
                 {
-                    return;
+                    return false;
                 }
 
-                await action();
+                return true;
             }
             catch
             {
-                await action();
+                return true;
             }
         }
 
-        private async Task UpdateToast(string caption, string message, string account, string sound, string launch, string tag, string group, string picture, string date, bool canReply)
+        private async Task UpdateToast(string caption, string message, string account, bool silent, Td.Api.File soundFile, string launch, string tag, string group, string picture, string date, bool canReply)
         {
-            string actions = "";
-            if (!string.IsNullOrEmpty(group) && canReply)
-            {
-                actions = string.Format("<actions><input id='input' type='text' placeHolderContent='{0}' /><action activationType='background' arguments='action=markAsRead&amp;", Strings.Reply);
-                actions += launch;
-                //actions += L"' hint-inputId='QuickMessage' content='ms-resource:Send' imageUri='ms-appx:///Assets/Icons/Toast/Send.png'/></actions>";
-                actions += string.Format("' content='{0}'/><action activationType='background' arguments='action=reply&amp;", Strings.MarkAsRead);
-                actions += launch;
-                actions += string.Format("' hint-inputId='input' content='{0}'/></actions>", Strings.Send);
-            }
-
-            string audio = "";
-            if (string.Equals(sound, "silent", StringComparison.OrdinalIgnoreCase))
-            {
-                audio = "<audio silent='true'/>";
-            }
-
-            string xml = "<toast launch='";
-            xml += launch;
-            xml += "' displayTimestamp='";
-            xml += date;
-            //xml += L"' hint-people='remoteid:";
-            //xml += group->Data();
-            xml += "'>";
-            //xml += L"<header id='";
-            //xml += account->Data();
-            //xml += L"' title='Camping!!' arguments='action = openConversation & amp; id = 6289'/>";
+            var xml = $"<toast launch='{launch}' displayTimestamp='{date}'>";
             xml += "<visual><binding template='ToastGeneric'>";
 
             if (!string.IsNullOrEmpty(picture))
             {
-                xml += "<image placement='appLogoOverride' hint-crop='circle' src='";
-                xml += picture;
-                xml += "'/>";
+                xml += $"<image placement='appLogoOverride' hint-crop='circle' src='{picture}'/>";
             }
 
-            xml += "<text><![CDATA[";
-            xml += caption;
-            xml += "]]></text><text><![CDATA[";
-            xml += message;
-            //xml += L"]]></text><text placement='attribution'>Unigram</text></binding></visual>";
-            xml += "]]></text>";
-
-            //xml += L"<text placement='attribution'><![CDATA[";
-            //xml += attribution->Data();
-            //xml += L"]]></text>";
+            xml += $"<text><![CDATA[{caption}]]></text><text><![CDATA[{message}]]></text>";
             xml += "</binding></visual>";
-            xml += actions;
-            xml += audio;
+
+            if (!string.IsNullOrEmpty(group) && canReply)
+            {
+                xml += string.Format("<actions><input id='input' type='text' placeHolderContent='{0}' /><action activationType='background' arguments='action=markAsRead&amp;", Strings.Reply);
+                xml += launch;
+                xml += string.Format("' content='{0}'/><action activationType='background' arguments='action=reply&amp;", Strings.MarkAsRead);
+                xml += launch;
+                xml += string.Format("' hint-inputId='input' content='{0}'/></actions>", Strings.Send);
+            }
+
+            if (silent || soundFile != null)
+            {
+                xml += "<audio silent='true'/>";
+            }
+
             xml += "</toast>";
 
             try
@@ -585,6 +566,11 @@ namespace Telegram.Services
                 }
 
                 notifier.Show(notification);
+
+                if (soundFile != null)
+                {
+                    SoundEffects.Play(soundFile);
+                }
             }
             catch (Exception) { }
         }
