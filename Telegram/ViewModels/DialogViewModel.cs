@@ -571,7 +571,7 @@ namespace Telegram.ViewModels
                     var replied = new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => CreateMessage(x)));
                     if (replied.Count > 0)
                     {
-                        await ProcessMessagesAsync(chat, replied);
+                        ProcessMessages(chat, replied);
 
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                         Items.RawInsertRange(0, replied, true, out bool empty);
@@ -663,7 +663,7 @@ namespace Telegram.ViewModels
                     var replied = new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => CreateMessage(x)));
                     if (replied.Count > 0)
                     {
-                        await ProcessMessagesAsync(chat, replied);
+                        ProcessMessages(chat, replied);
 
                         SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                         Items.RawAddRange(replied, true, out bool empty);
@@ -747,7 +747,7 @@ namespace Telegram.ViewModels
                     .Select(x => CreateMessage(x))
                     .ToList();
 
-                await ProcessMessagesAsync(chat, replied);
+                ProcessMessages(chat, replied);
 
                 previous = replied[0];
 
@@ -1069,11 +1069,8 @@ namespace Telegram.ViewModels
 
                     _groupedMessages.Clear();
 
-                    var replied = new MessageCollection(null, messages.MessagesValue.Select(x => CreateMessage(x)));
-                    await ProcessMessagesAsync(chat, replied);
-
                     var firstVisibleIndex = -1;
-                    var firstVisibleItem = default(MessageViewModel);
+                    var firstVisibleItem = default(Message);
 
                     var unread = false;
 
@@ -1102,12 +1099,12 @@ namespace Telegram.ViewModels
                         // then we want to skip it to align first unread message at top
                         if (lastReadMessageId != lastMessageId && maxId >= lastReadMessageId)
                         {
-                            var target = default(MessageViewModel);
+                            var target = default(Message);
                             var index = -1;
 
-                            for (int i = 0; i < replied.Count; i++)
+                            for (int i = 0; i < messages.MessagesValue.Count; i++)
                             {
-                                var current = replied[i];
+                                var current = messages.MessagesValue[i];
                                 if (current.Id > lastReadMessageId)
                                 {
                                     if (index == -1)
@@ -1138,7 +1135,7 @@ namespace Telegram.ViewModels
                             {
                                 if (index > 0)
                                 {
-                                    replied.Insert(index, CreateMessage(new Message(0, target.SenderId, target.ChatId, null, null, target.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, target.IsChannelPost, target.IsTopicMessage, false, target.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null)));
+                                    messages.MessagesValue.Insert(index, new Message(0, target.SenderId, target.ChatId, null, null, target.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, target.IsChannelPost, target.IsTopicMessage, false, target.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null));
                                     unread = true;
                                 }
                                 else if (maxId == lastReadMessageId)

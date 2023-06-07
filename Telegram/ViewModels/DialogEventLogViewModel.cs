@@ -147,7 +147,7 @@ namespace Telegram.ViewModels
                     }
 
                     var replied = ProcessEvents(events);
-                    await ProcessMessagesAsync(chat, replied);
+                    ProcessMessages(chat, replied);
 
                     Items.RawReplaceWith(replied);
 
@@ -202,7 +202,7 @@ namespace Telegram.ViewModels
                     }
 
                     var replied = ProcessEvents(events);
-                    await ProcessMessagesAsync(chat, replied);
+                    ProcessMessages(chat, replied);
 
                     Items.RawInsertRange(0, replied, false, out bool empty);
                     IsLastSliceLoaded = empty;

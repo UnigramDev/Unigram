@@ -878,7 +878,7 @@ namespace Telegram.ViewModels
                     messageCommon.IsInitial = false;
 
                     var result = new List<MessageViewModel> { messageCommon };
-                    await ProcessMessagesAsync(_chat, result);
+                    ProcessMessages(_chat, result);
 
                     if (result.Count > 0)
                     {
