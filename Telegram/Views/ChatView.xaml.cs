@@ -1232,6 +1232,13 @@ namespace Telegram.Views
             var editing = ViewModel.ComposerHeader?.EditingMessage != null;
             var empty = TextField.IsEmpty;
 
+            if (empty != _oldEmpty)
+            {
+                ButtonStickers.Source = empty
+                    ? ViewModel.Settings.Stickers.SelectedTab
+                    : Services.Settings.StickersTab.Emoji;
+            }
+
             FrameworkElement elementHide = null;
             FrameworkElement elementShow = null;
 
