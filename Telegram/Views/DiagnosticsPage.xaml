@@ -42,6 +42,10 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.LegacyScrollBars, Mode=TwoWay}"
                               Content="Legacy ScrollBar style"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.LegacyScrollViewers, Mode=TwoWay}"
+                              Content="Legacy ScrollViewer style"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="In-Memory Logs">

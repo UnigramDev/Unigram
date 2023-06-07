@@ -14,6 +14,7 @@ using Telegram.Td.Api;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using AcrylicBrush = Microsoft.UI.Xaml.Media.AcrylicBrush;
@@ -66,6 +67,7 @@ namespace Telegram.Common
         }
 
         private bool _legacyScrollBars;
+        private bool _legacyScrollViewer;
 
         public void UpdateScrolls()
         {
@@ -86,6 +88,28 @@ namespace Telegram.Common
                 }
 
                 _legacyScrollBars = SettingsService.Current.Diagnostics.LegacyScrollBars;
+            }
+
+            if (_legacyScrollViewer != SettingsService.Current.Diagnostics.LegacyScrollViewers)
+            {
+                if (SettingsService.Current.Diagnostics.LegacyScrollViewers)
+                {
+                    var style = new Style
+                    {
+                        TargetType = typeof(ScrollViewer),
+                    };
+
+                    style.Setters.Add(new Setter(ScrollViewer.VerticalScrollBarVisibilityProperty, ScrollBarVisibility.Auto));
+                    style.Setters.Add(new Setter(ScrollViewer.VerticalScrollModeProperty, ScrollMode.Enabled));
+
+                    this.Add(typeof(ScrollViewer), style);
+                }
+                else
+                {
+                    this.Remove(typeof(ScrollViewer));
+                }
+
+                _legacyScrollViewer = SettingsService.Current.Diagnostics.LegacyScrollViewers;
             }
         }
 
