@@ -1000,47 +1000,78 @@ namespace Telegram.ViewModels
 
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
 
-                Function func;
+                Task<BaseObject> func;
                 if (_topic != null)
                 {
                     // TODO: Workaround, should be removed some day
                     await ClientService.SendAsync(new GetMessage(chat.Id, _topic.Info.MessageThreadId));
 
-                    func = new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, maxId, -25, 50);
+                    func = ClientService.SendAsync(new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, maxId, -25, 50));
                 }
                 else if (_threadId != 0)
                 {
                     if (_thread != null && _thread.Messages.Any(x => x.Id == maxId))
                     {
-                        func = new GetMessageThreadHistory(chat.Id, _threadId, 1, -25, 50);
+                        func = ClientService.SendAsync(new GetMessageThreadHistory(chat.Id, _threadId, 1, -25, 50));
                     }
                     else
                     {
-                        func = new GetMessageThreadHistory(chat.Id, _threadId, maxId, -25, 50);
+                        func = ClientService.SendAsync(new GetMessageThreadHistory(chat.Id, _threadId, maxId, -25, 50));
                     }
                 }
                 else if (_type == DialogType.Pinned)
                 {
-                    func = new SearchChatMessages(chat.Id, string.Empty, null, maxId, -25, 50, new SearchMessagesFilterPinned(), 0);
+                    func = ClientService.SendAsync(new SearchChatMessages(chat.Id, string.Empty, null, maxId, -25, 50, new SearchMessagesFilterPinned(), 0));
                 }
                 else
                 {
-                    func = new GetChatHistory(chat.Id, maxId, -25, 50, alignment == VerticalAlignment.Top);
-                }
+                    async Task<BaseObject> GetChatHistoryAsync(long chatId, long fromMessageId, int offset, int limit, bool onlyLocal)
+                    {
+                        var response = await ClientService.SendAsync(new GetChatHistory(chatId, fromMessageId, offset, limit, onlyLocal));
+                        if (response is Messages messages && onlyLocal)
+                        {
+                            var count = messages.MessagesValue.Count;
+                            var outOfRange = maxId != 0 && count > 0 && messages.MessagesValue[^1].Id > maxId;
 
-                var send = ClientService.SendAsync(func);
+                            if (outOfRange || count < 5)
+                            {
+                                var force = await ClientService.SendAsync(new GetChatHistory(chat.Id, maxId, -25, 50, count > 0 && !outOfRange));
+                                if (force is Messages forceMessages)
+                                {
+                                    if (forceMessages.MessagesValue.Count == 0 && count > 0 && !outOfRange)
+                                    {
+                                        force = await ClientService.SendAsync(new GetChatHistory(chat.Id, maxId, -25, 50, false));
+
+                                        if (force is Messages forceMessages2)
+                                        {
+                                            return forceMessages2;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        return forceMessages;
+                                    }
+                                }
+                            }
+                        }
+
+                        return response;
+                    }
+
+                    func = GetChatHistoryAsync(chat.Id, maxId, -25, 50, alignment == VerticalAlignment.Top);
+                }
 
                 if (alignment != VerticalAlignment.Center)
                 {
-                    var wait = await Task.WhenAny(send, Task.Delay(200));
-                    if (wait != send)
+                    var wait = await Task.WhenAny(func, Task.Delay(200));
+                    if (wait != func)
                     {
                         Items.Clear();
                         NotifyMessageSliceLoaded();
                     }
                 }
 
-                var response = await send;
+                var response = await func;
                 if (response is FoundChatMessages foundChatMessages)
                 {
                     response = new Messages(foundChatMessages.TotalCount, foundChatMessages.Messages);
@@ -1048,15 +1079,6 @@ namespace Telegram.ViewModels
 
                 if (response is Messages messages)
                 {
-                    if (messages.MessagesValue.Count < 5 && func is GetChatHistory getChatHistory && getChatHistory.OnlyLocal)
-                    {
-                        var force = await ClientService.SendAsync(new GetChatHistory(chat.Id, maxId, -25, 50, messages.MessagesValue.Count > 0));
-                        if (force is Messages forceMessages)
-                        {
-                            messages = forceMessages;
-                        }
-                    }
-
                     if (_chat?.Id != chat.Id)
                     {
                         _isLoadingNextSlice = false;
@@ -1102,7 +1124,7 @@ namespace Telegram.ViewModels
                             var target = default(Message);
                             var index = -1;
 
-                            for (int i = 0; i < messages.MessagesValue.Count; i++)
+                            for (int i = messages.MessagesValue.Count - 1; i >= 0; i--)
                             {
                                 var current = messages.MessagesValue[i];
                                 if (current.Id > lastReadMessageId)
@@ -1113,7 +1135,7 @@ namespace Telegram.ViewModels
                                         firstVisibleItem = current;
                                     }
 
-                                    if (target == null && !current.IsOutgoing)
+                                    if ((target == null || target.IsOutgoing) && !current.IsOutgoing)
                                     {
                                         target = current;
                                         index = i;
@@ -1124,7 +1146,7 @@ namespace Telegram.ViewModels
                                         index = -1;
                                     }
                                 }
-                                else if (firstVisibleIndex == -1 && i == replied.Count - 1)
+                                else if (firstVisibleIndex == -1 && i == 0)
                                 {
                                     firstVisibleIndex = i;
                                     firstVisibleItem = current;
@@ -1133,9 +1155,9 @@ namespace Telegram.ViewModels
 
                             if (target != null)
                             {
-                                if (index > 0)
+                                if (index >= 0 && index < messages.MessagesValue.Count - 1)
                                 {
-                                    messages.MessagesValue.Insert(index, new Message(0, target.SenderId, target.ChatId, null, null, target.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, target.IsChannelPost, target.IsTopicMessage, false, target.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null));
+                                    messages.MessagesValue.Insert(index + 1, new Message(0, target.SenderId, target.ChatId, null, null, target.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, target.IsChannelPost, target.IsTopicMessage, false, target.Date, 0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null));
                                     unread = true;
                                 }
                                 else if (maxId == lastReadMessageId)
@@ -1167,9 +1189,9 @@ namespace Telegram.ViewModels
 
                     if (firstVisibleIndex == -1)
                     {
-                        for (int i = replied.Count - 1; i >= 0; i--)
+                        for (int i = 0; i < messages.MessagesValue.Count; i++)
                         {
-                            if (replied[i].Id == maxId || replied[i].Content is MessageAlbum album && album.Messages.ContainsKey(maxId))
+                            if (messages.MessagesValue[i].Id == maxId)
                             {
                                 firstVisibleIndex = i;
                                 unread = false;
@@ -1183,26 +1205,34 @@ namespace Telegram.ViewModels
                         System.Diagnostics.Debugger.Break();
                     }
 
+                    IEnumerable<Message> values;
                     if (alignment == VerticalAlignment.Bottom)
+                    {
+                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+                        values = messages.MessagesValue;
+                    }
+                    else if (alignment == VerticalAlignment.Top)
                     {
                         if (unread)
                         {
                             firstVisibleIndex++;
                         }
 
-                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        Items.RawReplaceWith(firstVisibleIndex == -1 ? replied : replied.Take(firstVisibleIndex + 1));
-                    }
-                    else if (alignment == VerticalAlignment.Top)
-                    {
                         SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
-                        Items.RawReplaceWith(firstVisibleIndex == -1 ? replied : replied.Skip(firstVisibleIndex));
+                        values = firstVisibleIndex == -1
+                            ? messages.MessagesValue
+                            : messages.MessagesValue.Take(firstVisibleIndex + 1);
                     }
                     else
                     {
                         SetScrollMode(direction == ScrollIntoViewAlignment.Default ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
-                        Items.RawReplaceWith(replied);
+                        values = messages.MessagesValue;
                     }
+
+                    var replied = new MessageCollection(null, values.Select(x => CreateMessage(x)));
+
+                    ProcessMessages(chat, replied);
+                    Items.RawReplaceWith(replied);
 
                     NotifyMessageSliceLoaded();
 
@@ -1283,7 +1313,7 @@ namespace Telegram.ViewModels
                     }
 
                     var replied = messages.MessagesValue.OrderBy(x => x.Id).Select(x => CreateMessage(x)).ToList();
-                    await ProcessMessagesAsync(chat, replied);
+                    ProcessMessages(chat, replied);
 
                     var target = replied.FirstOrDefault();
                     if (target != null)
@@ -1358,7 +1388,7 @@ namespace Telegram.ViewModels
             return _messageFactory.Create(_messageDelegate, _chat, message);
         }
 
-        protected Task ProcessMessagesAsync(Chat chat, IList<MessageViewModel> messages)
+        protected void ProcessMessages(Chat chat, IList<MessageViewModel> messages)
         {
             ProcessAlbums(chat, messages);
 
@@ -1397,8 +1427,6 @@ namespace Telegram.ViewModels
                 ProcessEmoji(message);
                 ProcessReplies(chat, message);
             }
-
-            return Task.CompletedTask;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1861,7 +1889,7 @@ namespace Telegram.ViewModels
                 if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < Items.Count - 1 && Items.Count > 0)
                 {
                     var start = Items[panel.LastVisibleIndex].Id;
-                    if (start != chat.LastMessage?.Id)
+                    if (start != 0 && start != chat.LastMessage?.Id)
                     {
                         long lastReadMessageId;
 
