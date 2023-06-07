@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages.Content;
@@ -1826,9 +1827,32 @@ namespace Telegram.Controls.Messages
             {
                 message.Delegate.OpenBankCardNumber(cardNumber);
             }
-            else if (e.Type is TextEntityTypeMediaTimestamp mediaTimestamp && message.ReplyToMessage != null)
+            else if (e.Type is TextEntityTypeMediaTimestamp mediaTimestamp)
             {
-                message.Delegate.OpenMedia(message.ReplyToMessage, null, mediaTimestamp.MediaTimestamp);
+                var target = message.HasTimestampedMedia ? message : message.ReplyToMessage;
+                if (target == null)
+                {
+                    return;
+                }
+
+                if (target.Content is MessageText text && text.WebPage != null)
+                {
+                    var regex = new Regex("^.*(?:(?:youtu\\.be\\/|v\\/|vi\\/|u\\/\\w\\/|embed\\/|shorts\\/)|(?:(?:watch)?\\?v(?:i)?=|\\&v(?:i)?=))([^#\\&\\?]*).*");
+
+                    var match = regex.Match(text.WebPage.Url);
+                    if (match.Success && match.Groups.Count == 2)
+                    {
+                        message.Delegate.OpenUrl($"https://youtu.be/{match.Groups[1].Value}?t={mediaTimestamp.MediaTimestamp}", false);
+                    }
+                    else
+                    {
+                        message.Delegate.OpenUrl(text.WebPage.Url, false);
+                    }
+                }
+                else
+                {
+                    message.Delegate.OpenMedia(target, null, mediaTimestamp.MediaTimestamp);
+                }
             }
             else if (e.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode && e.Data is string code)
             {
