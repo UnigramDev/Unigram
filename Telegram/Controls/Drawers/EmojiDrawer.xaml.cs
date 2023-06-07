@@ -278,7 +278,10 @@ namespace Telegram.Controls.Drawers
 
         private void Toolbar_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //Pivot.SelectedIndex = Toolbar.SelectedIndex;
+            if (Toolbar.SelectedItem != null)
+            {
+                _ = Toolbar.ScrollToItem2(Toolbar.SelectedItem, VerticalAlignment.Center);
+            }
         }
 
         private void Toolbar_ItemClick(object sender, ItemClickEventArgs e)

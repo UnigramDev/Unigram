@@ -161,6 +161,7 @@
                       Height="40"
                       IsItemClickEnabled="True"
                       ItemClick="Toolbar_ItemClick"
+                      SelectionChanged="Toolbar_SelectionChanged"
                       ContainerContentChanging="Toolbar_ContainerContentChanging"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
                       ScrollViewer.HorizontalScrollMode="Auto"

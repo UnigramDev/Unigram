@@ -55,66 +55,107 @@
                   BorderThickness="1"
                   CornerRadius="8">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
                     <RowDefinition />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Pivot x:Name="Pivot"
-                       Style="{StaticResource HeaderlessPivotStyle}"
-                       Background="Transparent"
-                       Grid.Row="1">
-                    <PivotItem>
-                        <Grid>
-                            <Border x:Name="EmojisPanel">
-                                <drawers:EmojiDrawer x:Name="EmojisRoot"
-                                                     x:Load="False"
-                                                     ItemClick="Emojis_ItemClick" />
-                            </Border>
-                            <TextBlock x:Name="EmojisPermission"
-                                       VerticalAlignment="Center"
-                                       TextAlignment="Center"
-                                       Margin="12"
-                                       Foreground="{ThemeResource ButtonForegroundDisabled}"
-                                       Style="{StaticResource BodyTextBlockStyle}" />
-                        </Grid>
-                    </PivotItem>
-                    <PivotItem>
-                        <Grid>
-                            <Border x:Name="AnimationsPanel">
-                                <drawers:AnimationDrawer x:Name="AnimationsRoot"
-                                                         x:Load="False" />
-                            </Border>
-                            <TextBlock x:Name="AnimationsPermission"
-                                       VerticalAlignment="Center"
-                                       TextAlignment="Center"
-                                       Margin="12"
-                                       Foreground="{ThemeResource ButtonForegroundDisabled}"
-                                       Style="{StaticResource BodyTextBlockStyle}" />
-                        </Grid>
-                    </PivotItem>
-                    <PivotItem>
-                        <Grid>
-                            <Border x:Name="StickersPanel">
-                                <drawers:StickerDrawer x:Name="StickersRoot"
-                                                       x:Load="False" />
-                            </Border>
-                            <TextBlock x:Name="StickersPermission"
-                                       VerticalAlignment="Center"
-                                       TextAlignment="Center"
-                                       Margin="12"
-                                       Foreground="{ThemeResource ButtonForegroundDisabled}"
-                                       Style="{StaticResource BodyTextBlockStyle}" />
-                        </Grid>
-                    </PivotItem>
-                </Pivot>
+                <Grid x:Name="Tab0">
+                    <Border x:Name="EmojisPanel">
+                        <drawers:EmojiDrawer x:Name="EmojisRoot"
+                                             x:Load="False"
+                                             ItemClick="Emojis_ItemClick" />
+                    </Border>
+                    <TextBlock x:Name="EmojisPermission"
+                               VerticalAlignment="Center"
+                               TextAlignment="Center"
+                               Margin="12"
+                               Foreground="{ThemeResource ButtonForegroundDisabled}"
+                               Style="{StaticResource BodyTextBlockStyle}" />
+                </Grid>
+
+                <Grid x:Name="Tab1">
+                    <Border x:Name="AnimationsPanel">
+                        <drawers:AnimationDrawer x:Name="AnimationsRoot"
+                                                 x:Load="False" />
+                    </Border>
+                    <TextBlock x:Name="AnimationsPermission"
+                               VerticalAlignment="Center"
+                               TextAlignment="Center"
+                               Margin="12"
+                               Foreground="{ThemeResource ButtonForegroundDisabled}"
+                               Style="{StaticResource BodyTextBlockStyle}" />
+                </Grid>
+
+                <Grid x:Name="Tab2">
+                    <Border x:Name="StickersPanel">
+                        <drawers:StickerDrawer x:Name="StickersRoot"
+                                               x:Load="False" />
+                    </Border>
+                    <TextBlock x:Name="StickersPermission"
+                               VerticalAlignment="Center"
+                               TextAlignment="Center"
+                               Margin="12"
+                               Foreground="{ThemeResource ButtonForegroundDisabled}"
+                               Style="{StaticResource BodyTextBlockStyle}" />
+                </Grid>
 
                 <Grid x:Name="Header"
-                      Grid.Row="2">
+                      Grid.Row="1">
                     <Border x:Name="HeaderSeparator" />
-                    <controls:TopNavView SelectedIndex="{x:Bind Pivot.SelectedIndex, Mode=TwoWay}"
+                    <controls:TopNavView x:Name="Navigation"
+                                         SelectionChanged="OnSelectionChanged"
                                          HorizontalAlignment="Center"
                                          Height="40">
+                        <controls:TopNavView.ItemContainerStyle>
+                            <Style TargetType="controls:TopNavViewItem">
+                                <Setter Property="HorizontalAlignment"
+                                        Value="Stretch" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Stretch" />
+                                <Setter Property="HorizontalContentAlignment"
+                                        Value="Center" />
+                                <Setter Property="VerticalContentAlignment"
+                                        Value="Center" />
+                                <Setter Property="UseSystemFocusVisuals"
+                                        Value="True" />
+                                <Setter Property="FocusVisualMargin"
+                                        Value="-3,5" />
+                                <Setter Property="CornerRadius"
+                                        Value="12" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="controls:TopNavViewItem">
+                                            <Grid x:Name="ContentBorder"
+                                                  Background="Transparent">
+                                                <ContentPresenter x:Name="ContentPresenter"
+                                                                  Grid.Column="1"
+                                                                  Margin="12,5,12,6"
+                                                                  TextWrapping="NoWrap"
+                                                                  Foreground="{TemplateBinding Foreground}"
+                                                                  ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                  Content="{TemplateBinding Content}"
+                                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                  ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                                                  VerticalAlignment="Center"
+                                                                  AutomationProperties.AccessibilityView="Raw"
+                                                                  Canvas.ZIndex="1" />
+                                                <Grid x:Name="SelectionIndicatorGrid"
+                                                      Margin="0,8,0,8"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Stretch">
+                                                    <Rectangle x:Name="SelectionIndicator"
+                                                               Fill="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
+                                                               Opacity="0"
+                                                               RadiusX="12"
+                                                               RadiusY="12" />
+                                                </Grid>
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </controls:TopNavView.ItemContainerStyle>
                         <controls:TopNavViewItem Content="{CustomResource Emoji}" />
                         <controls:TopNavViewItem Content="{CustomResource AccDescrGIFs}" />
                         <controls:TopNavViewItem Content="{CustomResource AccDescrStickers}" />

@@ -370,5 +370,13 @@ namespace Telegram.Controls.Drawers
         {
             _toolbarHandler.ThrottleVisibleItems();
         }
+
+        private void Toolbar_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (Toolbar.SelectedItem != null)
+            {
+                _ = Toolbar.ScrollToItem2(Toolbar.SelectedItem, VerticalAlignment.Center);
+            }
+        }
     }
 }
