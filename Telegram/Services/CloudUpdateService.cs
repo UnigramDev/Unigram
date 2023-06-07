@@ -95,10 +95,17 @@ namespace Telegram.Services
                     }
 
                     // As soon as we find a valid update, we launch it
-
-                    await SystemTray.ExitAsync();
-                    await context.DispatchAsync(() => Launcher.LaunchFileAsync(update.File));
-                    await BootStrapper.ConsolidateAsync();
+                    await context.DispatchAsync(async () =>
+                    {
+                        // But only if App Installer is available
+                        var result = await Launcher.QueryFileSupportAsync(update.File);
+                        if (result == LaunchQuerySupportStatus.Available)
+                        {
+                            await SystemTray.ExitAsync();
+                            await Launcher.LaunchFileAsync(update.File);
+                            await BootStrapper.ConsolidateAsync();
+                        }
+                    });
 
                     // This line will never be reached
                     return true;
