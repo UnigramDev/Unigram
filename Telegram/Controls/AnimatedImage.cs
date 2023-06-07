@@ -465,6 +465,8 @@ namespace Telegram.Controls
         private int _loopCount;
 
         private LoopThread _timer;
+        private bool _timerSubscribed;
+        private bool _renderingSubscribed;
 
         private readonly AnimatedImagePresentation _presentation;
         private readonly AnimatedImageLoader _loader;
@@ -596,7 +598,7 @@ namespace Telegram.Controls
                             Dispose();
                         }
                     }
-                    else if (CorrelationId != null)
+                    else if (CorrelationId != 0)
                     {
                         _loader.Remove(CorrelationId);
                     }
@@ -646,7 +648,12 @@ namespace Telegram.Controls
                     _dispatcherQueue.TryEnqueue(RegisterRendering);
 
                     _ticking = _activated;
-                    _timer.Tick += OnTick;
+
+                    if (!_timerSubscribed)
+                    {
+                        _timerSubscribed = true;
+                        _timer.Tick += OnTick;
+                    }
                 }
             }
         }
@@ -698,9 +705,14 @@ namespace Telegram.Controls
                     _dispatcherQueue.TryEnqueue(CreateResources);
                     _createdResourcesLock.Wait();
 
-                    _ticking = (_idle && _presentation.AutoPlay) || (_playing > 0 && (_activated || _presentation.LoopCount > 0));
-                    _timer.Tick += OnTick;
                     _idle = false;
+                    _ticking = (_idle && _presentation.AutoPlay) || (_playing > 0 && (_activated || _presentation.LoopCount > 0));
+
+                    if (!_timerSubscribed)
+                    {
+                        _timerSubscribed = true;
+                        _timer.Tick += OnTick;
+                    }
                 }
                 else if (_task != null)
                 {
@@ -795,7 +807,12 @@ namespace Telegram.Controls
 
                         _rendering = true;
                         _ticking = true;
-                        _timer.Tick += OnTick;
+
+                        if (!_timerSubscribed)
+                        {
+                            _timerSubscribed = true;
+                            _timer.Tick += OnTick;
+                        }
 
                         return true;
                     }
@@ -807,7 +824,11 @@ namespace Telegram.Controls
 
         private void RegisterRendering()
         {
-            AnimatedImageLoader.Current.Rendering += OnRendering;
+            if (!_renderingSubscribed)
+            {
+                _renderingSubscribed = true;
+                AnimatedImageLoader.Current.Rendering += OnRendering;
+            }
         }
 
         #endregion
@@ -834,6 +855,7 @@ namespace Telegram.Controls
                 Logger.Debug("-=");
 
                 _rendering = false;
+                _timerSubscribed = false;
                 sender.Tick -= OnTick;
 
                 if (_disposing)
@@ -935,9 +957,10 @@ namespace Telegram.Controls
 
             OnRendering(e);
 
-            if (!_rendering)
+            if (!_rendering && _renderingSubscribed)
             {
                 Logger.Debug("-=");
+                _renderingSubscribed = false;
                 AnimatedImageLoader.Current.Rendering -= OnRendering;
             }
         }
@@ -1262,7 +1285,7 @@ namespace Telegram.Controls
         public void Load(AnimatedImagePresenter sender)
         {
             //Logger.Debug();
-            var correlationId = _indexer++;
+            var correlationId = ++_indexer;
 
             sender.CorrelationId = correlationId;
 
