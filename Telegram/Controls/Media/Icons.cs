@@ -13,6 +13,9 @@ namespace Telegram.Controls.Media
 {
     public class Icons
     {
+        public const string ArrowDownLeft16 = "\uE928";
+        public const string ArrowUpRight16 = "\uE9B7";
+
         public const string ArrowSync = "\uE981";
 
         public const string LinkSide = "\uE9F8";
