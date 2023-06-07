@@ -2433,7 +2433,7 @@ namespace Telegram.Views
             }
 
             var played = message.Content is MessageVoiceNote or MessageVideoNote;
-            var reacted = (int)message.InteractionInfo?.Reactions.Sum(x => x.TotalCount);
+            var reacted = message.InteractionInfo.TotalReactions();
 
             var placeholder = flyout.CreateFlyoutItem(ViewModel.ShowMessageInteractions, message, "...", reacted > 0 ? Icons.Heart : played ? Icons.Play : Icons.Seen);
             var separator = flyout.CreateFlyoutSeparator();

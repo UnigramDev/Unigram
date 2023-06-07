@@ -25,6 +25,16 @@ namespace Telegram.Td.Api
 {
     public static class TdExtensions
     {
+        public static int TotalReactions(this MessageInteractionInfo info)
+        {
+            if (info != null)
+            {
+                return (int)info.Reactions.Sum(x => x.TotalCount);
+            }
+
+            return 0;
+        }
+
         public static Vector2 ToVector2(this Point point)
         {
             return new Vector2((float)point.X, (float)point.Y);
