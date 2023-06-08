@@ -12,12 +12,11 @@ using System.IO;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Messages;
+using Telegram.Controls.Cells;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Telegram.ViewModels;
 using Telegram.Views;
 using Windows.Data.Xml.Dom;
 using Windows.Networking.PushNotifications;
@@ -460,9 +459,6 @@ namespace Telegram.Services
                 }
             }
 
-            var user = _clientService.GetUser(_clientService.Options.MyId);
-            var attribution = user?.FullName() ?? string.Empty;
-
             var showPreview = _settings.Notifications.GetShowPreview(chat);
 
             if (chat.Type is ChatTypeSecret || !showPreview || TLContainer.Current.Passcode.IsLockscreenRequired)
@@ -758,7 +754,10 @@ namespace Telegram.Services
                 return Strings.YouHaveNewMessage;
             }
 
-            return UpdateFromLabel(chat, message) + GetBriefLabel(chat, message);
+            var brief = ChatCell.UpdateBriefLabel(chat, message, false);
+            var clean = brief.ReplaceSpoilers();
+
+            return ChatCell.UpdateFromLabel(_clientService, chat, message) + clean;
         }
 
         private string GetPhoto(Chat chat)
@@ -770,211 +769,6 @@ namespace Telegram.Services
             }
 
             return string.Empty;
-        }
-
-
-
-        private string GetBriefLabel(Chat chat, Message value)
-        {
-            switch (value.Content)
-            {
-                case MessageAnimation animation:
-                    return animation.Caption.Text;
-                case MessageAudio audio:
-                    return audio.Caption.Text;
-                case MessageDocument document:
-                    return document.Caption.Text;
-                case MessagePhoto photo:
-                    return photo.Caption.Text;
-                case MessageVideo video:
-                    return video.Caption.Text;
-                case MessageVoiceNote voiceNote:
-                    return voiceNote.Caption.Text;
-
-                case MessageText text:
-                    return text.Text.Text;
-
-                case MessageAnimatedEmoji animatedEmoji:
-                    return animatedEmoji.Emoji;
-                case MessageDice dice:
-                    return dice.Emoji;
-            }
-
-            return string.Empty;
-        }
-
-        private string UpdateFromLabel(Chat chat, Message message)
-        {
-            if (message.IsService())
-            {
-                return MessageService.GetText(new MessageViewModel(_clientService, null, null, chat, message));
-            }
-
-            var result = string.Empty;
-
-            if (ShowFrom(_clientService, chat, message, out User from))
-            {
-                if (!string.IsNullOrEmpty(from.FirstName))
-                {
-                    result = $"{from.FirstName.Trim()}: ";
-                }
-                else if (!string.IsNullOrEmpty(from.LastName))
-                {
-                    result = $"{from.LastName.Trim()}: ";
-                }
-                else if (from.Type is UserTypeDeleted)
-                {
-                    result = $"{Strings.HiddenName}: ";
-                }
-                else
-                {
-                    result = $"{from.Id}: ";
-                }
-            }
-
-            if (message.Content is MessageGame gameMedia)
-            {
-                return result + "\uD83C\uDFAE " + gameMedia.Game.Title;
-            }
-            if (message.Content is MessageExpiredVideo)
-            {
-                return result + Strings.AttachVideoExpired;
-            }
-            else if (message.Content is MessageExpiredPhoto)
-            {
-                return result + Strings.AttachPhotoExpired;
-            }
-            else if (message.Content is MessageVideoNote)
-            {
-                return result + Strings.AttachRound;
-            }
-            else if (message.Content is MessageSticker sticker)
-            {
-                if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
-                {
-                    return result + Strings.AttachSticker;
-                }
-
-                return result + $"{sticker.Sticker.Emoji} {Strings.AttachSticker}";
-            }
-
-            string GetCaption(string caption)
-            {
-                return string.IsNullOrEmpty(caption) ? string.Empty : ", ";
-            }
-
-            if (message.Content is MessageVoiceNote voiceNote)
-            {
-                return result + Strings.AttachAudio + GetCaption(voiceNote.Caption.Text);
-            }
-            else if (message.Content is MessageVideo video)
-            {
-                return result + (video.IsSecret ? Strings.AttachDestructingVideo : Strings.AttachVideo) + GetCaption(video.Caption.Text);
-            }
-            else if (message.Content is MessageAnimation animation)
-            {
-                return result + Strings.AttachGif + GetCaption(animation.Caption.Text);
-            }
-            else if (message.Content is MessageAudio audio)
-            {
-                var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
-                var title = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
-
-                if (performer == null && title == null)
-                {
-                    return result + Strings.AttachMusic + GetCaption(audio.Caption.Text);
-                }
-                else
-                {
-                    return $"{result}{performer ?? Strings.AudioUnknownArtist} - {title ?? Strings.AudioUnknownTitle}" + GetCaption(audio.Caption.Text);
-                }
-            }
-            else if (message.Content is MessageDocument document)
-            {
-                if (string.IsNullOrEmpty(document.Document.FileName))
-                {
-                    return result + Strings.AttachDocument + GetCaption(document.Caption.Text);
-                }
-
-                return result + document.Document.FileName + GetCaption(document.Caption.Text);
-            }
-            else if (message.Content is MessageInvoice invoice)
-            {
-                return result + invoice.Title;
-            }
-            else if (message.Content is MessageContact)
-            {
-                return result + Strings.AttachContact;
-            }
-            else if (message.Content is MessageLocation location)
-            {
-                return result + (location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation);
-            }
-            else if (message.Content is MessageVenue)
-            {
-                return result + Strings.AttachLocation;
-            }
-            else if (message.Content is MessagePhoto photo)
-            {
-                return result + (photo.IsSecret ? Strings.AttachDestructingPhoto : Strings.AttachPhoto) + GetCaption(photo.Caption.Text);
-            }
-            else if (message.Content is MessagePoll poll)
-            {
-                return result + "\uD83D\uDCCA " + poll.Poll.Question;
-            }
-            else if (message.Content is MessageCall call)
-            {
-                return result + call.ToOutcomeText(message.IsOutgoing);
-            }
-            else if (message.Content is MessageUnsupported)
-            {
-                return result + Strings.UnsupportedAttachment;
-            }
-
-            return result;
-        }
-
-        private bool ShowFrom(IClientService clientService, Chat chat, Message message, out User senderUser)
-        {
-            if (message.IsService())
-            {
-                senderUser = null;
-                return false;
-            }
-
-            if (message.IsOutgoing)
-            {
-                return clientService.TryGetUser(message.SenderId, out senderUser);
-            }
-
-            if (chat.Type is ChatTypeBasicGroup)
-            {
-                return clientService.TryGetUser(message.SenderId, out senderUser);
-            }
-
-            if (chat.Type is ChatTypeSupergroup supergroup)
-            {
-                senderUser = null;
-                return !supergroup.IsChannel && clientService.TryGetUser(message.SenderId, out senderUser);
-            }
-
-            senderUser = null;
-            return false;
-        }
-
-        private bool ShowFrom(Chat chat)
-        {
-            if (chat.Type is ChatTypeBasicGroup)
-            {
-                return true;
-            }
-
-            if (chat.Type is ChatTypeSupergroup supergroup)
-            {
-                return !supergroup.IsChannel;
-            }
-
-            return false;
         }
 
         private void BeginOnUIThread(Windows.System.DispatcherQueueHandler action, Action fallback = null)
@@ -997,8 +791,6 @@ namespace Telegram.Services
                 //catch { }
             }
         }
-
-
 
         public void SetMuteFor(Chat chat, int muteFor)
         {

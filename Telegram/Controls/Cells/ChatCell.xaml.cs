@@ -226,14 +226,14 @@ namespace Telegram.Controls.Cells
             UnreadBadge.Visibility = Visibility.Collapsed;
             UnreadMentionsBadge.Visibility = Visibility.Collapsed;
 
-            FromLabel.Text = UpdateFromLabel(chat, message);
+            FromLabel.Text = UpdateFromLabel(clientService, chat, message);
             _dateLabel = UpdateTimeLabel(message);
             _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
 
             TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
 
-            UpdateBriefLabel(UpdateBriefLabel(chat, message, true, false));
-            UpdateMinithumbnail(chat, chat.DraftMessage == null ? message : null);
+            UpdateBriefLabel(UpdateBriefLabel(chat, message, false));
+            UpdateMinithumbnail(chat, message);
         }
 
         public async void UpdateChatList(IClientService clientService, ChatList chatList)
@@ -1169,7 +1169,7 @@ namespace Telegram.Controls.Cells
             var topMessage = chat.LastMessage;
             if (topMessage != null)
             {
-                return UpdateBriefLabel(chat, topMessage, true, true);
+                return UpdateBriefLabel(chat, topMessage, true);
             }
             else if (chat.Type is ChatTypeSecret secretType)
             {
@@ -1194,7 +1194,7 @@ namespace Telegram.Controls.Cells
             return new FormattedText(string.Empty, new TextEntity[0]);
         }
 
-        private FormattedText UpdateBriefLabel(Chat chat, Message message, bool showContent, bool draft)
+        public static FormattedText UpdateBriefLabel(Chat chat, Message message, bool draft)
         {
             if (chat.DraftMessage != null && draft)
             {
@@ -1203,11 +1203,6 @@ namespace Telegram.Controls.Cells
                     case InputMessageText text:
                         return text.Text;
                 }
-            }
-
-            if (!showContent)
-            {
-                return new FormattedText(Strings.Message, Array.Empty<TextEntity>());
             }
 
             static FormattedText Text(string text)
@@ -1381,23 +1376,23 @@ namespace Telegram.Controls.Cells
             }
 
             draft = false;
-            return UpdateFromLabel(chat, message);
+            return UpdateFromLabel(_clientService, chat, message);
         }
 
-        private string UpdateFromLabel(Chat chat, Message message)
+        public static string UpdateFromLabel(IClientService clientService, Chat chat, Message message)
         {
             if (message.IsService())
             {
-                return MessageService.GetText(new MessageViewModel(_clientService, null, null, chat, message));
+                return MessageService.GetText(new MessageViewModel(clientService, null, null, chat, message));
             }
 
             var format = "{0}: \u200B";
 
-            if (ShowFrom(_clientService, chat, message, out User fromUser, out Chat fromChat))
+            if (ShowFrom(clientService, chat, message, out User fromUser, out Chat fromChat))
             {
-                if (message.IsSaved(_clientService.Options.MyId))
+                if (message.IsSaved(clientService.Options.MyId))
                 {
-                    return string.Format(format, _clientService.GetTitle(message.ForwardInfo));
+                    return string.Format(format, clientService.GetTitle(message.ForwardInfo));
                 }
                 else if (message.IsOutgoing)
                 {
@@ -1434,7 +1429,7 @@ namespace Telegram.Controls.Cells
             return string.Empty;
         }
 
-        private bool ShowFrom(IClientService clientService, Chat chat, Message message, out User senderUser, out Chat senderChat)
+        public static bool ShowFrom(IClientService clientService, Chat chat, Message message, out User senderUser, out Chat senderChat)
         {
             if (message.IsService())
             {
