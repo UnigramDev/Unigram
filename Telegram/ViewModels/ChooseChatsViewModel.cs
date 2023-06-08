@@ -237,7 +237,7 @@ namespace Telegram.ViewModels
                 var list = ClientService.GetChats(chats.ChatIds).ToList();
                 Items.Clear();
 
-                if (chatList is ChatListMain && (Options.AllowAll || Options.CanPostMessages))
+                if (chatList is ChatListMain && Options.AllowSelf && (Options.AllowAll || Options.CanPostMessages))
                 {
                     var myId = ClientService.Options.MyId;
                     var self = list.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == myId);
@@ -690,7 +690,11 @@ namespace Telegram.ViewModels
                     }
                     return false;
                 case ChatTypePrivate privata:
-                    if (_clientService.TryGetUser(privata.UserId, out User user))
+                    if (privata.UserId == _clientService.Options.MyId)
+                    {
+                        return Options.AllowSelf;
+                    }
+                    else if (_clientService.TryGetUser(privata.UserId, out User user))
                     {
                         if (user.Type is UserTypeBot)
                         {
@@ -743,7 +747,11 @@ namespace Telegram.ViewModels
 
         private bool Allow(User user)
         {
-            if (user.Type is UserTypeBot)
+            if (user.Id == _clientService.Options.MyId)
+            {
+                return Options.AllowSelf;
+            }
+            else if (user.Type is UserTypeBot)
             {
                 return Options.AllowBotChats;
             }
