@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.Graphics.Canvas.UI.Xaml;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -37,6 +38,8 @@ namespace Telegram.Services
         string CurrentAudioInput { get; set; }
         string CurrentAudioOutput { get; set; }
         string CurrentVideoInput { get; set; }
+
+        void SetVideoInput(string value, CanvasControl canvas);
 
 #if ENABLE_CALLS
         bool IsMuted { get; set; }
@@ -438,6 +441,18 @@ namespace Telegram.Services
             set => _videoWatcher.Set(value);
         }
 
+        public void SetVideoInput(string value, CanvasControl canvas)
+        {
+            _videoWatcher.Set(value);
+
+#if ENABLE_CALLS
+            if (_capturer is VoipVideoCapture capturer)
+            {
+                capturer.SetOutput(canvas, false);
+            }
+#endif
+        }
+
         public string CurrentAudioInput
         {
             get => _inputWatcher.Get();
@@ -477,7 +492,7 @@ namespace Telegram.Services
                 {
                     if (pending.IsCreated && pending.IsReceived)
                     {
-                        if (_systemCall == null || !update.Call.IsOutgoing)
+                        if (_systemCall == null || update.Call.IsOutgoing)
                         {
                             SoundEffects.Play(update.Call.IsOutgoing ? SoundEffect.VoipRingback : SoundEffect.VoipIncoming);
                         }

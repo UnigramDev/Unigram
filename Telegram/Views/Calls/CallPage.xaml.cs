@@ -843,7 +843,7 @@ namespace Telegram.Views.Calls
                     deviceItem.IsChecked = videoId == device.Id;
                     deviceItem.Click += (s, args) =>
                     {
-                        _service.CurrentVideoInput = device.Id;
+                        _service.SetVideoInput(device.Id, Viewfinder);
                     };
 
                     video.Items.Add(deviceItem);
