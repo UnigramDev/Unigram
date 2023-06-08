@@ -908,7 +908,7 @@ namespace Telegram.ViewModels
             }
 
         LoadMessage:
-            await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Bottom);
+            await LoadMessageSliceAsync(null, message.Id, VerticalAlignment.Top);
         }
 
         public static int InsertMessageInOrder(IList<MessageViewModel> messages, MessageViewModel message)

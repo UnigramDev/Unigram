@@ -773,15 +773,7 @@ namespace Telegram.ViewModels
         {
             if (_type is DialogType.ScheduledMessages or DialogType.EventLog)
             {
-                var already = Items.LastOrDefault();
-                if (already != null)
-                {
-                    var field = HistoryField;
-                    if (field != null)
-                    {
-                        await field.ScrollToItem(already, VerticalAlignment.Bottom, false, int.MaxValue, ScrollIntoViewAlignment.Leading, false);
-                    }
-                }
+                ScrollToBottom();
             }
             else if (_repliesStack.Count > 0)
             {
@@ -789,24 +781,24 @@ namespace Telegram.ViewModels
             }
             else
             {
-                var chat = _chat;
-                if (chat == null)
-                {
-                    return;
-                }
-
-                var thread = _thread;
-                if (thread != null)
-                {
-                    await LoadMessageSliceAsync(null, thread.ReplyInfo?.LastMessageId ?? long.MaxValue, VerticalAlignment.Bottom, disableAnimation: false);
-                }
-                else
-                {
-                    await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom, disableAnimation: false);
-                }
+                await LoadLastSliceAsync();
             }
 
             TextField?.Focus(FocusState.Programmatic);
+        }
+
+        public Task LoadLastSliceAsync()
+        {
+            if (_thread is MessageThreadInfo thread)
+            {
+                return LoadMessageSliceAsync(null, thread.ReplyInfo?.LastMessageId ?? 0, VerticalAlignment.Top, disableAnimation: false);
+            }
+            else if (_chat is Chat chat)
+            {
+                return LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? 0, VerticalAlignment.Top, disableAnimation: false);
+            }
+
+            return Task.CompletedTask;
         }
 
         private async void LoadPinnedMessagesSliceAsync(long maxId, VerticalAlignment direction = VerticalAlignment.Center)
@@ -946,8 +938,7 @@ namespace Telegram.ViewModels
                 pixel = int.MaxValue;
             }
 
-            var already = Items.FirstOrDefault(x => x.Id == maxId || x.Content is MessageAlbum album && album.Messages.ContainsKey(maxId));
-            if (already != null)
+            if (Items.TryGetValue(maxId, out MessageViewModel already))
             {
                 var field = HistoryField;
                 if (field != null)
@@ -1689,28 +1680,19 @@ namespace Telegram.ViewModels
                     if (Settings.Chats.TryRemove(chat.Id, _threadId, ChatSetting.Pixel, out double pixel))
                     {
                         Logger.Debug(string.Format("{0} - Loading messages from specific pixel", chat.Id));
-
                         LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom, pixel);
                     }
                     else
                     {
                         Logger.Debug(string.Format("{0} - Loading messages from specific id, pixel missing", chat.Id));
-
                         LoadMessageSliceAsync(null, start, VerticalAlignment.Bottom);
                     }
                 }
                 else /*if (chat.UnreadCount > 0)*/
                 {
                     Logger.Debug(string.Format("{0} - Loading messages from LastReadInboxMessageId: {1}", chat.Id, chat.LastReadInboxMessageId));
-
                     LoadMessageSliceAsync(null, lastReadMessageId, VerticalAlignment.Top);
                 }
-                //else
-                //{
-                //    Logger.Debug(Logs.Target.Chat, string.Format("{0} - Loading messages from LastMessageId: {1}", chat.Id, chat.LastMessage?.Id));
-
-                //    LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom);
-                //}
             }
 #pragma warning restore CS4014
 
@@ -2346,7 +2328,6 @@ namespace Telegram.ViewModels
             {
                 var reply = GetReply(true, options?.SchedulingState != null);
 
-                //if (string.Equals(text.Trim(), "\uD83C\uDFB2"))
                 if (ClientService.IsDiceEmoji(text, out string dice))
                 {
                     var input = new InputMessageDice(dice, true);
@@ -2369,28 +2350,10 @@ namespace Telegram.ViewModels
                     }
                     else
                     {
-                        await LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom);
+                        await LoadLastSliceAsync();
                     }
                 }
             }
-
-
-            /*                        if (response.Error.TypeEquals(TLErrorType.PEER_FLOOD))
-                        {
-                            var dialog = new MessagePopup();
-                            dialog.Title = "Telegram";
-                            dialog.Message = "Sorry, you can only send messages to mutual contacts at the moment.";
-                            dialog.PrimaryButtonText = "More info";
-                            dialog.SecondaryButtonText = "OK";
-
-                            var confirm = await ShowPopupAsync(dialog);
-                            if (confirm == ContentDialogResult.Primary)
-                            {
-                                MessageHelper.HandleTelegramUrl("t.me/SpamBot");
-                            }
-                        }
-*/
-            //ClientService.Send(new SendMessage())
         }
 
         #region Set default message sender

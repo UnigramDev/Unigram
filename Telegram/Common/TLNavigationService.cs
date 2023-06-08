@@ -214,7 +214,7 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    await viewModel.LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? long.MaxValue, VerticalAlignment.Bottom);
+                    await viewModel.LoadLastSliceAsync();
                 }
 
                 if (viewModel != page.ViewModel)
