@@ -15,11 +15,11 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Settings
 {
-    public sealed partial class SettingsProxiesPage : HostedPage
+    public sealed partial class SettingsProxyPage : HostedPage
     {
-        public SettingsProxiesViewModel ViewModel => DataContext as SettingsProxiesViewModel;
+        public SettingsProxyViewModel ViewModel => DataContext as SettingsProxyViewModel;
 
-        public SettingsProxiesPage()
+        public SettingsProxyPage()
         {
             InitializeComponent();
             Title = Strings.ProxySettings;

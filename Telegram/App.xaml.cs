@@ -421,7 +421,7 @@ namespace Telegram
                 SettingsPasscodePage => TLContainer.Current.Resolve<SettingsPasscodeViewModel>(sessionId),
                 SettingsPasswordPage => TLContainer.Current.Resolve<SettingsPasswordViewModel>(sessionId),
                 SettingsPrivacyAndSecurityPage => TLContainer.Current.Resolve<SettingsPrivacyAndSecurityViewModel>(sessionId),
-                SettingsProxiesPage => TLContainer.Current.Resolve<SettingsProxiesViewModel>(sessionId),
+                SettingsProxyPage => TLContainer.Current.Resolve<SettingsProxyViewModel>(sessionId),
                 SettingsShortcutsPage => TLContainer.Current.Resolve<SettingsShortcutsViewModel>(sessionId),
                 SettingsThemesPage => TLContainer.Current.Resolve<SettingsThemesViewModel>(sessionId),
                 SettingsWebSessionsPage => TLContainer.Current.Resolve<SettingsWebSessionsViewModel>(sessionId),

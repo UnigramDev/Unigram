@@ -646,9 +646,9 @@ namespace Telegram.Views
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Telegram.ViewModels.Settings.SettingsProxiesViewModel))
+            else if (type == typeof(Telegram.ViewModels.Settings.SettingsProxyViewModel))
             {
-                return (T)(object)new Telegram.ViewModels.Settings.SettingsProxiesViewModel(
+                return (T)(object)new Telegram.ViewModels.Settings.SettingsProxyViewModel(
                     _clientService,
                     _settingsService,
                     _eventAggregator,

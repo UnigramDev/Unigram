@@ -666,6 +666,7 @@
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordHintViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordIntroViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsProxyViewModel.cs" />
     <Compile Include="ViewModels\TopicListViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
     <Compile Include="ViewModels\ChooseSoundViewModel.cs" />
@@ -1004,7 +1005,6 @@
     <Compile Include="ViewModels\Settings\SettingsPasscodeViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPasswordViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPrivacyAndSecurityViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsProxiesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsShortcutsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsThemesViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
@@ -1262,8 +1262,8 @@
     <Compile Include="Views\Settings\SettingsProfilePage.xaml.cs">
       <DependentUpon>SettingsProfilePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\SettingsProxiesPage.xaml.cs">
-      <DependentUpon>SettingsProxiesPage.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsProxyPage.xaml.cs">
+      <DependentUpon>SettingsProxyPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\SettingsQuickReactionPage.xaml.cs">
       <DependentUpon>SettingsQuickReactionPage.xaml</DependentUpon>
@@ -2547,9 +2547,9 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\SettingsProxiesPage.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Views\Settings\SettingsProxyPage.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\SettingsQuickReactionPage.xaml">
       <SubType>Designer</SubType>

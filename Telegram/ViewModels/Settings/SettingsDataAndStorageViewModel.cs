@@ -178,7 +178,7 @@ namespace Telegram.ViewModels.Settings
 
         public void OpenProxy()
         {
-            NavigationService.Navigate(typeof(SettingsProxiesPage));
+            NavigationService.Navigate(typeof(SettingsProxyPage));
         }
     }
 }

@@ -20,11 +20,11 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsProxiesViewModel : ViewModelBase, IHandle
+    public class SettingsProxyViewModel : ViewModelBase, IHandle
     {
         private readonly INetworkService _networkService;
 
-        public SettingsProxiesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, INetworkService networkService)
+        public SettingsProxyViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, INetworkService networkService)
             : base(clientService, settingsService, aggregator)
         {
             _networkService = networkService;
