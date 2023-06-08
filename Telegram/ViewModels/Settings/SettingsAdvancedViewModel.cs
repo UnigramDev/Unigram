@@ -173,16 +173,6 @@ namespace Telegram.ViewModels.Settings
 
         #endregion
 
-        public bool IsAdaptiveWideEnabled
-        {
-            get => Settings.IsAdaptiveWideEnabled;
-            set
-            {
-                Settings.IsAdaptiveWideEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool IsTrayVisible
         {
             get => Settings.IsTrayVisible;

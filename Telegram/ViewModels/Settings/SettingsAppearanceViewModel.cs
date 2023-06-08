@@ -240,12 +240,12 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public DistanceUnits DistanceUnits
+        public bool IsAdaptiveWideEnabled
         {
-            get => Settings.DistanceUnits;
+            get => Settings.IsAdaptiveWideEnabled;
             set
             {
-                Settings.DistanceUnits = value;
+                Settings.IsAdaptiveWideEnabled = value;
                 RaisePropertyChanged();
             }
         }

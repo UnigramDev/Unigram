@@ -635,7 +635,7 @@ namespace Telegram.Views
 
             _focusState.Set(FocusState.Programmatic);
 
-            StickersPanel.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 664 : double.PositiveInfinity;
+            StickersPanel.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
 
             Options.Visibility = ViewModel.Type == DialogType.History
                 ? Visibility.Visible
@@ -3623,7 +3623,7 @@ namespace Telegram.Views
 
         private void ItemsStackPanel_Loading(FrameworkElement sender, object args)
         {
-            sender.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 664 : double.PositiveInfinity;
+            sender.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
             Messages.SetScrollingMode();
         }
 
@@ -4555,7 +4555,7 @@ namespace Telegram.Views
             if (radius > 0)
             {
                 TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = ManagePanel.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
-                    SettingsService.Current.IsAdaptiveWideEnabled ? 640 : double.PositiveInfinity;
+                    SettingsService.Current.IsAdaptiveWideEnabled ? 1000 : double.PositiveInfinity;
                 TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness(12, 0, 12, 8);
                 InlinePanel.Margin = new Thickness(12, 0, 12, -radius);
                 ReplyMarkupPanel.Margin = new Thickness(12, -8 - radius, 12, 8);
@@ -4563,7 +4563,7 @@ namespace Telegram.Views
             else
             {
                 TextArea.MaxWidth = ChatRecord.MaxWidth = ChatFooter.MaxWidth = ManagePanel.MaxWidth = InlinePanel.MaxWidth = Separator.MaxWidth =
-                    SettingsService.Current.IsAdaptiveWideEnabled ? 664 : double.PositiveInfinity;
+                    SettingsService.Current.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
                 TextArea.Margin = ChatRecord.Margin = ChatFooter.Margin = ManagePanel.Margin = Separator.Margin = new Thickness();
                 InlinePanel.Margin = new Thickness();
                 ReplyMarkupPanel.Margin = new Thickness();

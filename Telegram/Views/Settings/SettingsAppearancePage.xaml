@@ -196,6 +196,10 @@
                               Content="{CustomResource ReplaceEmoji}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox IsChecked="{x:Bind ViewModel.IsAdaptiveWideEnabled, Mode=TwoWay}"
+                              Content="{CustomResource AdaptiveLayout}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <controls:BadgeButton Content="{CustomResource DistanceUnits}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xEA01;">

@@ -19,10 +19,6 @@
                 </controls:HeaderedControl>-->
 
                 <controls:HeaderedControl>
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsAdaptiveWideEnabled, Mode=TwoWay}"
-                              Content="{CustomResource AdaptiveLayout}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
                     <CheckBox x:Name="TraySwitch"
                               x:Load="False"
                               IsChecked="{x:Bind ViewModel.IsTrayVisible, Mode=TwoWay}"

@@ -242,11 +242,11 @@
                                      Width="216">
                 <StackPanel>
                     <chats:ChatBackgroundPresenter x:Name="Photo"
-                                                  IsEnabled="False"
-                                                  Width="120"
-                                                  Height="120"
-                                                  CornerRadius="60"
-                                                  Margin="0,10,0,12" />
+                                                   IsEnabled="False"
+                                                   Width="120"
+                                                   Height="120"
+                                                   CornerRadius="60"
+                                                   Margin="0,10,0,12" />
 
                     <controls:FormattedTextBlock x:Name="Text"
                                                  Foreground="White"
@@ -413,7 +413,7 @@
 
         <Grid x:Name="Header"
               Height="{StaticResource NavigationViewTopPaneHeight}"
-                                    Canvas.ZIndex="3">
+              Canvas.ZIndex="3">
             <Grid x:Name="InfoPanel">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="60" />
