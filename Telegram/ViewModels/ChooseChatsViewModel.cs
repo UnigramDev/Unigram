@@ -6,6 +6,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
@@ -37,6 +38,43 @@ namespace Telegram.ViewModels
             SelectedItems = new MvxObservableCollection<Chat>();
 
             SendCommand = new RelayCommand(SendExecute, () => SelectedItems?.Count > 0);
+
+            ChatList chatList = ClientService.MainChatListPosition > 0 && ClientService.ChatFolders.Count > 0
+                ? new ChatListFolder(ClientService.ChatFolders[0].Id)
+                : new ChatListMain();
+
+            if (ClientService.ChatFolders.Count > 0)
+            {
+                var folders = ClientService.ChatFolders.ToList();
+                var index = Math.Min(ClientService.MainChatListPosition, folders.Count);
+
+                folders.Insert(index, new ChatFolderInfo { Id = Constants.ChatListMain, Title = Strings.FilterAllChats, Icon = new ChatFolderIcon("All") });
+
+                Folders = new ObservableCollection<ChatFolderViewModel>(folders.Select(x => new ChatFolderViewModel(x)));
+
+                foreach (var folder in Folders)
+                {
+                    if (folder.ChatList is ChatListMain)
+                    {
+                        continue;
+                    }
+
+                    var unreadCount = ClientService.GetUnreadCount(folder.ChatList);
+                    if (unreadCount == null)
+                    {
+                        continue;
+                    }
+
+                    folder.UpdateCount(unreadCount.UnreadChatCount);
+                }
+
+                // Important not to raise SelectedFolder setter
+                Set(ref _selectedFolder, Folders.FirstOrDefault());
+            }
+            else
+            {
+                Folders = new ObservableCollection<ChatFolderViewModel>();
+            }
         }
 
         public SearchChatsViewModel SearchChats { get; }
@@ -51,7 +89,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             // The following is absolutely awful
 
@@ -180,13 +218,26 @@ namespace Telegram.ViewModels
 
             #endregion
 
-            var response = await ClientService.GetChatListAsync(new ChatListMain(), 0, 200);
+            LoadChats();
+            return Task.CompletedTask;
+        }
+
+        private async void LoadChats()
+        {
+            if (Options == null)
+            {
+                return;
+            }
+
+            var chatList = SelectedFolder?.ChatList ?? new ChatListMain();
+
+            var response = await ClientService.GetChatListAsync(chatList, 0, 200);
             if (response is Telegram.Td.Api.Chats chats)
             {
                 var list = ClientService.GetChats(chats.ChatIds).ToList();
                 Items.Clear();
 
-                if (Options.AllowAll || Options.CanPostMessages)
+                if (chatList is ChatListMain && (Options.AllowAll || Options.CanPostMessages))
                 {
                     var myId = ClientService.Options.MyId;
                     var self = list.FirstOrDefault(x => x.Type is ChatTypePrivate privata && privata.UserId == myId);
@@ -408,6 +459,20 @@ namespace Telegram.ViewModels
 
         public MvxObservableCollection<Chat> Items { get; private set; }
 
+        public ObservableCollection<ChatFolderViewModel> Folders { get; }
+
+        private ChatFolderViewModel _selectedFolder;
+        public ChatFolderViewModel SelectedFolder
+        {
+            get => _selectedFolder;
+            set
+            {
+                if (Set(ref _selectedFolder, value))
+                {
+                    LoadChats();
+                }
+            }
+        }
 
 
         public RelayCommand SendCommand { get; }

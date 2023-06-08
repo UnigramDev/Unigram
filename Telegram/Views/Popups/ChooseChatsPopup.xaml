@@ -1,16 +1,15 @@
 ﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.ChooseChatsPopup"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:local="using:Telegram.Views.Popups"
-                       xmlns:cells="using:Telegram.Controls.Cells"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
-                       xmlns:common="using:Telegram.Common"
+                       xmlns:cells="using:Telegram.Controls.Cells"
                        xmlns:drawers="using:Telegram.Controls.Drawers"
                        xmlns:messages="using:Telegram.Controls.Messages"
-                       xmlns:selectors="using:Telegram.Selectors"
                        xmlns:views="using:Telegram.Controls.Views"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:viewModels="using:Telegram.ViewModels"
+                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                        mc:Ignorable="d"
                        Title="{x:Bind ViewModel.Title, Mode=OneWay}"
                        PrimaryButtonText="OK"
@@ -47,7 +46,7 @@
                               Width="36"
                               Height="32" />
 
-        <Grid Margin="-12,0,-12,0"
+        <Grid Margin="-24,0,-24,0"
               Grid.Row="1">
             <!--<Grid x:Name="SearchPanel"
                   x:Load="False">
@@ -58,9 +57,51 @@
             <views:SearchChatsView x:Name="SearchPanel"
                                    x:Load="False"
                                    DataContext="{x:Bind ViewModel.SearchChats}"
-                                   ItemClick="ListView_ItemClick" />
+                                   ItemClick="ListView_ItemClick"
+                                   Margin="12,0" />
 
             <Grid x:Name="ChatListPanel">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"
+                                   MinHeight="6" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <controls:TopNavView x:Name="ChatFolders"
+                                     Visibility="{x:Bind ViewModel.Folders.Count, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                     ItemsSource="{x:Bind ViewModel.Folders}"
+                                     SelectedItem="{x:Bind ViewModel.SelectedFolder, Mode=TwoWay}"
+                                     ScrollViewer.IsHorizontalScrollChainingEnabled="False"
+                                     FocusFollowsSingleSelection="True"
+                                     Padding="12,0"
+                                     Height="40">
+                    <controls:TopNavView.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:ChatFolderViewModel">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{x:Bind Title, Mode=OneWay}"
+                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                           VerticalAlignment="Top" />
+
+                                <muxc:InfoBadge Value="{x:Bind UnreadCount, Mode=OneWay}"
+                                                Visibility="{x:Bind ShowUnmuted, Mode=OneWay}"
+                                                Background="{ThemeResource ChatUnreadBadgeBrush}"
+                                                Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                                Margin="8,0,0,0" />
+                                <muxc:InfoBadge Value="{x:Bind UnreadMutedCount, Mode=OneWay}"
+                                                Visibility="{x:Bind ShowMuted, Mode=OneWay}"
+                                                Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
+                                                Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
+                                                Margin="8,0,0,0" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </controls:TopNavView.ItemTemplate>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"
+                                        Padding="12,0" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </controls:TopNavView>
+
                 <ListView x:Name="ChatsPanel"
                           IsItemClickEnabled="True"
                           ItemsSource="{x:Bind ViewModel.Items}"
@@ -68,7 +109,8 @@
                           SelectionChanged="List_SelectionChanged"
                           ItemClick="List_ItemClick"
                           ChoosingItemContainer="OnChoosingItemContainer"
-                          ContainerContentChanging="OnContainerContentChanging">
+                          ContainerContentChanging="OnContainerContentChanging"
+                          Grid.Row="1">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <cells:ChatShareCell SelectionStroke="{ThemeResource ContentDialogBackground}"
@@ -79,10 +121,12 @@
                         <Style TargetType="ListViewItem">
                             <Setter Property="CornerRadius"
                                     Value="{ThemeResource ControlCornerRadius}" />
+                            <Setter Property="Margin"
+                                    Value="12,0" />
                         </Style>
                     </ListView.ItemContainerStyle>
                     <ListView.Header>
-                        <Border Height="10" />
+                        <Border Height="4" />
                     </ListView.Header>
                     <ListView.Footer>
                         <Border Height="12" />
@@ -94,7 +138,8 @@
 
                 <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
                                             ScrollingHost="{x:Bind ChatsPanel}"
-                                            Margin="0,2,0,0" />
+                                            Margin="0,2,0,0"
+                                            Grid.Row="1" />
             </Grid>
         </Grid>
 
