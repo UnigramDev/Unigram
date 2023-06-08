@@ -397,7 +397,14 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
             {
-                _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                if (_message.SendingState is MessageSendingStateFailed or MessageSendingStatePending)
+                {
+                    _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                }
+                else
+                {
+                    _message.ClientService.Send(new CancelPreliminaryUploadFile(file.Id));
+                }
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
             {
@@ -433,7 +440,14 @@ namespace Telegram.Controls.Messages.Content
                 }
                 else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
                 {
-                    _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                    if (_message.SendingState is MessageSendingStateFailed or MessageSendingStatePending)
+                    {
+                        _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                    }
+                    else
+                    {
+                        _message.ClientService.Send(new CancelPreliminaryUploadFile(file.Id));
+                    }
                 }
                 else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
                 {
@@ -456,7 +470,14 @@ namespace Telegram.Controls.Messages.Content
                 var file = video.VideoValue;
                 if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
                 {
-                    _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                    if (_message.SendingState is MessageSendingStateFailed or MessageSendingStatePending)
+                    {
+                        _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
+                    }
+                    else
+                    {
+                        _message.ClientService.Send(new CancelPreliminaryUploadFile(file.Id));
+                    }
                 }
                 else
                 {
