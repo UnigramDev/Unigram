@@ -78,7 +78,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public void Confirm(long soundId)
+        public void Confirm(long? soundId)
         {
             var defaultPreview = true;
             var preview = true;
@@ -95,8 +95,8 @@ namespace Telegram.ViewModels
                 MuteFor = AlwaysAlert ? 0 : int.MaxValue,
                 UseDefaultShowPreview = defaultPreview,
                 ShowPreview = preview,
-                UseDefaultSound = false,
-                SoundId = soundId,
+                UseDefaultSound = soundId == null,
+                SoundId = soundId ?? 0,
                 UseDefaultDisableMentionNotifications = true,
                 UseDefaultDisablePinnedMessageNotifications = true,
             }));

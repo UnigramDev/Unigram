@@ -1011,6 +1011,13 @@ namespace Telegram.Views
                     _settingsService,
                     _eventAggregator);
             }
+            else if (type == typeof(Telegram.ViewModels.ChatNotificationsViewModel))
+            {
+                return (T)(object)new Telegram.ViewModels.ChatNotificationsViewModel(
+                    _clientService,
+                    _settingsService,
+                    _eventAggregator);
+            }
             else if (type == typeof(Telegram.ViewModels.Premium.PromoViewModel))
             {
                 return (T)(object)new Telegram.ViewModels.Premium.PromoViewModel(

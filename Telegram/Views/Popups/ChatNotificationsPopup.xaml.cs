@@ -25,7 +25,11 @@ namespace Telegram.Views.Popups
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (SoundDefault.IsChecked == true)
+            if (AllOptions == null)
+            {
+                ViewModel.Confirm(null);
+            }
+            else if (SoundDefault.IsChecked == true)
             {
                 ViewModel.Confirm(-1);
             }
