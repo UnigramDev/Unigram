@@ -36,6 +36,10 @@
                     <CheckBox IsChecked="{x:Bind ViewModel.IsPointerOverEnabled, Mode=TwoWay}"
                               Content="Show stickers panel on pointer over"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
+                              Content="{CustomResource ConnectWithIPv6}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="Crash mitigation">

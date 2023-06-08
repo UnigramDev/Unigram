@@ -23,10 +23,6 @@
                               Content="{CustomResource AdaptiveLayout}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
-                              Content="{CustomResource ConnectWithIPv6}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
                     <CheckBox x:Name="TraySwitch"
                               x:Load="False"
                               IsChecked="{x:Bind ViewModel.IsTrayVisible, Mode=TwoWay}"

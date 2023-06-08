@@ -183,16 +183,6 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public bool PreferIpv6
-        {
-            get => ClientService.Options.PreferIpv6;
-            set
-            {
-                ClientService.Options.PreferIpv6 = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool IsTrayVisible
         {
             get => Settings.IsTrayVisible;

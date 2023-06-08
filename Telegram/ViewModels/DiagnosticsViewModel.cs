@@ -170,6 +170,16 @@ namespace Telegram.ViewModels
             }
         }
 
+        public bool PreferIpv6
+        {
+            get => ClientService.Options.PreferIpv6;
+            set
+            {
+                ClientService.Options.PreferIpv6 = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool CanUseTestDC => ClientService.AuthorizationState is not AuthorizationStateReady;
 
         public bool IsDatabaseDisabled => Settings.Diagnostics.DisableDatabase;
