@@ -329,26 +329,29 @@ namespace Telegram.ViewModels
                     if (delete.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
                     {
                         await ClientService.SendAsync(new LeaveChat(delete.Id));
+                        await ClientService.SendAsync(new DeleteChatHistory(delete.Id, true, false));
                     }
-
-                    var user = ClientService.GetUser(delete);
-                    if (user?.Type is UserTypeRegular)
+                    else if (delete.Type is ChatTypeSecret secret)
                     {
-                        await ClientService.SendAsync(new DeleteChatHistory(delete.Id, true, check));
-
-                        if (delete.Type is ChatTypeSecret secret)
-                        {
-                            ClientService.Send(new CloseSecretChat(secret.SecretChatId));
-                        }
+                        await ClientService.SendAsync(new DeleteChat(delete.Id));
+                        await ClientService.SendAsync(new CloseSecretChat(secret.SecretChatId));
                     }
                     else
                     {
-                        if (user?.Type is UserTypeBot && check)
+                        var user = ClientService.GetUser(delete);
+                        if (user?.Type is UserTypeRegular)
                         {
-                            await ClientService.SendAsync(new ToggleMessageSenderIsBlocked(new MessageSenderUser(user.Id), true));
+                            await ClientService.SendAsync(new DeleteChatHistory(delete.Id, true, check));
                         }
+                        else
+                        {
+                            if (user?.Type is UserTypeBot && check)
+                            {
+                                await ClientService.SendAsync(new ToggleMessageSenderIsBlocked(new MessageSenderUser(user.Id), true));
+                            }
 
-                        ClientService.Send(new DeleteChatHistory(delete.Id, true, false));
+                            await ClientService.SendAsync(new DeleteChatHistory(delete.Id, true, false));
+                        }
                     }
                 });
             }
@@ -382,16 +385,20 @@ namespace Telegram.ViewModels
                 {
                     foreach (var delete in items)
                     {
-                        if (delete.Type is ChatTypeSecret secret)
-                        {
-                            await ClientService.SendAsync(new CloseSecretChat(secret.SecretChatId));
-                        }
-                        else if (delete.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
+                        if (delete.Type is ChatTypeBasicGroup or ChatTypeSupergroup)
                         {
                             await ClientService.SendAsync(new LeaveChat(delete.Id));
+                            await ClientService.SendAsync(new DeleteChatHistory(delete.Id, true, false));
                         }
-
-                        ClientService.Send(new DeleteChatHistory(delete.Id, true, false));
+                        else if (delete.Type is ChatTypeSecret secret)
+                        {
+                            await ClientService.SendAsync(new DeleteChat(delete.Id));
+                            await ClientService.SendAsync(new CloseSecretChat(secret.SecretChatId));
+                        }
+                        else
+                        {
+                            await ClientService.SendAsync(new DeleteChatHistory(delete.Id, true, false));
+                        }
                     }
                 });
             }
