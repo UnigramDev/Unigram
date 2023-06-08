@@ -427,7 +427,7 @@ namespace Telegram.ViewModels
                 ? items.All(x => x is StorageVideo)
                 : false;
 
-            var popup = new SendFilesPopup(this, items, media, mediaAllowed, permissions.CanSendDocuments || permissions.CanSendAudios, _chat.Type is ChatTypePrivate && !self, _type == DialogType.History, self);
+            var popup = new SendFilesPopup(this, items, media, mediaAllowed, permissions.CanSendDocuments || permissions.CanSendAudios, _chat.Type is ChatTypePrivate && !self, _type is DialogType.History or DialogType.Thread, self);
             popup.Caption = caption;
 
             var confirm = await popup.OpenAsync();

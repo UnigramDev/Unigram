@@ -213,15 +213,6 @@ namespace Telegram.Views.Popups
             var query = text.Substring(0, Math.Min(CaptionInput.Document.Selection.EndPosition, text.Length));
             var entity = AutocompleteEntityFinder.Search(query, out string result, out int index);
 
-            void InsertText(string insert, string result)
-            {
-                var start = CaptionInput.Document.Selection.StartPosition - 1 - result.Length + insert.Length;
-                var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - result.Length, CaptionInput.Document.Selection.StartPosition);
-                range.SetText(TextSetOptions.None, insert);
-
-                CaptionInput.Document.Selection.StartPosition = start;
-            }
-
             if (e.ClickedItem is User user && entity == AutocompleteEntity.Username)
             {
                 // TODO: find username

@@ -2070,7 +2070,7 @@ namespace Telegram.Views
                 return;
             }
 
-            if (ViewModel.Type != DialogType.History)
+            if (ViewModel.Type is not DialogType.History and not DialogType.Thread)
             {
                 return;
             }
