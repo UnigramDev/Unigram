@@ -52,7 +52,7 @@ namespace Telegram.Services
 #endif
 
         Call Call { get; }
-        DateTime CallStarted { get; }
+        DateTime? CallStarted { get; }
 
         void Show();
 
@@ -81,7 +81,7 @@ namespace Telegram.Services
         private readonly DisposableMutex _updateLock = new DisposableMutex();
 
         private Call _call;
-        private DateTime _callStarted;
+        private DateTime? _callStarted;
 
 #if ENABLE_CALLS
         private VoipManager _manager;
@@ -560,7 +560,7 @@ namespace Telegram.Services
                     _manager.Start();
                     _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
 
-                    await ShowAsync(update.Call, _manager, _capturer, _callStarted);
+                    await ShowAsync(update.Call, _manager, _capturer);
                 }
                 else if (update.Call.State is CallStateDiscarded discarded)
                 {
@@ -603,7 +603,7 @@ namespace Telegram.Services
                         if (update.Call.IsOutgoing && discarded.Reason is CallDiscardReasonDeclined)
                         {
                             SoundEffects.Play(SoundEffect.VoipBusy);
-                            await ShowAsync(update.Call, null, null, _callStarted);
+                            await ShowAsync(update.Call, null, null);
                         }
                         else
                         {
@@ -615,7 +615,7 @@ namespace Telegram.Services
                         await HideAsync();
                         break;
                     default:
-                        await ShowAsync(update.Call, _manager, _capturer, _callStarted);
+                        await ShowAsync(update.Call, _manager, _capturer);
                         break;
                 }
             }
@@ -631,7 +631,7 @@ namespace Telegram.Services
             }
             else if (args == VoipState.Established)
             {
-                _callStarted = DateTime.Now;
+                _callStarted ??= DateTime.Now;
                 SoundEffects.Stop();
             }
         }
@@ -725,14 +725,14 @@ namespace Telegram.Services
         }
 
         public Call Call => _call;
-        public DateTime CallStarted => _callStarted;
+        public DateTime? CallStarted => _callStarted;
 
         public async void Show()
         {
 #if ENABLE_CALLS
             if (_call != null)
             {
-                await ShowAsync(_call, _manager, _capturer, _callStarted);
+                await ShowAsync(_call, _manager, _capturer);
             }
             else
             {
@@ -740,7 +740,7 @@ namespace Telegram.Services
             }
         }
 
-        private async Task ShowAsync(Call call, VoipManager controller, VoipCaptureBase capturer, DateTime started)
+        private async Task ShowAsync(Call call, VoipManager controller, VoipCaptureBase capturer)
         {
             if (call.State is CallStatePending && !call.IsOutgoing && _systemCall != null)
             {
@@ -776,7 +776,7 @@ namespace Telegram.Services
                 }
 
                 callPage.Connect(capturer);
-                callPage.Update(call, started);
+                callPage.Update(call);
             });
         }
 

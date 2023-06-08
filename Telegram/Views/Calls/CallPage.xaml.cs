@@ -134,7 +134,7 @@ namespace Telegram.Views.Calls
 
             if (voipService.Call != null)
             {
-                Update(voipService.Call, voipService.CallStarted);
+                Update(voipService.Call);
             }
 
             if (voipService.Manager != null)
@@ -433,7 +433,7 @@ namespace Telegram.Views.Calls
             CheckConstraints();
         }
 
-        public void Update(Call call, DateTime started)
+        public void Update(Call call)
         {
             if (_disposed)
             {
@@ -634,9 +634,9 @@ namespace Telegram.Views.Calls
                 StateLabel.Opacity = 0;
             }
 
-            if (_state == VoipState.Established)
+            if (_state == VoipState.Established && _service.CallStarted is DateTime callStarted)
             {
-                var duration = DateTime.Now - _service.CallStarted;
+                var duration = DateTime.Now - callStarted;
                 DurationLabel.Text = duration.ToString(duration.TotalHours >= 1 ? "hh\\:mm\\:ss" : "mm\\:ss");
             }
             else
@@ -748,7 +748,7 @@ namespace Telegram.Views.Calls
                     relay = _service.Manager.GetPreferredRelayId();
                 }
 
-                var duration = _state == VoipState.Established ? DateTime.Now - _service.CallStarted : TimeSpan.Zero;
+                var duration = _service.CallStarted is DateTime callStarted ? DateTime.Now - callStarted : TimeSpan.Zero;
                 _clientService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, _service.Capturer != null, relay));
             }
             else
@@ -779,7 +779,7 @@ namespace Telegram.Views.Calls
                 relay = _service.Manager.GetPreferredRelayId();
             }
 
-            var duration = _state == VoipState.Established ? DateTime.Now - _service.CallStarted : TimeSpan.Zero;
+            var duration = _service.CallStarted is DateTime callStarted ? DateTime.Now - callStarted : TimeSpan.Zero;
             _clientService.Send(new DiscardCall(call.Id, false, (int)duration.TotalSeconds, _service.Capturer != null, relay));
         }
 
