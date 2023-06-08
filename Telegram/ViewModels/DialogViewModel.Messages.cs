@@ -244,6 +244,36 @@ namespace Telegram.ViewModels
 
         #endregion
 
+        #region Multiple Download
+
+        public void DownloadSelectedMessages()
+        {
+            var messages = SelectedItems.Values.Where(x => x.CanBeAddedToDownloads).ToList();
+            if (messages.Count > 0)
+            {
+                IsSelectionEnabled = false;
+                TextField?.Focus(FocusState.Programmatic);
+
+                foreach (var message in messages)
+                {
+                    switch (message.Content)
+                    {
+                        case MessageAudio audio:
+                            ClientService.Send(new AddFileToDownloads(audio.Audio.AudioValue.Id, message.ChatId, message.Id, 32));
+                            break;
+                        case MessageDocument document:
+                            ClientService.Send(new AddFileToDownloads(document.Document.DocumentValue.Id, message.ChatId, message.Id, 32));
+                            break;
+                        case MessageVideo video:
+                            ClientService.Send(new AddFileToDownloads(video.Video.VideoValue.Id, message.ChatId, message.Id, 32));
+                            break;
+                    };
+                }
+            }
+        }
+
+        #endregion
+
         #region Multiple Copy
 
         public void CopySelectedMessages()

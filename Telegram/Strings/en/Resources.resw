@@ -2475,6 +2475,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   <data name="Downloading" xml:space="preserve">
     <value>Downloading</value>
   </data>
+  <data name="DownloadSelected" xml:space="preserve">
+    <value>Download Selected</value>
+  </data>
   <data name="DownloadsTabs" xml:space="preserve">
     <value>Downloads</value>
   </data>

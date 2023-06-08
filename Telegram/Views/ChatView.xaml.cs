@@ -2183,6 +2183,11 @@ namespace Telegram.Views
                 {
                     flyout.CreateFlyoutItem(ViewModel.ForwardSelectedMessages, Strings.ForwardSelected, Icons.Share);
 
+                    if (selected.All(x => MessageDownload_Loaded(x.Value)))
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.DownloadSelectedMessages, Strings.DownloadSelected, Icons.ArrowDownload);
+                    }
+
                     if (chat.CanBeReported)
                     {
                         flyout.CreateFlyoutItem(ViewModel.ReportSelectedMessages, "Report Selected", Icons.ShieldError);
@@ -2896,6 +2901,22 @@ namespace Telegram.Views
                 MessageAudio audio => audio.Audio.AudioValue.Local.IsDownloadingCompleted,
                 MessageDocument document => document.Document.DocumentValue.Local.IsDownloadingCompleted,
                 MessageVideo video => video.Video.VideoValue.Local.IsDownloadingCompleted,
+                _ => false
+            };
+        }
+
+        private bool MessageDownload_Loaded(MessageViewModel message)
+        {
+            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            {
+                return false;
+            }
+
+            return message.Content switch
+            {
+                MessageAudio audio => audio.Audio.AudioValue.Local.CanBeDownloaded && !audio.Audio.AudioValue.Local.IsDownloadingActive && !audio.Audio.AudioValue.Local.IsDownloadingCompleted,
+                MessageDocument document => document.Document.DocumentValue.Local.CanBeDownloaded && !document.Document.DocumentValue.Local.IsDownloadingActive && !document.Document.DocumentValue.Local.IsDownloadingCompleted,
+                MessageVideo video => video.Video.VideoValue.Local.CanBeDownloaded && !video.Video.VideoValue.Local.IsDownloadingActive && !video.Video.VideoValue.Local.IsDownloadingCompleted,
                 _ => false
             };
         }
