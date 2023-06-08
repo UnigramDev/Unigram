@@ -37,7 +37,7 @@ namespace Telegram.Stub
             openMenuItem.DefaultItem = true;
 
             _notifyIcon = new NotifyIcon();
-            _notifyIcon.DoubleClick += new EventHandler(OpenApp);
+            _notifyIcon.Click += OpenApp;
             _notifyIcon.Icon = Properties.Resources.Default;
             _notifyIcon.ContextMenu = new ContextMenu(new MenuItem[] { openMenuItem, exitMenuItem });
 #if DEBUG
@@ -83,6 +83,13 @@ namespace Telegram.Stub
 
         private async void OpenApp(object sender, EventArgs e)
         {
+            // There's a bug (I guess?) in NotifyIcon that causes Click handler
+            // to be fired if user opens the context menu and then dismisses it.
+            if (e is MouseEventArgs args && args.Button == MouseButtons.Right)
+            {
+                return;
+            }
+
             try
             {
                 var appListEntries = await Package.Current.GetAppListEntriesAsync();
