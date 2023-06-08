@@ -697,7 +697,7 @@ namespace Telegram.Views.Popups
             }
 
             var focused = FocusManager.GetFocusedElement();
-            if (focused is null or (not TextBox and not RichEditBox))
+            if (focused is null or (not TextBox and not RichEditBox and not Button and not MenuFlyoutItem))
             {
                 if (character == "\u0016" && CaptionInput.CanPasteClipboardContent)
                 {
