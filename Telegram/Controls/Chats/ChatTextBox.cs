@@ -26,6 +26,7 @@ using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
 using Windows.UI.Xaml.Controls;
@@ -134,15 +135,39 @@ namespace Telegram.Controls.Chats
         }
 
         public ListView Messages { get; set; }
-        public OrientableListView Autocomplete { get; set; }
+
+        private OrientableListView _controlledList;
+        public OrientableListView ControlledList
+        {
+            get => _controlledList;
+            set => SetControlledList(value);
+        }
+
+        private void SetControlledList(OrientableListView value)
+        {
+            if (_controlledList != null)
+            {
+                AutomationProperties.GetControlledPeers(this).Remove(_controlledList);
+            }
+
+            _controlledList = value;
+
+            if (_controlledList != null)
+            {
+                AutomationProperties.GetControlledPeers(this).Add(_controlledList);
+            }
+        }
+
+        private void SetAutocomplete(IAutocompleteCollection collection)
+        {
+            ViewModel.Autocomplete = collection;
+        }
 
         protected override void OnKeyDown(KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Space && Document.Selection.Length == 0)
             {
                 var clone = Document.Selection.GetClone();
-                var end = clone.EndOf(TextRangeUnit.CharacterFormat, true);
-
                 if (clone.EndPosition > Document.Selection.EndPosition && AreTheSame(clone.CharacterFormat, Document.Selection.CharacterFormat))
                 {
 
@@ -193,16 +218,16 @@ namespace Telegram.Controls.Chats
                 }
                 else if (e.Key is VirtualKey.Up or VirtualKey.Down)
                 {
-                    if (Autocomplete != null && ViewModel.Autocomplete?.Orientation == Orientation.Vertical)
+                    if (ControlledList != null && ViewModel.Autocomplete?.Orientation == Orientation.Vertical)
                     {
-                        Autocomplete.SelectionMode = ListViewSelectionMode.Single;
+                        ControlledList.SelectionMode = ListViewSelectionMode.Single;
 
                         var index = e.Key == VirtualKey.Up ? -1 : 1;
-                        var next = Autocomplete.SelectedIndex + index;
+                        var next = ControlledList.SelectedIndex + index;
                         if (next >= 0 && next < ViewModel.Autocomplete.Count)
                         {
-                            Autocomplete.SelectedIndex = next;
-                            Autocomplete.ScrollIntoView(Autocomplete.SelectedItem);
+                            ControlledList.SelectedIndex = next;
+                            ControlledList.ScrollIntoView(ControlledList.SelectedItem);
                         }
 
                         e.Handled = true;
@@ -211,36 +236,36 @@ namespace Telegram.Controls.Chats
             }
             else if (e.Key is VirtualKey.Left or VirtualKey.Right)
             {
-                if (Autocomplete != null && ViewModel.Autocomplete?.Orientation == Orientation.Horizontal)
+                if (ControlledList != null && ViewModel.Autocomplete?.Orientation == Orientation.Horizontal)
                 {
-                    if (Autocomplete.SelectedIndex == 0 && e.Key == VirtualKey.Left)
+                    if (ControlledList.SelectedIndex == 0 && e.Key == VirtualKey.Left)
                     {
-                        Autocomplete.SelectedIndex = -1;
+                        ControlledList.SelectedIndex = -1;
                         e.Handled = true;
                     }
-                    else if (Autocomplete.SelectedIndex == Autocomplete.Items.Count - 1 && e.Key == VirtualKey.Right)
+                    else if (ControlledList.SelectedIndex == ControlledList.Items.Count - 1 && e.Key == VirtualKey.Right)
                     {
-                        Autocomplete.SelectedIndex = 0;
+                        ControlledList.SelectedIndex = 0;
                         e.Handled = true;
                     }
                     else
                     {
-                        Autocomplete.SelectionMode = ListViewSelectionMode.Single;
+                        ControlledList.SelectionMode = ListViewSelectionMode.Single;
 
                         var index = e.Key == VirtualKey.Left ? -1 : 1;
-                        var next = Autocomplete.SelectedIndex + index;
+                        var next = ControlledList.SelectedIndex + index;
                         if (next >= 0 && next < ViewModel.Autocomplete.Count)
                         {
-                            Autocomplete.SelectedIndex = next;
-                            Autocomplete.ScrollIntoView(Autocomplete.SelectedItem);
+                            ControlledList.SelectedIndex = next;
+                            ControlledList.ScrollIntoView(ControlledList.SelectedItem);
 
                             e.Handled = true;
                         }
                     }
                 }
             }
-            else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && Autocomplete != null && Autocomplete.Items.Count > 0 && ViewModel.Autocomplete != null
-                && ((ViewModel.Autocomplete is SearchStickersCollection && Autocomplete.SelectedItem != null) || ViewModel.Autocomplete is not SearchStickersCollection))
+            else if ((e.Key == VirtualKey.Tab || e.Key == VirtualKey.Enter) && ControlledList != null && ControlledList.Items.Count > 0 && ViewModel.Autocomplete != null
+                && ((ViewModel.Autocomplete is SearchStickersCollection && ControlledList.SelectedItem != null) || ViewModel.Autocomplete is not SearchStickersCollection))
             {
                 var shift = WindowContext.IsKeyDown(VirtualKey.Shift);
                 if (shift)
@@ -248,7 +273,7 @@ namespace Telegram.Controls.Chats
                     return;
                 }
 
-                var container = Autocomplete.ContainerFromIndex(Math.Max(0, Autocomplete.SelectedIndex)) as GridViewItem;
+                var container = ControlledList.ContainerFromIndex(Math.Max(0, ControlledList.SelectedIndex)) as GridViewItem;
                 if (container != null)
                 {
                     var peer = new GridViewItemAutomationPeer(container);
@@ -345,7 +370,7 @@ namespace Telegram.Controls.Chats
                 if (ViewModel.Autocomplete is not AutocompleteList<UserCommand>)
                 {
                     ClearInlineBotResults();
-                    ViewModel.Autocomplete = GetCommands(string.Empty);
+                    SetAutocomplete(GetCommands(string.Empty));
                 }
 
                 return;
@@ -357,15 +382,14 @@ namespace Telegram.Controls.Chats
             // some stuff it inline bot isn't found
             if (SearchInlineBotResults(text, out string inlineQuery))
             {
-                ViewModel.Autocomplete = null;
-
+                SetAutocomplete(null);
                 GetInlineBotResults(inlineQuery);
                 return;
             }
 
             if (string.IsNullOrEmpty(text) || Document.Selection.Length != 0)
             {
-                ViewModel.Autocomplete = null;
+                SetAutocomplete(null);
                 return;
             }
 
@@ -374,12 +398,11 @@ namespace Telegram.Controls.Chats
             if (TryGetAutocomplete(text, query, ViewModel.Autocomplete, fromTextChanging, out var autocomplete))
             {
                 ClearInlineBotResults();
-                ViewModel.Autocomplete = autocomplete;
+                SetAutocomplete(autocomplete);
             }
             else
             {
-                ViewModel.Autocomplete = null;
-
+                SetAutocomplete(null);
                 CancelInlineBotToken();
 
                 var token = (_inlineBotToken = new CancellationTokenSource()).Token;
@@ -392,8 +415,7 @@ namespace Telegram.Controls.Chats
 
                     if (SearchInlineBotResults(text, out query))
                     {
-                        ViewModel.Autocomplete = null;
-
+                        SetAutocomplete(null);
                         GetInlineBotResults(query);
                         return;
                     }
