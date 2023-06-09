@@ -164,7 +164,7 @@
                                         <VisualState.Setters>
                                             <Setter Target="FromElement.Visibility"
                                                     Value="Visible" />
-                                            <Setter Target="PlaceholderTextContentPresenter.Content"
+                                            <Setter Target="PlaceholderTextContentPresenter.Text"
                                                     Value="{CustomResource SearchMembers}" />
                                             <Setter Target="ContentElement.Padding"
                                                     Value="0,4,6,5" />
@@ -178,12 +178,12 @@
                                                     Value="Visible" />
                                             <Setter Target="MemberElement.Visibility"
                                                     Value="Visible" />
-                                            <Setter Target="PlaceholderTextContentPresenter.Content"
+                                            <Setter Target="PlaceholderTextContentPresenter.Text"
                                                     Value="{CustomResource Search}" />
                                             <Setter Target="ContentElement.Padding"
-                                                    Value="4,4,6,5" />
+                                                    Value="0,4,6,5" />
                                             <Setter Target="PlaceholderTextContentPresenter.Padding"
-                                                    Value="4,4,6,5" />
+                                                    Value="0,4,6,5" />
                                         </VisualState.Setters>
                                     </VisualState>
                                 </VisualStateGroup>
@@ -213,7 +213,7 @@
                                             Content="{CustomResource SearchFrom}"
                                             Margin="{TemplateBinding BorderThickness}"
                                             VerticalAlignment="Center"
-                                            Padding="0,3,0,6" />
+                                            Padding="0,3,6,6" />
                             <ContentControl x:Name="MemberElement"
                                             Grid.Column="2"
                                             Visibility="Collapsed"
@@ -221,7 +221,7 @@
                                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                                             Margin="{TemplateBinding BorderThickness}"
                                             VerticalAlignment="Center"
-                                            Padding="0,3,0,6" />
+                                            Padding="0,3,6,6" />
 
                             <ScrollViewer x:Name="ContentElement"
                                           Grid.Row="1"
@@ -291,6 +291,7 @@
                     </Grid.ColumnDefinitions>
                     <local:ChatSearchTextBox x:Name="Field"
                                              Text="{x:Bind ViewModel.Query, Mode=OneWay}"
+                                             ControlledList="{x:Bind ListAutocomplete}"
                                              InputScope="Search"
                                              TextChanged="OnTextChanged"
                                              SelectionChanged="OnSelectionChanged"
@@ -391,6 +392,7 @@
                                ItemsSource="{x:Bind ViewModel.Autocomplete, Mode=OneWay}"
                                Visibility="{x:Bind ViewModel.Autocomplete, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                                ItemTemplateSelector="{StaticResource AutocompleteTemplate}"
+                               ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
                                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                AllowFocusOnInteraction="False"
                                IsItemClickEnabled="True"

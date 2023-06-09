@@ -7,11 +7,10 @@
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatSearchTextBox : TextBox
+    public class ChatSearchTextBox : SuggestTextBox
     {
         private ChatSearchState _state;
         public ChatSearchState State

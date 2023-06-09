@@ -139,7 +139,7 @@ namespace Telegram.Controls.Chats
                     username.Text = string.Empty;
                 }
 
-                photo.SetUser(ViewModel.ClientService, user, 36);
+                photo.SetUser(ViewModel.ClientService, user, 32);
             }
             else if (args.Item is ChatSearchMediaFilter filter)
             {
