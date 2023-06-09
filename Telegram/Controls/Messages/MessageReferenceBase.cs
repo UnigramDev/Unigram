@@ -553,11 +553,25 @@ namespace Telegram.Controls.Messages
         {
             Visibility = Visibility.Visible;
 
-            SetText(message,
-                outgoing ? null : message.SenderId,
-                GetFromLabel(message, title),
-                animatedEmoji.Emoji,
-                null);
+            if (animatedEmoji.AnimatedEmoji?.Sticker?.FullType is StickerFullTypeCustomEmoji customEmoji)
+            {
+                SetText(message,
+                    outgoing ? null : message.SenderId,
+                    GetFromLabel(message, title),
+                    string.Empty,
+                    new FormattedText(animatedEmoji.Emoji, new[]
+                    {
+                        new TextEntity(0, animatedEmoji.Emoji.Length, new TextEntityTypeCustomEmoji(customEmoji.CustomEmojiId))
+                    }));
+            }
+            else
+            {
+                SetText(message,
+                    outgoing ? null : message.SenderId,
+                    GetFromLabel(message, title),
+                    animatedEmoji.Emoji,
+                    null);
+            }
 
             HideThumbnail();
 

@@ -1187,6 +1187,18 @@ namespace Telegram.Controls.Cells
             {
                 return Text(Strings.UnsupportedAttachment);
             }
+            else if (message.Content is MessageAnimatedEmoji animatedEmoji)
+            {
+                if (animatedEmoji.AnimatedEmoji?.Sticker?.FullType is StickerFullTypeCustomEmoji customEmoji)
+                {
+                    return new FormattedText(animatedEmoji.Emoji, new[]
+                    {
+                        new TextEntity(0, animatedEmoji.Emoji.Length, new TextEntityTypeCustomEmoji(customEmoji.CustomEmojiId))
+                    });
+                }
+
+                return new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>());
+            }
 
             return message.Content switch
             {
