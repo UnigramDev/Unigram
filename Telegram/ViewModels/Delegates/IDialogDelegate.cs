@@ -62,5 +62,7 @@ namespace Telegram.ViewModels.Delegates
 
         void ForEach(Action<MessageBubble, MessageViewModel> action);
         void ForEach(Action<MessageBubble> action);
+
+        SelectorItem ContainerFromItem(long id);
     }
 }

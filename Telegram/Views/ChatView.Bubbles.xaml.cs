@@ -799,6 +799,16 @@ namespace Telegram.Views
             return "FriendMessageTemplate";
         }
 
+        public SelectorItem ContainerFromItem(long id)
+        {
+            if (_messageIdToSelector.TryGetValue(id, out var container))
+            {
+                return container;
+            }
+
+            return null;
+        }
+
         public void UpdateContainerWithMessageId(long id, Action<SelectorItem> action)
         {
             if (_messageIdToSelector.TryGetValue(id, out var container))

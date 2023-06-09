@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Messages;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Delegates;
 using Windows.Devices.Input;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
@@ -25,13 +26,12 @@ namespace Telegram.Controls.Chats
     public class ChatHistoryView : ListView
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
+        public IDialogDelegate Delegate { get; set; }
 
         public ScrollViewer ScrollingHost { get; private set; }
         public ItemsStackPanel ItemsStack { get; private set; }
 
         public bool IsBottomReached => ScrollingHost?.VerticalOffset == ScrollingHost?.ScrollableHeight;
-
-        public Action<bool> ViewVisibleMessages { get; set; }
 
         private readonly DisposableMutex _loadMoreLock = new();
         private int _loadMoreCount = 0;
@@ -271,7 +271,7 @@ namespace Telegram.Controls.Chats
             _programmaticScrolling = true;
             await ScrollIntoViewAsync(item, direction);
 
-            var selectorItem = ContainerFromItem(item) as SelectorItem;
+            var selectorItem = Delegate?.ContainerFromItem(item.Id);
             if (selectorItem == null)
             {
                 Logger.Debug("selectorItem == null, abort");
@@ -329,7 +329,7 @@ namespace Telegram.Controls.Chats
         Exit:
             _programmaticScrolling = _programmaticExternal = false;
 
-            ViewVisibleMessages?.Invoke(true);
+            Delegate?.ViewVisibleMessages();
             ViewChanged();
         }
 

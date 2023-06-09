@@ -144,8 +144,8 @@ namespace Telegram.Views
                 WindowContext.Current.ContactPanel.LaunchFullAppRequested += ContactPanel_LaunchFullAppRequested;
             }
 
+            Messages.Delegate = this;
             Messages.ItemsSource = _messages;
-            Messages.ViewVisibleMessages = ViewVisibleMessages;
             Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
             InitializeAutomation();
