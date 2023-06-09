@@ -1974,11 +1974,6 @@ namespace Telegram.Views
 
         private void Lock_Click(object sender, RoutedEventArgs e)
         {
-            if (!ViewModel.Passcode.IsEnabled)
-            {
-                return;
-            }
-
             ViewModel.Passcode.Lock();
         }
 

@@ -94,11 +94,14 @@ namespace Telegram.Services
 
         public void Lock()
         {
-            _settingsService.IsLocked = true;
-            _settingsService.CloseTime = DateTime.MaxValue;
-            Publish(true);
+            if (IsEnabled)
+            {
+                _settingsService.IsLocked = true;
+                _settingsService.CloseTime = DateTime.MaxValue;
+                Publish(true);
 
-            WindowContext.ForEach(window => window.Lock(false));
+                WindowContext.ForEach(window => window.Lock(false));
+            }
         }
 
         public void Unlock()
