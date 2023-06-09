@@ -36,6 +36,7 @@ using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
+using Telegram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Devices.Input;
@@ -313,6 +314,7 @@ namespace Telegram.Views
             StickersPanel.StickerClick = Stickers_ItemClick;
             StickersPanel.StickerContextRequested += Sticker_ContextRequested;
             StickersPanel.ChoosingSticker += Stickers_ChoosingItem;
+            StickersPanel.SettingsClick += StickersPanel_SettingsClick;
 
             StickersPanel.AnimationClick = Animations_ItemClick;
             StickersPanel.AnimationContextRequested += Animation_ContextRequested;
@@ -343,6 +345,12 @@ namespace Telegram.Views
             StickersPanel.PointerExited += Stickers_PointerExited;
 
             StickersPanel.AllowFocusOnInteraction = true;
+        }
+
+        private void StickersPanel_SettingsClick(object sender, EventArgs e)
+        {
+            HideStickers();
+            ViewModel.NavigationService.Navigate(typeof(SettingsStickersPage));
         }
 
         public void HideStickers()

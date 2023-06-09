@@ -25,6 +25,8 @@ namespace Telegram.Controls
         public new FrameworkElement Shadow => ShadowElement;
         public FrameworkElement Presenter => BackgroundElement;
 
+        public event EventHandler SettingsClick;
+
         public Action<object> EmojiClick { get; set; }
 
         public Action<Sticker, bool> StickerClick { get; set; }
@@ -178,6 +180,7 @@ namespace Telegram.Controls
                     StickersRoot.ItemClick = Stickers_ItemClick;
                     StickersRoot.ItemContextRequested += StickerContextRequested;
                     StickersRoot.ChoosingItem += ChoosingSticker;
+                    StickersRoot.SettingsClick += SettingsClick;
                 }
                 else
                 {
@@ -250,6 +253,7 @@ namespace Telegram.Controls
                 StickersRoot.ItemClick = null;
                 StickersRoot.ItemContextRequested -= StickerContextRequested;
                 StickersRoot.ChoosingItem -= ChoosingSticker;
+                StickersRoot.SettingsClick -= SettingsClick;
                 UnloadObject(StickersRoot);
 
                 Tab2.Visibility = Visibility.Collapsed;

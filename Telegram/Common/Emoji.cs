@@ -214,7 +214,7 @@ namespace Telegram.Common
             }).ToArray();
         }
 
-        public static List<EmojiGroup> Get(EmojiSkinTone skin, bool flags)
+        public static List<EmojiGroup> Get(EmojiSkinTone skin)
         {
             var results = new List<EmojiGroup>();
             var recent = new EmojiGroup
@@ -234,17 +234,7 @@ namespace Telegram.Common
                 }).ToArray()
             };
 
-            //results.Add(recent);
-
-            if (flags)
-            {
-                results.AddRange(Items.Select(x => x.ToGroup(skin)));
-            }
-            else
-            {
-                results.AddRange(Items.Take(Items.Count - 1).Select(x => x.ToGroup(skin)));
-            }
-
+            results.AddRange(Items.Select(x => x.ToGroup(skin)));
             return results;
         }
 

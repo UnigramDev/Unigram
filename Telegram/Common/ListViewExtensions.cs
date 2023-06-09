@@ -186,7 +186,14 @@ namespace Telegram.Common
         public static void ScrollToTop(this ListViewBase listViewBase)
         {
             var scrollViewer = GetScrollViewer(listViewBase);
-            scrollViewer?.ChangeView(null, 0, null);
+            if (scrollViewer.HorizontalScrollMode != ScrollMode.Disabled)
+            {
+                scrollViewer?.ChangeView(0, null, null);
+            }
+            else
+            {
+                scrollViewer?.ChangeView(null, 0, null);
+            }
         }
     }
 }

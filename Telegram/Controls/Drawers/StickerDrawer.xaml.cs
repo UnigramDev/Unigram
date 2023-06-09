@@ -29,6 +29,7 @@ namespace Telegram.Controls.Drawers
         public Action<Sticker, bool> ItemClick { get; set; }
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Sticker>> ItemContextRequested;
         public event EventHandler ChoosingItem;
+        public event EventHandler SettingsClick;
 
         private readonly AnimatedListHandler _handler;
         private readonly ZoomableListHandler _zoomer;
@@ -36,6 +37,7 @@ namespace Telegram.Controls.Drawers
         private readonly AnimatedListHandler _toolbarHandler;
 
         private readonly Dictionary<StickerViewModel, Grid> _itemIdToContent = new();
+        private long _selectedSetId;
 
         private bool _isActive;
 
@@ -165,8 +167,20 @@ namespace Telegram.Controls.Drawers
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scrollingHost = List.ItemsPanelRoot as ItemsWrapGrid;
-            if (scrollingHost != null && _isActive)
+            if (scrollingHost != null && _isActive && scrollingHost.FirstVisibleIndex >= 0)
             {
+                //var item = List.Items[scrollingHost.FirstVisibleIndex];
+                //if (item is StickerViewModel sticker && sticker.SetId != _selectedSetId)
+                //{
+                //    _selectedSetId = sticker.SetId;
+
+                //    if (ViewModel != null && ViewModel.TryGetInstalledSet(sticker.SetId, out var stickerSet))
+                //    {
+                //        Toolbar.SelectedItem = stickerSet;
+                //        Toolbar.ScrollIntoView(stickerSet);
+                //    }
+                //}
+
                 var first = List.ContainerFromIndex(scrollingHost.FirstVisibleIndex);
                 if (first != null)
                 {
@@ -174,7 +188,6 @@ namespace Telegram.Controls.Drawers
                     if (header != null && header.Content != Toolbar.SelectedItem)
                     {
                         Toolbar.SelectedItem = header.Content;
-                        Toolbar.ScrollIntoView(header.Content);
                     }
                 }
             }
@@ -187,7 +200,7 @@ namespace Telegram.Controls.Drawers
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            //ViewModel.NavigationService.Navigate(typeof(SettingsStickersPage));
+            SettingsClick?.Invoke(this, EventArgs.Empty);
         }
 
         private async void OnChoosingGroupHeaderContainer(ListViewBase sender, ChoosingGroupHeaderContainerEventArgs args)
@@ -317,7 +330,7 @@ namespace Telegram.Controls.Drawers
                     return;
                 }
 
-                photo.SetChat(ViewModel.ClientService, chat, 36);
+                photo.SetChat(ViewModel.ClientService, chat, 24);
             }
             else if (args.Item is StickerSetViewModel sticker)
             {

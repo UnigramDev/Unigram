@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
@@ -65,6 +66,7 @@ namespace Telegram.Controls.Drawers
         private readonly AnimatedListHandler _toolbarHandler;
 
         private readonly Dictionary<StickerViewModel, Grid> _itemIdToContent = new();
+        private long _selectedSetId;
 
         public EmojiDrawer()
             : this(EmojiDrawerMode.Chat)
@@ -249,7 +251,7 @@ namespace Telegram.Controls.Drawers
         private void ScrollingHost_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             var scrollingHost = List.ItemsPanelRoot as ItemsWrapGrid;
-            if (scrollingHost != null)
+            if (scrollingHost != null && _isActive && scrollingHost.FirstVisibleIndex >= 0)
             {
                 var first = List.ContainerFromIndex(scrollingHost.FirstVisibleIndex);
                 if (first != null)
@@ -261,13 +263,11 @@ namespace Telegram.Controls.Drawers
                         {
                             Toolbar2.SelectedItem = null;
                             Toolbar.SelectedItem = header.Content;
-                            Toolbar.ScrollIntoView(header.Content);
                         }
                         else
                         {
-                            Toolbar.SelectedItem = null;
                             Toolbar2.SelectedItem = header.Content;
-                            Toolbar2.ScrollIntoView(header.Content);
+                            Toolbar.SelectedItem = null;
                         }
 
                         UpdateToolbar();
@@ -278,9 +278,23 @@ namespace Telegram.Controls.Drawers
 
         private void Toolbar_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (Toolbar.SelectedItem != null)
+            if (sender is GridView toolbar)
             {
-                _ = Toolbar.ScrollToItem2(Toolbar.SelectedItem, VerticalAlignment.Center);
+                if (toolbar.SelectedItem != null)
+                {
+                    if (sender == Toolbar2 && Toolbar.SelectedItem != null)
+                    {
+                        toolbar.ScrollToTop();
+                    }
+                    else
+                    {
+                        _ = toolbar.ScrollToItem2(toolbar.SelectedItem, VerticalAlignment.Center);
+                    }
+                }
+                else
+                {
+                    toolbar.ScrollToTop();
+                }
             }
         }
 
@@ -394,7 +408,7 @@ namespace Telegram.Controls.Drawers
 
                 var show = !_emojiCollapsed;
 
-                var toolbar = ElementCompositionPreview.GetElementVisual(Toolbar);
+                var toolbar = ElementCompositionPreview.GetElementVisual(Toolbar3);
                 var pill = ElementCompositionPreview.GetElementVisual(ToolbarPill);
                 var panel = ElementCompositionPreview.GetElementVisual(Toolbar2.ItemsPanelRoot);
 
@@ -408,7 +422,7 @@ namespace Telegram.Controls.Drawers
 
                 pill.Clip = toolbar.Compositor.CreateGeometricClip(ellipse);
                 toolbar.Clip = clip;
-                Toolbar.Width = 144;
+                Toolbar3.Width = 144 + 36;
 
                 var animClip = toolbar.Compositor.CreateScalarKeyFrameAnimation();
                 animClip.InsertKeyFrame(show ? 1 : 0, 0);
@@ -432,10 +446,7 @@ namespace Telegram.Controls.Drawers
                     panel.Properties.InsertVector3("Translation", Vector3.Zero);
 
                     toolbar.Clip = null;
-                    Toolbar.Width = show ? 144 : 32;
-                    Toolbar.ScrollIntoView(Toolbar2.SelectedItem == null && Toolbar.Items.Count > 0
-                        ? Toolbar.Items[0]
-                        : Toolbar.Items.LastOrDefault());
+                    Toolbar3.Width = show ? 144 + 36 : 32 + 36;
                 };
 
                 clip.StartAnimation("RightInset", animClip);
@@ -536,9 +547,9 @@ namespace Telegram.Controls.Drawers
             // args.ItemContainer is used to indicate whether the ListView is proposing an
             // ItemContainer (ListViewItem) to use. If args.Itemcontainer != null, then there was a
             // recycled ItemContainer available to be reused.
-            if (args.ItemContainer != null)
+            if (args.ItemContainer is EmojiGridViewItem container)
             {
-                if (args.ItemContainer.Tag.Equals(typeName))
+                if (container.TypeName.Equals(typeName))
                 {
                     // Suggestion matches what we want, so remove it from the recycle queue
                     relevantHashSet.Remove(args.ItemContainer);
@@ -569,7 +580,8 @@ namespace Telegram.Controls.Drawers
                 {
                     // There aren't any (recycled) ItemContainers available. So a new one
                     // needs to be created.
-                    var item = new GridViewItem { ContentTemplate = Resources[typeName] as DataTemplate, Tag = typeName };
+                    var item = new EmojiGridViewItem(typeName);
+                    item.ContentTemplate = Resources[typeName] as DataTemplate;
                     item.Style = List.ItemContainerStyle;
                     item.ContextRequested += OnContextRequested;
                     args.ItemContainer = item;
@@ -623,6 +635,13 @@ namespace Telegram.Controls.Drawers
                 if (sticker != null)
                 {
                     _itemIdToContent.Remove(sticker);
+                }
+
+                if (args.ItemContainer is EmojiGridViewItem container)
+                {
+                    // XAML has indicated that the item is no longer being shown, so add it to the recycle queue
+                    var tag = container.TypeName;
+                    var added = _typeToItemHashSetMapping[tag].Add(args.ItemContainer);
                 }
 
                 return;
@@ -742,5 +761,17 @@ namespace Telegram.Controls.Drawers
         {
             _toolbarHandler.ThrottleVisibleItems();
         }
+    }
+
+    public class EmojiGridViewItem : GridViewItem
+    {
+        private readonly string _typeName;
+
+        public EmojiGridViewItem(string typeName)
+        {
+            _typeName = typeName;
+        }
+
+        public string TypeName => _typeName;
     }
 }
