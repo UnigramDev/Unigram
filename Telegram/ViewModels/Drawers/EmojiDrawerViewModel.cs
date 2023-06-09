@@ -234,7 +234,7 @@ namespace Telegram.ViewModels.Drawers
             if (_mode == EmojiDrawerMode.Chat)
             {
                 var recents = Emoji.GetRecents(SettingsService.Current.Stickers.SkinTone);
-                var emojiGroups = Emoji.Get(SettingsService.Current.Stickers.SkinTone, true);
+                var emojiGroups = Emoji.Get(SettingsService.Current.Stickers.SkinTone);
 
                 var source = new List<object>();
                 var customEmoji = new List<long>();
@@ -325,11 +325,11 @@ namespace Telegram.ViewModels.Drawers
             InstalledSets.ReplaceWith(installedSets);
         }
 
-        private async Task<IList<StickerSetViewModel>> GetInstalledSets()
+        private async Task<IEnumerable<StickerSetViewModel>> GetInstalledSets()
         {
             if (_installedSets != null)
             {
-                return _installedSets;
+                return _installedSets.Values;
             }
 
             var result1 = await ClientService.SendAsync(new GetInstalledStickerSets(new StickerTypeCustomEmoji()));
@@ -339,40 +339,41 @@ namespace Telegram.ViewModels.Drawers
             {
                 var stickers = new List<object>();
 
-                var installedSets = new List<StickerSetViewModel>();
+                var installedSets = new Dictionary<long, StickerSetViewModel>();
 
                 if (sets.Sets.Count > 0)
                 {
                     var result3 = await ClientService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
                     if (result3 is StickerSet set)
                     {
-                        installedSets.Add(new StickerSetViewModel(ClientService, sets.Sets[0], set));
-                        installedSets.AddRange(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ClientService, x)));
-                    }
-                    else
-                    {
-                        installedSets.AddRange(sets.Sets.Select(x => new StickerSetViewModel(ClientService, x)));
+                        installedSets[set.Id] = new StickerSetViewModel(ClientService, sets.Sets[0], set);
                     }
 
-                    var existing = installedSets.Select(x => x.Id).ToArray();
+                    for (int i = installedSets.Count; i < sets.Sets.Count; i++)
+                    {
+                        installedSets[sets.Sets[i].Id] = new StickerSetViewModel(ClientService, sets.Sets[i]);
+                    }
 
                     foreach (var item in trending.Sets)
                     {
-                        if (existing.Contains(item.Id))
+                        if (installedSets.ContainsKey(item.Id))
                         {
                             continue;
                         }
 
-                        installedSets.Add(new StickerSetViewModel(ClientService, item));
+                        installedSets[item.Id] = new StickerSetViewModel(ClientService, item);
                     }
                 }
                 else if (trending.Sets.Count > 0)
                 {
-                    installedSets.AddRange(trending.Sets.Select(x => new StickerSetViewModel(ClientService, x)));
+                    for (int i = 0; i < trending.Sets.Count; i++)
+                    {
+                        installedSets[trending.Sets[i].Id] = new StickerSetViewModel(ClientService, trending.Sets[i]);
+                    }
                 }
 
                 _installedSets = installedSets;
-                return installedSets;
+                return installedSets.Values;
             }
 
             return Array.Empty<StickerSetViewModel>();
@@ -428,20 +429,51 @@ namespace Telegram.ViewModels.Drawers
                 }
             }
 
-            if (visible != null)
+            IList<AvailableReaction> source;
+            if (available.AllowCustomEmoji)
             {
-                Populate(visible, items);
-            }
+                source = available.TopReactions;
+                Populate(available.TopReactions, top);
 
-            Populate(available.TopReactions, top);
-
-            if (available.PopularReactions.Count > 0)
-            {
-                Populate(available.PopularReactions, recent);
+                if (available.PopularReactions.Count > 0)
+                {
+                    Populate(available.PopularReactions, recent);
+                }
+                else
+                {
+                    Populate(available.RecentReactions, recent);
+                }
             }
             else
             {
-                Populate(available.RecentReactions, recent);
+                source = available.TopReactions.ToList();
+                var additional = available.RecentReactions.Count > 0
+                    ? available.RecentReactions
+                    : available.PopularReactions;
+
+                available.TopReactions
+                    .Select(x => x.Type)
+                    .Discern(out var emoji, out var customEmoji);
+
+                foreach (var item in additional)
+                {
+                    if (item.Type is ReactionTypeEmoji emojii
+                        && emoji != null
+                        && emoji.Contains(emojii.Emoji))
+                    {
+                        continue;
+                    }
+                    else if (item.Type is ReactionTypeCustomEmoji customEmojii
+                        && customEmoji != null
+                        && customEmoji.Contains(customEmojii.CustomEmojiId))
+                    {
+                        continue;
+                    }
+
+                    source.Add(item);
+                }
+
+                Populate(source, top);
             }
 
             _allowCustomEmoji = available.AllowCustomEmoji;
@@ -450,20 +482,13 @@ namespace Telegram.ViewModels.Drawers
             _topStickers = top;
             _recentStickers = recent;
 
-            if (visible != null)
-            {
-                Items.ReplaceWith(new[] { _reactionTopSet });
-            }
-            else
-            {
-                _ = UpdateAsync();
-            }
+            _ = UpdateAsync();
 
             var test = new List<(AvailableReaction, File)>();
 
             for (int i = 0; i < Math.Min(top.Count, 6); i++)
             {
-                test.Add((available.TopReactions[i], top[i].StickerValue));
+                test.Add((source[i], top[i].StickerValue));
             }
 
             return test;
@@ -474,7 +499,13 @@ namespace Telegram.ViewModels.Drawers
         private List<Sticker> _topStickers;
         private List<Sticker> _recentStickers;
 
-        private List<StickerSetViewModel> _installedSets;
+        //private List<StickerSetViewModel> _installedSets;
+        private Dictionary<long, StickerSetViewModel> _installedSets;
+
+        public bool TryGetInstalledSet(long id, out StickerSetViewModel value)
+        {
+            return _installedSets.TryGetValue(id, out value);
+        }
 
         public async void UpdateStatuses()
         {

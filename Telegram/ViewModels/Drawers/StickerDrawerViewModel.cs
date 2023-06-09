@@ -34,7 +34,12 @@ namespace Telegram.ViewModels.Drawers
         private readonly StickerSetViewModel _premiumSet;
         private readonly SupergroupStickerSetViewModel _groupSet;
 
-        private List<StickerSetViewModel> _installedSets;
+        private Dictionary<long, StickerSetViewModel> _installedSets;
+
+        public bool TryGetInstalledSet(long id, out StickerSetViewModel value)
+        {
+            return _installedSets.TryGetValue(id, out value);
+        }
 
         private long _groupSetId;
         private long _groupSetChatId;
@@ -356,42 +361,23 @@ namespace Telegram.ViewModels.Drawers
                     stickers.Add(_groupSet);
                 }
 
-                if (result4.Count > 0)
+                stickers.AddRange(result4);
+
+                if (_premiumSet.Stickers.Count > 0 && IsPremiumAvailable && !IsPremium)
                 {
-                    if (result4[0].IsLoaded is false)
-                    {
-                        result4[0].IsLoaded = true;
-
-                        var response = await ClientService.SendAsync(new GetStickerSet(result4[0].Id));
-                        if (response is StickerSet full)
-                        {
-                            result4[0].Update(full, false);
-                        }
-                    }
-
-                    stickers.AddRange(result4);
-
-                    if (_premiumSet.Stickers.Count > 0 && IsPremiumAvailable && !IsPremium)
-                    {
-                        stickers.Add(_premiumSet);
-                    }
-
-                    SavedStickers.ReplaceWith(stickers);
-                    _updating = false;
+                    stickers.Add(_premiumSet);
                 }
-                else
-                {
-                    SavedStickers.ReplaceWith(stickers);
-                    _updating = false;
-                }
+
+                SavedStickers.ReplaceWith(stickers);
+                _updating = false;
             }
         }
 
-        private async Task<IList<StickerSetViewModel>> GetInstalledSets()
+        private async Task<IEnumerable<StickerSetViewModel>> GetInstalledSets()
         {
             if (_installedSets != null)
             {
-                return _installedSets;
+                return _installedSets.Values;
             }
 
             var result1 = await ClientService.SendAsync(new GetInstalledStickerSets(new StickerTypeRegular()));
@@ -401,19 +387,19 @@ namespace Telegram.ViewModels.Drawers
             {
                 var stickers = new List<object>();
 
-                var installedSets = new List<StickerSetViewModel>();
+                var installedSets = new Dictionary<long, StickerSetViewModel>();
 
                 if (sets.Sets.Count > 0)
                 {
                     var result3 = await ClientService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
                     if (result3 is StickerSet set)
                     {
-                        installedSets.Add(new StickerSetViewModel(ClientService, sets.Sets[0], set));
-                        installedSets.AddRange(sets.Sets.Skip(1).Select(x => new StickerSetViewModel(ClientService, x)));
+                        installedSets[set.Id] = new StickerSetViewModel(ClientService, sets.Sets[0], set);
                     }
-                    else
+
+                    for (int i = installedSets.Count; i < sets.Sets.Count; i++)
                     {
-                        installedSets.AddRange(sets.Sets.Select(x => new StickerSetViewModel(ClientService, x)));
+                        installedSets[sets.Sets[i].Id] = new StickerSetViewModel(ClientService, sets.Sets[i]);
                     }
 
                     //var existing = installedSets.Select(x => x.Id).ToArray();
@@ -434,7 +420,7 @@ namespace Telegram.ViewModels.Drawers
                 //}
 
                 _installedSets = installedSets;
-                return installedSets;
+                return installedSets.Values;
             }
 
             return Array.Empty<StickerSetViewModel>();
@@ -621,31 +607,34 @@ namespace Telegram.ViewModels.Drawers
 
     public class StickerViewModel
     {
-        private Sticker _sticker;
-        private readonly long _setId;
-        private readonly StickerFormat _format;
-
         private readonly IClientService _clientService;
+        private Sticker _sticker;
 
         public StickerViewModel(IClientService clientService, long setId, StickerFormat format)
         {
             _clientService = clientService;
 
-            _setId = setId;
-            _format = format;
+            SetId = setId;
+            Format = format;
         }
 
         public StickerViewModel(IClientService clientService, Sticker sticker)
         {
             _clientService = clientService;
-
-            _sticker = sticker;
-            _format = sticker.Format;
+            Update(sticker);
         }
 
         public void Update(Sticker sticker)
         {
             _sticker = sticker;
+            StickerValue = sticker.StickerValue;
+            Outline = sticker.Outline;
+            FullType = sticker.FullType;
+            Format = sticker.Format;
+            Emoji = sticker.Emoji;
+            Height = sticker.Height;
+            Width = sticker.Width;
+            SetId = sticker.SetId;
         }
 
         public IClientService ClientService => _clientService;
@@ -655,14 +644,14 @@ namespace Telegram.ViewModels.Drawers
             return viewModel._sticker;
         }
 
-        public File StickerValue => _sticker?.StickerValue;
-        public IList<ClosedVectorPath> Outline => _sticker?.Outline;
-        public StickerFullType FullType => _sticker?.FullType;
-        public StickerFormat Format => _sticker?.Format ?? _format;
-        public string Emoji => _sticker?.Emoji;
-        public int Height => _sticker?.Height ?? 0;
-        public int Width => _sticker?.Width ?? 0;
-        public long SetId => _sticker?.SetId ?? _setId;
+        public File StickerValue { get; private set; }
+        public IList<ClosedVectorPath> Outline { get; private set; }
+        public StickerFullType FullType { get; private set; }
+        public StickerFormat Format { get; private set; }
+        public string Emoji { get; private set; }
+        public int Height { get; private set; }
+        public int Width { get; private set; }
+        public long SetId { get; private set; }
 
         public ReactionType ToReactionType()
         {
