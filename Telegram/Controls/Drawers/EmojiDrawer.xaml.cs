@@ -662,6 +662,44 @@ namespace Telegram.Controls.Drawers
                 else
                 {
                     UpdateContainerContent(sticker, content, false);
+
+                    if (_mode == EmojiDrawerMode.Reactions && args.ItemIndex > 5 && args.ItemIndex < 8 * 6)
+                    {
+                        var x1 = 4;
+                        var y1 = 0;
+                        var x2 = (int)(args.ItemIndex % 8);
+                        var y2 = (int)(args.ItemIndex / 8d);
+
+                        if (y2 >= 2)
+                        {
+                            y2++;
+                        }
+
+                        var xd = Math.Abs(x1 - x2);
+                        var yd = Math.Abs(y1 - y2);
+
+                        var distance = xd + yd - 1;
+                        distance = yd;
+
+                        var visual = ElementCompositionPreview.GetElementVisual(content);
+                        var scale = visual.Compositor.CreateVector3KeyFrameAnimation();
+                        scale.InsertKeyFrame(0, Vector3.Zero);
+                        scale.InsertKeyFrame(1, Vector3.One);
+                        scale.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                        scale.DelayTime = TimeSpan.FromMilliseconds(33 * distance);
+                        scale.Duration = Constants.FastAnimation;
+
+                        var opacity = visual.Compositor.CreateScalarKeyFrameAnimation();
+                        opacity.InsertKeyFrame(0, 0);
+                        opacity.InsertKeyFrame(1, 1);
+                        opacity.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                        opacity.DelayTime = TimeSpan.FromMilliseconds(33 * distance);
+                        opacity.Duration = Constants.FastAnimation;
+
+                        visual.CenterPoint = new Vector3(16, 0, 0);
+                        visual.StartAnimation("Opacity", opacity);
+                        visual.StartAnimation("Scale", scale);
+                    }
                 }
 
                 args.Handled = true;
