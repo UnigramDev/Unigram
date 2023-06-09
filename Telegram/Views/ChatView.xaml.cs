@@ -1718,6 +1718,14 @@ namespace Telegram.Views
             }
         }
 
+        private void PinnedAction_Click(object sender, RoutedEventArgs e)
+        {
+            if (PinnedMessage.Message?.ReplyMarkup is ReplyMarkupInlineKeyboard inlineKeyboard)
+            {
+                ViewModel.OpenInlineButton(PinnedMessage.Message, inlineKeyboard.Rows[0][0]);
+            }
+        }
+
         private void ReplyMarkup_ButtonClick(object sender, ReplyMarkupButtonClickEventArgs e)
         {
             if (sender is ReplyMarkupPanel panel)

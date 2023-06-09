@@ -31,7 +31,7 @@ namespace Telegram.Controls.Messages
         private Visual _textVisual;
 
         private long _chatId;
-        private long _messageId;
+        private new MessageViewModel _message;
 
         private bool _loading;
 
@@ -52,11 +52,12 @@ namespace Telegram.Controls.Messages
             Unloaded += OnUnloaded;
         }
 
+        public new MessageViewModel Message => _message;
+
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _chatId = 0;
-            _messageId = 0;
-
+            _message = null;
             _loading = false;
 
             _collapsed = true;
@@ -74,13 +75,26 @@ namespace Telegram.Controls.Messages
 
         public void UpdateMessage(Chat chat, MessageViewModel message, bool known, int value, int maximum, bool intermediate)
         {
-            HideButton.Visibility = maximum > 1 ? Visibility.Collapsed : Visibility.Visible;
-            ListButton.Visibility = maximum > 1 ? Visibility.Visible : Visibility.Collapsed;
+            if (message?.ReplyMarkup is ReplyMarkupInlineKeyboard inlineKeyboard
+                && inlineKeyboard.Rows.Count == 1
+                && inlineKeyboard.Rows[0].Count == 1)
+            {
+                ActionButton.Content = inlineKeyboard.Rows[0][0].Text;
+                ActionButton.Visibility = Visibility.Visible;
+                HideButton.Visibility = Visibility.Collapsed;
+                ListButton.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                ActionButton.Visibility = Visibility.Collapsed;
+                HideButton.Visibility = maximum > 1 ? Visibility.Collapsed : Visibility.Visible;
+                ListButton.Visibility = maximum > 1 ? Visibility.Visible : Visibility.Collapsed;
+            }
 
             if (message == null && !known)
             {
                 _chatId = 0;
-                _messageId = 0;
+                _message = null;
 
                 _loading = false;
                 ShowHide(false);
@@ -94,7 +108,7 @@ namespace Telegram.Controls.Messages
 
             var title = Strings.PinnedMessage + (value >= 0 && maximum > 1 && value + 1 < maximum ? $" #{value + 1}" : "");
 
-            if (_loading || (_chatId == chat.Id && _messageId == 0))
+            if (_loading || (_chatId == chat.Id && _message == null))
             {
                 _textVisual = _textVisual == _textVisual1 ? _textVisual2 : _textVisual1;
                 UpdateMessage(message, message == null, title);
@@ -102,12 +116,12 @@ namespace Telegram.Controls.Messages
                 Line.UpdateIndex(value, maximum, 0);
 
                 _chatId = chat.Id;
-                _messageId = message?.Id ?? 0;
+                _message = message;
 
                 _loading = known;
                 return;
             }
-            else if (_chatId == chat.Id && _messageId == message?.Id)
+            else if (_chatId == chat.Id && _message?.Id == message?.Id)
             {
                 return;
             }
@@ -133,13 +147,13 @@ namespace Telegram.Controls.Messages
             Debug.WriteLine("Playing text");
 
             var cross = _chatId == chat.Id;
-            var prev = _messageId < message?.Id;
+            var prev = _message?.Id < message?.Id;
 
             Line.UpdateIndex(value, maximum, prev ? 1 : -1);
             TitleLabel.Text = title;
 
             _chatId = chat.Id;
-            _messageId = message?.Id ?? 0;
+            _message = message;
 
             _loading = known;
 
@@ -267,6 +281,12 @@ namespace Telegram.Controls.Messages
         {
             add => ListButton.Click += value;
             remove => ListButton.Click -= value;
+        }
+
+        public event RoutedEventHandler ActionClick
+        {
+            add => ActionButton.Click += value;
+            remove => ActionButton.Click -= value;
         }
 
         #region Overrides

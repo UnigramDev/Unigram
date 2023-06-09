@@ -572,6 +572,7 @@
 
                         <messages:MessagePinned x:Name="PinnedMessage"
                                                 Click="Reply_Click"
+                                                ActionClick="PinnedAction_Click"
                                                 HideClick="{x:Bind ViewModel.HidePinnedMessage}"
                                                 ListClick="{x:Bind ViewModel.OpenPinnedMessages}"
                                                 Visibility="Collapsed" />

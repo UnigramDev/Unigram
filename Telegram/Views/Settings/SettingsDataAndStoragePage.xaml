@@ -77,8 +77,7 @@
                                               x:Load="{x:Bind ConvertResetDownloadFolder(ViewModel.DownloadFolder), Mode=OneWay}"
                                               Click="{x:Bind ViewModel.ResetDownloadFolder}"
                                               Content="{CustomResource Reset}"
-                                              Style="{StaticResource StartButtonStyle}"
-                                              Background="#2ca5e0"
+                                              Style="{StaticResource PillButtonStyle}"
                                               HorizontalAlignment="Right"
                                               VerticalAlignment="Center"
                                               Margin="0,0,12,0" />
