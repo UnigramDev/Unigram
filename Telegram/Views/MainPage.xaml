@@ -734,17 +734,19 @@
                                                         <StackPanel Orientation="Horizontal">
                                                             <TextBlock Text="{x:Bind Title, Mode=OneWay}"
                                                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                                       VerticalAlignment="Top" />
+                                                                       VerticalAlignment="Bottom" />
 
                                                             <muxc:InfoBadge Value="{x:Bind UnreadCount, Mode=OneWay}"
                                                                             Visibility="{x:Bind ShowUnmuted, Mode=OneWay}"
                                                                             Background="{ThemeResource ChatUnreadBadgeBrush}"
                                                                             Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                                                            VerticalAlignment="Bottom"
                                                                             Margin="8,0,0,0" />
                                                             <muxc:InfoBadge Value="{x:Bind UnreadMutedCount, Mode=OneWay}"
                                                                             Visibility="{x:Bind ShowMuted, Mode=OneWay}"
                                                                             Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
                                                                             Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
+                                                                            VerticalAlignment="Bottom"
                                                                             Margin="8,0,0,0" />
                                                         </StackPanel>
                                                     </DataTemplate>
