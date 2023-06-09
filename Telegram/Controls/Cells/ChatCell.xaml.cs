@@ -20,6 +20,7 @@ using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views;
@@ -46,7 +47,7 @@ namespace Telegram.Controls.Cells
         Read
     }
 
-    public sealed class ChatCell : Control, IMultipleElement, IPlayerView
+    public sealed class ChatCell : Control, IMultipleElement
     {
         private bool _selected;
 
@@ -126,15 +127,13 @@ namespace Telegram.Controls.Cells
         private Rectangle DropVisual;
         private TextBlock UnreadMentionsLabel;
         private TextBlock FromLabel;
-        private TextBlock BriefLabel;
+        private RichTextBlock BriefText;
+        private Paragraph BriefLabel;
         private ImageBrush Minithumbnail;
         private Rectangle SelectionOutline;
         private ProfilePicture Photo;
         private Border OnlineBadge;
         private Border OnlineHeart;
-
-        // Lazy loaded
-        private CustomEmojiCanvas CustomEmoji;
 
         private Border CompactBadgeRoot;
         private InfoBadge CompactBadge;
@@ -157,12 +156,11 @@ namespace Telegram.Controls.Cells
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
             FromLabel = GetTemplateChild(nameof(FromLabel)) as TextBlock;
-            BriefLabel = GetTemplateChild(nameof(BriefLabel)) as TextBlock;
+            BriefText = GetTemplateChild(nameof(BriefText)) as RichTextBlock;
+            BriefLabel = GetTemplateChild(nameof(BriefLabel)) as Paragraph;
             Minithumbnail = GetTemplateChild(nameof(Minithumbnail)) as ImageBrush;
             SelectionOutline = GetTemplateChild(nameof(SelectionOutline)) as Rectangle;
             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
-
-            BriefLabel.SizeChanged += OnSizeChanged;
 
             var tooltip = new ToolTip();
             tooltip.Opened += ToolTip_Opened;
@@ -576,7 +574,7 @@ namespace Telegram.Controls.Cells
                 ChatActionIndicator.Visibility = Visibility.Visible;
                 TypingLabel.Visibility = Visibility.Visible;
                 FromLabel.Visibility = Visibility.Collapsed;
-                BriefLabel.Visibility = Visibility.Collapsed;
+                BriefText.Visibility = Visibility.Collapsed;
                 MinithumbnailPanel.Visibility = Visibility.Collapsed;
             }
             else
@@ -585,7 +583,7 @@ namespace Telegram.Controls.Cells
                 ChatActionIndicator.UpdateAction(null);
                 TypingLabel.Visibility = Visibility.Collapsed;
                 FromLabel.Visibility = Visibility.Visible;
-                BriefLabel.Visibility = Visibility.Visible;
+                BriefText.Visibility = Visibility.Visible;
                 MinithumbnailPanel.Visibility = Minithumbnail.ImageSource != null
                     ? Visibility.Visible
                     : Visibility.Collapsed;
@@ -962,140 +960,14 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        #region Custom emoji
-
-        private readonly List<EmojiPosition> _positions = new();
-        private bool _ignoreLayoutUpdated = true;
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Logger.Debug();
-
-            _ignoreLayoutUpdated = false;
-        }
-
-        private void OnLayoutUpdated(object sender, object e)
-        {
-            if (_ignoreLayoutUpdated)
-            {
-                return;
-            }
-
-            Logger.Debug();
-
-            if (_positions.Count > 0)
-            {
-                _ignoreLayoutUpdated = true;
-                LoadCustomEmoji();
-            }
-            else
-            {
-                BriefLabel.LayoutUpdated -= OnLayoutUpdated;
-
-                if (CustomEmoji != null)
-                {
-                    XamlMarkupHelper.UnloadObject(CustomEmoji);
-                    CustomEmoji = null;
-                }
-            }
-        }
-
-        private void LoadCustomEmoji()
-        {
-            List<EmojiPosition> positions = null;
-
-            foreach (var item in _positions)
-            {
-                var pointer = BriefLabel.ContentStart.GetPositionAtOffset(item.X, LogicalDirection.Forward);
-                if (pointer == null)
-                {
-                    continue;
-                }
-
-                var rect = pointer.GetCharacterRect(LogicalDirection.Forward);
-                if (rect.X + 20 > BriefLabel.ActualWidth && BriefLabel.IsTextTrimmed)
-                {
-                    break;
-                }
-
-                positions ??= new();
-                positions.Add(new EmojiPosition
-                {
-                    CustomEmojiId = item.CustomEmojiId,
-                    X = (int)rect.X,
-                    Y = (int)rect.Y
-                });
-            }
-
-            if (positions == null)
-            {
-                BriefLabel.LayoutUpdated -= OnLayoutUpdated;
-
-                if (CustomEmoji != null)
-                {
-                    XamlMarkupHelper.UnloadObject(CustomEmoji);
-                    CustomEmoji = null;
-                }
-            }
-            else
-            {
-                CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
-                CustomEmoji.UpdatePositions(positions);
-
-                if (_playing)
-                {
-                    CustomEmoji.Play();
-                }
-            }
-        }
-
-        #endregion
-
-        #region IPlayerView
-
-        public bool IsAnimatable => CustomEmoji != null;
-
-        public int LoopCount => 0;
-
-        private bool _playing;
-
-        public bool Play()
-        {
-            CustomEmoji?.Play();
-
-            _playing = true;
-            return true;
-        }
-
-        public void Pause()
-        {
-            CustomEmoji?.Pause();
-
-            _playing = false;
-        }
-
-        public void Unload()
-        {
-            CustomEmoji?.Unload();
-
-            _playing = false;
-        }
-
-        #endregion
-
         private void UpdateBriefLabel(FormattedText message)
         {
-
-            _positions.Clear();
             BriefLabel.Inlines.Clear();
 
             if (message != null)
             {
                 var clean = message.ReplaceSpoilers();
                 var previous = 0;
-
-                var emoji = new HashSet<long>();
-                var shift = 0;
 
                 if (message.Entities != null)
                 {
@@ -1109,14 +981,17 @@ namespace Telegram.Controls.Cells
                         if (entity.Offset > previous)
                         {
                             BriefLabel.Inlines.Add(new Run { Text = clean.Substring(previous, entity.Offset - previous) });
-                            shift += 2;
                         }
 
-                        _positions.Add(new EmojiPosition { X = shift + entity.Offset + 1, CustomEmojiId = customEmoji.CustomEmojiId });
-                        BriefLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
+                        var player = new CustomEmojiIcon();
+                        player.Source = new CustomEmojiFileSource(_clientService, customEmoji.CustomEmojiId);
+                        player.Margin = new Thickness(0, -4, 0, -4);
+                        player.IsHitTestVisible = false;
 
-                        emoji.Add(customEmoji.CustomEmojiId);
-                        shift += 2;
+                        var inline = new InlineUIContainer();
+                        inline.Child = player;
+
+                        BriefLabel.Inlines.Add(inline);
 
                         previous = entity.Offset + entity.Length;
                     }
@@ -1126,35 +1001,6 @@ namespace Telegram.Controls.Cells
                 {
                     BriefLabel.Inlines.Add(new Run { Text = clean.Substring(previous) });
                 }
-
-                BriefLabel.LayoutUpdated -= OnLayoutUpdated;
-
-                if (emoji.Count > 0)
-                {
-                    CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
-                    CustomEmoji.UpdateEntities(_clientService, emoji);
-
-                    if (_playing)
-                    {
-                        CustomEmoji.Play();
-                    }
-
-                    _ignoreLayoutUpdated = false;
-                    BriefLabel.LayoutUpdated += OnLayoutUpdated;
-                }
-                else if (CustomEmoji != null)
-                {
-                    XamlMarkupHelper.UnloadObject(CustomEmoji);
-                    CustomEmoji = null;
-                }
-
-            }
-            else if (CustomEmoji != null)
-            {
-                BriefLabel.LayoutUpdated -= OnLayoutUpdated;
-
-                XamlMarkupHelper.UnloadObject(CustomEmoji);
-                CustomEmoji = null;
             }
         }
 
@@ -1783,7 +1629,7 @@ namespace Telegram.Controls.Cells
             UnreadMentionsBadge.Visibility = Visibility.Collapsed;
 
             FromLabel.Text = from;
-            BriefLabel.Text = message;
+            BriefLabel.Inlines.Add(new Run { Text = message });
             _dateLabel = Formatter.ShortTime.Format(date);
             _stateLabel = sent ? "\uE601" : string.Empty;
 

@@ -152,10 +152,10 @@ namespace Telegram.Controls.Messages
 
                 if (missingCustomEmoji != null)
                 {
-                    var response = await message.ClientService.SendAsync(new GetCustomEmojiStickers(missingCustomEmoji));
-                    if (response is Stickers stickers)
+                    var response = await EmojiCache.GetAsync(message.ClientService, missingCustomEmoji);
+                    if (response != null)
                     {
-                        foreach (var sticker in stickers.StickersValue)
+                        foreach (var sticker in response)
                         {
                             if (sticker.FullType is not StickerFullTypeCustomEmoji customEmoji)
                             {

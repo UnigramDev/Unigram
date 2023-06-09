@@ -1166,7 +1166,7 @@ namespace Telegram.Controls
             {
                 var range = Document.GetRange(index, index + 1);
 
-                range.GetRect(PointOptions.ClientCoordinates, out Rect rect, out int hit);
+                range.GetRect(PointOptions.ClientCoordinates, out Rect rect, out _);
                 range.GetText(TextGetOptions.UseObjectText, out string obj);
 
                 var split = obj.Split(';');
@@ -1189,9 +1189,7 @@ namespace Telegram.Controls
 
             if (CustomEmoji != null && DataContext is ViewModelBase viewModel)
             {
-                CustomEmoji.UpdatePositions(positions);
-                CustomEmoji.UpdateEntities(viewModel.ClientService, emoji);
-                CustomEmoji.Play();
+                CustomEmoji.UpdateEntities(viewModel.ClientService, positions);
             }
         }
     }

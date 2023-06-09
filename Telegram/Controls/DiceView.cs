@@ -388,13 +388,13 @@ namespace Telegram.Controls
             {
                 if (state is DiceStickersSlotMachine slotMachine)
                 {
-                    animations[0] = _backAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Background.StickerValue.Local.Path, _frameSize, false, null);
-                    animations[1] = LottieAnimation.LoadFromData(MergeReels(slotMachine), _frameSize, $"{newValue}", false, null);
-                    animations[2] = _frontAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Lever.StickerValue.Local.Path, _frameSize, false, null);
+                    animations[0] = _backAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Background.StickerValue.Local.Path, _frameSize.Width, _frameSize.Height, false, null);
+                    animations[1] = LottieAnimation.LoadFromData(MergeReels(slotMachine), _frameSize.Width, _frameSize.Height, $"{newValue}", false, null);
+                    animations[2] = _frontAnimation ??= LottieAnimation.LoadFromFile(slotMachine.Lever.StickerValue.Local.Path, _frameSize.Width, _frameSize.Height, false, null);
                 }
                 else if (state is DiceStickersRegular regular)
                 {
-                    animations[1] = LottieAnimation.LoadFromFile(regular.Sticker.StickerValue.Local.Path, _frameSize, false, null);
+                    animations[1] = LottieAnimation.LoadFromFile(regular.Sticker.StickerValue.Local.Path, _frameSize.Width, _frameSize.Height, false, null);
                 }
             });
 

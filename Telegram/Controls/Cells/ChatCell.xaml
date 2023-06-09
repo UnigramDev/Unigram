@@ -196,25 +196,17 @@
                                        Height="18" />-->
                             </Border>
 
-                            <TextBlock x:Name="BriefLabel"
-                                       Style="{StaticResource InfoBodyTextBlockStyle}"
-                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                       TextTrimming="CharacterEllipsis"
-                                       TextWrapping="NoWrap"
-                                       VerticalAlignment="Top"
-                                       MaxLines="1"
-                                       Grid.Column="2" />
-                            <!--<ToolTipService.ToolTip>
-                                <ToolTip Opened="ToolTip_Opened" />
-                            </ToolTipService.ToolTip>-->
-                            <!--<Run x:Name="DraftLabel"
-                                 Foreground="{ThemeResource ChatDraftLabelBrush}" />-->
-
-                            <messages:CustomEmojiCanvas x:Name="CustomEmoji"
-                                                        x:Load="False"
-                                                        Margin="-2"
-                                                        Grid.Column="2" />
-
+                            <RichTextBlock x:Name="BriefText"
+                                           Style="{StaticResource InfoBodyRichTextBlockStyle}"
+                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                           IsTextSelectionEnabled="False"
+                                           TextTrimming="CharacterEllipsis"
+                                           TextWrapping="NoWrap"
+                                           VerticalAlignment="Top"
+                                           MaxLines="1"
+                                           Grid.Column="2">
+                                <Paragraph x:Name="BriefLabel" />
+                            </RichTextBlock>
                             <chats:ChatActionIndicator x:Name="ChatActionIndicator"
                                                        Visibility="Collapsed"
                                                        Fill="{ThemeResource PageHeaderHighlightBrush}"

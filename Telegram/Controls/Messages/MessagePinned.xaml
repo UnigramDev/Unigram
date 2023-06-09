@@ -85,24 +85,30 @@
             </StackPanel>
 
             <Grid Grid.Row="1">
-                <TextBlock x:Name="TextLabel1"
-                           MaxLines="1"
-                           Foreground="{ThemeResource MessageForegroundBrush}"
-                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                           Style="{StaticResource ReplyBodyTextBlockStyle}">
-                    <Run x:Name="ServiceLabel1"
-                         Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Run x:Name="MessageLabel1"
-                                                                                          Foreground="{ThemeResource MessageForegroundBrush}" />
-                </TextBlock>
-                <TextBlock x:Name="TextLabel2"
-                           MaxLines="1"
-                           Foreground="{ThemeResource MessageForegroundBrush}"
-                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                           Style="{StaticResource ReplyBodyTextBlockStyle}">
-                    <Run x:Name="ServiceLabel2"
-                         Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Run x:Name="MessageLabel2"
-                                                                                          Foreground="{ThemeResource MessageForegroundBrush}" />
-                </TextBlock>
+                <RichTextBlock x:Name="TextLabel1"
+                               MaxLines="1"
+                               IsTextSelectionEnabled="False"
+                               Foreground="{ThemeResource MessageForegroundBrush}"
+                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               Style="{StaticResource ReplyBodyRichTextBlockStyle}">
+                    <Paragraph>
+                        <Run x:Name="ServiceLabel1"
+                             Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Span x:Name="MessageLabel1"
+                                                                                                 Foreground="{ThemeResource MessageForegroundBrush}" />
+                    </Paragraph>
+                </RichTextBlock>
+                <RichTextBlock x:Name="TextLabel2"
+                               MaxLines="1"
+                               IsTextSelectionEnabled="False"
+                               Foreground="{ThemeResource MessageForegroundBrush}"
+                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               Style="{StaticResource ReplyBodyRichTextBlockStyle}">
+                    <Paragraph>
+                        <Run x:Name="ServiceLabel2"
+                             Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Span x:Name="MessageLabel2"
+                                                                                                 Foreground="{ThemeResource MessageForegroundBrush}" />
+                    </Paragraph>
+                </RichTextBlock>
             </Grid>
         </Grid>
 

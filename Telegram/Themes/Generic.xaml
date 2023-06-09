@@ -788,23 +788,17 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:FormattedTextBlock">
-                    <Grid x:Name="LayoutRoot">
-                        <RichTextBlock x:Name="TextBlock"
-                                       Foreground="{TemplateBinding Foreground}"
-                                       Style="{TemplateBinding TextStyle}"
-                                       Padding="{TemplateBinding Padding}"
-                                       IsTextSelectionEnabled="{TemplateBinding IsTextSelectionEnabled}"
-                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                       TextAlignment="{TemplateBinding TextAlignment}"
-                                       TextReadingOrder="UseFlowDirection"
-                                       OpticalMarginAlignment="None">
-                            <Paragraph />
-                        </RichTextBlock>
-                        <messages:CustomEmojiCanvas x:Name="CustomEmoji"
-                                                    x:Load="False"
-                                                    IsHitTestVisible="False"
-                                                    Margin="-2" />
-                    </Grid>
+                    <RichTextBlock x:Name="TextBlock"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   Style="{TemplateBinding TextStyle}"
+                                   Padding="{TemplateBinding Padding}"
+                                   IsTextSelectionEnabled="{TemplateBinding IsTextSelectionEnabled}"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                   TextAlignment="{TemplateBinding TextAlignment}"
+                                   TextReadingOrder="UseFlowDirection"
+                                   OpticalMarginAlignment="None">
+                        <Paragraph />
+                    </RichTextBlock>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -825,23 +819,6 @@
                                     CornerRadius="{TemplateBinding CornerRadius}" />
                         </Border>
                     </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="messages:CustomEmojiCanvas">
-        <Setter Property="IsTabStop"
-                Value="False" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="messages:CustomEmojiCanvas">
-                    <Grid x:Name="LayoutRoot">
-                        <Border x:Name="Canvas"
-                                AutomationProperties.AccessibilityView="Raw"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch" />
-                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

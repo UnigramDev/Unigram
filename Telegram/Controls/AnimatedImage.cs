@@ -705,8 +705,8 @@ namespace Telegram.Controls
                     _dispatcherQueue.TryEnqueue(CreateResources);
                     _createdResourcesLock.Wait();
 
-                    _idle = false;
                     _ticking = (_idle && _presentation.AutoPlay) || (_playing > 0 && (_activated || _presentation.LoopCount > 0));
+                    _idle = false;
 
                     if (!_timerSubscribed)
                     {

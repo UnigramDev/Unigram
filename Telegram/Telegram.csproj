@@ -301,7 +301,6 @@
     <Compile Include="Common\ZoomableListHandler.cs" />
     <Compile Include="Constants.Secret.cs" />
     <Compile Include="Controls\AnimatedIconButton.cs" />
-    <Compile Include="Controls\AnimatedControl.cs" />
     <Compile Include="Controls\AnimatedGlyphButton.cs" />
     <Compile Include="Controls\AnimatedGlyphToggleButton.cs" />
     <Compile Include="Controls\AnimatedIconToggleButton.cs" />

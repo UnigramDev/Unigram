@@ -8,12 +8,14 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
@@ -312,7 +314,48 @@ namespace Telegram.Controls.Messages
             }
 
             var messageShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
-            messageShow.Text = text?.Text.Replace('\n', ' ') ?? string.Empty;
+            messageShow.Inlines.Clear();
+
+            if (text != null)
+            {
+                var clean = text.ReplaceSpoilers();
+                var previous = 0;
+
+                if (text.Entities != null)
+                {
+                    foreach (var entity in text.Entities)
+                    {
+                        if (entity.Type is not TextEntityTypeCustomEmoji customEmoji)
+                        {
+                            continue;
+                        }
+
+                        if (entity.Offset > previous)
+                        {
+                            messageShow.Inlines.Add(new Run { Text = clean.Substring(previous, entity.Offset - previous) });
+                        }
+
+                        //MessageLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
+
+                        var player = new CustomEmojiIcon();
+                        player.Source = new CustomEmojiFileSource(message.ClientService, customEmoji.CustomEmojiId);
+                        player.Margin = new Thickness(0, -4, 0, -4);
+                        player.IsHitTestVisible = false;
+
+                        var inline = new InlineUIContainer();
+                        inline.Child = player;
+
+                        messageShow.Inlines.Add(inline);
+
+                        previous = entity.Offset + entity.Length;
+                    }
+                }
+
+                if (clean.Length > previous)
+                {
+                    messageShow.Inlines.Add(new Run { Text = clean.Substring(previous) });
+                }
+            }
         }
 
         #endregion

@@ -28,14 +28,13 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed class ForumTopicCell : Control, IMultipleElement, IPlayerView
+    public sealed class ForumTopicCell : Control, IMultipleElement
     {
         private bool _selected;
 
@@ -117,9 +116,6 @@ namespace Telegram.Controls.Cells
         private Ellipse SelectionOutline;
         private ProfilePicture Photo;
 
-        // Lazy loaded
-        private CustomEmojiCanvas CustomEmoji;
-
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -146,8 +142,6 @@ namespace Telegram.Controls.Cells
             Minithumbnail = GetTemplateChild(nameof(Minithumbnail)) as Image;
             SelectionOutline = GetTemplateChild(nameof(SelectionOutline)) as Ellipse;
             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
-
-            BriefInfo.SizeChanged += OnSizeChanged;
 
             var tooltip = new ToolTip();
             tooltip.Opened += ToolTip_Opened;
@@ -469,138 +463,14 @@ namespace Telegram.Controls.Cells
             }
         }
 
-        #region Custom emoji
-
-        private readonly List<EmojiPosition> _positions = new();
-        private bool _ignoreLayoutUpdated = true;
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Logger.Debug();
-
-            _ignoreLayoutUpdated = false;
-        }
-
-        private void OnLayoutUpdated(object sender, object e)
-        {
-            if (_ignoreLayoutUpdated)
-            {
-                return;
-            }
-
-            if (_positions.Count > 0)
-            {
-                _ignoreLayoutUpdated = true;
-                LoadCustomEmoji();
-            }
-            else
-            {
-                BriefInfo.LayoutUpdated -= OnLayoutUpdated;
-
-                if (CustomEmoji != null)
-                {
-                    XamlMarkupHelper.UnloadObject(CustomEmoji);
-                    CustomEmoji = null;
-                }
-            }
-        }
-
-        private void LoadCustomEmoji()
-        {
-            List<EmojiPosition> positions = null;
-
-            foreach (var item in _positions)
-            {
-                var pointer = BriefLabel.ContentStart.GetPositionAtOffset(item.X, LogicalDirection.Forward);
-                if (pointer == null)
-                {
-                    continue;
-                }
-
-                var rect = pointer.GetCharacterRect(LogicalDirection.Forward);
-                if (rect.X + 20 > BriefInfo.ActualWidth && BriefInfo.IsTextTrimmed)
-                {
-                    break;
-                }
-
-                positions ??= new();
-                positions.Add(new EmojiPosition
-                {
-                    CustomEmojiId = item.CustomEmojiId,
-                    X = (int)rect.X,
-                    Y = (int)rect.Y
-                });
-            }
-
-            if (positions == null)
-            {
-                BriefInfo.LayoutUpdated -= OnLayoutUpdated;
-
-                if (CustomEmoji != null)
-                {
-                    XamlMarkupHelper.UnloadObject(CustomEmoji);
-                    CustomEmoji = null;
-                }
-            }
-            else
-            {
-                CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
-                CustomEmoji.UpdatePositions(positions);
-
-                if (_playing)
-                {
-                    CustomEmoji.Play();
-                }
-            }
-        }
-
-        #endregion
-
-        #region IPlayerView
-
-        public bool IsAnimatable => CustomEmoji != null;
-
-        public int LoopCount => 0;
-
-        private bool _playing;
-
-        public bool Play()
-        {
-            CustomEmoji?.Play();
-
-            _playing = true;
-            return true;
-        }
-
-        public void Pause()
-        {
-            CustomEmoji?.Pause();
-
-            _playing = false;
-        }
-
-        public void Unload()
-        {
-            CustomEmoji?.Unload();
-
-            _playing = false;
-        }
-
-        #endregion
-
         private void UpdateBriefLabel(FormattedText message)
         {
-
-            _positions.Clear();
             BriefLabel.Inlines.Clear();
 
             if (message != null)
             {
                 var clean = message.ReplaceSpoilers();
                 var previous = 0;
-
-                var emoji = new HashSet<long>();
-                var shift = 0;
 
                 if (message.Entities != null)
                 {
@@ -614,14 +484,9 @@ namespace Telegram.Controls.Cells
                         if (entity.Offset > previous)
                         {
                             BriefLabel.Inlines.Add(new Run { Text = clean.Substring(previous, entity.Offset - previous) });
-                            shift += 2;
                         }
 
-                        _positions.Add(new EmojiPosition { X = shift + entity.Offset + 1, CustomEmojiId = customEmoji.CustomEmojiId });
                         BriefLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
-
-                        emoji.Add(customEmoji.CustomEmojiId);
-                        shift += 2;
 
                         previous = entity.Offset + entity.Length;
                     }
@@ -631,35 +496,6 @@ namespace Telegram.Controls.Cells
                 {
                     BriefLabel.Inlines.Add(new Run { Text = clean.Substring(previous) });
                 }
-
-                BriefInfo.LayoutUpdated -= OnLayoutUpdated;
-
-                if (emoji.Count > 0)
-                {
-                    CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
-                    CustomEmoji.UpdateEntities(_clientService, emoji);
-
-                    if (_playing)
-                    {
-                        CustomEmoji.Play();
-                    }
-
-                    _ignoreLayoutUpdated = false;
-                    BriefInfo.LayoutUpdated += OnLayoutUpdated;
-                }
-                else if (CustomEmoji != null)
-                {
-                    XamlMarkupHelper.UnloadObject(CustomEmoji);
-                    CustomEmoji = null;
-                }
-
-            }
-            else if (CustomEmoji != null)
-            {
-                BriefInfo.LayoutUpdated -= OnLayoutUpdated;
-
-                XamlMarkupHelper.UnloadObject(CustomEmoji);
-                CustomEmoji = null;
             }
         }
 

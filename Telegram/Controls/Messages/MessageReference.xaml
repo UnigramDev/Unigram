@@ -92,26 +92,24 @@
                             </Border>
                         </Border>
 
-                        <TextBlock x:Name="Label"
-                                   Margin="8,0,0,2"
-                                   VerticalAlignment="Center"
-                                   MaxLines="2"
-                                   Foreground="{ThemeResource MessageForegroundBrush}"
-                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                   Style="{StaticResource ReplyBodyTextBlockStyle}"
-                                   Grid.Column="1">
-                            <Run x:Name="TitleLabel"
-                                 Foreground="{ThemeResource MessageHeaderForegroundBrush}" />
-                            <LineBreak />
-                            <Run x:Name="ServiceLabel"
-                                 Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Span x:Name="MessageLabel"
-                                                                                                   Foreground="{ThemeResource MessageForegroundBrush}" />
-                        </TextBlock>
-
-                        <local:CustomEmojiCanvas x:Name="CustomEmoji"
-                                                 x:Load="False"
-                                                 Margin="6,-2,-2,-2"
-                                                 Grid.Column="1" />
+                        <RichTextBlock x:Name="Label"
+                                       Margin="8,0,0,2"
+                                       VerticalAlignment="Center"
+                                       MaxLines="2"
+                                       IsTextSelectionEnabled="False"
+                                       Foreground="{ThemeResource MessageForegroundBrush}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       Style="{StaticResource ReplyBodyRichTextBlockStyle}"
+                                       Grid.Column="1">
+                            <Paragraph>
+                                <Run x:Name="TitleLabel"
+                                     Foreground="{ThemeResource MessageHeaderForegroundBrush}" />
+                                <LineBreak />
+                                <Run x:Name="ServiceLabel"
+                                     Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Span x:Name="MessageLabel"
+                                                                                                       Foreground="{ThemeResource MessageForegroundBrush}" />
+                            </Paragraph>
+                        </RichTextBlock>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

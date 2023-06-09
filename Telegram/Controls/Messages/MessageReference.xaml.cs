@@ -5,23 +5,19 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
-using Telegram.Navigation;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
-    public sealed class MessageReference : MessageReferenceBase, IPlayerView
+    public sealed class MessageReference : MessageReferenceBase
     {
-        private bool _ignoreLayoutUpdated = true;
-
         public MessageReference()
         {
             DefaultStyleKey = typeof(MessageReference);
@@ -40,8 +36,6 @@ namespace Telegram.Controls.Messages
         private Border ThumbEllipse;
         private ImageBrush ThumbImage;
 
-        private CustomEmojiCanvas CustomEmoji;
-
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
@@ -49,8 +43,6 @@ namespace Telegram.Controls.Messages
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as Run;
             ServiceLabel = GetTemplateChild(nameof(ServiceLabel)) as Run;
             MessageLabel = GetTemplateChild(nameof(MessageLabel)) as Span;
-
-            Label.LayoutUpdated += OnLayoutUpdated;
 
             _templateApplied = true;
 
@@ -74,83 +66,6 @@ namespace Telegram.Controls.Messages
         }
 
         #endregion
-
-        private readonly List<EmojiPosition> _positions = new();
-
-        private void OnLayoutUpdated(object sender, object e)
-        {
-            if (_ignoreLayoutUpdated)
-            {
-                return;
-            }
-
-            Logger.Debug();
-
-            if (_positions.Count > 0)
-            {
-                _ignoreLayoutUpdated = true;
-                LoadCustomEmoji();
-            }
-            else
-            {
-                Label.LayoutUpdated -= OnLayoutUpdated;
-
-                if (CustomEmoji != null)
-                {
-                    XamlMarkupHelper.UnloadObject(CustomEmoji);
-                    CustomEmoji = null;
-                }
-            }
-        }
-
-        private void LoadCustomEmoji()
-        {
-            List<EmojiPosition> positions = null;
-
-            foreach (var item in _positions)
-            {
-                var pointer = MessageLabel.ContentStart.GetPositionAtOffset(item.X, LogicalDirection.Forward);
-                if (pointer == null)
-                {
-                    continue;
-                }
-
-                var rect = pointer.GetCharacterRect(LogicalDirection.Forward);
-                if (rect.X + 20 > Label.ActualWidth && Label.IsTextTrimmed)
-                {
-                    break;
-                }
-
-                positions ??= new();
-                positions.Add(new EmojiPosition
-                {
-                    CustomEmojiId = item.CustomEmojiId,
-                    X = (int)rect.X,
-                    Y = (int)rect.Y
-                });
-            }
-
-            if (positions == null)
-            {
-                Label.LayoutUpdated -= OnLayoutUpdated;
-
-                if (CustomEmoji != null)
-                {
-                    XamlMarkupHelper.UnloadObject(CustomEmoji);
-                    CustomEmoji = null;
-                }
-            }
-            else
-            {
-                CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
-                CustomEmoji.UpdatePositions(positions);
-
-                if (_playing)
-                {
-                    CustomEmoji.Play();
-                }
-            }
-        }
 
         private bool _light;
         private bool _tinted;
@@ -248,16 +163,12 @@ namespace Telegram.Controls.Messages
                     }
                 }
 
-                _positions.Clear();
                 MessageLabel.Inlines.Clear();
 
                 if (text != null)
                 {
                     var clean = text.ReplaceSpoilers();
                     var previous = 0;
-
-                    var emoji = new HashSet<long>();
-                    var shift = 0;
 
                     if (text.Entities != null)
                     {
@@ -271,14 +182,17 @@ namespace Telegram.Controls.Messages
                             if (entity.Offset > previous)
                             {
                                 MessageLabel.Inlines.Add(new Run { Text = clean.Substring(previous, entity.Offset - previous) });
-                                shift += 2;
                             }
 
-                            _positions.Add(new EmojiPosition { X = shift + entity.Offset + 1, CustomEmojiId = customEmoji.CustomEmojiId });
-                            MessageLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
+                            var player = new CustomEmojiIcon();
+                            player.Source = new CustomEmojiFileSource(message.ClientService, customEmoji.CustomEmojiId);
+                            player.Margin = new Thickness(0, -4, 0, -4);
+                            player.IsHitTestVisible = false;
 
-                            emoji.Add(customEmoji.CustomEmojiId);
-                            shift += 2;
+                            var inline = new InlineUIContainer();
+                            inline.Child = player;
+
+                            MessageLabel.Inlines.Add(inline);
 
                             previous = entity.Offset + entity.Length;
                         }
@@ -288,35 +202,6 @@ namespace Telegram.Controls.Messages
                     {
                         MessageLabel.Inlines.Add(new Run { Text = clean.Substring(previous) });
                     }
-
-                    Label.LayoutUpdated -= OnLayoutUpdated;
-
-                    if (emoji.Count > 0)
-                    {
-                        CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
-                        CustomEmoji.UpdateEntities(message.ClientService, emoji);
-
-                        if (_playing)
-                        {
-                            CustomEmoji.Play();
-                        }
-
-                        _ignoreLayoutUpdated = false;
-                        Label.LayoutUpdated += OnLayoutUpdated;
-                    }
-                    else if (CustomEmoji != null)
-                    {
-                        XamlMarkupHelper.UnloadObject(CustomEmoji);
-                        CustomEmoji = null;
-                    }
-
-                }
-                else if (CustomEmoji != null)
-                {
-                    Label.LayoutUpdated -= OnLayoutUpdated;
-
-                    XamlMarkupHelper.UnloadObject(CustomEmoji);
-                    CustomEmoji = null;
                 }
             }
         }
@@ -460,38 +345,6 @@ namespace Telegram.Controls.Messages
 
             return string.Empty;
         }
-
-        #region IPlayerView
-
-        public bool IsAnimatable => CustomEmoji != null;
-
-        public int LoopCount => 0;
-
-        private bool _playing;
-
-        public bool Play()
-        {
-            CustomEmoji?.Play();
-
-            _playing = true;
-            return true;
-        }
-
-        public void Pause()
-        {
-            CustomEmoji?.Pause();
-
-            _playing = false;
-        }
-
-        public void Unload()
-        {
-            CustomEmoji?.Unload();
-
-            _playing = false;
-        }
-
-        #endregion
 
         public double ContentWidth { get; set; }
 

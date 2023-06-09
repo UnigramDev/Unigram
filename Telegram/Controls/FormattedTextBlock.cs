@@ -8,18 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
-using Telegram.Controls.Messages;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
-using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
@@ -37,7 +35,7 @@ namespace Telegram.Controls
         public object Data { get; }
     }
 
-    public class FormattedTextBlock : Control, IPlayerView
+    public class FormattedTextBlock : Control
     {
         private IClientService _clientService;
         private string _text;
@@ -49,19 +47,14 @@ namespace Telegram.Controls
         private bool _isFormatted;
         private bool _isHighlighted;
 
-        private readonly List<EmojiPosition> _positions = new();
-
         private bool _ignoreSpoilers = false;
-        private bool _ignoreLayoutUpdated = true;
 
-        private bool _layoutUpdatedSubscribed;
         private bool _autoPlaySubscribed;
 
         private TextHighlighter _spoiler;
 
         private RichTextBlock TextBlock;
         private Paragraph Paragraph;
-        private CustomEmojiCanvas CustomEmoji;
 
         private bool _templateApplied;
 
@@ -119,14 +112,6 @@ namespace Telegram.Controls
             }
         }
 
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            Logger.Debug();
-
-            _ignoreLayoutUpdated = false;
-            return base.ArrangeOverride(finalSize);
-        }
-
         public void Clear()
         {
             _clientService = null;
@@ -141,26 +126,14 @@ namespace Telegram.Controls
 
         public void Cleanup()
         {
-            _positions.Clear();
-
-            if (TextBlock != null)
-            {
-                _ignoreLayoutUpdated = true;
-
-                if (_layoutUpdatedSubscribed)
-                {
-                    _layoutUpdatedSubscribed = false;
-                    TextBlock.LayoutUpdated -= OnLayoutUpdated;
-                }
-            }
+            // TODO: clear inlines here?
+            // Probably not needed
 
             if (_autoPlaySubscribed)
             {
                 _autoPlaySubscribed = false;
                 EffectiveViewportChanged -= OnEffectiveViewportChanged;
             }
-
-            UnloadObject(ref CustomEmoji);
         }
 
         private void Adjust()
@@ -255,16 +228,12 @@ namespace Telegram.Controls
                 return;
             }
 
-            _positions.Clear();
             TextHighlighter spoiler = null;
 
             var preformatted = false;
 
             var runs = TextStyleRun.GetRuns(text, entities);
             var previous = 0;
-
-            var shift = 1;
-            var close = false;
 
             var direct = XamlDirect.GetDefault();
             var paragraph = direct.GetXamlDirectObject(Paragraph);
@@ -276,19 +245,11 @@ namespace Telegram.Controls
                 direct.ClearCollection(inlines);
             }
 
-            HashSet<long> emojis = null;
-
             foreach (var entity in runs)
             {
                 if (entity.Offset > previous)
                 {
                     direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous, entity.Offset - previous), fontSize: fontSize));
-
-                    // Run
-                    shift++;
-                    shift += entity.Offset - previous;
-
-                    shift++;
                 }
 
                 if (entity.Length + entity.Offset > text.Length)
@@ -310,23 +271,11 @@ namespace Telegram.Controls
 
                         hyperlink.Inlines.Add(CreateRun(data, fontFamily: new FontFamily("Consolas"), fontSize: fontSize));
                         direct.AddToCollection(inlines, direct.GetXamlDirectObject(hyperlink));
-
-                        // Hyperlink
-                        shift++;
-                        close = true;
-
-                        // Run
-                        shift++;
-                        shift += entity.Length;
                     }
                     else
                     {
                         direct.AddToCollection(inlines, CreateDirectRun(data, fontFamily: new FontFamily("Consolas"), fontSize: fontSize));
                         preformatted = entity.Type is TextEntityTypePre or TextEntityTypePreCode;
-
-                        // Run
-                        shift++;
-                        shift += entity.Length;
                     }
                 }
                 else
@@ -349,10 +298,6 @@ namespace Telegram.Controls
 
                         direct.AddToCollection(inlines, temp);
                         local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
-
-                        // Hyperlink
-                        shift++;
-                        close = true;
                     }
                     else if (entity.HasFlag(Common.TextStyle.Mention) || entity.HasFlag(Common.TextStyle.Url))
                     {
@@ -411,25 +356,20 @@ namespace Telegram.Controls
                             direct.AddToCollection(inlines, temp);
                             local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
                         }
-
-                        // Hyperlink
-                        shift++;
-                        close = true;
                     }
 
                     if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
                     {
-                        // Run
-                        shift++;
+                        var player = new CustomEmojiIcon();
+                        player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
+                        player.Margin = new Thickness(-20, -4, 0, -4);
 
-                        _positions.Add(new EmojiPosition { X = shift, CustomEmojiId = customEmoji.CustomEmojiId });
+                        var inline = new InlineUIContainer();
+                        inline.Child = player;
 
-                        direct.AddToCollection(inlines, CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontFamily: BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily, fontSize: fontSize));
-
-                        emojis ??= new HashSet<long>();
-                        emojis.Add(customEmoji.CustomEmojiId);
-
-                        shift += entity.Length;
+                        // TODO: see if there's a better way
+                        direct.AddToCollection(inlines, CreateDirectRun("\U0001F921", fontFamily: BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily));
+                        direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
                     }
                     else
                     {
@@ -460,21 +400,10 @@ namespace Telegram.Controls
                         }
 
                         direct.AddToCollection(local, run);
-
-                        // Run
-                        shift++;
-                        shift += entity.Length;
                     }
                 }
 
                 previous = entity.Offset + entity.Length;
-                shift++;
-
-                if (close)
-                {
-                    shift++;
-                    close = false;
-                }
             }
 
             //ContentPanel.MaxWidth = preformatted ? double.PositiveInfinity : 432;
@@ -529,135 +458,17 @@ namespace Telegram.Controls
                 }
             }
 
-            if (emojis != null)
-            {
-                LoadObject(ref CustomEmoji, nameof(CustomEmoji));
-                CustomEmoji.UpdateEntities(clientService, emojis);
+            //if (!_autoPlaySubscribed)
+            //{
+            //    _autoPlaySubscribed = true;
+            //    EffectiveViewportChanged += OnEffectiveViewportChanged;
+            //}
 
-                if (_playing)
-                {
-                    CustomEmoji.Play();
-                }
-
-                _ignoreLayoutUpdated = false;
-
-                if (!_layoutUpdatedSubscribed)
-                {
-                    _layoutUpdatedSubscribed = true;
-                    TextBlock.LayoutUpdated += OnLayoutUpdated;
-                }
-
-                if (!_autoPlaySubscribed)
-                {
-                    _autoPlaySubscribed = true;
-                    EffectiveViewportChanged += OnEffectiveViewportChanged;
-                }
-            }
-            else if (CustomEmoji != null)
-            {
-                UnloadObject(ref CustomEmoji);
-
-                if (_layoutUpdatedSubscribed)
-                {
-                    _layoutUpdatedSubscribed = false;
-                    TextBlock.LayoutUpdated -= OnLayoutUpdated;
-                }
-
-                if (_autoPlaySubscribed)
-                {
-                    _autoPlaySubscribed = false;
-                    EffectiveViewportChanged -= OnEffectiveViewportChanged;
-                }
-            }
-        }
-
-        private void OnLayoutUpdated(object sender, object e)
-        {
-            if (_ignoreLayoutUpdated)
-            {
-                return;
-            }
-
-            Logger.Debug();
-
-            if (_positions.Count > 0)
-            {
-                _ignoreLayoutUpdated = true;
-                LoadCustomEmoji();
-            }
-            else
-            {
-                UnloadObject(ref CustomEmoji);
-
-                if (_layoutUpdatedSubscribed)
-                {
-                    _layoutUpdatedSubscribed = false;
-                    TextBlock.LayoutUpdated -= OnLayoutUpdated;
-                }
-
-                if (_autoPlaySubscribed)
-                {
-                    _autoPlaySubscribed = false;
-                    EffectiveViewportChanged -= OnEffectiveViewportChanged;
-                }
-            }
-        }
-
-        private void LoadCustomEmoji()
-        {
-            List<EmojiPosition> positions = null;
-
-            foreach (var item in _positions)
-            {
-                var pointer = TextBlock.ContentStart.GetPositionAtOffset(item.X, LogicalDirection.Forward);
-                if (pointer == null)
-                {
-                    continue;
-                }
-
-                var rect = pointer.GetCharacterRect(LogicalDirection.Forward);
-
-                positions ??= new();
-                positions.Add(new EmojiPosition
-                {
-                    CustomEmojiId = item.CustomEmojiId,
-                    X = (int)rect.X,
-                    Y = (int)rect.Y
-                });
-            }
-
-            if (positions == null)
-            {
-                UnloadObject(ref CustomEmoji);
-
-                if (_layoutUpdatedSubscribed)
-                {
-                    _layoutUpdatedSubscribed = false;
-                    TextBlock.LayoutUpdated -= OnLayoutUpdated;
-                }
-
-                if (_autoPlaySubscribed)
-                {
-                    _autoPlaySubscribed = false;
-                    EffectiveViewportChanged -= OnEffectiveViewportChanged;
-                }
-            }
-            else
-            {
-                LoadObject(ref CustomEmoji, nameof(CustomEmoji));
-                CustomEmoji.UpdatePositions(positions);
-
-                if (_playing)
-                {
-                    CustomEmoji.Play();
-                }
-
-                if (!_autoPlaySubscribed)
-                {
-                    _autoPlaySubscribed = true;
-                    EffectiveViewportChanged += OnEffectiveViewportChanged;
-                }
-            }
+            //if (_autoPlaySubscribed)
+            //{
+            //    _autoPlaySubscribed = false;
+            //    EffectiveViewportChanged -= OnEffectiveViewportChanged;
+            //}
         }
 
         private Run CreateRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
@@ -754,56 +565,6 @@ namespace Telegram.Controls
             TextEntityClick?.Invoke(this, new TextEntityClickEventArgs(type, data));
         }
 
-        #region IPlayerView
-
-        public bool IsAnimatable => CustomEmoji != null;
-
-        public int LoopCount => 0;
-
-        private bool _playing;
-
-        public bool Play()
-        {
-            _playing = true;
-            CustomEmoji?.Play();
-
-            return true;
-        }
-
-        public void Pause()
-        {
-            _playing = false;
-            CustomEmoji?.Pause();
-        }
-
-        public void Unload()
-        {
-            _playing = false;
-            CustomEmoji?.Unload();
-        }
-
-        #endregion
-
-        #region XamlMarkupHelper
-
-        private void LoadObject<T>(ref T element, /*[CallerArgumentExpression("element")]*/string name)
-            where T : DependencyObject
-        {
-            element ??= GetTemplateChild(name) as T;
-        }
-
-        private void UnloadObject<T>(ref T element)
-            where T : DependencyObject
-        {
-            if (element != null)
-            {
-                XamlMarkupHelper.UnloadObject(element);
-                element = null;
-            }
-        }
-
-        #endregion
-
         #region TextAlignment
 
         public TextAlignment TextAlignment
@@ -833,15 +594,15 @@ namespace Telegram.Controls
         #region AutoPlay
 
 
-        public bool AutoPlay
-        {
-            get { return (bool)GetValue(AutoPlayProperty); }
-            set { SetValue(AutoPlayProperty, value); }
-        }
+        //public bool AutoPlay
+        //{
+        //    get { return (bool)GetValue(AutoPlayProperty); }
+        //    set { SetValue(AutoPlayProperty, value); }
+        //}
 
-        // Using a DependencyProperty as the backing store for AutoPlay.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty AutoPlayProperty =
-            DependencyProperty.Register("AutoPlay", typeof(bool), typeof(FormattedTextBlock), new PropertyMetadata(false, OnAutoPlayChanged));
+        //// Using a DependencyProperty as the backing store for AutoPlay.  This enables animation, styling, binding, etc...
+        //public static readonly DependencyProperty AutoPlayProperty =
+        //    DependencyProperty.Register("AutoPlay", typeof(bool), typeof(FormattedTextBlock), new PropertyMetadata(false, OnAutoPlayChanged));
 
         private static void OnAutoPlayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -869,12 +630,12 @@ namespace Telegram.Controls
             if (within && !_withinViewport)
             {
                 _withinViewport = true;
-                Play();
+                //Play();
             }
             else if (_withinViewport && !within)
             {
                 _withinViewport = false;
-                Pause();
+                //Pause();
             }
         }
 
