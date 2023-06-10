@@ -1,13 +1,11 @@
 ﻿<UserControl x:Class="Telegram.Controls.Views.SearchChatsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Telegram.Controls.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="using:Telegram.Controls"
              xmlns:cells="using:Telegram.Controls.Cells"
              xmlns:selectors="using:Telegram.Selectors"
-             xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="400">
@@ -93,18 +91,15 @@
                             <DataTemplate>
                                 <StackPanel Width="72"
                                             Padding="0,12"
-                                            Background="Transparent"
-                                            ContextRequested="TopChat_ContextRequested">
+                                            Background="Transparent">
                                     <Grid Width="48"
                                           Height="48"
                                           Margin="12,0">
                                         <controls:ProfilePicture Width="48"
                                                                  Height="48"
                                                                  IsEnabled="False" />
-                                        <muxc:InfoBadge Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                                        Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                                        VerticalAlignment="Top"
-                                                        HorizontalAlignment="Right" />
+                                        <controls:BadgeControl VerticalAlignment="Top"
+                                                               HorizontalAlignment="Right" />
                                         <Border Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                 Width="13"
                                                 Height="13"

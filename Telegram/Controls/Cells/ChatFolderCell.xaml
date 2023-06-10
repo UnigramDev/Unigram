@@ -1,10 +1,9 @@
 ﻿<UserControl x:Class="Telegram.Controls.Cells.ChatFolderCell"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Telegram.Controls.Cells"
-             xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="using:Telegram.Controls"
              mc:Ignorable="d"
              d:DesignHeight="300"
              d:DesignWidth="400">
@@ -44,20 +43,12 @@
                       Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                       HorizontalAlignment="Center"
                       FontSize="24" />
-            <muxc:InfoBadge Value="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.ShowUnmuted, Mode=OneWay}"
-                            Background="{ThemeResource ChatUnreadBadgeBrush}"
-                            Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            Margin="0,-4,4,0" />
-            <muxc:InfoBadge Value="{x:Bind ViewModel.UnreadMutedCount, Mode=OneWay}"
-                            Visibility="{x:Bind ViewModel.ShowMuted, Mode=OneWay}"
-                            Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
-                            Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            Margin="0,-4,4,0" />
+            <controls:BadgeControl Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
+                                   IsUnmuted="{x:Bind ViewModel.IsUnmuted, Mode=OneWay}"
+                                   Visibility="{x:Bind ViewModel.ShowCount, Mode=OneWay}"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   Margin="0,-4,8,0" />
         </Grid>
         <Border x:Name="TitlePresenter"
                 Opacity="0.8"

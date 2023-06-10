@@ -81,18 +81,11 @@
                                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                            VerticalAlignment="Bottom" />
 
-                                <muxc:InfoBadge Value="{x:Bind UnreadCount, Mode=OneWay}"
-                                                Visibility="{x:Bind ShowUnmuted, Mode=OneWay}"
-                                                Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                                Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                                VerticalAlignment="Bottom"
-                                                Margin="8,0,0,0" />
-                                <muxc:InfoBadge Value="{x:Bind UnreadMutedCount, Mode=OneWay}"
-                                                Visibility="{x:Bind ShowMuted, Mode=OneWay}"
-                                                Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
-                                                Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
-                                                VerticalAlignment="Bottom"
-                                                Margin="8,0,0,0" />
+                                <controls:BadgeControl Text="{x:Bind UnreadCount, Mode=OneWay}"
+                                                       IsUnmuted="{x:Bind IsUnmuted, Mode=OneWay}"
+                                                       Visibility="{x:Bind ShowCount, Mode=OneWay}"
+                                                       VerticalAlignment="Bottom"
+                                                       Margin="4,0,0,0" />
                             </StackPanel>
                         </DataTemplate>
                     </controls:TopNavView.ItemTemplate>

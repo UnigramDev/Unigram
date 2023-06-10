@@ -219,31 +219,6 @@ namespace Telegram.Views
                 btnSendMessage.SlowModeDelayExpiresIn = fullInfo.SlowModeDelayExpiresIn;
             };
 
-            var visual = DropShadowEx.Attach(ArrowShadow, 2);
-            visual.Offset = new Vector3(0, 1, 0);
-
-            visual = DropShadowEx.Attach(ArrowMentionsShadow, 2);
-            visual.Offset = new Vector3(0, 1, 0);
-
-            visual = DropShadowEx.Attach(ArrowReactionsShadow, 2);
-            visual.Offset = new Vector3(0, 1, 0);
-
-            //if (ApiInformation.IsMethodPresent("Windows.UI.Xaml.Hosting.ElementCompositionPreview", "SetImplicitShowAnimation"))
-            //{
-            //    var showShowAnimation = Window.Current.Compositor.CreateSpringScalarAnimation();
-            //    showShowAnimation.InitialValue = 0;
-            //    showShowAnimation.FinalValue = 1;
-            //    showShowAnimation.Target = nameof(Visual.Opacity);
-
-            //    var hideHideAnimation = Window.Current.Compositor.CreateSpringScalarAnimation();
-            //    hideHideAnimation.InitialValue = 1;
-            //    hideHideAnimation.FinalValue = 0;
-            //    hideHideAnimation.Target = nameof(Visual.Opacity);
-
-            //    ElementCompositionPreview.SetImplicitShowAnimation(ManagePanel, showShowAnimation);
-            //    ElementCompositionPreview.SetImplicitHideAnimation(ManagePanel, hideHideAnimation);
-            //}
-
             _textShadowVisual = DropShadowEx.Attach(Separator);
             _textShadowVisual.IsVisible = false;
 
@@ -3607,34 +3582,11 @@ namespace Telegram.Views
             ListAutocomplete.MaxHeight = Math.Min(320, Math.Max(e.NewSize.Height - 48, 0));
         }
 
-        private void Arrow_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Logger.Debug();
-
-            ElementCompositionPreview.GetElementVisual(sender as UIElement).CenterPoint = new Vector3((float)e.NewSize.Width / 2f, (float)e.NewSize.Height - (float)e.NewSize.Width / 2f, 0);
-        }
-
         private void DateHeaderPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             Logger.Debug();
 
             ElementCompositionPreview.GetElementVisual(sender as UIElement).CenterPoint = new Vector3((float)e.NewSize.Width / 2f, (float)e.NewSize.Height / 2f, 0);
-        }
-
-        private void Mentions_RightTapped(object sender, RightTappedRoutedEventArgs e)
-        {
-            ViewModel.ReadMentions();
-        }
-
-        private void Reactions_RightTapped(object sender, RightTappedRoutedEventArgs e)
-        {
-            ViewModel.ReadMentions();
-        }
-
-        private void Arrow_RightTapped(object sender, RightTappedRoutedEventArgs e)
-        {
-            ViewModel.RepliesStack.Clear();
-            ViewModel.PreviousSlice();
         }
 
         private void ItemsStackPanel_Loading(FrameworkElement sender, object args)
@@ -4058,12 +4010,11 @@ namespace Telegram.Views
         {
             if (ViewModel.Type == DialogType.History && count > 0)
             {
-                MentionsPanel.Visibility = Visibility.Visible;
-                Mentions.Text = count.ToString();
+                Arrows.UnreadMentionCount = count;
             }
             else
             {
-                MentionsPanel.Visibility = Visibility.Collapsed;
+                Arrows.UnreadMentionCount = 0;
             }
         }
 
@@ -4071,12 +4022,11 @@ namespace Telegram.Views
         {
             if (ViewModel.Type == DialogType.History && count > 0)
             {
-                ReactionsPanel.Visibility = Visibility.Visible;
-                Reactions.Text = count.ToString();
+                Arrows.UnreadReactionsCount = count;
             }
             else
             {
-                ReactionsPanel.Visibility = Visibility.Collapsed;
+                Arrows.UnreadReactionsCount = 0;
             }
         }
 

@@ -45,23 +45,19 @@ namespace Telegram.Views
                 return;
             }
 
-            Arrow.Visibility = Visibility.Collapsed;
-            //VisualUtilities.SetIsVisible(Arrow, false);
-
+            Arrows.IsVisible = false;
             ViewVisibleMessages(false);
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
-            if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 120 && ViewModel.IsFirstSliceLoaded != false)
+            if (Messages.ScrollingHost.ScrollableHeight - Messages.ScrollingHost.VerticalOffset < 40 && ViewModel.IsFirstSliceLoaded != false)
             {
-                Arrow.Visibility = Visibility.Collapsed;
-                //VisualUtilities.SetIsVisible(Arrow, false);
+                Arrows.IsVisible = false;
             }
             else if (ViewModel.Type is DialogType.History or DialogType.Thread)
             {
-                Arrow.Visibility = Visibility.Visible;
-                //VisualUtilities.SetIsVisible(Arrow, true);
+                Arrows.IsVisible = true;
             }
 
             ViewVisibleMessages(false);

@@ -3017,6 +3017,38 @@ namespace Telegram.ViewModels
 
         #endregion
 
+        #region Read reactions
+
+        public void ReadReactions()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (_threadId != 0)
+            {
+                ClientService.Send(new ReadAllMessageThreadReactions(chat.Id, _threadId));
+            }
+            else
+            {
+                ClientService.Send(new ReadAllChatReactions(chat.Id));
+            }
+        }
+
+        #endregion
+
+        #region Read messages
+
+        public void ReadMessages()
+        {
+            RepliesStack.Clear();
+            PreviousSlice();
+        }
+
+        #endregion
+
         #region Mute for
 
         public async void MuteFor(int? value)

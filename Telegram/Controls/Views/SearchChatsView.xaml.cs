@@ -1,5 +1,4 @@
-﻿using Microsoft.UI.Xaml.Controls;
-using Telegram.Collections;
+﻿using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
@@ -117,9 +116,9 @@ namespace Telegram.Controls.Views
             photo.SetChat(ViewModel.ClientService, chat, 48);
             title.Text = ViewModel.ClientService.GetTitle(chat, true);
 
-            var badge = grid.Children[1] as InfoBadge;
+            var badge = grid.Children[1] as BadgeControl;
             badge.Visibility = chat.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-            badge.Value = chat.UnreadCount;
+            badge.Text = chat.UnreadCount.ToString();
 
             var user = ViewModel.ClientService.GetUser(chat);
             if (user != null)

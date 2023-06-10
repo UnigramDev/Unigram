@@ -2854,6 +2854,50 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:BadgeControl">
+        <Setter Property="Background"
+                Value="{ThemeResource ChatUnreadBadgeBrush}" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource ChatUnreadLabelBrush}" />
+        <Setter Property="IsTabStop"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:BadgeControl">
+                    <Grid x:Name="LayoutRoot"
+                          Background="{ThemeResource ChatUnreadBadgeBrush}"
+                          CornerRadius="8"
+                          Height="16"
+                          MinWidth="16">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Unmuted" />
+                                <VisualState x:Name="Muted">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background"
+                                                Value="{ThemeResource ChatUnreadBadgeMutedBrush}" />
+                                        <Setter Target="Label.Foreground"
+                                                Value="{ThemeResource ChatUnreadLabelMutedBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <TextBlock x:Name="Label"
+                                   Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                   Text="{TemplateBinding Text}"
+                                   TextLineBounds="Tight"
+                                   TextAlignment="Center"
+                                   OpticalMarginAlignment="TrimSideBearings"
+                                   FontSize="11"
+                                   Padding="4,0,4,0"
+                                   VerticalAlignment="Center"
+                                   Typography.NumeralAlignment="Tabular" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:MoreButton"
            BasedOn="{StaticResource HeaderGlyphButtonStyle}">
         <Setter Property="Glyph"

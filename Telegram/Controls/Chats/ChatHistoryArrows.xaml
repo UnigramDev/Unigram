@@ -1,0 +1,105 @@
+﻿<UserControl x:Class="Telegram.Controls.Chats.ChatHistoryArrows"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Telegram.Controls.Chats"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="using:Telegram.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="400">
+
+    <StackPanel VerticalAlignment="Bottom"
+                HorizontalAlignment="Right"
+                Margin="12,0,12,-8"
+                Width="36">
+        <StackPanel x:Name="ReactionsPanel"
+                    Visibility="Collapsed"
+                    Margin="0,0,0,16"
+                    Canvas.ZIndex="2">
+            <controls:BadgeControl x:Name="Reactions"
+                                   HorizontalAlignment="Center"
+                                   IsHitTestVisible="False"
+                                   Margin="0,-10,0,-6"
+                                   Canvas.ZIndex="1" />
+            <Grid>
+                <Ellipse x:Name="ArrowReactionsShadow"
+                         Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                         Width="36"
+                         Height="36" />
+                <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                        CornerRadius="18"
+                        Height="36"
+                        Width="36">
+                    <controls:GlyphButton x:Name="ReactionsButton"
+                                          Width="36"
+                                          Height="36"
+                                          Glyph="&#xE987;"
+                                          CornerRadius="24"
+                                          AutomationProperties.Name="{CustomResource AccDescrReactionMentionDown}"
+                                          ToolTipService.ToolTip="{CustomResource AccDescrReactionMentionDown}"
+                                          Style="{StaticResource RoundGlyphButtonStyle}" />
+                </Border>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel x:Name="MentionsPanel"
+                    Margin="0,0,0,16"
+                    Visibility="Collapsed"
+                    Canvas.ZIndex="1">
+            <controls:BadgeControl x:Name="Mentions"
+                                   HorizontalAlignment="Center"
+                                   IsHitTestVisible="False"
+                                   Margin="0,-10,0,-6"
+                                   Canvas.ZIndex="1" />
+            <Grid>
+                <Ellipse x:Name="ArrowMentionsShadow"
+                         Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                         Width="36"
+                         Height="36" />
+                <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                        CornerRadius="18"
+                        Height="36"
+                        Width="36">
+                    <controls:GlyphButton x:Name="MentionsButton"
+                                          Width="36"
+                                          Height="36"
+                                          Glyph="&#xE168;"
+                                          CornerRadius="24"
+                                          AutomationProperties.Name="{CustomResource AccDescrMentionDown}"
+                                          ToolTipService.ToolTip="{CustomResource AccDescrMentionDown}"
+                                          Style="{StaticResource RoundGlyphButtonStyle}" />
+                </Border>
+            </Grid>
+        </StackPanel>
+
+        <StackPanel x:Name="MessagesPanel"
+                    Margin="0,0,0,16"
+                    Visibility="Collapsed">
+            <controls:BadgeControl x:Name="Messages"
+                                   HorizontalAlignment="Center"
+                                   IsHitTestVisible="False"
+                                   Margin="0,-10,0,-6"
+                                   Canvas.ZIndex="1" />
+            <Grid>
+                <Ellipse x:Name="ArrowShadow"
+                         Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                         Width="36"
+                         Height="36" />
+                <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                        CornerRadius="18"
+                        Height="36"
+                        Width="36">
+                    <controls:GlyphButton x:Name="MessagesButton"
+                                          Width="36"
+                                          Height="36"
+                                          Glyph="&#xE74B;"
+                                          CornerRadius="24"
+                                          AutomationProperties.Name="{CustomResource AccDescrPageDown}"
+                                          ToolTipService.ToolTip="{CustomResource AccDescrPageDown}"
+                                          Style="{StaticResource RoundGlyphButtonStyle}" />
+                </Border>
+            </Grid>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

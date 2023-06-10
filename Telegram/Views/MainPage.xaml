@@ -1,19 +1,17 @@
 <Page x:Class="Telegram.Views.MainPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:Telegram.Views"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+      xmlns:icons="using:Telegram.Assets.Icons"
       xmlns:controls="using:Telegram.Controls"
-      xmlns:collections="using:Telegram.Collections"
-      xmlns:selectors="using:Telegram.Selectors"
       xmlns:cells="using:Telegram.Controls.Cells"
       xmlns:chats="using:Telegram.Controls.Chats"
       xmlns:views="using:Telegram.Controls.Views"
-      xmlns:viewModels="using:Telegram.ViewModels"
-      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
       xmlns:navigation="using:Telegram.Navigation.Services"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:icons="using:Telegram.Assets.Icons"
+      xmlns:viewModels="using:Telegram.ViewModels"
+      xmlns:local="using:Telegram.Views"
       mc:Ignorable="d"
       Loaded="OnLoaded"
       Unloaded="OnUnloaded">
@@ -736,18 +734,11 @@
                                                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                                        VerticalAlignment="Bottom" />
 
-                                                            <muxc:InfoBadge Value="{x:Bind UnreadCount, Mode=OneWay}"
-                                                                            Visibility="{x:Bind ShowUnmuted, Mode=OneWay}"
-                                                                            Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                                                            Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                                                            VerticalAlignment="Bottom"
-                                                                            Margin="8,0,0,0" />
-                                                            <muxc:InfoBadge Value="{x:Bind UnreadMutedCount, Mode=OneWay}"
-                                                                            Visibility="{x:Bind ShowMuted, Mode=OneWay}"
-                                                                            Background="{ThemeResource ChatUnreadBadgeMutedBrush}"
-                                                                            Foreground="{ThemeResource ChatUnreadLabelMutedBrush}"
-                                                                            VerticalAlignment="Bottom"
-                                                                            Margin="8,0,0,0" />
+                                                            <controls:BadgeControl Text="{x:Bind UnreadCount, Mode=OneWay}"
+                                                                                   IsUnmuted="{x:Bind IsUnmuted, Mode=OneWay}"
+                                                                                   Visibility="{x:Bind ShowCount, Mode=OneWay}"
+                                                                                   VerticalAlignment="Bottom"
+                                                                                   Margin="4,0,0,0" />
                                                         </StackPanel>
                                                     </DataTemplate>
                                                 </controls:TopNavView.ItemTemplate>

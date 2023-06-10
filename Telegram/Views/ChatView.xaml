@@ -827,126 +827,16 @@
                  <ProgressRing Width="36" Height="36" IsActive="{x:Bind ViewModel.IsEmpty, Mode=OneWay}" Foreground="White" Background="{StaticResource MessageServiceBackgroundBrush}" Style="{StaticResource SkypeProgressRingStyle}"/>
                  </Border>-->
 
-            <StackPanel VerticalAlignment="Bottom"
-                        HorizontalAlignment="Right"
-                        Margin="0,6">
-                <StackPanel x:Name="ReactionsPanel"
-                            Visibility="Collapsed"
-                            RightTapped="Reactions_RightTapped">
-                    <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                            MinWidth="20"
-                            Height="20"
-                            CornerRadius="10"
-                            HorizontalAlignment="Center"
-                            Margin="0,0,0,-12"
-                            IsHitTestVisible="False"
-                            Canvas.ZIndex="1">
-                        <TextBlock x:Name="Reactions"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                   TextAlignment="Center"
-                                   Margin="4,2,4,0" />
-                    </Border>
-                    <Grid Margin="12,6">
-                        <Ellipse x:Name="ArrowReactionsShadow"
-                                 Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                 Width="36"
-                                 Height="36" />
-                        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                                CornerRadius="18"
-                                Height="36"
-                                Width="36">
-                            <controls:GlyphButton Click="{x:Bind ViewModel.Reactions.NextMessage}"
-                                                  Width="36"
-                                                  Height="36"
-                                                  Glyph="&#xE987;"
-                                                  CornerRadius="24"
-                                                  AutomationProperties.Name="{CustomResource AccDescrReactionDown}"
-                                                  ToolTipService.ToolTip="{CustomResource AccDescrReactionDown}"
-                                                  Style="{StaticResource RoundGlyphButtonStyle}" />
-                        </Border>
-                    </Grid>
-                </StackPanel>
-
-                <StackPanel x:Name="MentionsPanel"
-                            Visibility="Collapsed"
-                            RightTapped="Mentions_RightTapped">
-                    <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                            MinWidth="20"
-                            Height="20"
-                            CornerRadius="10"
-                            HorizontalAlignment="Center"
-                            Margin="0,0,0,-12"
-                            IsHitTestVisible="False"
-                            Canvas.ZIndex="1">
-                        <TextBlock x:Name="Mentions"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                   TextAlignment="Center"
-                                   Margin="4,2,4,0" />
-                    </Border>
-                    <Grid Margin="12,6">
-                        <Ellipse x:Name="ArrowMentionsShadow"
-                                 Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                 Width="36"
-                                 Height="36" />
-                        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                                CornerRadius="18"
-                                Height="36"
-                                Width="36">
-                            <controls:GlyphButton Click="{x:Bind ViewModel.Mentions.NextMessage}"
-                                                  Width="36"
-                                                  Height="36"
-                                                  Glyph="&#xE168;"
-                                                  CornerRadius="24"
-                                                  AutomationProperties.Name="{CustomResource AccDescrMentionDown}"
-                                                  ToolTipService.ToolTip="{CustomResource AccDescrMentionDown}"
-                                                  Style="{StaticResource RoundGlyphButtonStyle}" />
-                        </Border>
-                    </Grid>
-                </StackPanel>
-
-                <StackPanel x:Name="Arrow"
-                            SizeChanged="Arrow_SizeChanged"
-                            Visibility="Collapsed">
-                    <Border Background="{ThemeResource ChatUnreadBadgeBrush}"
-                            Visibility="{x:Bind ViewModel.UnreadCount, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
-                            MinWidth="20"
-                            Height="20"
-                            CornerRadius="10"
-                            HorizontalAlignment="Center"
-                            Margin="0,6,0,-12"
-                            IsHitTestVisible="False"
-                            Canvas.ZIndex="1">
-                        <TextBlock x:Name="UnreadCount"
-                                   Text="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
-                                   Style="{StaticResource CaptionTextBlockStyle}"
-                                   Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                   TextAlignment="Center"
-                                   Margin="4,2,4,0" />
-                    </Border>
-                    <Grid Margin="12,6">
-                        <Ellipse x:Name="ArrowShadow"
-                                 Fill="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                 Width="36"
-                                 Height="36" />
-                        <Border Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                                CornerRadius="18"
-                                Height="36"
-                                Width="36">
-                            <controls:GlyphButton Click="{x:Bind ViewModel.PreviousSlice}"
-                                                  RightTapped="Arrow_RightTapped"
-                                                  Width="36"
-                                                  Height="36"
-                                                  Glyph="&#xE74B;"
-                                                  CornerRadius="24"
-                                                  AutomationProperties.Name="{CustomResource AccDescrPageDown}"
-                                                  ToolTipService.ToolTip="{CustomResource AccDescrPageDown}"
-                                                  Style="{StaticResource RoundGlyphButtonStyle}" />
-                        </Border>
-                    </Grid>
-                </StackPanel>
-            </StackPanel>
+            <chats:ChatHistoryArrows x:Name="Arrows"
+                                     UnreadCount="{x:Bind ViewModel.UnreadCount, Mode=OneWay}"
+                                     NextMention="{x:Bind ViewModel.Mentions.NextMessage}"
+                                     ReadMentions="{x:Bind ViewModel.ReadMentions}"
+                                     NextReaction="{x:Bind ViewModel.Reactions.NextMessage}"
+                                     ReadReactions="{x:Bind ViewModel.ReadReactions}"
+                                     ReadMessages="{x:Bind ViewModel.ReadMessages}"
+                                     NextMessage="{x:Bind ViewModel.PreviousSlice}"
+                                     HorizontalAlignment="Right"
+                                     VerticalAlignment="Bottom" />
 
             <Grid x:Name="InlinePanel"
                   SizeChanged="InlinePanel_SizeChanged"
