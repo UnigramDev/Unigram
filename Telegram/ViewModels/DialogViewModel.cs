@@ -920,6 +920,13 @@ namespace Telegram.ViewModels
                 return;
             }
 
+            var chat = _chat;
+            if (chat == null)
+            {
+                NotifyMessageSliceLoaded();
+                return;
+            }
+
             if (direction == null)
             {
                 var field = HistoryField;
@@ -940,6 +947,31 @@ namespace Telegram.ViewModels
 
             if (Items.TryGetValue(maxId, out MessageViewModel already))
             {
+                if (alignment == VerticalAlignment.Top && !second)
+                {
+                    long lastMessageId;
+                    if (_topic is ForumTopic topic)
+                    {
+                        lastMessageId = topic.LastMessage?.Id ?? long.MaxValue;
+                    }
+                    else if (_thread is MessageThreadInfo thread)
+                    {
+                        lastMessageId = thread.ReplyInfo?.LastMessageId ?? long.MaxValue;
+                    }
+                    else
+                    {
+                        lastMessageId = chat.LastMessage?.Id ?? long.MaxValue;
+                    }
+
+                    // If we're loading the last message and it has been read already
+                    // then we want to align it at bottom, as it might be taller than the window height
+                    if (maxId == lastMessageId)
+                    {
+                        alignment = VerticalAlignment.Bottom;
+                        pixel = null;
+                    }
+                }
+
                 var field = HistoryField;
                 if (field != null)
                 {
@@ -964,13 +996,6 @@ namespace Telegram.ViewModels
                 //var max = _dialog?.UnreadCount > 0 ? _dialog.ReadInboxMaxId : int.MaxValue;
                 //var offset = _dialog?.UnreadCount > 0 && max > 0 ? -16 : 0;
                 //await LoadFirstSliceAsync(max, offset);
-                NotifyMessageSliceLoaded();
-                return;
-            }
-
-            var chat = _chat;
-            if (chat == null)
-            {
                 NotifyMessageSliceLoaded();
                 return;
             }

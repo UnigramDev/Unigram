@@ -239,7 +239,7 @@ namespace Telegram.Views
             ShowHideDateHeader(minDateValue > 0 && minDateIndex > 0, minDateValue > 0 && minDateIndex is > 0 and < int.MaxValue);
 
             // Read and play messages logic:
-            if (messages.Count > 0 && !Messages.IsProgrammaticScrolling && WindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+            if (messages.Count > 0 && WindowContext.Current.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
             {
                 MessageSource source = ViewModel.Type switch
                 {

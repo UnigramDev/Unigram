@@ -38,15 +38,6 @@ namespace Telegram.Controls.Chats
 
         private readonly TaskCompletionSource<ItemsStackPanel> _waitItemsPanelRoot = new();
 
-        private bool _programmaticExternal;
-        private bool _programmaticScrolling;
-
-        public bool IsProgrammaticScrolling
-        {
-            get => _programmaticExternal || _programmaticScrolling;
-            set => _programmaticExternal = value;
-        }
-
         public PanelScrollingDirection ScrollingDirection { get; private set; }
 
         public ChatHistoryView()
@@ -61,9 +52,22 @@ namespace Telegram.Controls.Chats
             Unloaded += OnUnloaded;
         }
 
+        private bool _raiseViewChanged;
+        public event EventHandler<ScrollViewerViewChangedEventArgs> ViewChanged;
+
         public void ScrollToBottom()
         {
             ScrollingHost?.ChangeView(null, ScrollingHost.ScrollableHeight, null);
+        }
+
+        public void Suspend()
+        {
+            _raiseViewChanged = false;
+        }
+
+        public void Resume()
+        {
+            _raiseViewChanged = true;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -79,7 +83,7 @@ namespace Telegram.Controls.Chats
                 SetScrollingMode();
             }
 
-            ViewChanged();
+            ViewChanging();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -110,11 +114,16 @@ namespace Telegram.Controls.Chats
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             Logger.Debug();
-            ViewChanged();
+            ViewChanging();
         }
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
+            if (_raiseViewChanged)
+            {
+                ViewChanged?.Invoke(sender, e);
+            }
+
             if (e.IsIntermediate)
             {
                 return;
@@ -125,14 +134,14 @@ namespace Telegram.Controls.Chats
 
         private void OnViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
         {
-            ViewChanged(e.FinalView.VerticalOffset != e.NextView.VerticalOffset ?
+            ViewChanging(e.FinalView.VerticalOffset != e.NextView.VerticalOffset ?
                 e.FinalView.VerticalOffset < e.NextView.VerticalOffset
                 ? PanelScrollingDirection.Backward
                 : PanelScrollingDirection.Forward
                 : PanelScrollingDirection.None);
         }
 
-        private async void ViewChanged(PanelScrollingDirection direction = PanelScrollingDirection.None)
+        private async void ViewChanging(PanelScrollingDirection direction = PanelScrollingDirection.None)
         {
             ScrollingDirection = direction;
 
@@ -261,6 +270,8 @@ namespace Telegram.Controls.Chats
 
         public async Task ScrollToItem(MessageViewModel item, VerticalAlignment alignment, bool highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
         {
+            _raiseViewChanged = false;
+
             var scrollViewer = ScrollingHost;
             if (scrollViewer == null)
             {
@@ -268,7 +279,6 @@ namespace Telegram.Controls.Chats
                 goto Exit;
             }
 
-            _programmaticScrolling = true;
             await ScrollIntoViewAsync(item, direction);
 
             var selectorItem = Delegate?.ContainerFromItem(item.Id);
@@ -327,10 +337,9 @@ namespace Telegram.Controls.Chats
             }
 
         Exit:
-            _programmaticScrolling = _programmaticExternal = false;
-
-            Delegate?.ViewVisibleMessages();
-            ViewChanged();
+            Resume();
+            ViewChanging();
+            ViewChanged?.Invoke(scrollViewer, null);
         }
 
         private async Task ScrollIntoViewAsync(MessageViewModel item, ScrollIntoViewAlignment alignment)
