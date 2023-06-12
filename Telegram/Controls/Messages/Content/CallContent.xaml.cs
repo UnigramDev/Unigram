@@ -11,7 +11,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -32,10 +31,9 @@ namespace Telegram.Controls.Messages.Content
         private Border Texture;
         private GlyphHyperlinkButton Button;
         private TextBlock TitleLabel;
+        private TextBlock IconLabel;
+        private TextBlock DateLabel;
         private ToolTip Tip;
-        private Run ReasonGlyph;
-        private Run DateLabel;
-        private Run DurationLabel;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -44,9 +42,8 @@ namespace Telegram.Controls.Messages.Content
             Button = GetTemplateChild(nameof(Button)) as GlyphHyperlinkButton;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
             Tip = GetTemplateChild(nameof(Tip)) as ToolTip;
-            ReasonGlyph = GetTemplateChild(nameof(ReasonGlyph)) as Run;
-            DateLabel = GetTemplateChild(nameof(DateLabel)) as Run;
-            DurationLabel = GetTemplateChild(nameof(DurationLabel)) as Run;
+            IconLabel = GetTemplateChild(nameof(IconLabel)) as TextBlock;
+            DateLabel = GetTemplateChild(nameof(DateLabel)) as TextBlock;
 
             Button.Click += Button_Click;
             Tip.Opened += ToolTip_Opened;
@@ -78,18 +75,16 @@ namespace Telegram.Controls.Messages.Content
             //Button.FontSize = call.IsVideo ? 24 : 20;
 
             TitleLabel.Text = call.ToOutcomeText(message.IsOutgoing);
-            ReasonGlyph.Text = outgoing ? "\uE60B\u00A0" : "\uE60C\u00A0";
-            DateLabel.Text = Formatter.Date(message.Date);
+            IconLabel.Text = outgoing ? Icons.ArrowUpRight16 : Icons.ArrowDownLeft16;
+
+            var date = Formatter.Date(message.Date);
 
             if (call.Duration > 0 && !missed)
             {
-                DurationLabel.Text = ", " + Locale.FormatCallDuration(call.Duration);
-            }
-            else
-            {
-                DurationLabel.Text = string.Empty;
+                date += ", " + Locale.FormatCallDuration(call.Duration);
             }
 
+            DateLabel.Text = date;
             VisualStateManager.GoToState(this, missed ? "Missed" : "Default", false);
         }
 

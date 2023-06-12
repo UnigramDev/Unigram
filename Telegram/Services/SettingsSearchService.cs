@@ -247,9 +247,9 @@ namespace Telegram.Services
                 }),
 
                 // Proxy
-                new SettingsSearchPage(typeof(SettingsProxiesPage), Strings.Proxy, new Assets.Icons.Data(), new SettingsSearchEntry[]
+                new SettingsSearchPage(typeof(SettingsProxyPage), Strings.Proxy, new Assets.Icons.Data(), new SettingsSearchEntry[]
                 {
-                    new SettingsSearchPage(typeof(SettingsProxiesPage), Strings.AddProxy)
+                    new SettingsSearchPage(typeof(SettingsProxyPage), Strings.AddProxy)
                 })
             });
         }

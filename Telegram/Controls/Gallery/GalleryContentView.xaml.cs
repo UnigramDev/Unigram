@@ -86,13 +86,11 @@ namespace Telegram.Controls.Gallery
 
             //ScrollingHost.ChangeView(0, 0, 1, true);
 
-            if (item == null)
+            var file = item?.GetFile();
+            if (file == null)
             {
                 return;
             }
-
-            var file = item.GetFile();
-            var thumbnail = item.GetThumbnail();
 
             if (item.IsVideoNote)
             {
@@ -114,6 +112,7 @@ namespace Telegram.Controls.Gallery
             UpdateManager.Subscribe(this, delegato.ClientService, file, ref _fileToken, UpdateFile);
             UpdateFile(item, file);
 
+            var thumbnail = item.GetThumbnail();
             if (thumbnail != null && (item.IsVideo || (item.IsPhoto && !file.Local.IsDownloadingCompleted)))
             {
                 UpdateThumbnail(item, thumbnail, true);

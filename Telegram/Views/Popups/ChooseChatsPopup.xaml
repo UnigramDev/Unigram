@@ -9,7 +9,6 @@
                        xmlns:messages="using:Telegram.Controls.Messages"
                        xmlns:views="using:Telegram.Controls.Views"
                        xmlns:viewModels="using:Telegram.ViewModels"
-                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                        mc:Ignorable="d"
                        Title="{x:Bind ViewModel.Title, Mode=OneWay}"
                        PrimaryButtonText="OK"

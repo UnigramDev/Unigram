@@ -116,7 +116,7 @@
                             <VisualStateGroup>
                                 <VisualState x:Name="Missed">
                                     <VisualState.Setters>
-                                        <Setter Target="ReasonGlyph.Foreground"
+                                        <Setter Target="IconLabel.Foreground"
                                                 Value="{ThemeResource MessageCallMissedForegroundBrush}" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -136,25 +136,36 @@
                                                            Glyph="&#xE717;"
                                                            Style="{StaticResource InlineButtonStyle}" />
                         </Border>
-                        <StackPanel Margin="8,0,0,2"
-                                    VerticalAlignment="Center"
-                                    Grid.Column="1">
+                        <Grid Margin="8,0,0,2"
+                              VerticalAlignment="Center"
+                              Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
                             <TextBlock x:Name="TitleLabel"
                                        Foreground="{ThemeResource MessageForegroundBrush}"
                                        TextWrapping="NoWrap"
                                        TextTrimming="CharacterEllipsis"
-                                       Style="{StaticResource BaseTextBlockStyle}" />
-                            <TextBlock Style="{StaticResource DisabledCaptionTextBlockStyle}">
+                                       Style="{StaticResource BaseTextBlockStyle}"
+                                       Grid.ColumnSpan="2" />
+                            <TextBlock x:Name="IconLabel"
+                                       Foreground="{ThemeResource MessageCallForegroundBrush}"
+                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
+                                       Grid.Row="1" />
+                            <TextBlock x:Name="DateLabel"
+                                       Style="{StaticResource DisabledCaptionTextBlockStyle}"
+                                       Grid.Column="1"
+                                       Grid.Row="1">
                                 <ToolTipService.ToolTip>
                                     <ToolTip x:Name="Tip" />
                                 </ToolTipService.ToolTip>
-                                <Run x:Name="ReasonGlyph"
-                                     FontSize="10"
-                                     Foreground="{ThemeResource MessageCallForegroundBrush}"
-                                     FontFamily="{StaticResource TelegramThemeFontFamily}" />
-                                <Run x:Name="DateLabel" /><Run x:Name="DurationLabel" />
                             </TextBlock>
-                        </StackPanel>
+                        </Grid>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

@@ -441,8 +441,8 @@ namespace Telegram.Services
                     {
                         var decoder = await BitmapDecoder.CreateAsync(fileStream);
 
-                        double ratioX = 90d / originalWidth;
-                        double ratioY = 90d / originalHeight;
+                        double ratioX = 320d / originalWidth;
+                        double ratioY = 320d / originalHeight;
                         double ratio = Math.Min(ratioX, ratioY);
 
                         uint width = (uint)(originalWidth * ratio);

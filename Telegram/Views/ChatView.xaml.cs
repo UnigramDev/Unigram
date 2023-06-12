@@ -502,6 +502,8 @@ namespace Telegram.Views
                 ViewModel.HistoryField = null;
                 ViewModel.Sticker_Click = null;
 
+                Messages.Suspend();
+
                 _cleanup = ViewModel.Items;
 
                 if (navigation)
@@ -2085,7 +2087,7 @@ namespace Telegram.Views
         {
             var flyout = new MenuFlyout();
             flyout.MenuFlyoutPresenterStyle = new Style(typeof(MenuFlyoutPresenter));
-            flyout.MenuFlyoutPresenterStyle.Setters.Add(new Setter(MinWidthProperty, 165));
+            flyout.MenuFlyoutPresenterStyle.Setters.Add(new Setter(MinWidthProperty, 180));
 
             var element = sender as FrameworkElement;
             var message = Messages.ItemFromContainer(element) as MessageViewModel;
@@ -2294,7 +2296,7 @@ namespace Telegram.Views
                     flyout.Items.Add(new MenuFlyoutLabel
                     {
                         Padding = new Thickness(12, 4, 12, 4),
-                        MaxWidth = 180,
+                        MaxWidth = 178,
                         Text = message.IsChannelPost
                             ? Strings.ForwardsRestrictedInfoChannel
                             : Strings.ForwardsRestrictedInfoGroup

@@ -12,13 +12,13 @@
                        VerticalContentAlignment="Stretch">
 
     <Grid Margin="-24,0,-24,-24">
-        <ListView x:Name="ScrollingHost"
-                  ItemsSource="{x:Bind ViewModel.Items}"
-                  ContainerContentChanging="OnContainerContentChanging"
-                  SelectionMode="None"
-                  IsItemClickEnabled="True"
-                  ItemClick="OnItemClick"
-                  Padding="12,0,12,24">
+        <controls:TextListView x:Name="ScrollingHost"
+                               ItemsSource="{x:Bind ViewModel.Items}"
+                               ContainerContentChanging="OnContainerContentChanging"
+                               SelectionMode="None"
+                               IsItemClickEnabled="True"
+                               ItemClick="OnItemClick"
+                               Padding="12,0,12,24">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -32,7 +32,11 @@
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
-        </ListView>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem"
+                       BasedOn="{StaticResource DefaultListViewItemStyle}" />
+            </ListView.ItemContainerStyle>
+        </controls:TextListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
                                     ScrollingHost="{x:Bind ScrollingHost}" />

@@ -21,6 +21,8 @@ namespace Telegram.Services
         bool IsActive { get; set; }
 
         int UnreadCount { get; }
+        bool IsUnmuted { get; }
+        bool ShowCount { get; }
 
 
 
@@ -70,9 +72,18 @@ namespace Telegram.Services
             private set => _unreadCount.Set(value);
         }
 
+        public bool IsUnmuted => !Settings.Notifications.IncludeMutedChats;
+
+        public bool ShowCount => UnreadCount > 0;
+
         private void UpdateUnreadCount(int value)
         {
-            BeginOnUIThread(() => RaisePropertyChanged(nameof(UnreadCount)));
+            BeginOnUIThread(() =>
+            {
+                RaisePropertyChanged(nameof(UnreadCount));
+                RaisePropertyChanged(nameof(IsUnmuted));
+                RaisePropertyChanged(nameof(ShowCount));
+            });
         }
 
         private bool _isActive;

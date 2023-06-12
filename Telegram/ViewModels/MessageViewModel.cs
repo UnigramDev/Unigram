@@ -352,6 +352,7 @@ namespace Telegram.ViewModels
         public bool CanGetViewers => _message.CanGetViewers;
         public bool IsOutgoing { get => _message.IsOutgoing; set => _message.IsOutgoing = value; }
         public bool IsPinned { get => _message.IsPinned; set => _message.IsPinned = value; }
+        public bool HasTimestampedMedia => _message.HasTimestampedMedia;
         public MessageSchedulingState SchedulingState => _message.SchedulingState;
         public MessageSendingState SendingState => _message.SendingState;
         public long ChatId => _message.ChatId;

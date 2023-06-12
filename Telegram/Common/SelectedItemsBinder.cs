@@ -137,7 +137,7 @@ namespace Telegram.Common
         {
             UnsubscribeFromEvents();
 
-            if (source != null && target != null)
+            if (_listView.SelectionMode == ListViewSelectionMode.Multiple && source != null && target != null)
             {
                 if (target is IMvxObservableCollection collection)
                 {

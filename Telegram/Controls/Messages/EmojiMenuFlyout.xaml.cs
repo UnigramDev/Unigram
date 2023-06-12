@@ -76,8 +76,7 @@ namespace Telegram.Controls.Messages
             view.DataContext = viewModel;
             view.VerticalAlignment = VerticalAlignment.Top;
             view.Width = width;
-            view.Height = height + 20;
-            view.Margin = new Thickness(0, 0, 0, -20);
+            view.Height = height;
             view.ItemClick += OnStatusClick;
 
             if (_mode == EmojiDrawerMode.CustomEmojis)

@@ -606,31 +606,33 @@ namespace Telegram.ViewModels
             set => Set(ref _unreadCount, value);
         }
 
-        private int _unreadUnmutedCount;
-        public int UnreadUnmutedCount
+        private bool _isUnmuted;
+        public bool IsUnmuted
         {
-            get => _unreadUnmutedCount;
-            set => Set(ref _unreadUnmutedCount, value);
+            get => _isUnmuted;
+            set => Set(ref _isUnmuted, value);
         }
 
-        private int _unreadMutedCount;
-        public int UnreadMutedCount
-        {
-            get => _unreadMutedCount;
-            set => Set(ref _unreadMutedCount, value);
-        }
-
-        public bool ShowUnmuted => _unreadUnmutedCount > 0;
-        public bool ShowMuted => _unreadMutedCount > 0 && _unreadUnmutedCount == 0;
+        public bool ShowCount => UnreadCount > 0;
 
         public void UpdateCount(UpdateUnreadChatCount update)
         {
-            UnreadCount = update.UnreadCount;
-            UnreadUnmutedCount = update.UnreadUnmutedCount;
-            UnreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount;
+            var unreadCount = update.UnreadCount;
+            var unreadUnmutedCount = update.UnreadUnmutedCount;
+            var unreadMutedCount = update.UnreadCount - update.UnreadUnmutedCount;
 
-            RaisePropertyChanged(nameof(ShowUnmuted));
-            RaisePropertyChanged(nameof(ShowMuted));
+            if (unreadMutedCount > 0 && unreadUnmutedCount == 0)
+            {
+                UnreadCount = unreadMutedCount;
+                IsUnmuted = false;
+            }
+            else
+            {
+                UnreadCount = unreadCount;
+                IsUnmuted = true;
+            }
+
+            RaisePropertyChanged(nameof(ShowCount));
         }
     }
 

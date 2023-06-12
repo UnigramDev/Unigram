@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -261,16 +260,6 @@ namespace Telegram.Services
         {
             public const string DownloadFolder = "FilesDirectory";
 
-            private static readonly HashSet<string> _tokens = new();
-
-            static Future()
-            {
-                foreach (var item in SAP.FutureAccessList.Entries)
-                {
-                    _tokens.Add(item.Token);
-                }
-            }
-
             public static bool Contains(string token, bool temp = false)
             {
                 if (string.IsNullOrEmpty(token))
@@ -280,7 +269,7 @@ namespace Telegram.Services
 
                 try
                 {
-                    return _tokens.Contains(temp ? token + "temp" : token);
+                    return SAP.FutureAccessList.ContainsItem(temp ? token + "temp" : token);
                 }
                 catch
                 {
@@ -296,7 +285,6 @@ namespace Telegram.Services
 
                     if (SAP.FutureAccessList.ContainsItem(token))
                     {
-                        _tokens.Remove(token);
                         SAP.FutureAccessList.Remove(token);
                     }
                 }
@@ -459,7 +447,6 @@ namespace Telegram.Services
 
                 try
                 {
-                    _tokens.Add(token);
                     SAP.FutureAccessList.AddOrReplace(token, item);
                 }
                 catch
@@ -475,10 +462,7 @@ namespace Telegram.Services
 
                 try
                 {
-                    var token = SAP.FutureAccessList.Add(item);
-
-                    _tokens.Add(token);
-                    return token;
+                    return SAP.FutureAccessList.Add(item);
                 }
                 catch
                 {
@@ -498,7 +482,6 @@ namespace Telegram.Services
                             var entry = SAP.FutureAccessList.Entries[i];
                             if (entry.Token != "FilesDirectory")
                             {
-                                _tokens.Remove(entry.Token);
                                 SAP.FutureAccessList.Remove(entry.Token);
                             }
                         }

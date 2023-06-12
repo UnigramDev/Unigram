@@ -747,7 +747,7 @@
                     <Border x:Name="LayoutRoot">
                         <Border.Background>
                             <ImageBrush x:Name="Canvas"
-                                        Stretch="UniformToFill"
+                                        Stretch="Uniform"
                                         AlignmentX="Center"
                                         AlignmentY="Center" />
                         </Border.Background>
@@ -907,6 +907,7 @@
                         </Grid.RowDefinitions>
                         <local:AnimatedImage Source="{TemplateBinding Source}"
                                              LoopCount="{TemplateBinding LoopCount}"
+                                             AutoPlay="True"
                                              IsCachingEnabled="False"
                                              DecodeFrameType="Logical"
                                              FrameSize="140,140"

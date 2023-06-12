@@ -334,7 +334,6 @@ namespace Telegram.ViewModels
                     else if (delete.Type is ChatTypeSecret secret)
                     {
                         await ClientService.SendAsync(new DeleteChat(delete.Id));
-                        await ClientService.SendAsync(new CloseSecretChat(secret.SecretChatId));
                     }
                     else
                     {

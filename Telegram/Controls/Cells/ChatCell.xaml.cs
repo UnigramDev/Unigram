@@ -123,7 +123,7 @@ namespace Telegram.Controls.Cells
         private TextBlock TypingLabel;
         private TextBlock PinnedIcon;
         private Border UnreadMentionsBadge;
-        private InfoBadge UnreadBadge;
+        private BadgeControl UnreadBadge;
         private Rectangle DropVisual;
         private TextBlock UnreadMentionsLabel;
         private TextBlock FromLabel;
@@ -136,7 +136,7 @@ namespace Telegram.Controls.Cells
         private Border OnlineHeart;
 
         private Border CompactBadgeRoot;
-        private InfoBadge CompactBadge;
+        private BadgeControl CompactBadge;
 
         private bool _templateApplied;
 
@@ -152,7 +152,7 @@ namespace Telegram.Controls.Cells
             TypingLabel = GetTemplateChild(nameof(TypingLabel)) as TextBlock;
             PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as TextBlock;
             UnreadMentionsBadge = GetTemplateChild(nameof(UnreadMentionsBadge)) as Border;
-            UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as InfoBadge;
+            UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as BadgeControl;
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
             FromLabel = GetTemplateChild(nameof(FromLabel)) as TextBlock;
@@ -264,18 +264,18 @@ namespace Telegram.Controls.Cells
 
                 MinithumbnailPanel.Visibility = Visibility.Collapsed;
 
-                VisualStateManager.GoToState(this, "Muted", false);
-
                 UpdateTicks(null);
 
                 var unreadCount = clientService.GetUnreadCount(chatList);
                 UnreadBadge.Visibility = unreadCount.UnreadChatCount.UnreadCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-                UnreadBadge.Value = unreadCount.UnreadChatCount.UnreadCount;
+                UnreadBadge.Text = unreadCount.UnreadChatCount.UnreadCount.ToString();
+                UnreadBadge.IsUnmuted = false;
 
                 if (CompactBadge != null)
                 {
                     CompactBadgeRoot.Visibility = UnreadBadge.Visibility;
-                    CompactBadge.Value = UnreadBadge.Value;
+                    CompactBadge.Text = UnreadBadge.Text;
+                    CompactBadge.IsUnmuted = false;
                 }
 
                 BriefLabel.Inlines.Clear();
@@ -479,12 +479,12 @@ namespace Telegram.Controls.Cells
 
             PinnedIcon.Visibility = chat.UnreadCount == 0 && !chat.IsMarkedAsUnread && (position?.IsPinned ?? false) ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Visibility = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
-            UnreadBadge.Value = chat.UnreadCount;
+            UnreadBadge.Text = chat.UnreadCount > 0 ? chat.UnreadCount.ToString() : string.Empty;
 
             if (CompactBadge != null)
             {
                 CompactBadgeRoot.Visibility = UnreadBadge.Visibility;
-                CompactBadge.Value = UnreadBadge.Value;
+                CompactBadge.Text = UnreadBadge.Text;
             }
 
             //UpdateAutomation(_clientService, chat, chat.LastMessage);
@@ -528,6 +528,12 @@ namespace Telegram.Controls.Cells
             var muted = _clientService.Notifications.GetMutedFor(chat) > 0;
             VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
+            UnreadBadge.IsUnmuted = !muted;
+
+            if (CompactBadge != null)
+            {
+                CompactBadge.IsUnmuted = !muted;
+            }
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -866,7 +872,8 @@ namespace Telegram.Controls.Cells
                 LoadObject(ref CompactBadge, nameof(CompactBadge));
 
                 CompactBadgeRoot.Visibility = UnreadBadge.Visibility;
-                CompactBadge.Value = UnreadBadge.Value;
+                CompactBadge.Text = UnreadBadge.Text;
+                CompactBadge.IsUnmuted = UnreadBadge.IsUnmuted;
             }
 
             //ElementCompositionPreview.SetIsTranslationEnabled(LayoutRoot, true);
@@ -1203,7 +1210,6 @@ namespace Telegram.Controls.Cells
             return message.Content switch
             {
                 MessageText text => text.Text,
-                MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>()),
                 MessageDice dice => new FormattedText(dice.Emoji, Array.Empty<TextEntity>()),
                 _ => new FormattedText(string.Empty, Array.Empty<TextEntity>()),
             };
@@ -1631,13 +1637,13 @@ namespace Telegram.Controls.Cells
             Photo.Source = type is ChatTypeSupergroup ? PlaceholderImage.GetNameForChat(title, color) : PlaceholderImage.GetNameForUser(title, color);
 
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
-            VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
 
             MinithumbnailPanel.Visibility = Visibility.Collapsed;
 
             PinnedIcon.Visibility = pinned ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Visibility = unread > 0 ? Visibility.Visible : Visibility.Collapsed;
-            UnreadBadge.Value = unread;
+            UnreadBadge.Text = unread.ToString();
+            UnreadBadge.IsUnmuted = !muted;
             UnreadMentionsBadge.Visibility = Visibility.Collapsed;
 
             FromLabel.Text = from;

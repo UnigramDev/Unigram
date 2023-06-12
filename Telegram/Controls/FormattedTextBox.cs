@@ -934,12 +934,31 @@ namespace Telegram.Controls
 
         public async void SetText(string text, IList<TextEntity> entities)
         {
+            try
+            {
+                _updateLocked = true;
+
+                Document.BeginUndoGroup();
+                Document.BatchDisplayUpdates();
+
+                await SetTextImpl(text, entities);
+            }
+            catch
+            {
+                // TODO:
+            }
+            finally
+            {
+                Document.ApplyDisplayUpdates();
+                Document.EndUndoGroup();
+
+                _updateLocked = false;
+            }
+        }
+
+        private async Task SetTextImpl(string text, IList<TextEntity> entities)
+        {
             OnSettingText();
-
-            _updateLocked = true;
-
-            Document.BeginUndoGroup();
-            Document.BatchDisplayUpdates();
             Document.Clear();
 
             if (!string.IsNullOrEmpty(text))
@@ -1002,11 +1021,6 @@ namespace Telegram.Controls
 
                 Document.Selection.SetRange(TextConstants.MaxUnitCount, TextConstants.MaxUnitCount);
             }
-
-            Document.ApplyDisplayUpdates();
-            Document.EndUndoGroup();
-
-            _updateLocked = false;
         }
 
         public void InsertText(string text, IList<TextEntity> entities)

@@ -102,8 +102,7 @@
 
                                 <controls:BadgeButton Content="{CustomResource Add}"
                                                       Visibility="{x:Bind IsInstalled, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
-                                                      Style="{StaticResource StartButtonStyle}"
-                                                      Background="#2ca5e0"
+                                                      Style="{StaticResource PillButtonStyle}"
                                                       HorizontalAlignment="Right"
                                                       VerticalAlignment="Center"
                                                       Padding="12,1,12,2"

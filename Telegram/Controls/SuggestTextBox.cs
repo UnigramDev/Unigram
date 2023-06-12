@@ -76,6 +76,15 @@ namespace Telegram.Controls
             }
         }
 
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (sender.Items.Count > StartingIndex)
+            {
+                sender.SelectedIndex = StartingIndex;
+                sender.ChoosingItemContainer -= OnChoosingItemContainer;
+            }
+        }
+
         #region ControlledList
 
         public ListViewBase ControlledList
@@ -104,15 +113,6 @@ namespace Telegram.Controls
             {
                 newValue.ChoosingItemContainer += OnChoosingItemContainer;
                 AutomationProperties.GetControlledPeers(this).Add(newValue);
-            }
-        }
-
-        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
-        {
-            if (sender.Items.Count > StartingIndex)
-            {
-                sender.SelectedIndex = StartingIndex;
-                sender.ChoosingItemContainer -= OnChoosingItemContainer;
             }
         }
 

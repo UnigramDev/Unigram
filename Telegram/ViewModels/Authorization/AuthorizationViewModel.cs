@@ -269,7 +269,7 @@ namespace Telegram.ViewModels.Authorization
 
         public void Proxy()
         {
-            NavigationService.Navigate(typeof(SettingsProxiesPage));
+            NavigationService.Navigate(typeof(SettingsProxyPage));
         }
 
         #region Strings

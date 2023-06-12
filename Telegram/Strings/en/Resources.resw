@@ -616,7 +616,7 @@ to: {1}</value>
     <value>You scored {0} in un2</value>
   </data>
   <data name="AdaptiveLayout" xml:space="preserve">
-    <value>Adaptive layout for wide screens</value>
+    <value>Adaptive Layout for Wide Screens</value>
   </data>
   <data name="Add" xml:space="preserve">
     <value>Add</value>
@@ -846,10 +846,10 @@ Unused sets are archived when you add more.</value>
 Unused sets are archived when you add more.</value>
   </data>
   <data name="ArchiveMoveToChatList" xml:space="preserve">
-    <value>Move to chat list</value>
+    <value>Move to Chat List</value>
   </data>
   <data name="ArchiveMoveToMainMenu" xml:space="preserve">
-    <value>Move to main menu</value>
+    <value>Move to Main Menu</value>
   </data>
   <data name="ArchiveMoveToMainMenuInfo" xml:space="preserve">
     <value>Archive moved to the main menu
@@ -1206,7 +1206,7 @@ Sunrise: {1}</value>
     <value>Videos</value>
   </data>
   <data name="AutoStart" xml:space="preserve">
-    <value>Launch Unigram when system starts</value>
+    <value>Launch Unigram When System Starts</value>
   </data>
   <data name="AutoStartDisabledInfo" xml:space="preserve">
     <value>Starting with the system was disabled in Windows Settings.
@@ -2042,7 +2042,7 @@ Minimum length is 5 characters.</value>
     <value>Enable</value>
   </data>
   <data name="ConnectWithIPv6" xml:space="preserve">
-    <value>Try connecting through IPv6</value>
+    <value>Try Connecting Through IPv6</value>
   </data>
   <data name="ContactJoined" xml:space="preserve">
     <value>Contact joined Telegram</value>
@@ -6029,7 +6029,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>Show Translate Button</value>
   </data>
   <data name="ShowTrayIcon" xml:space="preserve">
-    <value>Show tray icon</value>
+    <value>Show Tray Icon</value>
   </data>
   <data name="ShowVotes_one" xml:space="preserve">
     <value>Show More ({0})</value>

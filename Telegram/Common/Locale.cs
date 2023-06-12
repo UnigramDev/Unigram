@@ -352,7 +352,7 @@ namespace Telegram.Common
                 int dateYear = online.Year;
                 if (dateDay == day && year == dateYear)
                 {
-                    return string.Format(Strings.TodayAtFormatted, Formatter.ShortTime.Format(online));
+                    return string.Format(Strings.TodayAtFormattedWithToday, Formatter.ShortTime.Format(online));
                 }
                 else if (dateDay + 1 == day && year == dateYear)
                 {
