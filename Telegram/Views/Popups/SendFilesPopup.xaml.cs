@@ -162,6 +162,7 @@ namespace Telegram.Views.Popups
             _documentAllowed = documentAllowed;
 
             DataContext = viewModel;
+            ViewModel = viewModel;
 
             Items = new MvxObservableCollection<StorageMedia>(items);
             Items.CollectionChanged += OnCollectionChanged;
@@ -170,6 +171,7 @@ namespace Telegram.Views.Popups
 
             EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(viewModel.SessionId);
             CaptionInput.CustomEmoji = CustomEmoji;
+            CaptionInput.ViewModel = viewModel;
 
             UpdateView();
             UpdatePanel();
@@ -294,7 +296,7 @@ namespace Telegram.Views.Popups
                     username.Text = string.Empty;
                 }
 
-                photo.SetUser(ViewModel.ClientService, user, 36);
+                photo.SetUser(ViewModel.ClientService, user, 32);
             }
         }
 

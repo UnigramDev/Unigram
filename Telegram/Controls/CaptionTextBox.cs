@@ -24,7 +24,7 @@ namespace Telegram.Controls
 {
     public class CaptionTextBox : FormattedTextBox
     {
-        public DialogViewModel ViewModel => DataContext as DialogViewModel;
+        public DialogViewModel ViewModel { get; set; }
 
         public IViewWithAutocomplete View { get; set; }
 
