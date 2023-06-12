@@ -178,7 +178,7 @@ namespace Telegram.Views.Popups
 
             if (ScrollingHost.SelectedItem == null)
             {
-                CurrentLocation.UpdateState(true, true);
+                CurrentLocation.UpdateState(true, true, true);
                 Media = new InputMessageLocation(ViewModel.Location, 0, 0, 0);
             }
         }
@@ -187,7 +187,7 @@ namespace Telegram.Views.Popups
         {
             ScrollingHost.SelectedItem = null;
 
-            CurrentLocation.UpdateState(true, true);
+            CurrentLocation.UpdateState(true, true, true);
             Media = new InputMessageLocation(ViewModel.Location, 0, 0, 0);
         }
 
@@ -197,7 +197,7 @@ namespace Telegram.Views.Popups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new MultipleListViewItem(false);
+                args.ItemContainer = new MultipleListViewItem(sender, false);
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
             }
@@ -217,7 +217,7 @@ namespace Telegram.Views.Popups
 
             content.UpdateVenue(venue);
             content.UpdateState(sender.SelectionMode == ListViewSelectionMode.Multiple
-                && args.ItemContainer.IsSelected, false);
+                && args.ItemContainer.IsSelected, false, true);
         }
 
         #endregion
@@ -232,7 +232,7 @@ namespace Telegram.Views.Popups
         {
             if (e.AddedItems.Count > 0 && e.AddedItems[0] is Venue venue)
             {
-                CurrentLocation.UpdateState(false, true);
+                CurrentLocation.UpdateState(false, true, true);
                 Media = new InputMessageVenue(venue);
             }
         }

@@ -1050,7 +1050,7 @@ namespace Telegram.Controls.Cells
             _visual = visual;
         }
 
-        public void UpdateState(bool selected, bool animate)
+        public void UpdateState(bool selected, bool animate, bool multiple)
         {
             if (_selected == selected)
             {

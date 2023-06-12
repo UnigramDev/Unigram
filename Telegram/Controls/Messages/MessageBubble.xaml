@@ -174,7 +174,6 @@
                                 <controls:FormattedTextBlock x:Name="Message"
                                                              Foreground="{ThemeResource MessageForegroundBrush}"
                                                              AdjustLineEnding="True"
-                                                             AutoPlay="True"
                                                              Margin="10,0,10,6"
                                                              Grid.Column="1"
                                                              Grid.Row="2" />

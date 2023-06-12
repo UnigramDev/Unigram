@@ -185,7 +185,7 @@ namespace Telegram.Charts
 
                     var b = a + currentPercent * 360f;
 
-                    var builder = new CanvasPathBuilder(canvas);
+                    using var builder = new CanvasPathBuilder(canvas);
                     var center = new Vector2((float)rectF.X + (float)rectF.Width / 2, (float)rectF.Y + (float)rectF.Height / 2);
                     builder.BeginFigure(center);
                     builder.AddLine(

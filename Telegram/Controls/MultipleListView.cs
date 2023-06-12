@@ -13,18 +13,22 @@ namespace Telegram.Controls
     {
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new MultipleListViewItem();
+            return new MultipleListViewItem(this);
         }
     }
 
     public class MultipleListViewItem : TableListViewItem
     {
+        private readonly ListViewBase _owner;
         private readonly bool _multi;
+        private bool _enabled;
         private bool _selected;
 
-        public MultipleListViewItem(bool multi = true)
+        public MultipleListViewItem(ListViewBase owner, bool multi = true)
         {
+            _owner = owner;
             _multi = multi;
+            _enabled = owner.SelectionMode == ListViewSelectionMode.Multiple;
             DefaultStyleKey = typeof(MultipleListViewItem);
         }
 
@@ -32,7 +36,8 @@ namespace Telegram.Controls
 
         public void UpdateState(bool selected)
         {
-            if (_selected == selected)
+            var enabled = _owner.SelectionMode == ListViewSelectionMode.Multiple;
+            if (enabled == _enabled && _selected == selected)
             {
                 return;
             }
@@ -40,14 +45,15 @@ namespace Telegram.Controls
             if (ContentTemplateRoot is IMultipleElement test)
             {
                 _selected = selected;
-                test.UpdateState(selected, true);
+                _enabled = enabled;
+                test.UpdateState(selected, true, enabled);
             }
         }
     }
 
     public interface IMultipleElement
     {
-        void UpdateState(bool selected, bool animate);
+        void UpdateState(bool selected, bool animate, bool multiple);
     }
 
     public class MultipleVisualStateManager : VisualStateManager

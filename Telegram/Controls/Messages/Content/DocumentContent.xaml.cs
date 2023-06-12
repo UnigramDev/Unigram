@@ -7,10 +7,10 @@
 using System;
 using Telegram.Common;
 using Telegram.Converters;
-using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -79,8 +79,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else
             {
-                Texture.Background = null;
-                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                UpdateThumbnail(null);
             }
 
             UpdateManager.Subscribe(this, message, document.DocumentValue, ref _fileToken, UpdateFile);
@@ -176,23 +175,40 @@ namespace Telegram.Controls.Messages.Content
                 var width = (int)(thumbnail.Width * ratio);
                 var height = (int)(thumbnail.Height * ratio);
 
-                try
+                UpdateThumbnail(UriEx.ToBitmap(file.Local.Path, width, height));
+            }
+            else
+            {
+                UpdateThumbnail(null);
+
+                if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                 {
-                    Texture.Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
-                    Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
-                }
-                catch
-                {
-                    Texture.Background = null;
-                    Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
+                    message.ClientService.DownloadFile(file.Id, 1);
                 }
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                message.ClientService.DownloadFile(file.Id, 1);
+        }
 
+        private void UpdateThumbnail(BitmapImage imageSource)
+        {
+            if (Texture.Background is ImageBrush imageBrush && imageSource != null)
+            {
+                imageBrush.ImageSource = imageSource;
+            }
+            else if (imageSource != null)
+            {
+                Button.Background = new SolidColorBrush(Color.FromArgb(0x54, 0x00, 0x00, 0x00));
+                Texture.Background = new ImageBrush
+                {
+                    ImageSource = imageSource,
+                    Stretch = Stretch.UniformToFill,
+                    AlignmentX = AlignmentX.Center,
+                    AlignmentY = AlignmentY.Center
+                };
+            }
+            else
+            {
+                Button.Background = null;
                 Texture.Background = null;
-                Button.Style = BootStrapper.Current.Resources["InlineFileButtonStyle"] as Style;
             }
         }
 

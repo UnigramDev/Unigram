@@ -172,7 +172,7 @@ namespace Telegram.Controls
             var response = await clientService.SendAsync(new GetEmojiCategories(task));
             if (response is EmojiCategories categories)
             {
-                var foreground = BootStrapper.Current.Resources["TextControlButtonForeground"] as SolidColorBrush;
+                var foreground = SearchButton.Foreground as SolidColorBrush;
 
                 foreach (var item in categories.Categories)
                 {
@@ -200,26 +200,8 @@ namespace Telegram.Controls
                         Style = BootStrapper.Current.Resources["EmojiSearchButtonStyle"] as Style
                     };
 
-                    //button.Click += Reaction_Click;
                     button.Checked += Category_Checked;
-
                     Presenter.Children.Add(button);
-
-                    //if (offset < visible)
-                    //{
-                    //    var visual = ElementCompositionPreview.GetElementVisual(view);
-                    //    visual.CenterPoint = new Vector3(12, 12, 0);
-                    //    visual.Scale = Vector3.Zero;
-
-                    //    var scale = visual.Compositor.CreateVector3KeyFrameAnimation();
-                    //    scale.InsertKeyFrame(0, Vector3.Zero);
-                    //    scale.InsertKeyFrame(1, Vector3.One);
-                    //    scale.DelayTime = TimeSpan.FromMilliseconds(50 * (visible - Presenter.Children.Count));
-
-                    //    visual.StartAnimation("Scale", scale);
-                    //}
-
-                    //offset++;
                 }
             }
         }

@@ -42,7 +42,8 @@
                                 Margin="-24,0,-24,0"
                                 Grid.ColumnSpan="2" />
 
-                        <Grid CornerRadius="8,8,0,0">
+                        <Grid CornerRadius="8,8,0,0"
+                              Height="48">
                             <Border x:Name="CardBackground"
                                     Background="{ThemeResource SettingsItemBackground}"
                                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -53,6 +54,7 @@
                                                  ItemsSource="{x:Bind ViewModel.Items}"
                                                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                                                  DisplayMemberPath="Text"
+                                                 Height="40"
                                                  Grid.RowSpan="1" />
                         </Grid>
                     </Grid>
@@ -73,7 +75,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>

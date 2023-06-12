@@ -14,7 +14,7 @@ $path_manifest = "${path}\Package.appxmanifest"
 $config = $config.ToUpper()
 
 if ($config -eq "RELEASE") {
-    elseif ($mode -eq "SideloadOnly") {
+    if ($mode -eq "SideloadOnly") {
         $config = "DIRECT"
     }
 }
@@ -98,7 +98,7 @@ $publisherDisplayName = $h[$config].PublisherDisplayName
 $storeAssociation = $storeAssociation -replace "<Publisher>(.*?)</Publisher>", "<Publisher>$publisher</Publisher>"
 $storeAssociation = $storeAssociation -replace "<PublisherDisplayName>(.*?)</PublisherDisplayName>", "<PublisherDisplayName>$publisherDisplayName</PublisherDisplayName>"
 
-if(Compare-Object -ReferenceObject $(Get-Content "${path}\Package.StoreAssociation.xml") -DifferenceObject $storeAssociation) {
+if (Compare-Object -ReferenceObject $(Get-Content "${path}\Package.StoreAssociation.xml") -DifferenceObject $storeAssociation) {
     Set-Content -Path "${path}\Package.StoreAssociation.xml" -Value $storeAssociation
     Write-Output "Package.StoreAssociation.xml updated"
 }

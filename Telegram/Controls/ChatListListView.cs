@@ -150,7 +150,7 @@ namespace Telegram.Controls
             if (ContentTemplateRoot is IMultipleElement test)
             {
                 _selected = selected;
-                test.UpdateState(selected, true);
+                test.UpdateState(selected, true, _list.SelectionMode == ListViewSelectionMode.Multiple);
             }
         }
 

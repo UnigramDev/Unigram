@@ -203,6 +203,10 @@
     <Compile Include="Common\ListViewExtensions.cs" />
     <Compile Include="Common\SystemTray.cs" />
     <Compile Include="Controls\AnimatedImage.cs" />
+    <Compile Include="Controls\BadgeControl.cs" />
+    <Compile Include="Controls\Chats\ChatHistoryArrows.xaml.cs">
+      <DependentUpon>ChatHistoryArrows.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Chats\ChatHistoryView.cs" />
     <Compile Include="Controls\Chats\ChatHistoryViewItem.cs" />
     <Compile Include="Controls\ClrGrid.cs" />
@@ -1778,6 +1782,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Chats\ChatHistoryArrows.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Chats\ChatSearchBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2758,6 +2766,7 @@
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.pri" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\avfilter-7.dll" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

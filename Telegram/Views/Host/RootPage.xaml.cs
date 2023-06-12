@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls;
@@ -727,13 +728,36 @@ namespace Telegram.Views.Host
             view.TryResizeView(ApplicationView.PreferredLaunchViewSize);
         }
 
-        private void Theme_Click(object sender, RoutedEventArgs e)
+        private Task Test()
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            void handler(object sender, object e)
+            {
+                Windows.UI.Xaml.Media.CompositionTarget.Rendered -= handler;
+                tsc.SetResult(true);
+            }
+
+            Windows.UI.Xaml.Media.CompositionTarget.Rendered += handler;
+            return tsc.Task;
+        }
+
+        private async void Theme_Click(object sender, RoutedEventArgs e)
         {
             var animate = true;
             if (animate)
             {
+                Theme.Visibility = Visibility.Collapsed;
+
+                if (false)
+                {
+                    await Test();
+                }
+
                 var bitmap = ScreenshotManager.Capture();
                 Transition.Background = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, RelativeTransform = new ScaleTransform { ScaleY = -1, CenterY = 0.5 } };
+                
+                Theme.Visibility = Visibility.Visible;
+                Theme.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
 
                 var actualWidth = (float)ActualWidth;
                 var actualHeight = (float)ActualHeight;
@@ -765,6 +789,7 @@ namespace Telegram.Views.Host
                 {
                     visual.Clip = null;
                     Transition.Background = null;
+                    Theme.Foreground = new SolidColorBrush(ActualTheme == ElementTheme.Dark ? Windows.UI.Colors.White : Windows.UI.Colors.Black);
                 };
 
                 CompositionEasingFunction ease;

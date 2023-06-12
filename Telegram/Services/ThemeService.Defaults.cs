@@ -148,7 +148,7 @@ namespace Telegram.Services
                     { "MessageHeaderForegroundIncoming", Color.FromArgb(0xFF, 0x16, 0x8d, 0xcd) },
                     { "MessageHeaderBorderIncoming", Color.FromArgb(0xFF, 0x53, 0x8E, 0xBD) },
                     { "MessageBackgroundOutgoing", Color.FromArgb(0xFF, 0xDE, 0xF1, 0xFD) },
-                    { "MessageSubtleForegroundOutgoing", ColorEx.FromHex(0xFF86A8C2) },
+                    { "MessageElevationOutgoing", Color.FromArgb(0x1A, 0x0D, 0x5A, 0x91) },
                     { "MessageSubtleForegroundOutgoing", Color.FromArgb(0xFF, 0x86, 0xA8, 0xC2) },
                     { "MessageSubtleLabelOutgoing", Color.FromArgb(0xFF, 0x91, 0xAF, 0xC8) },
                     { "MessageSubtleGlyphOutgoing", Color.FromArgb(0xFF, 0x86, 0xCA, 0xFF) },

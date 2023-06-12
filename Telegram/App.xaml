@@ -225,6 +225,17 @@
                         Value="CharacterEllipsis" />
             </Style>
 
+            <Style x:Key="ReplyBodyRichTextBlockStyle"
+                   TargetType="RichTextBlock"
+                   BasedOn="{StaticResource CaptionRichTextBlockStyle}">
+                <Setter Property="TextWrapping"
+                        Value="NoWrap" />
+                <Setter Property="MaxLines"
+                        Value="1" />
+                <Setter Property="TextTrimming"
+                        Value="CharacterEllipsis" />
+            </Style>
+
             <Style x:Key="DisabledBodyTextBlockStyle"
                    TargetType="TextBlock"
                    BasedOn="{StaticResource BodyTextBlockStyle}">
@@ -257,6 +268,13 @@
             <Style x:Key="InfoBodyTextBlockStyle"
                    TargetType="TextBlock"
                    BasedOn="{StaticResource BodyTextBlockStyle}">
+                <Setter Property="Foreground"
+                        Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+            </Style>
+
+            <Style x:Key="InfoBodyRichTextBlockStyle"
+                   TargetType="RichTextBlock"
+                   BasedOn="{StaticResource BodyRichTextBlockStyle}">
                 <Setter Property="Foreground"
                         Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
             </Style>

@@ -371,7 +371,9 @@ namespace Telegram.ViewModels
             }
         }
 
-        protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
+        private static bool _shown;
+
+        protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             //BeginOnUIThread(() => Calls.OnNavigatedToAsync(parameter, mode, state));
             //BeginOnUIThread(() => Settings.OnNavigatedToAsync(parameter, mode, state));
@@ -401,7 +403,18 @@ namespace Telegram.ViewModels
                 Task.Run(() => _cloudUpdateService.UpdateAsync(false));
             }
 
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            if (ApiInfo.IsPackagedRelease && WatchDog.HasCrashedInLastSession && !_shown)
+            {
+                _shown = true;
+
+                var confirm = await ShowPopupAsync("It seems that the app terminated unexpectedly. Do you want to report this problem?", "Something went wrong", "OK", "Cancel");
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    MessageHelper.NavigateToUsername(ClientService, NavigationService, "unigraminsiders", null, null);
+                }
+            }
+
+            //return base.OnNavigatedToAsync(parameter, mode, state);
         }
 
         public override void Subscribe()

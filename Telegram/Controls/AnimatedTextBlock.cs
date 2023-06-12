@@ -3,7 +3,6 @@ using System.Numerics;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls
@@ -298,9 +297,9 @@ namespace Telegram.Controls
                 }
 
                 // This is NOT optimal, but this control triggers a small amount of measures.
-                var rect = block.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
+                //var rect = block.ContentEnd.GetCharacterRect(LogicalDirection.Forward);
                 height = block.DesiredSize.Height;
-                return rect.Right;
+                return block.DesiredSize.Width; //rect.Right;
             }
 
             _prefixRight = Width(PrefixPart, out double height1);

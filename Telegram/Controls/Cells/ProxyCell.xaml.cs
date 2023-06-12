@@ -11,11 +11,16 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class ProxyCell : UserControl
+    public sealed partial class ProxyCell : Grid, IMultipleElement
     {
         public ProxyCell()
         {
             InitializeComponent();
+        }
+
+        public string DisplayName
+        {
+            set => DisplayNameLabel.Text = value;
         }
 
         public ConnectionStatus Status
@@ -66,9 +71,15 @@ namespace Telegram.Controls.Cells
 
         private void UpdateTextAndState(string text, string state)
         {
-            VisualStateManager.GoToState(this, state, false);
+            VisualStateManager.GoToState(LayoutRoot, state, false);
+            StatusLabel.Text = text;
+        }
 
-            Label.Text = text;
+        public void UpdateState(bool selected, bool animate, bool multiple)
+        {
+            Test.CornerRadius = new CornerRadius(multiple ? 4 : 12);
+            Test.Visibility = multiple || selected ? Visibility.Visible : Visibility.Collapsed;
+            Test.IsChecked = selected;
         }
     }
 }

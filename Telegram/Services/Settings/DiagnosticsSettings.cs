@@ -14,6 +14,20 @@ namespace Telegram.Services.Settings
         {
         }
 
+        private bool? _disableRendering;
+        public bool DisableRendering
+        {
+            get => _disableRendering ??= GetValueOrDefault("DisableRendering", false);
+            set => AddOrUpdateValue(ref _disableRendering, "DisableRendering", value);
+        }
+
+        private bool? _disableClipping;
+        public bool DisableClipping
+        {
+            get => _disableClipping ??= GetValueOrDefault("DisableClipping", true);
+            set => AddOrUpdateValue(ref _disableClipping, "DisableClipping", value);
+        }
+
         private bool? _legacyScrollBars;
         public bool LegacyScrollBars
         {

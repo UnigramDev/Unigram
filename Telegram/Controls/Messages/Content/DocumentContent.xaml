@@ -29,7 +29,7 @@
                             <Border x:Name="Texture"
                                     CornerRadius="24" />
                             <controls:FileButton x:Name="Button"
-                                                 Style="{StaticResource InlineFileButtonStyle}" />
+                                                 Style="{StaticResource ImmersiveFileButtonStyle}" />
                         </Grid>
                         <StackPanel Margin="8,0,0,2"
                                     VerticalAlignment="Center"

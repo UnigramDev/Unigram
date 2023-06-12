@@ -146,7 +146,6 @@ namespace Telegram.Controls
 
             Logger.Debug();
             InvalidateMeasure();
-            InvalidateArrange();
 
             await this.UpdateLayoutAsync();
 

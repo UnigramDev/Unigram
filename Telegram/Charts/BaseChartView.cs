@@ -162,7 +162,6 @@ namespace Telegram.Charts
         readonly Paint whiteLinePaint = new Paint();
 
         Rect pickerRect = new Rect();
-        readonly CanvasPathBuilder pathTmp;
 
         Animator maxValueAnimator;
 
@@ -1073,14 +1072,14 @@ namespace Telegram.Charts
                 pickerDelegate.middlePickerArea = new Rect(pickerRect.X, pickerRect.Y, pickerRect.Width, pickerRect.Height);
 
 
-                canvas.FillGeometry(RoundedRect(pathTmp, canvas, (float)pickerRect.Left,
+                canvas.FillGeometry(RoundedRect(canvas, (float)pickerRect.Left,
                         (float)pickerRect.Top - 1,
                         (float)pickerRect.Left + 12,
                         (float)pickerRect.Bottom + 1, 6, 6,
                         true, false, false, true), pickerSelectorPaint.Color);
 
 
-                canvas.FillGeometry(RoundedRect(pathTmp, canvas, (float)pickerRect.Right - 12,
+                canvas.FillGeometry(RoundedRect(canvas, (float)pickerRect.Right - 12,
                         (float)pickerRect.Top - 1, (float)pickerRect.Right,
                         (float)pickerRect.Bottom + 1, 6, 6,
                         false, true, true, false), pickerSelectorPaint.Color);
@@ -2098,13 +2097,12 @@ namespace Telegram.Charts
         }
 
         public static CanvasGeometry RoundedRect(
-                CanvasPathBuilder path,
                 ICanvasResourceCreator creator,
                 float left, float top, float right, float bottom, float rx, float ry,
                 bool tl, bool tr, bool br, bool bl
         )
         {
-            path = new CanvasPathBuilder(creator);
+            using var path = new CanvasPathBuilder(creator);
             if (rx < 0)
             {
                 rx = 0;

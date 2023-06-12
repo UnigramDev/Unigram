@@ -51,6 +51,10 @@ namespace Telegram.Views.Settings
             flyout.CreateFlyoutItem(ViewModel.Edit, proxy, Strings.Edit, Icons.Edit);
             flyout.CreateFlyoutItem(ViewModel.Remove, proxy, Strings.Delete, Icons.Delete, dangerous: true);
 
+            flyout.CreateFlyoutSeparator();
+
+            flyout.CreateFlyoutItem(ViewModel.Select, proxy, Strings.Select, Icons.CheckmarkCircle);
+
             args.ShowAt(flyout, element);
         }
 
@@ -62,7 +66,7 @@ namespace Telegram.Views.Settings
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TableListViewItem();
+                args.ItemContainer = new MultipleListViewItem(sender, false);
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Proxy_ContextRequested;

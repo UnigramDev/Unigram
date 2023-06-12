@@ -34,7 +34,7 @@ namespace Telegram.Controls
     {
         private MasterDetailPanel AdaptivePanel;
         private Frame DetailFrame;
-        private ContentControl MasterPresenter;
+        private Grid DetailHeaderPresenter2;
         private Grid DetailPresenter;
         private BreadcrumbBar DetailHeaderPresenter;
         private Border DetailHeaderBackground;
@@ -284,7 +284,7 @@ namespace Telegram.Controls
         {
             VisualStateManager.GoToState(this, "ResetState", false);
 
-            MasterPresenter = GetTemplateChild("MasterFrame") as ContentControl;
+            DetailHeaderPresenter2 = GetTemplateChild(nameof(DetailHeaderPresenter2)) as Grid;
             DetailPresenter = GetTemplateChild(nameof(DetailPresenter)) as Grid;
             DetailHeaderPresenter = GetTemplateChild(nameof(DetailHeaderPresenter)) as BreadcrumbBar;
             DetailHeaderBackground = GetTemplateChild(nameof(DetailHeaderBackground)) as Border;
@@ -308,6 +308,9 @@ namespace Telegram.Controls
 
             var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
             detailVisual.Clip = Window.Current.Compositor.CreateInsetClip();
+
+            var detailVisual2 = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter2);
+            detailVisual2.Clip = Window.Current.Compositor.CreateInsetClip();
 
             var visual1 = ElementCompositionPreview.GetElementVisual(DetailHeaderBackground);
             var visual2 = ElementCompositionPreview.GetElementVisual(DetailHeaderPresenter);
@@ -570,13 +573,19 @@ namespace Telegram.Controls
             if (_isMinimal != IsMinimal)
             {
                 _isMinimal = IsMinimal;
-
                 VisualStateManager.GoToState(this, IsMinimal ? "Minimal" : "Expanded", false);
+            }
+
+            if (_prevState != CurrentState)
+            {
+                _prevState = CurrentState;
                 ViewStateChanged?.Invoke(this, EventArgs.Empty);
             }
 
             UpdateMasterVisibility();
         }
+
+        private MasterDetailState _prevState;
 
         private bool _isMinimal = false;
         private bool IsMinimal =>

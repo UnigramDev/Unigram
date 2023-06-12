@@ -106,8 +106,8 @@ namespace Telegram.Controls
 
         private static void OnConstraintChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // TODO: removed as an experiment
-            //((ImageView)d).InvalidateMeasure();
+            Logger.Debug();
+            ((ImageView)d).InvalidateMeasure();
         }
 
         #endregion
@@ -380,7 +380,6 @@ namespace Telegram.Controls
 
         private void UpdateSource(object target, File file)
         {
-            UpdateManager.Unsubscribe(this);
             Source = GetSource(_clientService, _file, _width, _height, false);
         }
 

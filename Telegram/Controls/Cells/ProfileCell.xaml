@@ -19,6 +19,15 @@
         <ColumnDefinition />
         <ColumnDefinition Width="Auto" />
     </Grid.ColumnDefinitions>
+    <Rectangle x:Name="SelectionOutline"
+               Visibility="Collapsed"
+               Width="36"
+               Height="36"
+               Margin="0,0,8,0"
+               Grid.RowSpan="2"
+               StrokeThickness="2"
+               Stroke="{ThemeResource SystemControlBackgroundAccentBrush}" />
+
     <controls:ProfilePicture x:Name="Photo"
                              IsEnabled="False"
                              Width="36"

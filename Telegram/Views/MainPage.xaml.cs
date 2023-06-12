@@ -2146,7 +2146,7 @@ namespace Telegram.Views
 
         private void Proxy_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsProxiesPage));
+            MasterDetail.NavigationService.Navigate(typeof(SettingsProxyPage));
         }
 
         private void ChatsNearby_Click(object sender, RoutedEventArgs e)

@@ -240,13 +240,13 @@
             </Grid>
         </Button>
 
-        <Border x:Name="Transition" />
+        <Border x:Name="Transition"
+                ActualThemeChanged="Theme_ActualThemeChanged" />
 
         <controls:AnimatedIconToggleButton x:Name="Theme"
                                            Click="Theme_Click"
                                            CheckedGlyph="&#xE9EE;"
                                            Glyph="&#xE9EA;"
-                                           ActualThemeChanged="Theme_ActualThemeChanged"
                                            Visibility="Collapsed"
                                            VerticalAlignment="Top"
                                            HorizontalAlignment="Left"

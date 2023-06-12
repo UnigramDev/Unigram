@@ -308,6 +308,11 @@ namespace Telegram.Common
             count = 0;
             text = text.Trim();
 
+            if (text.Contains(" "))
+            {
+                return false;
+            }
+
             var result = false;
 
             foreach (var last in EnumerateByComposedCharacterSequence(text))

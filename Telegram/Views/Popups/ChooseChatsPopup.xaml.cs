@@ -541,7 +541,7 @@ namespace Telegram.Views.Popups
             var folder = args.Item as FolderFlag;
             var content = args.ItemContainer.ContentTemplateRoot as ChatShareCell;
 
-            content.UpdateState(args.ItemContainer.IsSelected, false);
+            content.UpdateState(args.ItemContainer.IsSelected, false, true);
             content.UpdateChatFolder(folder);
         }
 
@@ -555,7 +555,7 @@ namespace Telegram.Views.Popups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new MultipleListViewItem(false);
+                args.ItemContainer = new MultipleListViewItem(sender, false);
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
             }
@@ -587,7 +587,7 @@ namespace Telegram.Views.Popups
             }
             else if (args.ItemContainer.ContentTemplateRoot is ChatShareCell content)
             {
-                content.UpdateState(args.ItemContainer.IsSelected, false);
+                content.UpdateState(args.ItemContainer.IsSelected, false, true);
                 content.UpdateChat(ViewModel.ClientService, args, OnContainerContentChanging);
             }
         }

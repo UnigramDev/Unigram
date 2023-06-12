@@ -200,11 +200,46 @@ namespace Telegram.ViewModels.Settings
 
         public MvxObservableCollection<ConnectionViewModel> Items { get; private set; }
 
+        public MvxObservableCollection<ConnectionViewModel> SelectedItems { get; private set; } = new();
+
+        private ConnectionViewModel _previousItem;
         private ConnectionViewModel _selectedItem;
         public ConnectionViewModel SelectedItem
         {
             get => _selectedItem;
-            set => Set(ref _selectedItem, value);
+            set
+            {
+                Set(ref _selectedItem, value);
+
+                if (value != null)
+                {
+                    _previousItem = value;
+                }
+            }
+        }
+
+        private ListViewSelectionMode _selectionMode = ListViewSelectionMode.Single;
+        public ListViewSelectionMode SelectionMode
+        {
+            get => _selectionMode;
+            set => Set(ref _selectionMode, value);
+        }
+
+        public void Select(ConnectionViewModel item)
+        {
+            SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+            SelectionMode = ListViewSelectionMode.Multiple;
+            SelectedItems.Add(item);
+            SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
+        }
+
+        private void SelectedItems_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (SelectedItems.Count == 0)
+            {
+                SelectionMode = ListViewSelectionMode.Single;
+                SelectedItem = _previousItem;
+            }
         }
 
         public async void Add()

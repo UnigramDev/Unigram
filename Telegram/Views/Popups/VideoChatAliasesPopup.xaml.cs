@@ -81,7 +81,7 @@ namespace Telegram.Views.Popups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new MultipleListViewItem(false);
+                args.ItemContainer = new MultipleListViewItem(sender, false);
                 args.ItemContainer.Style = ScrollingHost.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = ScrollingHost.ItemTemplate;
             }
@@ -97,7 +97,7 @@ namespace Telegram.Views.Popups
             }
             else if (args.ItemContainer.ContentTemplateRoot is ChatShareCell content)
             {
-                content.UpdateState(args.ItemContainer.IsSelected, false);
+                content.UpdateState(args.ItemContainer.IsSelected, false, true);
                 content.UpdateMessageSender(_clientService, args, OnContainerContentChanging);
             }
         }

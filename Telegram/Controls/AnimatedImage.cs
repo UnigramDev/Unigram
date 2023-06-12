@@ -409,7 +409,7 @@ namespace Telegram.Controls
         {
             //Logger.Debug();
             Canvas = GetTemplateChild(nameof(Canvas)) as ImageBrush;
-            //Canvas.Stretch = Stretch;
+            Canvas.Stretch = Stretch;
 
             _templateApplied = true;
             _rasterizationScale = XamlRoot.RasterizationScale;
@@ -588,13 +588,13 @@ namespace Telegram.Controls
                     {
                         if (_ticking)
                         {
-                            Logger.Debug("Task exists, and timer is attached");
+                            //Logger.Debug("Task exists, and timer is attached");
                             _disposing = true;
                             _ticking = false;
                         }
                         else
                         {
-                            Logger.Debug("Task exists, and timer is not attached");
+                            //Logger.Debug("Task exists, and timer is not attached");
                             Dispose();
                         }
                     }
@@ -718,13 +718,13 @@ namespace Telegram.Controls
                 {
                     if (_ticking)
                     {
-                        Logger.Debug("Task exists, and timer is attached");
+                        //Logger.Debug("Task exists, and timer is attached");
                         _disposing = true;
                         _ticking = false;
                     }
                     else
                     {
-                        Logger.Debug("Task exists, and timer is not attached");
+                        //Logger.Debug("Task exists, and timer is not attached");
                         Dispose();
                     }
                 }
@@ -852,7 +852,7 @@ namespace Telegram.Controls
 
             if (!_ticking)
             {
-                Logger.Debug("-=");
+                //Logger.Debug("-=");
 
                 _rendering = false;
                 _timerSubscribed = false;
@@ -931,7 +931,7 @@ namespace Telegram.Controls
 
         private void Dispose()
         {
-            Logger.Debug();
+            //Logger.Debug();
             //Debug.Assert(_images.Count == 0);
 
             _dispatcherQueue.TryEnqueue(UnregisterEvents);
@@ -959,7 +959,7 @@ namespace Telegram.Controls
 
             if (!_rendering && _renderingSubscribed)
             {
-                Logger.Debug("-=");
+                //Logger.Debug("-=");
                 _renderingSubscribed = false;
                 AnimatedImageLoader.Current.Rendering -= OnRendering;
             }

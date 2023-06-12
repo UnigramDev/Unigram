@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
@@ -526,7 +525,6 @@ namespace Telegram.Controls.Cells
             }
 
             var muted = _clientService.Notifications.GetMutedFor(chat) > 0;
-            VisualStateManager.GoToState(this, muted ? "Muted" : "Unmuted", false);
             MutedIcon.Visibility = muted ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.IsUnmuted = !muted;
 
@@ -820,8 +818,6 @@ namespace Telegram.Controls.Cells
             _chat = chat;
             _chatList = chatList;
 
-            Tag = chat;
-
             if (!_templateApplied)
             {
                 return;
@@ -975,6 +971,7 @@ namespace Telegram.Controls.Cells
             {
                 var clean = message.ReplaceSpoilers();
                 var previous = 0;
+                var hasCustomEmoji = false;
 
                 if (message.Entities != null)
                 {
@@ -1001,12 +998,18 @@ namespace Telegram.Controls.Cells
                         BriefLabel.Inlines.Add(inline);
 
                         previous = entity.Offset + entity.Length;
+                        hasCustomEmoji = true;
                     }
                 }
 
                 if (clean.Length > previous)
                 {
                     BriefLabel.Inlines.Add(new Run { Text = clean.Substring(previous) });
+                }
+
+                if (hasCustomEmoji)
+                {
+
                 }
             }
         }
@@ -1786,7 +1789,7 @@ namespace Telegram.Controls.Cells
             _visual = visual;
         }
 
-        public void UpdateState(bool selected, bool animate)
+        public void UpdateState(bool selected, bool animate, bool multiple)
         {
             if (_selected == selected)
             {

@@ -185,6 +185,10 @@ namespace Telegram
 
         public override async void OnStart(StartKind startKind, IActivatedEventArgs args)
         {
+#if DEBUG
+            DebugSettings.EnableFrameRateCounter = true;
+#endif
+
             if (startKind == StartKind.Activate)
             {
                 var lifetime = TLContainer.Current.Lifetime;
@@ -342,6 +346,11 @@ namespace Telegram
                 network.Reconnect();
             }
 
+            //foreach (var client in TLContainer.Current.ResolveAll<IClientService>())
+            //{
+            //    client.TryInitialize();
+            //}
+
             // #2034: Will this work? No one knows.
             SettingsService.Current.Appearance.UpdateNightMode(null);
 
@@ -355,6 +364,7 @@ namespace Telegram
             TLContainer.Current.Passcode.CloseTime = DateTime.UtcNow;
 
             return Task.WhenAll(TLContainer.Current.ResolveAll<IVoipService>().Select(x => x.DiscardAsync()));
+            //await Task.WhenAll(TLContainer.Current.ResolveAll<IClientService>().Select(x => x.CloseAsync()));
         }
 
         public override INavigable ViewModelForPage(UIElement page, int sessionId)

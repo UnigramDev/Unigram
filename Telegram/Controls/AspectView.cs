@@ -30,8 +30,8 @@ namespace Telegram.Controls
 
         private static void OnConstraintChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // TODO: removed as an experiment
-            //((AspectView)d).InvalidateMeasure();
+            Logger.Debug();
+            ((AspectView)d).InvalidateMeasure();
         }
 
         #endregion
@@ -49,8 +49,8 @@ namespace Telegram.Controls
 
         private static void OnStretchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // TODO: removed as an experiment
-            //((AspectView)d).InvalidateMeasure();
+            Logger.Debug();
+            ((AspectView)d).InvalidateMeasure();
         }
 
         #endregion
