@@ -67,11 +67,18 @@ namespace Telegram.Views.Settings.Popups
         {
             IsPrimaryButtonEnabled = false;
 
-            var deferral = args.GetDeferral();
-            var confirm = await ViewModel.SendAsync();
+            try
+            {
+                var deferral = args.GetDeferral();
+                var confirm = await ViewModel.SendAsync();
 
-            args.Cancel = !confirm;
-            deferral.Complete();
+                args.Cancel = !confirm;
+                deferral.Complete();
+            }
+            catch
+            {
+                // Deferral already completed.
+            }
 
             IsPrimaryButtonEnabled = true;
         }
