@@ -298,19 +298,22 @@ namespace Telegram.Controls.Messages.Content
                 {
                     source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, isSecret ? 15 : 3);
                 }
-                else if (download)
+                else
                 {
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    if (download)
                     {
-                        if (minithumbnail != null)
+                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                         {
-                            source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, isSecret ? 15 : 3);
+                            message.ClientService.DownloadFile(file.Id, 1);
                         }
 
-                        message.ClientService.DownloadFile(file.Id, 1);
+                        UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
                     }
 
-                    UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
+                    if (minithumbnail != null)
+                    {
+                        source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, isSecret ? 15 : 3);
+                    }
                 }
             }
             else if (minithumbnail != null)

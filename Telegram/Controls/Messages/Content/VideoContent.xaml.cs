@@ -264,19 +264,22 @@ namespace Telegram.Controls.Messages.Content
                         source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
                     }
                 }
-                else if (download)
+                else
                 {
-                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    if (download)
                     {
-                        if (video.Minithumbnail != null)
+                        if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
                         {
-                            source = await PlaceholderHelper.GetBlurredAsync(video.Minithumbnail.Data, isSecret ? 15 : 3);
+                            message.ClientService.DownloadFile(file.Id, 1);
                         }
 
-                        message.ClientService.DownloadFile(file.Id, 1);
+                        UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
                     }
 
-                    UpdateManager.Subscribe(this, message, file, ref _thumbnailToken, UpdateThumbnail, true);
+                    if (video.Minithumbnail != null)
+                    {
+                        source = await PlaceholderHelper.GetBlurredAsync(video.Minithumbnail.Data, isSecret ? 15 : 3);
+                    }
                 }
             }
             else if (video.Minithumbnail != null)
