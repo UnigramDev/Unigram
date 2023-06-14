@@ -194,7 +194,7 @@ namespace Telegram.Services.ViewService
                     refCountCopy = ++refCount;
                 }
             }
-            Logger.Info("Start:" + refCountCopy);
+
             if (releasedCopy)
             {
                 return -1;
@@ -233,7 +233,7 @@ namespace Telegram.Services.ViewService
                     }
                 }
             }
-            Logger.Info("Stop:" + refCountCopy);
+
             if (releasedCopy)
             {
                 return -1;

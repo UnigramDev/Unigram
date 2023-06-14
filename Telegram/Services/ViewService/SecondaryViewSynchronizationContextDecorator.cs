@@ -27,7 +27,6 @@ namespace Telegram.Services.ViewService
             if (count != -1)
             {
                 _context.OperationStarted();
-                Logger.Info("Count: " + count);
             }
         }
 
@@ -48,7 +47,7 @@ namespace Telegram.Services.ViewService
             var count = _control.StopViewInUse();
             if (count != -1)
             {
-                Logger.Info("Count: " + count);
+
             }
         }
 
