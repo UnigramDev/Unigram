@@ -584,6 +584,13 @@
                                 SelectionMode="None"
                                 Margin="-24,0,-24,0"
                                 Padding="0,16,0,24">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem"
+                       BasedOn="{StaticResource DefaultListViewItemStyle}">
+                    <Setter Property="IsTabStop"
+                            Value="False" />
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.Header>
                 <Grid Margin="0,0,0,24">
                     <controls:StorageChart x:Name="Chart"
