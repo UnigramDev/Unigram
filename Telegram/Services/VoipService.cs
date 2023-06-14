@@ -155,7 +155,7 @@ namespace Telegram.Services
                 if (_capturer != null)
                 {
                     _capturer.SetOutput(null);
-                    _manager.SetVideoCapture(null);
+                    _manager?.SetVideoCapture(null);
 
                     _capturer.Dispose();
                     _capturer = null;
