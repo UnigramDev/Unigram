@@ -184,22 +184,30 @@ namespace Telegram.Common
 
         public static async Task<bool> CheckAccessAsync(bool video, bool required = true, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            var audioPermission = await CheckDeviceAccessAsync(true, video, required, requestedTheme);
-            if (audioPermission == false)
+            try
             {
-                return false;
-            }
-
-            if (video)
-            {
-                var videoPermission = await CheckDeviceAccessAsync(false, true, required, requestedTheme);
-                if (videoPermission == false)
+                var audioPermission = await CheckDeviceAccessAsync(true, video, required, requestedTheme);
+                if (audioPermission == false)
                 {
                     return false;
                 }
-            }
 
-            return true;
+                if (video)
+                {
+                    var videoPermission = await CheckDeviceAccessAsync(false, true, required, requestedTheme);
+                    if (videoPermission == false)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            catch
+            {
+                // TODO: notify user
+                return false;
+            }
         }
 
         private static async Task<bool> CheckDeviceAccessAsync(bool audio, bool video, bool required, ElementTheme requestedTheme = ElementTheme.Default)

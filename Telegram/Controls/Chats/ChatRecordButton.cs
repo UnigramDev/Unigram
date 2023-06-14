@@ -439,22 +439,30 @@ namespace Telegram.Controls.Chats
 
         private async Task<bool> CheckAccessAsync(ChatRecordMode mode)
         {
-            var audioPermission = await CheckDeviceAccessAsync(true, mode);
-            if (audioPermission == false)
+            try
             {
-                return false;
-            }
-
-            if (mode == ChatRecordMode.Video)
-            {
-                var videoPermission = await CheckDeviceAccessAsync(false, ChatRecordMode.Video);
-                if (videoPermission == false)
+                var audioPermission = await CheckDeviceAccessAsync(true, mode);
+                if (audioPermission == false)
                 {
                     return false;
                 }
-            }
 
-            return true;
+                if (mode == ChatRecordMode.Video)
+                {
+                    var videoPermission = await CheckDeviceAccessAsync(false, ChatRecordMode.Video);
+                    if (videoPermission == false)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            catch
+            {
+                // TODO: notify user
+                return false;
+            }
         }
 
         private async Task<bool> CheckDeviceAccessAsync(bool audio, ChatRecordMode mode)
