@@ -4,17 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using System;
 using System.Runtime.CompilerServices;
-using System.Text;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
@@ -33,11 +30,6 @@ namespace Telegram.Controls.Messages
 
         public MessageReferenceBase()
         {
-        }
-
-        protected override AutomationPeer OnCreateAutomationPeer()
-        {
-            return new MessageReferenceAutomationPeer(this);
         }
 
         public long MessageId { get; private set; }
@@ -719,35 +711,6 @@ namespace Telegram.Controls.Messages
             }
 
             return title ?? string.Empty;
-        }
-    }
-
-    public class MessageReferenceAutomationPeer : FrameworkElementAutomationPeer
-    {
-        private readonly MessageReferenceBase _owner;
-
-        public MessageReferenceAutomationPeer(MessageReferenceBase owner)
-            : base(owner)
-        {
-            _owner = owner;
-        }
-
-        protected override string GetNameCore()
-        {
-            var builder = new StringBuilder();
-            var descendants = _owner.DescendantsAndSelf<TextBlock>();
-
-            foreach (TextBlock child in descendants)
-            {
-                if (builder.Length > 0)
-                {
-                    builder.Append(", ");
-                }
-
-                builder.Append(child.Text);
-            }
-
-            return builder.Replace(Environment.NewLine, ": ").ToString();
         }
     }
 }
