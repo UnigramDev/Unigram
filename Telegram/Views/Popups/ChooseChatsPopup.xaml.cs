@@ -670,7 +670,7 @@ namespace Telegram.Views.Popups
         {
             if (args.FocusState == FocusState.Programmatic)
             {
-                args.Cancel = true;
+                args.TryCancel();
             }
         }
 
