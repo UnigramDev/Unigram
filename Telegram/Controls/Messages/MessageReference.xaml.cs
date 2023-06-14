@@ -5,11 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Text;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
@@ -23,10 +25,43 @@ namespace Telegram.Controls.Messages
             DefaultStyleKey = typeof(MessageReference);
         }
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new MessageReferenceAutomationPeer(this);
+        }
+
+        public string GetNameCore()
+        {
+            var builder = new StringBuilder();
+
+            if (TitleLabel != null)
+            {
+                builder.Append(TitleLabel.Text);
+                builder.Append(": ");
+            }
+
+            if (ServiceLabel != null)
+            {
+                builder.Append(ServiceLabel.Text);
+            }
+
+            if (MessageLabel != null)
+            {
+                foreach (var entity in MessageLabel.Inlines)
+                {
+                    if (entity is Run run)
+                    {
+                        builder.Append(run.Text);
+                    }
+                }
+            }
+
+            return builder.ToString();
+        }
+
         #region InitializeComponent
 
         private Grid LayoutRoot;
-        private TextBlock Label;
         private Run TitleLabel;
         private Run ServiceLabel;
         private Span MessageLabel;
@@ -39,7 +74,6 @@ namespace Telegram.Controls.Messages
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
-            Label = GetTemplateChild(nameof(Label)) as TextBlock;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as Run;
             ServiceLabel = GetTemplateChild(nameof(ServiceLabel)) as Run;
             MessageLabel = GetTemplateChild(nameof(MessageLabel)) as Span;
@@ -208,144 +242,6 @@ namespace Telegram.Controls.Messages
 
         #endregion
 
-        public static string GetServicePart(Message message)
-        {
-            if (message.Content is MessageGame gameMedia)
-            {
-                return "\uD83C\uDFAE " + gameMedia.Game.Title;
-            }
-            if (message.Content is MessageExpiredVideo)
-            {
-                return Strings.AttachVideoExpired;
-            }
-            else if (message.Content is MessageExpiredPhoto)
-            {
-                return Strings.AttachPhotoExpired;
-            }
-            else if (message.Content is MessageVideoNote)
-            {
-                return Strings.AttachRound;
-            }
-            else if (message.Content is MessageSticker sticker)
-            {
-                if (string.IsNullOrEmpty(sticker.Sticker.Emoji))
-                {
-                    return Strings.AttachSticker;
-                }
-
-                return $"{sticker.Sticker.Emoji} {Strings.AttachSticker}";
-            }
-
-            static string GetCaption(string caption)
-            {
-                return string.IsNullOrEmpty(caption) ? string.Empty : ", ";
-            }
-
-            if (message.Content is MessageVoiceNote voiceNote)
-            {
-                return Strings.AttachAudio + GetCaption(voiceNote.Caption.Text);
-            }
-            else if (message.Content is MessageVideo video)
-            {
-                return (video.IsSecret ? Strings.AttachDestructingVideo : Strings.AttachVideo) + GetCaption(video.Caption.Text);
-            }
-            else if (message.Content is MessageAnimatedEmoji animatedEmoji)
-            {
-                return animatedEmoji.Emoji;
-            }
-            else if (message.Content is MessageAnimation animation)
-            {
-                return Strings.AttachGif + GetCaption(animation.Caption.Text);
-            }
-            else if (message.Content is MessageAudio audio)
-            {
-                var performer = string.IsNullOrEmpty(audio.Audio.Performer) ? null : audio.Audio.Performer;
-                var title = string.IsNullOrEmpty(audio.Audio.Title) ? null : audio.Audio.Title;
-
-                if (performer == null || title == null)
-                {
-                    return Strings.AttachMusic + GetCaption(audio.Caption.Text);
-                }
-                else
-                {
-                    return $"\uD83C\uDFB5 {performer} - {title}" + GetCaption(audio.Caption.Text);
-                }
-            }
-            else if (message.Content is MessageDocument document)
-            {
-                if (string.IsNullOrEmpty(document.Document.FileName))
-                {
-                    return Strings.AttachDocument + GetCaption(document.Caption.Text);
-                }
-
-                return document.Document.FileName + GetCaption(document.Caption.Text);
-            }
-            else if (message.Content is MessageInvoice invoice)
-            {
-                return invoice.Title;
-            }
-            else if (message.Content is MessageContact)
-            {
-                return Strings.AttachContact;
-            }
-            else if (message.Content is MessageLocation location)
-            {
-                return location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation;
-            }
-            else if (message.Content is MessageVenue)
-            {
-                return Strings.AttachLocation;
-            }
-            else if (message.Content is MessagePhoto photo)
-            {
-                return (photo.IsSecret ? Strings.AttachDestructingPhoto : Strings.AttachPhoto) + GetCaption(photo.Caption.Text);
-            }
-            else if (message.Content is MessagePoll poll)
-            {
-                return $"\uD83D\uDCCA {poll.Poll.Question}";
-            }
-            else if (message.Content is MessageCall call)
-            {
-                return call.ToOutcomeText(message.IsOutgoing);
-            }
-            else if (message.Content is MessageUnsupported)
-            {
-                return Strings.UnsupportedAttachment;
-            }
-
-            return string.Empty;
-        }
-
-        public static string GetTextPart(Message value)
-        {
-            switch (value.Content)
-            {
-                case MessageAnimation animation:
-                    return animation.Caption.Text.Replace('\n', ' ');
-                case MessageAudio audio:
-                    return audio.Caption.Text.Replace('\n', ' ');
-                case MessageDocument document:
-                    return document.Caption.Text.Replace('\n', ' ');
-                case MessagePhoto photo:
-                    return photo.Caption.Text.Replace('\n', ' ');
-                case MessageVideo video:
-                    return video.Caption.Text.Replace('\n', ' ');
-                case MessageVoiceNote voiceNote:
-                    return voiceNote.Caption.Text.Replace('\n', ' ');
-
-                case MessageText text:
-                    return text.Text.Text.Replace('\n', ' ');
-
-                case MessageAnimatedEmoji animatedEmoji:
-                    return animatedEmoji.Emoji;
-
-                case MessageDice dice:
-                    return dice.Emoji;
-            }
-
-            return string.Empty;
-        }
-
         public double ContentWidth { get; set; }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -372,6 +268,22 @@ namespace Telegram.Controls.Messages
             }
 
             return base.ArrangeOverride(finalSize);
+        }
+    }
+
+    public class MessageReferenceAutomationPeer : HyperlinkButtonAutomationPeer
+    {
+        private readonly MessageReference _owner;
+
+        public MessageReferenceAutomationPeer(MessageReference owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override string GetNameCore()
+        {
+            return _owner.GetNameCore();
         }
     }
 }
