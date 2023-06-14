@@ -226,16 +226,9 @@ namespace Telegram.Controls.Chats
         public void SetScrollingMode(ItemsUpdatingScrollMode mode, bool force)
         {
             var panel = ItemsPanelRoot as ItemsStackPanel;
-            if (panel == null)
-            {
-                _pendingMode = mode;
-                _pendingForce = force;
-
-                return;
-            }
-
             var scroll = ScrollingHost;
-            if (scroll == null)
+
+            if (panel == null || scroll == null)
             {
                 _pendingMode = mode;
                 _pendingForce = force;
@@ -338,8 +331,12 @@ namespace Telegram.Controls.Chats
 
         Exit:
             Resume();
-            ViewChanging();
-            ViewChanged?.Invoke(scrollViewer, null);
+
+            if (scrollViewer != null)
+            {
+                ViewChanging();
+                ViewChanged?.Invoke(scrollViewer, null);
+            }
         }
 
         private async Task ScrollIntoViewAsync(MessageViewModel item, ScrollIntoViewAlignment alignment)
