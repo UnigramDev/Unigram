@@ -62,10 +62,17 @@ namespace Telegram.Common
 
         public static async Task<LoadedImageSurface> LoadBitmapAsync(File file)
         {
-            var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
-            using (var stream = await item.OpenReadAsync())
+            try
             {
-                return LoadedImageSurface.StartLoadFromStream(stream);
+                var item = await StorageFile.GetFileFromPathAsync(file.Local.Path);
+                using (var stream = await item.OpenReadAsync())
+                {
+                    return LoadedImageSurface.StartLoadFromStream(stream);
+                }
+            }
+            catch
+            {
+                return null;
             }
         }
 
@@ -230,7 +237,7 @@ namespace Telegram.Common
                 try
                 {
                     await Task.Run(() => PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(path, amount, stream));
-                    bitmap.SetSource(stream);
+                    await bitmap.SetSourceAsync(stream);
                 }
                 catch { }
             }
