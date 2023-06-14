@@ -114,10 +114,10 @@
                                         </Border>
                                     </Grid>
 
-                                    <TextBlock Margin="0,8,0,0"
+                                    <TextBlock Margin="0,4,0,0"
                                                TextAlignment="Center"
                                                TextWrapping="NoWrap"
-                                               TextTrimming="CharacterEllipsis"
+                                               TextTrimming="WordEllipsis"
                                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                Style="{StaticResource CaptionTextBlockStyle}" />
                                 </StackPanel>
