@@ -1329,53 +1329,17 @@ namespace Telegram.Controls
                     var extension = System.IO.Path.GetExtension(local.FilePath);
                     if (string.Equals(extension, ".tgs", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".json", StringComparison.OrdinalIgnoreCase))
                     {
-                        var animation = LottieAnimation.LoadFromFile(local.FilePath, work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.IsCachingEnabled, work.Presentation.Source.ColorReplacements, work.Presentation.Source.FitzModifier);
-                        if (animation != null)
-                        {
-                            // TODO: check if animation is valid
-                            // Width, height, frame rate...
-
-                            if (TryGetDelegate(work.CorrelationId, out var target))
-                            {
-                                if (work.Presentation.Source.ReplacementColor != default)
-                                {
-                                    animation.SetColor(work.Presentation.Source.ReplacementColor);
-                                }
-
-                                target.Ready(new LottieAnimatedImageTask(animation, work.Presentation));
-                            }
-                            else
-                            {
-                                animation.Dispose();
-                            }
-                        }
+                        LoadLottie(work, local);
                     }
                     else if (string.Equals(extension, ".webm", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".mp4", StringComparison.OrdinalIgnoreCase))
                     {
-                        var animation = CachedVideoAnimation.LoadFromFile(local, work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.IsCachingEnabled);
-                        if (animation != null)
-                        {
-                            // TODO: check if animation is valid
-                            // Width, height, frame rate...
-
-                            if (TryGetDelegate(work.CorrelationId, out var target))
-                            {
-                                target.Ready(new VideoAnimatedImageTask(animation, work.Presentation));
-                            }
-                            else
-                            {
-                                animation.Dispose();
-                            }
-                        }
+                        LoadCachedVideo(work);
                     }
                     else if (string.Equals(extension, ".webp", StringComparison.OrdinalIgnoreCase))
                     {
                         var animation = PlaceholderImageHelper.DrawWebP(local.FilePath, work.Presentation.PixelWidth, out Size size);
                         if (animation != null)
                         {
-                            // TODO: check if animation is valid
-                            // Width, height, frame rate...
-
                             if (TryGetDelegate(work.CorrelationId, out var target))
                             {
                                 target.Ready(new WebpAnimatedImageTask(animation, size, work.Presentation));
@@ -1389,21 +1353,54 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    var animation = CachedVideoAnimation.LoadFromFile(work.Presentation.Source, work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.IsCachingEnabled);
-                    if (animation != null)
-                    {
-                        // TODO: check if animation is valid
-                        // Width, height, frame rate...
+                    LoadCachedVideo(work);
+                }
+            }
+        }
 
-                        if (TryGetDelegate(work.CorrelationId, out var target))
-                        {
-                            target.Ready(new VideoAnimatedImageTask(animation, work.Presentation));
-                        }
-                        else
-                        {
-                            animation.Dispose();
-                        }
+        private void LoadLottie(WorkItem work, LocalFileSource local)
+        {
+            var animation = LottieAnimation.LoadFromFile(local.FilePath, work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.IsCachingEnabled, work.Presentation.Source.ColorReplacements, work.Presentation.Source.FitzModifier);
+            if (animation != null)
+            {
+                // TODO: check if animation is valid
+                // Width, height, frame rate...
+
+                if (TryGetDelegate(work.CorrelationId, out var target))
+                {
+                    if (work.Presentation.Source.ReplacementColor != default)
+                    {
+                        animation.SetColor(work.Presentation.Source.ReplacementColor);
                     }
+
+                    target.Ready(new LottieAnimatedImageTask(animation, work.Presentation));
+                }
+                else
+                {
+                    animation.Dispose();
+                }
+            }
+        }
+
+        private void LoadCachedVideo(WorkItem work)
+        {
+            var animation = CachedVideoAnimation.LoadFromFile(work.Presentation.Source, work.Presentation.PixelWidth, work.Presentation.PixelHeight, work.Presentation.IsCachingEnabled);
+            if (animation != null)
+            {
+                static bool IsValid(CachedVideoAnimation animation)
+                {
+                    // TODO: check if animation is valid
+                    // Width, height, frame rate...
+                    return !double.IsNaN(animation.FrameRate);
+                }
+
+                if (IsValid(animation) && TryGetDelegate(work.CorrelationId, out var target))
+                {
+                    target.Ready(new VideoAnimatedImageTask(animation, work.Presentation));
+                }
+                else
+                {
+                    animation.Dispose();
                 }
             }
         }
