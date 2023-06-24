@@ -1495,18 +1495,23 @@ namespace Telegram.Controls.Cells
                     tooltip.CornerRadius = new CornerRadius(15);
                     tooltip.MaxWidth = double.PositiveInfinity;
 
-                    if (message.ReplyTo is MessageReplyToMessage ||
+                    if (message.ReplyTo is not null ||
                         message.Content is MessagePinMessage ||
                         message.Content is MessageGameScore ||
                         message.Content is MessagePaymentSuccessful)
                     {
                         message.ReplyToState = MessageReplyToState.Loading;
 
-                        _clientService.Send(new GetRepliedMessage(message.ChatId, message.Id), response =>
+                        _clientService.GetReplyTo(message, response =>
                         {
                             if (response is Message result)
                             {
-                                message.ReplyToMessage = new MessageViewModel(_clientService, playback, delegato, _chat, result);
+                                message.ReplyToItem = new MessageViewModel(_clientService, playback, delegato, _chat, result);
+                                message.ReplyToState = MessageReplyToState.None;
+                            }
+                            else if (response is Story story)
+                            {
+                                message.ReplyToItem = story;
                                 message.ReplyToState = MessageReplyToState.None;
                             }
                             else

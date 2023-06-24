@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Telegram.Services.Updates;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Windows.Storage;
 
 namespace Telegram.Services
@@ -27,6 +28,8 @@ namespace Telegram.Services
         //void Send(Function function, ClientResultHandler handler);
         void Send(Function function, Action<BaseObject> handler = null);
         Task<BaseObject> SendAsync(Function function);
+
+        void GetReplyTo(MessageViewModel message, Action<BaseObject> handler);
 
         Task<BaseObject> CheckChatInviteLinkAsync(string inviteLink);
 
@@ -588,6 +591,23 @@ namespace Telegram.Services
         public Task<BaseObject> SendAsync(Function function)
         {
             return _client.SendAsync(function, ProcessFiles);
+        }
+
+
+
+        public void GetReplyTo(MessageViewModel message, Action<BaseObject> handler)
+        {
+            if (message.ReplyTo is MessageReplyToMessage replyToMessage ||
+                message.Content is MessagePinMessage ||
+                message.Content is MessageGameScore ||
+                message.Content is MessagePaymentSuccessful)
+            {
+                Send(new GetRepliedMessage(message.ChatId, message.Id), handler);
+            }
+            else if (message.ReplyTo is MessageReplyToStory replyToStory)
+            {
+                Send(new GetStory(replyToStory.StorySenderUserId, replyToStory.StoryId), handler);
+            }
         }
 
 

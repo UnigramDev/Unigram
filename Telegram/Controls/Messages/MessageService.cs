@@ -1633,7 +1633,7 @@ namespace Telegram.Controls.Messages
 
             var sender = message.GetSender();
 
-            var reply = message.ReplyToMessage;
+            var reply = message.ReplyToItem as MessageViewModel;
             if (reply == null)
             {
                 content = ReplaceWithLink(Strings.ActionPinnedNoText, "un1", sender, entities);
@@ -2093,7 +2093,7 @@ namespace Telegram.Controls.Messages
 
         private static Game GetGame(MessageViewModel message)
         {
-            var reply = message.ReplyToMessage;
+            var reply = message.ReplyToItem as MessageViewModel;
             if (reply == null)
             {
                 return null;
@@ -2110,7 +2110,7 @@ namespace Telegram.Controls.Messages
 
         private static MessageInvoice GetInvoice(MessageViewModel message)
         {
-            var reply = message.ReplyToMessage;
+            var reply = message.ReplyToItem as MessageViewModel;
             if (reply == null)
             {
                 return null;

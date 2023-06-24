@@ -843,7 +843,7 @@ namespace Telegram.Views
                 {
                     if (_viewModel.Items.TryGetValue(messageId, out MessageViewModel message))
                     {
-                        if (message.ReplyToMessage != null && _messageIdToSelector.TryGetValue(messageId, out var container))
+                        if (message.ReplyToItem is MessageViewModel && _messageIdToSelector.TryGetValue(messageId, out var container))
                         {
                             if (container.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
                             {

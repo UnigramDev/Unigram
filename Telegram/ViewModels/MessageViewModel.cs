@@ -87,7 +87,8 @@ namespace Telegram.ViewModels
         private bool? _isSaved;
         public bool IsSaved => _isSaved ??= _message.IsSaved(_clientService.Options.MyId);
 
-        public MessageViewModel ReplyToMessage { get; set; }
+        // TODO: BaseObject
+        public object ReplyToItem { get; set; }
         public MessageReplyToState ReplyToState { get; set; } = MessageReplyToState.None;
 
         public void Reset()

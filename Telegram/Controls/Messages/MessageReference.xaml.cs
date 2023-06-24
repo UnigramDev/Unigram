@@ -6,6 +6,7 @@
 //
 using System;
 using System.Text;
+using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -160,7 +161,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        protected override void SetText(MessageViewModel message, MessageSender sender, string title, string service, FormattedText text)
+        protected override void SetText(IClientService clientService, MessageSender sender, string title, string service, FormattedText text)
         {
             if (TitleLabel != null)
             {
@@ -219,7 +220,7 @@ namespace Telegram.Controls.Messages
                             }
 
                             var player = new CustomEmojiIcon();
-                            player.Source = new CustomEmojiFileSource(message.ClientService, customEmoji.CustomEmojiId);
+                            player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
                             player.Margin = new Thickness(0, -4, 0, -4);
                             player.IsHitTestVisible = false;
 

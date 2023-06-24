@@ -330,15 +330,22 @@ namespace Telegram.ViewModels
                         builder.AppendLine($"[{Strings.From} {forwardedFromHiddenUser.SenderName}]");
                     }
 
-                    if (message.ReplyToMessage != null)
+                    if (message.ReplyToItem is MessageViewModel replyToMessage)
                     {
-                        if (ClientService.TryGetUser(message.ReplyToMessage.SenderId, out Telegram.Td.Api.User replyUser))
+                        if (ClientService.TryGetUser(replyToMessage.SenderId, out Telegram.Td.Api.User replyUser))
                         {
                             builder.AppendLine($"[In reply to {replyUser.FullName()}]");
                         }
-                        else if (ClientService.TryGetChat(message.ReplyToMessage.SenderId, out Chat replyChat))
+                        else if (ClientService.TryGetChat(replyToMessage.SenderId, out Chat replyChat))
                         {
                             builder.AppendLine($"[In reply to {replyChat.Title}]");
+                        }
+                    }
+                    else if (message.ReplyToItem is Story replyToStory)
+                    {
+                        if (ClientService.TryGetUser(replyToStory.SenderUserId, out Telegram.Td.Api.User replyUser))
+                        {
+                            builder.AppendLine($"[In reply to {replyUser.FullName()}]");
                         }
                     }
 

@@ -528,7 +528,7 @@ namespace Telegram.ViewModels
                             }
                             else if (message.ReplyTo is MessageReplyToMessage replyToMessage && table.Contains(replyToMessage.MessageId))
                             {
-                                message.ReplyToMessage = null;
+                                message.ReplyToItem = null;
                                 message.ReplyToState = MessageReplyToState.Deleted;
 
                                 Handle(message, bubble => bubble.UpdateMessageReply(message), service => service.UpdateMessage(message));
@@ -846,7 +846,7 @@ namespace Telegram.ViewModels
 
                 Delegate?.UpdateBubbleWithReplyToMessageId(messageId, (bubble, reply) =>
                 {
-                    update(reply.ReplyToMessage);
+                    update(reply.ReplyToItem as MessageViewModel);
                     action(bubble, reply, true);
                 });
             });

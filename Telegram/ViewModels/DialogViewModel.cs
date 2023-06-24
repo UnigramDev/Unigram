@@ -1561,18 +1561,23 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (message.ReplyTo is MessageReplyToMessage ||
+            if (message.ReplyTo is not null ||
                 message.Content is MessagePinMessage ||
                 message.Content is MessageGameScore ||
                 message.Content is MessagePaymentSuccessful)
             {
                 message.ReplyToState = MessageReplyToState.Loading;
 
-                ClientService.Send(new GetRepliedMessage(message.ChatId, message.Id), response =>
+                ClientService.GetReplyTo(message, response =>
                 {
                     if (response is Message result)
                     {
-                        message.ReplyToMessage = CreateMessage(result);
+                        message.ReplyToItem = CreateMessage(result);
+                        message.ReplyToState = MessageReplyToState.None;
+                    }
+                    else if (response is Story story)
+                    {
+                        message.ReplyToItem = story;
                         message.ReplyToState = MessageReplyToState.None;
                     }
                     else

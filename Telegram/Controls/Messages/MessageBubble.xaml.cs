@@ -277,15 +277,22 @@ namespace Telegram.Controls.Messages
                 }
             }
 
-            if (message.ReplyToMessage != null)
+            if (message.ReplyToItem is MessageViewModel replyToMessage)
             {
-                if (message.ClientService.TryGetUser(message.ReplyToMessage.SenderId, out User replyUser))
+                if (message.ClientService.TryGetUser(replyToMessage.SenderId, out User replyUser))
                 {
                     builder.AppendLine($"{Strings.AccDescrReplying} {replyUser.FullName()}. ");
                 }
-                else if (message.ClientService.TryGetChat(message.ReplyToMessage.SenderId, out Chat replyChat))
+                else if (message.ClientService.TryGetChat(replyToMessage.SenderId, out Chat replyChat))
                 {
                     builder.AppendLine($"{Strings.AccDescrReplying} {message.ClientService.GetTitle(replyChat)}. ");
+                }
+            }
+            else if (message.ReplyToItem is Story replyToStory)
+            {
+                if (message.ClientService.TryGetUser(replyToStory.SenderUserId, out User replyUser))
+                {
+                    builder.AppendLine($"{Strings.AccDescrReplying} {replyUser.FullName()}. ");
                 }
             }
 
@@ -1861,29 +1868,36 @@ namespace Telegram.Controls.Messages
             }
             else if (e.Type is TextEntityTypeMediaTimestamp mediaTimestamp)
             {
-                var target = message.HasTimestampedMedia ? message : message.ReplyToMessage;
+                var target = message.HasTimestampedMedia ? message : message.ReplyToItem;
                 if (target == null)
                 {
                     return;
                 }
 
-                if (target.Content is MessageText text && text.WebPage != null)
+                if (target is MessageViewModel targetMessage)
                 {
-                    var regex = new Regex("^.*(?:(?:youtu\\.be\\/|v\\/|vi\\/|u\\/\\w\\/|embed\\/|shorts\\/)|(?:(?:watch)?\\?v(?:i)?=|\\&v(?:i)?=))([^#\\&\\?]*).*");
-
-                    var match = regex.Match(text.WebPage.Url);
-                    if (match.Success && match.Groups.Count == 2)
+                    if (targetMessage.Content is MessageText text && text.WebPage != null)
                     {
-                        message.Delegate.OpenUrl($"https://youtu.be/{match.Groups[1].Value}?t={mediaTimestamp.MediaTimestamp}", false);
+                        var regex = new Regex("^.*(?:(?:youtu\\.be\\/|v\\/|vi\\/|u\\/\\w\\/|embed\\/|shorts\\/)|(?:(?:watch)?\\?v(?:i)?=|\\&v(?:i)?=))([^#\\&\\?]*).*");
+
+                        var match = regex.Match(text.WebPage.Url);
+                        if (match.Success && match.Groups.Count == 2)
+                        {
+                            message.Delegate.OpenUrl($"https://youtu.be/{match.Groups[1].Value}?t={mediaTimestamp.MediaTimestamp}", false);
+                        }
+                        else
+                        {
+                            message.Delegate.OpenUrl(text.WebPage.Url, false);
+                        }
                     }
                     else
                     {
-                        message.Delegate.OpenUrl(text.WebPage.Url, false);
+                        message.Delegate.OpenMedia(targetMessage, null, mediaTimestamp.MediaTimestamp);
                     }
                 }
                 else
                 {
-                    message.Delegate.OpenMedia(target, null, mediaTimestamp.MediaTimestamp);
+                    // TODO
                 }
             }
             else if (e.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode && e.Data is string code)
