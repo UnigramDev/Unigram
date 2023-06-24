@@ -888,7 +888,7 @@ namespace Telegram.Views
                 _messageIdToSelector.Remove(oldMessageId);
             }
 
-            if (message.ReplyToMessageId != 0 && _messageIdToMessageIds.TryGetValue(message.ReplyToMessageId, out var ids))
+            if (message.ReplyTo is MessageReplyToMessage replyToMessage && _messageIdToMessageIds.TryGetValue(replyToMessage.MessageId, out var ids))
             {
                 ids.Add(message.Id);
                 ids.Remove(oldMessageId);
@@ -905,8 +905,8 @@ namespace Telegram.Views
                 if (message.Id != 0)
                     _messageIdToSelector.Remove(message.Id);
 
-                if (message.ReplyToMessageId != 0)
-                    _messageIdToMessageIds.Remove(message.ReplyToMessageId, message.Id);
+                if (message.ReplyTo is MessageReplyToMessage replyToMessage)
+                    _messageIdToMessageIds.Remove(replyToMessage.MessageId, message.Id);
             }
             else
             {
@@ -916,8 +916,8 @@ namespace Telegram.Views
                 if (message.Id != 0)
                     _messageIdToSelector[message.Id] = container;
 
-                if (message.ReplyToMessageId != 0)
-                    _messageIdToMessageIds.Add(message.ReplyToMessageId, message.Id);
+                if (message.ReplyTo is MessageReplyToMessage replyToMessage)
+                    _messageIdToMessageIds.Add(replyToMessage.MessageId, message.Id);
             }
         }
     }

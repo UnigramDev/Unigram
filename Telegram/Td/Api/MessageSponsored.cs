@@ -12,13 +12,23 @@ namespace Telegram.Td.Api
     {
         public MessageSponsored(SponsoredMessage message)
         {
+            AdditionalInfo = message.AdditionalInfo;
+            Sponsor = message.Sponsor;
             Content = message.Content;
-            Link = message.Link;
-            ShowChatPhoto = message.ShowChatPhoto;
-            SponsorChatInfo = message.SponsorChatInfo;
-            SponsorChatId = message.SponsorChatId;
             IsRecommended = message.IsRecommended;
+            MessageId  = message.MessageId;
         }
+
+        /// <summary>
+        /// If non-empty, additional information about the sponsored message to be shown
+        /// along with the message.
+        /// </summary>
+        public string AdditionalInfo { get; set; }
+
+        /// <summary>
+        /// Information about the sponsor of the message.
+        /// </summary>
+        public MessageSponsor Sponsor { get; set; }
 
         /// <summary>
         /// Content of the message. Currently, can be only of the type messageText.
@@ -26,31 +36,15 @@ namespace Telegram.Td.Api
         public MessageContent Content { get; set; }
 
         /// <summary>
-        /// An internal link to be opened when the sponsored message is clicked; may be null
-        /// if the sponsor chat needs to be opened instead.
-        /// </summary>
-        public InternalLinkType Link { get; set; }
-
-        /// <summary>
-        /// True, if the sponsor's chat photo must be shown.
-        /// </summary>
-        public bool ShowChatPhoto { get; set; }
-
-        /// <summary>
-        /// Information about the sponsor chat; may be null unless SponsorChatId == 0.
-        /// </summary>
-        public ChatInviteLinkInfo SponsorChatInfo { get; set; }
-
-        /// <summary>
-        /// Sponsor chat identifier; 0 if the sponsor chat is accessible through an invite
-        /// link.
-        /// </summary>
-        public long SponsorChatId { get; set; }
-
-        /// <summary>
         /// True, if the message needs to be labeled as "recommended" instead of "sponsored".
         /// </summary>
         public bool IsRecommended { get; set; }
+
+        /// <summary>
+        /// Message identifier; unique for the chat to which the sponsored message belongs
+        /// among both ordinary and sponsored messages.
+        /// </summary>
+        public long MessageId { get; set; }
 
         public NativeObject ToUnmanaged()
         {

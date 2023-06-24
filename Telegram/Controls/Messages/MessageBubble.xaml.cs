@@ -744,7 +744,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            if (Reply == null && message.ReplyToMessageId != 0 && message.ReplyToMessageState != ReplyToMessageState.Hidden)
+            if (Reply == null && message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden)
             {
                 Reply = GetTemplateChild(nameof(Reply)) as MessageReference;
                 Reply.Click += Reply_Click;
@@ -1057,7 +1057,7 @@ namespace Telegram.Controls.Messages
                     HeaderPanel.Visibility = Visibility.Collapsed;
                 }
 
-                Header.Visibility = (message.ReplyToMessageId != 0 && message.ReplyToMessageState != ReplyToMessageState.Hidden) || ForwardLabel?.Inlines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+                Header.Visibility = (message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden) || ForwardLabel?.Inlines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
 
                 if (ForwardLabel != null)
                 {
@@ -1383,7 +1383,7 @@ namespace Telegram.Controls.Messages
                 {
                     top = 4;
                 }
-                if ((message.ForwardInfo != null && !message.IsSaved) || message.ViaBotUserId != 0 || (message.ReplyToMessageId != 0 && message.ReplyToMessageState != ReplyToMessageState.Hidden) || message.IsChannelPost)
+                if ((message.ForwardInfo != null && !message.IsSaved) || message.ViaBotUserId != 0 || (message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden) || message.IsChannelPost)
                 {
                     top = 4;
                 }

@@ -599,7 +599,7 @@ namespace Telegram.Services
 
         public string GetLaunch(Chat chat, Message message)
         {
-            var launch = string.Format(CultureInfo.InvariantCulture, "msg_id={0}", message.Id >> 20);
+            var launch = string.Format(CultureInfo.InvariantCulture, "msg_id={0}", message.Id);
 
             if (chat.Type is ChatTypePrivate privata)
             {
@@ -701,7 +701,7 @@ namespace Telegram.Services
                     var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
                     var formatted = Client.Execute(new ParseMarkdown(new FormattedText(messageText, new TextEntity[0]))) as FormattedText;
 
-                    var replyToMsgId = data.ContainsKey("msg_id") ? long.Parse(data["msg_id"]) << 20 : 0;
+                    var replyToMsgId = data.ContainsKey("msg_id") ? new MessageReplyToMessage(chat.Id, long.Parse(data["msg_id"])) : null;
                     var response = await _clientService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, false, false, null, 0), null, new InputMessageText(formatted, false, false)));
 
                     if (chat.Type is ChatTypePrivate && chat.LastMessage != null)
@@ -809,6 +809,7 @@ namespace Telegram.Services
                         useDefault, muteFor,
                         settings.UseDefaultSound, settings.SoundId,
                         settings.UseDefaultShowPreview, settings.ShowPreview,
+                        settings.UseDefaultMuteStories, settings.MuteStories,
                         settings.UseDefaultDisablePinnedMessageNotifications, settings.DisablePinnedMessageNotifications,
                         settings.UseDefaultDisableMentionNotifications, settings.DisableMentionNotifications)));
             }

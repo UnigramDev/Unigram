@@ -709,7 +709,7 @@ namespace Telegram.ViewModels
 
         private async Task<BaseObject> SendMessageAsync(Chat chat, long replyToMessageId, InputMessageContent inputMessageContent, MessageSendOptions options)
         {
-            var response = await ClientService.SendAsync(new SendMessage(chat.Id, _threadId, replyToMessageId, options, null, inputMessageContent));
+            var response = await ClientService.SendAsync(new SendMessage(chat.Id, _threadId, replyTo, options, null, inputMessageContent));
             if (response is Error error)
             {
                 if (error.MessageEquals(ErrorType.PEER_FLOOD))

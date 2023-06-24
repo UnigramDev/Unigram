@@ -85,15 +85,12 @@ namespace Telegram.Views.Supergroups
             ViewModel.Title = chat.Title;
             ViewModel.IsSignatures = group.SignMessages;
 
-            ChatType.Glyph = group.IsChannel ? Icons.Megaphone : Icons.People;
-
             Photo.IsEnabled = group.CanChangeInfo();
             TitleLabel.IsReadOnly = !group.CanChangeInfo();
             About.IsReadOnly = !group.CanChangeInfo();
 
             ChatType.Content = group.IsChannel ? Strings.ChannelType : Strings.GroupType;
             ChatType.Glyph = group.IsChannel ? Icons.Megaphone : Icons.People;
-            ChatType.Visibility = Visibility.Collapsed;
             ChatType.Badge = group.HasActiveUsername()
                 ? group.IsChannel
                     ? Strings.TypePublic
@@ -136,8 +133,6 @@ namespace Telegram.Views.Supergroups
 
             ViewModel.About = fullInfo.Description;
             ViewModel.IsAllHistoryAvailable = fullInfo.IsAllHistoryAvailable ? 0 : 1;
-
-            ChatType.Visibility = fullInfo.CanSetUsername ? Visibility.Visible : Visibility.Collapsed;
 
             var linkedChat = ViewModel.ClientService.GetChat(fullInfo.LinkedChatId);
             if (linkedChat != null)

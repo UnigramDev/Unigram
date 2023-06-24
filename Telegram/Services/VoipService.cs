@@ -719,7 +719,7 @@ namespace Telegram.Services
                         return;
                     }
 
-                    ClientService.Send(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageDocument(new InputFileLocal(file.Path), null, false, null)));
+                    ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageDocument(new InputFileLocal(file.Path), null, false, null)));
                 }
             }
         }

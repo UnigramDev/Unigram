@@ -802,7 +802,7 @@ namespace Telegram.Views
                     if (i == args.NewStartingIndex && animateSendout)
                     {
                         var bubble = owner.Descendants<MessageBubble>().FirstOrDefault();
-                        var reply = message.ReplyToMessageState != ReplyToMessageState.Hidden && message.ReplyToMessageId != 0;
+                        var reply = message.ReplyToState != MessageReplyToState.Hidden && message.ReplyTo != null;
                         var more = ButtonMore.Visibility == Visibility.Visible ? 40 : 0;
 
                         var xOffset = content switch

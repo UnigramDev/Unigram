@@ -494,7 +494,7 @@ namespace Telegram.ViewModels
             {
                 foreach (var chat in chats)
                 {
-                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageText(_caption, false, false)));
+                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(_caption, false, false)));
                 }
             }
 
@@ -504,7 +504,7 @@ namespace Telegram.ViewModels
                 {
                     if (IsWithMyScore)
                     {
-                        var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageForwarded(_messages[0].ChatId, _messages[0].Id, true, new MessageCopyOptions(false, false, null))));
+                        var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, new InputMessageForwarded(_messages[0].ChatId, _messages[0].Id, true, new MessageCopyOptions(false, false, null))));
                     }
                     else
                     {
@@ -526,7 +526,7 @@ namespace Telegram.ViewModels
             {
                 foreach (var chat in chats)
                 {
-                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, InputMedia));
+                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, InputMedia));
                 }
 
                 //NavigationService.GoBack();
@@ -537,7 +537,7 @@ namespace Telegram.ViewModels
 
                 foreach (var chat in chats)
                 {
-                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageText(formatted, false, false)));
+                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(formatted, false, false)));
                 }
 
                 //NavigationService.GoBack();
@@ -597,7 +597,7 @@ namespace Telegram.ViewModels
 
                     foreach (var chat in chats)
                     {
-                        await ClientService.SendAsync(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageText(formatted, false, false)));
+                        await ClientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(formatted, false, false)));
                     }
                 }
             }

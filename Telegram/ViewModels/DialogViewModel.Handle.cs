@@ -526,10 +526,10 @@ namespace Telegram.ViewModels
                                 Items.RemoveAt(i);
                                 i--;
                             }
-                            else if (table.Contains(message.ReplyToMessageId))
+                            else if (message.ReplyTo is MessageReplyToMessage replyToMessage && table.Contains(replyToMessage.MessageId))
                             {
                                 message.ReplyToMessage = null;
-                                message.ReplyToMessageState = ReplyToMessageState.Deleted;
+                                message.ReplyToState = MessageReplyToState.Deleted;
 
                                 Handle(message, bubble => bubble.UpdateMessageReply(message), service => service.UpdateMessage(message));
                             }

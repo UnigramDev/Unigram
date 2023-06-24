@@ -116,7 +116,7 @@ namespace Telegram.Controls.Messages
 
             // TODO: chat type
 
-            if (message.ReplyToMessageState == ReplyToMessageState.Hidden || message.ReplyToMessageId == 0)
+            if (message.ReplyToState == MessageReplyToState.Hidden || message.ReplyTo == null)
             {
                 Visibility = Visibility.Collapsed;
             }
@@ -124,11 +124,11 @@ namespace Telegram.Controls.Messages
             {
                 GetMessageTemplate(message.ReplyToMessage, null, outgoing);
             }
-            else if (message.ReplyToMessageState == ReplyToMessageState.Loading)
+            else if (message.ReplyToState == MessageReplyToState.Loading)
             {
                 SetLoadingTemplate(null, null, outgoing);
             }
-            else if (message.ReplyToMessageState == ReplyToMessageState.Deleted)
+            else if (message.ReplyToState == MessageReplyToState.Deleted)
             {
                 SetEmptyTemplate();
             }
