@@ -15,48 +15,30 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels
 {
-    public class ContactsViewModel : ViewModelBase, IChildViewModel
+    public class ContactsViewModel : MultiViewModelBase, IChildViewModel
     {
-        private readonly IContactsService _contactsService;
-
         private readonly DisposableMutex _loadMoreLock;
+        private readonly UserComparer _comparer;
 
-        public ContactsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService)
+        public ContactsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            _contactsService = contactsService;
-
             _loadMoreLock = new DisposableMutex();
+            _comparer = new UserComparer(Settings.IsContactsSortedByEpoch);
 
-            Items = new SortedObservableCollection<User>(new UserComparer(Settings.IsContactsSortedByEpoch));
+            Items = new SortedObservableCollection<User>(_comparer);
 
-            Initialize();
-        }
+            Stories = new StoriesViewModel(clientService, settingsService, aggregator);
+            Stories.HiddenStories = true;
 
-        private async void Initialize()
-        {
-            if (!Settings.IsContactsSyncRequested)
+            Groups = new object[]
             {
-                Settings.IsContactsSyncRequested = true;
-
-                var confirm = await ShowPopupAsync(Strings.ContactsPermissionAlert, Strings.AppName, Strings.ContactsPermissionAlertContinue, Strings.ContactsPermissionAlertNotNow);
-                if (confirm != Windows.UI.Xaml.Controls.ContentDialogResult.Primary)
-                {
-                    Settings.IsContactsSyncEnabled = false;
-                }
-
-                if (Settings.IsContactsSyncEnabled)
-                {
-                    ClientService.Send(new GetContacts(), async result =>
-                    {
-                        if (result is Telegram.Td.Api.Users users)
-                        {
-                            await _contactsService.SyncAsync(users);
-                        }
-                    });
-                }
-            }
+                Stories,
+                this
+            };
         }
+
+        public object[] Groups { get; }
 
         public async void Activate()
         {
@@ -69,17 +51,25 @@ namespace Telegram.ViewModels
                 if (response is Telegram.Td.Api.Users users)
                 {
                     var items = new List<User>();
+                    var stories = new List<ActiveStoriesViewModel>();
 
-                    foreach (var id in users.UserIds)
+                    foreach (var user in ClientService.GetUsers(users.UserIds))
                     {
-                        var user = ClientService.GetUser(id);
-                        if (user != null)
+                        items.Add(user);
+
+                        if (user.StoriesAreHidden && user.HasActiveStories)
                         {
-                            items.Add(user);
+                            stories.Add(new ActiveStoriesViewModel(ClientService, user.Id));
                         }
                     }
 
                     Items.ReplaceWith(items);
+
+                    // TODO: ???
+                    if (Stories.HasMoreItems)
+                    {
+                        await Stories.LoadMoreItemsAsync(1);
+                    }
                 }
             }
         }
@@ -108,23 +98,19 @@ namespace Telegram.ViewModels
         {
             using (await _loadMoreLock.WaitAsync())
             {
+                _comparer.ByEpoch = epoch;
+
                 var response = await ClientService.SendAsync(new GetContacts());
                 if (response is Telegram.Td.Api.Users users)
                 {
                     var items = new List<User>();
 
-                    foreach (var id in users.UserIds)
+                    foreach (var user in ClientService.GetUsers(users.UserIds))
                     {
-                        var user = ClientService.GetUser(id);
-                        if (user != null)
-                        {
-                            items.Add(user);
-                        }
+                        items.Add(user);
                     }
 
-                    Items = new SortedObservableCollection<User>(new UserComparer(epoch));
                     Items.ReplaceWith(items);
-                    RaisePropertyChanged(nameof(Items));
                 }
             }
         }
@@ -183,21 +169,22 @@ namespace Telegram.ViewModels
 
         #endregion
 
-        public SortedObservableCollection<User> Items { get; private set; }
+        public SortedObservableCollection<User> Items { get; }
+        public StoriesViewModel Stories { get; }
     }
 
     public class UserComparer : IComparer<User>
     {
-        private readonly bool _epoch;
-
         public UserComparer(bool epoch)
         {
-            _epoch = epoch;
+            ByEpoch = epoch;
         }
+
+        public bool ByEpoch { get; set; }
 
         public int Compare(User x, User y)
         {
-            if (_epoch)
+            if (ByEpoch)
             {
                 var epoch = LastSeenConverter.GetIndex(y).CompareTo(LastSeenConverter.GetIndex(x));
                 if (epoch == 0)

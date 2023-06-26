@@ -6,12 +6,14 @@
       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
       xmlns:icons="using:Telegram.Assets.Icons"
       xmlns:controls="using:Telegram.Controls"
+      xmlns:contacts="using:Telegram.Controls.Contacts"
       xmlns:cells="using:Telegram.Controls.Cells"
       xmlns:chats="using:Telegram.Controls.Chats"
       xmlns:views="using:Telegram.Controls.Views"
       xmlns:navigation="using:Telegram.Navigation.Services"
       xmlns:viewModels="using:Telegram.ViewModels"
       xmlns:local="using:Telegram.Views"
+      xmlns:selectors="using:Telegram.Selectors"
       mc:Ignorable="d"
       Loaded="OnLoaded"
       Unloaded="OnUnloaded">
@@ -31,6 +33,11 @@
 
         <CollectionViewSource x:Name="ContactsResults"
                               Source="{x:Bind ViewModel.Contacts.Search, Mode=OneWay}"
+                              IsSourceGrouped="True" />
+
+        <CollectionViewSource x:Name="ContactsGroups"
+                              Source="{x:Bind ViewModel.Contacts.Groups, Mode=OneWay}"
+                              ItemsPath="Items"
                               IsSourceGrouped="True" />
 
         <Style TargetType="controls:MasterDetailView">
@@ -974,18 +981,63 @@
                             </ListView>
                             <Grid x:Name="ContactsPanel">
                                 <ListView x:Name="UsersListView"
-                                          ItemsSource="{x:Bind ViewModel.Contacts.Items, Mode=OneWay}"
+                                          ItemsSource="{x:Bind ContactsGroups.View}"
                                           ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
                                           IsItemClickEnabled="True"
                                           ItemClick="ListView_ItemClick"
                                           ChoosingItemContainer="UsersListView_ChoosingItemContainer"
                                           ContainerContentChanging="UsersListView_ContainerContentChanging"
                                           SelectionMode="None">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate>
-                                            <cells:ProfileCell />
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
+                                    <ListView.GroupStyle>
+                                        <GroupStyle HidesIfEmpty="True">
+                                            <GroupStyle.HeaderTemplateSelector>
+                                                <selectors:ContactTemplateSelector>
+                                                    <selectors:ContactTemplateSelector.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <contacts:ContactsSortedByHeader />
+                                                        </DataTemplate>
+                                                    </selectors:ContactTemplateSelector.ItemTemplate>
+                                                    <selectors:ContactTemplateSelector.ActiveStoriesTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{CustomResource HiddenStories}"
+                                                                       Style="{StaticResource BaseTextBlockStyle}"
+                                                                       TextWrapping="WrapWholeWords"
+                                                                       Margin="12,8,0,4" />
+                                                        </DataTemplate>
+                                                    </selectors:ContactTemplateSelector.ActiveStoriesTemplate>
+                                                </selectors:ContactTemplateSelector>
+                                            </GroupStyle.HeaderTemplateSelector>
+                                            <GroupStyle.HeaderContainerStyle>
+                                                <Style TargetType="ListViewHeaderItem">
+                                                    <Setter Property="Margin"
+                                                            Value="0" />
+                                                    <Setter Property="MinHeight"
+                                                            Value="0" />
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate>
+                                                                <ContentPresenter />
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </GroupStyle.HeaderContainerStyle>
+                                        </GroupStyle>
+                                    </ListView.GroupStyle>
+                                    <ListView.ItemTemplateSelector>
+                                        <selectors:ContactTemplateSelector>
+                                            <selectors:ContactTemplateSelector.ItemTemplate>
+                                                <DataTemplate>
+                                                    <cells:ProfileCell />
+                                                </DataTemplate>
+                                            </selectors:ContactTemplateSelector.ItemTemplate>
+                                            <selectors:ContactTemplateSelector.ActiveStoriesTemplate>
+                                                <DataTemplate x:DataType="viewModels:ActiveStoriesViewModel">
+                                                    <cells:ProfileCell Subtitle="{x:Bind Subtitle, Mode=OneWay}" />
+                                                </DataTemplate>
+                                            </selectors:ContactTemplateSelector.ActiveStoriesTemplate>
+                                        </selectors:ContactTemplateSelector>
+                                    </ListView.ItemTemplateSelector>
                                     <ListView.Header>
                                         <StackPanel>
                                             <controls:BadgeButton Content="{CustomResource AddPeopleNearby}"
@@ -1003,36 +1055,6 @@
                                                     <icons:PersonAdd />
                                                 </controls:BadgeButton.IconSource>
                                             </controls:BadgeButton>
-
-                                            <Grid>
-                                                <Grid.ChildrenTransitions>
-                                                    <TransitionCollection>
-                                                        <RepositionThemeTransition />
-                                                    </TransitionCollection>
-                                                </Grid.ChildrenTransitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition />
-                                                </Grid.ColumnDefinitions>
-                                                <controls:AnimatedTextBlock Text="{x:Bind ConvertSortedBy(ViewModel.Contacts.IsSortedByEpoch), Mode=OneWay}"
-                                                                            TextStyle="{StaticResource BaseTextBlockStyle}"
-                                                                            TextWrapping="WrapWholeWords"
-                                                                            Margin="12,8,0,4" />
-
-                                                <controls:GlyphToggleButton HorizontalAlignment="Left"
-                                                                            VerticalAlignment="Bottom"
-                                                                            IsOneWay="False"
-                                                                            IsChecked="{x:Bind ViewModel.Contacts.IsSortedByEpoch, Mode=TwoWay}"
-                                                                            AutomationProperties.Name="{CustomResource AccDescrContactSorting}"
-                                                                            ToolTipService.ToolTip="{CustomResource AccDescrContactSorting}"
-                                                                            Margin="0,0,0,-4"
-                                                                            CheckedGlyph="&#xE8CB;"
-                                                                            Glyph="&#xE8CB;"
-                                                                            FontSize="16"
-                                                                            Width="36"
-                                                                            Height="32"
-                                                                            Grid.Column="1" />
-                                            </Grid>
                                         </StackPanel>
                                     </ListView.Header>
                                     <!--<ListView.ItemContainerTransitions>

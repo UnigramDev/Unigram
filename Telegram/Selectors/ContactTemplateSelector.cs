@@ -4,25 +4,25 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Selectors
 {
-    public class StorageStatisticsTemplateSelector : DataTemplateSelector
+    public class ContactTemplateSelector : DataTemplateSelector
     {
         public DataTemplate ItemTemplate { get; set; }
-        public DataTemplate OtherTemplate { get; set; }
+        public DataTemplate ActiveStoriesTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            if (item is StorageStatisticsByChat statistics)
+            if (item is ActiveStoriesViewModel or StoriesViewModel)
             {
-                return statistics.ChatId == 0 ? OtherTemplate : ItemTemplate;
+                return ActiveStoriesTemplate;
             }
 
-            return base.SelectTemplateCore(item, container);
+            return ItemTemplate;
         }
     }
 }

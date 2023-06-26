@@ -25,6 +25,24 @@ namespace Telegram.Td.Api
 {
     public static class TdExtensions
     {
+        public static bool AllowCloseFriends(this UserPrivacySettingRules rules)
+        {
+            if (rules == null)
+            {
+                return false;
+            }
+
+            foreach (var rule in rules.Rules)
+            {
+                if (rule is UserPrivacySettingRuleAllowCloseFriends)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static int TotalReactions(this MessageInteractionInfo info)
         {
             if (info != null)

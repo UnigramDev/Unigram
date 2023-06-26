@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="Telegram.Controls.Contacts.ContactsSortedByHeader"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Telegram.Controls.Contacts"
+             xmlns:controls="using:Telegram.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="400">
+
+    <Grid>
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <RepositionThemeTransition />
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <controls:AnimatedTextBlock Text="{x:Bind ConvertSortedBy(ViewModel.IsSortedByEpoch), Mode=OneWay}"
+                                    TextStyle="{StaticResource BaseTextBlockStyle}"
+                                    TextWrapping="WrapWholeWords"
+                                    Margin="12,8,0,4" />
+
+        <controls:GlyphToggleButton HorizontalAlignment="Left"
+                                    VerticalAlignment="Bottom"
+                                    IsOneWay="False"
+                                    IsChecked="{x:Bind ViewModel.IsSortedByEpoch, Mode=TwoWay}"
+                                    AutomationProperties.Name="{CustomResource AccDescrContactSorting}"
+                                    ToolTipService.ToolTip="{CustomResource AccDescrContactSorting}"
+                                    Margin="0,0,0,-4"
+                                    CheckedGlyph="&#xE8CB;"
+                                    Glyph="&#xE8CB;"
+                                    FontSize="16"
+                                    Width="36"
+                                    Height="32"
+                                    Grid.Column="1" />
+    </Grid>
+</UserControl>

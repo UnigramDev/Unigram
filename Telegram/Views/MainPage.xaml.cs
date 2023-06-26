@@ -1708,29 +1708,6 @@ namespace Telegram.Views
 
         #endregion
 
-        #region Binding
-
-        private string ConvertGeoLive(int count, IList<Message> items)
-        {
-            //if (count > 1)
-            //{
-            //    return string.Format("sharing to {0} chats", count);
-            //}
-            //else if (count == 1 && items[0].Parent is ITLDialogWith with)
-            //{
-            //    return string.Format("sharing to {0}", with.DisplayName);
-            //}
-
-            return null;
-        }
-
-        private string ConvertSortedBy(bool epoch)
-        {
-            return epoch ? Strings.SortedByLastSeen : Strings.SortedByName;
-        }
-
-        #endregion
-
         private void NewContact_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(UserCreatePage));
@@ -2004,10 +1981,31 @@ namespace Telegram.Views
             {
                 args.ItemContainer = new TextListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
-                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += UsersListView_ContextRequested;
             }
 
+            args.ItemContainer.ContentTemplate = sender.ItemTemplateSelector.SelectTemplate(args.Item, args.ItemContainer);
             args.IsContainerPrepared = true;
+        }
+
+        private void UsersListView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var element = sender as FrameworkElement;
+            var activeStories = UsersListView.ItemFromContainer(sender) as ActiveStoriesViewModel;
+
+            if (activeStories == null || activeStories.UserId == activeStories.ClientService.Options.MyId)
+            {
+                return;
+            }
+
+            var muted = ViewModel.Settings.Settings.Notifications.GetMuteStories(activeStories.Chat);
+
+            var flyout = new MenuFlyout();
+            flyout.CreateFlyoutItem(ViewModel.Contacts.Stories.OpenProfile, activeStories, Strings.OpenProfile, Icons.Person);
+            flyout.CreateFlyoutItem(ViewModel.Contacts.Stories.MuteProfile, activeStories, muted ? Strings.NotificationsStoryUnmute : Strings.NotificationsStoryMute, muted ? Icons.Alert : Icons.AlertOff);
+            flyout.CreateFlyoutItem(ViewModel.Contacts.Stories.ShowProfile, activeStories, Strings.ShowInChats, Icons.AddCircle);
+
+            args.ShowAt(flyout, element);
         }
 
         private void UsersListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -2021,9 +2019,15 @@ namespace Telegram.Views
             }
 
             var content = args.ItemContainer.ContentTemplateRoot as ProfileCell;
-            var user = args.Item as User;
 
-            content.UpdateUser(ViewModel.ClientService, user, args, UsersListView_ContainerContentChanging);
+            if (args.Item is ActiveStoriesViewModel activeStories)
+            {
+                content.UpdateActiveStories(ViewModel.ClientService, activeStories, args, UsersListView_ContainerContentChanging);
+            }
+            else if (args.Item is User user)
+            {
+                content.UpdateUser(ViewModel.ClientService, user, args, UsersListView_ContainerContentChanging);
+            }
         }
 
         private void Settings_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

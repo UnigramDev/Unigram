@@ -3563,6 +3563,9 @@ They can still join via an invite link as long as they are not on the Removed Us
   <data name="HiddenName" xml:space="preserve">
     <value>Deleted Account</value>
   </data>
+  <data name="HiddenStories" xml:space="preserve">
+    <value>Hidden Stories</value>
+  </data>
   <data name="Hide" xml:space="preserve">
     <value>Hide</value>
   </data>
@@ -4405,6 +4408,12 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="NewSecretChat" xml:space="preserve">
     <value>New Secret Chat</value>
+  </data>
+  <data name="NewStories_one" xml:space="preserve">
+    <value>{0} new story</value>
+  </data>
+  <data name="NewStories_other" xml:space="preserve">
+    <value>{0} new stories</value>
   </data>
   <data name="NewTheme" xml:space="preserve">
     <value>New color theme</value>
@@ -6214,6 +6223,15 @@ and enter your phone number.</value>
   </data>
   <data name="StorageUsage" xml:space="preserve">
     <value>Storage Usage</value>
+  </data>
+  <data name="Stories_one" xml:space="preserve">
+    <value>{0} story</value>
+  </data>
+  <data name="Stories_other" xml:space="preserve">
+    <value>{0} stories</value>
+  </data>
+  <data name="Story" xml:space="preserve">
+    <value>Story</value>
   </data>
   <data name="Streaming" xml:space="preserve">
     <value>Streaming</value>

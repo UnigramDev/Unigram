@@ -792,21 +792,21 @@ namespace Telegram.Services
             }
         }
 
-        public void SetMuteFor(Chat chat, int muteFor)
+        public void SetMuteFor(Chat chat, int value)
         {
             if (_settings.Notifications.TryGetScope(chat, out ScopeNotificationSettings scope))
             {
                 var settings = chat.NotificationSettings;
 
-                var useDefault = muteFor == scope.MuteFor || muteFor > 366 * 24 * 60 * 60 && scope.MuteFor > 366 * 24 * 60 * 60;
+                var useDefault = value == scope.MuteFor || value > 366 * 24 * 60 * 60 && scope.MuteFor > 366 * 24 * 60 * 60;
                 if (useDefault)
                 {
-                    muteFor = scope.MuteFor;
+                    value = scope.MuteFor;
                 }
 
                 _clientService.Send(new SetChatNotificationSettings(chat.Id,
                     new ChatNotificationSettings(
-                        useDefault, muteFor,
+                        useDefault, value,
                         settings.UseDefaultSound, settings.SoundId,
                         settings.UseDefaultShowPreview, settings.ShowPreview,
                         settings.UseDefaultMuteStories, settings.MuteStories,

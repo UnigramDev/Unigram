@@ -210,9 +210,13 @@
     <Compile Include="Controls\Chats\ChatHistoryView.cs" />
     <Compile Include="Controls\Chats\ChatHistoryViewItem.cs" />
     <Compile Include="Controls\ClrGrid.cs" />
+    <Compile Include="Controls\Contacts\ContactsSortedByHeader.xaml.cs">
+      <DependentUpon>ContactsSortedByHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\ReactionsMenuFlyout.xaml.cs">
       <DependentUpon>ReactionsMenuFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Selectors\ContactTemplateSelector.cs" />
     <Compile Include="Services\VoipGroupService.cs" />
     <Compile Include="Services\VoipService.cs" />
     <Compile Include="Streams\AnimatedImageSource.cs" />
@@ -671,6 +675,7 @@
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBioViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxyViewModel.cs" />
+    <Compile Include="ViewModels\StoriesViewModel.cs" />
     <Compile Include="ViewModels\TopicListViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
     <Compile Include="ViewModels\ChooseSoundViewModel.cs" />
@@ -886,7 +891,6 @@
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
-    <Compile Include="Selectors\StorageStatisticsTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\SettingsSearchService.cs" />
     <Compile Include="Services\SettingsLegacyService.cs" />
@@ -1797,6 +1801,10 @@
     <Page Include="Controls\Chats\ChatThemeDrawer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Contacts\ContactsSortedByHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\CountryBox.xaml">
       <SubType>Designer</SubType>
