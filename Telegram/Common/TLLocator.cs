@@ -676,6 +676,7 @@ namespace Telegram.Views
                     Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhoneViewModel>(),
                     Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowPhotoViewModel>(),
                     Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel>(),
+                    Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBioViewModel>(),
                     Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowCallsViewModel>(),
                     Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowChatInvitesViewModel>(),
                     Resolve<Telegram.ViewModels.Settings.Privacy.SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel>());
@@ -750,6 +751,13 @@ namespace Telegram.Views
             else if (type == typeof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel))
             {
                 return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowStatusViewModel(
+                    _clientService,
+                    _settingsService,
+                    _eventAggregator);
+            }
+            else if (type == typeof(Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBioViewModel))
+            {
+                return (T)(object)new Telegram.ViewModels.Settings.Privacy.SettingsPrivacyShowBioViewModel(
                     _clientService,
                     _settingsService,
                     _eventAggregator);

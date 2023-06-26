@@ -449,6 +449,7 @@ namespace Telegram
                 SettingsPrivacyPhonePage => TLContainer.Current.Resolve<SettingsPrivacyPhoneViewModel>(sessionId),
                 SettingsPrivacyShowPhotoPage privacyShowPhotoPage => TLContainer.Current.Resolve<SettingsPrivacyShowPhotoViewModel, IUserDelegate>(privacyShowPhotoPage, sessionId),
                 SettingsPrivacyShowStatusPage => TLContainer.Current.Resolve<SettingsPrivacyShowStatusViewModel>(sessionId),
+                SettingsPrivacyShowBioPage => TLContainer.Current.Resolve<SettingsPrivacyShowBioViewModel>(sessionId),
                 SettingsPasswordConfirmPage => TLContainer.Current.Resolve<SettingsPasswordConfirmViewModel>(sessionId),
                 SettingsPasswordCreatePage => TLContainer.Current.Resolve<SettingsPasswordCreateViewModel>(sessionId),
                 SettingsPasswordDonePage => TLContainer.Current.Resolve<SettingsPasswordDoneViewModel>(sessionId),

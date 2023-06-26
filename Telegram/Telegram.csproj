@@ -668,6 +668,7 @@
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordCreateViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordHintViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordIntroViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBioViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxyViewModel.cs" />
     <Compile Include="ViewModels\TopicListViewModel.cs" />
@@ -1222,6 +1223,9 @@
     </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowPhotoPage.xaml.cs">
       <DependentUpon>SettingsPrivacyShowPhotoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowBioPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyShowBioPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowStatusPage.xaml.cs">
       <DependentUpon>SettingsPrivacyShowStatusPage.xaml</DependentUpon>
@@ -2495,6 +2499,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Settings\Privacy\SettingsPrivacyShowPhotoPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\Privacy\SettingsPrivacyShowBioPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

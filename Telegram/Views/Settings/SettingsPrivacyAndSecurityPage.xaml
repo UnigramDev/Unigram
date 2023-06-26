@@ -75,6 +75,13 @@
                                           IsChevronVisible="True"
                                           Glyph="&#xE9A9;" />
 
+                    <controls:BadgeButton Content="{CustomResource PrivacyBio}"
+                                          Badge="{x:Bind ViewModel.ShowBioRules.Badge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenBio}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xEA0A;" />
+
                     <controls:BadgeButton Content="{CustomResource PrivacyForwards}"
                                           Badge="{x:Bind ViewModel.ShowForwardedRules.Badge, Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"

@@ -5156,6 +5156,18 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PrivacyAdvanced" xml:space="preserve">
     <value>Advanced</value>
   </data>
+  <data name="PrivacyBio" xml:space="preserve">
+    <value>Bio</value>
+  </data>
+  <data name="PrivacyBioInfo" xml:space="preserve">
+    <value>You can restrict who can see you bio with granular precision.</value>
+  </data>
+  <data name="PrivacyBioInfo3" xml:space="preserve">
+    <value>You can add users or entire groups that will not see your bio.</value>
+  </data>
+  <data name="PrivacyBioTitle" xml:space="preserve">
+    <value>Who can see my bio?</value>
+  </data>
   <data name="PrivacyBots" xml:space="preserve">
     <value>Bots and websites</value>
   </data>
