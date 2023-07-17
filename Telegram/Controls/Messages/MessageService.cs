@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Telegram.Common;
+using Telegram.Controls.Chats;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td;
@@ -16,6 +18,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
 using Windows.UI.Text;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
@@ -87,6 +90,99 @@ namespace Telegram.Controls.Messages
                 content.SetText(message.ClientService, entities.Text, entities.Entities);
                 AutomationProperties.SetName(this, entities.Text);
             }
+
+            UpdateContent(message);
+        }
+
+        private void UpdateContent(MessageViewModel message)
+        {
+            if (message.Content is MessageChatChangePhoto chatChangePhoto)
+            {
+                var photo = FindName("Photo") as ProfilePicture;
+                var view = FindName("View") as Border;
+
+                Width = 216;
+
+                photo.Visibility = Visibility.Visible;
+                view.Visibility = Visibility.Visible;
+
+                photo.SetChatPhoto(message.ClientService, chatChangePhoto.Photo, 120);
+
+                if (view.Child is TextBlock label)
+                {
+                    label.Text = chatChangePhoto.Photo.Animation != null
+                        ? Strings.ViewVideoAction
+                        : Strings.ViewPhotoAction;
+                }
+            }
+            else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
+            {
+                var photo = FindName("Photo") as ProfilePicture;
+                var view = FindName("View") as Border;
+
+                Width = 216;
+
+                photo.Visibility = Visibility.Visible;
+                view.Visibility = Visibility.Visible;
+
+                photo.SetChatPhoto(message.ClientService, suggestProfilePhoto.Photo, 120);
+
+                if (view.Child is TextBlock label)
+                {
+                    label.Text = suggestProfilePhoto.Photo.Animation != null
+                        ? Strings.ViewVideoAction
+                        : Strings.ViewPhotoAction;
+                }
+            }
+            else if (message.Content is MessageAsyncStory story)
+            {
+                var photo = FindName("Photo") as ProfilePicture;
+                var view = FindName("View") as Border;
+
+                if (story.State == MessageStoryState.Expired)
+                {
+                    Width = double.NaN;
+
+                    photo.Visibility = Visibility.Collapsed;
+                    view.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    Width = 216;
+
+                    photo.Visibility = Visibility.Visible;
+                    view.Visibility = Visibility.Visible;
+
+                    //if (story.Story == null)
+                    {
+                        photo.SetChat(message.ClientService, message.Chat, 120);
+                    }
+                    //else
+                    //{
+                    //    photo.SetStory(message.ClientService, story.Story, 120);
+                    //}
+
+                    if (view.Child is TextBlock label)
+                    {
+                        label.Text = Strings.StoryMentionedAction;
+                    }
+                }
+            }
+            else if (message.Content is MessageChatSetBackground chatSetBackground)
+            {
+                var photo = FindName("Photo") as ChatBackgroundPresenter;
+                var view = FindName("View") as Border;
+
+                photo?.UpdateSource(message.ClientService, chatSetBackground.Background.Background, true);
+
+                if (view != null)
+                {
+                    view.Visibility = message.IsOutgoing
+                        ? Visibility.Collapsed
+                        : Visibility.Visible;
+                }
+            }
+
         }
 
         public static string GetText(MessageViewModel message)
@@ -135,6 +231,8 @@ namespace Telegram.Controls.Messages
                 MessageWebAppDataSent webAppDataSent => UpdateWebAppDataSent(message, webAppDataSent, active),
                 MessageExpiredPhoto expiredPhoto => UpdateExpiredPhoto(message, expiredPhoto, active),
                 MessageExpiredVideo expiredVideo => UpdateExpiredVideo(message, expiredVideo, active),
+                MessageAsyncStory story => UpdateStory(message, story, active),
+                MessageStory story => UpdateStory(message, story, active),
                 // Local types:
                 MessageChatEvent chatEvent => chatEvent.Action switch
                 {
@@ -1753,7 +1851,7 @@ namespace Telegram.Controls.Messages
 
             if (message.IsOutgoing)
             {
-                if (message.ClientService.TryGetUser(message.ChatId, out User user))
+                if (message.ClientService.TryGetUser(message.Chat, out User user))
                 {
                     content = string.Format(Strings.ActionSuggestPhotoFromYouDescription, user.FirstName);
                     entities?.Add(new TextEntity(Strings.ActionSuggestPhotoFromYouDescription.IndexOf("{0}"), user.FirstName.Length, new TextEntityTypeBold()));
@@ -1861,7 +1959,50 @@ namespace Telegram.Controls.Messages
             return (Strings.AttachVideoExpired, null);
         }
 
+        private static (string, IList<TextEntity>) UpdateStory(MessageViewModel message, MessageAsyncStory story, bool active)
+        {
+            if (active)
+            {
+                string content = string.Empty;
 
+                if (message.ClientService.TryGetUser(message.Chat, out User user))
+                {
+                    if (message.IsOutgoing)
+                    {
+                        content = string.Format(story.State == MessageStoryState.Expired ? Icons.ExpiredStory + "\u00A0" + Strings.ExpiredStoryMentioned : Strings.StoryYouMentionedTitle, user.FirstName);
+                    }
+                    else
+                    {
+                        content = string.Format(story.State == MessageStoryState.Expired ? Icons.ExpiredStory + "\u00A0" + Strings.ExpiredStoryMention : Strings.StoryMentionedTitle, user.FirstName);
+                    }
+                }
+
+                var formatted = DialogViewModel.GetFormattedText(content);
+                return (formatted.Text, formatted.Entities);
+            }
+
+            return (string.Empty, null);
+        }
+
+        private static (string, IList<TextEntity>) UpdateStory(MessageViewModel message, MessageStory story, bool active)
+        {
+            if (active)
+            {
+            }
+            else if (message.IsOutgoing)
+            {
+                if (message.ClientService.TryGetUser(message.Chat, out User user))
+                {
+                    return (string.Format(Strings.StoryYouMentionInDialog, user.FirstName), null);
+                }
+            }
+            else
+            {
+                return (Strings.StoryMentionInDialog, null);
+            }
+
+            return (string.Empty, null);
+        }
 
         public static string ReplaceWithLink(string source, string param, BaseObject obj, IList<TextEntity> entities)
         {

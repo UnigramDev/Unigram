@@ -1193,6 +1193,10 @@ namespace Telegram.Controls.Cells
             {
                 return Text("\u260E " + call.ToOutcomeText(message.IsOutgoing));
             }
+            else if (message.Content is MessageStory story && !story.ViaMention)
+            {
+                return Text(Strings.Story);
+            }
             else if (message.Content is MessageUnsupported)
             {
                 return Text(Strings.UnsupportedAttachment);

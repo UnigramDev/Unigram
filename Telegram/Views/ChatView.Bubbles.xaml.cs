@@ -609,48 +609,6 @@ namespace Telegram.Views
 
                     content = checkbox.Content as FrameworkElement;
                 }
-                else if (content is MessageService service)
-                {
-                    if (message.Content is MessageChatChangePhoto chatChangePhoto)
-                    {
-                        var photo = service.FindName("Photo") as ProfilePicture;
-                        photo?.SetChatPhoto(message.ClientService, chatChangePhoto.Photo, 120);
-
-                        var view = service.FindName("View") as TextBlock;
-                        if (view != null)
-                        {
-                            view.Text = chatChangePhoto.Photo.Animation != null
-                                ? Strings.ViewVideoAction
-                                : Strings.ViewPhotoAction;
-                        }
-                    }
-                    else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
-                    {
-                        var photo = service.FindName("Photo") as ProfilePicture;
-                        photo?.SetChatPhoto(message.ClientService, suggestProfilePhoto.Photo, 120);
-
-                        var view = service.FindName("View") as TextBlock;
-                        if (view != null)
-                        {
-                            view.Text = suggestProfilePhoto.Photo.Animation != null
-                                ? Strings.ViewVideoAction
-                                : Strings.ViewPhotoAction;
-                        }
-                    }
-                    else if (message.Content is MessageChatSetBackground chatSetBackground)
-                    {
-                        var photo = service.FindName("Photo") as ChatBackgroundPresenter;
-                        photo?.UpdateSource(_viewModel.ClientService, chatSetBackground.Background.Background, true);
-
-                        var view = service.FindName("View") as Border;
-                        if (view != null)
-                        {
-                            view.Visibility = message.IsOutgoing
-                                ? Visibility.Collapsed
-                                : Visibility.Visible;
-                        }
-                    }
-                }
 
                 if (content is MessageBubble bubble)
                 {
@@ -767,7 +725,7 @@ namespace Telegram.Views
 
             if (message.IsService)
             {
-                if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto)
+                if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto or MessageAsyncStory)
                 {
                     return "ServiceMessagePhotoTemplate";
                 }

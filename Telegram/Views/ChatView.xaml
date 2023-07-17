@@ -210,6 +210,7 @@
                                                  Foreground="White"
                                                  TextAlignment="Center"
                                                  TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                                 FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                                  AutoFontSize="False"
                                                  IsTextSelectionEnabled="False"
                                                  HyperlinkStyle="None"
@@ -217,13 +218,13 @@
                                                  HyperlinkFontWeight="SemiBold"
                                                  Padding="0,0,0,4" />
 
-                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
+                    <Border x:Name="View"
+                            Background="{ThemeResource MessageServiceBackgroundBrush}"
                             CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
                             HorizontalAlignment="Center"
                             Padding="12,4,12,4"
                             Margin="0,8,0,12">
-                        <TextBlock x:Name="View"
-                                   Text="{CustomResource ViewPhotoAction}"
+                        <TextBlock Text="{CustomResource ViewPhotoAction}"
                                    Foreground="#FFFFFF"
                                    TextAlignment="Center"
                                    Style="{StaticResource CaptionTextBlockStyle}" />
@@ -250,6 +251,7 @@
                                                  Foreground="White"
                                                  TextAlignment="Center"
                                                  TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                                 FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                                  AutoFontSize="False"
                                                  IsTextSelectionEnabled="False"
                                                  HyperlinkStyle="None"
@@ -280,6 +282,7 @@
                                              Foreground="#FFFFFF"
                                              TextAlignment="Center"
                                              TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                             FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                              AutoFontSize="False"
                                              IsTextSelectionEnabled="False"
                                              HyperlinkStyle="None"
