@@ -22,8 +22,6 @@ namespace Telegram.Controls.Messages.Content
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
 
-        private RemoteFileSource _source;
-
         private long _fileToken;
         private long _thumbnailToken;
 
@@ -177,7 +175,7 @@ namespace Telegram.Controls.Messages.Content
                     Overlay.Progress = (double)file.Local.DownloadedSize / size;
                     Overlay.ProgressVisibility = Visibility.Visible;
 
-                    if (_source == null)
+                    if (Player.Source == null)
                     {
                         Subtitle.Text = video.GetDuration() + Environment.NewLine + string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
                     }
@@ -294,13 +292,13 @@ namespace Telegram.Controls.Messages.Content
         {
             if (message?.Delegate == null || file == null || !PowerSavingPolicy.AutoPlayVideos)
             {
-                Player.Source = _source = null;
+                Player.Source = null;
             }
             else
             {
-                if (_source?.Id != file.Id)
+                if (Player.Source is not RemoteFileSource remote || remote.Id != file.Id)
                 {
-                    Player.Source = _source = new RemoteFileSource(message.ClientService, file, duration);
+                    Player.Source = new RemoteFileSource(message.ClientService, file, duration);
                     message.Delegate.ViewVisibleMessages();
                 }
             }
@@ -364,7 +362,7 @@ namespace Telegram.Controls.Messages.Content
                 return null;
             }
 
-            var content = message.Content;
+            var content = message.GeneratedContent ?? message.Content;
             if (content is MessageVideo video)
             {
                 isSecret = video.IsSecret;

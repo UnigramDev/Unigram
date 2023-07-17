@@ -290,7 +290,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.ReplyToItem is Story replyToStory)
             {
-                if (message.ClientService.TryGetUser(replyToStory.SenderUserId, out User replyUser))
+                if (message.ClientService.TryGetUser(replyToStory.SenderChatId, out User replyUser))
                 {
                     builder.AppendLine($"{Strings.AccDescrReplying} {replyUser.FullName()}. ");
                 }
@@ -920,7 +920,39 @@ namespace Telegram.Controls.Messages
                 shown = true;
             }
 
-            if (message.ForwardInfo != null && !message.IsSaved)
+            if (message.Content is MessageAsyncStory story)
+            {
+                LoadObject(ref ForwardLabel, nameof(ForwardLabel));
+
+                if (story.State == MessageStoryState.Expired)
+                {
+                    ForwardLabel.Inlines.Add(CreateRun(Icons.ExpiredStory + "\u00A0" + Strings.ExpiredStory, FontWeights.Normal));
+                }
+                else
+                {
+                    ForwardLabel.Inlines.Add(CreateRun(Strings.ForwardedStory, FontWeights.Normal));
+                }
+
+                ForwardLabel.Inlines.Add(new LineBreak());
+                ForwardLabel.Inlines.Add(CreateRun($"{Strings.From} ", FontWeights.Normal));
+
+                if (message.ClientService.TryGetChat(story.StorySenderChatId, out Chat storyChat))
+                {
+                    var hyperlink = new Hyperlink();
+                    hyperlink.Inlines.Add(CreateRun(storyChat.Title, FontWeights.SemiBold));
+                    hyperlink.UnderlineStyle = UnderlineStyle.None;
+                    hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
+                    hyperlink.Click += FwdFrom_Click;
+
+                    ForwardLabel.Foreground = hyperlink.Foreground;
+
+                    ForwardLabel.Inlines.Add(hyperlink);
+                    ForwardLabel.Visibility = Visibility.Visible;
+                }
+
+                shown = true;
+            }
+            else if (message.ForwardInfo != null && !message.IsSaved)
             {
                 LoadObject(ref ForwardLabel, nameof(ForwardLabel));
 
@@ -1390,7 +1422,7 @@ namespace Telegram.Controls.Messages
                 {
                     top = 4;
                 }
-                if ((message.ForwardInfo != null && !message.IsSaved) || message.ViaBotUserId != 0 || (message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden) || message.IsChannelPost)
+                if ((message.ForwardInfo != null && !message.IsSaved) || message.ViaBotUserId != 0 || (message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden) || message.IsChannelPost || message.Content is MessageAsyncStory)
                 {
                     top = 4;
                 }
@@ -1436,7 +1468,7 @@ namespace Telegram.Controls.Messages
                     Panel.Placeholder = content is MessageBigEmoji;
                 }
             }
-            else if ((content is MessageText webPage && webPage.WebPage != null) || content is MessageGame)
+            else if ((content is MessageText webPage && webPage.WebPage != null) || content is MessageGame || content is MessageAsyncStory)
             {
                 ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                 Media.Margin = new Thickness(10, -6, 10, 0);
@@ -1621,6 +1653,13 @@ namespace Telegram.Controls.Messages
             else if (content is MessageVoiceNote)
             {
                 Media.Child = new VoiceNoteContent(message);
+            }
+            else if (content is MessageAsyncStory story && story.State != MessageStoryState.Expired)
+            {
+                Media.Child = new AspectView
+                {
+                    Constraint = message
+                };
             }
             else if (content is MessageAnimatedEmoji)
             {
@@ -2639,7 +2678,7 @@ namespace Telegram.Controls.Messages
 
             //return base.MeasureOverride(availableSize);
 
-            var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 320));
+            var availableWidth = Math.Min(availableSize.Width, Math.Min(double.IsNaN(Width) ? double.PositiveInfinity : Width, 420));
             var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, 420));
 
             var ttl = false;
@@ -2697,6 +2736,13 @@ namespace Telegram.Controls.Messages
             else if (constraint is MessageSticker stickerMessage)
             {
                 constraint = stickerMessage.Sticker;
+            }
+            else if (constraint is MessageAsyncStory storyMessage)
+            {
+                width = 720;
+                height = 1280;
+
+                goto Calculate;
             }
             else if (constraint is MessageVenue venueMessage)
             {
@@ -2881,6 +2927,8 @@ namespace Telegram.Controls.Messages
                 case MessageInvoice invoice:
                     return invoice.ExtendedMedia is not MessageExtendedMediaUnsupported and not null
                         || (width && invoice.Photo != null);
+                case MessageAsyncStory story:
+                    return story.State != MessageStoryState.Expired;
                 default:
                     return false;
             }

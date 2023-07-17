@@ -1440,6 +1440,16 @@ namespace Telegram.ViewModels
                     message.GeneratedContentUnread = true;
                 }
 
+                if (message.Content is MessageStory story)
+                {
+                    message.Content = new MessageAsyncStory
+                    {
+                        ViaMention = story.ViaMention,
+                        StoryId = story.StoryId,
+                        StorySenderChatId = story.StorySenderChatId
+                    };
+                }
+
                 ProcessEmoji(message);
                 ProcessReplies(chat, message);
             }
@@ -1587,6 +1597,36 @@ namespace Telegram.ViewModels
 
                     BeginOnUIThread(() => Handle(message,
                         bubble => bubble.UpdateMessageReply(message),
+                        service => service.UpdateMessage(message)));
+                });
+            }
+            else if (message.Content is MessageAsyncStory asyncStory)
+            {
+                asyncStory.State = MessageStoryState.Loading;
+
+                ClientService.Send(new GetStory(asyncStory.StorySenderChatId, asyncStory.StoryId, false), response =>
+                {
+                    if (response is Story story)
+                    {
+                        asyncStory.Story = story;
+                        asyncStory.State = MessageStoryState.None;
+
+                        if (story.Content is StoryContentPhoto photo)
+                        {
+                            message.GeneratedContent = new MessagePhoto(photo.Photo, null, false, false);
+                        }
+                        else if (story.Content is StoryContentVideo video)
+                        {
+                            message.GeneratedContent = new MessageVideo(new Video((int)video.Video.Duration, video.Video.Width, video.Video.Height, "video.mp4", "video/mp4", video.Video.HasStickers, true, video.Video.Minithumbnail, video.Video.Thumbnail, video.Video.Video), null, false, false);
+                        }
+                    }
+                    else
+                    {
+                        asyncStory.State = MessageStoryState.Expired;
+                    }
+
+                    BeginOnUIThread(() => Handle(message,
+                        bubble => { bubble.UpdateMessageHeader(message); bubble.UpdateMessageContent(message); },
                         service => service.UpdateMessage(message)));
                 });
             }
