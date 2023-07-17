@@ -23,11 +23,6 @@ namespace Telegram.Services.Factories
     public interface IMessageFactory
     {
         MessageViewModel Create(IMessageDelegate delegato, Chat chat, Message message);
-
-        Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool asFile, bool spoiler = false, int ttl = 0, BitmapEditState editState = null);
-        Task<InputMessageFactory> CreateVideoAsync(StorageFile file, bool animated, bool asFile, bool spoiler = false, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null);
-        Task<InputMessageFactory> CreateVideoNoteAsync(StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null);
-        Task<InputMessageFactory> CreateDocumentAsync(StorageFile file, bool asFile);
     }
 
     public class MessageFactory : IMessageFactory
@@ -53,7 +48,7 @@ namespace Telegram.Services.Factories
 
 
 
-        public async Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool asFile, bool spoiler = false, int ttl = 0, BitmapEditState editState = null)
+        public static async Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool asFile, bool spoiler = false, int ttl = 0, BitmapEditState editState = null)
         {
             var size = await ImageHelper.GetScaleAsync(file, editState: editState);
             if (size.Width == 0 || size.Height == 0)
@@ -82,7 +77,7 @@ namespace Telegram.Services.Factories
             };
         }
 
-        public async Task<InputMessageFactory> CreateVideoAsync(StorageFile file, bool animated, bool asFile, bool spoiler = false, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        public static async Task<InputMessageFactory> CreateVideoAsync(StorageFile file, bool animated, bool asFile, bool spoiler = false, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
         {
             var basicProps = await file.GetBasicPropertiesAsync();
             var videoProps = await file.Properties.GetVideoPropertiesAsync();
@@ -149,7 +144,7 @@ namespace Telegram.Services.Factories
             };
         }
 
-        public async Task<InputMessageFactory> CreateVideoNoteAsync(StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        public static async Task<InputMessageFactory> CreateVideoNoteAsync(StorageFile file, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
         {
             var basicProps = await file.GetBasicPropertiesAsync();
             var videoProps = await file.Properties.GetVideoPropertiesAsync();
@@ -200,7 +195,7 @@ namespace Telegram.Services.Factories
             };
         }
 
-        public async Task<InputMessageFactory> CreateDocumentAsync(StorageFile file, bool asFile)
+        public static async Task<InputMessageFactory> CreateDocumentAsync(StorageFile file, bool asFile)
         {
             var generated = await file.ToGeneratedAsync();
             var thumbnail = new InputThumbnail(await file.ToGeneratedAsync(ConversionType.DocumentThumbnail), 0, 0);

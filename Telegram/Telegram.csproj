@@ -232,6 +232,7 @@
     <Compile Include="Streams\RemoteFileSource.cs" />
     <Compile Include="ViewModels\ChatNotificationsViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
+    <Compile Include="ViewModels\ComposeViewModel.cs" />
     <Compile Include="ViewModels\MyStoriesViewModel.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />

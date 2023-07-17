@@ -38,7 +38,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.ViewModels
 {
-    public partial class DialogViewModel : ViewModelBase, IDelegable<IDialogDelegate>
+    public partial class DialogViewModel : ComposeViewModel, IDelegable<IDialogDelegate>
     {
         private readonly ConcurrentDictionary<long, MessageViewModel> _selectedItems = new();
         public IDictionary<long, MessageViewModel> SelectedItems => _selectedItems;
@@ -156,7 +156,7 @@ namespace Telegram.ViewModels
         }
 
         protected long _threadId => _topic?.Info.MessageThreadId ?? _thread?.MessageThreadId ?? 0;
-        public long ThreadId => _topic?.Info.MessageThreadId ?? _thread?.MessageThreadId ?? 0;
+        public override long ThreadId => _topic?.Info.MessageThreadId ?? _thread?.MessageThreadId ?? 0;
 
         protected MessageThreadInfo _thread;
         public MessageThreadInfo Thread
@@ -173,7 +173,7 @@ namespace Telegram.ViewModels
         }
 
         protected Chat _chat;
-        public Chat Chat
+        public override Chat Chat
         {
             get => _chat;
             set => Set(ref _chat, value);
@@ -425,7 +425,7 @@ namespace Telegram.ViewModels
             return text;
         }
 
-        public FormattedText GetFormattedText(bool clear = false)
+        public override FormattedText GetFormattedText(bool clear = false)
         {
             var field = TextField;
             if (field == null)
@@ -2241,7 +2241,7 @@ namespace Telegram.ViewModels
             TextField?.Focus(FocusState.Programmatic);
         }
 
-        private MessageReplyTo GetReply(bool clean, bool notify = true)
+        protected override MessageReplyTo GetReply(bool clean, bool notify = true)
         {
             var embedded = _composerHeader;
             if (embedded == null || embedded.ReplyToMessage == null)
@@ -2271,121 +2271,75 @@ namespace Telegram.ViewModels
             await SendMessageAsync(args);
         }
 
-        public Task SendMessageAsync(FormattedText formattedText, MessageSendOptions options = null)
+        protected override async Task<bool> BeforeSendMessageAsync(FormattedText formattedText)
         {
-            return SendMessageAsync(formattedText.Text, formattedText.Entities, options);
-        }
-
-        public async Task SendMessageAsync(string text, IList<TextEntity> entities = null, MessageSendOptions options = null)
-        {
-            text = text.Replace('\v', '\n').Replace('\r', '\n');
-
-            var chat = _chat;
-            if (chat == null)
+            if (Chat is not Chat chat)
             {
-                return;
-            }
-
-            FormattedText formattedText;
-            if (entities == null)
-            {
-                formattedText = GetFormattedText(text);
-            }
-            else
-            {
-                formattedText = new FormattedText(text, entities);
-            }
-
-            options ??= await PickMessageSendOptionsAsync();
-
-            if (options == null)
-            {
-                return;
+                return false;
             }
 
             var header = _composerHeader;
             var disablePreview = header?.WebPageDisabled ?? false;
 
-            if (header?.EditingMessage != null)
+            if (header?.EditingMessage == null)
             {
-                var editing = header.EditingMessage;
+                return false;
+            }
 
-                var factory = header.EditingMessageMedia;
-                if (factory != null)
+            var editing = header.EditingMessage;
+
+            var factory = header.EditingMessageMedia;
+            if (factory != null)
+            {
+                var input = factory.Delegate(factory.InputFile, header.EditingMessageCaption);
+
+                var response = await ClientService.SendAsync(new SendMessageAlbum(editing.ChatId, editing.MessageThreadId, editing.ReplyTo, null, new[] { input }, true));
+                if (response is Messages messages && messages.MessagesValue.Count == 1)
                 {
-                    var input = factory.Delegate(factory.InputFile, header.EditingMessageCaption);
+                    _contentOverrides[editing.CombinedId] = messages.MessagesValue[0].Content;
+                    Aggregator.Publish(new UpdateMessageContent(editing.ChatId, editing.Id, messages.MessagesValue[0].Content));
 
-                    var response = await ClientService.SendAsync(new SendMessageAlbum(editing.ChatId, editing.MessageThreadId, editing.ReplyTo, null, new[] { input }, true));
-                    if (response is Messages messages && messages.MessagesValue.Count == 1)
-                    {
-                        _contentOverrides[editing.CombinedId] = messages.MessagesValue[0].Content;
-                        Aggregator.Publish(new UpdateMessageContent(editing.ChatId, editing.Id, messages.MessagesValue[0].Content));
-
-                        ComposerHeader = null;
-                        ClientService.Send(new EditMessageMedia(editing.ChatId, editing.Id, null, input));
-                    }
-                }
-                else
-                {
-                    Function function;
-                    if (editing.Content is MessageText or MessageAnimatedEmoji or MessageBigEmoji)
-                    {
-                        function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(formattedText, disablePreview, true));
-                    }
-                    else
-                    {
-                        function = new EditMessageCaption(chat.Id, editing.Id, null, formattedText);
-                    }
-
-                    var response = await ClientService.SendAsync(function);
-                    if (response is Message message)
-                    {
-                        ShowDraftMessage(chat);
-                        Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
-                    }
-                    else if (response is Error error)
-                    {
-                        if (error.MessageEquals(ErrorType.MESSAGE_NOT_MODIFIED))
-                        {
-                            ShowDraftMessage(chat);
-                        }
-                        else
-                        {
-                            // TODO: ...
-                        }
-                    }
+                    ComposerHeader = null;
+                    ClientService.Send(new EditMessageMedia(editing.ChatId, editing.Id, null, input));
                 }
             }
             else
             {
-                var reply = GetReply(true, options?.SchedulingState != null);
-
-                if (ClientService.IsDiceEmoji(text, out string dice))
+                Function function;
+                if (editing.Content is MessageText or MessageAnimatedEmoji or MessageBigEmoji)
                 {
-                    var input = new InputMessageDice(dice, true);
-                    await SendMessageAsync(chat, reply, input, options);
+                    function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(formattedText, disablePreview, true));
                 }
                 else
                 {
-                    if (text.Length > ClientService.Options.MessageTextLengthMax)
+                    function = new EditMessageCaption(chat.Id, editing.Id, null, formattedText);
+                }
+
+                var response = await ClientService.SendAsync(function);
+                if (response is Message message)
+                {
+                    ShowDraftMessage(chat);
+                    Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
+                }
+                else if (response is Error error)
+                {
+                    if (error.MessageEquals(ErrorType.MESSAGE_NOT_MODIFIED))
                     {
-                        foreach (var split in formattedText.Split(ClientService.Options.MessageTextLengthMax))
-                        {
-                            var input = new InputMessageText(split, disablePreview, true);
-                            await SendMessageAsync(chat, reply, input, options);
-                        }
-                    }
-                    else if (text.Length > 0)
-                    {
-                        var input = new InputMessageText(formattedText, disablePreview, true);
-                        await SendMessageAsync(chat, reply, input, options);
+                        ShowDraftMessage(chat);
                     }
                     else
                     {
-                        await LoadLastSliceAsync();
+                        // TODO: ...
                     }
                 }
             }
+
+            return true;
+        }
+
+        protected override Task AfterSendMessageAsync()
+        {
+            return LoadLastSliceAsync();
         }
 
         #region Set default message sender

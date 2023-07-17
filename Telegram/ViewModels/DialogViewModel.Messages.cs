@@ -1214,7 +1214,7 @@ namespace Telegram.ViewModels
                     var confirm = await ShowPopupAsync(content, Strings.ShareYouPhoneNumberTitle, Strings.OK, Strings.Cancel);
                     if (confirm == ContentDialogResult.Primary)
                     {
-                        await SendContactAsync(chat, new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, string.Empty, cached.Id), null);
+                        await SendContactAsync(new Contact(cached.PhoneNumber, cached.FirstName, cached.LastName, string.Empty, cached.Id), null);
                     }
                 }
             }
@@ -1226,7 +1226,7 @@ namespace Telegram.ViewModels
                     var location = await _locationService.GetPositionAsync();
                     if (location != null)
                     {
-                        await SendMessageAsync(chat, null, new InputMessageLocation(location, 0, 0, 0), null);
+                        await SendMessageAsync(null, new InputMessageLocation(location, 0, 0, 0), null);
                     }
                 }
             }
@@ -1237,7 +1237,7 @@ namespace Telegram.ViewModels
             else if (keyboardButton.Type is KeyboardButtonTypeText)
             {
                 var input = new InputMessageText(new FormattedText(keyboardButton.Text, null), false, true);
-                await SendMessageAsync(chat, chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup ? new MessageReplyToMessage(message.ChatId, message.Id) : null, input, null);
+                await SendMessageAsync(chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup ? new MessageReplyToMessage(message.ChatId, message.Id) : null, input, null);
             }
             else if (keyboardButton.Type is KeyboardButtonTypeWebApp webApp && message.SenderId is MessageSenderUser bot)
             {
