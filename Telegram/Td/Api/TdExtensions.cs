@@ -1249,6 +1249,10 @@ namespace Telegram.Td.Api
                 case MessageVideoNote:
                 case MessageVoiceNote:
                     return false;
+                case MessageAsyncStory asyncStory:
+                    return asyncStory.ViaMention;
+                case MessageStory story:
+                    return story.ViaMention;
                 default:
                     return true;
             }

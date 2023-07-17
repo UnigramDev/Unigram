@@ -7,6 +7,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Native;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -124,9 +125,16 @@ namespace Telegram.Controls.Messages
             {
                 GetMessageTemplate(message.ClientService, replyToMessage, null, outgoing);
             }
-            else if (message.ReplyToItem is Story replyToStory /*&& !replyToStory.IsVisibleOnlyToSelf*/)
+            else if (message.ReplyToItem is Story replyToStory)
             {
-                GetStoryTemplate(message.ClientService, replyToStory, null, outgoing);
+                if (replyToStory.IsVisibleOnlyForSelf)
+                {
+                    SetEmptyTemplate(message.ClientService, message.ReplyTo);
+                }
+                else
+                {
+                    GetStoryTemplate(message.ClientService, replyToStory, null, outgoing);
+                }
             }
             else if (message.ReplyToState == MessageReplyToState.Loading)
             {
@@ -134,7 +142,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.ReplyToState == MessageReplyToState.Deleted)
             {
-                SetEmptyTemplate(message.ReplyTo);
+                SetEmptyTemplate(message.ClientService, message.ReplyTo);
             }
         }
 
@@ -150,7 +158,7 @@ namespace Telegram.Controls.Messages
 
             if (loading)
             {
-                SetLoadingTemplate(message.ClientService, null, title, true);
+                SetLoadingTemplate(message?.ClientService, null, title, true);
             }
             else
             {
@@ -278,6 +286,8 @@ namespace Telegram.Controls.Messages
                     return SetPollTemplate(clientService, message, poll, title, outgoing);
                 case MessageSticker sticker:
                     return SetStickerTemplate(clientService, message, sticker, title, outgoing);
+                case MessageStory story:
+                    return SetStoryTemplate(clientService, message, story, title, outgoing);
                 case MessageUnsupported:
                     return SetUnsupportedTemplate(clientService, message, title, outgoing);
                 case MessageVenue venue:
@@ -298,7 +308,7 @@ namespace Telegram.Controls.Messages
             Visibility = Visibility.Visible;
 
             SetText(clientService,
-                outgoing ? null : new MessageSenderUser(story.SenderUserId),
+                outgoing ? null : new MessageSenderChat(story.SenderChatId),
                 GetFromLabel(clientService, story, title),
                 Strings.Story,
                 null);
@@ -628,6 +638,21 @@ namespace Telegram.Controls.Messages
             return true;
         }
 
+        private bool SetStoryTemplate(IClientService clientService, MessageViewModel message, MessageStory story, string title, bool outgoing)
+        {
+            Visibility = Visibility.Visible;
+
+            HideThumbnail();
+
+            SetText(clientService,
+                outgoing ? null : message.SenderId,
+                GetFromLabel(clientService, message, title),
+                Strings.Story,
+                null);
+
+            return true;
+        }
+
         private bool SetDocumentTemplate(IClientService clientService, MessageViewModel message, MessageDocument document, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
@@ -673,17 +698,39 @@ namespace Telegram.Controls.Messages
             return true;
         }
 
-        private bool SetEmptyTemplate(MessageReplyTo replyTo)
+        private bool SetEmptyTemplate(IClientService clientService, MessageReplyTo replyTo)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            SetText(null,
-                null,
-                null,
-                replyTo is MessageReplyToMessage ? Strings.DeletedMessage : Strings.ExpiredStory,
-                null);
+            if (replyTo is MessageReplyToStory replyToStory)
+            {
+                if (clientService.TryGetChat(replyToStory.StorySenderChatId, out Chat chat))
+                {
+                    SetText(null,
+                        null,
+                        chat.Title,
+                        Icons.ExpiredStory + "\u00A0" + Strings.ExpiredStory,
+                        null);
+                }
+                else
+                {
+                    SetText(null,
+                        null,
+                        null,
+                        Icons.ExpiredStory + "\u00A0" + Strings.ExpiredStory,
+                        null);
+                }
+            }
+            else
+            {
+                SetText(null,
+                    null,
+                    null,
+                    Strings.DeletedMessage,
+                    null);
+            }
 
             return true;
         }
@@ -748,7 +795,7 @@ namespace Telegram.Controls.Messages
                 return title;
             }
 
-            if (clientService.TryGetUser(story.SenderUserId, out User user))
+            if (clientService.TryGetUser(story.SenderChatId, out User user))
             {
                 return user.FullName();
             }
