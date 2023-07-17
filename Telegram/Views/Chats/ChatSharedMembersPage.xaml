@@ -1,14 +1,11 @@
 ﻿<local:ChatSharedMediaPageBase x:Class="Telegram.Views.Chats.ChatSharedMembersPage"
                                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                               xmlns:local="using:Telegram.Views.Chats"
-                               xmlns:cells="using:Telegram.Controls.Cells"
-                               xmlns:common="using:Telegram.Common"
-                               xmlns:controls="using:Telegram.Controls"
-                               xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-                               xmlns:selectors="using:Telegram.Selectors"
                                xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                                xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                               xmlns:controls="using:Telegram.Controls"
+                               xmlns:cells="using:Telegram.Controls.Cells"
+                               xmlns:local="using:Telegram.Views.Chats"
                                mc:Ignorable="d">
 
     <Grid>

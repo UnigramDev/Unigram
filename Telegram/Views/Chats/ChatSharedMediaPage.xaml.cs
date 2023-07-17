@@ -21,6 +21,7 @@ namespace Telegram.Views.Chats
         public ChatSharedMediaPage()
         {
             InitializeComponent();
+            ScrollingHost.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, OnSelectionModeChanged);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -47,17 +48,21 @@ namespace Telegram.Views.Chats
                 photo.Tag = message;
                 content.Tag = message;
 
+                var panel = content.Children[1] as Border;
+                var duration = panel.Child as TextBlock;
+
                 if (message.Content is MessagePhoto photoMessage)
                 {
                     var small = photoMessage.Photo.GetSmall();
+
                     photo.SetSource(ViewModel.ClientService, small.Photo);
+                    panel.Visibility = Visibility.Collapsed;
                 }
                 else if (message.Content is MessageVideo videoMessage && videoMessage.Video.Thumbnail != null)
                 {
                     photo.SetSource(ViewModel.ClientService, videoMessage.Video.Thumbnail.File);
+                    panel.Visibility = Visibility.Visible;
 
-                    var panel = content.Children[1] as Grid;
-                    var duration = panel.Children[1] as TextBlock;
                     duration.Text = videoMessage.Video.GetDuration();
                 }
             }
@@ -76,6 +81,7 @@ namespace Telegram.Views.Chats
             var message = element.Tag as MessageWithOwner;
 
             var viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, 0, message.Get(), true);
+            viewModel.NavigationService = ViewModel.NavigationService;
             await GalleryView.ShowAsync(viewModel, () => element);
         }
     }
