@@ -10,6 +10,12 @@
     <Style TargetType="local:MessageReference">
         <Setter Property="BorderThickness"
                 Value="2,0,0,0" />
+        <Setter Property="Foreground"
+                Value="{ThemeResource MessageForegroundBrush}" />
+        <Setter Property="HeaderBrush"
+                Value="{ThemeResource MessageHeaderForegroundBrush}" />
+        <Setter Property="SubtleBrush"
+                Value="{ThemeResource MessageSubtleForegroundBrush}" />
         <Setter Property="BorderBrush"
                 Value="{ThemeResource MessageHeaderBorderBrush}" />
         <Setter Property="HorizontalContentAlignment"
@@ -36,40 +42,34 @@
                           BorderThickness="{TemplateBinding BorderThickness}"
                           Margin="{TemplateBinding Padding}">
                         <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Overlay.Visibility"
+                                                Value="Visible" />
+                                        <Setter Target="Overlay.Opacity"
+                                                Value="0.05" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Overlay.Visibility"
+                                                Value="Visible" />
+                                        <Setter Target="Overlay.Opacity"
+                                                Value="0.1" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
                             <VisualStateGroup>
                                 <VisualState x:Name="TintedState" />
                                 <VisualState x:Name="LightState">
                                     <VisualState.Setters>
-                                        <Setter Target="Label.Foreground"
-                                                Value="#FFFFFF" />
-                                        <Setter Target="TitleLabel.Foreground"
-                                                Value="#FFFFFF" />
-                                        <Setter Target="ServiceLabel.Foreground"
-                                                Value="#FFFFFF" />
-                                        <Setter Target="MessageLabel.Foreground"
-                                                Value="#FFFFFF" />
-
                                         <Setter Target="LayoutRoot.Margin"
                                                 Value="0,4,0,2" />
-                                        <Setter Target="LayoutRoot.BorderBrush"
-                                                Value="#FFFFFF" />
                                     </VisualState.Setters>
                                 </VisualState>
-                                <VisualState x:Name="NormalState">
-                                    <VisualState.Setters>
-                                        <Setter Target="Label.Foreground"
-                                                Value="{ThemeResource MessageForegroundBrush}" />
-                                        <Setter Target="TitleLabel.Foreground"
-                                                Value="{ThemeResource MessageHeaderForegroundBrush}" />
-                                        <Setter Target="ServiceLabel.Foreground"
-                                                Value="{ThemeResource MessageSubtleForegroundBrush}" />
-                                        <Setter Target="MessageLabel.Foreground"
-                                                Value="{ThemeResource MessageForegroundBrush}" />
-
-                                        <Setter Target="LayoutRoot.BorderBrush"
-                                                Value="{ThemeResource MessageHeaderBorderBrush}" />
-                                    </VisualState.Setters>
-                                </VisualState>
+                                <VisualState x:Name="NormalState" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
@@ -97,19 +97,27 @@
                                        VerticalAlignment="Center"
                                        MaxLines="2"
                                        IsTextSelectionEnabled="False"
-                                       Foreground="{ThemeResource MessageForegroundBrush}"
-                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                        Style="{StaticResource ReplyBodyRichTextBlockStyle}"
                                        Grid.Column="1">
                             <Paragraph>
                                 <Run x:Name="TitleLabel"
-                                     Foreground="{ThemeResource MessageHeaderForegroundBrush}" />
+                                     Foreground="{Binding HeaderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                 <LineBreak />
                                 <Run x:Name="ServiceLabel"
-                                     Foreground="{ThemeResource MessageSubtleForegroundBrush}" /><Span x:Name="MessageLabel"
-                                                                                                       Foreground="{ThemeResource MessageForegroundBrush}" />
+                                     Foreground="{Binding SubtleBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                <Span x:Name="MessageLabel" />
                             </Paragraph>
                         </RichTextBlock>
+
+                        <Rectangle x:Name="Overlay"
+                                   Fill="{TemplateBinding BorderBrush}"
+                                   Visibility="Collapsed"
+                                   Margin="-6,-2,-4,-2"
+                                   RadiusX="4"
+                                   RadiusY="4"
+                                   Grid.ColumnSpan="2" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

@@ -89,7 +89,7 @@
                                MaxLines="1"
                                IsTextSelectionEnabled="False"
                                Foreground="{ThemeResource MessageForegroundBrush}"
-                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                Style="{StaticResource ReplyBodyRichTextBlockStyle}">
                     <Paragraph>
                         <Run x:Name="ServiceLabel1"
@@ -101,7 +101,7 @@
                                MaxLines="1"
                                IsTextSelectionEnabled="False"
                                Foreground="{ThemeResource MessageForegroundBrush}"
-                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                               FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                Style="{StaticResource ReplyBodyRichTextBlockStyle}">
                     <Paragraph>
                         <Run x:Name="ServiceLabel2"

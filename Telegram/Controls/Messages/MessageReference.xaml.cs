@@ -11,6 +11,7 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
@@ -60,6 +61,32 @@ namespace Telegram.Controls.Messages
             return builder.ToString();
         }
 
+        #region HeaderBrush
+
+        public Brush HeaderBrush
+        {
+            get { return (Brush)GetValue(HeaderBrushProperty); }
+            set { SetValue(HeaderBrushProperty, value); }
+        }
+
+        public static readonly DependencyProperty HeaderBrushProperty =
+            DependencyProperty.Register("HeaderBrush", typeof(Brush), typeof(MessageReference), new PropertyMetadata(null));
+
+        #endregion
+
+        #region SubtleBrush
+
+        public Brush SubtleBrush
+        {
+            get { return (Brush)GetValue(SubtleBrushProperty); }
+            set { SetValue(SubtleBrushProperty, value); }
+        }
+
+        public static readonly DependencyProperty SubtleBrushProperty =
+            DependencyProperty.Register("SubtleBrush", typeof(Brush), typeof(MessageReference), new PropertyMetadata(null));
+
+        #endregion
+
         #region InitializeComponent
 
         private Grid LayoutRoot;
@@ -103,27 +130,42 @@ namespace Telegram.Controls.Messages
         #endregion
 
         private bool _light;
-        private bool _tinted;
-
-        private string _currentState;
+        private long _tintId;
 
         public void ToLightState()
         {
-            if (_currentState != "LightState")
+            if (_light is false)
             {
                 _light = true;
-                _currentState = "LightState";
                 VisualStateManager.GoToState(this, "LightState", false);
+
+                Foreground =
+                    SubtleBrush =
+                    HeaderBrush =
+                    BorderBrush = new SolidColorBrush(Colors.White);
             }
         }
 
         public void ToNormalState()
         {
-            if (_currentState != (_tinted ? "TintedState" : "NormalState"))
+            if (_light)
             {
                 _light = false;
-                _currentState = _tinted ? "TintedState" : "NormalState";
-                VisualStateManager.GoToState(this, _tinted ? "TintedState" : "NormalState", false);
+                VisualStateManager.GoToState(this, "NormalState", false);
+
+                ClearValue(ForegroundProperty);
+                ClearValue(SubtleBrushProperty);
+
+                if (_tintId != 0)
+                {
+                    HeaderBrush =
+                        BorderBrush = PlaceholderImage.GetBrush(_tintId);
+                }
+                else
+                {
+                    ClearValue(HeaderBrushProperty);
+                    ClearValue(BorderBrushProperty);
+                }
             }
         }
 
@@ -173,28 +215,38 @@ namespace Telegram.Controls.Messages
                     ServiceLabel.Text += ", ";
                 }
 
-                if (_light || sender is null)
+                _tintId = sender switch
                 {
-                    ClearValue(BorderBrushProperty);
-                    TitleLabel.ClearValue(TextElement.ForegroundProperty);
+                    MessageSenderUser user => user.UserId,
+                    MessageSenderChat chat => chat.ChatId,
+                    _ => 0
+                };
 
-                    _tinted = false;
-                    VisualStateManager.GoToState(this, _light ? "LightState" : "NormalState", false);
+                if (_light)
+                {
+                    VisualStateManager.GoToState(this, "LightState", false);
+
+                    Foreground =
+                        SubtleBrush =
+                        HeaderBrush =
+                        BorderBrush = new SolidColorBrush(Colors.White);
                 }
                 else
                 {
-                    _tinted = true;
-                    VisualStateManager.GoToState(this, "TintedState", false);
+                    VisualStateManager.GoToState(this, "NormalState", false);
 
-                    if (sender is MessageSenderUser user)
+                    ClearValue(ForegroundProperty);
+                    ClearValue(SubtleBrushProperty);
+
+                    if (_tintId != 0)
                     {
-                        BorderBrush = PlaceholderImage.GetBrush(user.UserId);
-                        TitleLabel.Foreground = PlaceholderImage.GetBrush(user.UserId);
+                        HeaderBrush =
+                            BorderBrush = PlaceholderImage.GetBrush(_tintId);
                     }
-                    else if (sender is MessageSenderChat chat)
+                    else
                     {
-                        BorderBrush = PlaceholderImage.GetBrush(chat.ChatId);
-                        TitleLabel.Foreground = PlaceholderImage.GetBrush(chat.ChatId);
+                        ClearValue(HeaderBrushProperty);
+                        ClearValue(BorderBrushProperty);
                     }
                 }
 
