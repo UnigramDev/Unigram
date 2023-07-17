@@ -51,8 +51,6 @@ namespace Telegram.Controls.Gallery
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
-        public override int SessionId => ViewModel.SessionId;
-
         public IClientService ClientService => ViewModel.ClientService;
 
         private Func<FrameworkElement> _closing;
@@ -312,8 +310,12 @@ namespace Telegram.Controls.Gallery
             return new GalleryView();
         }
 
-        public static Task<ContentDialogResult> ShowAsync(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, Chat chat, Func<FrameworkElement> closing = null)
+        public static Task<ContentDialogResult> ShowAsync(ViewModelBase viewModelBase, IStorageService storageService, Chat chat, Func<FrameworkElement> closing = null)
         {
+            var clientService = viewModelBase.ClientService;
+            var aggregator = viewModelBase.Aggregator;
+            var navigationService = viewModelBase.NavigationService;
+
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = clientService.GetUser(chat);
@@ -329,6 +331,7 @@ namespace Telegram.Controls.Gallery
                 }
 
                 var viewModel = new UserPhotosViewModel(clientService, storageService, aggregator, user, userFull);
+                viewModel.NavigationService = navigationService;
                 return ShowAsync(viewModel, closing);
             }
             else if (chat.Type is ChatTypeBasicGroup)
@@ -340,6 +343,7 @@ namespace Telegram.Controls.Gallery
                 }
 
                 var viewModel = new ChatPhotosViewModel(clientService, storageService, aggregator, chat, basicGroupFull.Photo);
+                viewModel.NavigationService = navigationService;
                 return ShowAsync(viewModel, closing);
             }
             else if (chat.Type is ChatTypeSupergroup)
@@ -351,6 +355,7 @@ namespace Telegram.Controls.Gallery
                 }
 
                 var viewModel = new ChatPhotosViewModel(clientService, storageService, aggregator, chat, supergroupFull.Photo);
+                viewModel.NavigationService = navigationService;
                 return ShowAsync(viewModel, closing);
             }
 

@@ -914,7 +914,7 @@ namespace Telegram.Views
                 return;
             }
 
-            await GalleryView.ShowAsync(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, chat, () => Photo);
+            await GalleryView.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

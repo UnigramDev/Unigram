@@ -288,6 +288,7 @@ namespace Telegram.ViewModels
                         }
                     }
 
+                    viewModel.NavigationService = NavigationService;
                     await GalleryView.ShowAsync(viewModel, target != null ? () => target : null, timestamp);
                 }
 
