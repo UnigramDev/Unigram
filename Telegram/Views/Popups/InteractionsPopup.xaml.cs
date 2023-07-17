@@ -7,15 +7,15 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class MessageInteractionsPopup : ContentPopup
+    public sealed partial class InteractionsPopup : ContentPopup
     {
-        public MessageInteractionsViewModel ViewModel => DataContext as MessageInteractionsViewModel;
+        public InteractionsViewModel ViewModel => DataContext as InteractionsViewModel;
 
-        public MessageInteractionsPopup()
+        public InteractionsPopup()
         {
             InitializeComponent();
 
-            Title = Strings.Reactions;
+            //Title = Strings.Reactions;
             SecondaryButtonText = Strings.Close;
         }
 

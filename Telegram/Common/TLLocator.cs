@@ -954,9 +954,9 @@ namespace Telegram.Views
                     _settingsService,
                     _eventAggregator);
             }
-            else if (type == typeof(Telegram.ViewModels.MessageInteractionsViewModel))
+            else if (type == typeof(Telegram.ViewModels.InteractionsViewModel))
             {
-                return (T)(object)new Telegram.ViewModels.MessageInteractionsViewModel(
+                return (T)(object)new Telegram.ViewModels.InteractionsViewModel(
                     _clientService,
                     _settingsService,
                     _eventAggregator);

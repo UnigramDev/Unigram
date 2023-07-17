@@ -470,7 +470,7 @@ namespace Telegram
                 ChatNotificationsPopup => TLContainer.Current.Resolve<ChatNotificationsViewModel>(sessionId),
                 CreateChatPhotoPopup => TLContainer.Current.Resolve<CreateChatPhotoViewModel>(sessionId),
                 PromoPopup => TLContainer.Current.Resolve<PromoViewModel>(sessionId),
-                MessageInteractionsPopup => TLContainer.Current.Resolve<MessageInteractionsViewModel>(sessionId),
+                InteractionsPopup => TLContainer.Current.Resolve<InteractionsViewModel>(sessionId),
                 BackgroundsPopup => TLContainer.Current.Resolve<SettingsBackgroundsViewModel>(sessionId),
                 BackgroundPopup backgroundPopup => TLContainer.Current.Resolve<BackgroundViewModel, IBackgroundDelegate>(backgroundPopup, sessionId),
                 _ => null

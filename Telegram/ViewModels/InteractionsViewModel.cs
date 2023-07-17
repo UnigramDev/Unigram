@@ -12,14 +12,16 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class MessageInteractionsViewModel : ViewModelBase, IIncrementalCollectionOwner
+    public class InteractionsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
-        private MessageViewModel _message;
+        private MessageReplyTo _replyTo;
+
         private string _nextOffset;
+        private MessageViewer _nextViewers;
 
-        private HashSet<long> _users = new();
+        private readonly HashSet<long> _users = new();
 
-        public MessageInteractionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        public InteractionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
             Items = new IncrementalCollection<object>(this);
@@ -27,14 +29,18 @@ namespace Telegram.ViewModels
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (parameter is MessageViewModel message)
+            if (parameter is MessageReplyTo message)
             {
-                _message = message;
+                _replyTo = message;
                 _nextOffset = string.Empty;
             }
 
             return Task.CompletedTask;
         }
+
+        public string Title => _replyTo is MessageReplyToMessage
+            ? Strings.Reactions
+            : Strings.StatisticViews;
 
         public IncrementalCollection<object> Items { get; }
 
@@ -42,9 +48,9 @@ namespace Telegram.ViewModels
         {
             var totalCount = 0u;
 
-            if (_nextOffset != null)
+            if (_nextOffset != null && _replyTo is MessageReplyToMessage message)
             {
-                var response = await ClientService.SendAsync(new GetMessageAddedReactions(_message.ChatId, _message.Id, null, _nextOffset, 50));
+                var response = await ClientService.SendAsync(new GetMessageAddedReactions(message.ChatId, message.MessageId, null, _nextOffset, 50));
                 if (response is AddedReactions addedReactions)
                 {
                     _nextOffset = addedReactions.NextOffset.Length > 0 ? addedReactions.NextOffset : null;
@@ -67,13 +73,22 @@ namespace Telegram.ViewModels
             }
             else
             {
-                HasMoreItems = false;
+                Function function = _replyTo switch
+                {
+                    MessageReplyToMessage replyToMessage => new GetMessageViewers(replyToMessage.ChatId, replyToMessage.MessageId),
+                    MessageReplyToStory replyToStory => new GetStoryViewers(replyToStory.StoryId, _nextViewers, 50),
+                    _ => null
+                };
 
-                var response = await ClientService.SendAsync(new GetMessageViewers(_message.ChatId, _message.Id));
+                var response = await ClientService.SendAsync(function);
                 if (response is MessageViewers viewers)
                 {
+                    HasMoreItems = _replyTo is MessageReplyToStory && viewers.Viewers.Count > 0;
+
                     foreach (var item in viewers.Viewers)
                     {
+                        _nextViewers = item;
+
                         if (_users.Contains(item.UserId))
                         {
                             continue;

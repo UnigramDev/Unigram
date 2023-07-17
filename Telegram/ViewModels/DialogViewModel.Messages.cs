@@ -897,7 +897,7 @@ namespace Telegram.ViewModels
 
         public async void ShowMessageInteractions(MessageViewModel message)
         {
-            await ShowPopupAsync(typeof(MessageInteractionsPopup), message);
+            await ShowPopupAsync(typeof(InteractionsPopup), new MessageReplyToMessage(message.ChatId, message.Id));
         }
 
         #endregion
