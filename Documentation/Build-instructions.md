@@ -47,6 +47,34 @@ Now that everything is properly configured go back to the terminal and enter the
 ```
 Make sure to replace `$arch$` with either `x64`, `x86` or `arm64` depending on your build target.
 
+### VLC
+Unigram uses VLC to play videos and audio in the app. This is required because the system provided media player doesn't meet the app quality expectations.
+You can freely use the pre-built NuGet packages `VideoLAN.LibVLC.UWP` and `LibVLCSharp` provided by VLC, however we ship the app with binaries built by us,
+as we disable all the features that we don't need to save a bit of disk space:
+1. Clone VLC [repository](https://code.videolan.org/videolan/vlc) in `C:\Source` and check out branch `3.0.x`.
+2. Apply the patch located in `Unigram repository\Libraries\vlc`
+3. Make sure to have docker installed on your machine
+4. Open the terminal and run the following commands:
+```
+docker run -it -v C:\Source\vlc:/vlc registry.videolan.org/vlc-debian-llvm-uwp:20200706065223 /bin/bash`
+cd ../vlc
+extras/package/win32/build.sh -a x86_64 -z -r -u -w -D=C:/Source/vlc
+```
+When the building is complete, the NuGet package can be [manually created](https://code.videolan.org/videolan/LibVLCSharp).
+
+For reference, this is the list of VLC plugins currently needed by Unigram to properly work:
+- access\libimem_plugin.dll
+- audio_output\libwinstore_plugin.dll
+- codec\libavcodec_plugin.dll
+- codec\libd3d11va_plugin.dll
+- demux\libmp4_plugin.dll
+- stream_filter\libcache_read_plugin.dll
+- stream_filter\librecord_plugin.dll
+- text_renderer\libtdummy_plugin.dll
+- video_chroma\libswscale_plugin.dll
+- video_chroma\libyuvp_plugin.dll
+- video_output\libdirect3d11_plugin.dll
+
 ### WebRTC
 Unigram uses WebRTC for calls and video chats. Since WebRTC doesn't currently support UWP, you must use our fork to build it.
 1. Click on Start Menu → Visual Studio 2019 → x64 Native Tools Command Prompt for VS 2022.

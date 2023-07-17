@@ -2700,6 +2700,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="LibVLCSharp">
+      <Version>3.7.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Bcl.HashCode">
       <Version>1.1.1</Version>
     </PackageReference>
@@ -2725,6 +2728,9 @@
     </PackageReference>
     <PackageReference Include="Telegram.Td.UWP">
       <Version>1.8.14</Version>
+    </PackageReference>
+    <PackageReference Include="VideoLAN.LibVLC.UWP">
+      <Version>3.3.5</Version>
     </PackageReference>
     <PackageReference Include="Win2D.uwp">
       <Version>1.26.0</Version>
@@ -2780,7 +2786,6 @@
     </Reference>
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.dll" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.pri" />
-    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\avfilter-7.dll" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
