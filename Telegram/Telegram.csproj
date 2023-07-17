@@ -214,6 +214,9 @@
     </Compile>
     <Compile Include="Controls\Chats\ChatHistoryView.cs" />
     <Compile Include="Controls\Chats\ChatHistoryViewItem.cs" />
+    <Compile Include="Controls\Chats\ChatRecordBar.xaml.cs">
+      <DependentUpon>ChatRecordBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ClrGrid.cs" />
     <Compile Include="Controls\Contacts\ContactsSortedByHeader.xaml.cs">
       <DependentUpon>ContactsSortedByHeader.xaml</DependentUpon>
@@ -1806,6 +1809,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Chats\ChatHistoryArrows.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Chats\ChatRecordBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
