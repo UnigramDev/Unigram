@@ -5,14 +5,19 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml.Controls;
+using System;
 using System.Numerics;
 using Telegram.Assets.Icons;
 using Telegram.Controls.Media;
+using Telegram.Services;
 using Telegram.Services.Settings;
+using Telegram.Views;
+using Windows.Devices.Input;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Chats
@@ -30,10 +35,211 @@ namespace Telegram.Controls.Chats
         public ChatStickerButton()
         {
             DefaultStyleKey = typeof(ChatStickerButton);
+            Source = SettingsService.Current.Stickers.SelectedTab;
+
+            Click += Stickers_Click;
+
             RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
 
             _animateOnToggle = false;
         }
+
+        #region 
+
+        private DispatcherTimer _stickersTimer;
+        private Visual _stickersPanel;
+        private Visual _stickersShadow;
+        private StickersPanelMode _stickersMode = StickersPanelMode.Collapsed;
+
+        private StickerPanel _controlledPanel;
+        public StickerPanel ControlledPanel
+        {
+            get => _controlledPanel;
+            set => SetControlledPanel(value);
+        }
+
+        public event EventHandler Redirect;
+
+        public event EventHandler Opening;
+        public event EventHandler Closing;
+
+        private void SetControlledPanel(StickerPanel value)
+        {
+            if (_controlledPanel != null)
+            {
+                return;
+            }
+
+            _controlledPanel = value;
+
+            _stickersPanel = ElementCompositionPreview.GetElementVisual(ControlledPanel.Presenter);
+            _stickersShadow = ElementCompositionPreview.GetElementChildVisual(ControlledPanel.Shadow);
+
+            _stickersTimer = new DispatcherTimer();
+            _stickersTimer.Interval = TimeSpan.FromMilliseconds(300);
+            _stickersTimer.Tick += (s, args) =>
+            {
+                _stickersTimer.Stop();
+
+                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+                if (popups.Count > 0)
+                {
+                    return;
+                }
+
+                Collapse_Click(null, null);
+                Redirect?.Invoke(this, EventArgs.Empty);
+            };
+
+            PointerEntered += Stickers_PointerEntered;
+            PointerExited += Stickers_PointerExited;
+
+            ControlledPanel.PointerEntered += Stickers_PointerEntered;
+            ControlledPanel.PointerExited += Stickers_PointerExited;
+
+            ControlledPanel.AllowFocusOnInteraction = true;
+        }
+
+        private void Stickers_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            if (IsPointerOverEnabled(e.Pointer))
+            {
+                _stickersTimer.Start();
+            }
+            else if (_stickersTimer.IsEnabled)
+            {
+                _stickersTimer.Stop();
+            }
+        }
+
+        private bool IsPointerOverEnabled(Pointer pointer)
+        {
+            return pointer?.PointerDeviceType == PointerDeviceType.Mouse && SettingsService.Current.Stickers.IsPointerOverEnabled;
+        }
+
+        private bool IsPointerOverDisabled(Pointer pointer)
+        {
+            return pointer != null && (pointer.PointerDeviceType != PointerDeviceType.Mouse || !SettingsService.Current.Stickers.IsPointerOverEnabled);
+        }
+
+        private void Stickers_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            if (_stickersTimer.IsEnabled)
+            {
+                _stickersTimer.Stop();
+            }
+
+            if (ControlledPanel.Visibility == Visibility.Visible || IsPointerOverDisabled(e?.Pointer))
+            {
+                return;
+            }
+
+            _stickersMode = StickersPanelMode.Overlay;
+            IsChecked = false;
+            SettingsService.Current.IsSidebarOpen = false;
+
+            //Focus(FocusState.Programmatic);
+            Redirect?.Invoke(this, EventArgs.Empty);
+            Opening?.Invoke(this, EventArgs.Empty);
+
+            _stickersPanel.Opacity = 0;
+            _stickersPanel.Clip = Window.Current.Compositor.CreateInsetClip(48, 48, 0, 0);
+
+            _stickersShadow.Opacity = 0;
+            _stickersShadow.Clip = Window.Current.Compositor.CreateInsetClip(48, 48, -48, -4);
+
+            ControlledPanel.Visibility = Visibility.Visible;
+            ControlledPanel.Activate();
+
+            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, 0);
+            opacity.InsertKeyFrame(1, 1);
+
+            var clip = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            clip.InsertKeyFrame(0, 48);
+            clip.InsertKeyFrame(1, 0);
+
+            var clipShadow = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            clipShadow.InsertKeyFrame(0, 48);
+            clipShadow.InsertKeyFrame(1, -48);
+
+            _stickersPanel.StartAnimation("Opacity", opacity);
+            _stickersPanel.Clip.StartAnimation("LeftInset", clip);
+            _stickersPanel.Clip.StartAnimation("TopInset", clip);
+
+            _stickersShadow.StartAnimation("Opacity", opacity);
+            _stickersShadow.Clip.StartAnimation("LeftInset", clipShadow);
+            _stickersShadow.Clip.StartAnimation("TopInset", clipShadow);
+        }
+
+        private void Collapse_Click(object sender, RoutedEventArgs e)
+        {
+            if (ControlledPanel.Visibility == Visibility.Collapsed || _stickersMode == StickersPanelMode.Collapsed)
+            {
+                return;
+            }
+
+            _stickersMode = StickersPanelMode.Collapsed;
+            SettingsService.Current.IsSidebarOpen = false;
+
+            Closing?.Invoke(this, EventArgs.Empty);
+
+            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                ControlledPanel.Visibility = Visibility.Collapsed;
+                ControlledPanel.Deactivate();
+            };
+
+            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(0, 1);
+            opacity.InsertKeyFrame(1, 0);
+
+            var clip = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            clip.InsertKeyFrame(0, 0);
+            clip.InsertKeyFrame(1, 48);
+
+            var clipShadow = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            clipShadow.InsertKeyFrame(0, -48);
+            clipShadow.InsertKeyFrame(1, 48);
+
+            _stickersPanel.StartAnimation("Opacity", opacity);
+            _stickersPanel.Clip.StartAnimation("LeftInset", clip);
+            _stickersPanel.Clip.StartAnimation("TopInset", clip);
+
+            _stickersShadow.StartAnimation("Opacity", opacity);
+            _stickersShadow.Clip.StartAnimation("LeftInset", clip);
+            _stickersShadow.Clip.StartAnimation("TopInset", clip);
+
+            batch.End();
+
+            IsChecked = false;
+            Source = SettingsService.Current.Stickers.SelectedTab;
+        }
+
+        private void Stickers_Click(object sender, RoutedEventArgs e)
+        {
+            if (ControlledPanel.Visibility == Visibility.Collapsed || _stickersMode == StickersPanelMode.Collapsed)
+            {
+                Stickers_PointerEntered(sender, null);
+            }
+            else
+            {
+                Collapse_Click(null, null);
+            }
+        }
+
+        public StickersPanelMode Mode => _stickersMode;
+
+        public void Collapse()
+        {
+            if (_stickersMode == StickersPanelMode.Overlay)
+            {
+                Collapse_Click(null, null);
+            }
+        }
+
+        #endregion
 
         private void OnForegroundChanged(DependencyObject sender, DependencyProperty dp)
         {

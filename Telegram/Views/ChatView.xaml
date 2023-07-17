@@ -1108,7 +1108,8 @@
 
                         <!-- Button to use stickers keyboard, all -->
                         <chats:ChatStickerButton x:Name="ButtonStickers"
-                                                 Click="Stickers_Click"
+                                                 Redirect="Stickers_Redirect"
+                                                 ControlledPanel="{x:Bind StickersPanel}"
                                                  AllowFocusOnInteraction="False"
                                                  VerticalAlignment="Bottom"
                                                  AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"

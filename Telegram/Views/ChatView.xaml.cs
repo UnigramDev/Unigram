@@ -39,7 +39,6 @@ using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -70,11 +69,6 @@ namespace Telegram.Views
         private readonly bool _myPeople;
 
         private readonly DispatcherTimer _slowModeTimer;
-
-        private DispatcherTimer _stickersTimer;
-        private Visual _stickersPanel;
-        private Visual _stickersShadow;
-        private StickersPanelMode _stickersMode = StickersPanelMode.Collapsed;
 
         private readonly Visual _rootVisual;
         private readonly Visual _textShadowVisual;
@@ -227,8 +221,6 @@ namespace Telegram.Views
             JoinRequests.InitializeParent(ClipperJoinRequests, ViewModel.ClientService);
             ActionBar.InitializeParent(ClipperActionBar);
             PinnedMessage.InitializeParent(Clipper);
-
-            ButtonStickers.Source = ViewModel.Settings.Stickers.SelectedTab;
         }
 
         private void InitializeAutomation()
@@ -269,33 +261,6 @@ namespace Telegram.Views
 
             StickersPanel.AnimationClick = Animations_ItemClick;
             StickersPanel.AnimationContextRequested += Animation_ContextRequested;
-
-            _stickersPanel = ElementCompositionPreview.GetElementVisual(StickersPanel.Presenter);
-            _stickersShadow = ElementCompositionPreview.GetElementChildVisual(StickersPanel.Shadow);
-
-            _stickersTimer = new DispatcherTimer();
-            _stickersTimer.Interval = TimeSpan.FromMilliseconds(300);
-            _stickersTimer.Tick += (s, args) =>
-            {
-                _stickersTimer.Stop();
-
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-                if (popups.Count > 0)
-                {
-                    return;
-                }
-
-                Collapse_Click(StickersPanel, null);
-                _focusState.Set(FocusState.Programmatic);
-            };
-
-            ButtonStickers.PointerEntered += Stickers_PointerEntered;
-            ButtonStickers.PointerExited += Stickers_PointerExited;
-
-            StickersPanel.PointerEntered += Stickers_PointerEntered;
-            StickersPanel.PointerExited += Stickers_PointerExited;
-
-            StickersPanel.AllowFocusOnInteraction = true;
         }
 
         private void StickersPanel_SettingsClick(object sender, EventArgs e)
@@ -306,11 +271,7 @@ namespace Telegram.Views
 
         public void HideStickers()
         {
-            if (_stickersMode == StickersPanelMode.Overlay)
-            {
-                Collapse_Click(StickersPanel, null);
-            }
-
+            ButtonStickers.Collapse();
             _focusState.Set(FocusState.Programmatic);
         }
 
@@ -335,77 +296,6 @@ namespace Telegram.Views
                     await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-contact-profile://meh?ContactRemoteIds=u" + privata.UserId), options);
                 }
             });
-        }
-
-        private void Stickers_PointerExited(object sender, PointerRoutedEventArgs e)
-        {
-            if (IsPointerOverEnabled(e.Pointer))
-            {
-                _stickersTimer.Start();
-            }
-            else if (_stickersTimer.IsEnabled)
-            {
-                _stickersTimer.Stop();
-            }
-        }
-
-        private bool IsPointerOverEnabled(Pointer pointer)
-        {
-            return pointer?.PointerDeviceType == PointerDeviceType.Mouse && _viewModel.Settings.Stickers.IsPointerOverEnabled;
-        }
-
-        private bool IsPointerOverDisabled(Pointer pointer)
-        {
-            return pointer != null && (pointer.PointerDeviceType != PointerDeviceType.Mouse || !_viewModel.Settings.Stickers.IsPointerOverEnabled);
-        }
-
-        private void Stickers_PointerEntered(object sender, PointerRoutedEventArgs e)
-        {
-            if (_stickersTimer.IsEnabled)
-            {
-                _stickersTimer.Stop();
-            }
-
-            if (StickersPanel.Visibility == Visibility.Visible || IsPointerOverDisabled(e?.Pointer))
-            {
-                return;
-            }
-
-            _stickersMode = StickersPanelMode.Overlay;
-            ButtonStickers.IsChecked = false;
-            SettingsService.Current.IsSidebarOpen = false;
-
-            Focus(FocusState.Programmatic);
-            _focusState.Set(FocusState.Programmatic);
-
-            _stickersPanel.Opacity = 0;
-            _stickersPanel.Clip = Window.Current.Compositor.CreateInsetClip(48, 48, 0, 0);
-
-            _stickersShadow.Opacity = 0;
-            _stickersShadow.Clip = Window.Current.Compositor.CreateInsetClip(48, 48, -48, -4);
-
-            StickersPanel.Visibility = Visibility.Visible;
-            StickersPanel.Activate();
-
-            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(0, 0);
-            opacity.InsertKeyFrame(1, 1);
-
-            var clip = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            clip.InsertKeyFrame(0, 48);
-            clip.InsertKeyFrame(1, 0);
-
-            var clipShadow = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            clipShadow.InsertKeyFrame(0, 48);
-            clipShadow.InsertKeyFrame(1, -48);
-
-            _stickersPanel.StartAnimation("Opacity", opacity);
-            _stickersPanel.Clip.StartAnimation("LeftInset", clip);
-            _stickersPanel.Clip.StartAnimation("TopInset", clip);
-
-            _stickersShadow.StartAnimation("Opacity", opacity);
-            _stickersShadow.Clip.StartAnimation("LeftInset", clipShadow);
-            _stickersShadow.Clip.StartAnimation("TopInset", clipShadow);
         }
 
         public void OnNavigatingFrom(Type sourcePageType)
@@ -1196,7 +1086,7 @@ namespace Telegram.Views
             if (empty != _oldEmpty)
             {
                 ButtonStickers.Source = empty
-                    ? ViewModel.Settings.Stickers.SelectedTab
+                    ? SettingsService.Current.Stickers.SelectedTab
                     : Services.Settings.StickersTab.Emoji;
             }
 
@@ -1692,18 +1582,6 @@ namespace Telegram.Views
             }
         }
 
-        private void Stickers_Click(object sender, RoutedEventArgs e)
-        {
-            if (StickersPanel.Visibility == Visibility.Collapsed || _stickersMode == StickersPanelMode.Collapsed)
-            {
-                Stickers_PointerEntered(sender, null);
-            }
-            else
-            {
-                Collapse_Click(null, null);
-            }
-        }
-
         private void Commands_Click(object sender, RoutedEventArgs e)
         {
             TextField.SetText("/", null);
@@ -1751,7 +1629,7 @@ namespace Telegram.Views
 
         private void TextField_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            Collapse_Click(null, null);
+            ButtonStickers.Collapse();
         }
 
         public void ChangeTheme()
@@ -3018,11 +2896,7 @@ namespace Telegram.Views
         public void Stickers_ItemClick(Sticker sticker, bool fromStickerSet)
         {
             ViewModel.SendSticker(sticker, null, null, null, fromStickerSet);
-
-            if (_stickersMode == StickersPanelMode.Overlay)
-            {
-                Collapse_Click(null, null);
-            }
+            ButtonStickers.Collapse();
 
             _focusState.Set(FocusState.Programmatic);
         }
@@ -3035,11 +2909,7 @@ namespace Telegram.Views
         public void Animations_ItemClick(Animation animation)
         {
             ViewModel.SendAnimation(animation);
-
-            if (_stickersMode == StickersPanelMode.Overlay)
-            {
-                Collapse_Click(null, null);
-            }
+            ButtonStickers.Collapse();
 
             _focusState.Set(FocusState.Programmatic);
         }
@@ -3157,10 +3027,7 @@ namespace Telegram.Views
                     TextField.SetText(null, null);
                     ViewModel.SendSticker(sticker, null, null, result);
 
-                    if (_stickersMode == StickersPanelMode.Overlay)
-                    {
-                        Collapse_Click(null, null);
-                    }
+                    ButtonStickers.Collapse();
                 }
             }
         }
@@ -3264,49 +3131,6 @@ namespace Telegram.Views
                     await ViewModel.LoadDateSliceAsync(offset);
                 }
             }
-        }
-
-        private void Collapse_Click(object sender, RoutedEventArgs e)
-        {
-            if (StickersPanel.Visibility == Visibility.Collapsed || _stickersMode == StickersPanelMode.Collapsed)
-            {
-                return;
-            }
-
-            _stickersMode = StickersPanelMode.Collapsed;
-            SettingsService.Current.IsSidebarOpen = false;
-
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                StickersPanel.Visibility = Visibility.Collapsed;
-                StickersPanel.Deactivate();
-            };
-
-            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(0, 1);
-            opacity.InsertKeyFrame(1, 0);
-
-            var clip = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            clip.InsertKeyFrame(0, 0);
-            clip.InsertKeyFrame(1, 48);
-
-            var clipShadow = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            clipShadow.InsertKeyFrame(0, -48);
-            clipShadow.InsertKeyFrame(1, 48);
-
-            _stickersPanel.StartAnimation("Opacity", opacity);
-            _stickersPanel.Clip.StartAnimation("LeftInset", clip);
-            _stickersPanel.Clip.StartAnimation("TopInset", clip);
-
-            _stickersShadow.StartAnimation("Opacity", opacity);
-            _stickersShadow.Clip.StartAnimation("LeftInset", clip);
-            _stickersShadow.Clip.StartAnimation("TopInset", clip);
-
-            batch.End();
-
-            ButtonStickers.IsChecked = false;
-            ButtonStickers.Source = ViewModel.Settings.Stickers.SelectedTab;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -4720,10 +4544,7 @@ namespace Telegram.Views
 
         private void TextField_Sending(object sender, EventArgs e)
         {
-            if (_stickersMode == StickersPanelMode.Overlay)
-            {
-                Collapse_Click(StickersPanel, null);
-            }
+            ButtonStickers.Collapse();
         }
 
         private async void ButtonMore_Checked(object sender, RoutedEventArgs e)
@@ -4818,6 +4639,11 @@ namespace Telegram.Views
         }
 
         #endregion
+
+        private void Stickers_Redirect(object sender, EventArgs e)
+        {
+            _focusState.Set(FocusState.Programmatic);
+        }
 
         private void ChatRecord_StartTyping(object sender, ChatAction e)
         {
