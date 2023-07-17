@@ -118,11 +118,11 @@ namespace Telegram.Views.Popups
             if (fileDownload.CompleteDate == 0)
             {
                 flyout.CreateFlyoutItem(ViewModel.RemoveFileDownload, fileDownload, Strings.AccActionCancelDownload, Icons.Dismiss);
-                flyout.CreateFlyoutItem(ViewModel.ViewFileDownload, fileDownload, Strings.ViewInChat, Icons.Comment);
+                flyout.CreateFlyoutItem(ViewModel.ViewFileDownload, fileDownload, Strings.ViewInChat, Icons.ChatEmpty);
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.ViewFileDownload, fileDownload, Strings.ViewInChat, Icons.Comment);
+                flyout.CreateFlyoutItem(ViewModel.ViewFileDownload, fileDownload, Strings.ViewInChat, Icons.ChatEmpty);
                 flyout.CreateFlyoutItem(ViewModel.ShowFileDownload, fileDownload, Strings.ShowInFolder, Icons.FolderOpen);
 
                 flyout.CreateFlyoutItem(ViewModel.RemoveFileDownload, fileDownload, Strings.DeleteFromRecent, Icons.Delete);

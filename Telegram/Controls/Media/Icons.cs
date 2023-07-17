@@ -45,7 +45,7 @@ namespace Telegram.Controls.Media
         public const string Dismiss = "\uE711";
         public const string DismissFilled24 = "\uEA1F";
         public const string Cancel = "\uE978";
-        public const string CancelSmall = "\uE928";
+        public const string CancelSmall = "\uE93F";
         public const string Play = "\uE768";
         public const string PlayFilled = "\uEA17";
         public const string Pause = "\uE769";
@@ -102,6 +102,7 @@ namespace Telegram.Controls.Media
         public const string Thread = "\uE93D";
         public const string Edit = "\uE104";
         public const string Compose = "\uE932";
+        public const string Compose16 = "\uE996";
         public const string Signature = "\uEE56";
         public const string Timer = "\uE916";
         public const string ShieldError = "\uE730";
@@ -121,6 +122,8 @@ namespace Telegram.Controls.Media
 
         public const string MusicNote2 = "\uE99D";
         public const string MusicNoteOff2 = "\uE99E";
+
+        public const string ErrorCircle = "\uEA22";
 
         public const string Pin = "\uE840";
         public const string PinOff = "\uE77A";
@@ -152,10 +155,12 @@ namespace Telegram.Controls.Media
         public const string Star = "\uE734";
         public const string StarOff = "\uE8D9";
 
-        public const string Comment = "\uE8BD";
+        public const string ChatEmpty = "\uE8BD";
 
         public const string Archive = "\uE7B8";
         public const string ArchiveFilled = "\uEA0E";
+
+        public const string Unarchive = "\uEA24";
 
         public const string WindowNew = "\uE97F";
 
@@ -185,6 +190,9 @@ namespace Telegram.Controls.Media
 
         public const string EmojiEdit = "\uE9EC";
         public const string EmojiAdd = "\uE9ED";
+
+        public const string Stories = "\uE9D3";
+        public const string ExpiredStory = "\uE9E5";
 
         public const string Block = "\uF166";
         public const string Search = "\uE721";

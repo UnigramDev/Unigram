@@ -653,7 +653,7 @@ namespace Telegram.Controls.Messages
                     ActionButton.Click += Action_Click;
                 }
 
-                ActionButton.Glyph = Icons.Comment;
+                ActionButton.Glyph = Icons.ChatEmpty;
                 Action.Visibility = Visibility.Visible;
 
                 Automation.SetToolTip(ActionButton, info.ReplyCount > 0

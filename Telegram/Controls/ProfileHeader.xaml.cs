@@ -732,7 +732,7 @@ namespace Telegram.Controls
                 }
                 else if (supergroup.HasLinkedChat)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.Discuss, Strings.ViewDiscussion, Icons.Comment);
+                    flyout.CreateFlyoutItem(ViewModel.Discuss, Strings.ViewDiscussion, Icons.ChatEmpty);
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup basic && basicGroup != null)

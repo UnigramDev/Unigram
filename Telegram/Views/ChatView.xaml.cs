@@ -1955,7 +1955,7 @@ namespace Telegram.Views
 
             if (supergroup != null && supergroup.Status is not ChatMemberStatusCreator && (supergroup.IsChannel || supergroup.HasActiveUsername()))
             {
-                flyout.CreateFlyoutItem(ViewModel.Report, Strings.ReportChat, Icons.ShieldError);
+                flyout.CreateFlyoutItem(ViewModel.Report, Strings.ReportChat, Icons.ErrorCircle);
             }
             if (user != null && user.Type is not UserTypeDeleted && user.Id != ViewModel.ClientService.Options.MyId)
             {
@@ -2229,7 +2229,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(MessageStatistics_Loaded, ViewModel.OpenMessageStatistics, message, Strings.Statistics, Icons.DataUsage);
 
                 flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.ForwardMessage, message, Strings.Forward, Icons.Share);
-                flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.ReportMessage, message, Strings.ReportChat, Icons.ShieldError);
+                flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.ReportMessage, message, Strings.ReportChat, Icons.ErrorCircle);
                 flyout.CreateFlyoutItem(MessageReportFalsePositive_Loaded, ViewModel.ReportFalsePositive, message, Strings.ReportFalsePositive, Icons.ShieldError);
                 flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.DeleteMessage, message, Strings.Delete, Icons.Delete, dangerous: true);
                 flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.SelectMessage, message, Strings.Select, Icons.CheckmarkCircle);

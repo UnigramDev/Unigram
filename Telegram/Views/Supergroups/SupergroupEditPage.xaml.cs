@@ -111,7 +111,7 @@ namespace Telegram.Views.Supergroups
 
             ChatLinked.Visibility = group.IsChannel ? Visibility.Visible : group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
             ChatLinked.Content = group.IsChannel ? Strings.Discussion : Strings.LinkedChannel;
-            ChatLinked.Glyph = group.IsChannel ? Icons.Comment : Icons.Megaphone;
+            ChatLinked.Glyph = group.IsChannel ? Icons.ChatEmpty : Icons.Megaphone;
             ChatLinked.Badge = group.HasLinkedChat ? string.Empty : Strings.DiscussionInfo;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());

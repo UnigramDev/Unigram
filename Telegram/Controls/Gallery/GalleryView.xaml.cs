@@ -1137,7 +1137,7 @@ namespace Telegram.Controls.Gallery
                 flyout.CreateFlyoutSeparator();
             }
 
-            flyout.CreateFlyoutItem(() => item.CanView, viewModel.View, Strings.ShowInChat, Icons.Comment);
+            flyout.CreateFlyoutItem(() => item.CanView, viewModel.View, Strings.ShowInChat, Icons.ChatEmpty);
             flyout.CreateFlyoutItem(() => item.CanShare, viewModel.Forward, Strings.Forward, Icons.Share);
             flyout.CreateFlyoutItem(() => item.CanCopy, viewModel.Copy, Strings.Copy, Icons.DocumentCopy, VirtualKey.C);
             flyout.CreateFlyoutItem(() => item.CanSave, viewModel.Save, Strings.SaveAs, Icons.SaveAs, VirtualKey.S);
