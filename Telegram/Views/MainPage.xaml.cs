@@ -3272,6 +3272,13 @@ namespace Telegram.Views
         }
     }
 
+    public enum HostedNavigationMode
+    {
+        Child,
+        Root,
+        RootWhenParameterless,
+    }
+
     public class HostedPage : Page
     {
         #region HasHeader
@@ -3313,9 +3320,9 @@ namespace Telegram.Views
 
         #endregion
 
-        #region IsNavigationRoot
+        #region NavigationMode
 
-        public bool IsNavigationRoot { get; set; } = false;
+        public HostedNavigationMode NavigationMode { get; set; }
 
         #endregion
     }
