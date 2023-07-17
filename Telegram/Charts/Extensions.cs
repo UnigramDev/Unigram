@@ -83,36 +83,6 @@ namespace Telegram.Charts
 
     }
 
-    public static class MathEx
-    {
-        public static double ToRadians(double degrees)
-        {
-            double radians = Math.PI / 180 * degrees;
-            return radians;
-        }
-
-        public static double ToDegrees(double radians)
-        {
-            double degrees = 180 / Math.PI * radians;
-            return degrees;
-        }
-    }
-
-    public static class MathFEx
-    {
-        public static float ToRadians(float degrees)
-        {
-            float radians = MathF.PI / 180 * degrees;
-            return radians;
-        }
-
-        public static float ToDegrees(float radians)
-        {
-            float degrees = 180 / MathF.PI * radians;
-            return degrees;
-        }
-    }
-
     public static class ChartExtensions
     {
         public static Color blendARGB(this Color color1, Color color2, float ratio)
