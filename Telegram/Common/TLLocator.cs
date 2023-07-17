@@ -555,6 +555,13 @@ namespace Telegram.Views
                     _settingsService,
                     _eventAggregator);
             }
+            else if (type == typeof(Telegram.ViewModels.MyStoriesViewModel))
+            {
+                return (T)(object)new Telegram.ViewModels.MyStoriesViewModel(
+                    _clientService,
+                    _settingsService,
+                    _eventAggregator);
+            }
             else if (type == typeof(Telegram.ViewModels.SettingsViewModel))
             {
                 return (T)(object)new Telegram.ViewModels.SettingsViewModel(

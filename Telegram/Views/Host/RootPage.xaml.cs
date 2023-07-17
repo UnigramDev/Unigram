@@ -62,6 +62,7 @@ namespace Telegram.Views.Host
                 // ------------
                 RootDestination.Separator,
                 // ------------
+                RootDestination.MyStories,
                 RootDestination.ArchivedChats,
                 RootDestination.SavedMessages,
                 // ------------
@@ -361,7 +362,7 @@ namespace Telegram.Views.Host
                 }
             }
 
-            var index = 3;
+            var index = 4;
 
             if (clientService.IsPremium is false)
             {
@@ -371,7 +372,7 @@ namespace Telegram.Views.Host
                     _navigationViewItems.RemoveAt(1);
                 }
 
-                index = 1;
+                index = 2;
             }
             else if (_navigationViewItems[1] is not RootDestination.Status)
             {
@@ -584,6 +585,10 @@ namespace Telegram.Views.Host
                             content.Glyph = user.EmojiStatus == null ? Icons.EmojiAdd : Icons.EmojiEdit;
                         }
                         break;
+                    case RootDestination.MyStories:
+                        content.Text = Strings.ProfileMyStories;
+                        content.Glyph = Icons.Stories;
+                        break;
 
                     case RootDestination.Tips:
                         content.Text = Strings.TelegramFeatures;
@@ -755,7 +760,7 @@ namespace Telegram.Views.Host
 
                 var bitmap = ScreenshotManager.Capture();
                 Transition.Background = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, RelativeTransform = new ScaleTransform { ScaleY = -1, CenterY = 0.5 } };
-                
+
                 Theme.Visibility = Visibility.Visible;
                 Theme.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
 
@@ -1065,6 +1070,7 @@ namespace Telegram.Views.Host
 
         Status,
 
+        MyStories,
         ArchivedChats,
         SavedMessages,
 

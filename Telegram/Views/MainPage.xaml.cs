@@ -2124,6 +2124,10 @@ namespace Telegram.Views
             {
                 Status_Click(null, null);
             }
+            else if (destination == RootDestination.MyStories)
+            {
+                MasterDetail.NavigationService.Navigate(typeof(MyStoriesPage));
+            }
             else if (destination == RootDestination.SavedMessages)
             {
                 var response = await ViewModel.ClientService.SendAsync(new CreatePrivateChat(ViewModel.ClientService.Options.MyId, false));

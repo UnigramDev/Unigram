@@ -7,6 +7,12 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Common
 {
+    public enum SelectedItemsMode
+    {
+        None,
+        Auto
+    }
+
     public class SelectedItemsBinder : DependencyObject
     {
         #region Attached
@@ -70,6 +76,32 @@ namespace Telegram.Common
 
         #endregion
 
+        #region SelectionMode
+
+        public SelectedItemsMode SelectionMode
+        {
+            get { return (SelectedItemsMode)GetValue(SelectionModeProperty); }
+            set { SetValue(SelectionModeProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectionModeProperty =
+            DependencyProperty.Register("SelectionMode", typeof(SelectedItemsMode), typeof(SelectedItemsBinder), new PropertyMetadata(SelectedItemsMode.None));
+
+        #endregion
+
+        #region IsItemClickEnabled
+
+        public bool IsItemClickEnabled
+        {
+            get { return (bool)GetValue(IsItemClickEnabledProperty); }
+            set { SetValue(IsItemClickEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsItemClickEnabledProperty =
+            DependencyProperty.Register("IsItemClickEnabled", typeof(bool), typeof(SelectedItemsBinder), new PropertyMetadata(false));
+
+        #endregion
+
         private ListViewBase _listView;
 
         private void Attach(ListViewBase view)
@@ -92,10 +124,33 @@ namespace Telegram.Common
         private void SelectedItems_CollectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Transfer(_listView.SelectedItems, SelectedItems as IList);
+
+            if (SelectionMode == SelectedItemsMode.Auto)
+            {
+                if (_listView.SelectedItems.Count == 0 && _listView.SelectionMode == ListViewSelectionMode.Multiple)
+                {
+                    _listView.SelectionMode = ListViewSelectionMode.None;
+                    _listView.IsItemClickEnabled = IsItemClickEnabled;
+                }
+            }
         }
 
         private void Context_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if (SelectionMode == SelectedItemsMode.Auto && SelectedItems is IList list)
+            {
+                if (list.Count > 0 && _listView.SelectionMode == ListViewSelectionMode.None)
+                {
+                    _listView.SelectionMode = ListViewSelectionMode.Multiple;
+                    _listView.IsItemClickEnabled = false;
+                }
+                else if (list.Count == 0 && _listView.SelectionMode == ListViewSelectionMode.Multiple)
+                {
+                    _listView.SelectionMode = ListViewSelectionMode.None;
+                    _listView.IsItemClickEnabled = IsItemClickEnabled;
+                }
+            }
+
             Transfer(SelectedItems as IList, _listView.SelectedItems);
         }
 

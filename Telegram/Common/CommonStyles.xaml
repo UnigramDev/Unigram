@@ -956,9 +956,10 @@
                         <ContentPresenter x:Name="ContentoPresentero"
                                           Content="{TemplateBinding Content}"
                                           FontSize="{ThemeResource ControlContentThemeFontSize}"
+                                          FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                           HorizontalContentAlignment="Left"
                                           VerticalContentAlignment="Center"
-                                          Margin="4,-2,12,2"
+                                          Margin="2,-2,12,2"
                                           Grid.Column="1" />
                     </Grid>
                 </ControlTemplate>

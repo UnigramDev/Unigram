@@ -206,6 +206,9 @@
     <Compile Include="Common\SystemTray.cs" />
     <Compile Include="Controls\AnimatedImage.cs" />
     <Compile Include="Controls\BadgeControl.cs" />
+    <Compile Include="Controls\Cells\StoryCell.xaml.cs">
+      <DependentUpon>StoryCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Chats\ChatHistoryArrows.xaml.cs">
       <DependentUpon>ChatHistoryArrows.xaml</DependentUpon>
     </Compile>
@@ -229,6 +232,7 @@
     <Compile Include="Streams\RemoteFileSource.cs" />
     <Compile Include="ViewModels\ChatNotificationsViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
+    <Compile Include="ViewModels\MyStoriesViewModel.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
     <Compile Include="Collections\LegacyIncrementalCollection.cs" />
@@ -779,6 +783,9 @@
       <DependentUpon>ShareFolderPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\MultiValueDictionary.cs" />
+    <Compile Include="Views\MyStoriesPage.xaml.cs">
+      <DependentUpon>MyStoriesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Payments\PaymentAddressPopup.xaml.cs">
       <DependentUpon>PaymentAddressPopup.xaml</DependentUpon>
     </Compile>
@@ -1489,6 +1496,7 @@
     <Content Include="Assets\Animations\Premium.tgs" />
     <Content Include="Assets\Animations\ShareFolder.tgs" />
     <Content Include="Assets\Animations\AuthorizationStateWaitPassword.tgs" />
+    <Content Include="Assets\Animations\MyStories.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -1723,6 +1731,10 @@
     <Page Include="Controls\Cells\ProxyCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Cells\StoryCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Cells\UsernameInfoCell.xaml">
       <SubType>Designer</SubType>
@@ -2127,6 +2139,10 @@
     <Page Include="Views\Folders\Popups\ShareFolderPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MyStoriesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Payments\PaymentAddressPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
