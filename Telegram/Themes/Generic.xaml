@@ -55,6 +55,22 @@
     <Style TargetType="local:SettingsComboBox"
            BasedOn="{StaticResource DefaultComboBoxStyle}" />
 
+    <Style TargetType="local:ActiveStoriesSegments">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ActiveStoriesSegments">
+                    <Grid>
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Stretch" />
+                        <Border Background="Transparent"
+                                CornerRadius="96" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:NavigationView">
         <Setter Property="Padding"
                 Value="0,0,0,0" />

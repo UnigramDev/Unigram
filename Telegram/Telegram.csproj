@@ -204,8 +204,12 @@
     <Compile Include="Collections\Handlers\ChatDiffHandler.cs" />
     <Compile Include="Common\ListViewExtensions.cs" />
     <Compile Include="Common\SystemTray.cs" />
+    <Compile Include="Controls\ActiveStoriesSegments.cs" />
     <Compile Include="Controls\AnimatedImage.cs" />
     <Compile Include="Controls\BadgeControl.cs" />
+    <Compile Include="Controls\Cells\ActiveStoriesCell.xaml.cs">
+      <DependentUpon>ActiveStoriesCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Cells\StoryCell.xaml.cs">
       <DependentUpon>StoryCell.xaml</DependentUpon>
     </Compile>
@@ -225,6 +229,10 @@
       <DependentUpon>ReactionsMenuFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Selectors\ContactTemplateSelector.cs" />
+    <Compile Include="Controls\Stories\StoriesStrip.xaml.cs">
+      <DependentUpon>StoriesStrip.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ClientService.StoryList.cs" />
     <Compile Include="Services\VoipGroupService.cs" />
     <Compile Include="Services\VoipService.cs" />
     <Compile Include="Streams\AnimatedImageSource.cs" />
@@ -233,6 +241,7 @@
     <Compile Include="Streams\DelayedFileSource.cs" />
     <Compile Include="Streams\LocalFileSource.cs" />
     <Compile Include="Streams\RemoteFileSource.cs" />
+    <Compile Include="Td\Api\MessageAsyncStory.cs" />
     <Compile Include="ViewModels\ChatNotificationsViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\ComposeViewModel.cs" />
@@ -685,7 +694,9 @@
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBioViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxyViewModel.cs" />
-    <Compile Include="ViewModels\StoriesViewModel.cs" />
+    <Compile Include="ViewModels\Stories\ActiveStoriesViewModel.cs" />
+    <Compile Include="ViewModels\Stories\StoryListViewModel.cs" />
+    <Compile Include="ViewModels\Stories\StoryViewModel.cs" />
     <Compile Include="ViewModels\TopicListViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
     <Compile Include="ViewModels\ChooseSoundViewModel.cs" />
@@ -1413,7 +1424,6 @@
     <Compile Include="ViewModels\ContactsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Handle.cs" />
-    <Compile Include="ViewModels\DialogViewModel.Info.cs" />
     <Compile Include="ViewModels\DialogViewModel.Inline.cs" />
     <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -1739,6 +1749,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Cells\ActiveStoriesCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\StoryCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2028,6 +2042,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\SearchChatsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Stories\StoriesStrip.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

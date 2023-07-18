@@ -896,7 +896,7 @@ namespace Telegram.Views.Host
             opacity.Duration = TimeSpan.FromMilliseconds(350);
 
             var scale = compositor.CreateVector3KeyFrameAnimation();
-            scale.InsertKeyFrame(0, new Vector3(28f / 48f, 28f / 48f, 0), ease);
+            scale.InsertKeyFrame(0, new Vector3(0, 0, 0), ease);
             scale.InsertKeyFrame(1, new Vector3(1, 1, 0), ease);
             scale.Duration = TimeSpan.FromMilliseconds(350);
 
@@ -908,8 +908,9 @@ namespace Telegram.Views.Host
             theme.StartAnimation("Offset", offset1);
             theme.StartAnimation("Opacity", opacity);
 
-            photo.CenterPoint = new Vector3(_isSidebarEnabled ? 24 : 0, 24, 0);
+            photo.CenterPoint = new Vector3(24, 24, 0);
             photo.StartAnimation("Scale", scale);
+            photo.StartAnimation("Opacity", opacity);
 
             info.CenterPoint = new Vector3(0, 32, 0);
             info.StartAnimation("Scale", scale);
@@ -958,15 +959,7 @@ namespace Telegram.Views.Host
 
             var scale = compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(0, new Vector3(1, 1, 0), ease);
-
-            if (_navigationViewSelected == RootDestination.Settings && !_isSidebarEnabled)
-            {
-                scale.InsertKeyFrame(1, new Vector3(0, 0, 0), ease);
-            }
-            else
-            {
-                scale.InsertKeyFrame(1, new Vector3(28f / 48f, 28f / 48f, 0), ease);
-            }
+            scale.InsertKeyFrame(1, new Vector3(0, 0, 0), ease);
 
             scale.Duration = TimeSpan.FromMilliseconds(120);
 
@@ -978,8 +971,9 @@ namespace Telegram.Views.Host
             theme.StartAnimation("Offset", offset1);
             theme.StartAnimation("Opacity", opacity);
 
-            photo.CenterPoint = new Vector3(_isSidebarEnabled ? 24 : 0, 24, 0);
+            photo.CenterPoint = new Vector3(24, 24, 0);
             photo.StartAnimation("Scale", scale);
+            photo.StartAnimation("Opacity", opacity);
 
             info.CenterPoint = new Vector3(0, 32, 0);
             info.StartAnimation("Scale", scale);

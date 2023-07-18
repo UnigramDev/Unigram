@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="Telegram.Controls.Cells.ActiveStoriesCell"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Telegram.Controls.Cells"
+             xmlns:controls="using:Telegram.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="400">
+
+    <Grid Width="72"
+          Padding="0,12">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border x:Name="PhotoCiccio"
+                Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                CornerRadius="24"
+                Width="48"
+                Height="48">
+            <Grid x:Name="PhotoRoot"
+                  Width="48"
+                  Height="48">
+                <controls:ProfilePicture x:Name="Photo"
+                                         Width="40"
+                                         Height="40" />
+                <Grid x:Name="SegmentsRoot">
+                    <controls:ActiveStoriesSegments x:Name="SegmentsSmall"
+                                                    IsHitTestVisible="False"
+                                                    Width="48"
+                                                    Height="48"
+                                                    Canvas.ZIndex="1" />
+                    <controls:ActiveStoriesSegments x:Name="Segments"
+                                                    Click="Segments_Click"
+                                                    Width="48"
+                                                    Height="48" />
+                </Grid>
+            </Grid>
+        </Border>
+
+        <TextBlock x:Name="Title"
+                   Margin="0,4,0,0"
+                   TextAlignment="Center"
+                   TextWrapping="NoWrap"
+                   TextTrimming="WordEllipsis"
+                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                   Style="{StaticResource CaptionTextBlockStyle}"
+                   HorizontalAlignment="Stretch"
+                   Grid.Row="1" />
+
+    </Grid>
+</UserControl>
