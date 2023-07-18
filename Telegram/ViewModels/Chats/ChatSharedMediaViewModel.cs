@@ -154,8 +154,8 @@ namespace Telegram.ViewModels.Chats
 
         public double VerticalOffset { get; set; }
 
+        public bool HasPinnedStories { get; private set; }
         public bool HasSharedGroups { get; private set; }
-
         public bool HasSharedMembers { get; private set; }
 
         private async Task UpdateSharedCountAsync(Chat chat)
@@ -179,7 +179,7 @@ namespace Telegram.ViewModels.Chats
                 }
             }
 
-            SharedCount[SharedCount.Length - 1] = 0;
+            SharedCount[^1] = 0;
 
             if (SharedCount[0] > 0)
             {
@@ -210,6 +210,11 @@ namespace Telegram.ViewModels.Chats
                 // This should really rarely happen
                 cached ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
 
+                if (cached.HasPinnedStories)
+                {
+                    Items.Insert(0, new ProfileItem(Strings.ProfileStories, typeof(ChatStoriesPage)));
+                    HasPinnedStories = true;
+                }
                 if (cached.GroupInCommonCount > 0)
                 {
                     Items.Add(new ProfileItem(Strings.SharedGroupsTab2, typeof(UserCommonChatsPage)));

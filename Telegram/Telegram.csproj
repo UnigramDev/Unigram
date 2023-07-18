@@ -770,6 +770,9 @@
     <Compile Include="Views\Chats\ChatSharedVoicePage.xaml.cs">
       <DependentUpon>ChatSharedVoicePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Chats\ChatStoriesPage.xaml.cs">
+      <DependentUpon>ChatStoriesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ChatThreadPage.xaml.cs">
       <DependentUpon>ChatThreadPage.xaml</DependentUpon>
     </Compile>
@@ -2125,6 +2128,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Chats\ChatSharedVoicePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Chats\ChatStoriesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

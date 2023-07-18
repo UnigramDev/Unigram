@@ -44,6 +44,11 @@ namespace Telegram.Views
                     MediaFrame.Navigate(typeof(ChatSharedMembersPage), null, new SuppressNavigationTransitionInfo());
                     return;
                 }
+                else if (ViewModel.HasPinnedStories)
+                {
+                    MediaFrame.Navigate(typeof(ChatStoriesPage), null, new SuppressNavigationTransitionInfo());
+                    return;
+                }
 
                 var sharedCount = ViewModel.SharedCount;
                 if (sharedCount[0] > 0)
