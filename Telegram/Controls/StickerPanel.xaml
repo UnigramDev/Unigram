@@ -50,6 +50,7 @@
             <Border x:Name="ShadowElement" />
 
             <Grid x:Name="BackgroundElement"
+                  BackgroundSizing="OuterBorderEdge"
                   Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
                   BorderBrush="{ThemeResource SurfaceStrokeColorFlyoutBrush}"
                   BorderThickness="1"

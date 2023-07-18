@@ -14,6 +14,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Folders;
+using Telegram.ViewModels.Stories;
 using Telegram.Views;
 using Windows.Foundation;
 using Windows.UI;
@@ -102,6 +103,31 @@ namespace Telegram.Controls.Cells
             {
                 Photo.SetUser(clientService, user, 36);
                 Identity.SetStatus(clientService, user);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
+        public void UpdateActiveStories(IClientService clientService, ActiveStoriesViewModel activeStories, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = activeStories.Chat.Title;
+            }
+            else if (args.Phase == 1)
+            {
+                //SubtitleLabel.Text = LastSeenConverter.GetLabel(user, false);
+                //SubtitleLabel.Style = BootStrapper.Current.Resources[user.Status is UserStatusOnline ? "AccentCaptionTextBlockStyle" : "InfoCaptionTextBlockStyle"] as Style;
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetChat(clientService, activeStories.Chat, 36);
+                Identity.SetStatus(clientService, activeStories.Chat);
             }
 
             if (args.Phase < 2)
@@ -601,6 +627,32 @@ namespace Telegram.Controls.Cells
             }
 
             args.Handled = true;
+        }
+
+        public void UpdateMessageSender(IClientService clientService, MessageSender member)
+        {
+            UpdateStyleNoSubtitle();
+
+            var messageSender = clientService.GetMessageSender(member);
+            if (messageSender == null)
+            {
+                return;
+            }
+
+            if (messageSender is User user)
+            {
+                TitleLabel.Text = user.FullName();
+
+                Photo.SetUser(clientService, user, 36);
+                Identity.SetStatus(clientService, user);
+            }
+            else if (messageSender is Chat chat)
+            {
+                TitleLabel.Text = chat.Title;
+
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
+            }
         }
 
         public void UpdateMessageStatisticsSharer(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)

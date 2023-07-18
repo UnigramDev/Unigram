@@ -230,6 +230,9 @@ namespace Telegram.Controls.Media
         public const string Calendar = "\uE787";
         public const string TextFont = "\uE8D2";
         public const string StarFilled = "\uE735";
+        public const string StarFilled16 = "\uEA23";
+        public const string PeopleFilled16 = "\uEA27";
+        public const string PersonCircleFilled16 = "\uEA26";
         public const string Folder = "\uF12B";
         public const string DataPie = "\uEB05";
         public const string FolderMove = "\uE92B";

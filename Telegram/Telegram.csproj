@@ -228,7 +228,15 @@
     <Compile Include="Controls\Messages\ReactionsMenuFlyout.xaml.cs">
       <DependentUpon>ReactionsMenuFlyout.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Selectors\ContactTemplateSelector.cs" />
+    <Compile Include="Controls\Stories\StoriesWindow.xaml.cs">
+      <DependentUpon>StoriesWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Stories\StoryContent.xaml.cs">
+      <DependentUpon>StoryContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Stories\StoryInteractionBar.xaml.cs">
+      <DependentUpon>StoryInteractionBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Stories\StoriesStrip.xaml.cs">
       <DependentUpon>StoriesStrip.xaml</DependentUpon>
     </Compile>
@@ -2030,6 +2038,18 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\StickerPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Stories\StoriesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Stories\StoryContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Stories\StoryInteractionBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

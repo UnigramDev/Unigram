@@ -305,11 +305,6 @@ namespace Telegram.Controls.Gallery
             sender.Volume = SettingsService.Current.VolumeLevel;
         }
 
-        public static GalleryView GetForCurrentView()
-        {
-            return new GalleryView();
-        }
-
         public static Task<ContentDialogResult> ShowAsync(ViewModelBase viewModelBase, IStorageService storageService, Chat chat, Func<FrameworkElement> closing = null)
         {
             var clientService = viewModelBase.ClientService;

@@ -139,7 +139,7 @@ namespace Telegram.Navigation
 
         public CoreWindowActivationMode ActivationMode => _window.CoreWindow.ActivationMode;
 
-        public EventHandler<WindowActivatedEventArgs> Activated;
+        public event EventHandler<WindowActivatedEventArgs> Activated;
 
         private void OnActivated(object sender, WindowActivatedEventArgs e)
         {

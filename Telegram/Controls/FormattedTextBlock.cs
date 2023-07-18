@@ -214,6 +214,23 @@ namespace Telegram.Controls
             }
         }
 
+        public void SetText(IClientService clientService, FormattedText text, double fontSize = 0)
+        {
+            if (text != null)
+            {
+                SetText(clientService, text.Text, text.Entities, fontSize);
+            }
+            else if (_templateApplied)
+            {
+                _clientService = clientService;
+                _text = string.Empty;
+                _entities = Array.Empty<TextEntity>();
+                _fontSize = fontSize;
+
+                Paragraph.Inlines.Clear();
+            }
+        }
+
         public void SetText(IClientService clientService, string text, IList<TextEntity> entities, double fontSize = 0)
         {
             entities ??= Array.Empty<TextEntity>();
@@ -223,8 +240,13 @@ namespace Telegram.Controls
             _entities = entities;
             _fontSize = fontSize;
 
-            if (!_templateApplied || string.IsNullOrEmpty(text))
+            if (!_templateApplied)
             {
+                return;
+            }
+            else if (string.IsNullOrEmpty(text))
+            {
+                Paragraph.Inlines.Clear();
                 return;
             }
 
@@ -654,6 +676,45 @@ namespace Telegram.Controls
 
         #endregion
 
+        #region OverflowContentTarget
+
+        public RichTextBlockOverflow OverflowContentTarget
+        {
+            get { return (RichTextBlockOverflow)GetValue(OverflowContentTargetProperty); }
+            set { SetValue(OverflowContentTargetProperty, value); }
+        }
+
+        public static readonly DependencyProperty OverflowContentTargetProperty =
+            DependencyProperty.Register("OverflowContentTarget", typeof(RichTextBlockOverflow), typeof(FormattedTextBlock), new PropertyMetadata(null));
+
+        #endregion
+
+        #region TextTrimming
+
+        public TextTrimming TextTrimming
+        {
+            get { return (TextTrimming)GetValue(TextTrimmingProperty); }
+            set { SetValue(TextTrimmingProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextTrimmingProperty =
+            DependencyProperty.Register("TextTrimming", typeof(TextTrimming), typeof(FormattedTextBlock), new PropertyMetadata(TextTrimming.None));
+
+        #endregion
+
+        #region MaxLines
+
+        public int MaxLines
+        {
+            get { return (int)GetValue(MaxLinesProperty); }
+            set { SetValue(MaxLinesProperty, value); }
+        }
+
+        public static readonly DependencyProperty MaxLinesProperty =
+            DependencyProperty.Register("MaxLines", typeof(int), typeof(FormattedTextBlock), new PropertyMetadata(0));
+
+        #endregion
+
         #region Hyperlink
 
         public bool AutoFontSize { get; set; } = true;
@@ -665,5 +726,7 @@ namespace Telegram.Controls
         public FontWeight HyperlinkFontWeight { get; set; } = FontWeights.Normal;
 
         #endregion
+
+        public bool HasOverflowContent => TextBlock?.HasOverflowContent ?? false;
     }
 }

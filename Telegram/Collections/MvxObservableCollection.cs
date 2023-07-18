@@ -111,15 +111,24 @@ namespace Telegram.Collections
                 throw new ArgumentNullException(nameof(items));
             }
 
+            List<T> changedItems = null;
+            int startingIndex = Count;
+
             using (SuppressEvents())
             {
                 foreach (var item in items)
                 {
                     Add(item);
+
+                    changedItems ??= new();
+                    changedItems.Add(item);
                 }
             }
 
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, changedItems: items.ToList()));
+            if (changedItems != null)
+            {
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, changedItems: changedItems, startingIndex: startingIndex));
+            }
         }
 
         /// <summary>

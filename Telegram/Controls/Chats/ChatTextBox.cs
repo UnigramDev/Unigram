@@ -134,8 +134,6 @@ namespace Telegram.Controls.Chats
             catch { }
         }
 
-        public ListView Messages { get; set; }
-
         private OrientableListView _controlledList;
         public OrientableListView ControlledList
         {
