@@ -515,9 +515,9 @@ namespace Telegram.ViewModels.Drawers
             var recentResponse = await ClientService.SendAsync(new GetRecentEmojiStatuses()) as EmojiStatuses;
             var defaulResponse = await ClientService.SendAsync(new GetDefaultEmojiStatuses()) as EmojiStatuses;
 
-            var themed = themedResponse?.EmojiStatusesValue ?? Array.Empty<EmojiStatus>();
-            var recent = recentResponse?.EmojiStatusesValue ?? Array.Empty<EmojiStatus>();
-            var defaul = defaulResponse?.EmojiStatusesValue ?? Array.Empty<EmojiStatus>();
+            var themed = themedResponse?.CustomEmojiIds ?? Array.Empty<long>();
+            var recent = recentResponse?.CustomEmojiIds ?? Array.Empty<long>();
+            var defaul = defaulResponse?.CustomEmojiIds ?? Array.Empty<long>();
 
             var emoji = new List<long>();
             var delay = new List<long>();
@@ -526,13 +526,13 @@ namespace Telegram.ViewModels.Drawers
 
             foreach (var status in themed.Union(recent.Union(defaul)))
             {
-                if (emoji.Count < 8 * 5 - 1 && !emoji.Contains(status.CustomEmojiId))
+                if (emoji.Count < 8 * 5 - 1 && !emoji.Contains(status))
                 {
-                    emoji.Add(status.CustomEmojiId);
+                    emoji.Add(status);
                 }
-                else if (!delay.Contains(status.CustomEmojiId))
+                else if (!delay.Contains(status))
                 {
-                    delay.Add(status.CustomEmojiId);
+                    delay.Add(status);
                 }
 
                 i++;
