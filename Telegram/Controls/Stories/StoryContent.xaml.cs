@@ -927,11 +927,14 @@ namespace Telegram.Controls.Stories
             //_library.Log += _library_Log;
 
             _player = new MediaPlayer(_library);
+            _player.SetAudioOutput("winstore");
             _player.EnableHardwareDecoding = true;
             //_player.ESSelected += OnESSelected;
             _player.Vout += OnVout;
             _player.Buffering += OnBuffering;
             _player.EndReached += OnEndReached;
+
+            _player.Mute = _viewModel.Settings.AreStoriesMuted;
 
             //_player.FileCaching = 1;
 
