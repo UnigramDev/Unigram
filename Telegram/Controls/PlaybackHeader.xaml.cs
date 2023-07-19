@@ -13,7 +13,6 @@ using Telegram.Converters;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.Media.Playback;
 using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Text;
@@ -158,8 +157,8 @@ namespace Telegram.Controls
                 _ => Icons.SpeakerOff
             };
 
-            PlaybackButton.Glyph = _playbackService.PlaybackState == MediaPlaybackState.Paused ? Icons.Play : Icons.Pause;
-            Automation.SetToolTip(PlaybackButton, _playbackService.PlaybackState == MediaPlaybackState.Paused ? Strings.AccActionPlay : Strings.AccActionPause);
+            PlaybackButton.Glyph = _playbackService.PlaybackState == PlaybackState.Paused ? Icons.Play : Icons.Pause;
+            Automation.SetToolTip(PlaybackButton, _playbackService.PlaybackState == PlaybackState.Paused ? Strings.AccActionPlay : Strings.AccActionPause);
 
             var webPage = message.Content is MessageText text ? text.WebPage : null;
 
@@ -293,7 +292,7 @@ namespace Telegram.Controls
 
         private void Toggle_Click(object sender, RoutedEventArgs e)
         {
-            if (_playbackService.PlaybackState == MediaPlaybackState.Paused)
+            if (_playbackService.PlaybackState == PlaybackState.Paused)
             {
                 _playbackService.Play();
             }

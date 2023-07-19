@@ -10,7 +10,6 @@ using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -175,7 +174,7 @@ namespace Telegram.Controls.Cells
             {
                 if (message.AreTheSame(_playbackService.CurrentItem))
                 {
-                    if (_playbackService.PlaybackState == MediaPlaybackState.Paused)
+                    if (_playbackService.PlaybackState == PlaybackState.Paused)
                     {
                         //Button.Glyph = Icons.Play;
                         Button.SetGlyph(file.Id, MessageContentState.Play);
@@ -244,7 +243,7 @@ namespace Telegram.Controls.Cells
             {
                 if (_message.AreTheSame(_playbackService.CurrentItem))
                 {
-                    if (_playbackService.PlaybackState == MediaPlaybackState.Paused)
+                    if (_playbackService.PlaybackState == PlaybackState.Paused)
                     {
                         _playbackService.Play();
                     }
