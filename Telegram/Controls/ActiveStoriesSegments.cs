@@ -2,13 +2,19 @@
 using System;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Controls.Stories;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Stories;
+using Telegram.Views;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
+using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls
 {
@@ -29,6 +35,36 @@ namespace Telegram.Controls
             DefaultStyleKey = typeof(ActiveStoriesSegments);
         }
 
+        public async void Open(INavigationService navigationService, IClientService clientService, Chat chat, int side, Func<ActiveStoriesViewModel, Rect> origin)
+        {
+            var transform = TransformToVisual(Window.Current.Content);
+            var point = transform.TransformPoint(new Point());
+
+            var pointz = new Rect(point.X + 4, point.Y + 4, side - 8, side - 8);
+
+            ShowIndeterminate(side, false);
+
+            await clientService.SendAsync(new GetChatActiveStories(chat.Id));
+
+            if (clientService.TryGetActiveStories(chat.Id, out ChatActiveStories chatActiveStories))
+            {
+                var settings = TLContainer.Current.Resolve<ISettingsService>(clientService.SessionId);
+                var aggregator = TLContainer.Current.Resolve<IEventAggregator>(clientService.SessionId);
+
+                var activeStories = new ActiveStoriesViewModel(clientService, settings, aggregator, chatActiveStories);
+                await activeStories.Wait;
+
+                var viewModel = new StoryListViewModel(clientService, settings, aggregator, activeStories);
+                viewModel.NavigationService = navigationService;
+
+                var window = new StoriesWindow();
+                window.Update(viewModel, activeStories, StoryOrigin.ProfilePhoto, pointz, origin);
+                _ = window.ShowAsync();
+            }
+
+            SetChat(clientService, chat, side);
+        }
+
         public void SetUser(IClientService clientService, User user, int side)
         {
             if (user.Id != clientService.Options.MyId)
@@ -37,7 +73,7 @@ namespace Telegram.Controls
             }
             else
             {
-                UpdateActiveStories(clientService, null as User, side);
+                UpdateActiveStories(clientService, null, side);
             }
         }
 
@@ -49,7 +85,7 @@ namespace Telegram.Controls
             }
             else
             {
-                UpdateActiveStories(clientService, null as User, side);
+                UpdateActiveStories(clientService, null, side);
             }
         }
 
@@ -72,11 +108,11 @@ namespace Telegram.Controls
             }
             else if (unreadCount > 0)
             {
-                UpdateSegments(side, closeFriends, 1, 1, precise);
+                UpdateSegments(side, closeFriends, 1, 1, false);
             }
             else
             {
-                UpdateSegments(side, false, 1, 0, precise);
+                UpdateSegments(side, false, 1, 0, false);
             }
         }
 

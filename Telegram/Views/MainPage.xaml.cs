@@ -3244,18 +3244,11 @@ namespace Telegram.Views
             }
         }
 
-        private async void ChatCell_StoryClick(object sender, Chat chat)
+        private void ChatCell_StoryClick(object sender, Chat chat)
         {
             if (sender is ActiveStoriesSegments segments)
             {
-                var transform = segments.TransformToVisual(Window.Current.Content);
-                var point = transform.TransformPoint(new Point());
-
-                var origin = new Rect(point.X + 4, point.Y + 4, 40, 40);
-
-                segments.ShowIndeterminate(48, false);
-
-                await ViewModel.OpenStoryAsync(chat, origin, story =>
+                segments.Open(ViewModel.NavigationService, ViewModel.ClientService, chat, 48, story =>
                 {
                     var container = ChatsList.ContainerFromItem(story.Chat) as SelectorItem;
                     if (container != null)
@@ -3268,8 +3261,6 @@ namespace Telegram.Views
 
                     return Rect.Empty;
                 });
-
-                segments.SetChat(_clientService, chat, 48);
             }
         }
     }
