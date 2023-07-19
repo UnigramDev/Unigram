@@ -783,6 +783,23 @@ namespace Telegram.Views
             await GalleryView.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
         }
 
+        private void Segments_Click(object sender, RoutedEventArgs e)
+        {
+            var chat = ViewModel.Chat;
+            if (chat == null || sender is not ActiveStoriesSegments segments)
+            {
+                return;
+            }
+
+            segments.Open(ViewModel.NavigationService, ViewModel.ClientService, chat, 36, story =>
+            {
+                var transform = Segments.TransformToVisual(Window.Current.Content);
+                var point = transform.TransformPoint(new Point());
+
+                return new Rect(point.X + 4, point.Y + 4, 28, 28);
+            });
+        }
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             _loadedThemeTask?.TrySetResult(true);
@@ -3335,6 +3352,8 @@ namespace Telegram.Views
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
 
+            UpdateChatActiveStories(chat);
+
             UpdateChatActionBar(chat);
 
             UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
@@ -3492,6 +3511,11 @@ namespace Telegram.Views
                 Photo.SetChat(ViewModel.ClientService, chat, 36);
                 Photo.IsEnabled = true;
             }
+        }
+
+        public void UpdateChatActiveStories(Chat chat)
+        {
+            Segments.SetChat(ViewModel.ClientService, chat, 36);
         }
 
         public void UpdateChatHasScheduledMessages(Chat chat)

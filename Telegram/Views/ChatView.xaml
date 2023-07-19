@@ -415,7 +415,8 @@
               Canvas.ZIndex="3">
             <Grid x:Name="InfoPanel">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
@@ -425,6 +426,20 @@
                                          Width="36"
                                          Height="36"
                                          HorizontalAlignment="Center" />
+                <controls:ActiveStoriesSegments x:Name="Segments"
+                                                Click="Segments_Click"
+                                                Width="36"
+                                                Height="36"
+                                                HorizontalAlignment="Center"
+                                                Margin="0,0,12,0"
+                                                Grid.Column="1">
+
+                    <controls:ProfilePicture x:Name="Photo"
+                                             Click="Photo_Click"
+                                             AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                             Width="36"
+                                             Height="36" />
+                </controls:ActiveStoriesSegments>
                 <controls:CustomEmojiIcon x:Name="Icon"
                                           x:Load="False"
                                           AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
@@ -432,17 +447,18 @@
                                           Height="32"
                                           FrameSize="32,32"
                                           DecodeFrameType="Logical"
-                                          HorizontalAlignment="Center" />
+                                          HorizontalAlignment="Center"
+                                          Grid.Column="1" />
 
                 <HyperlinkButton x:Name="Profile"
                                  Click="Profile_Click"
                                  Style="{StaticResource EmptyHyperlinkButtonStyle}"
                                  HorizontalContentAlignment="Stretch"
-                                 Grid.Column="1">
+                                 Grid.Column="2">
                     <Grid Background="Transparent"
                           VerticalAlignment="Center"
                           Margin="0,-2,0,2"
-                          Grid.Column="1">
+                          Grid.Column="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -496,7 +512,7 @@
                 </HyperlinkButton>
 
                 <Grid x:Name="Options"
-                      Grid.Column="2">
+                      Grid.Column="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />

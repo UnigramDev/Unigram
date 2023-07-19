@@ -26,6 +26,7 @@ namespace Telegram.ViewModels
         public override void Subscribe()
         {
             Aggregator.Subscribe<UpdateWindowActivated>(this, Handle)
+                .Subscribe<UpdateChatActiveStories>(Handle)
                 .Subscribe<UpdateChatPermissions>(Handle)
                 .Subscribe<UpdateChatReplyMarkup>(Handle)
                 .Subscribe<UpdateChatUnreadMentionCount>(Handle)
@@ -299,6 +300,14 @@ namespace Telegram.ViewModels
             if (update.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatPendingJoinRequests(_chat));
+            }
+        }
+
+        public void Handle(UpdateChatActiveStories update)
+        {
+            if (update.ActiveStories.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatActiveStories(_chat));
             }
         }
 
