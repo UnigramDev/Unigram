@@ -47,6 +47,12 @@ namespace Telegram.Controls.Stories
             InitializeStickers();
         }
 
+        protected override void MaskTitleAndStatusBar()
+        {
+            base.MaskTitleAndStatusBar();
+            Window.Current.SetTitleBar(TitleBar);
+        }
+
         protected override void OnPointerWheelChanged(PointerRoutedEventArgs e)
         {
             var point = e.GetCurrentPoint(this);
@@ -63,6 +69,7 @@ namespace Telegram.Controls.Stories
         private void StoriesWindow_Loaded(object sender, RoutedEventArgs e)
         {
             var layer = ElementCompositionPreview.GetElementVisual(Layer);
+            var backButton = ElementCompositionPreview.GetElementVisual(BackButton);
             var viewport = ElementCompositionPreview.GetElementVisual(Viewport);
             var composer = ElementCompositionPreview.GetElementVisual(Composer);
             ElementCompositionPreview.SetIsTranslationEnabled(Composer, true);
@@ -95,6 +102,7 @@ namespace Telegram.Controls.Stories
             translation.Duration = Constants.FastAnimation;
 
             layer.StartAnimation("Opacity", opacity);
+            backButton.StartAnimation("Opacity", opacity);
             viewport.StartAnimation("Opacity", opacity);
             composer.StartAnimation("Translation.Y", translation);
         }
@@ -112,6 +120,7 @@ namespace Telegram.Controls.Stories
             e.Handled = true;
 
             var layer = ElementCompositionPreview.GetElementVisual(Layer);
+            var backButton = ElementCompositionPreview.GetElementVisual(BackButton);
             var viewport = ElementCompositionPreview.GetElementVisual(Viewport);
             var composer = ElementCompositionPreview.GetElementVisual(Composer);
             ElementCompositionPreview.SetIsTranslationEnabled(Composer, true);
@@ -161,6 +170,7 @@ namespace Telegram.Controls.Stories
             translation.Duration = Constants.FastAnimation;
 
             layer.StartAnimation("Opacity", opacity);
+            backButton.StartAnimation("Opacity", opacity);
             viewport.StartAnimation("Opacity", opacity);
             composer.StartAnimation("Translation.Y", translation);
 
