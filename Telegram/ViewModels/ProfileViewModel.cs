@@ -246,6 +246,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateUserStatus>(Handle)
                 .Subscribe<UpdateChatTitle>(Handle)
                 .Subscribe<UpdateChatPhoto>(Handle)
+                .Subscribe<UpdateChatActiveStories>(Handle)
                 .Subscribe<UpdateChatNotificationSettings>(Handle);
         }
 
@@ -362,6 +363,14 @@ namespace Telegram.ViewModels
             if (update.ChatId == _chat?.Id)
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatPhoto(_chat));
+            }
+        }
+
+        public void Handle(UpdateChatActiveStories update)
+        {
+            if (update.ActiveStories.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatActiveStories(_chat));
             }
         }
 

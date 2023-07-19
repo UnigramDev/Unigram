@@ -18,12 +18,18 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <controls:ProfilePicture x:Name="Photo"
-                                     Click="Photo_Click"
-                                     Width="140"
-                                     Height="140"
-                                     Margin="12,24,12,8"
-                                     AutomationProperties.Name="{CustomResource AccDescrProfilePicture}" />
+            <controls:ActiveStoriesSegments x:Name="Segments"
+                                            Click="Segments_Click"
+                                            Width="140"
+                                            Height="140"
+                                            Margin="12,24,12,8">
+                
+                <controls:ProfilePicture x:Name="Photo"
+                                         Click="Photo_Click"
+                                         Width="140"
+                                         Height="140"
+                                         AutomationProperties.Name="{CustomResource AccDescrProfilePicture}" />
+            </controls:ActiveStoriesSegments>
             <Border Height="140"
                     Width="140"
                     Margin="12,8">

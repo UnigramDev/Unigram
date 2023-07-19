@@ -113,6 +113,16 @@ namespace Telegram.Views
             }
         }
 
+        public void UpdateChatActiveStories(Chat chat)
+        {
+            ProfileHeader?.UpdateChatActiveStories(chat);
+
+            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            {
+                sharedMedia.Header.UpdateChatActiveStories(chat);
+            }
+        }
+
         public void UpdateChatNotificationSettings(Chat chat)
         {
             ProfileHeader?.UpdateChatNotificationSettings(chat);
