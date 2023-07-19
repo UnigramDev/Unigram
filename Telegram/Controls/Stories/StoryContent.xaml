@@ -234,7 +234,9 @@
                          Style="{StaticResource EmptyHyperlinkButtonStyle}">
             <Border Background="#7F000000">
                 <StackPanel x:Name="MiniInside"
-                            VerticalAlignment="Center">
+                            IsHitTestVisible="False"
+                            VerticalAlignment="Center"
+                            SizeChanged="InactivePanel_SizeChanged">
                     <controls:ActiveStoriesSegments x:Name="SegmentsInactive"
                                                     Width="48"
                                                     Height="48">

@@ -1257,6 +1257,12 @@ namespace Telegram.Controls.Stories
             overlay.StartAnimation("Opacity", opacity);
             visual.StartAnimation("Translation.Y", translation);
         }
+
+        private void InactivePanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(MiniInside);
+            visual.CenterPoint = new Vector3(MiniInside.ActualSize / 2, 0);
+        }
     }
 
     public class StoryContentPhotoTimer
