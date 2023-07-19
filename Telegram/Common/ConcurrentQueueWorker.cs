@@ -103,4 +103,30 @@ namespace Telegram.Common
             });
         }
     }
+
+    public class FifoActionWorker
+    {
+        private readonly ConcurrentQueue<Action> taskQueue = new();
+        private int _concurrentCount = 0;
+
+        public void Run(Action task)
+        {
+            taskQueue.Enqueue(task);
+
+            if (0 != Interlocked.Exchange(ref _concurrentCount, 1))
+            {
+                return;
+            }
+
+            _ = Task.Run(() =>
+            {
+                while (taskQueue.TryDequeue(out Action nextTaskAction))
+                {
+                    nextTaskAction();
+                }
+
+                Interlocked.Exchange(ref _concurrentCount, 0);
+            });
+        }
+    }
 }

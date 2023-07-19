@@ -470,7 +470,9 @@ namespace Telegram.Controls
 
         private readonly AnimatedImagePresentation _presentation;
         private readonly AnimatedImageLoader _loader;
+
         private readonly DispatcherQueue _dispatcherQueue;
+        private readonly FifoActionWorker _workerQueue;
 
         private readonly List<AnimatedImage> _images = new();
 
@@ -486,10 +488,11 @@ namespace Telegram.Controls
 
         public AnimatedImagePresenter(AnimatedImageLoader loader, DispatcherQueue dispatcherQueue, AnimatedImagePresentation configuration)
         {
-            _loader = loader;
-            _dispatcherQueue = dispatcherQueue;
-
             _presentation = configuration;
+            _loader = loader;
+
+            _dispatcherQueue = dispatcherQueue;
+            _workerQueue = new FifoActionWorker();
 
             Increment();
         }
@@ -516,7 +519,7 @@ namespace Telegram.Controls
             _images.Add(canvas);
             canvas.Invalidate(_foregroundPrev?.Source);
 
-            Task.Run(PrepareImpl);
+            _workerQueue.Run(PrepareImpl);
         }
 
         public void Unload(AnimatedImage canvas, bool playing)
@@ -529,7 +532,7 @@ namespace Telegram.Controls
             _images.Remove(canvas);
             canvas.Invalidate(null);
 
-            Task.Run(() => UnloadImpl(playing));
+            _workerQueue.Run(() => UnloadImpl(playing));
         }
 
         private void PrepareImpl()
@@ -616,17 +619,17 @@ namespace Telegram.Controls
 
         public void Play()
         {
-            Task.Run(PlayImpl);
+            _workerQueue.Run(PlayImpl);
         }
 
         public void Pause()
         {
-            Task.Run(PauseImpl);
+            _workerQueue.Run(PauseImpl);
         }
 
         public void Seek(string marker)
         {
-            Task.Run(() => SeekImpl(marker));
+            _workerQueue.Run(() => SeekImpl(marker));
         }
 
         private void PlayImpl()
@@ -686,7 +689,7 @@ namespace Telegram.Controls
 
         public void Ready(AnimatedImageTask task)
         {
-            Task.Run(() => ReadyImpl(task));
+            _workerQueue.Run(() => ReadyImpl(task));
         }
 
         private void ReadyImpl(AnimatedImageTask task)
@@ -1324,36 +1327,32 @@ namespace Telegram.Controls
                     continue;
                 }
 
-                if (work.Presentation.Source is LocalFileSource local)
+                try
                 {
-                    var extension = System.IO.Path.GetExtension(local.FilePath);
-                    if (string.Equals(extension, ".tgs", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".json", StringComparison.OrdinalIgnoreCase))
+                    if (work.Presentation.Source is LocalFileSource local)
                     {
-                        LoadLottie(work, local);
+                        var extension = System.IO.Path.GetExtension(local.FilePath);
+                        if (string.Equals(extension, ".tgs", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".json", StringComparison.OrdinalIgnoreCase))
+                        {
+                            LoadLottie(work, local);
+                        }
+                        else if (string.Equals(extension, ".webm", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".mp4", StringComparison.OrdinalIgnoreCase))
+                        {
+                            LoadCachedVideo(work);
+                        }
+                        else if (string.Equals(extension, ".webp", StringComparison.OrdinalIgnoreCase))
+                        {
+                            LoadWebP(work, local);
+                        }
                     }
-                    else if (string.Equals(extension, ".webm", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".mp4", StringComparison.OrdinalIgnoreCase))
+                    else
                     {
                         LoadCachedVideo(work);
                     }
-                    else if (string.Equals(extension, ".webp", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var animation = PlaceholderImageHelper.DrawWebP(local.FilePath, work.Presentation.PixelWidth, out Size size);
-                        if (animation != null)
-                        {
-                            if (TryGetDelegate(work.CorrelationId, out var target))
-                            {
-                                target.Ready(new WebpAnimatedImageTask(animation, size, work.Presentation));
-                            }
-                            else
-                            {
-                                //animation.Dispose();
-                            }
-                        }
-                    }
                 }
-                else
+                catch
                 {
-                    LoadCachedVideo(work);
+                    // Shit happens...
                 }
             }
         }
@@ -1391,7 +1390,9 @@ namespace Telegram.Controls
                 {
                     // TODO: check if animation is valid
                     // Width, height, frame rate...
-                    return !double.IsNaN(animation.FrameRate);
+                    return animation.PixelWidth > 0
+                        && animation.PixelHeight > 0
+                        && !double.IsNaN(animation.FrameRate);
                 }
 
                 if (IsValid(animation) && TryGetDelegate(work.CorrelationId, out var target))
@@ -1401,6 +1402,22 @@ namespace Telegram.Controls
                 else
                 {
                     animation.Dispose();
+                }
+            }
+        }
+
+        private void LoadWebP(WorkItem work, LocalFileSource local)
+        {
+            var animation = PlaceholderImageHelper.DrawWebP(local.FilePath, work.Presentation.PixelWidth, out Size size);
+            if (animation != null)
+            {
+                if (TryGetDelegate(work.CorrelationId, out var target))
+                {
+                    target.Ready(new WebpAnimatedImageTask(animation, size, work.Presentation));
+                }
+                else
+                {
+                    //animation.Dispose();
                 }
             }
         }
