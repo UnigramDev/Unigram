@@ -609,48 +609,6 @@ namespace Telegram.Views
 
                     content = checkbox.Content as FrameworkElement;
                 }
-                else if (content is MessageService service)
-                {
-                    if (message.Content is MessageChatChangePhoto chatChangePhoto)
-                    {
-                        var photo = service.FindName("Photo") as ProfilePicture;
-                        photo?.SetChatPhoto(message.ClientService, chatChangePhoto.Photo, 120);
-
-                        var view = service.FindName("View") as TextBlock;
-                        if (view != null)
-                        {
-                            view.Text = chatChangePhoto.Photo.Animation != null
-                                ? Strings.ViewVideoAction
-                                : Strings.ViewPhotoAction;
-                        }
-                    }
-                    else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
-                    {
-                        var photo = service.FindName("Photo") as ProfilePicture;
-                        photo?.SetChatPhoto(message.ClientService, suggestProfilePhoto.Photo, 120);
-
-                        var view = service.FindName("View") as TextBlock;
-                        if (view != null)
-                        {
-                            view.Text = suggestProfilePhoto.Photo.Animation != null
-                                ? Strings.ViewVideoAction
-                                : Strings.ViewPhotoAction;
-                        }
-                    }
-                    else if (message.Content is MessageChatSetBackground chatSetBackground)
-                    {
-                        var photo = service.FindName("Photo") as ChatBackgroundPresenter;
-                        photo?.UpdateSource(_viewModel.ClientService, chatSetBackground.Background.Background, true);
-
-                        var view = service.FindName("View") as Border;
-                        if (view != null)
-                        {
-                            view.Visibility = message.IsOutgoing
-                                ? Visibility.Collapsed
-                                : Visibility.Visible;
-                        }
-                    }
-                }
 
                 if (content is MessageBubble bubble)
                 {
@@ -767,7 +725,7 @@ namespace Telegram.Views
 
             if (message.IsService)
             {
-                if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto)
+                if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto or MessageAsyncStory)
                 {
                     return "ServiceMessagePhotoTemplate";
                 }
@@ -843,7 +801,7 @@ namespace Telegram.Views
                 {
                     if (_viewModel.Items.TryGetValue(messageId, out MessageViewModel message))
                     {
-                        if (message.ReplyToMessage != null && _messageIdToSelector.TryGetValue(messageId, out var container))
+                        if (message.ReplyToItem is MessageViewModel && _messageIdToSelector.TryGetValue(messageId, out var container))
                         {
                             if (container.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
                             {
@@ -888,7 +846,7 @@ namespace Telegram.Views
                 _messageIdToSelector.Remove(oldMessageId);
             }
 
-            if (message.ReplyToMessageId != 0 && _messageIdToMessageIds.TryGetValue(message.ReplyToMessageId, out var ids))
+            if (message.ReplyTo is MessageReplyToMessage replyToMessage && _messageIdToMessageIds.TryGetValue(replyToMessage.MessageId, out var ids))
             {
                 ids.Add(message.Id);
                 ids.Remove(oldMessageId);
@@ -905,8 +863,8 @@ namespace Telegram.Views
                 if (message.Id != 0)
                     _messageIdToSelector.Remove(message.Id);
 
-                if (message.ReplyToMessageId != 0)
-                    _messageIdToMessageIds.Remove(message.ReplyToMessageId, message.Id);
+                if (message.ReplyTo is MessageReplyToMessage replyToMessage)
+                    _messageIdToMessageIds.Remove(replyToMessage.MessageId, message.Id);
             }
             else
             {
@@ -916,8 +874,8 @@ namespace Telegram.Views
                 if (message.Id != 0)
                     _messageIdToSelector[message.Id] = container;
 
-                if (message.ReplyToMessageId != 0)
-                    _messageIdToMessageIds.Add(message.ReplyToMessageId, message.Id);
+                if (message.ReplyTo is MessageReplyToMessage replyToMessage)
+                    _messageIdToMessageIds.Add(replyToMessage.MessageId, message.Id);
             }
         }
     }

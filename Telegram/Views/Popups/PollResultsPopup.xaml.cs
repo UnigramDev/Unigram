@@ -56,15 +56,22 @@ namespace Telegram.Views.Popups
         private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
         {
             var item = sender.ItemsSourceView.GetAt(args.Index);
-            if (item is User user)
+            if (item is MessageSender messageSender)
             {
                 var button = args.Element as Button;
                 var content = button.Content as ProfileCell;
 
-                content.UpdateUser(_clientService, user, 36);
+                content.UpdateMessageSender(_clientService, messageSender);
                 button.Click += User_Click;
 
-                AutomationProperties.SetName(button, user.FullName());
+                if (_clientService.TryGetUser(messageSender, out User user))
+                {
+                    AutomationProperties.SetName(button, user.FullName());
+                }
+                else if (_clientService.TryGetChat(messageSender, out Chat chat))
+                {
+                    AutomationProperties.SetName(button, chat.Title);
+                }
             }
             else if (item is PollResultViewModel option)
             {
@@ -77,11 +84,19 @@ namespace Telegram.Views.Popups
 
         private void User_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button button && button.DataContext is User user)
+            if (sender is Button button && button.DataContext is MessageSender messageSender)
             {
-                _delegate.OpenUser(user.Id);
-                Hide();
+                if (messageSender is MessageSenderUser user)
+                {
+                    _delegate.OpenUser(user.UserId);
+                }
+                else if (messageSender is MessageSenderChat chat)
+                {
+                    _delegate.OpenChat(chat.ChatId, true);
+                }
             }
+
+            Hide();
         }
     }
 
@@ -103,7 +118,7 @@ namespace Telegram.Views.Popups
             _poll = poll;
             _option = option;
 
-            Items = new MvxObservableCollection<User>();
+            Items = new MvxObservableCollection<MessageSender>();
             LoadMoreCommand = new RelayCommand(LoadMoreExecute);
 
             LoadMoreExecute();
@@ -115,7 +130,7 @@ namespace Telegram.Views.Popups
 
         public PollType Type => _poll.Type;
 
-        public MvxObservableCollection<User> Items { get; private set; }
+        public MvxObservableCollection<MessageSender> Items { get; private set; }
 
         public RelayCommand LoadMoreCommand { get; }
         private async void LoadMoreExecute()
@@ -124,21 +139,15 @@ namespace Telegram.Views.Popups
             limit = _offset > 0 ? 50 : limit;
 
             var response = await ClientService.SendAsync(new GetPollVoters(_chatId, _messageId, _poll.Options.IndexOf(_option), _offset, limit));
-            if (response is Telegram.Td.Api.Users users)
+            if (response is MessageSenders senders)
             {
-                foreach (var id in users.UserIds)
+                foreach (var sender in senders.Senders)
                 {
-                    var user = ClientService.GetUser(id);
-                    if (user == null)
-                    {
-                        continue;
-                    }
-
-                    Items.Add(user);
+                    Items.Add(sender);
                 }
 
-                _offset += users.UserIds.Count;
-                _remaining = users.TotalCount - _offset;
+                _offset += senders.Senders.Count;
+                _remaining = senders.TotalCount - _offset;
 
                 RaisePropertyChanged(nameof(LoadMoreLabel));
                 RaisePropertyChanged(nameof(LoadMoreVisibility));

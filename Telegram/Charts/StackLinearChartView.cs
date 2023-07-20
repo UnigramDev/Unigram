@@ -10,6 +10,7 @@ using System;
 using System.Numerics;
 using Telegram.Charts.Data;
 using Telegram.Charts.DataView;
+using Telegram.Common;
 using Windows.Foundation;
 
 namespace Telegram.Charts

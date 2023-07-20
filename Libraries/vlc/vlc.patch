@@ -1,0 +1,230 @@
+diff --git a/contrib/src/ffmpeg/rules.mak b/contrib/src/ffmpeg/rules.mak
+index 9baf9b140d..d05d3d85c7 100644
+--- a/contrib/src/ffmpeg/rules.mak
++++ b/contrib/src/ffmpeg/rules.mak
+@@ -22,32 +22,115 @@ FFMPEG_SNAPURL := http://git.libav.org/?p=libav.git;a=snapshot;h=$(FFMPEG_HASH);
+ FFMPEG_GITURL := git://git.libav.org/libav.git
+ FFMPEG_LAVC_MIN := 57.16.0
+ endif
+-
++ 
+ FFMPEG_BASENAME := $(subst .,_,$(subst \,_,$(subst /,_,$(FFMPEG_HASH))))
+ 
+ # bsf=vp9_superframe is needed to mux VP9 inside webm/mkv
+ FFMPEGCONF = \
+ 	--cc="$(CC)" \
+ 	--pkg-config="$(PKG_CONFIG)" \
+-	--disable-doc \
+-	--disable-encoder=vorbis \
+-	--disable-decoder=opus \
+-	--enable-libgsm \
+-	--disable-debug \
++	--disable-everything \
+ 	--disable-avdevice \
+-	--disable-devices \
+ 	--disable-avfilter \
+-	--disable-filters \
+-	--disable-protocol=concat \
+-	--disable-bsfs \
+-	--disable-bzlib \
+-	--disable-libvpx \
+-	--disable-avresample \
+-	--enable-bsf=vp9_superframe
++	--enable-hwaccel=h264_d3d11va \
++	--enable-hwaccel=h264_d3d11va2 \
++	--enable-hwaccel=h264_dxva2 \
++	--enable-hwaccel=hevc_d3d11va \
++	--enable-hwaccel=hevc_d3d11va2 \
++	--enable-hwaccel=hevc_dxva2 \
++	--enable-hwaccel=mpeg2_d3d11va \
++	--enable-hwaccel=mpeg2_d3d11va2 \
++	--enable-hwaccel=mpeg2_dxva2 \
++	--enable-protocol=file \
++	--enable-libopus \
++	--enable-libvpx \
++	--enable-decoder=aac \
++	--enable-decoder=aac_fixed \
++	--enable-decoder=aac_latm \
++	--enable-decoder=aasc \
++	--enable-decoder=alac \
++	--enable-decoder=flac \
++	--enable-decoder=gif \
++	--enable-decoder=h264 \
++	--enable-decoder=hevc \
++	--enable-decoder=libvpx_vp8 \
++	--enable-decoder=libvpx_vp9 \
++	--enable-decoder=mp1 \
++	--enable-decoder=mp1float \
++	--enable-decoder=mp2 \
++	--enable-decoder=mp2float \
++	--enable-decoder=mp3 \
++	--enable-decoder=mp3adu \
++	--enable-decoder=mp3adufloat \
++	--enable-decoder=mp3float \
++	--enable-decoder=mp3on4 \
++	--enable-decoder=mp3on4float \
++	--enable-decoder=mpeg4 \
++	--enable-decoder=msmpeg4v2 \
++	--enable-decoder=msmpeg4v3 \
++	--enable-decoder=opus \
++	--enable-decoder=pcm_alaw \
++	--enable-decoder=pcm_f32be \
++	--enable-decoder=pcm_f32le \
++	--enable-decoder=pcm_f64be \
++	--enable-decoder=pcm_f64le \
++	--enable-decoder=pcm_lxf \
++	--enable-decoder=pcm_mulaw \
++	--enable-decoder=pcm_s16be \
++	--enable-decoder=pcm_s16be_planar \
++	--enable-decoder=pcm_s16le \
++	--enable-decoder=pcm_s16le_planar \
++	--enable-decoder=pcm_s24be \
++	--enable-decoder=pcm_s24daud \
++	--enable-decoder=pcm_s24le \
++	--enable-decoder=pcm_s24le_planar \
++	--enable-decoder=pcm_s32be \
++	--enable-decoder=pcm_s32le \
++	--enable-decoder=pcm_s32le_planar \
++	--enable-decoder=pcm_s64be \
++	--enable-decoder=pcm_s64le \
++	--enable-decoder=pcm_s8 \
++	--enable-decoder=pcm_s8_planar \
++	--enable-decoder=pcm_u16be \
++	--enable-decoder=pcm_u16le \
++	--enable-decoder=pcm_u24be \
++	--enable-decoder=pcm_u24le \
++	--enable-decoder=pcm_u32be \
++	--enable-decoder=pcm_u32le \
++	--enable-decoder=pcm_u8 \
++	--enable-decoder=vorbis \
++	--enable-decoder=wavpack \
++	--enable-decoder=wmalossless \
++	--enable-decoder=wmapro \
++	--enable-decoder=wmav1 \
++	--enable-decoder=wmav2 \
++	--enable-decoder=wmavoice \
++	--enable-encoder=libopus \
++	--enable-parser=aac \
++	--enable-parser=aac_latm \
++	--enable-parser=flac \
++	--enable-parser=h264 \
++	--enable-parser=hevc \
++	--enable-parser=mpeg4video \
++	--enable-parser=mpegaudio \
++	--enable-parser=opus \
++	--enable-parser=vorbis \
++	--enable-demuxer=aac \
++	--enable-demuxer=flac \
++	--enable-demuxer=gif \
++	--enable-demuxer=h264 \
++	--enable-demuxer=hevc \
++	--enable-demuxer=matroska \
++	--enable-demuxer=m4v \
++	--enable-demuxer=mov \
++	--enable-demuxer=mp3 \
++	--enable-demuxer=ogg \
++	--enable-demuxer=wav \
++	--enable-muxer=ogg \
++	--enable-muxer=opus
+ 
+ ifdef USE_FFMPEG
+ FFMPEGCONF += \
+-	--disable-swresample \
+ 	--disable-iconv \
+ 	--disable-avisynth \
+ 	--disable-nvenc \
+@@ -61,6 +144,8 @@ endif
+ 
+ DEPS_ffmpeg = zlib gsm
+ 
++DEPS_ffmpeg += vpx opus
++
+ ifndef USE_LIBAV
+ FFMPEGCONF += \
+ 	--enable-libopenjpeg
+diff --git a/extras/package/win32/configure.sh b/extras/package/win32/configure.sh
+index 455ff18dd3..6b489ec726 100755
+--- a/extras/package/win32/configure.sh
++++ b/extras/package/win32/configure.sh
+@@ -1,23 +1,36 @@
+ #!/bin/sh
+ 
++# TODO: some of the disabled modules is actually used by libmp4_plugin and IT IS NEEDED
++
+ OPTIONS="
+-      --enable-update-check
+-      --enable-lua
+-      --enable-faad
+-      --enable-flac
+-      --enable-theora
+-      --enable-avcodec --enable-merge-ffmpeg
+-      --enable-dca
+-      --enable-mpc
+-      --enable-libass
+-      --enable-schroedinger
+-      --enable-realrtsp
+-      --enable-live555
+-      --enable-shout
+-      --enable-goom
++      --enable-avcodec --enable-merge-ffmpeg --enable-swscale
+       --enable-sse --enable-mmx
+-      --enable-libcddb
+-      --enable-zvbi --disable-telx
+-      --enable-nls"
++      --enable-nls
++      --disable-png --disable-jpeg
++
++      --disable-flac --disable-libmpeg2 --disable-opus --disable-vorbis
++
++      --disable-fribidi --disable-harfbuzz --disable-fontconfig --disable-sdl-image
++      --disable-mpg123 --disable-x265 --disable-x264 --disable-x26410b
++      --disable-libgcrypt --disable-taglib --disable-sout --disable-vlm
++      --disable-update-check --disable-lua --disable-faad --disable-flac
++      --disable-theora --disable-dca --disable-mpc --disable-mod --disable-libxml2
++      --disable-libass --disable-schroedinger --disable-realrtsp
++      --disable-live555 --disable-nfs --disable-addonmanagermodules
++      --disable-shout --disable-vcd --disable-decklink --disable-v4l2
++      --disable-postproc --disable-gst-decode --disable-crystalhd --disable-shine
++      --disable-oggspots --disable-spatialaudio --disable-speex --disable-aom
++      --disable-aribsub --disable-fluidlite --disable-fluidsynth --disable-a52
++      --disable-css --disable-tiger --disable-kate --disable-aribb25 
++      --disable-zvbi --disable-telx --disable-svgdec --disable-svg
++      --disable-vpx --disable-gnutls --disable-srt --disable-ncurses
++      --disable-goom --disable-projectm --disable-vsxu --disable-mpc
++      --disable-screen --disable-gme --disable-sid --disable-shout --disable-mod
++      --disable-dvdread --disable-linsys --disable-dv1394 --disable-dc1394
++      --disable-freetype --disable-opencv --disable-bluray --disable-dvdnav
++      --disable-archive --disable-decklink --disable-smb2 --disable-smbclient
++      --disable-freerdp --disable-vnc --disable-dsm --disable-sftp --disable-libcddb
++      --disable-avahi --disable-udev --disable-mtp --disable-upnp --disable-microdns
++      --disable-samplerate --disable-chromecast --disable-chromaprint"
+ 
+ sh "$(dirname $0)"/../../../configure ${OPTIONS}  "$@"
+diff --git a/extras/package/win32/package.mak b/extras/package/win32/package.mak
+index 2045de887a..6707386df2 100644
+--- a/extras/package/win32/package.mak
++++ b/extras/package/win32/package.mak
+@@ -90,7 +90,7 @@ package-win-npapi: build-npapi
+ 	mkdir -p "$(win32_destdir)/sdk/activex/"
+ 	cp $(top_builddir)/npapi-vlc/activex/README.TXT $(top_builddir)/npapi-vlc/share/test/test.html $(win32_destdir)/sdk/activex/
+ 
+-package-win-strip: package-win-common package-win-npapi
++package-win-strip: package-win-common
+ 	mkdir -p "$(win32_debugdir)"/
+ 	find $(win32_destdir) -type f \( -name '*$(LIBEXT)' -or -name '*$(EXEEXT)' \) | while read i; \
+ 	do if test -n "$$i" ; then \
+diff --git a/src/modules/modules.c b/src/modules/modules.c
+index 7d29370e4a..7793180369 100644
+--- a/src/modules/modules.c
++++ b/src/modules/modules.c
+@@ -318,8 +318,8 @@ done:
+ 
+     if (module != NULL)
+     {
+-        msg_Dbg (obj, "using %s module \"%s\"", capability,
+-                 module_get_object (module));
++        msg_Dbg (obj, "using %s module \"%s\" from %s", capability,
++                 module_get_object (module), module->plugin->path);
+         vlc_object_set_name (obj, module_get_object (module));
+     }
+     else

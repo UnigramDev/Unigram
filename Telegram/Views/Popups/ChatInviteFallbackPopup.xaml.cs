@@ -79,7 +79,7 @@ namespace Telegram.Views.Popups
                     var chat = await _clientService.SendAsync(new CreatePrivateChat(user.Id, true)) as Chat;
                     if (chat != null)
                     {
-                        _clientService.Send(new SendMessage(chat.Id, 0, 0, null, null, new InputMessageText(new FormattedText(_inviteLink.InviteLink, new TextEntity[0]), false, false)));
+                        _clientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(new FormattedText(_inviteLink.InviteLink, new TextEntity[0]), false, false)));
                     }
                 }
             }

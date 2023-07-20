@@ -96,10 +96,7 @@ namespace Telegram.Controls.Drawers
 
             SearchField.SetType(ViewModel.ClientService, type);
 
-            if (chat != null)
-            {
-                ViewModel.Update();
-            }
+            ViewModel.Update();
         }
 
         public void Deactivate()

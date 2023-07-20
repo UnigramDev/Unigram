@@ -51,8 +51,6 @@ namespace Telegram.Controls.Gallery
     {
         public GalleryViewModelBase ViewModel => DataContext as GalleryViewModelBase;
 
-        public override int SessionId => ViewModel.SessionId;
-
         public IClientService ClientService => ViewModel.ClientService;
 
         private Func<FrameworkElement> _closing;
@@ -307,13 +305,12 @@ namespace Telegram.Controls.Gallery
             sender.Volume = SettingsService.Current.VolumeLevel;
         }
 
-        public static GalleryView GetForCurrentView()
+        public static Task<ContentDialogResult> ShowAsync(ViewModelBase viewModelBase, IStorageService storageService, Chat chat, Func<FrameworkElement> closing = null)
         {
-            return new GalleryView();
-        }
+            var clientService = viewModelBase.ClientService;
+            var aggregator = viewModelBase.Aggregator;
+            var navigationService = viewModelBase.NavigationService;
 
-        public static Task<ContentDialogResult> ShowAsync(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, Chat chat, Func<FrameworkElement> closing = null)
-        {
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
             {
                 var user = clientService.GetUser(chat);
@@ -329,6 +326,7 @@ namespace Telegram.Controls.Gallery
                 }
 
                 var viewModel = new UserPhotosViewModel(clientService, storageService, aggregator, user, userFull);
+                viewModel.NavigationService = navigationService;
                 return ShowAsync(viewModel, closing);
             }
             else if (chat.Type is ChatTypeBasicGroup)
@@ -340,6 +338,7 @@ namespace Telegram.Controls.Gallery
                 }
 
                 var viewModel = new ChatPhotosViewModel(clientService, storageService, aggregator, chat, basicGroupFull.Photo);
+                viewModel.NavigationService = navigationService;
                 return ShowAsync(viewModel, closing);
             }
             else if (chat.Type is ChatTypeSupergroup)
@@ -351,6 +350,7 @@ namespace Telegram.Controls.Gallery
                 }
 
                 var viewModel = new ChatPhotosViewModel(clientService, storageService, aggregator, chat, supergroupFull.Photo);
+                viewModel.NavigationService = navigationService;
                 return ShowAsync(viewModel, closing);
             }
 
@@ -1137,7 +1137,7 @@ namespace Telegram.Controls.Gallery
                 flyout.CreateFlyoutSeparator();
             }
 
-            flyout.CreateFlyoutItem(() => item.CanView, viewModel.View, Strings.ShowInChat, Icons.Comment);
+            flyout.CreateFlyoutItem(() => item.CanView, viewModel.View, Strings.ShowInChat, Icons.ChatEmpty);
             flyout.CreateFlyoutItem(() => item.CanShare, viewModel.Forward, Strings.Forward, Icons.Share);
             flyout.CreateFlyoutItem(() => item.CanCopy, viewModel.Copy, Strings.Copy, Icons.DocumentCopy, VirtualKey.C);
             flyout.CreateFlyoutItem(() => item.CanSave, viewModel.Save, Strings.SaveAs, Icons.SaveAs, VirtualKey.S);

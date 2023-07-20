@@ -127,7 +127,24 @@ namespace Telegram.Controls
                 return;
             }
 
-            await GalleryView.ShowAsync(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, chat, () => Photo);
+            await GalleryView.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
+        }
+
+        private void Segments_Click(object sender, RoutedEventArgs e)
+        {
+            var chat = ViewModel.Chat;
+            if (chat == null || sender is not ActiveStoriesSegments segments)
+            {
+                return;
+            }
+
+            segments.Open(ViewModel.NavigationService, ViewModel.ClientService, chat, 140, story =>
+            {
+                var transform = Segments.TransformToVisual(Window.Current.Content);
+                var point = transform.TransformPoint(new Point());
+
+                return new Rect(point.X + 4, point.Y + 4, 132, 132);
+            });
         }
 
         #region Delegate
@@ -142,6 +159,8 @@ namespace Telegram.Controls
 
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
+
+            UpdateChatActiveStories(chat);
 
             UpdateChatNotificationSettings(chat);
         }
@@ -171,6 +190,11 @@ namespace Telegram.Controls
                 UnloadObject(Icon);
                 Photo.SetChat(ViewModel.ClientService, chat, 140);
             }
+        }
+
+        public void UpdateChatActiveStories(Chat chat)
+        {
+            Segments.SetChat(ViewModel.ClientService, chat, 140);
         }
 
         public void UpdateChatNotificationSettings(Chat chat)
@@ -732,7 +756,7 @@ namespace Telegram.Controls
                 }
                 else if (supergroup.HasLinkedChat)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.Discuss, Strings.ViewDiscussion, Icons.Comment);
+                    flyout.CreateFlyoutItem(ViewModel.Discuss, Strings.ViewDiscussion, Icons.ChatEmpty);
                 }
             }
             else if (chat.Type is ChatTypeBasicGroup basic && basicGroup != null)

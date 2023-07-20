@@ -13,10 +13,10 @@ namespace Telegram.Common
 {
     public class ConcurrentQueueWorker
     {
-        private readonly ConcurrentQueue<Func<Task>> taskQueue = new ConcurrentQueue<Func<Task>>();
-        private readonly ManualResetEvent mre = new ManualResetEvent(true);
+        private readonly ConcurrentQueue<Func<Task>> taskQueue = new();
+        private readonly ManualResetEvent mre = new(true);
+        private readonly object o = new();
         private int _concurrentCount = 1;
-        private readonly object o = new object();
 
         /// <summary>
         /// Max Task Count we can run concurrently
@@ -44,6 +44,11 @@ namespace Telegram.Common
                 {
                     if (taskQueue.Count > 0 && MaxConcurrentCount >= _concurrentCount)
                     {
+                        if (taskQueue.Count > 1)
+                        {
+                            Logger.Info(taskQueue.Count);
+                        }
+
                         if (taskQueue.TryDequeue(out Func<Task> nextTaskAction))
                         {
                             Interlocked.Increment(ref _concurrentCount);
@@ -61,6 +66,66 @@ namespace Telegram.Common
                         }
                     }
                 }
+            });
+        }
+    }
+
+    public class LifoActionWorker
+    {
+        private readonly ConcurrentStack<Action> taskQueue = new();
+        private int _concurrentCount = 0;
+
+        public void Enqueue(Action task)
+        {
+            taskQueue.Push(task);
+
+            if (0 != Interlocked.Exchange(ref _concurrentCount, 1))
+            {
+                return;
+            }
+
+            _ = Task.Run(() =>
+            {
+                while (true)
+                {
+                    if (taskQueue.Count > 0)
+                    {
+                        if (taskQueue.TryPop(out Action nextTaskAction))
+                        {
+                            taskQueue.Clear();
+                            nextTaskAction();
+
+                            Interlocked.Exchange(ref _concurrentCount, 0);
+                            break;
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    public class FifoActionWorker
+    {
+        private readonly ConcurrentQueue<Action> taskQueue = new();
+        private int _concurrentCount = 0;
+
+        public void Run(Action task)
+        {
+            taskQueue.Enqueue(task);
+
+            if (0 != Interlocked.Exchange(ref _concurrentCount, 1))
+            {
+                return;
+            }
+
+            _ = Task.Run(() =>
+            {
+                while (taskQueue.TryDequeue(out Action nextTaskAction))
+                {
+                    nextTaskAction();
+                }
+
+                Interlocked.Exchange(ref _concurrentCount, 0);
             });
         }
     }

@@ -39,7 +39,6 @@ using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -71,16 +70,6 @@ namespace Telegram.Views
 
         private readonly DispatcherTimer _slowModeTimer;
 
-        private DispatcherTimer _stickersTimer;
-        private Visual _stickersPanel;
-        private Visual _stickersShadow;
-        private StickersPanelMode _stickersMode = StickersPanelMode.Collapsed;
-
-        private readonly DispatcherTimer _elapsedTimer;
-        private readonly Visual _ellipseVisual;
-        private readonly Visual _elapsedVisual;
-        private readonly Visual _slideVisual;
-        private readonly Visual _recordVisual;
         private readonly Visual _rootVisual;
         private readonly Visual _textShadowVisual;
 
@@ -152,20 +141,12 @@ namespace Telegram.Views
             InitializeStickers();
 
             //ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
-            ElementCompositionPreview.SetIsTranslationEnabled(Ellipse, true);
             ElementCompositionPreview.SetIsTranslationEnabled(ButtonMore, true);
             ElementCompositionPreview.SetIsTranslationEnabled(TextFieldPanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(btnAttach, true);
             ElementCompositionPreview.SetIsTranslationEnabled(ListAutocomplete, true);
 
-            _ellipseVisual = ElementCompositionPreview.GetElementVisual(Ellipse);
-            _elapsedVisual = ElementCompositionPreview.GetElementVisual(ElapsedPanel);
-            _slideVisual = ElementCompositionPreview.GetElementVisual(SlidePanel);
-            _recordVisual = ElementCompositionPreview.GetElementVisual(ChatRecord);
             _rootVisual = ElementCompositionPreview.GetElementVisual(TextArea);
-
-            _ellipseVisual.CenterPoint = new Vector3(60);
-            _ellipseVisual.Scale = new Vector3(0);
 
             if (DateHeaderPanel != null)
             {
@@ -182,13 +163,6 @@ namespace Telegram.Views
 
                 _dateHeaderPanel.Clip = Window.Current.Compositor.CreateInsetClip();
             }
-
-            _elapsedTimer = new DispatcherTimer();
-            _elapsedTimer.Interval = TimeSpan.FromMilliseconds(100);
-            _elapsedTimer.Tick += (s, args) =>
-            {
-                ElapsedLabel.Text = btnVoiceMessage.Elapsed.ToString("m\\:ss\\.ff");
-            };
 
             _debouncer = new DispatcherTimer();
             _debouncer.Interval = TimeSpan.FromMilliseconds(Constants.AnimatedThrottle);
@@ -221,10 +195,6 @@ namespace Telegram.Views
 
             _textShadowVisual = DropShadowEx.Attach(Separator);
             _textShadowVisual.IsVisible = false;
-
-            //TextField.Language = Native.NativeUtils.GetCurrentCulture();
-            _drawable ??= new AvatarWavesDrawable(true, true);
-            _drawable.Update(Theme.Accent, true);
         }
 
         private bool CanFocusText(FocusState state)
@@ -251,8 +221,6 @@ namespace Telegram.Views
             JoinRequests.InitializeParent(ClipperJoinRequests, ViewModel.ClientService);
             ActionBar.InitializeParent(ClipperActionBar);
             PinnedMessage.InitializeParent(Clipper);
-
-            ButtonStickers.Source = ViewModel.Settings.Stickers.SelectedTab;
         }
 
         private void InitializeAutomation()
@@ -293,33 +261,6 @@ namespace Telegram.Views
 
             StickersPanel.AnimationClick = Animations_ItemClick;
             StickersPanel.AnimationContextRequested += Animation_ContextRequested;
-
-            _stickersPanel = ElementCompositionPreview.GetElementVisual(StickersPanel.Presenter);
-            _stickersShadow = ElementCompositionPreview.GetElementChildVisual(StickersPanel.Shadow);
-
-            _stickersTimer = new DispatcherTimer();
-            _stickersTimer.Interval = TimeSpan.FromMilliseconds(300);
-            _stickersTimer.Tick += (s, args) =>
-            {
-                _stickersTimer.Stop();
-
-                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-                if (popups.Count > 0)
-                {
-                    return;
-                }
-
-                Collapse_Click(StickersPanel, null);
-                _focusState.Set(FocusState.Programmatic);
-            };
-
-            ButtonStickers.PointerEntered += Stickers_PointerEntered;
-            ButtonStickers.PointerExited += Stickers_PointerExited;
-
-            StickersPanel.PointerEntered += Stickers_PointerEntered;
-            StickersPanel.PointerExited += Stickers_PointerExited;
-
-            StickersPanel.AllowFocusOnInteraction = true;
         }
 
         private void StickersPanel_SettingsClick(object sender, EventArgs e)
@@ -330,11 +271,7 @@ namespace Telegram.Views
 
         public void HideStickers()
         {
-            if (_stickersMode == StickersPanelMode.Overlay)
-            {
-                Collapse_Click(StickersPanel, null);
-            }
-
+            ButtonStickers.Collapse();
             _focusState.Set(FocusState.Programmatic);
         }
 
@@ -359,77 +296,6 @@ namespace Telegram.Views
                     await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-contact-profile://meh?ContactRemoteIds=u" + privata.UserId), options);
                 }
             });
-        }
-
-        private void Stickers_PointerExited(object sender, PointerRoutedEventArgs e)
-        {
-            if (IsPointerOverEnabled(e.Pointer))
-            {
-                _stickersTimer.Start();
-            }
-            else if (_stickersTimer.IsEnabled)
-            {
-                _stickersTimer.Stop();
-            }
-        }
-
-        private bool IsPointerOverEnabled(Pointer pointer)
-        {
-            return pointer?.PointerDeviceType == PointerDeviceType.Mouse && _viewModel.Settings.Stickers.IsPointerOverEnabled;
-        }
-
-        private bool IsPointerOverDisabled(Pointer pointer)
-        {
-            return pointer != null && (pointer.PointerDeviceType != PointerDeviceType.Mouse || !_viewModel.Settings.Stickers.IsPointerOverEnabled);
-        }
-
-        private void Stickers_PointerEntered(object sender, PointerRoutedEventArgs e)
-        {
-            if (_stickersTimer.IsEnabled)
-            {
-                _stickersTimer.Stop();
-            }
-
-            if (StickersPanel.Visibility == Visibility.Visible || IsPointerOverDisabled(e?.Pointer))
-            {
-                return;
-            }
-
-            _stickersMode = StickersPanelMode.Overlay;
-            ButtonStickers.IsChecked = false;
-            SettingsService.Current.IsSidebarOpen = false;
-
-            Focus(FocusState.Programmatic);
-            _focusState.Set(FocusState.Programmatic);
-
-            _stickersPanel.Opacity = 0;
-            _stickersPanel.Clip = Window.Current.Compositor.CreateInsetClip(48, 48, 0, 0);
-
-            _stickersShadow.Opacity = 0;
-            _stickersShadow.Clip = Window.Current.Compositor.CreateInsetClip(48, 48, -48, -4);
-
-            StickersPanel.Visibility = Visibility.Visible;
-            StickersPanel.Activate();
-
-            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(0, 0);
-            opacity.InsertKeyFrame(1, 1);
-
-            var clip = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            clip.InsertKeyFrame(0, 48);
-            clip.InsertKeyFrame(1, 0);
-
-            var clipShadow = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            clipShadow.InsertKeyFrame(0, 48);
-            clipShadow.InsertKeyFrame(1, -48);
-
-            _stickersPanel.StartAnimation("Opacity", opacity);
-            _stickersPanel.Clip.StartAnimation("LeftInset", clip);
-            _stickersPanel.Clip.StartAnimation("TopInset", clip);
-
-            _stickersShadow.StartAnimation("Opacity", opacity);
-            _stickersShadow.Clip.StartAnimation("LeftInset", clipShadow);
-            _stickersShadow.Clip.StartAnimation("TopInset", clipShadow);
         }
 
         public void OnNavigatingFrom(Type sourcePageType)
@@ -802,7 +668,7 @@ namespace Telegram.Views
                     if (i == args.NewStartingIndex && animateSendout)
                     {
                         var bubble = owner.Descendants<MessageBubble>().FirstOrDefault();
-                        var reply = message.ReplyToMessageState != ReplyToMessageState.Hidden && message.ReplyToMessageId != 0;
+                        var reply = message.ReplyToState != MessageReplyToState.Hidden && message.ReplyTo != null;
                         var more = ButtonMore.Visibility == Visibility.Visible ? 40 : 0;
 
                         var xOffset = content switch
@@ -914,7 +780,24 @@ namespace Telegram.Views
                 return;
             }
 
-            await GalleryView.ShowAsync(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, chat, () => Photo);
+            await GalleryView.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
+        }
+
+        private void Segments_Click(object sender, RoutedEventArgs e)
+        {
+            var chat = ViewModel.Chat;
+            if (chat == null || sender is not ActiveStoriesSegments segments)
+            {
+                return;
+            }
+
+            segments.Open(ViewModel.NavigationService, ViewModel.ClientService, chat, 36, story =>
+            {
+                var transform = Segments.TransformToVisual(Window.Current.Content);
+                var point = transform.TransformPoint(new Point());
+
+                return new Rect(point.X + 4, point.Y + 4, 28, 28);
+            });
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -1220,7 +1103,7 @@ namespace Telegram.Views
             if (empty != _oldEmpty)
             {
                 ButtonStickers.Source = empty
-                    ? ViewModel.Settings.Stickers.SelectedTab
+                    ? SettingsService.Current.Stickers.SelectedTab
                     : Services.Settings.StickersTab.Emoji;
             }
 
@@ -1716,18 +1599,6 @@ namespace Telegram.Views
             }
         }
 
-        private void Stickers_Click(object sender, RoutedEventArgs e)
-        {
-            if (StickersPanel.Visibility == Visibility.Collapsed || _stickersMode == StickersPanelMode.Collapsed)
-            {
-                Stickers_PointerEntered(sender, null);
-            }
-            else
-            {
-                Collapse_Click(null, null);
-            }
-        }
-
         private void Commands_Click(object sender, RoutedEventArgs e)
         {
             TextField.SetText("/", null);
@@ -1775,7 +1646,7 @@ namespace Telegram.Views
 
         private void TextField_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            Collapse_Click(null, null);
+            ButtonStickers.Collapse();
         }
 
         public void ChangeTheme()
@@ -1955,7 +1826,7 @@ namespace Telegram.Views
 
             if (supergroup != null && supergroup.Status is not ChatMemberStatusCreator && (supergroup.IsChannel || supergroup.HasActiveUsername()))
             {
-                flyout.CreateFlyoutItem(ViewModel.Report, Strings.ReportChat, Icons.ShieldError);
+                flyout.CreateFlyoutItem(ViewModel.Report, Strings.ReportChat, Icons.ErrorCircle);
             }
             if (user != null && user.Type is not UserTypeDeleted && user.Id != ViewModel.ClientService.Options.MyId)
             {
@@ -2229,7 +2100,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(MessageStatistics_Loaded, ViewModel.OpenMessageStatistics, message, Strings.Statistics, Icons.DataUsage);
 
                 flyout.CreateFlyoutItem(MessageForward_Loaded, ViewModel.ForwardMessage, message, Strings.Forward, Icons.Share);
-                flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.ReportMessage, message, Strings.ReportChat, Icons.ShieldError);
+                flyout.CreateFlyoutItem(MessageReport_Loaded, ViewModel.ReportMessage, message, Strings.ReportChat, Icons.ErrorCircle);
                 flyout.CreateFlyoutItem(MessageReportFalsePositive_Loaded, ViewModel.ReportFalsePositive, message, Strings.ReportFalsePositive, Icons.ShieldError);
                 flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.DeleteMessage, message, Strings.Delete, Icons.Delete, dangerous: true);
                 flyout.CreateFlyoutItem(MessageSelect_Loaded, ViewModel.SelectMessage, message, Strings.Select, Icons.CheckmarkCircle);
@@ -3042,11 +2913,7 @@ namespace Telegram.Views
         public void Stickers_ItemClick(Sticker sticker, bool fromStickerSet)
         {
             ViewModel.SendSticker(sticker, null, null, null, fromStickerSet);
-
-            if (_stickersMode == StickersPanelMode.Overlay)
-            {
-                Collapse_Click(null, null);
-            }
+            ButtonStickers.Collapse();
 
             _focusState.Set(FocusState.Programmatic);
         }
@@ -3059,11 +2926,7 @@ namespace Telegram.Views
         public void Animations_ItemClick(Animation animation)
         {
             ViewModel.SendAnimation(animation);
-
-            if (_stickersMode == StickersPanelMode.Overlay)
-            {
-                Collapse_Click(null, null);
-            }
+            ButtonStickers.Collapse();
 
             _focusState.Set(FocusState.Programmatic);
         }
@@ -3081,238 +2944,6 @@ namespace Telegram.Views
             Logger.Debug();
 
             _rootVisual.Size = e.NewSize.ToVector2();
-        }
-
-        private void ElapsedPanel_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Logger.Debug();
-
-            var point = _elapsedVisual.Offset;
-            point.X = (float)-e.NewSize.Width;
-
-            _elapsedVisual.Offset = point;
-            _elapsedVisual.Size = e.NewSize.ToVector2();
-        }
-
-        private void SlidePanel_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            Logger.Debug();
-
-            var point = _slideVisual.Offset;
-            point.X = (float)e.NewSize.Width + 36;
-
-            _slideVisual.Opacity = 0;
-            _slideVisual.Offset = point;
-            _slideVisual.Size = e.NewSize.ToVector2();
-        }
-
-        private void VoiceButton_RecordingStarted(object sender, EventArgs e)
-        {
-            // TODO: video message
-            ChatRecord.Visibility = Visibility.Visible;
-
-            ChatRecordPopup.IsOpen = true;
-            ChatRecordGlyph.Text = btnVoiceMessage.Mode == ChatRecordMode.Video
-                ? Icons.VideoNoteFilled24
-                : Icons.MicOnFilled24;
-
-            var slideWidth = SlidePanel.ActualSize.X;
-            var elapsedWidth = ElapsedPanel.ActualSize.X;
-
-            _slideVisual.Opacity = 1;
-
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                _elapsedTimer.Start();
-                AttachExpression();
-            };
-
-            var slideAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            slideAnimation.InsertKeyFrame(0, slideWidth + 36);
-            slideAnimation.InsertKeyFrame(1, 0);
-            slideAnimation.Duration = TimeSpan.FromMilliseconds(300);
-
-            var elapsedAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            elapsedAnimation.InsertKeyFrame(0, -elapsedWidth);
-            elapsedAnimation.InsertKeyFrame(1, 0);
-            elapsedAnimation.Duration = TimeSpan.FromMilliseconds(300);
-
-            var visibleAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            visibleAnimation.InsertKeyFrame(0, 0);
-            visibleAnimation.InsertKeyFrame(1, 1);
-
-            var ellipseAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            ellipseAnimation.InsertKeyFrame(0, new Vector3(56f / 96f));
-            ellipseAnimation.InsertKeyFrame(1, new Vector3(1));
-            ellipseAnimation.Duration = TimeSpan.FromMilliseconds(200);
-
-            _slideVisual.StartAnimation("Offset.X", slideAnimation);
-            _elapsedVisual.StartAnimation("Offset.X", elapsedAnimation);
-            _recordVisual.StartAnimation("Opacity", visibleAnimation);
-            _ellipseVisual.StartAnimation("Scale", ellipseAnimation);
-
-            batch.End();
-
-            ViewModel.ChatActionManager.SetTyping(btnVoiceMessage.IsChecked.Value ? new ChatActionRecordingVideoNote() : new ChatActionRecordingVoiceNote());
-        }
-
-        private void VoiceButton_RecordingStopped(object sender, EventArgs e)
-        {
-            //if (btnVoiceMessage.IsLocked)
-            //{
-            //    Poggers.Visibility = Visibility.Visible;
-            //    Poggers.UpdateWaveform(btnVoiceMessage.GetWaveform());
-            //    return;
-            //}
-
-            AttachExpression();
-
-            var slidePosition = LayoutRoot.ActualSize.X - 48 - 36;
-            var difference = slidePosition - ElapsedPanel.ActualSize.X;
-
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                _elapsedTimer.Stop();
-
-                DetachExpression();
-
-                ChatRecordPopup.IsOpen = false;
-
-                ChatRecord.Visibility = Visibility.Collapsed;
-                ButtonCancelRecording.Visibility = Visibility.Collapsed;
-                ElapsedLabel.Text = "0:00,0";
-
-                var point = _slideVisual.Offset;
-                point.X = _slideVisual.Size.X + 36;
-
-                _slideVisual.Opacity = 0;
-                _slideVisual.Offset = point;
-
-                point = _elapsedVisual.Offset;
-                point.X = -_elapsedVisual.Size.X;
-
-                _elapsedVisual.Offset = point;
-
-                _ellipseVisual.Properties.TryGetVector3("Translation", out point);
-                point.Y = 0;
-
-                _ellipseVisual.Properties.InsertVector3("Translation", point);
-            };
-
-            var slideAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            slideAnimation.InsertKeyFrame(0, _slideVisual.Offset.X);
-            slideAnimation.InsertKeyFrame(1, -slidePosition);
-            slideAnimation.Duration = TimeSpan.FromMilliseconds(200);
-
-            var visibleAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            visibleAnimation.InsertKeyFrame(0, 1);
-            visibleAnimation.InsertKeyFrame(1, 0);
-
-            _slideVisual.StartAnimation("Offset.X", slideAnimation);
-            _recordVisual.StartAnimation("Opacity", visibleAnimation);
-
-            batch.End();
-
-            ViewModel.ChatActionManager.CancelTyping();
-
-            _focusState.Set(FocusState.Programmatic);
-        }
-
-        private void VoiceButton_RecordingLocked(object sender, EventArgs e)
-        {
-            ChatRecordGlyph.Text = Icons.SendFilled;
-
-            DetachExpression();
-
-            var ellipseAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            ellipseAnimation.InsertKeyFrame(0, -57);
-            ellipseAnimation.InsertKeyFrame(1, 0);
-
-            _ellipseVisual.StartAnimation("Translation.Y", ellipseAnimation);
-
-            ButtonCancelRecording.Visibility = Visibility.Visible;
-            btnVoiceMessage.Focus(FocusState.Programmatic);
-
-            var point = _slideVisual.Offset;
-            point.X = _slideVisual.Size.X + 36;
-
-            _slideVisual.Opacity = 0;
-            _slideVisual.Offset = point;
-        }
-
-        private void VoiceButton_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            Vector3 point;
-            if (btnVoiceMessage.IsLocked || !btnVoiceMessage.IsRecording)
-            {
-                point = _slideVisual.Offset;
-                point.X = 0;
-
-                _slideVisual.Offset = point;
-
-                _ellipseVisual.Properties.TryGetVector3("Translation", out point);
-                point.Y = 0;
-
-                _ellipseVisual.Properties.InsertVector3("Translation", point);
-
-                return;
-            }
-
-            var cumulative = e.Cumulative.Translation.ToVector2();
-            point = _slideVisual.Offset;
-            point.X = Math.Min(0, cumulative.X);
-
-            _slideVisual.Offset = point;
-
-            if (point.X < -80)
-            {
-                e.Complete();
-                btnVoiceMessage.StopRecording(true);
-                return;
-            }
-
-            _ellipseVisual.Properties.TryGetVector3("Translation", out point);
-            point.Y = Math.Min(0, cumulative.Y);
-
-            _ellipseVisual.Properties.InsertVector3("Translation", point);
-
-            if (point.Y < -120)
-            {
-                e.Complete();
-                btnVoiceMessage.LockRecording();
-            }
-        }
-
-        private void ButtonCancelRecording_Click(object sender, RoutedEventArgs e)
-        {
-            btnVoiceMessage.StopRecording(true);
-        }
-
-        private void AttachExpression()
-        {
-            var elapsedExpression = Window.Current.Compositor.CreateExpressionAnimation("min(0, slide.Offset.X + ((root.Size.X - 48 - 36 - slide.Size.X) - elapsed.Size.X))");
-            elapsedExpression.SetReferenceParameter("slide", _slideVisual);
-            elapsedExpression.SetReferenceParameter("elapsed", _elapsedVisual);
-            elapsedExpression.SetReferenceParameter("root", _rootVisual);
-
-            var ellipseExpression = Window.Current.Compositor.CreateExpressionAnimation("Vector3(max(0, min(1, 1 + slide.Offset.X / (root.Size.X - 48 - 36))), max(0, min(1, 1 + slide.Offset.X / (root.Size.X - 48 - 36))), 1)");
-            ellipseExpression.SetReferenceParameter("slide", _slideVisual);
-            ellipseExpression.SetReferenceParameter("elapsed", _elapsedVisual);
-            ellipseExpression.SetReferenceParameter("root", _rootVisual);
-
-            _elapsedVisual.StopAnimation("Offset.X");
-            _elapsedVisual.StartAnimation("Offset.X", elapsedExpression);
-
-            _ellipseVisual.StopAnimation("Scale");
-            _ellipseVisual.StartAnimation("Scale", ellipseExpression);
-        }
-
-        private void DetachExpression()
-        {
-            _elapsedVisual.StopAnimation("Offset.X");
-            _ellipseVisual.StopAnimation("Scale");
         }
 
         private async void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
@@ -3413,10 +3044,7 @@ namespace Telegram.Views
                     TextField.SetText(null, null);
                     ViewModel.SendSticker(sticker, null, null, result);
 
-                    if (_stickersMode == StickersPanelMode.Overlay)
-                    {
-                        Collapse_Click(null, null);
-                    }
+                    ButtonStickers.Collapse();
                 }
             }
         }
@@ -3520,49 +3148,6 @@ namespace Telegram.Views
                     await ViewModel.LoadDateSliceAsync(offset);
                 }
             }
-        }
-
-        private void Collapse_Click(object sender, RoutedEventArgs e)
-        {
-            if (StickersPanel.Visibility == Visibility.Collapsed || _stickersMode == StickersPanelMode.Collapsed)
-            {
-                return;
-            }
-
-            _stickersMode = StickersPanelMode.Collapsed;
-            SettingsService.Current.IsSidebarOpen = false;
-
-            var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                StickersPanel.Visibility = Visibility.Collapsed;
-                StickersPanel.Deactivate();
-            };
-
-            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(0, 1);
-            opacity.InsertKeyFrame(1, 0);
-
-            var clip = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            clip.InsertKeyFrame(0, 0);
-            clip.InsertKeyFrame(1, 48);
-
-            var clipShadow = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            clipShadow.InsertKeyFrame(0, -48);
-            clipShadow.InsertKeyFrame(1, 48);
-
-            _stickersPanel.StartAnimation("Opacity", opacity);
-            _stickersPanel.Clip.StartAnimation("LeftInset", clip);
-            _stickersPanel.Clip.StartAnimation("TopInset", clip);
-
-            _stickersShadow.StartAnimation("Opacity", opacity);
-            _stickersShadow.Clip.StartAnimation("LeftInset", clip);
-            _stickersShadow.Clip.StartAnimation("TopInset", clip);
-
-            batch.End();
-
-            ButtonStickers.IsChecked = false;
-            ButtonStickers.Source = ViewModel.Settings.Stickers.SelectedTab;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -3767,6 +3352,8 @@ namespace Telegram.Views
             UpdateChatTitle(chat);
             UpdateChatPhoto(chat);
 
+            UpdateChatActiveStories(chat);
+
             UpdateChatActionBar(chat);
 
             UpdateChatUnreadMentionCount(chat, chat.UnreadMentionCount);
@@ -3924,6 +3511,11 @@ namespace Telegram.Views
                 Photo.SetChat(ViewModel.ClientService, chat, 36);
                 Photo.IsEnabled = true;
             }
+        }
+
+        public void UpdateChatActiveStories(Chat chat)
+        {
+            Segments.SetChat(ViewModel.ClientService, chat, 36);
         }
 
         public void UpdateChatHasScheduledMessages(Chat chat)
@@ -4976,28 +4568,7 @@ namespace Telegram.Views
 
         private void TextField_Sending(object sender, EventArgs e)
         {
-            if (_stickersMode == StickersPanelMode.Overlay)
-            {
-                Collapse_Click(StickersPanel, null);
-            }
-        }
-
-        private AvatarWavesDrawable _drawable;
-
-        private void VoiceButton_QuantumProcessed(object sender, float amplitude)
-        {
-            _drawable ??= new AvatarWavesDrawable(true, true);
-            _drawable.SetAmplitude(amplitude * 100, ChatRecordCanvas);
-        }
-
-        private void ChatRecordCanvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
-        {
-            _drawable.Draw(args.DrawingSession, 60, 60, sender);
-        }
-
-        private void ChatRecordLocked_Click(object sender, RoutedEventArgs e)
-        {
-            btnVoiceMessage.Release();
+            ButtonStickers.Collapse();
         }
 
         private async void ButtonMore_Checked(object sender, RoutedEventArgs e)
@@ -5093,6 +4664,21 @@ namespace Telegram.Views
 
         #endregion
 
+        private void Stickers_Redirect(object sender, EventArgs e)
+        {
+            _focusState.Set(FocusState.Programmatic);
+        }
+
+        private void ChatRecord_StartTyping(object sender, ChatAction e)
+        {
+            ViewModel.ChatActionManager.SetTyping(e);
+        }
+
+        private void ChatRecord_CancelTyping(object sender, EventArgs e)
+        {
+            _focusState.Set(FocusState.Programmatic);
+            ViewModel.ChatActionManager.CancelTyping();
+        }
     }
 
     public enum StickersPanelMode

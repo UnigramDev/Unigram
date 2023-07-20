@@ -449,6 +449,7 @@ namespace Telegram
                 SettingsPrivacyPhonePage => TLContainer.Current.Resolve<SettingsPrivacyPhoneViewModel>(sessionId),
                 SettingsPrivacyShowPhotoPage privacyShowPhotoPage => TLContainer.Current.Resolve<SettingsPrivacyShowPhotoViewModel, IUserDelegate>(privacyShowPhotoPage, sessionId),
                 SettingsPrivacyShowStatusPage => TLContainer.Current.Resolve<SettingsPrivacyShowStatusViewModel>(sessionId),
+                SettingsPrivacyShowBioPage => TLContainer.Current.Resolve<SettingsPrivacyShowBioViewModel>(sessionId),
                 SettingsPasswordConfirmPage => TLContainer.Current.Resolve<SettingsPasswordConfirmViewModel>(sessionId),
                 SettingsPasswordCreatePage => TLContainer.Current.Resolve<SettingsPasswordCreateViewModel>(sessionId),
                 SettingsPasswordDonePage => TLContainer.Current.Resolve<SettingsPasswordDoneViewModel>(sessionId),
@@ -460,6 +461,7 @@ namespace Telegram
                 MessageStatisticsPage => TLContainer.Current.Resolve<MessageStatisticsViewModel>(sessionId),
                 ChatInviteLinkPage => TLContainer.Current.Resolve<ChatInviteLinkViewModel>(sessionId),
                 ChatStatisticsPage => TLContainer.Current.Resolve<ChatStatisticsViewModel>(sessionId),
+                MyStoriesPage => TLContainer.Current.Resolve<MyStoriesViewModel>(sessionId),
 
                 // Popups
                 SettingsUsernamePopup => TLContainer.Current.Resolve<SettingsUsernameViewModel>(sessionId),
@@ -469,7 +471,7 @@ namespace Telegram
                 ChatNotificationsPopup => TLContainer.Current.Resolve<ChatNotificationsViewModel>(sessionId),
                 CreateChatPhotoPopup => TLContainer.Current.Resolve<CreateChatPhotoViewModel>(sessionId),
                 PromoPopup => TLContainer.Current.Resolve<PromoViewModel>(sessionId),
-                MessageInteractionsPopup => TLContainer.Current.Resolve<MessageInteractionsViewModel>(sessionId),
+                InteractionsPopup => TLContainer.Current.Resolve<InteractionsViewModel>(sessionId),
                 BackgroundsPopup => TLContainer.Current.Resolve<SettingsBackgroundsViewModel>(sessionId),
                 BackgroundPopup backgroundPopup => TLContainer.Current.Resolve<BackgroundViewModel, IBackgroundDelegate>(backgroundPopup, sessionId),
                 _ => null

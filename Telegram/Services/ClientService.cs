@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Telegram.Services.Updates;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Windows.Storage;
 
 namespace Telegram.Services
@@ -28,6 +29,8 @@ namespace Telegram.Services
         void Send(Function function, Action<BaseObject> handler = null);
         Task<BaseObject> SendAsync(Function function);
 
+        void GetReplyTo(MessageViewModel message, Action<BaseObject> handler);
+
         Task<BaseObject> CheckChatInviteLinkAsync(string inviteLink);
 
         Task<StorageFile> GetFileAsync(File file, bool completed = true);
@@ -41,6 +44,7 @@ namespace Telegram.Services
         bool IsDownloadFileCanceled(int fileId);
 
         Task<Chats> GetChatListAsync(ChatList chatList, int offset, int limit);
+        Task<Chats> GetStoryListAsync(StoryList storyList, int offset, int limit);
 
         int SessionId { get; }
 
@@ -79,6 +83,9 @@ namespace Telegram.Services
         Chat GetChat(long id);
         IEnumerable<Chat> GetChats(IEnumerable<long> ids);
 
+        ChatActiveStories GetActiveStories(long id);
+        IEnumerable<ChatActiveStories> GetActiveStorieses(IEnumerable<long> ids);
+
         IDictionary<MessageSender, ChatAction> GetChatActions(long id, long threadId = 0);
 
         bool IsSavedMessages(MessageSender sender);
@@ -99,6 +106,10 @@ namespace Telegram.Services
         bool TryGetChat(MessageSender sender, out Chat value);
 
         bool TryGetChatFromUser(long userId, out long value);
+        bool TryGetChatFromUser(long userId, out Chat value);
+        bool TryGetActiveStoriesFromUser(long userId, out ChatActiveStories activeStories);
+
+        bool TryGetActiveStories(long chatId, out ChatActiveStories activeStories);
 
         SecretChat GetSecretChat(int id);
         SecretChat GetSecretChat(Chat chat);
@@ -180,6 +191,8 @@ namespace Telegram.Services
         private readonly IEventAggregator _aggregator;
 
         private readonly Action<BaseObject> _processFilesDelegate;
+
+        private readonly Dictionary<long, ChatActiveStories> _activeStories = new();
 
         private readonly Dictionary<long, Chat> _chats = new();
         private readonly ConcurrentDictionary<long, ConcurrentDictionary<MessageSender, ChatAction>> _chatActions = new();
@@ -592,6 +605,23 @@ namespace Telegram.Services
 
 
 
+        public void GetReplyTo(MessageViewModel message, Action<BaseObject> handler)
+        {
+            if (message.ReplyTo is MessageReplyToMessage replyToMessage ||
+                message.Content is MessagePinMessage ||
+                message.Content is MessageGameScore ||
+                message.Content is MessagePaymentSuccessful)
+            {
+                Send(new GetRepliedMessage(message.ChatId, message.Id), handler);
+            }
+            else if (message.ReplyTo is MessageReplyToStory replyToStory)
+            {
+                Send(new GetStory(replyToStory.StorySenderChatId, replyToStory.StoryId, false), handler);
+            }
+        }
+
+
+
         private readonly Dictionary<long, DateTime> _chatAccessibleUntil = new();
 
         public async Task<BaseObject> CheckChatInviteLinkAsync(string inviteLink)
@@ -963,6 +993,28 @@ namespace Telegram.Services
             return _usersToChats.TryGetValue(userId, out value);
         }
 
+        public bool TryGetChatFromUser(long userId, out Chat chat)
+        {
+            if (_usersToChats.TryGetValue(userId, out long chatId))
+            {
+                return TryGetChat(chatId, out chat);
+            }
+
+            chat = null;
+            return false;
+        }
+
+        public bool TryGetActiveStoriesFromUser(long userId, out ChatActiveStories activeStories)
+        {
+            if (_usersToChats.TryGetValue(userId, out long chatId))
+            {
+                return TryGetActiveStories(chatId, out activeStories);
+            }
+
+            activeStories = null;
+            return false;
+        }
+
         public IEnumerable<Chat> GetChats(IEnumerable<long> ids)
         {
 #if MOCKUP
@@ -975,6 +1027,37 @@ namespace Telegram.Services
                 if (chat != null)
                 {
                     yield return chat;
+                }
+            }
+        }
+
+        public ChatActiveStories GetActiveStories(long id)
+        {
+            if (_activeStories.TryGetValue(id, out ChatActiveStories value))
+            {
+                return value;
+            }
+
+            return null;
+        }
+
+        public bool TryGetActiveStories(long id, out ChatActiveStories value)
+        {
+            return _activeStories.TryGetValue(id, out value);
+        }
+
+        public IEnumerable<ChatActiveStories> GetActiveStorieses(IEnumerable<long> ids)
+        {
+#if MOCKUP
+            return _chats.Values.ToList();
+#endif
+
+            foreach (var id in ids)
+            {
+                var activeStories = GetActiveStories(id);
+                if (activeStories != null)
+                {
+                    yield return activeStories;
                 }
             }
         }
@@ -1481,6 +1564,15 @@ namespace Telegram.Services
                     _authorizationStateTask.TrySetResult(true);
                     _authorizationState = updateAuthorizationState.AuthorizationState;
                 }
+            }
+            else if (update is UpdateChatActiveStories updateActiveStories)
+            {
+                _activeStories.TryGetValue(updateActiveStories.ActiveStories.ChatId, out ChatActiveStories value);
+                _activeStories[updateActiveStories.ActiveStories.ChatId] = updateActiveStories.ActiveStories;
+
+                Monitor.Enter(updateActiveStories.ActiveStories);
+                SetActiveStoriesPositions(updateActiveStories.ActiveStories, value);
+                Monitor.Exit(updateActiveStories.ActiveStories);
             }
             else if (update is UpdateAnimationSearchParameters updateAnimationSearchParameters)
             {

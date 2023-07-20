@@ -136,7 +136,7 @@ namespace Telegram.ViewModels.Settings
                     }
                     else
                     {
-                        ClientService.Send(new ReorderActiveBotUsernames(_userId, order));
+                        ClientService.Send(new ReorderBotActiveUsernames(_userId, order));
                     }
                 }
             }

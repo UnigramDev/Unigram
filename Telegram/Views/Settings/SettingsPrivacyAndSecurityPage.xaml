@@ -1,13 +1,13 @@
 <local:HostedPage x:Class="Telegram.Views.Settings.SettingsPrivacyAndSecurityPage"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:local="using:Telegram.Views"
-                  xmlns:controls="using:Telegram.Controls"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:local="using:Telegram.Views"
                   d:DesignHeight="2000"
                   mc:Ignorable="d"
-                  IsNavigationRoot="True">
+                  NavigationMode="Root">
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <ScrollViewer x:Name="ScrollingHost"
@@ -74,6 +74,13 @@
                                           Click="{x:Bind ViewModel.OpenProfilePhoto}"
                                           IsChevronVisible="True"
                                           Glyph="&#xE9A9;" />
+
+                    <controls:BadgeButton Content="{CustomResource PrivacyBio}"
+                                          Badge="{x:Bind ViewModel.ShowBioRules.Badge, Mode=OneWay}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenBio}"
+                                          IsChevronVisible="True"
+                                          Glyph="&#xEA0A;" />
 
                     <controls:BadgeButton Content="{CustomResource PrivacyForwards}"
                                           Badge="{x:Bind ViewModel.ShowForwardedRules.Badge, Mode=OneWay}"

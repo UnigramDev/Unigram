@@ -11,7 +11,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -269,7 +268,7 @@ namespace Telegram.Controls.Messages.Content
         {
             if (message.AreTheSame(message.PlaybackService.CurrentItem))
             {
-                if (message.PlaybackService.PlaybackState == MediaPlaybackState.Paused)
+                if (message.PlaybackService.PlaybackState == PlaybackState.Paused)
                 {
                     Button.SetGlyph(file.Id, MessageContentState.Play);
                 }
@@ -434,7 +433,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (_message.AreTheSame(_message.PlaybackService.CurrentItem))
             {
-                if (_message.PlaybackService.PlaybackState == MediaPlaybackState.Paused)
+                if (_message.PlaybackService.PlaybackState == PlaybackState.Paused)
                 {
                     _message.PlaybackService.Play();
                 }
@@ -488,7 +487,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 if (_message.AreTheSame(_message.PlaybackService.CurrentItem))
                 {
-                    if (_message.PlaybackService.PlaybackState == MediaPlaybackState.Paused)
+                    if (_message.PlaybackService.PlaybackState == PlaybackState.Paused)
                     {
                         _message.PlaybackService.Play();
                     }

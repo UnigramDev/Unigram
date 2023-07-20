@@ -8,6 +8,7 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -321,7 +322,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        protected override void SetText(MessageViewModel message, MessageSender sender, string title, string service, FormattedText text)
+        protected override void SetText(IClientService clientService, MessageSender sender, string title, string service, FormattedText text)
         {
             TitleLabel.Text = title;
 
@@ -358,7 +359,7 @@ namespace Telegram.Controls.Messages
                         //MessageLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
 
                         var player = new CustomEmojiIcon();
-                        player.Source = new CustomEmojiFileSource(message.ClientService, customEmoji.CustomEmojiId);
+                        player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
                         player.Margin = new Thickness(0, -4, 0, -4);
                         player.IsHitTestVisible = false;
 

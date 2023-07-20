@@ -44,6 +44,11 @@ namespace Telegram.Views
                     MediaFrame.Navigate(typeof(ChatSharedMembersPage), null, new SuppressNavigationTransitionInfo());
                     return;
                 }
+                else if (ViewModel.HasPinnedStories)
+                {
+                    MediaFrame.Navigate(typeof(ChatStoriesPage), null, new SuppressNavigationTransitionInfo());
+                    return;
+                }
 
                 var sharedCount = ViewModel.SharedCount;
                 if (sharedCount[0] > 0)
@@ -105,6 +110,16 @@ namespace Telegram.Views
             if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
             {
                 sharedMedia.Header.UpdateChatPhoto(chat);
+            }
+        }
+
+        public void UpdateChatActiveStories(Chat chat)
+        {
+            ProfileHeader?.UpdateChatActiveStories(chat);
+
+            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            {
+                sharedMedia.Header.UpdateChatActiveStories(chat);
             }
         }
 

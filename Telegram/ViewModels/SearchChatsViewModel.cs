@@ -136,18 +136,11 @@ namespace Telegram.ViewModels
         {
             var temp = new List<SearchResult>();
 
-            // TODO: replace with new TDLib method
-            var response = await ClientService.SendAsync(new SearchChats(string.Empty, 50));
+            var response = await ClientService.SendAsync(new SearchRecentlyFoundChats(query, 50));
             if (response is Td.Api.Chats chats && !cancellationToken.IsCancellationRequested)
             {
                 foreach (var chat in ClientService.GetChats(chats.ChatIds))
                 {
-                    // TODO: replace with new TDLib method
-                    if (!chat.Title.Contains(query, StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
                     if (_tracker.Filter(chat))
                     {
                         temp.Add(new SearchResult(chat, query, SearchResultType.Recent));

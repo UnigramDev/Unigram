@@ -191,6 +191,8 @@
     <Compile Include="Charts\FastOutSlowInInterpolator.cs" />
     <Compile Include="Charts\LinearChartView.cs" />
     <Compile Include="Charts\LookupTableInterpolator.cs" />
+    <Compile Include="Common\MathEx.cs" />
+    <Compile Include="Common\MathFEx.cs" />
     <Compile Include="Charts\Paint.cs" />
     <Compile Include="Charts\PieChartView.cs" />
     <Compile Include="Charts\SegmentTree.cs" />
@@ -202,17 +204,43 @@
     <Compile Include="Collections\Handlers\ChatDiffHandler.cs" />
     <Compile Include="Common\ListViewExtensions.cs" />
     <Compile Include="Common\SystemTray.cs" />
+    <Compile Include="Controls\ActiveStoriesSegments.cs" />
     <Compile Include="Controls\AnimatedImage.cs" />
     <Compile Include="Controls\BadgeControl.cs" />
+    <Compile Include="Controls\Cells\ActiveStoriesCell.xaml.cs">
+      <DependentUpon>ActiveStoriesCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\StoryCell.xaml.cs">
+      <DependentUpon>StoryCell.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Chats\ChatHistoryArrows.xaml.cs">
       <DependentUpon>ChatHistoryArrows.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Chats\ChatHistoryView.cs" />
     <Compile Include="Controls\Chats\ChatHistoryViewItem.cs" />
+    <Compile Include="Controls\Chats\ChatRecordBar.xaml.cs">
+      <DependentUpon>ChatRecordBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ClrGrid.cs" />
+    <Compile Include="Controls\Contacts\ContactsSortedByHeader.xaml.cs">
+      <DependentUpon>ContactsSortedByHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\ReactionsMenuFlyout.xaml.cs">
       <DependentUpon>ReactionsMenuFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Stories\StoriesWindow.xaml.cs">
+      <DependentUpon>StoriesWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Stories\StoryContent.xaml.cs">
+      <DependentUpon>StoryContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Stories\StoryInteractionBar.xaml.cs">
+      <DependentUpon>StoryInteractionBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Stories\StoriesStrip.xaml.cs">
+      <DependentUpon>StoriesStrip.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Services\ClientService.StoryList.cs" />
     <Compile Include="Services\VoipGroupService.cs" />
     <Compile Include="Services\VoipService.cs" />
     <Compile Include="Streams\AnimatedImageSource.cs" />
@@ -221,8 +249,11 @@
     <Compile Include="Streams\DelayedFileSource.cs" />
     <Compile Include="Streams\LocalFileSource.cs" />
     <Compile Include="Streams\RemoteFileSource.cs" />
+    <Compile Include="Td\Api\MessageAsyncStory.cs" />
     <Compile Include="ViewModels\ChatNotificationsViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
+    <Compile Include="ViewModels\ComposeViewModel.cs" />
+    <Compile Include="ViewModels\MyStoriesViewModel.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
     <Compile Include="Collections\LegacyIncrementalCollection.cs" />
@@ -668,8 +699,12 @@
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordCreateViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordHintViewModel.cs" />
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordIntroViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBioViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxyViewModel.cs" />
+    <Compile Include="ViewModels\Stories\ActiveStoriesViewModel.cs" />
+    <Compile Include="ViewModels\Stories\StoryListViewModel.cs" />
+    <Compile Include="ViewModels\Stories\StoryViewModel.cs" />
     <Compile Include="ViewModels\TopicListViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
     <Compile Include="ViewModels\ChooseSoundViewModel.cs" />
@@ -754,6 +789,9 @@
     <Compile Include="Views\Chats\ChatSharedVoicePage.xaml.cs">
       <DependentUpon>ChatSharedVoicePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Chats\ChatStoriesPage.xaml.cs">
+      <DependentUpon>ChatStoriesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ChatThreadPage.xaml.cs">
       <DependentUpon>ChatThreadPage.xaml</DependentUpon>
     </Compile>
@@ -771,6 +809,9 @@
       <DependentUpon>ShareFolderPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\MultiValueDictionary.cs" />
+    <Compile Include="Views\MyStoriesPage.xaml.cs">
+      <DependentUpon>MyStoriesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Payments\PaymentAddressPopup.xaml.cs">
       <DependentUpon>PaymentAddressPopup.xaml</DependentUpon>
     </Compile>
@@ -826,10 +867,10 @@
     <Compile Include="Views\Popups\InputPopup.xaml.cs">
       <DependentUpon>InputPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\MessageInteractionsPopup.xaml.cs">
-      <DependentUpon>MessageInteractionsPopup.xaml</DependentUpon>
+    <Compile Include="Views\Popups\InteractionsPopup.xaml.cs">
+      <DependentUpon>InteractionsPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\MessageInteractionsViewModel.cs" />
+    <Compile Include="ViewModels\InteractionsViewModel.cs" />
     <Compile Include="Views\Popups\RecordVideoChatPopup.xaml.cs">
       <DependentUpon>RecordVideoChatPopup.xaml</DependentUpon>
     </Compile>
@@ -885,7 +926,6 @@
     <Compile Include="Selectors\StatsDataTemplateSelector.cs" />
     <Compile Include="Selectors\StickerSetTemplateSelector.cs" />
     <Compile Include="Selectors\StorageMediaTemplateSelector.cs" />
-    <Compile Include="Selectors\StorageStatisticsTemplateSelector.cs" />
     <Compile Include="Services\AlertsService.cs" />
     <Compile Include="Services\SettingsSearchService.cs" />
     <Compile Include="Services\SettingsLegacyService.cs" />
@@ -1223,6 +1263,9 @@
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowPhotoPage.xaml.cs">
       <DependentUpon>SettingsPrivacyShowPhotoPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowBioPage.xaml.cs">
+      <DependentUpon>SettingsPrivacyShowBioPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\Privacy\SettingsPrivacyShowStatusPage.xaml.cs">
       <DependentUpon>SettingsPrivacyShowStatusPage.xaml</DependentUpon>
     </Compile>
@@ -1389,7 +1432,6 @@
     <Compile Include="ViewModels\ContactsViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Handle.cs" />
-    <Compile Include="ViewModels\DialogViewModel.Info.cs" />
     <Compile Include="ViewModels\DialogViewModel.Inline.cs" />
     <Compile Include="ViewModels\DialogViewModel.Messages.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
@@ -1479,6 +1521,7 @@
     <Content Include="Assets\Animations\Premium.tgs" />
     <Content Include="Assets\Animations\ShareFolder.tgs" />
     <Content Include="Assets\Animations\AuthorizationStateWaitPassword.tgs" />
+    <Content Include="Assets\Animations\MyStories.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -1714,6 +1757,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Cells\ActiveStoriesCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Cells\StoryCell.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Cells\UsernameInfoCell.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1786,6 +1837,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Chats\ChatRecordBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\Chats\ChatSearchBar.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1793,6 +1848,10 @@
     <Page Include="Controls\Chats\ChatThemeDrawer.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Contacts\ContactsSortedByHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\CountryBox.xaml">
       <SubType>Designer</SubType>
@@ -1982,6 +2041,18 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\Stories\StoriesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Stories\StoryContent.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Stories\StoryInteractionBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\UndoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1991,6 +2062,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Views\SearchChatsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Stories\StoriesStrip.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2094,6 +2169,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Chats\ChatStoriesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\ChatThreadPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2113,6 +2192,10 @@
     <Page Include="Views\Folders\Popups\ShareFolderPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\MyStoriesPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Payments\PaymentAddressPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2186,7 +2269,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\MessageInteractionsPopup.xaml">
+    <Page Include="Views\Popups\InteractionsPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2498,6 +2581,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\Privacy\SettingsPrivacyShowBioPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Settings\Privacy\SettingsPrivacyShowStatusPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2684,6 +2771,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="LibVLCSharp">
+      <Version>3.7.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Bcl.HashCode">
       <Version>1.1.1</Version>
     </PackageReference>
@@ -2709,6 +2799,9 @@
     </PackageReference>
     <PackageReference Include="Telegram.Td.UWP">
       <Version>1.8.14</Version>
+    </PackageReference>
+    <PackageReference Include="VideoLAN.LibVLC.UWP">
+      <Version>3.3.5</Version>
     </PackageReference>
     <PackageReference Include="Win2D.uwp">
       <Version>1.26.0</Version>
@@ -2764,7 +2857,6 @@
     </Reference>
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.dll" />
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.pri" />
-    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\avfilter-7.dll" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

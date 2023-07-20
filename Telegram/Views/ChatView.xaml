@@ -210,6 +210,7 @@
                                                  Foreground="White"
                                                  TextAlignment="Center"
                                                  TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                                 FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                                  AutoFontSize="False"
                                                  IsTextSelectionEnabled="False"
                                                  HyperlinkStyle="None"
@@ -217,13 +218,13 @@
                                                  HyperlinkFontWeight="SemiBold"
                                                  Padding="0,0,0,4" />
 
-                    <Border Background="{ThemeResource MessageServiceBackgroundBrush}"
+                    <Border x:Name="View"
+                            Background="{ThemeResource MessageServiceBackgroundBrush}"
                             CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
                             HorizontalAlignment="Center"
                             Padding="12,4,12,4"
                             Margin="0,8,0,12">
-                        <TextBlock x:Name="View"
-                                   Text="{CustomResource ViewPhotoAction}"
+                        <TextBlock Text="{CustomResource ViewPhotoAction}"
                                    Foreground="#FFFFFF"
                                    TextAlignment="Center"
                                    Style="{StaticResource CaptionTextBlockStyle}" />
@@ -250,6 +251,7 @@
                                                  Foreground="White"
                                                  TextAlignment="Center"
                                                  TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                                 FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                                  AutoFontSize="False"
                                                  IsTextSelectionEnabled="False"
                                                  HyperlinkStyle="None"
@@ -280,6 +282,7 @@
                                              Foreground="#FFFFFF"
                                              TextAlignment="Center"
                                              TextStyle="{StaticResource CaptionRichTextBlockStyle}"
+                                             FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                              AutoFontSize="False"
                                              IsTextSelectionEnabled="False"
                                              HyperlinkStyle="None"
@@ -412,7 +415,8 @@
               Canvas.ZIndex="3">
             <Grid x:Name="InfoPanel">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
@@ -422,6 +426,20 @@
                                          Width="36"
                                          Height="36"
                                          HorizontalAlignment="Center" />
+                <controls:ActiveStoriesSegments x:Name="Segments"
+                                                Click="Segments_Click"
+                                                Width="36"
+                                                Height="36"
+                                                HorizontalAlignment="Center"
+                                                Margin="0,0,12,0"
+                                                Grid.Column="1">
+
+                    <controls:ProfilePicture x:Name="Photo"
+                                             Click="Photo_Click"
+                                             AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
+                                             Width="36"
+                                             Height="36" />
+                </controls:ActiveStoriesSegments>
                 <controls:CustomEmojiIcon x:Name="Icon"
                                           x:Load="False"
                                           AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
@@ -429,17 +447,18 @@
                                           Height="32"
                                           FrameSize="32,32"
                                           DecodeFrameType="Logical"
-                                          HorizontalAlignment="Center" />
+                                          HorizontalAlignment="Center"
+                                          Grid.Column="1" />
 
                 <HyperlinkButton x:Name="Profile"
                                  Click="Profile_Click"
                                  Style="{StaticResource EmptyHyperlinkButtonStyle}"
                                  HorizontalContentAlignment="Stretch"
-                                 Grid.Column="1">
+                                 Grid.Column="2">
                     <Grid Background="Transparent"
                           VerticalAlignment="Center"
                           Margin="0,-2,0,2"
-                          Grid.Column="1">
+                          Grid.Column="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -493,7 +512,7 @@
                 </HyperlinkButton>
 
                 <Grid x:Name="Options"
-                      Grid.Column="2">
+                      Grid.Column="3">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
@@ -1108,7 +1127,8 @@
 
                         <!-- Button to use stickers keyboard, all -->
                         <chats:ChatStickerButton x:Name="ButtonStickers"
-                                                 Click="Stickers_Click"
+                                                 Redirect="Stickers_Redirect"
+                                                 ControlledPanel="{x:Bind StickersPanel}"
                                                  AllowFocusOnInteraction="False"
                                                  VerticalAlignment="Bottom"
                                                  AutomationProperties.Name="{CustomResource AccDescrEmojiButton}"
@@ -1123,11 +1143,6 @@
                                                     AllowFocusOnInteraction="False"
                                                     Glyph="&#xE9E4;"
                                                     CheckedGlyph="&#xE9E0;"
-                                                    RecordingStarted="VoiceButton_RecordingStarted"
-                                                    RecordingStopped="VoiceButton_RecordingStopped"
-                                                    RecordingLocked="VoiceButton_RecordingLocked"
-                                                    QuantumProcessed="VoiceButton_QuantumProcessed"
-                                                    ManipulationDelta="VoiceButton_ManipulationDelta"
                                                     ManipulationMode="TranslateX,TranslateY">
                                 <controls:AnimatedIconToggleButton.Source>
                                     <icons:VoiceVideo />
@@ -1163,148 +1178,13 @@
             </Grid>
         </ContentControl>
 
-        <Grid x:Name="ChatRecord"
-              Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-              Margin="12,0,12,8"
-              Visibility="Collapsed"
-              Grid.Row="3">
-            <Grid VerticalAlignment="Bottom"
-                  Height="{StaticResource TelegramToolBarHeight}">
-
-                <Border HorizontalAlignment="Left"
-                        Margin="0,0,48,0"
-                        Grid.ColumnSpan="4"
-                        Grid.Row="1">
-                    <Grid x:Name="ElapsedPanel"
-                          SizeChanged="ElapsedPanel_SizeChanged">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="48" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Ellipse Fill="Red"
-                                 Width="12"
-                                 Height="12"
-                                 HorizontalAlignment="Center" />
-                        <TextBlock x:Name="ElapsedLabel"
-                                   Text="0:00,00"
-                                   Margin="0,0,0,1"
-                                   Width="64"
-                                   VerticalAlignment="Center"
-                                   Grid.Column="1" />
-                    </Grid>
-                </Border>
-
-                <Border HorizontalAlignment="Right"
-                        Margin="0,0,84,0"
-                        Grid.ColumnSpan="4"
-                        Grid.Row="1">
-                    <StackPanel x:Name="SlidePanel"
-                                SizeChanged="SlidePanel_SizeChanged"
-                                Orientation="Horizontal">
-                        <FontIcon Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                  Glyph="&#xE0E2;"
-                                  FontSize="12"
-                                  Margin="0,1,4,0" />
-                        <TextBlock Foreground="{ThemeResource SystemControlForegroundBaseMediumBrush}"
-                                   Text="{CustomResource SlideToCancel}"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,0,0"
-                                   Style="{StaticResource CaptionTextBlockStyle}" />
-                    </StackPanel>
-                </Border>
-
-                <HyperlinkButton x:Name="ButtonCancelRecording"
-                                 Click="ButtonCancelRecording_Click"
-                                 Content="{CustomResource Cancel}"
-                                 HorizontalAlignment="Center"
-                                 Visibility="Collapsed"
-                                 Grid.ColumnSpan="4"
-                                 Grid.Row="1" />
-
-                <controls:ProgressVoice x:Name="Poggers"
-                                        x:Load="False"
-                                        Visibility="Collapsed">
-                    <controls:ProgressVoice.Style>
-                        <Style TargetType="controls:ProgressVoice">
-                            <Setter Property="Foreground"
-                                    Value="{ThemeResource MessageHeaderBorderBrush}" />
-                            <Setter Property="Background"
-                                    Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
-                            <Setter Property="BorderThickness"
-                                    Value="{ThemeResource ProgressBarBorderThemeThickness}" />
-                            <Setter Property="BorderBrush"
-                                    Value="{ThemeResource SystemControlHighlightTransparentBrush}" />
-                            <Setter Property="Maximum"
-                                    Value="100" />
-                            <Setter Property="MinHeight"
-                                    Value="{ThemeResource ProgressBarThemeMinHeight}" />
-                            <Setter Property="IsTabStop"
-                                    Value="False" />
-                            <Setter Property="VerticalAlignment"
-                                    Value="Stretch" />
-                            <!--<Setter Property="Width" Value="209"/>-->
-                            <Setter Property="MinWidth"
-                                    Value="142" />
-                            <Setter Property="Margin"
-                                    Value="0,0,0,2" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="controls:ProgressVoice">
-                                        <Grid>
-                                            <Path x:Name="HorizontalTrackRect"
-                                                  Margin="{TemplateBinding Padding}"
-                                                  Fill="{TemplateBinding Background}"
-                                                  StrokeStartLineCap="Round"
-                                                  StrokeEndLineCap="Round"
-                                                  HorizontalAlignment="Stretch" />
-                                            <Path x:Name="ProgressBarIndicator"
-                                                  Margin="{TemplateBinding Padding}"
-                                                  Fill="{TemplateBinding Foreground}"
-                                                  StrokeStartLineCap="Round"
-                                                  StrokeEndLineCap="Round"
-                                                  HorizontalAlignment="Left" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </controls:ProgressVoice.Style>
-                </controls:ProgressVoice>
-            </Grid>
-            <Border Width="120"
-                    Height="240"
-                    Margin="-36,-156,-36,-36"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom">
-                <Popup x:Name="ChatRecordPopup"
-                       contract8Present:ShouldConstrainToRootBounds="False">
-                    <Border Height="240">
-                        <Grid x:Name="Ellipse"
-                              Width="120"
-                              Height="120"
-                              VerticalAlignment="Bottom">
-                            <xaml:CanvasControl x:Name="ChatRecordCanvas"
-                                                Draw="ChatRecordCanvas_Draw"
-                                                Width="120"
-                                                Height="120" />
-                            <Grid CornerRadius="40"
-                                  Width="80"
-                                  Height="80">
-                                <TextBlock x:Name="ChatRecordGlyph"
-                                           FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                           FontSize="{StaticResource GlyphLargeFontSize}"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Foreground="White" />
-                                <Button Click="ChatRecordLocked_Click"
-                                        Style="{StaticResource EmptyButtonStyle}"
-                                        Opacity="0" />
-                            </Grid>
-                        </Grid>
-                    </Border>
-                </Popup>
-            </Border>
-        </Grid>
+        <chats:ChatRecordBar x:Name="ChatRecord"
+                             StartTyping="ChatRecord_StartTyping"
+                             CancelTyping="ChatRecord_CancelTyping"
+                             ControlledButton="{x:Bind btnVoiceMessage}"
+                             Margin="12,0,12,8"
+                             Visibility="Collapsed"
+                             Grid.Row="3" />
 
         <Grid x:Name="ChatFooter"
               Margin="12,0,12,8"

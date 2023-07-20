@@ -145,12 +145,15 @@ namespace Telegram.Common
 
         public static bool TryCreateUri(string url, out Uri uri)
         {
-            if (Uri.TryCreate(url, UriKind.Absolute, out uri))
+            if (!url.StartsWith("http://")
+                && !url.StartsWith("https://")
+                && !url.StartsWith("tg:")
+                && !url.StartsWith("ftp:"))
             {
-                return true;
+                url = "http://" + url;
             }
 
-            return Uri.TryCreate("http://" + url, UriKind.Absolute, out uri);
+            return Uri.TryCreate(url, UriKind.Absolute, out uri);
         }
 
         public static bool IsTelegramUrl(Uri uri)

@@ -26,6 +26,7 @@ namespace Telegram.ViewModels
         public override void Subscribe()
         {
             Aggregator.Subscribe<UpdateWindowActivated>(this, Handle)
+                .Subscribe<UpdateChatActiveStories>(Handle)
                 .Subscribe<UpdateChatPermissions>(Handle)
                 .Subscribe<UpdateChatReplyMarkup>(Handle)
                 .Subscribe<UpdateChatUnreadMentionCount>(Handle)
@@ -302,6 +303,14 @@ namespace Telegram.ViewModels
             }
         }
 
+        public void Handle(UpdateChatActiveStories update)
+        {
+            if (update.ActiveStories.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatActiveStories(_chat));
+            }
+        }
+
         public void Handle(UpdateChatPermissions update)
         {
             if (update.ChatId == _chat?.Id)
@@ -526,10 +535,10 @@ namespace Telegram.ViewModels
                                 Items.RemoveAt(i);
                                 i--;
                             }
-                            else if (table.Contains(message.ReplyToMessageId))
+                            else if (message.ReplyTo is MessageReplyToMessage replyToMessage && table.Contains(replyToMessage.MessageId))
                             {
-                                message.ReplyToMessage = null;
-                                message.ReplyToMessageState = ReplyToMessageState.Deleted;
+                                message.ReplyToItem = null;
+                                message.ReplyToState = MessageReplyToState.Deleted;
 
                                 Handle(message, bubble => bubble.UpdateMessageReply(message), service => service.UpdateMessage(message));
                             }
@@ -846,7 +855,7 @@ namespace Telegram.ViewModels
 
                 Delegate?.UpdateBubbleWithReplyToMessageId(messageId, (bubble, reply) =>
                 {
-                    update(reply.ReplyToMessage);
+                    update(reply.ReplyToItem as MessageViewModel);
                     action(bubble, reply, true);
                 });
             });

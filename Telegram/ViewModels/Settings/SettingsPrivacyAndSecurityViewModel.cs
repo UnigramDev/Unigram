@@ -34,11 +34,12 @@ namespace Telegram.ViewModels.Settings
         private readonly SettingsPrivacyShowPhoneViewModel _showPhoneRules;
         private readonly SettingsPrivacyShowPhotoViewModel _showPhotoRules;
         private readonly SettingsPrivacyShowStatusViewModel _showStatusRules;
+        private readonly SettingsPrivacyShowBioViewModel _showBioRules;
         private readonly SettingsPrivacyAllowCallsViewModel _allowCallsRules;
         private readonly SettingsPrivacyAllowChatInvitesViewModel _allowChatInvitesRules;
         private readonly SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel _allowPrivateVoiceAndVideoNoteMessages;
 
-        public SettingsPrivacyAndSecurityViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowForwardedViewModel showForwarded, SettingsPrivacyShowPhoneViewModel showPhone, SettingsPrivacyShowPhotoViewModel showPhoto, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite, SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel privateVoiceAndVideoNoteMessages)
+        public SettingsPrivacyAndSecurityViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IContactsService contactsService, IPasscodeService passcodeService, SettingsPrivacyShowForwardedViewModel showForwarded, SettingsPrivacyShowPhoneViewModel showPhone, SettingsPrivacyShowPhotoViewModel showPhoto, SettingsPrivacyShowStatusViewModel statusTimestamp, SettingsPrivacyShowBioViewModel showBio, SettingsPrivacyAllowCallsViewModel phoneCall, SettingsPrivacyAllowChatInvitesViewModel chatInvite, SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel privateVoiceAndVideoNoteMessages)
             : base(clientService, settingsService, aggregator)
         {
             _contactsService = contactsService;
@@ -48,6 +49,7 @@ namespace Telegram.ViewModels.Settings
             _showPhoneRules = showPhone;
             _showPhotoRules = showPhoto;
             _showStatusRules = statusTimestamp;
+            _showBioRules = showBio;
             _allowCallsRules = phoneCall;
             _allowChatInvitesRules = chatInvite;
             _allowPrivateVoiceAndVideoNoteMessages = privateVoiceAndVideoNoteMessages;
@@ -56,6 +58,7 @@ namespace Telegram.ViewModels.Settings
             Children.Add(_showPhotoRules);
             Children.Add(_showPhoneRules);
             Children.Add(_showStatusRules);
+            Children.Add(_showBioRules);
             Children.Add(_allowCallsRules);
             Children.Add(_allowChatInvitesRules);
             Children.Add(_allowPrivateVoiceAndVideoNoteMessages);
@@ -146,6 +149,7 @@ namespace Telegram.ViewModels.Settings
         public SettingsPrivacyShowPhoneViewModel ShowPhoneRules => _showPhoneRules;
         public SettingsPrivacyShowPhotoViewModel ShowPhotoRules => _showPhotoRules;
         public SettingsPrivacyShowStatusViewModel ShowStatusRules => _showStatusRules;
+        public SettingsPrivacyShowBioViewModel ShowBioRules => _showBioRules;
         public SettingsPrivacyAllowCallsViewModel AllowCallsRules => _allowCallsRules;
         public SettingsPrivacyAllowChatInvitesViewModel AllowChatInvitesRules => _allowChatInvitesRules;
         public SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel AllowPrivateVoiceAndVideoNoteMessages => _allowPrivateVoiceAndVideoNoteMessages;
@@ -447,6 +451,11 @@ namespace Telegram.ViewModels.Settings
         public void OpenProfilePhoto()
         {
             NavigationService.Navigate(typeof(SettingsPrivacyShowPhotoPage));
+        }
+
+        public void OpenBio()
+        {
+            NavigationService.Navigate(typeof(SettingsPrivacyShowBioPage));
         }
 
         public void OpenForwards()

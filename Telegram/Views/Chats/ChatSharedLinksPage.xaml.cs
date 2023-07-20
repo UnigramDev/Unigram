@@ -17,6 +17,7 @@ namespace Telegram.Views.Chats
         public ChatSharedLinksPage()
         {
             InitializeComponent();
+            ScrollingHost.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, OnSelectionModeChanged);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls.Drawers;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
@@ -37,6 +38,19 @@ namespace Telegram.Controls
         public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs<Animation>> AnimationContextRequested;
 
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
+
+        public int SessionId
+        {
+            get
+            {
+                if (DataContext is ViewModelBase viewModel)
+                {
+                    return viewModel.SessionId;
+                }
+
+                return int.MaxValue;
+            }
+        }
 
         private int _prevIndex = -1;
 
@@ -81,7 +95,7 @@ namespace Telegram.Controls
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            LoadAtIndex(ViewModel.Chat, Navigation.SelectedIndex, /* unsure here */ false);
+            LoadAtIndex(ViewModel?.Chat, Navigation.SelectedIndex, /* unsure here */ false);
         }
 
         private void LoadAtIndex(Chat chat, int index, bool unload)
@@ -108,7 +122,7 @@ namespace Telegram.Controls
                 {
                     FindName(nameof(EmojisRoot));
                     EmojisRoot.LayoutUpdated += EmojisRoot_LayoutUpdated;
-                    EmojisRoot.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
+                    EmojisRoot.DataContext = EmojiDrawerViewModel.GetForCurrentView(SessionId);
                 }
                 else
                 {
@@ -141,7 +155,7 @@ namespace Telegram.Controls
                 {
                     FindName(nameof(AnimationsRoot));
                     AnimationsRoot.LayoutUpdated += AnimationsRoot_LayoutUpdated;
-                    AnimationsRoot.DataContext = AnimationDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
+                    AnimationsRoot.DataContext = AnimationDrawerViewModel.GetForCurrentView(SessionId);
                     AnimationsRoot.ItemClick = Animations_ItemClick;
                     AnimationsRoot.ItemContextRequested += AnimationContextRequested;
                 }
@@ -176,7 +190,7 @@ namespace Telegram.Controls
                 {
                     FindName(nameof(StickersRoot));
                     StickersRoot.LayoutUpdated += StickersRoot_LayoutUpdated;
-                    StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
+                    StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(SessionId);
                     StickersRoot.ItemClick = Stickers_ItemClick;
                     StickersRoot.ItemContextRequested += StickerContextRequested;
                     StickersRoot.ChoosingItem += ChoosingSticker;
@@ -286,13 +300,13 @@ namespace Telegram.Controls
             switch (SettingsService.Current.Stickers.SelectedTab)
             {
                 case StickersTab.Emoji:
-                    LoadAtIndex(ViewModel.Chat, 0, /* unsure here */ false);
+                    LoadAtIndex(ViewModel?.Chat, 0, /* unsure here */ false);
                     break;
                 case StickersTab.Animations:
-                    LoadAtIndex(ViewModel.Chat, 1, /* unsure here */ false);
+                    LoadAtIndex(ViewModel?.Chat, 1, /* unsure here */ false);
                     break;
                 case StickersTab.Stickers:
-                    LoadAtIndex(ViewModel.Chat, 2, /* unsure here */ false);
+                    LoadAtIndex(ViewModel?.Chat, 2, /* unsure here */ false);
                     break;
             }
         }

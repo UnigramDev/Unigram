@@ -41,7 +41,7 @@ namespace Telegram.Controls.Chats
 
     public class ChatRecordButton : AnimatedIconToggleButton
     {
-        public DialogViewModel ViewModel => DataContext as DialogViewModel;
+        public ComposeViewModel ViewModel => DataContext as ComposeViewModel;
 
         private AnimatedIcon Icon;
         private Visual _icon;
@@ -189,7 +189,7 @@ namespace Telegram.Controls.Chats
                 return;
             }
 
-            ViewModel.PlaybackService.Pause();
+            //ViewModel.PlaybackService.Pause();
 
             Logger.Debug("Permissions granted, mode: " + Mode);
 
@@ -356,13 +356,7 @@ namespace Telegram.Controls.Chats
 
                 ClickMode = ClickMode.Release;
 
-                var chat = ViewModel.Chat;
-                if (chat == null)
-                {
-                    return;
-                }
-
-                var restricted = await ViewModel.VerifyRightsAsync(chat, x => Mode == ChatRecordMode.Video ? x.CanSendVideoNotes : x.CanSendVoiceNotes, Strings.GlobalAttachMediaRestricted, Strings.AttachMediaRestrictedForever, Strings.AttachMediaRestricted);
+                var restricted = await ViewModel.VerifyRightsAsync(x => Mode == ChatRecordMode.Video ? x.CanSendVideoNotes : x.CanSendVoiceNotes, Strings.GlobalAttachMediaRestricted, Strings.AttachMediaRestrictedForever, Strings.AttachMediaRestricted);
                 if (restricted)
                 {
                     return;
@@ -563,13 +557,7 @@ namespace Telegram.Controls.Chats
             }
             else
             {
-                var chat = ViewModel.Chat;
-                if (chat == null)
-                {
-                    return;
-                }
-
-                var restricted = await ViewModel.VerifyRightsAsync(chat, x => Mode == ChatRecordMode.Video ? x.CanSendVideoNotes : x.CanSendVoiceNotes, Strings.GlobalAttachMediaRestricted, Strings.AttachMediaRestrictedForever, Strings.AttachMediaRestricted);
+                var restricted = await ViewModel.VerifyRightsAsync(x => Mode == ChatRecordMode.Video ? x.CanSendVideoNotes : x.CanSendVoiceNotes, Strings.GlobalAttachMediaRestricted, Strings.AttachMediaRestrictedForever, Strings.AttachMediaRestricted);
                 if (restricted)
                 {
                     return;
@@ -600,6 +588,7 @@ namespace Telegram.Controls.Chats
             public static Recorder Current => _current ??= new Recorder();
 
             private readonly ConcurrentQueueWorker _recordQueue;
+            private readonly DispatcherQueue _dispatcherQueue;
 
             private OpusRecorder _recorder;
             private StorageFile _file;
@@ -612,6 +601,7 @@ namespace Telegram.Controls.Chats
             public Recorder()
             {
                 _recordQueue = new ConcurrentQueueWorker(1);
+                _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             }
 
             public async void Start(ChatRecordMode mode, Chat chat)
@@ -892,7 +882,7 @@ namespace Telegram.Controls.Chats
                 return result;
             }
 
-            public async void Stop(DialogViewModel viewModel, bool? cancel)
+            public async void Stop(ComposeViewModel viewModel, bool? cancel)
             {
                 Logger.Debug("Stop invoked, cancel: " + cancel);
 
@@ -966,7 +956,7 @@ namespace Telegram.Controls.Chats
                 });
             }
 
-            private async void Send(DialogViewModel viewModel, ChatRecordMode mode, Chat chat, StorageFile file, bool mirroring, int duration)
+            private async void Send(ComposeViewModel viewModel, ChatRecordMode mode, Chat chat, StorageFile file, bool mirroring, int duration)
             {
                 if (mode == ChatRecordMode.Video)
                 {
@@ -1004,7 +994,7 @@ namespace Telegram.Controls.Chats
 
                     try
                     {
-                        await viewModel.Dispatcher.DispatchAsync(() => viewModel.SendVideoNoteAsync(chat, file, profile, transform));
+                        _dispatcherQueue.TryEnqueue(() => _ = viewModel.SendVideoNoteAsync(file, profile, transform));
                     }
                     catch { }
                 }
@@ -1012,7 +1002,7 @@ namespace Telegram.Controls.Chats
                 {
                     try
                     {
-                        await viewModel.Dispatcher.DispatchAsync(() => viewModel.SendVoiceNoteAsync(chat, file, duration, null));
+                        _dispatcherQueue.TryEnqueue(() => _ = viewModel.SendVoiceNoteAsync(file, duration, null));
                     }
                     catch { }
                 }

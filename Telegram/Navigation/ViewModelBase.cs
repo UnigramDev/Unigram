@@ -13,6 +13,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -116,9 +117,14 @@ namespace Telegram.Navigation
             _ = popup.ShowQueuedAsync();
         }
 
-        public Task<ContentDialogResult> ShowPopupAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)
+        public Task<ContentDialogResult> ShowPopupAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return NavigationService.ShowPopupAsync(sourcePopupType, parameter, tsc);
+            return NavigationService.ShowPopupAsync(sourcePopupType, parameter, tsc, requestedTheme);
+        }
+
+        public void ShowPopup(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            _ = NavigationService.ShowPopupAsync(sourcePopupType, parameter, tsc, requestedTheme);
         }
 
         public Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false)

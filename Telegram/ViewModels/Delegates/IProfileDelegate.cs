@@ -13,5 +13,7 @@ namespace Telegram.ViewModels.Delegates
         void UpdateSecretChat(Chat chat, SecretChat secretChat);
 
         void UpdateChatNotificationSettings(Chat chat);
+
+        void UpdateChatActiveStories(Chat chat);
     }
 }

@@ -81,12 +81,12 @@ namespace Telegram.Navigation.Services
 
     public class NavigationStackItem : BindableBase
     {
-        public NavigationStackItem(Type sourcePageType, object parameter, string title, bool root)
+        public NavigationStackItem(Type sourcePageType, object parameter, string title, HostedNavigationMode mode)
         {
             SourcePageType = sourcePageType;
             Parameter = parameter;
             Title = title;
-            IsRoot = root;
+            Mode = mode;
         }
 
         public Type SourcePageType { get; }
@@ -100,7 +100,7 @@ namespace Telegram.Navigation.Services
             set => Set(ref _title, value);
         }
 
-        public bool IsRoot { get; }
+        public HostedNavigationMode Mode { get; }
 
         public override string ToString()
         {
@@ -154,13 +154,13 @@ namespace Telegram.Navigation.Services
         public void InsertToBackStack(int index, Type type, object parameter = null, NavigationTransitionInfo info = null)
         {
             Frame.BackStack.Insert(index, new PageStackEntry(type, parameter, info));
-            BackStack.Insert(index, new NavigationStackItem(type, parameter, null, false));
+            BackStack.Insert(index, new NavigationStackItem(type, parameter, null, HostedNavigationMode.Child));
         }
 
         public void AddToBackStack(Type type, object parameter = null, NavigationTransitionInfo info = null)
         {
             Frame.BackStack.Add(new PageStackEntry(type, parameter, info));
-            BackStack.Add(new NavigationStackItem(type, parameter, null, false));
+            BackStack.Add(new NavigationStackItem(type, parameter, null, HostedNavigationMode.Child));
         }
 
         public void RemoveFromBackStack(int index)
@@ -195,11 +195,11 @@ namespace Telegram.Navigation.Services
                     {
                         if (page is HostedPage hosted)
                         {
-                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, hosted.Title, hosted.IsNavigationRoot));
+                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, hosted.Title, hosted.NavigationMode));
                         }
                         else
                         {
-                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, null, false));
+                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, null, HostedNavigationMode.Child));
                         }
                     }
                     else if (e.NavigationMode is NavigationMode.Back && BackStack.Count > 0)

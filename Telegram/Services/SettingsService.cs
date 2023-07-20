@@ -72,6 +72,8 @@ namespace Telegram.Services
         bool AreSmoothTransitionsEnabled { get; set; }
         bool AreMaterialsEnabled { get; set; }
 
+        bool AreStoriesMuted { get; set; }
+
         bool UseSystemProxy { get; set; }
 
         int[] AccountsSelectorOrder { get; set; }
@@ -371,6 +373,13 @@ namespace Telegram.Services
         {
             get => _areMaterialsEnabled ??= GetValueOrDefault(_local, "AreMaterialsEnabled", true);
             set => AddOrUpdateValue(ref _areMaterialsEnabled, _local, "AreMaterialsEnabled", value);
+        }
+
+        private static bool? _areStoriesMuted;
+        public bool AreStoriesMuted
+        {
+            get => _areStoriesMuted ??= GetValueOrDefault(_local, "AreStoriesMuted", true);
+            set => AddOrUpdateValue(ref _areStoriesMuted, _local, "AreStoriesMuted", value);
         }
 
         private static bool? _isTrayVisible;

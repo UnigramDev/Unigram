@@ -7,12 +7,14 @@
 using LinqToVisualTree;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Telegram.Controls;
 using Telegram.Entities;
 using Telegram.Native;
@@ -20,6 +22,7 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.DataTransfer;
@@ -45,6 +48,26 @@ namespace Telegram.Common
 {
     public static class Extensions
     {
+        public static int Read(this Stream stream, Span<byte> buffer)
+        {
+            byte[] sharedBuffer = ArrayPool<byte>.Shared.Rent(buffer.Length);
+            try
+            {
+                int numRead = stream.Read(sharedBuffer, 0, buffer.Length);
+                if ((uint)numRead > (uint)buffer.Length)
+                {
+                    throw new IOException("IO_StreamTooLong");
+                }
+
+                new ReadOnlySpan<byte>(sharedBuffer, 0, numRead).CopyTo(buffer);
+                return numRead;
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(sharedBuffer);
+            }
+        }
+
         // TODO: this is a duplicat of INavigationService.ShowPopupAsync, and it's needed by GamePage, GroupCallPage and LiveStreamPage.
         // Must be removed at some point.
         public static Task<ContentDialogResult> ShowPopupAsync(this Page frame, int sessionId, Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)
@@ -186,22 +209,22 @@ namespace Telegram.Common
             }
         }
 
-        public static void ShowTeachingTip(this Window app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            ShowTeachingTip(app, target, text, null, placement);
+            return ShowTeachingTip(app, target, text, null, placement, requestedTheme);
         }
 
-        public static void ShowTeachingTip(this Window app, FrameworkElement target, string text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            ShowTeachingTip(app, target, new FormattedText(text, Array.Empty<TextEntity>()), icon, placement);
+            return ShowTeachingTip(app, target, DialogViewModel.GetFormattedText(text), icon, placement, requestedTheme);
         }
 
-        public static void ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            ShowTeachingTip(app, target, text, null, placement);
+            return ShowTeachingTip(app, target, text, null, placement, requestedTheme);
         }
 
-        public static void ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var label = new TextBlock
             {
@@ -242,6 +265,10 @@ namespace Telegram.Common
                 MinWidth = 0,
             };
 
+            if (requestedTheme != ElementTheme.Default)
+            {
+                tip.RequestedTheme = requestedTheme;
+            }
 
             if (app.Content is FrameworkElement element)
             {
@@ -260,6 +287,7 @@ namespace Telegram.Common
             }
 
             tip.IsOpen = true;
+            return tip;
         }
 
         public static Color ToColor(this int color, bool alpha = false)

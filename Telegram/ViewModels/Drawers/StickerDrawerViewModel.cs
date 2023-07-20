@@ -31,7 +31,6 @@ namespace Telegram.ViewModels.Drawers
 
         private readonly StickerSetViewModel _recentSet;
         private readonly StickerSetViewModel _favoriteSet;
-        private readonly StickerSetViewModel _premiumSet;
         private readonly SupergroupStickerSetViewModel _groupSet;
 
         private Dictionary<long, StickerSetViewModel> _installedSets;
@@ -50,13 +49,6 @@ namespace Telegram.ViewModels.Drawers
         public StickerDrawerViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            _premiumSet = new StickerSetViewModel(ClientService, new StickerSetInfo
-            {
-                Title = Strings.PremiumStickers,
-                Name = "tg/premiumStickers",
-                IsInstalled = true
-            });
-
             _favoriteSet = new StickerSetViewModel(ClientService, new StickerSetInfo
             {
                 Title = Strings.FavoriteStickers,
@@ -320,10 +312,9 @@ namespace Telegram.ViewModels.Drawers
 
             var result1 = await ClientService.SendAsync(new GetFavoriteStickers());
             var result2 = await ClientService.SendAsync(new GetRecentStickers());
-            var result3 = await ClientService.SendAsync(new GetPremiumStickers(60));
             var result4 = await GetInstalledSets();
 
-            if (result1 is Stickers favorite && result2 is Stickers recent && result3 is Stickers premium)
+            if (result1 is Stickers favorite && result2 is Stickers recent)
             {
                 for (int i = 0; i < favorite.StickersValue.Count; i++)
                 {
@@ -341,7 +332,6 @@ namespace Telegram.ViewModels.Drawers
 
                 _favoriteSet.Update(favorite.StickersValue);
                 _recentSet.Update(recent.StickersValue);
-                _premiumSet.Update(premium.StickersValue);
 
                 var stickers = new List<StickerSetViewModel>();
                 if (_favoriteSet.Stickers.Count > 0)
@@ -352,21 +342,12 @@ namespace Telegram.ViewModels.Drawers
                 {
                     stickers.Add(_recentSet);
                 }
-                if (_premiumSet.Stickers.Count > 0 && IsPremium)
-                {
-                    stickers.Add(_premiumSet);
-                }
                 if (_groupSet.Stickers.Count > 0 && _groupSet.ChatId == chat?.Id)
                 {
                     stickers.Add(_groupSet);
                 }
 
                 stickers.AddRange(result4);
-
-                if (_premiumSet.Stickers.Count > 0 && IsPremiumAvailable && !IsPremium)
-                {
-                    stickers.Add(_premiumSet);
-                }
 
                 SavedStickers.ReplaceWith(stickers);
                 _updating = false;

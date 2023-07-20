@@ -224,7 +224,7 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var destination = RecentVoters.Items;
-            var origin = poll.Poll.RecentVoterUserIds.Select(x => new MessageSenderUser(x));
+            var origin = poll.Poll.RecentVoterIds;
 
             if (destination.Count > 0 && recycled)
             {

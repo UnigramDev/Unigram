@@ -87,8 +87,9 @@ namespace Telegram.ViewModels
         private bool? _isSaved;
         public bool IsSaved => _isSaved ??= _message.IsSaved(_clientService.Options.MyId);
 
-        public MessageViewModel ReplyToMessage { get; set; }
-        public ReplyToMessageState ReplyToMessageState { get; set; } = ReplyToMessageState.None;
+        // TODO: BaseObject
+        public object ReplyToItem { get; set; }
+        public MessageReplyToState ReplyToState { get; set; } = MessageReplyToState.None;
 
         public void Reset()
         {
@@ -192,7 +193,7 @@ namespace Telegram.ViewModels
             }
             else if (IsChannelPost)
             {
-                if (ViaBotUserId == 0 && ReplyToMessageId == 0 || Content is not MessageSticker)
+                if (ViaBotUserId == 0 && ReplyTo == null || Content is not MessageSticker)
                 {
                     return true;
                 }
@@ -261,8 +262,7 @@ namespace Telegram.ViewModels
             _message.MessageThreadId = message.MessageThreadId;
             _message.MediaAlbumId = message.MediaAlbumId;
             _message.ReplyMarkup = message.ReplyMarkup;
-            _message.ReplyInChatId = message.ReplyInChatId;
-            _message.ReplyToMessageId = message.ReplyToMessageId;
+            _message.ReplyTo = message.ReplyTo;
             _message.SenderId = message.SenderId;
             _message.SendingState = message.SendingState;
             _message.SelfDestructTime = message.SelfDestructTime;
@@ -333,8 +333,7 @@ namespace Telegram.ViewModels
         public long ViaBotUserId => _message.ViaBotUserId;
         public double SelfDestructIn { get => _message.SelfDestructIn; set => _message.SelfDestructIn = value; }
         public int SelfDestructTime => _message.SelfDestructTime;
-        public long ReplyToMessageId { get => _message.ReplyToMessageId; set => _message.ReplyToMessageId = value; }
-        public long ReplyInChatId => _message.ReplyInChatId;
+        public MessageReplyTo ReplyTo { get => _message.ReplyTo; set => _message.ReplyTo = value; }
         public MessageForwardInfo ForwardInfo => _message.ForwardInfo;
         public IList<UnreadReaction> UnreadReactions { get => _message.UnreadReactions; set => _message.UnreadReactions = value; }
         public int EditDate { get => _message.EditDate; set => _message.EditDate = value; }
@@ -398,7 +397,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public enum ReplyToMessageState
+    public enum MessageReplyToState
     {
         None,
         Loading,

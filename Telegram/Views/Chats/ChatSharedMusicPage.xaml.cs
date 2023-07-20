@@ -17,6 +17,7 @@ namespace Telegram.Views.Chats
         public ChatSharedMusicPage()
         {
             InitializeComponent();
+            ScrollingHost.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, OnSelectionModeChanged);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -42,11 +43,6 @@ namespace Telegram.Views.Chats
                 audioCell.UpdateMessage(ViewModel.PlaybackService, message);
                 audioCell.Tag = message;
             }
-        }
-
-        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
         }
     }
 }

@@ -85,15 +85,12 @@ namespace Telegram.Views.Supergroups
             ViewModel.Title = chat.Title;
             ViewModel.IsSignatures = group.SignMessages;
 
-            ChatType.Glyph = group.IsChannel ? Icons.Megaphone : Icons.People;
-
             Photo.IsEnabled = group.CanChangeInfo();
             TitleLabel.IsReadOnly = !group.CanChangeInfo();
             About.IsReadOnly = !group.CanChangeInfo();
 
             ChatType.Content = group.IsChannel ? Strings.ChannelType : Strings.GroupType;
             ChatType.Glyph = group.IsChannel ? Icons.Megaphone : Icons.People;
-            ChatType.Visibility = Visibility.Collapsed;
             ChatType.Badge = group.HasActiveUsername()
                 ? group.IsChannel
                     ? Strings.TypePublic
@@ -114,7 +111,7 @@ namespace Telegram.Views.Supergroups
 
             ChatLinked.Visibility = group.IsChannel ? Visibility.Visible : group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
             ChatLinked.Content = group.IsChannel ? Strings.Discussion : Strings.LinkedChannel;
-            ChatLinked.Glyph = group.IsChannel ? Icons.Comment : Icons.Megaphone;
+            ChatLinked.Glyph = group.IsChannel ? Icons.ChatEmpty : Icons.Megaphone;
             ChatLinked.Badge = group.HasLinkedChat ? string.Empty : Strings.DiscussionInfo;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
@@ -136,8 +133,6 @@ namespace Telegram.Views.Supergroups
 
             ViewModel.About = fullInfo.Description;
             ViewModel.IsAllHistoryAvailable = fullInfo.IsAllHistoryAvailable ? 0 : 1;
-
-            ChatType.Visibility = fullInfo.CanSetUsername ? Visibility.Visible : Visibility.Collapsed;
 
             var linkedChat = ViewModel.ClientService.GetChat(fullInfo.LinkedChatId);
             if (linkedChat != null)

@@ -948,6 +948,13 @@ namespace Telegram.Services
                     ProcessFiles(item);
                 }
             }
+            else if (target is MessageSponsor messageSponsor)
+            {
+                if (messageSponsor.Photo != null)
+                {
+                    ProcessFiles(messageSponsor.Photo);
+                }
+            }
             else if (target is MessageSticker messageSticker)
             {
                 if (messageSticker.Sticker != null)
@@ -1624,9 +1631,9 @@ namespace Telegram.Services
                 {
                     ProcessFiles(sponsoredMessage.Content);
                 }
-                if (sponsoredMessage.SponsorChatInfo != null)
+                if (sponsoredMessage.Sponsor != null)
                 {
-                    ProcessFiles(sponsoredMessage.SponsorChatInfo);
+                    ProcessFiles(sponsoredMessage.Sponsor);
                 }
             }
             else if (target is SponsoredMessages sponsoredMessages)
@@ -1692,6 +1699,49 @@ namespace Telegram.Services
                 foreach (var item in stickerSets.Sets)
                 {
                     ProcessFiles(item);
+                }
+            }
+            else if (target is Stories stories)
+            {
+                foreach (var item in stories.StoriesValue)
+                {
+                    ProcessFiles(item);
+                }
+            }
+            else if (target is Story story)
+            {
+                if (story.Content != null)
+                {
+                    ProcessFiles(story.Content);
+                }
+            }
+            else if (target is StoryContentPhoto storyContentPhoto)
+            {
+                if (storyContentPhoto.Photo != null)
+                {
+                    ProcessFiles(storyContentPhoto.Photo);
+                }
+            }
+            else if (target is StoryContentVideo storyContentVideo)
+            {
+                if (storyContentVideo.AlternativeVideo != null)
+                {
+                    ProcessFiles(storyContentVideo.AlternativeVideo);
+                }
+                if (storyContentVideo.Video != null)
+                {
+                    ProcessFiles(storyContentVideo.Video);
+                }
+            }
+            else if (target is StoryVideo storyVideo)
+            {
+                if (storyVideo.Thumbnail != null)
+                {
+                    ProcessFiles(storyVideo.Thumbnail);
+                }
+                if (storyVideo.Video != null)
+                {
+                    storyVideo.Video = ProcessFile(storyVideo.Video);
                 }
             }
             else if (target is SupergroupFullInfo supergroupFullInfo)
@@ -1881,6 +1931,13 @@ namespace Telegram.Services
                 if (updateStickerSet.StickerSet != null)
                 {
                     ProcessFiles(updateStickerSet.StickerSet);
+                }
+            }
+            else if (target is UpdateStory updateStory)
+            {
+                if (updateStory.Story != null)
+                {
+                    ProcessFiles(updateStory.Story);
                 }
             }
             else if (target is UpdateSupergroupFullInfo updateSupergroupFullInfo)

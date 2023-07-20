@@ -48,7 +48,7 @@ namespace Telegram.Controls
         public Frame ParentFrame { get; private set; }
 
         private readonly MvxObservableCollection<NavigationStackItem> _backStack = new();
-        private readonly NavigationStackItem _currentPage = new(null, null, null, false);
+        private readonly NavigationStackItem _currentPage = new(null, null, null, HostedNavigationMode.Child);
 
         private long _titleToken;
 
@@ -396,7 +396,7 @@ namespace Telegram.Controls
                     {
                         _currentPage.Title = hosted.Title;
 
-                        _backStack.ReplaceWith(BuildBackStack(hosted.IsNavigationRoot));
+                        _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && e.Parameter == null)));
                         _backStack.Add(_currentPage);
                     }
 
@@ -519,7 +519,7 @@ namespace Telegram.Controls
                 {
                     _currentPage.Title = hosted.Title;
 
-                    _backStack.ReplaceWith(BuildBackStack(hosted.IsNavigationRoot));
+                    _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && NavigationService.CurrentPageParam == null)));
                     _backStack.Add(_currentPage);
                 }
             }
@@ -529,7 +529,7 @@ namespace Telegram.Controls
         {
             if (DetailFrame.Content is HostedPage hosted)
             {
-                _backStack.ReplaceWith(BuildBackStack(hosted.IsNavigationRoot));
+                _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && NavigationService.CurrentPageParam == null)));
                 _backStack.Add(_currentPage);
             }
             else if (_backStack.Count > 0)
@@ -545,7 +545,7 @@ namespace Telegram.Controls
                 yield break;
             }
 
-            var index = NavigationService.BackStack.FindLastIndex(x => x.IsRoot);
+            var index = NavigationService.BackStack.FindLastIndex(x => x.Mode != HostedNavigationMode.Child);
             var k = Math.Max(index, 0);
 
             for (int i = k; i < NavigationService.BackStack.Count; i++)
@@ -667,11 +667,11 @@ namespace Telegram.Controls
 
         public UIElement Banner
         {
-            get => (UIElement)GetValue(PageHeaderProperty);
-            set => SetValue(PageHeaderProperty, value);
+            get => (UIElement)GetValue(BannerProperty);
+            set => SetValue(BannerProperty, value);
         }
 
-        public static readonly DependencyProperty PageHeaderProperty =
+        public static readonly DependencyProperty BannerProperty =
             DependencyProperty.Register("Banner", typeof(UIElement), typeof(MasterDetailView), new PropertyMetadata(null));
 
         #endregion

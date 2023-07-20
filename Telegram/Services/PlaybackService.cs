@@ -20,6 +20,13 @@ using Windows.Media.Playback;
 
 namespace Telegram.Services
 {
+    public enum PlaybackState
+    {
+        None,
+        Playing,
+        Paused
+    }
+
     public interface IPlaybackService
     {
         IReadOnlyList<PlaybackItem> Items { get; }
@@ -46,7 +53,7 @@ namespace Telegram.Services
         TimeSpan Position { get; }
         TimeSpan Duration { get; }
 
-        MediaPlaybackState PlaybackState { get; }
+        PlaybackState PlaybackState { get; }
 
 
 
@@ -210,7 +217,7 @@ namespace Telegram.Services
                     break;
                 case MediaPlaybackState.None:
                     sender.MediaPlayer.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Stopped;
-                    PlaybackState = MediaPlaybackState.None;
+                    PlaybackState = PlaybackState.None;
                     break;
             }
         }
@@ -305,8 +312,8 @@ namespace Telegram.Services
 
         public TimeSpan Duration => Execute(player => player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero, TimeSpan.Zero);
 
-        private MediaPlaybackState _playbackState;
-        public MediaPlaybackState PlaybackState
+        private PlaybackState _playbackState;
+        public PlaybackState PlaybackState
         {
             get => _playbackState;
             private set
@@ -386,7 +393,7 @@ namespace Telegram.Services
                 if (player.PlaybackSession.CanPause)
                 {
                     player.Pause();
-                    PlaybackState = MediaPlaybackState.Paused;
+                    PlaybackState = PlaybackState.Paused;
                 }
             });
         }
@@ -401,7 +408,7 @@ namespace Telegram.Services
             Execute(player =>
             {
                 player.Play();
-                PlaybackState = MediaPlaybackState.Playing;
+                PlaybackState = PlaybackState.Playing;
             });
         }
 
@@ -533,7 +540,7 @@ namespace Telegram.Services
 
         public void Clear()
         {
-            PlaybackState = MediaPlaybackState.None;
+            PlaybackState = PlaybackState.None;
 
             //Execute.BeginOnUIThread(() => CurrentItem = null);
             CurrentPlayback = null;

@@ -55,6 +55,22 @@
     <Style TargetType="local:SettingsComboBox"
            BasedOn="{StaticResource DefaultComboBoxStyle}" />
 
+    <Style TargetType="local:ActiveStoriesSegments">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ActiveStoriesSegments">
+                    <Grid>
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          HorizontalContentAlignment="Stretch"
+                                          VerticalContentAlignment="Stretch" />
+                        <Border Background="Transparent"
+                                CornerRadius="96" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:NavigationView">
         <Setter Property="Padding"
                 Value="0,0,0,0" />
@@ -795,6 +811,9 @@
                                    IsTextSelectionEnabled="{TemplateBinding IsTextSelectionEnabled}"
                                    FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                    TextAlignment="{TemplateBinding TextAlignment}"
+                                   TextTrimming="{TemplateBinding TextTrimming}"
+                                   MaxLines="{TemplateBinding MaxLines}"
+                                   OverflowContentTarget="{TemplateBinding OverflowContentTarget}"
                                    TextReadingOrder="UseFlowDirection"
                                    OpticalMarginAlignment="None">
                         <Paragraph />
@@ -3367,7 +3386,8 @@
         </Setter>
     </Style>
 
-    <Style TargetType="chats:ChatTextBox">
+    <Style x:Key="DefaultChatTextBoxStyle"
+           TargetType="local:FormattedTextBox">
         <Setter Property="MinWidth"
                 Value="{ThemeResource TextControlThemeMinWidth}" />
         <Setter Property="MinHeight"
@@ -3402,7 +3422,7 @@
                 Value="{ThemeResource TextControlThemePadding}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="chats:ChatTextBox">
+                <ControlTemplate TargetType="local:FormattedTextBox">
                     <Grid>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -3548,6 +3568,9 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="chats:ChatTextBox"
+           BasedOn="{StaticResource DefaultChatTextBoxStyle}" />
 
     <Style TargetType="local:OverlayPage">
         <Setter Property="Foreground"
@@ -3917,7 +3940,7 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
                                                                        Storyboard.TargetName="UncheckedContentPresenter">
                                             <DiscreteObjectKeyFrame KeyTime="0"
-                                                                    Value="{TemplateBinding UncheckedForeground}" />
+                                                                    Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -3984,6 +4007,11 @@
                                                                        Storyboard.TargetName="CheckedContentPresenter">
                                             <DiscreteObjectKeyFrame KeyTime="0"
                                                                     Value="Visible" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                       Storyboard.TargetName="CheckedContentPresenter">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>

@@ -62,6 +62,7 @@ namespace Telegram.Views.Host
                 // ------------
                 RootDestination.Separator,
                 // ------------
+                RootDestination.MyStories,
                 RootDestination.ArchivedChats,
                 RootDestination.SavedMessages,
                 // ------------
@@ -361,7 +362,7 @@ namespace Telegram.Views.Host
                 }
             }
 
-            var index = 3;
+            var index = 4;
 
             if (clientService.IsPremium is false)
             {
@@ -371,7 +372,7 @@ namespace Telegram.Views.Host
                     _navigationViewItems.RemoveAt(1);
                 }
 
-                index = 1;
+                index = 2;
             }
             else if (_navigationViewItems[1] is not RootDestination.Status)
             {
@@ -584,6 +585,10 @@ namespace Telegram.Views.Host
                             content.Glyph = user.EmojiStatus == null ? Icons.EmojiAdd : Icons.EmojiEdit;
                         }
                         break;
+                    case RootDestination.MyStories:
+                        content.Text = Strings.ProfileMyStories;
+                        content.Glyph = Icons.Stories;
+                        break;
 
                     case RootDestination.Tips:
                         content.Text = Strings.TelegramFeatures;
@@ -755,7 +760,7 @@ namespace Telegram.Views.Host
 
                 var bitmap = ScreenshotManager.Capture();
                 Transition.Background = new ImageBrush { ImageSource = bitmap, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center, RelativeTransform = new ScaleTransform { ScaleY = -1, CenterY = 0.5 } };
-                
+
                 Theme.Visibility = Visibility.Visible;
                 Theme.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
 
@@ -891,7 +896,7 @@ namespace Telegram.Views.Host
             opacity.Duration = TimeSpan.FromMilliseconds(350);
 
             var scale = compositor.CreateVector3KeyFrameAnimation();
-            scale.InsertKeyFrame(0, new Vector3(28f / 48f, 28f / 48f, 0), ease);
+            scale.InsertKeyFrame(0, new Vector3(0, 0, 0), ease);
             scale.InsertKeyFrame(1, new Vector3(1, 1, 0), ease);
             scale.Duration = TimeSpan.FromMilliseconds(350);
 
@@ -903,8 +908,9 @@ namespace Telegram.Views.Host
             theme.StartAnimation("Offset", offset1);
             theme.StartAnimation("Opacity", opacity);
 
-            photo.CenterPoint = new Vector3(_isSidebarEnabled ? 24 : 0, 24, 0);
+            photo.CenterPoint = new Vector3(24, 24, 0);
             photo.StartAnimation("Scale", scale);
+            photo.StartAnimation("Opacity", opacity);
 
             info.CenterPoint = new Vector3(0, 32, 0);
             info.StartAnimation("Scale", scale);
@@ -953,15 +959,7 @@ namespace Telegram.Views.Host
 
             var scale = compositor.CreateVector3KeyFrameAnimation();
             scale.InsertKeyFrame(0, new Vector3(1, 1, 0), ease);
-
-            if (_navigationViewSelected == RootDestination.Settings && !_isSidebarEnabled)
-            {
-                scale.InsertKeyFrame(1, new Vector3(0, 0, 0), ease);
-            }
-            else
-            {
-                scale.InsertKeyFrame(1, new Vector3(28f / 48f, 28f / 48f, 0), ease);
-            }
+            scale.InsertKeyFrame(1, new Vector3(0, 0, 0), ease);
 
             scale.Duration = TimeSpan.FromMilliseconds(120);
 
@@ -973,8 +971,9 @@ namespace Telegram.Views.Host
             theme.StartAnimation("Offset", offset1);
             theme.StartAnimation("Opacity", opacity);
 
-            photo.CenterPoint = new Vector3(_isSidebarEnabled ? 24 : 0, 24, 0);
+            photo.CenterPoint = new Vector3(24, 24, 0);
             photo.StartAnimation("Scale", scale);
+            photo.StartAnimation("Opacity", opacity);
 
             info.CenterPoint = new Vector3(0, 32, 0);
             info.StartAnimation("Scale", scale);
@@ -1065,6 +1064,7 @@ namespace Telegram.Views.Host
 
         Status,
 
+        MyStories,
         ArchivedChats,
         SavedMessages,
 

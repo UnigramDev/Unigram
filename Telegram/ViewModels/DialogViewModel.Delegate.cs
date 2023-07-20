@@ -43,15 +43,18 @@ namespace Telegram.ViewModels
 
         public async void OpenReply(MessageViewModel message)
         {
-            if (message.ReplyToMessageState == ReplyToMessageState.None)
+            if (message.ReplyToState != MessageReplyToState.Deleted)
             {
-                if (message.ReplyInChatId == message.ChatId || message.ReplyInChatId == 0)
+                if (message.ReplyTo is MessageReplyToMessage replyToMessage)
                 {
-                    await LoadMessageSliceAsync(message.Id, message.ReplyToMessageId);
-                }
-                else
-                {
-                    NavigationService.NavigateToChat(message.ReplyInChatId, message.ReplyToMessageId);
+                    if (replyToMessage.ChatId == message.ChatId || replyToMessage.ChatId == 0)
+                    {
+                        await LoadMessageSliceAsync(message.Id, replyToMessage.MessageId);
+                    }
+                    else
+                    {
+                        NavigationService.NavigateToChat(replyToMessage.ChatId, replyToMessage.MessageId);
+                    }
                 }
             }
         }
@@ -285,6 +288,7 @@ namespace Telegram.ViewModels
                         }
                     }
 
+                    viewModel.NavigationService = NavigationService;
                     await GalleryView.ShowAsync(viewModel, target != null ? () => target : null, timestamp);
                 }
 

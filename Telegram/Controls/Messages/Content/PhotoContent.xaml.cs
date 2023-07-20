@@ -363,7 +363,7 @@ namespace Telegram.Controls.Messages.Content
                 return null;
             }
 
-            var content = message.Content;
+            var content = message.GeneratedContent ?? message.Content;
             if (content is MessagePhoto photo)
             {
                 hasSpoiler = photo.HasSpoiler;

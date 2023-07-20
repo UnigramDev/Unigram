@@ -8,6 +8,8 @@
       xmlns:controls="using:Telegram.Controls"
       xmlns:cells="using:Telegram.Controls.Cells"
       xmlns:chats="using:Telegram.Controls.Chats"
+      xmlns:contacts="using:Telegram.Controls.Contacts"
+      xmlns:stories="using:Telegram.Controls.Stories"
       xmlns:views="using:Telegram.Controls.Views"
       xmlns:navigation="using:Telegram.Navigation.Services"
       xmlns:viewModels="using:Telegram.ViewModels"
@@ -88,7 +90,7 @@
                                       Canvas.ZIndex="1">
                                     <muxc:BreadcrumbBar x:Name="DetailHeaderPresenter"
                                                         Visibility="Collapsed"
-                                                        Margin="0,20,0,0"
+                                                        Margin="28,20,0,0"
                                                         VerticalAlignment="Top"
                                                         TabIndex="1">
                                         <muxc:BreadcrumbBar.ItemTemplate>
@@ -97,6 +99,11 @@
                                             </DataTemplate>
                                         </muxc:BreadcrumbBar.ItemTemplate>
                                     </muxc:BreadcrumbBar>
+
+                                    <controls:BackButton x:Name="BackButton"
+                                                         Margin="-20,18,0,0"
+                                                         CornerRadius="20"
+                                                         Glyph="&#xe93e;" />
 
                                     <ContentControl x:Name="DetailAction"
                                                     Content="{TemplateBinding DetailFooter}"
@@ -178,8 +185,10 @@
 
         <Grid x:Name="TitleBarrr"
               Height="40"
+              Margin="48,0,0,0"
               Background="Transparent"
-              Grid.ColumnSpan="2">
+              Grid.Column="1"
+              Canvas.ZIndex="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -201,7 +210,7 @@
                              Click="Status_Click"
                              Style="{StaticResource EmptyHyperlinkButtonStyle}"
                              IsTabStop="False"
-                             Margin="6,0"
+                             Margin="-10,0,4,0"
                              Width="40"
                              Height="40"
                              Grid.Column="1">
@@ -281,13 +290,15 @@
                        Grid.Column="2" />
         </Grid>
 
+        <Border BackgroundSizing="OuterBorderEdge"
+                Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                BorderThickness="0,0,1,0"
+                Grid.RowSpan="2" />
+
         <Grid x:Load="False"
               x:Name="ChatTabsLeft"
               Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="42" />
-                <RowDefinition />
-            </Grid.RowDefinitions>
             <controls:TopNavView x:Name="ChatFoldersSide"
                                  ItemsSource="{x:Bind NavigationResults.View}"
                                  SelectedItem="{x:Bind ConvertFolder(ViewModel.SelectedFolder), Mode=TwoWay, BindBack=ConvertFolderBack}"
@@ -430,20 +441,17 @@
             </controls:TopNavView>
         </Grid>
 
-        <controls:ProfilePicture x:Name="Photo"
-                                 Click="Photo_Click"
-                                 TabIndex="0"
-                                 HorizontalAlignment="Left"
-                                 VerticalAlignment="Top"
-                                 Margin="12,2,12,0"
-                                 Width="28"
-                                 Height="28"
-                                 AutomationProperties.LandmarkType="Navigation"
-                                 AutomationProperties.Name="{CustomResource AccDescrOpenMenu}"
-                                 ToolTipService.ToolTip="{CustomResource AccDescrOpenMenu}"
-                                 Canvas.ZIndex="1"
-                                 Grid.ColumnSpan="2"
-                                 Grid.Row="1" />
+        <controls:GlyphButton Glyph="&#xE700;"
+                              x:Name="Photo"
+                              Click="Photo_Click"
+                              TabIndex="0"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              Width="48"
+                              Height="40"
+                              Canvas.ZIndex="2"
+                              Grid.ColumnSpan="2"
+                              Grid.Row="0" />
 
         <controls:MasterDetailView x:Name="MasterDetail"
                                    ViewStateChanged="OnStateChanged"
@@ -489,7 +497,8 @@
                 <Grid x:Name="Header"
                       BorderBrush="Transparent"
                       Height="{StaticResource NavigationViewTopPaneHeight}"
-                      Margin="0,-8,0,0">
+                      Margin="0,-8,0,-8"
+                      Canvas.ZIndex="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="40" />
                         <ColumnDefinition />
@@ -503,13 +512,6 @@
                             <ColumnDefinition Width="Auto"
                                               MinWidth="12" />
                         </Grid.ColumnDefinitions>
-                        <Border x:Name="PhotoPlaceholder"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Margin="0,0,12,0"
-                                Width="28"
-                                Height="28" />
-
                         <controls:SuggestTextBox x:Name="SearchField"
                                                  PlaceholderText="{CustomResource Search}"
                                                  BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
@@ -560,15 +562,16 @@
                                     VerticalAlignment="Center"
                                     Grid.Column="2">
                             <controls:GlyphButton x:Name="ComposeButton"
+                                                  Click="ComposeButton_Click"
                                                   Glyph="&#xE996;"
                                                   AutomationProperties.Name="{CustomResource NewConversationShortcut}"
                                                   ToolTipService.ToolTip="{CustomResource NewConversationShortcut}"
                                                   FontSize="16"
                                                   VerticalAlignment="Center"
-                                                  Margin="-36,0,0,0"
-                                                  Width="36"
-                                                  Height="32">
-                                <Button.Flyout>
+                                                  Margin="-40,-4,0,-4"
+                                                  Width="44"
+                                                  Height="40">
+                                <FlyoutBase.AttachedFlyout>
                                     <MenuFlyout Placement="BottomEdgeAlignedRight">
                                         <MenuFlyoutItem Click="NewGroup_Click"
                                                         Text="{CustomResource NewGroup}">
@@ -592,7 +595,7 @@
                                             </MenuFlyoutItem.Icon>
                                         </MenuFlyoutItem>
                                     </MenuFlyout>
-                                </Button.Flyout>
+                                </FlyoutBase.AttachedFlyout>
                             </controls:GlyphButton>
                             <controls:GlyphButton x:Name="Proxy"
                                                   Glyph="&#xEA19;"
@@ -615,144 +618,80 @@
                                                   Height="40" />
                         </StackPanel>
                     </Grid>
-
-                    <Grid x:Name="ManagePanel"
-                          Visibility="Collapsed"
-                          Grid.ColumnSpan="3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <controls:GlyphButton x:Name="ManageMute"
-                                              Click="{x:Bind ViewModel.Chats.NotifySelectedChats}"
-                                              Style="{StaticResource HeaderGlyphButtonStyle}"
-                                              VerticalAlignment="Center"
-                                              Width="40"
-                                              Height="40" />
-                        <controls:GlyphButton x:Name="ManageMark"
-                                              Click="{x:Bind ViewModel.Chats.MarkSelectedChatsAsRead}"
-                                              FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                              Style="{StaticResource HeaderGlyphButtonStyle}"
-                                              VerticalAlignment="Center"
-                                              Width="40"
-                                              Height="40"
-                                              Grid.Column="1" />
-                        <controls:GlyphButton Glyph="&#xE7B8;"
-                                              Click="{x:Bind ViewModel.Chats.ArchiveSelectedChats}"
-                                              AutomationProperties.Name="{CustomResource Archive}"
-                                              ToolTipService.ToolTip="{CustomResource Archive}"
-                                              Style="{StaticResource HeaderGlyphButtonStyle}"
-                                              VerticalAlignment="Center"
-                                              Width="40"
-                                              Height="40"
-                                              Grid.Column="2" />
-                        <controls:GlyphButton Glyph="&#xE74D;"
-                                              Click="{x:Bind ViewModel.Chats.DeleteSelectedChats}"
-                                              AutomationProperties.Name="{CustomResource Delete}"
-                                              ToolTipService.ToolTip="{CustomResource Delete}"
-                                              Style="{StaticResource HeaderGlyphButtonStyle}"
-                                              VerticalAlignment="Center"
-                                              Width="40"
-                                              Height="40"
-                                              Grid.Column="3" />
-                        <controls:GlyphButton x:Name="ManageClear"
-                                              Glyph="&#xEA99;"
-                                              Click="{x:Bind ViewModel.Chats.ClearSelectedChats}"
-                                              AutomationProperties.Name="{CustomResource ClearHistory}"
-                                              ToolTipService.ToolTip="{CustomResource ClearHistory}"
-                                              Style="{StaticResource HeaderGlyphButtonStyle}"
-                                              VerticalAlignment="Center"
-                                              Width="40"
-                                              Height="40"
-                                              Grid.Column="4" />
-
-                        <ContentControl Content="{x:Bind ViewModel.Chats.SelectedItems.Count, Mode=OneWay}"
-                                        HorizontalContentAlignment="Center"
-                                        VerticalContentAlignment="Center"
-                                        FontWeight="SemiBold"
-                                        Padding="12,0"
-                                        Height="48"
-                                        Grid.Column="6">
-                            <ContentControl.ContentTransitions>
-                                <TransitionCollection>
-                                    <EntranceThemeTransition />
-                                </TransitionCollection>
-                            </ContentControl.ContentTransitions>
-                            <ContentControl.Clip>
-                                <RectangleGeometry Rect="0,0,200,48" />
-                            </ContentControl.Clip>
-                        </ContentControl>
-                    </Grid>
                 </Grid>
 
                 <Pivot x:Name="rpMasterTitlebar"
                        SelectionChanged="Pivot_SelectionChanged"
                        Style="{StaticResource HeaderlessPivotStyle}"
+                       Margin="0,-72,0,0"
                        IsLocked="True"
                        Grid.Row="1">
                     <PivotItem x:Name="TabChats"
                                Header="Chats">
-                        <Grid>
+                        <Grid Margin="0,0,0,0">
                             <views:SearchChatsView x:Name="DialogsSearchPanel"
                                                    x:Load="False"
                                                    DataContext="{x:Bind ViewModel.SearchChats}"
-                                                   ItemClick="ListView_ItemClick" />
+                                                   ItemClick="ListView_ItemClick"
+                                                   Margin="0,72,0,0" />
                             <Grid x:Name="DialogsPanel">
                                 <Grid x:Name="ChatsPanel">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
-                                    <Border x:Name="ChatTabs"
-                                            x:Load="False">
-                                        <Grid x:Name="ChatTabsView">
-                                            <controls:TopNavView x:Name="ChatFolders"
-                                                                 ItemsSource="{x:Bind ViewModel.Folders}"
-                                                                 SelectedItem="{x:Bind ConvertFolder(ViewModel.SelectedFolder), Mode=TwoWay, BindBack=ConvertFolderBack}"
-                                                                 IsItemClickEnabled="True"
-                                                                 ItemClick="ChatFolders_ItemClick"
-                                                                 ItemContextRequested="ChatFolder_ContextRequested"
-                                                                 AllowDrop="True"
-                                                                 CanDragItems="True"
-                                                                 CanReorderItems="False"
-                                                                 DragItemsStarting="ChatFolders_DragItemsStarting"
-                                                                 DragItemsCompleted="ChatFolders_DragItemsCompleted"
-                                                                 ScrollViewer.IsHorizontalScrollChainingEnabled="False"
-                                                                 FocusFollowsSingleSelection="True"
-                                                                 Height="40"
-                                                                 Margin="0,-8,0,0">
-                                                <controls:TopNavView.ItemTemplate>
-                                                    <DataTemplate x:DataType="viewModels:ChatFolderViewModel">
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <TextBlock Text="{x:Bind Title, Mode=OneWay}"
-                                                                       FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                                       VerticalAlignment="Bottom" />
+                                    <StackPanel x:Name="ChatListHeader"
+                                                SizeChanged="ChatListHeader_SizeChanged"
+                                                VerticalAlignment="Top"
+                                                Spacing="60"
+                                                Canvas.ZIndex="1">
+                                        <Border Height="92" />
 
-                                                            <controls:BadgeControl Text="{x:Bind UnreadCount, Mode=OneWay}"
-                                                                                   IsUnmuted="{x:Bind IsUnmuted, Mode=OneWay}"
-                                                                                   Visibility="{x:Bind ShowCount, Mode=OneWay}"
-                                                                                   VerticalAlignment="Bottom"
-                                                                                   Margin="4,0,0,0" />
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </controls:TopNavView.ItemTemplate>
-                                                <controls:TopNavView.ItemContainerTransitions>
-                                                    <TransitionCollection>
-                                                        <AddDeleteThemeTransition />
-                                                        <ContentThemeTransition />
-                                                        <ReorderThemeTransition />
-                                                        <RepositionThemeTransition />
-                                                    </TransitionCollection>
-                                                </controls:TopNavView.ItemContainerTransitions>
-                                            </controls:TopNavView>
-                                        </Grid>
-                                    </Border>
+                                        <Border x:Name="ChatTabs"
+                                                x:Load="False">
+                                            <Grid x:Name="ChatTabsView">
+                                                <controls:TopNavView x:Name="ChatFolders"
+                                                                     ItemsSource="{x:Bind ViewModel.Folders}"
+                                                                     SelectedItem="{x:Bind ConvertFolder(ViewModel.SelectedFolder), Mode=TwoWay, BindBack=ConvertFolderBack}"
+                                                                     IsItemClickEnabled="True"
+                                                                     ItemClick="ChatFolders_ItemClick"
+                                                                     ItemContextRequested="ChatFolder_ContextRequested"
+                                                                     AllowDrop="True"
+                                                                     CanDragItems="True"
+                                                                     CanReorderItems="False"
+                                                                     DragItemsStarting="ChatFolders_DragItemsStarting"
+                                                                     DragItemsCompleted="ChatFolders_DragItemsCompleted"
+                                                                     ScrollViewer.IsHorizontalScrollChainingEnabled="False"
+                                                                     FocusFollowsSingleSelection="True"
+                                                                     SingleSelectionFollowsFocus="False"
+                                                                     Height="40">
+                                                    <controls:TopNavView.ItemTemplate>
+                                                        <DataTemplate x:DataType="viewModels:ChatFolderViewModel">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <TextBlock Text="{x:Bind Title, Mode=OneWay}"
+                                                                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                                           VerticalAlignment="Bottom" />
+
+                                                                <controls:BadgeControl Text="{x:Bind UnreadCount, Mode=OneWay}"
+                                                                                       IsUnmuted="{x:Bind IsUnmuted, Mode=OneWay}"
+                                                                                       Visibility="{x:Bind ShowCount, Mode=OneWay}"
+                                                                                       VerticalAlignment="Bottom"
+                                                                                       Margin="4,0,0,0" />
+                                                            </StackPanel>
+                                                        </DataTemplate>
+                                                    </controls:TopNavView.ItemTemplate>
+                                                    <controls:TopNavView.ItemContainerTransitions>
+                                                        <TransitionCollection>
+                                                            <AddDeleteThemeTransition />
+                                                            <ContentThemeTransition />
+                                                            <ReorderThemeTransition />
+                                                            <RepositionThemeTransition />
+                                                        </TransitionCollection>
+                                                    </controls:TopNavView.ItemContainerTransitions>
+                                                </controls:TopNavView>
+                                            </Grid>
+                                        </Border>
+                                    </StackPanel>
 
                                     <local:ChatListPage x:Name="ChatsList"
                                                         ItemClick="ListView_ItemClick"
@@ -765,7 +704,7 @@
                                                         SelectionChanged="ListView_SelectionChanged"
                                                         ChoosingItemContainer="ChatsList_ChoosingItemContainer"
                                                         SizeChanged="ChatList_SizeChanged"
-                                                        Grid.Row="1">
+                                                        Grid.RowSpan="2">
                                         <ListView.Header>
                                             <Grid x:Name="ArchivedChatsPresenter">
                                                 <Button x:Name="ArchivedChatsPanel"
@@ -795,6 +734,13 @@
                                                 </Border>-->
                                             </Grid>
                                         </ListView.Header>
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <cells:ChatCell StoryClick="ChatCell_StoryClick"
+                                                                Stroke="{ThemeResource ChatLastMessageStateBrush}"
+                                                                SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
                                     </local:ChatListPage>
 
                                     <Grid x:Name="TopicListPresenter"
@@ -895,12 +841,88 @@
                                 <controls:UndoView x:Name="Undo"
                                                    VerticalAlignment="Bottom"
                                                    Grid.Row="1" />
+
+                                <Grid x:Name="ManagePanel"
+                                      Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                      VerticalAlignment="Bottom"
+                                      Margin="12,8"
+                                      CornerRadius="15"
+                                      Visibility="Collapsed"
+                                      Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                            BorderThickness="1"
+                                            CornerRadius="15"
+                                            Grid.ColumnSpan="8" />
+
+                                    <controls:GlyphButton x:Name="ButtonManage"
+                                                          CornerRadius="13,4,4,13"
+                                                          Glyph="&#xE711;"
+                                                          Click="Manage_Click" />
+
+                                    <controls:AnimatedTextBlock x:Name="ManageCount"
+                                                                Text="{x:Bind ViewModel.Chats.SelectedItems.Count, Mode=OneWay}"
+                                                                TextStyle="{StaticResource BaseTextBlockStyle}"
+                                                                VerticalAlignment="Center"
+                                                                Margin="0,-2,0,0"
+                                                                Grid.Column="1" />
+
+
+                                    <controls:GlyphButton x:Name="ManageMute"
+                                                          Click="{x:Bind ViewModel.Chats.NotifySelectedChats}"
+                                                          Style="{StaticResource HeaderGlyphButtonStyle}"
+                                                          VerticalAlignment="Center"
+                                                          Grid.Column="3" />
+                                    <controls:GlyphButton Glyph="&#xE7B8;"
+                                                          Click="{x:Bind ViewModel.Chats.ArchiveSelectedChats}"
+                                                          AutomationProperties.Name="{CustomResource Archive}"
+                                                          ToolTipService.ToolTip="{CustomResource Archive}"
+                                                          Style="{StaticResource HeaderGlyphButtonStyle}"
+                                                          VerticalAlignment="Center"
+                                                          Grid.Column="5" />
+                                    <controls:GlyphButton Glyph="&#xE74D;"
+                                                          Click="{x:Bind ViewModel.Chats.DeleteSelectedChats}"
+                                                          AutomationProperties.Name="{CustomResource Delete}"
+                                                          ToolTipService.ToolTip="{CustomResource Delete}"
+                                                          Style="{StaticResource HeaderGlyphButtonStyle}"
+                                                          VerticalAlignment="Center"
+                                                          Grid.Column="6" />
+
+                                    <controls:MoreButton CornerRadius="4,13,13,4"
+                                                         Grid.Column="7">
+                                        <controls:MoreButton.Flyout>
+                                            <MenuFlyout Placement="TopEdgeAlignedRight">
+                                                <MenuFlyoutItem x:Name="ManageMark"
+                                                                Click="{x:Bind ViewModel.Chats.MarkSelectedChatsAsRead}" />
+                                                <MenuFlyoutItem x:Name="ManageClear"
+                                                                Text="{CustomResource ClearHistory}"
+                                                                Click="{x:Bind ViewModel.Chats.ClearSelectedChats}">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xEA99;"
+                                                                  FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                                  FontSize="20" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                            </MenuFlyout>
+                                        </controls:MoreButton.Flyout>
+                                    </controls:MoreButton>
+                                </Grid>
                             </Grid>
                         </Grid>
                     </PivotItem>
                     <PivotItem Header="{CustomResource Contacts}">
                         <Grid x:Name="ContactsRoot"
-                              x:Load="False">
+                              x:Load="False"
+                              Margin="0,80,0,0">
                             <ListView x:Name="ContactsSearchListView"
                                       x:Load="False"
                                       ItemsSource="{x:Bind ContactsResults.View, Mode=OneWay}"
@@ -974,7 +996,7 @@
                             </ListView>
                             <Grid x:Name="ContactsPanel">
                                 <ListView x:Name="UsersListView"
-                                          ItemsSource="{x:Bind ViewModel.Contacts.Items, Mode=OneWay}"
+                                          ItemsSource="{x:Bind ViewModel.Contacts.Items}"
                                           ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
                                           IsItemClickEnabled="True"
                                           ItemClick="ListView_ItemClick"
@@ -1004,35 +1026,7 @@
                                                 </controls:BadgeButton.IconSource>
                                             </controls:BadgeButton>
 
-                                            <Grid>
-                                                <Grid.ChildrenTransitions>
-                                                    <TransitionCollection>
-                                                        <RepositionThemeTransition />
-                                                    </TransitionCollection>
-                                                </Grid.ChildrenTransitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition />
-                                                </Grid.ColumnDefinitions>
-                                                <controls:AnimatedTextBlock Text="{x:Bind ConvertSortedBy(ViewModel.Contacts.IsSortedByEpoch), Mode=OneWay}"
-                                                                            TextStyle="{StaticResource BaseTextBlockStyle}"
-                                                                            TextWrapping="WrapWholeWords"
-                                                                            Margin="12,8,0,4" />
-
-                                                <controls:GlyphToggleButton HorizontalAlignment="Left"
-                                                                            VerticalAlignment="Bottom"
-                                                                            IsOneWay="False"
-                                                                            IsChecked="{x:Bind ViewModel.Contacts.IsSortedByEpoch, Mode=TwoWay}"
-                                                                            AutomationProperties.Name="{CustomResource AccDescrContactSorting}"
-                                                                            ToolTipService.ToolTip="{CustomResource AccDescrContactSorting}"
-                                                                            Margin="0,0,0,-4"
-                                                                            CheckedGlyph="&#xE8CB;"
-                                                                            Glyph="&#xE8CB;"
-                                                                            FontSize="16"
-                                                                            Width="36"
-                                                                            Height="32"
-                                                                            Grid.Column="1" />
-                                            </Grid>
+                                            <contacts:ContactsSortedByHeader DataContext="{x:Bind ViewModel.Contacts}" />
                                         </StackPanel>
                                     </ListView.Header>
                                     <!--<ListView.ItemContainerTransitions>
@@ -1045,7 +1039,8 @@
                     <PivotItem x:Name="Calls"
                                Header="{CustomResource Calls}">
                         <Grid x:Name="CallsRoot"
-                              x:Load="False">
+                              x:Load="False"
+                              Margin="0,80,0,0">
                             <ListView ItemsSource="{x:Bind ViewModel.Calls.Items}"
                                       ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
                                       ItemClick="ListView_ItemClick"
@@ -1065,7 +1060,8 @@
                     </PivotItem>
                     <PivotItem Header="{CustomResource Settings}">
                         <Grid x:Name="SettingsRoot"
-                              x:Load="False">
+                              x:Load="False"
+                              Margin="0,80,0,0">
                             <ListView ItemsSource="{x:Bind ViewModel.Settings.Results}"
                                       SelectionMode="None"
                                       ContainerContentChanging="Settings_ContainerContentChanging"
@@ -1090,6 +1086,17 @@
                         </Grid>
                     </PivotItem>
                 </Pivot>
+
+                <stories:StoriesStrip x:Name="Stories"
+                                      Expanding="Stories_Expanding"
+                                      DataContext="{x:Bind ViewModel.Stories}"
+                                      ControlledList="{x:Bind ChatsList}"
+                                      ChatTabs="{x:Bind ChatTabs, Mode=OneWay}"
+                                      TitleBarrr="{x:Bind TitleBarrr}"
+                                      Header="{x:Bind Header}"
+                                      VerticalAlignment="Top"
+                                      Margin="0,-32,0,0"
+                                      Grid.RowSpan="2" />
             </Grid>
         </controls:MasterDetailView>
 

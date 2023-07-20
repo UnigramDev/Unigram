@@ -56,12 +56,21 @@ namespace Telegram.ViewModels.Chats
 
             Items = new ObservableCollection<ProfileItem>();
 
+            SelectedItems = new MvxObservableCollection<MessageWithOwner>();
+            SelectedItems.CollectionChanged += OnConnectionChanged;
+
             Media = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterPhotoAndVideo(), new MessageDiffHandler());
             Files = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterDocument(), new MessageDiffHandler());
             Links = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterUrl(), new MessageDiffHandler());
             Music = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterAudio(), new MessageDiffHandler());
             Voice = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterVoiceNote(), new MessageDiffHandler());
             Animations = new SearchCollection<MessageWithOwner, MediaCollection>(SetSearch, new SearchMessagesFilterAnimation(), new MessageDiffHandler());
+        }
+
+        private void OnConnectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(CanForwardSelectedMessages));
+            RaisePropertyChanged(nameof(CanDeleteSelectedMessages));
         }
 
         public ObservableCollection<ProfileItem> Items { get; }
@@ -154,8 +163,8 @@ namespace Telegram.ViewModels.Chats
 
         public double VerticalOffset { get; set; }
 
+        public bool HasPinnedStories { get; private set; }
         public bool HasSharedGroups { get; private set; }
-
         public bool HasSharedMembers { get; private set; }
 
         private async Task UpdateSharedCountAsync(Chat chat)
@@ -179,7 +188,7 @@ namespace Telegram.ViewModels.Chats
                 }
             }
 
-            SharedCount[SharedCount.Length - 1] = 0;
+            SharedCount[^1] = 0;
 
             if (SharedCount[0] > 0)
             {
@@ -210,6 +219,11 @@ namespace Telegram.ViewModels.Chats
                 // This should really rarely happen
                 cached ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
 
+                if (cached.HasPinnedStories)
+                {
+                    Items.Insert(0, new ProfileItem(Strings.ProfileStories, typeof(ChatStoriesPage)));
+                    HasPinnedStories = true;
+                }
                 if (cached.GroupInCommonCount > 0)
                 {
                     Items.Add(new ProfileItem(Strings.SharedGroupsTab2, typeof(UserCommonChatsPage)));
@@ -295,24 +309,7 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        private ListViewSelectionMode _selectionMode = ListViewSelectionMode.None;
-        public ListViewSelectionMode SelectionMode
-        {
-            get => _selectionMode;
-            set => Set(ref _selectionMode, value);
-        }
-
-        private List<MessageWithOwner> _selectedItems = new List<MessageWithOwner>();
-        public List<MessageWithOwner> SelectedItems
-        {
-            get => _selectedItems;
-            set
-            {
-                Set(ref _selectedItems, value);
-                RaisePropertyChanged(nameof(CanForwardSelectedMessages));
-                RaisePropertyChanged(nameof(CanDeleteSelectedMessages));
-            }
-        }
+        public ObservableCollection<MessageWithOwner> SelectedItems { get; }
 
         #region View
 
@@ -436,7 +433,7 @@ namespace Telegram.ViewModels.Chats
                 return;
             }
 
-            SelectionMode = ListViewSelectionMode.None;
+            UnselectMessages();
 
             if (dialog.DeleteAll && sameUser)
             {
@@ -464,7 +461,7 @@ namespace Telegram.ViewModels.Chats
 
         public async void ForwardMessage(MessageWithOwner message)
         {
-            SelectionMode = ListViewSelectionMode.None;
+            UnselectMessages();
             await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(message.Get()));
         }
 
@@ -502,12 +499,12 @@ namespace Telegram.ViewModels.Chats
             var messages = SelectedItems.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).Select(x => x.Get()).ToList();
             if (messages.Count > 0)
             {
-                SelectionMode = ListViewSelectionMode.None;
+                UnselectMessages();
                 await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(messages));
             }
         }
 
-        private bool CanForwardSelectedMessages => SelectedItems.Count > 0 && SelectedItems.All(x => x.CanBeForwarded);
+        public bool CanForwardSelectedMessages => SelectedItems.Count > 0 && SelectedItems.All(x => x.CanBeForwarded);
 
         #endregion
 
@@ -515,10 +512,7 @@ namespace Telegram.ViewModels.Chats
 
         public void SelectMessage(MessageWithOwner message)
         {
-            SelectionMode = ListViewSelectionMode.Multiple;
-
-            SelectedItems = new List<MessageWithOwner> { message };
-            RaisePropertyChanged("SelectedItems");
+            SelectedItems.Add(message);
         }
 
         #endregion
@@ -527,7 +521,7 @@ namespace Telegram.ViewModels.Chats
 
         public void UnselectMessages()
         {
-            SelectionMode = ListViewSelectionMode.None;
+            SelectedItems.Clear();
         }
 
         #endregion

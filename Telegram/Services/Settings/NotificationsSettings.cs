@@ -53,6 +53,16 @@ namespace Telegram.Services.Settings
             return chat.NotificationSettings.ShowPreview;
         }
 
+        public bool GetMuteStories(Chat chat)
+        {
+            if (chat.NotificationSettings.UseDefaultMuteStories && TryGetScope(chat, out var scope))
+            {
+                return scope.MuteStories;
+            }
+
+            return chat.NotificationSettings.MuteStories;
+        }
+
         public ScopeNotificationSettings GetScope(Chat chat)
         {
             TryGetScope(chat, out var scope);
