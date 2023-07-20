@@ -47,6 +47,33 @@ Now that everything is properly configured go back to the terminal and enter the
 ```
 Make sure to replace `$arch$` with either `x64`, `x86` or `arm64` depending on your build target.
 
+### TDLib
+In order to communicate with Telegram servers, Unigram uses TDLib.
+Here is complete instruction for TDLib binaries building, taken from the official [documentation](https://tdlib.github.io/td/build.html?language=C%23):
+
+- Download and install Microsoft Visual Studio. Enable C++ and Windows 10 SDK support while installing.
+- Download and install CMake; choose "Add CMake to the system PATH" option while installing.
+- Download and install Git.
+- Download and unpack PHP. Add the path to php.exe to the PATH environment variable.
+- Download and install 7-Zip archiver. Add the path to 7z.exe to the PATH environment variable.
+- Close and re-open PowerShell if the PATH environment variable was changed.
+- Run these commands in PowerShell to build TDLib and to install it to td/tdlib:
+
+```shell
+> git clone https://github.com/tdlib/td.git
+> cd td
+> git clone https://github.com/Microsoft/vcpkg.git
+> cd vcpkg
+> git checkout 1b1ae50e1a69f7c659bd7d731e80b358d21c86ad
+> ./bootstrap-vcpkg.bat
+> ./vcpkg.exe install gperf:x86-windows openssl:arm-uwp openssl:arm64-uwp openssl:x64-uwp openssl:x86-uwp zlib:arm-uwp zlib:arm64-uwp zlib:x64-uwp zlib:x86-uwp
+> cd ..
+> cd example/uwp
+> powershell -ExecutionPolicy ByPass ./build.ps1 -vcpkg_root ../../vcpkg -nupkg
+```
+
+The resulting .nupkg file must be copied into Unigram\Libraries.
+
 ### VLC
 Unigram uses VLC to play videos and audio in the app. This is required because the system provided media player doesn't meet the app quality expectations.
 You can freely use the pre-built NuGet packages `VideoLAN.LibVLC.UWP` and `LibVLCSharp` provided by VLC, however we ship the app with binaries built by us,
@@ -90,9 +117,7 @@ Since compiling WebRTC is time and resources consuming, it is possible to build 
 - From Telegram > Properties > Build, remove `ENABLE_CALLS` directive.
 - Exclude from the project the following files:
   - Controls/Cells/GroupCallParticipantGridCell.xaml
-  - Views/GroupCallPage.xaml
-  - Views/LiveStreamPage.xaml
-  - Views/VoIPPage.xaml
+  - Views/Calls
 
 ## Requirements
 
