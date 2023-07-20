@@ -337,9 +337,10 @@ namespace Telegram.Common
 
                 var pixelData = await decoder.GetSoftwareBitmapAsync(decoder.BitmapPixelFormat, decoder.BitmapAlphaMode, transform, ExifOrientationMode.RespectExifOrientation, ColorManagementMode.DoNotColorManage);
 
-                var propertySet = new BitmapPropertySet();
-                var qualityValue = new BitmapTypedValue(quality, PropertyType.Single);
-                propertySet.Add("ImageQuality", qualityValue);
+                // Not using ATM, quality is too low
+                //var propertySet = new BitmapPropertySet();
+                //var qualityValue = new BitmapTypedValue(quality, PropertyType.Single);
+                //propertySet.Add("ImageQuality", qualityValue);
 
                 var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, destination);
                 encoder.SetSoftwareBitmap(pixelData);
