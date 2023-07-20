@@ -682,15 +682,14 @@
     <ClInclude Include="libyuv\include\libyuv\scale_uv.h">
       <Filter>libyuv\include\libyuv</Filter>
     </ClInclude>
-    <ClInclude Include="qoi.h" />
     <ClInclude Include="BufferSurface.h" />
     <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="TelegramWebviewProxy.h" />
     <ClInclude Include="DebugUtils.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Telegram.Native.def" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="NativeUtils.idl" />
@@ -714,5 +713,6 @@
     </Midl>
     <Midl Include="PixelBuffer.idl" />
     <Midl Include="TelegramWebviewProxy.idl" />
+    <Midl Include="VideoAnimationStreamSource.idl" />
   </ItemGroup>
 </Project>

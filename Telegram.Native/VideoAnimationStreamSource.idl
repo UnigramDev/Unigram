@@ -1,0 +1,10 @@
+import "VideoAnimation.idl";
+
+namespace Telegram.Native
+{
+    [default_interface]
+    runtimeclass VideoAnimationStreamSource : Telegram.Native.IVideoAnimationSource
+    {
+        VideoAnimationStreamSource(Windows.Storage.Streams.IRandomAccessStream stream);
+    }
+}

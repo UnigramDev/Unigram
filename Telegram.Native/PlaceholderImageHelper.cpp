@@ -860,6 +860,38 @@ namespace winrt::Telegram::Native::implementation
         winrt::check_hresult(stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr));
     }
 
+    HRESULT PlaceholderImageHelper::Encode(IBuffer source, IRandomAccessStream destination, int32_t width, int32_t height)
+    {
+        HRESULT result;
+        winrt::com_ptr<IStream> stream;
+        ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(destination), IID_PPV_ARGS(&stream)));
+
+        if (destination.Size())
+        {
+            stream->SetSize({ 0 });
+        }
+
+        winrt::com_ptr<IWICBitmapEncoder> wicBitmapEncoder;
+        ReturnIfFailed(result, m_wicFactory->CreateEncoder(GUID_ContainerFormatPng, nullptr, wicBitmapEncoder.put()));
+        ReturnIfFailed(result, wicBitmapEncoder->Initialize(stream.get(), WICBitmapEncoderNoCache));
+
+        winrt::com_ptr<IWICBitmapFrameEncode> wicFrameEncode;
+        ReturnIfFailed(result, wicBitmapEncoder->CreateNewFrame(wicFrameEncode.put(), nullptr));
+        ReturnIfFailed(result, wicFrameEncode->Initialize(nullptr));
+
+        WICPixelFormatGUID pixelFormat = GUID_WICPixelFormat32bppBGRA;
+        ReturnIfFailed(result, wicFrameEncode->SetSize(width, height));
+        ReturnIfFailed(result, wicFrameEncode->SetPixelFormat(&pixelFormat));
+
+        ReturnIfFailed(result, wicFrameEncode->WritePixels(height, width * 4, width * height * 4, source.data()));
+        ReturnIfFailed(result, wicFrameEncode->Commit());
+        ReturnIfFailed(result, wicBitmapEncoder->Commit());
+
+        ReturnIfFailed(result, stream->Commit(STGC_DEFAULT));
+
+        return stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr);
+    }
+
     HRESULT PlaceholderImageHelper::SaveImageToStream(ID2D1Image* image, REFGUID wicFormat, IRandomAccessStream randomAccessStream)
     {
         HRESULT result;

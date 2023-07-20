@@ -8,7 +8,6 @@
 #define QOI_NO_STDIO
 
 #include <lz4.h>
-#include <qoi.h>
 
 #define RETURNFALSE(x) if (!x) return false;
 

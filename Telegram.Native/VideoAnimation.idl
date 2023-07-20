@@ -1,31 +1,33 @@
 namespace Telegram.Native
 {
-	interface IVideoAnimationSource {
-		void SeekCallback(Int64 offset);
-		void ReadCallback(Int64 count);
+    interface IVideoAnimationSource {
+        void SeekCallback(Int64 offset);
+        void ReadCallback(Int64 count);
 
-		String FilePath{ get; };
-		Int64 FileSize{ get; };
+        String FilePath{ get; };
+        Int64 FileSize{ get; };
 
-		Int64 Offset{ get; };
+        Int64 Offset{ get; };
 
-		Int64 Id{ get; };
-	};
+        Int64 Id{ get; };
+    };
 
-	[default_interface]
-	runtimeclass VideoAnimation : Windows.Foundation.IClosable
-	{
-		static VideoAnimation LoadFromFile(IVideoAnimationSource file, Boolean preview, Boolean limitFps);
+    [default_interface]
+    runtimeclass VideoAnimation : Windows.Foundation.IClosable
+    {
+        static VideoAnimation LoadFromFile(IVideoAnimationSource file, Boolean preview, Boolean limitFps);
 
-		void Stop();
-		void PrepareToSeek();
-		void SeekToMilliseconds(Int64 ms, Boolean precise);
+        void Stop();
+        void PrepareToSeek();
+        void SeekToMilliseconds(Int64 ms, Boolean precise);
 
-		Int32 RenderSync(Microsoft.Graphics.Canvas.CanvasBitmap bitmap, Boolean preview, out Int32 seconds);
+        Int32 RenderSync(Windows.Storage.Streams.IBuffer bitmap, Int32 width, Int32 height, Boolean preview, out Int32 seconds);
 
-		Int32 PixelWidth{ get; };
-		Int32 PixelHeight{ get; };
+        Int32 PixelWidth{ get; };
+        Int32 PixelHeight{ get; };
 
-		Double FrameRate{ get; };
-	}
+        Double FrameRate{ get; };
+
+        Int32 Duration{ get; };
+    }
 } // namespace Telegram.Native

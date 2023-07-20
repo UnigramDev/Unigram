@@ -51,6 +51,8 @@ namespace winrt::Telegram::Native::implementation
         static void WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept;
         static IBuffer DrawWebP(hstring fileName, int32_t maxWidth, Windows::Foundation::Size& size) noexcept;
 
+        HRESULT Encode(IBuffer source, IRandomAccessStream destination, int32_t width, int32_t height);
+
         winrt::Windows::Foundation::IAsyncAction DrawSvgAsync(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, double dpi);
         void DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size);
         void DrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);

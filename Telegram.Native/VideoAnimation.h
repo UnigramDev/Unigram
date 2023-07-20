@@ -8,13 +8,12 @@
 #include <fcntl.h>
 #include <libyuv.h>
 
-#include <winrt/Microsoft.Graphics.Canvas.h>
-
 extern "C"
 {
 #include <libavformat/avformat.h>
 #include <libavutil/eval.h>
 #include <libswscale/swscale.h>
+#include <libavutil/imgutils.h>
 }
 
 static const std::string av_make_error_str(int errnum)
@@ -28,7 +27,7 @@ static const std::string av_make_error_str(int errnum)
 #define av_err2str(errnum) av_make_error_str(errnum).c_str()
 #define FFMPEG_AVSEEK_SIZE 0x10000
 
-using namespace winrt::Microsoft::Graphics::Canvas;
+using namespace winrt::Windows::Storage::Streams;
 
 namespace winrt::Telegram::Native::implementation
 {
@@ -110,7 +109,7 @@ namespace winrt::Telegram::Native::implementation
         void PrepareToSeek();
         void SeekToMilliseconds(int64_t ms, bool precise);
 
-        int RenderSync(CanvasBitmap bitmap, bool preview, int32_t& seconds);
+        int RenderSync(IBuffer buffer, int32_t width, int32_t height, bool preview, int32_t& seconds);
         int RenderSync(uint8_t* pixels, int32_t width, int32_t height, bool preview, int32_t& seconds, bool& completed);
 
         int PixelWidth()
@@ -128,6 +127,11 @@ namespace winrt::Telegram::Native::implementation
             return framerate;
         }
 
+        int Duration()
+        {
+            return duration;
+        }
+
     private:
         int decode_packet(VideoAnimation* info, int* got_frame);
         static void requestFd(VideoAnimation* info);
@@ -137,6 +141,7 @@ namespace winrt::Telegram::Native::implementation
         static void RedirectLoggingOutputs(void* ptr, int level, const char* fmt, va_list vargs);
 
 
+        winrt::slim_mutex m_lock;
 
         AVFormatContext* fmt_ctx = nullptr;
         IVideoAnimationSource file{ nullptr };

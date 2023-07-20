@@ -4,15 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using FFmpegInteropX;
 using Microsoft.Graphics.Canvas;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading.Tasks;
-using Telegram.Charts;
 using Telegram.Controls;
 using Telegram.Entities;
+using Telegram.Native;
 using Windows.Foundation;
 using Windows.Graphics;
 using Windows.Graphics.Imaging;
@@ -191,14 +190,39 @@ namespace Telegram.Common
             {
                 if (sourceFile.FileType.Equals(".mp4"))
                 {
-                    using var videoStream = await sourceFile.OpenReadAsync();
-                    using var grabber = await FrameGrabber.CreateFromStreamAsync(videoStream);
-                    using var frame = await grabber.ExtractVideoFrameAsync(TimeSpan.Zero);
+                    int width = 0;
+                    int height = 0;
 
-                    using var source = new InMemoryRandomAccessStream();
+                    var buffer = await Task.Run(async () =>
+                    {
+                        using var videoStream = await sourceFile.OpenReadAsync();
+                        using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false);
 
-                    await frame.EncodeAsPngAsync(source);
-                    return await GetPreviewBitmapAsync(source, requestedMinSide);
+                        if (animation.PixelWidth > requestedMinSide || animation.PixelHeight > requestedMinSide)
+                        {
+                            double ratioX = (double)requestedMinSide / animation.PixelWidth;
+                            double ratioY = (double)requestedMinSide / animation.PixelHeight;
+                            double ratio = Math.Min(ratioX, ratioY);
+
+                            width = (int)(animation.PixelWidth * ratio);
+                            height = (int)(animation.PixelHeight * ratio);
+                        }
+                        else
+                        {
+                            width = animation.PixelWidth;
+                            height = animation.PixelHeight;
+                        }
+
+                        var frame = BufferSurface.Create((uint)(width * height * 4));
+                        animation.RenderSync(frame, width, height, false, out _);
+
+                        return frame;
+                    });
+
+                    var bitmap = new WriteableBitmap(width, height);
+                    BufferSurface.Copy(buffer, bitmap.PixelBuffer);
+
+                    return bitmap;
                 }
                 else
                 {
@@ -388,15 +412,22 @@ namespace Telegram.Common
         {
             if (sourceFile.FileType.Equals(".mp4"))
             {
-                using var videoStream = await sourceFile.OpenReadAsync();
-                using var grabber = await FrameGrabber.CreateFromStreamAsync(videoStream);
-                using var frame = await grabber.ExtractVideoFrameAsync(TimeSpan.Zero);
+                return await Task.Run(async () =>
+                {
+                    using var videoStream = await sourceFile.OpenReadAsync();
+                    using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false);
 
-                using var source = new InMemoryRandomAccessStream();
+                    int width = animation.PixelWidth;
+                    int height = animation.PixelHeight;
 
-                await frame.EncodeAsPngAsync(source);
-                return await CropAndPreviewAsync(source, editState);
+                    var frame = BufferSurface.Create((uint)(width * height * 4));
+                    animation.RenderSync(frame, width, height, false, out _);
 
+                    using var stream = new InMemoryRandomAccessStream();
+                    PlaceholderImageHelper.Current.Encode(frame, stream, width, height);
+
+                    return await CropAndPreviewAsync(stream, editState);
+                });
             }
             else
             {
@@ -478,14 +509,22 @@ namespace Telegram.Common
         {
             if (sourceFile.FileType.Equals(".mp4"))
             {
-                using var videoStream = await sourceFile.OpenReadAsync();
-                using var grabber = await FrameGrabber.CreateFromStreamAsync(videoStream);
-                using var frame = await grabber.ExtractVideoFrameAsync(TimeSpan.Zero);
+                return await Task.Run(async () =>
+                {
+                    using var videoStream = await sourceFile.OpenReadAsync();
+                    using var animation = VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(videoStream), false, false);
 
-                var source = new InMemoryRandomAccessStream();
+                    int width = animation.PixelWidth;
+                    int height = animation.PixelHeight;
 
-                await frame.EncodeAsPngAsync(source);
-                return source;
+                    var frame = BufferSurface.Create((uint)(width * height * 4));
+                    var result = animation.RenderSync(frame, width, height, false, out _);
+
+                    var stream = new InMemoryRandomAccessStream();
+                    PlaceholderImageHelper.Current.Encode(frame, stream, width, height);
+
+                    return stream;
+                });
             }
             else
             {

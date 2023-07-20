@@ -4,21 +4,21 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using FFmpegInteropX;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Entities;
+using Telegram.Native;
 using Telegram.Services;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Core;
 using Windows.Storage;
-using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -29,8 +29,6 @@ namespace Telegram.Views.Popups
     public sealed partial class EditMediaPopup : OverlayPage
     {
         public StorageMedia ResultMedia { get; private set; }
-
-        public override int SessionId => throw new NotImplementedException();
 
         private readonly StorageFile _file;
         private readonly StorageMedia _media;
@@ -102,38 +100,38 @@ namespace Telegram.Views.Popups
             Media.MediaPlayer.PlaybackSession.PositionChanged += MediaPlayer_PositionChanged;
 
             using var stream = await file.OpenReadAsync();
-            using var grabber = await FrameGrabber.CreateFromStreamAsync(stream);
+            using var animation = await Task.Run(() => VideoAnimation.LoadFromFile(new VideoAnimationStreamSource(stream), false, false));
 
-            double ratioX = (double)40 / grabber.CurrentVideoStream.PixelWidth;
-            double ratioY = (double)40 / grabber.CurrentVideoStream.PixelHeight;
+            double ratioX = (double)40 / animation.PixelWidth;
+            double ratioY = (double)40 / animation.PixelHeight;
             double ratio = Math.Max(ratioY, ratioY);
 
-            var width = (int)(grabber.CurrentVideoStream.PixelWidth * ratio);
-            var height = (int)(grabber.CurrentVideoStream.PixelHeight * ratio);
+            var width = (int)(animation.PixelWidth * ratio);
+            var height = (int)(animation.PixelHeight * ratio);
 
             var count = Math.Ceiling(296d / width);
 
-            TrimRange.OriginalDuration = grabber.Duration;
-            TrimThumbnails.Children.Clear();
+            width = (int)(width * XamlRoot.RasterizationScale);
+            height = (int)(height * XamlRoot.RasterizationScale);
 
-            grabber.DecodePixelWidth = width;
-            grabber.DecodePixelHeight = height;
+            TrimRange.OriginalDuration = TimeSpan.FromMilliseconds(animation.Duration);
+            TrimThumbnails.Children.Clear();
 
             try
             {
                 for (int i = 0; i < count; i++)
                 {
-                    using var thumb = await grabber.ExtractVideoFrameAsync(grabber.Duration / count * i, false);
-                    using var encoded = new InMemoryRandomAccessStream();
+                    var bitmap = new WriteableBitmap(width, height);
+                    var buffer = new PixelBuffer(bitmap);
 
-                    await thumb.EncodeAsPngAsync(encoded);
-
-                    var bitmap = new BitmapImage();
-                    await bitmap.SetSourceAsync(encoded);
+                    await Task.Run(() =>
+                    {
+                        animation.SeekToMilliseconds((long)(animation.Duration / count * i), false);
+                        animation.RenderSync(buffer, width, height, false, out _);
+                    });
 
                     var image = new Image();
-                    image.Width = width;
-                    image.Height = height;
+                    image.Height = 40;
                     image.Stretch = Windows.UI.Xaml.Media.Stretch.UniformToFill;
                     image.Source = bitmap;
 

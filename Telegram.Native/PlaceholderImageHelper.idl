@@ -24,6 +24,8 @@ namespace Telegram.Native
 		static void WriteBytes(Windows.Foundation.Collections.IVector<byte> hash, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
 		static Windows.Storage.Streams.IBuffer DrawWebP(String fileName, Int32 maxWidth, out Windows.Foundation.Size size);
 
+		void Encode(Windows.Storage.Streams.IBuffer source, Windows.Storage.Streams.IRandomAccessStream destination, Int32 width, Int32 height);
+
 		Windows.Foundation.IAsyncAction DrawSvgAsync(String path, Windows.UI.Color foreground, Windows.Storage.Streams.IRandomAccessStream randomAccessStream, Double dpi);
 		void DrawSvg(String path, Windows.UI.Color foreground, Windows.Storage.Streams.IRandomAccessStream randomAccessStream, Double dpi, out Windows.Foundation.Size size);
 
