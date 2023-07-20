@@ -1,55 +1,55 @@
 namespace Telegram.Native.Calls
 {
-	enum VoipDataSaving
-	{
-		Never,
-		Mobile,
-		Always,
-	};
+    enum VoipDataSaving
+    {
+        Never,
+        Mobile,
+        Always,
+    };
 
-	enum VoipState
-	{
-		WaitInit = 0,
-		WaitInitAck = 1,
-		Established = 2,
-		Failed = 3,
-		Reconnecting = 4,
-	};
+    enum VoipState
+    {
+        WaitInit = 0,
+        WaitInitAck = 1,
+        Established = 2,
+        Failed = 3,
+        Reconnecting = 4,
+    };
 
-	enum VoipAudioState
-	{
-		Muted = 0,
-		Active = 1,
-	};
+    enum VoipAudioState
+    {
+        Muted = 0,
+        Active = 1,
+    };
 
-	enum VoipVideoState
-	{
-		Inactive = 0,
-		Paused = 1,
-		Active = 2,
-	};
+    enum VoipVideoState
+    {
+        Inactive = 0,
+        Paused = 1,
+        Active = 2,
+    };
 
-	enum VoipGroupConnectionMode
-	{
-		None = 0,
-		Rtc = 1,
-		Broadcast = 2,
-	};
+    enum VoipGroupConnectionMode
+    {
+        None = 0,
+        Rtc = 1,
+        Broadcast = 2,
+    };
 
-	enum VoipVideoContentType
-	{
-		None = 0,
-		Screencast = 1,
-		Generic = 2
-	};
+    enum VoipVideoContentType
+    {
+        None = 0,
+        Screencast = 1,
+        Generic = 2
+    };
 
-	struct VoipGroupParticipant
-	{
-		Int32 AudioSource;
-		Single Level;
-		Boolean IsSpeaking;
-		Boolean IsMuted;
-	};
+    struct VoipGroupParticipant
+    {
+        Int32 AudioSource;
+        Single Level;
+        Boolean IsSpeaking;
+        Boolean IsMuted;
+    };
 
 } // namespace Telegram.Native.Calls
 

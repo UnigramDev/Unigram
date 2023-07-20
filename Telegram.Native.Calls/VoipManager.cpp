@@ -34,7 +34,8 @@ namespace winrt::Telegram::Native::Calls::implementation
         m_descriptor = descriptor;
     }
 
-    void VoipManager::Close() {
+    void VoipManager::Close()
+    {
         m_descriptor = nullptr;
         m_capturer.reset();
         m_impl.reset();
@@ -45,7 +46,8 @@ namespace winrt::Telegram::Native::Calls::implementation
         std::stringstream ss;
         ss << std::hex;
 
-        for (const uint8_t& x : data) {
+        for (const uint8_t& x : data)
+        {
             ss << std::setw(2) << std::setfill('0') << (int)x;
         }
 
@@ -84,21 +86,24 @@ namespace winrt::Telegram::Native::Calls::implementation
         };
 
         tgcalls::MediaDevicesConfig mediaConfig = {
-            .audioInputId = string_to_unmanaged(m_descriptor.AudioInputId()),
-            .audioOutputId = string_to_unmanaged(m_descriptor.AudioOutputId()),
+            .audioInputId = winrt::to_string(m_descriptor.AudioInputId()),
+            .audioOutputId = winrt::to_string(m_descriptor.AudioOutputId()),
             .inputVolume = 1.f,
             .outputVolume = 1.f
         };
 
         std::vector<uint8_t> persistentState = {};
-        if (m_descriptor.PersistentState()) {
-            for (int i = 0; i < m_descriptor.PersistentState().Size(); i++) {
+        if (m_descriptor.PersistentState())
+        {
+            for (int i = 0; i < m_descriptor.PersistentState().Size(); i++)
+            {
                 persistentState[i] = m_descriptor.PersistentState().GetAt(i);
             }
         }
 
         std::array<uint8_t, 256> encryptionKey = {};
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < 256; i++)
+        {
             encryptionKey[i] = m_descriptor.EncryptionKey().GetAt(i);
         }
 
@@ -108,14 +113,18 @@ namespace winrt::Telegram::Native::Calls::implementation
         auto rtc = std::vector<tgcalls::RtcServer>();
         auto ids = std::vector<long>();
 
-        for (const CallServer& x : m_descriptor.Servers()) {
-            if (auto webRtc = x.Type().try_as<CallServerTypeWebrtc>()) {
-                const auto host = string_to_unmanaged(x.IpAddress());
-                const auto hostv6 = string_to_unmanaged(x.Ipv6Address());
+        for (const CallServer& x : m_descriptor.Servers())
+        {
+            if (auto webRtc = x.Type().try_as<CallServerTypeWebrtc>())
+            {
+                const auto host = winrt::to_string(x.IpAddress());
+                const auto hostv6 = winrt::to_string(x.Ipv6Address());
                 const auto port = uint16_t(x.Port());
-                if (webRtc.SupportsStun()) {
+                if (webRtc.SupportsStun())
+                {
                     const auto pushStun = [&](const std::string& host) {
-                        if (host.empty()) {
+                        if (host.empty())
+                        {
                             return;
                         }
                         tgcalls::RtcServer server;
@@ -127,9 +136,10 @@ namespace winrt::Telegram::Native::Calls::implementation
                     pushStun(host);
                     pushStun(hostv6);
                 }
-                const auto username = string_to_unmanaged(webRtc.Username());
-                const auto password = string_to_unmanaged(webRtc.Password());
-                if (webRtc.SupportsTurn() && !username.empty() && !password.empty()) {
+                const auto username = winrt::to_string(webRtc.Username());
+                const auto password = winrt::to_string(webRtc.Password());
+                if (webRtc.SupportsTurn() && !username.empty() && !password.empty())
+                {
                     const auto pushTurn = [&](const std::string& host) {
                         tgcalls::RtcServer server;
                         server.host = host;
@@ -143,17 +153,20 @@ namespace winrt::Telegram::Native::Calls::implementation
                     pushTurn(hostv6);
                 }
             }
-            else if (auto reflector = x.Type().try_as<CallServerTypeTelegramReflector>()) {
+            else if (auto reflector = x.Type().try_as<CallServerTypeTelegramReflector>())
+            {
                 ids.push_back(x.Id());
             }
         }
 
         std::sort(ids.begin(), ids.end());
 
-        for (const CallServer& x : m_descriptor.Servers()) {
-            if (auto reflector = x.Type().try_as<CallServerTypeTelegramReflector>()) {
+        for (const CallServer& x : m_descriptor.Servers())
+        {
+            if (auto reflector = x.Type().try_as<CallServerTypeTelegramReflector>())
+            {
                 const auto reflectorId = std::find(ids.begin(), ids.end(), x.Id()) - ids.begin();
-                const auto host = string_to_unmanaged(x.IpAddress());
+                const auto host = winrt::to_string(x.IpAddress());
                 const auto port = uint16_t(x.Port());
                 tgcalls::RtcServer server;
                 server.id = reflectorId;
@@ -167,7 +180,8 @@ namespace winrt::Telegram::Native::Calls::implementation
             }
         }
 
-        if (m_descriptor.VideoCapture()) {
+        if (m_descriptor.VideoCapture())
+        {
             auto implementation = winrt::get_self<implementation::VoipVideoCapture>(m_descriptor.VideoCapture());
             m_capturer = implementation->m_impl;
         }
@@ -217,30 +231,39 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     //void VoipManager::SetNetworkType(NetworkType networkType);
 
-    bool VoipManager::IsMuted() {
+    bool VoipManager::IsMuted()
+    {
         return m_isMuted;
     }
 
-    void VoipManager::IsMuted(bool muteMicrophone) {
-        if (m_impl) {
+    void VoipManager::IsMuted(bool muteMicrophone)
+    {
+        if (m_impl)
+        {
             m_impl->setMuteMicrophone(m_isMuted = muteMicrophone);
         }
     }
 
-    void VoipManager::SetAudioOutputGainControlEnabled(bool enabled) {
-        if (m_impl) {
+    void VoipManager::SetAudioOutputGainControlEnabled(bool enabled)
+    {
+        if (m_impl)
+        {
             m_impl->setAudioOutputGainControlEnabled(enabled);
         }
     }
 
-    void VoipManager::SetEchoCancellationStrength(int strength) {
-        if (m_impl) {
+    void VoipManager::SetEchoCancellationStrength(int strength)
+    {
+        if (m_impl)
+        {
             m_impl->setEchoCancellationStrength(strength);
         }
     }
 
-    bool VoipManager::SupportsVideo() {
-        if (m_impl) {
+    bool VoipManager::SupportsVideo()
+    {
+        if (m_impl)
+        {
             return m_impl->supportsVideo();
         }
 
@@ -248,13 +271,17 @@ namespace winrt::Telegram::Native::Calls::implementation
     }
 
     //void SetIncomingVideoOutput(std::shared_ptr<rtc::VideoSinkInterface<webrtc::VideoFrame>> sink);
-    void VoipManager::SetIncomingVideoOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas) {
-        if (m_impl) {
-            if (canvas != nullptr) {
+    void VoipManager::SetIncomingVideoOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas)
+    {
+        if (m_impl)
+        {
+            if (canvas != nullptr)
+            {
                 m_renderer = std::make_shared<VoipVideoRenderer>(canvas, false, false);
                 m_impl->setIncomingVideoOutput(m_renderer);
             }
-            else {
+            else
+            {
                 m_renderer.reset();
             }
         }
@@ -262,38 +289,50 @@ namespace winrt::Telegram::Native::Calls::implementation
 
 
 
-    void VoipManager::SetAudioInputDevice(hstring id) {
-        if (m_impl) {
-            m_impl->setAudioInputDevice(string_to_unmanaged(id));
+    void VoipManager::SetAudioInputDevice(hstring id)
+    {
+        if (m_impl)
+        {
+            m_impl->setAudioInputDevice(winrt::to_string(id));
         }
     }
 
-    void VoipManager::SetAudioOutputDevice(hstring id) {
-        if (m_impl) {
-            m_impl->setAudioOutputDevice(string_to_unmanaged(id));
+    void VoipManager::SetAudioOutputDevice(hstring id)
+    {
+        if (m_impl)
+        {
+            m_impl->setAudioOutputDevice(winrt::to_string(id));
         }
     }
 
-    void VoipManager::SetInputVolume(float level) {
-        if (m_impl) {
+    void VoipManager::SetInputVolume(float level)
+    {
+        if (m_impl)
+        {
             m_impl->setInputVolume(level);
         }
     }
 
-    void VoipManager::SetOutputVolume(float level) {
-        if (m_impl) {
+    void VoipManager::SetOutputVolume(float level)
+    {
+        if (m_impl)
+        {
             m_impl->setOutputVolume(level);
         }
     }
 
-    void VoipManager::SetAudioOutputDuckingEnabled(bool enabled) {
-        if (m_impl) {
+    void VoipManager::SetAudioOutputDuckingEnabled(bool enabled)
+    {
+        if (m_impl)
+        {
             m_impl->setAudioOutputDuckingEnabled(enabled);
         }
     }
 
-    void VoipManager::SetIsLowBatteryLevel(bool isLowBatteryLevel) {
-        if (m_impl) {
+    void VoipManager::SetIsLowBatteryLevel(bool isLowBatteryLevel)
+    {
+        if (m_impl)
+        {
             m_impl->setIsLowBatteryLevel(isLowBatteryLevel);
         }
     }
@@ -301,8 +340,10 @@ namespace winrt::Telegram::Native::Calls::implementation
 
 
     //std::string getLastError();
-    hstring VoipManager::GetDebugInfo() {
-        if (m_impl) {
+    hstring VoipManager::GetDebugInfo()
+    {
+        if (m_impl)
+        {
             std::string log = m_impl->getDebugInfo();
             size_t len = sizeof(wchar_t) * (log.length() + 1);
             wchar_t* wlog = (wchar_t*)malloc(len);
@@ -314,8 +355,10 @@ namespace winrt::Telegram::Native::Calls::implementation
         return L"";
     }
 
-    int64_t VoipManager::GetPreferredRelayId() {
-        if (m_impl) {
+    int64_t VoipManager::GetPreferredRelayId()
+    {
+        if (m_impl)
+        {
             return m_impl->getPreferredRelayId();
         }
 
@@ -326,10 +369,13 @@ namespace winrt::Telegram::Native::Calls::implementation
 
 
 
-    void VoipManager::ReceiveSignalingData(IVector<uint8_t> const data) {
-        if (m_impl) {
+    void VoipManager::ReceiveSignalingData(IVector<uint8_t> const data)
+    {
+        if (m_impl)
+        {
             auto bytes = std::vector<unsigned char>();
-            for (const uint8_t& x : data) {
+            for (const uint8_t& x : data)
+            {
                 bytes.push_back(x);
             }
 
@@ -337,19 +383,25 @@ namespace winrt::Telegram::Native::Calls::implementation
         }
     }
 
-    void VoipManager::SetVideoCapture(Telegram::Native::Calls::VoipCaptureBase videoCapture) {
-        if (m_impl) {
-            if (videoCapture) {
-                if (auto screen = videoCapture.try_as<winrt::default_interface<VoipScreenCapture>>()) {
+    void VoipManager::SetVideoCapture(Telegram::Native::Calls::VoipCaptureBase videoCapture)
+    {
+        if (m_impl)
+        {
+            if (videoCapture)
+            {
+                if (auto screen = videoCapture.try_as<winrt::default_interface<VoipScreenCapture>>())
+                {
                     auto implementation = winrt::get_self<VoipScreenCapture>(screen);
                     m_capturer = implementation->m_impl;
                 }
-                else if (auto video = videoCapture.try_as<winrt::default_interface<VoipVideoCapture>>()) {
+                else if (auto video = videoCapture.try_as<winrt::default_interface<VoipVideoCapture>>())
+                {
                     auto implementation = winrt::get_self<VoipVideoCapture>(video);
                     m_capturer = implementation->m_impl;
                 }
             }
-            else {
+            else
+            {
                 m_capturer = nullptr;
             }
 
@@ -357,8 +409,10 @@ namespace winrt::Telegram::Native::Calls::implementation
         }
     }
 
-    void VoipManager::SetRequestedVideoAspect(float aspect) {
-        if (m_impl) {
+    void VoipManager::SetRequestedVideoAspect(float aspect)
+    {
+        if (m_impl)
+        {
             m_impl->setRequestedVideoAspect(aspect);
         }
     }

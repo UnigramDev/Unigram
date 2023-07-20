@@ -23,7 +23,8 @@
 
 #include <d3d11.h>
 
-namespace ABI {
+namespace ABI
+{
     using namespace Microsoft::Graphics::Canvas;
 }
 
@@ -55,7 +56,8 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
     CanvasBitmap m_bitmapU{ nullptr };
     CanvasBitmap m_bitmapV{ nullptr };
 
-    VoipVideoRenderer(CanvasControl canvas, /*Stretch stretch = Stretch::UniformToFill,*/ bool flip = false, bool enableBlur = false) {
+    VoipVideoRenderer(CanvasControl canvas, /*Stretch stretch = Stretch::UniformToFill,*/ bool flip = false, bool enableBlur = false)
+    {
         m_canvasControl = std::make_shared<CanvasControl>(canvas);
         m_readyToDraw = canvas.ReadyToDraw();
         //m_stretch = stretch;
@@ -66,7 +68,8 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
             winrt::slim_lock_guard const guard(m_drawLock);
             m_readyToDraw = true;
 
-            if (m_bitmapY && !m_disposed) {
+            if (m_bitmapY && !m_disposed)
+            {
                 float width = sender.Size().Width;
                 float height = sender.Size().Height;
                 float bitmapWidth = m_bitmapY.SizeInPixels().Width;
@@ -81,7 +84,8 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
                 float3x2 matrix;
                 float scale = 1;
 
-                switch (m_rotation) {
+                switch (m_rotation)
+                {
                 case webrtc::kVideoRotation_0:
                     matrix = float3x2::identity();
                     break;
@@ -96,26 +100,34 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
                     break;
                 }
 
-                if (m_stretch == Stretch::UniformToFill) {
-                    if (ratioX < ratioY && ((bitmapWidth * ratioY) - width) / width <= .25f) {
+                if (m_stretch == Stretch::UniformToFill)
+                {
+                    if (ratioX < ratioY && ((bitmapWidth * ratioY) - width) / width <= .25f)
+                    {
                         scale = ratioY;
                     }
-                    else if (ratioY < ratioX && ((bitmapHeight * ratioX) - height) / height <= .25f) {
+                    else if (ratioY < ratioX && ((bitmapHeight * ratioX) - height) / height <= .25f)
+                    {
                         scale = ratioX;
                     }
-                    else {
+                    else
+                    {
                         scale = std::min(ratioX, ratioY);
                     }
                 }
-                else if (m_stretch == Stretch::Uniform) {
+                else if (m_stretch == Stretch::Uniform)
+                {
                     scale = std::min(ratioX, ratioY);
                 }
-                else if (m_stretch == Stretch::Fill) {
+                else if (m_stretch == Stretch::Fill)
+                {
                     scale = std::max(ratioX, ratioY);
                 }
 
-                if (m_enableBlur && (bitmapWidth * scale < width || bitmapHeight * scale < height)) {
-                    if (m_blur == nullptr) {
+                if (m_enableBlur && (bitmapWidth * scale < width || bitmapHeight * scale < height))
+                {
+                    if (m_blur == nullptr)
+                    {
                         m_blur = GaussianBlurEffect();
                         m_blur.BlurAmount(10);
                         m_blur.Source(m_shader);
@@ -134,39 +146,46 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
             });
     }
 
-    ~VoipVideoRenderer() {
+    ~VoipVideoRenderer()
+    {
         winrt::slim_lock_guard const guard(m_lock);
         winrt::slim_lock_guard const drawGuard(m_drawLock);
 
         m_disposed = true;
         m_readyToDraw = false;
 
-        if (m_canvasControl) {
+        if (m_canvasControl)
+        {
             m_canvasControl->Draw(m_eventToken);
             m_canvasControl = nullptr;
         }
 
-        if (m_blur) {
+        if (m_blur)
+        {
             m_blur.Close();
             m_blur = nullptr;
         }
 
-        if (m_shader) {
+        if (m_shader)
+        {
             m_shader.Close();
             m_shader = nullptr;
         }
 
-        if (m_bitmapY) {
+        if (m_bitmapY)
+        {
             m_bitmapY.Close();
             m_bitmapY = nullptr;
         }
 
-        if (m_bitmapU) {
+        if (m_bitmapU)
+        {
             m_bitmapU.Close();
             m_bitmapU = nullptr;
         }
 
-        if (m_bitmapV) {
+        if (m_bitmapV)
+        {
             m_bitmapV.Close();
             m_bitmapV = nullptr;
         }
@@ -176,7 +195,8 @@ struct VoipVideoRenderer : public rtc::VideoSinkInterface<webrtc::VideoFrame>
     {
         winrt::slim_lock_guard const guard(m_lock);
 
-        if (m_disposed || !m_readyToDraw || !m_canvasControl) {
+        if (m_disposed || !m_readyToDraw || !m_canvasControl)
+        {
             return;
         }
 

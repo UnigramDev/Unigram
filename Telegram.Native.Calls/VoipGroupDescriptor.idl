@@ -4,7 +4,7 @@ import "VoipVideoCapture.idl";
 namespace Telegram.Native.Calls
 {
     [default_interface]
-    runtimeclass VoipGroupDescriptor 
+    runtimeclass VoipGroupDescriptor
     {
         VoipGroupDescriptor();
 

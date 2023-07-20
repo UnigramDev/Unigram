@@ -9,11 +9,13 @@ namespace winrt::Telegram::Native::Calls::implementation
     {
     }
 
-    VoipAudioState RemoteMediaStateUpdatedEventArgs::Audio() {
+    VoipAudioState RemoteMediaStateUpdatedEventArgs::Audio()
+    {
         return m_audio;
     }
 
-    VoipVideoState RemoteMediaStateUpdatedEventArgs::Video() {
+    VoipVideoState RemoteMediaStateUpdatedEventArgs::Video()
+    {
         return m_video;
     }
 } // namespace winrt::Telegram::Native::Calls::implementation

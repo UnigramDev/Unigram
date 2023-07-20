@@ -28,34 +28,45 @@ namespace winrt::Telegram::Native::Calls::implementation
         m_impl = nullptr;
     }
 
-    void VoipScreenCapture::Close() {
+    void VoipScreenCapture::Close()
+    {
         m_impl = nullptr;
     }
 
-    void VoipScreenCapture::SwitchToDevice(hstring deviceId) {
-        if (m_impl) {
-            m_impl->switchToDevice(string_to_unmanaged(deviceId), false);
+    void VoipScreenCapture::SwitchToDevice(hstring deviceId)
+    {
+        if (m_impl)
+        {
+            m_impl->switchToDevice(winrt::to_string(deviceId), false);
         }
     }
 
-    void VoipScreenCapture::SetState(VoipVideoState state) {
-        if (m_impl) {
+    void VoipScreenCapture::SetState(VoipVideoState state)
+    {
+        if (m_impl)
+        {
             m_impl->setState((tgcalls::VideoState)state);
         }
     }
 
-    void VoipScreenCapture::SetPreferredAspectRatio(float aspectRatio) {
-        if (m_impl) {
+    void VoipScreenCapture::SetPreferredAspectRatio(float aspectRatio)
+    {
+        if (m_impl)
+        {
             m_impl->setPreferredAspectRatio(aspectRatio);
         }
     }
 
-    void VoipScreenCapture::SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas, bool enableBlur) {
-        if (m_impl) {
-            if (canvas != nullptr) {
+    void VoipScreenCapture::SetOutput(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl canvas, bool enableBlur)
+    {
+        if (m_impl)
+        {
+            if (canvas != nullptr)
+            {
                 m_impl->setOutput(std::make_shared<VoipVideoRenderer>(canvas, false, enableBlur));
             }
-            else {
+            else
+            {
                 m_impl->setOutput(nullptr);
             }
         }

@@ -8,7 +8,8 @@ namespace winrt::Telegram::Native::Calls::implementation
     {
     }
 
-    IVector<uint8_t> SignalingDataEmittedEventArgs::Data() {
+    IVector<uint8_t> SignalingDataEmittedEventArgs::Data()
+    {
         return m_data;
     }
 } // namespace winrt::Telegram::Native::Calls::implementation

@@ -2,7 +2,8 @@ import "VoipVideoRendererToken.idl";
 
 namespace Telegram.Native.Calls
 {
-    enum VoipVideoChannelQuality {
+    enum VoipVideoChannelQuality
+    {
         Thumbnail = 0,
         Medium = 1,
         Full = 2

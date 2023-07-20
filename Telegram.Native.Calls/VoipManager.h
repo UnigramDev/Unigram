@@ -28,7 +28,8 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     struct VoipManager : VoipManagerT<VoipManager>
     {
-        static CallProtocol Protocol() {
+        static CallProtocol Protocol()
+        {
             auto minLayer = 92;
             auto maxLayer = tgcalls::Meta::MaxLayer();
             auto versions = tgcalls::Meta::Versions();
@@ -42,7 +43,8 @@ namespace winrt::Telegram::Native::Calls::implementation
 
             auto args = winrt::single_threaded_vector<hstring>();
 
-            for (const std::string& x : versions) {
+            for (const std::string& x : versions)
+            {
                 args.Append(winrt::to_hstring(x));
             }
 

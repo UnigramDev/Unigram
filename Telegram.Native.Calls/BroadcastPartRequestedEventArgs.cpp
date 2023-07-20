@@ -13,23 +13,28 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     }
 
-    int32_t BroadcastPartRequestedEventArgs::Scale() {
+    int32_t BroadcastPartRequestedEventArgs::Scale()
+    {
         return m_scale;
     }
 
-    int64_t BroadcastPartRequestedEventArgs::Time() {
+    int64_t BroadcastPartRequestedEventArgs::Time()
+    {
         return m_time;
     }
 
-    int32_t BroadcastPartRequestedEventArgs::ChannelId() {
+    int32_t BroadcastPartRequestedEventArgs::ChannelId()
+    {
         return m_channelId;
     }
 
-    GroupCallVideoQuality BroadcastPartRequestedEventArgs::VideoQuality() {
+    GroupCallVideoQuality BroadcastPartRequestedEventArgs::VideoQuality()
+    {
         return m_videoQuality;
     }
 
-    BroadcastPartRequestedDeferral BroadcastPartRequestedEventArgs::Deferral() {
+    BroadcastPartRequestedDeferral BroadcastPartRequestedEventArgs::Deferral()
+    {
         return m_deferral;
     }
 }

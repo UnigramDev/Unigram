@@ -6,43 +6,53 @@
 
 namespace winrt::Telegram::Native::Calls::implementation
 {
-    hstring VoipGroupDescriptor::AudioInputId() {
+    hstring VoipGroupDescriptor::AudioInputId()
+    {
         return m_audioInputId;
     }
 
-    void VoipGroupDescriptor::AudioInputId(hstring value) {
+    void VoipGroupDescriptor::AudioInputId(hstring value)
+    {
         m_audioInputId = value;
     }
 
-    hstring VoipGroupDescriptor::AudioOutputId() {
+    hstring VoipGroupDescriptor::AudioOutputId()
+    {
         return m_audioOutputId;
     }
 
-    void VoipGroupDescriptor::AudioOutputId(hstring value) {
+    void VoipGroupDescriptor::AudioOutputId(hstring value)
+    {
         m_audioOutputId = value;
     }
 
-    VoipCaptureBase VoipGroupDescriptor::VideoCapture() {
+    VoipCaptureBase VoipGroupDescriptor::VideoCapture()
+    {
         return m_videoCapture;
     }
 
-    void VoipGroupDescriptor::VideoCapture(VoipCaptureBase value) {
+    void VoipGroupDescriptor::VideoCapture(VoipCaptureBase value)
+    {
         m_videoCapture = value;
     }
 
-    VoipVideoContentType VoipGroupDescriptor::VideoContentType() {
+    VoipVideoContentType VoipGroupDescriptor::VideoContentType()
+    {
         return m_videoContentType;
     }
 
-    void VoipGroupDescriptor::VideoContentType(VoipVideoContentType value) {
+    void VoipGroupDescriptor::VideoContentType(VoipVideoContentType value)
+    {
         m_videoContentType = value;
     }
 
-    bool VoipGroupDescriptor::IsNoiseSuppressionEnabled() {
+    bool VoipGroupDescriptor::IsNoiseSuppressionEnabled()
+    {
         return m_isNoiseSuppressionEnabled;
     }
 
-    void VoipGroupDescriptor::IsNoiseSuppressionEnabled(bool value) {
+    void VoipGroupDescriptor::IsNoiseSuppressionEnabled(bool value)
+    {
         m_isNoiseSuppressionEnabled = value;
     }
 }

@@ -89,7 +89,8 @@ namespace winrt::Telegram::Native::Calls::implementation
     };
 
 
-    class BroadcastPartTaskImpl final : public tgcalls::BroadcastPartTask {
+    class BroadcastPartTaskImpl final : public tgcalls::BroadcastPartTask
+    {
     public:
         BroadcastPartTaskImpl(
             int64_t time,
@@ -102,13 +103,16 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         }
 
-        void done(int64_t time, int64_t response, Telegram::Td::Api::FilePart filePart) {
+        void done(int64_t time, int64_t response, Telegram::Td::Api::FilePart filePart)
+        {
             webrtc::MutexLock lock(&_mutex);
 
-            if (_done) {
+            if (_done)
+            {
                 auto broadcastPart = tgcalls::BroadcastPart();
 
-                if (filePart) {
+                if (filePart)
+                {
                     auto part = filePart.Data();
                     std::vector data(begin(part), end(part));
 
@@ -121,7 +125,8 @@ namespace winrt::Telegram::Native::Calls::implementation
                     broadcastPart.timestampMilliseconds = time;
                     broadcastPart.status = tgcalls::BroadcastPart::Status::Success;
                 }
-                else {
+                else
+                {
                     broadcastPart.status = tgcalls::BroadcastPart::Status::NotReady;
                 }
 
@@ -129,10 +134,12 @@ namespace winrt::Telegram::Native::Calls::implementation
             }
         }
 
-        void cancel() override {
+        void cancel() override
+        {
             webrtc::MutexLock lock(&_mutex);
 
-            if (!_done) {
+            if (!_done)
+            {
                 return;
             }
 
@@ -147,7 +154,8 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     };
 
-    class BroadcastTimeTaskImpl final : public tgcalls::BroadcastPartTask {
+    class BroadcastTimeTaskImpl final : public tgcalls::BroadcastPartTask
+    {
     public:
         BroadcastTimeTaskImpl(
             std::function<void(int64_t)> done)
@@ -156,18 +164,22 @@ namespace winrt::Telegram::Native::Calls::implementation
 
         }
 
-        void done(int64_t time) {
+        void done(int64_t time)
+        {
             webrtc::MutexLock lock(&_mutex);
 
-            if (_done) {
+            if (_done)
+            {
                 _done(time);
             }
         }
 
-        void cancel() override {
+        void cancel() override
+        {
             webrtc::MutexLock lock(&_mutex);
 
-            if (!_done) {
+            if (!_done)
+            {
                 return;
             }
 

@@ -9,7 +9,8 @@ namespace winrt::Telegram::Native::Calls::implementation
 
     }
 
-    BroadcastTimeRequestedDeferral BroadcastTimeRequestedEventArgs::Deferral() {
+    BroadcastTimeRequestedDeferral BroadcastTimeRequestedEventArgs::Deferral()
+    {
         return m_deferral;
     }
 }
