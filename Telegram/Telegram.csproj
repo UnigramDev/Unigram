@@ -2850,15 +2850,6 @@
     <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\RLottie.pri" />
     <!--<ReferenceCopyLocalPaths Condition=" '$(Configuration)' == 'Debug' " Include="$(ProjectDir)\..\Libraries\rlottie\$(Platform)\zlib1.dll" />-->
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="FFmpegInteropX">
-      <HintPath>$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.winmd</HintPath>
-      <Implementation>FFmpegInteropX.dll</Implementation>
-    </Reference>
-    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.dll" />
-    <ReferenceCopyLocalPaths Include="$(ProjectDir)\..\Libraries\ffmpeg\$(Platform)\FFmpegInteropX.pri" />
-  </ItemGroup>
-  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

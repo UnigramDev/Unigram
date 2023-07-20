@@ -39,6 +39,6 @@
                    Style="{StaticResource BaseTextBlockStyle}" />
         <TextBlock x:Name="Subtitle"
                    Style="{StaticResource DisabledCaptionTextBlockStyle}"
-                   Typography.NumeralAlignment="Tabular"  />
+                   Typography.NumeralAlignment="Tabular" />
     </StackPanel>
 </Grid>

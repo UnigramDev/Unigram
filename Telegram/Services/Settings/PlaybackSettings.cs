@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Windows.Media;
 using Windows.Storage;
 
 namespace Telegram.Services.Settings
@@ -18,9 +17,9 @@ namespace Telegram.Services.Settings
         }
 
         private int? _repeatMode;
-        public MediaPlaybackAutoRepeatMode RepeatMode
+        public PlaybackRepeatMode RepeatMode
         {
-            get => (MediaPlaybackAutoRepeatMode)(_repeatMode ??= GetValueOrDefault("RepeatMode", 0));
+            get => (PlaybackRepeatMode)(_repeatMode ??= GetValueOrDefault("RepeatMode", 0));
             set => AddOrUpdateValue(ref _repeatMode, "RepeatMode", (int)value);
         }
 

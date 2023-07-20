@@ -97,10 +97,10 @@ namespace Telegram.Controls
             this.BeginOnUIThread(UpdateGlyph);
         }
 
-        private void OnPositionChanged(IPlaybackService sender, object args)
+        private void OnPositionChanged(IPlaybackService sender, PlaybackPositionChangedEventArgs args)
         {
-            var position = sender.Position;
-            var duration = sender.Duration;
+            var position = args.Position;
+            var duration = args.Duration;
 
             this.BeginOnUIThread(() => UpdatePosition(position, duration));
         }

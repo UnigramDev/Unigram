@@ -4,19 +4,19 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using FFmpegInteropX;
+using LibVLCSharp.Shared;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
-using Windows.Media;
-using Windows.Media.Playback;
+using Windows.Storage;
+using WM = Windows.Media;
 
 namespace Telegram.Services
 {
@@ -25,6 +25,19 @@ namespace Telegram.Services
         None,
         Playing,
         Paused
+    }
+
+    public enum PlaybackRepeatMode
+    {
+        None,
+        Track,
+        List
+    }
+
+    public class PlaybackPositionChangedEventArgs
+    {
+        public TimeSpan Position { get; set; }
+        public TimeSpan Duration { get; set; }
     }
 
     public interface IPlaybackService
@@ -63,11 +76,11 @@ namespace Telegram.Services
 
 
 
-        event TypedEventHandler<IPlaybackService, MediaPlayerFailedEventArgs> MediaFailed;
+        event TypedEventHandler<IPlaybackService, object> MediaFailed;
 
         event TypedEventHandler<IPlaybackService, object> StateChanged;
         event TypedEventHandler<IPlaybackService, object> SourceChanged;
-        event TypedEventHandler<IPlaybackService, object> PositionChanged;
+        event TypedEventHandler<IPlaybackService, PlaybackPositionChangedEventArgs> PositionChanged;
         event TypedEventHandler<IPlaybackService, object> PlaylistChanged;
     }
 
@@ -75,62 +88,62 @@ namespace Telegram.Services
     {
         private readonly ISettingsService _settingsService;
 
+        private LibVLC _library;
         private MediaPlayer _mediaPlayer;
-        private double _lastTotalSeconds = double.MinValue;
+        private readonly object _mediaPlayerLock = new();
 
-        private readonly ConditionalWeakTable<IMediaPlaybackSource, PlaybackItem> _mapping;
-        private CancellationTokenSource _nextToken;
+        private readonly PlaybackPositionChangedEventArgs _positionChanged = new();
 
         private long _threadId;
 
         private List<PlaybackItem> _items;
 
-        public event TypedEventHandler<IPlaybackService, MediaPlayerFailedEventArgs> MediaFailed;
+        public event TypedEventHandler<IPlaybackService, object> MediaFailed;
         public event TypedEventHandler<IPlaybackService, object> StateChanged;
         public event TypedEventHandler<IPlaybackService, object> SourceChanged;
-        public event TypedEventHandler<IPlaybackService, object> PositionChanged;
+        public event TypedEventHandler<IPlaybackService, PlaybackPositionChangedEventArgs> PositionChanged;
         public event TypedEventHandler<IPlaybackService, object> PlaylistChanged;
 
         public PlaybackService(ISettingsService settingsService)
         {
             _settingsService = settingsService;
 
-            _isRepeatEnabled = _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.Track
+            _isRepeatEnabled = _settingsService.Playback.RepeatMode == PlaybackRepeatMode.Track
                 ? null
-                : _settingsService.Playback.RepeatMode == MediaPlaybackAutoRepeatMode.List;
+                : _settingsService.Playback.RepeatMode == PlaybackRepeatMode.List;
             _playbackSpeed = _settingsService.Playback.PlaybackRate;
 
-            _mapping = new ConditionalWeakTable<IMediaPlaybackSource, PlaybackItem>();
+            // TODO: System media transport controls are currently unsupported.
         }
 
         #region SystemMediaTransportControls
 
-        private void Transport_AutoRepeatModeChangeRequested(SystemMediaTransportControls sender, AutoRepeatModeChangeRequestedEventArgs args)
+        private void Transport_AutoRepeatModeChangeRequested(WM.SystemMediaTransportControls sender, WM.AutoRepeatModeChangeRequestedEventArgs args)
         {
-            IsRepeatEnabled = args.RequestedAutoRepeatMode == MediaPlaybackAutoRepeatMode.List
+            IsRepeatEnabled = args.RequestedAutoRepeatMode == WM.MediaPlaybackAutoRepeatMode.List
                 ? true
-                : args.RequestedAutoRepeatMode == MediaPlaybackAutoRepeatMode.Track
+                : args.RequestedAutoRepeatMode == WM.MediaPlaybackAutoRepeatMode.Track
                 ? null
                 : false;
         }
 
-        private void Transport_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
+        private void Transport_ButtonPressed(WM.SystemMediaTransportControls sender, WM.SystemMediaTransportControlsButtonPressedEventArgs args)
         {
             switch (args.Button)
             {
-                case SystemMediaTransportControlsButton.Play:
+                case WM.SystemMediaTransportControlsButton.Play:
                     Play();
                     break;
-                case SystemMediaTransportControlsButton.Pause:
+                case WM.SystemMediaTransportControlsButton.Pause:
                     Pause();
                     break;
-                case SystemMediaTransportControlsButton.Rewind:
-                    Execute(player => player.StepBackwardOneFrame());
-                    break;
-                case SystemMediaTransportControlsButton.FastForward:
-                    Execute(player => player.StepForwardOneFrame());
-                    break;
-                case SystemMediaTransportControlsButton.Previous:
+                //case WM.SystemMediaTransportControlsButton.Rewind:
+                //    Execute(player => player.StepBackwardOneFrame());
+                //    break;
+                //case WM.SystemMediaTransportControlsButton.FastForward:
+                //    Execute(player => player.StepForwardOneFrame());
+                //    break;
+                case WM.SystemMediaTransportControlsButton.Previous:
                     if (Position.TotalSeconds > 5)
                     {
                         Seek(TimeSpan.Zero);
@@ -140,7 +153,7 @@ namespace Telegram.Services
                         MovePrevious();
                     }
                     break;
-                case SystemMediaTransportControlsButton.Next:
+                case WM.SystemMediaTransportControlsButton.Next:
                     MoveNext();
                     break;
             }
@@ -148,9 +161,10 @@ namespace Telegram.Services
 
         #endregion
 
-        private void OnSourceChanged(MediaPlayer sender, object args)
+        private void OnMediaChanged(object sender, MediaPlayerMediaChangedEventArgs args)
         {
-            if (sender.Source != null && _mapping.TryGetValue(sender.Source, out PlaybackItem item))
+            var item = CurrentPlayback;
+            if (item != null)
             {
                 var message = item.Message;
                 var webPage = message.Content is MessageText text ? text.WebPage : null;
@@ -160,13 +174,14 @@ namespace Telegram.Services
                     message.ClientService.Send(new OpenMessageContent(message.ChatId, message.Id));
                 }
 
-                CurrentPlayback = item;
+                SourceChanged?.Invoke(this, item);
             }
         }
 
-        private void OnMediaEnded(MediaPlayer sender, object args)
+        private void OnEndReached(object sender, EventArgs args)
         {
-            if (sender.Source != null && _mapping.TryGetValue(sender.Source, out PlaybackItem item))
+            var item = CurrentPlayback;
+            if (item != null)
             {
                 if (item.Message.Content is MessageAudio && _isRepeatEnabled == null)
                 {
@@ -174,69 +189,57 @@ namespace Telegram.Services
                 }
                 else
                 {
-                    var index = _items.IndexOf(item);
-                    if (index == -1 || index == (_isReversed ? 0 : _items.Count - 1))
-                    {
-                        if (item.Message.Content is MessageAudio && _isRepeatEnabled == true)
-                        {
-                            SetSource(_items[_isReversed ? _items.Count - 1 : 0], true);
-                        }
-                        else
-                        {
-                            Clear();
-                        }
-                    }
-                    else
-                    {
-                        SetSource(_items[_isReversed ? index - 1 : index + 1], true);
-                    }
+                    MoveNext();
                 }
             }
         }
 
-        private void OnMediaFailed(MediaPlayer sender, MediaPlayerFailedEventArgs args)
+        private void OnEncounteredError(object sender, EventArgs args)
         {
             Clear();
-            MediaFailed?.Invoke(this, args);
+            MediaFailed?.Invoke(this, null);
         }
 
-        private void OnPlaybackStateChanged(MediaPlaybackSession sender, object args)
+        private void OnPlaybackStateChanged(object sender, object args)
         {
-            if (sender.PlaybackState == MediaPlaybackState.Playing && sender.PlaybackRate != _playbackSpeed)
-            {
-                sender.PlaybackRate = _playbackSpeed;
-            }
+            //if (sender.PlaybackState == MediaPlaybackState.Playing && sender.PlaybackRate != _playbackSpeed)
+            //{
+            //    sender.PlaybackRate = _playbackSpeed;
+            //}
 
-            switch (sender.PlaybackState)
+            switch (_mediaPlayer.State)
             {
-                case MediaPlaybackState.Playing:
-                    sender.MediaPlayer.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
+                case VLCState.Playing:
+                    //sender.MediaPlayer.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Playing;
                     break;
-                case MediaPlaybackState.Paused:
-                    sender.MediaPlayer.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
+                case VLCState.Paused:
+                    //sender.MediaPlayer.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Paused;
                     break;
-                case MediaPlaybackState.None:
-                    sender.MediaPlayer.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Stopped;
+                case VLCState.NothingSpecial:
+                case VLCState.Stopped:
+                    //sender.MediaPlayer.SystemMediaTransportControls.PlaybackStatus = MediaPlaybackStatus.Stopped;
                     PlaybackState = PlaybackState.None;
                     break;
             }
         }
 
-        private void OnPositionChanged(MediaPlaybackSession sender, object args)
+        private void OnTimeChanged(object sender, MediaPlayerTimeChangedEventArgs args)
         {
-            //var totalSeconds = Math.Truncate(sender.Position.TotalSeconds);
-            //if (totalSeconds == _lastTotalSeconds)
-            //{
-            //    return;
-            //}
+            _positionChanged.Position = TimeSpan.FromMilliseconds(args.Time);
+            PositionChanged?.Invoke(this, _positionChanged);
+        }
 
-            //_lastTotalSeconds = totalSeconds;
-            PositionChanged?.Invoke(this, args);
+        private void OnLengthChanged(object sender, MediaPlayerLengthChangedEventArgs args)
+        {
+            _positionChanged.Duration = TimeSpan.FromMilliseconds(args.Length);
+            PositionChanged?.Invoke(this, _positionChanged);
         }
 
         private async void UpdateTransport()
         {
-            var transport = _mediaPlayer?.SystemMediaTransportControls;
+            return;
+
+            var transport = WM.SystemMediaTransportControls.GetForCurrentView();
             if (transport == null)
             {
                 return;
@@ -245,7 +248,7 @@ namespace Telegram.Services
             var items = _items;
             var item = CurrentPlayback;
 
-            if (items == null || item?.Stream?.File == null)
+            if (items == null || item == null /*|| item?.Stream?.File == null*/)
             {
                 transport.IsEnabled = false;
                 transport.DisplayUpdater.ClearAll();
@@ -261,7 +264,7 @@ namespace Telegram.Services
             void SetProperties(string title, string artist)
             {
                 transport.DisplayUpdater.ClearAll();
-                transport.DisplayUpdater.Type = MediaPlaybackType.Music;
+                transport.DisplayUpdater.Type = WM.MediaPlaybackType.Music;
 
                 try
                 {
@@ -271,19 +274,19 @@ namespace Telegram.Services
                 catch { }
             }
 
-            if (item.Stream.File.Local.IsDownloadingCompleted)
-            {
-                try
-                {
-                    var cached = await item.Message.ClientService.GetFileAsync(item.Stream.File);
-                    await transport.DisplayUpdater.CopyFromFileAsync(MediaPlaybackType.Music, cached);
-                }
-                catch
-                {
-                    SetProperties(item.Title, item.Performer);
-                }
-            }
-            else
+            //if (item.Stream.File.Local.IsDownloadingCompleted)
+            //{
+            //    try
+            //    {
+            //        var cached = await item.Message.ClientService.GetFileAsync(item.Stream.File);
+            //        await transport.DisplayUpdater.CopyFromFileAsync(WM.MediaPlaybackType.Music, cached);
+            //    }
+            //    catch
+            //    {
+            //        SetProperties(item.Title, item.Performer);
+            //    }
+            //}
+            //else
             {
                 SetProperties(item.Title, item.Performer);
             }
@@ -301,16 +304,15 @@ namespace Telegram.Services
             {
                 _currentItem = value?.Message;
                 _currentPlayback = value;
-                SourceChanged?.Invoke(this, value);
                 UpdateTransport();
             }
         }
         private MessageWithOwner _currentItem;
         public MessageWithOwner CurrentItem => _currentItem;
 
-        public TimeSpan Position => Execute(player => player.PlaybackSession?.Position ?? TimeSpan.Zero, TimeSpan.Zero);
+        public TimeSpan Position => _positionChanged.Position;
 
-        public TimeSpan Duration => Execute(player => player.PlaybackSession?.NaturalDuration ?? TimeSpan.Zero, TimeSpan.Zero);
+        public TimeSpan Duration => _positionChanged.Duration;
 
         private PlaybackState _playbackState;
         public PlaybackState PlaybackState
@@ -333,11 +335,11 @@ namespace Telegram.Services
             set
             {
                 _isRepeatEnabled = value;
-                Execute(player => player.SystemMediaTransportControls.AutoRepeatMode = _settingsService.Playback.RepeatMode = value == true
-                    ? MediaPlaybackAutoRepeatMode.List
-                    : value == null
-                    ? MediaPlaybackAutoRepeatMode.Track
-                    : MediaPlaybackAutoRepeatMode.None);
+                //Execute(player => player.SystemMediaTransportControls.AutoRepeatMode = _settingsService.Playback.RepeatMode = value == true
+                //    ? MediaPlaybackAutoRepeatMode.List
+                //    : value == null
+                //    ? MediaPlaybackAutoRepeatMode.Track
+                //    : MediaPlaybackAutoRepeatMode.None);
             }
         }
 
@@ -355,7 +357,7 @@ namespace Telegram.Services
             set
             {
                 _isShuffleEnabled = value;
-                Execute(player => player.SystemMediaTransportControls.ShuffleEnabled = value);
+                //Execute(player => player.SystemMediaTransportControls.ShuffleEnabled = value);
             }
         }
 
@@ -368,10 +370,10 @@ namespace Telegram.Services
                 _playbackSpeed = value;
                 _settingsService.Playback.PlaybackRate = value;
 
-                Execute(player =>
+                Run(player =>
                 {
-                    player.PlaybackSession.PlaybackRate = value;
-                    player.SystemMediaTransportControls.PlaybackRate = value;
+                    player.SetRate((float)value);
+                    //player.SystemMediaTransportControls.PlaybackRate = value;
                 });
             }
         }
@@ -382,74 +384,71 @@ namespace Telegram.Services
             set
             {
                 _settingsService.VolumeLevel = value;
-                Execute(player => player.Volume = value);
+                Run(player => player.Volume = (int)Math.Round(value * 100));
             }
         }
 
         public void Pause()
         {
-            Execute(player =>
+            Run(PauseImpl);
+        }
+
+        public void PauseImpl(MediaPlayer player)
+        {
+            if (player.CanPause)
             {
-                if (player.PlaybackSession.CanPause)
-                {
-                    player.Pause();
-                    PlaybackState = PlaybackState.Paused;
-                }
-            });
+                player.Pause();
+                PlaybackState = PlaybackState.Paused;
+            }
         }
 
         public void Play()
         {
+            Run(PlayImpl);
+        }
+
+        public void PlayImpl(MediaPlayer player)
+        {
             if (CurrentPlayback is PlaybackItem item)
             {
-                PlaybackSpeed = item.CanChangePlaybackRate ? _settingsService.Playback.PlaybackRate : 1;
+                _playbackSpeed = item.CanChangePlaybackRate ? _settingsService.Playback.PlaybackRate : 1;
+                player.SetRate((float)_playbackSpeed);
             }
 
-            Execute(player =>
+            if (player.State == VLCState.Ended)
             {
-                player.Play();
-                PlaybackState = PlaybackState.Playing;
+                player.Stop();
+            }
+
+            player.Play();
+            PlaybackState = PlaybackState.Playing;
+        }
+
+        private void Run(Action<MediaPlayer> action)
+        {
+            Task.Run(() =>
+            {
+                lock (_mediaPlayerLock)
+                {
+                    if (_mediaPlayer != null)
+                    {
+                        action(_mediaPlayer);
+                    }
+                }
             });
-        }
-
-        private void Execute(Action<MediaPlayer> action)
-        {
-            if (_mediaPlayer != null)
-            {
-                try
-                {
-                    action(_mediaPlayer);
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block
-                }
-            }
-        }
-
-        private T Execute<T>(Func<MediaPlayer, T> action, T defaultValue)
-        {
-            if (_mediaPlayer != null)
-            {
-                try
-                {
-                    return action(_mediaPlayer);
-                }
-                catch
-                {
-
-                }
-            }
-
-            return defaultValue;
         }
 
         public void Seek(TimeSpan span)
         {
-            Execute(player => player.PlaybackSession.Position = span);
+            Run(player => player.SeekTo(span));
         }
 
         public void MoveNext()
+        {
+            Run(MoveNextImpl);
+        }
+
+        public void MoveNextImpl(MediaPlayer player)
         {
             var items = _items;
             if (items == null)
@@ -458,18 +457,30 @@ namespace Telegram.Services
             }
 
             var index = items.IndexOf(CurrentPlayback);
-            if (index == (_isReversed ? 0 : items.Count - 1))
+            if (index == -1 || index == (_isReversed ? 0 : items.Count - 1))
             {
-                SetSource(items, _isReversed ? items.Count - 1 : 0, true);
+                if (CurrentPlayback?.Message.Content is MessageAudio && _isRepeatEnabled == true)
+                {
+                    SetSource(player, items, _isReversed ? items.Count - 1 : 0);
+                }
+                else
+                {
+                    ClearImpl(player);
+                }
             }
             else
             {
-                SetSource(items, _isReversed ? index - 1 : index + 1, true);
+                SetSource(player, items, _isReversed ? index - 1 : index + 1);
             }
         }
 
         public void MovePrevious()
         {
+            Run(MovePreviousImpl);
+        }
+
+        public void MovePreviousImpl(MediaPlayer player)
+        {
             var items = _items;
             if (items == null)
             {
@@ -477,60 +488,43 @@ namespace Telegram.Services
             }
 
             var index = items.IndexOf(CurrentPlayback);
-            if (index == (_isReversed ? items.Count - 1 : 0))
+            if (index == -1 || index == (_isReversed ? items.Count - 1 : 0))
             {
-                SetSource(items, _isReversed ? 0 : items.Count - 1, true);
+                if (CurrentPlayback?.Message.Content is MessageAudio && _isRepeatEnabled == true)
+                {
+                    SetSource(player, items, _isReversed ? 0 : items.Count - 1);
+                }
+                else
+                {
+                    ClearImpl(player);
+                }
             }
             else
             {
-                SetSource(items, _isReversed ? index + 1 : index - 1, true);
+                SetSource(player, items, _isReversed ? index + 1 : index - 1);
             }
         }
 
-        private void SetSource(List<PlaybackItem> items, int index, bool play = false)
+        private void SetSource(MediaPlayer player, List<PlaybackItem> items, int index)
         {
             if (index >= 0 && index <= items.Count - 1)
             {
-                SetSource(items[index], play);
+                SetSource(player, items[index]);
             }
         }
 
-        private async void SetSource(PlaybackItem item, bool play = false)
+        private void SetSource(MediaPlayer player, PlaybackItem item)
         {
             try
             {
-                Create();
+                player ??= Create();
 
-                if (_mediaPlayer.Source != null && _mapping.TryGetValue(_mediaPlayer.Source, out PlaybackItem prevItem))
-                {
-                    _mapping.Remove(_mediaPlayer.Source);
-                    prevItem.Dispose();
-                }
-
-                _nextToken?.Cancel();
-                _mediaPlayer.Source = null;
+                _playbackSpeed = item.CanChangePlaybackRate ? _settingsService.Playback.PlaybackRate : 1;
                 CurrentPlayback = item;
 
-                var token = _nextToken = new CancellationTokenSource();
-
-                var source = await item.GetSourceAsync();
-                if (source != null && !token.IsCancellationRequested)
-                {
-                    if (_mediaPlayer != null)
-                    {
-                        _mapping.AddOrUpdate(source, item);
-                        _mediaPlayer.Source = source;
-
-                        if (play)
-                        {
-                            Play();
-                        }
-
-                        return;
-                    }
-                }
-
-                item.Dispose();
+                player.SetRate((float)_playbackSpeed);
+                player.Play(new Media(_library, item.Stream));
+                PlaybackState = PlaybackState.Playing;
             }
             catch
             {
@@ -540,6 +534,11 @@ namespace Telegram.Services
 
         public void Clear()
         {
+            Run(ClearImpl);
+        }
+
+        public void ClearImpl(MediaPlayer player)
+        {
             PlaybackState = PlaybackState.None;
 
             //Execute.BeginOnUIThread(() => CurrentItem = null);
@@ -547,7 +546,18 @@ namespace Telegram.Services
             Dispose(true);
         }
 
-        public async void Play(MessageWithOwner message, long threadId)
+        public void Play(MessageWithOwner message, long threadId)
+        {
+            Task.Run(() =>
+            {
+                lock (_mediaPlayerLock)
+                {
+                    _ = PlayAsync(message, threadId);
+                }
+            });
+        }
+
+        public async Task PlayAsync(MessageWithOwner message, long threadId)
         {
             if (message == null)
             {
@@ -560,7 +570,7 @@ namespace Telegram.Services
                 var already = previous.FirstOrDefault(x => x.Message.Id == message.Id && x.Message.ChatId == message.ChatId);
                 if (already != null)
                 {
-                    SetSource(already, true);
+                    SetSource(null, already);
                     return;
                 }
             }
@@ -573,7 +583,7 @@ namespace Telegram.Services
             _items.Add(item);
             _threadId = threadId;
 
-            SetSource(item, true);
+            SetSource(null, item);
 
             if (message.Content is MessageText)
             {
@@ -617,9 +627,9 @@ namespace Telegram.Services
 
         private PlaybackItem GetPlaybackItem(MessageWithOwner message)
         {
-            GetProperties(message, out File file, out int duration, out bool speed);
+            GetProperties(message, out File file, out bool speed);
 
-            var stream = new RemoteFileStream(message.ClientService, file, duration);
+            var stream = new RemoteInputStream(message.ClientService, file);
             var item = new PlaybackItem(stream)
             {
                 Message = message,
@@ -643,28 +653,24 @@ namespace Telegram.Services
             return item;
         }
 
-        private void GetProperties(MessageWithOwner message, out File file, out int duration, out bool speed)
+        private void GetProperties(MessageWithOwner message, out File file, out bool speed)
         {
             file = null;
-            duration = 0;
             speed = false;
 
             if (message.Content is MessageAudio audio)
             {
                 file = audio.Audio.AudioValue;
-                duration = audio.Audio.Duration;
-                speed = duration >= 10 * 60;
+                speed = audio.Audio.Duration >= 10 * 60;
             }
             else if (message.Content is MessageVoiceNote voiceNote)
             {
                 file = voiceNote.VoiceNote.Voice;
-                duration = voiceNote.VoiceNote.Duration;
                 speed = true;
             }
             else if (message.Content is MessageVideoNote videoNote)
             {
                 file = videoNote.VideoNote.Video;
-                duration = videoNote.VideoNote.Duration;
                 speed = true;
             }
             else if (message.Content is MessageText text && text.WebPage != null)
@@ -672,19 +678,16 @@ namespace Telegram.Services
                 if (text.WebPage.Audio != null)
                 {
                     file = text.WebPage.Audio.AudioValue;
-                    duration = text.WebPage.Audio.Duration;
-                    speed = duration >= 10 * 60;
+                    speed = text.WebPage.Audio.Duration >= 10 * 60;
                 }
                 else if (text.WebPage.VoiceNote != null)
                 {
                     file = text.WebPage.VoiceNote.Voice;
-                    duration = text.WebPage.VoiceNote.Duration;
                     speed = true;
                 }
                 else if (text.WebPage.VideoNote != null)
                 {
                     file = text.WebPage.VideoNote.Video;
-                    duration = text.WebPage.VideoNote.Duration;
                     speed = true;
                 }
             }
@@ -694,17 +697,18 @@ namespace Telegram.Services
         {
             if (_mediaPlayer != null)
             {
-                _mediaPlayer.Source = null;
-                _mediaPlayer.CommandManager.IsEnabled = false;
+                _mediaPlayer.Stop();
+                //_mediaPlayer.CommandManager.IsEnabled = false;
 
                 if (full)
                 {
-                    _mediaPlayer.SystemMediaTransportControls.ButtonPressed -= Transport_ButtonPressed;
-                    _mediaPlayer.PlaybackSession.PlaybackStateChanged -= OnPlaybackStateChanged;
-                    _mediaPlayer.PlaybackSession.PositionChanged -= OnPositionChanged;
-                    _mediaPlayer.MediaFailed -= OnMediaFailed;
-                    _mediaPlayer.MediaEnded -= OnMediaEnded;
-                    _mediaPlayer.SourceChanged -= OnSourceChanged;
+                    //_mediaPlayer.SystemMediaTransportControls.ButtonPressed -= Transport_ButtonPressed;
+                    //_mediaPlayer.PlaybackSession.PlaybackStateChanged -= OnPlaybackStateChanged;
+                    _mediaPlayer.TimeChanged -= OnTimeChanged;
+                    _mediaPlayer.LengthChanged -= OnLengthChanged;
+                    _mediaPlayer.EncounteredError -= OnEncounteredError;
+                    _mediaPlayer.EndReached -= OnEndReached;
+                    _mediaPlayer.MediaChanged -= OnMediaChanged;
                     _mediaPlayer.Dispose();
 
                     _mediaPlayer = null;
@@ -716,85 +720,83 @@ namespace Telegram.Services
                 foreach (var item in _items)
                 {
                     item.Dispose();
-                    item.Stream.Dispose();
+                    //item.Stream.Dispose();
                 }
 
                 _items = null;
             }
-
-            _nextToken?.Cancel();
-            _mapping?.Clear();
         }
 
-        private void Create()
+        private MediaPlayer Create()
         {
             if (_mediaPlayer == null)
             {
-                _mediaPlayer = new MediaPlayer();
-                _mediaPlayer.SystemMediaTransportControls.AutoRepeatMode = _settingsService.Playback.RepeatMode;
-                _mediaPlayer.SystemMediaTransportControls.ButtonPressed += Transport_ButtonPressed;
-                _mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
-                _mediaPlayer.PlaybackSession.PositionChanged += OnPositionChanged;
-                _mediaPlayer.MediaFailed += OnMediaFailed;
-                _mediaPlayer.MediaEnded += OnMediaEnded;
-                _mediaPlayer.SourceChanged += OnSourceChanged;
-                _mediaPlayer.CommandManager.IsEnabled = false;
-                _mediaPlayer.Volume = _settingsService.VolumeLevel;
+                _library = new LibVLC();
+                //_library.Log += _library_Log;
+
+                _mediaPlayer = new MediaPlayer(_library);
+                _mediaPlayer.SetAudioOutput("winstore");
+                //_mediaPlayer.SystemMediaTransportControls.AutoRepeatMode = _settingsService.Playback.RepeatMode;
+                //_mediaPlayer.SystemMediaTransportControls.ButtonPressed += Transport_ButtonPressed;
+                //_mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+                _mediaPlayer.TimeChanged += OnTimeChanged;
+                _mediaPlayer.LengthChanged += OnLengthChanged;
+                _mediaPlayer.EncounteredError += OnEncounteredError;
+                _mediaPlayer.EndReached += OnEndReached;
+                _mediaPlayer.MediaChanged += OnMediaChanged;
+                //_mediaPlayer.CommandManager.IsEnabled = false;
+                _mediaPlayer.Volume = (int)Math.Round(_settingsService.VolumeLevel * 100);
+            }
+
+            return _mediaPlayer;
+        }
+
+        private static readonly Regex _videoLooking = new("using (.*?) module \"(.*?)\" from (.*?)$", RegexOptions.Compiled);
+        private static readonly object _syncObject = new();
+
+        private void _library_Log(object sender, LogEventArgs e)
+        {
+            Debug.WriteLine(e.FormattedLog);
+
+            lock (_syncObject)
+            {
+                var match = _videoLooking.Match(e.FormattedLog);
+                if (match.Success)
+                {
+                    System.IO.File.AppendAllText(ApplicationData.Current.LocalFolder.Path + "\\vlc.txt", string.Format("{2}\n", match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value));
+                }
             }
         }
     }
 
     public class PlaybackItem
     {
-        private FFmpegMediaSource _ffmpeg;
-        private IMediaPlaybackSource _source;
-
         public MessageWithOwner Message { get; set; }
 
-        public RemoteFileStream Stream { get; set; }
+        public RemoteInputStream Stream { get; set; }
 
         public string Title { get; set; }
         public string Performer { get; set; }
 
         public bool CanChangePlaybackRate { get; set; }
 
-        public PlaybackItem(RemoteFileStream stream)
+        public PlaybackItem(RemoteInputStream stream)
         {
             Stream = stream;
-        }
-
-        public async Task<IMediaPlaybackSource> GetSourceAsync()
-        {
-            try
-            {
-                if (_source == null)
-                {
-                    _ffmpeg = await FFmpegMediaSource.CreateFromStreamAsync(Stream);
-                    _source = _ffmpeg.CreateMediaPlaybackItem();
-                }
-
-                return _source;
-            }
-            catch
-            {
-                Dispose();
-                return null;
-            }
         }
 
         public void Dispose()
         {
             try
             {
-                _ffmpeg?.Dispose();
+                Stream?.Dispose();
             }
             catch
             {
                 Logger.Error();
             }
 
-            _ffmpeg = null;
-            _source = null;
+            Stream = null;
         }
     }
 }
