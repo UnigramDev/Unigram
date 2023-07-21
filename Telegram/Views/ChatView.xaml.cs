@@ -25,6 +25,7 @@ using Telegram.Controls.Chats;
 using Telegram.Controls.Gallery;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
+using Telegram.Controls.Stories;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -35,6 +36,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
+using Telegram.ViewModels.Stories;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Windows.ApplicationModel;
@@ -3178,7 +3180,7 @@ namespace Telegram.Views
             Messages.SetScrollingMode();
         }
 
-        private void ServiceMessage_Click(object sender, RoutedEventArgs e)
+        private async void ServiceMessage_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as FrameworkElement;
             var message = button.Tag as MessageViewModel;
@@ -3188,7 +3190,42 @@ namespace Telegram.Views
                 return;
             }
 
-            ViewModel.ExecuteServiceMessage(message);
+            if (message.Content is MessageAsyncStory asyncStory)
+            {
+                var segments = button.FindName("Segments") as ActiveStoriesSegments;
+                if (segments != null)
+                {
+                    var transform = segments.TransformToVisual(Window.Current.Content);
+                    var point = transform.TransformPoint(new Windows.Foundation.Point());
+
+                    var origin = new Rect(point.X + 4, point.Y + 4, 112, 112);
+
+                    var item = asyncStory.Story;
+                    item ??= await _viewModel.ClientService.SendAsync(new GetStory(asyncStory.StorySenderChatId, asyncStory.StoryId, true)) as Story;
+
+                    var story = new StoryViewModel(message.ClientService, item);
+                    var activeStories = new ActiveStoriesViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, story);
+
+                    var viewModel = new StoryListViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, activeStories);
+                    viewModel.NavigationService = _viewModel.NavigationService;
+
+                    var window = new StoriesWindow();
+                    window.Update(viewModel, activeStories, StoryOrigin.Mention, origin, _ =>
+                    {
+                        var transform = segments.TransformToVisual(Window.Current.Content);
+                        var point = transform.TransformPoint(new Windows.Foundation.Point());
+
+                        return new Rect(point.X + 4, point.Y + 4, 112, 112);
+                    });
+
+                    _ = window.ShowAsync();
+
+                }
+            }
+            else
+            {
+                ViewModel.ExecuteServiceMessage(message);
+            }
         }
 
         private void Autocomplete_ChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)

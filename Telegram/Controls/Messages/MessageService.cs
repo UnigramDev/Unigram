@@ -98,7 +98,8 @@ namespace Telegram.Controls.Messages
         {
             if (message.Content is MessageChatChangePhoto chatChangePhoto)
             {
-                var photo = FindName("Photo") as ProfilePicture;
+                var segments = FindName("Segments") as ActiveStoriesSegments;
+                var photo = segments.Content as ProfilePicture;
                 var view = FindName("View") as Border;
 
                 Width = 216;
@@ -106,6 +107,7 @@ namespace Telegram.Controls.Messages
                 photo.Visibility = Visibility.Visible;
                 view.Visibility = Visibility.Visible;
 
+                segments.SetChat(null, null, 120);
                 photo.SetChatPhoto(message.ClientService, chatChangePhoto.Photo, 120);
 
                 if (view.Child is TextBlock label)
@@ -117,7 +119,8 @@ namespace Telegram.Controls.Messages
             }
             else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
             {
-                var photo = FindName("Photo") as ProfilePicture;
+                var segments = FindName("Segments") as ActiveStoriesSegments;
+                var photo = segments.Content as ProfilePicture;
                 var view = FindName("View") as Border;
 
                 Width = 216;
@@ -125,6 +128,7 @@ namespace Telegram.Controls.Messages
                 photo.Visibility = Visibility.Visible;
                 view.Visibility = Visibility.Visible;
 
+                segments.SetChat(null, null, 120);
                 photo.SetChatPhoto(message.ClientService, suggestProfilePhoto.Photo, 120);
 
                 if (view.Child is TextBlock label)
@@ -136,7 +140,8 @@ namespace Telegram.Controls.Messages
             }
             else if (message.Content is MessageAsyncStory story)
             {
-                var photo = FindName("Photo") as ProfilePicture;
+                var segments = FindName("Segments") as ActiveStoriesSegments;
+                var photo = segments.Content as ProfilePicture;
                 var view = FindName("View") as Border;
 
                 if (story.State == MessageStoryState.Expired)
@@ -153,14 +158,23 @@ namespace Telegram.Controls.Messages
                     photo.Visibility = Visibility.Visible;
                     view.Visibility = Visibility.Visible;
 
-                    //if (story.Story == null)
+                    if (message.ClientService.TryGetUser(message.SenderId, out User user) && message.ClientService.TryGetActiveStoriesFromUser(user.Id, out ChatActiveStories activeStories))
+                    {
+                        segments.UpdateSegments(120, story.Story?.PrivacySettings is StoryPrivacySettingsCloseFriends, activeStories.MaxReadStoryId < story.StoryId);
+                    }
+                    else
+                    {
+                        segments.UpdateSegments(120, story.Story?.PrivacySettings is StoryPrivacySettingsCloseFriends, false);
+                    }
+
+                    if (story.Story == null)
                     {
                         photo.SetChat(message.ClientService, message.Chat, 120);
                     }
-                    //else
-                    //{
-                    //    photo.SetStory(message.ClientService, story.Story, 120);
-                    //}
+                    else
+                    {
+                        photo.SetStory(message.ClientService, story.Story, 120);
+                    }
 
                     if (view.Child is TextBlock label)
                     {

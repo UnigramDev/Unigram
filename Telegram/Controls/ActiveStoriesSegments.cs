@@ -169,6 +169,20 @@ namespace Telegram.Controls
             }
         }
 
+        public void UpdateSegments(int side, bool closeFriends, bool unread)
+        {
+            if (Content is UIElement elementa && !_hasActiveStories)
+            {
+                var visual = ElementCompositionPreview.GetElementVisual(elementa);
+                visual.CenterPoint = new Vector3(side / 2);
+                visual.Scale = new Vector3((side - 8f) / side);
+            }
+
+            _hasActiveStories = true;
+
+            UpdateSegments(side, closeFriends, 1, unread ? 1 : 0);
+        }
+
         private void UpdateSegments(int side, bool closeFriends, int total, int unread, bool precise = true)
         {
             var compositor = Window.Current.Compositor;

@@ -1,18 +1,14 @@
 <UserControl x:Class="Telegram.Views.ChatView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Telegram.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:icons="using:Telegram.Assets.Icons"
              xmlns:common="using:Telegram.Common"
              xmlns:controls="using:Telegram.Controls"
              xmlns:chats="using:Telegram.Controls.Chats"
              xmlns:messages="using:Telegram.Controls.Messages"
              xmlns:selectors="using:Telegram.Selectors"
-             xmlns:icons="using:Telegram.Assets.Icons"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:contract7Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
-             xmlns:contract8Present="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
-             xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
              mc:Ignorable="d"
              Loaded="OnLoaded"
              Unloaded="OnUnloaded"
@@ -174,7 +170,7 @@
                                           IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
                                           BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
                                           AutomationProperties.AccessibilityView="Raw"
-                                          contract7Present:CanContentRenderOutsideBounds="True">
+                                          CanContentRenderOutsideBounds="True">
                                 <ItemsPresenter Header="{TemplateBinding Header}"
                                                 HeaderTemplate="{TemplateBinding HeaderTemplate}"
                                                 HeaderTransitions="{TemplateBinding HeaderTransitions}"
@@ -200,11 +196,17 @@
                                      Padding="12,2,12,0"
                                      Width="216">
                 <StackPanel>
-                    <controls:ProfilePicture x:Name="Photo"
-                                             IsEnabled="False"
-                                             Width="120"
-                                             Height="120"
-                                             Margin="0,10,0,12" />
+                    <controls:ActiveStoriesSegments x:Name="Segments"
+                                                    IsClickEnabled="False"
+                                                    IsEnabled="False"
+                                                    Width="120"
+                                                    Height="120"
+                                                    Margin="0,10,0,12">
+                        <controls:ProfilePicture x:Name="Photo"
+                                                 IsEnabled="False"
+                                                 Width="120"
+                                                 Height="120" />
+                    </controls:ActiveStoriesSegments>
 
                     <controls:FormattedTextBlock x:Name="Text"
                                                  Foreground="White"
@@ -420,12 +422,17 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <controls:ProfilePicture x:Name="Photo"
-                                         Click="Photo_Click"
-                                         AutomationProperties.Name="{CustomResource AccDescrProfilePicture}"
-                                         Width="36"
-                                         Height="36"
-                                         HorizontalAlignment="Center" />
+                <controls:BackButton x:Name="BackButton"
+                                     RenderTransformOrigin="0.5,0.5"
+                                     Margin="4,0,-8,0"
+                                     CornerRadius="20"
+                                     Glyph="&#xe93e;">
+                    <Button.RenderTransform>
+                        <ScaleTransform ScaleX="0.8"
+                                        ScaleY="0.8" />
+                    </Button.RenderTransform>
+                </controls:BackButton>
+
                 <controls:ActiveStoriesSegments x:Name="Segments"
                                                 Click="Segments_Click"
                                                 Width="36"
@@ -1013,7 +1020,6 @@
                         <chats:ChatTextBox x:Name="TextField"
                                            FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                            Background="Transparent"
-                                           Messages="{x:Bind Messages}"
                                            ControlledList="{x:Bind ListAutocomplete}"
                                            CreateLinkTarget="{x:Bind ButtonAttach}"
                                            IsMenuExpanded="{x:Bind ButtonMore.IsChecked, Mode=OneWay}"
