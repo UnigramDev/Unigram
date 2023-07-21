@@ -271,13 +271,13 @@ namespace Telegram.Controls
             var compositor = Window.Current.Compositor;
 
             var center = new Vector2(side * 0.5f);
-            var clip = compositor.CreateRectangleClip(0, 0, side, side, center, center, center, center);
+            //var clip = compositor.CreateRectangleClip(0, 0, side, side, center, center, center, center);
 
             var indefiniteReplicatorLayer = compositor.CreateShapeVisual();
             indefiniteReplicatorLayer.Size = new Vector2(side, side);
             //indefiniteReplicatorLayer.RotationAngle = -MathF.PI;
             indefiniteReplicatorLayer.CenterPoint = new Vector3(center, 0);
-            indefiniteReplicatorLayer.Clip = clip;
+            //indefiniteReplicatorLayer.Clip = clip;
 
             var count = 1.0f / 0.0333f;
             var angle = (2.0f * MathF.PI) / count;
