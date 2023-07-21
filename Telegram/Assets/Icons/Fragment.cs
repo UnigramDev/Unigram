@@ -120,24 +120,24 @@ namespace Telegram.Assets.Icons
 
             if (Icon_1_AnimatedVisual_UAPv11.IsRuntimeCompatible())
             {
-                var res = 
+                var res =
                     new Icon_1_AnimatedVisual_UAPv11(
                         compositor,
                         _themeProperties
                         );
-                    res.CreateAnimations();
-                    return res;
+                res.CreateAnimations();
+                return res;
             }
 
             if (Icon_1_AnimatedVisual_UAPv7.IsRuntimeCompatible())
             {
-                var res = 
+                var res =
                     new Icon_1_AnimatedVisual_UAPv7(
                         compositor,
                         _themeProperties
                         );
-                    res.CreateAnimations();
-                    return res;
+                res.CreateAnimations();
+                return res;
             }
 
             return null;
@@ -1000,7 +1000,7 @@ namespace Telegram.Assets.Icons
             {
                 // Offset:<256, 256>
                 var geometry = PathGeometry_0();
-                var result = CreateSpriteShape(geometry, new Matrix3x2(1F, 0F, 0F, 1F, 256F, 256F), ThemeColor_Color_000000_0());;
+                var result = CreateSpriteShape(geometry, new Matrix3x2(1F, 0F, 0F, 1F, 256F, 256F), ThemeColor_Color_000000_0()); ;
                 return result;
             }
 
@@ -1010,7 +1010,7 @@ namespace Telegram.Assets.Icons
             {
                 // Offset:<256, 256>
                 var geometry = PathGeometry_1();
-                var result = CreateSpriteShape(geometry, new Matrix3x2(1F, 0F, 0F, 1F, 256F, 256F), ThemeColor_Color_000000_0());;
+                var result = CreateSpriteShape(geometry, new Matrix3x2(1F, 0F, 0F, 1F, 256F, 256F), ThemeColor_Color_000000_0()); ;
                 return result;
             }
 
@@ -1593,7 +1593,7 @@ namespace Telegram.Assets.Icons
             {
                 // Offset:<256, 256>
                 var geometry = PathGeometry_0();
-                var result = CreateSpriteShape(geometry, new Matrix3x2(1F, 0F, 0F, 1F, 256F, 256F), ThemeColor_Color_000000_0());;
+                var result = CreateSpriteShape(geometry, new Matrix3x2(1F, 0F, 0F, 1F, 256F, 256F), ThemeColor_Color_000000_0()); ;
                 return result;
             }
 
@@ -1603,7 +1603,7 @@ namespace Telegram.Assets.Icons
             {
                 // Offset:<256, 256>
                 var geometry = PathGeometry_1();
-                var result = CreateSpriteShape(geometry, new Matrix3x2(1F, 0F, 0F, 1F, 256F, 256F), ThemeColor_Color_000000_0());;
+                var result = CreateSpriteShape(geometry, new Matrix3x2(1F, 0F, 0F, 1F, 256F, 256F), ThemeColor_Color_000000_0()); ;
                 return result;
             }
 

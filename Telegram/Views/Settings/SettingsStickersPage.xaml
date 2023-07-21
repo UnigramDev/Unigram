@@ -163,15 +163,15 @@
                         </Grid.RowDefinitions>
 
                         <controls:AnimatedImage x:Name="Player"
-                                                 AutoPlay="False"
-                                                 LimitFps="True"
-                                                 FrameSize="36,36"
-                                                 DecodeFrameType="Logical"
-                                                 Width="36"
-                                                 Height="36"
-                                                 Margin="0,0,8,0"
-                                                 VerticalAlignment="Top"
-                                                 Grid.RowSpan="2" />
+                                                AutoPlay="False"
+                                                LimitFps="True"
+                                                FrameSize="36,36"
+                                                DecodeFrameType="Logical"
+                                                Width="36"
+                                                Height="36"
+                                                Margin="0,0,8,0"
+                                                VerticalAlignment="Top"
+                                                Grid.RowSpan="2" />
 
                         <TextBlock VerticalAlignment="Bottom"
                                    Style="{StaticResource BodyTextBlockStyle}"

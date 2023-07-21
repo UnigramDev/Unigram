@@ -1,59 +1,87 @@
-﻿<UserControl
-    x:Class="Telegram.Controls.UndoView"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Telegram.Controls"
-    xmlns:mux="using:Microsoft.UI.Xaml.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    d:DesignHeight="120"
-    d:DesignWidth="400"
-    RequestedTheme="Dark"
-    IsEnabled="False"
-    Margin="0,0,0,-60"
-    IsTabStop="False">
+﻿<UserControl x:Class="Telegram.Controls.UndoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mux="using:Microsoft.UI.Xaml.Controls"
+             xmlns:local="using:Telegram.Controls"
+             mc:Ignorable="d"
+             d:DesignHeight="120"
+             d:DesignWidth="400"
+             RequestedTheme="Dark"
+             IsEnabled="False"
+             Margin="0,0,0,-60"
+             IsTabStop="False">
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="60" />
+            <RowDefinition Height="60" />
         </Grid.RowDefinitions>
         <Grid.ChildrenTransitions>
             <TransitionCollection>
-                <RepositionThemeTransition/>
+                <RepositionThemeTransition />
             </TransitionCollection>
         </Grid.ChildrenTransitions>
 
-        <Grid x:Name="LayoutRoot" Background="{ThemeResource UndoViewBackgroundBrush}" Margin="12,0,12,12" CornerRadius="12" Grid.Row="1">
+        <Grid x:Name="LayoutRoot"
+              Background="{ThemeResource UndoViewBackgroundBrush}"
+              Margin="12,0,12,12"
+              CornerRadius="12"
+              Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="48"/>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="48"/>
+                <ColumnDefinition Width="48" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="48" />
             </Grid.ColumnDefinitions>
-            <ContentControl x:Name="Remaining" Content="5" Height="32" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" IsTabStop="False">
+            <ContentControl x:Name="Remaining"
+                            Content="5"
+                            Height="32"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            IsTabStop="False">
                 <ContentControl.ContentTransitions>
                     <TransitionCollection>
-                        <EntranceThemeTransition/>
+                        <EntranceThemeTransition />
                     </TransitionCollection>
                 </ContentControl.ContentTransitions>
                 <ContentControl.ContentTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding}" TextLineBounds="Tight" Style="{StaticResource BaseTextBlockStyle}"/>
+                        <TextBlock Text="{Binding}"
+                                   TextLineBounds="Tight"
+                                   Style="{StaticResource BaseTextBlockStyle}" />
                     </DataTemplate>
                 </ContentControl.ContentTemplate>
                 <ContentControl.Clip>
-                    <RectangleGeometry Rect="0,0,48,32"/>
+                    <RectangleGeometry Rect="0,0,48,32" />
                 </ContentControl.Clip>
             </ContentControl>
-            <local:SelfDestructTimer x:Name="Slice" Background="Transparent" Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}" Center="18" Radius="17" Width="36" Height="36" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <local:SelfDestructTimer x:Name="Slice"
+                                     Background="Transparent"
+                                     Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                     Center="18"
+                                     Radius="17"
+                                     Width="36"
+                                     Height="36"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center" />
 
-            <mux:AnimatedVisualPlayer x:Name="Player" AutoPlay="False" Width="36" Height="36" />
+            <mux:AnimatedVisualPlayer x:Name="Player"
+                                      AutoPlay="False"
+                                      Width="36"
+                                      Height="36" />
 
-            <TextBlock x:Name="Text" Margin="6,0,0,0" VerticalAlignment="Center" Style="{StaticResource BaseTextBlockStyle}" Grid.Column="1"/>
+            <TextBlock x:Name="Text"
+                       Margin="6,0,0,0"
+                       VerticalAlignment="Center"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       Grid.Column="1" />
 
-            <local:GlyphButton Click="Undo_Click" Glyph="&#xE7A7;" IsTabStop="False" Grid.Column="3"/>
+            <local:GlyphButton Click="Undo_Click"
+                               Glyph="&#xE7A7;"
+                               IsTabStop="False"
+                               Grid.Column="3" />
         </Grid>
     </Grid>
 </UserControl>

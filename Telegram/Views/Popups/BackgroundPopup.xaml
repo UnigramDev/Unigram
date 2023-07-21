@@ -1,16 +1,12 @@
 ﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.BackgroundPopup"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:local="using:Telegram.Views"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:common="using:Telegram.Common"
                        xmlns:controls="using:Telegram.Controls"
-                       xmlns:messages="using:Telegram.Controls.Messages"
                        xmlns:chats="using:Telegram.Controls.Chats"
-                       xmlns:selectors="using:Telegram.Selectors"
-                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-                       xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:messages="using:Telegram.Controls.Messages"
                        mc:Ignorable="d"
                        Background="Black"
                        VerticalContentAlignment="Stretch">
@@ -592,10 +588,10 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <chats:ChatBackgroundPresenter x:Name="Preview"
-                                      Tag="{x:Bind ConvertBackground(ViewModel.Item), Mode=OneWay}"
-                                      CornerRadius="6"
-                                      Margin="0,-24,0,0"
-                                      Grid.RowSpan="3" />
+                                       Tag="{x:Bind ConvertBackground(ViewModel.Item), Mode=OneWay}"
+                                       CornerRadius="6"
+                                       Margin="0,-24,0,0"
+                                       Grid.RowSpan="3" />
 
         <Grid x:Name="ContentPanel"
               Grid.Row="1">
@@ -847,7 +843,7 @@
                     <GridView.ItemTemplate>
                         <DataTemplate>
                             <chats:ChatBackgroundPresenter Width="72"
-                                                          Height="72" />
+                                                           Height="72" />
                         </DataTemplate>
                     </GridView.ItemTemplate>
                     <GridView.ItemsPanel>

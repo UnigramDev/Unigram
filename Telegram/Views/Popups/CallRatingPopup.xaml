@@ -1,48 +1,42 @@
-<controls:ContentPopup
-    x:Class="Telegram.Views.Popups.CallRatingPopup"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Telegram.Views.Popups"
-    xmlns:controls="using:Telegram.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    Title="Telegram"
-    PrimaryButtonText="OK"
-    SecondaryButtonText="Cancel"
-    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+<controls:ContentPopup x:Class="Telegram.Views.Popups.CallRatingPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
+                       mc:Ignorable="d"
+                       Title="Telegram"
+                       PrimaryButtonText="OK"
+                       SecondaryButtonText="Cancel"
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
 
     <StackPanel>
-        <TextBlock
-            Text="{CustomResource VoipRateCallAlert}"
-            Style="{StaticResource BodyTextBlockStyle}"/>
-        
-        <controls:RatingBar
-            x:Name="RatingBar"
-            FontSize="28"
-            Padding="3,8"
-            Margin="0,12"
-            HorizontalAlignment="Center"
-            ValueChanged="RatingBar_ValueChanged"/>
-        
+        <TextBlock Text="{CustomResource VoipRateCallAlert}"
+                   Style="{StaticResource BodyTextBlockStyle}" />
+
+        <controls:RatingBar x:Name="RatingBar"
+                            FontSize="28"
+                            Padding="3,8"
+                            Margin="0,12"
+                            HorizontalAlignment="Center"
+                            ValueChanged="RatingBar_ValueChanged" />
+
         <Border MinHeight="{ThemeResource TextControlThemeMinHeight}">
-            <TextBox
-                x:Name="CommentField"
-                Visibility="Collapsed"/>
+            <TextBox x:Name="CommentField"
+                     Visibility="Collapsed" />
         </Border>
 
-        <StackPanel x:Name="Debug" Visibility="Collapsed">
-            <CheckBox
-                x:Name="DebugLogs"
-                Content="{CustomResource CallReportIncludeLogs}"
-                Margin="0,8,0,0"/>
-            <TextBlock
-                Text="{CustomResource CallReportLogsExplain}" 
-                Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                Margin="0,8,0,0"
-                Style="{StaticResource CaptionTextBlockStyle}"
-                Grid.Row="6"/>
+        <StackPanel x:Name="Debug"
+                    Visibility="Collapsed">
+            <CheckBox x:Name="DebugLogs"
+                      Content="{CustomResource CallReportIncludeLogs}"
+                      Margin="0,8,0,0" />
+            <TextBlock Text="{CustomResource CallReportLogsExplain}"
+                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                       Margin="0,8,0,0"
+                       Style="{StaticResource CaptionTextBlockStyle}"
+                       Grid.Row="6" />
         </StackPanel>
     </StackPanel>
 </controls:ContentPopup>

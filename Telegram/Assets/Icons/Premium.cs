@@ -82,12 +82,12 @@ namespace Telegram.Assets.Icons
 
             if (Premium_AnimatedVisual.IsRuntimeCompatible())
             {
-                var res = 
+                var res =
                     new Premium_AnimatedVisual(
                         compositor
                         );
-                    res.CreateAnimations();
-                    return res;
+                res.CreateAnimations();
+                return res;
             }
 
             return null;
@@ -283,7 +283,7 @@ namespace Telegram.Assets.Icons
             {
                 // Scale:<10, 10>
                 var geometry = PathGeometry();
-                var result = CreateSpriteShape(geometry, new Matrix3x2(10F, 0F, 0F, 10F, 0F, 0F), LinearGradientBrush());;
+                var result = CreateSpriteShape(geometry, new Matrix3x2(10F, 0F, 0F, 10F, 0F, 0F), LinearGradientBrush()); ;
                 return result;
             }
 

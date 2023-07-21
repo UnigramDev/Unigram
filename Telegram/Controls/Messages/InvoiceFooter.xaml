@@ -1,16 +1,15 @@
-<ContentPresenter
-    x:Class="Telegram.Controls.Messages.InvoiceFooter"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Telegram.Controls.Messages"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    CornerRadius="{ThemeResource MessageServiceCornerRadius}"
-    d:DesignHeight="300"
-    d:DesignWidth="400">
+<ContentPresenter x:Class="Telegram.Controls.Messages.InvoiceFooter"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  mc:Ignorable="d"
+                  CornerRadius="{ThemeResource MessageServiceCornerRadius}"
+                  d:DesignHeight="300"
+                  d:DesignWidth="400">
 
     <TextBlock Style="{StaticResource CaptionTextBlockStyle}">
-        <Run x:Name="Amount" FontWeight="SemiBold"/><Run x:Name="Label"/>
+        <Run x:Name="Amount"
+             FontWeight="SemiBold" /><Run x:Name="Label" />
     </TextBlock>
 </ContentPresenter>

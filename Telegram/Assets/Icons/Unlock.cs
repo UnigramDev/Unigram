@@ -120,13 +120,13 @@ namespace Telegram.Assets.Icons
 
             if (Unlock_AnimatedVisual.IsRuntimeCompatible())
             {
-                var res = 
+                var res =
                     new Unlock_AnimatedVisual(
                         compositor,
                         _themeProperties
                         );
-                    res.CreateAnimations();
-                    return res;
+                res.CreateAnimations();
+                return res;
             }
 
             return null;

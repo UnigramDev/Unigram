@@ -122,13 +122,13 @@ namespace Telegram.Assets.Icons
 
             if (EmojiToSticker_AnimatedVisual_UAPv11.IsRuntimeCompatible())
             {
-                var res = 
+                var res =
                     new EmojiToSticker_AnimatedVisual_UAPv11(
                         compositor,
                         _themeProperties
                         );
-                    res.CreateAnimations();
-                    return res;
+                res.CreateAnimations();
+                return res;
             }
 
             return null;
@@ -503,7 +503,7 @@ namespace Telegram.Assets.Icons
             CompositionSpriteShape SpriteShape_0()
             {
                 // Offset:<120, 120>, Scale:<10, 10>
-                var result = CreateSpriteShape(PathGeometry_0(), new Matrix3x2(10F, 0F, 0F, 10F, 120F, 120F));;
+                var result = CreateSpriteShape(PathGeometry_0(), new Matrix3x2(10F, 0F, 0F, 10F, 120F, 120F)); ;
                 result.StrokeBrush = ThemeColor_Color_000000();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -520,7 +520,7 @@ namespace Telegram.Assets.Icons
             {
                 // Offset:<167.5, 167.5>, Scale:<10, 10>
                 if (_spriteShape_1 != null) { return _spriteShape_1; }
-                var result = _spriteShape_1 = CreateSpriteShape(PathGeometry_1(), new Matrix3x2(10F, 0F, 0F, 10F, 167.5F, 167.5F));;
+                var result = _spriteShape_1 = CreateSpriteShape(PathGeometry_1(), new Matrix3x2(10F, 0F, 0F, 10F, 167.5F, 167.5F)); ;
                 result.StrokeBrush = ThemeColor_Color_000000();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -536,7 +536,7 @@ namespace Telegram.Assets.Icons
             {
                 // Offset:<167.5, 167.5>
                 var geometry = PathGeometry_2();
-                var result = CreateSpriteShape(geometry, new Matrix3x2(1F, 0F, 0F, 1F, 167.5F, 167.5F), ColorBrush_Black());;
+                var result = CreateSpriteShape(geometry, new Matrix3x2(1F, 0F, 0F, 1F, 167.5F, 167.5F), ColorBrush_Black()); ;
                 return result;
             }
 
@@ -547,7 +547,7 @@ namespace Telegram.Assets.Icons
                 // Offset:<90, 90>, Scale:<10, 10>
                 var geometry = PathGeometry_3();
                 if (_spriteShape_3 != null) { return _spriteShape_3; }
-                var result = _spriteShape_3 = CreateSpriteShape(geometry, new Matrix3x2(10F, 0F, 0F, 10F, 90F, 90F), ThemeColor_Color_000000());;
+                var result = _spriteShape_3 = CreateSpriteShape(geometry, new Matrix3x2(10F, 0F, 0F, 10F, 90F, 90F), ThemeColor_Color_000000()); ;
                 return result;
             }
 
@@ -558,7 +558,7 @@ namespace Telegram.Assets.Icons
                 // Offset:<150, 90>, Scale:<10, 10>
                 var geometry = PathGeometry_3();
                 if (_spriteShape_4 != null) { return _spriteShape_4; }
-                var result = _spriteShape_4 = CreateSpriteShape(geometry, new Matrix3x2(10F, 0F, 0F, 10F, 150F, 90F), ThemeColor_Color_000000());;
+                var result = _spriteShape_4 = CreateSpriteShape(geometry, new Matrix3x2(10F, 0F, 0F, 10F, 150F, 90F), ThemeColor_Color_000000()); ;
                 return result;
             }
 
@@ -568,7 +568,7 @@ namespace Telegram.Assets.Icons
             {
                 // Offset:<120, 152.5>, Scale:<10, 10>
                 if (_spriteShape_5 != null) { return _spriteShape_5; }
-                var result = _spriteShape_5 = CreateSpriteShape(PathGeometry_4(), new Matrix3x2(10F, 0F, 0F, 10F, 120F, 152.5F));;
+                var result = _spriteShape_5 = CreateSpriteShape(PathGeometry_4(), new Matrix3x2(10F, 0F, 0F, 10F, 120F, 152.5F)); ;
                 result.StrokeBrush = ThemeColor_Color_000000();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;

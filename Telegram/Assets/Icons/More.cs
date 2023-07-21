@@ -114,24 +114,24 @@ namespace Telegram.Assets.Icons
 
             if (More_AnimatedVisual_UAPv15.IsRuntimeCompatible())
             {
-                var res = 
+                var res =
                     new More_AnimatedVisual_UAPv15(
                         compositor,
                         _themeProperties
                         );
-                    res.CreateAnimations();
-                    return res;
+                res.CreateAnimations();
+                return res;
             }
 
             if (More_AnimatedVisual_UAPv7.IsRuntimeCompatible())
             {
-                var res = 
+                var res =
                     new More_AnimatedVisual_UAPv7(
                         compositor,
                         _themeProperties
                         );
-                    res.CreateAnimations();
-                    return res;
+                res.CreateAnimations();
+                return res;
             }
 
             return null;

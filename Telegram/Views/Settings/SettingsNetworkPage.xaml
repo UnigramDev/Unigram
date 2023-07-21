@@ -1,14 +1,11 @@
 <local:HostedPage x:Class="Telegram.Views.Settings.SettingsNetworkPage"
                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                  xmlns:local="using:Telegram.Views"
-                  xmlns:controls="using:Telegram.Controls"
-                  xmlns:selectors="using:Telegram.Selectors"
-                  xmlns:viewModels="using:Telegram.ViewModels.Settings"
-                  xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-                  xmlns:td="using:Telegram.Td.Api"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:controls="using:Telegram.Controls"
+                  xmlns:viewModels="using:Telegram.ViewModels.Settings"
+                  xmlns:local="using:Telegram.Views"
                   d:DesignHeight="2000"
                   mc:Ignorable="d">
 
@@ -81,7 +78,7 @@
                                           Badge="{x:Bind ViewModel.TotalReceivedBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE118;" />
-                    
+
                     <controls:BadgeButton Content="{CustomResource BytesSent}"
                                           Badge="{x:Bind ViewModel.TotalSentBytes, Mode=OneWay, Converter={StaticResource FileSizeConverter}}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"

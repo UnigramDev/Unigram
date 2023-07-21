@@ -141,13 +141,13 @@ namespace Telegram.Assets.Icons
 
             if (Addone_AnimatedVisual.IsRuntimeCompatible())
             {
-                var res = 
+                var res =
                     new Addone_AnimatedVisual(
                         compositor,
                         _themeProperties
                         );
-                    res.CreateAnimations();
-                    return res;
+                res.CreateAnimations();
+                return res;
             }
 
             return null;

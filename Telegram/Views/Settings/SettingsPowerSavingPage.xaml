@@ -95,8 +95,10 @@
                                       CornerRadius="0">
                                 <TextBlock>
                                         <Run Text="{CustomResource LiteOptionsChat}" />
-                                        --><!--<Run Text="{x:Bind ConvertCanSendCount(ViewModel.CanSendCount), Mode=OneWay}"
-                                             FontWeight="SemiBold" />--><!--
+                                        -->
+                    <!--<Run Text="{x:Bind ConvertCanSendCount(ViewModel.CanSendCount), Mode=OneWay}"
+                                             FontWeight="SemiBold" />-->
+                    <!--
                                 </TextBlock>
                             </CheckBox>
                         </muxc:Expander.Header>

@@ -1,12 +1,10 @@
 ﻿<Page x:Class="Telegram.Views.Authorization.AuthorizationRecoveryPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:Telegram.Views"
-      xmlns:common="using:Telegram.Common"
-      xmlns:controls="using:Telegram.Controls"
-      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+      xmlns:controls="using:Telegram.Controls"
       Loaded="OnLoaded"
       mc:Ignorable="d">
 
@@ -56,8 +54,8 @@
                          Grid.Row="3" />
 
             <muxc:ProgressBar IsIndeterminate="{x:Bind ViewModel.IsLoading, Mode=OneWay}"
-                                   Background="Transparent"
-                                   Grid.Row="4" />
+                              Background="Transparent"
+                              Grid.Row="4" />
 
             <Button x:Name="NextButton"
                     Content="{CustomResource OK}"

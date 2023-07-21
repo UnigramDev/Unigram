@@ -122,13 +122,13 @@ namespace Telegram.Assets.Icons
 
             if (MuteUnmute_AnimatedVisual_UAPv11.IsRuntimeCompatible())
             {
-                var res = 
+                var res =
                     new MuteUnmute_AnimatedVisual_UAPv11(
                         compositor,
                         _themeProperties
                         );
-                    res.CreateAnimations();
-                    return res;
+                res.CreateAnimations();
+                return res;
             }
 
             return null;
@@ -676,7 +676,7 @@ namespace Telegram.Assets.Icons
             CompositionSpriteShape SpriteShape_0()
             {
                 // Offset:<-0.006, 162.659>, Scale:<21.333302, 21.333302>
-                var result = CreateSpriteShape(PathGeometry_0(), new Matrix3x2(21.3333015F, 0F, 0F, 21.3333015F, -0.00600000005F, 162.658997F));;
+                var result = CreateSpriteShape(PathGeometry_0(), new Matrix3x2(21.3333015F, 0F, 0F, 21.3333015F, -0.00600000005F, 162.658997F)); ;
                 result.StrokeBrush = ThemeColor_Foreground();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -691,7 +691,7 @@ namespace Telegram.Assets.Icons
             CompositionSpriteShape SpriteShape_1()
             {
                 // Offset:<-0.006, -37.341>, Scale:<21.333302, 21.333302>
-                var result = CreateSpriteShape(PathGeometry_1(), new Matrix3x2(21.3333015F, 0F, 0F, 21.3333015F, -0.00600000005F, -37.3409996F));;
+                var result = CreateSpriteShape(PathGeometry_1(), new Matrix3x2(21.3333015F, 0F, 0F, 21.3333015F, -0.00600000005F, -37.3409996F)); ;
                 result.StrokeBrush = ThemeColor_Foreground();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -710,7 +710,7 @@ namespace Telegram.Assets.Icons
                 // Offset:<-0.006, -37.341>, Rotation:-0.0059289241127998705 degrees,
                 // Scale:<2.13333, 2.13333>
                 var geometry = PathGeometry_2();
-                var result = CreateSpriteShape(geometry, new Matrix3x2(2.13333011F, 0F, 0F, 2.13333011F, -0.00600000005F, -37.3409996F), ColorBrush_Black());;
+                var result = CreateSpriteShape(geometry, new Matrix3x2(2.13333011F, 0F, 0F, 2.13333011F, -0.00600000005F, -37.3409996F), ColorBrush_Black()); ;
                 return result;
             }
 
@@ -720,7 +720,7 @@ namespace Telegram.Assets.Icons
             CompositionSpriteShape SpriteShape_3()
             {
                 // Offset:<-0.006, -0.008>, Scale:<21.333302, 21.333302>
-                var result = CreateSpriteShape(PathGeometry_3(), new Matrix3x2(21.3333015F, 0F, 0F, 21.3333015F, -0.00600000005F, -0.00800000038F));;
+                var result = CreateSpriteShape(PathGeometry_3(), new Matrix3x2(21.3333015F, 0F, 0F, 21.3333015F, -0.00600000005F, -0.00800000038F)); ;
                 result.StrokeBrush = ThemeColor_Foreground();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -736,7 +736,7 @@ namespace Telegram.Assets.Icons
             CompositionSpriteShape SpriteShape_4()
             {
                 // Offset:<-0.006, 162.659>, Scale:<21.333302, 21.333302>
-                var result = CreateSpriteShape(PathGeometry_0(), new Matrix3x2(21.3333015F, 0F, 0F, 21.3333015F, -0.00600000005F, 162.658997F));;
+                var result = CreateSpriteShape(PathGeometry_0(), new Matrix3x2(21.3333015F, 0F, 0F, 21.3333015F, -0.00600000005F, 162.658997F)); ;
                 result.StrokeBrush = ThemeColor_Foreground();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -751,7 +751,7 @@ namespace Telegram.Assets.Icons
             CompositionSpriteShape SpriteShape_5()
             {
                 // Offset:<-0.006, -37.341>, Scale:<21.333302, 21.333302>
-                var result = CreateSpriteShape(PathGeometry_1(), new Matrix3x2(21.3333015F, 0F, 0F, 21.3333015F, -0.00600000005F, -37.3409996F));;
+                var result = CreateSpriteShape(PathGeometry_1(), new Matrix3x2(21.3333015F, 0F, 0F, 21.3333015F, -0.00600000005F, -37.3409996F)); ;
                 result.StrokeBrush = ThemeColor_Foreground();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
@@ -770,7 +770,7 @@ namespace Telegram.Assets.Icons
                 // Offset:<-0.006, -37.341>, Rotation:-0.0059289241127998705 degrees,
                 // Scale:<2.13333, 2.13333>
                 var geometry = PathGeometry_4();
-                var result = CreateSpriteShape(geometry, new Matrix3x2(2.13333011F, 0F, 0F, 2.13333011F, -0.00600000005F, -37.3409996F), ColorBrush_Black());;
+                var result = CreateSpriteShape(geometry, new Matrix3x2(2.13333011F, 0F, 0F, 2.13333011F, -0.00600000005F, -37.3409996F), ColorBrush_Black()); ;
                 return result;
             }
 
@@ -779,7 +779,7 @@ namespace Telegram.Assets.Icons
             CompositionSpriteShape SpriteShape_7()
             {
                 // Offset:<-0.006, -0.008>, Scale:<21.333302, 21.333302>
-                var result = CreateSpriteShape(PathGeometry_5(), new Matrix3x2(21.3333015F, 0F, 0F, 21.3333015F, -0.00600000005F, -0.00800000038F));;
+                var result = CreateSpriteShape(PathGeometry_5(), new Matrix3x2(21.3333015F, 0F, 0F, 21.3333015F, -0.00600000005F, -0.00800000038F)); ;
                 result.StrokeBrush = ThemeColor_Foreground();
                 result.StrokeDashCap = CompositionStrokeCap.Round;
                 result.StrokeStartCap = CompositionStrokeCap.Round;
