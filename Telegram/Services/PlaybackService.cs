@@ -735,7 +735,6 @@ namespace Telegram.Services
                 //_library.Log += _library_Log;
 
                 _mediaPlayer = new MediaPlayer(_library);
-                _mediaPlayer.SetAudioOutput("winstore");
                 //_mediaPlayer.SystemMediaTransportControls.AutoRepeatMode = _settingsService.Playback.RepeatMode;
                 //_mediaPlayer.SystemMediaTransportControls.ButtonPressed += Transport_ButtonPressed;
                 //_mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;

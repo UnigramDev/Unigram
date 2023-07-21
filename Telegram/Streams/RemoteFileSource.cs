@@ -113,6 +113,14 @@ namespace Telegram.Streams
             //}
         }
 
+        public void Open()
+        {
+            _closed = false;
+            _canceled = false;
+
+            SeekCallback(0);
+        }
+
         public void Close()
         {
             if (_closed)

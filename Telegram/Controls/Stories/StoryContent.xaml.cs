@@ -91,6 +91,9 @@ namespace Telegram.Controls.Stories
             if (_player != null)
             {
                 _player.Stop();
+                _player.Vout -= OnVout;
+                _player.Buffering -= OnBuffering;
+                _player.EndReached -= OnEndReached;
 
                 _player.Dispose();
                 _player = null;
@@ -206,6 +209,8 @@ namespace Telegram.Controls.Stories
                 {
                     SegmentsInactive.UpdateActiveStories(activeStories.Item, 48, true);
                 }
+
+                Video?.Clear();
             }
 
             var story = activeStories.SelectedItem;
@@ -344,6 +349,7 @@ namespace Telegram.Controls.Stories
             if (string.IsNullOrEmpty(story.Caption?.Text))
             {
                 CaptionRoot.Visibility = Visibility.Collapsed;
+                Caption.SetText(null, null);
             }
             else
             {
@@ -576,8 +582,9 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
-            _fileId = file.Id;
+            UpdateManager.Unsubscribe(this, ref _fileToken, true);
 
+            _fileId = file.Id;
             Logger.Info();
 
             if (_player != null)
@@ -631,6 +638,8 @@ namespace Telegram.Controls.Stories
             {
                 return;
             }
+
+            UpdateManager.Unsubscribe(this, ref _fileToken, true);
 
             _fileId = file.Id;
             _watch = Stopwatch.StartNew();
@@ -801,7 +810,6 @@ namespace Telegram.Controls.Stories
                 layout.Scale = new Vector3(resize.X / (ActualSize.X - 8));
 
                 photo.Scale = new Vector3(resize.X / 32f, resize.Y / 32f, 0);
-                photo.Scale = new Vector3(40f / 32f, 40f / 32f, 0);
 
                 var compositor = Window.Current.Compositor;
 
@@ -914,11 +922,11 @@ namespace Telegram.Controls.Stories
 
         private void Video_Initialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)
         {
-            _library = new LibVLC(e.SwapChainOptions);
+            // Generating plugins cache requires a breakpoint in bank.c#662
+            _library = new LibVLC(e.SwapChainOptions); //"--quiet", "--reset-plugins-cache");
             //_library.Log += _library_Log;
 
             _player = new MediaPlayer(_library);
-            _player.SetAudioOutput("winstore");
             _player.EnableHardwareDecoding = true;
             //_player.ESSelected += OnESSelected;
             _player.Vout += OnVout;
@@ -1117,7 +1125,7 @@ namespace Telegram.Controls.Stories
         {
             _state |= source;
 
-            if (_mediaStream != null && _player != null)
+            if (_mediaStream != null && _player != null && _player.CanPause)
             {
                 _player.Pause();
             }
@@ -1135,7 +1143,7 @@ namespace Telegram.Controls.Stories
 
             if (_state == StoryPauseSource.None)
             {
-                if (_mediaStream != null && _player != null)
+                if (_mediaStream != null && _player != null && _player.CanPause)
                 {
                     _player.Play();
                 }

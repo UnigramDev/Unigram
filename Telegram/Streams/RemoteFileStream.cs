@@ -49,7 +49,7 @@ namespace Telegram.Streams
         {
             size = (ulong)_file.Size;
 
-            _source.SeekCallback(0);
+            _source.Open();
             return true;
         }
 
