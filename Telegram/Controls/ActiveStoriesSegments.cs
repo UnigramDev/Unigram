@@ -30,6 +30,8 @@ namespace Telegram.Controls
 
         private bool _hasActiveStories;
 
+        public bool HasActiveStories => _hasActiveStories;
+
         public ActiveStoriesSegments()
         {
             DefaultStyleKey = typeof(ActiveStoriesSegments);
@@ -42,7 +44,15 @@ namespace Telegram.Controls
 
             var pointz = new Rect(point.X + 4, point.Y + 4, side - 8, side - 8);
 
-            ShowIndeterminate(side, false);
+            if (clientService.TryGetActiveStories(chat.Id, out ChatActiveStories cached))
+            {
+                var unreadCount = cached.CountUnread(out bool closeFriends);
+                ShowIndeterminate(side, unreadCount, closeFriends);
+            }
+            else
+            {
+                ShowIndeterminate(side, 1, false);
+            }
 
             await clientService.SendAsync(new GetChatActiveStories(chat.Id));
 
@@ -129,7 +139,7 @@ namespace Telegram.Controls
                 }
 
                 _hasActiveStories = false;
-                IsEnabled = false;
+                IsEnabled = IsClickEnabled;
 
                 return;
             }
@@ -256,7 +266,7 @@ namespace Telegram.Controls
             return compositor.CreatePathGeometry(new CompositionPath(result));
         }
 
-        public void ShowIndeterminate(int side, bool closeFriends)
+        public void ShowIndeterminate(int side, int unreadCount, bool closeFriends)
         {
             var compositor = Window.Current.Compositor;
 
@@ -275,8 +285,8 @@ namespace Telegram.Controls
             var linear = compositor.CreateLinearEasingFunction();
 
             var unreadStroke = compositor.CreateLinearGradientBrush();
-            unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(0, closeFriends ? _storyCloseFriendTopColor : _storyUnreadTopColor));
-            unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(1, closeFriends ? _storyCloseFriendBottomColor : _storyUnreadBottomColor));
+            unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(0, unreadCount > 0 ? closeFriends ? _storyCloseFriendTopColor : _storyUnreadTopColor : _storyDefaultColor));
+            unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(1, unreadCount > 0 ? closeFriends ? _storyCloseFriendBottomColor : _storyUnreadBottomColor : _storyDefaultColor));
             unreadStroke.MappingMode = CompositionMappingMode.Absolute;
             unreadStroke.StartPoint = new Vector2(0, 0);
             unreadStroke.EndPoint = new Vector2(0, side);
@@ -330,5 +340,18 @@ namespace Telegram.Controls
 
             ElementCompositionPreview.SetElementChildVisual(this, indefiniteReplicatorLayer);
         }
+
+        #region IsClickEnabled
+
+        public bool IsClickEnabled
+        {
+            get { return (bool)GetValue(IsClickEnabledProperty); }
+            set { SetValue(IsClickEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsClickEnabledProperty =
+            DependencyProperty.Register("IsClickEnabled", typeof(bool), typeof(ActiveStoriesSegments), new PropertyMetadata(true));
+
+        #endregion
     }
 }

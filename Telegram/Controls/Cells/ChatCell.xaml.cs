@@ -82,6 +82,8 @@ namespace Telegram.Controls.Cells
             Unloaded += OnUnloaded;
         }
 
+        public event EventHandler<Chat> StoryClick;
+
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             if (Stroke is SolidColorBrush stroke && _strokeToken == 0 && (_container != null || _visual != null))
@@ -130,6 +132,7 @@ namespace Telegram.Controls.Cells
         private Paragraph BriefLabel;
         private ImageBrush Minithumbnail;
         private Rectangle SelectionOutline;
+        private ActiveStoriesSegments Segments;
         private ProfilePicture Photo;
         private Border OnlineBadge;
         private Border OnlineHeart;
@@ -159,6 +162,7 @@ namespace Telegram.Controls.Cells
             BriefLabel = GetTemplateChild(nameof(BriefLabel)) as Paragraph;
             Minithumbnail = GetTemplateChild(nameof(Minithumbnail)) as ImageBrush;
             SelectionOutline = GetTemplateChild(nameof(SelectionOutline)) as Rectangle;
+            Segments = GetTemplateChild(nameof(Segments)) as ActiveStoriesSegments;
             Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
 
             var tooltip = new ToolTip();
@@ -167,7 +171,9 @@ namespace Telegram.Controls.Cells
 
             ToolTipService.SetToolTip(this, tooltip);
 
-            _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
+            Segments.Click += Segments_Click;
+
+            _selectionPhoto = ElementCompositionPreview.GetElementVisual(Segments);
             _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
             _selectionPhoto.CenterPoint = new Vector3(24);
             _selectionOutline.CenterPoint = new Vector3(24);
@@ -187,6 +193,11 @@ namespace Telegram.Controls.Cells
             {
                 UpdateMessage(_clientService, _message);
             }
+        }
+
+        private void Segments_Click(object sender, RoutedEventArgs e)
+        {
+            StoryClick?.Invoke(sender, _chat);
         }
 
         #endregion
@@ -558,10 +569,16 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
+            Segments.SetChat(_clientService, chat, 48);
             Photo.SetChat(_clientService, chat, 48);
 
             SelectionOutline.RadiusX = Photo.Shape == ProfilePictureShape.Ellipse ? 24 : 12;
             SelectionOutline.RadiusY = Photo.Shape == ProfilePictureShape.Ellipse ? 24 : 12;
+        }
+
+        public void UpdateChatActiveStories(ChatActiveStories activeStories)
+        {
+            Segments.UpdateActiveStories(activeStories, 48, true);
         }
 
         public void UpdateChatActions(Chat chat, IDictionary<MessageSender, ChatAction> actions)
@@ -1438,7 +1455,7 @@ namespace Telegram.Controls.Cells
             var tooltip = sender as ToolTip;
             if (tooltip != null)
             {
-                if (SettingsService.Current.Notifications.InAppPreview && _chat != null)
+                if (_clientService.Notifications.InAppPreview && _chat != null)
                 {
                     var playback = TLContainer.Current.Playback;
                     var settings = TLContainer.Current.Resolve<ISettingsService>(_clientService.SessionId);

@@ -138,13 +138,20 @@ namespace Telegram.Controls
                 return;
             }
 
-            segments.Open(ViewModel.NavigationService, ViewModel.ClientService, chat, 140, story =>
+            if (segments.HasActiveStories)
             {
-                var transform = Segments.TransformToVisual(Window.Current.Content);
-                var point = transform.TransformPoint(new Point());
+                segments.Open(ViewModel.NavigationService, ViewModel.ClientService, chat, 140, story =>
+                {
+                    var transform = Segments.TransformToVisual(Window.Current.Content);
+                    var point = transform.TransformPoint(new Point());
 
-                return new Rect(point.X + 4, point.Y + 4, 132, 132);
-            });
+                    return new Rect(point.X + 4, point.Y + 4, 132, 132);
+                });
+            }
+            else
+            {
+                GalleryView.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
+            }
         }
 
         #region Delegate

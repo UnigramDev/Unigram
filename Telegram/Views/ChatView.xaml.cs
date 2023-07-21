@@ -772,17 +772,6 @@ namespace Telegram.Views
             }
         }
 
-        private async void Photo_Click(object sender, RoutedEventArgs e)
-        {
-            var chat = ViewModel.Chat;
-            if (chat == null)
-            {
-                return;
-            }
-
-            await GalleryView.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
-        }
-
         private void Segments_Click(object sender, RoutedEventArgs e)
         {
             var chat = ViewModel.Chat;
@@ -791,13 +780,20 @@ namespace Telegram.Views
                 return;
             }
 
-            segments.Open(ViewModel.NavigationService, ViewModel.ClientService, chat, 36, story =>
+            if (segments.HasActiveStories)
             {
-                var transform = Segments.TransformToVisual(Window.Current.Content);
-                var point = transform.TransformPoint(new Point());
+                segments.Open(ViewModel.NavigationService, ViewModel.ClientService, chat, 36, story =>
+                {
+                    var transform = Segments.TransformToVisual(Window.Current.Content);
+                    var point = transform.TransformPoint(new Point());
 
-                return new Rect(point.X + 4, point.Y + 4, 28, 28);
-            });
+                    return new Rect(point.X + 4, point.Y + 4, 28, 28);
+                });
+            }
+            else
+            {
+                GalleryView.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -5016,7 +5012,7 @@ namespace Telegram.Views
 
         private Matrix3x2 SetRotate(float degree, float px, float py)
         {
-            return Matrix3x2.CreateRotation(Charts.MathFEx.ToRadians(degree), new Vector2(px, py));
+            return Matrix3x2.CreateRotation(MathFEx.ToRadians(degree), new Vector2(px, py));
         }
 
         public void GenerateBlob()

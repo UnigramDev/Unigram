@@ -1,10 +1,9 @@
 ﻿<UserControl x:Class="Telegram.Controls.ProfileHeader"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Telegram.Controls"
-             xmlns:controls="using:Telegram.Controls"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="using:Telegram.Controls"
              mc:Ignorable="d"
              Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -22,14 +21,14 @@
                                             Click="Segments_Click"
                                             Width="140"
                                             Height="140"
-                                            Margin="12,24,12,8">
-                
+                                            Margin="12,24,12,8"
+                                            AutomationProperties.Name="{CustomResource AccDescrProfilePicture}">
                 <controls:ProfilePicture x:Name="Photo"
-                                         Click="Photo_Click"
                                          Width="140"
                                          Height="140"
-                                         AutomationProperties.Name="{CustomResource AccDescrProfilePicture}" />
+                                         IsEnabled="False" />
             </controls:ActiveStoriesSegments>
+            
             <Border Height="140"
                     Width="140"
                     Margin="12,8">
