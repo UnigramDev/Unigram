@@ -196,6 +196,7 @@
                 Margin="0,-40,0,0"
                 Background="#DD222222"
                 Tapped="Layer_Tapped"
+                PointerPressed="Layer_PointerPressed"
                 Grid.RowSpan="3" />
         <Border x:Name="TitleBar"
                 Background="Transparent"

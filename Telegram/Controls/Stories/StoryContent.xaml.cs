@@ -781,9 +781,10 @@ namespace Telegram.Controls.Stories
 
             //var show = true;
 
-            var test = new Vector2((float)origin.X, (float)origin.Y);
-            var relativeX = test.X - (point.X + 8);
-            var relativeY = test.Y - (point.Y + 18);
+            var reoffset = new Vector2((float)origin.X, (float)origin.Y);
+            var resize = new Vector2((float)origin.Width, (float)origin.Height);
+            var relativeX = reoffset.X - (point.X + 8);
+            var relativeY = reoffset.Y - (point.Y + 18);
 
             var photo = ElementCompositionPreview.GetElementVisual(Photo);
             var layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
@@ -794,57 +795,57 @@ namespace Telegram.Controls.Stories
 
             if (ciccio == StoryOrigin.ProfilePhoto)
             {
-                visual.Properties.InsertVector3("Translation", new Vector3(relativeX + 4, relativeY + 4, 0));
+                visual.Properties.InsertVector3("Translation", new Vector3(relativeX, relativeY, 0));
                 //layout.CenterPoint = new Vector3(8 + 16, 18 + 16, 0);
-                layout.CenterPoint = new Vector3(4, 14, 0);
-                layout.Scale = new Vector3(40 / ActualSize.X, 40 / ActualSize.X, 1);
+                layout.CenterPoint = new Vector3(8, 18, 0);
+                layout.Scale = new Vector3(resize.X / (ActualSize.X - 8));
 
-                photo.CenterPoint = new Vector3(16);
+                photo.Scale = new Vector3(resize.X / 32f, resize.Y / 32f, 0);
                 photo.Scale = new Vector3(40f / 32f, 40f / 32f, 0);
 
                 var compositor = Window.Current.Compositor;
 
                 var rect = compositor.CreateRoundedRectangleGeometry();
-                rect.Size = new Vector2(40, 40);
-                rect.Offset = new Vector2(4, 14);
-                rect.CornerRadius = new Vector2(20, 20);
+                rect.Size = new Vector2(resize.X, resize.Y);
+                rect.Offset = new Vector2(8, 18);
+                rect.CornerRadius = resize / 2;
 
                 visual.Clip = compositor.CreateGeometricClip(rect);
 
                 var size = compositor.CreateVector2KeyFrameAnimation();
-                size.InsertKeyFrame(show ? 0 : 1, new Vector2(40, 40));
+                size.InsertKeyFrame(show ? 0 : 1, new Vector2(resize.X, resize.Y));
                 size.InsertKeyFrame(show ? 1 : 0, new Vector2(ActualSize.X, ActualSize.Y));
-                //size.Duration = TimeSpan.FromSeconds(2);
+                //size.Duration = TimeSpan.FromSeconds(5);
 
                 var offset = compositor.CreateVector2KeyFrameAnimation();
-                offset.InsertKeyFrame(show ? 0 : 1, new Vector2(4, 14));
+                offset.InsertKeyFrame(show ? 0 : 1, new Vector2(8, 18));
                 offset.InsertKeyFrame(show ? 1 : 0, new Vector2(0, 0));
-                //offset.Duration = TimeSpan.FromSeconds(2);
+                //offset.Duration = TimeSpan.FromSeconds(5);
 
                 var cornerRadius = compositor.CreateVector2KeyFrameAnimation();
-                cornerRadius.InsertKeyFrame(show ? 0 : 1, new Vector2(20, 20));
+                cornerRadius.InsertKeyFrame(show ? 0 : 1, new Vector2(resize.X / 2));
                 cornerRadius.InsertKeyFrame(show ? 1 : 0, new Vector2(8, 8));
-                //cornerRadius.Duration = TimeSpan.FromSeconds(2);
+                //cornerRadius.Duration = TimeSpan.FromSeconds(5);
 
                 var translation = compositor.CreateVector3KeyFrameAnimation();
-                translation.InsertKeyFrame(show ? 0 : 1, new Vector3(relativeX + 4, relativeY + 4, 0));
+                translation.InsertKeyFrame(show ? 0 : 1, new Vector3(relativeX, relativeY, 0));
                 translation.InsertKeyFrame(show ? 1 : 0, new Vector3());
-                //translation.Duration = TimeSpan.FromSeconds(2);
+                //translation.Duration = TimeSpan.FromSeconds(5);
 
                 var entranceY = compositor.CreateScalarKeyFrameAnimation();
                 entranceY.InsertKeyFrame(show ? 0 : 1, -Caption.ActualSize.Y * 5);
                 entranceY.InsertKeyFrame(show ? 1 : 0, 0);
-                //entranceY.Duration = TimeSpan.FromSeconds(2);
+                //entranceY.Duration = TimeSpan.FromSeconds(5);
 
                 var scale = compositor.CreateVector3KeyFrameAnimation();
-                scale.InsertKeyFrame(show ? 0 : 1, new Vector3(40f / 32f));
+                scale.InsertKeyFrame(show ? 0 : 1, new Vector3(resize.X / 32f));
                 scale.InsertKeyFrame(show ? 1 : 0, new Vector3(1));
-                //scale.Duration = TimeSpan.FromSeconds(2);
+                //scale.Duration = TimeSpan.FromSeconds(5);
 
                 var scale2 = compositor.CreateVector3KeyFrameAnimation();
-                scale2.InsertKeyFrame(show ? 0 : 1, new Vector3(40 / ActualSize.X, 40 / ActualSize.X, 1));
+                scale2.InsertKeyFrame(show ? 0 : 1, new Vector3(resize.X / (ActualSize.X - 8)));
                 scale2.InsertKeyFrame(show ? 1 : 0, new Vector3(1));
-                //scale2.Duration = TimeSpan.FromSeconds(2);
+                //scale2.Duration = TimeSpan.FromSeconds(5);
 
                 rect.StartAnimation("Size", size);
                 rect.StartAnimation("Offset", offset);
@@ -856,25 +857,22 @@ namespace Telegram.Controls.Stories
             }
             else
             {
-                var smallSize = origin.ToSize().ToVector2();
-
-                visual.Properties.InsertVector3("Translation", new Vector3(relativeX + 8 - (ActualSize.X / 2), relativeY + 18 - (ActualSize.Y / 2), 0));
-                visual.Properties.InsertVector3("Translation", new Vector3(relativeX + 8 + smallSize.X / 2 - ActualSize.X / 2, relativeY + 18 + smallSize.Y / 2 - ActualSize.Y / 2, 0));
+                visual.Properties.InsertVector3("Translation", new Vector3(relativeX + 8 + resize.X / 2 - ActualSize.X / 2, relativeY + 18 + resize.Y / 2 - ActualSize.Y / 2, 0));
 
                 layout.CenterPoint = new Vector3(ActualSize / 2, 0);
-                layout.Scale = new Vector3(smallSize.X / ActualSize.X, smallSize.X / ActualSize.X, 1);
+                layout.Scale = new Vector3(resize.X / ActualSize.X, resize.X / ActualSize.X, 1);
 
                 var compositor = Window.Current.Compositor;
 
                 var rect = compositor.CreateRoundedRectangleGeometry();
-                rect.Size = new Vector2(smallSize.X, smallSize.Y);
+                rect.Size = new Vector2(resize.X, resize.Y);
                 rect.Offset = (ActualSize - rect.Size) / 2;
                 rect.CornerRadius = new Vector2(4, 4);
 
                 visual.Clip = compositor.CreateGeometricClip(rect);
 
                 var size = compositor.CreateVector2KeyFrameAnimation();
-                size.InsertKeyFrame(show ? 0 : 1, new Vector2(smallSize.X, smallSize.Y));
+                size.InsertKeyFrame(show ? 0 : 1, new Vector2(resize.X, resize.Y));
                 size.InsertKeyFrame(show ? 1 : 0, new Vector2(ActualSize.X, ActualSize.Y));
                 //size.Duration = TimeSpan.FromSeconds(5);
 
@@ -889,7 +887,7 @@ namespace Telegram.Controls.Stories
                 //cornerRadius.Duration = TimeSpan.FromSeconds(5);
 
                 var translation = compositor.CreateVector3KeyFrameAnimation();
-                translation.InsertKeyFrame(show ? 0 : 1, new Vector3(relativeX + 8 + smallSize.X / 2 - ActualSize.X / 2, relativeY + 18 + smallSize.Y / 2 - ActualSize.Y / 2, 0));
+                translation.InsertKeyFrame(show ? 0 : 1, new Vector3(relativeX + 8 + resize.X / 2 - ActualSize.X / 2, relativeY + 18 + resize.Y / 2 - ActualSize.Y / 2, 0));
                 translation.InsertKeyFrame(show ? 1 : 0, new Vector3());
                 //translation.Duration = TimeSpan.FromSeconds(5);
 
@@ -898,13 +896,8 @@ namespace Telegram.Controls.Stories
                 entranceY.InsertKeyFrame(show ? 1 : 0, 0);
                 //entranceY.Duration = TimeSpan.FromSeconds(5);
 
-                var scale = compositor.CreateVector3KeyFrameAnimation();
-                scale.InsertKeyFrame(show ? 0 : 1, new Vector3(40f / 32f));
-                scale.InsertKeyFrame(show ? 1 : 0, new Vector3(1));
-                //scale.Duration = TimeSpan.FromSeconds(5);
-
                 var scale2 = compositor.CreateVector3KeyFrameAnimation();
-                scale2.InsertKeyFrame(show ? 0 : 1, new Vector3(smallSize.X / ActualSize.X, smallSize.X / ActualSize.X, 1));
+                scale2.InsertKeyFrame(show ? 0 : 1, new Vector3(resize.X / ActualSize.X, resize.X / ActualSize.X, 1));
                 scale2.InsertKeyFrame(show ? 1 : 0, new Vector3(1));
                 //scale2.Duration = TimeSpan.FromSeconds(5);
 
@@ -916,8 +909,6 @@ namespace Telegram.Controls.Stories
                 visual.StartAnimation("Translation", translation);
                 caption.StartAnimation("Translation.Y", entranceY);
                 layout.StartAnimation("Scale", scale2);
-                photo.StartAnimation("Scale", scale);
-
             }
         }
 

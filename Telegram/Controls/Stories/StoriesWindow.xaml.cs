@@ -119,6 +119,8 @@ namespace Telegram.Controls.Stories
             _done = true;
             e.Handled = true;
 
+            ActiveCard?.Suspend(StoryPauseSource.Window);
+
             var layer = ElementCompositionPreview.GetElementVisual(Layer);
             var backButton = ElementCompositionPreview.GetElementVisual(BackButton);
             var viewport = ElementCompositionPreview.GetElementVisual(Viewport);
@@ -435,14 +437,6 @@ namespace Telegram.Controls.Stories
                 {
                     user.SelectedItem = user.Items[direction == Direction.Forward ? item + 1 : item - 1];
 
-                    for (int i = 0; i < _indexes.Length; i++)
-                    {
-                        if (_indexes[i] == 3 && LayoutRoot.Children[i] is StoryContent story)
-                        {
-                            story.Update(user, true, 3);
-                        }
-                    }
-
                     Update(_viewModel, user, _ciccio, _origin, _closing);
                     return true;
                 }
@@ -537,11 +531,6 @@ namespace Telegram.Controls.Stories
 
                 if (LayoutRoot.Children[i] is StoryContent content)
                 {
-                    if (real >= 0 && real < _viewModel.Items.Count)
-                    {
-                        content.Update(_viewModel.Items[real], real == _index, index);
-                    }
-
                     content.Animate(previous, index);
                 }
             }
@@ -825,7 +814,7 @@ namespace Telegram.Controls.Stories
 
         private void Flyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
         {
-            sender.Closing-= Flyout_Closing;
+            sender.Closing -= Flyout_Closing;
             ActiveCard.Resume(StoryPauseSource.Flyout);
         }
 
@@ -873,6 +862,32 @@ namespace Telegram.Controls.Stories
         }
 
         private StoryContent ActiveCard => LayoutRoot.Children[_synchronizedIndex] as StoryContent;
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            TryHide(ContentDialogResult.Primary);
+        }
+
+        private bool _backGesture;
+
+        private void Layer_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (_backGesture)
+            {
+                _backGesture = false;
+                return;
+            }
+
+            TryHide(ContentDialogResult.Primary);
+        }
+
+        private void Layer_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            if (InputListener.IsPointerGoBackGesture(e.GetCurrentPoint(this)))
+            {
+                _backGesture = true;
+            }
+        }
     }
 
     [Flags]

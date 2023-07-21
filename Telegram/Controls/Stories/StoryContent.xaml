@@ -36,16 +36,15 @@
               PointerPressed="OnPointerPressed"
               PointerReleased="OnPointerReleased"
               Canvas.ZIndex="1">
-            <Rectangle Height="48"
+            <Rectangle Height="64"
                        Opacity="0.5"
                        VerticalAlignment="Top">
                 <Rectangle.Fill>
-                    <LinearGradientBrush StartPoint="0,0"
-                                         EndPoint="0,1">
-                        <common:Scrim.Gradient>
-                            <common:CubicBezierGradient TopColor="#FF171717"
-                                                        BottomColor="#00171717" />
-                        </common:Scrim.Gradient>
+                    <LinearGradientBrush StartPoint="0,1"
+                                         EndPoint="0,0">
+                        <GradientStop Color="#00000000" />
+                        <GradientStop Color="#AA000000"
+                                      Offset="1" />
                     </LinearGradientBrush>
                 </Rectangle.Fill>
             </Rectangle>
@@ -74,7 +73,8 @@
                                          Width="32"
                                          Height="32"
                                          HorizontalAlignment="Center"
-                                         Margin="8,0,8,0" />
+                                         Margin="8,0,8,0"
+                                         Canvas.ZIndex="1" />
 
                 <Grid Grid.Column="1"
                       VerticalAlignment="Center"
