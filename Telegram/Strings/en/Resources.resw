@@ -855,6 +855,36 @@ Unused sets are archived when you add more.</value>
     <value>Archive moved to the main menu
 Right click the archive button to return the Archive to your chat list.</value>
   </data>
+  <data name="ArchiveSettings" xml:space="preserve">
+    <value>Archive Settings</value>
+  </data>
+  <data name="ArchiveSettingUnmutedChats" xml:space="preserve">
+    <value>Chats from folders</value>
+  </data>
+  <data name="ArchiveSettingUnmutedChatsCheck" xml:space="preserve">
+    <value>Always keep archived</value>
+  </data>
+  <data name="ArchiveSettingUnmutedChatsInfo" xml:space="preserve">
+    <value>Keep archived chats from folders in the Archive even if they are unmuted and get a new message.</value>
+  </data>
+  <data name="ArchiveSettingUnmutedFolders" xml:space="preserve">
+    <value>Unmuted chats</value>
+  </data>
+  <data name="ArchiveSettingUnmutedFoldersCheck" xml:space="preserve">
+    <value>Always keep archived</value>
+  </data>
+  <data name="ArchiveSettingUnmutedFoldersInfo" xml:space="preserve">
+    <value>Keep archived chats in the Archive even if they are unmuted and get a new message.</value>
+  </data>
+  <data name="ArchiveStories_one" xml:space="preserve">
+    <value>Archive Story</value>
+  </data>
+  <data name="ArchiveStories_other" xml:space="preserve">
+    <value>Archive Stories</value>
+  </data>
+  <data name="ArchiveStory" xml:space="preserve">
+    <value>Remove from Profile</value>
+  </data>
   <data name="AreTyping" xml:space="preserve">
     <value>are typing...</value>
   </data>
@@ -1993,6 +2023,12 @@ Minimum length is 5 characters.</value>
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="CloseFriendsHint" xml:space="preserve">
+    <value>Only people from **{0}’s** Close Friends list can view this story</value>
+  </data>
+  <data name="CloseFriendsHintSelf" xml:space="preserve">
+    <value>Only people from your Close Friends list can view this story</value>
+  </data>
   <data name="CloseTopic" xml:space="preserve">
     <value>Close topic</value>
   </data>
@@ -2317,6 +2353,21 @@ You can always switch back to the default Telegram theme here.</value>
   </data>
   <data name="DeleteSingleMessagesTitle" xml:space="preserve">
     <value>Delete message</value>
+  </data>
+  <data name="DeleteStoriesSubtitle_one" xml:space="preserve">
+    <value>Are you sure you want to delete {0} story?</value>
+  </data>
+  <data name="DeleteStoriesSubtitle_other" xml:space="preserve">
+    <value>Are you sure you want to delete {0} stories?</value>
+  </data>
+  <data name="DeleteStoriesTitle" xml:space="preserve">
+    <value>Delete Stories</value>
+  </data>
+  <data name="DeleteStorySubtitle" xml:space="preserve">
+    <value>Are you sure you want to delete this story?</value>
+  </data>
+  <data name="DeleteStoryTitle" xml:space="preserve">
+    <value>Delete Story</value>
   </data>
   <data name="DeleteThemeAlert" xml:space="preserve">
     <value>Are you sure you want to delete this theme?</value>
@@ -3065,6 +3116,18 @@ Duration: {1}</value>
   <data name="Expired" xml:space="preserve">
     <value>Expired</value>
   </data>
+  <data name="ExpiredStory" xml:space="preserve">
+    <value>Expired story</value>
+  </data>
+  <data name="ExpiredStoryMention" xml:space="preserve">
+    <value>The story you were mentioned in is no longer available</value>
+  </data>
+  <data name="ExpiredStoryMentioned" xml:space="preserve">
+    <value>The story where you mentioned {0} is no longer available</value>
+  </data>
+  <data name="ExpiredViewsStub" xml:space="preserve">
+    <value>List of viewers becomes unavailable **24 hours** after the story expires.</value>
+  </data>
   <data name="Fade" xml:space="preserve">
     <value>Fade</value>
   </data>
@@ -3390,13 +3453,16 @@ Duration: {1}</value>
     <value>Formatting</value>
   </data>
   <data name="ForumReplyToMessagesInTopic" xml:space="preserve">
-    <value>Swipe left on a message to reply</value>
+    <value>Right click on a message to reply</value>
   </data>
   <data name="Forward" xml:space="preserve">
     <value>Forward</value>
   </data>
   <data name="ForwardedMessage" xml:space="preserve">
     <value>Forwarded message</value>
+  </data>
+  <data name="ForwardedStory" xml:space="preserve">
+    <value>Forwarded Story</value>
   </data>
   <data name="ForwardSelected" xml:space="preserve">
     <value>Forward Selected</value>
@@ -4052,6 +4118,9 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   <data name="LocalPhotoCache" xml:space="preserve">
     <value>Photos</value>
   </data>
+  <data name="LocalStoriesCache" xml:space="preserve">
+    <value>Stories</value>
+  </data>
   <data name="LocalVideoCache" xml:space="preserve">
     <value>Videos</value>
   </data>
@@ -4323,7 +4392,7 @@ Minimum length is 5 characters.</value>
     <value>{0} months</value>
   </data>
   <data name="MoreInfo" xml:space="preserve">
-    <value>More info</value>
+    <value>Learn more</value>
   </data>
   <data name="Music" xml:space="preserve">
     <value>Music</value>
@@ -4355,6 +4424,9 @@ Minimum length is 5 characters.</value>
   <data name="MuteNotifications" xml:space="preserve">
     <value>Mute Forever</value>
   </data>
+  <data name="MyStory" xml:space="preserve">
+    <value>My Story</value>
+  </data>
   <data name="NearbyCreateGroup" xml:space="preserve">
     <value>Create a Local Group</value>
   </data>
@@ -4381,6 +4453,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="NewChatsFromNonContacts" xml:space="preserve">
     <value>New chats from unknown users</value>
+  </data>
+  <data name="NewChatsFromNonContactsCheck" xml:space="preserve">
+    <value>Automatically archive</value>
   </data>
   <data name="NewConversationShortcut" xml:space="preserve">
     <value>New conversation</value>
@@ -4424,6 +4499,12 @@ Minimum length is 5 characters.</value>
   <data name="Next" xml:space="preserve">
     <value>Next</value>
   </data>
+  <data name="NoArchivedStoriesSubtitle" xml:space="preserve">
+    <value>Upload a new story to view it here.</value>
+  </data>
+  <data name="NoArchivedStoriesTitle" xml:space="preserve">
+    <value>No stories yet…</value>
+  </data>
   <data name="NoBlockedChannel" xml:space="preserve">
     <value>Banned users are removed from the channel and can only come back if added by an admin. Invite links don&apos;t work for them.</value>
   </data>
@@ -4439,11 +4520,17 @@ Minimum length is 5 characters.</value>
   <data name="NobodyViewed" xml:space="preserve">
     <value>Nobody viewed</value>
   </data>
+  <data name="NobodyViews" xml:space="preserve">
+    <value>No views yet</value>
+  </data>
   <data name="NoComments" xml:space="preserve">
     <value>No comments here yet...</value>
   </data>
   <data name="NoMessages" xml:space="preserve">
     <value>No messages here yet...</value>
+  </data>
+  <data name="NoPublicStoriesTitle" xml:space="preserve">
+    <value>No public stories</value>
   </data>
   <data name="NoReactions" xml:space="preserve">
     <value>No reactions</value>
@@ -4458,6 +4545,9 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
   </data>
   <data name="NoSound" xml:space="preserve">
     <value>No sound</value>
+  </data>
+  <data name="NoStoriesSubtitle" xml:space="preserve">
+    <value>Open the Archive to select stories you want to be displayed on your profile.</value>
   </data>
   <data name="NotificationActionPinnedContactChannel" xml:space="preserve">
     <value>{0} pinned a contact</value>
@@ -4578,6 +4668,12 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
   </data>
   <data name="NotificationsService" xml:space="preserve">
     <value>Keep-Alive Service</value>
+  </data>
+  <data name="NotificationsStoryMute" xml:space="preserve">
+    <value>Do Not Notify</value>
+  </data>
+  <data name="NotificationsStoryUnmute" xml:space="preserve">
+    <value>Notify</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Username not found.</value>
@@ -4903,7 +4999,7 @@ messages from multiple devices.</value>
     <value>Tip (Optional)</value>
   </data>
   <data name="PaymentTransactionMessage" xml:space="preserve">
-    <value>Do you really want to transfer {0} to the {1} bot for {2}?</value>
+    <value>Are you sure you want to transfer {0} to the bot {1} for {2}?</value>
   </data>
   <data name="PaymentTransactionReview" xml:space="preserve">
     <value>Transaction Review</value>
@@ -5169,7 +5265,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Bio</value>
   </data>
   <data name="PrivacyBioInfo" xml:space="preserve">
-    <value>You can restrict who can see you bio with granular precision.</value>
+    <value>You can restrict who can see the bio on your profile with granular precision.</value>
   </data>
   <data name="PrivacyBioInfo3" xml:space="preserve">
     <value>You can add users or entire groups that will not see your bio.</value>
@@ -5305,6 +5401,18 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PrivateShares" xml:space="preserve">
     <value>Private Shares</value>
+  </data>
+  <data name="ProfileMyStories" xml:space="preserve">
+    <value>My stories</value>
+  </data>
+  <data name="ProfileStories" xml:space="preserve">
+    <value>Stories</value>
+  </data>
+  <data name="ProfileStoriesArchive" xml:space="preserve">
+    <value>Story Archive</value>
+  </data>
+  <data name="ProfileStoriesArchiveHint" xml:space="preserve">
+    <value>Only you can see archived stories unless you choose to save them to your profile.</value>
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>Proxy</value>
@@ -5474,6 +5582,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="Reply" xml:space="preserve">
     <value>Reply</value>
   </data>
+  <data name="ReplyPrivately" xml:space="preserve">
+    <value>Reply privately...</value>
+  </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Report</value>
   </data>
@@ -5511,7 +5622,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Are you sure you want to report spam from this user?</value>
   </data>
   <data name="ReportSpamAlertChannel" xml:space="preserve">
-    <value>Are you sure you want to report spam from this channel?</value>
+    <value>Are you sure you want to report this channel for spam?</value>
   </data>
   <data name="ReportSpamAlertGroup" xml:space="preserve">
     <value>Are you sure you want to report spam from this group?</value>
@@ -5698,11 +5809,20 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SaveForNotifications" xml:space="preserve">
     <value>Save for Notifications</value>
   </data>
+  <data name="SavePhoto" xml:space="preserve">
+    <value>Save Photo</value>
+  </data>
   <data name="SaveToDownloads" xml:space="preserve">
     <value>Save to Downloads</value>
   </data>
   <data name="SaveToGIFs" xml:space="preserve">
     <value>Add to GIFs</value>
+  </data>
+  <data name="SaveToProfile" xml:space="preserve">
+    <value>Save to Profile</value>
+  </data>
+  <data name="SaveVideo" xml:space="preserve">
+    <value>Save Video</value>
   </data>
   <data name="SavingContentTitle" xml:space="preserve">
     <value>Content protection</value>
@@ -5775,6 +5895,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="SelectTheme" xml:space="preserve">
     <value>Select theme</value>
+  </data>
+  <data name="SelfStoryTitle" xml:space="preserve">
+    <value>My Story</value>
   </data>
   <data name="Send" xml:space="preserve">
     <value>Send</value>
@@ -6037,8 +6160,14 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="ShowInChat" xml:space="preserve">
     <value>Show in chat</value>
   </data>
+  <data name="ShowInChats" xml:space="preserve">
+    <value>Show in Chats</value>
+  </data>
   <data name="ShowInFolder" xml:space="preserve">
     <value>Show in Folder</value>
+  </data>
+  <data name="ShowMore" xml:space="preserve">
+    <value>Show more</value>
   </data>
   <data name="ShowNotificationsFor" xml:space="preserve">
     <value>Show notifications from</value>
@@ -6230,8 +6359,50 @@ and enter your phone number.</value>
   <data name="Stories_other" xml:space="preserve">
     <value>{0} stories</value>
   </data>
+  <data name="StoriesSelected_one" xml:space="preserve">
+    <value>{0} Selected</value>
+  </data>
+  <data name="StoriesSelected_other" xml:space="preserve">
+    <value>{0} Selected</value>
+  </data>
   <data name="Story" xml:space="preserve">
     <value>Story</value>
+  </data>
+  <data name="StoryContactsHint" xml:space="preserve">
+    <value>Only **{0}’s** contacts can view this story.</value>
+  </data>
+  <data name="StoryContactsHintSelf" xml:space="preserve">
+    <value>Only your contacts can view this story.</value>
+  </data>
+  <data name="StoryMentionedAction" xml:space="preserve">
+    <value>View Story</value>
+  </data>
+  <data name="StoryMentionedTitle" xml:space="preserve">
+    <value>**{0}** mentioned you in a story.</value>
+  </data>
+  <data name="StoryMentionInDialog" xml:space="preserve">
+    <value>Mentioned you in a story</value>
+  </data>
+  <data name="StoryNoSound" xml:space="preserve">
+    <value>This video has no sound</value>
+  </data>
+  <data name="StoryReplyDisabled" xml:space="preserve">
+    <value>You can’t reply to this story</value>
+  </data>
+  <data name="StorySelectedContactsHint" xml:space="preserve">
+    <value>Only some contacts **{0}** selected can view this story.</value>
+  </data>
+  <data name="StorySelectedContactsHintSelf" xml:space="preserve">
+    <value>Only some contacts you selected can view this story.</value>
+  </data>
+  <data name="StoryUnsupported" xml:space="preserve">
+    <value>This story is not supported by your version of Telegram.</value>
+  </data>
+  <data name="StoryYouMentionedTitle" xml:space="preserve">
+    <value>**You** mentioned {0} in a story.</value>
+  </data>
+  <data name="StoryYouMentionInDialog" xml:space="preserve">
+    <value>You mentioned {0}</value>
   </data>
   <data name="Streaming" xml:space="preserve">
     <value>Streaming</value>
@@ -6622,6 +6793,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="Unlock" xml:space="preserve">
     <value>Unlock</value>
+  </data>
+  <data name="UnlockPremium" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to unlock this and many other features.</value>
   </data>
   <data name="UnlockPremiumStickers" xml:space="preserve">
     <value>Unlock Premium Stickers</value>
