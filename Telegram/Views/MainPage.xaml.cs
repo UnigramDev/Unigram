@@ -2131,6 +2131,11 @@ namespace Telegram.Views
 
             UpdatePaneToggleButtonVisibility();
 
+            if (rpMasterTitlebar.SelectedIndex != 0)
+            {
+                SetPivotIndex(0);
+            }
+
             return folder;
         }
 
