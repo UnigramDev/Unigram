@@ -9,7 +9,7 @@
              d:DesignHeight="300"
              d:DesignWidth="400">
 
-    <Grid Width="72"
+    <Grid Width="64"
           Padding="0,12">
         <Grid.RowDefinitions>
             <RowDefinition />

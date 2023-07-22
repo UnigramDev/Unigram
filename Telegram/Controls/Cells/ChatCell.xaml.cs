@@ -52,6 +52,7 @@ namespace Telegram.Controls.Cells
 
         private Chat _chat;
         private ChatList _chatList;
+        private StoryList _storyList;
 
         private Message _message;
 
@@ -185,9 +186,10 @@ namespace Telegram.Controls.Cells
             {
                 UpdateChat(_clientService, _chat, _chatList);
             }
-            else if (_chatList != null)
+            else if (_chatList != null && _storyList != null)
             {
                 UpdateChatList(_clientService, _chatList);
+                UpdateStoryList(_clientService, _storyList);
             }
             else if (_message != null)
             {
@@ -311,6 +313,40 @@ namespace Telegram.Controls.Cells
 
                     BriefLabel.Inlines.Add(run);
                 }
+            }
+        }
+
+        public async void UpdateStoryList(IClientService clientService, StoryList storyList)
+        {
+            _clientService = clientService;
+            _storyList = storyList;
+
+            if (!_templateApplied)
+            {
+                return;
+            }
+
+            var response = await clientService.GetStoryListAsync(storyList, 0, 10);
+            if (response is Telegram.Td.Api.Chats chats)
+            {
+                var count = 0;
+                var unread = 0;
+
+                foreach (var activeStories in clientService.GetActiveStorieses(chats.ChatIds))
+                {
+                    if (activeStories.Stories.Count > 0 && activeStories.Stories[^1].StoryId > activeStories.MaxReadStoryId)
+                    {
+                        unread++;
+                    }
+
+                    count++;
+                }
+
+                Segments.UpdateSegments(48, count, unread);
+            }
+            else
+            {
+                Segments.UpdateSegments(48, 0, 0);
             }
         }
 

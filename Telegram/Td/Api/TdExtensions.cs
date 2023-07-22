@@ -25,22 +25,25 @@ namespace Telegram.Td.Api
 {
     public static class TdExtensions
     {
-        public static bool AllowCloseFriends(this UserPrivacySettingRules rules)
+        public static int CountUnread(this ChatActiveStories activeStories, out bool closeFriends)
         {
-            if (rules == null)
-            {
-                return false;
-            }
+            var count = 0;
+            closeFriends = false;
 
-            foreach (var rule in rules.Rules)
+            foreach (var story in activeStories.Stories)
             {
-                if (rule is UserPrivacySettingRuleAllowCloseFriends)
+                if (story.StoryId > activeStories.MaxReadStoryId)
                 {
-                    return true;
+                    if (story.IsForCloseFriends)
+                    {
+                        closeFriends = true;
+                    }
+
+                    count++;
                 }
             }
 
-            return false;
+            return count;
         }
 
         public static int TotalReactions(this MessageInteractionInfo info)

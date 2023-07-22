@@ -22,27 +22,36 @@ namespace Telegram.Services
             Monitor.Enter(_storyList);
             //Monitor.Enter(chat);
 
+            int prevIndex = -1;
+            int nextIndex;
+
             if (prev != null)
             {
-                var index = prev.List switch
+                prevIndex = prev.List switch
                 {
                     StoryListArchive => 1,
                     StoryListMain or _ => 0
                 };
 
-                var storyList = _storyList[index];
+                var storyList = _storyList[prevIndex];
                 storyList?.Remove(new OrderedActiveStories(prev.ChatId, prev.Order));
             }
 
             {
-                var index = next.List switch
+                nextIndex = next.List switch
                 {
                     StoryListArchive => 1,
                     StoryListMain or _ => 0
                 };
 
-                var storyList = _storyList[index];
+                var storyList = _storyList[nextIndex];
                 storyList?.Add(new OrderedActiveStories(next.ChatId, next.Order));
+            }
+
+            // TODO: remove when this is added to TDLib.
+            if (prevIndex != nextIndex)
+            {
+                _aggregator.Publish(new UpdateChatActiveStories(new ChatActiveStories(prev.ChatId, prev.List, 0, prev.MaxReadStoryId, prev.Stories)));
             }
 
             //Monitor.Exit(chat);

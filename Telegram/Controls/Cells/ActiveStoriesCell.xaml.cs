@@ -68,11 +68,6 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            SegmentsSmall.Width = 48;
-            SegmentsSmall.Height = 48;
-            SegmentsSmall.HorizontalAlignment = HorizontalAlignment.Center;
-            SegmentsSmall.HorizontalAlignment = HorizontalAlignment.Center;
-
             var visual = ElementCompositionPreview.GetElementVisual(container);
             var ciccio = ElementCompositionPreview.GetElementVisual(PhotoCiccio);
             var photo = ElementCompositionPreview.GetElementVisual(PhotoRoot);
@@ -84,7 +79,7 @@ namespace Telegram.Controls.Cells
             var included = index >= f && index <= l;
             var clamp = Math.Clamp(index, f, l);
 
-            var prevX = 72 * index + 10f - (12 * clamp) /* + 14 */;
+            var prevX = 64 * index + 10f - (12 * clamp) /* + 14 */;
             var nextX = 0;
 
             var diffX = prevX - nextX;
@@ -94,7 +89,7 @@ namespace Telegram.Controls.Cells
             ElementCompositionPreview.SetIsTranslationEnabled(Title, true);
 
             //visual.Properties.InsertVector3("Translation", new Vector3(-prevX + diffX * boh, 0, 0));
-            visual.CenterPoint = new Vector3(12 + 24);
+            visual.CenterPoint = new Vector3(8 + 24);
             //visual.Scale = new Vector3(min + max * (1 - progress));
 
             var compositor = visual.Compositor;
@@ -117,8 +112,8 @@ namespace Telegram.Controls.Cells
             {
                 // TODO: replace this with an ellipse in the UI
                 var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, 48, 48);
-                var elli1 = CanvasGeometry.CreateEllipse(device, 48 + 72 * 0, 24, 22, 22);
-                var elli2 = CanvasGeometry.CreateEllipse(device, 48 + 72 * 1, 24, 22, 22);
+                var elli1 = CanvasGeometry.CreateEllipse(device, 48 + 64 * 0, 24, 22, 22);
+                var elli2 = CanvasGeometry.CreateEllipse(device, 48 + 64 * 1, 24, 22, 22);
                 var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
                 var group2 = CanvasGeometry.CreateGroup(device, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
 
@@ -149,8 +144,8 @@ namespace Telegram.Controls.Cells
             {
                 // TODO: replace this with an ellipse in the UI
                 var rect1 = CanvasGeometry.CreateRectangle(device, 0, 0, 48, 48);
-                var elli1 = CanvasGeometry.CreateEllipse(device, -0 + -72 * 0, 24, 22, 22);
-                var elli2 = CanvasGeometry.CreateEllipse(device, -0 + -72 * 1, 24, 22, 22);
+                var elli1 = CanvasGeometry.CreateEllipse(device, -0 + -64 * 0, 24, 22, 22);
+                var elli2 = CanvasGeometry.CreateEllipse(device, -0 + -64 * 1, 24, 22, 22);
                 var group1 = CanvasGeometry.CreateGroup(device, new[] { elli1, rect1 }, CanvasFilledRegionDetermination.Alternate);
                 var group2 = CanvasGeometry.CreateGroup(device, new[] { elli2, rect1 }, CanvasFilledRegionDetermination.Alternate);
 

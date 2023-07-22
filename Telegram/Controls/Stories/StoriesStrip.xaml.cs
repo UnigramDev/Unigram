@@ -371,11 +371,16 @@ namespace Telegram.Controls.Stories
 
         private void OnTick(object sender, object e)
         {
-            var test = ControlledList.ItemsPanelRoot;
+            var test = ControlledList.Header switch
+            {
+                FrameworkElement header => header.Visibility == Visibility.Visible ? header : ControlledList.ItemsPanelRoot,
+                _ => ControlledList.ItemsPanelRoot
+            };
+
             if (test != null && _collapsed)
             {
-                var trans = test.TransformToVisual(ControlledList);
-                var point = trans.TransformPoint(new Point()).ToVector2();
+                var transform = test.TransformToVisual(ControlledList);
+                var point = transform.TransformPoint(new Point()).ToVector2();
 
                 Logger.Info(point.Y);
 

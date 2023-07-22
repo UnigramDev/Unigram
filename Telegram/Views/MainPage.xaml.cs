@@ -202,7 +202,14 @@ namespace Telegram.Views
 
         public void Handle(UpdateChatActiveStories update)
         {
-            Handle(update.ActiveStories.ChatId, (chatView, chat) => chatView.UpdateChatActiveStories(update.ActiveStories));
+            if (update.ActiveStories.List is StoryListArchive)
+            {
+                this.BeginOnUIThread(() => ArchivedChats.UpdateStoryList(ViewModel.ClientService, new StoryListArchive()));
+            }
+            else
+            {
+                Handle(update.ActiveStories.ChatId, (chatView, chat) => chatView.UpdateChatActiveStories(update.ActiveStories));
+            }
         }
 
         public void Handle(UpdateFileDownloads update)
@@ -1252,6 +1259,7 @@ namespace Telegram.Views
             ViewModel.Settings.NavigationService = MasterDetail.NavigationService;
 
             ArchivedChats.UpdateChatList(ViewModel.ClientService, new ChatListArchive());
+            ArchivedChats.UpdateStoryList(ViewModel.ClientService, new StoryListArchive());
         }
 
         public async void Activate(string parameter)
@@ -2722,6 +2730,7 @@ namespace Telegram.Views
         private void ArchivedChats_ActualThemeChanged(FrameworkElement sender, object args)
         {
             ArchivedChats.UpdateChatList(ViewModel.ClientService, new ChatListArchive());
+            ArchivedChats.UpdateStoryList(ViewModel.ClientService, new StoryListArchive());
         }
 
         private async void Downloads_Click(object sender, RoutedEventArgs e)

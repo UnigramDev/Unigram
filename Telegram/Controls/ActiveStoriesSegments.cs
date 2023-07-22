@@ -89,7 +89,7 @@ namespace Telegram.Controls
 
         public void SetChat(IClientService clientService, Chat chat, int side)
         {
-            if (chat.Type is ChatTypePrivate privata && privata.UserId != clientService.Options.MyId && clientService.TryGetUser(privata.UserId, out User user))
+            if (clientService != null  && chat?.Type is ChatTypePrivate privata && privata.UserId != clientService.Options.MyId && clientService.TryGetUser(privata.UserId, out User user))
             {
                 UpdateActiveStories(clientService, user, side);
             }
@@ -135,7 +135,7 @@ namespace Telegram.Controls
                     var visual = ElementCompositionPreview.GetElementVisual(element);
                     visual.Scale = Vector3.One;
 
-                    ElementCompositionPreview.SetElementChildVisual(this, null);
+                    ElementCompositionPreview.SetElementChildVisual(this, visual.Compositor.CreateSpriteVisual());
                 }
 
                 _hasActiveStories = false;
@@ -183,13 +183,37 @@ namespace Telegram.Controls
             UpdateSegments(side, closeFriends, 1, unread ? 1 : 0);
         }
 
+        public void UpdateSegments(int side, int total, int unread)
+        {
+            if (total > 0)
+            {
+                if (Content is UIElement elementa && !_hasActiveStories)
+                {
+                    var visual = ElementCompositionPreview.GetElementVisual(elementa);
+                    visual.CenterPoint = new Vector3(side / 2);
+                    visual.Scale = new Vector3((side - 8f) / side);
+                }
+
+                _hasActiveStories = true;
+                UpdateSegments(side, false, total, unread);
+            }
+            else if (_hasActiveStories && Content is UIElement element)
+            {
+                var visual = ElementCompositionPreview.GetElementVisual(element);
+                visual.Scale = Vector3.One;
+
+                _hasActiveStories = false;
+                ElementCompositionPreview.SetElementChildVisual(this, visual.Compositor.CreateSpriteVisual());
+            }
+        }
+
         private void UpdateSegments(int side, bool closeFriends, int total, int unread, bool precise = true)
         {
             var compositor = Window.Current.Compositor;
             var read = total - unread;
 
-            var unreadPath = GetSegments(compositor, side, total, 0, unread);
-            var readPath = GetSegments(compositor, side, total, unread, read, precise ? 3 : 4);
+            var unreadPath = GetSegments(compositor, side, total, 0, unread, 2.0f);
+            var readPath = GetSegments(compositor, side, total, unread, read, 1.0f);
 
             var segments = compositor.CreateShapeVisual();
             segments.Size = new Vector2(side);
@@ -230,10 +254,10 @@ namespace Telegram.Controls
             ElementCompositionPreview.SetElementChildVisual(this, segments);
         }
 
-        private CompositionGeometry GetSegments(Compositor compositor, float side, float segments, int index, int length, float spacing = 4.0f)
+        private CompositionGeometry GetSegments(Compositor compositor, float side, float segments, int index, int length, float thickness = 2.0f)
         {
             var center = new Vector2(side * 0.5f);
-            var radius = center.X - 1;
+            var radius = center.X - (thickness * 0.5f);
 
             if (length == 0)
             {
@@ -253,7 +277,7 @@ namespace Telegram.Controls
             {
                 var startAngle = MathFEx.ToRadians(360f / segments);
 
-                //var spacing = 4.0f;
+                var spacing = 4.0f;
                 var angularSpacing = spacing / radius;
                 var circleLength = MathF.PI * 2.0f * radius;
                 var segmentLength = (circleLength - spacing * segments) / segments;
