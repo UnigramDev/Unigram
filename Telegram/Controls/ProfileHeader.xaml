@@ -149,6 +149,7 @@
             <controls:BadgeButton x:Name="Description"
                                   Visibility="Collapsed"
                                   Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"
+                                  ContextRequested="Description_ContextRequested"
                                   BadgeTemplate="{x:Null}"
                                   Glyph="&#xE946;">
                 <controls:BadgeButton.Badge>
@@ -163,17 +164,6 @@
                         </Paragraph>
                     </RichTextBlock>
                 </controls:BadgeButton.Badge>
-                <Button.ContextFlyout>
-                    <MenuFlyout>
-                        <MenuFlyoutItem Text="{CustomResource Copy}"
-                                        Click="{x:Bind ViewModel.CopyDescription}">
-                            <MenuFlyoutItem.Icon>
-                                <FontIcon Glyph="&#xE8C8;"
-                                          Style="{StaticResource DefaultFontIconStyle}" />
-                            </MenuFlyoutItem.Icon>
-                        </MenuFlyoutItem>
-                    </MenuFlyout>
-                </Button.ContextFlyout>
             </controls:BadgeButton>
 
             <controls:BadgeButton x:Name="UserPhone"

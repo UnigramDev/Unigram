@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
@@ -575,24 +574,10 @@ namespace Telegram.Controls
 
         private void Description_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = FlyoutBase.GetAttachedFlyout(sender as FrameworkElement) as MenuFlyout;
-            if (flyout == null)
+            var description = ViewModel.CopyDescription();
+            if (description != null)
             {
-                return;
-            }
-
-            if (args.TryGetPosition(sender, out Point point))
-            {
-                if (point.X < 0 || point.Y < 0)
-                {
-                    point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
-                }
-
-                flyout.ShowAt(sender, point);
-            }
-            else
-            {
-                flyout.ShowAt(sender as FrameworkElement);
+                MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, sender, description, args);
             }
         }
 
