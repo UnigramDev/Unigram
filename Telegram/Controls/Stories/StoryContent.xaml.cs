@@ -343,7 +343,7 @@ namespace Telegram.Controls.Stories
                     : Visibility.Collapsed;
 
                 Mute.IsEnabled = !video.Video.IsAnimation;
-                Mute.IsChecked = !video.Video.IsAnimation && _viewModel.Settings.AreStoriesMuted;
+                Mute.IsChecked = !video.Video.IsAnimation && !_viewModel.Settings.AreStoriesMuted;
             }
 
             if (string.IsNullOrEmpty(story.Caption?.Text))
@@ -928,12 +928,10 @@ namespace Telegram.Controls.Stories
 
             _player = new MediaPlayer(_library);
             _player.EnableHardwareDecoding = true;
-            //_player.ESSelected += OnESSelected;
+            _player.ESSelected += OnESSelected;
             _player.Vout += OnVout;
             _player.Buffering += OnBuffering;
             _player.EndReached += OnEndReached;
-
-            _player.Mute = _viewModel.Settings.AreStoriesMuted;
 
             //_player.FileCaching = 1;
 
@@ -961,7 +959,11 @@ namespace Telegram.Controls.Stories
         {
             if (e.Type == TrackType.Video && e.Id != -1)
             {
-                _dispatcherQueue.TryEnqueue(UpdateStretch);
+                //_dispatcherQueue.TryEnqueue(UpdateStretch);
+            }
+            else if (e.Type == TrackType.Audio && e.Id != -1)
+            {
+                _dispatcherQueue.TryEnqueue(() => _player.Mute = _viewModel.Settings.AreStoriesMuted);
             }
         }
 
