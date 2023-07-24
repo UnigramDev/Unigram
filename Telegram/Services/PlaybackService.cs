@@ -94,6 +94,8 @@ namespace Telegram.Services
 
         private readonly PlaybackPositionChangedEventArgs _positionChanged = new();
 
+        private WM.SystemMediaTransportControls _transport;
+
         private long _threadId;
 
         private List<PlaybackItem> _items;
@@ -233,18 +235,10 @@ namespace Telegram.Services
             PositionChanged?.Invoke(this, _positionChanged);
         }
 
-        private async void UpdateTransport()
+        private void UpdateTransport(PlaybackItem item)
         {
-            return;
-
-            var transport = WM.SystemMediaTransportControls.GetForCurrentView();
-            if (transport == null)
-            {
-                return;
-            }
-
             var items = _items;
-            var item = CurrentPlayback;
+            var transport = _transport;
 
             if (items == null || item == null /*|| item?.Stream?.File == null*/)
             {
@@ -259,35 +253,15 @@ namespace Telegram.Services
             transport.IsPreviousEnabled = true;
             transport.IsNextEnabled = items.Count > 1;
 
-            void SetProperties(string title, string artist)
-            {
-                transport.DisplayUpdater.ClearAll();
-                transport.DisplayUpdater.Type = WM.MediaPlaybackType.Music;
+            transport.DisplayUpdater.ClearAll();
+            transport.DisplayUpdater.Type = WM.MediaPlaybackType.Music;
 
-                try
-                {
-                    transport.DisplayUpdater.MusicProperties.Title = title ?? string.Empty;
-                    transport.DisplayUpdater.MusicProperties.Artist = artist ?? string.Empty;
-                }
-                catch { }
-            }
-
-            //if (item.Stream.File.Local.IsDownloadingCompleted)
-            //{
-            //    try
-            //    {
-            //        var cached = await item.Message.ClientService.GetFileAsync(item.Stream.File);
-            //        await transport.DisplayUpdater.CopyFromFileAsync(WM.MediaPlaybackType.Music, cached);
-            //    }
-            //    catch
-            //    {
-            //        SetProperties(item.Title, item.Performer);
-            //    }
-            //}
-            //else
+            try
             {
-                SetProperties(item.Title, item.Performer);
+                transport.DisplayUpdater.MusicProperties.Title = item.Title ?? string.Empty;
+                transport.DisplayUpdater.MusicProperties.Artist = item.Performer ?? string.Empty;
             }
+            catch { }
 
             transport.DisplayUpdater.Update();
         }
@@ -305,6 +279,7 @@ namespace Telegram.Services
                 _positionChanged.Position = TimeSpan.Zero;
                 _positionChanged.Duration = TimeSpan.Zero;
                 SourceChanged?.Invoke(this, value);
+                UpdateTransport(value);
             }
         }
         private MessageWithOwner _currentItem;
@@ -324,6 +299,13 @@ namespace Telegram.Services
                 {
                     _playbackState = value;
                     StateChanged?.Invoke(this, null);
+
+                    _transport.PlaybackStatus = value switch
+                    {
+                        PlaybackState.Playing => WM.MediaPlaybackStatus.Playing,
+                        PlaybackState.Paused => WM.MediaPlaybackStatus.Paused,
+                        PlaybackState.None or _ => WM.MediaPlaybackStatus.Stopped
+                    };
                 }
             }
         }
@@ -548,6 +530,8 @@ namespace Telegram.Services
 
         public void Play(MessageWithOwner message, long threadId)
         {
+            _transport ??= WM.SystemMediaTransportControls.GetForCurrentView();
+
             Task.Run(() =>
             {
                 lock (_mediaPlayerLock)
@@ -620,7 +604,7 @@ namespace Telegram.Services
                     }
                 }
 
-                UpdateTransport();
+                UpdateTransport(CurrentPlayback);
                 PlaylistChanged?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -702,6 +686,8 @@ namespace Telegram.Services
 
                 if (full)
                 {
+                    _transport.ButtonPressed -= Transport_ButtonPressed;
+
                     //_mediaPlayer.SystemMediaTransportControls.ButtonPressed -= Transport_ButtonPressed;
                     //_mediaPlayer.PlaybackSession.PlaybackStateChanged -= OnPlaybackStateChanged;
                     _mediaPlayer.TimeChanged -= OnTimeChanged;
@@ -745,6 +731,8 @@ namespace Telegram.Services
                 _mediaPlayer.MediaChanged += OnMediaChanged;
                 //_mediaPlayer.CommandManager.IsEnabled = false;
                 _mediaPlayer.Volume = (int)Math.Round(_settingsService.VolumeLevel * 100);
+
+                _transport.ButtonPressed += Transport_ButtonPressed;
             }
 
             return _mediaPlayer;
