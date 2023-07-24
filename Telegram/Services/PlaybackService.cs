@@ -173,8 +173,6 @@ namespace Telegram.Services
                 {
                     message.ClientService.Send(new OpenMessageContent(message.ChatId, message.Id));
                 }
-
-                SourceChanged?.Invoke(this, item);
             }
         }
 
@@ -304,7 +302,9 @@ namespace Telegram.Services
             {
                 _currentItem = value?.Message;
                 _currentPlayback = value;
-                UpdateTransport();
+                _positionChanged.Position = TimeSpan.Zero;
+                _positionChanged.Duration = TimeSpan.Zero;
+                SourceChanged?.Invoke(this, value);
             }
         }
         private MessageWithOwner _currentItem;
