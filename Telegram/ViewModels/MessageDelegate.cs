@@ -22,7 +22,6 @@ using Telegram.ViewModels.Gallery;
 using Telegram.Views;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels
 {
@@ -203,45 +202,9 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void OpenUrl(string url, bool untrust)
+        public void OpenUrl(string url, bool untrust)
         {
-            if (MessageHelper.TryCreateUri(url, out Uri uri))
-            {
-                if (MessageHelper.IsTelegramUrl(uri))
-                {
-                    MessageHelper.OpenTelegramUrl(ClientService, NavigationService, uri);
-                }
-                else
-                {
-                    //if (message?.Media is TLMessageMediaWebPage webpageMedia)
-                    //{
-                    //    if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
-                    //    {
-                    //        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                    //        if (service != null)
-                    //        {
-                    //            service.Navigate(typeof(InstantPage), webpageMedia);
-                    //            return;
-                    //        }
-                    //    }
-                    //}
-
-                    if (untrust)
-                    {
-                        var confirm = await ShowPopupAsync(string.Format(Strings.OpenUrlAlert, url), Strings.AppName, Strings.OK, Strings.Cancel);
-                        if (confirm != ContentDialogResult.Primary)
-                        {
-                            return;
-                        }
-                    }
-
-                    try
-                    {
-                        await Windows.System.Launcher.LaunchUriAsync(uri);
-                    }
-                    catch { }
-                }
-            }
+            MessageHelper.OpenUrl(ClientService, NavigationService, url, untrust);
         }
 
         public string GetAdminTitle(MessageViewModel message)

@@ -160,6 +160,9 @@ namespace Telegram.Controls.Media
         public const string Archive = "\uE7B8";
         public const string ArchiveFilled = "\uEA0E";
 
+        public const string StoriesPinned = "\uE9AC";
+        public const string StoriesPinnedOff = "\uE9D2";
+
         public const string Unarchive = "\uEA24";
 
         public const string WindowNew = "\uE97F";
@@ -277,17 +280,16 @@ namespace Telegram.Controls.Media
 
         public const string Seen = "\uE96B";
 
-        public const string PremiumMultiplier2x = "\uE9AC";
-        public const string PremiumPlayCircle = "\uE9AD";
-        public const string PremiumChat = "\uE9AE";
-        public const string PremiumSticker = "\uE9AF";
-        public const string PremiumHeart = "\uE9B0";
-        public const string PremiumMegaphone = "\uE9B1";
-        public const string PremiumMic = "\uE9B2";
-        public const string PremiumTopSpeed = "\uE9B3";
-        public const string PremiumDocument = "\uE9B4";
-        public const string PremiumPremium = "\uE9B6";
-        public const string PremiumEmoji = "\uE9D2";
+        public const string Multiplier2xFilled = "\uE9BA";
+        public const string PlayCircleFilled = "\uE9AE";
+        public const string ChatFilled = "\uE9B0";
+        public const string StickerFilled = "\uE9AD";
+        public const string HeartFilled = "\uE9B6";
+        public const string MegaphoneOffFilled = "\uE9AF";
+        public const string TopSpeedFilled = "\uE9B3";
+        public const string DocumentFilled = "\uE9B4";
+        public const string EmojiFilled = "\uE9B1";
+        public const string TranslateFilled = "\uE9B2";
 
         public const string Premium16 = "\uE9B5";
         public const string LockClosed16 = "\uE9BE";
@@ -297,7 +299,6 @@ namespace Telegram.Controls.Media
 
         public const string PersonFilled = "\uE9B8";
         public const string PeopleFilled = "\uE9B9";
-        public const string ChatFilled = "\uE9BA";
         public const string PinFilled = "\uE9BB";
         public const string LinkFilled = "\uE9BC";
         public const string FolderFilled = "\uE9BD";

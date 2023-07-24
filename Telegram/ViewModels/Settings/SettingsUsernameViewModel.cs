@@ -14,7 +14,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -401,13 +400,9 @@ namespace Telegram.ViewModels.Settings
             return false;
         }
 
-        public async void Copy()
+        public void Copy()
         {
-            var dataPackage = new DataPackage();
-            dataPackage.SetText(MeUrlPrefixConverter.Convert(ClientService, _username));
-            ClipboardEx.TrySetContent(dataPackage);
-
-            await ShowPopupAsync(Strings.LinkCopied, Strings.AppName, Strings.OK);
+            MessageHelper.CopyLink(ClientService, new InternalLinkTypePublicChat(_username));
         }
     }
 

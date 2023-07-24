@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -11,6 +12,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Telegram.Views;
 using Windows.Foundation;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
@@ -67,26 +69,31 @@ namespace Telegram.ViewModels
 
         public void ToggleStory(StoryViewModel story)
         {
-            ClientService.Send(new ToggleStoryIsPinned(story.StoryId, !story.IsPinned));
+            ClientService.Send(new ToggleStoryIsPinned(story.StoryId, !IsPinned));
 
-            if (story.IsPinned)
+            if (IsPinned)
             {
                 Items.Remove(story);
             }
+
+            Window.Current.ShowTeachingTip(IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }
 
         public void ToggleSelectedStories()
         {
-            foreach (var story in SelectedItems)
-            {
-                ClientService.Send(new ToggleStoryIsPinned(story.StoryId, !story.IsPinned));
+            var selection = SelectedItems.ToArray();
 
-                if (story.IsPinned)
+            foreach (var story in selection)
+            {
+                ClientService.Send(new ToggleStoryIsPinned(story.StoryId, !IsPinned));
+
+                if (IsPinned)
                 {
                     Items.Remove(story);
                 }
             }
 
+            Window.Current.ShowTeachingTip(Locale.Declension(IsPinned ? Strings.R.StoriesRemovedFromProfile : Strings.R.StoriesSavedToProfile, selection.Length));
             UnselectStories();
         }
 
@@ -98,8 +105,8 @@ namespace Telegram.ViewModels
             var confirm = await ShowPopupAsync(message, title, Strings.Delete, Strings.Cancel, dangerous: true);
             if (confirm == ContentDialogResult.Primary)
             {
-                Items.Remove(story);
                 ClientService.Send(new DeleteStory(story.StoryId));
+                Items.Remove(story);
             }
         }
 
@@ -111,10 +118,12 @@ namespace Telegram.ViewModels
             var confirm = await ShowPopupAsync(message, title, Strings.Delete, Strings.Cancel, dangerous: true);
             if (confirm == ContentDialogResult.Primary)
             {
-                foreach (var story in SelectedItems)
+                var selection = SelectedItems.ToArray();
+
+                foreach (var story in selection)
                 {
-                    Items.Remove(story);
                     ClientService.Send(new DeleteStory(story.StoryId));
+                    Items.Remove(story);
                 }
 
                 UnselectStories();

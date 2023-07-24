@@ -61,7 +61,7 @@ namespace Telegram.Views
 
             var flyout = new MenuFlyout();
 
-            flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, story.IsPinned ? Strings.ArchiveStory : Strings.SaveToProfile, story.IsPinned ? Icons.Archive : Icons.Add);
+            flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, story.IsPinned ? Strings.ArchiveStory : Strings.SaveToProfile, story.IsPinned ? Icons.StoriesPinnedOff : Icons.StoriesPinned);
             flyout.CreateFlyoutItem(ViewModel.DeleteStory, story, Strings.Delete, Icons.Delete, dangerous: true);
             flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(ViewModel.SelectStory, story, Strings.Select, Icons.CheckmarkCircle);
@@ -159,7 +159,7 @@ namespace Telegram.Views
 
         private string ConvertToggleIcon(bool pinned)
         {
-            return pinned ? Icons.Archive : Icons.Add;
+            return pinned ? Icons.StoriesPinnedOff : Icons.StoriesPinned;
         }
 
         private string ConvertToggleText(bool pinned, int count)

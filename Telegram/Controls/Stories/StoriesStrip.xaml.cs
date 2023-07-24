@@ -120,15 +120,15 @@ namespace Telegram.Controls.Stories
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.SendMessage, activeStories, Strings.SendMessage, Icons.ChatEmpty);
             flyout.CreateFlyoutItem(ViewModel.OpenProfile, activeStories, Strings.OpenProfile, Icons.Person);
-            flyout.CreateFlyoutItem(ViewModel.MuteProfile, activeStories, muted ? Strings.NotificationsStoryUnmute : Strings.NotificationsStoryMute, muted ? Icons.Alert : Icons.AlertOff);
+            flyout.CreateFlyoutItem(ViewModel.MuteProfile, activeStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
 
             if (archived)
             {
-                flyout.CreateFlyoutItem(ViewModel.ShowProfile, activeStories, Strings.Unarchive, Icons.Unarchive);
+                flyout.CreateFlyoutItem(ViewModel.ShowProfile, activeStories, Strings.UnarchiveStories, Icons.Unarchive);
             }
             else
             {
-                flyout.CreateFlyoutItem(ViewModel.HideProfile, activeStories, Strings.Archive, Icons.Archive);
+                flyout.CreateFlyoutItem(ViewModel.HideProfile, activeStories, Strings.ArchivePeerStories, Icons.Archive);
             }
 
             args.ShowAt(flyout, element);

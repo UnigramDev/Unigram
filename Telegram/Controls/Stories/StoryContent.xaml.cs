@@ -1267,6 +1267,14 @@ namespace Telegram.Controls.Stories
             var visual = ElementCompositionPreview.GetElementVisual(MiniInside);
             visual.CenterPoint = new Vector3(MiniInside.ActualSize / 2, 0);
         }
+
+        public void CopyLink(StoryViewModel story)
+        {
+            if (story.ClientService.TryGetUser(story.Chat, out User user) && user.HasActiveUsername(out string username))
+            {
+                MessageHelper.CopyLink(story.ClientService, new InternalLinkTypeStory(username, story.StoryId));
+            }
+        }
     }
 
     public class StoryContentPhotoTimer

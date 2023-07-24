@@ -209,22 +209,37 @@ namespace Telegram.Common
             }
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Default)
+        public static TeachingTip ShowTeachingTip(this Window app, string text, ElementTheme requestedTheme = ElementTheme.Dark)
+        {
+            return ShowTeachingTip(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme);
+        }
+
+        public static TeachingTip ShowTeachingTip(this Window app, string text, IAnimatedVisualSource2 icon, ElementTheme requestedTheme = ElementTheme.Dark)
+        {
+            return ShowTeachingTip(app, null, ComposeViewModel.GetFormattedText(text), icon, TeachingTipPlacementMode.Center, requestedTheme);
+        }
+
+        public static TeachingTip ShowTeachingTip(this Window app, FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark)
+        {
+            return ShowTeachingTip(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme);
+        }
+
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark)
         {
             return ShowTeachingTip(app, target, text, null, placement, requestedTheme);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Default)
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark)
         {
-            return ShowTeachingTip(app, target, DialogViewModel.GetFormattedText(text), icon, placement, requestedTheme);
+            return ShowTeachingTip(app, target, ComposeViewModel.GetFormattedText(text), icon, placement, requestedTheme);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Default)
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark)
         {
             return ShowTeachingTip(app, target, text, null, placement, requestedTheme);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Default)
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark)
         {
             var label = new TextBlock
             {

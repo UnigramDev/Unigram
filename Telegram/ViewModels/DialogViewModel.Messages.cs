@@ -675,10 +675,7 @@ namespace Telegram.ViewModels
                 dataPackage.SetText(link.Link);
                 ClipboardEx.TrySetContent(dataPackage);
 
-                if (!link.IsPublic)
-                {
-                    await ShowPopupAsync(Strings.LinkCopiedPrivate, Strings.AppName, Strings.OK);
-                }
+                Window.Current.ShowTeachingTip(link.IsPublic ? Strings.LinkCopied : Strings.LinkCopiedPrivate, new Assets.Icons.TeachingTipLinkCopied());
             }
         }
 

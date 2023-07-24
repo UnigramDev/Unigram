@@ -126,16 +126,16 @@
                                     <VisualState.Setters>
                                         <Setter Target="TitlesStackPanel.Margin"
                                                 Value="{StaticResource TeachingTipTitleStackPanelMarginWithHeaderCloseButton}" />
-                                        <Setter Target="AlternateCloseButton.Visibility"
-                                                Value="Visible" />
+                                        <!--<Setter Target="AlternateCloseButton.Visibility"
+                                                Value="Visible" />-->
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="FooterCloseButton">
                                     <VisualState.Setters>
                                         <Setter Target="TitlesStackPanel.Margin"
                                                 Value="{StaticResource TeachingTipTitleStackPanelMarginWithFooterCloseButton}" />
-                                        <Setter Target="AlternateCloseButton.Visibility"
-                                                Value="Collapsed" />
+                                        <!--<Setter Target="AlternateCloseButton.Visibility"
+                                                Value="Collapsed" />-->
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -540,7 +540,8 @@
                                                                   FontStyle="{TemplateBinding FontStyle}"
                                                                   FontFamily="{TemplateBinding FontFamily}"
                                                                   FontStretch="{TemplateBinding FontStretch}" />
-                                                <Grid Grid.Row="2">
+                                                <Grid Visibility="Collapsed"
+                                                      Grid.Row="2">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="*" />
                                                         <ColumnDefinition Width="*" />
@@ -565,8 +566,8 @@
                                                 </Grid>
                                             </StackPanel>
                                         </ScrollViewer>
-                                        <Button x:Name="AlternateCloseButton"
-                                                Style="{ThemeResource AlternateCloseButtonStyle}" />
+                                        <!--<Button x:Name="AlternateCloseButton"
+                                                Style="{ThemeResource AlternateCloseButtonStyle}" />-->
                                     </Grid>
                                 </Grid>
                                 <Polygon x:Name="TailPolygon"

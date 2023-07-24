@@ -855,6 +855,9 @@ Unused sets are archived when you add more.</value>
     <value>Archive moved to the main menu
 Right click the archive button to return the Archive to your chat list.</value>
   </data>
+  <data name="ArchivePeerStories" xml:space="preserve">
+    <value>Hide Stories</value>
+  </data>
   <data name="ArchiveSettings" xml:space="preserve">
     <value>Archive Settings</value>
   </data>
@@ -4672,8 +4675,22 @@ Please make sure you entered the right Server URL and Stream Key in your app.</v
   <data name="NotificationsStoryMute" xml:space="preserve">
     <value>Do Not Notify</value>
   </data>
+  <data name="NotificationsStoryMute2" xml:space="preserve">
+    <value>Do Not Notify
+About Stories</value>
+  </data>
+  <data name="NotificationsStoryMutedHint" xml:space="preserve">
+    <value>Disabled notifications for **{0}** stories.</value>
+  </data>
   <data name="NotificationsStoryUnmute" xml:space="preserve">
     <value>Notify</value>
+  </data>
+  <data name="NotificationsStoryUnmute2" xml:space="preserve">
+    <value>Notify About
+Stories</value>
+  </data>
+  <data name="NotificationsStoryUnmutedHint" xml:space="preserve">
+    <value>You will receive a notification whenever **{0}** posts a new story.</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Username not found.</value>
@@ -6359,6 +6376,24 @@ and enter your phone number.</value>
   <data name="Stories_other" xml:space="preserve">
     <value>{0} stories</value>
   </data>
+  <data name="StoriesMovedToContacts" xml:space="preserve">
+    <value>Stories of **{0}** were moved to **Archive**.</value>
+  </data>
+  <data name="StoriesMovedToDialogs" xml:space="preserve">
+    <value>Stories of **{0}** were moved to **Chats**.</value>
+  </data>
+  <data name="StoriesRemovedFromProfile_one" xml:space="preserve">
+    <value>{0} story removed from your profile.</value>
+  </data>
+  <data name="StoriesRemovedFromProfile_other" xml:space="preserve">
+    <value>{0} stories removed from your profile.</value>
+  </data>
+  <data name="StoriesSavedToProfile_one" xml:space="preserve">
+    <value>{0} story saved to your profile.</value>
+  </data>
+  <data name="StoriesSavedToProfile_other" xml:space="preserve">
+    <value>{0} stories saved to your profile.</value>
+  </data>
   <data name="StoriesSelected_one" xml:space="preserve">
     <value>{0} Selected</value>
   </data>
@@ -6386,8 +6421,14 @@ and enter your phone number.</value>
   <data name="StoryNoSound" xml:space="preserve">
     <value>This video has no sound</value>
   </data>
+  <data name="StoryRemovedFromProfile" xml:space="preserve">
+    <value>Story removed from your profile.</value>
+  </data>
   <data name="StoryReplyDisabled" xml:space="preserve">
     <value>You can’t reply to this story</value>
+  </data>
+  <data name="StorySavedToProfile" xml:space="preserve">
+    <value>Story saved to your profile.</value>
   </data>
   <data name="StorySelectedContactsHint" xml:space="preserve">
     <value>Only some contacts **{0}** selected can view this story.</value>
@@ -6763,6 +6804,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="Unarchive" xml:space="preserve">
     <value>Unarchive</value>
+  </data>
+  <data name="UnarchiveStories" xml:space="preserve">
+    <value>Unhide Stories</value>
   </data>
   <data name="Unavailable" xml:space="preserve">
     <value>Unavailable</value>

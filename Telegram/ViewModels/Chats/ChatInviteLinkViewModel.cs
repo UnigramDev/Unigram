@@ -12,7 +12,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -162,13 +161,9 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        public async void Copy()
+        public void Copy()
         {
-            var dataPackage = new DataPackage();
-            dataPackage.SetText(_inviteLink);
-            ClipboardEx.TrySetContent(dataPackage);
-
-            await ShowPopupAsync(Strings.LinkCopied, Strings.AppName, Strings.OK);
+            MessageHelper.CopyLink(_inviteLink);
         }
 
         public async void Revoke()

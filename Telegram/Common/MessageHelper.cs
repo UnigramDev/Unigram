@@ -143,6 +143,24 @@ namespace Telegram.Common
             return hasRandALCat;
         }
 
+        public static async void CopyLink(IClientService clientService, InternalLinkType type)
+        {
+            var response = await clientService.SendAsync(new GetInternalLink(type, true));
+            if (response is HttpUrl httpUrl)
+            {
+                CopyLink(httpUrl.Url);
+            }
+        }
+
+        public static void CopyLink(string link)
+        {
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(link);
+            ClipboardEx.TrySetContent(dataPackage);
+
+            Window.Current.ShowTeachingTip(Strings.LinkCopied, new TeachingTipLinkCopied());
+        }
+
         public static bool TryCreateUri(string url, out Uri uri)
         {
             if (!url.StartsWith("http://")
@@ -891,7 +909,34 @@ namespace Telegram.Common
 
         public static void Hyperlink_ContextRequested(ITranslateService service, UIElement sender, ContextRequestedEventArgs args)
         {
-            var text = sender as RichTextBlock;
+            if (args.TryGetPosition(sender, out Point point))
+            {
+                var flyout = new MenuFlyout();
+
+                if (sender is RichTextBlock text)
+                {
+                    Hyperlink_ContextRequested(flyout, service, text, point);
+                }
+
+                if (flyout.Items.Count > 0)
+                {
+                    // We don't want to unfocus the text are when the context menu gets opened
+                    flyout.ShowAt(sender, new FlyoutShowOptions { Position = point, ShowMode = FlyoutShowMode.Transient });
+                    args.Handled = true;
+                }
+                else
+                {
+                    args.Handled = false;
+                }
+            }
+            else
+            {
+                args.Handled = false;
+            }
+        }
+
+        public static void Hyperlink_ContextRequested(ITranslateService service, UIElement sender, string text, ContextRequestedEventArgs args)
+        {
             if (args.TryGetPosition(sender, out Point point))
             {
                 var flyout = new MenuFlyout();
@@ -915,6 +960,25 @@ namespace Telegram.Common
             }
         }
 
+        public static void Hyperlink_ContextRequested(MenuFlyout flyout, ITranslateService service, string text, Point point)
+        {
+            if (point.X < 0 || point.Y < 0)
+            {
+                point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
+            }
+
+            var length = text.Length;
+            if (length > 0)
+            {
+                flyout.CreateFlyoutItem(LinkCopy_Click, text, Strings.Copy, Icons.DocumentCopy);
+
+                if (service != null && service.CanTranslate(text))
+                {
+                    flyout.CreateFlyoutItem(LinkTranslate_Click, Tuple.Create(service, text), Strings.TranslateMessage, Icons.Translate);
+                }
+            }
+        }
+
         public static void Hyperlink_ContextRequested(MenuFlyout flyout, ITranslateService service, RichTextBlock text, Point point)
         {
             if (point.X < 0 || point.Y < 0)
@@ -922,15 +986,9 @@ namespace Telegram.Common
                 point = new Point(Math.Max(point.X, 0), Math.Max(point.Y, 0));
             }
 
-            var length = text.SelectedText.Length;
-            if (length > 0)
+            if (text.SelectedText.Length > 0)
             {
-                flyout.CreateFlyoutItem(LinkCopy_Click, text.SelectedText, Strings.Copy, Icons.DocumentCopy);
-
-                if (service != null && service.CanTranslate(text.SelectedText))
-                {
-                    flyout.CreateFlyoutItem(LinkTranslate_Click, Tuple.Create(service, text.SelectedText), Strings.TranslateMessage, Icons.Translate);
-                }
+                Hyperlink_ContextRequested(flyout, service, text.SelectedText, point);
             }
             else
             {

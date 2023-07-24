@@ -101,7 +101,7 @@ namespace Telegram.ViewModels
             await Launcher.LaunchUriAsync(link);
         }
 
-        public async void Copy()
+        public void Copy()
         {
             var link = ShareLink;
             if (link == null)
@@ -109,11 +109,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var dataPackage = new DataPackage();
-            dataPackage.SetText(link.AbsoluteUri);
-            ClipboardEx.TrySetContent(dataPackage);
-
-            await ShowPopupAsync(Strings.LinkCopied, Strings.AppName, Strings.OK);
+            MessageHelper.CopyLink(link.ToString());
         }
     }
 }

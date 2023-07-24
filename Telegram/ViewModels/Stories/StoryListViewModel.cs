@@ -70,18 +70,31 @@ namespace Telegram.ViewModels.Stories
             settings.MuteStories = !settings.MuteStories;
 
             ClientService.Send(new SetChatNotificationSettings(chat.Id, settings));
+
+            if (ClientService.TryGetUser(activeStories.Chat, out User user))
+            {
+                Window.Current.ShowTeachingTip(string.Format(settings.MuteStories ? Strings.NotificationsStoryMutedHint : Strings.NotificationsStoryUnmutedHint, user.FirstName));
+            }
         }
 
         public void HideProfile(ActiveStoriesViewModel activeStories)
         {
-            Items.Remove(activeStories);
             ClientService.Send(new SetChatActiveStoriesList(activeStories.ChatId, new StoryListArchive()));
+
+            if (ClientService.TryGetUser(activeStories.Chat, out User user))
+            {
+                Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToContacts, user.FirstName));
+            }
         }
 
         public void ShowProfile(ActiveStoriesViewModel activeStories)
         {
-            Items.Remove(activeStories);
             ClientService.Send(new SetChatActiveStoriesList(activeStories.ChatId, new StoryListMain()));
+
+            if (ClientService.TryGetUser(activeStories.Chat, out User user))
+            {
+                Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToDialogs, user.FirstName));
+            }
         }
 
         public void ShareStory(StoryViewModel story)
@@ -105,10 +118,7 @@ namespace Telegram.ViewModels.Stories
         {
             ClientService.Send(new ToggleStoryIsPinned(story.StoryId, !story.IsPinned));
 
-            //if (story.IsPinned)
-            //{
-            //    Items.Remove(story);
-            //}
+            Window.Current.ShowTeachingTip(story.IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }
 
         public async void ReportStory(StoryViewModel story)

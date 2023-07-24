@@ -765,15 +765,20 @@ namespace Telegram.Controls.Stories
 
             if (e.ActiveStories.IsMyStory)
             {
-                flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, story.IsPinned ? Strings.ArchiveStory : Strings.SaveToProfile, story.IsPinned ? Icons.Archive : Icons.Add);
+                flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, story.IsPinned ? Strings.ArchiveStory : Strings.SaveToProfile, story.IsPinned ? Icons.StoriesPinnedOff : Icons.StoriesPinned);
 
-                if (story.Content is StoryContentPhoto)
+                if (story.CanBeForwarded && story.Content is StoryContentPhoto)
                 {
                     flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, Strings.SavePhoto, Icons.SaveAs);
                 }
-                else if (story.Content is StoryContentVideo)
+                else if (story.CanBeForwarded && story.Content is StoryContentVideo)
                 {
                     flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, Strings.SaveVideo, Icons.SaveAs);
+                }
+
+                if (story.ClientService.TryGetUser(story.Chat, out User user) && user.HasActiveUsername(out _))
+                {
+                    flyout.CreateFlyoutItem(CopyLink, story, Strings.CopyLink, Icons.Link);
                 }
 
                 if (story.CanBeForwarded)
@@ -786,30 +791,48 @@ namespace Telegram.Controls.Stories
             }
             else
             {
+                if (story.CanBeForwarded && story.Content is StoryContentPhoto)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, Strings.SavePhoto, Icons.SaveAs);
+                }
+                else if (story.CanBeForwarded && story.Content is StoryContentVideo)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, Strings.SaveVideo, Icons.SaveAs);
+                }
+
+                if (story.ClientService.TryGetUser(story.Chat, out User user) && user.HasActiveUsername(out _))
+                {
+                    flyout.CreateFlyoutItem(CopyLink, story, Strings.CopyLink, Icons.Link);
+                }
+
                 if (story.CanBeForwarded)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ShareStory, story, Strings.CopyLink, Icons.Link);
                     flyout.CreateFlyoutItem(ViewModel.ShareStory, story, Strings.StickersShare, Icons.Share);
                 }
 
                 var muted = ViewModel.Settings.Notifications.GetMuteStories(e.ActiveStories.Chat);
                 var archived = e.ActiveStories.List is StoryListArchive;
 
-                flyout.CreateFlyoutItem(ViewModel.MuteProfile, e.ActiveStories, muted ? Strings.NotificationsStoryUnmute : Strings.NotificationsStoryMute, muted ? Icons.Alert : Icons.AlertOff);
+                flyout.CreateFlyoutItem(ViewModel.MuteProfile, e.ActiveStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
 
                 if (archived)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ShowProfile, e.ActiveStories, Strings.Unarchive, Icons.Unarchive);
+                    flyout.CreateFlyoutItem(ViewModel.ShowProfile, e.ActiveStories, Strings.UnarchiveStories, Icons.Unarchive);
                 }
                 else
                 {
-                    flyout.CreateFlyoutItem(ViewModel.HideProfile, e.ActiveStories, Strings.Archive, Icons.Archive);
+                    flyout.CreateFlyoutItem(ViewModel.HideProfile, e.ActiveStories, Strings.ArchivePeerStories, Icons.Archive);
                 }
 
                 flyout.CreateFlyoutItem(ViewModel.ReportStory, story, Strings.ReportChat, Icons.ErrorCircle);
             }
 
             flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.BottomEdgeAlignedRight);
+        }
+
+        private void CopyLink(StoryViewModel story)
+        {
+            ActiveCard?.CopyLink(story);
         }
 
         private void Flyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
@@ -820,7 +843,12 @@ namespace Telegram.Controls.Stories
 
         public void ShowTeachingTip(FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
-            var tip = Window.Current.ShowTeachingTip(target, text, placement, ElementTheme.Dark);
+            ShowTeachingTip(target, text, null, placement);
+        }
+
+        public void ShowTeachingTip(FrameworkElement target, string text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        {
+            var tip = Window.Current.ShowTeachingTip(target, text, icon, placement, ElementTheme.Dark);
             tip.Closing += TeachingTip_Closing;
             ActiveCard.Suspend(StoryPauseSource.TeachingTip);
         }

@@ -74,12 +74,12 @@ namespace Telegram.Views.Premium.Popups
             switch (feature)
             {
                 case PremiumFeatureAdvancedChatManagement:
-                    iconValue = Icons.PremiumChat;
+                    iconValue = Icons.ChatFilled;
                     titleValue = Strings.PremiumPreviewAdvancedChatManagement;
                     subtitleValue = Strings.PremiumPreviewAdvancedChatManagementDescription;
                     break;
                 case PremiumFeatureAnimatedProfilePhoto:
-                    iconValue = Icons.PremiumPlayCircle;
+                    iconValue = Icons.PlayCircleFilled;
                     titleValue = Strings.PremiumPreviewAnimatedProfiles;
                     subtitleValue = Strings.PremiumPreviewAnimatedProfilesDescription;
                     break;
@@ -88,12 +88,12 @@ namespace Telegram.Views.Premium.Popups
                     subtitleValue = Strings.PremiumPreviewAppIconDescription;
                     break;
                 case PremiumFeatureCustomEmoji:
-                    iconValue = Icons.PremiumEmoji;
+                    iconValue = Icons.EmojiFilled;
                     titleValue = Strings.PremiumPreviewEmoji;
                     subtitleValue = Strings.PremiumPreviewEmojiDescription;
                     break;
                 case PremiumFeatureDisabledAds:
-                    iconValue = Icons.PremiumMegaphone;
+                    iconValue = Icons.MegaphoneOffFilled;
                     titleValue = Strings.PremiumPreviewNoAds;
                     subtitleValue = Strings.PremiumPreviewNoAdsDescription;
                     break;
@@ -103,42 +103,42 @@ namespace Telegram.Views.Premium.Popups
                     subtitleValue = Strings.PremiumPreviewEmojiStatusDescription;
                     break;
                 case PremiumFeatureImprovedDownloadSpeed:
-                    iconValue = Icons.PremiumTopSpeed;
+                    iconValue = Icons.TopSpeedFilled;
                     titleValue = Strings.PremiumPreviewDownloadSpeed;
                     subtitleValue = Strings.PremiumPreviewDownloadSpeedDescription;
                     break;
                 case PremiumFeatureIncreasedLimits:
-                    iconValue = Icons.PremiumMultiplier2x;
+                    iconValue = Icons.Multiplier2xFilled;
                     titleValue = Strings.PremiumPreviewLimits;
                     subtitleValue = ViewModel.PremiumPreviewLimitsDescription;
                     break;
                 case PremiumFeatureIncreasedUploadFileSize:
-                    iconValue = Icons.PremiumDocument;
+                    iconValue = Icons.DocumentFilled;
                     titleValue = Strings.PremiumPreviewUploads;
                     subtitleValue = Strings.PremiumPreviewUploadsDescription;
                     break;
                 case PremiumFeatureProfileBadge:
-                    iconValue = Icons.PremiumPremium;
+                    iconValue = Icons.Premium16;
                     titleValue = Strings.PremiumPreviewProfileBadge;
                     subtitleValue = Strings.PremiumPreviewProfileBadgeDescription;
                     break;
                 case PremiumFeatureRealTimeChatTranslation:
-                    //iconValue = Icons.PremiumFilled24;
+                    iconValue = Icons.TranslateFilled;
                     titleValue = Strings.PremiumPreviewTranslations;
                     subtitleValue = Strings.PremiumPreviewTranslationsDescription;
                     break;
                 case PremiumFeatureUniqueReactions:
-                    iconValue = Icons.PremiumHeart;
+                    iconValue = Icons.HeartFilled;
                     titleValue = Strings.PremiumPreviewReactions2;
                     subtitleValue = Strings.PremiumPreviewReactions2Description;
                     break;
                 case PremiumFeatureUniqueStickers:
-                    iconValue = Icons.PremiumSticker;
+                    iconValue = Icons.StickerFilled;
                     titleValue = Strings.PremiumPreviewStickers;
                     subtitleValue = Strings.PremiumPreviewStickersDescription;
                     break;
                 case PremiumFeatureVoiceRecognition:
-                    iconValue = Icons.PremiumMic;
+                    iconValue = Icons.MicOnFilled;
                     titleValue = Strings.PremiumPreviewVoiceToText;
                     subtitleValue = Strings.PremiumPreviewVoiceToTextDescription;
                     break;

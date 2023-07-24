@@ -606,9 +606,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(MeUrlPrefixConverter.Convert(ClientService, username));
-                ClipboardEx.TrySetContent(dataPackage);
+                MessageHelper.CopyLink(ClientService, new InternalLinkTypePublicChat(username));
             }
             else
             {
@@ -618,9 +616,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(MeUrlPrefixConverter.Convert(ClientService, username));
-                ClipboardEx.TrySetContent(dataPackage);
+                MessageHelper.CopyLink(ClientService, new InternalLinkTypePublicChat(username));
             }
         }
 
