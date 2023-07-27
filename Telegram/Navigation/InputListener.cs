@@ -138,8 +138,10 @@ namespace Telegram.Services.Keyboard
             }
         }
 
-        public static bool IsPointerGoBackGesture(PointerPointProperties properties)
+        public static bool IsPointerGoBackGesture(PointerPoint point)
         {
+            var properties = point.Properties;
+
             // Ignore button chords with the left, right, and middle buttons
             if (properties.IsLeftButtonPressed || properties.IsRightButtonPressed ||
                 properties.IsMiddleButtonPressed)
