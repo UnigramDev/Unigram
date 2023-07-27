@@ -519,6 +519,8 @@
                                                                    TextWrapping="WrapWholeWords"
                                                                    Foreground="{ThemeResource TeachingTipTitleForegroundBrush}"
                                                                    FontFamily="{TemplateBinding FontFamily}"
+                                                                   Margin="{StaticResource ContentDialogTitleMargin}"
+                                                                   FontSize="20"
                                                                    FontWeight="SemiBold"
                                                                    Visibility="Collapsed" />
                                                         <TextBlock x:Name="SubtitleTextBlock"
@@ -527,7 +529,8 @@
                                                                    Foreground="{ThemeResource TeachingTipSubtitleForegroundBrush}"
                                                                    FontFamily="{TemplateBinding FontFamily}"
                                                                    TextWrapping="WrapWholeWords"
-                                                                   Visibility="Collapsed" />
+                                                                   Visibility="Collapsed"
+                                                                   Margin="0,0,0,8"/>
                                                     </StackPanel>
                                                 </Grid>
                                                 <ContentPresenter x:Name="MainContentPresenter"
@@ -540,8 +543,7 @@
                                                                   FontStyle="{TemplateBinding FontStyle}"
                                                                   FontFamily="{TemplateBinding FontFamily}"
                                                                   FontStretch="{TemplateBinding FontStretch}" />
-                                                <Grid Visibility="Collapsed"
-                                                      Grid.Row="2">
+                                                <Grid Grid.Row="2">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="*" />
                                                         <ColumnDefinition Width="*" />
