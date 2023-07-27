@@ -87,7 +87,7 @@ namespace Telegram.ViewModels
         private bool CanUpdateQuery(string value)
         {
             UpdateQueryOffline(value);
-            return value.Length > 3;
+            return value.Length > 0;
         }
 
         private async void UpdateQueryOffline(string value)
