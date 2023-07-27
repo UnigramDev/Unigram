@@ -35,7 +35,14 @@ namespace Telegram.Controls.Stories
 
         private void OnItemsChanged(object sender, ItemsChangedEventArgs e)
         {
-            UpdateIndexes();
+            if (ScrollingHost.Items.Count > 0)
+            {
+                UpdateIndexes();
+            }
+            else
+            {
+                Collapse();
+            }
         }
 
         private int _first = 0;
@@ -142,15 +149,22 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
-            for (int i = panel.FirstVisibleIndex; i <= panel.LastVisibleIndex; i++)
+            for (int i = panel.FirstCacheIndex; i <= panel.LastCacheIndex; i++)
             {
                 var container = ScrollingHost.ContainerFromIndex(i) as SelectorItem;
                 if (container != null)
                 {
                     if (container.ContentTemplateRoot is ActiveStoriesCell cell)
                     {
-                        cell.Update(container, i, _first, _last, tracker, expression);
-                        Canvas.SetZIndex(container, i >= _first && i <= _last ? 5 - i : -i);
+                        if (i >= panel.FirstVisibleIndex && i <= panel.LastVisibleIndex)
+                        {
+                            cell.Update(container, i, _first, _last, tracker, expression);
+                            Canvas.SetZIndex(container, i >= _first && i <= _last ? 5 - i : -i);
+                        }
+                        else
+                        {
+                            cell.Disconnect(container);
+                        }
                     }
                 }
             }
@@ -314,7 +328,7 @@ namespace Telegram.Controls.Stories
                 "(_.Padding - _.First * 12) * (1 - _.Progress)");
 
             var storiesVisualOffsetAnimation = compositor.CreateExpressionAnimation(
-                "-24 + (48 * _.Progress)");
+                "-22 + (48 * _.Progress)");
 
             var headerVisualOffsetAnimation = compositor.CreateExpressionAnimation(
                 "84 * _.Progress");
