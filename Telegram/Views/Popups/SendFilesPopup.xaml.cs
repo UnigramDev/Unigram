@@ -36,7 +36,7 @@ namespace Telegram.Views.Popups
 {
     public sealed partial class SendFilesPopup : ContentPopup, IViewWithAutocomplete, INotifyPropertyChanged
     {
-        public DialogViewModel ViewModel { get; private set; }
+        public ComposeViewModel ViewModel { get; private set; }
         public MvxObservableCollection<StorageMedia> Items { get; private set; }
 
         private ICollection _autocomplete;
@@ -147,7 +147,7 @@ namespace Telegram.Views.Popups
         public bool? Schedule { get; private set; }
         public bool? Silent { get; private set; }
 
-        public SendFilesPopup(DialogViewModel viewModel, IEnumerable<StorageMedia> items, bool media, bool mediaAllowed, bool documentAllowed, bool ttl, bool schedule, bool savedMessages)
+        public SendFilesPopup(ComposeViewModel viewModel, IEnumerable<StorageMedia> items, bool media, bool mediaAllowed, bool documentAllowed, bool ttl, bool schedule, bool savedMessages)
         {
             InitializeComponent();
 

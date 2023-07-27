@@ -220,6 +220,11 @@ namespace Telegram.Controls
             _result = result;
         }
 
+        public void Close()
+        {
+            Hide();
+        }
+
         public void Hide(ContentDialogResult result)
         {
             _result = result;

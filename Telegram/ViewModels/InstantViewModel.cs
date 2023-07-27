@@ -14,13 +14,12 @@ using Telegram.Services.Factories;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class InstantViewModel : ViewModelBase
+    public class InstantViewModel : MultiViewModelBase
     {
         private readonly ITranslateService _translateService;
         private readonly IMessageFactory _messageFactory;
@@ -35,6 +34,8 @@ namespace Telegram.ViewModels
             _gallery = new InstantGalleryViewModel(clientService, storageService, aggregator);
 
             _messageDelegate = new InstantMessageDelegate(this);
+
+            Children.Add(_gallery);
         }
 
         public ITranslateService TranslateService => _translateService;

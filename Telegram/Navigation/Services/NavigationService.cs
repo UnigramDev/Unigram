@@ -14,6 +14,7 @@ using Telegram.Views;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.System;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
@@ -44,7 +45,7 @@ namespace Telegram.Navigation.Services
 
 
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
-        Task<ContentDialogResult> ShowPopupAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null);
+        Task<ContentDialogResult> ShowPopupAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null, ElementTheme requestedTheme = ElementTheme.Default);
 
         object CurrentPageParam { get; }
         Type CurrentPageType { get; }
@@ -333,15 +334,21 @@ namespace Telegram.Navigation.Services
             return viewService.OpenAsync(page, parameter, title, size, SessionId);
         }
 
-        public Task<ContentDialogResult> ShowPopupAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)
+        public Task<ContentDialogResult> ShowPopupAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var popup = (tsc != null ? Activator.CreateInstance(sourcePopupType, tsc) : Activator.CreateInstance(sourcePopupType)) as ContentPopup;
             if (popup != null)
             {
+                if (requestedTheme != ElementTheme.Default)
+                {
+                    popup.RequestedTheme = requestedTheme;
+                }
+
                 var viewModel = BootStrapper.Current.ViewModelForPage(popup, SessionId);
                 if (viewModel != null)
                 {
                     viewModel.NavigationService = this;
+                    viewModel.Dispatcher = Dispatcher;
 
                     void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
                     {

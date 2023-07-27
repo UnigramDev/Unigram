@@ -95,7 +95,7 @@ namespace Telegram.Services.Settings
             return false;
         }
 
-        private static bool? _inAppPreview;
+        private bool? _inAppPreview;
         public bool InAppPreview
         {
             get => _inAppPreview ??= GetValueOrDefault("InAppPreview", true);

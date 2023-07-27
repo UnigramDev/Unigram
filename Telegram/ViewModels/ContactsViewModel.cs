@@ -27,18 +27,7 @@ namespace Telegram.ViewModels
             _comparer = new UserComparer(Settings.IsContactsSortedByEpoch);
 
             Items = new SortedObservableCollection<User>(_comparer);
-
-            Stories = new StoriesViewModel(clientService, settingsService, aggregator);
-            Stories.HiddenStories = true;
-
-            Groups = new object[]
-            {
-                Stories,
-                this
-            };
         }
-
-        public object[] Groups { get; }
 
         public async void Activate()
         {
@@ -51,25 +40,13 @@ namespace Telegram.ViewModels
                 if (response is Telegram.Td.Api.Users users)
                 {
                     var items = new List<User>();
-                    var stories = new List<ActiveStoriesViewModel>();
 
                     foreach (var user in ClientService.GetUsers(users.UserIds))
                     {
                         items.Add(user);
-
-                        if (user.StoriesAreHidden && user.HasActiveStories)
-                        {
-                            stories.Add(new ActiveStoriesViewModel(ClientService, user.Id));
-                        }
                     }
 
                     Items.ReplaceWith(items);
-
-                    // TODO: ???
-                    if (Stories.HasMoreItems)
-                    {
-                        await Stories.LoadMoreItemsAsync(1);
-                    }
                 }
             }
         }
@@ -170,7 +147,6 @@ namespace Telegram.ViewModels
         #endregion
 
         public SortedObservableCollection<User> Items { get; }
-        public StoriesViewModel Stories { get; }
     }
 
     public class UserComparer : IComparer<User>

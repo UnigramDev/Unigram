@@ -37,7 +37,7 @@ namespace Telegram.Views.Chats
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var member = element.Tag as ChatMember;
+            var member = ScrollingHost.ItemFromContainer(element) as ChatMember;
 
             var chat = ViewModel.Chat;
             if (chat == null || member == null)

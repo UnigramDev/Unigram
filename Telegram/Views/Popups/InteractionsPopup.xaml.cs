@@ -19,6 +19,9 @@ namespace Telegram.Views.Popups
             SecondaryButtonText = Strings.Close;
         }
 
+        // 446.667,
+        //  48.6667
+
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             if (args.InRecycleQueue)

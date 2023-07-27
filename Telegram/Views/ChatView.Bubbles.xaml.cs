@@ -395,6 +395,7 @@ namespace Telegram.Views
                         viewModel = new SingleGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, new GalleryMessage(ViewModel.ClientService, message.Get()));
                     }
 
+                    viewModel.NavigationService = ViewModel.NavigationService;
                     await GalleryView.ShowAsync(viewModel, () => target);
                 }
                 else

@@ -200,6 +200,7 @@ namespace Telegram.Controls.Cells
                 ciccio.StartAnimation("Opacity", visualScale2);
             }
 
+            return;
             //title.Properties.InsertVector3("Translation", new Vector3(0, -28 * progress, 0));
 
 
@@ -229,6 +230,42 @@ namespace Telegram.Controls.Cells
             shape2.StartAnimation("StrokeThickness", visualScalezzzz);
 
             //ElementCompositionPreview.SetElementChildVisual(PhotoRoot, test);
+        }
+
+        public void Disconnect(SelectorItem container)
+        {
+            var visual = ElementCompositionPreview.GetElementVisual(container);
+            var ciccio = ElementCompositionPreview.GetElementVisual(PhotoCiccio);
+            var photo = ElementCompositionPreview.GetElementVisual(PhotoRoot);
+            var title = ElementCompositionPreview.GetElementVisual(Title);
+            var gradient = ElementCompositionPreview.GetElementVisual(SegmentsRoot);
+            var cross1 = ElementCompositionPreview.GetElementVisual(Segments);
+            var cross2 = ElementCompositionPreview.GetElementVisual(SegmentsSmall);
+
+            ElementCompositionPreview.SetIsTranslationEnabled(container, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Title, true);
+
+            visual.StopAnimation("Translation.X");
+            visual.StopAnimation("Scale.X");
+            visual.StopAnimation("Scale.Y");
+
+            visual.Properties.InsertVector3("Translation", Vector3.Zero);
+            visual.Scale = Vector3.One;
+
+            gradient.Clip = null;
+            photo.Clip = null;
+
+            photo.CenterPoint = new Vector3(24);
+
+            title.StopAnimation("Opacity");
+            cross1.StopAnimation("Opacity");
+            cross2.StopAnimation("Opacity");
+            ciccio.StopAnimation("Opacity");
+
+            title.Opacity = 1;
+            cross1.Opacity = 1;
+            cross2.Opacity = 0;
+            ciccio.Opacity = 1;
         }
 
         public event EventHandler<StoryEventArgs> Click;

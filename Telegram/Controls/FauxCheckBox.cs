@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
@@ -12,7 +13,25 @@ namespace Telegram.Controls
     {
         protected override void OnToggle()
         {
-            //base.OnToggle();
+            if (IsFaux)
+            {
+                return;
+            }
+
+            base.OnToggle();
         }
+
+        #region IsFaux
+
+        public bool IsFaux
+        {
+            get { return (bool)GetValue(IsFauxProperty); }
+            set { SetValue(IsFauxProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsFauxProperty =
+            DependencyProperty.Register("IsFaux", typeof(bool), typeof(FauxCheckBox), new PropertyMetadata(true));
+
+        #endregion
     }
 }

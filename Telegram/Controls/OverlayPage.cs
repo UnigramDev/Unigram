@@ -5,14 +5,11 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
-using Telegram.Services.ViewService;
 using Telegram.Views.Host;
 using Windows.Devices.Input;
 using Windows.Foundation;
@@ -24,8 +21,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Controls
 {
@@ -57,12 +52,10 @@ namespace Telegram.Controls
             //Closed += OnClosed;
         }
 
-        public abstract int SessionId { get; }
-
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
             var pointer = e.GetCurrentPoint(this);
-            if (!IsConstrainedToRootBounds && InputListener.IsPointerGoBackGesture(pointer.Properties))
+            if (!IsConstrainedToRootBounds && InputListener.IsPointerGoBackGesture(pointer))
             {
                 var args = new BackRequestedRoutedEventArgs();
                 OnBackRequested(args);
@@ -127,10 +120,12 @@ namespace Telegram.Controls
         {
             Margin = new Thickness();
 
-            if (DataContext is INavigable navigable)
+#if DEBUG
+            if (DataContext is INavigable navigable && navigable.NavigationService == null)
             {
-                navigable.NavigationService = new ContentDialogNavigationService(this);
+                throw new InvalidOperationException();
             }
+#endif
 
             var previous = _callback;
 
@@ -377,172 +372,5 @@ namespace Telegram.Controls
             DependencyProperty.Register("OverlayBrush", typeof(Brush), typeof(OverlayPage), new PropertyMetadata(null));
 
         #endregion
-    }
-
-    public class ContentDialogNavigationService : INavigationService
-    {
-        private readonly OverlayPage _contentDialog;
-
-        public ContentDialogNavigationService(OverlayPage contentDialog)
-        {
-            _contentDialog = contentDialog;
-        }
-
-        public void GoBack(NavigationState state = null, NavigationTransitionInfo infoOverride = null)
-        {
-            _contentDialog.TryHide(ContentDialogResult.None);
-        }
-
-        public object Content => throw new NotImplementedException();
-
-        public bool CanGoBack => throw new NotImplementedException();
-
-        public bool CanGoForward => throw new NotImplementedException();
-
-        public string NavigationState { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public object CurrentPageParam => null;
-
-        public Type CurrentPageType => throw new NotImplementedException();
-
-        public IDispatcherContext Dispatcher => throw new NotImplementedException();
-
-        public Frame Frame => throw new NotImplementedException();
-
-        public FrameFacade FrameFacade => throw new NotImplementedException();
-
-        public bool IsInMainView => throw new NotImplementedException();
-
-        public int SessionId => _contentDialog.SessionId;
-
-        public IDictionary<string, long> CacheKeyToChatId => throw new NotImplementedException();
-
-        public event TypedEventHandler<INavigationService, Type> AfterRestoreSavedNavigation;
-
-        public event EventHandler<NavigatingEventArgs> Navigating;
-
-        public void ClearCache(bool removeCachedPagesInBackStack = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearHistory()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void GoForward()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> LoadAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Navigate(Type page, object parameter = null, NavigationState state = null, NavigationTransitionInfo infoOverride = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Refresh()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Refresh(object param)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> RestoreSavedNavigationAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Resuming()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task SaveAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task SaveNavigationAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task SuspendingAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void AddToBackStack(Type type, object parameter = null, NavigationTransitionInfo info = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void InsertToBackStack(int index, Type type, object parameter = null, NavigationTransitionInfo info = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveFromBackStack(int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearBackStack()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void GoBackAt(int index, bool back = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ContentDialogResult> ShowPopupAsync(Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)
-        {
-            var popup = (tsc != null ? Activator.CreateInstance(sourcePopupType, tsc) : Activator.CreateInstance(sourcePopupType)) as ContentPopup;
-            if (popup != null)
-            {
-                var viewModel = BootStrapper.Current.ViewModelForPage(popup, SessionId);
-                if (viewModel != null)
-                {
-                    viewModel.NavigationService = this;
-
-                    void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
-                    {
-                        popup.Opened -= OnOpened;
-                    }
-
-                    void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
-                    {
-                        _ = viewModel.NavigatedFromAsync(null, false);
-                        popup.Closed -= OnClosed;
-                    }
-
-                    popup.DataContext = viewModel;
-
-                    _ = viewModel.NavigatedToAsync(parameter, NavigationMode.New, null);
-                    popup.OnNavigatedTo();
-                    popup.Closed += OnClosed;
-                }
-
-                return popup.ShowQueuedAsync();
-            }
-
-            return Task.FromResult(ContentDialogResult.None);
-        }
     }
 }

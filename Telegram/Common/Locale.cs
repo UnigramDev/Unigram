@@ -236,6 +236,29 @@ namespace Telegram.Common
             }
         }
 
+        public static string FormatRelativeShort(int date)
+        {
+            var diff = DateTime.Now.ToTimestamp() - date;
+            if (diff < 60)
+            {
+                return diff + "s";
+            }
+            else if (diff < 60 * 60)
+            {
+                return diff / 60 + "m";
+            }
+            else if (diff < 60 * 60 * 24)
+            {
+                return diff / 60 / 60 + "h";
+            }
+            else if (diff < 60 * 60 * 24 * 7)
+            {
+                return diff / 60 / 60 / 24 + "d";
+            }
+
+            return diff / 60 / 60 / 24 / 7 + "w";
+        }
+
         public static string FormatTtl(int ttl, bool shorter = false)
         {
             if (shorter)

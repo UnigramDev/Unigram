@@ -383,9 +383,6 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
-            args.ItemContainer.Tag = args.Item;
-            Tag = args.Item;
-
             var user = clientService.GetMessageSender(member.MemberId) as User;
             if (user == null)
             {

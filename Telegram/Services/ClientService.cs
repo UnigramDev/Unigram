@@ -616,7 +616,7 @@ namespace Telegram.Services
             }
             else if (message.ReplyTo is MessageReplyToStory replyToStory)
             {
-                Send(new GetStory(replyToStory.StorySenderChatId, replyToStory.StoryId, false), handler);
+                Send(new GetStory(replyToStory.StorySenderChatId, replyToStory.StoryId, true), handler);
             }
         }
 
@@ -1586,10 +1586,6 @@ namespace Telegram.Services
             {
                 _basicGroupsFull[updateBasicGroupFullInfo.BasicGroupId] = updateBasicGroupFullInfo.BasicGroupFullInfo;
             }
-            else if (update is UpdateCall updateCall)
-            {
-
-            }
             else if (update is UpdateChatAction updateUserChatAction)
             {
                 if (updateUserChatAction.MessageThreadId != 0)
@@ -1799,10 +1795,6 @@ namespace Telegram.Services
             {
                 _defaultReaction = updateDefaultReactionType.ReactionType;
             }
-            else if (update is UpdateDeleteMessages updateDeleteMessages)
-            {
-
-            }
             else if (update is UpdateDiceEmojis updateDiceEmojis)
             {
                 _diceEmojis = updateDiceEmojis.Emojis.ToArray();
@@ -1810,14 +1802,6 @@ namespace Telegram.Services
             else if (update is UpdateFavoriteStickers updateFavoriteStickers)
             {
                 _favoriteStickers = updateFavoriteStickers.StickerIds;
-            }
-            else if (update is UpdateFileGenerationStart updateFileGenerationStart)
-            {
-
-            }
-            else if (update is UpdateFileGenerationStop updateFileGenerationStop)
-            {
-
             }
             else if (update is UpdateForumTopicInfo updateForumTopicInfo)
             {
@@ -1841,22 +1825,6 @@ namespace Telegram.Services
             else if (update is UpdateLanguagePackStrings updateLanguagePackStrings)
             {
                 _locale.Handle(updateLanguagePackStrings);
-            }
-            else if (update is UpdateMessageContent updateMessageContent)
-            {
-
-            }
-            else if (update is UpdateMessageContentOpened updateMessageContentOpened)
-            {
-
-            }
-            else if (update is UpdateMessageEdited updateMessageEdited)
-            {
-
-            }
-            else if (update is UpdateMessageInteractionInfo updateMessageInteractionInfo)
-            {
-
             }
             else if (update is UpdateMessageIsPinned updateMessageIsPinned)
             {
@@ -1927,14 +1895,6 @@ namespace Telegram.Services
                     _selectedBackground = updateSelectedBackground.Background;
                 }
             }
-            else if (update is UpdateServiceNotification updateServiceNotification)
-            {
-
-            }
-            else if (update is UpdateStickerSet updateStickerSet)
-            {
-
-            }
             else if (update is UpdateSupergroup updateSupergroup)
             {
                 _supergroups[updateSupergroup.Supergroup.Id] = updateSupergroup.Supergroup;
@@ -1943,14 +1903,6 @@ namespace Telegram.Services
             {
                 _supergroupsFull[updateSupergroupFullInfo.SupergroupId] = updateSupergroupFullInfo.SupergroupFullInfo;
             }
-            else if (update is UpdateTermsOfService updateTermsOfService)
-            {
-
-            }
-            else if (update is UpdateTrendingStickerSets updateTrendingStickerSets)
-            {
-
-            }
             else if (update is UpdateUnreadChatCount updateUnreadChatCount)
             {
                 SetUnreadCount(updateUnreadChatCount.ChatList, chatCount: updateUnreadChatCount);
@@ -1958,10 +1910,6 @@ namespace Telegram.Services
             else if (update is UpdateUserFullInfo updateUserFullInfo)
             {
                 _usersFull[updateUserFullInfo.UserId] = updateUserFullInfo.UserFullInfo;
-            }
-            else if (update is UpdateUserPrivacySettingRules updateUserPrivacySettingRules)
-            {
-
             }
             else if (update is UpdateUserStatus updateUserStatus)
             {

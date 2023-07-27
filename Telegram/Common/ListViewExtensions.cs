@@ -183,6 +183,15 @@ namespace Telegram.Common
             return listViewBase.Descendants<ScrollViewer>().FirstOrDefault();
         }
 
+        public static void SetVerticalPadding(this ScrollViewer scrollViewer, double padding)
+        {
+            var scrollBar = scrollViewer.Descendants<ScrollBar>().FirstOrDefault(x => x.Orientation == Orientation.Vertical);
+            if (scrollBar != null)
+            {
+                scrollBar.Margin = new Thickness(0, padding, 0, 0);
+            }
+        }
+
         public static void ScrollToTop(this ListViewBase listViewBase)
         {
             var scrollViewer = GetScrollViewer(listViewBase);

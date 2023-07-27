@@ -97,21 +97,25 @@ namespace Telegram.Views.Settings.Popups
                 return;
             }
 
-            var popup = new TeachingTip();
-            popup.Title = username.IsActive
-                ? Strings.UsernameDeactivateLink
-                : Strings.UsernameActivateLink;
-            popup.Subtitle = username.IsActive
-                ? Strings.UsernameDeactivateLinkProfileMessage
-                : Strings.UsernameActivateLinkProfileMessage;
-            popup.ActionButtonContent = username.IsActive ? Strings.Hide : Strings.Show;
-            popup.ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
-            popup.CloseButtonContent = Strings.Cancel;
-            popup.PreferredPlacement = TeachingTipPlacementMode.Top;
-            popup.Width = popup.MinWidth = popup.MaxWidth = 314;
-            popup.Target = /*badge ??*/ container;
-            popup.IsLightDismissEnabled = true;
-            popup.ShouldConstrainToRootBounds = true;
+            var popup = new TeachingTip
+            {
+                Title = username.IsActive
+                    ? Strings.UsernameDeactivateLink
+                    : Strings.UsernameActivateLink,
+                Subtitle = username.IsActive
+                    ? Strings.UsernameDeactivateLinkProfileMessage
+                    : Strings.UsernameActivateLinkProfileMessage,
+                ActionButtonContent = username.IsActive ? Strings.Hide : Strings.Show,
+                ActionButtonStyle = BootStrapper.Current.Resources["AccentButtonStyle"] as Style,
+                CloseButtonContent = Strings.Cancel,
+                PreferredPlacement = TeachingTipPlacementMode.Top,
+                Width = 314,
+                MinWidth = 314,
+                MaxWidth = 314,
+                Target = /*badge ??*/ container,
+                IsLightDismissEnabled = true,
+                ShouldConstrainToRootBounds = true,
+            };
 
             popup.ActionButtonClick += (s, args) =>
             {
@@ -122,10 +126,6 @@ namespace Telegram.Views.Settings.Popups
             if (Window.Current.Content is FrameworkElement element)
             {
                 element.Resources["TeachingTip"] = popup;
-            }
-            else
-            {
-                container.Resources["TeachingTip"] = popup;
             }
 
             popup.IsOpen = true;

@@ -99,6 +99,8 @@ namespace Telegram.Services
             try
             {
                 var extension = Path.GetExtension(text.TextValue);
+
+                // FileSavePicker doesn't support no exension.
                 if (string.IsNullOrEmpty(extension))
                 {
                     extension = ".dat";

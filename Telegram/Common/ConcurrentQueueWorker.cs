@@ -86,20 +86,13 @@ namespace Telegram.Common
 
             _ = Task.Run(() =>
             {
-                while (true)
+                while (taskQueue.TryPop(out Action nextTaskAction))
                 {
-                    if (taskQueue.Count > 0)
-                    {
-                        if (taskQueue.TryPop(out Action nextTaskAction))
-                        {
-                            taskQueue.Clear();
-                            nextTaskAction();
-
-                            Interlocked.Exchange(ref _concurrentCount, 0);
-                            break;
-                        }
-                    }
+                    taskQueue.Clear();
+                    nextTaskAction();
                 }
+
+                Interlocked.Exchange(ref _concurrentCount, 0);
             });
         }
     }

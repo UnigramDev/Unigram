@@ -796,7 +796,7 @@ namespace Telegram.Services
         {
             if (_settings.Notifications.TryGetScope(chat, out ScopeNotificationSettings scope))
             {
-                var settings = chat.NotificationSettings;
+                var settings = chat.NotificationSettings.Clone();
 
                 var useDefault = value == scope.MuteFor || value > 366 * 24 * 60 * 60 && scope.MuteFor > 366 * 24 * 60 * 60;
                 if (useDefault)
@@ -804,14 +804,10 @@ namespace Telegram.Services
                     value = scope.MuteFor;
                 }
 
-                _clientService.Send(new SetChatNotificationSettings(chat.Id,
-                    new ChatNotificationSettings(
-                        useDefault, value,
-                        settings.UseDefaultSound, settings.SoundId,
-                        settings.UseDefaultShowPreview, settings.ShowPreview,
-                        settings.UseDefaultMuteStories, settings.MuteStories,
-                        settings.UseDefaultDisablePinnedMessageNotifications, settings.DisablePinnedMessageNotifications,
-                        settings.UseDefaultDisableMentionNotifications, settings.DisableMentionNotifications)));
+                settings.UseDefaultMuteFor = useDefault;
+                settings.MuteFor = value;
+
+                _clientService.Send(new SetChatNotificationSettings(chat.Id, settings));
             }
         }
     }

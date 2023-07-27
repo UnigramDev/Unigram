@@ -191,34 +191,6 @@ namespace Telegram.Converters
             //return "LOC_ERR";
         }
 
-        //private SolidColorBrush BubbleInternal(int? value)
-        //{
-        //    return Application.Current.Resources[$"Placeholder{Utils.GetColorIndex(value ?? 0)}Brush"] as SolidColorBrush;
-
-        //    switch (Utils.GetColorIndex(value ?? 0))
-        //    {
-        //        case 0:
-        //            return Application.Current.Resources["PlaceholderRedBrush"] as SolidColorBrush;
-        //        case 1:
-        //            return Application.Current.Resources["PlaceholderGreenBrush"] as SolidColorBrush;
-        //        case 2:
-        //            return Application.Current.Resources["PlaceholderYellowBrush"] as SolidColorBrush;
-        //        case 3:
-        //            return Application.Current.Resources["PlaceholderBlueBrush"] as SolidColorBrush;
-        //        case 4:
-        //            return Application.Current.Resources["PlaceholderPurpleBrush"] as SolidColorBrush;
-        //        case 5:
-        //            return Application.Current.Resources["PlaceholderPinkBrush"] as SolidColorBrush;
-        //        case 6:
-        //            return Application.Current.Resources["PlaceholderCyanBrush"] as SolidColorBrush;
-        //        case 7:
-        //            return Application.Current.Resources["PlaceholderOrangeBrush"] as SolidColorBrush;
-        //        default:
-        //            return Application.Current.Resources["ListViewItemPlaceholderBackgroundThemeBrush"] as SolidColorBrush;
-        //    }
-        //}
-
-
         public static string FormatAmount(long amount, string currency)
         {
             return Locale.FormatCurrency(amount, currency);

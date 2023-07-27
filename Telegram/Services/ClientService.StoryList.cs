@@ -49,7 +49,7 @@ namespace Telegram.Services
             }
 
             // TODO: remove when this is added to TDLib.
-            if (prevIndex != nextIndex)
+            if (prevIndex != nextIndex && prevIndex != -1)
             {
                 _aggregator.Publish(new UpdateChatActiveStories(new ChatActiveStories(prev.ChatId, prev.List, 0, prev.MaxReadStoryId, prev.Stories)));
             }

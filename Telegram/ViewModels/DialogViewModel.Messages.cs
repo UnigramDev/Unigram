@@ -1483,6 +1483,7 @@ namespace Telegram.ViewModels
             else if (message.Content is MessageChatChangePhoto chatChangePhoto)
             {
                 var viewModel = new ChatPhotosViewModel(ClientService, StorageService, Aggregator, Chat, chatChangePhoto.Photo);
+                viewModel.NavigationService = NavigationService;
                 await GalleryView.ShowAsync(viewModel);
             }
             else if (message.Content is MessageSuggestProfilePhoto suggestProfilePhoto)
@@ -1490,6 +1491,7 @@ namespace Telegram.ViewModels
                 if (message.IsOutgoing)
                 {
                     var viewModel = new ChatPhotosViewModel(ClientService, StorageService, Aggregator, Chat, suggestProfilePhoto.Photo);
+                    viewModel.NavigationService = NavigationService;
                     await GalleryView.ShowAsync(viewModel);
                 }
                 else
