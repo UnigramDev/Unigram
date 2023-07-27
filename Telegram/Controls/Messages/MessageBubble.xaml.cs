@@ -1150,6 +1150,10 @@ namespace Telegram.Controls.Messages
             {
                 Window.Current.ShowTeachingTip(HeaderLabel, Strings.HidAccount);
             }
+            else if (message.Content is MessageAsyncStory asyncStory)
+            {
+                message.Delegate.OpenChat(asyncStory.StorySenderChatId, true);
+            }
         }
 
         private void From_Click(Hyperlink sender, HyperlinkClickEventArgs args)
