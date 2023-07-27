@@ -22,7 +22,7 @@ namespace Telegram.ViewModels.Stories
         private readonly long _chatId;
 
         private readonly ChatActiveStories _activeStories;
-        private readonly HashSet<int> _knownStories = new();
+        private readonly Dictionary<int, StoryViewModel> _stories = new();
 
         private readonly TaskCompletionSource<bool> _task;
 
@@ -41,7 +41,7 @@ namespace Telegram.ViewModels.Stories
             IsMyStory = Chat.Type is ChatTypePrivate privata && privata.UserId == clientService.Options.MyId;
 
             Items = new ObservableCollection<StoryViewModel>();
-            Initialize(activeStories);
+            Update(activeStories);
         }
 
         public ActiveStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, StoryViewModel selectedItem, ObservableCollection<StoryViewModel> stories)
@@ -101,21 +101,24 @@ namespace Telegram.ViewModels.Stories
             }
         }
 
-        public void Update(ChatActiveStories activeStories)
+        public async void Update(ChatActiveStories activeStories)
         {
-            var prev = Items.ToDictionary(x => x.StoryId);
             var next = new List<StoryViewModel>();
+            var selected = default(StoryViewModel);
+
+            SelectedItem = null;
 
             foreach (var story in activeStories.Stories)
             {
-                if (prev.TryGetValue(story.StoryId, out var item))
+                _stories.TryGetValue(story.StoryId, out var item);
+                item ??= new StoryViewModel(_clientService, activeStories.ChatId, story);
+
+                if (story.StoryId > activeStories.MaxReadStoryId)
                 {
-                    next.Add(item);
+                    selected ??= item;
                 }
-                else
-                {
-                    next.Add(new StoryViewModel(_clientService, activeStories.ChatId, story));
-                }
+
+                next.Add(item);
             }
 
             _activeStories.List = activeStories.List;
@@ -123,23 +126,17 @@ namespace Telegram.ViewModels.Stories
             _activeStories.Order = activeStories.Order;
             _activeStories.MaxReadStoryId = activeStories.MaxReadStoryId;
             _activeStories.Stories = activeStories.Stories;
-        }
 
-        private async void Initialize(ChatActiveStories activeStories)
-        {
-            foreach (var story in activeStories.Stories)
+            _stories.Clear();
+            Items.Clear();
+
+            foreach (var item in next)
             {
-                var item = new StoryViewModel(_clientService, _chatId, story);
-
-                if (story.StoryId > activeStories.MaxReadStoryId)
-                {
-                    SelectedItem ??= item;
-                }
-
+                _stories[item.StoryId] = item;
                 Items.Add(item);
             }
 
-            SelectedItem ??= Items.LastOrDefault();
+            SelectedItem = selected ?? Items.LastOrDefault();
 
             if (SelectedItem != null)
             {
@@ -181,6 +178,22 @@ namespace Telegram.ViewModels.Stories
         public override Task<MessageSendOptions> PickMessageSendOptionsAsync(bool? schedule = null, bool? silent = null, bool reorder = false)
         {
             return Task.FromResult(new MessageSendOptions(silent ?? false, false, false, reorder, null, 0));
+        }
+
+        public void Handle(UpdateStory update)
+        {
+            if (_stories.TryGetValue(update.Story.Id, out var story))
+            {
+                story.Update(update.Story);
+            }
+        }
+
+        public void Handle(UpdateStoryDeleted update)
+        {
+            if (_stories.Remove(update.StoryId, out var story))
+            {
+                Items.Remove(story);
+            }
         }
     }
 }

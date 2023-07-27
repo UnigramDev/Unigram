@@ -260,7 +260,9 @@ namespace Telegram.ViewModels.Stories
 
             private void Subscribe()
             {
-                _aggregator.Subscribe<UpdateChatActiveStories>(this, Handle);
+                _aggregator.Subscribe<UpdateChatActiveStories>(this, Handle)
+                    .Subscribe<UpdateStory>(Handle)
+                    .Subscribe<UpdateStoryDeleted>(Handle);
             }
 
             public bool HasMoreItems => _hasMoreItems;
@@ -279,65 +281,73 @@ namespace Telegram.ViewModels.Stories
                 }
             }
 
-            private void Handle(ChatActiveStories activeStories, long order, bool lastMessage)
+            public void Handle(UpdateStory update)
             {
-                if (_chats.TryGetValue(activeStories.ChatId, out var item))
+                if (_chats.TryGetValue(update.Story.SenderChatId, out var item))
                 {
-                    item.Update(activeStories);
-
-                    _viewModel.BeginOnUIThread(() => UpdateChatOrder(item, order, lastMessage));
-                }
-                else
-                {
-                    item = _viewModel.Create(activeStories);
-
-                    _chats.Add(activeStories.ChatId, item);
-                    _viewModel.BeginOnUIThread(() => UpdateChatOrder(item, order, lastMessage));
+                    item.Handle(update);
                 }
             }
 
-            private async void UpdateChatOrder(ActiveStoriesViewModel activeStories, long order, bool lastMessage)
+            public void Handle(UpdateStoryDeleted update)
+            {
+                if (_chats.TryGetValue(update.StorySenderChatId, out var item))
+                {
+                    item.Handle(update);
+                }
+            }
+
+            private async void Handle(ChatActiveStories activeStories, long order, bool lastMessage)
             {
                 using (await _loadMoreLock.WaitAsync())
                 {
-                    if (order > 0 && (order > _lastOrder || !_hasMoreItems || (order == _lastOrder && activeStories.ChatId >= _lastChatId)))
+                    if (_chats.TryGetValue(activeStories.ChatId, out var item))
                     {
-                        var next = NextIndexOf(activeStories.ChatId, order);
-                        if (next >= 0)
-                        {
-                            if (_chats.ContainsKey(activeStories.ChatId))
-                            {
-                                Remove(activeStories);
-                            }
-
-                            _chats[activeStories.ChatId] = activeStories;
-                            Insert(Math.Min(Count, next), activeStories);
-
-                            if (next == Count - 1)
-                            {
-                                _lastChatId = activeStories.ChatId;
-                                _lastOrder = order;
-                            }
-
-                            IsEmpty = Count == 0;
-                        }
-                        else
-                        {
-                            activeStories.RaisePropertyChanged(nameof(activeStories.Item));
-                        }
+                        item.Update(activeStories);
+                        await _viewModel.Dispatcher.DispatchAsync(() => UpdateChatOrder(item, order, lastMessage));
                     }
-                    else if (_chats.ContainsKey(activeStories.ChatId))
+                    else
                     {
-                        _chats.Remove(activeStories.ChatId);
-                        Remove(activeStories);
+                        item = _viewModel.Create(activeStories);
+                        await _viewModel.Dispatcher.DispatchAsync(() => UpdateChatOrder(item, order, lastMessage));
+                    }
+                }
+            }
+
+            private void UpdateChatOrder(ActiveStoriesViewModel activeStories, long order, bool lastMessage)
+            {
+                if (order > 0 && (order > _lastOrder || !_hasMoreItems || (order == _lastOrder && activeStories.ChatId >= _lastChatId)))
+                {
+                    var next = NextIndexOf(activeStories.ChatId, order);
+                    if (next >= 0)
+                    {
+                        if (_chats.ContainsKey(activeStories.ChatId))
+                        {
+                            Remove(activeStories);
+                        }
+
+                        _chats[activeStories.ChatId] = activeStories;
+                        Insert(Math.Min(Count, next), activeStories);
+
+                        if (next == Count - 1)
+                        {
+                            _lastChatId = activeStories.ChatId;
+                            _lastOrder = order;
+                        }
 
                         IsEmpty = Count == 0;
-
-                        //if (!_hasMoreItems)
-                        //{
-                        //    await LoadMoreItemsAsync(0);
-                        //}
                     }
+                    else
+                    {
+                        activeStories.RaisePropertyChanged(nameof(activeStories.Item));
+                    }
+                }
+                else if (_chats.ContainsKey(activeStories.ChatId))
+                {
+                    _chats.Remove(activeStories.ChatId);
+                    Remove(activeStories);
+
+                    IsEmpty = Count == 0;
                 }
             }
 

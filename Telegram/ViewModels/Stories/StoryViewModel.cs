@@ -30,7 +30,7 @@ namespace Telegram.ViewModels.Stories
             Date = story.Date;
             StoryId = story.Id;
 
-            Populate(story);
+            Update(story);
         }
 
         public int Date { get; set; }
@@ -54,14 +54,14 @@ namespace Telegram.ViewModels.Stories
             var response = await ClientService.SendAsync(new GetStory(ChatId, StoryId, false));
             if (response is Story story)
             {
-                Populate(story);
+                Update(story);
                 Prepare();
             }
 
             _task.SetResult(true);
         }
 
-        private void Populate(Story story)
+        public void Update(Story story)
         {
             Caption = story.Caption;
             Content = story.Content;
