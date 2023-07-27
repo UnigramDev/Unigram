@@ -834,8 +834,8 @@ namespace Telegram.ViewModels
                 return;
             }
 
+            var disablePreview = DisableWebPreview();
             var reply = GetReply(true, options?.SchedulingState != null);
-            var disablePreview = false;
 
             if (ClientService.IsDiceEmoji(text, out string dice))
             {
@@ -862,6 +862,11 @@ namespace Telegram.ViewModels
                     await AfterSendMessageAsync();
                 }
             }
+        }
+
+        protected virtual bool DisableWebPreview()
+        {
+            return false;
         }
 
         protected virtual Task<bool> BeforeSendMessageAsync(FormattedText formattedText)

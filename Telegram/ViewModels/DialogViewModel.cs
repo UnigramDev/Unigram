@@ -2311,6 +2311,14 @@ namespace Telegram.ViewModels
             await SendMessageAsync(args);
         }
 
+        protected override bool DisableWebPreview()
+        {
+            var header = _composerHeader;
+            var disablePreview = header?.WebPageDisabled ?? false;
+
+            return disablePreview;
+        }
+
         protected override async Task<bool> BeforeSendMessageAsync(FormattedText formattedText)
         {
             if (Chat is not Chat chat)
