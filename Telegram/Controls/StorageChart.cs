@@ -277,6 +277,11 @@ namespace Telegram.Controls
                     Name = Strings.AccDescrStickers;
                     Stroke = Color.FromArgb(0xFF, 0x8F, 0xCF, 0x39);
                     break;
+                case FileTypePhotoStory:
+                case FileTypeVideoStory:
+                    Name = Strings.LocalStoriesCache;
+                    Stroke = Color.FromArgb(0xFF, 0x7F, 0x79, 0xF3);
+                    break;
                 default:
                     Name = Strings.LocalCache;
                     Stroke = Color.FromArgb(0xFF, 0x58, 0xA8, 0xED);

@@ -36,6 +36,7 @@ namespace Telegram.Views.Settings
             StorageChartItem audio = null;
             StorageChartItem voice = null;
             StorageChartItem stickers = null;
+            StorageChartItem stories = null;
             StorageChartItem local = null;
 
             foreach (var fileType in statistics.ByFileType)
@@ -61,6 +62,10 @@ namespace Telegram.Views.Settings
                         break;
                     case FileTypeSticker:
                         stickers = new StorageChartItem(fileType);
+                        break;
+                    case FileTypePhotoStory:
+                    case FileTypeVideoStory:
+                        stories = stories?.Add(fileType) ?? new StorageChartItem(fileType);
                         break;
                     case FileTypeProfilePhoto:
                     case FileTypeWallpaper:
