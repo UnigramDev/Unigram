@@ -1604,7 +1604,7 @@ namespace Telegram.ViewModels
             {
                 asyncStory.State = MessageStoryState.Loading;
 
-                ClientService.Send(new GetStory(asyncStory.StorySenderChatId, asyncStory.StoryId, false), response =>
+                ClientService.GetStory(asyncStory.StorySenderChatId, asyncStory.StoryId, response =>
                 {
                     if (response is Story story)
                     {

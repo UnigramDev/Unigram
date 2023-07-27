@@ -30,6 +30,7 @@ namespace Telegram.Services
         Task<BaseObject> SendAsync(Function function);
 
         void GetReplyTo(MessageViewModel message, Action<BaseObject> handler);
+        void GetStory(long storySenderChatId, int storyId, Action<BaseObject> handler);
 
         Task<BaseObject> CheckChatInviteLinkAsync(string inviteLink);
 
@@ -616,8 +617,23 @@ namespace Telegram.Services
             }
             else if (message.ReplyTo is MessageReplyToStory replyToStory)
             {
-                Send(new GetStory(replyToStory.StorySenderChatId, replyToStory.StoryId, true), handler);
+                GetStory(replyToStory.StorySenderChatId, replyToStory.StoryId, handler);
             }
+        }
+
+        public void GetStory(long storySenderChatId, int storyId, Action<BaseObject> handler)
+        {
+            Send(new GetStory(storySenderChatId, storyId, true), result =>
+            {
+                if (result is Error)
+                {
+                    Send(new GetStory(storySenderChatId, storyId, false), handler);
+                }
+                else
+                {
+                    handler(result);
+                }
+            });
         }
 
 
