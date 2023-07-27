@@ -1125,18 +1125,23 @@ namespace Telegram.Controls.Stories
 
         public void Suspend(StoryPauseSource source)
         {
+            var none = _state == StoryPauseSource.None;
+
             _state |= source;
 
-            if (_mediaStream != null && _player != null && _player.CanPause)
+            if (none)
             {
-                _player.Pause();
-            }
-            else
-            {
-                _timer.Pause();
-            }
+                if (_mediaStream != null && _player != null && _player.CanPause)
+                {
+                    _player.SetPause(true);
+                }
+                else
+                {
+                    _timer.Pause();
+                }
 
-            Progress.Suspend();
+                Progress.Suspend();
+            }
         }
 
         public void Resume(StoryPauseSource source)
@@ -1147,7 +1152,7 @@ namespace Telegram.Controls.Stories
             {
                 if (_mediaStream != null && _player != null && _player.CanPause)
                 {
-                    _player.Play();
+                    _player.SetPause(false);
                 }
                 else
                 {
