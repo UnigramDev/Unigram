@@ -160,7 +160,7 @@ namespace Telegram.ViewModels
                         link = MeUrlPrefixConverter.Convert(ClientService, link);
                     }
 
-                    var title = message.Content.GetCaption()?.Text;
+                    var title = message.GetCaption()?.Text;
                     if (message.Content is MessageText text)
                     {
                         title = text.Text.Text;
@@ -176,6 +176,19 @@ namespace Telegram.ViewModels
                         ShareLink = new HttpUrl(MeUrlPrefixConverter.Convert(ClientService, $"{username}?game={game.Game.ShortName}"));
                     }
                 }
+            }
+            else if (parameter is ChooseChatsConfigurationShareStory configurationShareStory)
+            {
+                SelectionMode = ListViewSelectionMode.Multiple;
+                Options = ChooseChatsOptions.PostMessages;
+                IsCommentEnabled = true;
+                IsSendAsCopyEnabled = true;
+                IsChatSelection = false;
+
+                Sharing = new[]
+                {
+                    new MessageReplyToStory(configurationShareStory.ChatId, configurationShareStory.StoryId)
+                };
             }
             else if (parameter is ChooseChatsConfigurationShareMessages configurationShareMessages)
             {
@@ -337,6 +350,8 @@ namespace Telegram.ViewModels
             get => _messages;
             set => Set(ref _messages, value);
         }
+
+        public IList<MessageReplyTo> Sharing { get; set; }
 
         private GroupCall _groupCall;
         public GroupCall GroupCall
@@ -521,6 +536,19 @@ namespace Telegram.ViewModels
                 }
 
                 //NavigationService.GoBack();
+            }
+            else if (Sharing != null)
+            {
+                foreach (var chat in chats)
+                {
+                    foreach (var item in Sharing)
+                    {
+                        if (item is MessageReplyToStory replyToStory)
+                        {
+                            ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageStory(replyToStory.StorySenderChatId, replyToStory.StoryId)));
+                        }
+                    }
+                }
             }
             else if (InputMedia != null)
             {

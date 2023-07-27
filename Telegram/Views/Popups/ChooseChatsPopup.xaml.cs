@@ -216,6 +216,19 @@ namespace Telegram.Views.Popups
         public bool WithMyScore { get; }
     }
 
+    public class ChooseChatsConfigurationShareStory : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationShareStory(long chatId, int storyId)
+        {
+            ChatId = chatId;
+            StoryId = storyId;
+        }
+
+        public long ChatId { get; }
+
+        public int StoryId { get; }
+    }
+
     public class ChooseChatsConfigurationShareMessages : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationShareMessages(IList<Message> messages)
