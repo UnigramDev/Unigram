@@ -390,14 +390,14 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var direction = NativeUtils.GetDirectionality(text);
-            if (direction == NativeDirectionality.RightToLeft && LocaleService.Current.FlowDirection == FlowDirection.LeftToRight)
+            if (direction == TextDirectionality.RightToLeft && LocaleService.Current.FlowDirection == FlowDirection.LeftToRight)
             {
                 //Footer.HorizontalAlignment = HorizontalAlignment.Left;
                 //span.Inlines.Add(new LineBreak());
                 rich.FlowDirection = FlowDirection.RightToLeft;
                 adjust = true;
             }
-            else if (direction == NativeDirectionality.LeftToRight && LocaleService.Current.FlowDirection == FlowDirection.RightToLeft)
+            else if (direction == TextDirectionality.LeftToRight && LocaleService.Current.FlowDirection == FlowDirection.RightToLeft)
             {
                 //Footer.HorizontalAlignment = HorizontalAlignment.Left;
                 //span.Inlines.Add(new LineBreak());

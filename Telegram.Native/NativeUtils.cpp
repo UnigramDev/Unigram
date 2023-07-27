@@ -178,7 +178,7 @@ namespace winrt::Telegram::Native::implementation
         return 0;
     }
 
-    winrt::Telegram::Native::NativeDirectionality NativeUtils::GetDirectionality(hstring value)
+    winrt::Telegram::Native::TextDirectionality NativeUtils::GetDirectionality(hstring value)
     {
         unsigned int length = value.size();
         WORD* type;
@@ -187,17 +187,17 @@ namespace winrt::Telegram::Native::implementation
 
         for (int i = 0; i < length; i++)
         {
-            if (type[i] & C2_LEFTTORIGHT && !(type[i] & C2_RIGHTTOLEFT))
+            if (type[i] == C2_LEFTTORIGHT)
             {
-                return winrt::Telegram::Native::NativeDirectionality::LeftToRight;
+                return winrt::Telegram::Native::TextDirectionality::LeftToRight;
             }
-            else if (type[i] & C2_RIGHTTOLEFT && !(type[i] & C2_LEFTTORIGHT))
+            else if (type[i] == C2_RIGHTTOLEFT)
             {
-                return winrt::Telegram::Native::NativeDirectionality::RightToLeft;
+                return winrt::Telegram::Native::TextDirectionality::RightToLeft;
             }
         }
 
-        return winrt::Telegram::Native::NativeDirectionality::Neutral;
+        return winrt::Telegram::Native::TextDirectionality::Neutral;
     }
 
     hstring NativeUtils::GetCurrentCulture()

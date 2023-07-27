@@ -24,7 +24,7 @@ namespace winrt::Telegram::Native::implementation
         static int32_t GetLastInputTime();
 
         //[DefaultOverload]
-        static winrt::Telegram::Native::NativeDirectionality GetDirectionality(hstring value);
+        static winrt::Telegram::Native::TextDirectionality GetDirectionality(hstring value);
         //static int32_t GetDirectionality(char16 value);
 
         static hstring GetCurrentCulture();
