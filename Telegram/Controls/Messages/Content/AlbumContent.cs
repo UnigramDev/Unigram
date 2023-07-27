@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Telegram.Common;
+using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -388,14 +389,15 @@ namespace Telegram.Controls.Messages.Content
                 span.Inlines.Add(new Run { Text = text.Substring(previous) });
             }
 
-            if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
+            var direction = NativeUtils.GetDirectionality(text);
+            if (direction == NativeDirectionality.RightToLeft && LocaleService.Current.FlowDirection == FlowDirection.LeftToRight)
             {
                 //Footer.HorizontalAlignment = HorizontalAlignment.Left;
                 //span.Inlines.Add(new LineBreak());
                 rich.FlowDirection = FlowDirection.RightToLeft;
                 adjust = true;
             }
-            else if (LocaleService.Current.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(text))
+            else if (direction == NativeDirectionality.LeftToRight && LocaleService.Current.FlowDirection == FlowDirection.RightToLeft)
             {
                 //Footer.HorizontalAlignment = HorizontalAlignment.Left;
                 //span.Inlines.Add(new LineBreak());

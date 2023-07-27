@@ -178,27 +178,27 @@ namespace winrt::Telegram::Native::implementation
         return 0;
     }
 
-    //int32_t NativeUtils::GetDirectionality(hstring value)
-    //{
-    //	unsigned int length = value.size();
-    //	WORD* type;
-    //	type = new WORD[length];
-    //	GetStringTypeEx(LOCALE_USER_DEFAULT, CT_CTYPE2, value.data(), length, type);
+    winrt::Telegram::Native::NativeDirectionality NativeUtils::GetDirectionality(hstring value)
+    {
+        unsigned int length = value.size();
+        WORD* type;
+        type = new WORD[length];
+        GetStringTypeEx(LOCALE_USER_DEFAULT, CT_CTYPE2, value.data(), length, type);
 
-    //	for (int i = 0; i < length; i++)
-    //	{
-    //		/*if (type[i] & C2_LEFTTORIGHT)
-    //		{
-    //			return C2_LEFTTORIGHT;
-    //		}
-    //		else*/ if (type[i] & C2_RIGHTTOLEFT && !(type[i] & C2_LEFTTORIGHT))
-    //		{
-    //			return C2_RIGHTTOLEFT;
-    //		}
-    //	}
+        for (int i = 0; i < length; i++)
+        {
+            if (type[i] & C2_LEFTTORIGHT && !(type[i] & C2_RIGHTTOLEFT))
+            {
+                return winrt::Telegram::Native::NativeDirectionality::LeftToRight;
+            }
+            else if (type[i] & C2_RIGHTTOLEFT && !(type[i] & C2_LEFTTORIGHT))
+            {
+                return winrt::Telegram::Native::NativeDirectionality::RightToLeft;
+            }
+        }
 
-    //	return C2_OTHERNEUTRAL;
-    //}
+        return winrt::Telegram::Native::NativeDirectionality::Neutral;
+    }
 
     hstring NativeUtils::GetCurrentCulture()
     {
@@ -216,7 +216,8 @@ namespace winrt::Telegram::Native::implementation
         std::wstring str = buff;
         size_t sorting = str.find(L"_");
 
-        if (sorting != std::wstring::npos) {
+        if (sorting != std::wstring::npos)
+        {
             return str.substr(0, sorting).c_str();
         }
 
@@ -291,14 +292,16 @@ namespace winrt::Telegram::Native::implementation
             return false;
         }
 
-        if (fileSize) {
+        if (fileSize)
+        {
             LARGE_INTEGER pFileSize;
             GetFileSizeEx(handle, &pFileSize);
 
             *fileSize = static_cast<int64_t>(pFileSize.QuadPart);
         }
 
-        if (fileTime) {
+        if (fileTime)
+        {
             FILETIME pFileTime;
             GetFileTime(handle, NULL, NULL, &pFileTime);
 

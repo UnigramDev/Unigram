@@ -464,12 +464,13 @@ namespace Telegram.Controls
 
             if (AdjustLineEnding)
             {
-                if (LocaleService.Current.FlowDirection == FlowDirection.LeftToRight && MessageHelper.IsAnyCharacterRightToLeft(text))
+                var direction = NativeUtils.GetDirectionality(text);
+                if (direction == NativeDirectionality.RightToLeft && LocaleService.Current.FlowDirection == FlowDirection.LeftToRight)
                 {
                     TextBlock.FlowDirection = FlowDirection.RightToLeft;
                     Adjust();
                 }
-                else if (LocaleService.Current.FlowDirection == FlowDirection.RightToLeft && !MessageHelper.IsAnyCharacterRightToLeft(text))
+                else if (direction == NativeDirectionality.LeftToRight && LocaleService.Current.FlowDirection == FlowDirection.RightToLeft)
                 {
                     TextBlock.FlowDirection = FlowDirection.LeftToRight;
                     Adjust();
