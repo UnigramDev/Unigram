@@ -416,6 +416,11 @@ namespace Telegram.Views.Chats
                     _ => -1
                 };
 
+                if (index < 0 || index >= ScrollingHost.Items.Count)
+                {
+                    return;
+                }
+
                 var container = ScrollingHost.Items[index];
                 if (container is MessageWithOwner message)
                 {
