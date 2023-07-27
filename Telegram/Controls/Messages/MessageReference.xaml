@@ -104,10 +104,10 @@
                             <Paragraph>
                                 <Run x:Name="TitleLabel"
                                      Foreground="{Binding HeaderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <LineBreak />
+                            </Paragraph>
+                            <Paragraph>
                                 <Run x:Name="ServiceLabel"
-                                     Foreground="{Binding SubtleBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                <Span x:Name="MessageLabel" />
+                                     Foreground="{Binding SubtleBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}" /><Span x:Name="MessageLabel" />
                             </Paragraph>
                         </RichTextBlock>
 
