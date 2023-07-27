@@ -413,6 +413,7 @@
 
             <local:StoryInteractionBar x:Name="Interactions"
                                        ViewersClick="Interactions_ViewersClick"
+                                       DeleteClick="Interactions_DeleteClick"
                                        VerticalAlignment="Bottom"
                                        Margin="12,0,12,8" />
         </Grid>

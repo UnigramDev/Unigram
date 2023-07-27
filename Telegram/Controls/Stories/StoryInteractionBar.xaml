@@ -19,6 +19,7 @@
         </Grid.ColumnDefinitions>
         <HyperlinkButton x:Name="ViewersButton"
                          CornerRadius="13,4,4,13"
+                         VerticalAlignment="Stretch"
                          Margin="4"
                          Padding="0">
             <Grid Background="Transparent">
@@ -26,21 +27,20 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-
                 <controls:RecentUserHeads x:Name="Viewers"
                                           RecentUserHeadChanged="Viewers_RecentUserHeadChanged"
                                           ItemSize="28"
-                                          Margin="4,2,8,2" />
+                                          Margin="4,2,0,2" />
                 <controls:AnimatedTextBlock x:Name="ViewersCount"
                                             VerticalAlignment="Center"
                                             Foreground="#FFFFFF"
-                                            Margin="0,1,8,3"
+                                            Margin="8,1,8,3"
                                             Grid.Column="1" />
             </Grid>
         </HyperlinkButton>
 
-        <controls:GlyphButton x:Name="Share"
-                              Glyph="&#xE72D;"
+        <controls:GlyphButton x:Name="DeleteButton"
+                              Glyph="&#xE74D;"
                               CornerRadius="4,13,13,4"
                               Grid.Column="2" />
     </Grid>

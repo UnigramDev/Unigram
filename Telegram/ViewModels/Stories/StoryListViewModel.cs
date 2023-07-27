@@ -21,15 +21,19 @@ namespace Telegram.ViewModels.Stories
 {
     public class StoryListViewModel : ViewModelBase
     {
+        private readonly IStorageService _storageService;
+
         public StoryListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, StoryList storyList)
             : base(clientService, settingsService, aggregator)
         {
+            _storageService = TLContainer.Current.Resolve<IStorageService>(clientService.SessionId);
             Items = new ItemsCollection(clientService, aggregator, this, storyList);
         }
 
         public StoryListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, params ActiveStoriesViewModel[] items)
             : base(clientService, settingsService, aggregator)
         {
+            _storageService = TLContainer.Current.Resolve<IStorageService>(clientService.SessionId);
             Items = new ObservableCollection<ActiveStoriesViewModel>(items);
         }
 
@@ -97,12 +101,12 @@ namespace Telegram.ViewModels.Stories
             }
         }
 
-        public void ShareStory(StoryViewModel story)
+        public Task ShareStoryAsync(StoryViewModel story)
         {
-            ShowPopup(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareStory(story.ChatId, story.StoryId), requestedTheme: ElementTheme.Dark);
+            return ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareStory(story.ChatId, story.StoryId), requestedTheme: ElementTheme.Dark);
         }
 
-        public async void DeleteStory(StoryViewModel story)
+        public async Task DeleteStoryAsync(StoryViewModel story)
         {
             var message = Strings.DeleteStorySubtitle;
             var title = Strings.DeleteStoryTitle;
@@ -121,12 +125,21 @@ namespace Telegram.ViewModels.Stories
             Window.Current.ShowTeachingTip(story.IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }
 
-        public async void ReportStory(StoryViewModel story)
+        public async Task ReportStoryAsync(StoryViewModel story)
         {
             var form = await DialogViewModel.GetReportFormAsync(NavigationService);
             if (form.Reason != null)
             {
                 ClientService.Send(new ReportStory(story.ChatId, story.StoryId, form.Reason, form.Text));
+            }
+        }
+
+        public async void SaveStory(StoryViewModel story)
+        {
+            var file = story.GetFile();
+            if (file != null)
+            {
+                await _storageService.SaveFileAsAsync(file);
             }
         }
 

@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Linq;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
@@ -24,6 +25,7 @@ namespace Telegram.Controls.Stories
     public enum StoryOrigin
     {
         ProfilePhoto,
+        Mention,
         Card
     }
 
@@ -33,16 +35,7 @@ namespace Telegram.Controls.Stories
         {
             InitializeComponent();
 
-            _nextTimer = new DispatcherTimer();
-            _nextTimer.Interval = TimeSpan.FromSeconds(5);
-            _nextTimer.Tick += _nextTimer_Tick;
-
             Loaded += StoriesWindow_Loaded;
-
-            Unloaded += (s, args) =>
-            {
-                _nextTimer.Stop();
-            };
 
             InitializeStickers();
         }
@@ -248,18 +241,21 @@ namespace Telegram.Controls.Stories
         private StoryListViewModel _viewModel;
         public StoryListViewModel ViewModel => _viewModel ??= DataContext as StoryListViewModel;
 
-        private DispatcherTimer _nextTimer;
-
         private Windows.Foundation.Rect _origin;
         private StoryOrigin _ciccio;
         private Func<ActiveStoriesViewModel, Rect> _closing;
 
-        public async void Update(StoryListViewModel viewModel, ActiveStoriesViewModel activeStories, StoryOrigin origin, Rect point, Func<ActiveStoriesViewModel, Rect> closing)
+        public void Update(StoryListViewModel viewModel, ActiveStoriesViewModel activeStories, StoryOrigin origin, Rect point, Func<ActiveStoriesViewModel, Rect> closing)
         {
             _ciccio = origin;
             _origin = point;
             _closing = closing;
 
+            Update(viewModel, activeStories);
+        }
+
+        private async void Update(StoryListViewModel viewModel, ActiveStoriesViewModel activeStories)
+        {
             if (_viewModel != viewModel)
             {
                 _viewModel = viewModel;
@@ -313,9 +309,6 @@ namespace Telegram.Controls.Stories
                     child.Visibility = Visibility.Collapsed;
                 }
             }
-
-            _nextTimer.Stop();
-            //_nextTimer.Start();
 
             if (_index == _total - 1 && _viewModel.Items is ISupportIncrementalLoading incremental && incremental.HasMoreItems)
             {
@@ -437,7 +430,7 @@ namespace Telegram.Controls.Stories
                 {
                     user.SelectedItem = user.Items[direction == Direction.Forward ? item + 1 : item - 1];
 
-                    Update(_viewModel, user, _ciccio, _origin, _closing);
+                    Update(_viewModel, user);
                     return true;
                 }
             }
@@ -535,7 +528,7 @@ namespace Telegram.Controls.Stories
                 }
             }
 
-            Update(_viewModel, _viewModel.Items[_index], _ciccio, _origin, _closing);
+            Update(_viewModel, _viewModel.Items[_index]);
             return true;
         }
 
@@ -637,6 +630,14 @@ namespace Telegram.Controls.Stories
         private void Send_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
 
+        }
+
+        private void Interactions_DeleteClick(object sender, RoutedEventArgs e)
+        {
+            var user = ViewModel.Items[_index];
+            var story = user.SelectedItem;
+
+            DeleteStory(story);
         }
 
         private async void Interactions_ViewersClick(object sender, RoutedEventArgs e)
@@ -783,11 +784,10 @@ namespace Telegram.Controls.Stories
 
                 if (story.CanBeForwarded)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ShareStory, story, Strings.CopyLink, Icons.Link);
-                    flyout.CreateFlyoutItem(ViewModel.ShareStory, story, Strings.StickersShare, Icons.Share);
+                    flyout.CreateFlyoutItem(ShareStory, story, Strings.StickersShare, Icons.Share);
                 }
 
-                flyout.CreateFlyoutItem(ViewModel.DeleteStory, story, Strings.Delete, Icons.Delete, dangerous: true);
+                flyout.CreateFlyoutItem(DeleteStory, story, Strings.Delete, Icons.Delete, dangerous: true);
             }
             else
             {
@@ -807,24 +807,10 @@ namespace Telegram.Controls.Stories
 
                 if (story.CanBeForwarded)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ShareStory, story, Strings.StickersShare, Icons.Share);
+                    flyout.CreateFlyoutItem(ShareStory, story, Strings.StickersShare, Icons.Share);
                 }
 
-                var muted = ViewModel.Settings.Notifications.GetMuteStories(e.ActiveStories.Chat);
-                var archived = e.ActiveStories.List is StoryListArchive;
-
-                flyout.CreateFlyoutItem(ViewModel.MuteProfile, e.ActiveStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
-
-                if (archived)
-                {
-                    flyout.CreateFlyoutItem(ViewModel.ShowProfile, e.ActiveStories, Strings.UnarchiveStories, Icons.Unarchive);
-                }
-                else
-                {
-                    flyout.CreateFlyoutItem(ViewModel.HideProfile, e.ActiveStories, Strings.ArchivePeerStories, Icons.Archive);
-                }
-
-                flyout.CreateFlyoutItem(ViewModel.ReportStory, story, Strings.ReportChat, Icons.ErrorCircle);
+                flyout.CreateFlyoutItem(ReportStory, story, Strings.ReportChat, Icons.ErrorCircle);
             }
 
             flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.BottomEdgeAlignedRight);
@@ -833,6 +819,27 @@ namespace Telegram.Controls.Stories
         private void CopyLink(StoryViewModel story)
         {
             ActiveCard?.CopyLink(story);
+        }
+
+        private async void ReportStory(StoryViewModel story)
+        {
+            ActiveCard.Suspend(StoryPauseSource.Popup);
+            await ViewModel.ReportStoryAsync(story);
+            ActiveCard.Resume(StoryPauseSource.Popup);
+        }
+
+        private async void ShareStory(StoryViewModel story)
+        {
+            ActiveCard.Suspend(StoryPauseSource.Popup);
+            await ViewModel.ShareStoryAsync(story);
+            ActiveCard.Resume(StoryPauseSource.Popup);
+        }
+
+        private async void DeleteStory(StoryViewModel story)
+        {
+            ActiveCard.Suspend(StoryPauseSource.Popup);
+            await ViewModel.DeleteStoryAsync(story);
+            ActiveCard.Resume(StoryPauseSource.Popup);
         }
 
         private void Flyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
@@ -922,15 +929,15 @@ namespace Telegram.Controls.Stories
     public enum StoryPauseSource
     {
         None = 0,
-        Stickers = 1,
-        Record = 2,
-        Text = 4,
-        TeachingTip = 8,
-        Flyout = 16,
-        Popup = 32,
-        Interaction = 64,
-        Caption = 128,
-        Window = 256
+        Stickers = 1 << 10,
+        Record = 1 << 1,
+        Text = 1 << 2,
+        TeachingTip = 1 << 3,
+        Flyout = 1 << 4,
+        Popup = 1 << 5,
+        Interaction = 1 << 6,
+        Caption = 1 << 7,
+        Window = 1 << 8
     }
 
     enum Direction

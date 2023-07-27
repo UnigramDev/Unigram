@@ -23,6 +23,12 @@ namespace Telegram.Controls.Stories
             remove => ViewersButton.Click -= value;
         }
 
+        public event RoutedEventHandler DeleteClick
+        {
+            add => DeleteButton.Click += value;
+            remove => DeleteButton.Click -= value;
+        }
+
         public void Update(StoryViewModel story)
         {
             _viewModel = story;
@@ -30,17 +36,19 @@ namespace Telegram.Controls.Stories
             if (story.InteractionInfo != null)
             {
                 Viewers.Items.ReplaceDiff(story.InteractionInfo.RecentViewerUserIds.Select(x => new MessageSenderUser(x)));
+                Viewers.Visibility = story.InteractionInfo.RecentViewerUserIds.Count > 0
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
                 ViewersCount.Text = Locale.Declension(Strings.R.Views, story.InteractionInfo.ViewCount);
             }
             else
             {
                 Viewers.Items.Clear();
+                Viewers.Visibility = Visibility.Collapsed;
+
                 ViewersCount.Text = Strings.NobodyViews;
             }
-
-            Share.Visibility = story.CanBeForwarded
-                ? Visibility.Visible
-                : Visibility.Collapsed;
         }
 
         private void Viewers_RecentUserHeadChanged(ProfilePicture sender, MessageSender messageSender)

@@ -272,7 +272,7 @@ namespace Telegram.Controls.Stories
                     _viewModel.ClientService.Send(new CloseStory(story.ChatId, _storyId));
                 }
 
-                //_viewModel.ClientService.Send(new OpenStory(story.ChatId, story.StoryId));
+                _viewModel.ClientService.Send(new OpenStory(story.ChatId, story.StoryId));
                 Activate(story);
             }
             else if (_open && !open)
@@ -349,7 +349,7 @@ namespace Telegram.Controls.Stories
             if (string.IsNullOrEmpty(story.Caption?.Text))
             {
                 CaptionRoot.Visibility = Visibility.Collapsed;
-                Caption.SetText(null, null);
+                Caption.Clear();
             }
             else
             {
