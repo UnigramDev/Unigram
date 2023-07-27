@@ -1,12 +1,9 @@
 ﻿<controls:ContentPopup x:Class="Telegram.Views.Premium.Popups.LimitReachedPopup"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:local="using:Telegram.Views.Popups"
-                       xmlns:controls="using:Telegram.Controls"
-                       xmlns:icons="using:Telegram.Assets.Icons"
-                       xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:controls="using:Telegram.Controls"
                        mc:Ignorable="d"
                        Title="TITLE">
 
@@ -194,5 +191,12 @@
                 </Grid>
             </controls:BadgeButton>
         </Grid>
+
+        <controls:GlyphButton Click="{x:Bind Close}"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Top"
+                              Glyph="&#xE711;"
+                              Margin="0,0,-24,0"
+                              CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

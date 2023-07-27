@@ -28,13 +28,6 @@ namespace Telegram.ViewModels.Premium
             Features = new MvxObservableCollection<PremiumFeature>();
         }
 
-        private InternalLinkType _paymentLink;
-        public InternalLinkType PaymentLink
-        {
-            get => _paymentLink;
-            set => Set(ref _paymentLink, value);
-        }
-
         public MvxObservableCollection<PremiumLimit> Limits { get; private set; }
 
         public MvxObservableCollection<PremiumFeature> Features { get; private set; }
@@ -90,14 +83,13 @@ namespace Telegram.ViewModels.Premium
 
             features.Limits.Add(new PremiumLimit(new PremiumLimitTypeConnectedAccounts(), 3, 4));
 
-            PaymentLink = features.PaymentLink;
             Limits.ReplaceWith(features.Limits);
             Features.ReplaceWith(features.Features);
 
             State = state;
-            Option = state.PaymentOptions.FirstOrDefault();
+            Option = state.PaymentOptions.LastOrDefault();
 
-            CanPurchase = features.PaymentLink != null
+            CanPurchase = Option != null
                 && ClientService.IsPremiumAvailable;
 
             _animations = state.Animations.ToDictionary(x => x.Feature.GetType(), y => y.Animation);
@@ -121,8 +113,6 @@ namespace Telegram.ViewModels.Premium
 
         public async Task<bool> OpenAsync(PremiumFeature feature)
         {
-            ClientService.Send(new ViewPremiumFeature(feature));
-
             if (feature is PremiumFeatureIncreasedLimits)
             {
                 var popup = new LimitsPopup(ClientService, Option.PaymentOption, Limits);
@@ -153,10 +143,10 @@ namespace Telegram.ViewModels.Premium
 
         public void Purchase()
         {
-            if (PaymentLink != null && !ClientService.IsPremium)
+            if (Option != null && !ClientService.IsPremium)
             {
                 ClientService.Send(new ClickPremiumSubscriptionButton());
-                MessageHelper.OpenTelegramUrl(ClientService, NavigationService, PaymentLink);
+                MessageHelper.OpenTelegramUrl(ClientService, NavigationService, Option.PaymentOption.PaymentLink);
             }
         }
     }

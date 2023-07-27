@@ -39,9 +39,7 @@ namespace Telegram.Views.Premium.Popups
             ScrollingHost.ItemsSource = items;
             ScrollingHost.SelectedItem = selectedFeature;
 
-            PurchaseCommand.Content = clientService.IsPremium
-                ? Strings.OK
-                : string.Format(Strings.SubscribeToPremium, Locale.FormatCurrency(option.Amount / option.MonthCount, option.Currency));
+            PurchaseCommand.Content = PromoPopup.GetPaymentString(clientService.IsPremium, option);
         }
 
         public bool ShouldPurchase { get; private set; }

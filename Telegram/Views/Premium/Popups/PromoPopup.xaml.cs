@@ -23,8 +23,6 @@ namespace Telegram.Views.Premium.Popups
         public PromoPopup()
         {
             InitializeComponent();
-
-            Title = Strings.TelegramPremium;
         }
 
         private async void OnItemClick(object sender, ItemClickEventArgs e)
@@ -169,13 +167,24 @@ namespace Telegram.Views.Premium.Popups
 
         public string ConvertPurchase(bool premium, PremiumStatePaymentOption option)
         {
+            return GetPaymentString(premium, option?.PaymentOption);
+        }
+
+        public static string GetPaymentString(bool premium, PremiumPaymentOption option)
+        {
+            // TODO
             if (premium || option == null)
             {
                 return Strings.OK;
             }
 
-            return string.Format(Strings.SubscribeToPremium,
-                Locale.FormatCurrency(option.PaymentOption.Amount / option.PaymentOption.MonthCount, option.PaymentOption.Currency));
+            return string.Format(premium
+                ? option.MonthCount == 12
+                ? Strings.UpgradePremiumPerYear
+                : Strings.UpgradePremiumPerMonth
+                : option.MonthCount == 12
+                ? Strings.SubscribeToPremiumPerYear
+                : Strings.SubscribeToPremium, Locale.FormatCurrency(option.MonthCount == 12 ? option.Amount : option.Amount / option.MonthCount, option.Currency));
         }
 
         private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)

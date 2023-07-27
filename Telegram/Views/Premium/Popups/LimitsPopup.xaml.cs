@@ -39,10 +39,9 @@ namespace Telegram.Views.Premium.Popups
             Title = Strings.DoubledLimits;
 
             ScrollingHost.ItemsSource = limits;
+            PurchaseCommand.Content = PromoPopup.GetPaymentString(clientService.IsPremium, option);
 
-            PurchaseCommand.Content = clientService.IsPremium
-                ? Strings.OK
-                : string.Format(Strings.SubscribeToPremium, Locale.FormatCurrency(option.Amount / option.MonthCount, option.Currency));
+            clientService.Send(new ViewPremiumFeature(new PremiumFeatureIncreasedLimits()));
         }
 
         public bool ShouldPurchase { get; private set; }
