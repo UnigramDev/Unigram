@@ -3132,6 +3132,15 @@ namespace Telegram.ViewModels
                 return;
             }
 
+            var form = await GetReportFormAsync(NavigationService);
+            if (form.Reason != null)
+            {
+                ClientService.Send(new ReportChat(chat.Id, messages, form.Reason, form.Text));
+            }
+        }
+
+        public static async Task<(ReportReason Reason, string Text)> GetReportFormAsync(INavigationService navigation)
+        {
             var items = new[]
             {
                 new ChooseOptionItem(new ReportReasonSpam(), Strings.ReportChatSpam, true),
@@ -3143,21 +3152,21 @@ namespace Telegram.ViewModels
                 new ChooseOptionItem(new ReportReasonCustom(), Strings.ReportChatOther, false)
             };
 
-            var dialog = new ChooseOptionPopup(items);
-            dialog.Title = Strings.ReportChat;
-            dialog.PrimaryButtonText = Strings.OK;
-            dialog.SecondaryButtonText = Strings.Cancel;
+            var popup = new ChooseOptionPopup(items);
+            popup.Title = Strings.ReportChat;
+            popup.PrimaryButtonText = Strings.OK;
+            popup.SecondaryButtonText = Strings.Cancel;
 
-            var confirm = await ShowPopupAsync(dialog);
+            var confirm = await popup.ShowQueuedAsync();
             if (confirm != ContentDialogResult.Primary)
             {
-                return;
+                return (null, string.Empty);
             }
 
-            var reason = dialog.SelectedIndex as ReportReason;
-            if (reason == null)
+            var reason = popup.SelectedIndex as ReportReason;
+            if (reason is not ReportReasonCustom)
             {
-                return;
+                return (reason, string.Empty);
             }
 
             var input = new InputPopup();
@@ -3168,19 +3177,13 @@ namespace Telegram.ViewModels
             input.PrimaryButtonText = Strings.OK;
             input.SecondaryButtonText = Strings.Cancel;
 
-            var inputResult = await ShowPopupAsync(input);
-
-            string text;
+            var inputResult = await input.ShowQueuedAsync();
             if (inputResult == ContentDialogResult.Primary)
             {
-                text = input.Text;
-            }
-            else
-            {
-                return;
+                return (reason, input.Text);
             }
 
-            ClientService.Send(new ReportChat(chat.Id, messages, reason, text));
+            return (null, string.Empty);
         }
 
         #endregion
