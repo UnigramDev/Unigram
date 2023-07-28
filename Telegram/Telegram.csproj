@@ -225,6 +225,9 @@
     <Compile Include="Controls\Contacts\ContactsSortedByHeader.xaml.cs">
       <DependentUpon>ContactsSortedByHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Gallery\GalleryTransportControls.xaml.cs">
+      <DependentUpon>GalleryTransportControls.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\ReactionsMenuFlyout.xaml.cs">
       <DependentUpon>ReactionsMenuFlyout.xaml</DependentUpon>
     </Compile>
@@ -470,7 +473,6 @@
     <Compile Include="Controls\Gallery\GalleryContentView.xaml.cs">
       <DependentUpon>GalleryContentView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Gallery\GalleryTransportControls.cs" />
     <Compile Include="Controls\Gallery\GalleryView.xaml.cs">
       <DependentUpon>GalleryView.xaml</DependentUpon>
     </Compile>
@@ -1880,6 +1882,10 @@
     <Page Include="Controls\Gallery\GalleryContentView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Gallery\GalleryTransportControls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Gallery\GalleryView.xaml">
       <Generator>MSBuild:Compile</Generator>

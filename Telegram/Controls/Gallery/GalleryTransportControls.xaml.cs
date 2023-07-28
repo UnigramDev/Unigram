@@ -1,0 +1,389 @@
+﻿using LibVLCSharp.Shared;
+using System;
+using Telegram.Common;
+using Telegram.Controls.Media;
+using Telegram.Services;
+using Telegram.Td.Api;
+using Telegram.ViewModels.Gallery;
+using Windows.System;
+using Windows.System.Display;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
+
+namespace Telegram.Controls.Gallery
+{
+    public sealed partial class GalleryTransportControls : UserControl
+    {
+        private readonly DispatcherQueue _dispatcherQueue;
+        private long _videoToken;
+
+        public GalleryTransportControls()
+        {
+            InitializeComponent();
+
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+
+            var muted = SettingsService.Current.VolumeMuted;
+            var volume = (int)Math.Round(SettingsService.Current.VolumeLevel * 100);
+            var speed = SettingsService.Current.Playback.PlaybackRate;
+
+            VolumeSlider.Value = muted ? 0 : volume;
+            VolumeSlider.ValueChanged += VolumeSlider_ValueChanged;
+
+            VolumeButton.Glyph = muted ? Icons.SpeakerMuteFilled : volume switch
+            {
+                int n when n > 50 => Icons.Speaker2Filled,
+                int n when n > 0 => Icons.Speaker1Filled,
+                _ => Icons.SpeakerMuteFilled
+            };
+
+            SpeedText.Text = string.Format("{0:N1}x", speed);
+            SpeedButton.Badge = string.Format("{0:N1}x", speed);
+
+            Slider.AddHandler(KeyDownEvent, new KeyEventHandler(Slider_KeyDown), true);
+            Slider.AddHandler(PointerPressedEvent, new PointerEventHandler(Slider_PointerPressed), true);
+            Slider.AddHandler(PointerReleasedEvent, new PointerEventHandler(Slider_PointerReleased), true);
+            Slider.AddHandler(PointerCanceledEvent, new PointerEventHandler(Slider_PointerCanceled), true);
+            Slider.AddHandler(PointerCaptureLostEvent, new PointerEventHandler(Slider_PointerCaptureLost), true);
+        }
+
+        public bool IsFullScreen
+        {
+            get => FullScreenButton.IsChecked == true;
+            set => FullScreenButton.IsChecked = value;
+        }
+
+        public event RoutedEventHandler FullScreenClick
+        {
+            add => FullScreenButton.Click += value;
+            remove => FullScreenButton.Click -= value;
+        }
+
+        public event RoutedEventHandler CompactClick
+        {
+            add => CompactButton.Click += value;
+            remove => CompactButton.Click -= value;
+        }
+
+        #region Scrubbing
+
+        private bool _scrubbing;
+
+        private void Slider_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Right || e.Key == VirtualKey.Up)
+            {
+                _mediaPlayer.Time += 5;
+            }
+            else if (e.Key == VirtualKey.Left || e.Key == VirtualKey.Down)
+            {
+                _mediaPlayer.Time -= 5;
+            }
+            else if (e.Key == VirtualKey.PageUp)
+            {
+                _mediaPlayer.Time += 30;
+            }
+            else if (e.Key == VirtualKey.PageDown)
+            {
+                _mediaPlayer.Time -= 30;
+            }
+            else if (e.Key == VirtualKey.Home)
+            {
+                _mediaPlayer.Time = 0;
+            }
+            else if (e.Key == VirtualKey.End)
+            {
+                _mediaPlayer.Time = _mediaPlayer.Length;
+            }
+        }
+
+        private void Slider_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            _scrubbing = true;
+            _mediaPlayer.SetPause(true);
+        }
+
+        private void Slider_PointerReleased(object sender, PointerRoutedEventArgs e)
+        {
+            _mediaPlayer.Time = (long)Slider.Value;
+
+            _scrubbing = false;
+            _mediaPlayer.SetPause(false);
+        }
+
+        private void Slider_PointerCanceled(object sender, PointerRoutedEventArgs e)
+        {
+            _scrubbing = false;
+            _mediaPlayer.SetPause(false);
+        }
+
+        private void Slider_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
+        {
+            _scrubbing = false;
+            _mediaPlayer.SetPause(false);
+        }
+
+        #endregion
+
+        public void Attach(GalleryContent item, File file)
+        {
+            UpdateManager.Subscribe(this, item.ClientService, file, ref _videoToken, UpdateVideo);
+            UpdateVideo(item, file);
+        }
+
+        private void UpdateVideo(object target, File file)
+        {
+            var offset = file.Local.DownloadOffset + file.Local.DownloadedPrefixSize;
+
+            PositionBar.Maximum = file.Size;
+            PositionBar.Value = file.Local.IsDownloadingCompleted || offset == file.Size ? 0 : offset;
+        }
+
+        private MediaPlayer _mediaPlayer;
+        private DisplayRequest _request;
+
+        public void Attach(MediaPlayer mediaPlayer)
+        {
+            if (_mediaPlayer != null)
+            {
+                //_mediaPlayer.PositionChanged -= OnPositionChanged;
+                _mediaPlayer.TimeChanged -= OnTimeChanged;
+                _mediaPlayer.LengthChanged -= OnLengthChanged;
+                _mediaPlayer.Playing -= OnPlaying;
+                _mediaPlayer.Paused -= OnPaused;
+                _mediaPlayer.Stopped -= OnStopped;
+            }
+
+            _mediaPlayer = mediaPlayer;
+
+            if (_mediaPlayer != null)
+            {
+                //_mediaPlayer.PositionChanged += OnPositionChanged;
+                _mediaPlayer.TimeChanged += OnTimeChanged;
+                _mediaPlayer.LengthChanged += OnLengthChanged;
+                _mediaPlayer.Playing += OnPlaying;
+                _mediaPlayer.Paused += OnPaused;
+                _mediaPlayer.Stopped += OnStopped;
+
+                _mediaPlayer.Mute = SettingsService.Current.VolumeMuted;
+                _mediaPlayer.Volume = (int)Math.Round(SettingsService.Current.VolumeLevel * 100);
+                _mediaPlayer.Rate = (float)SettingsService.Current.Playback.PlaybackRate;
+
+                OnTimeChanged();
+                OnLengthChanged();
+            }
+
+            OnStopped();
+        }
+
+        private void OnPlaying(object sender, EventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(OnPlaying);
+        }
+
+        private void OnPaused(object sender, EventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(OnPaused);
+        }
+
+        private void OnStopped(object sender, EventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(OnStopped);
+        }
+
+        private void OnTimeChanged(object sender, MediaPlayerTimeChangedEventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(OnTimeChanged);
+        }
+
+        private void OnLengthChanged(object sender, MediaPlayerLengthChangedEventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(OnLengthChanged);
+        }
+
+        private void OnPlaying()
+        {
+            OnStopped();
+
+            PlaybackButton.Glyph = Icons.Pause;
+            Automation.SetToolTip(PlaybackButton, Strings.AccActionPause);
+
+            if (_request == null)
+            {
+                _request = new DisplayRequest();
+                _request.RequestActive();
+            }
+        }
+
+        private void OnPaused()
+        {
+            PlaybackButton.Glyph = Icons.Play;
+            Automation.SetToolTip(PlaybackButton, Strings.AccActionPlay);
+
+            if (_request != null)
+            {
+                _request.RequestRelease();
+                _request = null;
+            }
+        }
+
+        private void OnStopped()
+        {
+            var source = _mediaPlayer == null || _mediaPlayer.State == VLCState.Stopped;
+            Visibility = source
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+
+            if (_request != null && source)
+            {
+                _request.RequestRelease();
+                _request = null;
+            }
+        }
+
+        private void OnTimeChanged()
+        {
+            if (_scrubbing)
+            {
+                return;
+            }
+
+            Slider.Value = _mediaPlayer.Time;
+            TimeText.Text = FormatTime(_mediaPlayer.Time);
+        }
+
+        private void OnLengthChanged()
+        {
+            Slider.Maximum = _mediaPlayer.Length;
+            LengthText.Text = FormatTime(_mediaPlayer.Length);
+        }
+
+        private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            if (_scrubbing)
+            {
+                Slider.Value = e.NewValue;
+                TimeText.Text = FormatTime(e.NewValue);
+            }
+        }
+
+        private string FormatTime(double time)
+        {
+            var span = TimeSpan.FromMilliseconds(time);
+            if (span.TotalHours >= 1)
+            {
+                return span.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return span.ToString("mm\\:ss");
+            }
+        }
+
+        private void Speed_Click(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+            flyout.CreatePlaybackSpeed(_mediaPlayer.Rate, FlyoutPlacementMode.Top, UpdatePlaybackSpeed);
+            flyout.ShowAt(SpeedButton, FlyoutPlacementMode.TopEdgeAlignedRight);
+        }
+
+        private void UpdatePlaybackSpeed(double value)
+        {
+            //_playbackService.PlaybackSpeed = value;
+            _mediaPlayer.SetRate((float)value);
+            SpeedText.Text = string.Format("{0:N1}x", value);
+            SpeedButton.Badge = string.Format("{0:N1}x", value);
+        }
+
+        private void Toggle_Click(object sender, RoutedEventArgs e)
+        {
+            if (_mediaPlayer.State == VLCState.Paused)
+            {
+                _mediaPlayer.SetPause(false);
+
+                PlaybackButton.Glyph = Icons.Pause;
+                Automation.SetToolTip(PlaybackButton, Strings.AccActionPause);
+            }
+            else
+            {
+                _mediaPlayer.SetPause(true);
+
+                PlaybackButton.Glyph = Icons.Play;
+                Automation.SetToolTip(PlaybackButton, Strings.AccActionPlay);
+            }
+        }
+
+        private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            var volume = (int)e.NewValue;
+
+            if (_mediaPlayer != null)
+            {
+                _mediaPlayer.Volume = volume;
+                _mediaPlayer.Mute = false;
+            }
+
+            SettingsService.Current.VolumeLevel = volume / 100;
+            SettingsService.Current.VolumeMuted = false;
+
+            VolumeButton.Glyph = volume switch
+            {
+                int n when n > 50 => Icons.Speaker2Filled,
+                int n when n > 0 => Icons.Speaker1Filled,
+                _ => Icons.SpeakerMuteFilled
+            };
+        }
+
+        private void Volume_Click(object sender, RoutedEventArgs e)
+        {
+            var muted = !SettingsService.Current.VolumeMuted;
+            var volume = (int)Math.Round(SettingsService.Current.VolumeLevel * 100);
+
+            if (_mediaPlayer != null)
+            {
+                _mediaPlayer.Mute = muted;
+            }
+
+            SettingsService.Current.VolumeMuted = muted;
+
+            VolumeSlider.ValueChanged -= VolumeSlider_ValueChanged;
+            VolumeSlider.Value = muted ? 0 : volume;
+            VolumeSlider.ValueChanged += VolumeSlider_ValueChanged;
+
+            VolumeButton.Glyph = muted ? Icons.SpeakerMuteFilled : volume switch
+            {
+                int n when n > 50 => Icons.Speaker2Filled,
+                int n when n > 0 => Icons.Speaker1Filled,
+                _ => Icons.SpeakerMuteFilled
+            };
+        }
+
+        public bool TogglePlaybackState()
+        {
+            if (_mediaPlayer != null && _mediaPlayer.State is VLCState.Playing or VLCState.Paused)
+            {
+                _mediaPlayer.Pause();
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool AdjustVolume(double amount)
+        {
+            VolumeSlider.Value += amount;
+            return true;
+        }
+
+        public void Stop()
+        {
+            if (_request != null)
+            {
+                _request.RequestRelease();
+                _request = null;
+            }
+        }
+    }
+}

@@ -4,14 +4,18 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using LibVLCSharp.Shared;
 using System;
 using System.Numerics;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Windows.Foundation;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -26,8 +30,6 @@ namespace Telegram.Controls.Gallery
 
         public GalleryContent Item => _item;
 
-        public Border Presenter => Panel;
-
         private long _fileToken;
         private long _thumbnailToken;
 
@@ -39,9 +41,15 @@ namespace Telegram.Controls.Gallery
             set => Button.IsEnabled = value;
         }
 
+        private readonly DispatcherQueue _dispatcherQueue;
+        private readonly LifoActionWorker _playbackQueue;
+
         public GalleryContentView()
         {
             InitializeComponent();
+
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+            _playbackQueue = new LifoActionWorker();
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
@@ -233,6 +241,130 @@ namespace Telegram.Controls.Gallery
             {
                 _delegate?.OpenFile(item, file);
             }
+        }
+
+        private LibVLC _library;
+        private MediaPlayer _mediaPlayer;
+
+        private RemoteInputStream _fileStream;
+        private GalleryTransportControls _controls;
+
+        private bool _unloaded;
+        private int _fileId;
+
+        private long _initialPosition;
+
+        public void Play(GalleryContent item, long position, GalleryTransportControls controls)
+        {
+            if (_unloaded)
+            {
+                return;
+            }
+
+            try
+            {
+                var file = item.GetFile();
+                if (file.Id == _fileId || (!file.Local.IsDownloadingCompleted && !SettingsService.Current.IsStreamingEnabled))
+                {
+                    return;
+                }
+
+                _fileId = file.Id;
+
+                controls.Attach(item, file);
+
+                if (_mediaPlayer == null)
+                {
+                    _controls = controls;
+                    _fileStream = new RemoteInputStream(item.ClientService, file);
+                    _initialPosition = position;
+                    FindName(nameof(Video));
+                }
+                else
+                {
+                    controls.Attach(_mediaPlayer);
+
+                    _fileStream = null;
+                    _controls = null;
+                    _playbackQueue.Enqueue(() =>
+                    {
+                        _mediaPlayer.Play(new LibVLCSharp.Shared.Media(_library, new RemoteInputStream(item.ClientService, file)));
+                        _mediaPlayer.Time = position;
+                    });
+                }
+            }
+            catch { }
+        }
+
+        private void OnInitialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)
+        {
+            _library = new LibVLC(e.SwapChainOptions);
+
+            _mediaPlayer = new MediaPlayer(_library);
+            _mediaPlayer.EndReached += OnEndReached;
+            _mediaPlayer.Stopped += OnStopped;
+            //_mediaPlayer.VolumeChanged += OnVolumeChanged;
+            //_mediaPlayer.SourceChanged += OnSourceChanged;
+            //_mediaPlayer.MediaOpened += OnMediaOpened;
+            //_mediaPlayer.PlaybackSession.PlaybackStateChanged += OnPlaybackStateChanged;
+
+            var stream = _fileStream;
+            var position = _initialPosition;
+
+            _controls.Attach(_mediaPlayer);
+            _playbackQueue.Enqueue(() =>
+            {
+                _mediaPlayer.Play(new LibVLCSharp.Shared.Media(_library, stream));
+                _mediaPlayer.Time = position;
+            });
+
+            _controls = null;
+            _fileStream = null;
+            _initialPosition = 0;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Task.Run(() =>
+            {
+                _mediaPlayer?.Stop();
+                _mediaPlayer?.Dispose();
+                _mediaPlayer = null;
+
+                _library?.Dispose();
+                _library = null;
+
+                _fileStream?.Close();
+                _fileStream = null;
+            });
+        }
+
+        private void OnEndReached(object sender, EventArgs e)
+        {
+            _playbackQueue.Enqueue(_mediaPlayer.Stop);
+        }
+
+        private void OnStopped(object sender, EventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(Video.Clear);
+        }
+
+        public void Stop(out int fileId, out long position)
+        {
+            if (_mediaPlayer != null)
+            {
+                fileId = _fileId;
+                position = _mediaPlayer.Time;
+
+                _playbackQueue.Enqueue(_mediaPlayer.Stop);
+            }
+            else
+            {
+                fileId = 0;
+                position = 0;
+            }
+
+            _fileId = 0;
         }
     }
 }

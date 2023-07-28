@@ -87,7 +87,7 @@
                               HorizontalAlignment="Left"
                               VerticalAlignment="Top"
                               Margin="0,-40,0,0"
-                              Width="56"
+                              Width="48"
                               Height="40" />
 
         <local:GalleryBottomPanel x:Name="BottomPanel">
@@ -123,12 +123,6 @@
                                       Glyph="&#xF4AA;"
                                       FontSize="{StaticResource GlyphMediumFontSize}" />
 
-                <controls:AnimatedGlyphToggleButton x:Name="FullScreen"
-                                                    Click="FullScreen_Click"
-                                                    Height="{ThemeResource AppBarThemeCompactHeight}"
-                                                    Glyph="&#xE9F4;"
-                                                    CheckedGlyph="&#xE9F3;"/>
-
                 <controls:GlyphButton x:Name="ZoomOut"
                                       Click="ZoomOut_Click"
                                       Height="{ThemeResource AppBarThemeCompactHeight}"
@@ -143,29 +137,16 @@
                                       ToolTipService.ToolTip="{CustomResource MediaZoomIn}"
                                       Glyph="&#xE969;" />
 
-                <controls:GlyphButton Click="Compact_Click"
-                                      Visibility="{x:Bind ConvertCompactVisibility(ViewModel.SelectedItem), Mode=OneWay}"
-                                      Height="{ThemeResource AppBarThemeCompactHeight}"
-                                      FontFamily="{StaticResource TelegramThemeFontFamily}"
-                                      Glyph="&#xE92C;"
-                                      FontSize="16" />
-
                 <controls:MoreButton Click="Menu_ContextRequested"
                                      HorizontalAlignment="Right" />
             </StackPanel>
 
             <StackPanel Padding="12"
                         MinWidth="320">
-                <MediaTransportControls x:Name="Transport"
-                                        ShowAndHideAutomatically="False"
-                                        IsFullWindowButtonVisible="False"
-                                        IsZoomButtonVisible="False"
-                                        IsSkipBackwardButtonVisible="True"
-                                        IsSkipForwardButtonVisible="True"
-                                        IsSkipBackwardEnabled="True"
-                                        IsSkipForwardEnabled="True"
-                                        MaxWidth="396"
-                                        Margin="0"/>
+                <local:GalleryTransportControls x:Name="Controls"
+                                                FullScreenClick="FullScreen_Click"
+                                                CompactClick="Compact_Click"
+                                                MaxWidth="396" />
                 <Border Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}"
                         Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                         HorizontalAlignment="Center"
