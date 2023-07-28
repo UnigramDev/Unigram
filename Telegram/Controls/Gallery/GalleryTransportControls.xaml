@@ -399,7 +399,6 @@
                        Typography.NumeralAlignment="Tabular" />
 
             <ProgressBar x:Name="PositionBar"
-                         Value="50"
                          Grid.Column="1" />
             <Slider x:Name="Slider"
                     ValueChanged="Slider_ValueChanged"

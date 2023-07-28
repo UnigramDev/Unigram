@@ -146,7 +146,8 @@
                 <local:GalleryTransportControls x:Name="Controls"
                                                 FullScreenClick="FullScreen_Click"
                                                 CompactClick="Compact_Click"
-                                                MaxWidth="396" />
+                                                MaxWidth="396"
+                                                Visibility="Collapsed" />
                 <Border Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}"
                         Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
                         HorizontalAlignment="Center"
