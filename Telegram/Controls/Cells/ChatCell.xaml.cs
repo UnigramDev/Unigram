@@ -120,6 +120,7 @@ namespace Telegram.Controls.Cells
         private IdentityIcon Identity;
         private TextBlock MutedIcon;
         private TextBlock TimeLabel;
+        private Grid PreviewPanel;
         private Border MinithumbnailPanel;
         private ChatActionIndicator ChatActionIndicator;
         private TextBlock TypingLabel;
@@ -150,6 +151,7 @@ namespace Telegram.Controls.Cells
             Identity = GetTemplateChild(nameof(Identity)) as IdentityIcon;
             MutedIcon = GetTemplateChild(nameof(MutedIcon)) as TextBlock;
             TimeLabel = GetTemplateChild(nameof(TimeLabel)) as TextBlock;
+            PreviewPanel = GetTemplateChild(nameof(PreviewPanel)) as Grid;
             MinithumbnailPanel = GetTemplateChild(nameof(MinithumbnailPanel)) as Border;
             ChatActionIndicator = GetTemplateChild(nameof(ChatActionIndicator)) as ChatActionIndicator;
             TypingLabel = GetTemplateChild(nameof(TypingLabel)) as TextBlock;
@@ -170,7 +172,7 @@ namespace Telegram.Controls.Cells
             tooltip.Opened += ToolTip_Opened;
             tooltip.Closed += Tooltip_Closed;
 
-            ToolTipService.SetToolTip(this, tooltip);
+            ToolTipService.SetToolTip(PreviewPanel, tooltip);
 
             Segments.Click += Segments_Click;
 
@@ -1491,27 +1493,35 @@ namespace Telegram.Controls.Cells
             var tooltip = sender as ToolTip;
             if (tooltip != null)
             {
-                if (_clientService.Notifications.InAppPreview && _chat != null)
+                var chat = _chat;
+                var message = chat?.LastMessage;
+
+                if (chat == null && _message != null)
+                {
+                    chat = _clientService?.GetChat(_message.ChatId);
+                    message = _message;
+                }
+
+                if (_clientService != null && _clientService.Notifications.InAppPreview && chat != null && message != null)
                 {
                     var playback = TLContainer.Current.Playback;
                     var settings = TLContainer.Current.Resolve<ISettingsService>(_clientService.SessionId);
 
-                    var hidePreview = !settings.Notifications.GetShowPreview(_chat);
-                    hidePreview |= _chat.HasProtectedContent;
-                    hidePreview |= _chat.LastMessage == null;
-                    hidePreview |= _chat.Type is ChatTypeSecret;
+                    var hidePreview = !settings.Notifications.GetShowPreview(chat);
+                    hidePreview |= chat.HasProtectedContent;
+                    hidePreview |= chat.Type is ChatTypeSecret;
 
-                    if (hidePreview || _chat.LastMessage.IsService())
+                    if (hidePreview || message.IsService())
                     {
                         tooltip.IsOpen = false;
                         return;
                     }
 
-                    var delegato = new ChatMessageDelegate(_clientService, settings, _chat);
-                    var message = new MessageViewModel(_clientService, playback, delegato, _chat, _chat.LastMessage);
+                    var delegato = new ChatMessageDelegate(_clientService, settings, chat);
+                    var viewModel = new MessageViewModel(_clientService, playback, delegato, chat, message);
 
                     var bubble = new MessageBubble();
-                    if (message.IsOutgoing && !message.IsChannelPost)
+                    if (viewModel.IsOutgoing && !viewModel.IsChannelPost)
                     {
                         bubble.Resources = new ThemeOutgoing();
                     }
@@ -1520,7 +1530,7 @@ namespace Telegram.Controls.Cells
                     // hold a strong reference to the IMessageDelegate object.
                     bubble.Tag = delegato;
                     bubble.UpdateQuery(string.Empty);
-                    bubble.UpdateMessage(message);
+                    bubble.UpdateMessage(viewModel);
 
                     var grid = new Grid();
                     grid.Children.Add(bubble);
@@ -1552,35 +1562,35 @@ namespace Telegram.Controls.Cells
                     tooltip.CornerRadius = new CornerRadius(15);
                     tooltip.MaxWidth = double.PositiveInfinity;
 
-                    if (message.ReplyTo is not null ||
-                        message.Content is MessagePinMessage ||
-                        message.Content is MessageGameScore ||
-                        message.Content is MessagePaymentSuccessful)
+                    if (viewModel.ReplyTo is not null ||
+                        viewModel.Content is MessagePinMessage ||
+                        viewModel.Content is MessageGameScore ||
+                        viewModel.Content is MessagePaymentSuccessful)
                     {
-                        message.ReplyToState = MessageReplyToState.Loading;
+                        viewModel.ReplyToState = MessageReplyToState.Loading;
 
-                        _clientService.GetReplyTo(message, response =>
+                        _clientService.GetReplyTo(viewModel, response =>
                         {
                             if (response is Message result)
                             {
-                                message.ReplyToItem = new MessageViewModel(_clientService, playback, delegato, _chat, result);
-                                message.ReplyToState = MessageReplyToState.None;
+                                viewModel.ReplyToItem = new MessageViewModel(_clientService, playback, delegato, chat, result);
+                                viewModel.ReplyToState = MessageReplyToState.None;
                             }
                             else if (response is Story story)
                             {
-                                message.ReplyToItem = story;
-                                message.ReplyToState = MessageReplyToState.None;
+                                viewModel.ReplyToItem = story;
+                                viewModel.ReplyToState = MessageReplyToState.None;
                             }
                             else
                             {
-                                message.ReplyToState = MessageReplyToState.Deleted;
+                                viewModel.ReplyToState = MessageReplyToState.Deleted;
                             }
 
                             this.BeginOnUIThread(() =>
                             {
                                 if (tooltip.IsOpen)
                                 {
-                                    bubble.UpdateMessageReply(message);
+                                    bubble.UpdateMessageReply(viewModel);
                                 }
                             });
                         });

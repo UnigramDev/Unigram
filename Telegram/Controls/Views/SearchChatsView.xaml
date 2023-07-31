@@ -172,7 +172,6 @@
                         <DataTemplate>
                             <cells:ChatCell Stroke="{ThemeResource ChatLastMessageStateBrush}"
                                             SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                            IsEnabled="False"
                                             Margin="4,0" />
                         </DataTemplate>
                     </selectors:SearchTemplateSelector.MessageTemplate>

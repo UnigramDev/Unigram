@@ -139,7 +139,9 @@
                                    VerticalAlignment="Bottom"
                                    Grid.Column="2" />
 
-                        <Grid Margin="0,2,8,0"
+                        <Grid x:Name="PreviewPanel"
+                              Background="Transparent"
+                              Margin="0,2,8,0"
                               Grid.Column="1"
                               Grid.ColumnSpan="2"
                               Grid.Row="1">
