@@ -123,6 +123,7 @@
                 <controls:HeaderedControl x:Name="SharePhonePanel"
                                           x:Load="False">
                     <CheckBox x:Name="SharePhoneCheck"
+                              IsChecked="{x:Bind ViewModel.SharePhoneNumber, Mode=TwoWay}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 

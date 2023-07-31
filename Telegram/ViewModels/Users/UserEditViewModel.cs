@@ -208,7 +208,7 @@ namespace Telegram.ViewModels.Users
                 else
                 {
                     ClientService.Send(new AddContact(new Contact(user.PhoneNumber, _firstName, _lastName, string.Empty, user.Id),
-                        !userFull.NeedPhoneNumberPrivacyException || SharePhoneNumber));
+                        userFull.NeedPhoneNumberPrivacyException && SharePhoneNumber));
                 }
 
                 NavigationService.GoBack();
