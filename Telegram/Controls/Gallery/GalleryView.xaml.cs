@@ -17,11 +17,13 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Services.ViewService;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Telegram.ViewModels.Users;
+using Telegram.Views;
 using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.Media.Playback;
@@ -303,7 +305,7 @@ namespace Telegram.Controls.Gallery
             return Task.FromResult(ContentDialogResult.None);
         }
 
-        public static Task<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null, int timestamp = 0)
+        public static Task<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null, long timestamp = 0)
         {
             var popup = new GalleryView
             {
@@ -544,13 +546,13 @@ namespace Telegram.Controls.Gallery
             {
                 Play(container, item);
 
-                if (GalleryCompactView.Current is ViewLifetimeControl compact)
+                if (GalleryCompactWindow.Current is ViewLifetimeControl compact)
                 {
                     compact.Dispatcher.Dispatch(() =>
                     {
-                        if (compact.Window.Content is GalleryCompactView player)
+                        if (compact.Window.Content is GalleryCompactWindow player)
                         {
-                            player.MediaPlayer?.Pause();
+                            player.Pause();
                         }
                     });
                 }
@@ -699,19 +701,15 @@ namespace Telegram.Controls.Gallery
         {
             var keyCode = (int)args.VirtualKey;
 
-            if (args.VirtualKey is VirtualKey.Left or VirtualKey.GamepadLeftShoulder)
+            if (args.VirtualKey is VirtualKey.Left or VirtualKey.GamepadLeftShoulder && args.OnlyKey)
             {
                 ChangeView(CarouselDirection.Previous, false);
                 args.Handled = true;
             }
-            else if (args.VirtualKey is VirtualKey.Right or VirtualKey.GamepadRightShoulder)
+            else if (args.VirtualKey is VirtualKey.Right or VirtualKey.GamepadRightShoulder && args.OnlyKey)
             {
                 ChangeView(CarouselDirection.Next, false);
                 args.Handled = true;
-            }
-            else if (args.VirtualKey is VirtualKey.Space && args.OnlyKey)
-            {
-                args.Handled = Controls.TogglePlaybackState();
             }
             else if (args.VirtualKey is VirtualKey.C && args.OnlyControl)
             {
@@ -733,13 +731,9 @@ namespace Telegram.Controls.Gallery
                 ScrollingHost.Zoom(keyCode is 187 || args.VirtualKey is VirtualKey.Add);
                 args.Handled = true;
             }
-            else if (args.VirtualKey is VirtualKey.Up)
+            else
             {
-                args.Handled = Controls.AdjustVolume(10);
-            }
-            else if (args.VirtualKey is VirtualKey.Down)
-            {
-                args.Handled = Controls.AdjustVolume(-10);
+                Controls.OnAcceleratorKeyActivated(args);
             }
         }
 
@@ -966,86 +960,90 @@ namespace Telegram.Controls.Gallery
 
         private async void Compact_Click(object sender, RoutedEventArgs e)
         {
-            await MessagePopup.ShowAsync("Will be back soon, I promise!", "Sorry", "Ok");
+            var viewModel = ViewModel;
+            var item = viewModel?.SelectedItem;
 
-            //var item = ViewModel?.SelectedItem;
-            //if (item == null)
-            //{
-            //    return;
-            //}
+            if (item == null)
+            {
+                return;
+            }
 
             //if (_mediaPlayer == null || _mediaPlayer.Source == null)
-            //{
-            //    Play(LayoutRoot.CurrentElement, item);
-            //}
+            {
+                Play(LayoutRoot.CurrentElement, item);
+            }
 
-            //var width = 360d;
-            //var height = 225d;
+            var width = 320d;
+            var height = 200d;
 
-            //var constraint = item.Constraint;
-            //if (constraint is MessageAnimation messageAnimation)
-            //{
-            //    constraint = messageAnimation.Animation;
-            //}
-            //else if (constraint is MessageVideo messageVideo)
-            //{
-            //    constraint = messageVideo.Video;
-            //}
+            var constraint = item.Constraint;
+            if (constraint is MessageAnimation messageAnimation)
+            {
+                constraint = messageAnimation.Animation;
+            }
+            else if (constraint is MessageVideo messageVideo)
+            {
+                constraint = messageVideo.Video;
+            }
 
-            //if (constraint is Animation animation)
-            //{
-            //    width = animation.Width;
-            //    height = animation.Height;
-            //}
-            //else if (constraint is Video video)
-            //{
-            //    width = video.Width;
-            //    height = video.Height;
-            //}
+            if (constraint is Animation animation)
+            {
+                width = animation.Width;
+                height = animation.Height;
+            }
+            else if (constraint is Video video)
+            {
+                width = video.Width;
+                height = video.Height;
+            }
 
-            //if (width > 360 || height > 360)
-            //{
-            //    var ratioX = 360d / width;
-            //    var ratioY = 360d / height;
-            //    var ratio = Math.Min(ratioX, ratioY);
+            if (width > 320 || height > 320)
+            {
+                var ratioX = 320d / width;
+                var ratioY = 320d / height;
+                var ratio = Math.Min(ratioX, ratioY);
 
-            //    width *= ratio;
-            //    height *= ratio;
-            //}
+                width *= ratio;
+                height *= ratio;
+            }
 
-            //var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
-            //var viewService = TLContainer.Current.Resolve<IViewService>();
+            var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
+            var viewService = TLContainer.Current.Resolve<IViewService>();
 
             //var mediaPlayer = _mediaPlayer;
             //var fileStream = _fileStream;
 
-            //if (GalleryCompactView.Current is ViewLifetimeControl control)
-            //{
-            //    control.Dispatcher.Dispatch(() =>
-            //    {
-            //        if (control.Window.Content is GalleryCompactView player)
-            //        {
-            //            player.Update(mediaPlayer, fileStream);
-            //        }
+            _current.Stop(out int fileId, out long time);
 
-            //        ApplicationView.GetForCurrentView().TryResizeView(new Size(width, height));
-            //    });
-            //}
-            //else
-            //{
-            //    var parameters = new ViewServiceParams
-            //    {
-            //        ViewMode = ApplicationViewMode.CompactOverlay,
-            //        Width = width,
-            //        Height = height,
-            //        PersistentId = "PIP",
-            //        Content = control => new GalleryCompactView(control, mediaPlayer, fileStream)
-            //    };
+            var fileStream = new RemoteInputStream(ViewModel.ClientService, item.GetFile());
 
-            //    await viewService.OpenAsync(parameters);
-            //}
+            if (GalleryCompactWindow.Current is ViewLifetimeControl control)
+            {
+                control.Dispatcher.Dispatch(() =>
+                {
+                    if (control.Window.Content is GalleryCompactWindow player)
+                    {
+                        player.Play(viewModel, fileStream, time);
+                    }
 
-            //OnBackRequestedOverride(this, new BackRequestedRoutedEventArgs());
+                    ApplicationView.GetForCurrentView().TryResizeView(new Size(width, height));
+                });
+            }
+            else
+            {
+                var parameters = new ViewServiceParams
+                {
+                    ViewMode = ApplicationViewMode.CompactOverlay,
+                    Width = width,
+                    Height = height,
+                    PersistentId = "PIP",
+                    Content = control => new GalleryCompactWindow(control, viewModel, fileStream, time)
+                };
+
+                _ = viewService.OpenAsync(parameters);
+            }
+
+            OnBackRequestedOverride(this, new BackRequestedRoutedEventArgs());
         }
 
         #endregion

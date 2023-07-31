@@ -8,7 +8,8 @@
              d:DesignHeight="300"
              d:DesignWidth="400">
 
-    <Grid Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}"
+    <Grid x:Name="LayoutRoot"
+          Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}"
           CornerRadius="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -27,10 +28,10 @@
                 </Grid.ColumnDefinitions>
                 <controls:GlyphButton x:Name="VolumeButton"
                                       Click="Volume_Click"
-                                      CornerRadius="13,4,4,4"
-                                      FontSize="16" />
+                                      CornerRadius="13,4,4,4" />
 
                 <Slider x:Name="VolumeSlider"
+                        AutomationProperties.Name="{CustomResource AccDescrVolume}"
                         Foreground="#FFFFFF"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
@@ -346,6 +347,7 @@
                                           Click="Toggle_Click"
                                           Glyph="&#xE768;"
                                           HorizontalAlignment="Center"
+                                          FontSize="24"
                                           Grid.Column="1" />
 
             <Grid HorizontalAlignment="Right"
@@ -356,10 +358,14 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <controls:AnimatedGlyphToggleButton x:Name="FullScreenButton"
+                                                    AutomationProperties.Name="{CustomResource AccDescrFullScreen}"
+                                                    ToolTipService.ToolTip="{CustomResource AccDescrFullScreen}"
                                                     Glyph="&#xE966;"
                                                     CheckedGlyph="&#xE965;"
                                                     Margin="0,0,-8,0" />
                 <controls:GlyphButton x:Name="CompactButton"
+                                      AutomationProperties.Name="{CustomResource AccDescrMiniPlayer}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrMiniPlayer}"
                                       Glyph="&#xE92C;"
                                       Margin="0,0,-8,0"
                                       Grid.Column="1" />
@@ -401,6 +407,7 @@
             <ProgressBar x:Name="PositionBar"
                          Grid.Column="1" />
             <Slider x:Name="Slider"
+                    AutomationProperties.Name="{CustomResource AccDescrSeek}"
                     ValueChanged="Slider_ValueChanged"
                     IsThumbToolTipEnabled="False"
                     Grid.Column="1" />

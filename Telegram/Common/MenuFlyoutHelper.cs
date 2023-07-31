@@ -96,17 +96,17 @@ namespace Telegram.Common
 
         #region Playback speed
 
-        public static void CreatePlaybackSpeed(this MenuFlyout flyout, double value, Action<double> valueChanged)
+        public static void CreatePlaybackSpeed(this MenuFlyout flyout, double value, FlyoutPlacementMode placement, Action<double> valueChanged)
         {
-            CreatePlaybackSpeed(flyout.Items, value, valueChanged);
+            CreatePlaybackSpeed(flyout.Items, value, placement, valueChanged);
         }
 
-        public static void CreatePlaybackSpeed(this MenuFlyoutSubItem flyout, double value, Action<double> valueChanged)
+        public static void CreatePlaybackSpeed(this MenuFlyoutSubItem flyout, double value, FlyoutPlacementMode placement, Action<double> valueChanged)
         {
-            CreatePlaybackSpeed(flyout.Items, value, valueChanged);
+            CreatePlaybackSpeed(flyout.Items, value, placement, valueChanged);
         }
 
-        private static void CreatePlaybackSpeed(this IList<MenuFlyoutItemBase> items, double value, Action<double> valueChanged)
+        private static void CreatePlaybackSpeed(this IList<MenuFlyoutItemBase> items, double value, FlyoutPlacementMode placement, Action<double> valueChanged)
         {
             var rates = new double[] { 0.5, 1, 1.5, 2 };
             var labels = new string[] { "0.5x", Strings.SpeedNormal, "1.5x", "2x" };
@@ -127,7 +127,10 @@ namespace Telegram.Common
                 valueChanged(args.NewValue);
             };
 
-            items.Add(slider);
+            if (placement is FlyoutPlacementMode.Bottom or FlyoutPlacementMode.BottomEdgeAlignedLeft or FlyoutPlacementMode.BottomEdgeAlignedRight)
+            {
+                items.Add(slider);
+            }
 
             for (int i = 0; i < rates.Length; i++)
             {
@@ -143,6 +146,11 @@ namespace Telegram.Common
                 //flyout.Items.Add(toggle);
 
                 items.CreateFlyoutItem(valueChanged, rates[i], labels[i]);
+            }
+
+            if (placement is FlyoutPlacementMode.Top or FlyoutPlacementMode.TopEdgeAlignedLeft or FlyoutPlacementMode.TopEdgeAlignedRight)
+            {
+                items.Add(slider);
             }
         }
 

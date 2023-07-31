@@ -249,6 +249,8 @@ namespace Telegram.Controls.Gallery
         private RemoteInputStream _fileStream;
         private GalleryTransportControls _controls;
 
+        private bool _stopped;
+
         private bool _unloaded;
         private int _fileId;
 
@@ -301,7 +303,7 @@ namespace Telegram.Controls.Gallery
             _library = new LibVLC(e.SwapChainOptions);
 
             _mediaPlayer = new MediaPlayer(_library);
-            _mediaPlayer.EndReached += OnEndReached;
+            //_mediaPlayer.EndReached += OnEndReached;
             _mediaPlayer.Stopped += OnStopped;
             //_mediaPlayer.VolumeChanged += OnVolumeChanged;
             //_mediaPlayer.SourceChanged += OnSourceChanged;
@@ -346,7 +348,11 @@ namespace Telegram.Controls.Gallery
 
         private void OnStopped(object sender, EventArgs e)
         {
-            _dispatcherQueue.TryEnqueue(Video.Clear);
+            if (_stopped)
+            {
+                _stopped = false;
+                _dispatcherQueue.TryEnqueue(Video.Clear);
+            }
         }
 
         public void Stop(out int fileId, out long position)
@@ -356,6 +362,7 @@ namespace Telegram.Controls.Gallery
                 fileId = _fileId;
                 position = _mediaPlayer.Time;
 
+                _stopped = true;
                 _playbackQueue.Enqueue(_mediaPlayer.Stop);
             }
             else
