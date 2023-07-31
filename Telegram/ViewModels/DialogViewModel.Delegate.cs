@@ -289,7 +289,7 @@ namespace Telegram.ViewModels
                     }
 
                     viewModel.NavigationService = NavigationService;
-                    await GalleryView.ShowAsync(viewModel, target != null ? () => target : null, timestamp);
+                    await GalleryWindow.ShowAsync(viewModel, target != null ? () => target : null, timestamp);
                 }
 
                 TextField?.Focus(FocusState.Programmatic);

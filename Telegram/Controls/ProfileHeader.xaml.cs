@@ -126,7 +126,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            await GalleryView.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
+            await GalleryWindow.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
         }
 
         private void Segments_Click(object sender, RoutedEventArgs e)
@@ -149,7 +149,7 @@ namespace Telegram.Controls
             }
             else
             {
-                GalleryView.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
+                GalleryWindow.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
             }
         }
 

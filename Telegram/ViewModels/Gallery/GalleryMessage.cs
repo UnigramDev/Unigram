@@ -9,7 +9,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Gallery
 {
-    public class GalleryMessage : GalleryContent
+    public class GalleryMessage : GalleryMedia
     {
         protected readonly Message _message;
         protected readonly bool _hasProtectedContent;

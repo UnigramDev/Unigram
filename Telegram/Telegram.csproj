@@ -225,12 +225,22 @@
     <Compile Include="Controls\Contacts\ContactsSortedByHeader.xaml.cs">
       <DependentUpon>ContactsSortedByHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Gallery\GalleryCompactWindow.xaml.cs">
+      <DependentUpon>GalleryCompactWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Gallery\GalleryContent.xaml.cs">
+      <DependentUpon>GalleryContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Gallery\GalleryTransportControls.xaml.cs">
       <DependentUpon>GalleryTransportControls.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Gallery\GalleryWindow.xaml.cs">
+      <DependentUpon>GalleryWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\ReactionsMenuFlyout.xaml.cs">
       <DependentUpon>ReactionsMenuFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\OverlayWindow.cs" />
     <Compile Include="Controls\Stories\StoriesWindow.xaml.cs">
       <DependentUpon>StoriesWindow.xaml</DependentUpon>
     </Compile>
@@ -469,13 +479,6 @@
     </Compile>
     <Compile Include="Controls\CarouselViewer.cs" />
     <Compile Include="Controls\Gallery\GalleryBottomPanel.cs" />
-    <Compile Include="Controls\Gallery\GalleryCompactView.cs" />
-    <Compile Include="Controls\Gallery\GalleryContentView.xaml.cs">
-      <DependentUpon>GalleryContentView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Gallery\GalleryView.xaml.cs">
-      <DependentUpon>GalleryView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\CustomEmojiIcon.cs" />
     <Compile Include="Controls\Messages\Content\InvoicePreviewContent.xaml.cs">
       <DependentUpon>InvoicePreviewContent.xaml</DependentUpon>
@@ -609,7 +612,6 @@
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
     <Compile Include="Controls\NavigationViewItemSeparator.cs" />
-    <Compile Include="Controls\OverlayPage.cs" />
     <Compile Include="Controls\PageHeader.cs" />
     <Compile Include="Controls\BadgeButton.cs" />
     <Compile Include="Controls\Payments\CardTextBox.cs" />
@@ -1012,7 +1014,7 @@
     <Compile Include="ViewModels\Folders\FolderViewModel.cs" />
     <Compile Include="ViewModels\Gallery\GalleryAnimation.cs" />
     <Compile Include="ViewModels\Gallery\GalleryChatPhoto.cs" />
-    <Compile Include="ViewModels\Gallery\GalleryContent.cs" />
+    <Compile Include="ViewModels\Gallery\GalleryMedia.cs" />
     <Compile Include="ViewModels\Gallery\GalleryMessage.cs" />
     <Compile Include="ViewModels\Gallery\GalleryPhoto.cs" />
     <Compile Include="ViewModels\Gallery\GalleryVideo.cs" />
@@ -1879,7 +1881,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Gallery\GalleryContentView.xaml">
+    <Page Include="Controls\Gallery\GalleryCompactWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Gallery\GalleryContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1887,7 +1893,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Gallery\GalleryView.xaml">
+    <Page Include="Controls\Gallery\GalleryWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

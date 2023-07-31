@@ -23,28 +23,12 @@ namespace Telegram.ViewModels.Chats
             : base(clientService, storageService, aggregator)
         {
             _chat = chat;
-            Items = new MvxObservableCollection<GalleryContent> { new GalleryChatPhoto(clientService, chat, photo, 0) };
+            Items = new MvxObservableCollection<GalleryMedia> { new GalleryChatPhoto(clientService, chat, photo, 0) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
             Initialize(photo.GetBig().Photo.Id, photo.GetSmall().Photo.Id);
         }
-
-        //public ChatPhotosViewModel(IClientService clientService, IEventAggregator aggregator, TLChatFullBase chatFull, TLChatBase chat, TLMessageService serviceMessage)
-        //    : base(clientService, aggregator)
-        //{
-        //    _peer = chat.ToInputPeer();
-        //    _lastMaxId = serviceMessage.Id;
-
-        //    if (serviceMessage.Action is TLMessageActionChatEditPhoto editPhotoAction)
-        //    {
-        //        Items = new MvxObservableCollection<GalleryItem> { new GalleryPhotoItem(editPhotoAction.Photo as TLPhoto, chat) };
-        //        SelectedItem = Items[0];
-        //        FirstItem = Items[0];
-        //    }
-
-        //    Initialize(serviceMessage.Id);
-        //}
 
         private async void Initialize(long bigId, long smallId)
         {
@@ -225,7 +209,7 @@ namespace Telegram.ViewModels.Chats
 
         public override int Position => TotalItems - (Items.Count - base.Position);
 
-        public override MvxObservableCollection<GalleryContent> Group => Items;
+        public override MvxObservableCollection<GalleryMedia> Group => Items;
     }
 
     //public class GalleryChatPhotoItem : GalleryItem

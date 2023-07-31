@@ -12,10 +12,10 @@ namespace Telegram.ViewModels
 {
     public class SingleGalleryViewModel : GalleryViewModelBase
     {
-        public SingleGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, GalleryContent item)
+        public SingleGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, GalleryMedia item)
             : base(clientService, storageService, aggregator)
         {
-            Items = new MvxObservableCollection<GalleryContent> { item };
+            Items = new MvxObservableCollection<GalleryMedia> { item };
             SelectedItem = item;
             FirstItem = item;
         }

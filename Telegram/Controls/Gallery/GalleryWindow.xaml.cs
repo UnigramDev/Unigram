@@ -43,7 +43,7 @@ using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls.Gallery
 {
-    public sealed partial class GalleryView : OverlayPage, IGalleryDelegate
+    public sealed partial class GalleryWindow : OverlayWindow, IGalleryDelegate
     //, IHandle<UpdateDeleteMessages>
     //, IHandle<UpdateMessageContent>
     {
@@ -75,7 +75,7 @@ namespace Telegram.Controls.Gallery
             set => _initialPosition = value > 0 ? value : null;
         }
 
-        private GalleryView()
+        private GalleryWindow()
         {
             InitializeComponent();
 
@@ -217,12 +217,12 @@ namespace Telegram.Controls.Gallery
             });
         }
 
-        public void OpenFile(GalleryContent item, File file)
+        public void OpenFile(GalleryMedia item, File file)
         {
             Play(LayoutRoot.CurrentElement, item);
         }
 
-        public void OpenItem(GalleryContent item)
+        public void OpenItem(GalleryMedia item)
         {
             OnBackRequested(new BackRequestedRoutedEventArgs());
         }
@@ -307,7 +307,7 @@ namespace Telegram.Controls.Gallery
 
         public static Task<ContentDialogResult> ShowAsync(GalleryViewModelBase parameter, Func<FrameworkElement> closing = null, long timestamp = 0)
         {
-            var popup = new GalleryView
+            var popup = new GalleryWindow
             {
                 InitialPosition = timestamp
             };
@@ -396,7 +396,7 @@ namespace Telegram.Controls.Gallery
                 Controls.IsFullScreen = sender.IsFullScreenMode;
                 Padding = new Thickness(0, sender.IsFullScreenMode ? 0 : 40, 0, 0);
 
-                if (LayoutRoot.CurrentElement is GalleryContentView container)
+                if (LayoutRoot.CurrentElement is GalleryContent container)
                 {
                     container.Stretch = sender.IsFullScreenMode
                         ? Stretch.UniformToFill
@@ -501,7 +501,7 @@ namespace Telegram.Controls.Gallery
                 return;
             }
 
-            var image = sender as GalleryContentView;
+            var image = sender as GalleryContent;
             if (image.Item != viewModel.FirstItem)
             {
                 return;
@@ -540,7 +540,7 @@ namespace Telegram.Controls.Gallery
             InitializeVideo(container, item);
         }
 
-        private void InitializeVideo(Grid container, GalleryContent item)
+        private void InitializeVideo(Grid container, GalleryMedia item)
         {
             if (item.IsVideo)
             {
@@ -591,7 +591,7 @@ namespace Telegram.Controls.Gallery
             return string.Format(Strings.formatDateAtTime, Formatter.ShortDate.Format(date), Formatter.ShortTime.Format(date));
         }
 
-        private string ConvertOf(GalleryContent item, int index, int count)
+        private string ConvertOf(GalleryMedia item, int index, int count)
         {
             if (item.IsPersonal)
             {
@@ -605,7 +605,7 @@ namespace Telegram.Controls.Gallery
             return string.Format(Strings.Of, index, count);
         }
 
-        private Visibility ConvertCompactVisibility(GalleryContent item)
+        private Visibility ConvertCompactVisibility(GalleryMedia item)
         {
             if (item != null && item.IsVideo && !item.IsLoop)
             {
@@ -622,11 +622,11 @@ namespace Telegram.Controls.Gallery
 
         #endregion
 
-        private GalleryContentView _current;
+        private GalleryContent _current;
 
-        private void Play(FrameworkElement container, GalleryContent item)
+        private void Play(FrameworkElement container, GalleryMedia item)
         {
-            if (_unloaded || container is not GalleryContentView content)
+            if (_unloaded || container is not GalleryContent content)
             {
                 return;
             }
@@ -744,7 +744,7 @@ namespace Telegram.Controls.Gallery
 
         private void LayoutRoot_ViewChanged(object sender, CarouselViewChangedEventArgs e)
         {
-            if (ViewModel?.SelectedItem is GalleryContent item && item.IsVideo && (item.IsLoop || SettingsService.Current.IsStreamingEnabled))
+            if (ViewModel?.SelectedItem is GalleryMedia item && item.IsVideo && (item.IsLoop || SettingsService.Current.IsStreamingEnabled))
             {
                 Play(LayoutRoot.CurrentElement, item);
             }
@@ -847,9 +847,9 @@ namespace Telegram.Controls.Gallery
             }
 
             LayoutRoot.PrepareElements(direction,
-                out GalleryContentView previous,
-                out GalleryContentView target,
-                out GalleryContentView next);
+                out GalleryContent previous,
+                out GalleryContent target,
+                out GalleryContent next);
 
             previous.IsEnabled = false;
             target.IsEnabled = true;
@@ -896,7 +896,7 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        private bool TrySet(GalleryContentView element, GalleryContent content)
+        private bool TrySet(GalleryContent element, GalleryMedia content)
         {
             if (Equals(element.Item, content))
             {
@@ -944,7 +944,7 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        private void PopulateContextRequested(MenuFlyout flyout, GalleryViewModelBase viewModel, GalleryContent item)
+        private void PopulateContextRequested(MenuFlyout flyout, GalleryViewModelBase viewModel, GalleryMedia item)
         {
             flyout.CreateFlyoutItem(() => item.CanView, viewModel.View, Strings.ShowInChat, Icons.ChatEmpty);
             flyout.CreateFlyoutItem(() => item.CanShare, viewModel.Forward, Strings.Forward, Icons.Share);
@@ -1094,9 +1094,9 @@ namespace Telegram.Controls.Gallery
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private GalleryContentView GetElement(CarouselDirection direction)
+        private GalleryContent GetElement(CarouselDirection direction)
         {
-            return LayoutRoot.GetElement(direction) as GalleryContentView;
+            return LayoutRoot.GetElement(direction) as GalleryContent;
         }
 
         private void FullScreen_Click(object sender, RoutedEventArgs e)

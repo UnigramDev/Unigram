@@ -9,11 +9,11 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Gallery
 {
-    public abstract class GalleryContent
+    public abstract class GalleryMedia
     {
         protected readonly IClientService _clientService;
 
-        public GalleryContent(IClientService clientService)
+        public GalleryMedia(IClientService clientService)
         {
             _clientService = clientService;
         }

@@ -1318,7 +1318,7 @@ namespace Telegram.Views
             {
                 foreach (var popup in popups)
                 {
-                    if (popup.Child is GalleryView gallery)
+                    if (popup.Child is GalleryWindow gallery)
                     {
                         gallery.OnBackRequested(new BackRequestedRoutedEventArgs());
                         break;

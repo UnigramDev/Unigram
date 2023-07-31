@@ -498,13 +498,13 @@ namespace Telegram.ViewModels
 
         public override async void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0)
         {
-            var content = target.Tag as GalleryContent;
+            var content = target.Tag as GalleryMedia;
             content ??= _viewModel.Gallery.Items.FirstOrDefault();
 
             _viewModel.Gallery.SelectedItem = content;
             _viewModel.Gallery.FirstItem = content;
 
-            await GalleryView.ShowAsync(_viewModel.Gallery, () => target);
+            await GalleryWindow.ShowAsync(_viewModel.Gallery, () => target);
         }
     }
 }

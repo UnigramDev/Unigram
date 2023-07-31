@@ -14,7 +14,7 @@ namespace Telegram.ViewModels.Delegates
     {
         IClientService ClientService { get; }
 
-        void OpenItem(GalleryContent item);
-        void OpenFile(GalleryContent item, File file);
+        void OpenItem(GalleryMedia item);
+        void OpenFile(GalleryMedia item, File file);
     }
 }

@@ -75,8 +75,8 @@ namespace Telegram.ViewModels.Gallery
             }
         }
 
-        protected GalleryContent _selectedItem;
-        public GalleryContent SelectedItem
+        protected GalleryMedia _selectedItem;
+        public GalleryMedia SelectedItem
         {
             get => _selectedItem;
             set
@@ -87,8 +87,8 @@ namespace Telegram.ViewModels.Gallery
             }
         }
 
-        protected GalleryContent _firstItem;
-        public GalleryContent FirstItem
+        protected GalleryMedia _firstItem;
+        public GalleryMedia FirstItem
         {
             get => _firstItem;
             set => Set(ref _firstItem, value);
@@ -101,9 +101,9 @@ namespace Telegram.ViewModels.Gallery
             set => Set(ref _poster, value);
         }
 
-        public MvxObservableCollection<GalleryContent> Items { get; protected set; }
+        public MvxObservableCollection<GalleryMedia> Items { get; protected set; }
 
-        public virtual MvxObservableCollection<GalleryContent> Group { get; }
+        public virtual MvxObservableCollection<GalleryMedia> Group { get; }
 
         public void LoadMore()
         {
@@ -124,7 +124,7 @@ namespace Telegram.ViewModels.Gallery
         protected virtual void LoadPrevious() { }
         protected virtual void LoadNext() { }
 
-        protected virtual void OnSelectedItemChanged(GalleryContent item)
+        protected virtual void OnSelectedItemChanged(GalleryMedia item)
         {
             RaisePropertyChanged(nameof(Position));
 
@@ -288,7 +288,7 @@ namespace Telegram.ViewModels.Gallery
             }
         }
 
-        public void OpenMessage(GalleryContent galleryItem)
+        public void OpenMessage(GalleryMedia galleryItem)
         {
             var message = galleryItem as GalleryMessage;
             if (message == null)

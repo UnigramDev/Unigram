@@ -21,13 +21,13 @@ namespace Telegram.ViewModels
         public InstantGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator)
             : base(clientService, storageService, aggregator)
         {
-            Items = new MvxObservableCollection<GalleryContent>();
+            Items = new MvxObservableCollection<GalleryMedia>();
             Items.CollectionChanged += OnCollectionChanged;
         }
 
         public static async Task<InstantGalleryViewModel> CreateAsync(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, MessageViewModel message, WebPage webPage)
         {
-            var items = new List<GalleryContent>();
+            var items = new List<GalleryMedia>();
 
             var response = await clientService.SendAsync(new GetWebPageInstantView(webPage.Url, false));
             if (response is WebPageInstantView instantView && instantView.IsFull)
@@ -65,7 +65,7 @@ namespace Telegram.ViewModels
             return null;
         }
 
-        private static GalleryContent CountBlock(IClientService clientService, WebPageInstantView webPage, PageBlock pageBlock)
+        private static GalleryMedia CountBlock(IClientService clientService, WebPageInstantView webPage, PageBlock pageBlock)
         {
             if (pageBlock is PageBlockPhoto photoBlock)
             {
@@ -83,7 +83,7 @@ namespace Telegram.ViewModels
             return null;
         }
 
-        public override MvxObservableCollection<GalleryContent> Group => _shouldGroup ? Items : null;
+        public override MvxObservableCollection<GalleryMedia> Group => _shouldGroup ? Items : null;
 
         //private GalleryItem GetBlock(TLMessage message, TLWebPage webPage, object pageBlock)
         //{

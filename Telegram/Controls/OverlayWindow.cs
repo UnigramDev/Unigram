@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
-    public abstract class OverlayPage : ContentControl, INavigablePage
+    public abstract class OverlayWindow : ContentControl, INavigablePage
     {
         private ApplicationView _applicationView;
 
@@ -40,9 +40,9 @@ namespace Telegram.Controls
 
         public event EventHandler Closing;
 
-        public OverlayPage()
+        public OverlayWindow()
         {
-            DefaultStyleKey = typeof(OverlayPage);
+            DefaultStyleKey = typeof(OverlayWindow);
 
             Loading += OnLoading;
             Loaded += OnLoaded;
@@ -369,7 +369,7 @@ namespace Telegram.Controls
         }
 
         public static readonly DependencyProperty OverlayBrushProperty =
-            DependencyProperty.Register("OverlayBrush", typeof(Brush), typeof(OverlayPage), new PropertyMetadata(null));
+            DependencyProperty.Register("OverlayBrush", typeof(Brush), typeof(OverlayWindow), new PropertyMetadata(null));
 
         #endregion
     }

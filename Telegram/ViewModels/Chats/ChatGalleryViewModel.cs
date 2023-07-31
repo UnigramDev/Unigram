@@ -24,14 +24,14 @@ namespace Telegram.ViewModels.Chats
 
         private readonly bool _isMirrored;
 
-        private readonly MvxObservableCollection<GalleryContent> _group;
+        private readonly MvxObservableCollection<GalleryMedia> _group;
 
         public ChatGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, long chatId, long threadId, Message selected, bool mirrored = false)
             : base(clientService, storageService, aggregator)
         {
             _isMirrored = mirrored;
 
-            _group = new MvxObservableCollection<GalleryContent>();
+            _group = new MvxObservableCollection<GalleryMedia>();
 
             _chatId = chatId;
             _threadId = threadId;
@@ -49,20 +49,7 @@ namespace Telegram.ViewModels.Chats
                 _filter = new SearchMessagesFilterPhotoAndVideo();
             }
 
-            //if (selected.Media is TLMessageMediaPhoto photoMedia || selected.IsVideo())
-            //{
-            //    Items = new MvxObservableCollection<GalleryItem> { new GalleryLegacyMessageItem(selected) };
-            //    SelectedItem = Items[0];
-            //    FirstItem = Items[0];
-            //}
-            //else
-            //{
-            //    Items = new MvxObservableCollection<GalleryItem>();
-            //}
-
-            //Initialize(selected.Id);
-
-            Items = new MvxObservableCollection<GalleryContent> { new GalleryMessage(clientService, selected) };
+            Items = new MvxObservableCollection<GalleryMedia> { new GalleryMessage(clientService, selected) };
             SelectedItem = Items[0];
             FirstItem = Items[0];
 
@@ -212,6 +199,6 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        public override MvxObservableCollection<GalleryContent> Group => _group;
+        public override MvxObservableCollection<GalleryMedia> Group => _group;
     }
 }

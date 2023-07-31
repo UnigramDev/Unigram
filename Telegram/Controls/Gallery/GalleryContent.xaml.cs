@@ -23,12 +23,12 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Gallery
 {
-    public sealed partial class GalleryContentView : AspectView
+    public sealed partial class GalleryContent : AspectView
     {
         private IGalleryDelegate _delegate;
-        private GalleryContent _item;
+        private GalleryMedia _item;
 
-        public GalleryContent Item => _item;
+        public GalleryMedia Item => _item;
 
         private long _fileToken;
         private long _thumbnailToken;
@@ -44,7 +44,7 @@ namespace Telegram.Controls.Gallery
         private readonly DispatcherQueue _dispatcherQueue;
         private readonly LifoActionWorker _playbackQueue;
 
-        public GalleryContentView()
+        public GalleryContent()
         {
             InitializeComponent();
 
@@ -82,7 +82,7 @@ namespace Telegram.Controls.Gallery
             button.StartAnimation("Scale", factor);
         }
 
-        public void UpdateItem(IGalleryDelegate delegato, GalleryContent item)
+        public void UpdateItem(IGalleryDelegate delegato, GalleryMedia item)
         {
             _delegate = delegato;
             _item = item;
@@ -132,7 +132,7 @@ namespace Telegram.Controls.Gallery
             UpdateFile(_item, file);
         }
 
-        private void UpdateFile(GalleryContent item, File file)
+        private void UpdateFile(GalleryMedia item, File file)
         {
             var reference = item?.GetFile();
             if (reference == null || reference.Id != file.Id)
@@ -190,7 +190,7 @@ namespace Telegram.Controls.Gallery
             UpdateThumbnail(_item, file, false);
         }
 
-        private void UpdateThumbnail(GalleryContent item, File file, bool download)
+        private void UpdateThumbnail(GalleryMedia item, File file, bool download)
         {
             if (file.Local.IsDownloadingCompleted)
             {
@@ -256,7 +256,7 @@ namespace Telegram.Controls.Gallery
 
         private long _initialPosition;
 
-        public void Play(GalleryContent item, long position, GalleryTransportControls controls)
+        public void Play(GalleryMedia item, long position, GalleryTransportControls controls)
         {
             if (_unloaded)
             {

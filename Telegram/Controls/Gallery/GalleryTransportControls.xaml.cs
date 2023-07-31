@@ -150,7 +150,7 @@ namespace Telegram.Controls.Gallery
 
         #endregion
 
-        public void Attach(GalleryContent item, File file)
+        public void Attach(GalleryMedia item, File file)
         {
             UpdateManager.Subscribe(this, item.ClientService, file, ref _videoToken, UpdateVideo);
             UpdateVideo(item, file);

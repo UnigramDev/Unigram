@@ -29,7 +29,7 @@ namespace Telegram.Controls.Stories
         Card
     }
 
-    public sealed partial class StoriesWindow : OverlayPage
+    public sealed partial class StoriesWindow : OverlayWindow
     {
         public StoriesWindow()
         {

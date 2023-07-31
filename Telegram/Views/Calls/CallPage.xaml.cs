@@ -66,8 +66,6 @@ namespace Telegram.Views.Calls
 
         private bool _disposed;
 
-        public OverlayPage Dialog { get; set; }
-
         public CallPage(IClientService clientService, IEventAggregator aggregator, IVoipService voipService)
         {
             InitializeComponent();

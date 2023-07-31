@@ -82,7 +82,7 @@ namespace Telegram.Views.Chats
 
             var viewModel = new ChatGalleryViewModel(ViewModel.ClientService, ViewModel.StorageService, ViewModel.Aggregator, message.ChatId, 0, message.Get(), true);
             viewModel.NavigationService = ViewModel.NavigationService;
-            await GalleryView.ShowAsync(viewModel, () => element);
+            await GalleryWindow.ShowAsync(viewModel, () => element);
         }
     }
 }

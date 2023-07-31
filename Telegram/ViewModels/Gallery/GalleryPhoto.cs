@@ -9,7 +9,7 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Gallery
 {
-    public class GalleryPhoto : GalleryContent
+    public class GalleryPhoto : GalleryMedia
     {
         private readonly Photo _photo;
         private readonly string _caption;

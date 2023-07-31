@@ -141,7 +141,7 @@ namespace Telegram.Controls.Gallery
             {
                 var nextId = ApplicationView.GetForCurrentView().Id;
                 _ = ApplicationViewSwitcher.SwitchAsync(nextId, prevId, ApplicationViewSwitchingOptions.ConsolidateViews);
-                _ = GalleryView.ShowAsync(_viewModel, null, position);
+                _ = GalleryWindow.ShowAsync(_viewModel, null, position);
             });
         }
 

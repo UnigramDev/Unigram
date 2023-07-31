@@ -1464,13 +1464,13 @@ namespace Telegram.Views
         private async void Image_Click(object sender, RoutedEventArgs e)
         {
             var image = sender as ImageView;
-            var item = image.DataContext as GalleryContent;
+            var item = image.DataContext as GalleryMedia;
             if (item != null)
             {
                 ViewModel.Gallery.SelectedItem = item;
                 ViewModel.Gallery.FirstItem = item;
 
-                await GalleryView.ShowAsync(ViewModel.Gallery, () => image);
+                await GalleryWindow.ShowAsync(ViewModel.Gallery, () => image);
             }
         }
 

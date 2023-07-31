@@ -183,7 +183,7 @@ namespace Telegram.Views
                 return;
             }
 
-            await GalleryView.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
+            await GalleryWindow.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
         }
 
         #region Binding

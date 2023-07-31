@@ -112,7 +112,7 @@ namespace Telegram.Views.Host
             var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
             foreach (var popup in popups)
             {
-                if (popup.Child is OverlayPage contentDialog)
+                if (popup.Child is OverlayWindow contentDialog)
                 {
                     contentDialog.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
                 }

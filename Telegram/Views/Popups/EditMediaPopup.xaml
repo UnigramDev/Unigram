@@ -1,16 +1,16 @@
-<controls:OverlayPage x:Class="Telegram.Views.Popups.EditMediaPopup"
-                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      xmlns:local="using:Telegram.Views.Popups"
-                      xmlns:controls="using:Telegram.Controls"
-                      xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
-                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                      mc:Ignorable="d"
-                      VerticalAlignment="Stretch"
-                      HorizontalAlignment="Stretch"
-                      Background="{x:Null}"
-                      RequestedTheme="Dark">
+<controls:OverlayWindow x:Class="Telegram.Views.Popups.EditMediaPopup"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:local="using:Telegram.Views.Popups"
+                        xmlns:controls="using:Telegram.Controls"
+                        xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        mc:Ignorable="d"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        Background="{x:Null}"
+                        RequestedTheme="Dark">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -169,4 +169,4 @@
 
         </Grid>
     </Grid>
-</controls:OverlayPage>
+</controls:OverlayWindow>

@@ -26,7 +26,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class EditMediaPopup : OverlayPage
+    public sealed partial class EditMediaPopup : OverlayWindow
     {
         public StorageMedia ResultMedia { get; private set; }
 

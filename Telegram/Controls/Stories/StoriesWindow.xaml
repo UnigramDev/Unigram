@@ -1,21 +1,21 @@
-﻿<controls:OverlayPage x:Class="Telegram.Controls.Stories.StoriesWindow"
-                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      xmlns:local="using:Telegram.Controls.Stories"
-                      xmlns:controls="using:Telegram.Controls"
-                      xmlns:chats="using:Telegram.Controls.Chats"
-                      xmlns:icons="using:Telegram.Assets.Icons"
-                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                      mc:Ignorable="d"
-                      d:DesignHeight="300"
-                      d:DesignWidth="400"
-                      Background="{x:Null}"
-                      OverlayBrush="{x:Null}"
-                      Loaded="OnLoaded"
-                      Unloaded="OnUnloaded">
+﻿<controls:OverlayWindow x:Class="Telegram.Controls.Stories.StoriesWindow"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:local="using:Telegram.Controls.Stories"
+                        xmlns:controls="using:Telegram.Controls"
+                        xmlns:chats="using:Telegram.Controls.Chats"
+                        xmlns:icons="using:Telegram.Assets.Icons"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        mc:Ignorable="d"
+                        d:DesignHeight="300"
+                        d:DesignWidth="400"
+                        Background="{x:Null}"
+                        OverlayBrush="{x:Null}"
+                        Loaded="OnLoaded"
+                        Unloaded="OnUnloaded">
 
-    <controls:OverlayPage.Resources>
+    <controls:OverlayWindow.Resources>
         <ControlTemplate x:Key="HorizontalNextTemplate"
                          TargetType="Button">
             <Border x:Name="Root"
@@ -184,7 +184,7 @@
                 </FontIcon>
             </Border>
         </ControlTemplate>
-    </controls:OverlayPage.Resources>
+    </controls:OverlayWindow.Resources>
 
     <Grid RequestedTheme="Dark">
         <Grid.RowDefinitions>
@@ -419,4 +419,4 @@
         </Grid>
 
     </Grid>
-</controls:OverlayPage>
+</controls:OverlayWindow>

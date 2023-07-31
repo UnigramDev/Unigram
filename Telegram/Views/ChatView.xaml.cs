@@ -794,7 +794,7 @@ namespace Telegram.Views
             }
             else
             {
-                GalleryView.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
+                GalleryWindow.ShowAsync(ViewModel, ViewModel.StorageService, chat, () => Photo);
             }
         }
 
