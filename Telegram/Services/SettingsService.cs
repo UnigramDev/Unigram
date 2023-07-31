@@ -72,8 +72,6 @@ namespace Telegram.Services
         bool AreSmoothTransitionsEnabled { get; set; }
         bool AreMaterialsEnabled { get; set; }
 
-        bool AreStoriesMuted { get; set; }
-
         bool UseSystemProxy { get; set; }
 
         int[] AccountsSelectorOrder { get; set; }
@@ -93,6 +91,7 @@ namespace Telegram.Services
 
         bool IsStreamingEnabled { get; set; }
         double VolumeLevel { get; set; }
+        bool VolumeMuted { get; set; }
 
         int LastMessageTtl { get; set; }
 
@@ -375,13 +374,6 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _areMaterialsEnabled, _local, "AreMaterialsEnabled", value);
         }
 
-        private static bool? _areStoriesMuted;
-        public bool AreStoriesMuted
-        {
-            get => _areStoriesMuted ??= GetValueOrDefault(_local, "AreStoriesMuted", true);
-            set => AddOrUpdateValue(ref _areStoriesMuted, _local, "AreStoriesMuted", value);
-        }
-
         private static bool? _isTrayVisible;
         public bool IsTrayVisible
         {
@@ -603,6 +595,13 @@ namespace Telegram.Services
         {
             get => _volumeLevel ??= GetValueOrDefault("VolumeLevel", 1d);
             set => AddOrUpdateValue(ref _volumeLevel, "VolumeLevel", value);
+        }
+
+        private static bool? _volumeMuted;
+        public bool VolumeMuted
+        {
+            get => _volumeMuted ??= GetValueOrDefault("VolumeMuted", false);
+            set => AddOrUpdateValue(ref _volumeMuted, "VolumeMuted", value);
         }
 
         private static Vector2? _pencil;
