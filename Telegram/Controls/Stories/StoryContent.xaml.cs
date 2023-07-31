@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Streams;
@@ -46,6 +47,8 @@ namespace Telegram.Controls.Stories
         private readonly Windows.System.DispatcherQueue _dispatcherQueue;
         private readonly LifoActionWorker _playbackQueue;
 
+        private volatile bool _unloaded;
+
         public StoryContent()
         {
             InitializeComponent();
@@ -73,43 +76,29 @@ namespace Telegram.Controls.Stories
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            UnloadVideo();
-        }
-
-        private volatile bool _unloaded;
-
-        private void UnloadVideo()
-        {
             _unloaded = true;
             Logger.Info();
 
-            if (Video != null)
+            Task.Run(() =>
             {
-                Video.MediaPlayer = null;
-            }
+                if (_player != null)
+                {
+                    _player.Stop();
+                    _player.Vout -= OnVout;
+                    _player.Buffering -= OnBuffering;
+                    _player.EndReached -= OnEndReached;
+                    //_player.Stopped -= OnStopped;
 
-            if (_player != null)
-            {
-                _player.Stop();
-                _player.Vout -= OnVout;
-                _player.Buffering -= OnBuffering;
-                _player.EndReached -= OnEndReached;
+                    _player.Dispose();
+                    _player = null;
+                }
 
-                _player.Dispose();
-                _player = null;
-            }
-
-            if (_mediaStream != null)
-            {
-                _mediaStream.Dispose();
-                _mediaStream = null;
-            }
-
-            if (_library != null)
-            {
-                _library.Dispose();
+                _library?.Dispose();
                 _library = null;
-            }
+
+                _mediaStream?.Dispose();
+                _mediaStream = null;
+            });
         }
 
         private void CollapseCaption()
@@ -442,14 +431,10 @@ namespace Telegram.Controls.Stories
                 var file = video.Video.Video;
                 var stream = new RemoteInputStream(story.ClientService, file);
 
-                Logger.Info(_watch.ElapsedMilliseconds);
-
                 if (_player != null)
                 {
                     _mediaStream = stream;
                     _playbackQueue.Enqueue(() => Play(_mediaStream));
-
-                    Logger.Info(_watch.ElapsedMilliseconds);
                 }
                 else if (Video != null)
                 {
@@ -630,8 +615,6 @@ namespace Telegram.Controls.Stories
         private int _fileId;
         private int _thumbnailId;
 
-        private Stopwatch _watch;
-
         private void UpdateVideo(StoryViewModel story, File file, bool download)
         {
             if (file.Id == _fileId && download)
@@ -642,22 +625,17 @@ namespace Telegram.Controls.Stories
             UpdateManager.Unsubscribe(this, ref _fileToken, true);
 
             _fileId = file.Id;
-            _watch = Stopwatch.StartNew();
             //Player.Source = null;
 
             Logger.Info();
 
             //_player?.Stop();
 
-            Logger.Info(_watch.ElapsedMilliseconds);
-
             //if (_mediaStream != null)
             //{
             //    _mediaStream.Dispose();
             //    _mediaStream = null;
             //}
-
-            Logger.Info(_watch.ElapsedMilliseconds);
 
             var video = story.Content as StoryContentVideo;
 
@@ -932,6 +910,7 @@ namespace Telegram.Controls.Stories
             _player.Vout += OnVout;
             _player.Buffering += OnBuffering;
             _player.EndReached += OnEndReached;
+            //_player.Stopped += OnStopped;
 
             //_player.FileCaching = 1;
 
@@ -941,10 +920,13 @@ namespace Telegram.Controls.Stories
             }
         }
 
+        private void OnStopped(object sender, EventArgs e)
+        {
+            _dispatcherQueue.TryEnqueue(Video.Clear);
+        }
+
         private void OnVout(object sender, MediaPlayerVoutEventArgs e)
         {
-            Logger.Info(_watch.ElapsedMilliseconds);
-
             _dispatcherQueue.TryEnqueue(() =>
             {
                 _loading = false;
@@ -1131,9 +1113,9 @@ namespace Telegram.Controls.Stories
 
             if (none)
             {
-                if (_mediaStream != null && _player != null && _player.CanPause)
+                if (_type == StoryType.Video)
                 {
-                    _player.SetPause(true);
+                    _playbackQueue.Enqueue(() => _player?.SetPause(true));
                 }
                 else
                 {
@@ -1150,9 +1132,9 @@ namespace Telegram.Controls.Stories
 
             if (_state == StoryPauseSource.None)
             {
-                if (_mediaStream != null && _player != null && _player.CanPause)
+                if (_type == StoryType.Video)
                 {
-                    _player.SetPause(false);
+                    _playbackQueue.Enqueue(() => _player?.SetPause(false));
                 }
                 else
                 {
@@ -1181,7 +1163,7 @@ namespace Telegram.Controls.Stories
 
             if (_player != null)
             {
-                _player.Mute = _viewModel.Settings.AreStoriesMuted;
+                _playbackQueue.Enqueue(() => _player.Mute = _viewModel.Settings.AreStoriesMuted);
             }
         }
 
