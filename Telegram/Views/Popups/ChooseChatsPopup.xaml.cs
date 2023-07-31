@@ -127,10 +127,10 @@ namespace Telegram.Views.Popups
 
         public static readonly ChooseChatsOptions InviteUsers = new()
         {
-            AllowChannelChats = true,
-            AllowGroupChats = true,
-            AllowBotChats = false,
-            AllowUserChats = false,
+            AllowChannelChats = false,
+            AllowGroupChats = false,
+            AllowBotChats = true,
+            AllowUserChats = true,
             AllowSecretChats = false,
             AllowSelf = false,
             CanPostMessages = false,
