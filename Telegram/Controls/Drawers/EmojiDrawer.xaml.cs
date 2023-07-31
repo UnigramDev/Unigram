@@ -123,7 +123,7 @@ namespace Telegram.Controls.Drawers
                 }
                 else
                 {
-                    List.ItemsSource = await Emoji.SearchAsync(ViewModel.ClientService, SearchField.Text, _selected);
+                    List.ItemsSource = await Emoji.SearchAsync(ViewModel.ClientService, SearchField.Text, _selected, _mode);
                 }
             };
         }

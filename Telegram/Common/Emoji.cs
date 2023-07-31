@@ -238,7 +238,7 @@ namespace Telegram.Common
             return results;
         }
 
-        public static async Task<IList<object>> SearchAsync(IClientService clientService, string query, EmojiSkinTone skin)
+        public static async Task<IList<object>> SearchAsync(IClientService clientService, string query, EmojiSkinTone skin, EmojiDrawerMode mode)
         {
             var result = new List<object>();
             var inputLanguage = NativeUtils.GetKeyboardCulture();
@@ -256,16 +256,19 @@ namespace Telegram.Common
                     }
                 }
 
-                foreach (var item in suggestions.EmojisValue)
+                if (mode == EmojiDrawerMode.Chat)
                 {
-                    var emoji = item;
-                    if (EmojiGroupInternal._skinEmojis.Contains(emoji) || EmojiGroupInternal._skinEmojis.Contains(emoji.TrimEnd('\uFE0F')))
+                    foreach (var item in suggestions.EmojisValue)
                     {
-                        result.Add(new EmojiSkinData(emoji, skin));
-                    }
-                    else
-                    {
-                        result.Add(new EmojiData(item));
+                        var emoji = item;
+                        if (EmojiGroupInternal._skinEmojis.Contains(emoji) || EmojiGroupInternal._skinEmojis.Contains(emoji.TrimEnd('\uFE0F')))
+                        {
+                            result.Add(new EmojiSkinData(emoji, skin));
+                        }
+                        else
+                        {
+                            result.Add(new EmojiData(item));
+                        }
                     }
                 }
             }
