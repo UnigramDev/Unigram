@@ -52,7 +52,7 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="TitleLabel"
-                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                   FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                    TextWrapping="NoWrap"
                    TextTrimming="CharacterEllipsis" />
 
