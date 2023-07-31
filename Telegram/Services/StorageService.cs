@@ -479,19 +479,33 @@ namespace Telegram.Services
                 {
                     if (SAP.FutureAccessList.Entries.Count >= SAP.FutureAccessList.MaximumItemsAllowed - 10)
                     {
-                        for (int i = SAP.FutureAccessList.Entries.Count - 1; i >= 0; i--)
+                        for (int i = 0; i < SAP.FutureAccessList.Entries.Count; i++)
                         {
                             var entry = SAP.FutureAccessList.Entries[i];
                             if (entry.Token != "FilesDirectory")
                             {
                                 SAP.FutureAccessList.Remove(entry.Token);
+                                break;
                             }
                         }
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
                     // All the remote procedure calls must be wrapped in a try-catch block
+
+                    // TODO: I'm not sure how often it happens, but in some conditions trying to access
+                    // the Entities list, throws a FileNotFoundException.
+                    // When this happens, and the MaximumItemsAllowed count is reached, the app
+                    // won't be able to upload nor download any new file.
+                    // The only solution that I can think of, is to just clear the list when this happens
+                    // Hoping that this situation is isolated enough not to be an actual problem.
+
+#if !DEBUG
+                    Microsoft.AppCenter.Crashes.Crashes.TrackError(ex);
+#endif
+
+                    SAP.FutureAccessList.Clear();
                 }
             }
         }
