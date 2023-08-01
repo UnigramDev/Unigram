@@ -483,20 +483,30 @@ namespace Telegram.Navigation
                     await new ThemePreviewPopup(item).ShowQueuedAsync();
                 }
             }
+            else if (args is CommandLineActivatedEventArgs commandLine)
+            {
+                Activate(commandLine.Operation.Arguments, service);
+            }
+            else if (args is ToastNotificationActivatedEventArgs toastNotificationActivated)
+            {
+                Activate(toastNotificationActivated.Argument, service);
+            }
             else
             {
-                var activate = args as ToastNotificationActivatedEventArgs;
-                var launched = args as LaunchActivatedEventArgs;
-                var launch = activate?.Argument ?? launched?.Arguments;
+                var launch = args as LaunchActivatedEventArgs;
+                Activate(launch?.Arguments, service);
+            }
+        }
 
-                if (service?.Frame?.Content is MainPage page)
-                {
-                    page.Activate(launch);
-                }
-                else
-                {
-                    service.NavigateToMain(launch);
-                }
+        private void Activate(string arguments, INavigationService service)
+        {
+            if (service?.Frame?.Content is MainPage page)
+            {
+                page.Activate(arguments);
+            }
+            else
+            {
+                service.NavigateToMain(arguments);
             }
         }
 
