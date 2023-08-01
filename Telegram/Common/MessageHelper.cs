@@ -632,9 +632,9 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    var dialog = new JoinChatPopup(clientService, info);
+                    var popup = new JoinChatPopup(clientService, info);
 
-                    var confirm = await dialog.ShowQueuedAsync();
+                    var confirm = await popup.ShowQueuedAsync();
                     if (confirm != ContentDialogResult.Primary)
                     {
                         return;
@@ -647,7 +647,11 @@ namespace Telegram.Common
                     }
                     else if (import is Error error)
                     {
-                        if (error.MessageEquals(ErrorType.FLOOD_WAIT))
+                        if (error.MessageEquals(ErrorType.INVITE_REQUEST_SENT))
+                        {
+                            await MessagePopup.ShowAsync(Strings.RequestToJoinChannelSentDescription, Strings.RequestToJoinSent, Strings.OK);
+                        }
+                        else if (error.MessageEquals(ErrorType.FLOOD_WAIT))
                         {
                             await MessagePopup.ShowAsync(Strings.FloodWait, Strings.AppName, Strings.OK);
                         }

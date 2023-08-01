@@ -31,17 +31,18 @@ namespace Telegram.Td.Api
         QUERY_TOO_SHORT,
         USERNAME_INVALID,
         USERNAME_OCCUPIED,
-        USERNAME_NOT_OCCUPIED,  // 400
-        USERNAME_NOT_MODIFIED,  // 400
+        USERNAME_NOT_OCCUPIED,          // 400
+        USERNAME_NOT_MODIFIED,          // 400
         CHANNELS_ADMIN_PUBLIC_TOO_MUCH, // 400
-        CHANNEL_PRIVATE,        // 400
-        PEER_ID_INVALID,        // 400    
-        MESSAGE_EMPTY,          // 400
-        MESSAGE_TOO_LONG,       // 400
-        MSG_WAIT_FAILED,        // 400
-        MESSAGE_ID_INVALID,     // 400
-        MESSAGE_NOT_MODIFIED,   // 400
-        MESSAGE_EDIT_TIME_EXPIRED, // 400
+        CHANNEL_PRIVATE,                // 400
+        PEER_ID_INVALID,                // 400    
+        MESSAGE_EMPTY,                  // 400
+        MESSAGE_TOO_LONG,               // 400
+        MSG_WAIT_FAILED,                // 400
+        MESSAGE_ID_INVALID,             // 400
+        MESSAGE_NOT_MODIFIED,           // 400
+        MESSAGE_EDIT_TIME_EXPIRED,      // 400
+        INVITE_REQUEST_SENT,            // 400
 
         INVITE_SLUG_EXPIRED,
         FILTER_INCLUDE_TOO_MUCH,

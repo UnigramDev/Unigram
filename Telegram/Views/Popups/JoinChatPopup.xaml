@@ -9,7 +9,7 @@
                        TitleTemplate="{x:Null}"
                        mc:Ignorable="d">
 
-    <Grid>
+    <Grid Margin="0,-24,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -17,25 +17,30 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <controls:ProfilePicture x:Name="Photo"
-                                 Width="96"
-                                 Height="96"
-                                 IsEnabled="False" />
-
-        <StackPanel Margin="0,8,0,12"
-                    Grid.Row="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <controls:ProfilePicture x:Name="Photo"
+                                     Width="96"
+                                     Height="96"
+                                     IsEnabled="False"
+                                     Margin="0,24,0,8" />
             <TextBlock x:Name="Title"
+                       FontSize="20"
+                       FontFamily="XamlAutoFontFamily"
+                       FontWeight="SemiBold"
                        TextAlignment="Center"
-                       TextWrapping="NoWrap"
-                       TextTrimming="CharacterEllipsis"
-                       Style="{StaticResource BaseTextBlockStyle}" />
+                       VerticalAlignment="Top"
+                       Grid.Row="1" />
             <TextBlock x:Name="Subtitle"
+                       Style="{StaticResource InfoCaptionTextBlockStyle}"
                        TextAlignment="Center"
-                       TextWrapping="NoWrap"
-                       TextTrimming="CharacterEllipsis"
-                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                       Style="{StaticResource CaptionTextBlockStyle}" />
-        </StackPanel>
+                       Margin="12,0,12,24"
+                       Grid.Row="2" />
+        </Grid>
 
         <ListView x:Name="Members"
                   SelectionMode="None"
@@ -93,5 +98,10 @@
                 </StackPanel>
             </ListView.Footer>
         </ListView>
+
+        <TextBlock x:Name="JoinRequestInfo"
+                   Text="{CustomResource RequestToJoinChannelDescription}"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   Grid.Row="3" />
     </Grid>
 </controls:ContentPopup>

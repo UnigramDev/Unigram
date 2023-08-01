@@ -26,15 +26,15 @@ namespace Telegram.Views.Popups
             Photo.SetChat(clientService, info, 96);
 
             Title.Text = info.Title;
-            Subtitle.Text = ConvertCount(info.MemberCount, info.MemberUserIds.Count == 0);
+            Subtitle.Text = ConvertCount(info.MemberCount, info.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel);
 
-            PrimaryButtonText = Strings.ChannelJoin;
+            PrimaryButtonText = info.CreatesJoinRequest ? Strings.RequestToJoin2 : Strings.ChannelJoin2;
             SecondaryButtonText = Strings.Cancel;
 
             if (info.MemberUserIds.Count > 0)
             {
                 FooterPanel.Visibility = ConvertMoreVisibility(info.MemberCount, info.MemberUserIds.Count);
-                Footer.Text = ConvertMore(info.MemberCount, info.MemberUserIds.Count);
+                Footer.Text = string.Format("+{0}", info.MemberCount - info.MemberUserIds.Count);
 
                 Members.Visibility = Visibility.Visible;
                 Members.ItemsSource = clientService.GetUsers(info.MemberUserIds);
@@ -43,6 +43,10 @@ namespace Telegram.Views.Popups
             {
                 Members.Visibility = Visibility.Collapsed;
             }
+
+            JoinRequestInfo.Visibility = info.CreatesJoinRequest
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         public string ConvertCount(int total, bool broadcast)
@@ -53,21 +57,6 @@ namespace Telegram.Views.Popups
         public Visibility ConvertMoreVisibility(int total, int count)
         {
             return total - count > 0 ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        public string ConvertMore(int total, int count)
-        {
-            return string.Format("+{0}", total - count);
-        }
-
-        private void Join_Click(object sender, RoutedEventArgs e)
-        {
-            Hide();
-        }
-
-        private void Cancel_Click(object sender, RoutedEventArgs e)
-        {
-            Hide();
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
