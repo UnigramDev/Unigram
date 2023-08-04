@@ -71,29 +71,37 @@ namespace Telegram.ViewModels.Settings
         {
             if (editable != null)
             {
-                static void ReplaceEditable(IList<string> usernames, string original, string editable)
+                static IList<string> ReplaceEditable(IList<string> usernames, string original, string editable)
                 {
+                    if (usernames == null)
+                    {
+                        return Array.Empty<string>();
+                    }
+                    else original ??= string.Empty;
+
+                    var clone = new string[usernames.Count];
+
                     for (int i = 0; i < usernames.Count; i++)
                     {
                         if (usernames[i] == original)
                         {
-                            usernames[i] = editable;
-                            break;
+                            clone[i] = editable;
+                        }
+                        else
+                        {
+                            clone[i] = usernames[i];
                         }
                     }
+
+                    return clone;
                 }
 
-                usernames ??= new Usernames
+                usernames = new Usernames
                 {
-                    ActiveUsernames = Array.Empty<string>(),
-                    DisabledUsernames = Array.Empty<string>(),
-                    EditableUsername = string.Empty
+                    ActiveUsernames = ReplaceEditable(usernames?.ActiveUsernames, usernames?.EditableUsername, editable),
+                    DisabledUsernames = ReplaceEditable(usernames?.DisabledUsernames, usernames?.EditableUsername, editable),
+                    EditableUsername = editable
                 };
-
-                ReplaceEditable(usernames.ActiveUsernames, usernames.EditableUsername, editable);
-                ReplaceEditable(usernames.DisabledUsernames, usernames.EditableUsername, editable);
-
-                usernames.EditableUsername = editable;
             }
 
             if (usernames?.ActiveUsernames.Count + usernames?.DisabledUsernames.Count > 1)
@@ -174,6 +182,8 @@ namespace Telegram.ViewModels.Settings
         public bool CanBeEdited => _userId == ClientService.Options.MyId;
 
         public bool IsVisible => Items.Count < 2 && !string.IsNullOrWhiteSpace(_username);
+
+        public bool IsMultiple => Items.Count > 0 && !IsVisible;
 
         public string Footer => _userId == ClientService.Options.MyId ? Strings.UsernamesProfileHelp : Strings.BotUsernamesHelp;
 
@@ -287,6 +297,7 @@ namespace Telegram.ViewModels.Settings
             }
 
             RaisePropertyChanged(nameof(IsVisible));
+            RaisePropertyChanged(nameof(IsMultiple));
             return IsValid;
         }
 

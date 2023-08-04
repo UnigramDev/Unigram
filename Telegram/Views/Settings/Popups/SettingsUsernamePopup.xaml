@@ -73,7 +73,7 @@
                            Margin="0,8,0,12" />
 
                 <TextBlock Text="{CustomResource UsernamesProfileHeader}"
-                           Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}"
+                           Visibility="{x:Bind ViewModel.IsMultiple, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                            Style="{StaticResource BaseTextBlockStyle}"
                            Margin="0,8,0,0"
                            Grid.Row="2" />
@@ -96,7 +96,7 @@
         </ListView.ItemContainerStyle>
         <ListView.Footer>
             <controls:SettingsFooter Text="{x:Bind ViewModel.Footer}"
-                                     Visibility="{x:Bind ViewModel.IsVisible, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=invert}" />
+                                     Visibility="{x:Bind ViewModel.IsMultiple, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </ListView.Footer>
     </ListView>
 </controls:ContentPopup>

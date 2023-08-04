@@ -180,29 +180,37 @@ namespace Telegram.ViewModels.Supergroups
 
             if (editable != null)
             {
-                static void ReplaceEditable(IList<string> usernames, string original, string editable)
+                static IList<string> ReplaceEditable(IList<string> usernames, string original, string editable)
                 {
+                    if (usernames == null)
+                    {
+                        return Array.Empty<string>();
+                    }
+                    else original ??= string.Empty;
+
+                    var clone = new string[usernames.Count];
+
                     for (int i = 0; i < usernames.Count; i++)
                     {
                         if (usernames[i] == original)
                         {
-                            usernames[i] = editable;
-                            break;
+                            clone[i] = editable;
+                        }
+                        else
+                        {
+                            clone[i] = usernames[i];
                         }
                     }
+
+                    return clone;
                 }
 
-                usernames ??= new Usernames
+                usernames = new Usernames
                 {
-                    ActiveUsernames = Array.Empty<string>(),
-                    DisabledUsernames = Array.Empty<string>(),
-                    EditableUsername = string.Empty
+                    ActiveUsernames = ReplaceEditable(usernames?.ActiveUsernames, usernames?.EditableUsername, editable),
+                    DisabledUsernames = ReplaceEditable(usernames?.DisabledUsernames, usernames?.EditableUsername, editable),
+                    EditableUsername = editable
                 };
-
-                ReplaceEditable(usernames.ActiveUsernames, usernames.EditableUsername, editable);
-                ReplaceEditable(usernames.DisabledUsernames, usernames.EditableUsername, editable);
-
-                usernames.EditableUsername = editable;
             }
 
             if (usernames?.ActiveUsernames.Count + usernames?.DisabledUsernames.Count > 1)
