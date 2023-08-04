@@ -773,7 +773,7 @@ namespace Telegram.Services
 
         private void BeginOnUIThread(Windows.System.DispatcherQueueHandler action, Action fallback = null)
         {
-            var dispatcher = WindowContext.Default()?.Dispatcher;
+            var dispatcher = WindowContext.Main?.Dispatcher;
             if (dispatcher != null)
             {
                 dispatcher.Dispatch(action);

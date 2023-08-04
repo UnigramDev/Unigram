@@ -152,7 +152,7 @@ namespace Telegram.Navigation
         public virtual void BeginOnUIThread(DispatcherQueueHandler action)
         {
             var dispatcher = Dispatcher;
-            dispatcher ??= WindowContext.Default()?.Dispatcher;
+            dispatcher ??= WindowContext.Main?.Dispatcher;
 
             if (dispatcher != null)
             {

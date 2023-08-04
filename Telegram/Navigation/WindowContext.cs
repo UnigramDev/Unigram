@@ -50,7 +50,13 @@ namespace Telegram.Navigation
 
             Current = this;
             Dispatcher = new DispatcherContext(window.CoreWindow.DispatcherQueue);
-            IsInMainView = CoreApplication.MainView == CoreApplication.GetCurrentView();
+
+            if (CoreApplication.MainView == CoreApplication.GetCurrentView())
+            {
+                Main = this;
+                IsInMainView = true;
+            }
+
             All.Add(this);
 
             window.CoreWindow.Closed += (s, e) =>
@@ -604,33 +610,6 @@ namespace Telegram.Navigation
             return Window.Current.CoreWindow.GetAsyncKeyState(key).HasFlag(CoreVirtualKeyStates.Down);
         }
 
-        public static WindowContext Default()
-        {
-            try
-            {
-                if (BootStrapper.Current.IsMainWindowCreated == false)
-                {
-                    return null;
-                }
-
-                //var mainDispatcher = CoreApplication.MainView.Dispatcher;
-                var mainDispatcher = CoreApplication.MainView.CoreWindow?.Dispatcher;
-                if (mainDispatcher == null)
-                {
-                    return null;
-                }
-
-                return All.FirstOrDefault(x => x._window.Dispatcher == mainDispatcher) ??
-                        All.FirstOrDefault();
-            }
-            //catch (COMException)
-            catch
-            {
-                //MainView might exist but still be not accessible
-                return All.FirstOrDefault();
-            }
-        }
-
         public static void ForEach(Action<WindowContext> action)
         {
             foreach (var window in All.ToArray())
@@ -655,6 +634,8 @@ namespace Telegram.Navigation
 
         private static readonly object _activeLock = new();
         public static WindowContext Active;
+
+        public static WindowContext Main;
 
         [ThreadStatic]
         public static WindowContext Current;
