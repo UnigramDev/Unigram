@@ -1334,11 +1334,17 @@ namespace Telegram.Controls.Messages
                     ? Visibility.Collapsed
                     : Visibility.Visible;
 
-                ThreadLabel.Text = info.ReplyCount > 0
+                var commentsText = info.ReplyCount > 0
                     ? Locale.Declension(Strings.R.Comments, info.ReplyCount)
                     : Strings.LeaveAComment;
 
-                AutomationProperties.SetName(Thread, ThreadLabel.Text);
+                if (info.ReplyCount > 0 && info.LastReadInboxMessageId > 0 && info.LastMessageId > info.LastReadInboxMessageId)
+                {
+                    commentsText += "\u00A0\u2022";
+                }
+
+                ThreadLabel.Text = commentsText;
+                AutomationProperties.SetName(Thread, commentsText);
 
                 Thread.Visibility = Visibility.Visible;
             }
