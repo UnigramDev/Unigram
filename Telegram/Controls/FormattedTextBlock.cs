@@ -6,8 +6,8 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Telegram.Common;
+using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
@@ -38,23 +38,17 @@ namespace Telegram.Controls
     public class FormattedTextBlock : Control
     {
         private IClientService _clientService;
-        private string _text;
-        private IList<TextEntity> _entities;
+        private StyledText _text;
         private double _fontSize;
 
         private string _query;
 
-        private bool _isFormatted;
         private bool _isHighlighted;
-
         private bool _ignoreSpoilers = false;
-
-        private bool _autoPlaySubscribed;
 
         private TextHighlighter _spoiler;
 
         private RichTextBlock TextBlock;
-        private Paragraph Paragraph;
 
         private bool _templateApplied;
 
@@ -97,13 +91,11 @@ namespace Telegram.Controls
             TextBlock = GetTemplateChild(nameof(TextBlock)) as RichTextBlock;
             TextBlock.ContextMenuOpening += _contextMenuOpening;
 
-            Paragraph = TextBlock.Blocks[0] as Paragraph;
-
             _templateApplied = true;
 
             if (_clientService != null && _text != null)
             {
-                SetText(_clientService, _text, _entities, _fontSize);
+                SetText(_clientService, _text, _fontSize);
 
                 if (_query != null || _spoiler != null)
                 {
@@ -116,7 +108,6 @@ namespace Telegram.Controls
         {
             _clientService = null;
             _text = null;
-            _entities = null;
 
             _query = null;
             _spoiler = null;
@@ -128,17 +119,11 @@ namespace Telegram.Controls
         {
             // TODO: clear inlines here?
             // Probably not needed
-
-            if (_autoPlaySubscribed)
-            {
-                _autoPlaySubscribed = false;
-                EffectiveViewportChanged -= OnEffectiveViewportChanged;
             }
-        }
 
         private void Adjust()
         {
-            if (TextBlock?.Blocks.Count > 0 && TextBlock.Blocks[0] is Paragraph existing)
+            if (TextBlock?.Blocks.Count > 0 && TextBlock.Blocks[^1] is Paragraph existing)
             {
                 existing.Inlines.Add(new LineBreak());
             }
@@ -158,7 +143,7 @@ namespace Telegram.Controls
 
                 if (value)
                 {
-                    SetText(_clientService, _text, _entities, _fontSize);
+                    SetText(_clientService, _text, _fontSize);
                     SetQuery(string.Empty);
                 }
             }
@@ -193,7 +178,7 @@ namespace Telegram.Controls
 
                 if (query?.Length > 0)
                 {
-                    var find = _text.IndexOf(query, StringComparison.OrdinalIgnoreCase);
+                    var find = _text.Text.IndexOf(query, StringComparison.OrdinalIgnoreCase);
                     if (find != -1)
                     {
                         var highligher = new TextHighlighter();
@@ -218,35 +203,55 @@ namespace Telegram.Controls
         {
             if (text != null)
             {
-                SetText(clientService, text.Text, text.Entities, fontSize);
+                SetText(clientService, TextStyleRun.GetText(text), fontSize);
             }
-            else if (_templateApplied)
+            else
             {
                 _clientService = clientService;
-                _text = string.Empty;
-                _entities = Array.Empty<TextEntity>();
+                _text = null;
                 _fontSize = fontSize;
 
-                Paragraph.Inlines.Clear();
+                if (_templateApplied)
+                {
+                    TextBlock.Blocks.Clear();
             }
+        }
         }
 
         public void SetText(IClientService clientService, string text, IList<TextEntity> entities, double fontSize = 0)
         {
-            entities ??= Array.Empty<TextEntity>();
+            if (text != null)
+            {
+                SetText(clientService, TextStyleRun.GetText(text, entities), fontSize);
+            }
+            else
+            {
+                _clientService = clientService;
+                _text = null;
+                _fontSize = fontSize;
 
+                if (_templateApplied)
+                {
+                    TextBlock.Blocks.Clear();
+                }
+            }
+        }
+
+        public void SetText(IClientService clientService, StyledText styled, double fontSize = 0)
+        {
             _clientService = clientService;
-            _text = text;
-            _entities = entities;
+            _text = styled;
             _fontSize = fontSize;
 
             if (!_templateApplied)
             {
                 return;
             }
-            else if (string.IsNullOrEmpty(text))
+
+            TextBlock.Blocks.Clear();
+
+            if (string.IsNullOrEmpty(styled?.Text))
             {
-                Paragraph.Inlines.Clear();
                 return;
             }
 
@@ -254,17 +259,24 @@ namespace Telegram.Controls
 
             var preformatted = false;
 
-            var runs = TextStyleRun.GetRuns(text, entities);
+            var direct = XamlDirect.GetDefault();
+            var text = styled.Text;
+
+            var parag = 0;
+
+            foreach (var part in styled.Paragraphs)
+            {
+                text = styled.Text.Substring(part.Offset, part.Length);
+
+                var runs = part.Runs;
             var previous = 0;
 
-            var direct = XamlDirect.GetDefault();
-            var paragraph = direct.GetXamlDirectObject(Paragraph);
+                var paragraph = direct.CreateInstance(XamlTypeIndex.Paragraph);
             var inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
 
-            var clear = _isFormatted || fontSize != 0 || runs.Count > 0 || Paragraph.Inlines.Count != 1 || Paragraph.Inlines[0] is not Run;
-            if (clear)
+                if (AutoFontSize)
             {
-                direct.ClearCollection(inlines);
+                    direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
             }
 
             foreach (var entity in runs)
@@ -314,7 +326,7 @@ namespace Telegram.Controls
                         //hyperlink.Foreground = foreground;
 
                         spoiler ??= new TextHighlighter();
-                        spoiler.Ranges.Add(new TextRange { StartIndex = entity.Offset, Length = entity.Length });
+                            spoiler.Ranges.Add(new TextRange { StartIndex = part.Offset + entity.Offset - parag, Length = entity.Length });
 
                         var temp = direct.GetXamlDirectObject(hyperlink);
 
@@ -428,22 +440,19 @@ namespace Telegram.Controls
                 previous = entity.Offset + entity.Length;
             }
 
-            //ContentPanel.MaxWidth = preformatted ? double.PositiveInfinity : 432;
-
-            _isFormatted = runs.Count > 0 || fontSize != 0;
-            IsPreformatted = preformatted;
-
             if (text.Length > previous)
             {
-                if (clear)
-                {
                     direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous), fontSize: fontSize));
                 }
-                else if (Paragraph.Inlines[0] is Run recycled)
-                {
-                    recycled.Text = text;
+
+                TextBlock.Blocks.Add(direct.GetObject(paragraph) as Paragraph);
+                parag++;
                 }
-            }
+
+            //ContentPanel.MaxWidth = preformatted ? double.PositiveInfinity : 432;
+
+            //_isFormatted = runs.Count > 0 || fontSize != 0;
+            IsPreformatted = preformatted;
 
             if (spoiler?.Ranges.Count > 0)
             {
@@ -455,11 +464,6 @@ namespace Telegram.Controls
             else
             {
                 _spoiler = null;
-            }
-
-            if (AutoFontSize)
-            {
-                direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
             }
 
             if (AdjustLineEnding)
@@ -480,18 +484,6 @@ namespace Telegram.Controls
                     TextBlock.FlowDirection = LocaleService.Current.FlowDirection;
                 }
             }
-
-            //if (!_autoPlaySubscribed)
-            //{
-            //    _autoPlaySubscribed = true;
-            //    EffectiveViewportChanged += OnEffectiveViewportChanged;
-            //}
-
-            //if (_autoPlaySubscribed)
-            //{
-            //    _autoPlaySubscribed = false;
-            //    EffectiveViewportChanged -= OnEffectiveViewportChanged;
-            //}
         }
 
         private Run CreateRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
@@ -611,56 +603,6 @@ namespace Telegram.Controls
 
         public static readonly DependencyProperty TextStyleProperty =
             DependencyProperty.Register("TextStyle", typeof(Style), typeof(FormattedTextBlock), new PropertyMetadata(null));
-
-        #endregion
-
-        #region AutoPlay
-
-
-        //public bool AutoPlay
-        //{
-        //    get { return (bool)GetValue(AutoPlayProperty); }
-        //    set { SetValue(AutoPlayProperty, value); }
-        //}
-
-        //// Using a DependencyProperty as the backing store for AutoPlay.  This enables animation, styling, binding, etc...
-        //public static readonly DependencyProperty AutoPlayProperty =
-        //    DependencyProperty.Register("AutoPlay", typeof(bool), typeof(FormattedTextBlock), new PropertyMetadata(false, OnAutoPlayChanged));
-
-        private static void OnAutoPlayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((FormattedTextBlock)d).OnAutoPlayChanged((bool)e.OldValue, (bool)e.NewValue);
-        }
-
-        private void OnAutoPlayChanged(bool oldValue, bool newValue)
-        {
-            if (newValue)
-            {
-                //EffectiveViewportChanged += OnEffectiveViewportChanged;
-            }
-            else
-            {
-                _autoPlaySubscribed = false;
-                EffectiveViewportChanged -= OnEffectiveViewportChanged;
-            }
-        }
-
-        private bool _withinViewport;
-
-        private void OnEffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
-        {
-            var within = args.BringIntoViewDistanceX == 0 || args.BringIntoViewDistanceY == 0;
-            if (within && !_withinViewport)
-            {
-                _withinViewport = true;
-                //Play();
-            }
-            else if (_withinViewport && !within)
-            {
-                _withinViewport = false;
-                //Pause();
-            }
-        }
 
         #endregion
 

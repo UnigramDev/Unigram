@@ -322,6 +322,149 @@ namespace Telegram.Common
 
             return x.GetType() == y.GetType();
         }
+
+        #region Paragraphs
+
+        public static StyledText GetText(FormattedText text)
+        {
+            return new StyledText
+            {
+                Text = text.Text,
+                Paragraphs = GetParagraphs(text.Text, text.Entities)
+            };
+        }
+
+        public static StyledText GetText(string text, IList<TextEntity> entities)
+        {
+            return new StyledText
+            {
+                Text = text,
+                Paragraphs = GetParagraphs(text, entities ?? Array.Empty<TextEntity>())
+            };
+        }
+
+        private static IList<StyledParagraph> GetParagraphs(string text, IList<TextEntity> entities)
+        {
+            List<int> indexes = null;
+            List<int> pre = null;
+
+            var index = text.IndexOf('\n');
+
+            while (index != -1)
+            {
+                indexes ??= new();
+                indexes.Add(index);
+
+                index = text.IndexOf('\n', index + 1);
+            }
+
+            foreach (var entity in entities)
+            {
+                if (entity.Type is TextEntityTypePre or TextEntityTypePreCode)
+                {
+                    indexes?.RemoveAll(x => x >= entity.Offset && x <= entity.Offset + entity.Length);
+
+                    pre ??= new();
+                    pre.Add(entity.Offset);
+                    pre.Add(entity.Offset + entity.Length);
+                }
+            }
+
+            if (indexes != null && pre != null)
+            {
+                indexes.AddRange(pre);
+                indexes.Sort();
+            }
+            else indexes ??= pre;
+
+            if (indexes != null)
+            {
+                var prev = 0;
+                var list = new List<StyledParagraph>();
+
+                for (int i = 0; i < indexes.Count; i++)
+                {
+                    var length = indexes[i] - prev;
+                    var regular = pre == null || !pre.Contains(indexes[i]);
+
+                    if (length > 0 || regular)
+                    {
+                        list.Add(Split(text, entities, prev, length));
+                    }
+
+                    prev = indexes[i] + (regular ? 1 : 0);
+                }
+
+                if (text.Length > prev)
+                {
+                    list.Add(Split(text, entities, prev, text.Length - prev));
+                }
+
+                return list;
+            }
+
+            return new[]
+            {
+                Split(text, entities, 0, text.Length)
+            };
+        }
+
+        private static StyledParagraph Split(string text, IList<TextEntity> entities, long startIndex, long length)
+        {
+            if (length == 0)
+            {
+                return new StyledParagraph
+                {
+                    Offset = (int)startIndex,
+                    Length = (int)length,
+                    Runs = Array.Empty<TextStyleRun>()
+                };
+            }
+
+            var message = text.Substring((int)startIndex, Math.Min(text.Length - (int)startIndex, (int)length));
+            IList<TextEntity> sub = null;
+
+            foreach (var entity in entities)
+            {
+                // Included, Included
+                if (entity.Offset > startIndex && entity.Offset + entity.Length <= startIndex + length)
+                {
+                    var replace = new TextEntity { Offset = entity.Offset - (int)startIndex, Length = entity.Length, Type = entity.Type };
+                    sub ??= new List<TextEntity>();
+                    sub.Add(replace);
+                }
+                // Before, Included
+                else if (entity.Offset <= startIndex && entity.Offset + entity.Length > startIndex && entity.Offset + entity.Length < startIndex + length)
+                {
+                    var replace = new TextEntity { Offset = 0, Length = entity.Length - ((int)startIndex - entity.Offset), Type = entity.Type };
+                    sub ??= new List<TextEntity>();
+                    sub.Add(replace);
+                }
+                // Included, After
+                else if (entity.Offset > startIndex && entity.Offset < startIndex + length && entity.Offset + entity.Length > startIndex + length)
+                {
+                    var replace = new TextEntity { Offset = entity.Offset - (int)startIndex, Length = ((int)startIndex + (int)length) + entity.Offset, Type = entity.Type };
+                    sub ??= new List<TextEntity>();
+                    sub.Add(replace);
+                }
+                // Before, After
+                else if (entity.Offset <= startIndex && entity.Offset + entity.Length >= startIndex + length)
+                {
+                    var replace = new TextEntity { Offset = 0, Length = message.Length, Type = entity.Type };
+                    sub ??= new List<TextEntity>();
+                    sub.Add(replace);
+                }
+            }
+
+            return new StyledParagraph
+            {
+                Offset = (int)startIndex,
+                Length = (int)length,
+                Runs = GetRuns(message, sub)
+            };
+        }
+
+        #endregion
     }
 
     [Flags]
@@ -336,5 +479,21 @@ namespace Telegram.Common
         Mention = 64,
         Url = 128,
         Emoji = 256
+    }
+
+    public class StyledText
+    {
+        public string Text { get; set; }
+
+        public IList<StyledParagraph> Paragraphs { get; set; }
+    }
+
+    public class StyledParagraph
+    {
+        public int Offset { get; set; }
+
+        public int Length { get; set; }
+
+        public IList<TextStyleRun> Runs { get; set; }
     }
 }
