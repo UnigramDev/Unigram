@@ -76,8 +76,8 @@ namespace Telegram.Common
             var splitHostName = uri.Host.Split('.');
             if (splitHostName.Length >= 2)
             {
-                host = splitHostName[splitHostName.Length - 2] + "." +
-                       splitHostName[splitHostName.Length - 1];
+                host = splitHostName[^2] + "." +
+                       splitHostName[^1];
             }
 
             if (Constants.TelegramHosts.Contains(host))
@@ -106,6 +106,38 @@ namespace Telegram.Common
             if (response is InternalLinkType internalLink)
             {
                 OpenTelegramUrl(clientService, navigation, internalLink);
+            }
+            else
+            {
+                OpenLoginUrl(clientService, navigation, url, await clientService.SendAsync(new GetExternalLinkInfo(url)));
+            }
+        }
+
+        private static async void OpenLoginUrl(IClientService clientService, INavigationService navigation, string url, BaseObject info)
+        {
+            if (info is LoginUrlInfoOpen infoOpen)
+            {
+                OpenUrl(null, null, infoOpen.Url, !infoOpen.SkipConfirmation);
+            }
+            else if (info is LoginUrlInfoRequestConfirmation requestConfirmation)
+            {
+                var dialog = new LoginUrlInfoPopup(clientService, requestConfirmation);
+
+                var confirm = await dialog.ShowQueuedAsync();
+                if (confirm != ContentDialogResult.Primary || !dialog.HasAccepted)
+                {
+                    return;
+                }
+
+                var response = await clientService.SendAsync(new GetExternalLink(url, dialog.HasWriteAccess));
+                if (response is HttpUrl httpUrl)
+                {
+                    OpenUrl(null, null, httpUrl.Url, false);
+                }
+                else if (response is Error)
+                {
+                    OpenUrl(null, null, url, false);
+                }
             }
         }
 
@@ -767,25 +799,12 @@ namespace Telegram.Common
         {
             if (TryCreateUri(url, out Uri uri))
             {
-                if (IsTelegramUrl(uri))
+                if (clientService != null && navigationService != null && IsTelegramUrl(uri))
                 {
                     OpenTelegramUrl(clientService, navigationService, uri);
                 }
                 else
                 {
-                    //if (message?.Media is TLMessageMediaWebPage webpageMedia)
-                    //{
-                    //    if (webpageMedia.WebPage is TLWebPage webpage && webpage.HasCachedPage && webpage.Url.Equals(navigation))
-                    //    {
-                    //        var service = WindowWrapper.Current().NavigationServices.GetByFrameId("Main");
-                    //        if (service != null)
-                    //        {
-                    //            service.Navigate(typeof(InstantPage), webpageMedia);
-                    //            return;
-                    //        }
-                    //    }
-                    //}
-
                     if (untrust)
                     {
                         var confirm = await MessagePopup.ShowAsync(string.Format(Strings.OpenUrlAlert, url), Strings.OpenUrlTitle, Strings.Open, Strings.Cancel);
