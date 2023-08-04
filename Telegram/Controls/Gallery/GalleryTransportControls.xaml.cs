@@ -8,6 +8,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
 using Windows.System;
 using Windows.System.Display;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -19,6 +20,8 @@ namespace Telegram.Controls.Gallery
     {
         private readonly DispatcherQueue _dispatcherQueue;
         private long _videoToken;
+
+        private bool _loopingEnabled;
 
         public GalleryTransportControls()
         {
@@ -152,8 +155,33 @@ namespace Telegram.Controls.Gallery
 
         public void Attach(GalleryMedia item, File file)
         {
+            _loopingEnabled = item.IsLoop;
+
+            Visibility = item.IsVideo && !item.IsLoop
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            CompactButton.Visibility = ConvertCompactVisibility(item)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
             UpdateManager.Subscribe(this, item.ClientService, file, ref _videoToken, UpdateVideo);
             UpdateVideo(item, file);
+        }
+
+        private bool ConvertCompactVisibility(GalleryMedia item)
+        {
+            if (item != null && item.IsVideo && !item.IsLoop)
+            {
+                if (item is GalleryMessage message && message.IsProtected)
+                {
+                    return false;
+                }
+
+                return ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay);
+            }
+
+            return false;
         }
 
         private void UpdateVideo(object target, File file)
@@ -249,12 +277,16 @@ namespace Telegram.Controls.Gallery
         {
             Slider.Value = _mediaPlayer.Length;
             TimeText.Text = FormatTime(_mediaPlayer.Length);
+
+            if (_loopingEnabled)
+            {
+                _mediaPlayer.Stop();
+                _mediaPlayer.Play();
+            }
         }
 
         private void OnPlaying()
         {
-            Visibility = Visibility.Visible;
-
             PlaybackButton.Glyph = Icons.PauseFilled24;
             Automation.SetToolTip(PlaybackButton, Strings.AccActionPause);
 

@@ -605,21 +605,6 @@ namespace Telegram.Controls.Gallery
             return string.Format(Strings.Of, index, count);
         }
 
-        private Visibility ConvertCompactVisibility(GalleryMedia item)
-        {
-            if (item != null && item.IsVideo && !item.IsLoop)
-            {
-                if (item is GalleryMessage message && message.IsProtected)
-                {
-                    return Visibility.Collapsed;
-                }
-
-                return ApplicationView.GetForCurrentView().IsViewModeSupported(ApplicationViewMode.CompactOverlay) ? Visibility.Visible : Visibility.Collapsed;
-            }
-
-            return Visibility.Collapsed;
-        }
-
         #endregion
 
         private GalleryContent _current;
@@ -958,7 +943,7 @@ namespace Telegram.Controls.Gallery
 
         #region Compact overlay
 
-        private async void Compact_Click(object sender, RoutedEventArgs e)
+        private void Compact_Click(object sender, RoutedEventArgs e)
         {
             var viewModel = ViewModel;
             var item = viewModel?.SelectedItem;
