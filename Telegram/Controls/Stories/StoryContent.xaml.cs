@@ -412,7 +412,7 @@ namespace Telegram.Controls.Stories
             root.Clip = clip1;
         }
 
-        private void Play(RemoteInputStream stream)
+        private void Play(RemoteFileStream stream)
         {
             if (_player != null && !_unloaded && stream != null)
             {
@@ -429,7 +429,7 @@ namespace Telegram.Controls.Stories
                 Progress.Update(_viewModel.Items.IndexOf(_viewModel.SelectedItem), _viewModel.Items.Count, video.Video.Duration);
 
                 var file = video.Video.Video;
-                var stream = new RemoteInputStream(story.ClientService, file);
+                var stream = new RemoteFileStream(story.ClientService, file);
 
                 if (_player != null)
                 {
@@ -608,7 +608,7 @@ namespace Telegram.Controls.Stories
             _type = StoryType.Photo;
         }
 
-        private RemoteInputStream _mediaStream;
+        private RemoteFileStream _mediaStream;
 
         private StoryType _type;
 

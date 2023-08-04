@@ -1000,7 +1000,7 @@ namespace Telegram.Controls.Gallery
 
             _current.Stop(out int fileId, out long time);
 
-            var fileStream = new RemoteInputStream(ViewModel.ClientService, item.GetFile());
+            var fileStream = new RemoteFileStream(ViewModel.ClientService, item.GetFile());
 
             if (GalleryCompactWindow.Current is ViewLifetimeControl control)
             {

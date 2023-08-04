@@ -24,7 +24,7 @@ namespace Telegram.Controls.Gallery
         private readonly LifoActionWorker _playbackQueue;
 
         private GalleryViewModelBase _viewModel;
-        private RemoteInputStream _fileStream;
+        private RemoteFileStream _fileStream;
         private long _initialTime;
 
         private LibVLC _library;
@@ -32,7 +32,7 @@ namespace Telegram.Controls.Gallery
 
         public static ViewLifetimeControl Current { get; private set; }
 
-        public GalleryCompactWindow(ViewLifetimeControl control, GalleryViewModelBase viewModel, RemoteInputStream stream, long time)
+        public GalleryCompactWindow(ViewLifetimeControl control, GalleryViewModelBase viewModel, RemoteFileStream stream, long time)
         {
             InitializeComponent();
 
@@ -145,7 +145,7 @@ namespace Telegram.Controls.Gallery
             });
         }
 
-        public void Play(GalleryViewModelBase viewModel, RemoteInputStream stream, long time)
+        public void Play(GalleryViewModelBase viewModel, RemoteFileStream stream, long time)
         {
             _viewModel = viewModel;
 

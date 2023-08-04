@@ -246,7 +246,7 @@ namespace Telegram.Controls.Gallery
         private LibVLC _library;
         private MediaPlayer _mediaPlayer;
 
-        private RemoteInputStream _fileStream;
+        private RemoteFileStream _fileStream;
         private GalleryTransportControls _controls;
 
         private bool _stopped;
@@ -278,7 +278,7 @@ namespace Telegram.Controls.Gallery
                 if (_mediaPlayer == null)
                 {
                     _controls = controls;
-                    _fileStream = new RemoteInputStream(item.ClientService, file);
+                    _fileStream = new RemoteFileStream(item.ClientService, file);
                     _initialPosition = position;
                     FindName(nameof(Video));
                 }
@@ -290,7 +290,7 @@ namespace Telegram.Controls.Gallery
                     _controls = null;
                     _playbackQueue.Enqueue(() =>
                     {
-                        _mediaPlayer.Play(new LibVLCSharp.Shared.Media(_library, new RemoteInputStream(item.ClientService, file)));
+                        _mediaPlayer.Play(new LibVLCSharp.Shared.Media(_library, new RemoteFileStream(item.ClientService, file)));
                         _mediaPlayer.Time = position;
                     });
                 }
