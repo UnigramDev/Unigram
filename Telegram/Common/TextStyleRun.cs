@@ -346,36 +346,56 @@ namespace Telegram.Common
         private static IList<StyledParagraph> GetParagraphs(string text, IList<TextEntity> entities)
         {
             List<int> indexes = null;
-            List<int> pre = null;
-
-            var index = text.IndexOf('\n');
-
-            while (index != -1)
-            {
-                indexes ??= new();
-                indexes.Add(index);
-
-                index = text.IndexOf('\n', index + 1);
-            }
+            var previous = 0;
 
             foreach (var entity in entities)
             {
                 if (entity.Type is TextEntityTypePre or TextEntityTypePreCode)
                 {
-                    indexes?.RemoveAll(x => x >= entity.Offset && x <= entity.Offset + entity.Length);
+                    var offset = entity.Offset;
 
-                    pre ??= new();
-                    pre.Add(entity.Offset);
-                    pre.Add(entity.Offset + entity.Length);
+                    // It can happen that the line break happens within the code formatting
+                    if (offset > 0 && text[offset] == '\n' && text[offset - 1] != '\n')
+                    {
+                        offset++;
+                    }
+
+                    var index = text.IndexOf('\n', previous, offset - previous);
+                    if (index == -1 && offset > 0)
+                    {
+                        indexes ??= new();
+                        indexes.Add(offset);
+                    }
+
+                    while (index != -1)
+                    {
+                        indexes ??= new();
+                        indexes.Add(index);
+
+                        index = text.IndexOf('\n', index + 1, offset - index - 1);
+                    }
+
+                    previous = entity.Offset + entity.Length - 1;
                 }
             }
 
-            if (indexes != null && pre != null)
+            if (text.Length > previous)
             {
-                indexes.AddRange(pre);
-                indexes.Sort();
+                var index = text.IndexOf('\n', previous);
+                if (index == -1 && previous > 0)
+                {
+                    indexes ??= new();
+                    indexes.Add(previous + 1);
+                }
+
+                while (index != -1)
+                {
+                    indexes ??= new();
+                    indexes.Add(index);
+
+                    index = text.IndexOf('\n', index + 1);
+                }
             }
-            else indexes ??= pre;
 
             if (indexes != null)
             {
@@ -385,7 +405,7 @@ namespace Telegram.Common
                 for (int i = 0; i < indexes.Count; i++)
                 {
                     var length = indexes[i] - prev;
-                    var regular = pre == null || !pre.Contains(indexes[i]);
+                    var regular = text[indexes[i]] == '\n';
 
                     if (length > 0 || regular)
                     {
