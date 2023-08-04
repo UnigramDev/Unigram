@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -346,6 +347,13 @@ namespace Telegram.Navigation
                 else if (popup.Child is ToolTip toolTip)
                 {
                     toolTip.IsOpen = false;
+                }
+                else if (popup.Child is TeachingTip teachingTip)
+                {
+                    if (teachingTip.IsLightDismissEnabled)
+                    {
+                        teachingTip.IsOpen = false;
+                    }
                 }
                 else if (key == VirtualKey.Escape)
                 {

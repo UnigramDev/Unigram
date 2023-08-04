@@ -20,6 +20,7 @@ using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -214,7 +215,7 @@ namespace Telegram.Common
             return ShowTeachingTip(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, string text, IAnimatedVisualSource2 icon, ElementTheme requestedTheme = ElementTheme.Dark)
+        public static TeachingTip ShowTeachingTip(this Window app, string text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark)
         {
             return ShowTeachingTip(app, null, ComposeViewModel.GetFormattedText(text), icon, TeachingTipPlacementMode.Center, requestedTheme);
         }
@@ -224,12 +225,17 @@ namespace Telegram.Common
             return ShowTeachingTip(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme);
         }
 
+        public static TeachingTip ShowTeachingTip(this Window app, FormattedText text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark)
+        {
+            return ShowTeachingTip(app, null, text, icon, TeachingTipPlacementMode.Center, requestedTheme);
+        }
+
         public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark)
         {
             return ShowTeachingTip(app, target, text, null, placement, requestedTheme);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark)
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark)
         {
             return ShowTeachingTip(app, target, ComposeViewModel.GetFormattedText(text), icon, placement, requestedTheme);
         }
@@ -239,7 +245,7 @@ namespace Telegram.Common
             return ShowTeachingTip(app, target, text, null, placement, requestedTheme);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark)
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark)
         {
             var label = new TextBlock
             {
@@ -254,18 +260,22 @@ namespace Telegram.Common
             content.ColumnDefinitions.Add(new ColumnDefinition());
             content.Children.Add(label);
 
-            AnimatedIcon animated = null;
+            AnimatedImage animated = null;
             if (icon != null)
             {
-                animated = new AnimatedIcon
+                animated = new AnimatedImage
                 {
                     Source = icon,
                     Width = 32,
                     Height = 32,
+                    AutoPlay = true,
+                    LoopCount = 1,
+                    IsCachingEnabled = false,
+                    FrameSize = new Size(32, 32),
+                    DecodeFrameType = DecodePixelType.Logical,
                     Margin = new Thickness(-4, -12, 8, -12)
                 };
 
-                AnimatedIcon.SetState(animated, "Normal");
                 content.Children.Add(animated);
             }
 
@@ -290,15 +300,19 @@ namespace Telegram.Common
                 element.Resources["TeachingTip"] = tip;
             }
 
-            if (animated != null)
+            if (target == null)
             {
-                void handler(object sender, RoutedEventArgs e)
+                var timer = new DispatcherTimer();
+                timer.Interval = TimeSpan.FromSeconds(3);
+                
+                void handler(object sender, object e)
                 {
-                    tip.Loaded -= handler;
-                    AnimatedIcon.SetState(animated, "Checked");
+                    timer.Tick -= handler;
+                    tip.IsOpen = false;
                 }
 
-                tip.Loaded += handler;
+                timer.Tick += handler;
+                timer.Start();
             }
 
             tip.IsOpen = true;

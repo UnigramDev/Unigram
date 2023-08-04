@@ -156,7 +156,6 @@
     <Compile Include="Assets\Icons\StickerToEmoji.cs" />
     <Compile Include="Assets\Icons\StickerToGif.cs" />
     <Compile Include="Assets\Icons\Sun.cs" />
-    <Compile Include="Assets\Icons\TeachingTipLinkCopied.cs" />
     <Compile Include="Assets\Icons\Unlock.cs" />
     <Compile Include="Assets\Icons\Username.cs" />
     <Compile Include="Assets\Icons\Profile.cs" />
@@ -1526,6 +1525,9 @@
     <Content Include="Assets\Animations\ShareFolder.tgs" />
     <Content Include="Assets\Animations\AuthorizationStateWaitPassword.tgs" />
     <Content Include="Assets\Animations\MyStories.tgs" />
+    <Content Include="Assets\Toasts\ExpiredStory.tgs" />
+    <Content Include="Assets\Toasts\Info.tgs" />
+    <Content Include="Assets\Toasts\LinkCopied.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -1687,6 +1689,7 @@
     <PRIResource Include="Strings\sr-cyrl\Resources.resw">
       <SubType>Designer</SubType>
     </PRIResource>
+    <Content Include="Assets\Toasts\JoinRequested.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>

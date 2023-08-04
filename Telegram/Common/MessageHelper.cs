@@ -14,6 +14,7 @@ using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views;
@@ -52,7 +53,7 @@ namespace Telegram.Common
             dataPackage.SetText(link);
             ClipboardEx.TrySetContent(dataPackage);
 
-            Window.Current.ShowTeachingTip(Strings.LinkCopied, new TeachingTipLinkCopied());
+            Window.Current.ShowTeachingTip(Strings.LinkCopied, new LocalFileSource("ms-appx:///Assets/Toasts/LinkCopied.tgs"));
         }
 
         public static bool TryCreateUri(string url, out Uri uri)

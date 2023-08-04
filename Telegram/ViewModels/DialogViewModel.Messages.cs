@@ -19,6 +19,7 @@ using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.Views;
@@ -675,7 +676,7 @@ namespace Telegram.ViewModels
                 dataPackage.SetText(link.Link);
                 ClipboardEx.TrySetContent(dataPackage);
 
-                Window.Current.ShowTeachingTip(link.IsPublic ? Strings.LinkCopied : Strings.LinkCopiedPrivate, new Assets.Icons.TeachingTipLinkCopied());
+                Window.Current.ShowTeachingTip(link.IsPublic ? Strings.LinkCopied : Strings.LinkCopiedPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/LinkCopied.tgs"));
             }
         }
 

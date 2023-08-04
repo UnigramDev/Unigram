@@ -8,6 +8,7 @@ using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Services.Keyboard;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Popups;
@@ -853,7 +854,7 @@ namespace Telegram.Controls.Stories
             ShowTeachingTip(target, text, null, placement);
         }
 
-        public void ShowTeachingTip(FrameworkElement target, string text, IAnimatedVisualSource2 icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
+        public void ShowTeachingTip(FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
             var tip = Window.Current.ShowTeachingTip(target, text, icon, placement, ElementTheme.Dark);
             tip.Closing += TeachingTip_Closing;

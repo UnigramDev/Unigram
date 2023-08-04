@@ -146,7 +146,7 @@ namespace Telegram.ViewModels.Folders
 
         public void Copy()
         {
-            MessageHelper.CopyText(_inviteLink);
+            MessageHelper.CopyLink(_inviteLink);
         }
 
         public async void Share()

@@ -56,7 +56,7 @@
                                              Margin="12,12,12,8"
                                              Grid.ColumnSpan="2" />
 
-                            <Button Click="Copy_Click"
+                            <Button Click="{x:Bind ViewModel.Copy}"
                                     Content="{CustomResource Copy}"
                                     Style="{StaticResource AccentButtonStyle}"
                                     HorizontalAlignment="Stretch"
