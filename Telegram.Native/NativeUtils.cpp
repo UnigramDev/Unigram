@@ -202,11 +202,11 @@ namespace winrt::Telegram::Native::implementation
 
     hstring NativeUtils::GetCurrentCulture()
     {
-        TCHAR buff[530];
-        int result = GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_SNAME, buff, 530);
+        TCHAR buff[LOCALE_NAME_MAX_LENGTH];
+        int result = GetLocaleInfoEx(LOCALE_NAME_USER_DEFAULT, LOCALE_SNAME, buff, LOCALE_NAME_MAX_LENGTH);
         if (result == 0)
         {
-            result = GetLocaleInfoEx(LOCALE_NAME_SYSTEM_DEFAULT, LOCALE_SNAME, buff, 530);
+            result = GetLocaleInfoEx(LOCALE_NAME_SYSTEM_DEFAULT, LOCALE_SNAME, buff, LOCALE_NAME_MAX_LENGTH);
             if (result == 0)
             {
                 return L"en";
@@ -226,7 +226,7 @@ namespace winrt::Telegram::Native::implementation
 
     hstring NativeUtils::GetKeyboardCulture()
     {
-        // TODO: I'm not sure about how much expensive this call it.
+        // TODO: I'm not sure about how much expensive this call is.
         // At the moment it isn't used extremely often, but we should
         // consider caching it (problem is how to invalidate the cache)
         static const LibraryInstance user32(L"User32.dll");
@@ -237,7 +237,7 @@ namespace winrt::Telegram::Native::implementation
         {
             // The layout name looks something like this: 00000410
             // Where the first 4 bytes are most likely flags
-            // And the second half is the actually the LCID as a HEX string
+            // And the second half is actually the LCID as a HEX string
             unsigned int lcid = std::stoul(name + 4, nullptr, 16);
 
             WCHAR locale[LOCALE_NAME_MAX_LENGTH];
