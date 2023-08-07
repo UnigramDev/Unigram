@@ -199,7 +199,7 @@ namespace Telegram.ViewModels
             InlineBotResults = null;
 
             var reply = GetReply(true);
-            var response = await ClientService.SendAsync(new SendInlineQueryResultMessage(chat.Id, _threadId, reply, options, queryId, queryResult.GetId(), false));
+            var response = await ClientService.SendAsync(new SendInlineQueryResultMessage(chat.Id, ThreadId, reply, options, queryId, queryResult.GetId(), false));
         }
     }
 

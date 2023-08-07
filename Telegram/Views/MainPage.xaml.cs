@@ -3146,7 +3146,10 @@ namespace Telegram.Views
             _topicListCollapsed = !show;
             TopicListPresenter.Visibility = Visibility.Visible;
 
+            if (TopicListPresenter.ActualWidth == 0)
+            {
             await TopicListPresenter.UpdateLayoutAsync();
+            }
 
             void ShowHideTopicListCompleted()
             {

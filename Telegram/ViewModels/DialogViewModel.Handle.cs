@@ -73,7 +73,7 @@ namespace Telegram.ViewModels
 
         public void Handle(UpdateChatAction update)
         {
-            if (update.ChatId == _chat?.Id && update.MessageThreadId == _threadId && (_type == DialogType.History || _type == DialogType.Thread))
+            if (update.ChatId == _chat?.Id && update.MessageThreadId == ThreadId && (_type == DialogType.History || _type == DialogType.Thread))
             {
                 BeginOnUIThread(() => Delegate?.UpdateChatActions(_chat, ClientService.GetChatActions(update.ChatId)));
             }
@@ -450,7 +450,12 @@ namespace Telegram.ViewModels
             }
             else if (_type == DialogType.Thread)
             {
-                return message.SchedulingState == null && message.MessageThreadId == _threadId;
+                if (_topic != null && _topic.Info.IsGeneral)
+                {
+                    return message.SchedulingState == null && !message.IsTopicMessage;
+                }
+
+                return message.SchedulingState == null && message.MessageThreadId == ThreadId;
             }
 
             return message.SchedulingState == null && _type == DialogType.History;

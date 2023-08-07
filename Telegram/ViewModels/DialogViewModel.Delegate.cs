@@ -225,7 +225,7 @@ namespace Telegram.ViewModels
         {
             if (message.Content is MessageAudio or MessageVoiceNote)
             {
-                _playbackService.Play(message, _threadId);
+                _playbackService.Play(message, ThreadId);
 
                 if (timestamp > 0)
                 {
@@ -284,7 +284,7 @@ namespace Telegram.ViewModels
                         }
                         else
                         {
-                            viewModel = new ChatGalleryViewModel(ClientService, _storageService, Aggregator, message.ChatId, _threadId, message.Get());
+                            viewModel = new ChatGalleryViewModel(ClientService, _storageService, Aggregator, message.ChatId, ThreadId, message.Get());
                         }
                     }
 
@@ -298,7 +298,7 @@ namespace Telegram.ViewModels
 
         public void PlayMessage(MessageViewModel message)
         {
-            _playbackService.Play(message, _threadId);
+            _playbackService.Play(message, ThreadId);
         }
 
 
