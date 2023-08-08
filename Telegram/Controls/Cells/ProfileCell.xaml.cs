@@ -575,6 +575,39 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        public void UpdateStoryViewer(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var viewer = args.Item as StoryViewer;
+
+            var user = clientService.GetUser(viewer.UserId);
+            if (user == null)
+            {
+                return;
+            }
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = user.FullName();
+            }
+            else if (args.Phase == 1)
+            {
+                SubtitleLabel.Text = Locale.FormatDateAudio(viewer.ViewDate);
+            }
+            else if (args.Phase == 2)
+            {
+                Segments.SetUser(clientService, user, 36);
+                Photo.SetUser(clientService, user, 36);
+                Identity.SetStatus(clientService, user);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
         public void UpdateMessageSender(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             UpdateStyleNoSubtitle();

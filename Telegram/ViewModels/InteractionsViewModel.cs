@@ -17,7 +17,6 @@ namespace Telegram.ViewModels
         private MessageReplyTo _replyTo;
 
         private string _nextOffset;
-        private MessageViewer _nextViewers;
 
         private readonly HashSet<long> _users = new();
 
@@ -54,7 +53,7 @@ namespace Telegram.ViewModels
                 if (response is AddedReactions addedReactions)
                 {
                     _nextOffset = addedReactions.NextOffset.Length > 0 ? addedReactions.NextOffset : null;
-                    
+
                     foreach (var item in addedReactions.Reactions)
                     {
                         if (item.SenderId is MessageSenderUser senderUser)
@@ -76,7 +75,6 @@ namespace Telegram.ViewModels
                 Function function = _replyTo switch
                 {
                     MessageReplyToMessage replyToMessage => new GetMessageViewers(replyToMessage.ChatId, replyToMessage.MessageId),
-                    MessageReplyToStory replyToStory => new GetStoryViewers(replyToStory.StoryId, _nextViewers, 50),
                     _ => null
                 };
 
@@ -87,8 +85,6 @@ namespace Telegram.ViewModels
 
                     foreach (var item in viewers.Viewers)
                     {
-                        _nextViewers = item;
-
                         if (_users.Contains(item.UserId))
                         {
                             continue;

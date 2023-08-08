@@ -708,6 +708,7 @@
     <Compile Include="ViewModels\Stories\ActiveStoriesViewModel.cs" />
     <Compile Include="ViewModels\Stories\StoryListViewModel.cs" />
     <Compile Include="ViewModels\Stories\StoryViewModel.cs" />
+    <Compile Include="ViewModels\Stories\StoryInteractionsViewModel.cs" />
     <Compile Include="ViewModels\TopicListViewModel.cs" />
     <Compile Include="ViewModels\ChatListViewModel.cs" />
     <Compile Include="ViewModels\ChooseSoundViewModel.cs" />
@@ -1197,6 +1198,9 @@
     <Compile Include="Views\Premium\Popups\LimitsPopup.xaml.cs">
       <DependentUpon>LimitsPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Stories\Popups\StoryInteractionsPopup.xaml.cs">
+      <DependentUpon>StoryInteractionsPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Premium\Popups\PromoPopup.xaml.cs">
       <DependentUpon>PromoPopup.xaml</DependentUpon>
     </Compile>
@@ -1525,6 +1529,7 @@
     <Content Include="Assets\Animations\ShareFolder.tgs" />
     <Content Include="Assets\Animations\AuthorizationStateWaitPassword.tgs" />
     <Content Include="Assets\Animations\MyStories.tgs" />
+    <Content Include="Assets\Animations\Expired.tgs" />
     <Content Include="Assets\Toasts\ExpiredStory.tgs" />
     <Content Include="Assets\Toasts\Info.tgs" />
     <Content Include="Assets\Toasts\LinkCopied.tgs" />
@@ -2502,6 +2507,10 @@
     </Page>
     <Page Include="Views\Premium\Popups\LimitsPopup.xaml">
       <SubType>Designer</SubType>
+    <Page Include="Views\Stories\Popups\StoryInteractionsPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Premium\Popups\PromoPopup.xaml">
