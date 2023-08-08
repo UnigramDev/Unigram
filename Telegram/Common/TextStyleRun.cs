@@ -382,11 +382,6 @@ namespace Telegram.Common
             if (text.Length > previous)
             {
                 var index = text.IndexOf('\n', previous);
-                if (index == -1 && previous > 0)
-                {
-                    indexes ??= new();
-                    indexes.Add(previous + 1);
-                }
 
                 while (index != -1)
                 {
@@ -425,13 +420,18 @@ namespace Telegram.Common
 
             return new[]
             {
-                Split(text, entities, 0, text.Length)
+                new StyledParagraph
+                {
+                    Offset = 0,
+                    Length = text.Length,
+                    Runs = GetRuns(text, entities)
+                }
             };
         }
 
         private static StyledParagraph Split(string text, IList<TextEntity> entities, long startIndex, long length)
         {
-            if (length == 0)
+            if (length <= 0)
             {
                 return new StyledParagraph
                 {

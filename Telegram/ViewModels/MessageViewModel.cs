@@ -32,7 +32,7 @@ namespace Telegram.ViewModels
 
             _chat = chat;
 
-            Content = message.Content;
+            SetText(message.Content?.GetCaption());
         }
 
         public Chat Chat => _chat;
@@ -110,7 +110,11 @@ namespace Telegram.ViewModels
             set
             {
                 _generatedContent = value;
-                Text = null;
+
+                if (value != null)
+                {
+                    SetText(value.GetCaption());
+                }
             }
         }
 
@@ -315,15 +319,7 @@ namespace Telegram.ViewModels
                 }
 
                 album.Caption = caption ?? new FormattedText();
-
-                if (caption != null && caption.Text.Length > 0)
-                {
-                    Text = TextStyleRun.GetText(caption);
-                }
-                else
-                {
-                    Text = null;
-                }
+                SetText(caption);
             }
         }
     }
@@ -385,8 +381,11 @@ namespace Telegram.ViewModels
         private void SetContent(MessageContent content)
         {
             _message.Content = content;
+            SetText(content?.GetCaption());
+        }
 
-            var caption = content.GetCaption();
+        protected void SetText(FormattedText caption)
+        {
             if (caption != null && caption.Text.Length > 0)
             {
                 Text = TextStyleRun.GetText(caption);

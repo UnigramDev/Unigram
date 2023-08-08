@@ -586,39 +586,41 @@ namespace Telegram.Td.Api
             }
 
             var message = text.Text.Substring((int)startIndex, Math.Min(text.Text.Length - (int)startIndex, (int)length));
-            var sub = new List<TextEntity>();
+            IList<TextEntity> sub = null;
 
             foreach (var entity in text.Entities)
             {
                 // Included, Included
                 if (entity.Offset >= startIndex && entity.Offset + entity.Length <= startIndex + length)
                 {
-                    var replace = new TextEntity { Offset = entity.Offset - (int)startIndex, Length = entity.Length };
+                    var replace = new TextEntity { Offset = entity.Offset - (int)startIndex, Length = entity.Length, Type = entity.Type };
+                    sub ??= new List<TextEntity>();
                     sub.Add(replace);
                 }
                 // Before, Included
-                else if (entity.Offset < startIndex && entity.Offset + entity.Length > startIndex && entity.Offset + entity.Length <= startIndex + length)
+                else if (entity.Offset <= startIndex && entity.Offset + entity.Length > startIndex && entity.Offset + entity.Length < startIndex + length)
                 {
-                    var replace = new TextEntity { Offset = 0, Length = entity.Length - ((int)startIndex - entity.Offset) };
+                    var replace = new TextEntity { Offset = 0, Length = entity.Length - ((int)startIndex - entity.Offset), Type = entity.Type };
+                    sub ??= new List<TextEntity>();
                     sub.Add(replace);
                 }
                 // Included, After
-                else if (entity.Offset >= startIndex && entity.Offset < startIndex + length && entity.Offset + entity.Length > startIndex + length)
+                else if (entity.Offset > startIndex && entity.Offset < startIndex + length && entity.Offset + entity.Length > startIndex + length)
                 {
-                    var difference = entity.Offset + entity.Length - startIndex + length;
-
-                    var replace = new TextEntity { Offset = entity.Offset - (int)startIndex, Length = entity.Length - (int)difference };
+                    var replace = new TextEntity { Offset = entity.Offset - (int)startIndex, Length = ((int)startIndex + (int)length) + entity.Offset, Type = entity.Type };
+                    sub ??= new List<TextEntity>();
                     sub.Add(replace);
                 }
                 // Before, After
-                else if (entity.Offset < startIndex && entity.Offset + entity.Length > startIndex + length)
+                else if (entity.Offset <= startIndex && entity.Offset + entity.Length >= startIndex + length)
                 {
-                    var replace = new TextEntity { Offset = 0, Length = message.Length };
+                    var replace = new TextEntity { Offset = 0, Length = message.Length, Type = entity.Type };
+                    sub ??= new List<TextEntity>();
                     sub.Add(replace);
                 }
             }
 
-            return new FormattedText(message, sub);
+            return new FormattedText(message, sub ?? Array.Empty<TextEntity>());
         }
 
         public static string ToPlainText(this PageBlockCaption caption)

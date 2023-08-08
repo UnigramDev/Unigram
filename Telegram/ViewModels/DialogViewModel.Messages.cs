@@ -559,7 +559,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var input = message.Content.GetCaption();
+            var input = message.GetCaption();
             if (message.Content is MessageContact contact)
             {
                 input = new FormattedText(PhoneNumber.Format(contact.Contact.PhoneNumber), new TextEntity[0]);
@@ -704,7 +704,7 @@ namespace Telegram.ViewModels
 
                     foreach (var child in album.Messages)
                     {
-                        var childCaption = child.Content?.GetCaption();
+                        var childCaption = child.GetCaption();
                         if (childCaption != null && !string.IsNullOrEmpty(childCaption.Text))
                         {
                             message = child;
@@ -725,7 +725,7 @@ namespace Telegram.ViewModels
             SaveDraft();
 
             var container = new MessageComposerHeader { EditingMessage = message };
-            var input = message.Content.GetCaption();
+            var input = message.GetCaption();
 
             if (message.Content is MessageText text)
             {

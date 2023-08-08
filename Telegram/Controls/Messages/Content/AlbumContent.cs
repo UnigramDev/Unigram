@@ -190,7 +190,7 @@ namespace Telegram.Controls.Messages.Content
 
                 element.Margin = new Thickness(0, 0, 0, 8);
 
-                var caption = pos.Content?.GetCaption();
+                var caption = pos.GetCaption();
                 if (string.IsNullOrEmpty(caption?.Text))
                 {
                     continue;
