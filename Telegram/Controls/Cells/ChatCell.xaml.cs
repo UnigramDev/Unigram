@@ -616,7 +616,10 @@ namespace Telegram.Controls.Cells
 
         public void UpdateChatActiveStories(ChatActiveStories activeStories)
         {
-            Segments.UpdateActiveStories(activeStories, 48, true);
+            if (activeStories.ChatId != _clientService.Options.MyId)
+            {
+                Segments.UpdateActiveStories(activeStories, 48, true);
+            }
         }
 
         public void UpdateChatActions(Chat chat, IDictionary<MessageSender, ChatAction> actions)
