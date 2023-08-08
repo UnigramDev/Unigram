@@ -7,6 +7,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Stories;
+using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -22,11 +23,14 @@ namespace Telegram.ViewModels.Stories
     public class StoryListViewModel : ViewModelBase
     {
         private readonly IStorageService _storageService;
+        private readonly ITranslateService _translateService;
 
         public StoryListViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, StoryList storyList)
             : base(clientService, settingsService, aggregator)
         {
             _storageService = TLContainer.Current.Resolve<IStorageService>(clientService.SessionId);
+            _translateService = TLContainer.Current.Resolve<ITranslateService>(clientService.SessionId);
+
             Items = new ItemsCollection(clientService, aggregator, this, storyList);
         }
 
@@ -34,8 +38,12 @@ namespace Telegram.ViewModels.Stories
             : base(clientService, settingsService, aggregator)
         {
             _storageService = TLContainer.Current.Resolve<IStorageService>(clientService.SessionId);
+            _translateService = TLContainer.Current.Resolve<ITranslateService>(clientService.SessionId);
+
             Items = new ObservableCollection<ActiveStoriesViewModel>(items);
         }
+
+        public ITranslateService TranslateService => _translateService;
 
         public ObservableCollection<ActiveStoriesViewModel> Items { get; }
 
@@ -104,6 +112,17 @@ namespace Telegram.ViewModels.Stories
         public Task ShareStoryAsync(StoryViewModel story)
         {
             return ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareStory(story.ChatId, story.StoryId), requestedTheme: ElementTheme.Dark);
+        }
+
+        public Task TranslateStoryAsync(StoryViewModel story)
+        {
+            var language = LanguageIdentification.IdentifyLanguage(story.Caption.Text);
+            var popup = new TranslatePopup(_translateService, story.Caption.Text, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, !story.CanBeForwarded)
+            {
+                RequestedTheme = ElementTheme.Dark
+            };
+
+            return ShowPopupAsync(popup);
         }
 
         public async Task DeleteStoryAsync(StoryViewModel story)

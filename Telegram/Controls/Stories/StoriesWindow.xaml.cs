@@ -788,6 +788,11 @@ namespace Telegram.Controls.Stories
                     flyout.CreateFlyoutItem(ShareStory, story, Strings.StickersShare, Icons.Share);
                 }
 
+                if (ViewModel.TranslateService.CanTranslate(story.Caption))
+                {
+                    flyout.CreateFlyoutItem(TranslateStory, story, Strings.TranslateMessage, Icons.Translate);
+                }
+
                 flyout.CreateFlyoutItem(DeleteStory, story, Strings.Delete, Icons.Delete, dangerous: true);
             }
             else
@@ -811,6 +816,11 @@ namespace Telegram.Controls.Stories
                     flyout.CreateFlyoutItem(ShareStory, story, Strings.StickersShare, Icons.Share);
                 }
 
+                if (ViewModel.TranslateService.CanTranslate(story.Caption))
+                {
+                    flyout.CreateFlyoutItem(TranslateStory, story, Strings.TranslateMessage, Icons.Translate);
+                }
+
                 flyout.CreateFlyoutItem(ReportStory, story, Strings.ReportChat, Icons.ErrorCircle);
             }
 
@@ -826,6 +836,13 @@ namespace Telegram.Controls.Stories
         {
             ActiveCard.Suspend(StoryPauseSource.Popup);
             await ViewModel.ReportStoryAsync(story);
+            ActiveCard.Resume(StoryPauseSource.Popup);
+        }
+
+        private async void TranslateStory(StoryViewModel story)
+        {
+            ActiveCard.Suspend(StoryPauseSource.Popup);
+            await ViewModel.TranslateStoryAsync(story);
             ActiveCard.Resume(StoryPauseSource.Popup);
         }
 
