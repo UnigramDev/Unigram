@@ -1201,6 +1201,9 @@
     <Compile Include="Views\Stories\Popups\StoryInteractionsPopup.xaml.cs">
       <DependentUpon>StoryInteractionsPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Premium\Popups\StoriesPopup.xaml.cs">
+      <DependentUpon>StoriesPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Premium\Popups\PromoPopup.xaml.cs">
       <DependentUpon>PromoPopup.xaml</DependentUpon>
     </Compile>
@@ -2507,11 +2510,15 @@
     </Page>
     <Page Include="Views\Premium\Popups\LimitsPopup.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Stories\Popups\StoryInteractionsPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Premium\Popups\StoriesPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Premium\Popups\PromoPopup.xaml">
       <Generator>MSBuild:Compile</Generator>

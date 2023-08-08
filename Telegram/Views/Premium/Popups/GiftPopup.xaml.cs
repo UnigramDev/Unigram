@@ -35,7 +35,6 @@ namespace Telegram.Views.Premium.Popups
 
             _selectedOption = options.FirstOrDefault();
 
-            Title = Strings.GiftTelegramPremiumTitle;
             TextBlockHelper.SetMarkdown(Subtitle, string.Format(Strings.GiftTelegramPremiumDescription, user.FirstName));
 
             ScrollingHost.ItemsSource = options;

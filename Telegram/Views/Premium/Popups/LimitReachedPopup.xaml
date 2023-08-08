@@ -196,7 +196,7 @@
                               HorizontalAlignment="Right"
                               VerticalAlignment="Top"
                               Glyph="&#xE711;"
-                              Margin="0,0,-24,0"
+                              Margin="0,-64,-24,0"
                               CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

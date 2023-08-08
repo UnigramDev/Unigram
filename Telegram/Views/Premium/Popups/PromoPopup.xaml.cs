@@ -65,6 +65,8 @@ namespace Telegram.Views.Premium.Popups
             var feature = args.Item as PremiumFeature;
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
 
+            var badge = false;
+
             var iconValue = string.Empty;
             var titleValue = string.Empty;
             var subtitleValue = string.Empty;
@@ -135,6 +137,12 @@ namespace Telegram.Views.Premium.Popups
                     titleValue = Strings.PremiumPreviewStickers;
                     subtitleValue = Strings.PremiumPreviewStickersDescription;
                     break;
+                case PremiumFeatureUpgradedStories:
+                    iconValue = Icons.Stories;
+                    titleValue = Strings.PremiumPreviewStories;
+                    subtitleValue = Strings.PremiumPreviewStoriesDescription;
+                    badge = true;
+                    break;
                 case PremiumFeatureVoiceRecognition:
                     iconValue = Icons.MicOnFilled;
                     titleValue = Strings.PremiumPreviewVoiceToText;
@@ -146,6 +154,7 @@ namespace Telegram.Views.Premium.Popups
             var subtitle = content.FindName("Subtitle") as TextBlock;
             var icon = content.FindName("Icon") as TextBlock;
             var iconPanel = content.FindName("IconPanel") as Border;
+            var badgeControl = content.FindName("Badge") as BadgeControl;
 
             var index = Math.Min(args.ItemIndex, _gradient.Length - 1);
 
@@ -153,6 +162,7 @@ namespace Telegram.Views.Premium.Popups
             subtitle.Text = subtitleValue;
             icon.Text = iconValue;
             iconPanel.Background = new SolidColorBrush(_gradient[index]);
+            badgeControl.Visibility = badge ? Windows.UI.Xaml.Visibility.Visible : Windows.UI.Xaml.Visibility.Collapsed;
         }
 
         public string ConvertTitle(bool premium, bool title)

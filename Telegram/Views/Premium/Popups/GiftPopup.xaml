@@ -4,10 +4,9 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
-                       mc:Ignorable="d"
-                       Title="TITLE">
+                       mc:Ignorable="d">
 
-    <Grid Margin="0,0,0,-20">
+    <Grid Margin="0,-24,0,-24">
         <ListView x:Name="ScrollingHost"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
@@ -27,11 +26,18 @@
                                             DecodeFrameType="Logical"
                                             Width="120"
                                             Height="120"
-                                            Margin="0,16,0,0" />
+                                            Margin="0,24,0,8" />
+                    <TextBlock Text="{CustomResource GiftTelegramPremiumTitle}"
+                               FontSize="20"
+                               FontFamily="XamlAutoFontFamily"
+                               FontWeight="SemiBold"
+                               TextAlignment="Center"
+                               VerticalAlignment="Top"
+                               Grid.Row="1" />
                     <TextBlock x:Name="Subtitle"
                                Style="{StaticResource InfoCaptionTextBlockStyle}"
                                TextAlignment="Center"
-                               Margin="12,8,12,24"
+                               Margin="12,0,12,24"
                                Grid.Row="2" />
                 </Grid>
             </ListView.Header>
