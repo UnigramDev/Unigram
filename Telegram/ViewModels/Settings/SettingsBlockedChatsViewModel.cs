@@ -37,12 +37,12 @@ namespace Telegram.ViewModels.Settings
             if (selected.Type is ChatTypePrivate privata)
             {
                 Items.Insert(0, new MessageSenderUser(privata.UserId));
-                ClientService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(privata.UserId), true));
+                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(privata.UserId), new BlockListMain()));
             }
             else
             {
                 Items.Insert(0, new MessageSenderChat(selected.Id));
-                ClientService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderChat(selected.Id), true));
+                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderChat(selected.Id), new BlockListMain()));
             }
         }
 
@@ -52,13 +52,13 @@ namespace Telegram.ViewModels.Settings
             if (confirm == ContentDialogResult.Primary)
             {
                 Items.Remove(sender);
-                ClientService.Send(new ToggleMessageSenderIsBlocked(sender, false));
+                ClientService.Send(new SetMessageSenderBlockList(sender, null));
             }
         }
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            var response = await ClientService.SendAsync(new GetBlockedMessageSenders(Items.Count, 20));
+            var response = await ClientService.SendAsync(new GetBlockedMessageSenders(new BlockListMain(), Items.Count, 20));
             if (response is MessageSenders chats)
             {
                 foreach (var sender in chats.Senders)

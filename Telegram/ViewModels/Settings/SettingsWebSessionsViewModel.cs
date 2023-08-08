@@ -112,7 +112,7 @@ namespace Telegram.ViewModels.Settings
                     Logger.Error(error.Message);
                 }
 
-                ClientService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(session.BotUserId), true));
+                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(session.BotUserId), new BlockListMain()));
             }
         }
 

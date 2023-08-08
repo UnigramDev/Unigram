@@ -2573,11 +2573,11 @@ namespace Telegram.ViewModels
             }
             else if (chat.Type is ChatTypePrivate privata)
             {
-                ClientService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(privata.UserId), true));
+                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(privata.UserId), new BlockListMain()));
             }
             else if (chat.Type is ChatTypeSecret secret)
             {
-                ClientService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(secret.UserId), true));
+                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(secret.UserId), new BlockListMain()));
             }
 
             ClientService.Send(new DeleteChatHistory(chat.Id, true, false));
@@ -2621,7 +2621,7 @@ namespace Telegram.ViewModels
                 {
                     if (updated.Type is ChatTypePrivate privata && check)
                     {
-                        await ClientService.SendAsync(new ToggleMessageSenderIsBlocked(new MessageSenderUser(privata.UserId), true));
+                        await ClientService.SendAsync(new SetMessageSenderBlockList(new MessageSenderUser(privata.UserId), new BlockListMain()));
                     }
 
                     ClientService.Send(new DeleteChatHistory(updated.Id, true, false));
@@ -2769,7 +2769,7 @@ namespace Telegram.ViewModels
             var user = ClientService.GetUser(privata.UserId);
             if (user.Type is UserTypeBot)
             {
-                await ClientService.SendAsync(new ToggleMessageSenderIsBlocked(new MessageSenderUser(user.Id), false));
+                await ClientService.SendAsync(new SetMessageSenderBlockList(new MessageSenderUser(user.Id), null));
                 Start();
             }
             else
@@ -2780,7 +2780,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                ClientService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(user.Id), false));
+                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(user.Id), null));
             }
         }
 
@@ -3310,7 +3310,7 @@ namespace Telegram.ViewModels
                 {
                     ToggleMute();
                 }
-                else if (chat.IsBlocked)
+                else if (chat.BlockList is BlockListMain)
                 {
                     Unblock();
                 }

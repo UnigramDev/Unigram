@@ -477,11 +477,11 @@ namespace Telegram.ViewModels
         {
             if (chat.Type is ChatTypePrivate privata)
             {
-                ClientService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(privata.UserId), blocked));
+                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(privata.UserId), blocked ? new BlockListMain() : null));
             }
             else if (chat.Type is ChatTypeSecret secret)
             {
-                ClientService.Send(new ToggleMessageSenderIsBlocked(new MessageSenderUser(secret.UserId), blocked));
+                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(secret.UserId), blocked ? new BlockListMain() : null));
             }
         }
 

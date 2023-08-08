@@ -1693,11 +1693,11 @@ namespace Telegram.Services
                     value.HasScheduledMessages = updateChatHasScheduledMessages.HasScheduledMessages;
                 }
             }
-            else if (update is UpdateChatIsBlocked updateChatIsBlocked)
+            else if (update is UpdateChatBlockList updateChatBlockList)
             {
-                if (_chats.TryGetValue(updateChatIsBlocked.ChatId, out Chat value))
+                if (_chats.TryGetValue(updateChatBlockList.ChatId, out Chat value))
                 {
-                    value.IsBlocked = updateChatIsBlocked.IsBlocked;
+                    value.BlockList = updateChatBlockList.BlockList;
                 }
             }
             else if (update is UpdateChatIsMarkedAsUnread updateChatIsMarkedAsUnread)

@@ -4248,7 +4248,7 @@ namespace Telegram.Views
             {
                 ShowAction(ViewModel.ClientService.Notifications.GetMutedFor(chat) > 0 ? Strings.ChannelUnmute : Strings.ChannelMute, true);
             }
-            else if (chat.IsBlocked)
+            else if (chat.BlockList is BlockListMain)
             {
                 ShowAction(user.Type is UserTypeBot ? Strings.BotUnblock : Strings.Unblock, true);
             }

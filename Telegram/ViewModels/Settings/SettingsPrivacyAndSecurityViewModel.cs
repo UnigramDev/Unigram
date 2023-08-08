@@ -98,7 +98,7 @@ namespace Telegram.ViewModels.Settings
                 }
             });
 
-            ClientService.Send(new GetBlockedMessageSenders(0, 1), result =>
+            ClientService.Send(new GetBlockedMessageSenders(new BlockListMain(), 0, 1), result =>
             {
                 if (result is MessageSenders senders)
                 {

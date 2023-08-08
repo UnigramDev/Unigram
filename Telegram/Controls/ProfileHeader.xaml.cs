@@ -652,7 +652,7 @@ namespace Telegram.Controls
                     if (user.IsContact)
                     {
                         flyout.CreateFlyoutItem(ViewModel.Share, Strings.ShareContact, Icons.Share);
-                        flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.Unblock : ViewModel.Block, chat.IsBlocked ? Strings.Unblock : Strings.BlockContact, chat.IsBlocked ? Icons.Block : Icons.Block);
+                        flyout.CreateFlyoutItem(chat.BlockList is BlockListMain ? ViewModel.Unblock : ViewModel.Block, chat.BlockList is BlockListMain ? Strings.Unblock : Strings.BlockContact, chat.BlockList is BlockListMain ? Icons.Block : Icons.Block);
                         flyout.CreateFlyoutItem(ViewModel.Edit, Strings.EditContact, Icons.Edit);
                         flyout.CreateFlyoutItem(ViewModel.Delete, Strings.DeleteContact, Icons.Delete, dangerous: true);
                     }
@@ -675,17 +675,17 @@ namespace Telegram.Controls
                         if (user.PhoneNumber.Length > 0)
                         {
                             flyout.CreateFlyoutItem(ViewModel.Share, Strings.ShareContact, Icons.Share);
-                            flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.Unblock : ViewModel.Block, chat.IsBlocked ? Strings.Unblock : Strings.BlockContact, chat.IsBlocked ? Icons.Block : Icons.Block);
+                            flyout.CreateFlyoutItem(chat.BlockList is BlockListMain ? ViewModel.Unblock : ViewModel.Block, chat.BlockList is BlockListMain ? Strings.Unblock : Strings.BlockContact, chat.BlockList is BlockListMain ? Icons.Block : Icons.Block);
                         }
                         else
                         {
                             if (user.Type is UserTypeBot)
                             {
-                                flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.Unblock : ViewModel.Block, chat.IsBlocked ? Strings.BotRestart : Strings.BotStop, chat.IsBlocked ? Icons.Block : Icons.Block);
+                                flyout.CreateFlyoutItem(chat.BlockList is BlockListMain ? ViewModel.Unblock : ViewModel.Block, chat.BlockList is BlockListMain ? Strings.BotRestart : Strings.BotStop, chat.BlockList is BlockListMain ? Icons.Block : Icons.Block);
                             }
                             else
                             {
-                                flyout.CreateFlyoutItem(chat.IsBlocked ? ViewModel.Unblock : ViewModel.Block, chat.IsBlocked ? Strings.Unblock : Strings.BlockContact, chat.IsBlocked ? Icons.Block : Icons.Block);
+                                flyout.CreateFlyoutItem(chat.BlockList is BlockListMain ? ViewModel.Unblock : ViewModel.Block, chat.BlockList is BlockListMain ? Strings.Unblock : Strings.BlockContact, chat.BlockList is BlockListMain ? Icons.Block : Icons.Block);
                             }
                         }
                     }

@@ -346,7 +346,7 @@ namespace Telegram.ViewModels
                         {
                             if (user?.Type is UserTypeBot && check)
                             {
-                                await ClientService.SendAsync(new ToggleMessageSenderIsBlocked(new MessageSenderUser(user.Id), true));
+                                await ClientService.SendAsync(new SetMessageSenderBlockList(new MessageSenderUser(user.Id), new BlockListMain()));
                             }
 
                             await ClientService.SendAsync(new DeleteChatHistory(delete.Id, true, false));
