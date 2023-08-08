@@ -646,16 +646,30 @@ namespace Telegram.Controls.Stories
             var user = ViewModel.Items[_index];
             var story = user.SelectedItem;
 
-            if (story.CanGetViewers && !story.HasExpiredViewers)
-            {
                 ActiveCard.Suspend(StoryPauseSource.Popup);
-                await ViewModel.ShowPopupAsync(typeof(InteractionsPopup), new MessageReplyToStory(story.ChatId, story.StoryId), requestedTheme: ElementTheme.Dark);
+
+            var confirm = await ViewModel.ShowPopupAsync(typeof(StoryInteractionsPopup), story, requestedTheme: ElementTheme.Dark);
+            if (await ContinuePopupAsync(confirm == ContentDialogResult.Primary))
+            {
                 ActiveCard.Resume(StoryPauseSource.Popup);
             }
-            else
+        }
+
+        private async Task<bool> ContinuePopupAsync(bool shouldPurchase)
+        {
+            if (shouldPurchase && ViewModel.IsPremiumAvailable && !ViewModel.IsPremium)
             {
-                ShowTeachingTip(sender as FrameworkElement, Strings.ExpiredViewsStub);
+                var popup = new Telegram.Views.Premium.Popups.StoriesPopup(ViewModel.ClientService, ViewModel.NavigationService);
+                await ViewModel.ShowPopupAsync(popup);
+
+                if (popup.ShouldPurchase)
+            {
+                    TryHide(ContentDialogResult.Primary);
+                    return false;
             }
+        }
+
+            return true;
         }
 
         private void Story_Click(object sender, RoutedEventArgs e)
