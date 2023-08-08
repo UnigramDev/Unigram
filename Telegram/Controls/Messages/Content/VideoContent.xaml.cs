@@ -166,7 +166,7 @@ namespace Telegram.Controls.Messages.Content
                 {
                     if (message.Delegate.CanBeDownloaded(video, file))
                     {
-                        UpdateSource(message, file, video.Duration);
+                        UpdateSource(message, file);
                     }
 
                     Button.SetGlyph(file.Id, MessageContentState.Play);
@@ -184,7 +184,7 @@ namespace Telegram.Controls.Messages.Content
                 {
                     var generating = file.Local.DownloadedSize < size;
 
-                    UpdateSource(null, null, 0);
+                    UpdateSource(null, null);
 
                     Button.SetGlyph(file.Id, MessageContentState.Uploading);
                     Button.Progress = (double)(generating ? file.Local.DownloadedSize : file.Remote.UploadedSize) / size;
@@ -212,16 +212,16 @@ namespace Telegram.Controls.Messages.Content
                     if (message.Delegate.CanBeDownloaded(video, file))
                     {
                         _message.ClientService.DownloadFile(file.Id, 32);
-                        UpdateSource(message, file, video.Duration);
+                        UpdateSource(message, file);
                     }
                     else
                     {
-                        UpdateSource(null, null, 0);
+                        UpdateSource(null, null);
                     }
                 }
                 else
                 {
-                    UpdateSource(message, file, video.Duration);
+                    UpdateSource(message, file);
 
                     Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Play);
                     Button.Progress = 0;
@@ -288,7 +288,7 @@ namespace Telegram.Controls.Messages.Content
             brush.Source = source;
         }
 
-        private void UpdateSource(MessageViewModel message, File file, int duration)
+        private void UpdateSource(MessageViewModel message, File file)
         {
             if (message?.Delegate == null || file == null || !PowerSavingPolicy.AutoPlayVideos)
             {
@@ -298,7 +298,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 if (Player.Source is not RemoteFileSource remote || remote.Id != file.Id)
                 {
-                    Player.Source = new RemoteFileSource(message.ClientService, file, duration);
+                    Player.Source = new RemoteFileSource(message.ClientService, file);
                     message.Delegate.ViewVisibleMessages();
                 }
             }

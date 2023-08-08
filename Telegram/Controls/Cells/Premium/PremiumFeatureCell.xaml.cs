@@ -110,7 +110,7 @@ namespace Telegram.Controls.Cells.Premium
 
             if (value != null)
             {
-                Player.Source = new RemoteFileSource(clientService, value.AnimationValue, value.Duration);
+                Player.Source = new RemoteFileSource(clientService, value.AnimationValue);
             }
             else
             {
