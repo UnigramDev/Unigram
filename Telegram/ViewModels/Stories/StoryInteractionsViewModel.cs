@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Telegram.Collections;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Telegram.Views;
@@ -42,7 +44,7 @@ namespace Telegram.ViewModels
             return Task.CompletedTask;
         }
 
-        public async void BlockUser(MessageViewer viewer, DependencyObject container)
+        public async void BlockUser(StoryViewer viewer, DependencyObject container)
         {
             if (ClientService.TryGetUser(viewer.UserId, out User user))
             {
@@ -56,12 +58,13 @@ namespace Telegram.ViewModels
 
                 if (confirm == ContentDialogResult.Primary)
                 {
+                    viewer.BlockList = new BlockListMain();
                     ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(viewer.UserId), new BlockListMain()));
                 }
             }
         }
 
-        public async void DeleteContact(MessageViewer viewer, DependencyObject container)
+        public async void DeleteContact(StoryViewer viewer, DependencyObject container)
         {
             if (ClientService.TryGetUser(viewer.UserId, out User user))
             {
@@ -80,9 +83,37 @@ namespace Telegram.ViewModels
             }
         }
 
-        public void HideStories(MessageViewer viewer, DependencyObject dependencyObject)
+        public void HideStories(StoryViewer viewer)
         {
-            throw new NotImplementedException();
+            if (ClientService.TryGetUser(viewer.UserId, out User user))
+            {
+                viewer.BlockList = new BlockListStories();
+
+                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(user.Id), new BlockListStories()));
+                Window.Current.ShowTeachingTip(string.Format(Strings.StoryHiddenHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+            }
+        }
+
+        public void ShowStories(StoryViewer viewer)
+        {
+            if (ClientService.TryGetUser(viewer.UserId, out User user))
+            {
+                viewer.BlockList = null;
+
+                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(user.Id), null));
+                Window.Current.ShowTeachingTip(string.Format(Strings.StoryShownHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+            }
+        }
+
+        public void UnblockUser(StoryViewer viewer)
+        {
+            if (ClientService.TryGetUser(viewer.UserId, out User user))
+            {
+                viewer.BlockList = null;
+
+                ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(user.Id), null));
+                Window.Current.ShowTeachingTip(string.Format(Strings.StoryShownHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+            }
         }
 
         public IncrementalCollection<object> Items { get; }

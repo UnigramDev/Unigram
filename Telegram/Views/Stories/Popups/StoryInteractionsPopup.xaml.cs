@@ -68,7 +68,7 @@ namespace Telegram.Views.Stories.Popups
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var element = sender as FrameworkElement;
-            var viewer = ScrollingHost.ItemFromContainer(sender) as MessageViewer;
+            var viewer = ScrollingHost.ItemFromContainer(sender) as StoryViewer;
 
             if (viewer == null || !ViewModel.ClientService.TryGetUser(viewer.UserId, out User user))
             {
@@ -77,15 +77,26 @@ namespace Telegram.Views.Stories.Popups
 
             var flyout = new MenuFlyout();
 
-            flyout.CreateFlyoutItem(HideStories, viewer, Strings.ShareFile, Icons.StoriesOff);
+            if (viewer.BlockList is null)
+            {
+                flyout.CreateFlyoutItem(ViewModel.HideStories, viewer, string.Format(Strings.StoryHideFrom, user.FirstName), Icons.StoriesOff);
+            }
+            else if (viewer.BlockList is BlockListStories)
+            {
+                flyout.CreateFlyoutItem(ViewModel.ShowStories, viewer, string.Format(Strings.StoryShowTo, user.FirstName), Icons.Stories);
+            }
 
             if (user.IsContact)
             {
                 flyout.CreateFlyoutItem(DeleteContact, viewer, Strings.DeleteContact, Icons.Delete, dangerous: true);
             }
-            else
+            else if (viewer.BlockList is not BlockListMain)
             {
                 flyout.CreateFlyoutItem(BlockUser, viewer, Strings.BlockUser, Icons.HandRight, dangerous: true);
+            }
+            else if (viewer.BlockList is BlockListMain)
+            {
+                flyout.CreateFlyoutItem(ViewModel.UnblockUser, viewer, Strings.Unblock, Icons.HandRight);
             }
 
             args.ShowAt(flyout, element);
@@ -118,17 +129,12 @@ namespace Telegram.Views.Stories.Popups
             ViewModel.OpenChat(e.ClickedItem);
         }
 
-        private void HideStories(MessageViewer viewer)
-        {
-            ViewModel.HideStories(viewer, ScrollingHost.ContainerFromItem(viewer));
-        }
-
-        private void DeleteContact(MessageViewer viewer)
+        private void DeleteContact(StoryViewer viewer)
         {
             ViewModel.DeleteContact(viewer, ScrollingHost.ContainerFromItem(viewer));
         }
 
-        private void BlockUser(MessageViewer viewer)
+        private void BlockUser(StoryViewer viewer)
         {
             ViewModel.BlockUser(viewer, ScrollingHost.ContainerFromItem(viewer));
         }
