@@ -148,7 +148,7 @@ namespace Telegram.Controls.Chats
 
         private void Apply_Click(object sender, RoutedEventArgs e)
         {
-            if (ScrollingHost.SelectedItem is ChatTheme theme)
+            if (ScrollingHost.SelectedItem is ChatThemeViewModel theme)
             {
                 _viewModel.ClientService.Send(new SetChatTheme(_viewModel.Chat.Id, theme.Name));
                 ThemeSelected?.Invoke(this, new ChatThemeSelectedEventArgs(true));
