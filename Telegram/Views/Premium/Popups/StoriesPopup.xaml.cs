@@ -54,7 +54,8 @@ namespace Telegram.Views.Premium.Popups
             }
             else
             {
-                InitializePaymentOptions(clientService);
+                //InitializePaymentOptions(clientService);
+                PurchaseCommand.Content = Strings.UpgradeStories;
             }
 
             if (clientService.TryGetChat(clientService.Options.MyId, out Chat chat) &&

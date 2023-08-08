@@ -166,8 +166,15 @@ namespace Telegram.Navigation.Services
 
         public void RemoveFromBackStack(int index)
         {
-            Frame.BackStack.RemoveAt(index);
-            BackStack.RemoveAt(index);
+            if (Frame.BackStack.Count > index)
+            {
+                Frame.BackStack.RemoveAt(index);
+            }
+
+            if (BackStack.Count > index)
+            {
+                BackStack.RemoveAt(index);
+            }
         }
 
         public void ClearBackStack()
@@ -242,6 +249,8 @@ namespace Telegram.Navigation.Services
                 {
                     Logger.Error(ex);
                 }
+
+                OverlayWindow.Current?.TryHide(ContentDialogResult.None);
             };
         }
 

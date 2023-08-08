@@ -1708,6 +1708,19 @@ namespace Telegram.Td.Api
             }
         }
 
+        public static string GetDuration(this StoryVideo video)
+        {
+            var duration = TimeSpan.FromSeconds(video.Duration);
+            if (duration.TotalHours >= 1)
+            {
+                return duration.ToString("h\\:mm\\:ss");
+            }
+            else
+            {
+                return duration.ToString("mm\\:ss");
+            }
+        }
+
         public static string GetDuration(this Audio audio)
         {
             var duration = TimeSpan.FromSeconds(audio.Duration);

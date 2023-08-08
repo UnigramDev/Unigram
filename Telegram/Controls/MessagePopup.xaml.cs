@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -63,14 +64,15 @@ namespace Telegram.Controls
             set => CheckBox.IsChecked = value;
         }
 
-        public static Task<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        public static Task<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var popup = new MessagePopup
             {
                 Title = title ?? Strings.AppName,
                 Message = message,
                 PrimaryButtonText = primary ?? Strings.OK,
-                SecondaryButtonText = secondary ?? string.Empty
+                SecondaryButtonText = secondary ?? string.Empty,
+                RequestedTheme = requestedTheme
             };
 
             if (dangerous)
@@ -82,14 +84,15 @@ namespace Telegram.Controls
             return popup.ShowQueuedAsync();
         }
 
-        public static Task<ContentDialogResult> ShowAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        public static Task<ContentDialogResult> ShowAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var popup = new MessagePopup
             {
                 Title = title ?? Strings.AppName,
                 FormattedMessage = message,
                 PrimaryButtonText = primary ?? Strings.OK,
-                SecondaryButtonText = secondary ?? string.Empty
+                SecondaryButtonText = secondary ?? string.Empty,
+                RequestedTheme = requestedTheme
             };
 
             if (dangerous)
@@ -99,6 +102,47 @@ namespace Telegram.Controls
             }
 
             return popup.ShowQueuedAsync();
+        }
+
+        public static Task<ContentDialogResult> ShowAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        {
+            var tsc = new TaskCompletionSource<ContentDialogResult>();
+            var popup = new TeachingTip
+            {
+                Title = title,
+                Subtitle = message,
+                ActionButtonContent = primary,
+                ActionButtonStyle = BootStrapper.Current.Resources[dangerous ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
+                CloseButtonContent = secondary,
+                PreferredPlacement = TeachingTipPlacementMode.Top,
+                Width = 314,
+                MinWidth = 314,
+                MaxWidth = 314,
+                Target = target,
+                IsLightDismissEnabled = true,
+                ShouldConstrainToRootBounds = true,
+                // TODO:
+                RequestedTheme = target.ActualTheme
+            };
+
+            popup.ActionButtonClick += (s, args) =>
+            {
+                popup.IsOpen = false;
+                tsc.TrySetResult(ContentDialogResult.Primary);
+            };
+
+            popup.Closed += (s, args) =>
+            {
+                tsc.TrySetResult(ContentDialogResult.Secondary);
+            };
+
+            if (Window.Current.Content is FrameworkElement element)
+            {
+                element.Resources["TeachingTip"] = popup;
+            }
+
+            popup.IsOpen = true;
+            return tsc.Task;
         }
     }
 }

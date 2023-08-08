@@ -11,7 +11,7 @@ using Telegram.Services.Keyboard;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
-using Telegram.Views.Popups;
+using Telegram.Views.Stories.Popups;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using DispatcherQueue = Windows.System.DispatcherQueue;
 using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls.Stories
@@ -32,6 +33,9 @@ namespace Telegram.Controls.Stories
 
     public sealed partial class StoriesWindow : OverlayWindow
     {
+        private readonly DispatcherTimer _stealthTimer;
+        private readonly DispatcherQueue _dispatcherQueue;
+
         public StoriesWindow()
         {
             InitializeComponent();
@@ -39,6 +43,33 @@ namespace Telegram.Controls.Stories
             Loaded += StoriesWindow_Loaded;
 
             InitializeStickers();
+
+            _stealthTimer = new DispatcherTimer();
+            _stealthTimer.Interval = TimeSpan.FromSeconds(1);
+            _stealthTimer.Tick += StealthTimer_Tick;
+
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        }
+
+        private void StealthTimer_Tick(object sender, object e)
+        {
+            UpdateStealthTimer();
+        }
+
+        private void UpdateStealthTimer()
+        {
+            if (_viewModel == null || _viewModel.ClientService.StealthMode.ActiveUntilDate == 0)
+            {
+                _stealthTimer.Stop();
+                TextField.PlaceholderText = Strings.ReplyPrivately;
+            }
+            else
+            {
+                var untilDate = Converters.Formatter.ToLocalTime(_viewModel.ClientService.StealthMode.ActiveUntilDate);
+                var timeLeft = untilDate - DateTime.Now;
+
+                TextField.PlaceholderText = string.Format(Strings.StealthModeActiveHint, timeLeft.ToString("mm\\:ss"));
+            }
         }
 
         protected override void MaskTitleAndStatusBar()
@@ -252,10 +283,27 @@ namespace Telegram.Controls.Stories
             _origin = point;
             _closing = closing;
 
+            viewModel.Aggregator.Subscribe<UpdateStoryStealthMode>(this, Handle);
+
             Update(viewModel, activeStories);
+            UpdateStealthTimer();
+
+            Handle(viewModel.ClientService.StealthMode);
         }
 
-        private async void Update(StoryListViewModel viewModel, ActiveStoriesViewModel activeStories)
+        public void Handle(UpdateStoryStealthMode update)
+        {
+            if (update.ActiveUntilDate > 0)
+            {
+                _dispatcherQueue.TryEnqueue(_stealthTimer.Start);
+            }
+            else
+            {
+                _dispatcherQueue.TryEnqueue(UpdateStealthTimer);
+            }
+        }
+
+        private void Update(StoryListViewModel viewModel, ActiveStoriesViewModel activeStories)
         {
             if (_viewModel != viewModel)
             {
@@ -313,7 +361,7 @@ namespace Telegram.Controls.Stories
 
             if (_index == _total - 1 && _viewModel.Items is ISupportIncrementalLoading incremental && incremental.HasMoreItems)
             {
-                await incremental.LoadMoreItemsAsync(20);
+                _ = incremental.LoadMoreItemsAsync(20);
             }
         }
 
@@ -646,16 +694,16 @@ namespace Telegram.Controls.Stories
             var user = ViewModel.Items[_index];
             var story = user.SelectedItem;
 
-                ActiveCard.Suspend(StoryPauseSource.Popup);
+            ActiveCard.Suspend(StoryPauseSource.Popup);
 
             var confirm = await ViewModel.ShowPopupAsync(typeof(StoryInteractionsPopup), story, requestedTheme: ElementTheme.Dark);
-            if (await ContinuePopupAsync(confirm == ContentDialogResult.Primary))
+            if (await ContinuePopupAsync(confirm == ContentDialogResult.Primary, new PremiumStoryFeaturePermanentViewsHistory()))
             {
                 ActiveCard.Resume(StoryPauseSource.Popup);
             }
         }
 
-        private async Task<bool> ContinuePopupAsync(bool shouldPurchase)
+        private async Task<bool> ContinuePopupAsync(bool shouldPurchase, PremiumStoryFeature feature)
         {
             if (shouldPurchase && ViewModel.IsPremiumAvailable && !ViewModel.IsPremium)
             {
@@ -663,11 +711,11 @@ namespace Telegram.Controls.Stories
                 await ViewModel.ShowPopupAsync(popup);
 
                 if (popup.ShouldPurchase)
-            {
-                    TryHide(ContentDialogResult.Primary);
+                {
+                    await ViewModel.NavigationService.ShowPromoAsync(new PremiumSourceStoryFeature(feature), ElementTheme.Dark);
                     return false;
+                }
             }
-        }
 
             return true;
         }
@@ -700,6 +748,9 @@ namespace Telegram.Controls.Stories
         {
             WindowContext.Current.Activated -= OnActivated;
             WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+
+            _viewModel?.Aggregator.Unsubscribe(this);
+            _stealthTimer.Stop();
         }
 
         private void OnActivated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
@@ -783,13 +834,9 @@ namespace Telegram.Controls.Stories
             {
                 flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, story.IsPinned ? Strings.ArchiveStory : Strings.SaveToProfile, story.IsPinned ? Icons.StoriesPinnedOff : Icons.StoriesPinned);
 
-                if (story.CanBeForwarded && story.Content is StoryContentPhoto)
+                if (story.CanBeForwarded && story.Content is StoryContentPhoto or StoryContentVideo && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, Strings.SavePhoto, Icons.SaveAs);
-                }
-                else if (story.CanBeForwarded && story.Content is StoryContentVideo)
-                {
-                    flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, Strings.SaveVideo, Icons.SaveAs);
+                    flyout.CreateFlyoutItem(SaveStory, story, story.Content is StoryContentPhoto ? Strings.SavePhoto : Strings.SaveVideo, story.ClientService.IsPremium ? Icons.SaveAs : Icons.SaveAsLocked);
                 }
 
                 if (story.ClientService.TryGetUser(story.Chat, out User user) && user.HasActiveUsername(out _))
@@ -811,13 +858,20 @@ namespace Telegram.Controls.Stories
             }
             else
             {
-                if (story.CanBeForwarded && story.Content is StoryContentPhoto)
+                var muted = ViewModel.Settings.Notifications.GetMuteStories(e.ActiveStories.Chat);
+                var archived = e.ActiveStories.List is StoryListArchive;
+
+                flyout.CreateFlyoutItem(ViewModel.MuteProfile, e.ActiveStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
+                flyout.CreateFlyoutItem(ViewModel.ShowProfile, e.ActiveStories, archived ? Strings.UnarchiveStories : Strings.ArchivePeerStories, archived ? Icons.Unarchive : Icons.Archive);
+
+                if (story.CanBeForwarded && story.Content is StoryContentPhoto or StoryContentVideo && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, Strings.SavePhoto, Icons.SaveAs);
+                    flyout.CreateFlyoutItem(SaveStory, story, story.Content is StoryContentPhoto ? Strings.SavePhoto : Strings.SaveVideo, story.ClientService.IsPremium ? Icons.SaveAs : Icons.SaveAsLocked);
                 }
-                else if (story.CanBeForwarded && story.Content is StoryContentVideo)
+
+                if (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable)
                 {
-                    flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, Strings.SaveVideo, Icons.SaveAs);
+                    flyout.CreateFlyoutItem(StealthStory, story, Strings.StealthMode, story.ClientService.IsPremium ? Icons.Stealth : Icons.StealthLocked);
                 }
 
                 if (story.ClientService.TryGetUser(story.Chat, out User user) && user.HasActiveUsername(out _))
@@ -872,6 +926,58 @@ namespace Telegram.Controls.Stories
             ActiveCard.Suspend(StoryPauseSource.Popup);
             await ViewModel.DeleteStoryAsync(story);
             ActiveCard.Resume(StoryPauseSource.Popup);
+        }
+
+        private async void StealthStory(StoryViewModel story)
+        {
+            if (story.ClientService.StealthMode.ActiveUntilDate > 0)
+            {
+                ActiveCard.Suspend(StoryPauseSource.Popup);
+                await ViewModel.ShowPopupAsync(Strings.StealthModeOnHint, Strings.StealthModeOn, Strings.OK, requestedTheme: ElementTheme.Dark);
+                ActiveCard.Resume(StoryPauseSource.Popup);
+
+                return;
+
+                var text = Strings.StealthModeOn + Environment.NewLine + Strings.StealthModeOnHint;
+                var entity = new TextEntity(0, Strings.StealthModeOn.Length, new TextEntityTypeBold());
+
+                Window.Current.ShowTeachingTip(new FormattedText(text, new[] { entity }));
+            }
+            else if (story.ClientService.IsPremium)
+            {
+                ActiveCard.Suspend(StoryPauseSource.Popup);
+
+                var popup = new StealthPopup(ViewModel.ClientService, null);
+                await ViewModel.ShowPopupAsync(popup);
+
+                ActiveCard.Resume(StoryPauseSource.Popup);
+            }
+            else
+            {
+                ActiveCard.Suspend(StoryPauseSource.Popup);
+
+                if (await ContinuePopupAsync(true, new PremiumStoryFeatureStealthMode()))
+                {
+                    ActiveCard.Resume(StoryPauseSource.Popup);
+                }
+            }
+        }
+
+        private async void SaveStory(StoryViewModel story)
+        {
+            if (story.ClientService.IsPremium)
+            {
+                ViewModel.SaveStory(story);
+            }
+            else
+            {
+                ActiveCard.Suspend(StoryPauseSource.Popup);
+
+                if (await ContinuePopupAsync(true, new PremiumStoryFeatureSaveStories()))
+                {
+                    ActiveCard.Resume(StoryPauseSource.Popup);
+                }
+            }
         }
 
         private void Flyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)

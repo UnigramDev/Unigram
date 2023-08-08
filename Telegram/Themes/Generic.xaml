@@ -2887,6 +2887,8 @@
                 Value="{ThemeResource ChatUnreadBadgeBrush}" />
         <Setter Property="Foreground"
                 Value="{ThemeResource ChatUnreadLabelBrush}" />
+        <Setter Property="CornerRadius"
+                Value="8" />
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">
@@ -2894,7 +2896,7 @@
                 <ControlTemplate TargetType="local:BadgeControl">
                     <Grid x:Name="LayoutRoot"
                           Background="{ThemeResource ChatUnreadBadgeBrush}"
-                          CornerRadius="8"
+                          CornerRadius="{TemplateBinding CornerRadius}"
                           Height="16"
                           MinWidth="16">
                         <VisualStateManager.VisualStateGroups>
@@ -3580,7 +3582,7 @@
     <Style TargetType="chats:ChatTextBox"
            BasedOn="{StaticResource DefaultChatTextBoxStyle}" />
 
-    <Style TargetType="local:OverlayPage">
+    <Style TargetType="local:OverlayWindow">
         <Setter Property="Foreground"
                 Value="{ThemeResource SystemControlPageTextBaseHighBrush}" />
         <Setter Property="Background"
@@ -3595,7 +3597,7 @@
                 Value="False" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:OverlayPage">
+                <ControlTemplate TargetType="local:OverlayWindow">
                     <Border x:Name="Container"
                             Background="{TemplateBinding OverlayBrush}"
                             Padding="{TemplateBinding Padding}">

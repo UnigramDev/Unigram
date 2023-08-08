@@ -43,6 +43,7 @@ using Telegram.Views.Settings;
 using Telegram.Views.Settings.Password;
 using Telegram.Views.Settings.Popups;
 using Telegram.Views.Settings.Privacy;
+using Telegram.Views.Stories.Popups;
 using Telegram.Views.Supergroups;
 using Telegram.Views.Users;
 using Windows.ApplicationModel;

@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Collections.Generic;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
@@ -14,6 +15,8 @@ namespace Telegram.ViewModels.Delegates
     public interface IMessageDelegate : IViewModelDelegate
     {
         bool IsDialog { get; }
+
+        INavigationService NavigationService { get; }
 
         ISettingsService Settings { get; }
 

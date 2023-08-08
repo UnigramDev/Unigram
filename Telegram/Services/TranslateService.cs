@@ -14,6 +14,7 @@ namespace Telegram.Services
     public interface ITranslateService
     {
         bool CanTranslate(string text);
+        bool CanTranslate(FormattedText text);
 
         Task<object> TranslateAsync(long chatId, long messageId, string toLanguage);
         Task<object> TranslateAsync(string text, string toLanguage);
@@ -25,20 +26,20 @@ namespace Telegram.Services
         private readonly IClientService _clientService;
         private readonly ISettingsService _settings;
 
-        private readonly string[] _userAgents = new string[]
-        {
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36", // 13.5%
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36", // 6.6%
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0", // 6.4%
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:95.0) Gecko/20100101 Firefox/95.0", // 6.2%
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36", // 5.2%
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36" // 4.8%
-        };
-
         public TranslateService(IClientService clientService, ISettingsService settings)
         {
             _clientService = clientService;
             _settings = settings;
+        }
+
+        public bool CanTranslate(FormattedText text)
+        {
+            if (text == null)
+            {
+                return false;
+            }
+
+            return CanTranslate(text.Text);
         }
 
         public bool CanTranslate(string text)

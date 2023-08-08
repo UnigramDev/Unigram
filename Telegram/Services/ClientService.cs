@@ -159,6 +159,8 @@ namespace Telegram.Services
 
         ChatListUnreadCount GetUnreadCount(ChatList chatList);
 
+        UpdateStoryStealthMode StealthMode { get; }
+
         ChatTheme GetChatTheme(string themeName);
         IList<ChatTheme> GetChatThemes();
 
@@ -237,6 +239,8 @@ namespace Telegram.Services
         private UpdateAnimationSearchParameters _animationSearchParameters;
 
         private UpdateChatThemes _chatThemes;
+
+        private UpdateStoryStealthMode _storyStealthMode = new();
 
         private TaskCompletionSource<bool> _authorizationStateTask = new();
         private AuthorizationState _authorizationState;
@@ -683,6 +687,8 @@ namespace Telegram.Services
         public Client Client => _client;
 
         #region Cache
+
+        public UpdateStoryStealthMode StealthMode => _storyStealthMode;
 
         public ChatListUnreadCount GetUnreadCount(ChatList chatList)
         {
@@ -1910,6 +1916,10 @@ namespace Telegram.Services
                 {
                     _selectedBackground = updateSelectedBackground.Background;
                 }
+            }
+            else if (update is UpdateStoryStealthMode updateStoryStealthMode)
+            {
+                _storyStealthMode = updateStoryStealthMode;
             }
             else if (update is UpdateSupergroup updateSupergroup)
             {

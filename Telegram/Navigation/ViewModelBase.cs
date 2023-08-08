@@ -127,24 +127,24 @@ namespace Telegram.Navigation
             _ = NavigationService.ShowPopupAsync(sourcePopupType, parameter, tsc, requestedTheme);
         }
 
-        public Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        public Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return MessagePopup.ShowAsync(message, title, primary, secondary, dangerous);
+            return MessagePopup.ShowAsync(message, title, primary, secondary, dangerous, requestedTheme);
         }
 
-        public Task<ContentDialogResult> ShowPopupAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        public Task<ContentDialogResult> ShowPopupAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return MessagePopup.ShowAsync(message, title, primary, secondary, dangerous);
+            return MessagePopup.ShowAsync(message, title, primary, secondary, dangerous, requestedTheme);
         }
 
-        public void ShowPopup(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        public void ShowPopup(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            _ = MessagePopup.ShowAsync(message, title, primary, secondary, dangerous);
+            _ = MessagePopup.ShowAsync(message, title, primary, secondary, dangerous, requestedTheme);
         }
 
-        public void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        public void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            _ = MessagePopup.ShowAsync(message, title, primary, secondary, dangerous);
+            _ = MessagePopup.ShowAsync(message, title, primary, secondary, dangerous, requestedTheme);
         }
 
         #endregion

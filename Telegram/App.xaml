@@ -3,12 +3,10 @@
                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                          xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
                          xmlns:media="using:Microsoft.UI.Xaml.Media"
-                         xmlns:navigation="using:Telegram.Navigation"
-                         xmlns:themes="using:Telegram.Themes"
                          xmlns:common="using:Telegram.Common"
-                         xmlns:views="using:Telegram.Views"
                          xmlns:converters="using:Telegram.Converters"
-                         xmlns:local="using:Telegram">
+                         xmlns:navigation="using:Telegram.Navigation"
+                         xmlns:themes="using:Telegram.Themes">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -362,6 +360,27 @@
                               Offset="0.5333" />
                 <GradientStop Color="#E46ACE"
                               Offset="1.2065" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="StoryPrivacyCloseFriendsBrush"
+                                 EndPoint="0,1">
+                <GradientStop Color="#FF78d538" />
+                <GradientStop Color="#FF2ab56d"
+                              Offset="1" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="StoryPrivacySelectedContactsBrush"
+                                 EndPoint="0,1">
+                <GradientStop Color="#FFffb743" />
+                <GradientStop Color="#FFf69a36"
+                              Offset="1" />
+            </LinearGradientBrush>
+
+            <LinearGradientBrush x:Key="StoryPrivacyContactsBrush"
+                                 EndPoint="0,1">
+                <GradientStop Color="#FFc36eff" />
+                <GradientStop Color="#FF8b60fa"
+                              Offset="1" />
             </LinearGradientBrush>
 
             <ResourceDictionary.MergedDictionaries>

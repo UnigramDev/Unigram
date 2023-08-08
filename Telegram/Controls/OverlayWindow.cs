@@ -40,6 +40,8 @@ namespace Telegram.Controls
 
         public event EventHandler Closing;
 
+        public static OverlayWindow Current { get; private set; }
+
         public OverlayWindow()
         {
             DefaultStyleKey = typeof(OverlayWindow);
@@ -118,6 +120,7 @@ namespace Telegram.Controls
 
         public async Task<ContentDialogResult> ShowAsync()
         {
+            Current = this;
             Margin = new Thickness();
 
 #if DEBUG
@@ -287,6 +290,11 @@ namespace Telegram.Controls
 
             _result = result;
             _popupHost.IsOpen = false;
+
+            if (Current == this)
+            {
+                Current = null;
+            }
         }
 
         protected override void OnApplyTemplate()

@@ -118,11 +118,11 @@ namespace Telegram.Controls
             }
             else if (unreadCount > 0)
             {
-                UpdateSegments(side, closeFriends, 1, 1, false);
+                UpdateSegments(side, closeFriends, 1, 1, 3.0f, 3.0f);
             }
             else
             {
-                UpdateSegments(side, false, 1, 0, false);
+                UpdateSegments(side, false, 1, 0, 3.0f, 3.0f);
             }
         }
 
@@ -183,7 +183,7 @@ namespace Telegram.Controls
             UpdateSegments(side, closeFriends, 1, unread ? 1 : 0);
         }
 
-        public void UpdateSegments(int side, int total, int unread)
+        public void UpdateSegments(int side, int total, int unread, float unreadThickness = 2.0f, float readThickness = 1.0f)
         {
             if (total > 0)
             {
@@ -191,11 +191,11 @@ namespace Telegram.Controls
                 {
                     var visual = ElementCompositionPreview.GetElementVisual(elementa);
                     visual.CenterPoint = new Vector3(side / 2);
-                    visual.Scale = new Vector3((side - 8f) / side);
+                    visual.Scale = new Vector3((side - unreadThickness * 4) / side);
                 }
 
                 _hasActiveStories = true;
-                UpdateSegments(side, false, total, unread);
+                UpdateSegments(side, false, total, unread, unreadThickness, readThickness);
             }
             else if (_hasActiveStories && Content is UIElement element)
             {
@@ -207,13 +207,13 @@ namespace Telegram.Controls
             }
         }
 
-        private void UpdateSegments(int side, bool closeFriends, int total, int unread, bool precise = true)
+        private void UpdateSegments(int side, bool closeFriends, int total, int unread, float unreadThickness = 2.0f, float readThickness = 1.0f)
         {
             var compositor = Window.Current.Compositor;
             var read = total - unread;
 
-            var unreadPath = GetSegments(compositor, side, total, 0, unread, 2.0f);
-            var readPath = GetSegments(compositor, side, total, unread, read, 1.0f);
+            var unreadPath = GetSegments(compositor, side, total, 0, unread, unreadThickness, unreadThickness * 2);
+            var readPath = GetSegments(compositor, side, total, unread, read, readThickness, unreadThickness * 2);
 
             var segments = compositor.CreateShapeVisual();
             segments.Size = new Vector2(side);
@@ -221,14 +221,14 @@ namespace Telegram.Controls
             if (unreadPath != null)
             {
                 var unreadStroke = compositor.CreateLinearGradientBrush();
-                unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(0, closeFriends ? _storyCloseFriendTopColor : _storyUnreadTopColor));
-                unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(1, closeFriends ? _storyCloseFriendBottomColor : _storyUnreadBottomColor));
+                unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(0, TopColor ?? (closeFriends ? _storyCloseFriendTopColor : _storyUnreadTopColor)));
+                unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(1, BottomColor ?? (closeFriends ? _storyCloseFriendBottomColor : _storyUnreadBottomColor)));
                 unreadStroke.EndPoint = new Vector2(0, 1);
 
                 var unreadShape = compositor.CreateSpriteShape();
                 unreadShape.Geometry = unreadPath;
                 unreadShape.StrokeBrush = unreadStroke;
-                unreadShape.StrokeThickness = precise ? 2 : 3;
+                unreadShape.StrokeThickness = unreadThickness;
                 unreadShape.StrokeStartCap = CompositionStrokeCap.Round;
                 unreadShape.StrokeEndCap = CompositionStrokeCap.Round;
                 unreadShape.IsStrokeNonScaling = true;
@@ -243,7 +243,7 @@ namespace Telegram.Controls
                 var readShape = compositor.CreateSpriteShape();
                 readShape.Geometry = readPath;
                 readShape.StrokeBrush = readStroke;
-                readShape.StrokeThickness = precise ? 1 : 3;
+                readShape.StrokeThickness = readThickness;
                 readShape.StrokeStartCap = CompositionStrokeCap.Round;
                 readShape.StrokeEndCap = CompositionStrokeCap.Round;
                 readShape.IsStrokeNonScaling = true;
@@ -254,7 +254,7 @@ namespace Telegram.Controls
             ElementCompositionPreview.SetElementChildVisual(this, segments);
         }
 
-        private CompositionGeometry GetSegments(Compositor compositor, float side, float segments, int index, int length, float thickness = 2.0f)
+        private CompositionGeometry GetSegments(Compositor compositor, float side, float segments, int index, int length, float thickness = 2.0f, float spacing = 4.0f)
         {
             var center = new Vector2(side * 0.5f);
             var radius = center.X - (thickness * 0.5f);
@@ -277,7 +277,7 @@ namespace Telegram.Controls
             {
                 var startAngle = MathFEx.ToRadians(360f / segments);
 
-                var spacing = 4.0f;
+                //var spacing = 4.0f;
                 var angularSpacing = spacing / radius;
                 var circleLength = MathF.PI * 2.0f * radius;
                 var segmentLength = (circleLength - spacing * segments) / segments;
@@ -323,8 +323,8 @@ namespace Telegram.Controls
             var linear = compositor.CreateLinearEasingFunction();
 
             var unreadStroke = compositor.CreateLinearGradientBrush();
-            unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(0, unreadCount > 0 ? closeFriends ? _storyCloseFriendTopColor : _storyUnreadTopColor : _storyDefaultColor));
-            unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(1, unreadCount > 0 ? closeFriends ? _storyCloseFriendBottomColor : _storyUnreadBottomColor : _storyDefaultColor));
+            unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(0, TopColor ?? (unreadCount > 0 ? closeFriends ? _storyCloseFriendTopColor : _storyUnreadTopColor : _storyDefaultColor)));
+            unreadStroke.ColorStops.Add(compositor.CreateColorGradientStop(1, BottomColor ?? (unreadCount > 0 ? closeFriends ? _storyCloseFriendBottomColor : _storyUnreadBottomColor : _storyDefaultColor)));
             unreadStroke.MappingMode = CompositionMappingMode.Absolute;
             unreadStroke.StartPoint = new Vector2(0, 0);
             unreadStroke.EndPoint = new Vector2(0, side);
@@ -391,5 +391,8 @@ namespace Telegram.Controls
             DependencyProperty.Register("IsClickEnabled", typeof(bool), typeof(ActiveStoriesSegments), new PropertyMetadata(true));
 
         #endregion
+
+        public Color? TopColor { get; set; }
+        public Color? BottomColor { get; set; }
     }
 }

@@ -124,11 +124,20 @@
   <data name="AccDescrEmojiButton" xml:space="preserve">
     <value>Emoji, stickers, and GIFs</value>
   </data>
+  <data name="AccDescrExitFullScreen" xml:space="preserve">
+    <value>Exit full screen</value>
+  </data>
+  <data name="AccDescrExitMiniPlayer" xml:space="preserve">
+    <value>Exit mini player</value>
+  </data>
   <data name="AccDescrExpandPanel" xml:space="preserve">
     <value>Expand panel</value>
   </data>
   <data name="AccDescrForwarding" xml:space="preserve">
     <value>Forwarding from</value>
+  </data>
+  <data name="AccDescrFullScreen" xml:space="preserve">
+    <value>Full screen</value>
   </data>
   <data name="AccDescrGIFs" xml:space="preserve">
     <value>GIFs</value>
@@ -150,6 +159,9 @@
   </data>
   <data name="AccDescrMentionDown" xml:space="preserve">
     <value>Go to next mention</value>
+  </data>
+  <data name="AccDescrMiniPlayer" xml:space="preserve">
+    <value>Mini player</value>
   </data>
   <data name="AccDescrMoreOptions" xml:space="preserve">
     <value>More options</value>
@@ -232,6 +244,9 @@
   <data name="AccDescrSecretChat" xml:space="preserve">
     <value>Secret chat</value>
   </data>
+  <data name="AccDescrSeek" xml:space="preserve">
+    <value>Seek</value>
+  </data>
   <data name="AccDescrSentDate" xml:space="preserve">
     <value>Sent {0}</value>
   </data>
@@ -252,6 +267,9 @@
   </data>
   <data name="AccDescrVoiceMessage" xml:space="preserve">
     <value>Record voice message</value>
+  </data>
+  <data name="AccDescrVolume" xml:space="preserve">
+    <value>Volume</value>
   </data>
   <data name="Accept" xml:space="preserve">
     <value>Accept</value>
@@ -897,6 +915,9 @@ Right click the archive button to return the Archive to your chat list.</value>
   <data name="AreYouSureBlockContact" xml:space="preserve">
     <value>Are you sure you want to block this contact?</value>
   </data>
+  <data name="AreYouSureBlockContact2" xml:space="preserve">
+    <value>Are you sure you want to block **{0}**?</value>
+  </data>
   <data name="AreYouSureClearDrafts" xml:space="preserve">
     <value>Are you sure you want to delete all cloud drafts?</value>
   </data>
@@ -1251,6 +1272,9 @@ Please enable Unigram in the Startup Apps Settings.</value>
   </data>
   <data name="Available" xml:space="preserve">
     <value>Available</value>
+  </data>
+  <data name="AvailableIn" xml:space="preserve">
+    <value>Available in {0}</value>
   </data>
   <data name="AvailableReactions" xml:space="preserve">
     <value>Available reactions</value>
@@ -1660,6 +1684,9 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   </data>
   <data name="ChannelJoin" xml:space="preserve">
     <value>JOIN</value>
+  </data>
+  <data name="ChannelJoin2" xml:space="preserve">
+    <value>Join</value>
   </data>
   <data name="ChannelJoined" xml:space="preserve">
     <value>You joined this channel</value>
@@ -2759,6 +2786,9 @@ You&apos;ll need the password you set up here to log in to your Telegram account
   <data name="EnableSomeReactionsInfo" xml:space="preserve">
     <value>Members of the group can use only certain approved emoji as reactions to messages.</value>
   </data>
+  <data name="EnableStealthMode" xml:space="preserve">
+    <value>Enable Stealth Mode</value>
+  </data>
   <data name="EnableStreaming" xml:space="preserve">
     <value>Stream Videos and Audio Files</value>
   </data>
@@ -3130,6 +3160,9 @@ Duration: {1}</value>
   </data>
   <data name="ExpiredViewsStub" xml:space="preserve">
     <value>List of viewers becomes unavailable **24 hours** after the story expires.</value>
+  </data>
+  <data name="ExpiredViewsStubPremiumDescription" xml:space="preserve">
+    <value>To unlock viewers’ lists for expired and saved stories, subscribe to **Telegram Premium.**</value>
   </data>
   <data name="Fade" xml:space="preserve">
     <value>Fade</value>
@@ -3647,11 +3680,23 @@ They can still join via an invite link as long as they are not on the Removed Us
   <data name="HideNewChatsAlertTitle" xml:space="preserve">
     <value>Hide new chats?</value>
   </data>
+  <data name="HideNextViews" xml:space="preserve">
+    <value>Hide Next Views</value>
+  </data>
+  <data name="HideNextViewsDescription" xml:space="preserve">
+    <value>Hide my views in the next 25 minutes.</value>
+  </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>Hide</value>
   </data>
   <data name="HidePinnedMessages" xml:space="preserve">
     <value>HIDE PINNED MESSAGES</value>
+  </data>
+  <data name="HideRecentViews" xml:space="preserve">
+    <value>Hide Recent Views</value>
+  </data>
+  <data name="HideRecentViewsDescription" xml:space="preserve">
+    <value>Hide my views in the last 5 minutes.</value>
   </data>
   <data name="HideSenderNames" xml:space="preserve">
     <value>Hide Sender Names</value>
@@ -3914,6 +3959,9 @@ You can change your language back at any time in Settings.</value>
   </data>
   <data name="Lately" xml:space="preserve">
     <value>last seen recently</value>
+  </data>
+  <data name="LearnMore" xml:space="preserve">
+    <value>Learn More</value>
   </data>
   <data name="LeaveAComment" xml:space="preserve">
     <value>Leave a comment</value>
@@ -5134,6 +5182,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PlainTextRestrictedHint" xml:space="preserve">
     <value>Text not allowed</value>
   </data>
+  <data name="PlayerAudioMute" xml:space="preserve">
+    <value>Mute</value>
+  </data>
+  <data name="PlayerAudioUnmute" xml:space="preserve">
+    <value>Unmute</value>
+  </data>
   <data name="PleaseEnterCurrentPasswordTransfer" xml:space="preserve">
     <value>Please enter your password to complete the transfer.</value>
   </data>
@@ -5248,6 +5302,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PremiumPreviewStickersDescription" xml:space="preserve">
     <value>Exclusive enlarged stickers featuring additional effects, updated monthly.</value>
   </data>
+  <data name="PremiumPreviewStories" xml:space="preserve">
+    <value>Upgraded Stories</value>
+  </data>
+  <data name="PremiumPreviewStoriesDescription" xml:space="preserve">
+    <value>Priority order, stealth mode, permanent views history and more.</value>
+  </data>
   <data name="PremiumPreviewTranslations" xml:space="preserve">
     <value>Real-Time Translation</value>
   </data>
@@ -5268,6 +5328,48 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PremiumStickers" xml:space="preserve">
     <value>Premium Stickers</value>
+  </data>
+  <data name="PremiumStoriesCaption" xml:space="preserve">
+    <value>Longer Captions</value>
+  </data>
+  <data name="PremiumStoriesCaptionDescription" xml:space="preserve">
+    <value>Add ten times longer captions to your stories — up to 2048 symbols.</value>
+  </data>
+  <data name="PremiumStoriesExpiration" xml:space="preserve">
+    <value>Expiration Durations</value>
+  </data>
+  <data name="PremiumStoriesExpirationDescription" xml:space="preserve">
+    <value>Set custom expiration durations like 6 or 48 hours for your stories.</value>
+  </data>
+  <data name="PremiumStoriesFormatting" xml:space="preserve">
+    <value>Links and Formatting</value>
+  </data>
+  <data name="PremiumStoriesFormattingDescription" xml:space="preserve">
+    <value>Add links and formatting in captions of your stories.</value>
+  </data>
+  <data name="PremiumStoriesPriority" xml:space="preserve">
+    <value>Priority Order</value>
+  </data>
+  <data name="PremiumStoriesPriorityDescription" xml:space="preserve">
+    <value>Get more views as your stories are always displayed first.</value>
+  </data>
+  <data name="PremiumStoriesSaveToGallery" xml:space="preserve">
+    <value>Save Stories to Gallery</value>
+  </data>
+  <data name="PremiumStoriesSaveToGalleryDescription" xml:space="preserve">
+    <value>Save other people’s unprotected stories to your Gallery.</value>
+  </data>
+  <data name="PremiumStoriesStealth" xml:space="preserve">
+    <value>Stealth Mode</value>
+  </data>
+  <data name="PremiumStoriesStealthDescription" xml:space="preserve">
+    <value>Hide the fact that you viewed other people’s stories.</value>
+  </data>
+  <data name="PremiumStoriesViews" xml:space="preserve">
+    <value>Permanent Views History</value>
+  </data>
+  <data name="PremiumStoriesViewsDescription" xml:space="preserve">
+    <value>Check who opens your stories — even after they expire.</value>
   </data>
   <data name="PreviewFeedback2" xml:space="preserve">
     <value>Wrong layout?</value>
@@ -5663,6 +5765,21 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="ReportUnrelatedGroupTextNoAddress" xml:space="preserve">
     <value>Please let us know if this group is not related to this location.</value>
+  </data>
+  <data name="RequestToJoin" xml:space="preserve">
+    <value>REQUEST TO JOIN</value>
+  </data>
+  <data name="RequestToJoin2" xml:space="preserve">
+    <value>Request to Join</value>
+  </data>
+  <data name="RequestToJoinChannelDescription" xml:space="preserve">
+    <value>This channel accepts new subscribers only after they are approved by its admins.</value>
+  </data>
+  <data name="RequestToJoinChannelSentDescription" xml:space="preserve">
+    <value>You will be added to the channel once its admins approve your request.</value>
+  </data>
+  <data name="RequestToJoinSent" xml:space="preserve">
+    <value>Join request sent</value>
   </data>
   <data name="Reset" xml:space="preserve">
     <value>Reset</value>
@@ -6316,6 +6433,24 @@ and enter your phone number.</value>
   <data name="StatisticViews" xml:space="preserve">
     <value>Views</value>
   </data>
+  <data name="StealthMode" xml:space="preserve">
+    <value>Stealth Mode</value>
+  </data>
+  <data name="StealthModeActiveHint" xml:space="preserve">
+    <value>Stealth Mode active - {0}</value>
+  </data>
+  <data name="StealthModeHint" xml:space="preserve">
+    <value>Turn Stealth Mode on to hide the fact that you viewed peoples’ storis from them.</value>
+  </data>
+  <data name="StealthModeOn" xml:space="preserve">
+    <value>Stealth Mode On</value>
+  </data>
+  <data name="StealthModeOnHint" xml:space="preserve">
+    <value>The creators of stories you viewed in the last 5 minutes or will view in the next 25 minutes won’t see you in viewers’ lists.</value>
+  </data>
+  <data name="StealthModePremiumHint" xml:space="preserve">
+    <value>Subscribe to Premium to hide the fact that you viewed peoples’ stories from them.</value>
+  </data>
   <data name="Stickers_one" xml:space="preserve">
     <value>{0} sticker</value>
   </data>
@@ -6409,6 +6544,12 @@ and enter your phone number.</value>
   <data name="StoryContactsHintSelf" xml:space="preserve">
     <value>Only your contacts can view this story.</value>
   </data>
+  <data name="StoryHiddenHint" xml:space="preserve">
+    <value>**{0}** will not see your stories anymore.</value>
+  </data>
+  <data name="StoryHideFrom" xml:space="preserve">
+    <value>Hide My Stories From {0}</value>
+  </data>
   <data name="StoryMentionedAction" xml:space="preserve">
     <value>View Story</value>
   </data>
@@ -6420,6 +6561,9 @@ and enter your phone number.</value>
   </data>
   <data name="StoryNoSound" xml:space="preserve">
     <value>This video has no sound</value>
+  </data>
+  <data name="StoryNotFound" xml:space="preserve">
+    <value>This story is no longer available</value>
   </data>
   <data name="StoryRemovedFromProfile" xml:space="preserve">
     <value>Story removed from your profile.</value>
@@ -6436,8 +6580,17 @@ and enter your phone number.</value>
   <data name="StorySelectedContactsHintSelf" xml:space="preserve">
     <value>Only some contacts you selected can view this story.</value>
   </data>
+  <data name="StoryShownHint" xml:space="preserve">
+    <value>**{0}** will now see your stories.</value>
+  </data>
+  <data name="StoryShowTo" xml:space="preserve">
+    <value>Show My Stories To {0}</value>
+  </data>
   <data name="StoryUnsupported" xml:space="preserve">
     <value>This story is not supported by your version of Telegram.</value>
+  </data>
+  <data name="StoryViewLocation" xml:space="preserve">
+    <value>View Location &gt;</value>
   </data>
   <data name="StoryYouMentionedTitle" xml:space="preserve">
     <value>**You** mentioned {0} in a story.</value>
@@ -6459,6 +6612,9 @@ and enter your phone number.</value>
   </data>
   <data name="SubscribeToPremium" xml:space="preserve">
     <value>Subscribe for {0} per month</value>
+  </data>
+  <data name="SubscribeToPremiumPerYear" xml:space="preserve">
+    <value>Subscribe for {0} per year</value>
   </data>
   <data name="SuggestAnimatedEmoji" xml:space="preserve">
     <value>Suggest Animated Emoji</value>
@@ -6844,6 +7000,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="UnlockPremiumStickers" xml:space="preserve">
     <value>Unlock Premium Stickers</value>
   </data>
+  <data name="UnlockStealthMode" xml:space="preserve">
+    <value>Unlock Stealth Mode</value>
+  </data>
   <data name="UnlockWindowsHello" xml:space="preserve">
     <value>Unlock with Windows Hello</value>
   </data>
@@ -6909,6 +7068,18 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="Updating" xml:space="preserve">
     <value>Updating...</value>
+  </data>
+  <data name="UpgradedStories" xml:space="preserve">
+    <value>Upgraded Stories</value>
+  </data>
+  <data name="UpgradePremiumPerMonth" xml:space="preserve">
+    <value>Upgrade for {0} per year</value>
+  </data>
+  <data name="UpgradePremiumPerYear" xml:space="preserve">
+    <value>Upgrade for {0} per year</value>
+  </data>
+  <data name="UpgradeStories" xml:space="preserve">
+    <value>Upgrade Stories</value>
   </data>
   <data name="UploadSound" xml:space="preserve">
     <value>Upload sound</value>

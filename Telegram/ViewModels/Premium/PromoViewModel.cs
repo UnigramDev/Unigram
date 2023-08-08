@@ -126,6 +126,18 @@ namespace Telegram.ViewModels.Premium
 
                 return true;
             }
+            else if (feature is PremiumFeatureUpgradedStories)
+            {
+                var popup = new StoriesPopup(ClientService, NavigationService, Option.PaymentOption);
+                await ShowPopupAsync(popup);
+
+                if (popup.ShouldPurchase && !ClientService.IsPremium)
+                {
+                    return false;
+                }
+
+                return true;
+            }
             else
             {
                 var popup = new FeaturesPopup(ClientService, Option.PaymentOption, Features, _animations, _stickers, feature);
