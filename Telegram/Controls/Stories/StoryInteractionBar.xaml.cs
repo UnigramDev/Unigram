@@ -41,6 +41,12 @@ namespace Telegram.Controls.Stories
                     : Visibility.Collapsed;
 
                 ViewersCount.Text = Locale.Declension(Strings.R.Views, story.InteractionInfo.ViewCount);
+
+                ReactionCount.Text = story.InteractionInfo.ReactionCount.ToString("N0");
+                ReactionCount.Visibility =
+                    ReactionIcon.Visibility = story.InteractionInfo.ReactionCount > 0
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
             }
             else
             {
@@ -48,6 +54,9 @@ namespace Telegram.Controls.Stories
                 Viewers.Visibility = Visibility.Collapsed;
 
                 ViewersCount.Text = Strings.NobodyViews;
+
+                ReactionCount.Visibility =
+                    ReactionIcon.Visibility = Visibility.Collapsed;
             }
         }
 

@@ -18,12 +18,14 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <HyperlinkButton x:Name="ViewersButton"
-                         CornerRadius="13,4,4,13"
+                         CornerRadius="13"
                          VerticalAlignment="Stretch"
                          Margin="4"
                          Padding="0">
             <Grid Background="Transparent">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
@@ -34,8 +36,22 @@
                 <controls:AnimatedTextBlock x:Name="ViewersCount"
                                             VerticalAlignment="Center"
                                             Foreground="#FFFFFF"
-                                            Margin="8,1,8,3"
+                                            Margin="8,1,12,3"
                                             Grid.Column="1" />
+
+                <TextBlock x:Name="ReactionIcon"
+                           Text="&#xE985;"
+                           VerticalAlignment="Center"
+                           Foreground="#FF0000"
+                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                           FontSize="20"
+                           Grid.Column="2" />
+
+                <controls:AnimatedTextBlock x:Name="ReactionCount"
+                                            VerticalAlignment="Center"
+                                            Foreground="#FFFFFF"
+                                            Margin="4,1,12,3"
+                                            Grid.Column="3" />
             </Grid>
         </HyperlinkButton>
 
