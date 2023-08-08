@@ -166,6 +166,8 @@
                                      Grid.Column="5" />
             </Grid>
 
+            <Canvas x:Name="AreasPanel" />
+
             <Grid x:Name="CaptionRoot">
                 <Grid.RowDefinitions>
                     <RowDefinition />

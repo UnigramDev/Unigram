@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
@@ -73,6 +74,8 @@ namespace Telegram.ViewModels.Stories
             IsVisibleOnlyForSelf = story.IsVisibleOnlyForSelf;
             IsPinned = story.IsPinned;
             HasExpiredViewers = story.HasExpiredViewers;
+            Areas = story.Areas;
+            ChosenReactionType = story.ChosenReactionType;
         }
 
         public Task Wait => _task?.Task ?? Task.CompletedTask;
@@ -125,6 +128,15 @@ namespace Telegram.ViewModels.Stories
         /// </summary>
         public bool HasExpiredViewers { get; private set; }
 
+        /// <summary>
+        /// Clickable areas to be shown on the story content.
+        /// </summary>
+        public IList<StoryArea> Areas { get; private set; }
+
+        /// <summary>
+        /// Type of the chosen reaction; may be null if none.
+        /// </summary>
+        public ReactionType ChosenReactionType { get; private set; }
 
         public void Load()
         {
@@ -174,6 +186,16 @@ namespace Telegram.ViewModels.Stories
                     ClientService.DownloadFile(thumbnail.File.Id, 30);
                 }
             }
+        }
+
+        public File GetFile()
+        {
+            return Content switch
+            {
+                StoryContentPhoto photo => photo.Photo.GetBig()?.Photo,
+                StoryContentVideo video => video.Video.Video,
+                _ => null
+            };
         }
     }
 }

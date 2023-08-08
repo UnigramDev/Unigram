@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
+using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Stories
 {
@@ -128,6 +129,8 @@ namespace Telegram.Controls.Stories
             {
                 ShowSkeleton();
             }
+
+            UpdateAreas();
         }
 
         public event RoutedEventHandler Click
@@ -345,6 +348,59 @@ namespace Telegram.Controls.Stories
                 CaptionRoot.Visibility = Visibility.Visible;
                 Caption.SetText(story.ClientService, story.Caption);
                 Overflow.LayoutUpdated += Overflow_LayoutUpdated;
+            }
+
+            UpdateAreas();
+        }
+
+        private void UpdateAreas()
+        {
+            AreasPanel.Children.Clear();
+
+            var story = _viewModel?.SelectedItem;
+            if (story?.Areas == null)
+            {
+                return;
+            }
+
+            foreach (var area in story.Areas)
+            {
+                var button = new HyperlinkButton
+                {
+                    Content = new Border
+                    {
+                        Width = 24,
+                        Height = 24,
+                        HorizontalAlignment = HorizontalAlignment.Center
+                    },
+                    Width = area.Position.WidthPercentage / 100 * ActualWidth,
+                    Height = area.Position.HeightPercentage / 100 * ActualHeight,
+                    RenderTransformOrigin = new Point(0.5, 0.5),
+                    RenderTransform = new RotateTransform
+                    {
+                        Angle = area.Position.RotationAngle
+        }
+                };
+
+                Canvas.SetLeft(button, area.Position.XPercentage / 100 * ActualWidth - button.Width / 2);
+                Canvas.SetTop(button, area.Position.YPercentage / 100 * ActualHeight - button.Height / 2);
+
+                AreasPanel.Children.Add(button);
+
+                button.Tag = area;
+                button.Click += Area_Click;
+            }
+        }
+
+        private void Area_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is HyperlinkButton element && element.Tag is StoryArea area)
+            {
+                if (area.Type is StoryAreaTypeLocation or StoryAreaTypeVenue)
+                {
+                    var window = element.Ancestors<StoriesWindow>().FirstOrDefault();
+                    window?.ShowTeachingTip(element.Content as Border, Strings.StoryViewLocation, TeachingTipPlacementMode.Top);
+                }
             }
         }
 
