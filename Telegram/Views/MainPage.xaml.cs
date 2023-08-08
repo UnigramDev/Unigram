@@ -2183,12 +2183,12 @@ namespace Telegram.Views
             if (folder.ChatFolderId == Constants.ChatListMain)
             {
                 flyout.CreateFlyoutItem(ViewModel.EditFolder, folder, Strings.FilterEditAll, Icons.Edit);
-                flyout.CreateFlyoutItem(ViewModel.MarkFolderAsRead, folder, Strings.MarkAsRead, Icons.MarkAsRead);
+                flyout.CreateFlyoutItem(ViewModel.MarkFolderAsRead, folder, Strings.MarkAllAsRead, Icons.MarkAsRead);
             }
             else
             {
                 flyout.CreateFlyoutItem(ViewModel.EditFolder, folder, Strings.FilterEdit, Icons.Edit);
-                flyout.CreateFlyoutItem(ViewModel.MarkFolderAsRead, folder, Strings.MarkAsRead, Icons.MarkAsRead);
+                flyout.CreateFlyoutItem(ViewModel.MarkFolderAsRead, folder, Strings.MarkAllAsRead, Icons.MarkAsRead);
                 flyout.CreateFlyoutItem(ViewModel.AddToFolder, folder, Strings.FilterAddChats, Icons.Add);
                 flyout.CreateFlyoutSeparator();
                 flyout.CreateFlyoutItem(ViewModel.DeleteFolder, folder, Strings.Remove, Icons.Delete, dangerous: true);
