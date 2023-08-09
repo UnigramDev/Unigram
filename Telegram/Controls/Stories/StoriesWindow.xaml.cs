@@ -829,15 +829,7 @@ namespace Telegram.Controls.Stories
             flyout.Closing += Flyout_Closing;
             flyout.Opened += async (s, args) =>
             {
-                var msg = activeStories.Chat?.LastMessage;
-                if (msg == null)
-                {
-                    return;
-                }
-
-                var message = new ViewModels.MessageViewModel(activeStories.ClientService, null, null, activeStories.Chat, msg);
-
-                var response = await activeStories.ClientService.SendAsync(new GetMessageAvailableReactions(message.ChatId, message.Id, 8));
+                var response = await activeStories.ClientService.SendAsync(new GetStoryAvailableReactions(8));
                 if (response is AvailableReactions reactions && flyout.IsOpen)
                 {
                     if (reactions.TopReactions.Count > 0
@@ -860,8 +852,25 @@ namespace Telegram.Controls.Stories
         {
             var element = sender as FrameworkElement;
 
+            var activeStories = e.ActiveStories;
+            var story = activeStories.SelectedItem;
+
             var flyout = new MenuFlyout();
             flyout.Closing += Flyout_Closing;
+            flyout.Opened += async (s, args) =>
+            {
+                var response = await activeStories.ClientService.SendAsync(new GetStoryAvailableReactions(8));
+                if (response is AvailableReactions reactions && flyout.IsOpen)
+                {
+                    if (reactions.TopReactions.Count > 0
+                        || reactions.PopularReactions.Count > 0
+                        || reactions.RecentReactions.Count > 0)
+                    {
+                        ReactionsMenuFlyout.ShowAt(reactions, story, null, flyout);
+                    }
+                }
+            };
+
             ActiveCard.Suspend(StoryPauseSource.Flyout);
 
             PopulateMenuFlyout(flyout, e.ActiveStories);
