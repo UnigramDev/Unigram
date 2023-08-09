@@ -613,7 +613,7 @@ namespace Telegram.Services
         {
             GetProperties(message, out File file, out bool speed);
 
-            var stream = new RemoteInputStream(message.ClientService, file);
+            var stream = new RemoteFileStream(message.ClientService, file);
             var item = new PlaybackItem(stream)
             {
                 Message = message,
@@ -760,14 +760,14 @@ namespace Telegram.Services
     {
         public MessageWithOwner Message { get; set; }
 
-        public RemoteInputStream Stream { get; set; }
+        public RemoteFileStream Stream { get; set; }
 
         public string Title { get; set; }
         public string Performer { get; set; }
 
         public bool CanChangePlaybackRate { get; set; }
 
-        public PlaybackItem(RemoteInputStream stream)
+        public PlaybackItem(RemoteFileStream stream)
         {
             Stream = stream;
         }
