@@ -777,6 +777,9 @@ to: {1}</value>
   <data name="AllReactions" xml:space="preserve">
     <value>All reactions</value>
   </data>
+  <data name="AllViewers" xml:space="preserve">
+    <value>All viewers</value>
+  </data>
   <data name="ALongTimeAgo" xml:space="preserve">
     <value>last seen a long time ago</value>
   </data>
@@ -6354,6 +6357,12 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SomeReactions" xml:space="preserve">
     <value>Some reactions</value>
   </data>
+  <data name="SortByReactions" xml:space="preserve">
+    <value>Reactions First</value>
+  </data>
+  <data name="SortByTime" xml:space="preserve">
+    <value>Newest First</value>
+  </data>
   <data name="SortedByLastSeen" xml:space="preserve">
     <value>Sorted by last seen time</value>
   </data>
@@ -6591,6 +6600,9 @@ and enter your phone number.</value>
   </data>
   <data name="StoryViewLocation" xml:space="preserve">
     <value>View Location &gt;</value>
+  </data>
+  <data name="StoryViewsSortDescription" xml:space="preserve">
+    <value>Choose the order for the list of viewers.</value>
   </data>
   <data name="StoryYouMentionedTitle" xml:space="preserve">
     <value>**You** mentioned {0} in a story.</value>
