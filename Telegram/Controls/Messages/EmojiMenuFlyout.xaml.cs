@@ -39,6 +39,25 @@ namespace Telegram.Controls.Messages
 
         private readonly Popup _popup;
 
+        public static EmojiMenuFlyout ShowAt(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions)
+        {
+            return new EmojiMenuFlyout(element, message, bubble, reactions);
+        }
+
+        private EmojiMenuFlyout(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions)
+        {
+            InitializeComponent();
+
+            _clientService = message.ClientService;
+            _mode = EmojiDrawerMode.Reactions;
+            _message = message;
+            _bubble = bubble;
+
+            _popup = new Popup();
+
+            Initialize(message.ClientService, element, HorizontalAlignment.Center);
+        }
+
         public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, HorizontalAlignment alignment, MessageViewModel message = null, AvailableReactions reactions = null)
         {
             return new EmojiMenuFlyout(clientService, mode, element, alignment, message, reactions);
@@ -57,23 +76,23 @@ namespace Telegram.Controls.Messages
             Initialize(clientService, element, alignment);
         }
 
-        public static EmojiMenuFlyout ShowAt(IClientService clientService, FrameworkElement element, HorizontalAlignment alignment, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions)
+        public static EmojiMenuFlyout ShowAt(FrameworkElement element, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions)
         {
-            return new EmojiMenuFlyout(clientService, element, alignment, story, reserved, reactions);
+            return new EmojiMenuFlyout(element, story, reserved, reactions);
         }
 
-        private EmojiMenuFlyout(IClientService clientService, FrameworkElement element, HorizontalAlignment alignment, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions)
+        private EmojiMenuFlyout(FrameworkElement element, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions)
         {
             InitializeComponent();
 
-            _clientService = clientService;
+            _clientService = story.ClientService;
             _mode = EmojiDrawerMode.Reactions;
             _story = story;
             _reserved = reserved;
 
             _popup = new Popup();
 
-            Initialize(clientService, element, alignment);
+            Initialize(story.ClientService, element, HorizontalAlignment.Center);
         }
 
         private void Initialize(IClientService clientService, FrameworkElement element, HorizontalAlignment alignment)

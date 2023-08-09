@@ -388,7 +388,7 @@ namespace Telegram.Controls.Messages
         {
             if (_story != null)
             {
-                var flyout = EmojiMenuFlyout.ShowAt(_message.ClientService, this, HorizontalAlignment.Center, _story, _reserved, _reactions);
+                var flyout = EmojiMenuFlyout.ShowAt(this, _story, _reserved, _reactions);
                 flyout.Loaded += (s, args) =>
                 {
                     _flyout.Hide();
@@ -396,7 +396,7 @@ namespace Telegram.Controls.Messages
             }
             else if (_message != null)
             {
-                var flyout = EmojiMenuFlyout.ShowAt(_message.ClientService, EmojiDrawerMode.Reactions, this, HorizontalAlignment.Center, _message, _reactions);
+                var flyout = EmojiMenuFlyout.ShowAt(this, _message, _bubble, _reactions);
                 flyout.Loaded += (s, args) =>
                 {
                     _flyout.Hide();
