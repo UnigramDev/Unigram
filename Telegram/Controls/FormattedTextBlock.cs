@@ -6,6 +6,8 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Numerics;
+using System.Threading;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Navigation;
@@ -13,11 +15,13 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
@@ -46,6 +50,8 @@ namespace Telegram.Controls
         private bool _isHighlighted;
         private bool _ignoreSpoilers = false;
 
+        private readonly List<Paragraph> _codeBlocks = new();
+
         private TextHighlighter _spoiler;
 
         private RichTextBlock TextBlock;
@@ -59,7 +65,18 @@ namespace Telegram.Controls
 
         public bool AdjustLineEnding { get; set; }
 
-        public bool IsPreformatted { get; private set; }
+        private bool _hasCodeBlocks;
+        public bool HasCodeBlocks
+        {
+            get => _hasCodeBlocks;
+            set
+            {
+                if (_hasCodeBlocks != value)
+                {
+                    _hasCodeBlocks = value;
+                }
+            }
+        }
 
         public event EventHandler<TextEntityClickEventArgs> TextEntityClick;
 
@@ -89,6 +106,7 @@ namespace Telegram.Controls
         protected override void OnApplyTemplate()
         {
             TextBlock = GetTemplateChild(nameof(TextBlock)) as RichTextBlock;
+            TextBlock.SizeChanged += OnSizeChanged;
             TextBlock.ContextMenuOpening += _contextMenuOpening;
 
             _templateApplied = true;
@@ -119,13 +137,13 @@ namespace Telegram.Controls
         {
             // TODO: clear inlines here?
             // Probably not needed
-            }
+        }
 
         private void Adjust()
         {
             if (TextBlock?.Blocks.Count > 0 && TextBlock.Blocks[^1] is Paragraph existing)
             {
-                existing.Inlines.Add(new LineBreak());
+                TextBlock.Blocks.Add(new Paragraph());
             }
         }
 
@@ -213,9 +231,10 @@ namespace Telegram.Controls
 
                 if (_templateApplied)
                 {
+                    _codeBlocks.Clear();
                     TextBlock.Blocks.Clear();
+                }
             }
-        }
         }
 
         public void SetText(IClientService clientService, string text, IList<TextEntity> entities, double fontSize = 0)
@@ -232,6 +251,7 @@ namespace Telegram.Controls
 
                 if (_templateApplied)
                 {
+                    _codeBlocks.Clear();
                     TextBlock.Blocks.Clear();
                 }
             }
@@ -248,6 +268,7 @@ namespace Telegram.Controls
                 return;
             }
 
+            _codeBlocks.Clear();
             TextBlock.Blocks.Clear();
 
             if (string.IsNullOrEmpty(styled?.Text))
@@ -258,6 +279,7 @@ namespace Telegram.Controls
             TextHighlighter spoiler = null;
 
             var preformatted = false;
+            var lastFormatted = false;
 
             var direct = XamlDirect.GetDefault();
             var text = styled.Text;
@@ -267,192 +289,203 @@ namespace Telegram.Controls
             foreach (var part in styled.Paragraphs)
             {
                 text = styled.Text.Substring(part.Offset, part.Length);
+                lastFormatted = false;
 
                 var runs = part.Runs;
-            var previous = 0;
+                var previous = 0;
 
                 var paragraph = direct.CreateInstance(XamlTypeIndex.Paragraph);
-            var inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
+                var inlines = direct.GetXamlDirectObjectProperty(paragraph, XamlPropertyIndex.Paragraph_Inlines);
 
                 if (AutoFontSize)
-            {
+                {
                     direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
-            }
-
-            foreach (var entity in runs)
-            {
-                if (entity.Offset > previous)
-                {
-                    direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous, entity.Offset - previous), fontSize: fontSize));
                 }
 
-                if (entity.Length + entity.Offset > text.Length)
+                foreach (var entity in runs)
                 {
-                    previous = entity.Offset + entity.Length;
-                    continue;
-                }
-
-                if (entity.HasFlag(Common.TextStyle.Monospace))
-                {
-                    var data = text.Substring(entity.Offset, entity.Length);
-
-                    if (entity.Type is TextEntityTypeCode)
+                    if (entity.Offset > previous)
                     {
-                        var hyperlink = new Hyperlink();
-                        hyperlink.Click += (s, args) => Entity_Click(entity.Type, data);
-                        hyperlink.Foreground = TextBlock.Foreground;
-                        hyperlink.UnderlineStyle = UnderlineStyle.None;
-
-                        hyperlink.Inlines.Add(CreateRun(data, fontFamily: new FontFamily("Consolas"), fontSize: fontSize));
-                        direct.AddToCollection(inlines, direct.GetXamlDirectObject(hyperlink));
+                        direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous, entity.Offset - previous), fontSize: fontSize));
                     }
-                    else
+
+                    if (entity.Length + entity.Offset > text.Length)
                     {
-                        direct.AddToCollection(inlines, CreateDirectRun(data, fontFamily: new FontFamily("Consolas"), fontSize: fontSize));
-                        preformatted = entity.Type is TextEntityTypePre or TextEntityTypePreCode;
+                        previous = entity.Offset + entity.Length;
+                        continue;
                     }
-                }
-                else
-                {
-                    var local = inlines;
 
-                    if (_ignoreSpoilers is false && entity.HasFlag(Common.TextStyle.Spoiler))
+                    if (entity.HasFlag(Common.TextStyle.Monospace))
                     {
-                        var hyperlink = new Hyperlink();
-                        hyperlink.Click += (s, args) => Entity_Click(new TextEntityTypeSpoiler(), null);
-                        hyperlink.Foreground = null;
-                        hyperlink.UnderlineStyle = UnderlineStyle.None;
-                        hyperlink.FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily;
-                        //hyperlink.Foreground = foreground;
+                        var data = text.Substring(entity.Offset, entity.Length);
 
-                        spoiler ??= new TextHighlighter();
-                            spoiler.Ranges.Add(new TextRange { StartIndex = part.Offset + entity.Offset - parag, Length = entity.Length });
-
-                        var temp = direct.GetXamlDirectObject(hyperlink);
-
-                        direct.AddToCollection(inlines, temp);
-                        local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
-                    }
-                    else if (entity.HasFlag(Common.TextStyle.Mention) || entity.HasFlag(Common.TextStyle.Url))
-                    {
-                        if (entity.Type is TextEntityTypeMentionName or TextEntityTypeTextUrl)
+                        if (entity.Type is TextEntityTypeCode)
                         {
                             var hyperlink = new Hyperlink();
-                            object data;
-                            if (entity.Type is TextEntityTypeTextUrl textUrl)
-                            {
-                                data = textUrl.Url;
-                                MessageHelper.SetEntityData(hyperlink, textUrl.Url);
-                                MessageHelper.SetEntityType(hyperlink, entity.Type);
+                            hyperlink.Click += (s, args) => Entity_Click(entity.Type, data);
+                            hyperlink.Foreground = TextBlock.Foreground;
+                            hyperlink.UnderlineStyle = UnderlineStyle.None;
 
-                                ToolTipService.SetToolTip(hyperlink, textUrl.Url);
-                            }
-                            else if (entity.Type is TextEntityTypeMentionName mentionName)
-                            {
-                                data = mentionName.UserId;
-                            }
-
-                            hyperlink.Click += (s, args) => Entity_Click(entity.Type, null);
-                            hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
-                            hyperlink.UnderlineStyle = HyperlinkStyle;
-                            hyperlink.FontWeight = HyperlinkFontWeight;
-
-                            var temp = direct.GetXamlDirectObject(hyperlink);
-
-                            direct.AddToCollection(inlines, temp);
-                            local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
+                            hyperlink.Inlines.Add(CreateRun(data, fontFamily: new FontFamily("Consolas"), fontSize: fontSize));
+                            direct.AddToCollection(inlines, direct.GetXamlDirectObject(hyperlink));
                         }
                         else
                         {
+                            direct.SetObjectProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily, new FontFamily("Consolas"));
+                            direct.AddToCollection(inlines, CreateDirectRun(data));
+
+                            preformatted = true;
+                            lastFormatted = true;
+
+                            var last = part == styled.Paragraphs[^1];
+
+                            var temp = direct.GetObject(paragraph) as Paragraph;
+                            temp.Margin = new Thickness(8, 6, 8, last ? 0 : 8);
+
+                            _codeBlocks.Add(temp);
+                        }
+                    }
+                    else
+                    {
+                        var local = inlines;
+
+                        if (_ignoreSpoilers is false && entity.HasFlag(Common.TextStyle.Spoiler))
+                        {
                             var hyperlink = new Hyperlink();
-                            var original = entities.FirstOrDefault(x => x.Offset <= entity.Offset && x.Offset + x.Length >= entity.End);
+                            hyperlink.Click += (s, args) => Entity_Click(new TextEntityTypeSpoiler(), null);
+                            hyperlink.Foreground = null;
+                            hyperlink.UnderlineStyle = UnderlineStyle.None;
+                            hyperlink.FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily;
+                            //hyperlink.Foreground = foreground;
 
-                            var data = text.Substring(entity.Offset, entity.Length);
-
-                            if (original != null)
-                            {
-                                data = text.Substring(original.Offset, original.Length);
-                            }
-
-                            hyperlink.Click += (s, args) => Entity_Click(entity.Type, data);
-                            hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
-                            hyperlink.UnderlineStyle = HyperlinkStyle;
-                            hyperlink.FontWeight = HyperlinkFontWeight;
-
-                            //if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypeBankCardNumber)
-                            {
-                                MessageHelper.SetEntityData(hyperlink, data);
-                                MessageHelper.SetEntityType(hyperlink, entity.Type);
-                            }
+                            spoiler ??= new TextHighlighter();
+                            spoiler.Ranges.Add(new TextRange { StartIndex = part.Offset + entity.Offset - parag, Length = entity.Length });
 
                             var temp = direct.GetXamlDirectObject(hyperlink);
 
                             direct.AddToCollection(inlines, temp);
                             local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
                         }
+                        else if (entity.HasFlag(Common.TextStyle.Mention) || entity.HasFlag(Common.TextStyle.Url))
+                        {
+                            if (entity.Type is TextEntityTypeMentionName or TextEntityTypeTextUrl)
+                            {
+                                var hyperlink = new Hyperlink();
+                                object data;
+                                if (entity.Type is TextEntityTypeTextUrl textUrl)
+                                {
+                                    data = textUrl.Url;
+                                    MessageHelper.SetEntityData(hyperlink, textUrl.Url);
+                                    MessageHelper.SetEntityType(hyperlink, entity.Type);
+
+                                    ToolTipService.SetToolTip(hyperlink, textUrl.Url);
+                                }
+                                else if (entity.Type is TextEntityTypeMentionName mentionName)
+                                {
+                                    data = mentionName.UserId;
+                                }
+
+                                hyperlink.Click += (s, args) => Entity_Click(entity.Type, null);
+                                hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
+                                hyperlink.UnderlineStyle = HyperlinkStyle;
+                                hyperlink.FontWeight = HyperlinkFontWeight;
+
+                                var temp = direct.GetXamlDirectObject(hyperlink);
+
+                                direct.AddToCollection(inlines, temp);
+                                local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
+                            }
+                            else
+                            {
+                                var hyperlink = new Hyperlink();
+                                //var original = entities.FirstOrDefault(x => x.Offset <= entity.Offset && x.Offset + x.Length >= entity.End);
+
+                                var data = text.Substring(entity.Offset, entity.Length);
+
+                                //if (original != null)
+                                //{
+                                //    data = text.Substring(original.Offset, original.Length);
+                                //}
+
+                                hyperlink.Click += (s, args) => Entity_Click(entity.Type, data);
+                                hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
+                                hyperlink.UnderlineStyle = HyperlinkStyle;
+                                hyperlink.FontWeight = HyperlinkFontWeight;
+
+                                //if (entity.Type is TextEntityTypeUrl || entity.Type is TextEntityTypeEmailAddress || entity.Type is TextEntityTypeBankCardNumber)
+                                {
+                                    MessageHelper.SetEntityData(hyperlink, data);
+                                    MessageHelper.SetEntityType(hyperlink, entity.Type);
+                                }
+
+                                var temp = direct.GetXamlDirectObject(hyperlink);
+
+                                direct.AddToCollection(inlines, temp);
+                                local = direct.GetXamlDirectObjectProperty(temp, XamlPropertyIndex.Span_Inlines);
+                            }
+                        }
+
+                        if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
+                        {
+                            var player = new CustomEmojiIcon();
+                            player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
+                            player.Margin = new Thickness(-20, -4, 0, -4);
+
+                            var inline = new InlineUIContainer();
+                            inline.Child = player;
+
+                            // TODO: see if there's a better way
+                            direct.AddToCollection(inlines, CreateDirectRun("\U0001F921", fontFamily: BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily));
+                            direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
+                        }
+                        else
+                        {
+                            var run = CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontSize: fontSize);
+                            var decorations = TextDecorations.None;
+
+                            if (entity.HasFlag(Common.TextStyle.Underline))
+                            {
+                                decorations |= TextDecorations.Underline;
+                            }
+                            if (entity.HasFlag(Common.TextStyle.Strikethrough))
+                            {
+                                decorations |= TextDecorations.Strikethrough;
+                            }
+
+                            if (decorations != TextDecorations.None)
+                            {
+                                direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_TextDecorations, (uint)decorations);
+                            }
+
+                            if (entity.HasFlag(Common.TextStyle.Bold))
+                            {
+                                direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, FontWeights.SemiBold);
+                            }
+                            if (entity.HasFlag(Common.TextStyle.Italic))
+                            {
+                                direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
+                            }
+
+                            direct.AddToCollection(local, run);
+                        }
                     }
 
-                    if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
-                    {
-                        var player = new CustomEmojiIcon();
-                        player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
-                        player.Margin = new Thickness(-20, -4, 0, -4);
-
-                        var inline = new InlineUIContainer();
-                        inline.Child = player;
-
-                        // TODO: see if there's a better way
-                        direct.AddToCollection(inlines, CreateDirectRun("\U0001F921", fontFamily: BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily));
-                        direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
-                    }
-                    else
-                    {
-                        var run = CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontSize: fontSize);
-                        var decorations = TextDecorations.None;
-
-                        if (entity.HasFlag(Common.TextStyle.Underline))
-                        {
-                            decorations |= TextDecorations.Underline;
-                        }
-                        if (entity.HasFlag(Common.TextStyle.Strikethrough))
-                        {
-                            decorations |= TextDecorations.Strikethrough;
-                        }
-
-                        if (decorations != TextDecorations.None)
-                        {
-                            direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_TextDecorations, (uint)decorations);
-                        }
-
-                        if (entity.HasFlag(Common.TextStyle.Bold))
-                        {
-                            direct.SetObjectProperty(run, XamlPropertyIndex.TextElement_FontWeight, FontWeights.SemiBold);
-                        }
-                        if (entity.HasFlag(Common.TextStyle.Italic))
-                        {
-                            direct.SetEnumProperty(run, XamlPropertyIndex.TextElement_FontStyle, (uint)FontStyle.Italic);
-                        }
-
-                        direct.AddToCollection(local, run);
-                    }
+                    previous = entity.Offset + entity.Length;
                 }
 
-                previous = entity.Offset + entity.Length;
-            }
-
-            if (text.Length > previous)
-            {
+                if (text.Length > previous)
+                {
                     direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous), fontSize: fontSize));
                 }
 
                 TextBlock.Blocks.Add(direct.GetObject(paragraph) as Paragraph);
                 parag++;
-                }
+            }
 
             //ContentPanel.MaxWidth = preformatted ? double.PositiveInfinity : 432;
 
             //_isFormatted = runs.Count > 0 || fontSize != 0;
-            IsPreformatted = preformatted;
+            HasCodeBlocks = preformatted;
 
             if (spoiler?.Ranges.Count > 0)
             {
@@ -482,7 +515,51 @@ namespace Telegram.Controls
                 else
                 {
                     TextBlock.FlowDirection = LocaleService.Current.FlowDirection;
+
+                    if (lastFormatted)
+                    {
+                        Adjust();
+                    }
                 }
+            }
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var visual = ElementCompositionPreview.GetElementChildVisual(this) as ShapeVisual;
+            if (visual == null)
+            {
+                visual = Window.Current.Compositor.CreateShapeVisual();
+                visual.Opacity = 0.2f;
+
+                ElementCompositionPreview.SetElementChildVisual(this, visual);
+            }
+
+            visual.Size = e.NewSize.ToVector2();
+            visual.Shapes.Clear();
+
+            CompositionColorBrush brush = null;
+
+            foreach (var block in _codeBlocks)
+            {
+                var start = block.ContentStart.GetCharacterRect(block.ContentStart.LogicalDirection);
+                var end = block.ContentEnd.GetCharacterRect(block.ContentEnd.LogicalDirection);
+
+                var rect = visual.Compositor.CreateRoundedRectangleGeometry();
+                rect.Offset = new Vector2(0, (float)start.Y - 2);
+                rect.Size = new Vector2((float)e.NewSize.Width, (float)(end.Bottom - start.Y) + 6);
+                rect.CornerRadius = new Vector2(4);
+
+                if (brush == null && CodeBlockBackground is SolidColorBrush solid)
+                {
+                    brush = visual.Compositor.CreateColorBrush(solid.Color);
+                }
+
+                var shape = visual.Compositor.CreateSpriteShape();
+                shape.Geometry = rect;
+                shape.FillBrush = brush;
+
+                visual.Shapes.Add(shape);
             }
         }
 
@@ -667,6 +744,19 @@ namespace Telegram.Controls
         public SolidColorBrush HyperlinkForeground { get; set; }
 
         public FontWeight HyperlinkFontWeight { get; set; } = FontWeights.Normal;
+
+        #endregion
+
+        #region CodeBlockBackground
+
+        public Brush CodeBlockBackground
+        {
+            get { return (Brush)GetValue(CodeBlockBackgroundProperty); }
+            set { SetValue(CodeBlockBackgroundProperty, value); }
+        }
+
+        public static readonly DependencyProperty CodeBlockBackgroundProperty =
+            DependencyProperty.Register("CodeBlockBackground", typeof(Brush), typeof(FormattedTextBlock), new PropertyMetadata(null));
 
         #endregion
 

@@ -1704,6 +1704,17 @@ namespace Telegram.Controls.Messages
             var result = false;
             var cleanup = false;
 
+            if (message.Text != null)
+            {
+                Message.SetText(message.ClientService, message.Text);
+                Message.SetQuery(_query);
+
+                ContentPanel.MaxWidth = Message.HasCodeBlocks ? double.PositiveInfinity : 432;
+                Message.Visibility = Visibility.Visible;
+
+                return;
+            }
+
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageText text)
             {
@@ -1824,7 +1835,7 @@ namespace Telegram.Controls.Messages
             Message.SetText(message.ClientService, text, entities, fontSize);
             Message.SetQuery(_query);
 
-            ContentPanel.MaxWidth = Message.IsPreformatted ? double.PositiveInfinity : 432;
+            ContentPanel.MaxWidth = Message.HasCodeBlocks ? double.PositiveInfinity : 432;
 
             return text.Length > 0;
         }

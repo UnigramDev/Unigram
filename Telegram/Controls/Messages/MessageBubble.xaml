@@ -173,6 +173,7 @@
                                                       Grid.Row="1">
                                 <controls:FormattedTextBlock x:Name="Message"
                                                              Foreground="{ThemeResource MessageForegroundBrush}"
+                                                             CodeBlockBackground="{ThemeResource MessageCodeBlockBackgroundBrush}"
                                                              AdjustLineEnding="True"
                                                              Margin="10,0,10,6"
                                                              Grid.Column="1"
