@@ -18,6 +18,7 @@
                   ScrollViewer.VerticalScrollMode="Disabled"
                   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                   ScrollViewer.HorizontalScrollMode="Auto"
+                  SizeChanged="OnSizeChanged"
                   SelectionMode="None"
                   Padding="4,0">
             <ListView.ItemsPanel>

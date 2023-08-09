@@ -45,6 +45,11 @@ namespace Telegram.Controls.Stories
             }
         }
 
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateIndexes();
+        }
+
         private int _first = 0;
         private int _last = -1;
 
@@ -183,7 +188,7 @@ namespace Telegram.Controls.Stories
                     var transform = photo.TransformToVisual(Window.Current.Content);
                     var point = transform.TransformPoint(new Point());
 
-                    var origin = new Rect(point.X + 12 + 4, point.Y + 12 + 4, 40, 40);
+                    var origin = new Rect(point.X + 8 + 4, point.Y + 12 + 4, 40, 40);
 
                     ViewModel.OpenStory(e.ActiveStories, origin, GetOrigin);
                 }
@@ -204,7 +209,7 @@ namespace Telegram.Controls.Stories
                 var transform = container.TransformToVisual(Window.Current.Content);
                 var point = transform.TransformPoint(new Point());
 
-                return new Rect(point.X + 12 + 4, point.Y + 12 + 4, 40, 40);
+                return new Rect(point.X + 8 + 4, point.Y + 12 + 4, 40, 40);
             }
 
             return Rect.Empty;
