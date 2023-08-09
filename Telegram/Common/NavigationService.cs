@@ -11,6 +11,7 @@ using Telegram.Navigation.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
@@ -205,6 +206,16 @@ namespace Telegram.Common
             {
                 serviceEx.ShowPromo(source);
             }
+        }
+
+        public static Task ShowPromoAsync(this INavigationService service, PremiumSource source = null, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            if (service is TLNavigationService serviceEx)
+            {
+                return serviceEx.ShowPromoAsync(source, requestedTheme);
+            }
+
+            return Task.CompletedTask;
         }
 
         public static void RemovePeerFromStack(this INavigationService service, long target)

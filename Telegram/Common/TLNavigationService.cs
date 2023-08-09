@@ -8,6 +8,7 @@ using LinqToVisualTree;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -89,6 +90,11 @@ namespace Telegram.Common
         public async void ShowPromo(PremiumSource source = null)
         {
             await ShowPopupAsync(typeof(PromoPopup), source);
+        }
+
+        public Task ShowPromoAsync(PremiumSource source = null, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            return ShowPopupAsync(typeof(PromoPopup), source, requestedTheme: requestedTheme);
         }
 
         public async void NavigateToInvoice(MessageViewModel message)
