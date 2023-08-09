@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -17,13 +18,21 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
+    public enum StoryInteractionsSortBy
+    {
+        Reaction,
+        Time
+    }
+
     public class StoryInteractionsViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
         private string _nextOffset = string.Empty;
+        private CancellationTokenSource _nextToken;
 
         public StoryInteractionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            _query = new DebouncedProperty<string>(Constants.TypingTimeout, UpdateQuery);
             Items = new IncrementalCollection<object>(this);
         }
 
@@ -32,6 +41,56 @@ namespace Telegram.ViewModels
         {
             get => _story;
             set => Set(ref _story, value);
+        }
+
+        public StoryInteractionsSortBy SortBy { get; private set; }
+
+        private readonly DebouncedProperty<string> _query;
+        public string Query
+        {
+            get => _query ?? string.Empty;
+            set => _query.Set(value);
+        }
+
+        public void UpdateQuery(string value)
+        {
+            _query.Value = value;
+
+            UpdateSortBy();
+            RaisePropertyChanged(nameof(Query));
+        }
+
+        private int _onlyContacts;
+        public int OnlyContacts
+        {
+            get => _onlyContacts;
+            set
+            {
+                if (Set(ref _onlyContacts, value))
+                {
+                    UpdateSortBy();
+                }
+            }
+        }
+
+        public void SortByReaction()
+        {
+            SortBy = StoryInteractionsSortBy.Reaction;
+            RaisePropertyChanged(nameof(SortBy));
+            UpdateSortBy();
+        }
+
+        public void SortByTime()
+        {
+            SortBy = StoryInteractionsSortBy.Time;
+            RaisePropertyChanged(nameof(SortBy));
+            UpdateSortBy();
+        }
+
+        private void UpdateSortBy()
+        {
+            _nextOffset = string.Empty;
+            _ = LoadMoreItemsAsync(0);
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -120,10 +179,18 @@ namespace Telegram.ViewModels
 
         public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
         {
-            var totalCount = 0u;
+            _nextToken?.Cancel();
 
-            var response = await ClientService.SendAsync(new GetStoryViewers(_story.StoryId, string.Empty, false, false, _nextOffset, 50));
-            if (response is StoryViewers viewers)
+            if (count == 0 && Items.Count > 0)
+            {
+                Items.Clear();
+            }
+
+            var totalCount = 0u;
+            var token = _nextToken = new CancellationTokenSource();
+
+            var response = await ClientService.SendAsync(new GetStoryViewers(_story.StoryId, Query ?? string.Empty, OnlyContacts > 0, SortBy == StoryInteractionsSortBy.Reaction, _nextOffset, 50));
+            if (response is StoryViewers viewers && !token.IsCancellationRequested)
             {
                 _nextOffset = viewers.NextOffset;
                 HasMoreItems = viewers.NextOffset.Length > 0;

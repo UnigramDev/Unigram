@@ -2117,6 +2117,8 @@
                                     <ScrollViewer x:Name="ContentScrollViewer"
                                                   HorizontalScrollBarVisibility="Disabled"
                                                   VerticalScrollBarVisibility="Disabled"
+                                                  HorizontalScrollMode="Disabled"
+                                                  VerticalScrollMode="Disabled"
                                                   ZoomMode="Disabled"
                                                   CanContentRenderOutsideBounds="True"
                                                   Margin="{ThemeResource ContentDialogContentScrollViewerMargin}"

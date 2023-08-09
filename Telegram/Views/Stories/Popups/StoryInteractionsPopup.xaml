@@ -10,9 +10,111 @@
                        mc:Ignorable="d"
                        d:DesignHeight="300"
                        d:DesignWidth="400"
-                       VerticalContentAlignment="Stretch">
+                       VerticalContentAlignment="Stretch"
+                       Loaded="OnLoaded">
 
-    <Grid Margin="-24,0,-24,-24">
+    <Grid x:Name="LayoutRoot"
+          Margin="-24,-24,-24,-24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <controls:TopNavView x:Name="Navigation"
+                             SelectedIndex="{x:Bind ViewModel.OnlyContacts, Mode=TwoWay}"
+                             HorizontalAlignment="Left"
+                             Height="48">
+            <controls:TopNavView.ItemContainerStyle>
+                <Style TargetType="controls:TopNavViewItem">
+                    <Setter Property="HorizontalAlignment"
+                            Value="Stretch" />
+                    <Setter Property="VerticalAlignment"
+                            Value="Stretch" />
+                    <Setter Property="HorizontalContentAlignment"
+                            Value="Center" />
+                    <Setter Property="VerticalContentAlignment"
+                            Value="Center" />
+                    <Setter Property="UseSystemFocusVisuals"
+                            Value="True" />
+                    <Setter Property="FocusVisualMargin"
+                            Value="-3,9" />
+                    <Setter Property="CornerRadius"
+                            Value="12" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="controls:TopNavViewItem">
+                                <Grid x:Name="ContentBorder"
+                                      Background="Transparent">
+                                    <ContentPresenter x:Name="ContentPresenter"
+                                                      Grid.Column="1"
+                                                      Margin="12,5,12,6"
+                                                      TextWrapping="NoWrap"
+                                                      Foreground="{TemplateBinding Foreground}"
+                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                      Content="{TemplateBinding Content}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                                      VerticalAlignment="Center"
+                                                      AutomationProperties.AccessibilityView="Raw"
+                                                      Canvas.ZIndex="1" />
+                                    <Grid x:Name="SelectionIndicatorGrid"
+                                          Margin="0,12,0,12"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Stretch">
+                                        <Rectangle x:Name="SelectionIndicator"
+                                                   Fill="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}"
+                                                   Opacity="0"
+                                                   RadiusX="12"
+                                                   RadiusY="12" />
+                                    </Grid>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </controls:TopNavView.ItemContainerStyle>
+            <controls:TopNavViewItem Content="{CustomResource AllViewers}"
+                                     Margin="24,0,0,0" />
+            <controls:TopNavViewItem Content="{CustomResource Contacts}" />
+        </controls:TopNavView>
+
+        <controls:GlyphButton Glyph="&#xE9E6;"
+                              HorizontalAlignment="Right"
+                              Click="SortBy_ContextRequested"
+                              Visibility="Collapsed" />
+
+        <Button x:Name="SortBy"
+                Style="{StaticResource EmptyButtonStyle}"
+                Click="SortBy_ContextRequested"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Margin="0,0,24,0"
+                CornerRadius="12">
+            <Grid Padding="4,2,4,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{x:Bind ConvertSortBy(ViewModel.SortBy), Mode=OneWay}"
+                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                           FontSize="20" />
+                <TextBlock Text="&#xEA16;"
+                           FontFamily="{StaticResource SymbolThemeFontFamily}"
+                           FontSize="16"
+                           VerticalAlignment="Center"
+                           Margin="2,0,0,0"
+                           Grid.Column="1" />
+
+            </Grid>
+        </Button>
+
+        <TextBox x:Name="SearchField"
+                 Text="{x:Bind ViewModel.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 PlaceholderText="{CustomResource Search}"
+                 Margin="24,0,24,8"
+                 Grid.Row="1" />
+
         <controls:TextListView x:Name="ScrollingHost"
                                ItemsSource="{x:Bind ViewModel.Items}"
                                ChoosingItemContainer="OnChoosingItemContainer"
@@ -20,7 +122,8 @@
                                SelectionMode="None"
                                IsItemClickEnabled="True"
                                ItemClick="OnItemClick"
-                               Padding="12,0,12,24">
+                               Padding="12,0,12,24"
+                               Grid.Row="2">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -38,14 +141,19 @@
                 <Style TargetType="ListViewItem"
                        BasedOn="{StaticResource DefaultListViewItemStyle}" />
             </ListView.ItemContainerStyle>
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection />
+            </ListView.ItemContainerTransitions>
         </controls:TextListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                    ScrollingHost="{x:Bind ScrollingHost}" />
+                                    ScrollingHost="{x:Bind ScrollingHost}"
+                                    Grid.Row="2" />
 
         <Grid x:Name="ExpiredRoot"
               x:Load="False"
-              Padding="0,0,0,16">
+              Padding="0,0,0,16"
+              Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
