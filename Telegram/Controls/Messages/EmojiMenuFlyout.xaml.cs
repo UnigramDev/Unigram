@@ -12,6 +12,7 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
+using Telegram.ViewModels.Stories;
 using Telegram.Views.Popups;
 using Windows.Foundation;
 using Windows.UI;
@@ -33,6 +34,9 @@ namespace Telegram.Controls.Messages
         private readonly MessageViewModel _message;
         private readonly MessageBubble _bubble;
 
+        private readonly StoryViewModel _story;
+        private readonly FrameworkElement _reserved;
+
         private readonly Popup _popup;
 
         public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, HorizontalAlignment alignment, MessageViewModel message = null, AvailableReactions reactions = null)
@@ -50,6 +54,30 @@ namespace Telegram.Controls.Messages
 
             _popup = new Popup();
 
+            Initialize(clientService, element, alignment);
+        }
+
+        public static EmojiMenuFlyout ShowAt(IClientService clientService, FrameworkElement element, HorizontalAlignment alignment, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions)
+        {
+            return new EmojiMenuFlyout(clientService, element, alignment, story, reserved, reactions);
+        }
+
+        private EmojiMenuFlyout(IClientService clientService, FrameworkElement element, HorizontalAlignment alignment, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions)
+        {
+            InitializeComponent();
+
+            _clientService = clientService;
+            _mode = EmojiDrawerMode.Reactions;
+            _story = story;
+            _reserved = reserved;
+
+            _popup = new Popup();
+
+            Initialize(clientService, element, alignment);
+        }
+
+        private void Initialize(IClientService clientService, FrameworkElement element, HorizontalAlignment alignment)
+        {
             var transform = element.TransformToVisual(Window.Current.Content);
             var position = transform.TransformPoint(new Point());
 
@@ -71,8 +99,8 @@ namespace Telegram.Controls.Messages
 
             var padding = actualWidth - width;
 
-            var viewModel = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId, mode);
-            var view = new EmojiDrawer(mode);
+            var viewModel = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId, _mode);
+            var view = new EmojiDrawer(_mode);
             view.DataContext = viewModel;
             view.VerticalAlignment = VerticalAlignment.Top;
             view.Width = width;
@@ -86,12 +114,12 @@ namespace Telegram.Controls.Messages
 
             Presenter.Children.Add(view);
 
-            if (mode == EmojiDrawerMode.CustomEmojis)
+            if (_mode == EmojiDrawerMode.CustomEmojis)
             {
                 view.Activate(null, EmojiSearchType.EmojiStatus);
                 viewModel.UpdateStatuses();
             }
-            else if (mode == EmojiDrawerMode.Reactions)
+            else if (_mode == EmojiDrawerMode.Reactions)
             {
                 //_ = viewModel.UpdateReactions(reactions, null);
             }
@@ -438,7 +466,36 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private async void ToggleReaction(ReactionType reaction)
+        private void ToggleReaction(ReactionType reaction)
+        {
+            if (_story != null)
+            {
+                StoryToggleReaction(reaction);
+            }
+            else if (_message != null)
+            {
+                MessageToggleReaction(reaction);
+            }
+        }
+
+        private async void StoryToggleReaction(ReactionType reaction)
+        {
+            if (_story.ChosenReactionType != null && _story.ChosenReactionType.AreTheSame(reaction))
+            {
+                _story.ClientService.Send(new SetStoryReaction(_story.ChatId, _story.StoryId, null, true));
+            }
+            else
+            {
+                await _message.ClientService.SendAsync(new SetStoryReaction(_story.ChatId, _story.StoryId, reaction, true));
+
+                if (_reserved != null && _reserved.IsLoaded)
+                {
+                    // TODO: UI feedback
+                }
+            }
+        }
+
+        private async void MessageToggleReaction(ReactionType reaction)
         {
             if (_message.InteractionInfo != null && _message.InteractionInfo.Reactions.IsChosen(reaction))
             {
@@ -458,5 +515,6 @@ namespace Telegram.Controls.Messages
                 }
             }
         }
+
     }
 }

@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
+using Telegram.Controls.Messages;
 using Telegram.Navigation;
 using Telegram.Services.Keyboard;
 using Telegram.Streams;
@@ -326,12 +327,15 @@ namespace Telegram.Controls.Stories
                     child.Update(viewModel.Items[real], real == _index, index);
 
                     child.Completed -= OnCompleted;
+                    child.ContextRequested -= Story_ContextRequested;
 
                     if (index == 3)
                     {
                         _synchronizedIndex = i;
 
                         child.Completed += OnCompleted;
+                        child.ContextRequested += Story_ContextRequested;
+
                         Composer.DataContext = viewModel.Items[real];
 
                         if (viewModel.Items[real].IsMyStory)
@@ -816,21 +820,64 @@ namespace Telegram.Controls.Stories
             //}
         }
 
+        private void Story_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var activeStories = _viewModel.Items[_index];
+            var story = activeStories.SelectedItem;
+
+            var flyout = new MenuFlyout();
+            flyout.Closing += Flyout_Closing;
+            flyout.Opened += async (s, args) =>
+            {
+                var msg = activeStories.Chat?.LastMessage;
+                if (msg == null)
+                {
+                    return;
+                }
+
+                var message = new ViewModels.MessageViewModel(activeStories.ClientService, null, null, activeStories.Chat, msg);
+
+                var response = await activeStories.ClientService.SendAsync(new GetMessageAvailableReactions(message.ChatId, message.Id, 8));
+                if (response is AvailableReactions reactions && flyout.IsOpen)
+                {
+                    if (reactions.TopReactions.Count > 0
+                        || reactions.PopularReactions.Count > 0
+                        || reactions.RecentReactions.Count > 0)
+                    {
+                        ReactionsMenuFlyout.ShowAt(reactions, story, null, flyout);
+                    }
+                }
+            };
+
+            ActiveCard.Suspend(StoryPauseSource.Flyout);
+
+            PopulateMenuFlyout(flyout, activeStories);
+
+            args.ShowAt(flyout, sender as FrameworkElement);
+        }
+
         private void Story_ContextRequested(object sender, StoryEventArgs e)
         {
             var element = sender as FrameworkElement;
-
-            var story = e.ActiveStories?.SelectedItem;
-            if (story == null)
-            {
-                return;
-            }
 
             var flyout = new MenuFlyout();
             flyout.Closing += Flyout_Closing;
             ActiveCard.Suspend(StoryPauseSource.Flyout);
 
-            if (e.ActiveStories.IsMyStory)
+            PopulateMenuFlyout(flyout, e.ActiveStories);
+
+            flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.BottomEdgeAlignedRight);
+        }
+
+        private void PopulateMenuFlyout(MenuFlyout flyout, ActiveStoriesViewModel activeStories)
+        {
+            var story = activeStories?.SelectedItem;
+            if (story == null)
+            {
+                return;
+            }
+
+            if (activeStories.IsMyStory)
             {
                 flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, story.IsPinned ? Strings.ArchiveStory : Strings.SaveToProfile, story.IsPinned ? Icons.StoriesPinnedOff : Icons.StoriesPinned);
 
@@ -858,11 +905,11 @@ namespace Telegram.Controls.Stories
             }
             else
             {
-                var muted = ViewModel.Settings.Notifications.GetMuteStories(e.ActiveStories.Chat);
-                var archived = e.ActiveStories.List is StoryListArchive;
+                var muted = ViewModel.Settings.Notifications.GetMuteStories(activeStories.Chat);
+                var archived = activeStories.List is StoryListArchive;
 
-                flyout.CreateFlyoutItem(ViewModel.MuteProfile, e.ActiveStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
-                flyout.CreateFlyoutItem(ViewModel.ShowProfile, e.ActiveStories, archived ? Strings.UnarchiveStories : Strings.ArchivePeerStories, archived ? Icons.Unarchive : Icons.Archive);
+                flyout.CreateFlyoutItem(ViewModel.MuteProfile, activeStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
+                flyout.CreateFlyoutItem(ViewModel.ShowProfile, activeStories, archived ? Strings.UnarchiveStories : Strings.ArchivePeerStories, archived ? Icons.Unarchive : Icons.Archive);
 
                 if (story.CanBeForwarded && story.Content is StoryContentPhoto or StoryContentVideo && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
                 {
@@ -891,8 +938,6 @@ namespace Telegram.Controls.Stories
 
                 flyout.CreateFlyoutItem(ReportStory, story, Strings.ReportChat, Icons.ErrorCircle);
             }
-
-            flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }
 
         private void CopyLink(StoryViewModel story)

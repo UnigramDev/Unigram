@@ -11,10 +11,12 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
+using Telegram.ViewModels.Stories;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -34,6 +36,10 @@ namespace Telegram.Controls.Messages
 
         private readonly MessageViewModel _message;
         private readonly MessageBubble _bubble;
+
+        private readonly StoryViewModel _story;
+        private readonly FrameworkElement _reserved;
+
         private readonly MenuFlyout _flyout;
 
         private MenuFlyoutPresenter _presenter;
@@ -46,16 +52,32 @@ namespace Telegram.Controls.Messages
 
         private ReactionsMenuFlyout(AvailableReactions reactions, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout)
         {
-            _reactions = reactions /*message.ClientService.IsPremium ? reactions : reactions.Where(x => !x.IsPremium).ToList()*/;
+            _reactions = reactions;
             _message = message;
             _bubble = bubble;
             _flyout = flyout;
 
             InitializeComponent();
-            Initialize(reactions, message, bubble, flyout);
+            Initialize(reactions, message.ClientService, flyout);
         }
 
-        private async void Initialize(AvailableReactions available, MessageViewModel message, MessageBubble bubble, MenuFlyout flyout)
+        public static ReactionsMenuFlyout ShowAt(AvailableReactions reactions, StoryViewModel story, FrameworkElement reserved, MenuFlyout flyout)
+        {
+            return new ReactionsMenuFlyout(reactions, story, reserved, flyout);
+        }
+
+        private ReactionsMenuFlyout(AvailableReactions reactions, StoryViewModel story, FrameworkElement reserved, MenuFlyout flyout)
+        {
+            _reactions = reactions;
+            _story = story;
+            _reserved = reserved;
+            _flyout = flyout;
+
+            InitializeComponent();
+            Initialize(reactions, story.ClientService, flyout);
+        }
+
+        private async void Initialize(AvailableReactions available, IClientService clientService, MenuFlyout flyout)
         {
             var last = flyout.Items.LastOrDefault();
             var presenter = last.Ancestors<MenuFlyoutPresenter>().FirstOrDefault();
@@ -247,7 +269,7 @@ namespace Telegram.Controls.Messages
             batch.End();
 
 
-            var viewModel = EmojiDrawerViewModel.GetForCurrentView(message.ClientService.SessionId, EmojiDrawerMode.Reactions);
+            var viewModel = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId, EmojiDrawerMode.Reactions);
             var yolo = await viewModel.UpdateReactions(available, null);
 
             foreach (var item in yolo)
@@ -269,7 +291,7 @@ namespace Telegram.Controls.Messages
                 var visible = Create(28, true);
                 var preload = Create(32, false);
 
-                var delayed = new DelayedFileSource(message.ClientService, item.Item2);
+                var delayed = new DelayedFileSource(clientService, item.Item2);
 
                 visible.Source = delayed;
                 preload.Source = delayed;
@@ -312,7 +334,36 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private async void ToggleReaction(ReactionType reaction)
+        private void ToggleReaction(ReactionType reaction)
+        {
+            if (_story != null)
+            {
+                StoryToggleReaction(reaction);
+            }
+            else if (_message != null)
+            {
+                MessageToggleReaction(reaction);
+            }
+        }
+
+        private async void StoryToggleReaction(ReactionType reaction)
+        {
+            if (_story.ChosenReactionType != null && _story.ChosenReactionType.AreTheSame(reaction))
+            {
+                _story.ClientService.Send(new SetStoryReaction(_story.ChatId, _story.StoryId, null, true));
+            }
+            else
+            {
+                await _story.ClientService.SendAsync(new SetStoryReaction(_story.ChatId, _story.StoryId, reaction, true));
+
+                if (_reserved != null && _reserved.IsLoaded)
+                {
+                    // TODO: UI feedback
+                }
+            }
+        }
+
+        private async void MessageToggleReaction(ReactionType reaction)
         {
             if (_message.InteractionInfo != null && _message.InteractionInfo.Reactions.IsChosen(reaction))
             {
@@ -335,11 +386,22 @@ namespace Telegram.Controls.Messages
 
         private void Expand_Click(object sender, RoutedEventArgs e)
         {
-            var flyout = EmojiMenuFlyout.ShowAt(_message.ClientService, EmojiDrawerMode.Reactions, this, HorizontalAlignment.Center, _message, _reactions);
-            flyout.Loaded += (s, args) =>
+            if (_story != null)
             {
-                _flyout.Hide();
-            };
+                var flyout = EmojiMenuFlyout.ShowAt(_message.ClientService, this, HorizontalAlignment.Center, _story, _reserved, _reactions);
+                flyout.Loaded += (s, args) =>
+                {
+                    _flyout.Hide();
+                };
+            }
+            else if (_message != null)
+            {
+                var flyout = EmojiMenuFlyout.ShowAt(_message.ClientService, EmojiDrawerMode.Reactions, this, HorizontalAlignment.Center, _message, _reactions);
+                flyout.Loaded += (s, args) =>
+                {
+                    _flyout.Hide();
+                };
+            }
         }
     }
 }
