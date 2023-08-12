@@ -451,9 +451,13 @@ namespace Telegram.Controls.Messages
             {
                 _popup.IsOpen = false;
 
-                if (_message != null)
+                if (_story != null)
                 {
-                    ToggleReaction(sticker.ToReactionType());
+                    StoryToggleReaction(sticker.ToReactionType());
+                }
+                else if (_message != null)
+                {
+                    MessageToggleReaction(sticker.ToReactionType());
                 }
                 else if (_mode == EmojiDrawerMode.CustomEmojis && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
                 {
@@ -482,18 +486,6 @@ namespace Telegram.Controls.Messages
             if (confirm == ContentDialogResult.Primary && _mode == EmojiDrawerMode.CustomEmojis && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
             {
                 _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId, popup.Value)));
-            }
-        }
-
-        private void ToggleReaction(ReactionType reaction)
-        {
-            if (_story != null)
-            {
-                StoryToggleReaction(reaction);
-            }
-            else if (_message != null)
-            {
-                MessageToggleReaction(reaction);
             }
         }
 

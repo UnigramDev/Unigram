@@ -330,19 +330,14 @@ namespace Telegram.Controls.Messages
 
             if (sender is HyperlinkButton button && button.Tag is ReactionType reaction)
             {
-                ToggleReaction(reaction);
-            }
-        }
-
-        private void ToggleReaction(ReactionType reaction)
-        {
-            if (_story != null)
-            {
-                StoryToggleReaction(reaction);
-            }
-            else if (_message != null)
-            {
-                MessageToggleReaction(reaction);
+                if (_story != null)
+                {
+                    StoryToggleReaction(reaction);
+                }
+                else if (_message != null)
+                {
+                    MessageToggleReaction(reaction);
+                }
             }
         }
 
