@@ -591,7 +591,7 @@ namespace Telegram.Td.Api
             foreach (var entity in text.Entities)
             {
                 // Included, Included
-                if (entity.Offset >= startIndex && entity.Offset + entity.Length <= startIndex + length)
+                if (entity.Offset > startIndex && entity.Offset + entity.Length <= startIndex + length)
                 {
                     var replace = new TextEntity { Offset = entity.Offset - (int)startIndex, Length = entity.Length, Type = entity.Type };
                     sub ??= new List<TextEntity>();
@@ -1135,9 +1135,11 @@ namespace Telegram.Td.Api
             };
         }
 
-        public static string ReplaceSpoilers(this FormattedText text, bool singleLine = true)
+        public static FormattedText ReplaceSpoilers(this FormattedText text, bool singleLine = true)
         {
             var rep = new StringBuilder(text.Text);
+            var ent = text.Entities?.ToList() ?? new List<TextEntity>();
+
             var chars = "⠁⠂⠄⠈⠐⠠⡀⢀⠃⠅⠆⠉⠊⠌⠑⠒⠔⠘⠡⠢⠤⠨⠰⡁⡂⡄⡈⡐⡠⢁⢂⢄⢈⢐⢠⣀⠇⠋⠍⠎⠓⠕⠖⠙⠚⠜⠣⠥⠦⠩⠪⠬⠱⠲⠴⠸⡃⡅⡆⡉⡊⡌⡑⡒⡔⡘⡡⡢⡤⡨⡰⢃⢅⢆⢉⢊⢌⢑⢒⢔⢘⢡⢢⢤⢨⢰⣁⣂⣄⣈⣐⣠⠏⠗⠛⠝⠞⠧⠫⠭⠮⠳⠵⠶⠹⠺⠼⡇⡋⡍⡎⡓⡕⡖⡙⡚⡜⡣⡥⡦⡩⡪⡬⡱⡲⡴⡸⢇⢋⢍⢎⢓⢕⢖⢙⢚⢜⢣⢥⢦⢩⢪⢬⢱⢲⢴⢸⣃⣅⣆⣉⣊⣌⣑⣒⣔⣘⣡⣢⣤⣨⣰⠟⠯⠷⠻⠽⠾⡏⡗⡛⡝⡞⡧⡫⡭⡮⡳⡵⡶⡹⡺⡼⢏⢗⢛⢝⢞⢧⢫⢭⢮⢳⢵⢶⢹⢺⢼⣇⣋⣍⣎⣓⣕⣖⣙⣚⣜⣣⣥⣦⣩⣪⣬⣱⣲⣴⣸⠿⡟⡯⡷⡻⡽⡾⢟⢯⢷⢻⢽⢾⣏⣗⣛⣝⣞⣧⣫⣭⣮⣳⣵⣶⣹⣺⣼⡿⢿⣟⣯⣷⣻⣽⣾⣿";
 
             if (text.Entities != null)
@@ -1150,16 +1152,18 @@ namespace Telegram.Td.Api
                         {
                             rep[entity.Offset + i] = chars[text.Text[entity.Offset + i] % chars.Length];
                         }
+
+                        ent.RemoveAll(x => x.Offset <= entity.Offset + entity.Length && entity.Offset <= x.Offset + x.Length);
                     }
                 }
             }
 
             if (singleLine)
             {
-                return rep.Replace('\n', ' ').ToString();
+                return new FormattedText(rep.Replace('\n', ' ').ToString(), ent);
             }
 
-            return rep.ToString();
+            return new FormattedText(rep.ToString(), ent);
         }
 
         public static bool HasCaption(this MessageContent content)

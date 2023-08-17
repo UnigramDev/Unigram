@@ -344,7 +344,7 @@ namespace Telegram.Controls.Messages
 
                 if (text.Entities != null)
                 {
-                    foreach (var entity in text.Entities)
+                    foreach (var entity in clean.Entities)
                     {
                         if (entity.Type is not TextEntityTypeCustomEmoji customEmoji)
                         {
@@ -353,7 +353,7 @@ namespace Telegram.Controls.Messages
 
                         if (entity.Offset > previous)
                         {
-                            messageShow.Inlines.Add(new Run { Text = clean.Substring(previous, entity.Offset - previous) });
+                            messageShow.Inlines.Add(new Run { Text = clean.Text.Substring(previous, entity.Offset - previous) });
                         }
 
                         //MessageLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
@@ -372,9 +372,9 @@ namespace Telegram.Controls.Messages
                     }
                 }
 
-                if (clean.Length > previous)
+                if (clean.Text.Length > previous)
                 {
-                    messageShow.Inlines.Add(new Run { Text = clean.Substring(previous) });
+                    messageShow.Inlines.Add(new Run { Text = clean.Text.Substring(previous) });
                 }
             }
         }

@@ -45,6 +45,12 @@ namespace Telegram.Common
         {
             Flags |= run.Flags;
             Type ??= run.Type;
+
+            // TODO: probably makes sense to add all entity types that provide some additional value.
+            if (run.Type is TextEntityTypeCustomEmoji)
+            {
+                Type = run.Type;
+            }
         }
 
         public static IList<TextStyleRun> GetRuns(FormattedText formatted)

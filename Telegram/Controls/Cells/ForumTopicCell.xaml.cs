@@ -474,7 +474,7 @@ namespace Telegram.Controls.Cells
 
                 if (message.Entities != null)
                 {
-                    foreach (var entity in message.Entities)
+                    foreach (var entity in clean.Entities)
                     {
                         if (entity.Type is not TextEntityTypeCustomEmoji customEmoji)
                         {
@@ -483,18 +483,18 @@ namespace Telegram.Controls.Cells
 
                         if (entity.Offset > previous)
                         {
-                            BriefLabel.Inlines.Add(new Run { Text = clean.Substring(previous, entity.Offset - previous) });
+                            BriefLabel.Inlines.Add(new Run { Text = clean.Text.Substring(previous, entity.Offset - previous) });
                         }
 
-                        BriefLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
+                        BriefLabel.Inlines.Add(new Run { Text = clean.Text.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
 
                         previous = entity.Offset + entity.Length;
                     }
                 }
 
-                if (clean.Length > previous)
+                if (clean.Text.Length > previous)
                 {
-                    BriefLabel.Inlines.Add(new Run { Text = clean.Substring(previous) });
+                    BriefLabel.Inlines.Add(new Run { Text = clean.Text.Substring(previous) });
                 }
             }
         }

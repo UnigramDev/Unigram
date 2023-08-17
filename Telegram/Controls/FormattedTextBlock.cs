@@ -425,7 +425,7 @@ namespace Telegram.Controls
                             }
                         }
 
-                        if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
+                        if (entity.Type is TextEntityTypeCustomEmoji customEmoji && ((_ignoreSpoilers && entity.HasFlag(Common.TextStyle.Spoiler)) || !entity.HasFlag(Common.TextStyle.Spoiler)))
                         {
                             var player = new CustomEmojiIcon();
                             player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);

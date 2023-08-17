@@ -259,7 +259,7 @@ namespace Telegram.Controls.Messages
 
                     if (text.Entities != null)
                     {
-                        foreach (var entity in text.Entities)
+                        foreach (var entity in clean.Entities)
                         {
                             if (entity.Type is not TextEntityTypeCustomEmoji customEmoji)
                             {
@@ -268,7 +268,7 @@ namespace Telegram.Controls.Messages
 
                             if (entity.Offset > previous)
                             {
-                                MessageLabel.Inlines.Add(new Run { Text = clean.Substring(previous, entity.Offset - previous) });
+                                MessageLabel.Inlines.Add(new Run { Text = clean.Text.Substring(previous, entity.Offset - previous) });
                             }
 
                             var player = new CustomEmojiIcon();
@@ -285,9 +285,9 @@ namespace Telegram.Controls.Messages
                         }
                     }
 
-                    if (clean.Length > previous)
+                    if (clean.Text.Length > previous)
                     {
-                        MessageLabel.Inlines.Add(new Run { Text = clean.Substring(previous) });
+                        MessageLabel.Inlines.Add(new Run { Text = clean.Text.Substring(previous) });
                     }
                 }
             }
