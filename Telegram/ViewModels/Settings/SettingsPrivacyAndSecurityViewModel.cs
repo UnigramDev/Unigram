@@ -237,10 +237,10 @@ namespace Telegram.ViewModels.Settings
 
         public bool IsArchiveAndMuteEnabled
         {
-            get => ClientService.Options.ArchiveAndMuteNewChatsFromUnknownUsers;
+            get => true; //ClientService.Options.ArchiveAndMuteNewChatsFromUnknownUsers;
             set
             {
-                ClientService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = value;
+                //ClientService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = value;
                 RaisePropertyChanged();
             }
         }
