@@ -4,11 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Rg.DiffUtils;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI.Composition;
@@ -97,7 +99,7 @@ namespace Telegram.Controls
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add && e.NewStartingIndex <= _maxIndex)
+            if (e.Action == NotifyCollectionChangedAction.Add && e.NewStartingIndex <= _maxIndex && e.NewItems.Count > 0)
             {
                 InsertItem(e.NewStartingIndex, e.NewItems[0]);
             }
@@ -427,7 +429,7 @@ namespace Telegram.Controls
         {
             Logger.Debug();
 
-            var count = Math.Min(_maxCount, Math.Max(1, _items.Count));
+            var count = Math.Min(_maxCount, _items.Count);
             var width = count * (float)(_itemSize + 4) - ((count - 1) * _itemOverlap);
 
             base.MeasureOverride(availableSize);
@@ -442,24 +444,75 @@ namespace Telegram.Controls
         }
     }
 
-    public class RecentUserCollection : DiffObservableCollection<MessageSender>
+    public class RecentUserCollection : ObservableCollection<MessageSender>
     {
         public RecentUserCollection()
-            : base(new RecentUserHandler())
         {
 
         }
 
-        class RecentUserHandler : IDiffHandler<MessageSender>
+        public void ReplaceDiff(IEnumerable<MessageSender> items)
         {
-            public bool CompareItems(MessageSender oldItem, MessageSender newItem)
+            var origin = items?.ToList();
+            var destination = this;
+
+            if (origin == null)
             {
-                return oldItem.AreTheSame(newItem);
+                return;
+            }
+            else if (destination.Empty())
+            {
+                foreach (var item in origin)
+                {
+                    destination.Add(item);
+                }
+
+                return;
             }
 
-            public void UpdateItem(MessageSender oldItem, MessageSender newItem)
+            for (int i = 0; i < origin.Count; i++)
             {
+                var item = origin[i];
+                var index = -1;
 
+                for (int j = 0; j < destination.Count; j++)
+                {
+                    if (destination[j].AreTheSame(item))
+                    {
+                        index = j;
+                        break;
+                    }
+                }
+
+                if (index > -1 && index != i)
+                {
+                    destination.Move(index, Math.Min(i, destination.Count));
+                }
+                else if (index == -1)
+                {
+                    destination.Insert(Math.Min(i, destination.Count), item);
+                }
+            }
+
+            for (int i = 0; i < destination.Count; i++)
+            {
+                var item = destination[i];
+                var index = -1;
+
+                for (int j = 0; j < origin.Count; j++)
+                {
+                    if (origin[j].AreTheSame(item))
+                    {
+                        index = j;
+                        break;
+                    }
+                }
+
+                if (index == -1)
+                {
+                    destination.Remove(item);
+                    i--;
+                }
             }
         }
     }
