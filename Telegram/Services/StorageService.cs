@@ -479,7 +479,7 @@ namespace Telegram.Services
                 {
                     if (SAP.FutureAccessList.Entries.Count >= SAP.FutureAccessList.MaximumItemsAllowed - 10)
                     {
-                        for (int i = 0; i < SAP.FutureAccessList.Entries.Count; i++)
+                        for (int i = SAP.FutureAccessList.Entries.Count - 1; i >= 0; i--)
                         {
                             var entry = SAP.FutureAccessList.Entries[i];
                             if (entry.Token != "FilesDirectory")
