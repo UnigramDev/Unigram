@@ -503,5 +503,10 @@ namespace Telegram.Controls.Gallery
                 args.Handled = true;
             }
         }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Attach(null);
+        }
     }
 }
