@@ -1283,6 +1283,9 @@
     <Compile Include="Views\Settings\Phone\ChangePhoneNumberPopup.xaml.cs">
       <DependentUpon>ChangePhoneNumberPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\Popups\SettingsArchivePopup.xaml.cs">
+      <DependentUpon>SettingsArchivePopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\Popups\SettingsDataAutoPopup.xaml.cs">
       <DependentUpon>SettingsDataAutoPopup.xaml</DependentUpon>
     </Compile>
@@ -1747,6 +1750,7 @@
       <SubType>Designer</SubType>
     </PRIResource>
     <Content Include="Assets\Toasts\JoinRequested.tgs" />
+    <Content Include="Assets\highlight.json" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -2613,6 +2617,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\Popups\SettingsArchivePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\Popups\SettingsDataAutoPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2895,7 +2903,7 @@
     </PackageReference>
     <!-- Used by AppCenter -->
     <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3">
-      <Version>2.1.4</Version>
+      <Version>2.1.5</Version>
     </PackageReference>
     <PackageReference Include="System.Reflection.Metadata">
       <Version>1.7.0</Version>

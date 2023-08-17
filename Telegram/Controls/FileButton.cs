@@ -194,10 +194,10 @@ namespace Telegram.Controls
                     OnGlyphChanged(Icons.ImageFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Play:
-                    OnGlyphChanged(Icons.PlayFilled, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPlay);
+                    OnGlyphChanged(Icons.PlayFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPlay);
                     break;
                 case MessageContentState.Pause:
-                    OnGlyphChanged(Icons.PauseFilled, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPause);
+                    OnGlyphChanged(Icons.PauseFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPause);
                     break;
                 case MessageContentState.Ttl:
                     OnGlyphChanged(Icons.TtlFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);

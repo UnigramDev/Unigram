@@ -41,6 +41,7 @@ namespace Telegram
 
         public static readonly string[] TelegramHosts = new string[]
         {
+            "telegram.org",
             "telegram.me",
             "telegram.dog",
             "t.me",

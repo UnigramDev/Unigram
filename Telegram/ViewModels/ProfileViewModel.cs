@@ -522,12 +522,12 @@ namespace Telegram.ViewModels
             ClipboardEx.TrySetContent(dataPackage);
         }
 
-        public void CopyDescription()
+        public string CopyDescription()
         {
             var chat = _chat;
             if (chat == null)
             {
-                return;
+                return null;
             }
 
             if (chat.Type is ChatTypeSupergroup super)
@@ -535,24 +535,20 @@ namespace Telegram.ViewModels
                 var supergroup = ClientService.GetSupergroupFull(super.SupergroupId);
                 if (supergroup == null)
                 {
-                    return;
+                    return null;
                 }
 
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(supergroup.Description);
-                ClipboardEx.TrySetContent(dataPackage);
+                return supergroup.Description;
             }
             else
             {
                 var user = ClientService.GetUserFull(chat);
                 if (user == null)
                 {
-                    return;
+                    return null;
                 }
 
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(user.BotInfo?.ShortDescription ?? user.Bio.Text);
-                ClipboardEx.TrySetContent(dataPackage);
+                return user.BotInfo?.ShortDescription ?? user.Bio.Text;
             }
         }
 

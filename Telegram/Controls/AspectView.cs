@@ -209,6 +209,11 @@ namespace Telegram.Controls
                 width = extendedMediaPreview.Width;
                 height = extendedMediaPreview.Height;
             }
+            else if (constraint is MessageAsyncStory asyncStory)
+            {
+                width = 720;
+                height = 1280;
+            }
 
             #endregion
 

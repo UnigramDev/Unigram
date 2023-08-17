@@ -187,7 +187,7 @@ namespace Telegram
         public override async void OnStart(StartKind startKind, IActivatedEventArgs args)
         {
 #if DEBUG
-            DebugSettings.EnableFrameRateCounter = true;
+            DebugSettings.EnableFrameRateCounter = false;
 #endif
 
             if (startKind == StartKind.Activate)

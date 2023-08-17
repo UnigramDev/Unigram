@@ -214,17 +214,17 @@ namespace Telegram
         }
     }
 
-    public static class Extensions
+    public static class Extensions2
     {
         public static string TitleCase(this string str)
         {
             var split = str.Split('_');
-            return string.Join("", split.Select(x => x.Substring(0, 1).ToUpperInvariant() + x.Substring(1)));
+            return string.Join("", split.Select(x => x[..1].ToUpperInvariant() + x[1..]));
         }
 
         public static string CamelCase(this string str)
         {
-            return str.Substring(0, 1).ToLowerInvariant() + str.Substring(1);
+            return str[..1].ToLowerInvariant() + str[1..];
         }
     }
 

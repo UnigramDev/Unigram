@@ -371,7 +371,7 @@ namespace Telegram.Controls
         private void Speed_Click(object sender, RoutedEventArgs e)
         {
             var flyout = new MenuFlyout();
-            flyout.CreatePlaybackSpeed(_playbackService.PlaybackSpeed, UpdatePlaybackSpeed);
+            flyout.CreatePlaybackSpeed(_playbackService.PlaybackSpeed, FlyoutPlacementMode.Bottom, UpdatePlaybackSpeed);
             flyout.ShowAt(SpeedButton, FlyoutPlacementMode.BottomEdgeAlignedRight);
         }
 

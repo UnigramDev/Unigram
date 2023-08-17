@@ -38,7 +38,7 @@ Now that vcpkg is ready, you must customize the **ffmpeg** port to be built with
 - Open `portfile.cmake`
 - Locate `--enable-libvpx` and replace it with the following:
 ```
---disable-everything --enable-hwaccel=h264_d3d11va --enable-hwaccel=h264_d3d11va2 --enable-hwaccel=h264_dxva2 --enable-hwaccel=hevc_d3d11va --enable-hwaccel=hevc_d3d11va2 --enable-hwaccel=hevc_dxva2 --enable-hwaccel=mpeg2_d3d11va --enable-hwaccel=mpeg2_d3d11va2 --enable-hwaccel=mpeg2_dxva2 --enable-protocol=file --enable-libopus --enable-libvpx --enable-decoder=aac --enable-decoder=aac_fixed --enable-decoder=aac_latm --enable-decoder=aasc --enable-decoder=alac --enable-decoder=flac --enable-decoder=gif --enable-decoder=h264 --enable-decoder=hevc --enable-decoder=libvpx_vp8 --enable-decoder=libvpx_vp9 --enable-decoder=mp1 --enable-decoder=mp1float --enable-decoder=mp2 --enable-decoder=mp2float --enable-decoder=mp3 --enable-decoder=mp3adu --enable-decoder=mp3adufloat --enable-decoder=mp3float --enable-decoder=mp3on4 --enable-decoder=mp3on4float --enable-decoder=mpeg4 --enable-decoder=msmpeg4v2 --enable-decoder=msmpeg4v3 --enable-decoder=opus --enable-decoder=pcm_alaw --enable-decoder=pcm_f32be --enable-decoder=pcm_f32le --enable-decoder=pcm_f64be --enable-decoder=pcm_f64le --enable-decoder=pcm_lxf --enable-decoder=pcm_mulaw --enable-decoder=pcm_s16be --enable-decoder=pcm_s16be_planar --enable-decoder=pcm_s16le --enable-decoder=pcm_s16le_planar --enable-decoder=pcm_s24be --enable-decoder=pcm_s24daud --enable-decoder=pcm_s24le --enable-decoder=pcm_s24le_planar --enable-decoder=pcm_s32be --enable-decoder=pcm_s32le --enable-decoder=pcm_s32le_planar --enable-decoder=pcm_s64be --enable-decoder=pcm_s64le --enable-decoder=pcm_s8 --enable-decoder=pcm_s8_planar --enable-decoder=pcm_u16be --enable-decoder=pcm_u16le --enable-decoder=pcm_u24be --enable-decoder=pcm_u24le --enable-decoder=pcm_u32be --enable-decoder=pcm_u32le --enable-decoder=pcm_u8 --enable-decoder=vorbis --enable-decoder=wavpack --enable-decoder=wmalossless --enable-decoder=wmapro --enable-decoder=wmav1 --enable-decoder=wmav2 --enable-decoder=wmavoice --enable-encoder=libopus --enable-parser=aac --enable-parser=aac_latm --enable-parser=flac --enable-parser=h264 --enable-parser=hevc --enable-parser=mpeg4video --enable-parser=mpegaudio --enable-parser=opus --enable-parser=vorbis --enable-demuxer=aac --enable-demuxer=flac --enable-demuxer=gif --enable-demuxer=h264 --enable-demuxer=hevc --enable-demuxer=matroska --enable-demuxer=m4v --enable-demuxer=mov --enable-demuxer=mp3 --enable-demuxer=ogg --enable-demuxer=wav --enable-muxer=ogg --enable-muxer=opus
+--disable-everything --enable-protocol=file --enable-libopus --enable-libvpx --enable-decoder=gif --enable-decoder=h264 --enable-decoder=hevc --enable-decoder=libvpx_vp8 --enable-decoder=libvpx_vp9 --enable-decoder=mpeg4 --enable-decoder=msmpeg4v2 --enable-decoder=msmpeg4v3 --enable-decoder=opus --enable-decoder=vorbis --enable-encoder=libopus --enable-parser=h264 --enable-parser=hevc --enable-parser=mpeg4video --enable-parser=opus --enable-parser=vorbis --enable-demuxer=gif --enable-demuxer=h264 --enable-demuxer=hevc --enable-demuxer=matroska --enable-demuxer=m4v --enable-demuxer=mov --enable-demuxer=ogg --enable-muxer=ogg --enable-muxer=opus
 ```
 Now that everything is properly configured go back to the terminal and enter the following:
 ```
@@ -83,7 +83,7 @@ as we disable all the features that we don't need to save a bit of disk space:
 3. Make sure to have docker installed on your machine
 4. Open the terminal and run the following commands:
 ```
-docker run -it -v C:\Source\vlc:/vlc registry.videolan.org/vlc-debian-llvm-uwp:20200706065223 /bin/bash`
+docker run -it -v C:\Source\vlc:/vlc registry.videolan.org/vlc-debian-llvm-uwp:20200706065223`
 cd ../vlc
 extras/package/win32/build.sh -a x86_64 -z -r -u -w -D=C:/Source/vlc
 ```
@@ -91,16 +91,34 @@ When the building is complete, the NuGet package can be [manually created](https
 
 For reference, this is the list of VLC plugins currently needed by Unigram to properly work:
 - access\libimem_plugin.dll
+- audio_filter\libaudio_format_plugin.dll # .MP3/.M4A/.OGG/.FLAC
+- audio_filter\libsamplerate_plugin.dll
+- audio_filter\libscaletempo_plugin.dll
+- audio_filter\libtrivial_channel_mixer_plugin.dll # .OGG
+- audio_filter\libugly_resampler_plugin.dll
+- audio_mixer\libfloat_mixer_plugin.dll
+- audio_output\libwasapi_plugin.dll
 - audio_output\libwinstore_plugin.dll
 - codec\libavcodec_plugin.dll
 - codec\libd3d11va_plugin.dll
+- codec\libflac_plugin.dll # .FLAC
+- codec\libmpg123_plugin.dll # .MP3
+- codec\libopus_plugin.dll # .OGG
+- demux\libes_plugin.dll # .MP3
+- demux\libflacsys_plugin.dll # .FLAC
 - demux\libmp4_plugin.dll
+- demux\libogg_plugin.dll # .OGG
+- packetizer\libpacketizer_flac_plugin.dll # .FLAC
+- packetizer\libpacketizer_mpegaudio_plugin.dll # .MP3
 - stream_filter\libcache_read_plugin.dll
 - stream_filter\librecord_plugin.dll
+- stream_filter\libskiptags_plugin.dll # .MP3
 - text_renderer\libtdummy_plugin.dll
 - video_chroma\libswscale_plugin.dll
 - video_chroma\libyuvp_plugin.dll
 - video_output\libdirect3d11_plugin.dll
+
+⚠️ TODO: there must be a way to compile WITHOUT libd3d11va and just use libavcodec
 
 ### WebRTC
 Unigram uses WebRTC for calls and video chats. Since WebRTC doesn't currently support UWP, you must use our fork to build it.
@@ -117,7 +135,7 @@ Since compiling WebRTC is time and resources consuming, it is possible to build 
 - From Telegram > Properties > Build, remove `ENABLE_CALLS` directive.
 - Exclude from the project the following files:
   - Controls/Cells/GroupCallParticipantGridCell.xaml
-  - Views/Calls
+  - Views/Calls/*
 
 ## Requirements
 

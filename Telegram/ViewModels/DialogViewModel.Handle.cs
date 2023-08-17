@@ -576,7 +576,7 @@ namespace Telegram.ViewModels
             {
                 Handle(update.MessageId, message =>
                 {
-                    if (update.NewContent is not MessageAlbum)
+                    if (update.NewContent is not MessageAlbum and not MessageStory)
                     {
                         message.Reset();
                         message.Content = update.NewContent;

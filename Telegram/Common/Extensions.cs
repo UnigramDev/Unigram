@@ -283,7 +283,7 @@ namespace Telegram.Common
             {
                 Target = target,
                 PreferredPlacement = placement,
-                IsLightDismissEnabled = true,
+                IsLightDismissEnabled = target != null,
                 Content = content,
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 VerticalContentAlignment = VerticalAlignment.Stretch,

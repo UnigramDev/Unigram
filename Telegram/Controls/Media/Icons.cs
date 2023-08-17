@@ -13,6 +13,9 @@ namespace Telegram.Controls.Media
 {
     public class Icons
     {
+        public const string PictureInPictureEnter = "\uE92C";
+        public const string PictureInPictureExit = "\uE92D";
+
         public const string ArrowDownLeft16 = "\uE928";
         public const string ArrowUpRight16 = "\uE9B7";
 
@@ -47,9 +50,9 @@ namespace Telegram.Controls.Media
         public const string Cancel = "\uE978";
         public const string CancelSmall = "\uE93F";
         public const string Play = "\uE768";
-        public const string PlayFilled = "\uEA17";
+        public const string PlayFilled24 = "\uEA17";
         public const string Pause = "\uE769";
-        public const string PauseFilled = "\uEA18";
+        public const string PauseFilled24 = "\uEA18";
         public const string Checkmark = "\uE10B";
         public const string CheckmarkFilled24 = "\uEA20";
         public const string TtlFilled24 = "\uEA21";
@@ -120,6 +123,9 @@ namespace Telegram.Controls.Media
         public const string Alert = "\uEA8F";
         public const string AlertSnooze = "\uE99C";
 
+        public const string StealthLocked = "\uEA29";
+        public const string Stealth = "\uEA28";
+
         public const string MusicNote2 = "\uE99D";
         public const string MusicNoteOff2 = "\uE99E";
 
@@ -160,6 +166,7 @@ namespace Telegram.Controls.Media
         public const string Archive = "\uE7B8";
         public const string ArchiveFilled = "\uEA0E";
 
+        public const string StoriesOff = "\uEA2D";
         public const string StoriesPinned = "\uE9AC";
         public const string StoriesPinnedOff = "\uE9D2";
 
@@ -178,6 +185,7 @@ namespace Telegram.Controls.Media
         public const string CheckmarkCircle = "\uE97E";
         public const string Multiselect = "\uE762";
         public const string SaveAs = "\uE792";
+        public const string SaveAsLocked = "\uEA2B";
         public const string FolderOpen = "\uE838";
         public const string OpenIn = "\uE7AC";
 
@@ -196,6 +204,9 @@ namespace Telegram.Controls.Media
 
         public const string Stories = "\uE9D3";
         public const string ExpiredStory = "\uE9E5";
+
+        public const string Rewind524 = "\uEA31";
+        public const string Rewind2524 = "\uEA32";
 
         public const string Block = "\uF166";
         public const string Search = "\uE721";
@@ -257,6 +268,9 @@ namespace Telegram.Controls.Media
         public const string Speaker2 = "\uE995";
         public const string Speaker1 = "\uE993";
         public const string Speaker0 = "\uEA11";
+        public const string Speaker2Filled = "\uEA2E";
+        public const string Speaker1Filled = "\uEA2F";
+        public const string SpeakerMuteFilled = "\uEA30";
         public const string SpeakerOff = "\uE74F";
         public const string SendFilled = "\uE919";
 
@@ -279,6 +293,9 @@ namespace Telegram.Controls.Media
         public const string PaintBrush = "\uE90E";
 
         public const string Seen = "\uE96B";
+
+        public const string Clock = "\uEA34";
+        public const string ClockFilled = "\uEA33";
 
         public const string Multiplier2xFilled = "\uE9BA";
         public const string PlayCircleFilled = "\uE9AE";

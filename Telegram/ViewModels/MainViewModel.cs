@@ -18,9 +18,11 @@ using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Folders;
+using Telegram.ViewModels.Stories;
 using Telegram.Views;
 using Telegram.Views.Folders;
 using Telegram.Views.Popups;
+using Telegram.Views.Settings.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -71,8 +73,9 @@ namespace Telegram.ViewModels
 
             Chats = new ChatListViewModel(clientService, settingsService, aggregator, pushService, chatList);
             SearchChats = new SearchChatsViewModel(clientService, settingsService, aggregator);
+            Stories = new StoryListViewModel(clientService, settingsService, aggregator, new StoryListMain());
             Topics = new TopicListViewModel(clientService, settingsService, aggregator, pushService, 0);
-            Contacts = new ContactsViewModel(clientService, settingsService, aggregator, contactsService);
+            Contacts = new ContactsViewModel(clientService, settingsService, aggregator);
             Calls = new CallsViewModel(clientService, settingsService, aggregator);
             Settings = new SettingsViewModel(clientService, settingsService, storageService, aggregator, settingsSearchService);
 
@@ -86,6 +89,7 @@ namespace Telegram.ViewModels
             Children.Add(_voipService as ViewModelBase);
             Children.Add(SearchChats);
             Children.Add(Topics);
+            Children.Add(Stories);
 
             Subscribe();
         }
@@ -431,6 +435,7 @@ namespace Telegram.ViewModels
 
         public ChatListViewModel Chats { get; }
         public SearchChatsViewModel SearchChats { get; }
+        public StoryListViewModel Stories { get; }
         public TopicListViewModel Topics { get; }
         public ContactsViewModel Contacts { get; }
         public CallsViewModel Calls { get; }
@@ -481,7 +486,7 @@ namespace Telegram.ViewModels
 
         public async void MarkFolderAsRead(ChatFolderViewModel folder)
         {
-            var confirm = await ShowPopupAsync(Strings.AreYouSure, Strings.AppName, Strings.MarkAsRead, Strings.Cancel);
+            var confirm = await ShowPopupAsync(Strings.AreYouSure, Strings.AppName, Strings.MarkAllAsRead, Strings.Cancel);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
@@ -508,6 +513,11 @@ namespace Telegram.ViewModels
         public void DeleteFolder(ChatFolderViewModel folder)
         {
             FoldersViewModel.Delete(ClientService, NavigationService, folder.Info);
+        }
+
+        public void ArchiveSettings()
+        {
+            ShowPopup(new SettingsArchivePopup(ClientService));
         }
     }
 

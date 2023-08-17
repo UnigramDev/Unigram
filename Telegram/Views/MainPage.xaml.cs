@@ -1457,7 +1457,7 @@ namespace Telegram.Views
         private void UpdatePaneToggleButtonVisibility()
         {
             var visible = ViewModel.Chats.Items.ChatList is ChatListArchive
-               // || !_searchCollapsed
+                // || !_searchCollapsed
                 || !_topicListCollapsed;
             //|| rpMasterTitlebar.SelectedIndex != 0
             //|| MasterDetail.NavigationService.CanGoBack
@@ -3148,7 +3148,7 @@ namespace Telegram.Views
 
             if (TopicListPresenter.ActualWidth == 0)
             {
-            await TopicListPresenter.UpdateLayoutAsync();
+                await TopicListPresenter.UpdateLayoutAsync();
             }
 
             void ShowHideTopicListCompleted()
@@ -3254,9 +3254,6 @@ namespace Telegram.Views
             }
             else
             {
-                ViewModel.ArchiveSettings();
-                return;
-
                 FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
             }
         }
