@@ -104,7 +104,7 @@ namespace Telegram.Controls.Messages
 
                 Width = 216;
 
-                photo.Visibility = Visibility.Visible;
+                segments.Visibility = Visibility.Visible;
                 view.Visibility = Visibility.Visible;
 
                 segments.SetChat(null, null, 120);
@@ -125,7 +125,7 @@ namespace Telegram.Controls.Messages
 
                 Width = 216;
 
-                photo.Visibility = Visibility.Visible;
+                segments.Visibility = Visibility.Visible;
                 view.Visibility = Visibility.Visible;
 
                 segments.SetChat(null, null, 120);
@@ -148,14 +148,14 @@ namespace Telegram.Controls.Messages
                 {
                     Width = double.NaN;
 
-                    photo.Visibility = Visibility.Collapsed;
+                    segments.Visibility = Visibility.Collapsed;
                     view.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
                     Width = 216;
 
-                    photo.Visibility = Visibility.Visible;
+                    segments.Visibility = Visibility.Visible;
                     view.Visibility = Visibility.Visible;
 
                     if (message.ClientService.TryGetUser(message.SenderId, out User user) && message.ClientService.TryGetActiveStoriesFromUser(user.Id, out ChatActiveStories activeStories))

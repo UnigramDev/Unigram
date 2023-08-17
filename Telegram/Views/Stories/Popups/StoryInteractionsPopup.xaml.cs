@@ -41,11 +41,11 @@ namespace Telegram.Views.Stories.Popups
 
         public override void OnNavigatedTo()
         {
-            ViewModel.Items.CollectionChanged += OnCollectionChanged;
-
             var story = ViewModel.Story;
-            if (story.CanGetViewers && story.InteractionInfo != null && !story.HasExpiredViewers)
+            if (story?.InteractionInfo != null && story.CanGetViewers && !story.HasExpiredViewers)
             {
+                ViewModel.Items.CollectionChanged += OnCollectionChanged;
+
                 if (story.InteractionInfo.ViewCount >= 9)
                 {
                     VerticalContentAlignment = VerticalAlignment.Stretch;

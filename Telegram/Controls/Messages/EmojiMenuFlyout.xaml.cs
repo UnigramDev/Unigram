@@ -497,7 +497,7 @@ namespace Telegram.Controls.Messages
             }
             else
             {
-                await _message.ClientService.SendAsync(new SetStoryReaction(_story.ChatId, _story.StoryId, reaction, true));
+                await _story.ClientService.SendAsync(new SetStoryReaction(_story.ChatId, _story.StoryId, reaction, true));
 
                 if (_reserved != null && _reserved.IsLoaded)
                 {

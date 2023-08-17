@@ -127,14 +127,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.ReplyToItem is Story replyToStory)
             {
-                if (replyToStory.IsVisibleOnlyForSelf)
-                {
-                    SetEmptyTemplate(message.ClientService, message.ReplyTo);
-                }
-                else
-                {
-                    GetStoryTemplate(message.ClientService, replyToStory, null, outgoing);
-                }
+                GetStoryTemplate(message.ClientService, replyToStory, null, outgoing);
             }
             else if (message.ReplyToState == MessageReplyToState.Loading)
             {

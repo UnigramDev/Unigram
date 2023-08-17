@@ -40,7 +40,8 @@ namespace Telegram.Controls
 
         public event EventHandler Closing;
 
-        public static OverlayWindow Current { get; private set; }
+        [ThreadStatic]
+        public static OverlayWindow Current;
 
         public OverlayWindow()
         {
