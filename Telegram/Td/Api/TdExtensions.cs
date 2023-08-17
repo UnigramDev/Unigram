@@ -66,6 +66,19 @@ namespace Telegram.Td.Api
             return new Vector2((float)point.X * scale, (float)point.Y * scale);
         }
 
+        public static ChatNotificationSettings Clone(this ChatNotificationSettings settings)
+        {
+            return new ChatNotificationSettings(
+                settings.UseDefaultMuteFor, settings.MuteFor,
+                settings.UseDefaultSound, settings.SoundId,
+                settings.UseDefaultShowPreview, settings.ShowPreview,
+                settings.UseDefaultMuteStories, settings.MuteStories,
+                settings.UseDefaultStorySound, settings.StorySoundId,
+                settings.UseDefaultShowStorySender, settings.ShowStorySender,
+                settings.UseDefaultDisablePinnedMessageNotifications, settings.DisablePinnedMessageNotifications,
+                settings.UseDefaultDisableMentionNotifications, settings.DisableMentionNotifications);
+        }
+
         public static bool HasActiveUsername(this Supergroup supergroup)
         {
             return ActiveUsername(supergroup).Length > 0;

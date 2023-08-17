@@ -180,7 +180,12 @@ namespace Telegram.Services
                         var confirm = await MessagePopup.ShowAsync(Strings.HideNewChatsAlertText, Strings.HideNewChatsAlertTitle, Strings.OK, Strings.Cancel);
                         if (confirm == ContentDialogResult.Primary)
                         {
-                            _clientService.Options.ArchiveAndMuteNewChatsFromUnknownUsers = true;
+                            var response = await _clientService.SendAsync(new GetArchiveChatListSettings());
+                            if (response is ArchiveChatListSettings settings)
+                            {
+                                settings.ArchiveAndMuteNewChatsFromUnknownUsers = true;
+                                _clientService.Send(new SetArchiveChatListSettings(settings));
+                            }
                         }
 
                         _clientService.Send(new HideSuggestedAction(action));
