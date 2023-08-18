@@ -214,12 +214,14 @@
                                            Grid.Row="1" />
 
                     <TextBlock x:Name="ShowMore"
-                               Text="{CustomResource ShowMore}"
                                FontWeight="SemiBold"
                                HorizontalAlignment="Left"
                                SizeChanged="SizeMore_SizeChanged"
                                Grid.Column="1"
-                               Grid.Row="1" />
+                               Grid.Row="1">
+                        <Run />
+                        <Run Text="{CustomResource ShowMore}" />
+                    </TextBlock>
 
                 </Grid>
 

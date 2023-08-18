@@ -145,6 +145,9 @@ namespace Telegram.Controls.Stories
         private long _chatId;
         private int _storyId;
 
+        private long _openedChatId;
+        private int _openedStoryId;
+
         private bool _open;
         private int _index;
 
@@ -259,17 +262,17 @@ namespace Telegram.Controls.Stories
 
             if (open && (story.StoryId != _storyId || !_open))
             {
-                if (story.StoryId != _storyId)
+                if (story.ChatId != _openedChatId || story.StoryId != _openedStoryId)
                 {
-                    _viewModel.ClientService.Send(new CloseStory(story.ChatId, _storyId));
+                    _viewModel.ClientService.Send(new CloseStory(_openedChatId, _openedStoryId));
+                    _openedChatId = 0;
+                    _openedStoryId = 0;
                 }
 
-                _viewModel.ClientService.Send(new OpenStory(story.ChatId, story.StoryId));
                 Activate(story);
             }
             else if (_open && !open)
             {
-                _viewModel.ClientService.Send(new CloseStory(story.ChatId, story.StoryId));
                 Deactivate(story);
             }
 
@@ -379,7 +382,7 @@ namespace Telegram.Controls.Stories
                     RenderTransform = new RotateTransform
                     {
                         Angle = area.Position.RotationAngle
-        }
+                    }
                 };
 
                 Canvas.SetLeft(button, area.Position.XPercentage / 100 * ActualWidth - button.Width / 2);
@@ -527,6 +530,13 @@ namespace Telegram.Controls.Stories
 
             //UnloadVideo();
             CollapseCaption();
+
+            if (_openedChatId == story.ChatId && _openedStoryId == story.StoryId)
+            {
+                _viewModel.ClientService.Send(new CloseStory(story.ChatId, story.StoryId));
+                _openedChatId = 0;
+                _openedStoryId = 0;
+            }
         }
 
         private void Photo_Click(object sender, RoutedEventArgs e)
@@ -631,6 +641,11 @@ namespace Telegram.Controls.Stories
             if (_player != null)
             {
                 _playbackQueue.Enqueue(_player.Stop);
+            }
+
+            if (_type == StoryType.Photo)
+            {
+                Video?.Clear();
             }
 
             if (file.Local.IsDownloadingCompleted)
@@ -814,6 +829,13 @@ namespace Telegram.Controls.Stories
             {
                 _timer.Stop();
                 _timer.Start();
+
+                if (_viewModel?.SelectedItem != null && _viewModel.SelectedItem.ChatId != _openedChatId && _viewModel.SelectedItem.StoryId != _openedStoryId)
+                {
+                    _openedChatId = _viewModel.SelectedItem.ChatId;
+                    _openedStoryId = _viewModel.SelectedItem.StoryId;
+                    _viewModel.ClientService.Send(new OpenStory(_openedChatId, _openedStoryId));
+                }
             }
         }
 
@@ -822,7 +844,10 @@ namespace Telegram.Controls.Stories
             var transform = TransformToVisual(Window.Current.Content);
             var point = transform.TransformPoint(new Windows.Foundation.Point()).ToVector2();
 
-            //var show = true;
+            if (origin.IsEmpty && Window.Current.Content is FrameworkElement root)
+            {
+                origin = new Windows.Foundation.Rect(root.ActualWidth / 2, root.ActualHeight, 48, 48);
+            }
 
             var reoffset = new Vector2((float)origin.X, (float)origin.Y);
             var resize = new Vector2((float)origin.Width, (float)origin.Height);
@@ -909,7 +934,7 @@ namespace Telegram.Controls.Stories
                 var rect = compositor.CreateRoundedRectangleGeometry();
                 rect.Size = new Vector2(resize.X, resize.Y);
                 rect.Offset = (ActualSize - rect.Size) / 2;
-                rect.CornerRadius = new Vector2(4, 4);
+                rect.CornerRadius = ciccio == StoryOrigin.Mention ? resize / 2 : new Vector2(4, 4);
 
                 visual.Clip = compositor.CreateGeometricClip(rect);
 
@@ -924,7 +949,7 @@ namespace Telegram.Controls.Stories
                 //offset.Duration = TimeSpan.FromSeconds(5);
 
                 var cornerRadius = compositor.CreateVector2KeyFrameAnimation();
-                cornerRadius.InsertKeyFrame(show ? 0 : 1, new Vector2(4, 4));
+                cornerRadius.InsertKeyFrame(show ? 0 : 1, ciccio == StoryOrigin.Mention ? resize / 2 : new Vector2(4, 4));
                 cornerRadius.InsertKeyFrame(show ? 1 : 0, new Vector2(8, 8));
                 //cornerRadius.Duration = TimeSpan.FromSeconds(5);
 
@@ -1096,6 +1121,13 @@ namespace Telegram.Controls.Stories
                 {
                     _loading = false;
                     ElementCompositionPreview.SetElementChildVisual(ActiveRoot, Window.Current.Compositor.CreateSpriteVisual());
+
+                    if (_viewModel?.SelectedItem != null && _viewModel.SelectedItem.ChatId != _openedChatId && _viewModel.SelectedItem.StoryId != _openedStoryId)
+                    {
+                        _openedChatId = _viewModel.SelectedItem.ChatId;
+                        _openedStoryId = _viewModel.SelectedItem.StoryId;
+                        _viewModel.ClientService.Send(new OpenStory(_openedChatId, _openedStoryId));
+                    }
                 }
                 else if (e.Cache < 100 && !_loading)
                 {
