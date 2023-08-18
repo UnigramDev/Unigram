@@ -1004,7 +1004,14 @@ namespace Telegram.ViewModels
             {
                 if (maxId == 0)
                 {
-                    ScrollToBottom();
+                    if (_thread != null)
+                    {
+                        ScrollToTop();
+                    }
+                    else
+                    {
+                        ScrollToBottom();
+                    }
                 }
 
                 //var max = _dialog?.UnreadCount > 0 ? _dialog.ReadInboxMaxId : int.MaxValue;
@@ -1040,7 +1047,8 @@ namespace Telegram.ViewModels
                 }
                 else if (ThreadId != 0)
                 {
-                    if (Thread != null && Thread.Messages.Any(x => x.Id == maxId))
+                    // MaxId == 0 means that the thread was never opened
+                    if (maxId == 0 || Thread.Messages.Any(x => x.Id == maxId))
                     {
                         func = ClientService.SendAsync(new GetMessageThreadHistory(chat.Id, ThreadId, 1, -25, 50));
                     }
@@ -1149,7 +1157,7 @@ namespace Telegram.ViewModels
 
                         // If we're loading from the last read message
                         // then we want to skip it to align first unread message at top
-                        if (lastReadMessageId != lastMessageId && maxId >= lastReadMessageId)
+                        if (lastReadMessageId != 0 && lastReadMessageId != lastMessageId && maxId >= lastReadMessageId)
                         {
                             var target = default(Message);
                             var index = -1;
@@ -1403,6 +1411,21 @@ namespace Telegram.ViewModels
 
                 field.ScrollToBottom();
                 field.SetScrollingMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+            }
+        }
+
+        public void ScrollToTop()
+        {
+            //if (IsFirstSliceLoaded)
+            {
+                var field = HistoryField;
+                if (field == null)
+                {
+                    return;
+                }
+
+                field.ScrollToTop();
+                field.SetScrollingMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
             }
         }
 
