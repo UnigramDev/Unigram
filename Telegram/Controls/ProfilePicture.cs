@@ -229,6 +229,87 @@ namespace Telegram.Controls
 
         #endregion
 
+        #region Story
+
+        struct StoryParameters
+        {
+            public IClientService ClientService;
+            public Story Story;
+            public int Side;
+
+            public StoryParameters(IClientService clientService, Story story, int side)
+            {
+                ClientService = clientService;
+                Story = story;
+                Side = side;
+            }
+        }
+
+        public void SetStory(IClientService clientService, Story story, int side, bool download = true)
+        {
+            if (story.Content is StoryContentPhoto photo)
+            {
+                SetStory(clientService, story, photo.Photo.GetSmall()?.Photo, side, download);
+            }
+            else if (story.Content is StoryContentVideo video)
+            {
+                SetStory(clientService, story, video.Video.Thumbnail?.File, side, download);
+            }
+        }
+
+        private void SetStory(IClientService clientService, Story story, File file, int side, bool download = true)
+        {
+            UpdateManager.Unsubscribe(this, ref _fileToken, true);
+
+            if (_referenceId != story.Id || _fileId != file?.Id || Source == null || !download)
+            {
+                _referenceId = story.Id;
+                _fileId = file?.Id;
+
+                Source = GetStory(clientService, story, file, side, out var shape, download);
+                Shape = shape;
+            }
+        }
+
+        private object GetStory(IClientService clientService, Story story, File file, int side, out ProfilePictureShape shape, bool download = true)
+        {
+            System.Diagnostics.Debug.Assert(side == Width);
+
+            shape = ProfilePictureShape.Ellipse;
+
+            if (file != null)
+            {
+                if (file.Local.IsDownloadingCompleted)
+                {
+                    return UriEx.ToBitmap(file.Local.Path, 0, 0);
+                }
+                else if (download)
+                {
+                    if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
+                    {
+                        clientService.DownloadFile(file.Id, 1);
+                    }
+
+                    _parameters = new StoryParameters(clientService, story, side);
+                    UpdateManager.Subscribe(this, clientService, file, ref _fileToken, UpdateFile, true);
+                }
+            }
+
+            if (story.Content is StoryContentPhoto photo && photo.Photo.Minithumbnail != null)
+            {
+                return PlaceholderHelper.GetBlurred(photo.Photo.Minithumbnail.Data);
+            }
+            else if (story.Content is StoryContentVideo video && video.Video.Minithumbnail != null)
+            {
+                return PlaceholderHelper.GetBlurred(video.Video.Minithumbnail.Data);
+            }
+
+            return null;
+        }
+
+        #endregion
+
+
         #region Chat
 
         struct ChatParameters
@@ -272,7 +353,7 @@ namespace Telegram.Controls
 
             shape = ProfilePictureShape.Ellipse;
 
-            if (chat.Type is ChatTypePrivate privata && clientService.IsSavedMessages(chat))
+            if (clientService.IsSavedMessages(chat))
             {
                 return PlaceholderImage.GetGlyph(Icons.BookmarkFilled, 5);
             }
@@ -542,18 +623,6 @@ namespace Telegram.Controls
             else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 SetChat(message.ClientService, senderChat, 30);
-            }
-        }
-
-        public void CloneSource(ProfilePicture photo)
-        {
-            if (_referenceId != photo._referenceId || _fileId != photo._fileId || Source == null)
-            {
-                _referenceId = photo._referenceId;
-                _fileId = photo._fileId;
-
-                Source = photo.Source;
-                Shape = photo.Shape;
             }
         }
     }
