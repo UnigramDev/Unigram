@@ -86,15 +86,16 @@
                                            ChoosingItemContainer="TopChats_ChoosingItemContainer"
                                            ContainerContentChanging="TopChats_ContainerContentChanging"
                                            ItemsSource="{x:Bind ViewModel.TopChats}"
-                                           Style="{StaticResource HorizontalListViewStyle}">
+                                           Style="{StaticResource HorizontalListViewStyle}"
+                                           Padding="4,0">
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Width="72"
+                                <StackPanel Width="64"
                                             Padding="0,12"
                                             Background="Transparent">
                                     <Grid Width="48"
                                           Height="48"
-                                          Margin="12,0">
+                                          Margin="8,0">
                                         <controls:ProfilePicture Width="48"
                                                                  Height="48"
                                                                  IsEnabled="False" />
