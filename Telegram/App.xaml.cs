@@ -76,10 +76,10 @@ namespace Telegram
         /// </summary>
         public App()
         {
-            if (SettingsService.Current.Diagnostics.LastUpdateVersion < Package.Current.Id.Version.Build)
+            if (SettingsService.Current.Diagnostics.LastUpdateVersion < Constants.BuildNumber)
             {
                 SettingsService.Current.Diagnostics.LastUpdateTime = DateTime.Now.ToTimestamp();
-                SettingsService.Current.Diagnostics.LastUpdateVersion = Package.Current.Id.Version.Build;
+                SettingsService.Current.Diagnostics.LastUpdateVersion = Constants.BuildNumber;
                 SettingsService.Current.Diagnostics.UpdateCount++;
             }
 

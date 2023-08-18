@@ -76,10 +76,10 @@ namespace Telegram.Controls
 
             if (version.Revision > 0)
             {
-                return string.Format("{0}.{1}.{3} ({2}) {4}{5}", version.Major, version.Minor, version.Build, version.Revision, packageId.Architecture, type);
+                return string.Format("{0}.{1}.{2} ({3}) {4}{5}", version.Major, version.Minor, version.Revision, Constants.BuildNumber, packageId.Architecture, type);
             }
 
-            return string.Format("{0}.{1} ({2}) {3}{4}", version.Major, version.Minor, version.Build, packageId.Architecture, type);
+            return string.Format("{0}.{1} ({2}) {3}{4}", version.Major, version.Minor, Constants.BuildNumber, packageId.Architecture, type);
         }
     }
 }

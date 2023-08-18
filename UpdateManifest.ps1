@@ -69,7 +69,12 @@ $identity.Attributes["Publisher"].Value = $h[$config].Publisher
 $version = $identity.Attributes["Version"].Value
 $regex = [regex]'(?:(\d+)\.)(?:(\d+)\.)(?:(\d*?)\.\d+)'
 
-$identity.Attributes["Version"].Value = $regex.Replace($version, '$1.$2.{0}.0' -f $out)
+if ($config -eq "RELEASE") {
+    $identity.Attributes["Version"].Value = $regex.Replace($version, '$1.$2.$3.0')
+}
+else {
+    $identity.Attributes["Version"].Value = $regex.Replace($version, '$1.$2.$3.{0}' -f $out)
+}
 
 $properties = $document.GetElementsByTagName("Properties")[0]
 $displayName = $properties.GetElementsByTagName("DisplayName")[0]
@@ -102,3 +107,5 @@ if (Compare-Object -ReferenceObject $(Get-Content "${path}\Package.StoreAssociat
     Set-Content -Path "${path}\Package.StoreAssociation.xml" -Value $storeAssociation
     Write-Output "Package.StoreAssociation.xml updated"
 }
+
+(Get-Content -path "${path}\..\Telegram\Constants.Secret.cs") -Replace "BuildNumber = (.*?);", "BuildNumber = ${out};" | Out-File "${path}\..\Telegram\Constants.Secret.cs"

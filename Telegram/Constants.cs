@@ -19,6 +19,8 @@ namespace Telegram
         public static readonly string AppCenterId;
         public static readonly string BingMapsApiKey;
 
+        public static readonly ushort BuildNumber;
+
         public const int TypingTimeout = 300;
         public const int HoldingThrottle = 500;
         public const int AnimatedThrottle = 200;
