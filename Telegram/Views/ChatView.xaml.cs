@@ -1819,7 +1819,7 @@ namespace Telegram.Views
 
             if (user != null && user.Type is not UserTypeDeleted && !secret)
             {
-                flyout.CreateFlyoutItem(ViewModel.ChangeTheme, Strings.ChangeColors, Icons.PaintBrush);
+                flyout.CreateFlyoutItem(ViewModel.ChangeTheme, Strings.SetWallpapers, Icons.PaintBrush);
             }
 
             if (supergroup != null && supergroup.Status is not ChatMemberStatusCreator && (supergroup.IsChannel || supergroup.HasActiveUsername()))

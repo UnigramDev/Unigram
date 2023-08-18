@@ -68,8 +68,8 @@ namespace Telegram.Controls.Chats
                 {
                     var background = update.Background;
 
-                    SyncBackgroundWithChatTheme(ref background, update.ForDarkTheme);
-                    UpdateBackground(background, update.ForDarkTheme);
+                    SyncBackgroundWithChatTheme(ref background, update.ForDarkTheme, out int dimming);
+                    UpdateBackground(background, update.ForDarkTheme, dimming);
                 }
             });
         }
@@ -80,25 +80,39 @@ namespace Telegram.Controls.Chats
             _aggregator = aggregator;
             _aggregator?.Subscribe<UpdateSelectedBackground>(this, Handle);
 
-            UpdateBackground(clientService.SelectedBackground, IsDarkTheme);
+            UpdateBackground(clientService.SelectedBackground, IsDarkTheme, 1);
         }
 
         public void Update(Background background, bool forDarkTheme)
         {
             if (forDarkTheme == IsDarkTheme)
             {
-                SyncBackgroundWithChatTheme(ref background, forDarkTheme);
-                UpdateBackground(background, forDarkTheme);
+                SyncBackgroundWithChatTheme(ref background, forDarkTheme, out int dimming);
+                UpdateBackground(background, forDarkTheme, dimming);
             }
         }
 
-        private void SyncBackgroundWithChatTheme(ref Background background, bool forDarkTheme)
+        private void SyncBackgroundWithChatTheme(ref Background background, bool forDarkTheme, out int dimming)
         {
             // I'm not a big fan of this, but this is the easiest way to keep background in sync
-            var chat = Theme.Current.ChatBackground?.Background ?? (forDarkTheme ? Theme.Current.ChatTheme?.DarkSettings.Background : Theme.Current.ChatTheme?.LightSettings.Background);
-            if (chat != null)
+            var theme = Theme.Current.ChatBackground;
+            if (theme != null)
             {
-                background = chat;
+                if (forDarkTheme)
+                {
+                    dimming = theme.DarkThemeDimming;
+                }
+                else
+                {
+                    dimming = 100;
+                }
+
+                background = theme.Background;
+            }
+            else
+            {
+                dimming = 100;
+                background = forDarkTheme ? Theme.Current.ChatTheme?.DarkSettings.Background : Theme.Current.ChatTheme?.LightSettings.Background;
             }
         }
 
@@ -114,7 +128,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private void UpdateBackground(Background background, bool dark)
+        private void UpdateBackground(Background background, bool dark, int dimming)
         {
             if (background == null)
             {
@@ -133,6 +147,17 @@ namespace Telegram.Controls.Chats
             _oldDark = dark;
 
             _presenter.UpdateSource(_clientService, background, false);
+
+            if (dimming != 100)
+            {
+                _presenter.Opacity = dimming / 100d;
+                Background = new SolidColorBrush(Colors.Black);
+            }
+            else
+            {
+                _presenter.Opacity = 1;
+                Background = null;
+            }
         }
 
         public static bool BackgroundEquals(Background prev, Background next, bool fast = false)
