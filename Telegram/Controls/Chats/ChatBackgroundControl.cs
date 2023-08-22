@@ -80,7 +80,7 @@ namespace Telegram.Controls.Chats
             _aggregator = aggregator;
             _aggregator?.Subscribe<UpdateSelectedBackground>(this, Handle);
 
-            UpdateBackground(clientService.SelectedBackground, IsDarkTheme, 1);
+            UpdateBackground(clientService.SelectedBackground, IsDarkTheme, 100);
         }
 
         public void Update(Background background, bool forDarkTheme)
@@ -112,7 +112,9 @@ namespace Telegram.Controls.Chats
             else
             {
                 dimming = 100;
-                background = forDarkTheme ? Theme.Current.ChatTheme?.DarkSettings.Background : Theme.Current.ChatTheme?.LightSettings.Background;
+                background = forDarkTheme
+                    ? Theme.Current.ChatTheme?.DarkSettings.Background
+                    : Theme.Current.ChatTheme?.LightSettings.Background;
             }
         }
 
@@ -148,7 +150,7 @@ namespace Telegram.Controls.Chats
 
             _presenter.UpdateSource(_clientService, background, false);
 
-            if (dimming != 100)
+            if (dark && dimming != 100)
             {
                 _presenter.Opacity = dimming / 100d;
                 Background = new SolidColorBrush(Colors.Black);
