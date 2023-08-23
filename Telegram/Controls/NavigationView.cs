@@ -4,8 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Controls.Media;
-using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -14,7 +12,6 @@ namespace Telegram.Controls
 {
     public class NavigationView : ContentControl
     {
-        private GlyphButton TogglePaneButton;
         private SplitView RootSplitView;
 
         public NavigationView()
@@ -24,45 +21,10 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
-            TogglePaneButton = GetTemplateChild("TogglePaneButton") as GlyphButton;
             RootSplitView = GetTemplateChild("RootSplitView") as SplitView;
-
-            TogglePaneButton.Click += Toggle_Click;
 
             RootSplitView.PaneOpening += OnPaneOpening;
             RootSplitView.PaneClosing += OnPaneClosing;
-
-            var sender = CoreApplication.GetCurrentView().TitleBar;
-            sender.IsVisibleChanged += OnLayoutMetricsChanged;
-            sender.LayoutMetricsChanged += OnLayoutMetricsChanged;
-
-            OnLayoutMetricsChanged(sender, null);
-        }
-
-        private void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
-        {
-            try
-            {
-                if (sender.SystemOverlayLeftInset > 0)
-                {
-                    TogglePaneButton.Glyph = Icons.ArrowRight;
-                    TogglePaneButton.HorizontalAlignment = HorizontalAlignment.Right;
-                }
-                else
-                {
-                    TogglePaneButton.Glyph = Icons.ArrowLeft;
-                    TogglePaneButton.HorizontalAlignment = HorizontalAlignment.Left;
-                }
-            }
-            catch
-            {
-                // Most likely InvalidComObjectException
-            }
-        }
-
-        private void Toggle_Click(object sender, RoutedEventArgs e)
-        {
-            BackRequested?.Invoke(this, null);
         }
 
         private void OnPaneOpening(SplitView sender, object args)
@@ -74,8 +36,6 @@ namespace Telegram.Controls
         {
             PaneClosing?.Invoke(sender, args);
         }
-
-        public event TypedEventHandler<NavigationView, object> BackRequested;
 
         public event TypedEventHandler<SplitView, object> PaneOpening;
         public event TypedEventHandler<SplitView, SplitViewPaneClosingEventArgs> PaneClosing;
@@ -116,19 +76,6 @@ namespace Telegram.Controls
 
         public static readonly DependencyProperty PaneFooterProperty =
             DependencyProperty.Register("PaneFooter", typeof(object), typeof(NavigationView), new PropertyMetadata(null));
-
-        #endregion
-
-        #region PaneToggleButtonVisibility
-
-        public Visibility PaneToggleButtonVisibility
-        {
-            get => (Visibility)GetValue(PaneToggleButtonVisibilityProperty);
-            set => SetValue(PaneToggleButtonVisibilityProperty, value);
-        }
-
-        public static readonly DependencyProperty PaneToggleButtonVisibilityProperty =
-            DependencyProperty.Register("PaneToggleButtonVisibility", typeof(Visibility), typeof(NavigationView), new PropertyMetadata(Visibility.Collapsed));
 
         #endregion
     }

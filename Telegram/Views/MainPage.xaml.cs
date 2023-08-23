@@ -157,6 +157,10 @@ namespace Telegram.Views
                 StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0
                     ? FlowDirection.RightToLeft
                     : FlowDirection.LeftToRight;
+
+                Photo.HorizontalAlignment = sender.SystemOverlayLeftInset > 0
+                    ? HorizontalAlignment.Right
+                    : HorizontalAlignment.Left;
             }
             catch
             {
@@ -1457,18 +1461,20 @@ namespace Telegram.Views
         private void UpdatePaneToggleButtonVisibility()
         {
             var visible = ViewModel.Chats.Items.ChatList is ChatListArchive
-                // || !_searchCollapsed
-                || !_topicListCollapsed;
-            //|| rpMasterTitlebar.SelectedIndex != 0
-            //|| MasterDetail.NavigationService.CanGoBack
-            //|| ChatsList.SelectionMode == ListViewSelectionMode.Multiple;
+                || !_searchCollapsed
+                || !_topicListCollapsed
+                || rpMasterTitlebar.SelectedIndex != 0;
 
             if (MasterDetail.CurrentState == MasterDetailState.Minimal)
             {
                 visible &= MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage);
             }
 
-            Root?.SetPaneToggleButtonVisibility(visible);
+            Photo.Glyph = visible
+                ? Photo.HorizontalAlignment == HorizontalAlignment.Right
+                ? Icons.ArrowRight
+                : Icons.ArrowLeft
+                : Icons.Hamburger;
         }
 
         private void UpdateListViewsSelectedItem(long chatId)
@@ -1792,8 +1798,6 @@ namespace Telegram.Views
             DialogsPanel.Visibility = Visibility.Visible;
             DialogsSearchPanel.Visibility = Visibility.Visible;
 
-            ComposeButton.Glyph = show ? Icons.Dismiss : Icons.Compose16;
-
             if (show)
             {
                 SearchField.ControlledList = DialogsSearchPanel.Root;
@@ -1921,7 +1925,6 @@ namespace Telegram.Views
             }
 
             SearchField.Text = string.Empty;
-            ComposeButton.Visibility = Visibility.Visible;
 
             if (ContactsPanel != null)
             {
@@ -2740,7 +2743,29 @@ namespace Telegram.Views
 
         private void Photo_Click(object sender, RoutedEventArgs e)
         {
-            Root.IsPaneOpen = true;
+            if (!_searchCollapsed)
+            {
+                Search_LostFocus(null, null);
+            }
+            else if (!_topicListCollapsed)
+            {
+                ShowHideTopicList(false);
+                UpdateListViewsSelectedItem(0);
+            }
+            else if (rpMasterTitlebar.SelectedIndex > 0)
+            {
+                SetPivotIndex(0);
+                ViewModel.RaisePropertyChanged(nameof(ViewModel.SelectedFolder));
+            }
+            else if (ViewModel.Chats.Items.ChatList is ChatListArchive
+                || ViewModel.Folders.Count > 0 && !ViewModel.Chats.Items.ChatList.ListEquals(ViewModel.Folders[0].ChatList))
+            {
+                UpdateFolder(ViewModel.Folders.Count > 0 ? ViewModel.Folders[0] : ChatFolderViewModel.Main);
+            }
+            else
+            {
+                Root.IsPaneOpen = true;
+            }
         }
 
         private void ChatFolders_ChoosingGroupHeaderContainer(ListViewBase sender, ChoosingGroupHeaderContainerEventArgs args)
@@ -3248,14 +3273,7 @@ namespace Telegram.Views
 
         private void ComposeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!_searchCollapsed)
-            {
-                Search_LostFocus(null, null);
-            }
-            else
-            {
-                FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
-            }
+            FlyoutBase.ShowAttachedFlyout(sender as FrameworkElement);
         }
 
         private void ChatCell_StoryClick(object sender, Chat chat)

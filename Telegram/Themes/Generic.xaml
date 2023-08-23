@@ -126,16 +126,6 @@
                                               AutomationProperties.LandmarkType="Main"
                                               HorizontalContentAlignment="Stretch"
                                               VerticalContentAlignment="Stretch" />
-
-                            <local:GlyphButton x:Name="TogglePaneButton"
-                                               Grid.Row="1"
-                                               Visibility="{TemplateBinding PaneToggleButtonVisibility}"
-                                               Foreground="{ThemeResource PageHeaderForegroundBrush}"
-                                               Width="56"
-                                               Height="40"
-                                               AutomationProperties.Name="{CustomResource AccDescrGoBack}"
-                                               ToolTipService.ToolTip="{CustomResource AccDescrGoBack}"
-                                               Glyph="&#xE72B;" />
                         </Grid>
                     </SplitView>
                 </ControlTemplate>
@@ -3040,9 +3030,9 @@
         <Setter Property="Glyph"
                 Value="&#xE72B;" />
         <Setter Property="Height"
-                Value="{ThemeResource AppBarThemeCompactHeight}" />
+                Value="40" />
         <Setter Property="Width"
-                Value="{ThemeResource AppBarThemeCompactHeight}" />
+                Value="48" />
         <Setter Property="AutomationProperties.Name"
                 Value="{CustomResource AccDescrGoBack}" />
         <Setter Property="ToolTipService.ToolTip"

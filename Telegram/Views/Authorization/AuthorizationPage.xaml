@@ -199,5 +199,6 @@
 
         <Border x:Name="TitleBar"
                 Background="Transparent" />
+        <controls:BackButton />
     </Grid>
 </Page>

@@ -96,6 +96,8 @@ namespace Telegram.Controls.Media
         public const string HandRight = "\uE98B";
         public const string PlayCircle = "\uE9FC";
 
+        public const string Hamburger = "\uE700";
+
         public const string LockClosedFilled14 = "\uEA0C";
 
         public const string PersonQuestionMark = "\uE897";

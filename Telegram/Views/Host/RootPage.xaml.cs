@@ -42,7 +42,6 @@ namespace Telegram.Views.Host
     {
         private readonly ILifetimeService _lifetime;
         private NavigationService _navigationService;
-        private long? _canGoBackToken;
 
         private RootDestination _navigationViewSelected;
         private readonly MvxObservableCollection<object> _navigationViewItems;
@@ -84,7 +83,6 @@ namespace Telegram.Views.Host
             service.Frame.Navigating += OnNavigating;
             service.Frame.Navigated += OnNavigated;
 
-            _canGoBackToken = service.Frame.RegisterPropertyChangedCallback(Frame.CanGoBackProperty, OnCanGoBackChanged);
             _navigationService = service;
 
             InitializeNavigation(service.Frame);
@@ -175,8 +173,6 @@ namespace Telegram.Views.Host
                 service.Frame.Navigating += OnNavigating;
                 service.Frame.Navigated += OnNavigated;
 
-                _canGoBackToken = service.Frame.RegisterPropertyChangedCallback(Frame.CanGoBackProperty, OnCanGoBackChanged);
-
                 switch (session.ClientService.AuthorizationState)
                 {
                     case AuthorizationStateReady:
@@ -249,12 +245,6 @@ namespace Telegram.Views.Host
                 corpus.ClearCache();
             }
 
-            if (_canGoBackToken is long token)
-            {
-                _canGoBackToken = null;
-                master.Frame.UnregisterPropertyChangedCallback(Frame.CanGoBackProperty, token);
-            }
-
             master.Frame.Navigating -= OnNavigating;
             master.Frame.Navigated -= OnNavigated;
             master.Frame.Navigate(typeof(BlankPage));
@@ -277,20 +267,7 @@ namespace Telegram.Views.Host
             if (e.Content is IRootContentPage content)
             {
                 content.Root = this;
-                SetPaneToggleButtonVisibility(content.EvaluatePaneToggleButtonVisibility());
                 InitializeNavigation(sender as Frame);
-            }
-            else
-            {
-                SetPaneToggleButtonVisibility(_navigationService.CanGoBack);
-            }
-        }
-
-        private void OnCanGoBackChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            if (_navigationService.Content is not IRootContentPage)
-            {
-                SetPaneToggleButtonVisibility(_navigationService.CanGoBack);
             }
         }
 
@@ -396,7 +373,9 @@ namespace Telegram.Views.Host
             {
                 _navigationViewItems.Insert(1, RootDestination.Separator);
 
+#if !DEBUG
                 if (items.Count < 4)
+#endif
                 {
                     _navigationViewItems.Insert(1, RootDestination.AddAccount);
                 }
@@ -668,19 +647,6 @@ namespace Telegram.Views.Host
         public void UpdateSessions()
         {
             InitializeSessions(SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
-        }
-
-        private bool _paneToggleButtonVisible;
-
-        public void SetPaneToggleButtonVisibility(bool visible)
-        {
-            if (_paneToggleButtonVisible != visible)
-            {
-                _paneToggleButtonVisible = visible;
-                Navigation.PaneToggleButtonVisibility = visible
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
-            }
         }
 
         public void SetSelectedIndex(RootDestination value)
@@ -1023,18 +989,6 @@ namespace Telegram.Views.Host
             }
         }
 
-        private void Navigation_BackRequested(Controls.NavigationView sender, object args)
-        {
-            if (_navigationService?.Frame?.Content is IRootContentPage content)
-            {
-                content.BackRequested();
-            }
-            else if (_navigationService != null && _navigationService.CanGoBack)
-            {
-                _navigationService.GoBack();
-            }
-        }
-
         private void Photo_Click(object sender, RoutedEventArgs e)
         {
             IsPaneOpen = false;
@@ -1046,10 +1000,6 @@ namespace Telegram.Views.Host
         RootPage Root { get; set; }
 
         void NavigationView_ItemClick(RootDestination destination);
-
-        bool EvaluatePaneToggleButtonVisibility();
-
-        void BackRequested();
 
         void Dispose();
 

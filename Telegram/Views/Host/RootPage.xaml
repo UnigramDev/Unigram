@@ -147,7 +147,6 @@
         <!--<Border contract13NotPresent:Background="{ThemeResource ExpBackdropMaterialBrush}" />-->
 
         <controls:NavigationView x:Name="Navigation"
-                                 BackRequested="Navigation_BackRequested"
                                  PaneOpening="Navigation_PaneOpening"
                                  PaneClosing="Navigation_PaneClosing">
             <controls:NavigationView.PaneHeader>
