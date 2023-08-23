@@ -303,6 +303,7 @@ namespace Telegram.Controls.Stories
 
             _collapsed = true;
 
+            ControlledList.SizeChanged += ControlledList_SizeChanged;
             ControlledList.Margin = new Thickness(0, TopPadding, 0, 0);
             ControlledList.Padding = new Thickness();
 
@@ -371,6 +372,28 @@ namespace Telegram.Controls.Stories
                 var tabsVisual = ElementCompositionPreview.GetElementVisual(ChatTabs);
                 tabsVisual.Properties.InsertVector3("Translation", Vector3.Zero);
                 tabsVisual.StartAnimation("Translation.Y", tabsVisualOffsetAnimation);
+            }
+        }
+
+        private void ControlledList_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateMinHeight();
+        }
+
+        private void UpdateMinHeight()
+        {
+            if (ControlledList.ItemsPanelRoot == null)
+            {
+                return;
+            }
+
+            if (_collapsed)
+            {
+                ControlledList.ItemsPanelRoot.MinHeight = 0;
+            }
+            else
+            {
+                ControlledList.ItemsPanelRoot.MinHeight = ControlledList.ActualHeight;
             }
         }
 
@@ -510,6 +533,8 @@ namespace Telegram.Controls.Stories
             _progressAnimation.Properties.InsertBoolean("Collapsed", true);
             _scrollViewer.SetVerticalPadding(0);
 
+            UpdateMinHeight();
+
             if (animated)
             {
                 var batch = _progress.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
@@ -559,6 +584,8 @@ namespace Telegram.Controls.Stories
             ControlledList.Padding = new Thickness(0, 88, 0, 0);
             _progressAnimation.Properties.InsertBoolean("Collapsed", false);
             _scrollViewer.SetVerticalPadding(88);
+
+            UpdateMinHeight();
 
             if (animated)
             {
