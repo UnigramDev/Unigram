@@ -6,7 +6,9 @@
 //
 using LibVLCSharp.Shared;
 using System;
+using System.Diagnostics;
 using System.Numerics;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Services;
@@ -15,6 +17,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
 using Windows.Foundation;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -301,6 +304,7 @@ namespace Telegram.Controls.Gallery
         private void OnInitialized(object sender, LibVLCSharp.Platforms.Windows.InitializedEventArgs e)
         {
             _library = new LibVLC(e.SwapChainOptions);
+            //_library.Log += _library_Log;
 
             _mediaPlayer = new MediaPlayer(_library);
             //_mediaPlayer.EndReached += OnEndReached;
@@ -325,7 +329,24 @@ namespace Telegram.Controls.Gallery
             _initialPosition = 0;
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        private static readonly Regex _videoLooking = new("using (.*?) module \"(.*?)\" from (.*?)$", RegexOptions.Compiled);
+        private static readonly object _syncObject = new();
+
+        private void _library_Log(object sender, LogEventArgs e)
+        {
+            Debug.WriteLine(e.FormattedLog);
+
+            lock (_syncObject)
+            {
+                var match = _videoLooking.Match(e.FormattedLog);
+                if (match.Success)
+                {
+                    System.IO.File.AppendAllText(ApplicationData.Current.LocalFolder.Path + "\\vlc.txt", string.Format("{2}\n", match.Groups[1].Value, match.Groups[2].Value, match.Groups[3].Value));
+                }
+            }
+        }
+
+        public void Unload()
         {
             Task.Run(() =>
             {

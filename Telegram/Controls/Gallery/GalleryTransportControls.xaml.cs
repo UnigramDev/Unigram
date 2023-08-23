@@ -504,7 +504,7 @@ namespace Telegram.Controls.Gallery
             }
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        public void Unload()
         {
             Attach(null);
         }

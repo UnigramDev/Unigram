@@ -21,7 +21,6 @@
     <Border x:Name="Panel">
         <vlc:VideoView x:Name="Video"
                        x:Load="False"
-                       Initialized="OnInitialized"
-                       Unloaded="OnUnloaded" />
+                       Initialized="OnInitialized" />
     </Border>
 </controls:AspectView>

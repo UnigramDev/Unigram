@@ -6,8 +6,7 @@
              xmlns:controls="using:Telegram.Controls"
              mc:Ignorable="d"
              d:DesignHeight="300"
-             d:DesignWidth="400"
-             Unloaded="OnUnloaded">
+             d:DesignWidth="400">
 
     <Grid x:Name="LayoutRoot"
           Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}"

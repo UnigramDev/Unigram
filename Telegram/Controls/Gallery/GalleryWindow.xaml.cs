@@ -393,6 +393,10 @@ namespace Telegram.Controls.Gallery
         {
             if (_lastFullScreen != sender.IsFullScreenMode)
             {
+                //Window.Current.Content.Visibility = sender.IsFullScreenMode
+                //    ? Visibility.Collapsed
+                //    : Visibility.Visible;
+
                 Controls.IsFullScreen = sender.IsFullScreenMode;
                 Padding = new Thickness(0, sender.IsFullScreenMode ? 0 : 40, 0, 0);
 
@@ -680,6 +684,12 @@ namespace Telegram.Controls.Gallery
 
             DataContext = null;
             Bindings.StopTracking();
+
+            Controls.Unload();
+
+            Element0.Unload();
+            Element1.Unload();
+            Element2.Unload();
         }
 
         private void OnAcceleratorKeyActivated(Window sender, InputKeyDownEventArgs args)
