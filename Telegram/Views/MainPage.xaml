@@ -103,7 +103,9 @@
                                     <controls:BackButton x:Name="BackButton"
                                                          Margin="-20,18,0,0"
                                                          CornerRadius="20"
-                                                         Glyph="&#xe93e;" />
+                                                         Glyph="&#xe93e;"
+                                                         Width="48"
+                                                         Height="48" />
 
                                     <ContentControl x:Name="DetailAction"
                                                     Content="{TemplateBinding DetailFooter}"
