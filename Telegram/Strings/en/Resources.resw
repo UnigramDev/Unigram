@@ -1450,7 +1450,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>Drag and drop links to change the order in which they will be displayed on the bot info page.</value>
   </data>
   <data name="BotWebAppInstantViewOpen" xml:space="preserve">
-    <value>Open App</value>
+    <value>Launch</value>
   </data>
   <data name="BubbleRadius" xml:space="preserve">
     <value>Message corners</value>
@@ -3165,7 +3165,7 @@ Duration: {1}</value>
     <value>List of viewers becomes unavailable **24 hours** after the story expires.</value>
   </data>
   <data name="ExpiredViewsStubPremiumDescription" xml:space="preserve">
-    <value>To unlock viewers’ lists for expired and saved stories, subscribe to **Telegram Premium.**</value>
+    <value>To unlock viewer lists for expired and saved stories, subscribe to **Telegram Premium**.</value>
   </data>
   <data name="Fade" xml:space="preserve">
     <value>Fade</value>
@@ -3684,10 +3684,10 @@ They can still join via an invite link as long as they are not on the Removed Us
     <value>Hide new chats?</value>
   </data>
   <data name="HideNextViews" xml:space="preserve">
-    <value>Hide Next Views</value>
+    <value>Hide Upcoming Views</value>
   </data>
   <data name="HideNextViewsDescription" xml:space="preserve">
-    <value>Hide my views in the next 25 minutes.</value>
+    <value>Hide my views for the next 25 minutes.</value>
   </data>
   <data name="HideOnTop" xml:space="preserve">
     <value>Hide</value>
@@ -3699,7 +3699,7 @@ They can still join via an invite link as long as they are not on the Removed Us
     <value>Hide Recent Views</value>
   </data>
   <data name="HideRecentViewsDescription" xml:space="preserve">
-    <value>Hide my views in the last 5 minutes.</value>
+    <value>Hide my views from the past 5 minutes.</value>
   </data>
   <data name="HideSenderNames" xml:space="preserve">
     <value>Hide Sender Names</value>
@@ -4228,6 +4228,24 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   </data>
   <data name="Long" xml:space="preserve">
     <value>Long</value>
+  </data>
+  <data name="MainChannelProfilePhotoSetHint" xml:space="preserve">
+    <value>This is the main channel photo now.</value>
+  </data>
+  <data name="MainChannelProfileVideoSetHint" xml:space="preserve">
+    <value>This is the main channel photo now.</value>
+  </data>
+  <data name="MainGroupProfilePhotoSetHint" xml:space="preserve">
+    <value>This is the main group photo now.</value>
+  </data>
+  <data name="MainGroupProfileVideoSetHint" xml:space="preserve">
+    <value>This is the main group photo now.</value>
+  </data>
+  <data name="MainProfilePhotoSetHint" xml:space="preserve">
+    <value>This is your main profile photo now.</value>
+  </data>
+  <data name="MainProfileVideoSetHint" xml:space="preserve">
+    <value>This is your main profile photo now.</value>
   </data>
   <data name="ManageChannelMenu" xml:space="preserve">
     <value>Manage channel</value>
@@ -5309,7 +5327,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Upgraded Stories</value>
   </data>
   <data name="PremiumPreviewStoriesDescription" xml:space="preserve">
-    <value>Priority order, stealth mode, permanent views history and more.</value>
+    <value>Priority order, stealth mode, permanent view history and more.</value>
   </data>
   <data name="PremiumPreviewTranslations" xml:space="preserve">
     <value>Real-Time Translation</value>
@@ -5336,19 +5354,19 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Longer Captions</value>
   </data>
   <data name="PremiumStoriesCaptionDescription" xml:space="preserve">
-    <value>Add ten times longer captions to your stories — up to 2048 symbols.</value>
+    <value>Add 10x longer captions to your stories — up to 2048 characters.</value>
   </data>
   <data name="PremiumStoriesExpiration" xml:space="preserve">
-    <value>Expiration Durations</value>
+    <value>Expiration Options</value>
   </data>
   <data name="PremiumStoriesExpirationDescription" xml:space="preserve">
-    <value>Set custom expiration durations like 6 or 48 hours for your stories.</value>
+    <value>Set custom durations like 6 or 48 hours for your stories.</value>
   </data>
   <data name="PremiumStoriesFormatting" xml:space="preserve">
     <value>Links and Formatting</value>
   </data>
   <data name="PremiumStoriesFormattingDescription" xml:space="preserve">
-    <value>Add links and formatting in captions of your stories.</value>
+    <value>Add links and formatting to your story captions.</value>
   </data>
   <data name="PremiumStoriesPriority" xml:space="preserve">
     <value>Priority Order</value>
@@ -5360,16 +5378,16 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Save Stories to Gallery</value>
   </data>
   <data name="PremiumStoriesSaveToGalleryDescription" xml:space="preserve">
-    <value>Save other people’s unprotected stories to your Gallery.</value>
+    <value>Save other people&apos;s stories that are not protected.</value>
   </data>
   <data name="PremiumStoriesStealth" xml:space="preserve">
     <value>Stealth Mode</value>
   </data>
   <data name="PremiumStoriesStealthDescription" xml:space="preserve">
-    <value>Hide the fact that you viewed other people’s stories.</value>
+    <value>Hide the fact that you viewed other people&apos;s stories.</value>
   </data>
   <data name="PremiumStoriesViews" xml:space="preserve">
-    <value>Permanent Views History</value>
+    <value>Permanent View History</value>
   </data>
   <data name="PremiumStoriesViewsDescription" xml:space="preserve">
     <value>Check who opens your stories — even after they expire.</value>
@@ -5528,13 +5546,13 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>My stories</value>
   </data>
   <data name="ProfileStories" xml:space="preserve">
-    <value>Stories</value>
+    <value>Posts</value>
   </data>
   <data name="ProfileStoriesArchive" xml:space="preserve">
     <value>Story Archive</value>
   </data>
   <data name="ProfileStoriesArchiveHint" xml:space="preserve">
-    <value>Only you can see archived stories unless you choose to save them to your profile.</value>
+    <value>Only you can see archived stories unless you choose to post them to your profile.</value>
   </data>
   <data name="Proxy" xml:space="preserve">
     <value>Proxy</value>
@@ -6135,6 +6153,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SetAsAdmin" xml:space="preserve">
     <value>Promote to admin</value>
   </data>
+  <data name="SetAsMain" xml:space="preserve">
+    <value>Set as Main</value>
+  </data>
   <data name="SetBackground" xml:space="preserve">
     <value>SET WALLPAPER</value>
   </data>
@@ -6449,19 +6470,19 @@ and enter your phone number.</value>
     <value>Stealth Mode</value>
   </data>
   <data name="StealthModeActiveHint" xml:space="preserve">
-    <value>Stealth Mode active - {0}</value>
+    <value>Stealth Mode active – {0}</value>
   </data>
   <data name="StealthModeHint" xml:space="preserve">
-    <value>Turn Stealth Mode on to hide the fact that you viewed peoples’ storis from them.</value>
+    <value>Turn Stealth Mode on to watch stories without appearing in the list of viewers.</value>
   </data>
   <data name="StealthModeOn" xml:space="preserve">
     <value>Stealth Mode On</value>
   </data>
   <data name="StealthModeOnHint" xml:space="preserve">
-    <value>The creators of stories you viewed in the last 5 minutes or will view in the next 25 minutes won’t see you in viewers’ lists.</value>
+    <value>The creators of stories you viewed in the past 5 minutes or will view in the next 25 minutes won&apos;t see you in the list of viewers.</value>
   </data>
   <data name="StealthModePremiumHint" xml:space="preserve">
-    <value>Subscribe to Premium to hide the fact that you viewed peoples’ stories from them.</value>
+    <value>Subscribe to Telegram Premium to watch stories without appearing in the list of viewers.</value>
   </data>
   <data name="Stickers_one" xml:space="preserve">
     <value>{0} sticker</value>
@@ -6536,10 +6557,10 @@ and enter your phone number.</value>
     <value>{0} stories removed from your profile.</value>
   </data>
   <data name="StoriesSavedToProfile_one" xml:space="preserve">
-    <value>{0} story saved to your profile.</value>
+    <value>{0} story posted on your profile.</value>
   </data>
   <data name="StoriesSavedToProfile_other" xml:space="preserve">
-    <value>{0} stories saved to your profile.</value>
+    <value>{0} stories posted on your profile.</value>
   </data>
   <data name="StoriesSelected_one" xml:space="preserve">
     <value>{0} Selected</value>
@@ -6557,7 +6578,7 @@ and enter your phone number.</value>
     <value>Only your contacts can view this story.</value>
   </data>
   <data name="StoryHiddenHint" xml:space="preserve">
-    <value>**{0}** will not see your stories anymore.</value>
+    <value>**{0}** will not be able to see your stories.</value>
   </data>
   <data name="StoryHideFrom" xml:space="preserve">
     <value>Hide My Stories From {0}</value>
@@ -6584,7 +6605,7 @@ and enter your phone number.</value>
     <value>You can’t reply to this story</value>
   </data>
   <data name="StorySavedToProfile" xml:space="preserve">
-    <value>Story saved to your profile.</value>
+    <value>Story posted to your profile.</value>
   </data>
   <data name="StorySelectedContactsHint" xml:space="preserve">
     <value>Only some contacts **{0}** selected can view this story.</value>
@@ -6593,10 +6614,10 @@ and enter your phone number.</value>
     <value>Only some contacts you selected can view this story.</value>
   </data>
   <data name="StoryShownHint" xml:space="preserve">
-    <value>**{0}** will now see your stories.</value>
+    <value>**{0}** will be able to see your stories again.</value>
   </data>
   <data name="StoryShowTo" xml:space="preserve">
-    <value>Show My Stories To {0}</value>
+    <value>Do Not Hide My Stories From {0}</value>
   </data>
   <data name="StoryUnsupported" xml:space="preserve">
     <value>This story is not supported by your version of Telegram.</value>

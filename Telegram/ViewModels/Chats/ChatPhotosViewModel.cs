@@ -10,6 +10,7 @@ using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Chats
@@ -210,6 +211,21 @@ namespace Telegram.ViewModels.Chats
         public override int Position => TotalItems - (Items.Count - base.Position);
 
         public override MvxObservableCollection<GalleryMedia> Group => Items;
+
+        public void SetAsMain()
+        {
+            var item = _selectedItem as GalleryChatPhoto;
+            if (item == null)
+            {
+                return;
+            }
+
+            ClientService.Send(new SetChatPhoto(_chat.Id, new InputChatPhotoPrevious(item.Id)));
+            Window.Current.ShowTeachingTip(_chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
+                ? item.IsVideo ? Strings.MainChannelProfileVideoSetHint : Strings.MainChannelProfilePhotoSetHint
+                : item.IsVideo ? Strings.MainGroupProfileVideoSetHint : Strings.MainGroupProfilePhotoSetHint);
+        }
+
     }
 
     //public class GalleryChatPhotoItem : GalleryItem

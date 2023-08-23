@@ -935,6 +935,16 @@ namespace Telegram.Controls.Gallery
             flyout.CreateFlyoutItem(() => item.CanShare, viewModel.Forward, Strings.Forward, Icons.Share);
             flyout.CreateFlyoutItem(() => item.CanCopy, viewModel.Copy, Strings.Copy, Icons.DocumentCopy, VirtualKey.C);
             flyout.CreateFlyoutItem(() => item.CanSave, viewModel.Save, Strings.SaveAs, Icons.SaveAs, VirtualKey.S);
+
+            if (viewModel is UserPhotosViewModel userPhotos && userPhotos.CanDelete && userPhotos.SelectedIndex > 0)
+            {
+                flyout.CreateFlyoutItem(() => viewModel.CanDelete, userPhotos.SetAsMain, Strings.SetAsMain, Icons.PersonCircle);
+            }
+            else if (viewModel is ChatPhotosViewModel chatPhotos && chatPhotos.CanDelete && chatPhotos.SelectedIndex > 0)
+            {
+                flyout.CreateFlyoutItem(() => viewModel.CanDelete, chatPhotos.SetAsMain, Strings.SetAsMain, Icons.PersonCircle);
+            }
+
             flyout.CreateFlyoutItem(() => viewModel.CanOpenWith, viewModel.OpenWith, Strings.OpenInExternalApp, Icons.OpenIn);
             flyout.CreateFlyoutItem(() => viewModel.CanDelete, viewModel.Delete, Strings.Delete, Icons.Delete, dangerous: true);
         }

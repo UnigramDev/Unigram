@@ -10,6 +10,7 @@ using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Users
@@ -31,11 +32,11 @@ namespace Telegram.ViewModels.Users
                 _additionalPhotos++;
                 Items.Add(new GalleryChatPhoto(clientService, user, userFull.PersonalPhoto, 0, true, false));
             }
-            if (userFull.PublicPhoto != null && user.Id == clientService.Options.MyId)
-            {
-                _additionalPhotos++;
-                Items.Add(new GalleryChatPhoto(clientService, user, userFull.PublicPhoto, 0, false, true));
-            }
+            //if (userFull.PublicPhoto != null && user.Id == clientService.Options.MyId)
+            //{
+            //    _additionalPhotos++;
+            //    Items.Add(new GalleryChatPhoto(clientService, user, userFull.PublicPhoto, 0, false, true));
+            //}
 
             if (userFull.Photo != null)
             {
@@ -118,6 +119,18 @@ namespace Telegram.ViewModels.Users
                     }
                 }
             }
+        }
+
+        public void SetAsMain()
+        {
+            var item = _selectedItem as GalleryChatPhoto;
+            if (item == null)
+            {
+                return;
+            }
+
+            ClientService.Send(new SetProfilePhoto(new InputChatPhotoPrevious(item.Id), false));
+            Window.Current.ShowTeachingTip(item.IsVideo ? Strings.MainProfileVideoSetHint : Strings.MainProfilePhotoSetHint);
         }
     }
 }
