@@ -14,12 +14,15 @@ using System.Text.RegularExpressions;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages.Content;
+using Telegram.Controls.Stories;
 using Telegram.Converters;
 using Telegram.Native.Composition;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Stories;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -2377,7 +2380,44 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            message.Delegate.OpenReply(message);
+            if (message.ReplyTo is MessageReplyToStory)
+            {
+                if (message.ReplyToState == MessageReplyToState.Deleted)
+                {
+                    Window.Current.ShowTeachingTip(Strings.StoryNotFound, new LocalFileSource("ms-appx:///Assets/Toasts/ExpiredStory.tgs"));
+                }
+                else if (message.ReplyToItem is Story item)
+                {
+                    OpenStory(message, item);
+                }
+            }
+            else
+            {
+                message.Delegate.OpenReply(message);
+            }
+        }
+
+        public void OpenStory(MessageViewModel message, Story item)
+        {
+            var story = new StoryViewModel(message.ClientService, item);
+            var activeStories = new ActiveStoriesViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, story);
+
+            var viewModel = new StoryListViewModel(message.ClientService, message.Delegate.Settings, message.Delegate.Aggregator, activeStories);
+            viewModel.NavigationService = message.Delegate.NavigationService;
+
+            var origin = GetStoryOrigin(null);
+
+            var window = new StoriesWindow();
+            window.Update(viewModel, activeStories, StoryOrigin.Card, origin, GetStoryOrigin);
+            _ = window.ShowAsync();
+        }
+
+        private Rect GetStoryOrigin(ActiveStoriesViewModel activeStories)
+        {
+            var transform = Reply.TransformToVisual(Window.Current.Content);
+            var point = transform.TransformPoint(new Windows.Foundation.Point());
+
+            return new Rect(point.X + 10, point.Y + 4, 36, 36);
         }
 
         private void ReplyMarkup_ButtonClick(object sender, ReplyMarkupInlineButtonClickEventArgs e)

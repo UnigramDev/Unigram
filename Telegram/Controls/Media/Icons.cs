@@ -190,6 +190,7 @@ namespace Telegram.Controls.Media
         public const string SaveAsLocked = "\uEA2B";
         public const string FolderOpen = "\uE838";
         public const string OpenIn = "\uE7AC";
+        public const string PersonCircle = "\uE9A9";
 
         public const string ArrowExit = "\uE999";
         public const string ArrowEnter = "\uE99B";

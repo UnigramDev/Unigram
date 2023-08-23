@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Controls.Media;
+using Telegram.Controls.Stories;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -17,6 +18,7 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.ViewModels.Stories;
 using Telegram.Views;
 using Telegram.Views.Folders;
 using Telegram.Views.Folders.Popups;
@@ -26,6 +28,7 @@ using Telegram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources.Core;
+using Windows.Foundation;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -243,6 +246,10 @@ namespace Telegram.Common
             {
                 NavigateToStickerSet(stickerSet.StickerSetName);
             }
+            else if (internalLink is InternalLinkTypeStory story)
+            {
+                NavigateToStory(clientService, navigation, story.StorySenderUsername, story.StoryId);
+            }
             else if (internalLink is InternalLinkTypeTheme theme)
             {
                 NavigateToTheme(clientService, theme.ThemeName);
@@ -270,6 +277,38 @@ namespace Telegram.Common
             else if (internalLink is InternalLinkTypeWebApp webApp)
             {
                 NavigateToWebApp(clientService, navigation, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName);
+            }
+        }
+
+        private static async void NavigateToStory(IClientService clientService, INavigationService navigation, string username, int storyId)
+        {
+            var response = await clientService.SendAsync(new SearchPublicChat(username));
+            if (response is Chat chat)
+            {
+                var response2 = await clientService.SendAsync(new GetStory(chat.Id, storyId, false));
+                if (response2 is Story item)
+                {
+                    var settings = TLContainer.Current.Resolve<ISettingsService>(clientService.SessionId);
+                    var aggregator = TLContainer.Current.Resolve<IEventAggregator>(clientService.SessionId);
+
+                    var story = new StoryViewModel(clientService, item);
+
+                    var activeStories = new ActiveStoriesViewModel(clientService, settings, aggregator, story);
+                    var viewModel = new StoryListViewModel(clientService, settings, aggregator, activeStories);
+                    viewModel.NavigationService = navigation;
+
+                    var window = new StoriesWindow();
+                    window.Update(viewModel, activeStories, StoryOrigin.Card, Rect.Empty, null);
+                    _ = window.ShowAsync();
+                }
+                else
+                {
+                    Window.Current.ShowTeachingTip(Strings.StoryNotFound, new LocalFileSource("ms-appx:///Assets/Toasts/ExpiredStory.tgs"));
+                }
+            }
+            else
+            {
+                await MessagePopup.ShowAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
             }
         }
 
@@ -683,6 +722,14 @@ namespace Telegram.Common
                         if (error.MessageEquals(ErrorType.INVITE_REQUEST_SENT))
                         {
                             await MessagePopup.ShowAsync(Strings.RequestToJoinChannelSentDescription, Strings.RequestToJoinSent, Strings.OK);
+                            return;
+
+                            var message = Strings.RequestToJoinSent + Environment.NewLine + Strings.RequestToJoinChannelSentDescription;
+                            var entity = new TextEntity(0, Strings.RequestToJoinSent.Length, new TextEntityTypeBold());
+
+                            var text = new FormattedText(message, new[] { entity });
+
+                            Window.Current.ShowTeachingTip(text, new LocalFileSource("ms-appx:///Assets/Toasts/JoinRequested.tgs"));
                         }
                         else if (error.MessageEquals(ErrorType.FLOOD_WAIT))
                         {
