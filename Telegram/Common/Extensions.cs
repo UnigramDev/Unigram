@@ -304,7 +304,7 @@ namespace Telegram.Common
             {
                 var timer = new DispatcherTimer();
                 timer.Interval = TimeSpan.FromSeconds(3);
-                
+
                 void handler(object sender, object e)
                 {
                     timer.Tick -= handler;

@@ -12,13 +12,13 @@ namespace Telegram.Collections.Handlers
                 return false;
             }
 
-            if (oldItem.Chat != null && oldItem.Chat.Id == newItem.Chat?.Id)
+            if (oldItem.Chat != null && newItem.Chat != null)
             {
-                return true;
+                return oldItem.Chat.Id == newItem.Chat.Id;
             }
-            else if (oldItem.User != null && oldItem.User.Id == newItem.User?.Id)
+            else if (oldItem.User != null && newItem.User != null)
             {
-                return true;
+                return oldItem.User.Id == newItem.User.Id;
             }
 
             return false;

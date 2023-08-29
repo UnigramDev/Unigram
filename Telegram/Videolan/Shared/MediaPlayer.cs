@@ -1,9 +1,8 @@
-﻿using System;
+﻿using LibVLCSharp.Shared.Helpers;
+using LibVLCSharp.Shared.Structures;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using LibVLCSharp.Shared.Helpers;
-using LibVLCSharp.Shared.Structures;
-using Telegram.Td.Api;
 
 namespace LibVLCSharp.Shared
 {

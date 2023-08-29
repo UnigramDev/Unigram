@@ -89,7 +89,7 @@ namespace Telegram.Controls
 
         public void SetChat(IClientService clientService, Chat chat, int side)
         {
-            if (clientService != null  && chat?.Type is ChatTypePrivate privata && privata.UserId != clientService.Options.MyId && clientService.TryGetUser(privata.UserId, out User user))
+            if (clientService != null && chat?.Type is ChatTypePrivate privata && privata.UserId != clientService.Options.MyId && clientService.TryGetUser(privata.UserId, out User user))
             {
                 UpdateActiveStories(clientService, user, side);
             }

@@ -1,6 +1,5 @@
 ﻿using LibVLCSharp.Shared.Helpers;
 using System;
-using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace LibVLCSharp.Shared

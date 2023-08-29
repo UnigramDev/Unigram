@@ -16,7 +16,7 @@ namespace Telegram.Td.Api
             Sponsor = message.Sponsor;
             Content = message.Content;
             IsRecommended = message.IsRecommended;
-            MessageId  = message.MessageId;
+            MessageId = message.MessageId;
         }
 
         /// <summary>
