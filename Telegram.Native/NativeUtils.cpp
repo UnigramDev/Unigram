@@ -187,6 +187,11 @@ namespace winrt::Telegram::Native::implementation
 
         for (int i = 0; i < length; i++)
         {
+            if (IS_HIGH_SURROGATE(value[i]) || IS_LOW_SURROGATE(value[i]))
+            {
+                continue;
+            }
+
             if (type[i] == C2_LEFTTORIGHT)
             {
                 return winrt::Telegram::Native::TextDirectionality::LeftToRight;

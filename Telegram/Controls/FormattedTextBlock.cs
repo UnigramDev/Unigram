@@ -429,6 +429,8 @@ namespace Telegram.Controls
                         {
                             var player = new CustomEmojiIcon();
                             player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
+                            player.HorizontalAlignment = HorizontalAlignment.Left;
+                            player.FlowDirection = FlowDirection.LeftToRight;
                             player.Margin = new Thickness(-20, -4, 0, -4);
 
                             var inline = new InlineUIContainer();
