@@ -77,16 +77,16 @@ namespace Telegram.ViewModels
 
                 if (dialog.IsUntilOnline)
                 {
-                    return new MessageSendOptions(false, false, false, reorder, new MessageSchedulingStateSendWhenOnline(), 0);
+                    return new MessageSendOptions(false, false, false, Settings.Stickers.DynamicPackOrder && reorder, new MessageSchedulingStateSendWhenOnline(), 0);
                 }
                 else
                 {
-                    return new MessageSendOptions(false, false, false, reorder, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()), 0);
+                    return new MessageSendOptions(false, false, false, Settings.Stickers.DynamicPackOrder && reorder, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()), 0);
                 }
             }
             else
             {
-                return new MessageSendOptions(silent ?? false, false, false, reorder, null, 0);
+                return new MessageSendOptions(silent ?? false, false, false, Settings.Stickers.DynamicPackOrder && reorder, null, 0);
             }
         }
 
