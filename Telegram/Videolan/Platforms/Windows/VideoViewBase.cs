@@ -143,7 +143,7 @@ namespace LibVLCSharp.Platforms.Windows
             try
             {
                 var deviceCreationFlags =
-                    DeviceCreationFlags.BgraSupport | DeviceCreationFlags.VideoSupport;
+                    DeviceCreationFlags.BgraSupport;
 
 #if DEBUG
                 deviceCreationFlags |= DeviceCreationFlags.Debug;
