@@ -310,6 +310,8 @@ namespace Telegram.Controls.Stories
             var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
             var compositor = properties.Compositor;
 
+            var clip = compositor.CreateInsetClip();
+
             _progressAnimation = compositor.CreateExpressionAnimation($"Clamp((1 - (((This.Collapsed ? 88 : 0) + -(interactionTracker.Translation.Y > -1 && interactionTracker.Translation.Y < 1 ? 0 : interactionTracker.Translation.Y)) / 88)) * (This.Collapsed ? 0.5 : 1), 0, 1)");
             _progressAnimation.SetReferenceParameter("interactionTracker", properties);
             _progressAnimation.Properties.InsertBoolean("Collapsed", true);
@@ -348,6 +350,8 @@ namespace Telegram.Controls.Stories
             var storiesVisual = ElementCompositionPreview.GetElementVisual(this);
             var headerVisual = ElementCompositionPreview.GetElementVisual(Header);
 
+            storiesVisual.Clip = clip;
+
             titleVisual.Properties.InsertVector3("Translation", Vector3.Zero);
             storiesVisual.Properties.InsertVector3("Translation", Vector3.Zero);
             headerVisual.Properties.InsertVector3("Translation", Vector3.Zero);
@@ -358,6 +362,7 @@ namespace Telegram.Controls.Stories
 
             titleVisual.StartAnimation("Translation.X", titleVisualOffsetAnimation);
             storiesVisual.StartAnimation("Translation.X", storiesVisualOffsetAnimationX);
+            clip.StartAnimation("RightInset", storiesVisualOffsetAnimationX);
             storiesVisual.StartAnimation("Translation.Y", storiesVisualOffsetAnimation);
             headerVisual.StartAnimation("Translation.Y", headerVisualOffsetAnimation);
 
