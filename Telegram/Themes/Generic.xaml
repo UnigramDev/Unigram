@@ -79,60 +79,6 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:NavigationView">
-        <Setter Property="Padding"
-                Value="0,0,0,0" />
-        <Setter Property="IsTabStop"
-                Value="False" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="local:NavigationView">
-                    <SplitView x:Name="RootSplitView"
-                               BorderBrush="{ThemeResource NavigationViewItemSeparatorForeground}"
-                               BorderThickness="0 0 1 0"
-                               CornerRadius="{Binding Source={ThemeResource OverlayCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}"
-                               PaneBackground="{ThemeResource NavigationViewDefaultPaneBackground}"
-                               OpenPaneLength="240"
-                               IsTabStop="False"
-                               IsPaneOpen="{Binding Path=IsPaneOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
-                        <SplitView.Pane>
-                            <Grid x:Name="PaneContentGrid">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition x:Name="PaneContentGridToggleButtonRow"
-                                                   Height="40" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                    <!--<RowDefinition Height="8" />-->
-                                </Grid.RowDefinitions>
-                                <Grid.Children>
-                                    <Grid x:Name="ContentPaneTopPadding"
-                                          Padding="{TemplateBinding Padding}" />
-                                    <Border x:Name="HeaderContentBorder"
-                                            Grid.Row="2"
-                                            Child="{TemplateBinding PaneHeader}" />
-
-                                    <Border x:Name="FooterContentBorder"
-                                            Grid.Row="3"
-                                            Child="{TemplateBinding PaneFooter}" />
-                                    <!--<local:NavigationViewItem x:Name="SettingsNavPaneItem" Glyph="&#xE713;" Grid.Row="5" />-->
-                                </Grid.Children>
-                            </Grid>
-                        </SplitView.Pane>
-                        <Grid>
-                            <ContentPresenter Content="{TemplateBinding Content}"
-                                              AutomationProperties.LandmarkType="Main"
-                                              HorizontalContentAlignment="Stretch"
-                                              VerticalContentAlignment="Stretch" />
-                        </Grid>
-                    </SplitView>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style TargetType="local:NavigationViewItem">
         <Setter Property="Foreground"
                 Value="{ThemeResource NavigationViewItemForeground}" />

@@ -653,7 +653,6 @@
     <Compile Include="Controls\Messages\ReactionsPanel.cs" />
     <Compile Include="Controls\MoreButton.cs" />
     <Compile Include="Controls\MultipleListView.cs" />
-    <Compile Include="Controls\NavigationView.cs" />
     <Compile Include="Controls\NavigationViewItem.cs" />
     <Compile Include="Controls\NavigationViewItemBase.cs" />
     <Compile Include="Controls\NavigationViewItemSeparator.cs" />

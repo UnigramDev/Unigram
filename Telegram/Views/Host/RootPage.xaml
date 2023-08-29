@@ -144,16 +144,16 @@
             <ColumnDefinition x:Name="MainColumn" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <!--<Border contract13NotPresent:Background="{ThemeResource ExpBackdropMaterialBrush}" />-->
-
-        <controls:NavigationView x:Name="Navigation"
-                                 PaneOpening="Navigation_PaneOpening"
-                                 PaneClosing="Navigation_PaneClosing">
-            <controls:NavigationView.PaneHeader>
-                <Border x:Name="AccountsPlaceholder"
-                        Height="8" />
-            </controls:NavigationView.PaneHeader>
-            <controls:NavigationView.PaneFooter>
+        <SplitView x:Name="Navigation"
+                   PaneOpening="Navigation_PaneOpening"
+                   PaneClosing="Navigation_PaneClosing"
+                   BorderBrush="{ThemeResource NavigationViewItemSeparatorForeground}"
+                   BorderThickness="0,0,1,0"
+                   CornerRadius="{Binding Source={ThemeResource OverlayCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                   PaneBackground="{ThemeResource NavigationViewDefaultPaneBackground}"
+                   OpenPaneLength="240"
+                   IsTabStop="False">
+            <SplitView.Pane>
                 <ListView x:Name="NavigationViewList"
                           ItemClick="OnItemClick"
                           IsItemClickEnabled="True"
@@ -164,7 +164,8 @@
                           DragItemsStarting="OnDragItemsStarting"
                           DragItemsCompleted="OnDragItemsCompleted"
                           ChoosingItemContainer="OnChoosingItemContainer"
-                          ContainerContentChanging="OnContainerContentChanging">
+                          ContainerContentChanging="OnContainerContentChanging"
+                          Margin="0,48,0,0">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem"
                                BasedOn="{StaticResource DefaultListViewItemStyle}">
@@ -175,8 +176,8 @@
                         </Style>
                     </ListView.ItemContainerStyle>
                 </ListView>
-            </controls:NavigationView.PaneFooter>
-        </controls:NavigationView>
+            </SplitView.Pane>
+        </SplitView>
 
         <Button x:Name="Accounts"
                 Visibility="Collapsed"
