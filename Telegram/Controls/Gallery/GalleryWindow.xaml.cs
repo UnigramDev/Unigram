@@ -678,6 +678,11 @@ namespace Telegram.Controls.Gallery
 
         private void Unload()
         {
+            if (_unloaded)
+            {
+                return;
+            }
+
             _unloaded = true;
 
             ViewModel?.Aggregator.Unsubscribe(this);

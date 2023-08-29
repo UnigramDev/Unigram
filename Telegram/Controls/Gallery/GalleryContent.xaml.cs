@@ -348,6 +348,13 @@ namespace Telegram.Controls.Gallery
 
         public void Unload()
         {
+            if (_unloaded)
+            {
+                return;
+            }
+
+            _unloaded = true;
+
             Task.Run(() =>
             {
                 _mediaPlayer?.Stop();
