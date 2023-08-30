@@ -371,7 +371,17 @@ namespace Telegram.Controls.Gallery
 
         private void OnEndReached(object sender, EventArgs e)
         {
-            _playbackQueue.Enqueue(_mediaPlayer.Stop);
+            _playbackQueue.Enqueue(Stop);
+        }
+
+        private void Stop()
+        {
+            if (_unloaded)
+            {
+                return;
+            }
+
+            _mediaPlayer?.Stop();
         }
 
         private void OnStopped(object sender, EventArgs e)
@@ -385,13 +395,13 @@ namespace Telegram.Controls.Gallery
 
         public void Stop(out int fileId, out long position)
         {
-            if (_mediaPlayer != null)
+            if (_mediaPlayer != null && !_unloaded)
             {
                 fileId = _fileId;
                 position = _mediaPlayer.Time;
 
                 _stopped = true;
-                _playbackQueue.Enqueue(_mediaPlayer.Stop);
+                _playbackQueue.Enqueue(Stop);
             }
             else
             {

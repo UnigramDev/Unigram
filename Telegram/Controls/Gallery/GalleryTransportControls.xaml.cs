@@ -266,6 +266,11 @@ namespace Telegram.Controls.Gallery
 
         private void OnVolumeChanged()
         {
+            if (_mediaPlayer == null)
+            {
+                return;
+            }
+
             _mediaPlayer.VolumeChanged -= OnVolumeChanged;
 
             _mediaPlayer.Mute = SettingsService.Current.VolumeMuted;
@@ -275,6 +280,11 @@ namespace Telegram.Controls.Gallery
 
         private void OnEndReached()
         {
+            if (_mediaPlayer == null)
+            {
+                return;
+            }
+
             Slider.Value = _mediaPlayer.Length;
             TimeText.Text = FormatTime(_mediaPlayer.Length);
 
@@ -328,7 +338,7 @@ namespace Telegram.Controls.Gallery
 
         private void OnTimeChanged()
         {
-            if (_scrubbing)
+            if (_mediaPlayer == null || _scrubbing)
             {
                 return;
             }
@@ -339,12 +349,22 @@ namespace Telegram.Controls.Gallery
 
         private void OnLengthChanged()
         {
+            if (_mediaPlayer == null)
+            {
+                return;
+            }
+
             Slider.Maximum = _mediaPlayer.Length;
             LengthText.Text = FormatTime(_mediaPlayer.Length);
         }
 
         private void Slider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            if (_mediaPlayer == null)
+            {
+                return;
+            }
+
             if (_scrubbing)
             {
                 Slider.Value = e.NewValue;
