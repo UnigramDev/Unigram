@@ -762,7 +762,7 @@ namespace Telegram.Services
             var brief = ChatCell.UpdateBriefLabel(chat, message, false);
             var clean = brief.ReplaceSpoilers();
 
-            return ChatCell.UpdateFromLabel(_clientService, chat, message) + clean;
+            return ChatCell.UpdateFromLabel(_clientService, chat, message) + clean.Text;
         }
 
         private string GetPhoto(Chat chat)
