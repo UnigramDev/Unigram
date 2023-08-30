@@ -424,6 +424,8 @@
                 </Grid.ColumnDefinitions>
                 <controls:BackButton x:Name="BackButton"
                                      RenderTransformOrigin="0.5,0.5"
+                                     Width="48"
+                                     Height="48"
                                      Margin="4,0,-8,0"
                                      CornerRadius="20"
                                      Glyph="&#xe93e;">
