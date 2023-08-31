@@ -142,11 +142,11 @@ namespace LibVLCSharp.Platforms.Windows
             SharpDX.DXGI.Factory2 dxgiFactory = null;
             try
             {
-                var deviceCreationFlags =
-                    DeviceCreationFlags.BgraSupport;
+                var creationFlags =
+                    DeviceCreationFlags.BgraSupport | DeviceCreationFlags.VideoSupport;
 
 #if DEBUG
-                deviceCreationFlags |= DeviceCreationFlags.Debug;
+                creationFlags |= DeviceCreationFlags.Debug;
 
                 try
                 {
@@ -160,15 +160,32 @@ namespace LibVLCSharp.Platforms.Windows
                 dxgiFactory = new SharpDX.DXGI.Factory2(false);
 #endif
                 _d3D11Device = null;
-                for (var i = 0; i < dxgiFactory.GetAdapterCount(); i++)
+                int i_adapter = 0;
+                int adapterCount = dxgiFactory.GetAdapterCount();
+
+                while (_d3D11Device == null)
                 {
+                    if (i_adapter == adapterCount)
+                    {
+                        if (creationFlags.HasFlag(DeviceCreationFlags.VideoSupport))
+                        {
+                            i_adapter = 0;
+                            creationFlags &= ~DeviceCreationFlags.VideoSupport;
+                            continue;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
                     try
                     {
-                        var adapter = dxgiFactory.GetAdapter(i);
-                        _d3D11Device = new SharpDX.Direct3D11.Device(adapter, deviceCreationFlags);
+                        var adapter = dxgiFactory.GetAdapter(i_adapter++);
+                        _d3D11Device = new SharpDX.Direct3D11.Device(adapter, creationFlags);
                         adapter.Dispose();
                         adapter = null;
-                        break;
+                        break; 
                     }
                     catch (SharpDXException)
                     {
