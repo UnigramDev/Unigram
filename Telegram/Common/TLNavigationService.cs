@@ -240,6 +240,8 @@ namespace Telegram.Common
                 {
                     await page.ViewModel.HandlePackageAsync(package);
                 }
+
+                OverlayWindow.Current?.TryHide(ContentDialogResult.None);
             }
             else
             {
@@ -316,6 +318,8 @@ namespace Telegram.Common
                         await chatPage.ViewModel.NavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, state);
 
                         FrameFacade.RaiseNavigated(chat.Id);
+
+                        OverlayWindow.Current?.TryHide(ContentDialogResult.None);
                     }
                     else
                     {

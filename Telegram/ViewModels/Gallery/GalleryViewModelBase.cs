@@ -201,7 +201,6 @@ namespace Telegram.ViewModels.Gallery
         public virtual void View()
         {
             FirstItem = null;
-            NavigationService.GoBack();
 
             var message = _selectedItem as GalleryMessage;
             if (message == null || !message.CanView)
@@ -209,8 +208,7 @@ namespace Telegram.ViewModels.Gallery
                 return;
             }
 
-            var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
-            service?.NavigateToChat(message.ChatId, message: message.Id);
+            NavigationService.NavigateToChat(message.ChatId, message: message.Id);
         }
 
         public virtual async void Forward()
