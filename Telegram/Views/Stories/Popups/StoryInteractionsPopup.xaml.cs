@@ -42,7 +42,7 @@ namespace Telegram.Views.Stories.Popups
         public override void OnNavigatedTo()
         {
             var story = ViewModel.Story;
-            if (story?.InteractionInfo != null && story.CanGetViewers && !story.HasExpiredViewers)
+            if (story?.InteractionInfo != null && story.CanGetViewers && (story.ClientService.IsPremium || !story.HasExpiredViewers))
             {
                 ViewModel.Items.CollectionChanged += OnCollectionChanged;
 
