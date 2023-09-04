@@ -1755,7 +1755,10 @@ namespace Telegram.Views
 
             SearchReset();
 
-            Stories.Collapse();
+            if (rpMasterTitlebar.SelectedIndex != 0)
+            {
+                Stories.Collapse();
+            }
 
             _shouldGoBackWithDetail = false;
 
