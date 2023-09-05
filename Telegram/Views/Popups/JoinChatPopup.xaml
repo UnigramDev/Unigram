@@ -28,13 +28,24 @@
                                      Height="96"
                                      IsEnabled="False"
                                      Margin="0,24,0,8" />
-            <TextBlock x:Name="Title"
-                       FontSize="20"
-                       FontFamily="XamlAutoFontFamily"
-                       FontWeight="SemiBold"
-                       TextAlignment="Center"
-                       VerticalAlignment="Top"
-                       Grid.Row="1" />
+            <Grid HorizontalAlignment="Center"
+                  Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="Title"
+                           FontSize="20"
+                           FontFamily="XamlAutoFontFamily"
+                           FontWeight="SemiBold"
+                           TextAlignment="Center"
+                           VerticalAlignment="Bottom" />
+                <controls:IdentityIcon x:Name="Identity"
+                                       VerticalAlignment="Bottom"
+                                       Margin="4,0,0,2"
+                                       Grid.Column="1" />
+
+            </Grid>
             <TextBlock x:Name="Subtitle"
                        Style="{StaticResource InfoCaptionTextBlockStyle}"
                        TextAlignment="Center"

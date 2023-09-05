@@ -49,6 +49,10 @@ namespace Telegram.Controls
             {
                 SetStatus(supergroup);
             }
+            else if (_parameter is ChatInviteLinkInfo chatInviteLinkInfo)
+            {
+                SetStatus(chatInviteLinkInfo);
+            }
 
             _clientService = null;
             _parameter = null;
@@ -113,6 +117,30 @@ namespace Telegram.Controls
             }
         }
 
+        public void SetStatus(ChatInviteLinkInfo chat)
+        {
+            if (!_templateApplied)
+            {
+                _parameter = chat;
+                return;
+            }
+
+            if (chat.IsFake || chat.IsScam || chat.IsVerified)
+            {
+                LoadObject(ref Icon, nameof(Icon));
+                Icon.Glyph = chat.IsFake
+                    ? Icons.Fake16
+                    : chat.IsScam
+                    ? Icons.Scam16
+                    : Icons.Verified16;
+            }
+            else
+            {
+                UnloadObject(ref Icon);
+            }
+
+            UnloadObject(ref Status);
+        }
 
         public void SetStatus(IClientService clientService, ForumTopicIcon icon)
         {

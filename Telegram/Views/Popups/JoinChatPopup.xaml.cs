@@ -25,6 +25,8 @@ namespace Telegram.Views.Popups
 
             Photo.SetChat(clientService, info, 96);
 
+            Identity.SetStatus(info);
+
             Title.Text = info.Title;
             Subtitle.Text = ConvertCount(info.MemberCount, info.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel);
 
