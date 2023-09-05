@@ -410,17 +410,24 @@ namespace Telegram.Controls.Gallery
         private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             var volume = (int)e.NewValue;
+            var muted = false;
+
+            if (volume == 0)
+            {
+                volume = 100;
+                muted = true;
+            }
 
             if (_mediaPlayer != null)
             {
                 _mediaPlayer.Volume = volume;
-                _mediaPlayer.Mute = false;
+                _mediaPlayer.Mute = muted;
             }
 
-            SettingsService.Current.VolumeLevel = volume / 100;
-            SettingsService.Current.VolumeMuted = false;
+            SettingsService.Current.VolumeLevel = volume / 100d;
+            SettingsService.Current.VolumeMuted = muted;
 
-            VolumeButton.Glyph = volume switch
+            VolumeButton.Glyph = muted ? Icons.SpeakerMuteFilled : volume switch
             {
                 int n when n > 50 => Icons.Speaker2Filled,
                 int n when n > 0 => Icons.Speaker1Filled,
@@ -435,8 +442,15 @@ namespace Telegram.Controls.Gallery
             var muted = !SettingsService.Current.VolumeMuted;
             var volume = (int)Math.Round(SettingsService.Current.VolumeLevel * 100);
 
+            if (volume == 0 && !muted)
+            {
+                volume = 100;
+                muted = false;
+            }
+
             if (_mediaPlayer != null)
             {
+                _mediaPlayer.Volume = volume;
                 _mediaPlayer.Mute = muted;
             }
 
