@@ -485,7 +485,7 @@ namespace Telegram.Common
             return new StyledParagraph
             {
                 Offset = (int)startIndex,
-                Length = (int)length,
+                Length = message.Length,
                 Runs = GetRuns(message, sub)
             };
         }
