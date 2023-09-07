@@ -447,8 +447,16 @@ namespace Telegram.Controls.Cells
 
                 using (var stream = new InMemoryRandomAccessStream())
                 {
-                    PlaceholderImageHelper.WriteBytes(thumbnail.Data, stream);
-                    bitmap.SetSource(stream);
+                    try
+                    {
+                        PlaceholderImageHelper.WriteBytes(thumbnail.Data, stream);
+                        bitmap.SetSource(stream);
+                    }
+                    catch
+                    {
+                        // Throws when the data is not a valid encoded image,
+                        // not so frequent, but if it happens during ContainerContentChanging it crashes the app.
+                    }
                 }
 
                 Minithumbnail.Source = bitmap;

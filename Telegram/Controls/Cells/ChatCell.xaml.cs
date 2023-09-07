@@ -996,6 +996,8 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
+            // TODO: store some kind of minithumbnail ID
+
             var thumbnail = message?.GetMinithumbnail(false);
             if (thumbnail != null)
             {
@@ -1006,7 +1008,12 @@ namespace Telegram.Controls.Cells
                 var width = (int)(thumbnail.Width * ratio);
                 var height = (int)(thumbnail.Height * ratio);
 
-                var bitmap = new BitmapImage { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+                var bitmap = new BitmapImage
+                {
+                    DecodePixelWidth = width,
+                    DecodePixelHeight = height,
+                    DecodePixelType = DecodePixelType.Logical
+                };
 
                 Minithumbnail.ImageSource = bitmap;
                 MinithumbnailPanel.Visibility = Visibility.Visible;
@@ -1015,8 +1022,16 @@ namespace Telegram.Controls.Cells
 
                 using (var stream = new InMemoryRandomAccessStream())
                 {
-                    PlaceholderImageHelper.WriteBytes(thumbnail.Data, stream);
-                    await bitmap.SetSourceAsync(stream);
+                    try
+                    {
+                        PlaceholderImageHelper.WriteBytes(thumbnail.Data, stream);
+                        await bitmap.SetSourceAsync(stream);
+                    }
+                    catch
+                    {
+                        // Throws when the data is not a valid encoded image,
+                        // not so frequent, but if it happens during ContainerContentChanging it crashes the app.
+                    }
                 }
             }
             else
