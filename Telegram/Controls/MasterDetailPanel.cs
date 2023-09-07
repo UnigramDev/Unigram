@@ -59,6 +59,8 @@ namespace Telegram.Controls
             }
         }
 
+        public bool HasMaster { get; set; } = true;
+
         public double ActualMasterWidth => ((FrameworkElement)Children[2]).ActualWidth;
 
         public double ActualDetailWidth => ((FrameworkElement)Children[1]).ActualWidth;
@@ -89,7 +91,7 @@ namespace Telegram.Controls
             }
 
             // Single column mode
-            if (availableSize.Width < columnMinimalWidthLeft + columnMinimalWidthMain)
+            if (availableSize.Width < columnMinimalWidthLeft + columnMinimalWidthMain || !HasMaster)
             {
                 banner.Measure(availableSize);
 
@@ -131,7 +133,7 @@ namespace Telegram.Controls
             var grip = Children[3] as FrameworkElement;
 
             // Single column mode
-            if (finalSize.Width < columnMinimalWidthLeft + columnMinimalWidthMain)
+            if (finalSize.Width < columnMinimalWidthLeft + columnMinimalWidthMain || !HasMaster)
             {
                 CurrentState = MasterDetailState.Minimal;
 

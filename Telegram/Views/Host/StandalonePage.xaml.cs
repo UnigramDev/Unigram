@@ -16,10 +16,17 @@ using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Host
 {
+    public class StandaloneViewModel : ViewModelBase
+    {
+        public StandaloneViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+            : base(clientService, settingsService, aggregator)
+        {
+        }
+    }
+
     public sealed partial class StandalonePage : Page
     {
         private readonly INavigationService _navigationService;
@@ -35,28 +42,52 @@ namespace Telegram.Views.Host
             _navigationService = navigationService;
             _shortcutsService = TLContainer.Current.Resolve<IShortcutsService>(navigationService.SessionId);
 
-            Grid.SetRow(navigationService.Frame, 2);
-            LayoutRoot.Children.Add(navigationService.Frame);
+            //Grid.SetRow(navigationService.Frame, 2);
+            //LayoutRoot.Children.Add(navigationService.Frame);
 
             if (navigationService is TLNavigationService service && service.ClientService != null)
             {
                 var user = service.ClientService.GetUser(service.ClientService.Options.MyId);
                 if (user != null)
                 {
-                    StatusLabel.Text = string.Format("{0} - {1}", user.FullName(), "Unigram");
+                    StateLabel.Text = string.Format("{0} - {1}", user.FullName(), "Unigram");
                     ApplicationView.GetForCurrentView().Title = user.FullName();
                 }
             }
 
-            navigationService.Frame.Navigated += OnNavigated;
+            var clientService = TLContainer.Current.Resolve<IClientService>(navigationService.SessionId);
+            var settingsService = TLContainer.Current.Resolve<ISettingsService>(navigationService.SessionId);
+            var aggregator = TLContainer.Current.Resolve<IEventAggregator>(navigationService.SessionId);
 
-            if (navigationService.Frame.Content is HostedPage hosted)
+            MasterDetail.Initialize(navigationService as NavigationService, null, new StandaloneViewModel(clientService, settingsService, aggregator), false);
+            MasterDetail.NavigationService.Navigating += OnNavigating;
+        }
+
+        private void OnNavigating(object sender, NavigatingEventArgs e)
+        {
+            var allowed = e.SourcePageType == typeof(ChatPage) ||
+                e.SourcePageType == typeof(ChatPinnedPage) ||
+                e.SourcePageType == typeof(ChatThreadPage) ||
+                e.SourcePageType == typeof(ChatScheduledPage) ||
+                e.SourcePageType == typeof(ChatEventLogPage) ||
+                e.SourcePageType == typeof(BlankPage); //||
+                                                       //frame.CurrentSourcePageType == typeof(ChatPage) ||
+                                                       //frame.CurrentSourcePageType == typeof(ChatPinnedPage) ||
+                                                       //frame.CurrentSourcePageType == typeof(ChatThreadPage) ||
+                                                       //frame.CurrentSourcePageType == typeof(ChatScheduledPage) ||
+                                                       //frame.CurrentSourcePageType == typeof(ChatEventLogPage) ||
+                                                       //frame.CurrentSourcePageType == typeof(BlankPage);
+
+            var type = allowed ? BackgroundKind.Background : BackgroundKind.Material;
+
+            if (MasterDetail.CurrentState == MasterDetailState.Minimal && e.SourcePageType == typeof(BlankPage))
             {
-                PageHeader.Content = hosted.Action;
+                type = BackgroundKind.None;
             }
-            else
+
+            if (MasterDetail.CurrentState != MasterDetailState.Unknown)
             {
-                PageHeader.Content = null;
+                MasterDetail.ShowHideBackground(type, true);
             }
         }
 
@@ -70,52 +101,30 @@ namespace Telegram.Views.Host
             WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
         }
 
-        private void OnNavigated(object sender, Windows.UI.Xaml.Navigation.NavigationEventArgs e)
-        {
-            if (e.Content is HostedPage hosted)
-            {
-                PageHeader.Content = hosted.Action;
-            }
-            else
-            {
-                PageHeader.Content = null;
-            }
-        }
-
         private void InitializeTitleBar()
         {
             var sender = CoreApplication.GetCurrentView().TitleBar;
+            sender.IsVisibleChanged += OnLayoutMetricsChanged;
+            sender.LayoutMetricsChanged += OnLayoutMetricsChanged;
 
-            if (ApiInfo.IsDesktop && UIViewSettings.GetForCurrentView().UserInteractionMode == UserInteractionMode.Mouse)
-            {
-                // If running on PC and tablet mode is disabled, then titlebar is most likely visible
-                // So we're going to force it
-                Navigation.Padding = new Thickness(48, 0, 0, 0);
-                Navigation.Height = 32;
-            }
-            else
-            {
-                Navigation.Padding = new Thickness(sender.IsVisible ? Math.Max(sender.SystemOverlayLeftInset, 6) : 0, 0, 0, 0);
-                Navigation.Height = sender.IsVisible ? sender.Height : 0;
-            }
-
-            sender.ExtendViewIntoTitleBar = true;
-            sender.IsVisibleChanged += CoreTitleBar_LayoutMetricsChanged;
-            sender.LayoutMetricsChanged += CoreTitleBar_LayoutMetricsChanged;
+            OnLayoutMetricsChanged(sender, null);
         }
 
-        private void CoreTitleBar_LayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
+        private void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)
         {
-            Navigation.Padding = new Thickness(sender.IsVisible ? Math.Max(sender.SystemOverlayLeftInset, 6) : 0, 0, 0, 0);
-            Navigation.Height = sender.IsVisible ? sender.Height : 0;
-
-            var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-            foreach (var popup in popups)
+            try
             {
-                if (popup.Child is OverlayWindow contentDialog)
-                {
-                    contentDialog.Padding = new Thickness(0, sender.IsVisible ? sender.Height : 0, 0, 0);
-                }
+                TitleBarrr.ColumnDefinitions[0].Width = new GridLength(Math.Max(sender.SystemOverlayLeftInset, 0), GridUnitType.Pixel);
+                TitleBarrr.ColumnDefinitions[4].Width = new GridLength(Math.Max(sender.SystemOverlayRightInset, 0), GridUnitType.Pixel);
+
+                Grid.SetColumn(TitleBarLogo, sender.SystemOverlayLeftInset > 0 ? 3 : 1);
+                StateLabel.FlowDirection = sender.SystemOverlayLeftInset > 0
+                    ? FlowDirection.RightToLeft
+                    : FlowDirection.LeftToRight;
+            }
+            catch
+            {
+                // Most likely InvalidComObjectException
             }
         }
 

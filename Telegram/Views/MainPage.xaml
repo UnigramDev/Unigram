@@ -7,11 +7,9 @@
       xmlns:icons="using:Telegram.Assets.Icons"
       xmlns:controls="using:Telegram.Controls"
       xmlns:cells="using:Telegram.Controls.Cells"
-      xmlns:chats="using:Telegram.Controls.Chats"
       xmlns:contacts="using:Telegram.Controls.Contacts"
       xmlns:stories="using:Telegram.Controls.Stories"
       xmlns:views="using:Telegram.Controls.Views"
-      xmlns:navigation="using:Telegram.Navigation.Services"
       xmlns:viewModels="using:Telegram.ViewModels"
       xmlns:local="using:Telegram.Views"
       mc:Ignorable="d"
@@ -34,145 +32,6 @@
         <CollectionViewSource x:Name="ContactsResults"
                               Source="{x:Bind ViewModel.Contacts.Search, Mode=OneWay}"
                               IsSourceGrouped="True" />
-
-        <Style TargetType="controls:MasterDetailView">
-            <Setter Property="IsTabStop"
-                    Value="False" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:MasterDetailView">
-                        <controls:MasterDetailPanel x:Name="AdaptivePanel"
-                                                    Background="Transparent">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Expanded" />
-                                    <VisualState x:Name="Minimal">
-                                        <VisualState.Setters>
-                                            <Setter Target="DetailHeaderPresenter2.CornerRadius"
-                                                    Value="0" />
-                                            <Setter Target="BackgroundPart.CornerRadius"
-                                                    Value="0" />
-                                            <Setter Target="BorderPart.CornerRadius"
-                                                    Value="0" />
-                                            <Setter Target="BorderPart.BorderThickness"
-                                                    Value="0,1,0,0" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <ContentControl Content="{TemplateBinding Banner}"
-                                            IsTabStop="False"
-                                            TabIndex="3"
-                                            HorizontalContentAlignment="Stretch"
-                                            VerticalContentAlignment="Stretch"
-                                            VerticalAlignment="Top"
-                                            Canvas.ZIndex="2" />
-
-                            <Grid x:Name="DetailHeaderPresenter2"
-                                  CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="64" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-
-                                <Border x:Name="MaterialPart"
-                                        Background="{ThemeResource LayerFillColorDefaultBrush}"
-                                        CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
-                                        Grid.RowSpan="2" />
-
-                                <chats:ChatBackgroundControl x:Name="BackgroundPart"
-                                                             Margin="{TemplateBinding BackgroundMargin}"
-                                                             CornerRadius="9,0,0,0"
-                                                             Grid.RowSpan="2" />
-
-                                <Grid MaxWidth="1000"
-                                      Margin="24,0"
-                                      Canvas.ZIndex="1">
-                                    <muxc:BreadcrumbBar x:Name="DetailHeaderPresenter"
-                                                        Visibility="Collapsed"
-                                                        Margin="28,20,0,0"
-                                                        VerticalAlignment="Top"
-                                                        TabIndex="1">
-                                        <muxc:BreadcrumbBar.ItemTemplate>
-                                            <DataTemplate x:DataType="navigation:NavigationStackItem">
-                                                <TextBlock Text="{x:Bind Title, Mode=OneWay}" />
-                                            </DataTemplate>
-                                        </muxc:BreadcrumbBar.ItemTemplate>
-                                    </muxc:BreadcrumbBar>
-
-                                    <controls:BackButton x:Name="BackButton"
-                                                         Margin="-20,18,0,0"
-                                                         CornerRadius="20"
-                                                         Glyph="&#xe93e;"
-                                                         Width="48"
-                                                         Height="48" />
-
-                                    <ContentControl x:Name="DetailAction"
-                                                    Content="{TemplateBinding DetailFooter}"
-                                                    IsTabStop="False"
-                                                    TabIndex="2"
-                                                    VerticalContentAlignment="Stretch"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Top"
-                                                    Height="48"
-                                                    Margin="0,16,0,0"
-                                                    Canvas.ZIndex="1" />
-                                </Grid>
-
-                                <Grid x:Name="DetailPresenter"
-                                      Grid.RowSpan="2" />
-
-                                <Border x:Name="DetailHeaderBackground"
-                                        Visibility="Collapsed"
-                                        Height="48"
-                                        Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                                        BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                                        BorderThickness="0,0,0,1"
-                                        BackgroundSizing="InnerBorderEdge"
-                                        VerticalAlignment="Top" />
-
-                                <Border x:Name="BorderPart"
-                                        BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                                        BorderThickness="{ThemeResource NavigationViewContentGridBorderThickness}"
-                                        CornerRadius="{ThemeResource NavigationViewContentGridCornerRadius}"
-                                        Grid.RowSpan="2" />
-                            </Grid>
-
-                            <ContentControl x:Name="MasterFrame"
-                                            Content="{TemplateBinding Content}"
-                                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                                            ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                                            Visibility="{TemplateBinding MasterVisibility}"
-                                            HorizontalContentAlignment="Stretch"
-                                            VerticalContentAlignment="Stretch"
-                                            IsTabStop="False"
-                                            TabIndex="0" />
-
-                            <UserControl Canvas.ZIndex="2">
-                                <Border x:Name="Grip"
-                                        Width="12"
-                                        Background="Transparent"
-                                        BorderBrush="Transparent"
-                                        BorderThickness="0,0,6,0">
-                                    <VisualStateManager.VisualStateGroups>
-                                        <VisualStateGroup>
-                                            <VisualState x:Name="Normal" />
-                                            <VisualState x:Name="Pressed">
-                                                <VisualState.Setters>
-                                                    <Setter Target="Grip.Background"
-                                                            Value="{ThemeResource ScrollBarThumbBackground}" />
-                                                </VisualState.Setters>
-                                            </VisualState>
-                                        </VisualStateGroup>
-                                    </VisualStateManager.VisualStateGroups>
-                                </Border>
-                            </UserControl>
-                        </controls:MasterDetailPanel>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Page.Resources>
 
     <Grid>
@@ -284,6 +143,7 @@
             <TextBlock x:Name="StateLabel"
                        VerticalAlignment="Center"
                        TextLineBounds="TrimToCapHeight"
+                       TextWrapping="NoWrap"
                        AutomationProperties.LiveSetting="Assertive"
                        Foreground="{ThemeResource PageHeaderForegroundBrush}"
                        Style="{StaticResource CaptionTextBlockStyle}"
