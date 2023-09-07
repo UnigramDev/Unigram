@@ -486,7 +486,7 @@ namespace Telegram.Controls
 
                 if (index > -1 && index != i)
                 {
-                    destination.Move(index, Math.Min(i, destination.Count));
+                    destination.Move(index, Math.Min(i, destination.Count - 1));
                 }
                 else if (index == -1)
                 {
