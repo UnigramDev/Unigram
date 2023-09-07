@@ -9,6 +9,8 @@ namespace Telegram.Controls
 {
     public class AnimatedTextBlock : Control
     {
+        private AnimatedTextBlockPresenter Presenter;
+
         private TextBlock PrefixPart;
         private TextBlock SuffixPart;
         private TextBlock PrevPart;
@@ -21,6 +23,9 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
+            Presenter = GetTemplateChild(nameof(Presenter)) as AnimatedTextBlockPresenter;
+            Presenter.Owner = this;
+
             ChangePartText(ref NextPart, nameof(NextPart), Text, true, true);
         }
 
@@ -279,7 +284,7 @@ namespace Telegram.Controls
         private double _prefixRight;
         private double _nextRight;
 
-        protected override Size MeasureOverride(Size availableSize)
+        public Size DoMeasure(Size availableSize)
         {
             Logger.Debug();
 
@@ -311,7 +316,7 @@ namespace Telegram.Controls
             return new Size(width, height);
         }
 
-        protected override Size ArrangeOverride(Size finalSize)
+        public Size DoArrange(Size finalSize)
         {
             Logger.Debug();
 
@@ -349,6 +354,26 @@ namespace Telegram.Controls
 
     public class AnimatedTextBlockPresenter : Panel
     {
-        // This does nothing, it's only used to have custom Measure and Arrange in AnimatedTextBlock
+        public AnimatedTextBlock Owner { get; set; }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            if (Owner != null)
+            {
+                return Owner.DoMeasure(availableSize);
+            }
+
+            return base.MeasureOverride(availableSize);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            if (Owner != null)
+            {
+                return Owner.DoArrange(finalSize);
+            }
+
+            return base.ArrangeOverride(finalSize);
+        }
     }
 }

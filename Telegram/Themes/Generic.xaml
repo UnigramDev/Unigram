@@ -6317,7 +6317,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AnimatedTextBlock">
-                    <local:AnimatedTextBlockPresenter>
+                    <local:AnimatedTextBlockPresenter x:Name="Presenter">
                         <TextBlock x:Name="PrefixPart"
                                    x:Load="False"
                                    Style="{TemplateBinding TextStyle}"
