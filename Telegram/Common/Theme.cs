@@ -238,6 +238,11 @@ namespace Telegram.Common
             {
                 Update(requested);
             }
+
+            if (ChatTheme != null)
+            {
+                Update(theme == ApplicationTheme.Light ? ElementTheme.Light : ElementTheme.Dark, ChatTheme, ChatBackground);
+            }
         }
 
         private void Update(TelegramTheme requested, ChatTheme theme)
