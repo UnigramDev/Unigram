@@ -220,7 +220,7 @@ namespace Telegram
             _ = Task.Run(() => OnStartSync(context));
             //return Task.CompletedTask;
 
-            if (args is not LaunchActivatedEventArgs)
+            if (startKind != StartKind.Launch)
             {
                 var view = ApplicationView.GetForCurrentView();
                 await ApplicationViewSwitcher.TryShowAsStandaloneAsync(view.Id);
