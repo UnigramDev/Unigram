@@ -76,7 +76,18 @@ namespace Telegram.Views.Settings
                 }
             }
 
-            var items = new[] { photo, video, document, audio, voice, stickers, local }.Where(x => x != null).ToList();
+            var items = new[]
+            {
+                photo,
+                video,
+                document,
+                audio,
+                voice,
+                stickers,
+                stories,
+                local
+            }.Where(x => x != null).ToList();
+
             ScrollingHost.ItemsSource = items;
             Chart.Items = items;
 
