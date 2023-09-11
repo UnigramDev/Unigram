@@ -110,7 +110,7 @@ namespace Telegram.Common
             {
                 OpenTelegramUrl(clientService, navigation, internalLink);
             }
-            else
+            else if (!string.Equals(uri.Scheme, "tg", StringComparison.OrdinalIgnoreCase))
             {
                 OpenLoginUrl(clientService, navigation, url, await clientService.SendAsync(new GetExternalLinkInfo(url)));
             }
