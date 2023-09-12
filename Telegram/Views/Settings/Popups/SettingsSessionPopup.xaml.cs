@@ -45,7 +45,7 @@ namespace Telegram.Views.Settings.Popups
 
             Application.Badge = string.Format("{0} {1}", session.ApplicationName, session.ApplicationVersion);
             Location.Badge = session.Country;
-            Address.Badge = session.Ip;
+            Address.Badge = session.IpAddress;
 
             AcceptCalls.IsChecked = session.CanAcceptCalls;
 

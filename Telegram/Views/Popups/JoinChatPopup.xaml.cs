@@ -28,7 +28,7 @@ namespace Telegram.Views.Popups
             Identity.SetStatus(info);
 
             Title.Text = info.Title;
-            Subtitle.Text = ConvertCount(info.MemberCount, info.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel);
+            Subtitle.Text = ConvertCount(info.MemberCount, info.Type is InviteLinkChatTypeChannel);
 
             PrimaryButtonText = info.CreatesJoinRequest ? Strings.RequestToJoin2 : Strings.ChannelJoin2;
             SecondaryButtonText = Strings.Cancel;
