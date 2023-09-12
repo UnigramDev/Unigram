@@ -155,7 +155,7 @@ namespace Telegram.Views.Chats
 
         private bool MessageSaveMedia_Loaded(MessageWithOwner message)
         {
-            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            if (message.SelfDestructType is not null || !message.CanBeSaved)
             {
                 return false;
             }
@@ -180,7 +180,7 @@ namespace Telegram.Views.Chats
 
         private bool MessageOpenMedia_Loaded(MessageWithOwner message)
         {
-            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            if (message.SelfDestructType is not null || !message.CanBeSaved)
             {
                 return false;
             }
@@ -196,7 +196,7 @@ namespace Telegram.Views.Chats
 
         private bool MessageOpenFolder_Loaded(MessageWithOwner message)
         {
-            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            if (message.SelfDestructType is not null || !message.CanBeSaved)
             {
                 return false;
             }

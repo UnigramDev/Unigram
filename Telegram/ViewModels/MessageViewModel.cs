@@ -283,7 +283,7 @@ namespace Telegram.ViewModels
             _message.ReplyTo = message.ReplyTo;
             _message.SenderId = message.SenderId;
             _message.SendingState = message.SendingState;
-            _message.SelfDestructTime = message.SelfDestructTime;
+            _message.SelfDestructType = message.SelfDestructType;
             _message.SelfDestructIn = message.SelfDestructIn;
             _message.AutoDeleteIn = message.AutoDeleteIn;
             _message.ViaBotUserId = message.ViaBotUserId;
@@ -351,7 +351,7 @@ namespace Telegram.ViewModels
         public string AuthorSignature => _message.AuthorSignature;
         public long ViaBotUserId => _message.ViaBotUserId;
         public double SelfDestructIn { get => _message.SelfDestructIn; set => _message.SelfDestructIn = value; }
-        public int SelfDestructTime => _message.SelfDestructTime;
+        public MessageSelfDestructType SelfDestructType => _message.SelfDestructType;
         public MessageReplyTo ReplyTo { get => _message.ReplyTo; set => _message.ReplyTo = value; }
         public MessageForwardInfo ForwardInfo => _message.ForwardInfo;
         public IList<UnreadReaction> UnreadReactions { get => _message.UnreadReactions; set => _message.UnreadReactions = value; }

@@ -131,9 +131,9 @@ namespace Telegram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
-            if (message.SelfDestructTime > 0 && _templateApplied)
+            if (message.SelfDestructType is MessageSelfDestructTypeTimer selfDestructTypeTimer && _templateApplied)
             {
-                Timer.Maximum = message.SelfDestructTime;
+                Timer.Maximum = selfDestructTypeTimer.SelfDestructTime;
                 Timer.Value = DateTime.Now.AddSeconds(message.SelfDestructIn);
             }
         }
@@ -211,7 +211,16 @@ namespace Telegram.Controls.Messages.Content
                     Overlay.Opacity = 1;
 
                     Texture.Source = null;
-                    Subtitle.Text = Locale.FormatTtl(message.SelfDestructTime, true);
+
+                    // TODO: Icon
+                    if (message.SelfDestructType is MessageSelfDestructTypeTimer selfDestructTypeTimer)
+                    {
+                        Subtitle.Text = Locale.FormatTtl(selfDestructTypeTimer.SelfDestructTime, true);
+                    }
+                    else
+                    {
+                        Subtitle.Text = "1";
+                    }
                 }
                 else
                 {

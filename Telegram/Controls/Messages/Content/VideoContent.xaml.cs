@@ -86,7 +86,7 @@ namespace Telegram.Controls.Messages.Content
 
         public void UpdateMessageContentOpened(MessageViewModel message)
         {
-            if (message.SelfDestructTime > 0)
+            if (message.SelfDestructType is MessageSelfDestructTypeTimer)
             {
                 //Timer.Maximum = message.Ttl;
                 //Timer.Value = DateTime.Now.AddSeconds(message.TtlExpiresIn);
@@ -144,7 +144,15 @@ namespace Telegram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Download);
                     Button.Progress = 0;
 
-                    Subtitle.Text = string.Format("{0}, {1}", Locale.FormatTtl(message.SelfDestructTime, true), FileSizeConverter.Convert(size));
+                    // TODO icon
+                    if (message.SelfDestructType is MessageSelfDestructTypeTimer timer)
+                    {
+                        Subtitle.Text = string.Format("{0}, {1}", Locale.FormatTtl(timer.SelfDestructTime, true), FileSizeConverter.Convert(size));
+                    }
+                    else
+                    {
+                        Subtitle.Text = "1";
+                    }
 
                     if (message.Delegate.CanBeDownloaded(video, file))
                     {
@@ -156,7 +164,15 @@ namespace Telegram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Ttl);
                     Button.Progress = 1;
 
-                    Subtitle.Text = Locale.FormatTtl(message.SelfDestructTime, true);
+                    // TODO icon
+                    if (message.SelfDestructType is MessageSelfDestructTypeTimer timer)
+                    {
+                        Subtitle.Text = Locale.FormatTtl(timer.SelfDestructTime, true);
+                    }
+                    else
+                    {
+                        Subtitle.Text = "1";
+                    }
                 }
             }
             else

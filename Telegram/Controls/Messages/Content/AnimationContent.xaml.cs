@@ -142,7 +142,16 @@ namespace Telegram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Ttl);
                     Button.Progress = 1;
 
-                    Subtitle.Text = Locale.FormatTtl(Math.Max(message.SelfDestructTime, animation.Duration), true);
+                    // TODO icon
+                    if (message.SelfDestructType is MessageSelfDestructTypeTimer timer)
+                    {
+                        Subtitle.Text = Locale.FormatTtl(Math.Max(timer.SelfDestructTime, animation.Duration), true);
+                    }
+                    else
+                    {
+                        Subtitle.Text = "1";
+                    }
+
                     Overlay.Opacity = 1;
 
                     Player.Source = null;

@@ -158,7 +158,7 @@ namespace Telegram.Common
 
         public static MenuFlyoutSeparator CreateFlyoutSeparator(this MenuFlyout flyout)
         {
-            if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem or MenuFlyoutSubItem))
+            if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is not MenuFlyoutSeparator))
             {
                 var separator = new MenuFlyoutSeparator();
                 flyout.Items.Add(separator);
@@ -170,7 +170,7 @@ namespace Telegram.Common
 
         public static MenuFlyoutSeparator CreateFlyoutSeparator(this MenuFlyoutSubItem flyout)
         {
-            if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is MenuFlyoutItem or MenuFlyoutSubItem))
+            if (flyout.Items.Count > 0 && (flyout.Items[flyout.Items.Count - 1] is not MenuFlyoutSeparator))
             {
                 var separator = new MenuFlyoutSeparator();
                 flyout.Items.Add(separator);

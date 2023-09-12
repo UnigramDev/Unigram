@@ -48,7 +48,7 @@ namespace Telegram.Services.Factories
 
 
 
-        public static async Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool asFile, bool spoiler = false, int ttl = 0, BitmapEditState editState = null)
+        public static async Task<InputMessageFactory> CreatePhotoAsync(StorageFile file, bool asFile, bool spoiler = false, MessageSelfDestructType ttl = null, BitmapEditState editState = null)
         {
             var size = await ImageHelper.GetScaleAsync(file, editState: editState);
             if (size.Width == 0 || size.Height == 0)
@@ -77,7 +77,7 @@ namespace Telegram.Services.Factories
             };
         }
 
-        public static async Task<InputMessageFactory> CreateVideoAsync(StorageFile file, bool animated, bool asFile, bool spoiler = false, int ttl = 0, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
+        public static async Task<InputMessageFactory> CreateVideoAsync(StorageFile file, bool animated, bool asFile, bool spoiler = false, MessageSelfDestructType ttl = null, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null)
         {
             var basicProps = await file.GetBasicPropertiesAsync();
             var videoProps = await file.Properties.GetVideoPropertiesAsync();
@@ -117,7 +117,7 @@ namespace Telegram.Services.Factories
             var generated = await file.ToGeneratedAsync(ConversionType.Transcode, JsonConvert.SerializeObject(conversion));
             var thumbnail = await file.ToVideoThumbnailAsync(conversion, ConversionType.TranscodeThumbnail, JsonConvert.SerializeObject(conversion));
 
-            if (asFile && ttl == 0)
+            if (asFile && ttl == null)
             {
                 return new InputMessageFactory
                 {
@@ -126,7 +126,7 @@ namespace Telegram.Services.Factories
                     Delegate = (inputFile, caption) => new InputMessageDocument(inputFile, thumbnail, true, caption)
                 };
             }
-            else if (animated && ttl == 0)
+            else if (animated && ttl == null)
             {
                 return new InputMessageFactory
                 {

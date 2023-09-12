@@ -2643,7 +2643,7 @@ namespace Telegram.Views
 
         private bool MessageCopyMedia_Loaded(MessageViewModel message)
         {
-            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            if (message.SelfDestructType is not null || !message.CanBeSaved)
             {
                 return false;
             }
@@ -2728,7 +2728,7 @@ namespace Telegram.Views
 
         private bool MessageSaveMedia_Loaded(MessageViewModel message)
         {
-            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            if (message.SelfDestructType is not null || !message.CanBeSaved)
             {
                 return false;
             }
@@ -2753,7 +2753,7 @@ namespace Telegram.Views
 
         private bool MessageOpenMedia_Loaded(MessageViewModel message)
         {
-            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            if (message.SelfDestructType is not null || !message.CanBeSaved)
             {
                 return false;
             }
@@ -2769,7 +2769,7 @@ namespace Telegram.Views
 
         private bool MessageDownload_Loaded(MessageViewModel message)
         {
-            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            if (message.SelfDestructType is not null || !message.CanBeSaved)
             {
                 return false;
             }
@@ -2785,7 +2785,7 @@ namespace Telegram.Views
 
         private bool MessageOpenFolder_Loaded(MessageViewModel message)
         {
-            if (message.SelfDestructTime > 0 || !message.CanBeSaved)
+            if (message.SelfDestructType is not null || !message.CanBeSaved)
             {
                 return false;
             }

@@ -371,7 +371,7 @@ namespace Telegram.Controls.Messages
                 Strings.AttachPhoto,
                 photo.Caption);
 
-            if (message.SelfDestructTime > 0)
+            if (message.SelfDestructType is not null)
             {
                 HideThumbnail();
             }
@@ -553,7 +553,7 @@ namespace Telegram.Controls.Messages
                 Strings.AttachVideo,
                 video.Caption);
 
-            if (message.SelfDestructTime > 0)
+            if (message.SelfDestructType is not null)
             {
                 HideThumbnail();
             }

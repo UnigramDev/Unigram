@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
+using Telegram.Td.Api;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.UI.Xaml.Media;
@@ -84,8 +85,8 @@ namespace Telegram.Entities
             set => Set(ref _hasSpoiler, value);
         }
 
-        protected int _ttl;
-        public int Ttl
+        protected MessageSelfDestructType _ttl;
+        public MessageSelfDestructType Ttl
         {
             get => _ttl;
             set
@@ -95,7 +96,7 @@ namespace Telegram.Entities
             }
         }
 
-        public bool IsSecret => _ttl > 0;
+        public bool IsSecret => _ttl != null;
 
         public virtual uint Width { get; }
         public virtual uint Height { get; }

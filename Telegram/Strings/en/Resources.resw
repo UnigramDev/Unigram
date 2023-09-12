@@ -6842,6 +6842,39 @@ Here’s what is now unlocked.</value>
   <data name="ThisIsYou" xml:space="preserve">
     <value>this is you</value>
   </data>
+  <data name="TimerPeriodDoNotDelete" xml:space="preserve">
+    <value>Do Not Delete</value>
+  </data>
+  <data name="TimerPeriodHint" xml:space="preserve">
+    <value>Choose how long the media will be kept after opening.</value>
+  </data>
+  <data name="TimerPeriodOnce" xml:space="preserve">
+    <value>View Once</value>
+  </data>
+  <data name="TimerPeriodPhotoKeep" xml:space="preserve">
+    <value>Photo will be kept.</value>
+  </data>
+  <data name="TimerPeriodPhotoSetOnce" xml:space="preserve">
+    <value>Photo set to view once</value>
+  </data>
+  <data name="TimerPeriodPhotoSetSeconds_one" xml:space="preserve">
+    <value>Photo will be deleted in **{0}** second after opening.</value>
+  </data>
+  <data name="TimerPeriodPhotoSetSeconds_other" xml:space="preserve">
+    <value>Photo will be deleted in **{0}** seconds after opening.</value>
+  </data>
+  <data name="TimerPeriodVideoKeep" xml:space="preserve">
+    <value>Video will be kept.</value>
+  </data>
+  <data name="TimerPeriodVideoSetOnce" xml:space="preserve">
+    <value>Video set to view once</value>
+  </data>
+  <data name="TimerPeriodVideoSetSeconds_one" xml:space="preserve">
+    <value>Video will be deleted in **{0}** second after opening.</value>
+  </data>
+  <data name="TimerPeriodVideoSetSeconds_other" xml:space="preserve">
+    <value>Video will be deleted in **{0}** seconds after opening.</value>
+  </data>
   <data name="Times_one" xml:space="preserve">
     <value>{0} time</value>
   </data>

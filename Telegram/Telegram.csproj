@@ -1750,6 +1750,8 @@
     </PRIResource>
     <Content Include="Assets\Toasts\JoinRequested.tgs" />
     <Content Include="Assets\highlight.json" />
+    <Content Include="Assets\Toasts\AutoRemoveOff.tgs" />
+    <Content Include="Assets\Toasts\AutoRemoveOn.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>

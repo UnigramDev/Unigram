@@ -625,7 +625,11 @@ namespace Telegram.ViewModels
             {
                 Handle(update.MessageId, message =>
                 {
-                    message.SelfDestructIn = message.SelfDestructTime;
+                    // TODO: this makes no sense
+                    if (message.SelfDestructType is MessageSelfDestructTypeTimer timer)
+                    {
+                        message.SelfDestructIn = timer.SelfDestructTime;
+                    }
 
                     switch (message.Content)
                     {

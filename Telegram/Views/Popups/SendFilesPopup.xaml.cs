@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,6 +18,7 @@ using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Entities;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Drawers;
@@ -63,7 +65,7 @@ namespace Telegram.Views.Popups
             {
                 if (IsMediaSelected)
                 {
-                    return Items.Count > 1 && Items.Count <= 10 && Items.All(x => (x is StoragePhoto || x is StorageVideo) && x.Ttl == 0);
+                    return Items.Count > 1 && Items.Count <= 10 && Items.All(x => (x is StoragePhoto || x is StorageVideo) && x.Ttl == null);
                 }
 
                 return Items.Count is > 1 and <= 10;
@@ -569,38 +571,59 @@ namespace Telegram.Views.Popups
             var button = sender as ToggleButton;
             var media = button.Tag as StorageMedia;
 
-            var slider = new Slider();
-            slider.IsThumbToolTipEnabled = false;
-            slider.Header = MessageTtlConverter.Convert(MessageTtlConverter.ConvertSeconds(media.Ttl));
-            slider.Minimum = 0;
-            slider.Maximum = 28;
-            slider.StepFrequency = 1;
-            slider.SmallChange = 1;
-            slider.LargeChange = 1;
-            slider.Value = MessageTtlConverter.ConvertSeconds(media.Ttl);
-            slider.ValueChanged += (s, args) =>
+            var flyout = new MenuFlyout();
+
+            flyout.Items.Add(new MenuFlyoutLabel
             {
-                var index = (int)args.NewValue;
-                var label = MessageTtlConverter.Convert(index);
+                Text = Strings.TimerPeriodHint,
+                Padding = new Thickness(12, 4, 12, 8),
+                MaxWidth = 178,
+            });
 
-                slider.Header = label;
-                media.Ttl = MessageTtlConverter.ConvertBack(index);
-            };
+            flyout.Items.Add(new MenuFlyoutSeparator());
 
-            var text = new TextBlock();
-            text.Style = Navigation.BootStrapper.Current.Resources["InfoCaptionTextBlockStyle"] as Style;
-            text.TextWrapping = TextWrapping.Wrap;
-            text.Text = media is StoragePhoto
-                ? Strings.MessageLifetimePhoto
-                : Strings.MessageLifetimeVideo;
+            void Update(MessageSelfDestructType ttl)
+            {
+                media.Ttl = ttl;
+                Window.Current.ShowTeachingTip(sender as FrameworkElement,
+                    media is StorageVideo
+                        ? ttl is MessageSelfDestructTypeTimer timer1
+                        ? Locale.Declension(Strings.R.TimerPeriodVideoSetSeconds, timer1.SelfDestructTime)
+                        : ttl is MessageSelfDestructTypeImmediately
+                        ? Strings.TimerPeriodVideoSetOnce
+                        : Strings.TimerPeriodVideoKeep
+                        : ttl is MessageSelfDestructTypeTimer timer2
+                        ? Locale.Declension(Strings.R.TimerPeriodPhotoSetSeconds, timer2.SelfDestructTime)
+                        : ttl is MessageSelfDestructTypeImmediately
+                        ? Strings.TimerPeriodPhotoSetOnce
+                        : Strings.TimerPeriodPhotoKeep,
+                    new LocalFileSource(ttl == null
+                        ? "ms-appx:///Assets/Toasts/AutoRemoveOff.tgs"
+                        : "ms-appx:///Assets/Toasts/AutoRemoveOn.tgs"),
+                    TeachingTipPlacementMode.TopLeft);
+            }
 
-            var stack = new StackPanel();
-            stack.Width = 260;
-            stack.Children.Add(slider);
-            stack.Children.Add(text);
+            var command = new RelayCommand<MessageSelfDestructType>(Update);
 
-            var flyout = new Flyout();
-            flyout.Content = stack;
+            void CreateToggle(MessageSelfDestructType value, string text)
+            {
+                var toggle = new ToggleMenuFlyoutItem
+                {
+                    Text = text,
+                    IsChecked = value.AreTheSame(media.Ttl),
+                    Command = command,
+                    CommandParameter = value
+                };
+
+                flyout.Items.Add(toggle);
+            }
+
+            CreateToggle(new MessageSelfDestructTypeImmediately(), Strings.TimerPeriodOnce);
+            CreateToggle(new MessageSelfDestructTypeTimer(3), Locale.Declension(Strings.R.Seconds, 3));
+            CreateToggle(new MessageSelfDestructTypeTimer(10), Locale.Declension(Strings.R.Seconds, 10));
+            CreateToggle(new MessageSelfDestructTypeTimer(30), Locale.Declension(Strings.R.Seconds, 30));
+            CreateToggle(new MessageSelfDestructTypeTimer(60), Locale.Declension(Strings.R.Seconds, 60));
+            CreateToggle(null, Strings.TimerPeriodDoNotDelete);
 
             flyout.ShowAt(button.Parent, FlyoutPlacementMode.TopEdgeAlignedRight);
         }

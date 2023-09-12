@@ -188,6 +188,22 @@ namespace Telegram.Td.Api
             return false;
         }
 
+        public static bool AreTheSame(this MessageSelfDestructType x, MessageSelfDestructType y)
+        {
+            if (x is MessageSelfDestructTypeTimer oldTimer
+                && y is MessageSelfDestructTypeTimer newTimer)
+            {
+                return oldTimer.SelfDestructTime == newTimer.SelfDestructTime;
+            }
+            else if (x is MessageSelfDestructTypeImmediately
+                && y is MessageSelfDestructTypeImmediately)
+            {
+                return false;
+            }
+
+            return x == null && y == null;
+        }
+
         public static bool AreTheSame(this ChatAvailableReactions x, ChatAvailableReactions y)
         {
             if (x is ChatAvailableReactionsAll && y is ChatAvailableReactionsAll)
