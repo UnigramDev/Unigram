@@ -427,6 +427,22 @@ namespace Telegram.Views
             });
         }
 
+        public void Handle(UpdateUnconfirmedSession update)
+        {
+            this.BeginOnUIThread(() =>
+            {
+                if (update.Session == null)
+                {
+                    UnloadObject(UnconfirmedCard);
+                }
+                else
+                {
+                    FindName(nameof(UnconfirmedCard));
+                    UnconfirmedCard.Update(update.Session);
+                }
+            });
+        }
+
         public void Handle(UpdateConnectionState update)
         {
             this.BeginOnUIThread(() =>
@@ -816,6 +832,8 @@ namespace Telegram.Views
                 ViewModel.Aggregator.Publish(update);
             }
 
+            Handle(new UpdateUnconfirmedSession(ViewModel.ClientService.UnconfirmedSession));
+
             if (_unloaded)
             {
                 _unloaded = false;
@@ -863,6 +881,7 @@ namespace Telegram.Views
                 .Subscribe<UpdateChatFolders>(Handle)
                 .Subscribe<UpdateChatNotificationSettings>(Handle)
                 .Subscribe<UpdatePasscodeLock>(Handle)
+                .Subscribe<UpdateUnconfirmedSession>(Handle)
                 .Subscribe<UpdateConnectionState>(Handle)
                 .Subscribe<UpdateOption>(Handle)
                 .Subscribe<UpdateCallDialog>(Handle)

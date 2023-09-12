@@ -33,7 +33,7 @@
 
             <TextBlock x:Name="Title"
                        TextAlignment="Center"
-                       Margin="0,4,0,0" />
+                       Margin="0,8,0,4" />
 
             <TextBlock x:Name="Subtitle"
                        TextAlignment="Center"

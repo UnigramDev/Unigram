@@ -48,14 +48,14 @@ namespace Telegram.Services
         Task<Chats> GetStoryListAsync(StoryList storyList, int offset, int limit);
 
         int SessionId { get; }
-
-        Client Client { get; }
     }
 
     public interface ICacheService
     {
         bool IsPremium { get; }
         bool IsPremiumAvailable { get; }
+
+        UnconfirmedSession UnconfirmedSession { get; }
 
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
@@ -219,6 +219,8 @@ namespace Telegram.Services
         private readonly Dictionary<int, ChatListUnreadCount> _unreadCounts = new();
 
         private readonly Dictionary<int, File> _files = new();
+
+        private UnconfirmedSession _unconfirmedSession;
 
         private IList<string> _diceEmojis;
 
@@ -749,6 +751,8 @@ namespace Telegram.Services
             await _authorizationStateTask.Task;
             return _authorizationState;
         }
+
+        public UnconfirmedSession UnconfirmedSession => _unconfirmedSession;
 
         public AuthorizationState AuthorizationState => _authorizationState;
 
@@ -1943,6 +1947,10 @@ namespace Telegram.Services
                 {
                     value.Status = updateUserStatus.Status;
                 }
+            }
+            else if (update is UpdateUnconfirmedSession updateUnconfirmedSession)
+            {
+                _unconfirmedSession = updateUnconfirmedSession.Session;
             }
 
             _aggregator.Publish(update);

@@ -1,0 +1,84 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Popups.UnconfirmedSessionPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Popups"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       Opened="OnOpened"
+                       Closing="OnClosing"
+                       mc:Ignorable="d">
+
+    <Grid Margin="0,-12,0,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Border Background="{ThemeResource DangerButtonBackground}"
+                Opacity="0.1"
+                CornerRadius="8" />
+        <Border Padding="12,4">
+            <TextBlock Text="{CustomResource UnconfirmedAuthDeniedWarning}"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       Foreground="{ThemeResource DangerButtonBackground}" />
+        </Border>
+
+        <Border x:Name="IconBackground"
+                Background="{ThemeResource AccentButtonBackground}"
+                CornerRadius="32"
+                Margin="0,16,0,0"
+                Width="64"
+                Height="64"
+                Grid.Row="1">
+            <controls:AnimatedImage x:Name="Icon"
+                                    AutoPlay="False"
+                                    IsCachingEnabled="False"
+                                    LoopCount="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FrameSize="50,50"
+                                    DecodeFrameType="Logical"
+                                    Width="50"
+                                    Height="50" />
+        </Border>
+
+        <TextBlock x:Name="Title"
+                   TextAlignment="Center"
+                   FontSize="20"
+                   FontFamily="XamlAutoFontFamily"
+                   FontWeight="SemiBold"
+                   Margin="0,8,0,4"
+                   Grid.Row="2" />
+
+        <TextBlock x:Name="Subtitle"
+                   TextAlignment="Center"
+                   TextTrimming="CharacterEllipsis"
+                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   Grid.Row="3" />
+
+        <Button Click="Done_Click"
+                Style="{StaticResource AccentButtonStyle}"
+                HorizontalAlignment="Stretch"
+                Margin="0,24,0,0"
+                Grid.Row="4">
+            <Grid x:Name="DonePanel">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Got it"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           Foreground="#FFFFFF" />
+                <controls:AnimatedTextBlock x:Name="Cooldown"
+                                            Text="5"
+                                            Foreground="{ThemeResource AppBarItemDisabledForegroundThemeBrush}"
+                                            Margin="8,0,0,0"
+                                            Grid.Column="1" />
+            </Grid>
+        </Button>
+    </Grid>
+</controls:ContentPopup>

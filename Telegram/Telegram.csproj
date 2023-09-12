@@ -252,6 +252,9 @@
     <Compile Include="Controls\Stories\StoriesStrip.xaml.cs">
       <DependentUpon>StoriesStrip.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\UnconfirmedSessionCard.xaml.cs">
+      <DependentUpon>UnconfirmedSessionCard.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Services\ClientService.StoryList.cs" />
     <Compile Include="Services\VoipGroupService.cs" />
     <Compile Include="Services\VoipService.cs" />
@@ -935,6 +938,9 @@
     <Compile Include="Views\Popups\TranslatePopup.xaml.cs">
       <DependentUpon>TranslatePopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\UnconfirmedSessionPopup.xaml.cs">
+      <DependentUpon>UnconfirmedSessionPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\VideoChatAliasesPopup.xaml.cs">
       <DependentUpon>VideoChatAliasesPopup.xaml</DependentUpon>
     </Compile>
@@ -1587,6 +1593,7 @@
     <Content Include="Assets\Toasts\ExpiredStory.tgs" />
     <Content Include="Assets\Toasts\Info.tgs" />
     <Content Include="Assets\Toasts\LinkCopied.tgs" />
+    <Content Include="Assets\Animations\Banned.tgs" />
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -1752,6 +1759,7 @@
     <Content Include="Assets\highlight.json" />
     <Content Include="Assets\Toasts\AutoRemoveOff.tgs" />
     <Content Include="Assets\Toasts\AutoRemoveOn.tgs" />
+    <Content Include="Assets\Toasts\Success.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -2130,6 +2138,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Controls\UnconfirmedSessionCard.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\UndoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2367,6 +2379,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\TranslatePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\UnconfirmedSessionPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -571,22 +571,28 @@
                                                         SizeChanged="ChatList_SizeChanged"
                                                         Grid.RowSpan="2">
                                         <ListView.Header>
-                                            <Grid x:Name="ArchivedChatsPresenter">
-                                                <Button x:Name="ArchivedChatsPanel"
-                                                        Click="ArchivedChats_Click"
-                                                        ContextRequested="ArchivedChats_ContextRequested"
-                                                        AutomationProperties.Name="{CustomResource ArchivedChats}"
-                                                        Style="{StaticResource EmptyButtonStyle}"
-                                                        Background="Transparent"
-                                                        Padding="4,2"
-                                                        CornerRadius="4">
-                                                    <cells:ChatCell x:Name="ArchivedChats"
-                                                                    Visibility="Collapsed"
-                                                                    Stroke="{ThemeResource ChatLastMessageStateBrush}"
-                                                                    SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                                                    ActualThemeChanged="ArchivedChats_ActualThemeChanged" />
-                                                </Button>
-                                                <!--<Border VerticalAlignment="Bottom">
+                                            <StackPanel>
+                                                <controls:UnconfirmedSessionCard x:Name="UnconfirmedCard"
+                                                                                 x:Load="False"
+                                                                                 ConfirmClick="{x:Bind ViewModel.ConfirmSession}"
+                                                                                 DenyClick="{x:Bind ViewModel.DenySession}"/>
+
+                                                <Grid x:Name="ArchivedChatsPresenter">
+                                                    <Button x:Name="ArchivedChatsPanel"
+                                                            Click="ArchivedChats_Click"
+                                                            ContextRequested="ArchivedChats_ContextRequested"
+                                                            AutomationProperties.Name="{CustomResource ArchivedChats}"
+                                                            Style="{StaticResource EmptyButtonStyle}"
+                                                            Background="Transparent"
+                                                            Padding="4,2"
+                                                            CornerRadius="4">
+                                                        <cells:ChatCell x:Name="ArchivedChats"
+                                                                        Visibility="Collapsed"
+                                                                        Stroke="{ThemeResource ChatLastMessageStateBrush}"
+                                                                        SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                                        ActualThemeChanged="ArchivedChats_ActualThemeChanged" />
+                                                    </Button>
+                                                    <!--<Border VerticalAlignment="Bottom">
                                                     <Border x:Name="ArchivedChatsCompactPanel"
                                                             Background="{ThemeResource PageBackgroundDarkBrush}">
                                                         <Button Click="ArchivedChats_Click"
@@ -597,7 +603,8 @@
                                                                 BorderThickness="12,6" />
                                                     </Border>
                                                 </Border>-->
-                                            </Grid>
+                                                </Grid>
+                                            </StackPanel>
                                         </ListView.Header>
                                         <ListView.ItemTemplate>
                                             <DataTemplate>

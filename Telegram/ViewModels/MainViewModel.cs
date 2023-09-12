@@ -16,6 +16,8 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
+using Telegram.Streams;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Folders;
 using Telegram.ViewModels.Stories;
@@ -23,6 +25,7 @@ using Telegram.Views;
 using Telegram.Views.Folders;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings.Popups;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -442,7 +445,42 @@ namespace Telegram.ViewModels
         public SettingsViewModel Settings { get; }
 
 
+        
+        public void ConfirmSession()
+        {
+            var session = ClientService.UnconfirmedSession;
+            if (session == null)
+            {
+                Aggregator.Publish(new UpdateUnconfirmedSession(null));
+                return;
+            }
 
+            ClientService.Send(new ConfirmSession(session.Id));
+            //Aggregator.Publish(new UpdateUnconfirmedSession(null));
+
+            var message = Strings.UnconfirmedAuthConfirmed + Environment.NewLine + Strings.UnconfirmedAuthConfirmedMessage;
+            var entity = new TextEntity(0, Strings.RequestToJoinSent.Length, new TextEntityTypeBold());
+
+            var markdown = new FormattedText(message, new[] { entity });
+            var text = Client.Execute(new ParseMarkdown(markdown)) as FormattedText;
+
+            Window.Current.ShowTeachingTip(text, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+        }
+
+        public async void DenySession()
+        {
+            var session = ClientService.UnconfirmedSession;
+            if (session == null)
+            {
+                Aggregator.Publish(new UpdateUnconfirmedSession(null));
+                return;
+            }
+
+            ClientService.Send(new TerminateSession(session.Id));
+            //Aggregator.Publish(new UpdateUnconfirmedSession(null));
+
+            await ShowPopupAsync(new UnconfirmedSessionPopup(session));
+        }
 
         public async void UpdateApp()
         {
