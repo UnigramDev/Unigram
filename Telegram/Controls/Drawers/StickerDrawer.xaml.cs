@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
-using Telegram.Controls.Media;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
@@ -278,20 +277,6 @@ namespace Telegram.Controls.Drawers
             if (file == null)
             {
                 return;
-            }
-
-            if (content.Children.Count > 1 && content.Children[1] is Border panel && panel.Child is TextBlock premium)
-            {
-                if (sticker.FullType is StickerFullTypeRegular regular && regular.PremiumAnimation != null && ViewModel.ClientService.IsPremiumAvailable)
-                {
-                    premium.Text = ViewModel.ClientService.IsPremium ? Icons.Premium16 : Icons.LockClosed16;
-                    panel.HorizontalAlignment = ViewModel.ClientService.IsPremium ? HorizontalAlignment.Right : HorizontalAlignment.Center;
-                    panel.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    panel.Visibility = Visibility.Collapsed;
-                }
             }
 
             var animation = content.Children[0] as AnimatedImage;

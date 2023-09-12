@@ -54,21 +54,6 @@
                                                 FrameSize="64,64"
                                                 DecodeFrameType="Logical"
                                                 Ready="Player_Ready" />
-
-                        <Border HorizontalAlignment="Center"
-                                VerticalAlignment="Bottom"
-                                Background="{StaticResource PremiumObliqueGradientBrush}"
-                                CornerRadius="10"
-                                Width="20"
-                                Height="20"
-                                Margin="-2,0,-2,-2">
-                            <TextBlock HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Foreground="#FFFFFF"
-                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                       FontSize="16"
-                                       Text="&#xE9BE;" />
-                        </Border>
                     </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>

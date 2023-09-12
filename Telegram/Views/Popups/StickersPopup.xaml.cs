@@ -10,7 +10,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Streams;
@@ -159,20 +158,6 @@ namespace Telegram.Views.Popups
         {
             var content = args.ItemContainer.ContentTemplateRoot as Grid;
             var sticker = args.Item as ViewModels.Drawers.StickerViewModel;
-
-            if (content.Children.Count > 1 && content.Children[1] is Border panel && panel.Child is TextBlock premium)
-            {
-                if (sticker.FullType is StickerFullTypeRegular regular && regular.PremiumAnimation != null && ViewModel.ClientService.IsPremiumAvailable)
-                {
-                    premium.Text = ViewModel.ClientService.IsPremium ? Icons.Premium16 : Icons.LockClosed16;
-                    panel.HorizontalAlignment = ViewModel.ClientService.IsPremium ? HorizontalAlignment.Right : HorizontalAlignment.Center;
-                    panel.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    panel.Visibility = Visibility.Collapsed;
-                }
-            }
 
             var file = sticker.StickerValue;
             if (file == null)
