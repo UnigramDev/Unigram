@@ -6,6 +6,7 @@
 //
 using System;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -144,14 +145,13 @@ namespace Telegram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Download);
                     Button.Progress = 0;
 
-                    // TODO icon
                     if (message.SelfDestructType is MessageSelfDestructTypeTimer timer)
                     {
-                        Subtitle.Text = string.Format("{0}, {1}", Locale.FormatTtl(timer.SelfDestructTime, true), FileSizeConverter.Convert(size));
+                        Subtitle.Text = string.Format("{0}, {1}", Icons.ArrowClockwiseFilled12 + "\u2004\u200A" + Locale.FormatTtl(timer.SelfDestructTime, true), FileSizeConverter.Convert(size));
                     }
                     else
                     {
-                        Subtitle.Text = "1";
+                        Subtitle.Text = Icons.PlayFilled12 + "\u2004\u200A1";
                     }
 
                     if (message.Delegate.CanBeDownloaded(video, file))
@@ -164,14 +164,13 @@ namespace Telegram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Ttl);
                     Button.Progress = 1;
 
-                    // TODO icon
                     if (message.SelfDestructType is MessageSelfDestructTypeTimer timer)
                     {
-                        Subtitle.Text = Locale.FormatTtl(timer.SelfDestructTime, true);
+                        Subtitle.Text = Icons.ArrowClockwiseFilled12 + "\u2004\u200A" + Locale.FormatTtl(timer.SelfDestructTime, true);
                     }
                     else
                     {
-                        Subtitle.Text = "1";
+                        Subtitle.Text = Icons.PlayFilled12 + "\u2004\u200A1";
                     }
                 }
             }

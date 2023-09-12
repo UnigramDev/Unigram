@@ -50,6 +50,8 @@ namespace Telegram.Controls.Media
         public const string Cancel = "\uE978";
         public const string CancelSmall = "\uE93F";
         public const string Play = "\uE768";
+        public const string ArrowClockwiseFilled12 = "\uEA35";
+        public const string PlayFilled12 = "\uEA36";
         public const string PlayFilled24 = "\uEA17";
         public const string Pause = "\uE769";
         public const string PauseFilled24 = "\uEA18";

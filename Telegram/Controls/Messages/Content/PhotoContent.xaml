@@ -36,6 +36,7 @@
                                 Margin="4">
                             <TextBlock x:Name="Subtitle"
                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                        Foreground="White"
                                        TextAlignment="Right"
                                        TextWrapping="NoWrap" />

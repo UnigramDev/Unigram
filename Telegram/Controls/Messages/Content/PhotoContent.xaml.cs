@@ -6,6 +6,7 @@
 //
 using System;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
@@ -212,14 +213,13 @@ namespace Telegram.Controls.Messages.Content
 
                     Texture.Source = null;
 
-                    // TODO: Icon
                     if (message.SelfDestructType is MessageSelfDestructTypeTimer selfDestructTypeTimer)
                     {
-                        Subtitle.Text = Locale.FormatTtl(selfDestructTypeTimer.SelfDestructTime, true);
+                        Subtitle.Text = Icons.ArrowClockwiseFilled12 + "\u2004\u200A" + Locale.FormatTtl(selfDestructTypeTimer.SelfDestructTime, true);
                     }
                     else
                     {
-                        Subtitle.Text = "1";
+                        Subtitle.Text = Icons.PlayFilled12 +  "\u2004\u200A1";
                     }
                 }
                 else

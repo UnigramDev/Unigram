@@ -6,6 +6,7 @@
 //
 using System;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -142,14 +143,13 @@ namespace Telegram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Ttl);
                     Button.Progress = 1;
 
-                    // TODO icon
                     if (message.SelfDestructType is MessageSelfDestructTypeTimer timer)
                     {
-                        Subtitle.Text = Locale.FormatTtl(Math.Max(timer.SelfDestructTime, animation.Duration), true);
+                        Subtitle.Text = Icons.ArrowClockwiseFilled12 + "\u2004\u200A" + Locale.FormatTtl(Math.Max(timer.SelfDestructTime, animation.Duration), true);
                     }
                     else
                     {
-                        Subtitle.Text = "1";
+                        Subtitle.Text = Icons.PlayFilled12 + "\u2004\u200A1";
                     }
 
                     Overlay.Opacity = 1;

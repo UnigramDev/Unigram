@@ -46,6 +46,7 @@
                                              Style="{StaticResource SmallImmersiveFileButtonStyle}">
                             <TextBlock x:Name="Subtitle"
                                        Style="{StaticResource CaptionTextBlockStyle}"
+                                       FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
                                        Foreground="White"
                                        TextWrapping="NoWrap"
                                        Typography.NumeralAlignment="Tabular" />
