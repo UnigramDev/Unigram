@@ -65,6 +65,11 @@ namespace Telegram.Services
         IList<ChatFolderInfo> ChatFolders { get; }
         int MainChatListPosition { get; }
 
+        IList<AttachmentMenuBot> AttachmentMenuBots { get; }
+
+        IList<AttachmentMenuBot> GetBotsForChat(long chatId);
+        IList<AttachmentMenuBot> GetBotsForMenu();
+
         IList<string> AnimationSearchEmojis { get; }
         string AnimationSearchProvider { get; }
 
@@ -236,7 +241,9 @@ namespace Telegram.Services
         private IList<ChatFolderInfo> _chatFolders = new ChatFolderInfo[0];
         private int _mainChatListPosition = 0;
 
-        private IList<string> _reactions = new List<string>();
+        private IList<string> _reactions = Array.Empty<string>();
+
+        private IList<AttachmentMenuBot> _attachmentMenuBots = Array.Empty<AttachmentMenuBot>();
 
         private UpdateAnimationSearchParameters _animationSearchParameters;
 
@@ -773,6 +780,75 @@ namespace Telegram.Services
         public IList<ChatFolderInfo> ChatFolders => _chatFolders;
 
         public int MainChatListPosition => _mainChatListPosition;
+
+        public IList<AttachmentMenuBot> AttachmentMenuBots => _attachmentMenuBots;
+
+        public IList<AttachmentMenuBot> GetBotsForChat(long chatId)
+        {
+            List<AttachmentMenuBot> bots = null;
+
+            if (_chats.TryGetValue(chatId, out Chat chat))
+            {
+                foreach (var bot in _attachmentMenuBots)
+                {
+                    if (!bot.ShowInAttachmentMenu)
+                    {
+                        continue;
+                    }
+
+                    if (bot.SupportsGroupChats)
+                    {
+                        if (chat.Type is ChatTypeBasicGroup || (chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel))
+                        {
+                            bots ??= new();
+                            bots.Add(bot);
+                        }
+                    }
+                    
+                    if (bot.SupportsChannelChats)
+                    {
+                        if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+                        {
+                            bots ??= new();
+                            bots.Add(bot);
+                        }
+                    }
+                    
+                    if (bot.SupportsUserChats || bot.SupportsBotChats || bot.SupportsSelfChat)
+                    {
+                        if (TryGetUser(chat, out User user))
+                        {
+                            var supportsSelf = bot.SupportsSelfChat && user.Id == Options.MyId;
+                            var supportsBot = bot.SupportsBotChats && user.Type is UserTypeBot;
+                            var supportsUser = !supportsSelf && !supportsBot && user.Type is UserTypeRegular;
+
+                            if (supportsSelf || supportsBot || supportsUser)
+                            {
+                                bots ??= new();
+                                bots.Add(bot);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return (IList<AttachmentMenuBot>)bots ?? Array.Empty<AttachmentMenuBot>();
+        }
+
+        public IList<AttachmentMenuBot> GetBotsForMenu()
+        {
+            List<AttachmentMenuBot> bots = null;
+
+            foreach (var bot in _attachmentMenuBots)
+            {
+                if (bot.ShowInSideMenu)
+                {
+                    bots.Add(bot);
+                }
+            }
+
+            return (IList<AttachmentMenuBot>)bots ?? Array.Empty<AttachmentMenuBot>();
+        }
 
         public IList<string> AnimationSearchEmojis => _animationSearchParameters?.Emojis ?? new string[0];
 
@@ -1951,6 +2027,10 @@ namespace Telegram.Services
             else if (update is UpdateUnconfirmedSession updateUnconfirmedSession)
             {
                 _unconfirmedSession = updateUnconfirmedSession.Session;
+            }
+            else if (update is UpdateAttachmentMenuBots updateAttachmentMenuBots)
+            {
+                _attachmentMenuBots = updateAttachmentMenuBots.Bots;
             }
 
             _aggregator.Publish(update);

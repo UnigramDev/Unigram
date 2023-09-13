@@ -1494,6 +1494,18 @@ namespace Telegram.Views
                 {
                     flyout.CreateFlyoutItem(ViewModel.GiftPremium, Strings.GiftPremium, Icons.GiftPremium);
                 }
+
+                var bots = ViewModel.ClientService.GetBotsForChat(chat.Id);
+                if (bots.Count > 0)
+                {
+                    flyout.CreateFlyoutSeparator();
+
+                    foreach (var bot in bots)
+                    {
+                        var item = flyout.CreateFlyoutItem(ViewModel.OpenMiniApp, bot, bot.Name, Icons.Bot);
+                        item.ContextRequested += AttachmentMenuBot_ContextRequested;
+                    }
+                }
             }
             else if (header?.EditingMessage != null)
             {
@@ -1517,6 +1529,17 @@ namespace Telegram.Views
             {
                 flyout.ShowAt(ButtonAttach, FlyoutPlacementMode.TopEdgeAlignedLeft);
             }
+        }
+
+        private void AttachmentMenuBot_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var item = sender as MenuFlyoutItem;
+
+            var flyout = new MenuFlyout();
+            var bot = item.CommandParameter as AttachmentMenuBot;
+
+            flyout.CreateFlyoutItem(ViewModel.RemoveMiniApp, bot, Strings.BotWebViewDeleteBot, Icons.Delete);
+            args.ShowAt(flyout, item);
         }
 
         private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
