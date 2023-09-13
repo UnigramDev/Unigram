@@ -1489,11 +1489,12 @@ namespace Telegram.Views
                 visible &= MasterDetail.NavigationService.CurrentPageType == typeof(BlankPage);
             }
 
-            Photo.Glyph = visible
-                ? Photo.HorizontalAlignment == HorizontalAlignment.Right
-                ? Icons.ArrowRight
-                : Icons.ArrowLeft
-                : Icons.Hamburger;
+            Photo.IsChecked = visible;
+            //Photo.Glyph = visible
+            //    ? Photo.HorizontalAlignment == HorizontalAlignment.Right
+            //    ? Icons.ArrowRight
+            //    : Icons.ArrowLeft
+            //    : Icons.Hamburger;
         }
 
         private void UpdateListViewsSelectedItem(long chatId)

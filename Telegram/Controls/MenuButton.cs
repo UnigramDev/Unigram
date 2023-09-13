@@ -65,14 +65,14 @@ namespace Telegram.Controls
             var line2 = Window.Current.Compositor.CreateLineGeometry();
             var line3 = Window.Current.Compositor.CreateLineGeometry();
 
-            line1.Start = new Vector2(0, 4.5f);
-            line1.End = new Vector2(16, 4.5f);
+            line1.Start = new Vector2(0, 3.5f);
+            line1.End = new Vector2(16, 3.5f);
 
             line2.Start = new Vector2(0, 8.5f);
             line2.End = new Vector2(16, 8.5f);
 
-            line3.Start = new Vector2(0, 12.5f);
-            line3.End = new Vector2(16, 12.5f);
+            line3.Start = new Vector2(0, 13.5f);
+            line3.End = new Vector2(16, 13.5f);
 
             var shape1 = Window.Current.Compositor.CreateSpriteShape(line1);
             shape1.StrokeThickness = 1;
@@ -98,7 +98,7 @@ namespace Telegram.Controls
             visual1.Size = new Vector2(16, 16);
             visual1.CenterPoint = new Vector3(8, 8, 0);
 
-            visual1.BorderMode = CompositionBorderMode.Hard;
+            //visual1.BorderMode = CompositionBorderMode.Hard;
 
             _shape1 = shape1;
             _shape2 = shape2;
@@ -136,10 +136,11 @@ namespace Telegram.Controls
             var show = IsChecked == true;
 
             var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                _visual.BorderMode = show /*&& Type == MenuButtonType.Dismiss*/ ? CompositionBorderMode.Soft : CompositionBorderMode.Hard;
-            };
+            //batch.Completed += (s, args) =>
+            //{
+            //    _visual.BorderMode = show /*&& Type == MenuButtonType.Dismiss*/ ? CompositionBorderMode.Soft : CompositionBorderMode.Hard;
+            //    _visual.BorderMode = CompositionBorderMode.Soft;
+            //};
 
             if (Type == MenuButtonType.Back)
             {
@@ -148,22 +149,22 @@ namespace Telegram.Controls
                 angle.InsertKeyFrame(1, show ? 180 : 0);
 
                 var start1 = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-                start1.InsertKeyFrame(show ? 0 : 1, new Vector2(0, 4.5f));
+                start1.InsertKeyFrame(show ? 0 : 1, new Vector2(0, 3.5f));
                 start1.InsertKeyFrame(show ? 1 : 0, new Vector2(8.5f, 1.5f));
 
                 var start3 = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-                start3.InsertKeyFrame(show ? 0 : 1, new Vector2(0, 12.5f));
+                start3.InsertKeyFrame(show ? 0 : 1, new Vector2(0, 13.5f));
                 start3.InsertKeyFrame(show ? 1 : 0, new Vector2(8.5f, 15.5f));
 
                 var end1 = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-                end1.InsertKeyFrame(show ? 0 : 1, new Vector2(16, 4.5f));
+                end1.InsertKeyFrame(show ? 0 : 1, new Vector2(16, 3.5f));
                 end1.InsertKeyFrame(show ? 1 : 0, new Vector2(15.5f, 8.5f));
 
                 var end3 = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
-                end3.InsertKeyFrame(show ? 0 : 1, new Vector2(16, 12.5f));
+                end3.InsertKeyFrame(show ? 0 : 1, new Vector2(16, 13.5f));
                 end3.InsertKeyFrame(show ? 1 : 0, new Vector2(15.5f, 8.5f));
 
-                _visual.BorderMode = CompositionBorderMode.Soft;
+                //_visual.BorderMode = CompositionBorderMode.Soft;
                 _visual.StartAnimation("RotationAngleInDegrees", angle);
                 _shape1.Geometry.StartAnimation("Start", start1);
                 _shape3.Geometry.StartAnimation("Start", start3);
@@ -204,7 +205,7 @@ namespace Telegram.Controls
 
                 _shape3.StrokeBrush.StartAnimation("Color", opacity3);
 
-                _visual.BorderMode = CompositionBorderMode.Soft;
+                //_visual.BorderMode = CompositionBorderMode.Soft;
                 _visual.StartAnimation("RotationAngleInDegrees", angle2);
                 _shape1.StartAnimation("RotationAngleInDegrees", angle1);
                 _shape3.StartAnimation("RotationAngleInDegrees", angle1);
