@@ -6,7 +6,6 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -108,15 +107,15 @@ namespace Telegram.ViewModels.Settings
                 {
                     Items.ReplaceWith(new[]
                     {
-                        new KeyedList<KeyedGroup, Session>(new KeyedGroup { Title = Strings.LoginAttempts }, pending.OrderByDescending(x => x.LastActiveDate)),
-                        new KeyedList<KeyedGroup, Session>(new KeyedGroup { Title = Strings.OtherSessions, Footer = Strings.LoginAttemptsInfo }, results.OrderByDescending(x => x.LastActiveDate))
+                        new KeyedList<KeyedGroup, Session>(new KeyedGroup { Title = Strings.LoginAttempts }, pending),
+                        new KeyedList<KeyedGroup, Session>(new KeyedGroup { Title = Strings.OtherSessions, Footer = Strings.LoginAttemptsInfo }, results)
                     });
                 }
                 else if (results.Count > 0)
                 {
                     Items.ReplaceWith(new[]
                     {
-                        new KeyedList<KeyedGroup, Session>(new KeyedGroup { Title = Strings.OtherSessions }, results.OrderByDescending(x => x.LastActiveDate))
+                        new KeyedList<KeyedGroup, Session>(new KeyedGroup { Title = Strings.OtherSessions }, results)
                     });
                 }
                 else
