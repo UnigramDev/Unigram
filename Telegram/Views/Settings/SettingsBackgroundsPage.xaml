@@ -84,19 +84,17 @@
 
                         <Grid VerticalAlignment="Center">
                             <Rectangle x:Name="NormalRectangle"
-                                       Fill="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                                       Stroke="{ThemeResource CheckBoxCheckBackgroundStrokeUnchecked}"
-                                       StrokeThickness="{ThemeResource CheckBoxBorderThemeThickness}"
-                                       RadiusX="16"
-                                       RadiusY="16"
+                                       Fill="{ThemeResource MessageServiceBackgroundBrush}"
+                                       RadiusX="18"
+                                       RadiusY="18"
                                        UseLayoutRounding="False"
-                                       Height="32"
-                                       Width="32" />
+                                       Height="36"
+                                       Width="36" />
                             <FontIcon x:Name="CheckGlyph"
                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
                                       Glyph="&#xE001;"
-                                      FontSize="24"
-                                      Foreground="{ThemeResource CheckBoxCheckBackgroundFillChecked}" />
+                                      FontSize="20"
+                                      Foreground="#FFFFFF" />
                         </Grid>
                     </controls:AspectView>
                 </DataTemplate>

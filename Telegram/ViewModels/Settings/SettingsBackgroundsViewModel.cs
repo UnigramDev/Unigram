@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
 {
-    public class SettingsBackgroundsViewModel : ViewModelBase
+    public class SettingsBackgroundsViewModel : ViewModelBase, IHandle
     {
         private long? _chatId;
 
@@ -31,6 +31,11 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             Items = new DiffObservableCollection<Background>(new BackgroundDiffHandler(), Constants.DiffOptions);
+        }
+
+        public override void Subscribe()
+        {
+            Aggregator.Subscribe<UpdateSelectedBackground>(this, Handle);
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -98,6 +103,16 @@ namespace Telegram.ViewModels.Settings
         }
 
         public DiffObservableCollection<Background> Items { get; private set; }
+
+        public void Handle(UpdateSelectedBackground update)
+        {
+            this.BeginOnUIThread(Refresh);
+        }
+
+        private async void Refresh()
+        {
+            await OnNavigatedToAsync(null, NavigationMode.Refresh, null);
+        }
 
         public void ChangeToLocal()
         {
