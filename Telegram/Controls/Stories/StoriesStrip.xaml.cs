@@ -241,7 +241,21 @@ namespace Telegram.Controls.Stories
 
         private ScrollViewer _scrollViewer;
 
-        public FrameworkElement ChatTabs { get; set; }
+        private FrameworkElement _chatTabs;
+        public FrameworkElement ChatTabs
+        {
+            get => _chatTabs;
+            set
+            {
+                _chatTabs = value;
+
+                if (_chatTabs != null && _progress != null)
+                {
+                    SetControlledList(_controlledList);
+                }
+            }
+        }
+
         public FrameworkElement TitleBarrr { get; set; }
         public FrameworkElement Header { get; set; }
 
