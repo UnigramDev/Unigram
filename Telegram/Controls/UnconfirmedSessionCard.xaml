@@ -35,15 +35,19 @@
                    Grid.ColumnSpan="2"
                    Grid.Row="1" />
 
-        <HyperlinkButton x:Name="Confirm"
-                         Content="{CustomResource UnconfirmedAuthConfirm}"
-                         HorizontalAlignment="Center"
-                         Grid.Row="2" />
-        <HyperlinkButton x:Name="Deny"
-                         Content="{CustomResource UnconfirmedAuthDeny}"
-                         Foreground="{ThemeResource DangerButtonBackground}"
-                         HorizontalAlignment="Center"
-                         Grid.Column="1"
-                         Grid.Row="2" />
+        <Button x:Name="Confirm"
+                Content="{CustomResource UnconfirmedAuthConfirm}"
+                Style="{StaticResource AccentTextButtonStyle}"
+                FontWeight="SemiBold"
+                HorizontalAlignment="Stretch"
+                Grid.Row="2" />
+        <Button x:Name="Deny"
+                Content="{CustomResource UnconfirmedAuthDeny}"
+                Foreground="{ThemeResource DangerButtonBackground}"
+                Style="{StaticResource DangerTextButtonStyle}"
+                FontWeight="SemiBold"
+                HorizontalAlignment="Stretch"
+                Grid.Column="1"
+                Grid.Row="2" />
     </Grid>
 </UserControl>
