@@ -2069,7 +2069,7 @@ namespace Telegram.Views
             {
                 if (message.SendingState is MessageSendingStateFailed)
                 {
-                    flyout.CreateFlyoutItem(MessageRetry_Loaded, ViewModel.ResendMessage, message, Strings.Retry, Icons.Retry);
+                    flyout.CreateFlyoutItem(MessageRetry_Loaded, ViewModel.ResendMessage, message, Strings.Retry, Icons.ArrowClockwise);
                 }
 
                 flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.CopyMessage, message, Strings.Copy, Icons.DocumentCopy);

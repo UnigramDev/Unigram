@@ -5,39 +5,59 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Globalization;
+using System.Numerics;
+using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Media;
+using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Data.Json;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using static Telegram.Strings;
 
 namespace Telegram.Views.Popups
 {
     public sealed partial class WebBotPopup : ContentPopup
     {
-        public WebBotPopup(User user, WebAppInfo info)
+        private readonly IClientService _clientService;
+        private readonly User _botUser;
+        private readonly AttachmentMenuBot _menuBot;
+
+        public WebBotPopup(IClientService clientService, User user, WebAppInfo info, AttachmentMenuBot menuBot = null)
         {
             InitializeComponent();
 
-            Title = user.FullName();
+            _clientService = clientService;
+            _botUser = user;
+            _menuBot = menuBot;
+
+            Title.Text = user.FullName();
 
             ElementCompositionPreview.SetIsTranslationEnabled(MainButton, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Title, true);
 
             View.SizeChanged += View_SizeChanged;
             View.Navigate(info.Url);
         }
 
-        public WebBotPopup(User user, string url)
+        public WebBotPopup(IClientService clientService, User user, string url)
         {
             InitializeComponent();
 
-            Title = user.FullName();
+            _clientService = clientService;
+            _botUser = user;
+            _menuBot = null;
+
+            Title.Text = user.FullName();
 
             ElementCompositionPreview.SetIsTranslationEnabled(MainButton, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Title, true);
 
             View.SizeChanged += View_SizeChanged;
             View.Navigate(url);
@@ -62,10 +82,11 @@ namespace Telegram.Views.Popups
 
         private void ReceiveEvent(string eventName, JsonObject eventData)
         {
-            System.Diagnostics.Debug.WriteLine("{0}: {1}", eventName, eventData);
+            Logger.Info(string.Format("{0}: {1}", eventName, eventData));
 
             if (eventName == "web_app_close")
             {
+                // TODO: probably need to inform the web view
                 Hide();
             }
             else if (eventName == "web_app_data_send")
@@ -108,9 +129,17 @@ namespace Telegram.Views.Popups
             {
                 OpenPopup(eventData);
             }
+            else if (eventName == "web_app_request_write_access")
+            {
+                RequestWriteAccess();
+            }
             else if (eventName == "web_app_request_phone")
             {
                 RequestPhone();
+            }
+            else if (eventName == "web_app_invoke_custom_method")
+            {
+                InvokeCustomMethod(eventData);
             }
             else if (eventName == "web_app_setup_closing_behavior")
             {
@@ -119,6 +148,10 @@ namespace Telegram.Views.Popups
             else if (eventName == "web_app_read_text_from_clipboard")
             {
                 RequestClipboardText(eventData);
+            }
+            else if (eventName == "web_app_set_header_color")
+            {
+                ProcessHeaderColor(eventData);
             }
         }
 
@@ -132,7 +165,69 @@ namespace Telegram.Views.Popups
 
         }
 
+        private async void InvokeCustomMethod(JsonObject eventData)
+        {
+            var requestId = eventData.GetNamedString("req_id", string.Empty);
+            if (string.IsNullOrEmpty(requestId))
+            {
+                return;
+            }
+
+            var method = eventData.GetNamedString("method");
+            var parameters = eventData.GetNamedObject("params");
+
+            var response = await _clientService.SendAsync(new SendWebAppCustomRequest(_botUser.Id, method, parameters.Stringify()));
+            if (response is CustomRequestResult result)
+            {
+                PostEvent("custom_method_invoked", "{ req_id: \"" + requestId + "\", result: " + result.Result + " }");
+            }
+            else if (response is Error error)
+            {
+                PostEvent("custom_method_invoked", "{ req_id: \"" + requestId + "\", error: " + error.Message + " }");
+            }
+        }
+
+        private void ProcessHeaderColor(JsonObject eventData)
+        {
+            if (eventData.ContainsKey("color"))
+            {
+                var colorValue = eventData.GetNamedString("color");
+                var color = ParseColor(colorValue);
+
+                if (color is Color c)
+                {
+                    var luminance = 0.2126 * (c.R / 255d) + 0.7152 * (c.G / 255d) + 0.0722 * (c.B / 255d);
+                    var foreground = luminance > 0.5 ? Colors.Black : Colors.White;
+
+                    var brush = new SolidColorBrush(foreground);
+
+                    TitlePanel.Background = new SolidColorBrush(c);
+                    Title.Foreground = brush;
+                    BackButton.Foreground = brush;
+                    MoreButton.Foreground = brush;
+                    HideButton.Foreground = brush;
+                }
+                else
+                {
+                    TitlePanel.ClearValue(Panel.BackgroundProperty);
+                    Title.ClearValue(TextBlock.ForegroundProperty);
+                    BackButton.ClearValue(ForegroundProperty);
+                    MoreButton.ClearValue(ForegroundProperty);
+                    HideButton.ClearValue(ForegroundProperty);
+                }
+            }
+            else if (eventData.ContainsKey("color_key"))
+            {
+                var colorKey = eventData.GetNamedString("color_key");
+            }
+        }
+
         private void RequestPhone()
+        {
+
+        }
+
+        private void RequestWriteAccess()
         {
 
         }
@@ -182,7 +277,67 @@ namespace Telegram.Views.Popups
 
         private void ProcessBackButtonMessage(JsonObject eventData)
         {
+            ShowHideBackButton(eventData.GetNamedBoolean("is_visible", false));
+        }
 
+        private bool _backButtonCollapsed = true;
+
+        private void ShowHideBackButton(bool show)
+        {
+            if (_backButtonCollapsed != show)
+            {
+                return;
+            }
+
+            _backButtonCollapsed = !show;
+            BackButton.Visibility = Visibility.Visible;
+
+            var visual1 = ElementCompositionPreview.GetElementVisual(BackButton);
+            var visual2 = ElementCompositionPreview.GetElementVisual(Title);
+
+            var batch = visual1.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                visual2.Properties.InsertVector3("Translation", Vector3.Zero);
+                BackButton.Visibility = show
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            };
+
+            var offset = visual1.Compositor.CreateScalarKeyFrameAnimation();
+            offset.InsertKeyFrame(0, show ? -28 : 0);
+            offset.InsertKeyFrame(1, show ? 0 : -28);
+            offset.Duration = Constants.FastAnimation;
+
+            var scale = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            scale.InsertKeyFrame(show ? 0 : 1, Vector3.Zero);
+            scale.InsertKeyFrame(show ? 1 : 0, Vector3.One);
+            scale.Duration = Constants.FastAnimation;
+
+            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacity.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity.InsertKeyFrame(show ? 1 : 0, 1);
+
+            visual1.CenterPoint = new Vector3(24);
+
+            visual2.StartAnimation("Translation.X", offset);
+            visual1.StartAnimation("Scale", scale);
+            visual1.StartAnimation("Opacity", opacity);
+            batch.End();
+        }
+
+        private Color? ParseColor(string color)
+        {
+            if (color.StartsWith("#") && int.TryParse(color.Substring(1), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexColor))
+            {
+                byte r = (byte)((hexColor & 0xff0000) >> 16);
+                byte g = (byte)((hexColor & 0x00ff00) >> 8);
+                byte b = (byte)(hexColor & 0x0000ff);
+
+                return Color.FromArgb(0xFF, r, g, b);
+            }
+
+            return null;
         }
 
         private void ProcessMainButtonMessage(JsonObject eventData)
@@ -196,21 +351,17 @@ namespace Telegram.Views.Popups
 
             if (is_visible && !string.IsNullOrEmpty(text.Trim()))
             {
-                void SetColor(string color, DependencyProperty property)
+                void SetColor(string value, DependencyProperty property)
                 {
-                    if (color.StartsWith("#") && int.TryParse(color.Substring(1), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int hexColor))
+                    var color = ParseColor(value);
+                    if (color is Color c)
                     {
-                        byte r = (byte)((hexColor & 0xff0000) >> 16);
-                        byte g = (byte)((hexColor & 0x00ff00) >> 8);
-                        byte b = (byte)(hexColor & 0x0000ff);
-
-                        MainButton.SetValue(property, new SolidColorBrush(Color.FromArgb(0xFF, r, g, b)));
+                        MainButton.SetValue(property, new SolidColorBrush(c));
                     }
                     else
                     {
                         MainButton.ClearValue(property);
                     }
-
                 }
 
                 SetColor(color, BackgroundProperty);
@@ -227,7 +378,7 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private bool _mainButtonCollapsed;
+        private bool _mainButtonCollapsed = true;
 
         private void ShowHideMainButton(bool show)
         {
@@ -272,12 +423,60 @@ namespace Telegram.Views.Popups
 
         private void PostEvent(string eventName, string eventData = "null")
         {
+            Logger.Info(string.Format("{0}: {1}", eventName, eventData));
             View.InvokeScript($"window.Telegram.WebView.receiveEvent('{eventName}', {eventData});");
         }
 
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             View.Close();
+        }
+
+        private void More_ContextRequested(object sender, RoutedEventArgs e)
+        {
+            var flyout = new MenuFlyout();
+
+            if (_menuBot != null && _menuBot.SupportsSettings)
+            {
+                flyout.CreateFlyoutItem(MenuItemSettings, Strings.BotWebViewSettings, Icons.Settings);
+            }
+
+            // TODO: check opening chat?
+            flyout.CreateFlyoutItem(MenuItemOpenBot, Strings.BotWebViewOpenBot, Icons.Bot);
+
+            flyout.CreateFlyoutItem(MenuItemReloadPage, Strings.BotWebViewReloadPage, Icons.ArrowClockwise);
+
+            if (_menuBot != null && _menuBot.IsAdded)
+            {
+                flyout.CreateFlyoutItem(MenuItemDeleteBot, Strings.BotWebViewDeleteBot, Icons.Delete, dangerous: true);
+            }
+
+            flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);
+        }
+
+        private void MenuItemSettings()
+        {
+            PostEvent("settings_button_pressed");
+        }
+
+        private void MenuItemOpenBot()
+        {
+
+        }
+
+        private void MenuItemReloadPage()
+        {
+            View.Reload();
+        }
+
+        private void MenuItemDeleteBot()
+        {
+
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            PostEvent("back_button_pressed");
         }
     }
 }

@@ -1416,6 +1416,12 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BotOwnershipTransferReadyAlertText" xml:space="preserve">
     <value>Please enter your password to confirm this action.</value>
   </data>
+  <data name="BotRemoveFromMenu" xml:space="preserve">
+    <value>This will remove **{0}** shortcuts from all menus.</value>
+  </data>
+  <data name="BotRemoveFromMenuTitle" xml:space="preserve">
+    <value>Remove bot</value>
+  </data>
   <data name="BotRestart" xml:space="preserve">
     <value>Restart Bot</value>
   </data>
@@ -1451,6 +1457,18 @@ It will be able to access your **IP address** and basic device info.</value>
   </data>
   <data name="BotWebAppInstantViewOpen" xml:space="preserve">
     <value>Launch</value>
+  </data>
+  <data name="BotWebViewDeleteBot" xml:space="preserve">
+    <value>Remove from Menu</value>
+  </data>
+  <data name="BotWebViewOpenBot" xml:space="preserve">
+    <value>Open bot</value>
+  </data>
+  <data name="BotWebViewReloadPage" xml:space="preserve">
+    <value>Reload page</value>
+  </data>
+  <data name="BotWebViewSettings" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="BubbleRadius" xml:space="preserve">
     <value>Message corners</value>
@@ -7054,9 +7072,6 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="UnconfirmedAuthConfirmedMessage" xml:space="preserve">
     <value>You can check the list of your active logins in **Settings &gt; Devices**.</value>
   </data>
-  <data name="UnconfirmedAuthDeniedMessageMultiple" xml:space="preserve">
-    <value>We have terminated the login attempts from: {0}</value>
-  </data>
   <data name="UnconfirmedAuthDeniedMessageSingle" xml:space="preserve">
     <value>We have terminated the login attempt from {0}.</value>
   </data>
@@ -7071,18 +7086,6 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="UnconfirmedAuthDeny" xml:space="preserve">
     <value>No, it’s not me!</value>
-  </data>
-  <data name="UnconfirmedAuthMultiple_one" xml:space="preserve">
-    <value>We detected new {0} login to your account. Is it you?</value>
-  </data>
-  <data name="UnconfirmedAuthMultiple_other" xml:space="preserve">
-    <value>We detected new {0} logins to your account. Is it you?</value>
-  </data>
-  <data name="UnconfirmedAuthMultipleFrom_one" xml:space="preserve">
-    <value>We detected new {0} login to your account from {1}. Is it you?</value>
-  </data>
-  <data name="UnconfirmedAuthMultipleFrom_other" xml:space="preserve">
-    <value>We detected new {0} logins to your account from {1}. Is it you?</value>
   </data>
   <data name="UnconfirmedAuthSingle" xml:space="preserve">
     <value>We detected a new login to your account from {0}. Is it you?</value>

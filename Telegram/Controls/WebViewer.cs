@@ -59,6 +59,8 @@ namespace Telegram.Controls
 
         public Task InvokeScriptAsync(string javaScript) => _presenter.InvokeScriptAsync(javaScript);
 
+        public void Reload() => _presenter.Reload();
+
         public void Close()
         {
             _presenter.Close();
@@ -77,6 +79,8 @@ namespace Telegram.Controls
         public abstract void NavigateToString(string htmlContent);
 
         public abstract Task InvokeScriptAsync(string javaScript);
+
+        public abstract void Reload();
 
         public abstract void Close();
 
@@ -151,6 +155,14 @@ namespace Telegram.Controls
             if (await _templatedApplied.Task && View != null)
             {
                 await View.InvokeScriptAsync("eval", new[] { javaScript });
+            }
+        }
+
+        public override async void Reload()
+        {
+            if (await _templatedApplied.Task)
+            {
+                View?.Refresh();
             }
         }
 
@@ -248,6 +260,14 @@ postEvent: function(eventType, eventData) {
             if (await _templatedApplied.Task && View?.CoreWebView2 != null)
             {
                 await View.CoreWebView2.ExecuteScriptAsync(javaScript);
+            }
+        }
+
+        public override async void Reload()
+        {
+            if (await _templatedApplied.Task)
+            {
+                View?.Reload();
             }
         }
 

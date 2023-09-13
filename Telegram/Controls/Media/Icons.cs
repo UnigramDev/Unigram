@@ -64,7 +64,7 @@ namespace Telegram.Controls.Media
         public const string Color = "\uE2B1";
         public const string ColorFilled24 = "\uEA1B";
 
-        public const string Retry = "\uE72C";
+        public const string ArrowClockwise = "\uE72C";
 
         public const string ArrowUndo = "\uE7A7";
         public const string ArrowRedo = "\uE7A6";

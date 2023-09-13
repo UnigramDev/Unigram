@@ -7,19 +7,70 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       Title="TITLE"
                        ContentMaxWidth="394"
                        HorizontalContentAlignment="Stretch"
                        VerticalContentAlignment="Stretch"
                        Closing="OnClosing">
 
-    <Grid Margin="-24,0,-24,-24">
+    <Grid Margin="-24,-24,-24,-24">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+        <Grid x:Name="TitlePanel">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"
+                                  MinWidth="16" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <controls:GlyphButton x:Name="BackButton"
+                                  Click="BackButton_Click"
+                                  RenderTransformOrigin="0.5,0.5"
+                                  Width="48"
+                                  Height="48"
+                                  Margin="4,0,-8,0"
+                                  CornerRadius="20"
+                                  Glyph="&#xe93e;"
+                                  Visibility="Collapsed">
+                <Button.RenderTransform>
+                    <ScaleTransform ScaleX="0.8"
+                                    ScaleY="0.8" />
+                </Button.RenderTransform>
+            </controls:GlyphButton>
+
+            <TextBlock x:Name="Title"
+                       Text="Adsasdsd"
+                       Foreground="{ThemeResource PageHeaderForegroundBrush}"
+                       Style="{StaticResource BaseTextBlockStyle}"
+                       FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                       TextWrapping="NoWrap"
+                       TextTrimming="CharacterEllipsis"
+                       MaxLines="1"
+                       VerticalAlignment="Center"
+                       Margin="8,0,0,0"
+                       FontSize="20"
+                       Grid.Column="1" />
+
+            <controls:MoreButton x:Name="MoreButton"
+                                 Click="More_ContextRequested"
+                                 CornerRadius="20"
+                                 Margin="0,0,-8,0"
+                                 Grid.Column="2" />
+
+            <controls:GlyphButton x:Name="HideButton"
+                                  Click="{x:Bind Close}"
+                                  Glyph="&#xE711;"
+                                  CornerRadius="20"
+                                  Grid.Column="3" />
+        </Grid>
+
         <controls:WebViewer x:Name="View"
-                            EventReceived="View_EventReceived" />
+                            EventReceived="View_EventReceived"
+                            Grid.RowSpan="2"
+                            Grid.Row="1" />
 
         <Button x:Name="MainButton"
                 Click="MainButton_Click"
@@ -28,6 +79,8 @@
                 BorderThickness="0"
                 VerticalAlignment="Bottom"
                 HorizontalAlignment="Stretch"
-                Grid.Row="1" />
+                FontWeight="SemiBold"
+                Visibility="Collapsed"
+                Grid.Row="2" />
     </Grid>
 </controls:ContentPopup>

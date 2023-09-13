@@ -331,7 +331,7 @@ namespace Telegram.Common
                     var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(0, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, false));
                     if (responsa is HttpUrl url)
                     {
-                        await new WebBotPopup(user, url.Url).ShowQueuedAsync();
+                        await new WebBotPopup(clientService, user, url.Url).ShowQueuedAsync();
                     }
                 }
                 else
