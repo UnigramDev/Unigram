@@ -101,28 +101,38 @@ namespace Telegram.Controls
 
         public void UpdateActiveStories(ChatActiveStories activeStories, int side, bool precise)
         {
-            if (Content is UIElement element && !_hasActiveStories)
+            if (activeStories.Stories.Count > 0)
+            {
+                if (Content is UIElement element && !_hasActiveStories)
+                {
+                    var visual = ElementCompositionPreview.GetElementVisual(element);
+                    visual.CenterPoint = new Vector3(side / 2);
+                    visual.Scale = new Vector3((side - 8f) / side);
+                }
+
+                _hasActiveStories = true;
+
+                var unreadCount = activeStories.CountUnread(out bool closeFriends);
+
+                if (precise)
+                {
+                    UpdateSegments(side, closeFriends, activeStories.Stories.Count, unreadCount);
+                }
+                else if (unreadCount > 0)
+                {
+                    UpdateSegments(side, closeFriends, 1, 1, 3.0f, 3.0f);
+                }
+                else
+                {
+                    UpdateSegments(side, false, 1, 0, 3.0f, 3.0f);
+                }
+            }
+            else if (_hasActiveStories && Content is UIElement element)
             {
                 var visual = ElementCompositionPreview.GetElementVisual(element);
-                visual.CenterPoint = new Vector3(side / 2);
-                visual.Scale = new Vector3((side - 8f) / side);
-            }
+                visual.Scale = Vector3.One;
 
-            _hasActiveStories = true;
-
-            var unreadCount = activeStories.CountUnread(out bool closeFriends);
-
-            if (precise)
-            {
-                UpdateSegments(side, closeFriends, activeStories.Stories.Count, unreadCount);
-            }
-            else if (unreadCount > 0)
-            {
-                UpdateSegments(side, closeFriends, 1, 1, 3.0f, 3.0f);
-            }
-            else
-            {
-                UpdateSegments(side, false, 1, 0, 3.0f, 3.0f);
+                ElementCompositionPreview.SetElementChildVisual(this, visual.Compositor.CreateSpriteVisual());
             }
         }
 
