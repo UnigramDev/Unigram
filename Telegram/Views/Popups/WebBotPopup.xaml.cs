@@ -28,6 +28,8 @@ namespace Telegram.Views.Popups
         private readonly User _botUser;
         private readonly AttachmentMenuBot _menuBot;
 
+        private bool _blockingAction;
+
         public WebBotPopup(IClientService clientService, User user, WebAppInfo info, AttachmentMenuBot menuBot = null)
         {
             InitializeComponent();
@@ -221,14 +223,77 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private void RequestPhone()
+        private async void RequestPhone()
         {
+            if (_blockingAction)
+            {
+                PostEvent("phone_requested", "{ status: \"cancelled\" }");
+                return;
+            }
 
+            _blockingAction = true;
+
+            var confirm = await MessagePopup.ShowAsync(null, string.Format(Strings.AreYouSureShareMyContactInfoWebapp, _botUser.FullName()), Strings.ShareYouPhoneNumberTitle, Strings.OK, Strings.Cancel);
+            if (confirm == ContentDialogResult.Primary && _clientService.TryGetUser(_clientService.Options.MyId, out User user))
+            {
+                var chat = await _clientService.SendAsync(new CreatePrivateChat(_botUser.Id, false)) as Chat;
+                if (chat == null)
+                {
+                    _blockingAction = false;
+                    PostEvent("phone_requested", "{ status: \"cancelled\" }");
+
+                    return;
+                }
+
+                if (chat.BlockList is BlockListMain)
+                {
+                    await _clientService.SendAsync(new SetMessageSenderBlockList(new MessageSenderUser(_botUser.Id), null));
+                }
+
+                await _clientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, new InputMessageContact(new Contact(user.PhoneNumber, user.FirstName, user.LastName, string.Empty, user.Id))));
+
+                _blockingAction = false;
+                PostEvent("phone_requested", "{ status: \"sent\" }");
+            }
+            else
+            {
+                _blockingAction = false;
+                PostEvent("phone_requested", "{ status: \"cancelled\" }");
+            }
         }
 
-        private void RequestWriteAccess()
+        private async void RequestWriteAccess()
         {
+            if (_blockingAction)
+            {
+                PostEvent("write_access_requested", "{ status: \"cancelled\" }");
+                return;
+            }
 
+            _blockingAction = true;
+
+            var request = await _clientService.SendAsync(new CanBotSendMessages(_botUser.Id));
+            if (request is Ok)
+            {
+                _blockingAction = false;
+                PostEvent("write_access_requested", "{ status: \"allowed\" }");
+
+                return;
+            }
+
+            var confirm = await MessagePopup.ShowAsync(null, Strings.BotWebViewRequestWriteMessage, Strings.BotWebViewRequestWriteTitle, Strings.BotWebViewRequestAllow, Strings.BotWebViewRequestDontAllow);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                await _clientService.SendAsync(new AllowBotToSendMessages(_botUser.Id));
+
+                _blockingAction = false;
+                PostEvent("write_access_requested", "{ status: \"allowed\" }");
+            }
+            else
+            {
+                _blockingAction = false;
+                PostEvent("write_access_requested", "{ status: \"cancelled\" }");
+            }
         }
 
         private async void OpenPopup(JsonObject eventData)

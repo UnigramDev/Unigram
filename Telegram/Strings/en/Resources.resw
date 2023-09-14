@@ -313,6 +313,9 @@
   <data name="ActionBotAllowed" xml:space="preserve">
     <value>You allowed this bot to message you when you logged in on {0}.</value>
   </data>
+  <data name="ActionBotAllowedWebapp" xml:space="preserve">
+    <value>You allowed this bot to message you in web-app</value>
+  </data>
   <data name="ActionBotDocumentAddress" xml:space="preserve">
     <value>Address</value>
   </data>
@@ -1006,6 +1009,9 @@ You can use Telegram on all your devices at once and use several accounts in the
   <data name="AreYouSureShareMyContactInfoUser" xml:space="preserve">
     <value>Do you want to share your phone number {0} with **{1}**?</value>
   </data>
+  <data name="AreYouSureShareMyContactInfoWebapp" xml:space="preserve">
+    <value>**{0}** will know your phone number. This can be useful for integration with other services.</value>
+  </data>
   <data name="AreYouSureUnblockContact" xml:space="preserve">
     <value>Are you sure you want to unblock this user?</value>
   </data>
@@ -1466,6 +1472,18 @@ It will be able to access your **IP address** and basic device info.</value>
   </data>
   <data name="BotWebViewReloadPage" xml:space="preserve">
     <value>Reload page</value>
+  </data>
+  <data name="BotWebViewRequestAllow" xml:space="preserve">
+    <value>Allow</value>
+  </data>
+  <data name="BotWebViewRequestDontAllow" xml:space="preserve">
+    <value>Don&apos;t Allow</value>
+  </data>
+  <data name="BotWebViewRequestWriteMessage" xml:space="preserve">
+    <value>Allow this bot to send you messages?</value>
+  </data>
+  <data name="BotWebViewRequestWriteTitle" xml:space="preserve">
+    <value>Allow messaging</value>
   </data>
   <data name="BotWebViewSettings" xml:space="preserve">
     <value>Settings</value>

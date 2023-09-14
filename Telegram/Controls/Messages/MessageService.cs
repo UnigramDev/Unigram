@@ -209,6 +209,7 @@ namespace Telegram.Controls.Messages
             return message.Content switch
             {
                 MessageBasicGroupChatCreate basicGroupChatCreate => UpdateBasicGroupChatCreate(message, basicGroupChatCreate, active),
+                MessageBotWriteAccessAllowed botWriteAccessAllowed => UpdateBotWriteAccessAllowed(message, botWriteAccessAllowed, active),
                 MessageChatAddMembers chatAddMembers => UpdateChatAddMembers(message, chatAddMembers, active),
                 MessageChatChangePhoto chatChangePhoto => UpdateChatChangePhoto(message, chatChangePhoto, active),
                 MessageChatChangeTitle chatChangeTitle => UpdateChatChangeTitle(message, chatChangeTitle, active),
@@ -933,6 +934,11 @@ namespace Telegram.Controls.Messages
             }
 
             return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdateBotWriteAccessAllowed(MessageViewModel message, MessageBotWriteAccessAllowed botWriteAccessAllowed, bool active)
+        {
+            return (Strings.ActionBotAllowedWebapp, null);
         }
 
         private static (string, IList<TextEntity>) UpdateChatAddMembers(MessageViewModel message, MessageChatAddMembers chatAddMembers, bool active)
