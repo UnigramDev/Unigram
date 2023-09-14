@@ -48,13 +48,13 @@ namespace Telegram.Controls
             set => TextBlockHelper.SetFormattedText(MessageLabel, value);
         }
 
-        public string CheckBoxLabel
+        public object CheckBoxLabel
         {
             get => CheckBox.Content.ToString();
             set
             {
                 CheckBox.Content = value;
-                CheckBox.Visibility = string.IsNullOrWhiteSpace(value) ? Visibility.Collapsed : Visibility.Visible;
+                CheckBox.Visibility = (value is string str ? string.IsNullOrWhiteSpace(str) : value == null) ? Visibility.Collapsed : Visibility.Visible;
             }
         }
 
@@ -62,6 +62,26 @@ namespace Telegram.Controls
         {
             get => CheckBox.IsChecked;
             set => CheckBox.IsChecked = value;
+        }
+
+        private bool _isCheckedRequired;
+        public bool IsCheckedRequired
+        {
+            get => _isCheckedRequired;
+            set
+            {
+                _isCheckedRequired = value;
+
+                if (value)
+                {
+                    IsPrimaryButtonEnabled = CheckBox.IsChecked == true;
+                }
+            }
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            IsPrimaryButtonEnabled = !_isCheckedRequired || CheckBox.IsChecked is true;
         }
 
         public static Task<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)

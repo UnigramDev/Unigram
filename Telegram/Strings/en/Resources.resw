@@ -1461,6 +1461,12 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BotUsernamesHelp" xml:space="preserve">
     <value>Drag and drop links to change the order in which they will be displayed on the bot info page.</value>
   </data>
+  <data name="BotWebAppDisclaimerCheck" xml:space="preserve">
+    <value>I agree to the **Terms of Use**</value>
+  </data>
+  <data name="BotWebAppDisclaimerSubtitle" xml:space="preserve">
+    <value>You are about to use a mini app operated by an independent party **not affiliated with Telegram**. You must agree to the Terms of Use of mini apps to continue.</value>
+  </data>
   <data name="BotWebAppInstantViewOpen" xml:space="preserve">
     <value>Launch</value>
   </data>
@@ -6827,6 +6833,9 @@ Here’s what is now unlocked.</value>
   <data name="TermsOfService" xml:space="preserve">
     <value>Terms of Service</value>
   </data>
+  <data name="TermsOfUse" xml:space="preserve">
+    <value>Terms of Use</value>
+  </data>
   <data name="TextSize" xml:space="preserve">
     <value>Message Text Size</value>
   </data>
@@ -7830,6 +7839,9 @@ Participants will see that the chat is being recorded.</value>
   </data>
   <data name="Warning" xml:space="preserve">
     <value>Warning</value>
+  </data>
+  <data name="WebAppDisclaimerUrl" xml:space="preserve">
+    <value>https://telegram.org/tos/mini-apps</value>
   </data>
   <data name="WebSessionsTitle" xml:space="preserve">
     <value>Logged In with Telegram</value>

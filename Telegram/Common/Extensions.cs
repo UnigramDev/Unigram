@@ -143,6 +143,38 @@ namespace Telegram.Common
             }
         }
 
+        public static void ForEach(this ListViewBase listView, Action<SelectorItem> handler)
+        {
+            int lastCacheIndex;
+            int firstCacheIndex;
+
+            if (listView.ItemsPanelRoot is ItemsStackPanel stack)
+            {
+                lastCacheIndex = stack.LastCacheIndex;
+                firstCacheIndex = stack.FirstCacheIndex;
+            }
+            else if (listView.ItemsPanelRoot is ItemsWrapGrid wrap)
+            {
+                lastCacheIndex = wrap.LastCacheIndex;
+                firstCacheIndex = wrap.FirstCacheIndex;
+            }
+            else
+            {
+                return;
+            }
+
+            for (int i = firstCacheIndex; i <= lastCacheIndex; i++)
+            {
+                var container = listView.ContainerFromIndex(i) as SelectorItem;
+                if (container == null)
+                {
+                    continue;
+                }
+
+                handler(container);
+            }
+        }
+
         public static async Task<StorageMedia> PickSingleMediaAsync(this FileOpenPicker picker)
         {
             var file = await picker.PickSingleFileAsync();

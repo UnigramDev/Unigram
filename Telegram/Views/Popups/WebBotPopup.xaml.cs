@@ -30,6 +30,7 @@ namespace Telegram.Views.Popups
 
         private bool _blockingAction;
 
+        // TODO: constructor should take a function and URL should be loaded asynchronously
         public WebBotPopup(IClientService clientService, User user, WebAppInfo info, AttachmentMenuBot menuBot = null)
         {
             InitializeComponent();
@@ -47,13 +48,14 @@ namespace Telegram.Views.Popups
             View.Navigate(info.Url);
         }
 
-        public WebBotPopup(IClientService clientService, User user, string url)
+        // TODO: constructor should take a function and URL should be loaded asynchronously
+        public WebBotPopup(IClientService clientService, User user, string url, AttachmentMenuBot menuBot = null)
         {
             InitializeComponent();
 
             _clientService = clientService;
             _botUser = user;
-            _menuBot = null;
+            _menuBot = menuBot;
 
             Title.Text = user.FullName();
 

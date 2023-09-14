@@ -46,6 +46,8 @@ namespace Telegram.Views.Host
         private RootDestination _navigationViewSelected;
         private readonly MvxObservableCollection<object> _navigationViewItems;
 
+        private long _attachmentMenuBots;
+
         public RootPage(NavigationService service)
         {
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
@@ -58,10 +60,10 @@ namespace Telegram.Views.Host
             {
                 RootDestination.ShowAccounts,
                 RootDestination.Status,
+                RootDestination.MyStories,
                 // ------------
                 RootDestination.Separator,
                 // ------------
-                RootDestination.MyStories,
                 RootDestination.ArchivedChats,
                 RootDestination.SavedMessages,
                 // ------------
@@ -324,6 +326,8 @@ namespace Telegram.Views.Host
 
         private void InitializeSessions(IClientService clientService, bool show, IList<ISessionService> items)
         {
+            var bots = clientService.GetBotsForMenu(out long botsHash);
+
             for (int i = 0; i < _navigationViewItems.Count; i++)
             {
                 if (_navigationViewItems[i] is ISessionService || _navigationViewItems[i] is RootDestination.AddAccount)
@@ -337,6 +341,11 @@ namespace Telegram.Views.Host
 
                     i--;
                 }
+                else if (_navigationViewItems[i] is AttachmentMenuBot && _attachmentMenuBots != botsHash)
+                {
+                    _navigationViewItems.RemoveAt(i);
+                    i--;
+                }
             }
 
             var index = 4;
@@ -346,15 +355,26 @@ namespace Telegram.Views.Host
                 if (_navigationViewItems[1] is RootDestination.Status)
                 {
                     _navigationViewItems.RemoveAt(1);
-                    _navigationViewItems.RemoveAt(1);
                 }
 
-                index = 2;
+                index = 3;
             }
             else if (_navigationViewItems[1] is not RootDestination.Status)
             {
-                _navigationViewItems.Insert(1, RootDestination.Separator);
                 _navigationViewItems.Insert(1, RootDestination.Status);
+            }
+
+            if (_attachmentMenuBots != botsHash)
+            {
+                for (int i = bots.Count - 1; i >= 0; i--)
+                {
+                    _navigationViewItems.Insert(3, bots[i]);
+                    index++;
+                }
+            }
+            else
+            {
+                index += bots.Count;
             }
 
             if (SettingsService.Current.HideArchivedChats is false)
@@ -388,17 +408,24 @@ namespace Telegram.Views.Host
                     }
                 }
             }
+
+            _attachmentMenuBots = botsHash;
         }
 
         #region Recycling
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
-            if (args.Item is ISessionService && (args.ItemContainer == null || args.ItemContainer is Controls.NavigationViewItem || args.ItemContainer is Controls.NavigationViewItemSeparator))
+            if (args.Item is ISessionService && args.ItemContainer is null or Controls.NavigationViewItem or Controls.NavigationViewItemSeparator)
             {
                 args.ItemContainer = new ListViewItem();
                 args.ItemContainer.Style = NavigationViewList.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = Resources["SessionItemTemplate"] as DataTemplate;
+                args.ItemContainer.ContextRequested += OnContextRequested;
+            }
+            else if (args.Item is AttachmentMenuBot && args.ItemContainer is null or Controls.NavigationViewItemSeparator or ListViewItem)
+            {
+                args.ItemContainer = new Controls.NavigationViewItem();
                 args.ItemContainer.ContextRequested += OnContextRequested;
             }
             else if (args.Item is RootDestination destination)
@@ -437,6 +464,18 @@ namespace Telegram.Views.Host
             if (container.Content is ISessionService session && !session.IsActive)
             {
 
+            }
+            else if (container.Content is AttachmentMenuBot menuBot)
+            {
+                if (_navigationService.Content is MainPage page)
+                {
+                    var flyout = new MenuFlyout();
+
+                    // TODO: list updates are not handled while the panel is open
+                    flyout.CreateFlyoutItem(page.ViewModel.RemoveMiniApp, menuBot, Strings.BotWebViewDeleteBot, Icons.Delete);
+
+                    args.ShowAt(flyout, container);
+                }
             }
             else if (container.Content is RootDestination.AddAccount)
             {
@@ -515,6 +554,13 @@ namespace Telegram.Views.Host
                 identity.SetStatus(session.ClientService, user);
 
                 AutomationProperties.SetName(container, user.FullName());
+            }
+            else if (item is AttachmentMenuBot menuBot)
+            {
+                var content = container as Controls.NavigationViewItem;
+                content.IsChecked = false;
+                content.Text = menuBot.Name;
+                content.Glyph = Icons.Bot;
             }
             else if (item is RootDestination destination && _navigationService.Content is MainPage page)
             {
@@ -614,6 +660,14 @@ namespace Telegram.Views.Host
 
                 Switch(session);
             }
+            else if (e.ClickedItem is AttachmentMenuBot menuBot)
+            {
+                if (_navigationService?.Frame?.Content is MainPage content)
+                {
+                    content.ViewModel.OpenMiniApp(menuBot, ContinueNavigation);
+                    return;
+                }
+            }
             else if (e.ClickedItem is RootDestination destination)
             {
                 if (destination is RootDestination.ShowAccounts)
@@ -631,10 +685,18 @@ namespace Telegram.Views.Host
                 }
             }
 
-            Navigation.IsPaneOpen = false;
+            ContinueNavigation();
+        }
 
-            var scroll = NavigationViewList.GetScrollViewer();
-            scroll?.ChangeView(null, 0, null, true);
+        private void ContinueNavigation(bool done = true)
+        {
+            if (done)
+            {
+                Navigation.IsPaneOpen = false;
+
+                var scroll = NavigationViewList.GetScrollViewer();
+                scroll?.ChangeView(null, 0, null, true);
+            }
         }
 
         #region Exposed
@@ -813,7 +875,24 @@ namespace Telegram.Views.Host
 
         private void UpdateNavigation()
         {
-            foreach (SelectorItem container in NavigationViewList.ItemsPanelRoot.Children)
+            var clientService = TLContainer.Current.Resolve<IClientService>(_navigationService.SessionId);
+            var bots = clientService.GetBotsForMenu(out long botsHash);
+
+            var index = -1;
+
+            if (_attachmentMenuBots != botsHash)
+            {
+                for (int i = 0; i < _navigationViewItems.Count; i++)
+                {
+                    if (_navigationViewItems[i] is AttachmentMenuBot)
+                    {
+                        _navigationViewItems.RemoveAt(i);
+                        index = i--;
+                    }
+                }
+            }
+
+            NavigationViewList.ForEach(container =>
             {
                 UpdateContainerContent(container, container.Content);
 
@@ -821,7 +900,17 @@ namespace Telegram.Views.Host
                 {
                     return;
                 }
+            });
+
+            if (_attachmentMenuBots != botsHash && index != -1)
+            {
+                for (int i = bots.Count - 1; i >= 0; i--)
+                {
+                    _navigationViewItems.Insert(index, bots[i]);
+                }
             }
+
+            _attachmentMenuBots = botsHash;
         }
 
         private void Navigation_PaneOpening(SplitView sender, object args)

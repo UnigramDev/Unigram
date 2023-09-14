@@ -68,7 +68,7 @@ namespace Telegram.Services
         IList<AttachmentMenuBot> AttachmentMenuBots { get; }
 
         IList<AttachmentMenuBot> GetBotsForChat(long chatId);
-        IList<AttachmentMenuBot> GetBotsForMenu();
+        IList<AttachmentMenuBot> GetBotsForMenu(out long hash);
 
         IList<string> AnimationSearchEmojis { get; }
         string AnimationSearchProvider { get; }
@@ -835,14 +835,18 @@ namespace Telegram.Services
             return (IList<AttachmentMenuBot>)bots ?? Array.Empty<AttachmentMenuBot>();
         }
 
-        public IList<AttachmentMenuBot> GetBotsForMenu()
+        public IList<AttachmentMenuBot> GetBotsForMenu(out long hash)
         {
             List<AttachmentMenuBot> bots = null;
+            hash = Options.MyId;
 
             foreach (var bot in _attachmentMenuBots)
             {
                 if (bot.ShowInSideMenu)
                 {
+                    hash = ((hash * 20261) + 0x80000000L + bot.BotUserId) % 0x80000000L;
+
+                    bots ??= new();
                     bots.Add(bot);
                 }
             }

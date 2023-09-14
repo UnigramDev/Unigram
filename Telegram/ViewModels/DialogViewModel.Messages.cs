@@ -1183,7 +1183,7 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.Id, webApp.Url, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
                 if (response is WebAppInfo webAppInfo)
                 {
-                    await ShowPopupAsync(new WebBotPopup(bot, webAppInfo));
+                    await ShowPopupAsync(new WebBotPopup(ClientService, bot, webAppInfo));
                 }
             }
         }
@@ -1248,8 +1248,38 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.UserId, webApp.Url, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
                 if (response is WebAppInfo webAppInfo)
                 {
-                    await ShowPopupAsync(new WebBotPopup(user, webAppInfo));
+                    await ShowPopupAsync(new WebBotPopup(ClientService, user, webAppInfo));
                 }
+            }
+        }
+
+        public async void OpenMiniApp(AttachmentMenuBot bot)
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            var user = ClientService.GetUser(bot.BotUserId);
+            if (user == null)
+            {
+                return;
+            }
+
+            var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.BotUserId, string.Empty, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
+            if (response is WebAppInfo webAppInfo)
+            {
+                await ShowPopupAsync(new WebBotPopup(ClientService, user, webAppInfo, bot));
+            }
+        }
+
+        public async void RemoveMiniApp(AttachmentMenuBot bot)
+        {
+            var confirm = await ShowPopupAsync(string.Format(Strings.BotRemoveFromMenu, bot.Name), Strings.BotRemoveFromMenuTitle, Strings.OK, Strings.Cancel);
+            if (confirm == ContentDialogResult.Primary)
+            {
+                ClientService.Send(new ToggleBotIsAddedToAttachmentMenu(bot.BotUserId, false, false));
             }
         }
 

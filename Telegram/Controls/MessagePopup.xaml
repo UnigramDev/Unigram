@@ -10,7 +10,9 @@
         <TextBlock x:Name="MessageLabel"
                    Style="{StaticResource BodyTextBlockStyle}" />
         <CheckBox x:Name="CheckBox"
-                  Margin="0,16,0,0"
+                  Checked="CheckBox_Checked"
+                  Unchecked="CheckBox_Checked"
+                  Margin="0,16,0,-4"
                   Visibility="Collapsed" />
     </StackPanel>
 </local:ContentPopup>
