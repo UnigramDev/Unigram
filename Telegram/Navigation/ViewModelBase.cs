@@ -12,6 +12,7 @@ using Telegram.Controls;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Popups;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -132,10 +133,20 @@ namespace Telegram.Navigation
             return MessagePopup.ShowAsync(message, title, primary, secondary, dangerous, requestedTheme);
         }
 
+        public Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            return MessagePopup.ShowAsync(target, message, title, primary, secondary, dangerous, requestedTheme);
+        }
+
         public Task<ContentDialogResult> ShowPopupAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             return MessagePopup.ShowAsync(message, title, primary, secondary, dangerous, requestedTheme);
         }
+
+        //public Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        //{
+        //    return MessagePopup.ShowAsync(target, message, title, primary, secondary, dangerous, requestedTheme);
+        //}
 
         public void ShowPopup(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
@@ -145,6 +156,16 @@ namespace Telegram.Navigation
         public void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             _ = MessagePopup.ShowAsync(message, title, primary, secondary, dangerous, requestedTheme);
+        }
+
+        public Task<InputPopupResult> ShowInputAsync(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            return InputPopup.ShowAsync(type, message, title, placeholderText, primary, secondary, dangerous, requestedTheme);
+        }
+
+        public Task<InputPopupResult> ShowInputAsync(FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            return InputPopup.ShowAsync(target, type, message, title, placeholderText, primary, secondary, dangerous, requestedTheme);
         }
 
         #endregion

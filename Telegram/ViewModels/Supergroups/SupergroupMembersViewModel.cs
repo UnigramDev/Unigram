@@ -13,6 +13,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
 using Telegram.Views.Supergroups;
+using Telegram.Views.Supergroups.Popups;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Supergroups
@@ -111,7 +112,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
+            NavigationService.ShowPopupAsync(typeof(SupergroupEditAdministratorPopup), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
         }
 
         public void RestrictMemeber(ChatMember member)

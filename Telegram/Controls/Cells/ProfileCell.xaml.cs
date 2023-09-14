@@ -34,8 +34,8 @@ namespace Telegram.Controls.Cells
 
         public event RoutedEventHandler Click
         {
-            add { Photo.IsEnabled = true; Photo.Click += value; }
-            remove { Photo.IsEnabled = false; Photo.Click -= value; }
+            add { Segments.IsEnabled = true; Segments.Click += value; }
+            remove { Segments.IsEnabled = false; Segments.Click -= value; }
         }
 
         public double PhotoSize
@@ -81,8 +81,8 @@ namespace Telegram.Controls.Cells
                 SubtitleLabel.Style = BootStrapper.Current.Resources[user.Status is UserStatusOnline ? "AccentCaptionTextBlockStyle" : "InfoCaptionTextBlockStyle"] as Style;
             }
 
-            Photo.Width = photoSize;
-            Photo.Height = photoSize;
+            Photo.Width = Segments.Width = photoSize;
+            Photo.Height = Segments.Height = photoSize;
             Photo.SetUser(clientService, user, photoSize);
 
             Identity.SetStatus(clientService, user);

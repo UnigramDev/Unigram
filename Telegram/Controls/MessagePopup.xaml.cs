@@ -104,7 +104,7 @@ namespace Telegram.Controls
             return popup.ShowQueuedAsync();
         }
 
-        public static Task<ContentDialogResult> ShowAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool dangerous = false)
+        public static Task<ContentDialogResult> ShowAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var tsc = new TaskCompletionSource<ContentDialogResult>();
             var popup = new TeachingTip
@@ -114,7 +114,7 @@ namespace Telegram.Controls
                 ActionButtonContent = primary,
                 ActionButtonStyle = BootStrapper.Current.Resources[dangerous ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
                 CloseButtonContent = secondary,
-                PreferredPlacement = TeachingTipPlacementMode.Top,
+                PreferredPlacement = target != null ? TeachingTipPlacementMode.Top : TeachingTipPlacementMode.Center,
                 Width = 314,
                 MinWidth = 314,
                 MaxWidth = 314,
@@ -122,7 +122,7 @@ namespace Telegram.Controls
                 IsLightDismissEnabled = true,
                 ShouldConstrainToRootBounds = true,
                 // TODO:
-                RequestedTheme = target.ActualTheme
+                RequestedTheme = target?.ActualTheme ?? requestedTheme
             };
 
             popup.ActionButtonClick += (s, args) =>

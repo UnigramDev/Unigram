@@ -10,7 +10,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.UI.Xaml.Controls;
 
-namespace Telegram.Views.Supergroups.Popup
+namespace Telegram.Views.Supergroups.Popups
 {
     public sealed partial class SupergroupTopicPopup : ContentPopup
     {

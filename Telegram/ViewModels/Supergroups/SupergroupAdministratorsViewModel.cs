@@ -4,11 +4,11 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Telegram.Views.Supergroups;
+using Telegram.Views.Supergroups.Popups;
 
 namespace Telegram.ViewModels.Supergroups
 {
@@ -73,7 +73,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
+            NavigationService.ShowPopupAsync(typeof(SupergroupEditAdministratorPopup), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
         }
 
         public async void DismissMember(ChatMember member)

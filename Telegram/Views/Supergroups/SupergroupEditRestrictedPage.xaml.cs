@@ -12,7 +12,7 @@ using Windows.UI.Xaml;
 
 namespace Telegram.Views.Supergroups
 {
-    public sealed partial class SupergroupEditRestrictedPage : HostedPage, IMemberDelegate
+    public sealed partial class SupergroupEditRestrictedPage : HostedPage, IMemberPopupDelegate
     {
         public SupergroupEditRestrictedViewModel ViewModel => DataContext as SupergroupEditRestrictedViewModel;
 
@@ -96,5 +96,9 @@ namespace Telegram.Views.Supergroups
 
         #endregion
 
+        public void Hide()
+        {
+            // TODO: move this to a popup too
+        }
     }
 }

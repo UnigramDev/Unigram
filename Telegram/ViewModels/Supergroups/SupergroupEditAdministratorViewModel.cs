@@ -16,14 +16,15 @@ using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Supergroups;
+using Telegram.Views.Supergroups.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupEditAdministratorViewModel : ViewModelBase, IDelegable<IMemberDelegate>
+    public class SupergroupEditAdministratorViewModel : ViewModelBase, IDelegable<IMemberPopupDelegate>
     {
-        public IMemberDelegate Delegate { get; set; }
+        public IMemberPopupDelegate Delegate { get; set; }
 
         public SupergroupEditAdministratorViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
@@ -37,6 +38,8 @@ namespace Telegram.ViewModels.Supergroups
             set => Set(ref _chat, value);
         }
 
+        private long _userId;
+
         private ChatMember _member;
         public ChatMember Member
         {
@@ -46,10 +49,14 @@ namespace Telegram.ViewModels.Supergroups
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            state.TryGet("chatId", out long chatId);
-            state.TryGet("senderUserId", out long userId);
+            // Currently, we only support editing admin rights for users
+            if (parameter is not SupergroupEditMemberArgs args || args.MemberId is not MessageSenderUser user)
+            {
+                return;
+            }
 
-            Chat = ClientService.GetChat(chatId);
+            _userId = user.UserId;
+            Chat = ClientService.GetChat(args.ChatId);
 
             var chat = _chat;
             if (chat == null)
@@ -57,18 +64,18 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ClientService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(userId)));
+            var response = await ClientService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(user.UserId)));
             if (response is ChatMember member)
             {
-                var item = ClientService.GetUser(userId);
-                var cache = ClientService.GetUserFull(userId);
+                var item = ClientService.GetUser(user.UserId);
+                var cache = ClientService.GetUserFull(user.UserId);
 
                 Delegate?.UpdateMember(chat, item, member);
                 Delegate?.UpdateUser(chat, item, false);
 
                 if (cache == null)
                 {
-                    ClientService.Send(new GetUserFullInfo(userId));
+                    ClientService.Send(new GetUserFullInfo(user.UserId));
                 }
                 else
                 {
@@ -143,15 +150,27 @@ namespace Telegram.ViewModels.Supergroups
                     return false;
                 }
 
+                if (ClientService.TryGetUser(_userId, out var user))
+                {
+                    if (user.Type is not UserTypeRegular)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
                 return _canChangeInfo &&
                     _canDeleteMessages &&
                     _canInviteUsers &&
                     _canPromoteMembers &&
-                    (supergroup.IsChannel ? _canEditMessages : true) &&
-                    (supergroup.IsChannel ? true : _canPinMessages) &&
-                    (supergroup.IsChannel ? _canPostMessages : true) &&
-                    (supergroup.IsChannel ? true : _canRestrictMembers) &&
-                    (supergroup.IsChannel ? true : _canManageVideoChats);
+                    (!supergroup.IsChannel || _canEditMessages) &&
+                    (supergroup.IsChannel || _canPinMessages) &&
+                    (!supergroup.IsChannel || _canPostMessages) &&
+                    (supergroup.IsChannel || _canRestrictMembers) &&
+                    (supergroup.IsChannel || _canManageVideoChats);
             }
         }
 
@@ -280,6 +299,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
+            Delegate?.Hide();
             NavigationService.NavigateToSender(member.MemberId);
         }
 
@@ -310,16 +330,16 @@ namespace Telegram.ViewModels.Supergroups
                 {
                     Rights = new ChatAdministratorRights
                     {
-                        IsAnonymous = channel ? false : _isAnonymous,
+                        IsAnonymous = !channel && _isAnonymous,
                         CanChangeInfo = _canChangeInfo,
                         CanDeleteMessages = _canDeleteMessages,
-                        CanEditMessages = channel ? _canEditMessages : false,
+                        CanEditMessages = channel && _canEditMessages,
                         CanInviteUsers = _canInviteUsers,
-                        CanPinMessages = channel ? false : _canPinMessages,
-                        CanPostMessages = channel ? _canPostMessages : false,
+                        CanPinMessages = !channel && _canPinMessages,
+                        CanPostMessages = channel && _canPostMessages,
                         CanPromoteMembers = _canPromoteMembers,
-                        CanRestrictMembers = channel ? false : _canRestrictMembers,
-                        CanManageVideoChats = channel ? false : _canManageVideoChats
+                        CanRestrictMembers = !channel && _canRestrictMembers,
+                        CanManageVideoChats = !channel && _canManageVideoChats
                     },
                     CustomTitle = _customTitle ?? string.Empty
                 };
@@ -328,9 +348,13 @@ namespace Telegram.ViewModels.Supergroups
             var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
             if (response is Ok)
             {
-                NavigationService.RemoveLastIf(typeof(SupergroupAddAdministratorPage));
-                NavigationService.GoBack();
-                NavigationService.Frame.ForwardStack.Clear();
+                Delegate?.Hide();
+
+                if (NavigationService.CurrentPageType == typeof(SupergroupAddAdministratorPage))
+                {
+                    NavigationService.GoBack();
+                    NavigationService.Frame.ForwardStack.Clear();
+                }
             }
             else
             {
@@ -385,7 +409,7 @@ namespace Telegram.ViewModels.Supergroups
                     builder.AppendLine(Strings.EditAdminTransferAlertText3);
                 }
 
-                var confirm = await ShowPopupAsync(builder.ToString(), Strings.EditAdminTransferAlertTitle, primary, Strings.Cancel);
+                var confirm = await ShowPopupAsync(null, builder.ToString(), Strings.EditAdminTransferAlertTitle, primary, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary && canTransfer is CanTransferOwnershipResultPasswordNeeded)
                 {
                     NavigationService.Navigate(typeof(SettingsPasswordPage));
@@ -393,28 +417,19 @@ namespace Telegram.ViewModels.Supergroups
             }
             else if (canTransfer is CanTransferOwnershipResultOk)
             {
-                var confirm = await ShowPopupAsync(string.Format(Strings.EditAdminTransferReadyAlertText, chat.Title, user.FullName()), supergroup.IsChannel ? Strings.EditAdminChannelTransfer : Strings.EditAdminGroupTransfer, Strings.EditAdminTransferChangeOwner, Strings.Cancel);
+                var confirm = await ShowPopupAsync(null, string.Format(Strings.EditAdminTransferReadyAlertText, chat.Title, user.FullName()), supergroup.IsChannel ? Strings.EditAdminChannelTransfer : Strings.EditAdminGroupTransfer, Strings.EditAdminTransferChangeOwner, Strings.Cancel);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;
                 }
 
-                var popup = new InputPopup(InputPopupType.Password)
-                {
-                    Title = Strings.TwoStepVerification,
-                    Header = Strings.PleaseEnterCurrentPasswordTransfer,
-                    PlaceholderText = Strings.LoginPassword,
-                    PrimaryButtonText = Strings.OK,
-                    SecondaryButtonText = Strings.Cancel
-                };
-
-                var result = await ShowPopupAsync(popup);
-                if (result != ContentDialogResult.Primary)
+                var result = await ShowInputAsync(null, InputPopupType.Password, Strings.PleaseEnterCurrentPasswordTransfer, Strings.TwoStepVerification, Strings.LoginPassword, Strings.OK, Strings.Cancel);
+                if (result.Result != ContentDialogResult.Primary)
                 {
                     return;
                 }
 
-                var response = await ClientService.SendAsync(new TransferChatOwnership(chat.Id, user.Id, popup.Text));
+                var response = await ClientService.SendAsync(new TransferChatOwnership(chat.Id, user.Id, result.Text));
                 if (response is Ok)
                 {
 
@@ -439,9 +454,13 @@ namespace Telegram.ViewModels.Supergroups
             var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusMember()));
             if (response is Ok)
             {
-                NavigationService.RemoveLastIf(typeof(SupergroupAddAdministratorPage));
-                NavigationService.GoBack();
-                NavigationService.Frame.ForwardStack.Clear();
+                Delegate?.Hide();
+
+                if (NavigationService.CurrentPageType == typeof(SupergroupAddAdministratorPage))
+                {
+                    NavigationService.GoBack();
+                    NavigationService.Frame.ForwardStack.Clear();
+                }
             }
             else
             {

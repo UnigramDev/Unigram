@@ -18,9 +18,9 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
 {
-    public class SupergroupEditRestrictedViewModel : ViewModelBase, IDelegable<IMemberDelegate>
+    public class SupergroupEditRestrictedViewModel : ViewModelBase, IDelegable<IMemberPopupDelegate>
     {
-        public IMemberDelegate Delegate { get; set; }
+        public IMemberPopupDelegate Delegate { get; set; }
 
         public SupergroupEditRestrictedViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)

@@ -8,10 +8,10 @@ using System;
 using System.ComponentModel;
 using Telegram.Controls;
 using Telegram.Converters;
-using Telegram.Navigation.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Supergroups;
+using Telegram.Views.Supergroups.Popups;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -63,17 +63,17 @@ namespace Telegram.Views.Supergroups
 
             if (e.ClickedItem is ChatMember member)
             {
-                ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
+                ViewModel.NavigationService.ShowPopupAsync(typeof(SupergroupEditAdministratorPopup), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
             }
             else if (e.ClickedItem is SearchResult result)
             {
                 if (result.User is User user)
                 {
-                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, new MessageSenderUser(user.Id)));
+                    ViewModel.NavigationService.ShowPopupAsync(typeof(SupergroupEditAdministratorPopup), new SupergroupEditMemberArgs(chat.Id, new MessageSenderUser(user.Id)));
                 }
                 else if (result.Chat is Chat temp && temp.Type is ChatTypePrivate privata)
                 {
-                    ViewModel.NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, new MessageSenderUser(privata.UserId)));
+                    ViewModel.NavigationService.ShowPopupAsync(typeof(SupergroupEditAdministratorPopup), new SupergroupEditMemberArgs(chat.Id, new MessageSenderUser(privata.UserId)));
                 }
             }
         }

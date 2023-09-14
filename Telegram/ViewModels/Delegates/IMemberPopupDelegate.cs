@@ -8,8 +8,9 @@ using Telegram.Td.Api;
 
 namespace Telegram.ViewModels.Delegates
 {
-    public interface IMemberDelegate : IUserDelegate
+    public interface IMemberPopupDelegate : IUserDelegate
     {
         void UpdateMember(Chat chat, User user, ChatMember member);
+        void Hide();
     }
 }

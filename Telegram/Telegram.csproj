@@ -916,6 +916,9 @@
     <Compile Include="Views\Popups\IdenticonPopup.xaml.cs">
       <DependentUpon>IdenticonPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\InputTeachingTip.xaml.cs">
+      <DependentUpon>InputTeachingTip.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\InputPopup.xaml.cs">
       <DependentUpon>InputPopup.xaml</DependentUpon>
     </Compile>
@@ -1108,7 +1111,7 @@
     <Compile Include="ViewModels\Settings\SettingsWebSessionsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
     <Compile Include="ViewModels\SingleGalleryViewModel.cs" />
-    <Compile Include="ViewModels\Delegates\IMemberDelegate.cs" />
+    <Compile Include="ViewModels\Delegates\IMemberPopupDelegate.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupAddAdministratorViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupAddRestrictedViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupAdministratorsViewModel.cs" />
@@ -1396,7 +1399,10 @@
     <Compile Include="Views\Settings\SettingsWebSessionsPage.xaml.cs">
       <DependentUpon>SettingsWebSessionsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Supergroups\Popup\SupergroupTopicPopup.xaml.cs">
+    <Compile Include="Views\Supergroups\Popups\SupergroupEditAdministratorPopup.xaml.cs">
+      <DependentUpon>SupergroupEditAdministratorPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Supergroups\Popups\SupergroupTopicPopup.xaml.cs">
       <DependentUpon>SupergroupTopicPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupAddAdministratorPage.xaml.cs">
@@ -1410,9 +1416,6 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupBannedPage.xaml.cs">
       <DependentUpon>SupergroupBannedPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Supergroups\SupergroupEditAdministratorPage.xaml.cs">
-      <DependentUpon>SupergroupEditAdministratorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupEditLinkedChatPage.xaml.cs">
       <DependentUpon>SupergroupEditLinkedChatPage.xaml</DependentUpon>
@@ -2354,6 +2357,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Popups\InputTeachingTip.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Popups\InputPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2810,9 +2817,13 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Supergroups\Popup\SupergroupTopicPopup.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Views\Supergroups\Popups\SupergroupEditAdministratorPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Supergroups\Popups\SupergroupTopicPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Supergroups\SupergroupAddAdministratorPage.xaml">
       <SubType>Designer</SubType>
@@ -2827,10 +2838,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Supergroups\SupergroupBannedPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Supergroups\SupergroupEditAdministratorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -45,6 +45,7 @@ using Telegram.Views.Settings.Popups;
 using Telegram.Views.Settings.Privacy;
 using Telegram.Views.Stories.Popups;
 using Telegram.Views.Supergroups;
+using Telegram.Views.Supergroups.Popups;
 using Telegram.Views.Users;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -388,9 +389,9 @@ namespace Telegram
                 SupergroupAddRestrictedPage => TLContainer.Current.Resolve<SupergroupAddRestrictedViewModel>(sessionId),
                 SupergroupAdministratorsPage supergroupAdministrators => TLContainer.Current.Resolve<SupergroupAdministratorsViewModel, ISupergroupDelegate>(supergroupAdministrators, sessionId),
                 SupergroupBannedPage supergroupBanned => TLContainer.Current.Resolve<SupergroupBannedViewModel, ISupergroupDelegate>(supergroupBanned, sessionId),
-                SupergroupEditAdministratorPage supergroupEditAdministrator => TLContainer.Current.Resolve<SupergroupEditAdministratorViewModel, IMemberDelegate>(supergroupEditAdministrator, sessionId),
+                SupergroupEditAdministratorPopup supergroupEditAdministrator => TLContainer.Current.Resolve<SupergroupEditAdministratorViewModel, IMemberPopupDelegate>(supergroupEditAdministrator, sessionId),
                 SupergroupEditLinkedChatPage supergroupEditLinkedChat => TLContainer.Current.Resolve<SupergroupEditLinkedChatViewModel, ISupergroupDelegate>(supergroupEditLinkedChat, sessionId),
-                SupergroupEditRestrictedPage supergroupEditRestricted => TLContainer.Current.Resolve<SupergroupEditRestrictedViewModel, IMemberDelegate>(supergroupEditRestricted, sessionId),
+                SupergroupEditRestrictedPage supergroupEditRestricted => TLContainer.Current.Resolve<SupergroupEditRestrictedViewModel, IMemberPopupDelegate>(supergroupEditRestricted, sessionId),
                 SupergroupEditStickerSetPage => TLContainer.Current.Resolve<SupergroupEditStickerSetViewModel>(sessionId),
                 SupergroupEditTypePage supergroupEditType => TLContainer.Current.Resolve<SupergroupEditTypeViewModel, ISupergroupEditDelegate>(supergroupEditType, sessionId),
                 SupergroupEditPage supergroupEdit => TLContainer.Current.Resolve<SupergroupEditViewModel, ISupergroupEditDelegate>(supergroupEdit, sessionId),

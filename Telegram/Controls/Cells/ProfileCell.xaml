@@ -31,6 +31,7 @@
 
     <controls:ActiveStoriesSegments x:Name="Segments"
                                     IsClickEnabled="False"
+                                    IsEnabled="False"
                                     Width="36"
                                     Height="36"
                                     Margin="0,0,8,0"

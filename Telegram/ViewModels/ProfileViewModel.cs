@@ -26,7 +26,7 @@ using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
 using Telegram.Views.Supergroups;
-using Telegram.Views.Supergroups.Popup;
+using Telegram.Views.Supergroups.Popups;
 using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -1106,7 +1106,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            NavigationService.Navigate(typeof(SupergroupEditAdministratorPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
+            NavigationService.ShowPopupAsync(typeof(SupergroupEditAdministratorPopup), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
         }
 
         public void RestrictMember(ChatMember member)
