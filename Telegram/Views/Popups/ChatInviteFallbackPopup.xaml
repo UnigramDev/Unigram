@@ -41,6 +41,9 @@
             <ListView.ItemContainerTransitions>
                 <TransitionCollection />
             </ListView.ItemContainerTransitions>
+            <ListView.Footer>
+                <Border Height="18" />
+            </ListView.Footer>
         </ListView>
 
         <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
