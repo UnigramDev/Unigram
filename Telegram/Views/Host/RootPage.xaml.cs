@@ -557,10 +557,13 @@ namespace Telegram.Views.Host
             }
             else if (item is AttachmentMenuBot menuBot)
             {
+                // TODO: properly support icons provided by the API
+
                 var content = container as Controls.NavigationViewItem;
                 content.IsChecked = false;
                 content.Text = menuBot.Name;
-                content.Glyph = Icons.Bot;
+                content.Glyph = menuBot.BotUserId == 1985737506 ? Icons.Wallet : Icons.Bot;
+                content.BadgeVisibility = menuBot.ShowDisclaimerInSideMenu ? Visibility.Visible : Visibility.Collapsed;
             }
             else if (item is RootDestination destination && _navigationService.Content is MainPage page)
             {
@@ -568,6 +571,7 @@ namespace Telegram.Views.Host
                 if (content != null)
                 {
                     content.IsChecked = destination == _navigationViewSelected;
+                    content.BadgeVisibility = Visibility.Collapsed;
                 }
 
                 switch (destination)

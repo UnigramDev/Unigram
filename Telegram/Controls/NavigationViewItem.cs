@@ -65,5 +65,18 @@ namespace Telegram.Controls
         }
 
         #endregion
+
+        #region BadgeVisibility
+
+        public Visibility BadgeVisibility
+        {
+            get { return (Visibility)GetValue(BadgeVisibilityProperty); }
+            set { SetValue(BadgeVisibilityProperty, value); }
+        }
+
+        public static readonly DependencyProperty BadgeVisibilityProperty =
+            DependencyProperty.Register("BadgeVisibility", typeof(Visibility), typeof(NavigationViewItem), new PropertyMetadata(Visibility.Collapsed));
+
+        #endregion
     }
 }

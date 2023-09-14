@@ -347,6 +347,7 @@
                                 <ColumnDefinition x:Name="IconColumn"
                                                   Width="48" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <FontIcon x:Name="IconBox"
                                       Glyph="{TemplateBinding Glyph}"
@@ -362,6 +363,15 @@
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               Margin="{TemplateBinding Padding}"
                                               AutomationProperties.AccessibilityView="Raw" />
+
+                            <local:BadgeControl x:Name="Badge"
+                                                Visibility="{TemplateBinding BadgeVisibility}"
+                                                Text="NEW"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Margin="4,4,0,0"
+                                                CornerRadius="4"
+                                                Grid.Column="2" />
                         </Grid>
                     </Grid>
                 </ControlTemplate>

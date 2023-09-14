@@ -92,6 +92,7 @@ namespace Telegram.Controls.Media
         public const string LockClosed = "\uE72E";
         public const string LockClosedFilled24 = "\uEA1E";
         public const string Bot = "\uE99A";
+        public const string Wallet = "\uEA38";
 
         public const string GiftPremium = "\uE9D4";
 
