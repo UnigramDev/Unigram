@@ -63,7 +63,7 @@ namespace Telegram.Views.Chats
             if (chat.Type is ChatTypeSupergroup)
             {
                 flyout.CreateFlyoutItem(MemberPromote_Loaded, ViewModel.PromoteMember, chat.Type, status, member, member.Status is ChatMemberStatusAdministrator ? Strings.EditAdminRights : Strings.SetAsAdmin, Icons.Star);
-                flyout.CreateFlyoutItem(MemberRestrict_Loaded, ViewModel.RestrictMember, chat.Type, status, member, Strings.KickFromSupergroup, Icons.LockClosed);
+                flyout.CreateFlyoutItem(MemberRestrict_Loaded, ViewModel.RestrictMember, chat.Type, status, member, member.Status is ChatMemberStatusRestricted ? Strings.ChangePermissions : Strings.KickFromSupergroup, Icons.LockClosed);
             }
 
             flyout.CreateFlyoutItem(MemberRemove_Loaded, ViewModel.RemoveMember, chat.Type, status, member, Strings.KickFromGroup, Icons.Block);
@@ -88,7 +88,7 @@ namespace Telegram.Views.Chats
 
         private bool MemberRestrict_Loaded(ChatType chatType, ChatMemberStatus status, ChatMember member)
         {
-            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusRestricted || member.Status is ChatMemberStatusAdministrator admin && !admin.CanBeEdited)
+            if (member.Status is ChatMemberStatusCreator || member.Status is ChatMemberStatusAdministrator admin && !admin.CanBeEdited)
             {
                 return false;
             }

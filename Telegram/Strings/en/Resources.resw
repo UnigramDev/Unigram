@@ -1583,6 +1583,9 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChangePassword" xml:space="preserve">
     <value>Change Password</value>
   </data>
+  <data name="ChangePermissions" xml:space="preserve">
+    <value>Change permissions</value>
+  </data>
   <data name="ChangePhoneHelp" xml:space="preserve">
     <value>Your new number will receive a confirmation code via call or SMS.</value>
   </data>
