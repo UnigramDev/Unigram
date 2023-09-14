@@ -98,7 +98,7 @@ namespace Telegram.Views.Supergroups
 
             if (chat.Type is ChatTypeSupergroup)
             {
-                flyout.CreateFlyoutItem(MemberPromote_Loaded, ViewModel.PromoteMember, chat.Type, status, member, Strings.SetAsAdmin, Icons.Star);
+                flyout.CreateFlyoutItem(MemberPromote_Loaded, ViewModel.PromoteMember, chat.Type, status, member, member.Status is ChatMemberStatusAdministrator ? Strings.EditAdminRights : Strings.SetAsAdmin, Icons.Star);
                 flyout.CreateFlyoutItem(MemberRestrict_Loaded, ViewModel.RestrictMemeber, chat.Type, status, member, Strings.KickFromSupergroup, Icons.LockClosed);
             }
 
@@ -109,7 +109,7 @@ namespace Telegram.Views.Supergroups
 
         private bool MemberPromote_Loaded(ChatType chatType, ChatMemberStatus status, ChatMember member)
         {
-            if (member.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator)
+            if (member.Status is ChatMemberStatusCreator)
             {
                 return false;
             }
