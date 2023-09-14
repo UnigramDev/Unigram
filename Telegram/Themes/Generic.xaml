@@ -3336,10 +3336,14 @@
     </Style>
 
     <Style TargetType="local:SettingsExpander">
+        <Setter Property="Background"
+                Value="{ThemeResource SettingsItemBackground}" />
         <Setter Property="BorderBrush"
                 Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="HorizontalContentAlignment"
                 Value="Stretch" />
+        <Setter Property="MinHeight"
+                Value="44" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:SettingsExpander">
@@ -3365,7 +3369,8 @@
                                       CornerRadius="{TemplateBinding CornerRadius}"
                                       HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       Padding="0"
-                                      MinHeight="44"
+                                      MinHeight="{TemplateBinding MinHeight}"
+                                      Background="{TemplateBinding Background}"
                                       HorizontalAlignment="Stretch" />
                     </Grid>
                 </ControlTemplate>

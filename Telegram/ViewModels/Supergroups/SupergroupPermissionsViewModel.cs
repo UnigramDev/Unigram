@@ -9,6 +9,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views.Supergroups;
+using Telegram.Views.Supergroups.Popups;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Supergroups
@@ -377,7 +378,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, member.MemberId));
+            NavigationService.ShowPopupAsync(typeof(SupergroupEditRestrictedPopup), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
         }
 
         public async void UnbanMember(ChatMember member)

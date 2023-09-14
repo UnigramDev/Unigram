@@ -6,10 +6,9 @@
 //
 using Telegram.Collections;
 using Telegram.Common;
-using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views.Supergroups;
+using Telegram.Views.Supergroups.Popups;
 
 namespace Telegram.ViewModels.Supergroups
 {
@@ -51,7 +50,7 @@ namespace Telegram.ViewModels.Supergroups
             }
             else
             {
-                NavigationService.Navigate(typeof(SupergroupEditRestrictedPage), state: NavigationState.GetChatMember(chat.Id, memberId));
+                _ = NavigationService.ShowPopupAsync(typeof(SupergroupEditRestrictedPopup), new SupergroupEditMemberArgs(chat.Id, memberId));
             }
         }
     }

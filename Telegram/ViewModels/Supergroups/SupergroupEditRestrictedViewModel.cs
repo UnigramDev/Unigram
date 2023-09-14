@@ -13,6 +13,8 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
+using Telegram.Views.Supergroups;
+using Telegram.Views.Supergroups.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -34,6 +36,8 @@ namespace Telegram.ViewModels.Supergroups
             set => Set(ref _chat, value);
         }
 
+        private long _userId;
+
         private ChatMember _member;
         public ChatMember Member
         {
@@ -43,10 +47,14 @@ namespace Telegram.ViewModels.Supergroups
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            state.TryGet("chatId", out long chatId);
-            state.TryGet("senderUserId", out long userId);
+            // Currently, we only support editing admin rights for users
+            if (parameter is not SupergroupEditMemberArgs args || args.MemberId is not MessageSenderUser user)
+            {
+                return;
+            }
 
-            Chat = ClientService.GetChat(chatId);
+            _userId = user.UserId;
+            Chat = ClientService.GetChat(args.ChatId);
 
             var chat = _chat;
             if (chat == null)
@@ -54,18 +62,18 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ClientService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(userId)));
+            var response = await ClientService.SendAsync(new GetChatMember(chat.Id, args.MemberId));
             if (response is ChatMember member)
             {
-                var item = ClientService.GetUser(userId);
-                var cache = ClientService.GetUserFull(userId);
+                var item = ClientService.GetUser(user.UserId);
+                var cache = ClientService.GetUserFull(user.UserId);
 
                 Delegate?.UpdateMember(chat, item, member);
                 Delegate?.UpdateUser(chat, item, false);
 
                 if (cache == null)
                 {
-                    ClientService.Send(new GetUserFullInfo(userId));
+                    ClientService.Send(new GetUserFullInfo(user.UserId));
                 }
                 else
                 {
@@ -359,6 +367,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
+            Delegate?.Hide();
             NavigationService.NavigateToSender(member.MemberId);
         }
 
@@ -407,8 +416,13 @@ namespace Telegram.ViewModels.Supergroups
             var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, status));
             if (response is Ok)
             {
-                NavigationService.GoBack();
-                NavigationService.Frame.ForwardStack.Clear();
+                Delegate?.Hide();
+
+                if (NavigationService.CurrentPageType == typeof(SupergroupAddRestrictedPage))
+                {
+                    NavigationService.GoBack();
+                    NavigationService.Frame.ForwardStack.Clear();
+                }
             }
             else
             {
@@ -418,6 +432,8 @@ namespace Telegram.ViewModels.Supergroups
 
         public async void EditUntil()
         {
+            // TODO: this is currently unsupported
+
             var dialog = new SupergroupEditRestrictedUntilPopup(_untilDate);
             var confirm = await ShowPopupAsync(dialog);
             if (confirm == ContentDialogResult.Primary)
@@ -440,8 +456,13 @@ namespace Telegram.ViewModels.Supergroups
             var response = await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, member.MemberId, new ChatMemberStatusBanned()));
             if (response is Ok)
             {
-                NavigationService.GoBack();
-                NavigationService.Frame.ForwardStack.Clear();
+                Delegate?.Hide();
+
+                if (NavigationService.CurrentPageType == typeof(SupergroupAddRestrictedPage))
+                {
+                    NavigationService.GoBack();
+                    NavigationService.Frame.ForwardStack.Clear();
+                }
             }
             else
             {

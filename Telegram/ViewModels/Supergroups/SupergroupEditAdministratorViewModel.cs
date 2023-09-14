@@ -64,7 +64,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            var response = await ClientService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(user.UserId)));
+            var response = await ClientService.SendAsync(new GetChatMember(chat.Id, args.MemberId));
             if (response is ChatMember member)
             {
                 var item = ClientService.GetUser(user.UserId);

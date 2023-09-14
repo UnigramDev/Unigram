@@ -4,22 +4,26 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
 
-namespace Telegram.Views.Supergroups
+namespace Telegram.Views.Supergroups.Popups
 {
-    public sealed partial class SupergroupEditRestrictedPage : HostedPage, IMemberPopupDelegate
+    public sealed partial class SupergroupEditRestrictedPopup : ContentPopup, IMemberPopupDelegate
     {
         public SupergroupEditRestrictedViewModel ViewModel => DataContext as SupergroupEditRestrictedViewModel;
 
-        public SupergroupEditRestrictedPage()
+        public SupergroupEditRestrictedPopup()
         {
             InitializeComponent();
             Title = Strings.UserRestrictions;
+
+            PrimaryButtonText = Strings.Done;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         #region Binding
@@ -51,6 +55,7 @@ namespace Telegram.Views.Supergroups
         public void UpdateUser(Chat chat, User user, bool secret)
         {
             Cell.UpdateUser(ViewModel.ClientService, user, 64);
+            Cell.Height = double.NaN;
         }
 
         public void UpdateUserStatus(Chat chat, User user)
@@ -64,11 +69,11 @@ namespace Telegram.Views.Supergroups
         {
             if (member.Status is ChatMemberStatusRestricted)
             {
-                DismissPanel.Visibility = Visibility.Visible;
+                DismissButton.Visibility = Visibility.Visible;
             }
             else
             {
-                DismissPanel.Visibility = Visibility.Collapsed;
+                DismissButton.Visibility = Visibility.Collapsed;
             }
 
             PermissionsPanel.Visibility = Visibility.Visible;
@@ -95,10 +100,5 @@ namespace Telegram.Views.Supergroups
         }
 
         #endregion
-
-        public void Hide()
-        {
-            // TODO: move this to a popup too
-        }
     }
 }
