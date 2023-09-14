@@ -9,6 +9,7 @@ using Telegram.Collections.Handlers;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml.Controls;
@@ -158,7 +159,7 @@ namespace Telegram.ViewModels
 
         private async Task<Chat> LoadSavedMessagesAsync(string query, CancellationToken cancellationToken)
         {
-            if (query.Length > 0 && Strings.SavedMessages.StartsWith(_query, StringComparison.OrdinalIgnoreCase))
+            if (TdClientExtensions.SearchByPrefix(Strings.SavedMessages, _query))
             {
                 var savedMessages = await ClientService.SendAsync(new CreatePrivateChat(ClientService.Options.MyId, false));
                 if (savedMessages is Chat chat && !cancellationToken.IsCancellationRequested)

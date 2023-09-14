@@ -36,5 +36,16 @@ namespace Telegram.Td
 
             return tsc.Task;
         }
+
+        public static bool SearchByPrefix(string input, string query)
+        {
+            var result = Client.Execute(new SearchStringsByPrefix(new[] { input }, query, 1, true));
+            if (result is FoundPositions positions && positions.Positions.Count == 1)
+            {
+                return positions.Positions[0] >= 0;
+            }
+
+            return false;
+        }
     }
 }

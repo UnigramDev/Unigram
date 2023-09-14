@@ -44,7 +44,7 @@ namespace Telegram.Views.Settings.Popups
             Subtitle.Text = Formatter.DateExtended(session.LastActiveDate);
 
             Application.Badge = string.Format("{0} {1}", session.ApplicationName, session.ApplicationVersion);
-            Location.Badge = session.Country;
+            Location.Badge = session.Location;
             Address.Badge = session.IpAddress;
 
             AcceptCalls.IsChecked = session.CanAcceptCalls;

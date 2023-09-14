@@ -290,7 +290,7 @@ namespace Telegram.Controls.Stories
                     Privacy.Background = App.Current.Resources["StoryPrivacyCloseFriendsBrush"] as Brush;
                     PrivacyIcon.Text = Icons.StarFilled16;
                     break;
-                case StoryPrivacySettingsSelectedContacts:
+                case StoryPrivacySettingsSelectedUsers:
                     Privacy.Background = App.Current.Resources["StoryPrivacySelectedContactsBrush"] as Brush;
                     PrivacyIcon.Text = Icons.PeopleFilled16;
                     break;
@@ -1166,7 +1166,7 @@ namespace Telegram.Controls.Stories
                     message = _viewModel.SelectedItem?.PrivacySettings switch
                     {
                         StoryPrivacySettingsCloseFriends => Strings.CloseFriendsHintSelf,
-                        StoryPrivacySettingsSelectedContacts => Strings.StorySelectedContactsHintSelf,
+                        StoryPrivacySettingsSelectedUsers => Strings.StorySelectedContactsHintSelf,
                         StoryPrivacySettingsContacts => Strings.StoryContactsHintSelf,
                         _ => string.Empty
                     };
@@ -1176,7 +1176,7 @@ namespace Telegram.Controls.Stories
                     message = _viewModel.SelectedItem?.PrivacySettings switch
                     {
                         StoryPrivacySettingsCloseFriends => Strings.CloseFriendsHint,
-                        StoryPrivacySettingsSelectedContacts => Strings.StorySelectedContactsHint,
+                        StoryPrivacySettingsSelectedUsers => Strings.StorySelectedContactsHint,
                         StoryPrivacySettingsContacts => Strings.StoryContactsHint,
                         _ => string.Empty
                     };
