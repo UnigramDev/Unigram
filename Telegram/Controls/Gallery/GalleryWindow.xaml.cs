@@ -961,7 +961,7 @@ namespace Telegram.Controls.Gallery
             }
 
             flyout.CreateFlyoutItem(() => viewModel.CanOpenWith, viewModel.OpenWith, Strings.OpenInExternalApp, Icons.OpenIn);
-            flyout.CreateFlyoutItem(() => viewModel.CanDelete, viewModel.Delete, Strings.Delete, Icons.Delete, dangerous: true);
+            flyout.CreateFlyoutItem(() => viewModel.CanDelete, viewModel.Delete, Strings.Delete, Icons.Delete, destructive: true);
         }
 
         #endregion

@@ -191,7 +191,7 @@ namespace Telegram.Views.Popups
 
         #region Static methods
 
-        public static async Task<InputPopupResult> ShowAsync(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static async Task<InputPopupResult> ShowAsync(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var popup = new InputPopup(type)
             {
@@ -199,7 +199,7 @@ namespace Telegram.Views.Popups
                 Header = message,
                 PlaceholderText = placeholderText ?? string.Empty,
                 PrimaryButtonText = primary,
-                PrimaryButtonStyle = BootStrapper.Current.Resources[dangerous ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
+                PrimaryButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
                 SecondaryButtonText = secondary,
                 RequestedTheme = requestedTheme
             };
@@ -208,7 +208,7 @@ namespace Telegram.Views.Popups
             return new InputPopupResult(confirm, popup.Text, popup.Value);
         }
 
-        public static async Task<InputPopupResult> ShowAsync(FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static async Task<InputPopupResult> ShowAsync(FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var popup = new InputTeachingTip(type)
             {
@@ -216,7 +216,7 @@ namespace Telegram.Views.Popups
                 Header = message,
                 PlaceholderText = placeholderText ?? string.Empty,
                 ActionButtonContent = primary,
-                ActionButtonStyle = BootStrapper.Current.Resources[dangerous ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
+                ActionButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
                 CloseButtonContent = secondary,
                 PreferredPlacement = target != null ? TeachingTipPlacementMode.Top : TeachingTipPlacementMode.Center,
                 Width = 314,

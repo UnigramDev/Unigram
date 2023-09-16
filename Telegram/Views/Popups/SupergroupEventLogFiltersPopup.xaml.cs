@@ -115,7 +115,7 @@ namespace Telegram.Views.Popups
             var none = EventFilters.Children.OfType<CheckBox>().All(x => x.IsChecked == false);
 
             FieldAllEvents.IsChecked = all ? true : none ? new bool?(false) : null;
-            IsPrimaryButtonEnabled = none ? false : true;
+            IsPrimaryButtonEnabled = !none;
         }
 
         private void AllEvents_Toggled(object sender, RoutedEventArgs e)

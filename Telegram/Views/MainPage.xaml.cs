@@ -1716,7 +1716,7 @@ namespace Telegram.Views
             var element = sender as FrameworkElement;
             var call = element.Tag as TLCallGroup;
 
-            flyout.CreateFlyoutItem(ViewModel.Calls.DeleteCall, call, Strings.Delete, Icons.Delete, dangerous: true);
+            flyout.CreateFlyoutItem(ViewModel.Calls.DeleteCall, call, Strings.Delete, Icons.Delete, destructive: true);
 
             args.ShowAt(flyout, element);
         }
@@ -2217,7 +2217,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(ViewModel.MarkFolderAsRead, folder, Strings.MarkAllAsRead, Icons.MarkAsRead);
                 flyout.CreateFlyoutItem(ViewModel.AddToFolder, folder, Strings.FilterAddChats, Icons.Add);
                 flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(ViewModel.DeleteFolder, folder, Strings.Remove, Icons.Delete, dangerous: true);
+                flyout.CreateFlyoutItem(ViewModel.DeleteFolder, folder, Strings.Remove, Icons.Delete, destructive: true);
             }
 
             flyout.ShowAt(element, FlyoutPlacementMode.BottomEdgeAlignedLeft);
@@ -2946,7 +2946,7 @@ namespace Telegram.Views
 
             flyout.CreateFlyoutItem(DialogMark_Loaded, viewModel.MarkChatAsRead, chat, chat.IsUnread() ? Strings.MarkAsRead : Strings.MarkAsUnread, chat.IsUnread() ? Icons.MarkAsRead : Icons.MarkAsUnread);
             flyout.CreateFlyoutItem(DialogClear_Loaded, viewModel.ClearChat, chat, Strings.ClearHistory, Icons.Broom);
-            flyout.CreateFlyoutItem(DialogDelete_Loaded, viewModel.DeleteChat, chat, DialogDelete_Text(chat), Icons.Delete, dangerous: true);
+            flyout.CreateFlyoutItem(DialogDelete_Loaded, viewModel.DeleteChat, chat, DialogDelete_Text(chat), Icons.Delete, destructive: true);
 
             if (viewModel.SelectionMode != ListViewSelectionMode.Multiple)
             {
@@ -3136,7 +3136,7 @@ namespace Telegram.Views
 
             if (canManage)
             {
-                flyout.CreateFlyoutItem(viewModel.DeleteTopic, topic, Strings.Delete, Icons.Delete, dangerous: true);
+                flyout.CreateFlyoutItem(viewModel.DeleteTopic, topic, Strings.Delete, Icons.Delete, destructive: true);
             }
 
             if (viewModel.SelectionMode != ListViewSelectionMode.Multiple)

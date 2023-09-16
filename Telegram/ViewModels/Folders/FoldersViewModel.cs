@@ -167,7 +167,7 @@ namespace Telegram.ViewModels.Folders
             }
             else
             {
-                var confirm = await MessagePopup.ShowAsync(info.HasMyInviteLinks ? Strings.FilterDeleteAlertLinks : Strings.FilterDeleteAlert, Strings.FilterDelete, Strings.Delete, Strings.Cancel, dangerous: true);
+                var confirm = await MessagePopup.ShowAsync(info.HasMyInviteLinks ? Strings.FilterDeleteAlertLinks : Strings.FilterDeleteAlert, Strings.FilterDelete, Strings.Delete, Strings.Cancel, destructive: true);
                 if (confirm != ContentDialogResult.Primary)
                 {
                     return;

@@ -42,7 +42,7 @@ namespace Telegram.Views.Supergroups
             var member = ScrollingHost.ItemFromContainer(sender) as ChatMember;
 
             flyout.CreateFlyoutItem(ViewModel.EditMember, member, Strings.EditAdminRights, Icons.ShieldStar);
-            flyout.CreateFlyoutItem(ViewModel.DismissMember, member, Strings.ChannelRemoveUserAdmin, Icons.SubtractCircle, dangerous: true);
+            flyout.CreateFlyoutItem(ViewModel.DismissMember, member, Strings.ChannelRemoveUserAdmin, Icons.SubtractCircle, destructive: true);
 
             args.ShowAt(flyout, element);
         }

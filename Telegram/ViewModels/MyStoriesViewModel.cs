@@ -102,7 +102,7 @@ namespace Telegram.ViewModels
             var message = Strings.DeleteStorySubtitle;
             var title = Strings.DeleteStoryTitle;
 
-            var confirm = await ShowPopupAsync(message, title, Strings.Delete, Strings.Cancel, dangerous: true);
+            var confirm = await ShowPopupAsync(message, title, Strings.Delete, Strings.Cancel, destructive: true);
             if (confirm == ContentDialogResult.Primary)
             {
                 ClientService.Send(new DeleteStory(story.StoryId));
@@ -115,7 +115,7 @@ namespace Telegram.ViewModels
             var message = Locale.Declension(Strings.R.DeleteStoriesSubtitle, SelectedItems.Count);
             var title = SelectedItems.Count == 1 ? Strings.DeleteStoryTitle : Strings.DeleteStoriesTitle;
 
-            var confirm = await ShowPopupAsync(message, title, Strings.Delete, Strings.Cancel, dangerous: true);
+            var confirm = await ShowPopupAsync(message, title, Strings.Delete, Strings.Cancel, destructive: true);
             if (confirm == ContentDialogResult.Primary)
             {
                 var selection = SelectedItems.ToArray();

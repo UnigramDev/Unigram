@@ -514,7 +514,7 @@ namespace Telegram.Views.Popups
 
             if (_menuBot != null && _menuBot.IsAdded)
             {
-                flyout.CreateFlyoutItem(MenuItemDeleteBot, Strings.BotWebViewDeleteBot, Icons.Delete, dangerous: true);
+                flyout.CreateFlyoutItem(MenuItemDeleteBot, Strings.BotWebViewDeleteBot, Icons.Delete, destructive: true);
             }
 
             flyout.ShowAt(sender as Button, FlyoutPlacementMode.BottomEdgeAlignedRight);

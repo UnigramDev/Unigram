@@ -404,9 +404,7 @@ namespace Telegram.ViewModels
                 ? items.All(x => x is StoragePhoto)
                 ? permissions.CanSendVideos
                 : items.All(x => x is StoragePhoto or StorageVideo)
-                : permissions.CanSendVideos
-                ? items.All(x => x is StorageVideo)
-                : false;
+                : permissions.CanSendVideos && items.All(x => x is StorageVideo);
 
             var popup = new SendFilesPopup(this, items, media, mediaAllowed, permissions.CanSendDocuments || permissions.CanSendAudios, chat.Type is ChatTypePrivate && !self, CanSchedule, self);
             popup.Caption = caption;

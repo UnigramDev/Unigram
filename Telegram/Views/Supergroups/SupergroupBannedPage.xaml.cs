@@ -51,7 +51,7 @@ namespace Telegram.Views.Supergroups
             var channel = ViewModel.Chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
 
             flyout.CreateFlyoutItem(ViewModel.AddMember, member, channel ? Strings.ChannelAddToChannel : Strings.ChannelAddToGroup, Icons.PersonAdd);
-            flyout.CreateFlyoutItem(ViewModel.UnbanMember, member, Strings.ChannelDeleteFromList, Icons.Delete, dangerous: true);
+            flyout.CreateFlyoutItem(ViewModel.UnbanMember, member, Strings.ChannelDeleteFromList, Icons.Delete, destructive: true);
 
             args.ShowAt(flyout, element);
         }

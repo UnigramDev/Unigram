@@ -180,17 +180,17 @@ namespace Telegram.Common
             return null;
         }
 
-        public static void CreateFlyoutItem<T>(this MenuFlyout flyout, Func<T, bool> visibility, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool dangerous = false) where T : class
+        public static void CreateFlyoutItem<T>(this MenuFlyout flyout, Func<T, bool> visibility, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool destructive = false) where T : class
         {
-            flyout.Items.CreateFlyoutItem(visibility, command, parameter, text, icon, key, modifiers, dangerous);
+            flyout.Items.CreateFlyoutItem(visibility, command, parameter, text, icon, key, modifiers, destructive);
         }
 
-        public static void CreateFlyoutItem<T>(this MenuFlyoutSubItem flyout, Func<T, bool> visibility, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool dangerous = false) where T : class
+        public static void CreateFlyoutItem<T>(this MenuFlyoutSubItem flyout, Func<T, bool> visibility, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool destructive = false) where T : class
         {
-            flyout.Items.CreateFlyoutItem(visibility, command, parameter, text, icon, key, modifiers, dangerous);
+            flyout.Items.CreateFlyoutItem(visibility, command, parameter, text, icon, key, modifiers, destructive);
         }
 
-        public static void CreateFlyoutItem<T>(this IList<MenuFlyoutItemBase> items, Func<T, bool> visibility, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool dangerous = false) where T : class
+        public static void CreateFlyoutItem<T>(this IList<MenuFlyoutItemBase> items, Func<T, bool> visibility, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool destructive = false) where T : class
         {
             var value = visibility(parameter);
             if (value)
@@ -200,7 +200,7 @@ namespace Telegram.Common
                 flyoutItem.Command = new RelayCommand<T>(command);
                 flyoutItem.Text = text;
 
-                if (dangerous)
+                if (destructive)
                 {
                     flyoutItem.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
                 }
@@ -224,17 +224,17 @@ namespace Telegram.Common
             }
         }
 
-        public static void CreateFlyoutItem(this MenuFlyout flyout, Func<bool> visibility, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool dangerous = false)
+        public static void CreateFlyoutItem(this MenuFlyout flyout, Func<bool> visibility, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool destructive = false)
         {
-            flyout.Items.CreateFlyoutItem(visibility, command, text, icon, key, modifiers, dangerous);
+            flyout.Items.CreateFlyoutItem(visibility, command, text, icon, key, modifiers, destructive);
         }
 
-        public static void CreateFlyoutItem(this MenuFlyoutSubItem flyout, Func<bool> visibility, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool dangerous = false)
+        public static void CreateFlyoutItem(this MenuFlyoutSubItem flyout, Func<bool> visibility, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool destructive = false)
         {
-            flyout.Items.CreateFlyoutItem(visibility, command, text, icon, key, modifiers, dangerous);
+            flyout.Items.CreateFlyoutItem(visibility, command, text, icon, key, modifiers, destructive);
         }
 
-        public static void CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, Func<bool> visibility, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool dangerous = false)
+        public static void CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, Func<bool> visibility, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool destructive = false)
         {
             var value = visibility();
             if (value)
@@ -243,7 +243,7 @@ namespace Telegram.Common
                 flyoutItem.Command = new RelayCommand(command);
                 flyoutItem.Text = text;
 
-                if (dangerous)
+                if (destructive)
                 {
                     flyoutItem.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
                 }
@@ -297,24 +297,24 @@ namespace Telegram.Common
             }
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyout flyout, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool dangerous = false)
+        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyout flyout, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool destructive = false)
         {
-            return CreateFlyoutItem(flyout.Items, command, text, icon, key, modifiers, dangerous);
+            return CreateFlyoutItem(flyout.Items, command, text, icon, key, modifiers, destructive);
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyoutSubItem flyout, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool dangerous = false)
+        public static MenuFlyoutItem CreateFlyoutItem(this MenuFlyoutSubItem flyout, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool destructive = false)
         {
-            return CreateFlyoutItem(flyout.Items, command, text, icon, key, modifiers, dangerous);
+            return CreateFlyoutItem(flyout.Items, command, text, icon, key, modifiers, destructive);
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool dangerous = false)
+        public static MenuFlyoutItem CreateFlyoutItem(this IList<MenuFlyoutItemBase> items, Action command, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool destructive = false)
         {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.IsEnabled = command != null;
             flyoutItem.Command = new RelayCommand(command);
             flyoutItem.Text = text;
 
-            if (dangerous)
+            if (destructive)
             {
                 flyoutItem.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
             }
@@ -374,24 +374,24 @@ namespace Telegram.Common
             return flyoutItem;
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem<T>(this MenuFlyout flyout, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool dangerous = false)
+        public static MenuFlyoutItem CreateFlyoutItem<T>(this MenuFlyout flyout, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool destructive = false)
         {
-            return flyout.Items.CreateFlyoutItem(command, parameter, text, icon, key, modifiers, dangerous);
+            return flyout.Items.CreateFlyoutItem(command, parameter, text, icon, key, modifiers, destructive);
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem<T>(this MenuFlyoutSubItem flyout, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool dangerous = false)
+        public static MenuFlyoutItem CreateFlyoutItem<T>(this MenuFlyoutSubItem flyout, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool destructive = false)
         {
-            return flyout.Items.CreateFlyoutItem(command, parameter, text, icon, key, modifiers, dangerous);
+            return flyout.Items.CreateFlyoutItem(command, parameter, text, icon, key, modifiers, destructive);
         }
 
-        public static MenuFlyoutItem CreateFlyoutItem<T>(this IList<MenuFlyoutItemBase> items, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool dangerous = false)
+        public static MenuFlyoutItem CreateFlyoutItem<T>(this IList<MenuFlyoutItemBase> items, Action<T> command, T parameter, string text, string icon = null, VirtualKey? key = null, VirtualKeyModifiers modifiers = VirtualKeyModifiers.Control, bool destructive = false)
         {
             var flyoutItem = new MenuFlyoutItem();
             flyoutItem.CommandParameter = parameter;
             flyoutItem.Command = new RelayCommand<T>(command);
             flyoutItem.Text = text;
 
-            if (dangerous)
+            if (destructive)
             {
                 flyoutItem.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
             }

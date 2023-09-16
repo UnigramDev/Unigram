@@ -156,11 +156,11 @@ namespace Telegram.Views.Stories.Popups
 
             if (user.IsContact)
             {
-                flyout.CreateFlyoutItem(DeleteContact, viewer, Strings.DeleteContact, Icons.Delete, dangerous: true);
+                flyout.CreateFlyoutItem(DeleteContact, viewer, Strings.DeleteContact, Icons.Delete, destructive: true);
             }
             else if (viewer.BlockList is not BlockListMain)
             {
-                flyout.CreateFlyoutItem(BlockUser, viewer, Strings.BlockUser, Icons.HandRight, dangerous: true);
+                flyout.CreateFlyoutItem(BlockUser, viewer, Strings.BlockUser, Icons.HandRight, destructive: true);
             }
             else if (viewer.BlockList is BlockListMain)
             {

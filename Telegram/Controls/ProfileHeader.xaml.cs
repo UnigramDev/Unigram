@@ -654,7 +654,7 @@ namespace Telegram.Controls
                         flyout.CreateFlyoutItem(ViewModel.Share, Strings.ShareContact, Icons.Share);
                         flyout.CreateFlyoutItem(chat.BlockList is BlockListMain ? ViewModel.Unblock : ViewModel.Block, chat.BlockList is BlockListMain ? Strings.Unblock : Strings.BlockContact, chat.BlockList is BlockListMain ? Icons.Block : Icons.Block);
                         flyout.CreateFlyoutItem(ViewModel.Edit, Strings.EditContact, Icons.Edit);
-                        flyout.CreateFlyoutItem(ViewModel.Delete, Strings.DeleteContact, Icons.Delete, dangerous: true);
+                        flyout.CreateFlyoutItem(ViewModel.Delete, Strings.DeleteContact, Icons.Delete, destructive: true);
                     }
                     else
                     {

@@ -910,7 +910,7 @@ namespace Telegram.Controls.Stories
                     flyout.CreateFlyoutItem(TranslateStory, story, Strings.TranslateMessage, Icons.Translate);
                 }
 
-                flyout.CreateFlyoutItem(DeleteStory, story, Strings.Delete, Icons.Delete, dangerous: true);
+                flyout.CreateFlyoutItem(DeleteStory, story, Strings.Delete, Icons.Delete, destructive: true);
             }
             else
             {

@@ -128,44 +128,44 @@ namespace Telegram.Navigation
             _ = NavigationService.ShowPopupAsync(sourcePopupType, parameter, tsc, requestedTheme);
         }
 
-        public Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public Task<ContentDialogResult> ShowPopupAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return MessagePopup.ShowAsync(message, title, primary, secondary, dangerous, requestedTheme);
+            return MessagePopup.ShowAsync(message, title, primary, secondary, destructive, requestedTheme);
         }
 
-        public Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return MessagePopup.ShowAsync(target, message, title, primary, secondary, dangerous, requestedTheme);
+            return MessagePopup.ShowAsync(target, message, title, primary, secondary, destructive, requestedTheme);
         }
 
-        public Task<ContentDialogResult> ShowPopupAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public Task<ContentDialogResult> ShowPopupAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return MessagePopup.ShowAsync(message, title, primary, secondary, dangerous, requestedTheme);
+            return MessagePopup.ShowAsync(message, title, primary, secondary, destructive, requestedTheme);
         }
 
-        //public Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        //public Task<ContentDialogResult> ShowPopupAsync(FrameworkElement target, FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         //{
-        //    return MessagePopup.ShowAsync(target, message, title, primary, secondary, dangerous, requestedTheme);
+        //    return MessagePopup.ShowAsync(target, message, title, primary, secondary, destructive, requestedTheme);
         //}
 
-        public void ShowPopup(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public void ShowPopup(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            _ = MessagePopup.ShowAsync(message, title, primary, secondary, dangerous, requestedTheme);
+            _ = MessagePopup.ShowAsync(message, title, primary, secondary, destructive, requestedTheme);
         }
 
-        public void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public void ShowPopup(FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            _ = MessagePopup.ShowAsync(message, title, primary, secondary, dangerous, requestedTheme);
+            _ = MessagePopup.ShowAsync(message, title, primary, secondary, destructive, requestedTheme);
         }
 
-        public Task<InputPopupResult> ShowInputAsync(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public Task<InputPopupResult> ShowInputAsync(InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return InputPopup.ShowAsync(type, message, title, placeholderText, primary, secondary, dangerous, requestedTheme);
+            return InputPopup.ShowAsync(type, message, title, placeholderText, primary, secondary, destructive, requestedTheme);
         }
 
-        public Task<InputPopupResult> ShowInputAsync(FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public Task<InputPopupResult> ShowInputAsync(FrameworkElement target, InputPopupType type, string message, string title = null, string placeholderText = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
-            return InputPopup.ShowAsync(target, type, message, title, placeholderText, primary, secondary, dangerous, requestedTheme);
+            return InputPopup.ShowAsync(target, type, message, title, placeholderText, primary, secondary, destructive, requestedTheme);
         }
 
         #endregion

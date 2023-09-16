@@ -138,7 +138,7 @@ namespace Telegram.Views.Settings
             else
             {
                 flyout.CreateFlyoutItem(ViewModel.Archive, stickerSet, Strings.StickersHide, Icons.Archive);
-                flyout.CreateFlyoutItem(ViewModel.Remove, stickerSet, Strings.StickersRemove, Icons.Delete, dangerous: true);
+                flyout.CreateFlyoutItem(ViewModel.Remove, stickerSet, Strings.StickersRemove, Icons.Delete, destructive: true);
                 //CreateFlyoutItem(ref flyout, ViewModel.StickerSetShareCommand, stickerSet, Strings.StickersShare);
                 //CreateFlyoutItem(ref flyout, ViewModel.StickerSetCopyCommand, stickerSet, Strings.StickersCopy);
             }

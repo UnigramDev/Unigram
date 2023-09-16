@@ -84,7 +84,7 @@ namespace Telegram.Controls
             IsPrimaryButtonEnabled = !_isCheckedRequired || CheckBox.IsChecked is true;
         }
 
-        public static Task<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static Task<ContentDialogResult> ShowAsync(string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var popup = new MessagePopup
             {
@@ -95,7 +95,7 @@ namespace Telegram.Controls
                 RequestedTheme = requestedTheme
             };
 
-            if (dangerous)
+            if (destructive)
             {
                 popup.DefaultButton = ContentDialogButton.None;
                 popup.PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
@@ -104,7 +104,7 @@ namespace Telegram.Controls
             return popup.ShowQueuedAsync();
         }
 
-        public static Task<ContentDialogResult> ShowAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static Task<ContentDialogResult> ShowAsync(FormattedText message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var popup = new MessagePopup
             {
@@ -115,7 +115,7 @@ namespace Telegram.Controls
                 RequestedTheme = requestedTheme
             };
 
-            if (dangerous)
+            if (destructive)
             {
                 popup.DefaultButton = ContentDialogButton.None;
                 popup.PrimaryButtonStyle = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
@@ -124,7 +124,7 @@ namespace Telegram.Controls
             return popup.ShowQueuedAsync();
         }
 
-        public static Task<ContentDialogResult> ShowAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool dangerous = false, ElementTheme requestedTheme = ElementTheme.Default)
+        public static Task<ContentDialogResult> ShowAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
             var tsc = new TaskCompletionSource<ContentDialogResult>();
             var popup = new TeachingTip
@@ -132,7 +132,7 @@ namespace Telegram.Controls
                 Title = title,
                 Subtitle = message,
                 ActionButtonContent = primary,
-                ActionButtonStyle = BootStrapper.Current.Resources[dangerous ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
+                ActionButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
                 CloseButtonContent = secondary,
                 PreferredPlacement = target != null ? TeachingTipPlacementMode.Top : TeachingTipPlacementMode.Center,
                 Width = 314,

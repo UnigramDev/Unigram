@@ -69,10 +69,10 @@ namespace Telegram.Controls
             var horizontal = newValue == Orientation.Horizontal;
             ScrollViewer.SetVerticalScrollBarVisibility(this, horizontal ? ScrollBarVisibility.Disabled : ScrollBarVisibility.Auto);
             ScrollViewer.SetVerticalScrollMode(this, horizontal ? ScrollMode.Disabled : ScrollMode.Auto);
-            ScrollViewer.SetIsVerticalRailEnabled(this, horizontal ? false : true);
+            ScrollViewer.SetIsVerticalRailEnabled(this, !horizontal);
             ScrollViewer.SetHorizontalScrollBarVisibility(this, horizontal ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled);
             ScrollViewer.SetHorizontalScrollMode(this, horizontal ? ScrollMode.Auto : ScrollMode.Disabled);
-            ScrollViewer.SetIsHorizontalRailEnabled(this, horizontal ? true : false);
+            ScrollViewer.SetIsHorizontalRailEnabled(this, horizontal);
 
             var root = ItemsPanelRoot as ItemsStackPanel;
             if (root != null)

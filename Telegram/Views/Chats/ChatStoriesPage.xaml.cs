@@ -42,7 +42,7 @@ namespace Telegram.Views.Chats
             var flyout = new MenuFlyout();
 
             //flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, story.IsPinned ? Strings.ArchiveStory : Strings.SaveToProfile, story.IsPinned ? Icons.Archive : Icons.Add);
-            //flyout.CreateFlyoutItem(ViewModel.DeleteStory, story, Strings.Delete, Icons.Delete, dangerous: true);
+            //flyout.CreateFlyoutItem(ViewModel.DeleteStory, story, Strings.Delete, Icons.Delete, destructive: true);
             //flyout.CreateFlyoutSeparator();
             //flyout.CreateFlyoutItem(ViewModel.SelectStory, story, Strings.Select, Icons.CheckmarkCircle);
 
