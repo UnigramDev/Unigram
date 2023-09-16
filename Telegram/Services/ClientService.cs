@@ -553,7 +553,7 @@ namespace Telegram.Services
 
             _files.Clear();
 
-            _reactions.Clear();
+            _reactions = Array.Empty<string>();
 
             _chats.Clear();
             _chatActions.Clear();
