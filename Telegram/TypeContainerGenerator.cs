@@ -116,6 +116,7 @@ namespace Telegram
                 typeof(SupergroupReactionsViewModel),
                 typeof(ChatSharedMediaViewModel),
                 typeof(ChatStatisticsViewModel),
+                typeof(ChatBoostsViewModel),
                 typeof(MessageStatisticsViewModel),
                 typeof(ChannelCreateStep1ViewModel),
                 typeof(ChannelCreateStep2ViewModel),
@@ -123,6 +124,7 @@ namespace Telegram
                 typeof(InstantViewModel),
                 typeof(LogOutViewModel),
                 typeof(DiagnosticsViewModel),
+                typeof(MyStoriesViewModel),
                 typeof(SettingsViewModel),
                 typeof(SettingsAdvancedViewModel),
                 typeof(SettingsStorageViewModel),
@@ -148,6 +150,7 @@ namespace Telegram
                 typeof(SettingsPrivacyAllowPrivateVoiceAndVideoNoteMessagesViewModel),
                 typeof(SettingsPrivacyShowPhotoViewModel),
                 typeof(SettingsPrivacyShowStatusViewModel),
+                typeof(SettingsPrivacyShowBioViewModel),
                 typeof(SettingsAutoDeleteViewModel),
                 typeof(SettingsProfileViewModel),
                 typeof(SettingsPasswordViewModel),
@@ -172,11 +175,17 @@ namespace Telegram
                 typeof(PaymentAddressViewModel),
                 typeof(PaymentCredentialsViewModel),
                 typeof(PaymentFormViewModel),
+                typeof(InteractionsViewModel),
+                typeof(StoryInteractionsViewModel),
                 typeof(ChatsNearbyViewModel),
                 typeof(FoldersViewModel),
                 typeof(FolderViewModel),
+                typeof(ShareFolderViewModel),
+                typeof(AddFolderViewModel),
+                typeof(RemoveFolderViewModel),
                 typeof(DownloadsViewModel),
                 typeof(ChooseSoundViewModel),
+                typeof(ChatNotificationsViewModel),
                 typeof(PromoViewModel)
             };
 
@@ -295,42 +304,30 @@ namespace Telegram
 
             builder.AppendLine("public T Resolve<T>()");
             builder.AppendLine("{");
-            builder.AppendLine("var type = typeof(T);");
+            builder.AppendLine("switch (typeof(T).Name)");
+            builder.AppendLine("{");
 
             for (int i = 0; i < _instances.Count; i++)
             {
-                if (i == 0)
-                {
-                    builder.AppendLine("if (type == typeof(" + _instances[i].FullName + "))");
-                }
-                else
-                {
-                    builder.AppendLine("else if (type == typeof(" + _instances[i].FullName + "))");
-                }
-
-                builder.AppendLine("{");
+                    builder.AppendLine("case nameof(" + _instances[i].FullName + "):");
                 builder.AppendLine("return (T)(object)" + GenerateConstructor(_instances[i], 4) + "; ");
-                builder.AppendLine("}");
             }
 
             for (int i = 0; i < _singletons.Count; i++)
             {
-                builder.AppendLine("else if (type == typeof(" + _singletons[i].Key.FullName + "))");
-                builder.AppendLine("{");
+                builder.AppendLine("case nameof(" + _singletons[i].Key.FullName + "):");
                 builder.AppendLine("return (T)" + GetSingletonName(_singletons[i].Key) + "; ");
-                builder.AppendLine("}");
             }
 
             for (int i = 0; i < _lazySingletons.Count; i++)
             {
-                builder.AppendLine("else if (type == typeof(" + _lazySingletons[i].Key.FullName + "))");
-                builder.AppendLine("{");
+                builder.AppendLine("case nameof(" + _lazySingletons[i].Key.FullName + "):");
                 builder.AppendLine("return (T)(" + GetSingletonName(_lazySingletons[i].Key) + " ??= " + GenerateConstructor(_lazySingletons[i].Value, 4) + ");");
-                builder.AppendLine("}");
             }
 
-            builder.AppendLine();
+            builder.AppendLine("default:");
             builder.AppendLine("return default;");
+            builder.AppendLine();
 
             builder.AppendLine("}");
             builder.AppendLine("}");
