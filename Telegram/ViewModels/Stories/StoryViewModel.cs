@@ -71,6 +71,9 @@ namespace Telegram.ViewModels.Stories
             CanGetViewers = story.CanGetViewers;
             CanBeReplied = story.CanBeReplied;
             CanBeForwarded = story.CanBeForwarded;
+            CanToggleIsPinned = story.CanToggleIsPinned;
+            CanBeEdited = story.CanBeEdited;
+            CanBeDeleted = story.CanBeDeleted;
             IsVisibleOnlyForSelf = story.IsVisibleOnlyForSelf;
             IsPinned = story.IsPinned;
             HasExpiredViewers = story.HasExpiredViewers;
@@ -110,6 +113,21 @@ namespace Telegram.ViewModels.Stories
         /// saving of the story content must be also forbidden.
         /// </summary>
         public bool CanBeForwarded { get; private set; }
+
+        /// <summary>
+        /// True, if the story's IsPinned value can be changed.
+        /// </summary>
+        public bool CanToggleIsPinned { get; private set; }
+
+        /// <summary>
+        /// True, if the story can be edited.
+        /// </summary>
+        public bool CanBeEdited { get; private set; }
+
+        /// <summary>
+        /// True, if the story can be deleted.
+        /// </summary>
+        public bool CanBeDeleted { get; private set; }
 
         /// <summary>
         /// True, if the story is visible only for the current user.

@@ -886,65 +886,51 @@ namespace Telegram.Controls.Stories
                 return;
             }
 
-            if (activeStories.IsMyStory)
+            var muted = ViewModel.Settings.Notifications.GetMuteStories(activeStories.Chat);
+            var archived = activeStories.List is StoryListArchive;
+
+            if (story.CanToggleIsPinned)
             {
                 flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, story.IsPinned ? Strings.ArchiveStory : Strings.SaveToProfile, story.IsPinned ? Icons.StoriesPinnedOff : Icons.StoriesPinned);
+            }
+            else
+            {
+                flyout.CreateFlyoutItem(ViewModel.MuteProfile, activeStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
+            }
 
-                if (story.CanBeForwarded && story.Content is StoryContentPhoto or StoryContentVideo && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
-                {
-                    flyout.CreateFlyoutItem(SaveStory, story, story.Content is StoryContentPhoto ? Strings.SavePhoto : Strings.SaveVideo, story.ClientService.IsPremium ? Icons.SaveAs : Icons.SaveAsLocked);
-                }
+            flyout.CreateFlyoutItem(ViewModel.ShowProfile, activeStories, archived ? Strings.UnarchiveStories : Strings.ArchivePeerStories, archived ? Icons.Unarchive : Icons.Archive);
 
-                if (story.ClientService.TryGetUser(story.Chat, out User user) && user.HasActiveUsername(out _))
-                {
-                    flyout.CreateFlyoutItem(CopyLink, story, Strings.CopyLink, Icons.Link);
-                }
+            if (story.CanBeForwarded && story.Content is StoryContentPhoto or StoryContentVideo && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
+            {
+                flyout.CreateFlyoutItem(SaveStory, story, story.Content is StoryContentPhoto ? Strings.SavePhoto : Strings.SaveVideo, story.ClientService.IsPremium ? Icons.SaveAs : Icons.SaveAsLocked);
+            }
 
-                if (story.CanBeForwarded)
-                {
-                    flyout.CreateFlyoutItem(ShareStory, story, Strings.StickersShare, Icons.Share);
-                }
+            if (story.Chat.Type is ChatTypePrivate && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
+            {
+                flyout.CreateFlyoutItem(StealthStory, story, Strings.StealthMode, story.ClientService.IsPremium ? Icons.Stealth : Icons.StealthLocked);
+            }
 
-                if (ViewModel.TranslateService.CanTranslate(story.Caption))
-                {
-                    flyout.CreateFlyoutItem(TranslateStory, story, Strings.TranslateMessage, Icons.Translate);
-                }
+            if (story.ClientService.TryGetUser(story.Chat, out User user) && user.HasActiveUsername(out _))
+            {
+                flyout.CreateFlyoutItem(CopyLink, story, Strings.CopyLink, Icons.Link);
+            }
 
+            if (story.CanBeForwarded)
+            {
+                flyout.CreateFlyoutItem(ShareStory, story, Strings.StickersShare, Icons.Share);
+            }
+
+            if (ViewModel.TranslateService.CanTranslate(story.Caption))
+            {
+                flyout.CreateFlyoutItem(TranslateStory, story, Strings.TranslateMessage, Icons.Translate);
+            }
+
+            if (story.CanBeDeleted)
+            {
                 flyout.CreateFlyoutItem(DeleteStory, story, Strings.Delete, Icons.Delete, destructive: true);
             }
             else
             {
-                var muted = ViewModel.Settings.Notifications.GetMuteStories(activeStories.Chat);
-                var archived = activeStories.List is StoryListArchive;
-
-                flyout.CreateFlyoutItem(ViewModel.MuteProfile, activeStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
-                flyout.CreateFlyoutItem(ViewModel.ShowProfile, activeStories, archived ? Strings.UnarchiveStories : Strings.ArchivePeerStories, archived ? Icons.Unarchive : Icons.Archive);
-
-                if (story.CanBeForwarded && story.Content is StoryContentPhoto or StoryContentVideo && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
-                {
-                    flyout.CreateFlyoutItem(SaveStory, story, story.Content is StoryContentPhoto ? Strings.SavePhoto : Strings.SaveVideo, story.ClientService.IsPremium ? Icons.SaveAs : Icons.SaveAsLocked);
-                }
-
-                if (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable)
-                {
-                    flyout.CreateFlyoutItem(StealthStory, story, Strings.StealthMode, story.ClientService.IsPremium ? Icons.Stealth : Icons.StealthLocked);
-                }
-
-                if (story.ClientService.TryGetUser(story.Chat, out User user) && user.HasActiveUsername(out _))
-                {
-                    flyout.CreateFlyoutItem(CopyLink, story, Strings.CopyLink, Icons.Link);
-                }
-
-                if (story.CanBeForwarded)
-                {
-                    flyout.CreateFlyoutItem(ShareStory, story, Strings.StickersShare, Icons.Share);
-                }
-
-                if (ViewModel.TranslateService.CanTranslate(story.Caption))
-                {
-                    flyout.CreateFlyoutItem(TranslateStory, story, Strings.TranslateMessage, Icons.Translate);
-                }
-
                 flyout.CreateFlyoutItem(ReportStory, story, Strings.ReportChat, Icons.ErrorCircle);
             }
         }
