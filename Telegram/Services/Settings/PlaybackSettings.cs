@@ -23,11 +23,18 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _repeatMode, "RepeatMode", (int)value);
         }
 
-        private double? _playbackRate;
-        public double PlaybackRate
+        private double? _audioSpeed;
+        public double AudioSpeed
         {
-            get => _playbackRate ??= GetValueOrDefault("PlaybackRate", 1.0);
-            set => AddOrUpdateValue(ref _playbackRate, "PlaybackRate", value);
+            get => _audioSpeed ??= GetValueOrDefault("PlaybackRate", 1.0);
+            set => AddOrUpdateValue(ref _audioSpeed, "PlaybackRate", value);
+        }
+
+        private double? _videoSpeed;
+        public double VideoSpeed
+        {
+            get => _videoSpeed ??= GetValueOrDefault("VideoSpeed", 1.0);
+            set => AddOrUpdateValue(ref _videoSpeed, "VideoSpeed", value);
         }
     }
 }

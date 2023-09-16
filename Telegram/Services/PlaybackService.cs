@@ -113,7 +113,7 @@ namespace Telegram.Services
             _isRepeatEnabled = _settingsService.Playback.RepeatMode == PlaybackRepeatMode.Track
                 ? null
                 : _settingsService.Playback.RepeatMode == PlaybackRepeatMode.List;
-            _playbackSpeed = _settingsService.Playback.PlaybackRate;
+            _playbackSpeed = _settingsService.Playback.AudioSpeed;
 
             // TODO: System media transport controls are currently unsupported.
         }
@@ -350,7 +350,7 @@ namespace Telegram.Services
             set
             {
                 _playbackSpeed = value;
-                _settingsService.Playback.PlaybackRate = value;
+                _settingsService.Playback.AudioSpeed = value;
 
                 Run(player =>
                 {
@@ -393,7 +393,7 @@ namespace Telegram.Services
         {
             if (CurrentPlayback is PlaybackItem item)
             {
-                _playbackSpeed = item.CanChangePlaybackRate ? _settingsService.Playback.PlaybackRate : 1;
+                _playbackSpeed = item.CanChangePlaybackRate ? _settingsService.Playback.AudioSpeed : 1;
                 player.SetRate((float)_playbackSpeed);
             }
 
@@ -501,7 +501,7 @@ namespace Telegram.Services
             {
                 player ??= Create();
 
-                _playbackSpeed = item.CanChangePlaybackRate ? _settingsService.Playback.PlaybackRate : 1;
+                _playbackSpeed = item.CanChangePlaybackRate ? _settingsService.Playback.AudioSpeed : 1;
                 CurrentPlayback = item;
 
                 player.SetRate((float)_playbackSpeed);

@@ -31,7 +31,7 @@ namespace Telegram.Controls.Gallery
 
             var muted = SettingsService.Current.VolumeMuted;
             var volume = (int)Math.Round(SettingsService.Current.VolumeLevel * 100);
-            var speed = SettingsService.Current.Playback.PlaybackRate;
+            var speed = SettingsService.Current.Playback.VideoSpeed;
 
             VolumeSlider.Value = muted ? 0 : volume;
             VolumeSlider.ValueChanged += VolumeSlider_ValueChanged;
@@ -275,7 +275,7 @@ namespace Telegram.Controls.Gallery
 
             _mediaPlayer.Mute = SettingsService.Current.VolumeMuted;
             _mediaPlayer.Volume = (int)Math.Round(SettingsService.Current.VolumeLevel * 100);
-            _mediaPlayer.Rate = (float)SettingsService.Current.Playback.PlaybackRate;
+            _mediaPlayer.Rate = (float)SettingsService.Current.Playback.VideoSpeed;
         }
 
         private void OnEndReached()
@@ -394,8 +394,7 @@ namespace Telegram.Controls.Gallery
 
         private void UpdatePlaybackSpeed(double value)
         {
-            //_playbackService.PlaybackSpeed = value;
-            SettingsService.Current.Playback.PlaybackRate = value;
+            SettingsService.Current.Playback.VideoSpeed = value;
 
             _mediaPlayer.SetRate((float)value);
             SpeedText.Text = string.Format("{0:N1}x", value);
