@@ -4,11 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System.Globalization;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
+using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.Data.Json;
@@ -25,17 +28,21 @@ namespace Telegram.Views.Popups
     public sealed partial class WebBotPopup : ContentPopup
     {
         private readonly IClientService _clientService;
+        private readonly INavigationService _navigationService;
+
         private readonly User _botUser;
         private readonly AttachmentMenuBot _menuBot;
 
         private bool _blockingAction;
 
         // TODO: constructor should take a function and URL should be loaded asynchronously
-        public WebBotPopup(IClientService clientService, User user, WebAppInfo info, AttachmentMenuBot menuBot = null)
+        public WebBotPopup(IClientService clientService, INavigationService navigationService, User user, WebAppInfo info, AttachmentMenuBot menuBot = null)
         {
             InitializeComponent();
 
             _clientService = clientService;
+            _navigationService = navigationService;
+
             _botUser = user;
             _menuBot = menuBot;
 
@@ -49,11 +56,13 @@ namespace Telegram.Views.Popups
         }
 
         // TODO: constructor should take a function and URL should be loaded asynchronously
-        public WebBotPopup(IClientService clientService, User user, string url, AttachmentMenuBot menuBot = null)
+        public WebBotPopup(IClientService clientService, INavigationService navigationService, User user, string url, AttachmentMenuBot menuBot = null)
         {
             InitializeComponent();
 
             _clientService = clientService;
+            _navigationService = navigationService;
+
             _botUser = user;
             _menuBot = menuBot;
 
@@ -118,7 +127,7 @@ namespace Telegram.Views.Popups
             }
             else if (eventName == "web_app_open_tg_link")
             {
-                OpenTgLink(eventData);
+                OpenInternalLink(eventData);
             }
             else if (eventName == "web_app_open_link")
             {
@@ -298,27 +307,108 @@ namespace Telegram.Views.Popups
             }
         }
 
-        private async void OpenPopup(JsonObject eventData)
+        private void OpenPopup(JsonObject eventData)
         {
             var title = eventData.GetNamedString("title", string.Empty);
             var message = eventData.GetNamedString("message", string.Empty);
             var buttons = eventData.GetNamedArray("buttons");
 
-            foreach (var buttonVal in buttons)
+            if (string.IsNullOrEmpty(message) || buttons.Empty())
             {
-                var button = buttonVal.GetObject();
+                return;
+            }
+
+            var panel = new Grid
+            {
+                ColumnSpacing = 8,
+                Margin = new Thickness(0, 8, 0, 0)
+            };
+
+            var popup = new TeachingTip
+            {
+                Title = title,
+                Subtitle = message,
+                Content = panel,
+                PreferredPlacement = TeachingTipPlacementMode.Center,
+                Width = 388,
+                MinWidth = 388,
+                MaxWidth = 388,
+                Target = null,
+                IsLightDismissEnabled = false,
+                ShouldConstrainToRootBounds = true,
+            };
+
+            void handler(object sender, RoutedEventArgs e)
+            {
+                if (sender is Button button && button.CommandParameter is string id)
+                {
+                    PostEvent("popup_closed", "{ button_id: \"" + id + "\" }");
+                    button.Click -= handler;
+                }
+
+                popup.IsOpen = false;
+            }
+
+            for (int i = 0; i < buttons.Count; i++)
+            {
+                var button = buttons[i].GetObject();
 
                 var id = button.GetNamedString("id");
                 var type = button.GetNamedString("type");
                 var text = button.GetNamedString("text", string.Empty);
 
+                var action = new Button
+                {
+                    Content = text,
+                    CommandParameter = id,
+                    HorizontalAlignment = HorizontalAlignment.Stretch
+                };
+
+                action.Click += handler;
+
                 switch (type)
                 {
-
+                    case "default":
+                        action.Style = BootStrapper.Current.Resources["AccentButtonStyle"] as Style;
+                        break;
+                    case "destructive":
+                        action.Style = BootStrapper.Current.Resources["DangerButtonStyle"] as Style;
+                        break;
+                    case "ok":
+                        action.Content = Strings.OK;
+                        break;
+                    case "close":
+                        action.Content = Strings.Close;
+                        break;
+                    case "cancel":
+                        action.Content = Strings.Cancel;
+                        break;
                 }
+
+                if (buttons.Count == 1)
+                {
+                    Grid.SetColumn(action, 1);
+                    panel.ColumnDefinitions.Add(new ColumnDefinition());
+                }
+                else
+                {
+                    Grid.SetColumn(action, i);
+                }
+
+                panel.ColumnDefinitions.Add(new ColumnDefinition());
+                panel.Children.Add(action);
             }
 
-            PostEvent("popup_closed");
+            if (Window.Current.Content is FrameworkElement element)
+            {
+                element.Resources["TeachingTip"] = popup;
+            }
+
+            popup.IsOpen = true;
+        }
+
+        private void ContinuePopup(string id)
+        {
         }
 
         private void OpenInvoice(JsonObject eventData)
@@ -328,12 +418,25 @@ namespace Telegram.Views.Popups
 
         private void OpenExternalLink(JsonObject eventData)
         {
+            // Ignoring try_instant_view for now
+            var value = eventData.GetNamedString("url", string.Empty);
+            if (string.IsNullOrEmpty(value))
+            {
+                return;
+            }
 
+            MessageHelper.OpenUrl(_clientService, _navigationService, value);
         }
 
-        private void OpenTgLink(JsonObject eventData)
+        private void OpenInternalLink(JsonObject eventData)
         {
+            var value = eventData.GetNamedString("path_full", string.Empty);
+            if (string.IsNullOrEmpty(value))
+            {
+                return;
+            }
 
+            MessageHelper.OpenUrl(_clientService, _navigationService, "https://t.me" + value);
         }
 
         private void SendViewport()
@@ -522,6 +625,9 @@ namespace Telegram.Views.Popups
 
         private void MenuItemSettings()
         {
+            PostEvent("popup_closed", "{ status: \"cancelled\" }");
+
+
             PostEvent("settings_button_pressed");
         }
 

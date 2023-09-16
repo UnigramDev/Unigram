@@ -1183,7 +1183,7 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.Id, webApp.Url, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
                 if (response is WebAppInfo webAppInfo)
                 {
-                    await ShowPopupAsync(new WebBotPopup(ClientService, bot, webAppInfo));
+                    await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, bot, webAppInfo));
                 }
             }
         }
@@ -1248,7 +1248,7 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.UserId, webApp.Url, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
                 if (response is WebAppInfo webAppInfo)
                 {
-                    await ShowPopupAsync(new WebBotPopup(ClientService, user, webAppInfo));
+                    await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, user, webAppInfo));
                 }
             }
         }
@@ -1270,7 +1270,7 @@ namespace Telegram.ViewModels
             var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.BotUserId, string.Empty, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
             if (response is WebAppInfo webAppInfo)
             {
-                await ShowPopupAsync(new WebBotPopup(ClientService, user, webAppInfo, bot));
+                await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, user, webAppInfo, bot));
             }
         }
 

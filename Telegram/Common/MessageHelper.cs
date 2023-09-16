@@ -331,7 +331,7 @@ namespace Telegram.Common
                     var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(0, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, false));
                     if (responsa is HttpUrl url)
                     {
-                        await new WebBotPopup(clientService, user, url.Url).ShowQueuedAsync();
+                        await new WebBotPopup(clientService, navigation, user, url.Url).ShowQueuedAsync();
                     }
                 }
                 else
@@ -842,7 +842,7 @@ namespace Telegram.Common
             return (symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z') || (symbol >= '0' && symbol <= '9') || symbol == '_';
         }
 
-        public static async void OpenUrl(IClientService clientService, INavigationService navigationService, string url, bool untrust)
+        public static async void OpenUrl(IClientService clientService, INavigationService navigationService, string url, bool untrust = false)
         {
             if (TryCreateUri(url, out Uri uri))
             {
