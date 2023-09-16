@@ -309,6 +309,10 @@ namespace Telegram.Services
                 {
                     attachmentMenuBot.AndroidIcon = ProcessFile(attachmentMenuBot.AndroidIcon);
                 }
+                if (attachmentMenuBot.AndroidSideMenuIcon != null)
+                {
+                    attachmentMenuBot.AndroidSideMenuIcon = ProcessFile(attachmentMenuBot.AndroidSideMenuIcon);
+                }
                 if (attachmentMenuBot.DefaultIcon != null)
                 {
                     attachmentMenuBot.DefaultIcon = ProcessFile(attachmentMenuBot.DefaultIcon);
@@ -317,6 +321,10 @@ namespace Telegram.Services
                 {
                     attachmentMenuBot.IosAnimatedIcon = ProcessFile(attachmentMenuBot.IosAnimatedIcon);
                 }
+                if (attachmentMenuBot.IosSideMenuIcon != null)
+                {
+                    attachmentMenuBot.IosSideMenuIcon = ProcessFile(attachmentMenuBot.IosSideMenuIcon);
+                }
                 if (attachmentMenuBot.IosStaticIcon != null)
                 {
                     attachmentMenuBot.IosStaticIcon = ProcessFile(attachmentMenuBot.IosStaticIcon);
@@ -324,6 +332,10 @@ namespace Telegram.Services
                 if (attachmentMenuBot.MacosIcon != null)
                 {
                     attachmentMenuBot.MacosIcon = ProcessFile(attachmentMenuBot.MacosIcon);
+                }
+                if (attachmentMenuBot.MacosSideMenuIcon != null)
+                {
+                    attachmentMenuBot.MacosSideMenuIcon = ProcessFile(attachmentMenuBot.MacosSideMenuIcon);
                 }
                 if (attachmentMenuBot.WebAppPlaceholder != null)
                 {
@@ -1938,6 +1950,20 @@ namespace Telegram.Services
                 if (updateStory.Story != null)
                 {
                     ProcessFiles(updateStory.Story);
+                }
+            }
+            else if (target is UpdateStorySendFailed updateStorySendFailed)
+            {
+                if (updateStorySendFailed.Story != null)
+                {
+                    ProcessFiles(updateStorySendFailed.Story);
+                }
+            }
+            else if (target is UpdateStorySendSucceeded updateStorySendSucceeded)
+            {
+                if (updateStorySendSucceeded.Story != null)
+                {
+                    ProcessFiles(updateStorySendSucceeded.Story);
                 }
             }
             else if (target is UpdateSupergroupFullInfo updateSupergroupFullInfo)
