@@ -15,6 +15,7 @@ using Telegram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
@@ -36,6 +37,8 @@ namespace Telegram.Controls.Messages
 
         private bool _loading;
 
+        private string _alternativeText;
+
         public MessagePinned()
         {
             InitializeComponent();
@@ -51,6 +54,16 @@ namespace Telegram.Controls.Messages
             _templateApplied = true;
 
             Unloaded += OnUnloaded;
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new MessagePinnedAutomationPeer(this);
+        }
+
+        public string GetNameCore()
+        {
+            return _alternativeText;
         }
 
         public new MessageViewModel Message => _message;
@@ -324,13 +337,20 @@ namespace Telegram.Controls.Messages
 
         protected override void SetText(IClientService clientService, MessageSender sender, string title, string service, FormattedText text)
         {
+            _alternativeText = title + ": ";
             TitleLabel.Text = title;
 
             var serviceShow = _textVisual == _textVisual1 ? ServiceLabel2 : ServiceLabel1;
             serviceShow.Text = service;
 
+            if (!string.IsNullOrEmpty(service))
+            {
+                _alternativeText += service += ", ";
+            }
+
             if (!string.IsNullOrEmpty(text?.Text) && !string.IsNullOrEmpty(service))
             {
+                _alternativeText += ", " + text.Text;
                 serviceShow.Text += ", ";
             }
 
@@ -380,6 +400,22 @@ namespace Telegram.Controls.Messages
         }
 
         #endregion
+    }
+
+    public class MessagePinnedAutomationPeer : HyperlinkButtonAutomationPeer
+    {
+        private readonly MessagePinned _owner;
+
+        public MessagePinnedAutomationPeer(MessagePinned owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override string GetNameCore()
+        {
+            return _owner.GetNameCore();
+        }
     }
 
     public class MessagePinnedLine : Control
