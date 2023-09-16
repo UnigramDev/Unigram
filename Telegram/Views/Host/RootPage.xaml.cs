@@ -368,7 +368,7 @@ namespace Telegram.Views.Host
             {
                 for (int i = bots.Count - 1; i >= 0; i--)
                 {
-                    _navigationViewItems.Insert(3, bots[i]);
+                    _navigationViewItems.Insert(index - 1, bots[i]);
                     index++;
                 }
             }
