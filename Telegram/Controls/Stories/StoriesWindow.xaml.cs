@@ -827,19 +827,23 @@ namespace Telegram.Controls.Stories
 
             var flyout = new MenuFlyout();
             flyout.Closing += Flyout_Closing;
-            flyout.Opened += async (s, args) =>
+
+            if (story.Chat.Type is ChatTypePrivate)
             {
-                var response = await activeStories.ClientService.SendAsync(new GetStoryAvailableReactions(8));
-                if (response is AvailableReactions reactions && flyout.IsOpen)
+                flyout.Opened += async (s, args) =>
                 {
-                    if (reactions.TopReactions.Count > 0
-                        || reactions.PopularReactions.Count > 0
-                        || reactions.RecentReactions.Count > 0)
+                    var response = await activeStories.ClientService.SendAsync(new GetStoryAvailableReactions(8));
+                    if (response is AvailableReactions reactions && flyout.IsOpen)
                     {
-                        ReactionsMenuFlyout.ShowAt(reactions, story, null, flyout);
+                        if (reactions.TopReactions.Count > 0
+                            || reactions.PopularReactions.Count > 0
+                            || reactions.RecentReactions.Count > 0)
+                        {
+                            ReactionsMenuFlyout.ShowAt(reactions, story, null, flyout);
+                        }
                     }
-                }
-            };
+                };
+            }
 
             ActiveCard.Suspend(StoryPauseSource.Flyout);
 
@@ -857,19 +861,23 @@ namespace Telegram.Controls.Stories
 
             var flyout = new MenuFlyout();
             flyout.Closing += Flyout_Closing;
-            flyout.Opened += async (s, args) =>
+
+            if (story.Chat.Type is ChatTypePrivate)
             {
-                var response = await activeStories.ClientService.SendAsync(new GetStoryAvailableReactions(8));
-                if (response is AvailableReactions reactions && flyout.IsOpen)
+                flyout.Opened += async (s, args) =>
                 {
-                    if (reactions.TopReactions.Count > 0
-                        || reactions.PopularReactions.Count > 0
-                        || reactions.RecentReactions.Count > 0)
+                    var response = await activeStories.ClientService.SendAsync(new GetStoryAvailableReactions(8));
+                    if (response is AvailableReactions reactions && flyout.IsOpen)
                     {
-                        ReactionsMenuFlyout.ShowAt(reactions, story, null, flyout);
+                        if (reactions.TopReactions.Count > 0
+                            || reactions.PopularReactions.Count > 0
+                            || reactions.RecentReactions.Count > 0)
+                        {
+                            ReactionsMenuFlyout.ShowAt(reactions, story, null, flyout);
+                        }
                     }
-                }
-            };
+                };
+            }
 
             ActiveCard.Suspend(StoryPauseSource.Flyout);
 
