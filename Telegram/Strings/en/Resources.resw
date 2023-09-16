@@ -1375,6 +1375,27 @@ Please enable Unigram in the Startup Apps Settings.</value>
   <data name="Bold" xml:space="preserve">
     <value>Bold</value>
   </data>
+  <data name="Boosters" xml:space="preserve">
+    <value>Boosters</value>
+  </data>
+  <data name="BoostersInfoDescription" xml:space="preserve">
+    <value>Your channel is currently boosted by these users.</value>
+  </data>
+  <data name="BoostExpireOn" xml:space="preserve">
+    <value>boost expires on {0}</value>
+  </data>
+  <data name="Boosts" xml:space="preserve">
+    <value>Boosts</value>
+  </data>
+  <data name="BoostsExisting" xml:space="preserve">
+    <value>Existing Boosts</value>
+  </data>
+  <data name="BoostsLevel2" xml:space="preserve">
+    <value>Level</value>
+  </data>
+  <data name="BoostsToLevel" xml:space="preserve">
+    <value>Boosts to level up</value>
+  </data>
   <data name="Bot" xml:space="preserve">
     <value>bot</value>
   </data>
@@ -4115,6 +4136,9 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   <data name="LinkedChannel" xml:space="preserve">
     <value>Linked Channel</value>
   </data>
+  <data name="LinkForBoosting" xml:space="preserve">
+    <value>Link for boosting</value>
+  </data>
   <data name="LinkInfo" xml:space="preserve">
     <value>Anyone who has Telegram installed will be able to join your group by following this link.</value>
   </data>
@@ -5436,6 +5460,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PremiumStoriesViewsDescription" xml:space="preserve">
     <value>Check who opens your stories — even after they expire.</value>
+  </data>
+  <data name="PremiumSubscribers" xml:space="preserve">
+    <value>Premium subscribers</value>
   </data>
   <data name="PreviewFeedback2" xml:space="preserve">
     <value>Wrong layout?</value>

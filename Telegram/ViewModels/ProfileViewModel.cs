@@ -425,18 +425,17 @@ namespace Telegram.ViewModels
             }
 
             NavigationService.Navigate(typeof(ChatStatisticsPage), chat.Id);
+        }
 
-            //var fullInfo = ClientService.GetSupergroupFull(chat);
-            //if (fullInfo == null || !fullInfo.CanViewStatistics)
-            //{
-            //    return;
-            //}
+        public void OpenBoosts()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
 
-            //var response = await ClientService.SendAsync(new GetChatStatisticsUrl(chat.Id, string.Empty));
-            //if (response is ChatStatisticsUrl url)
-            //{
-            //    await Launcher.LaunchUriAsync(new Uri(url.Url));
-            //}
+            NavigationService.Navigate(typeof(ChatBoostsPage), chat.Id);
         }
 
         public async void Block()

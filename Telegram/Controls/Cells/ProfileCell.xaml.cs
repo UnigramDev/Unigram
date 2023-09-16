@@ -434,6 +434,42 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        public void UpdateChatBoost(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var boost = args.Item as ChatBoost;
+            if (boost == null)
+            {
+                return;
+            }
+
+            var user = clientService.GetUser(boost.UserId) as User;
+            if (user == null)
+            {
+                return;
+            }
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = user.FullName();
+            }
+            else if (args.Phase == 1)
+            {
+                SubtitleLabel.Text = string.Format(Strings.BoostExpireOn, Formatter.DateAt(boost.ExpireDate));
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetUser(clientService, user, 36);
+                Identity.SetStatus(clientService, user);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
         public void UpdateNotificationException(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             var chat = args.Item as Chat;

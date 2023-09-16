@@ -398,6 +398,7 @@ namespace Telegram
                 SupergroupMembersPage supergroupMembers => TLContainer.Current.Resolve<SupergroupMembersViewModel, ISupergroupDelegate>(supergroupMembers, sessionId),
                 SupergroupPermissionsPage supergroupPermissions => TLContainer.Current.Resolve<SupergroupPermissionsViewModel, ISupergroupDelegate>(supergroupPermissions, sessionId),
                 SupergroupReactionsPage => TLContainer.Current.Resolve<SupergroupReactionsViewModel>(sessionId),
+                ChatBoostsPage => TLContainer.Current.Resolve<ChatBoostsViewModel>(sessionId),
                 //
                 AuthorizationRecoveryPage => TLContainer.Current.Resolve<AuthorizationRecoveryViewModel>(sessionId),
                 AuthorizationRegistrationPage => TLContainer.Current.Resolve<AuthorizationRegistrationViewModel>(sessionId),

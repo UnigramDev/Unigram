@@ -312,6 +312,7 @@
     <Compile Include="Videolan\Shared\Structures\VideoViewpoint.cs" />
     <Compile Include="Videolan\Shared\VLCException.cs" />
     <Compile Include="ViewModels\ChatNotificationsViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatBoostsViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\ComposeViewModel.cs" />
     <Compile Include="ViewModels\MyStoriesViewModel.cs" />
@@ -821,6 +822,9 @@
     </Compile>
     <Compile Include="Views\ChatPinnedPage.xaml.cs">
       <DependentUpon>ChatPinnedPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\ChatBoostsPage.xaml.cs">
+      <DependentUpon>ChatBoostsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Chats\ChatSharedFilesPage.xaml.cs">
       <DependentUpon>ChatSharedFilesPage.xaml</DependentUpon>
@@ -2234,6 +2238,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ChatPinnedPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Chats\ChatBoostsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

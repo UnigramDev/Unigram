@@ -106,6 +106,8 @@ namespace Telegram.Controls.Media
         public const string PersonQuestionMark = "\uE897";
         public const string QuestionCircle = "\uE9CE";
 
+        public const string Boosts = "\uEA39";
+
         public const string ArrowReply = "\uE248";
         public const string Thread = "\uE93D";
         public const string Edit = "\uE104";
