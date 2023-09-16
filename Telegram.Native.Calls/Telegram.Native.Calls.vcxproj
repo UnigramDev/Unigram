@@ -28,7 +28,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -544,7 +544,7 @@
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets" Condition="Exists('..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets')" />
     <Import Project="..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets" Condition="Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets')" />
-    <Import Project="..\packages\Telegram.Td.UWP.1.8.16\build\native\Telegram.Td.UWP.targets" Condition="Exists('..\packages\Telegram.Td.UWP.1.8.16\build\native\Telegram.Td.UWP.targets')" />
+    <Import Project="..\packages\Telegram.Td.UWP.1.8.19\build\native\Telegram.Td.UWP.targets" Condition="Exists('..\packages\Telegram.Td.UWP.1.8.19\build\native\Telegram.Td.UWP.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -553,6 +553,6 @@
     <Error Condition="!Exists('..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Win2D.uwp.1.26.0\build\native\Win2D.uwp.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.CppWinRT.2.0.230706.1\build\native\Microsoft.Windows.CppWinRT.targets'))" />
-    <Error Condition="!Exists('..\packages\Telegram.Td.UWP.1.8.16\build\native\Telegram.Td.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Telegram.Td.UWP.1.8.16\build\native\Telegram.Td.UWP.targets'))" />
+    <Error Condition="!Exists('..\packages\Telegram.Td.UWP.1.8.19\build\native\Telegram.Td.UWP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Telegram.Td.UWP.1.8.19\build\native\Telegram.Td.UWP.targets'))" />
   </Target>
 </Project>

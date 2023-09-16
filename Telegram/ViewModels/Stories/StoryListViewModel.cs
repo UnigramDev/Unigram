@@ -133,13 +133,13 @@ namespace Telegram.ViewModels.Stories
             var confirm = await ShowPopupAsync(message, title, Strings.Delete, Strings.Cancel, destructive: true);
             if (confirm == ContentDialogResult.Primary)
             {
-                ClientService.Send(new DeleteStory(story.StoryId));
+                ClientService.Send(new DeleteStory(story.ChatId, story.StoryId));
             }
         }
 
         public void ToggleStory(StoryViewModel story)
         {
-            ClientService.Send(new ToggleStoryIsPinned(story.StoryId, !story.IsPinned));
+            ClientService.Send(new ToggleStoryIsPinned(story.ChatId, story.StoryId, !story.IsPinned));
 
             Window.Current.ShowTeachingTip(story.IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }

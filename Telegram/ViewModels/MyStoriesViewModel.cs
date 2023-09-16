@@ -69,7 +69,7 @@ namespace Telegram.ViewModels
 
         public void ToggleStory(StoryViewModel story)
         {
-            ClientService.Send(new ToggleStoryIsPinned(story.StoryId, !IsPinned));
+            ClientService.Send(new ToggleStoryIsPinned(story.ChatId, story.StoryId, !IsPinned));
 
             if (IsPinned)
             {
@@ -85,7 +85,7 @@ namespace Telegram.ViewModels
 
             foreach (var story in selection)
             {
-                ClientService.Send(new ToggleStoryIsPinned(story.StoryId, !IsPinned));
+                ClientService.Send(new ToggleStoryIsPinned(story.ChatId, story.StoryId, !IsPinned));
 
                 if (IsPinned)
                 {
@@ -105,7 +105,7 @@ namespace Telegram.ViewModels
             var confirm = await ShowPopupAsync(message, title, Strings.Delete, Strings.Cancel, destructive: true);
             if (confirm == ContentDialogResult.Primary)
             {
-                ClientService.Send(new DeleteStory(story.StoryId));
+                ClientService.Send(new DeleteStory(story.ChatId, story.StoryId));
                 Items.Remove(story);
             }
         }
@@ -122,7 +122,7 @@ namespace Telegram.ViewModels
 
                 foreach (var story in selection)
                 {
-                    ClientService.Send(new DeleteStory(story.StoryId));
+                    ClientService.Send(new DeleteStory(story.ChatId, story.StoryId));
                     Items.Remove(story);
                 }
 
@@ -157,7 +157,7 @@ namespace Telegram.ViewModels
 
             Function function = _type switch
             {
-                MyStoriesType.Archive => new GetArchivedStories(_fromStoryId, 50),
+                MyStoriesType.Archive => new GetChatArchivedStories(ClientService.Options.MyId, _fromStoryId, 50),
                 MyStoriesType.Pinned or _ => new GetChatPinnedStories(ClientService.Options.MyId, _fromStoryId, 50),
             };
 
