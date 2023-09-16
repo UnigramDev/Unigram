@@ -45,7 +45,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swresample.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>avcodec.lib;avformat.lib;avutil.lib;swscale.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -138,7 +138,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -158,7 +158,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -178,7 +178,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -198,7 +198,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -218,7 +218,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -238,7 +238,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>libyuv\include;..\Libraries\libutf;..\Libraries\flatbuffers\include;..\Libraries\libtextclassifier;..\Libraries\libwebp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
@@ -251,6 +251,49 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv.h" />
+    <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv_cpu.h" />
+    <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv_csp.h" />
+    <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv_dsp.h" />
+    <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv_gamma.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dec\alphai_dec.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dec\common_dec.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dec\vp8i_dec.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dec\vp8li_dec.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dec\vp8_dec.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dec\webpi_dec.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dsp\common_sse2.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dsp\common_sse41.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dsp\cpu.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dsp\dsp.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dsp\lossless.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dsp\lossless_common.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dsp\mips_macro.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dsp\msa_macro.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dsp\neon.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dsp\quant.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\dsp\yuv.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\bit_reader_inl_utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\bit_reader_utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\bit_writer_utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\color_cache_utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\endian_inl_utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\filters_utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\huffman_encode_utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\huffman_utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\quant_levels_dec_utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\quant_levels_utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\random_utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\rescaler_utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\thread_utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\utils\utils.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\webp\decode.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\webp\demux.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\webp\encode.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\webp\format_constants.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\webp\mux.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\webp\mux_types.h" />
+    <ClInclude Include="..\Libraries\libwebp\src\webp\types.h" />
     <ClInclude Include="AudioPitchEffect.h">
       <DependentUpon>AudioPitchEffect.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -274,6 +317,13 @@
     <ClInclude Include="Helpers\DebugHelper.h" />
     <ClInclude Include="Helpers\LibraryHelper.h" />
     <ClInclude Include="Helpers\StringHelper.h" />
+    <ClInclude Include="Highlight\Highlight.h" />
+    <ClInclude Include="Highlight\LanguageTree.h" />
+    <ClInclude Include="Highlight\SyntaxHighlighter.h" />
+    <ClInclude Include="Highlight\SyntaxToken.h" />
+    <ClInclude Include="Highlight\TextToken.h" />
+    <ClInclude Include="Highlight\third-party\json11.hpp" />
+    <ClInclude Include="Highlight\TokenList.h" />
     <ClInclude Include="HttpProxyWatcher.h">
       <DependentUpon>HttpProxyWatcher.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -558,6 +608,300 @@
     <ClCompile Include="..\Libraries\libutf\utfutf.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\sharpyuv\sharpyuv.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\sharpyuv\sharpyuv_cpu.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\sharpyuv\sharpyuv_csp.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\sharpyuv\sharpyuv_dsp.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\sharpyuv\sharpyuv_gamma.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\sharpyuv\sharpyuv_neon.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\sharpyuv\sharpyuv_sse2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dec\alpha_dec.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dec\buffer_dec.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dec\frame_dec.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dec\idec_dec.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dec\io_dec.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dec\quant_dec.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dec\tree_dec.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dec\vp8l_dec.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dec\vp8_dec.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dec\webp_dec.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\demux\anim_decode.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\demux\demux.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\alpha_processing.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\alpha_processing_mips_dsp_r2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\alpha_processing_neon.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\alpha_processing_sse2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\alpha_processing_sse41.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\cost.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\cost_mips32.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\cost_mips_dsp_r2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\cost_neon.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\cost_sse2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\cpu.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\dec.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\dec_clip_tables.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\dec_mips32.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\dec_mips_dsp_r2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\dec_msa.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\dec_neon.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\dec_sse2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\dec_sse41.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\enc.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\enc_mips32.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\enc_mips_dsp_r2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\enc_msa.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\enc_neon.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\enc_sse2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\enc_sse41.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\filters.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\filters_mips_dsp_r2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\filters_msa.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\filters_neon.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\filters_sse2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\lossless.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\lossless_enc.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\lossless_enc_mips32.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\lossless_enc_mips_dsp_r2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\lossless_enc_msa.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\lossless_enc_neon.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\lossless_enc_sse2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\lossless_enc_sse41.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\lossless_mips_dsp_r2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\lossless_msa.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\lossless_neon.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\lossless_sse2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\lossless_sse41.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\rescaler.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\rescaler_mips32.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\rescaler_mips_dsp_r2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\rescaler_msa.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\rescaler_neon.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\rescaler_sse2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\ssim.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\ssim_sse2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\upsampling.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\upsampling_mips_dsp_r2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\upsampling_msa.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\upsampling_neon.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\upsampling_sse2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\upsampling_sse41.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\yuv.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\yuv_mips32.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\yuv_mips_dsp_r2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\yuv_neon.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\yuv_sse2.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\dsp\yuv_sse41.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\utils\bit_reader_utils.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\utils\bit_writer_utils.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\utils\color_cache_utils.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\utils\filters_utils.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\utils\huffman_encode_utils.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\utils\huffman_utils.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\utils\quant_levels_dec_utils.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\utils\quant_levels_utils.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\utils\random_utils.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\utils\rescaler_utils.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\utils\thread_utils.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libwebp\src\utils\utils.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Highlight\Highlight.cpp" />
+    <ClCompile Include="Highlight\LanguageTree.cpp" />
+    <ClCompile Include="Highlight\SyntaxHighlighter.cpp" />
+    <ClCompile Include="Highlight\SyntaxToken.cpp" />
+    <ClCompile Include="Highlight\TextToken.cpp" />
+    <ClCompile Include="Highlight\third-party\json11.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Highlight\TokenList.cpp" />
     <ClCompile Include="VideoAnimationStreamSource.cpp">
       <DependentUpon>VideoAnimationStreamSource.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -793,6 +1137,8 @@
     </Midl>
     <Midl Include="Composition\CompositionDevice.idl" />
     <Midl Include="Composition\DirectRectangleClip.idl" />
+    <Midl Include="Highlight\SyntaxToken.idl" />
+    <Midl Include="Highlight\TextToken.idl" />
     <Midl Include="HttpProxyWatcher.idl">
       <SubType>Designer</SubType>
     </Midl>

@@ -8,8 +8,8 @@
 #include "StringUtils.h"
 #include "Helpers\COMHelper.h"
 
-#include <webp\decode.h>
-#include <webp\demux.h>
+#include <src\webp\decode.h>
+#include <src\webp\demux.h>
 
 #include <shcore.h>
 
