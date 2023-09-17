@@ -20,6 +20,7 @@ using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Folders;
 using Telegram.ViewModels.Payments;
 using Telegram.ViewModels.Premium;
+using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Settings;
 using Telegram.ViewModels.Settings.Password;
 using Telegram.ViewModels.Settings.Privacy;
@@ -97,7 +98,9 @@ namespace Telegram
                 typeof(EmojiDrawerViewModel),
                 typeof(CreateChatPhotoViewModel),
                 typeof(ProfileViewModel),
-                typeof(UserCommonChatsViewModel),
+                typeof(ProfileStoriesTabViewModel),
+                typeof(ProfileMembersTabViewModel),
+                typeof(ProfileGroupsTabViewModel),
                 typeof(UserCreateViewModel),
                 typeof(UserEditViewModel),
                 typeof(SupergroupEditViewModel),
@@ -114,7 +117,7 @@ namespace Telegram
                 typeof(SupergroupPermissionsViewModel),
                 typeof(SupergroupMembersViewModel),
                 typeof(SupergroupReactionsViewModel),
-                typeof(ChatSharedMediaViewModel),
+                typeof(ProfileTabsViewModel),
                 typeof(ChatStatisticsViewModel),
                 typeof(ChatBoostsViewModel),
                 typeof(MessageStatisticsViewModel),

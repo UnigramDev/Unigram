@@ -15,7 +15,7 @@ using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Telegram.ViewModels.Chats;
+using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Stories;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -24,9 +24,9 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Animation;
 
-namespace Telegram.Views.Chats
+namespace Telegram.Views.Profile
 {
-    public class ChatSharedMediaPageBase : Page, INavigablePage
+    public class ProfileTabPage : Page, INavigablePage
     {
         public ProfileViewModel ViewModel => DataContext as ProfileViewModel;
 
@@ -38,7 +38,7 @@ namespace Telegram.Views.Chats
         private Visual _dateHeaderPanel;
         private bool _dateHeaderCollapsed = true;
 
-        public ChatSharedMediaPageBase()
+        public ProfileTabPage()
         {
             _dateHeaderTimer = new DispatcherTimer();
             _dateHeaderTimer.Interval = TimeSpan.FromMilliseconds(2000);
@@ -456,7 +456,7 @@ namespace Telegram.Views.Chats
 
         protected void Header_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is ProfileItem page && page.Type != GetType())
+            if (e.ClickedItem is ProfileTabItem page && page.Type != GetType())
             {
                 Frame.Navigate(page.Type, null, new SuppressNavigationTransitionInfo());
             }

@@ -316,6 +316,9 @@
     <Compile Include="ViewModels\Chats\ChatStoriesViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\ComposeViewModel.cs" />
+    <Compile Include="ViewModels\Profile\ProfileGroupsTabViewModel.cs" />
+    <Compile Include="ViewModels\Profile\ProfileMembersTabViewModel.cs" />
+    <Compile Include="ViewModels\Profile\ProfileStoriesTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileTabsViewModel.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
@@ -1109,7 +1112,6 @@
     <Compile Include="ViewModels\Supergroups\SupergroupMembersViewModelBase.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupPermissionsViewModel.cs" />
     <Compile Include="Navigation\MultiViewModelBase.cs" />
-    <Compile Include="ViewModels\Users\UserCommonChatsViewModel.cs" />
     <Compile Include="ViewModels\Users\UserCreateViewModel.cs" />
     <Compile Include="Views\BasicGroups\BasicGroupCreateStep1Page.xaml.cs">
       <DependentUpon>BasicGroupCreateStep1Page.xaml</DependentUpon>
@@ -1236,6 +1238,9 @@
     </Compile>
     <Compile Include="Views\Profile\ProfileFilesTabPage.xaml.cs">
       <DependentUpon>ProfileFilesTabPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Profile\ProfileGroupsTabPage.xaml.cs">
+      <DependentUpon>ProfileGroupsTabPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Profile\ProfileLinksTabPage.xaml.cs">
       <DependentUpon>ProfileLinksTabPage.xaml</DependentUpon>
@@ -1447,9 +1452,6 @@
     </Compile>
     <Compile Include="Views\Users\UserEditPage.xaml.cs">
       <DependentUpon>UserEditPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Users\UserCommonChatsPage.xaml.cs">
-      <DependentUpon>UserCommonChatsPage.xaml</DependentUpon>
     </Compile>
     <Content Include="Assets\Audio\sent.mp3" />
     <Content Include="Assets\Audio\voicechat_join.mp3" />
@@ -2573,6 +2575,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Profile\ProfileGroupsTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Profile\ProfileLinksTabPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2882,10 +2888,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Users\UserEditPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Users\UserCommonChatsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

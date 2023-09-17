@@ -11,16 +11,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
-using Telegram.Controls.Stories;
 using Telegram.Converters;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
-using Telegram.ViewModels.Stories;
+using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Supergroups;
-using Telegram.ViewModels.Users;
 using Telegram.Views;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
@@ -29,14 +26,12 @@ using Telegram.Views.Supergroups;
 using Telegram.Views.Supergroups.Popups;
 using Telegram.Views.Users;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public class ProfileViewModel : ChatSharedMediaViewModel, IDelegable<IProfileDelegate>, IHandle, IIncrementalCollectionOwner
+    public class ProfileViewModel : ProfileTabsViewModel, IDelegable<IProfileDelegate>, IHandle
     {
         public string LastSeen { get; internal set; }
 
@@ -47,10 +42,11 @@ namespace Telegram.ViewModels
         private readonly INotificationsService _notificationsService;
         private readonly ITranslateService _translateService;
 
-        private readonly UserCommonChatsViewModel _userCommonChatsViewModel;
-        private readonly SupergroupMembersViewModel _supergroupMembersVieModel;
+        private readonly ProfileStoriesTabViewModel _storiesTabViewModel;
+        private readonly ProfileGroupsTabViewModel _groupsTabViewModel;
+        private readonly ProfileMembersTabViewModel _membersTabVieModel;
 
-        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService, ChatSharedMediaViewModel chatSharedMediaViewModel, UserCommonChatsViewModel userCommonChatsViewModel, SupergroupMembersViewModel supergroupMembersViewModel)
+        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService, ProfileStoriesTabViewModel profileStoriesTabViewModel, ProfileGroupsTabViewModel profileGroupsTabViewModel, ProfileMembersTabViewModel profileMembersTabViewModel)
             : base(clientService, settingsService, storageService, aggregator, playbackService)
         {
             _voipService = voipService;
@@ -58,22 +54,23 @@ namespace Telegram.ViewModels
             _notificationsService = notificationsService;
             _translateService = translateService;
 
-            _userCommonChatsViewModel = userCommonChatsViewModel;
-            _supergroupMembersVieModel = supergroupMembersViewModel;
-            _supergroupMembersVieModel.IsEmbedded = true;
+            _storiesTabViewModel = profileStoriesTabViewModel;
+            _groupsTabViewModel = profileGroupsTabViewModel;
+            _membersTabVieModel = profileMembersTabViewModel;
+            _membersTabVieModel.IsEmbedded = true;
 
             SetTimerCommand = new RelayCommand<int?>(SetTimer);
 
-            Stories = new IncrementalCollection<StoryViewModel>(this);
-
-            Children.Add(userCommonChatsViewModel);
-            Children.Add(supergroupMembersViewModel);
+            Children.Add(profileStoriesTabViewModel);
+            Children.Add(profileGroupsTabViewModel);
+            Children.Add(profileMembersTabViewModel);
         }
 
         public ITranslateService TranslateService => _translateService;
 
-        public UserCommonChatsViewModel UserCommonChats => _userCommonChatsViewModel;
-        public SupergroupMembersViewModel SupergroupMembers => _supergroupMembersVieModel;
+        public ProfileStoriesTabViewModel StoriesTab => _storiesTabViewModel;
+        public ProfileGroupsTabViewModel GroupsTab => _groupsTabViewModel;
+        public SupergroupMembersViewModel MembersTab => _membersTabVieModel;
 
         protected ObservableCollection<ChatMember> _members;
         public ObservableCollection<ChatMember> Members
@@ -81,49 +78,6 @@ namespace Telegram.ViewModels
             get => _members;
             set => Set(ref _members, value);
         }
-
-        public ObservableCollection<StoryViewModel> Stories { get; }
-
-        #region Stories
-
-        private int _fromStoryId;
-
-        public async Task<LoadMoreItemsResult> LoadMoreItemsAsync(uint count)
-        {
-            var totalCount = 0u;
-
-            var response = await ClientService.SendAsync(new GetChatPinnedStories(_chat.Id, _fromStoryId, 50));
-            if (response is Td.Api.Stories stories)
-            {
-                HasMoreItems = stories.StoriesValue.Count > 0;
-
-                foreach (var story in stories.StoriesValue)
-                {
-                    _fromStoryId = story.Id;
-                    Stories.Add(new StoryViewModel(ClientService, story));
-                }
-            }
-
-            return new LoadMoreItemsResult
-            {
-                Count = totalCount
-            };
-        }
-
-        public bool HasMoreItems { get; private set; } = true;
-
-        public void OpenStory(StoryViewModel story, Rect origin, Func<ActiveStoriesViewModel, Rect> closing)
-        {
-            var activeStories = new ActiveStoriesViewModel(ClientService, Settings, Aggregator, story, Stories);
-            var viewModel = new StoryListViewModel(ClientService, Settings, Aggregator, activeStories);
-            viewModel.NavigationService = NavigationService;
-
-            var window = new StoriesWindow();
-            window.Update(viewModel, activeStories, StoryOrigin.Card, origin, closing);
-            _ = window.ShowAsync();
-        }
-
-        #endregion
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {

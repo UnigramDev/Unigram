@@ -14,11 +14,11 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 
-namespace Telegram.Views.Chats
+namespace Telegram.Views.Profile
 {
-    public sealed partial class ChatSharedMediaPage : ChatSharedMediaPageBase
+    public sealed partial class ProfileMediaTabPage : ProfileTabPage
     {
-        public ChatSharedMediaPage()
+        public ProfileMediaTabPage()
         {
             InitializeComponent();
             ScrollingHost.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, OnSelectionModeChanged);

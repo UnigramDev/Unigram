@@ -9,8 +9,7 @@ using Telegram.Collections;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Delegates;
-using Telegram.Views.Chats;
-using Telegram.Views.Users;
+using Telegram.Views.Profile;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
@@ -41,39 +40,39 @@ namespace Telegram.Views
             {
                 if (ViewModel.HasSharedMembers)
                 {
-                    MediaFrame.Navigate(typeof(ChatSharedMembersPage), null, new SuppressNavigationTransitionInfo());
+                    MediaFrame.Navigate(typeof(ProfileMembersTabPage), null, new SuppressNavigationTransitionInfo());
                     return;
                 }
                 else if (ViewModel.HasPinnedStories)
                 {
-                    MediaFrame.Navigate(typeof(ChatSharedStoriesPage), null, new SuppressNavigationTransitionInfo());
+                    MediaFrame.Navigate(typeof(ProfileStoriesTabPage), null, new SuppressNavigationTransitionInfo());
                     return;
                 }
 
                 var sharedCount = ViewModel.SharedCount;
                 if (sharedCount[0] > 0)
                 {
-                    MediaFrame.Navigate(typeof(ChatSharedMediaPage), null, new SuppressNavigationTransitionInfo());
+                    MediaFrame.Navigate(typeof(ProfileMediaTabPage), null, new SuppressNavigationTransitionInfo());
                 }
                 else if (sharedCount[1] > 0)
                 {
-                    MediaFrame.Navigate(typeof(ChatSharedFilesPage), null, new SuppressNavigationTransitionInfo());
+                    MediaFrame.Navigate(typeof(ProfileFilesTabPage), null, new SuppressNavigationTransitionInfo());
                 }
                 else if (sharedCount[2] > 0)
                 {
-                    MediaFrame.Navigate(typeof(ChatSharedLinksPage), null, new SuppressNavigationTransitionInfo());
+                    MediaFrame.Navigate(typeof(ProfileLinksTabPage), null, new SuppressNavigationTransitionInfo());
                 }
                 else if (sharedCount[3] > 0)
                 {
-                    MediaFrame.Navigate(typeof(ChatSharedMusicPage), null, new SuppressNavigationTransitionInfo());
+                    MediaFrame.Navigate(typeof(ProfileMusicTabPage), null, new SuppressNavigationTransitionInfo());
                 }
                 else if (sharedCount[4] > 0)
                 {
-                    MediaFrame.Navigate(typeof(ChatSharedVoicePage), null, new SuppressNavigationTransitionInfo());
+                    MediaFrame.Navigate(typeof(ProfileVoiceTabPage), null, new SuppressNavigationTransitionInfo());
                 }
                 else if (ViewModel.HasSharedGroups)
                 {
-                    MediaFrame.Navigate(typeof(UserCommonChatsPage), null, new SuppressNavigationTransitionInfo());
+                    MediaFrame.Navigate(typeof(ProfileGroupsTabPage), null, new SuppressNavigationTransitionInfo());
                 }
             }
         }
@@ -84,7 +83,7 @@ namespace Telegram.Views
         {
             ProfileHeader?.UpdateChat(chat);
 
-            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            if (MediaFrame.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.UpdateChat(chat);
             }
@@ -97,7 +96,7 @@ namespace Telegram.Views
         {
             ProfileHeader?.UpdateChatTitle(chat);
 
-            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            if (MediaFrame.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.UpdateChatTitle(chat);
             }
@@ -107,7 +106,7 @@ namespace Telegram.Views
         {
             ProfileHeader?.UpdateChatPhoto(chat);
 
-            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            if (MediaFrame.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.UpdateChatPhoto(chat);
             }
@@ -117,7 +116,7 @@ namespace Telegram.Views
         {
             ProfileHeader?.UpdateChatActiveStories(chat);
 
-            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            if (MediaFrame.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.UpdateChatActiveStories(chat);
             }
@@ -127,7 +126,7 @@ namespace Telegram.Views
         {
             ProfileHeader?.UpdateChatNotificationSettings(chat);
 
-            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            if (MediaFrame.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.UpdateChatNotificationSettings(chat);
             }
@@ -137,7 +136,7 @@ namespace Telegram.Views
         {
             ProfileHeader?.UpdateUser(chat, user, secret);
 
-            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            if (MediaFrame.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.UpdateUser(chat, user, secret);
             }
@@ -147,7 +146,7 @@ namespace Telegram.Views
         {
             ProfileHeader?.UpdateUserFullInfo(chat, user, fullInfo, secret, accessToken);
 
-            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            if (MediaFrame.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.UpdateUserFullInfo(chat, user, fullInfo, secret, accessToken);
             }
@@ -157,7 +156,7 @@ namespace Telegram.Views
         {
             ProfileHeader?.UpdateUserStatus(chat, user);
 
-            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            if (MediaFrame.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.UpdateUserStatus(chat, user);
             }
@@ -169,7 +168,7 @@ namespace Telegram.Views
         {
             ProfileHeader?.UpdateSecretChat(chat, secretChat);
 
-            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            if (MediaFrame.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.UpdateSecretChat(chat, secretChat);
             }
@@ -181,7 +180,7 @@ namespace Telegram.Views
         {
             ProfileHeader?.UpdateBasicGroup(chat, group);
 
-            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            if (MediaFrame.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.UpdateBasicGroup(chat, group);
             }
@@ -191,7 +190,7 @@ namespace Telegram.Views
         {
             ProfileHeader?.UpdateBasicGroupFullInfo(chat, group, fullInfo);
 
-            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            if (MediaFrame.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.UpdateBasicGroupFullInfo(chat, group, fullInfo);
             }
@@ -205,7 +204,7 @@ namespace Telegram.Views
         {
             ProfileHeader?.UpdateSupergroup(chat, group);
 
-            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            if (MediaFrame.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.UpdateSupergroup(chat, group);
             }
@@ -220,7 +219,7 @@ namespace Telegram.Views
         {
             ProfileHeader?.UpdateSupergroupFullInfo(chat, group, fullInfo);
 
-            if (MediaFrame.Content is ChatSharedMediaPageBase sharedMedia)
+            if (MediaFrame.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.UpdateSupergroupFullInfo(chat, group, fullInfo);
             }
@@ -230,7 +229,7 @@ namespace Telegram.Views
 
         private void OnNavigated(object sender, NavigationEventArgs e)
         {
-            if (e.Content is ChatSharedMediaPageBase sharedMedia)
+            if (e.Content is ProfileTabPage sharedMedia)
             {
                 sharedMedia.Header.DataContext = ViewModel;
             }

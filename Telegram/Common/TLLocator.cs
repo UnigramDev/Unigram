@@ -314,11 +314,21 @@ namespace Telegram.Views
                         _translateService ??= new Telegram.Services.TranslateService(
                             _clientService,
                             _settingsService),
-                        Resolve<Telegram.ViewModels.Chats.ChatSharedMediaViewModel>(),
-                        Resolve<Telegram.ViewModels.Users.UserCommonChatsViewModel>(),
-                        Resolve<Telegram.ViewModels.Supergroups.SupergroupMembersViewModel>());
-                case nameof(Telegram.ViewModels.Users.UserCommonChatsViewModel):
-                    return (T)(object)new Telegram.ViewModels.Users.UserCommonChatsViewModel(
+                        Resolve<Telegram.ViewModels.Profile.ProfileStoriesTabViewModel>(),
+                        Resolve<Telegram.ViewModels.Profile.ProfileGroupsTabViewModel>(),
+                        Resolve<Telegram.ViewModels.Profile.ProfileMembersTabViewModel>());
+                case nameof(Telegram.ViewModels.Profile.ProfileMembersTabViewModel):
+                    return (T)(object)new Telegram.ViewModels.Profile.ProfileMembersTabViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
+                case nameof(Telegram.ViewModels.Profile.ProfileStoriesTabViewModel):
+                    return (T)(object)new Telegram.ViewModels.Profile.ProfileStoriesTabViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
+                case nameof(Telegram.ViewModels.Profile.ProfileGroupsTabViewModel):
+                    return (T)(object)new Telegram.ViewModels.Profile.ProfileGroupsTabViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
@@ -404,8 +414,8 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Chats.ChatSharedMediaViewModel):
-                    return (T)(object)new Telegram.ViewModels.Chats.ChatSharedMediaViewModel(
+                case nameof(Telegram.ViewModels.Profile.ProfileTabsViewModel):
+                    return (T)(object)new Telegram.ViewModels.Profile.ProfileTabsViewModel(
                         _clientService,
                         _settingsService,
                         _storageService ??= new Telegram.Services.StorageService(_clientService),
@@ -469,8 +479,8 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.ChatStoriesViewModel):
-                    return (T)(object)new Telegram.ViewModels.ChatStoriesViewModel(
+                case nameof(Telegram.ViewModels.Chats.ChatStoriesViewModel):
+                    return (T)(object)new Telegram.ViewModels.Chats.ChatStoriesViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);

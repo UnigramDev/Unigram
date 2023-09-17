@@ -10,11 +10,11 @@ using Telegram.ViewModels;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 
-namespace Telegram.Views.Chats
+namespace Telegram.Views.Profile
 {
-    public sealed partial class ChatSharedVoicePage : ChatSharedMediaPageBase
+    public sealed partial class ProfileVoiceTabPage : ProfileTabPage
     {
-        public ChatSharedVoicePage()
+        public ProfileVoiceTabPage()
         {
             InitializeComponent();
             ScrollingHost.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, OnSelectionModeChanged);

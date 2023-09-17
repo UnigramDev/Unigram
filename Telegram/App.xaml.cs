@@ -381,7 +381,6 @@ namespace Telegram
                 //
                 MainPage => TLContainer.Current.Resolve<MainViewModel>(sessionId),
                 SettingsPage settings => TLContainer.Current.Resolve<SettingsViewModel, ISettingsDelegate>(settings, sessionId),
-                UserCommonChatsPage => TLContainer.Current.Resolve<UserCommonChatsViewModel>(sessionId),
                 UserCreatePage => TLContainer.Current.Resolve<UserCreateViewModel>(sessionId),
                 UserEditPage userEdit => TLContainer.Current.Resolve<UserEditViewModel, IUserDelegate>(userEdit, sessionId),
                 //

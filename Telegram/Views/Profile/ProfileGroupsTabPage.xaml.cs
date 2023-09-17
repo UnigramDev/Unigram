@@ -7,14 +7,13 @@
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Td.Api;
-using Telegram.Views.Chats;
 using Windows.UI.Xaml.Controls;
 
-namespace Telegram.Views.Users
+namespace Telegram.Views.Profile
 {
-    public sealed partial class UserCommonChatsPage : ChatSharedMediaPageBase
+    public sealed partial class ProfileGroupsTabPage : ProfileTabPage
     {
-        public UserCommonChatsPage()
+        public ProfileGroupsTabPage()
         {
             InitializeComponent();
         }

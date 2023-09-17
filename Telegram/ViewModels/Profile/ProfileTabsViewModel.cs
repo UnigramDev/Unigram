@@ -18,35 +18,34 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
-using Telegram.Views.Chats;
 using Telegram.Views.Popups;
-using Telegram.Views.Users;
+using Telegram.Views.Profile;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace Telegram.ViewModels.Chats
+namespace Telegram.ViewModels.Profile
 {
-    public class ProfileItem
+    public class ProfileTabItem
     {
         public string Text { get; set; }
 
         public Type Type { get; set; }
 
-        public ProfileItem(string text, Type type)
+        public ProfileTabItem(string text, Type type)
         {
             Text = text;
             Type = type;
         }
     }
 
-    public class ChatSharedMediaViewModel : MultiViewModelBase, IHandle
+    public class ProfileTabsViewModel : MultiViewModelBase, IHandle
     {
         private readonly IPlaybackService _playbackService;
         private readonly IStorageService _storageService;
 
         private readonly IMessageDelegate _messageDelegate;
 
-        public ChatSharedMediaViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, IPlaybackService playbackService)
+        public ProfileTabsViewModel(IClientService clientService, ISettingsService settingsService, IStorageService storageService, IEventAggregator aggregator, IPlaybackService playbackService)
             : base(clientService, settingsService, aggregator)
         {
             _playbackService = playbackService;
@@ -54,7 +53,7 @@ namespace Telegram.ViewModels.Chats
 
             _messageDelegate = new MessageDelegate(this);
 
-            Items = new ObservableCollection<ProfileItem>();
+            Items = new ObservableCollection<ProfileTabItem>();
 
             SelectedItems = new MvxObservableCollection<MessageWithOwner>();
             SelectedItems.CollectionChanged += OnConnectionChanged;
@@ -73,7 +72,7 @@ namespace Telegram.ViewModels.Chats
             RaisePropertyChanged(nameof(CanDeleteSelectedMessages));
         }
 
-        public ObservableCollection<ProfileItem> Items { get; }
+        public ObservableCollection<ProfileTabItem> Items { get; }
 
         public IPlaybackService PlaybackService => _playbackService;
 
@@ -138,7 +137,7 @@ namespace Telegram.ViewModels.Chats
 
             if (Chat.Type is ChatTypeBasicGroup || Chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
             {
-                Items.Add(new ProfileItem(Strings.ChannelMembers, typeof(ChatSharedMembersPage)));
+                Items.Add(new ProfileTabItem(Strings.ChannelMembers, typeof(ProfileMembersTabPage)));
                 HasSharedMembers = Topic == null;
                 SelectedItem = Items.FirstOrDefault();
             }
@@ -154,8 +153,8 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _sharedCount, value);
         }
 
-        private ProfileItem _selectedItem;
-        public ProfileItem SelectedItem
+        private ProfileTabItem _selectedItem;
+        public ProfileTabItem SelectedItem
         {
             get => _selectedItem;
             set => Set(ref _selectedItem, value);
@@ -192,23 +191,23 @@ namespace Telegram.ViewModels.Chats
 
             if (SharedCount[0] > 0)
             {
-                Items.Add(new ProfileItem(Strings.SharedMediaTab2, typeof(ChatSharedMediaPage)));
+                Items.Add(new ProfileTabItem(Strings.SharedMediaTab2, typeof(ProfileMediaTabPage)));
             }
             if (SharedCount[1] > 0)
             {
-                Items.Add(new ProfileItem(Strings.SharedFilesTab2, typeof(ChatSharedFilesPage)));
+                Items.Add(new ProfileTabItem(Strings.SharedFilesTab2, typeof(ProfileFilesTabPage)));
             }
             if (SharedCount[2] > 0)
             {
-                Items.Add(new ProfileItem(Strings.SharedLinksTab2, typeof(ChatSharedLinksPage)));
+                Items.Add(new ProfileTabItem(Strings.SharedLinksTab2, typeof(ProfileLinksTabPage)));
             }
             if (SharedCount[3] > 0)
             {
-                Items.Add(new ProfileItem(Strings.SharedMusicTab2, typeof(ChatSharedMusicPage)));
+                Items.Add(new ProfileTabItem(Strings.SharedMusicTab2, typeof(ProfileMusicTabPage)));
             }
             if (SharedCount[4] > 0)
             {
-                Items.Add(new ProfileItem(Strings.SharedVoiceTab2, typeof(ChatSharedVoicePage)));
+                Items.Add(new ProfileTabItem(Strings.SharedVoiceTab2, typeof(ProfileVoiceTabPage)));
             }
 
             if (chat.Type is ChatTypePrivate or ChatTypeSecret)
@@ -221,13 +220,27 @@ namespace Telegram.ViewModels.Chats
 
                 if (cached.HasPinnedStories)
                 {
-                    Items.Insert(0, new ProfileItem(Strings.ProfileStories, typeof(ChatSharedStoriesPage)));
+                    Items.Insert(0, new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
                     HasPinnedStories = true;
                 }
                 if (cached.GroupInCommonCount > 0)
                 {
-                    Items.Add(new ProfileItem(Strings.SharedGroupsTab2, typeof(UserCommonChatsPage)));
+                    Items.Add(new ProfileTabItem(Strings.SharedGroupsTab2, typeof(ProfileGroupsTabPage)));
                     HasSharedGroups = true;
+                }
+            }
+            else if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            {
+                var user = ClientService.GetSupergroup(chat);
+                var cached = ClientService.GetSupergroupFull(chat);
+
+                // This should really rarely happen
+                cached ??= await ClientService.SendAsync(new GetSupergroupFullInfo(user.Id)) as SupergroupFullInfo;
+
+                if (cached.HasPinnedStories)
+                {
+                    Items.Insert(0, new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
+                    HasPinnedStories = true;
                 }
             }
 

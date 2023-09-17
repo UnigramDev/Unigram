@@ -7,14 +7,15 @@
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.ViewModels;
+using Telegram.Views.Profile;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 
-namespace Telegram.Views.Chats
+namespace Telegram.Views.Profile
 {
-    public sealed partial class ChatSharedMusicPage : ChatSharedMediaPageBase
+    public sealed partial class ProfileMusicTabPage : ProfileTabPage
     {
-        public ChatSharedMusicPage()
+        public ProfileMusicTabPage()
         {
             InitializeComponent();
             ScrollingHost.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, OnSelectionModeChanged);

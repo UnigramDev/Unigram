@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
 
-namespace Telegram.ViewModels
+namespace Telegram.ViewModels.Chats
 {
     public class ChatStoriesViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
@@ -59,6 +59,11 @@ namespace Telegram.ViewModels
             {
                 _chatId = args.ChatId;
                 _type = args.Type;
+            }
+            else if (parameter is long chatId)
+            {
+                _chatId = chatId;
+                _type = ChatStoriesType.Pinned;
             }
             else
             {

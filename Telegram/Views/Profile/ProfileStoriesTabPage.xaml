@@ -1,17 +1,17 @@
-﻿<local:ChatSharedMediaPageBase x:Class="Telegram.Views.Chats.ChatSharedStoriesPage"
-                               xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                               xmlns:local="using:Telegram.Views.Chats"
-                               xmlns:chats="using:Telegram.Controls.Chats"
-                               xmlns:controls="using:Telegram.Controls"
-                               xmlns:cells="using:Telegram.Controls.Cells"
-                               xmlns:common="using:Telegram.Common"
-                               xmlns:selectors="using:Telegram.Selectors"
-                               xmlns:td="using:Telegram.Td.Api"
-                               xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                               xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                               xmlns:messages="using:Telegram.Controls.Messages"
-                               mc:Ignorable="d">
+﻿<local:ProfileTabPage x:Class="Telegram.Views.Profile.ProfileStoriesTabPage"
+                      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:common="using:Telegram.Common"
+                      xmlns:controls="using:Telegram.Controls"
+                      xmlns:cells="using:Telegram.Controls.Cells"
+                      xmlns:chats="using:Telegram.Controls.Chats"
+                      xmlns:messages="using:Telegram.Controls.Messages"
+                      xmlns:selectors="using:Telegram.Selectors"
+                      xmlns:td="using:Telegram.Td.Api"
+                      xmlns:local="using:Telegram.Views.Profile"
+                      mc:Ignorable="d">
 
     <Page.Transitions>
         <TransitionCollection>
@@ -23,7 +23,7 @@
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <GridView x:Name="ScrollingHost"
-                  ItemsSource="{x:Bind ViewModel.Stories}"
+                  ItemsSource="{x:Bind ViewModel.StoriesTab.Items}"
                   Loaded="List_Loaded"
                   ItemClick="List_ItemClick"
                   IsItemClickEnabled="True"
@@ -32,6 +32,11 @@
                   ContainerContentChanging="OnContainerContentChanging"
                   common:FluidGridView.MaxLength="1004"
                   Padding="24,0,20,0">
+            <common:SelectedItemsBinder.Attached>
+                <common:SelectedItemsBinder SelectionMode="Auto"
+                                            SelectedItems="{x:Bind ViewModel.StoriesTab.SelectedItems}"
+                                            IsItemClickEnabled="True" />
+            </common:SelectedItemsBinder.Attached>
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger MinLength="0"
                                              RowsOrColumns="3" />
@@ -115,5 +120,53 @@
                 <Border Height="60" />
             </GridView.Footer>
         </GridView>
+
+        <Grid x:Name="ManagePanel"
+              Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+              VerticalAlignment="Bottom"
+              Margin="24,8"
+              CornerRadius="15"
+              MaxWidth="1000"
+              Visibility="Collapsed"
+              Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="15"
+                    Grid.ColumnSpan="8" />
+
+            <controls:GlyphButton Click="{x:Bind ViewModel.StoriesTab.UnselectStories}"
+                                  CornerRadius="13,4,4,13"
+                                  Glyph="&#xE711;" />
+
+            <controls:AnimatedTextBlock Text="{x:Bind ConvertSelected(ViewModel.StoriesTab.SelectedItems.Count), Mode=OneWay}"
+                                        TextStyle="{StaticResource BaseTextBlockStyle}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,-2,0,0"
+                                        Grid.Column="1" />
+
+
+            <controls:GlyphButton Glyph="{x:Bind ConvertToggleIcon(ViewModel.StoriesTab.IsPinned)}"
+                                  Content="{x:Bind ConvertToggleText(ViewModel.StoriesTab.IsPinned, ViewModel.StoriesTab.SelectedItems.Count), Mode=OneWay}"
+                                  IsEnabled="{x:Bind ViewModel.StoriesTab.CanSelectedToggleIsPinned, Mode=OneWay}"
+                                  Click="{x:Bind ViewModel.StoriesTab.ToggleSelectedStories}"
+                                  Style="{StaticResource GlyphButtonWithLabelStyle}"
+                                  Grid.Column="3" />
+
+            <controls:GlyphButton Glyph="&#xE74D;"
+                                  Content="{CustomResource Delete}"
+                                  IsEnabled="{x:Bind ViewModel.StoriesTab.CanSelectedBeDeleted, Mode=OneWay}"
+                                  Foreground="#df3f40"
+                                  Click="{x:Bind ViewModel.StoriesTab.DeleteSelectedStories}"
+                                  Style="{StaticResource GlyphButtonWithLabelStyle}"
+                                  CornerRadius="4,13,13,4"
+                                  Grid.Column="4" />
+        </Grid>
     </Grid>
-</local:ChatSharedMediaPageBase>
+</local:ProfileTabPage>

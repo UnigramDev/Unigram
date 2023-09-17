@@ -13,11 +13,11 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Telegram.Views.Chats
+namespace Telegram.Views.Profile
 {
-    public sealed partial class ChatSharedMembersPage : ChatSharedMediaPageBase
+    public sealed partial class ProfileMembersTabPage : ProfileTabPage
     {
-        public ChatSharedMembersPage()
+        public ProfileMembersTabPage()
         {
             InitializeComponent();
         }

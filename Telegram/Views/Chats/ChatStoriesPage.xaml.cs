@@ -3,7 +3,7 @@ using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
-using Telegram.ViewModels;
+using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Stories;
 using Windows.Foundation;
 using Windows.UI.Composition;
