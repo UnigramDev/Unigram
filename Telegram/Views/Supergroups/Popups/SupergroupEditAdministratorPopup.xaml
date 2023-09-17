@@ -22,13 +22,65 @@
                               IsChecked="{x:Bind ViewModel.CanChangeInfo, Mode=TwoWay}"
                               Content="{CustomResource EditAdminChangeGroupInfo}" />
 
-                    <CheckBox x:Name="PostMessages"
-                              IsChecked="{x:Bind ViewModel.CanPostMessages, Mode=TwoWay}"
-                              Content="{CustomResource EditAdminPostMessages}" />
+                    <controls:SettingsExpander x:Name="CanManageMessagesRoot"
+                                               Visibility="Collapsed"
+                                               Background="Transparent"
+                                               MinHeight="32">
+                        <controls:SettingsExpander.Header>
+                            <CheckBox x:Name="CanManageMessages"
+                                      IsChecked="{x:Bind ViewModel.CanManageMessages, Mode=TwoWay}">
+                                <TextBlock>
+                                        <Run Text="{CustomResource ChannelManageMessages}" />
+                                        <Run Text="{x:Bind ConvertCanSendCount(ViewModel.CanManageMessagesCount), Mode=OneWay}"
+                                             FontWeight="SemiBold" />
+                                </TextBlock>
+                            </CheckBox>
 
-                    <CheckBox x:Name="EditMessages"
-                              IsChecked="{x:Bind ViewModel.CanEditMessages, Mode=TwoWay}"
-                              Content="{CustomResource EditAdminEditMessages}" />
+                        </controls:SettingsExpander.Header>
+                        <StackPanel>
+                            <CheckBox x:Name="CanPostMessages"
+                                      IsChecked="{x:Bind ViewModel.CanPostMessages, Mode=TwoWay}"
+                                      Content="{CustomResource EditAdminPostMessages}" />
+
+                            <CheckBox x:Name="CanEditMessages"
+                                      IsChecked="{x:Bind ViewModel.CanEditMessages, Mode=TwoWay}"
+                                      Content="{CustomResource EditAdminEditMessages}" />
+
+                            <CheckBox x:Name="CanDeleteMessages2"
+                                      IsChecked="{x:Bind ViewModel.CanDeleteMessages, Mode=TwoWay}"
+                                      Content="{CustomResource EditAdminDeleteMessages}" />
+                        </StackPanel>
+                    </controls:SettingsExpander>
+
+                    <controls:SettingsExpander x:Name="CanManageStoriesRoot"
+                                               Visibility="Collapsed"
+                                               Background="Transparent"
+                                               MinHeight="32">
+                        <controls:SettingsExpander.Header>
+                            <CheckBox x:Name="CanManageStories"
+                                      IsChecked="{x:Bind ViewModel.CanManageStories, Mode=TwoWay}">
+                                <TextBlock>
+                                        <Run Text="{CustomResource ChannelManageStories}" />
+                                        <Run Text="{x:Bind ConvertCanSendCount(ViewModel.CanManageStoriesCount), Mode=OneWay}"
+                                             FontWeight="SemiBold" />
+                                </TextBlock>
+                            </CheckBox>
+
+                        </controls:SettingsExpander.Header>
+                        <StackPanel>
+                            <CheckBox x:Name="CanPostStories"
+                                      IsChecked="{x:Bind ViewModel.CanPostStories, Mode=TwoWay}"
+                                      Content="{CustomResource EditAdminPostStories}" />
+
+                            <CheckBox x:Name="CanEditStories"
+                                      IsChecked="{x:Bind ViewModel.CanEditStories, Mode=TwoWay}"
+                                      Content="{CustomResource EditAdminEditStories}" />
+
+                            <CheckBox x:Name="CanDeleteStories"
+                                      IsChecked="{x:Bind ViewModel.CanDeleteStories, Mode=TwoWay}"
+                                      Content="{CustomResource EditAdminDeleteStories}" />
+                        </StackPanel>
+                    </controls:SettingsExpander>
 
                     <CheckBox x:Name="DeleteMessages"
                               IsChecked="{x:Bind ViewModel.CanDeleteMessages, Mode=TwoWay}"
@@ -75,7 +127,7 @@
                          PlaceholderText="{CustomResource ChannelCreator}"
                          TextWrapping="Wrap"
                          AcceptsReturn="True"
-                         Margin="0,4,0,8"/>
+                         Margin="0,4,0,8" />
 
                 <TextBlock x:Name="EditRankFooter"
                            Text="{CustomResource EditAdminRankInfo}"

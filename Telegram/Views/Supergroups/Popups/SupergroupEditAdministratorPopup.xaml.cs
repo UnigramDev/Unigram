@@ -78,8 +78,14 @@ namespace Telegram.Views.Supergroups.Popups
                 EditRankFooter.Text = string.Format(Strings.EditAdminRankInfo, member.Status is ChatMemberStatusCreator ? Strings.ChannelCreator : Strings.ChannelAdmin);
 
                 ChangeInfo.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited && !chat.Permissions.CanChangeInfo;
-                PostMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
-                EditMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                CanManageMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                CanManageStories.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                CanPostMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                CanEditMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                CanDeleteMessages2.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                CanPostStories.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                CanEditStories.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
+                CanDeleteStories.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 DeleteMessages.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 BanUsers.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 AddUsers.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
@@ -102,13 +108,16 @@ namespace Telegram.Views.Supergroups.Popups
                 PermissionsRoot.Visibility = Visibility.Visible;
                 PermissionsFooter.Visibility = Visibility.Collapsed;
 
+                if (group.IsChannel)
+                {
+                    CanManageMessagesRoot.Visibility = Visibility.Visible;
+                    CanManageStoriesRoot.Visibility = Visibility.Visible;
+                    DeleteMessages.Visibility = Visibility.Collapsed;
+                }
+
                 ChangeInfo.Content = group.IsChannel ? Strings.EditAdminChangeChannelInfo : Strings.EditAdminChangeGroupInfo;
-                PostMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-                EditMessages.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
-                DeleteMessages.Content = group.IsChannel ? Strings.EditAdminDeleteMessages : Strings.EditAdminGroupDeleteMessages;
                 BanUsers.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
                 PinMessages.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
-                ManageVideoChats.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
                 IsAnonymous.Visibility = group.IsChannel ? Visibility.Collapsed : Visibility.Visible;
                 AddUsers.Content = chat.Permissions.CanInviteUsers ? Strings.EditAdminAddUsersViaLink : Strings.EditAdminAddUsers;
             }
@@ -121,6 +130,11 @@ namespace Telegram.Views.Supergroups.Popups
         }
 
         #region Binding
+
+        private string ConvertCanSendCount(int count)
+        {
+            return $"{count}/3";
+        }
 
         private Visibility ConvertActionVisibility(Visibility ownership, Visibility dismiss)
         {

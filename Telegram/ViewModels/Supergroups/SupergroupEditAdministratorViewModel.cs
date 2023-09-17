@@ -92,6 +92,9 @@ namespace Telegram.ViewModels.Supergroups
                     CanInviteUsers = administrator.Rights.CanInviteUsers;
                     CanPinMessages = administrator.Rights.CanPinMessages;
                     CanPostMessages = administrator.Rights.CanPostMessages;
+                    CanPostStories = administrator.Rights.CanPostStories;
+                    CanEditStories = administrator.Rights.CanEditStories;
+                    CanDeleteStories = administrator.Rights.CanDeleteStories;
                     CanPromoteMembers = administrator.Rights.CanPromoteMembers;
                     CanRestrictMembers = administrator.Rights.CanRestrictMembers;
                     CanManageVideoChats = administrator.Rights.CanManageVideoChats;
@@ -107,9 +110,12 @@ namespace Telegram.ViewModels.Supergroups
                     CanInviteUsers = true;
                     CanPinMessages = true;
                     CanPostMessages = true;
-                    CanManageVideoChats = true;
+                    CanPostStories = true;
+                    CanEditStories = true;
+                    CanDeleteStories = true;
                     CanPromoteMembers = member.Status is ChatMemberStatusCreator;
                     CanRestrictMembers = true;
+                    CanManageVideoChats = true;
 
                     if (member.Status is ChatMemberStatusCreator creator)
                     {
@@ -169,10 +175,123 @@ namespace Telegram.ViewModels.Supergroups
                     (!supergroup.IsChannel || _canEditMessages) &&
                     (supergroup.IsChannel || _canPinMessages) &&
                     (!supergroup.IsChannel || _canPostMessages) &&
+                    (!supergroup.IsChannel || _canPostStories) &&
+                    (!supergroup.IsChannel || _canEditStories) &&
+                    (!supergroup.IsChannel || _canDeleteStories) &&
                     (supergroup.IsChannel || _canRestrictMembers) &&
                     (supergroup.IsChannel || _canManageVideoChats);
             }
         }
+
+        #region Manage messages
+
+        private bool? _canManageMessages;
+        public bool? CanManageMessages
+        {
+            get => _canManageMessages;
+            set
+            {
+                Set(ref _canManageMessages, value);
+
+                if (value.HasValue)
+                {
+                    CanPostMessages = value.Value;
+                    CanEditMessages = value.Value;
+                    CanDeleteMessages = value.Value;
+                }
+            }
+        }
+
+        private void UpdateCanManageMessages()
+        {
+            var count = CountMessages();
+
+            Set(ref _canManageMessagesCount, count, nameof(CanManageMessagesCount));
+            Set(ref _canManageMessages, count == 0 ? false : count == 3 ? true : null, nameof(CanManageMessages));
+        }
+
+        private int CountMessages()
+        {
+            var count = 0;
+            if (_canPostMessages)
+            {
+                count++;
+            }
+            if (_canEditMessages)
+            {
+                count++;
+            }
+            if (_canDeleteMessages)
+            {
+                count++;
+            }
+
+            return count;
+        }
+
+        private int _canManageMessagesCount;
+        public int CanManageMessagesCount
+        {
+            get => _canManageMessagesCount;
+            set => Set(ref _canManageMessagesCount, value);
+        }
+
+        #endregion
+
+        #region Manage stories
+
+        private bool? _canManageStories;
+        public bool? CanManageStories
+        {
+            get => _canManageStories;
+            set
+            {
+                Set(ref _canManageStories, value);
+
+                if (value.HasValue)
+                {
+                    CanPostStories = value.Value;
+                    CanEditStories = value.Value;
+                    CanDeleteStories = value.Value;
+                }
+            }
+        }
+
+        private void UpdateCanManageStories()
+        {
+            var count = CountStories();
+
+            Set(ref _canManageStoriesCount, count, nameof(CanManageStoriesCount));
+            Set(ref _canManageStories, count == 0 ? false : count == 3 ? true : null, nameof(CanManageStories));
+        }
+
+        private int CountStories()
+        {
+            var count = 0;
+            if (_canPostMessages)
+            {
+                count++;
+            }
+            if (_canEditMessages)
+            {
+                count++;
+            }
+            if (_canDeleteMessages)
+            {
+                count++;
+            }
+
+            return count;
+        }
+
+        private int _canManageStoriesCount;
+        public int CanManageStoriesCount
+        {
+            get => _canManageStoriesCount;
+            set => Set(ref _canManageStoriesCount, value);
+        }
+
+        #endregion
 
         #region Flags
 
@@ -195,6 +314,7 @@ namespace Telegram.ViewModels.Supergroups
             {
                 Set(ref _canPostMessages, value);
                 RaisePropertyChanged(nameof(CanTransferOwnership));
+                UpdateCanManageMessages();
             }
         }
 
@@ -206,6 +326,7 @@ namespace Telegram.ViewModels.Supergroups
             {
                 Set(ref _canEditMessages, value);
                 RaisePropertyChanged(nameof(CanTransferOwnership));
+                UpdateCanManageMessages();
             }
         }
 
@@ -217,8 +338,46 @@ namespace Telegram.ViewModels.Supergroups
             {
                 Set(ref _canDeleteMessages, value);
                 RaisePropertyChanged(nameof(CanTransferOwnership));
+                UpdateCanManageMessages();
             }
         }
+
+        private bool _canPostStories;
+        public bool CanPostStories
+        {
+            get => _canPostStories;
+            set
+            {
+                Set(ref _canPostStories, value);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
+                UpdateCanManageStories();
+            }
+        }
+
+        private bool _canEditStories;
+        public bool CanEditStories
+        {
+            get => _canEditStories;
+            set
+            {
+                Set(ref _canEditStories, value);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
+                UpdateCanManageStories();
+            }
+        }
+
+        private bool _canDeleteStories;
+        public bool CanDeleteStories
+        {
+            get => _canDeleteStories;
+            set
+            {
+                Set(ref _canDeleteStories, value);
+                RaisePropertyChanged(nameof(CanTransferOwnership));
+                UpdateCanManageStories();
+            }
+        }
+
 
         private bool _canRestrictMembers;
         public bool CanRestrictMembers
@@ -337,6 +496,9 @@ namespace Telegram.ViewModels.Supergroups
                         CanInviteUsers = _canInviteUsers,
                         CanPinMessages = !channel && _canPinMessages,
                         CanPostMessages = channel && _canPostMessages,
+                        CanPostStories = channel && _canPostStories,
+                        CanEditStories = channel && _canEditStories,
+                        CanDeleteStories = channel && _canDeleteStories,
                         CanPromoteMembers = _canPromoteMembers,
                         CanRestrictMembers = !channel && _canRestrictMembers,
                         CanManageVideoChats = !channel && _canManageVideoChats
