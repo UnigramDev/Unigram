@@ -46,7 +46,7 @@ namespace Telegram.Views
                 }
                 else if (ViewModel.HasPinnedStories)
                 {
-                    MediaFrame.Navigate(typeof(ChatStoriesPage), null, new SuppressNavigationTransitionInfo());
+                    MediaFrame.Navigate(typeof(ChatSharedStoriesPage), null, new SuppressNavigationTransitionInfo());
                     return;
                 }
 

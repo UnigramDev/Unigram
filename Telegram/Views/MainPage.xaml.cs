@@ -31,6 +31,7 @@ using Telegram.ViewModels.Drawers;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.BasicGroups;
 using Telegram.Views.Channels;
+using Telegram.Views.Chats;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
@@ -2121,7 +2122,7 @@ namespace Telegram.Views
             }
             else if (destination == RootDestination.MyStories)
             {
-                MasterDetail.NavigationService.Navigate(typeof(MyStoriesPage));
+                MasterDetail.NavigationService.Navigate(typeof(ChatStoriesPage));
             }
             else if (destination == RootDestination.SavedMessages)
             {

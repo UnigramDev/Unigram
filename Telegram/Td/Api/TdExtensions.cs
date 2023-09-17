@@ -1974,6 +1974,55 @@ namespace Telegram.Td.Api
             }
         }
 
+
+        public static bool CanPostStories(this Supergroup supergroup)
+        {
+            if (supergroup.Status == null)
+            {
+                return false;
+            }
+
+            if (supergroup.IsChannel)
+            {
+                return supergroup.Status is ChatMemberStatusCreator
+                    || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanPostStories;
+            }
+
+            return false;
+        }
+
+        public static bool CanEditStories(this Supergroup supergroup)
+        {
+            if (supergroup.Status == null)
+            {
+                return false;
+            }
+
+            if (supergroup.IsChannel)
+            {
+                return supergroup.Status is ChatMemberStatusCreator
+                    || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanEditStories;
+            }
+
+            return false;
+        }
+
+        public static bool CanDeleteStories(this Supergroup supergroup)
+        {
+            if (supergroup.Status == null)
+            {
+                return false;
+            }
+
+            if (supergroup.IsChannel)
+            {
+                return supergroup.Status is ChatMemberStatusCreator
+                    || supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanDeleteStories;
+            }
+
+            return false;
+        }
+
         public static bool CanRestrictMembers(this Supergroup supergroup)
         {
             if (supergroup.Status == null)

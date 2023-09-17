@@ -731,7 +731,7 @@ namespace Telegram.Controls
                     {
                         //flyout.CreateFlyoutItem(ViewModel.EditCommand, Strings.ManageChannelMenu, Icons.Edit);
                     }
-                    else if (supergroup.Status is ChatMemberStatusCreator || (supergroup.Status is ChatMemberStatusAdministrator administrator && administrator.Rights.CanInviteUsers) || chat.Permissions.CanInviteUsers)
+                    else if (chat.Permissions.CanInviteUsers || supergroup.CanInviteUsers())
                     {
                         flyout.CreateFlyoutItem(ViewModel.Invite, Strings.AddMember, Icons.PersonAdd);
                     }
@@ -742,9 +742,14 @@ namespace Telegram.Controls
                     flyout.CreateFlyoutItem(ViewModel.OpenStatistics, Strings.Statistics, Icons.DataUsage);
                 }
 
-                if (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator)
+                if (super.IsChannel && (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator))
                 {
                     flyout.CreateFlyoutItem(ViewModel.OpenBoosts, Strings.Boosts, Icons.Boosts);
+
+                    if (supergroup.CanEditStories())
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.OpenArchivedStories, Strings.ArchivedStories, Icons.Archive);
+                    }
                 }
 
                 if (!super.IsChannel)

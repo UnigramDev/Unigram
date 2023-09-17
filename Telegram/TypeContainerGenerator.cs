@@ -124,7 +124,7 @@ namespace Telegram
                 typeof(InstantViewModel),
                 typeof(LogOutViewModel),
                 typeof(DiagnosticsViewModel),
-                typeof(MyStoriesViewModel),
+                typeof(ChatStoriesViewModel),
                 typeof(SettingsViewModel),
                 typeof(SettingsAdvancedViewModel),
                 typeof(SettingsStorageViewModel),

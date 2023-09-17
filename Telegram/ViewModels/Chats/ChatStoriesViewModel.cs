@@ -10,7 +10,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
-using Telegram.Views;
+using Telegram.Views.Chats;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -19,44 +19,51 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels
 {
-    public enum MyStoriesType
+    public class ChatStoriesViewModel : ViewModelBase, IIncrementalCollectionOwner
     {
-        Pinned,
-        Archive
-    }
-
-    public class MyStoriesViewModel : ViewModelBase, IIncrementalCollectionOwner
-    {
-        private MyStoriesType _type;
+        private ChatStoriesType _type;
+        private long _chatId;
         private int _fromStoryId;
 
-        public MyStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        public ChatStoriesViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
             Items = new IncrementalCollection<StoryViewModel>(this);
             SelectedItems = new MvxObservableCollection<StoryViewModel>();
+            SelectedItems.CollectionChanged += OnCollectionChanged;
+        }
+
+        private void OnCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            RaisePropertyChanged(nameof(CanSelectedToggleIsPinned));
+            RaisePropertyChanged(nameof(CanSelectedBeDeleted));
         }
 
         public string Title => _type switch
         {
-            MyStoriesType.Archive => Strings.ProfileStoriesArchive,
-            MyStoriesType.Pinned or _ => Strings.ProfileMyStories
+            ChatStoriesType.Archive => Strings.ProfileStoriesArchive,
+            ChatStoriesType.Pinned or _ => Strings.ProfileMyStories
         };
 
-        public bool IsPinned => _type == MyStoriesType.Pinned;
+        public bool IsPinned => _type == ChatStoriesType.Pinned;
 
         public ObservableCollection<StoryViewModel> Items { get; }
         public ObservableCollection<StoryViewModel> SelectedItems { get; }
 
+        public bool CanSelectedToggleIsPinned => SelectedItems.All(x => x.CanToggleIsPinned);
+        public bool CanSelectedBeDeleted => SelectedItems.All(x => x.CanBeDeleted);
+
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (parameter is MyStoriesType type)
+            if (parameter is ChatStoriesArgs args)
             {
-                _type = type;
+                _chatId = args.ChatId;
+                _type = args.Type;
             }
             else
             {
-                _type = MyStoriesType.Pinned;
+                _chatId = ClientService.Options.MyId;
+                _type = ChatStoriesType.Pinned;
             }
 
             return Task.CompletedTask;
@@ -64,7 +71,7 @@ namespace Telegram.ViewModels
 
         public void OpenArchive()
         {
-            NavigationService.Navigate(typeof(MyStoriesPage), MyStoriesType.Archive);
+            NavigationService.Navigate(typeof(ChatStoriesPage), new ChatStoriesArgs(_chatId, ChatStoriesType.Archive));
         }
 
         public void ToggleStory(StoryViewModel story)
@@ -157,8 +164,8 @@ namespace Telegram.ViewModels
 
             Function function = _type switch
             {
-                MyStoriesType.Archive => new GetChatArchivedStories(ClientService.Options.MyId, _fromStoryId, 50),
-                MyStoriesType.Pinned or _ => new GetChatPinnedStories(ClientService.Options.MyId, _fromStoryId, 50),
+                ChatStoriesType.Archive => new GetChatArchivedStories(_chatId, _fromStoryId, 50),
+                ChatStoriesType.Pinned or _ => new GetChatPinnedStories(_chatId, _fromStoryId, 50),
             };
 
             var response = await ClientService.SendAsync(function);
@@ -186,7 +193,15 @@ namespace Telegram.ViewModels
         public bool IsEmpty
         {
             get => _isEmpty;
-            set => Set(ref _isEmpty, value);
+            set
+            {
+                if (Set(ref _isEmpty, value))
+                {
+                    RaisePropertyChanged(nameof(ShowHint));
+                }
+            }
         }
+
+        public bool ShowHint => !IsEmpty && _type == ChatStoriesType.Archive && _chatId != ClientService.Options.MyId;
     }
 }

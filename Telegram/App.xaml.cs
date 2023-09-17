@@ -464,7 +464,7 @@ namespace Telegram
                 MessageStatisticsPage => TLContainer.Current.Resolve<MessageStatisticsViewModel>(sessionId),
                 ChatInviteLinkPage => TLContainer.Current.Resolve<ChatInviteLinkViewModel>(sessionId),
                 ChatStatisticsPage => TLContainer.Current.Resolve<ChatStatisticsViewModel>(sessionId),
-                MyStoriesPage => TLContainer.Current.Resolve<MyStoriesViewModel>(sessionId),
+                ChatStoriesPage => TLContainer.Current.Resolve<ChatStoriesViewModel>(sessionId),
 
                 // Popups
                 SettingsUsernamePopup => TLContainer.Current.Resolve<SettingsUsernameViewModel>(sessionId),

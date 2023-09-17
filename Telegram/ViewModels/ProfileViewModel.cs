@@ -438,6 +438,17 @@ namespace Telegram.ViewModels
             NavigationService.Navigate(typeof(ChatBoostsPage), chat.Id);
         }
 
+        public void OpenArchivedStories()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            NavigationService.Navigate(typeof(ChatStoriesPage), new ChatStoriesArgs(chat.Id, ChatStoriesType.Archive));
+        }
+
         public async void Block()
         {
             var chat = _chat;

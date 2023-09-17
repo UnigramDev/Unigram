@@ -221,7 +221,7 @@ namespace Telegram.ViewModels.Chats
 
                 if (cached.HasPinnedStories)
                 {
-                    Items.Insert(0, new ProfileItem(Strings.ProfileStories, typeof(ChatStoriesPage)));
+                    Items.Insert(0, new ProfileItem(Strings.ProfileStories, typeof(ChatSharedStoriesPage)));
                     HasPinnedStories = true;
                 }
                 if (cached.GroupInCommonCount > 0)

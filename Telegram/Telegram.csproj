@@ -313,9 +313,9 @@
     <Compile Include="Videolan\Shared\VLCException.cs" />
     <Compile Include="ViewModels\ChatNotificationsViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatBoostsViewModel.cs" />
+    <Compile Include="ViewModels\Chats\ChatStoriesViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\ComposeViewModel.cs" />
-    <Compile Include="ViewModels\MyStoriesViewModel.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
     <Compile Include="Collections\LegacyIncrementalCollection.cs" />
@@ -842,6 +842,9 @@
     <Compile Include="Views\Chats\ChatSharedMusicPage.xaml.cs">
       <DependentUpon>ChatSharedMusicPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Chats\ChatSharedStoriesPage.xaml.cs">
+      <DependentUpon>ChatSharedStoriesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Chats\ChatSharedVoicePage.xaml.cs">
       <DependentUpon>ChatSharedVoicePage.xaml</DependentUpon>
     </Compile>
@@ -865,9 +868,6 @@
       <DependentUpon>ShareFolderPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\MultiValueDictionary.cs" />
-    <Compile Include="Views\MyStoriesPage.xaml.cs">
-      <DependentUpon>MyStoriesPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Payments\PaymentAddressPopup.xaml.cs">
       <DependentUpon>PaymentAddressPopup.xaml</DependentUpon>
     </Compile>
@@ -2265,6 +2265,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Chats\ChatSharedStoriesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Chats\ChatSharedVoicePage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2292,10 +2296,6 @@
     <Page Include="Views\Folders\Popups\ShareFolderPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\MyStoriesPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Payments\PaymentAddressPopup.xaml">
       <Generator>MSBuild:Compile</Generator>

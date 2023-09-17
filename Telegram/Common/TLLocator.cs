@@ -469,8 +469,8 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.MyStoriesViewModel):
-                    return (T)(object)new Telegram.ViewModels.MyStoriesViewModel(
+                case nameof(Telegram.ViewModels.ChatStoriesViewModel):
+                    return (T)(object)new Telegram.ViewModels.ChatStoriesViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
