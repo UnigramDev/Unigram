@@ -316,6 +316,7 @@
     <Compile Include="ViewModels\Chats\ChatStoriesViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\ComposeViewModel.cs" />
+    <Compile Include="ViewModels\Profile\ProfileTabsViewModel.cs" />
     <Compile Include="ViewModels\SearchChatsViewModel.cs" />
     <Compile Include="Collections\GroupCallParticipantsCollection.cs" />
     <Compile Include="Collections\LegacyIncrementalCollection.cs" />
@@ -826,28 +827,6 @@
     <Compile Include="Views\Chats\ChatBoostsPage.xaml.cs">
       <DependentUpon>ChatBoostsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Chats\ChatSharedFilesPage.xaml.cs">
-      <DependentUpon>ChatSharedFilesPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Chats\ChatSharedLinksPage.xaml.cs">
-      <DependentUpon>ChatSharedLinksPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Chats\ChatSharedMediaPage.xaml.cs">
-      <DependentUpon>ChatSharedMediaPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Chats\ChatSharedMediaPageBase.cs" />
-    <Compile Include="Views\Chats\ChatSharedMembersPage.xaml.cs">
-      <DependentUpon>ChatSharedMembersPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Chats\ChatSharedMusicPage.xaml.cs">
-      <DependentUpon>ChatSharedMusicPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Chats\ChatSharedStoriesPage.xaml.cs">
-      <DependentUpon>ChatSharedStoriesPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Chats\ChatSharedVoicePage.xaml.cs">
-      <DependentUpon>ChatSharedVoicePage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Chats\ChatStoriesPage.xaml.cs">
       <DependentUpon>ChatStoriesPage.xaml</DependentUpon>
     </Compile>
@@ -1047,7 +1026,6 @@
     <Compile Include="ViewModels\Chats\ChatInviteLinkViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatPhotosViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatSearchViewModel.cs" />
-    <Compile Include="ViewModels\Chats\ChatSharedMediaViewModel.cs" />
     <Compile Include="ViewModels\Chats\ChatStatisticsViewModel.cs" />
     <Compile Include="ViewModels\ChatViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IBackgroundDelegate.cs" />
@@ -1255,6 +1233,28 @@
     </Compile>
     <Compile Include="Views\Premium\Popups\LimitsPopup.xaml.cs">
       <DependentUpon>LimitsPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Profile\ProfileFilesTabPage.xaml.cs">
+      <DependentUpon>ProfileFilesTabPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Profile\ProfileLinksTabPage.xaml.cs">
+      <DependentUpon>ProfileLinksTabPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Profile\ProfileMediaTabPage.xaml.cs">
+      <DependentUpon>ProfileMediaTabPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Profile\ProfileMembersTabPage.xaml.cs">
+      <DependentUpon>ProfileMembersTabPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Profile\ProfileMusicTabPage.xaml.cs">
+      <DependentUpon>ProfileMusicTabPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Profile\ProfileStoriesTabPage.xaml.cs">
+      <DependentUpon>ProfileStoriesTabPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Profile\ProfileTabPage.cs" />
+    <Compile Include="Views\Profile\ProfileVoiceTabPage.xaml.cs">
+      <DependentUpon>ProfileVoiceTabPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stories\Popups\StoryInteractionsPopup.xaml.cs">
       <DependentUpon>StoryInteractionsPopup.xaml</DependentUpon>
@@ -2245,34 +2245,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Chats\ChatSharedFilesPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Chats\ChatSharedLinksPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Chats\ChatSharedMediaPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Chats\ChatSharedMembersPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Chats\ChatSharedMusicPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Chats\ChatSharedStoriesPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Chats\ChatSharedVoicePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Chats\ChatStoriesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2596,6 +2568,34 @@
     <Page Include="Views\Premium\Popups\LimitsPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Profile\ProfileFilesTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Profile\ProfileLinksTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Profile\ProfileMediaTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Profile\ProfileMembersTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Profile\ProfileMusicTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Profile\ProfileStoriesTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Profile\ProfileVoiceTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Stories\Popups\StoryInteractionsPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
