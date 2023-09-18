@@ -89,6 +89,12 @@ namespace Telegram.Controls
 
         private void OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
+            if (_started is false)
+            {
+                sender.Paused = true;
+                return;
+            }
+
             int i = (int)args.Timing.ElapsedTime.TotalMilliseconds;
             if (i > 18)
             {
@@ -125,8 +131,6 @@ namespace Telegram.Controls
             }
 
             _started = false;
-            sender.Paused = true;
-
             Completed?.Invoke(this, EventArgs.Empty);
         }
 
