@@ -765,6 +765,21 @@ namespace Telegram.ViewModels
                 {
                     AppendChange(n.CanDeleteMessages, Strings.EventLogPromotedDeleteMessages);
                 }
+                if (channel)
+                {
+                    if (o.CanPostStories != n.CanPostStories)
+                    {
+                        AppendChange(n.CanPostStories, Strings.EventLogPromotedPostStories);
+                    }
+                    if (o.CanEditStories != n.CanEditStories)
+                    {
+                        AppendChange(n.CanEditStories, Strings.EventLogPromotedEditStories);
+                    }
+                    if (o.CanDeleteMessages != n.CanDeleteMessages)
+                    {
+                        AppendChange(n.CanDeleteStories, Strings.EventLogPromotedDeleteStories);
+                    }
+                }
                 if (o.CanPromoteMembers != n.CanPromoteMembers)
                 {
                     AppendChange(n.CanPromoteMembers, Strings.EventLogPromotedAddAdmins);
