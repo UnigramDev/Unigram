@@ -195,6 +195,11 @@ namespace Telegram.Controls.Gallery
 
         public void Handle(UpdateDeleteMessages update)
         {
+            if (update.FromCache || !update.IsPermanent)
+            {
+                return;
+            }
+
             this.BeginOnUIThread(() =>
             {
                 var viewModel = ViewModel;
