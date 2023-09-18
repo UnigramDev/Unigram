@@ -84,9 +84,9 @@ namespace Telegram.ViewModels.Chats
                 if (response is ChatBoostStatus status)
                 {
                     Level = status.Level;
-                    BoostCount = status.BoostCount;
                     CurrentLevelBoostCount = status.CurrentLevelBoostCount;
                     NextLevelBoostCount = status.NextLevelBoostCount;
+                    BoostCount = status.BoostCount;
                     PremiumMemberCount = status.PremiumMemberCount;
                     PremiumMemberPercentage = status.PremiumMemberPercentage;
                 }

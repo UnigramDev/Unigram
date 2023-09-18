@@ -84,95 +84,18 @@ namespace Telegram.Controls
 
             ValueText.Text = newValue.ToString("F0");
             UpdateClip();
-        }
-
-        private int _prevvv = 0;
-
-        private float GetOffset(double value, out float width)
-        {
-            width = ActualSize.X * (float)((value - Minimum) / (Maximum - Minimum));
-            var center = Thumb.ActualSize.X / 2;
-
-            var alignment = HorizontalAlignment.Center;
-
-            if (width < center)
-            {
-                return 0;
-                //_thumb.Offset = new Vector3(width, 0, 0);
-                alignment = HorizontalAlignment.Left;
-            }
-            else if (width > ActualWidth - center)
-            {
-                return ActualSize.X - center * 2;
-                //_thumb.Offset = new Vector3(width - center * 2, 0, 0);
-                alignment = HorizontalAlignment.Right;
-            }
-
-            return width - center;
-        }
-
-        private void UpdateClip()
-        {
-            if (ValueRoot == null || Thumb == null)
-            {
-                return;
-            }
-
-            _thumbClip.SetInset(0, 0, (float)Math.Truncate(Thumb.ActualWidth), 40);
-
-            var width = ActualSize.X * (float)((Value - Minimum) / (Maximum - Minimum));
-            var center = Thumb.ActualSize.X / 2;
-
-            var alignment = HorizontalAlignment.Center;
-
-            if (width < center)
-            {
-                _thumb.Offset = new Vector3(0, 0, 0);
-                //_thumb.Offset = new Vector3(width, 0, 0);
-                alignment = HorizontalAlignment.Left;
-            }
-            else if (width > ActualWidth - center)
-            {
-                _thumb.Offset = new Vector3(ActualSize.X - center * 2, 0, 0);
-                //_thumb.Offset = new Vector3(width - center * 2, 0, 0);
-                alignment = HorizontalAlignment.Right;
-            }
-            else
-            {
-                _thumb.Offset = new Vector3(width - center, 0, 0);
-            }
 
             if (_valueRoot.Clip is not InsetClip clip)
             {
                 _valueRoot.Clip = clip = _valueRoot.Compositor.CreateInsetClip();
             }
 
-            clip.RightInset = ValueRoot.ActualSize.X - width;
-
-            //if (alignment == _arrowAlignment)
-            //{
-            //    return;
-            //}
-
             var next = ElementCompositionPreview.GetElementVisual(NextArrow);
             var core = ElementCompositionPreview.GetElementVisual(CoreArrow);
             var prev = ElementCompositionPreview.GetElementVisual(PrevArrow);
 
-            _thumb.Clip ??= _thumb.Compositor.CreateInsetClip();
-            _thumb.CenterPoint = new Vector3(Thumb.ActualSize.X / 2, Thumb.ActualSize.Y, 0);
-
             var half = Thumb.ActualSize.X / 2;
             var duration = TimeSpan.FromSeconds(0.333 * 1);
-
-            //_arrowAlignment = _prevvv == 0 ? HorizontalAlignment.Left : _prevvv == 1 ? HorizontalAlignment.Center : HorizontalAlignment.Right;
-            //alignment = _prevvv == 0 ? HorizontalAlignment.Center : _prevvv == 1 ? HorizontalAlignment.Right : HorizontalAlignment.Left;
-
-            _prevvv++;
-
-            if (_prevvv > 2)
-            {
-                _prevvv = 0;
-            }
 
             if (_prevValue == Minimum && false)
             {
@@ -196,8 +119,8 @@ namespace Telegram.Controls
             animAngle.Period = duration / 4;
 
             var animOffset = _thumb.Compositor.CreateScalarKeyFrameAnimation();
-            animOffset.InsertKeyFrame(0, GetOffset(_prevValue, out float prevWidth));
-            animOffset.InsertKeyFrame(1, GetOffset(Value, out float nextWidth));
+            animOffset.InsertKeyFrame(0, GetOffset(_prevValue, out float prevWidth, out _));
+            animOffset.InsertKeyFrame(1, GetOffset(Value, out float nextWidth, out var alignment));
             animOffset.Duration = duration;
 
             var animClip = _thumb.Compositor.CreateScalarKeyFrameAnimation();
@@ -321,6 +244,74 @@ namespace Telegram.Controls
 
             _arrowAlignment = alignment;
             _prevValue = Value;
+        }
+
+        private int _prevvv = 0;
+
+        private float GetOffset(double value, out float width, out HorizontalAlignment alignment)
+        {
+            width = ActualSize.X * (float)((value - Minimum) / (Maximum - Minimum));
+            var center = Thumb.ActualSize.X / 2;
+
+            if (width < center)
+            {
+                alignment = HorizontalAlignment.Left;
+                return 0;
+                //_thumb.Offset = new Vector3(width, 0, 0);
+            }
+            else if (width > ActualWidth - center)
+            {
+                alignment = HorizontalAlignment.Right;
+                return ActualSize.X - center * 2;
+                //_thumb.Offset = new Vector3(width - center * 2, 0, 0);
+            }
+
+            alignment = HorizontalAlignment.Center;
+            return width - center;
+        }
+
+        private void UpdateClip()
+        {
+            if (ValueRoot == null || Thumb == null)
+            {
+                return;
+            }
+
+            _thumbClip.SetInset(0, 0, (float)Math.Truncate(Thumb.ActualWidth), 40);
+
+            var value = (float)((Value - Minimum) / (Maximum - Minimum));
+            var width = ActualSize.X * (float.IsNaN(value) ? 0 : value);
+            var center = Thumb.ActualSize.X / 2;
+
+            if (width < center)
+            {
+                _thumb.Offset = new Vector3(0, 0, 0);
+                //_thumb.Offset = new Vector3(width, 0, 0);
+            }
+            else if (width > ActualWidth - center)
+            {
+                _thumb.Offset = new Vector3(ActualSize.X - center * 2, 0, 0);
+                //_thumb.Offset = new Vector3(width - center * 2, 0, 0);
+            }
+            else
+            {
+                _thumb.Offset = new Vector3(width - center, 0, 0);
+            }
+
+            if (_valueRoot.Clip is not InsetClip clip)
+            {
+                _valueRoot.Clip = clip = _valueRoot.Compositor.CreateInsetClip();
+            }
+
+            clip.RightInset = ValueRoot.ActualSize.X - width;
+
+            //if (alignment == _arrowAlignment)
+            //{
+            //    return;
+            //}
+
+            _thumb.Clip ??= _thumb.Compositor.CreateInsetClip();
+            _thumb.CenterPoint = new Vector3(Thumb.ActualSize.X / 2, Thumb.ActualSize.Y, 0);
         }
 
         #region MinimumText

@@ -48,6 +48,11 @@ namespace Telegram.Views.Chats
             return (next - current).ToString();
         }
 
+        private string ConvertLevel(int level, bool next)
+        {
+            return string.Format(Strings.BoostsLevel, next ? level + 1 : level);
+        }
+
         #endregion
 
         private void OnItemClick(object sender, ItemClickEventArgs e)

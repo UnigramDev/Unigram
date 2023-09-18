@@ -69,24 +69,24 @@ namespace Telegram.Views.Chats.Popups
                 ? Strings.OK
                 : Strings.BoostChannel;
 
-            Progress.Minimum = Slid.Minimum = status.CurrentLevelBoostCount;
-            Progress.Maximum = Slid.Maximum = status.NextLevelBoostCount;
-            Progress.Value = Slid.Value = status.BoostCount;
+            Progress.Minimum = status.CurrentLevelBoostCount;
+            Progress.Maximum = status.NextLevelBoostCount;
+            Progress.Value = status.BoostCount;
 
             if (justReached && status.IsBoosted)
             {
-                Progress.Minimum = Slid.Minimum = 0;
-                Progress.Maximum = Slid.Maximum = status.BoostCount;
-                Progress.Value = Slid.Value = status.BoostCount;
+                Progress.Minimum = 0;
+                Progress.Maximum = status.BoostCount;
+                Progress.Value = status.BoostCount;
 
                 Progress.MinimumText = string.Format(Strings.BoostsLevel, status.Level - 1);
                 Progress.MaximumText = string.Format(Strings.BoostsLevel, status.Level);
             }
             else
             {
-                Progress.Minimum = Slid.Minimum = status.CurrentLevelBoostCount;
-                Progress.Maximum = Slid.Maximum = status.NextLevelBoostCount;
-                Progress.Value = Slid.Value = status.BoostCount;
+                Progress.Minimum = status.CurrentLevelBoostCount;
+                Progress.Maximum = status.NextLevelBoostCount;
+                Progress.Value = status.BoostCount;
 
                 Progress.MinimumText = string.Format(Strings.BoostsLevel, status.Level);
                 Progress.MaximumText = string.Format(Strings.BoostsLevel, status.Level + 1);

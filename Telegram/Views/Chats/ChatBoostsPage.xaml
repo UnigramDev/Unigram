@@ -18,7 +18,17 @@
                                 VerticalContentAlignment="Top">
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
-                    <!-- TODO: level bar -->
+                    <controls:PremiumProgressBar x:Name="Progress"
+                                                 Minimum="{x:Bind ViewModel.CurrentLevelBoostCount, Mode=OneWay}"
+                                                 Maximum="{x:Bind ViewModel.NextLevelBoostCount, Mode=OneWay}"
+                                                 Value="{x:Bind ViewModel.BoostCount}"
+                                                 MinimumText="{x:Bind ConvertLevel(ViewModel.Level, x:False), Mode=OneWay}"
+                                                 MaximumText="{x:Bind ConvertLevel(ViewModel.Level, x:True), Mode=OneWay}"
+                                                 Glyph="&#xEA3A;"
+                                                 HorizontalAlignment="Stretch"
+                                                 MaxWidth="1000"
+                                                 Margin="24,0,24,0"
+                                                 Grid.Row="1" />
 
                     <controls:HeaderedControl Header="{CustomResource StatisticOverview}">
                         <Grid Background="{ThemeResource SettingsItemBackground}">
