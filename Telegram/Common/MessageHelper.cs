@@ -20,6 +20,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Stories;
 using Telegram.Views;
+using Telegram.Views.Chats.Popups;
 using Telegram.Views.Folders;
 using Telegram.Views.Folders.Popups;
 using Telegram.Views.Host;
@@ -174,6 +175,10 @@ namespace Telegram.Common
             {
                 navigation.Navigate(typeof(SettingsProfilePage));
             }
+            else if (internalLink is InternalLinkTypeChatBoost chatBoost)
+            {
+                NavigateToChatBoost(clientService, navigation, chatBoost.Url);
+            }
             else if (internalLink is InternalLinkTypeChatInvite chatInvite)
             {
                 NavigateToInviteLink(clientService, navigation, chatInvite.InviteLink);
@@ -277,6 +282,26 @@ namespace Telegram.Common
             else if (internalLink is InternalLinkTypeWebApp webApp)
             {
                 NavigateToWebApp(clientService, navigation, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName);
+            }
+        }
+
+        private static async void NavigateToChatBoost(IClientService clientService, INavigationService navigation, string url)
+        {
+            var response = await clientService.SendAsync(new GetChatBoostLinkInfo(url));
+            if (response is ChatBoostLinkInfo linkInfo)
+            {
+                if (linkInfo.ChatId == 0 || !clientService.TryGetChat(linkInfo.ChatId, out Chat chat))
+                {
+                    await MessagePopup.ShowAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
+                    return;
+                }
+
+                var response2 = await clientService.SendAsync(new CanBoostChat(linkInfo.ChatId));
+                var response3 = await clientService.SendAsync(new GetChatBoostStatus(linkInfo.ChatId));
+                if (response2 is CanBoostChatResult result && response3 is ChatBoostStatus status)
+                {
+                    await new ChatBoostPopup(clientService, chat, status, result).ShowQueuedAsync();
+                }
             }
         }
 

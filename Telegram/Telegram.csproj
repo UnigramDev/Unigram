@@ -240,6 +240,7 @@
       <DependentUpon>ReactionsMenuFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\OverlayWindow.cs" />
+    <Compile Include="Controls\PremiumProgressBar.cs" />
     <Compile Include="Controls\Stories\StoriesWindow.xaml.cs">
       <DependentUpon>StoriesWindow.xaml</DependentUpon>
     </Compile>
@@ -832,6 +833,9 @@
     </Compile>
     <Compile Include="Views\Chats\ChatStoriesPage.xaml.cs">
       <DependentUpon>ChatStoriesPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Chats\Popups\ChatBoostPopup.xaml.cs">
+      <DependentUpon>ChatBoostPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ChatThreadPage.xaml.cs">
       <DependentUpon>ChatThreadPage.xaml</DependentUpon>
@@ -2250,6 +2254,10 @@
     <Page Include="Views\Chats\ChatStoriesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Chats\Popups\ChatBoostPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ChatThreadPage.xaml">
       <SubType>Designer</SubType>

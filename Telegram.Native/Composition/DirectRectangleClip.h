@@ -50,6 +50,9 @@ namespace winrt::Telegram::Native::Composition::implementation
         void AnimateTop(Compositor compositor, float from, float to, double duration);
         void AnimateBottom(Compositor compositor, float from, float to, double duration);
 
+        void AnimateBottomLeft(Compositor compositor, float from, float to, double duration);
+        void AnimateBottomRight(Compositor compositor, float from, float to, double duration);
+
     private:
         winrt::com_ptr<IDCompositionRectangleClip> m_impl;
 

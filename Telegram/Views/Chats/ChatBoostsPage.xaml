@@ -82,7 +82,7 @@
                                     <RowDefinition />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <TextBlock Text="{x:Bind ConvertDifference(ViewModel.CurrentLevelBoostCount, ViewModel.NextLevelBoostCount), Mode=OneWay}"
+                                <TextBlock Text="{x:Bind ConvertDifference(ViewModel.BoostCount, ViewModel.NextLevelBoostCount), Mode=OneWay}"
                                            Style="{StaticResource BodyStrongTextBlockStyle}" />
                                 <TextBlock Text="{CustomResource BoostsToLevel}"
                                            Style="{StaticResource InfoCaptionTextBlockStyle}"

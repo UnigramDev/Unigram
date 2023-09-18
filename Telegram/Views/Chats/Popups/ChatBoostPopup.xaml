@@ -1,0 +1,220 @@
+﻿<controls:ContentPopup x:Class="Telegram.Views.Chats.Popups.ChatBoostPopup"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:local="using:Telegram.Views.Chats.Popups"
+                       xmlns:common="using:Telegram.Common"
+                       xmlns:controls="using:Telegram.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       Title="TITLE">
+
+    <Grid Margin="0,0,0,-24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <controls:GlyphButton Click="{x:Bind Close}"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Top"
+                              Glyph="&#xE711;"
+                              Margin="0,-64,-24,0"
+                              CornerRadius="20" />
+
+        <Button HorizontalAlignment="Center"
+                Margin="0,-8,0,0"
+                CornerRadius="16"
+                Padding="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <controls:ProfilePicture x:Name="ChatPhoto" />
+                <TextBlock x:Name="ChatTitle"
+                           Style="{StaticResource BodyTextBlockStyle}"
+                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                           VerticalAlignment="Center"
+                           Margin="8,1,8,3"
+                           Grid.Column="1" />
+            </Grid>
+        </Button>
+
+        <controls:PremiumProgressBar x:Name="Progress"
+                                     Minimum="0"
+                                     Maximum="2"
+                                     Value="{x:Bind Slid.Value, Mode=OneWay}"
+                                     Glyph="&#xEA3A;"
+                                     Margin="0,16,0,0"
+                                     Grid.Row="1">
+            <controls:PremiumProgressBar.Template>
+                <ControlTemplate TargetType="controls:PremiumProgressBar">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid x:Name="Thumb"
+                              HorizontalAlignment="Left"
+                              VerticalAlignment="Top"
+                              Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Border Background="{StaticResource PremiumLinearGradientBrush}"
+                                    Height="40"
+                                    CornerRadius="0"
+                                    Grid.ColumnSpan="2" />
+                            <TextBlock Text="{TemplateBinding Glyph}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="24"
+                                       Foreground="#FFFFFF"
+                                       VerticalAlignment="Center"
+                                       Margin="12,0,4,0" />
+                            <controls:AnimatedTextBlock x:Name="ValueText"
+                                                        Foreground="#FFFFFF"
+                                                        Margin="0,6,12,6"
+                                                        Grid.Column="1">
+                                <controls:AnimatedTextBlock.TextStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="FontSize"
+                                                Value="20" />
+                                        <Setter Property="FontWeight"
+                                                Value="SemiBold" />
+                                    </Style>
+                                </controls:AnimatedTextBlock.TextStyle>
+                            </controls:AnimatedTextBlock>
+
+                            <!-- M14.4853 0H0C1.5913 0 3.1174 0.6321 4.2427 1.7574L9.364 6.8787C11.2539 8.7686 14.4853 7.4301 14.4853 4.7574V0Z -->
+                            <Path x:Name="NextArrow"
+                                  Data="M0 0H11.2V2H11.1951V5.67679C11.1951 7.74241 8.69766 8.77688 7.23704 7.31625L3.279 3.35822C2.40931 2.48852 1.22985 2 0 2V0Z"
+                                  Fill="#CB6CDE"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Top"
+                                  Height="8"
+                                  Margin="0,-2,0,0"
+                                  Stretch="Uniform"
+                                  Canvas.ZIndex="-1"
+                                  Grid.ColumnSpan="2"
+                                  Grid.Row="1" />
+                            <!-- M0 0H14.4853C12.894 0 11.3679 0.6321 10.2426 1.7574L5.1213 6.8787C3.2314 8.7686 0 7.4301 0 4.7574V0Z -->
+                            <Path x:Name="PrevArrow"
+                                  Data="M11.2 0H0V2H0.00492764V5.67679C0.00492764 7.74241 2.50234 8.77688 3.96296 7.31625L7.921 3.35822C8.79069 2.48852 9.97015 2 11.2 2V0Z"
+                                  Fill="#6B93FF"
+                                  HorizontalAlignment="Left"
+                                  VerticalAlignment="Top"
+                                  Height="8"
+                                  Margin="0,-2,0,0"
+                                  Stretch="Uniform"
+                                  Canvas.ZIndex="-1"
+                                  Grid.ColumnSpan="2"
+                                  Grid.Row="1" />
+                            <!-- M36.9852 0H8.01465C9.60595 0 11.132 0.6321 12.2573 1.7574 L19.6715 9.1716 C21.2336 10.7337 23.7662 10.7337 25.3283 9.1716 L32.7425 1.7574 C33.8678 0.6321 35.3939 0 36.9852 0Z -->
+                            <Path x:Name="CoreArrow"
+                                  Data="M0 0V2C0.923101 2 1.80835 2.36668 2.46113 3.01945L6.76205 7.32038C7.66822 8.22654 9.13736 8.22654 10.0435 7.32038L14.3444 3.01945C14.9972 2.36668 15.8825 2 16.8056 2H16.81V0H0Z"
+                                  Fill="#976FFF"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Top"
+                                  Margin="0,-2,0,0"
+                                  Height="8"
+                                  Stretch="Uniform"
+                                  Canvas.ZIndex="-2"
+                                  Grid.ColumnSpan="2"
+                                  Grid.Row="1" />
+
+                        </Grid>
+
+                        <Grid Background="{ThemeResource ControlFillColorDefaultBrush}"
+                              BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                              BorderThickness="1"
+                              CornerRadius="4"
+                              Grid.Row="1">
+                            <TextBlock Text="{TemplateBinding MinimumText}"
+                                       TextAlignment="Left"
+                                       FontWeight="SemiBold"
+                                       Margin="8,4,8,5" />
+                            <TextBlock Text="{TemplateBinding MaximumText}"
+                                       TextAlignment="Right"
+                                       FontWeight="SemiBold"
+                                       Margin="8,4,8,5" />
+
+                            <Grid x:Name="ValueRoot"
+                                  Background="{StaticResource PremiumLinearGradientBrush}"
+                                  CornerRadius="4">
+                                <TextBlock Text="{TemplateBinding MinimumText}"
+                                           TextAlignment="Left"
+                                           FontWeight="SemiBold"
+                                           Foreground="#FFFFFF"
+                                           Margin="8,4,8,5" />
+                                <TextBlock Text="{TemplateBinding MaximumText}"
+                                           TextAlignment="Right"
+                                           FontWeight="SemiBold"
+                                           Foreground="#FFFFFF"
+                                           Margin="8,4,8,5" />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </controls:PremiumProgressBar.Template>
+        </controls:PremiumProgressBar>
+
+        <Grid x:Name="DescriptionRoot"
+              Padding="0,24"
+              Canvas.ZIndex="1"
+              Grid.Row="2">
+            <TextBlock x:Name="Description"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       VerticalAlignment="Center"
+                       TextAlignment="Center" />
+
+            <TextBlock x:Name="DescriptionBoosted"
+                       Style="{StaticResource BodyTextBlockStyle}"
+                       VerticalAlignment="Center"
+                       TextAlignment="Center" />
+        </Grid>
+
+        <Slider x:Name="Slid"
+                Maximum="2"
+                VerticalAlignment="Bottom"
+                IsThumbToolTipEnabled="False"
+                Visibility="Collapsed"
+                Grid.Row="2" />
+
+        <Grid x:Name="PurchasePanel"
+              VerticalAlignment="Bottom"
+              HorizontalAlignment="Stretch"
+              Margin="0,0,0,24"
+              Grid.Row="3">
+            <Rectangle x:Name="PurchaseShadow"
+                       Loaded="PurchaseShadow_Loaded"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       Fill="White"
+                       Margin="0"
+                       RadiusX="4"
+                       RadiusY="4">
+            </Rectangle>
+            <Border Background="{StaticResource PremiumLinearGradientBrush}"
+                    CornerRadius="4"
+                    Height="36" />
+            <controls:BadgeButton x:Name="PurchaseCommand"
+                                  Click="Purchase_Click"
+                                  Style="{StaticResource StartButtonStyle}"
+                                  HorizontalAlignment="Stretch"
+                                  HorizontalContentAlignment="Center"
+                                  FontWeight="SemiBold"
+                                  Padding="16,3,16,5"
+                                  CornerRadius="4"
+                                  Margin="0"
+                                  Height="36" />
+        </Grid>
+
+    </Grid>
+</controls:ContentPopup>

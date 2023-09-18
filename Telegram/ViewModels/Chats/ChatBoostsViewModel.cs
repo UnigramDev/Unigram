@@ -32,6 +32,13 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _level, value);
         }
 
+        private int _boostCount;
+        public int BoostCount
+        {
+            get => _boostCount;
+            set => Set(ref _boostCount, value);
+        }
+
         private int _currentLevelBoostCount;
         public int CurrentLevelBoostCount
         {
@@ -77,6 +84,7 @@ namespace Telegram.ViewModels.Chats
                 if (response is ChatBoostStatus status)
                 {
                     Level = status.Level;
+                    BoostCount = status.BoostCount;
                     CurrentLevelBoostCount = status.CurrentLevelBoostCount;
                     NextLevelBoostCount = status.NextLevelBoostCount;
                     PremiumMemberCount = status.PremiumMemberCount;

@@ -103,7 +103,7 @@
         <Grid x:Name="PurchasePanel"
               VerticalAlignment="Bottom"
               HorizontalAlignment="Stretch"
-              Margin="0,12,0,20"
+              Margin="0,12,0,24"
               Grid.Row="1">
             <Rectangle x:Name="PurchaseShadow"
                        Loaded="PurchaseShadow_Loaded"

@@ -164,5 +164,45 @@ namespace Telegram.Controls
             popup.IsOpen = true;
             return tsc.Task;
         }
+
+        public static Task<ContentDialogResult> ShowAsync(FrameworkElement target, FrameworkElement content, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
+        {
+            var tsc = new TaskCompletionSource<ContentDialogResult>();
+            var popup = new TeachingTip
+            {
+                Content = content,
+                ActionButtonContent = primary,
+                ActionButtonStyle = BootStrapper.Current.Resources[destructive ? "DangerButtonStyle" : "AccentButtonStyle"] as Style,
+                CloseButtonContent = secondary,
+                PreferredPlacement = target != null ? TeachingTipPlacementMode.Top : TeachingTipPlacementMode.Center,
+                Width = 314,
+                MinWidth = 314,
+                MaxWidth = 314,
+                Target = target,
+                IsLightDismissEnabled = true,
+                ShouldConstrainToRootBounds = true,
+                // TODO:
+                RequestedTheme = target?.ActualTheme ?? requestedTheme
+            };
+
+            popup.ActionButtonClick += (s, args) =>
+            {
+                popup.IsOpen = false;
+                tsc.TrySetResult(ContentDialogResult.Primary);
+            };
+
+            popup.Closed += (s, args) =>
+            {
+                tsc.TrySetResult(ContentDialogResult.Secondary);
+            };
+
+            if (Window.Current.Content is FrameworkElement element)
+            {
+                element.Resources["TeachingTip"] = popup;
+            }
+
+            popup.IsOpen = true;
+            return tsc.Task;
+        }
     }
 }
