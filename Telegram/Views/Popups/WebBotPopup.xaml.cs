@@ -34,6 +34,7 @@ namespace Telegram.Views.Popups
         private readonly AttachmentMenuBot _menuBot;
 
         private bool _blockingAction;
+        private bool _closeNeedConfirmation;
 
         // TODO: constructor should take a function and URL should be loaded asynchronously
         public WebBotPopup(IClientService clientService, INavigationService navigationService, User user, WebAppInfo info, AttachmentMenuBot menuBot = null)
@@ -174,7 +175,7 @@ namespace Telegram.Views.Popups
 
         private void SetupClosingBehaviour(JsonObject eventData)
         {
-
+            _closeNeedConfirmation = eventData.GetNamedBoolean("need_confirmation", false);
         }
 
         private async void InvokeCustomMethod(JsonObject eventData)
@@ -407,10 +408,6 @@ namespace Telegram.Views.Popups
             popup.IsOpen = true;
         }
 
-        private void ContinuePopup(string id)
-        {
-        }
-
         private void OpenInvoice(JsonObject eventData)
         {
 
@@ -596,8 +593,22 @@ namespace Telegram.Views.Popups
             View.InvokeScript($"window.Telegram.WebView.receiveEvent('{eventName}', {eventData});");
         }
 
-        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        private async void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
+            if (_closeNeedConfirmation)
+            {
+                args.Cancel = true;
+
+                var confirm = await MessagePopup.ShowAsync(target: null, Strings.BotWebViewChangesMayNotBeSaved, _botUser.FirstName, Strings.BotWebViewCloseAnyway, Strings.Cancel, destructive: true);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    _closeNeedConfirmation = false;
+                    Hide();
+                }
+
+                return;
+            }
+
             View.Close();
         }
 
