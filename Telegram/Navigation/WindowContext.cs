@@ -92,6 +92,7 @@ namespace Telegram.Navigation
             }
 
             SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+            ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
         }
 
         private void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
@@ -104,13 +105,26 @@ namespace Telegram.Navigation
 
         public async Task ConsolidateAsync()
         {
-            if (await ApplicationView.GetForCurrentView().TryConsolidateAsync() || IsInMainView)
+            if (await ApplicationView.GetForCurrentView().TryConsolidateAsync())
             {
                 return;
             }
 
-            Window.Current.Content = null;
-            Window.Current.Close();
+            OnConsolidated();
+        }
+
+        private void OnConsolidated(ApplicationView sender, ApplicationViewConsolidatedEventArgs args)
+        {
+            OnConsolidated();
+        }
+
+        private void OnConsolidated()
+        {
+            if (!IsInMainView)
+            {
+                Window.Current.Content = null;
+                Window.Current.Close();
+            }
         }
 
         public bool IsInMainView { get; }

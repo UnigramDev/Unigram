@@ -150,9 +150,6 @@ namespace Telegram.Services.ViewService
                 UnregisterForEvents();
                 InternalReleased?.Invoke(this, new EventArgs());
                 WindowControlsMap.TryRemove(Id, out _);
-
-                Window.Current.Content = null;
-                Window.Current.Close();
             }
         }
 
