@@ -93,6 +93,7 @@ namespace Telegram.Views.Supergroups.Popups
                 ManageVideoChats.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 AddAdmins.IsEnabled = member.Status is ChatMemberStatusAdministrator && canBeEdited;
                 IsAnonymous.IsEnabled = canBeEdited;
+                EditRankField.IsEnabled = canBeEdited;
             }
             else
             {
@@ -124,6 +125,7 @@ namespace Telegram.Views.Supergroups.Popups
             else
             {
                 PermissionsRoot.Visibility = Visibility.Collapsed;
+                PermissionsFooter.Visibility = Visibility.Collapsed;
             }
 
             //TransferOwnership.Content = group.IsChannel ? Strings.EditAdminChannelTransfer : Strings.EditAdminGroupTransfer;
