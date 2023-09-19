@@ -334,7 +334,16 @@ namespace LibVLCSharp.Platforms.Windows
         void UpdateScale()
         {
             if (_panel is null) return;
-            _swapChain2!.MatrixTransform = new RawMatrix3x2 { M11 = 1.0f / _panel.CompositionScaleX, M22 = 1.0f / _panel.CompositionScaleY };
+
+            // TODO: experiment
+            // CompositionScale changes when che SwapChainPanel is inside a ScrollViewer and ZoomLevel changes.
+            // We don't want this to happen, so let's try to use XamlRoot.RasterizationScale instead.
+
+            _swapChain2!.MatrixTransform = new RawMatrix3x2
+            {
+                M11 = 1.0f / (float)XamlRoot.RasterizationScale, //_panel.CompositionScaleX,
+                M22 = 1.0f / (float)XamlRoot.RasterizationScale //_panel.CompositionScaleY
+            };
         }
 
         /// <summary>
