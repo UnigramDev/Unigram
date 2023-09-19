@@ -433,6 +433,7 @@ namespace Telegram.Views.Popups
                 return;
             }
 
+            Hide();
             MessageHelper.OpenUrl(_clientService, _navigationService, "https://t.me" + value);
         }
 
