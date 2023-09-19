@@ -27,7 +27,7 @@
                                                  Glyph="&#xEA3A;"
                                                  HorizontalAlignment="Stretch"
                                                  MaxWidth="1000"
-                                                 Margin="24,0,24,0"
+                                                 Margin="24,8,24,0"
                                                  Grid.Row="1" />
 
                     <controls:HeaderedControl Header="{CustomResource StatisticOverview}">
@@ -101,7 +101,21 @@
                         </Grid>
                     </controls:HeaderedControl>
 
-                    <TextBlock Text="{CustomResource Boosters}"
+                    <controls:HeaderedControl x:Name="NoBoosters"
+                                              x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay}"
+                                              Header="{CustomResource Boosters}">
+                        <Border Background="{ThemeResource SettingsItemBackground}"
+                                MinHeight="48">
+                            <TextBlock Text="{CustomResource NoBoostersHint}"
+                                       Style="{StaticResource InfoBodyTextBlockStyle}"
+                                       VerticalAlignment="Center"
+                                       Margin="12,8" />
+                        </Border>
+                    </controls:HeaderedControl>
+
+                    <TextBlock x:Name="BoostersHeader"
+                               x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                               Text="{CustomResource Boosters}"
                                Style="{StaticResource BaseTextBlockStyle}"
                                Margin="24,16,24,8" />
                 </controls:SettingsPanel>
@@ -118,7 +132,9 @@
             </ListView.ItemTemplate>
             <ListView.Footer>
                 <controls:SettingsPanel IsFooter="True">
-                    <controls:SettingsFooter Text="{CustomResource BoostersInfoDescription}"
+                    <controls:SettingsFooter x:Name="BoostersFooter"
+                                             x:Load="{x:Bind ViewModel.IsEmpty, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                             Text="{CustomResource BoostersInfoDescription}"
                                              Margin="24,8,24,0" />
 
                     <controls:HeaderedControl Header="{CustomResource LinkForBoosting}">

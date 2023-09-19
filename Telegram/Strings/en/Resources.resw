@@ -4748,6 +4748,9 @@ Minimum length is 5 characters.</value>
   <data name="NobodyViews" xml:space="preserve">
     <value>No views yet</value>
   </data>
+  <data name="NoBoostersHint" xml:space="preserve">
+    <value>No users currently boost your channel</value>
+  </data>
   <data name="NoComments" xml:space="preserve">
     <value>No comments here yet...</value>
   </data>

@@ -74,6 +74,13 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _link, value);
         }
 
+        private bool _isEmpty;
+        public bool IsEmpty
+        {
+            get => _isEmpty;
+            set => Set(ref _isEmpty, value);
+        }
+
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is long chatId)
@@ -115,6 +122,8 @@ namespace Telegram.ViewModels.Chats
                 _nextOffset = boosts.NextOffset;
                 HasMoreItems = false;
             }
+
+            IsEmpty = Items.Count == 0;
 
             return new LoadMoreItemsResult
             {
