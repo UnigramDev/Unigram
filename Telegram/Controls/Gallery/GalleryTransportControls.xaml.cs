@@ -226,7 +226,8 @@ namespace Telegram.Controls.Gallery
                 OnLengthChanged();
             }
 
-            OnStopped();
+            PlaybackButton.Glyph = Icons.PlayFilled24;
+            Automation.SetToolTip(PlaybackButton, Strings.AccActionPlay);
         }
 
         private void OnVolumeChanged(object sender, MediaPlayerVolumeChangedEventArgs e)
