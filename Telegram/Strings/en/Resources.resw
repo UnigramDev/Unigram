@@ -869,6 +869,9 @@ Unused sets are archived when you add more.</value>
     <value>You can have 200 active sticker sets.
 Unused sets are archived when you add more.</value>
   </data>
+  <data name="ArchivedStories" xml:space="preserve">
+    <value>Archived Stories</value>
+  </data>
   <data name="ArchiveMoveToChatList" xml:space="preserve">
     <value>Move to Chat List</value>
   </data>
@@ -1375,6 +1378,9 @@ Please enable Unigram in the Startup Apps Settings.</value>
   <data name="Bold" xml:space="preserve">
     <value>Bold</value>
   </data>
+  <data name="BoostChannel" xml:space="preserve">
+    <value>Boost Channel</value>
+  </data>
   <data name="Boosters" xml:space="preserve">
     <value>Boosters</value>
   </data>
@@ -1384,17 +1390,32 @@ Please enable Unigram in the Startup Apps Settings.</value>
   <data name="BoostExpireOn" xml:space="preserve">
     <value>boost expires on {0}</value>
   </data>
+  <data name="BoostingEnableStoriesForChannel" xml:space="preserve">
+    <value>Enable Stories for The Channel</value>
+  </data>
+  <data name="BoostLinkButton" xml:space="preserve">
+    <value>BOOST</value>
+  </data>
   <data name="Boosts" xml:space="preserve">
     <value>Boosts</value>
   </data>
   <data name="BoostsExisting" xml:space="preserve">
     <value>Existing Boosts</value>
   </data>
+  <data name="BoostsLevel" xml:space="preserve">
+    <value>Level {0}</value>
+  </data>
   <data name="BoostsLevel2" xml:space="preserve">
     <value>Level</value>
   </data>
   <data name="BoostsToLevel" xml:space="preserve">
     <value>Boosts to level up</value>
+  </data>
+  <data name="BoostStories_one" xml:space="preserve">
+    <value>**{0}** story</value>
+  </data>
+  <data name="BoostStories_other" xml:space="preserve">
+    <value>**{0}** stories</value>
   </data>
   <data name="Bot" xml:space="preserve">
     <value>bot</value>
@@ -1596,6 +1617,18 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="CanJoin_other" xml:space="preserve">
     <value>{0} can join</value>
   </data>
+  <data name="CantBoostTooOften" xml:space="preserve">
+    <value>Can’t boost too often!</value>
+  </data>
+  <data name="CantBoostTooOftenDescription" xml:space="preserve">
+    <value>You can change the channel you boost only once a day. Next time you can boost is in **{0}.**</value>
+  </data>
+  <data name="CantBoostWithGiftedPremium" xml:space="preserve">
+    <value>Can’t boost with gifted Premium!</value>
+  </data>
+  <data name="CantBoostWithGiftedPremiumDescription" xml:space="preserve">
+    <value>Because your **Telegram Premium** subscription was gifted to you, you can’t use it to boost channels.</value>
+  </data>
   <data name="Caption" xml:space="preserve">
     <value>Caption</value>
   </data>
@@ -1697,6 +1730,12 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChannelBlockUser" xml:space="preserve">
     <value>Remove User</value>
   </data>
+  <data name="ChannelBoostsJustReachedLevel1" xml:space="preserve">
+    <value>This channel reached **Level 1** and can now post stories.</value>
+  </data>
+  <data name="ChannelBoostsJustReachedLevelNext" xml:space="preserve">
+    <value>This channel reached **Level {0}** and can now post **{1}** per day.</value>
+  </data>
   <data name="ChannelBots" xml:space="preserve">
     <value>Bots</value>
   </data>
@@ -1772,6 +1811,12 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChannelLinkTitle" xml:space="preserve">
     <value>Public link</value>
   </data>
+  <data name="ChannelManageMessages" xml:space="preserve">
+    <value>Manage Messages</value>
+  </data>
+  <data name="ChannelManageStories" xml:space="preserve">
+    <value>Manage Stories</value>
+  </data>
   <data name="ChannelMegaJoined" xml:space="preserve">
     <value>You joined this group</value>
   </data>
@@ -1783,6 +1828,18 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   </data>
   <data name="ChannelMute" xml:space="preserve">
     <value>MUTE</value>
+  </data>
+  <data name="ChannelNeedBoostsAlreadyBoostedDescriptionLevel1" xml:space="preserve">
+    <value>This channel need {0} more boosts to enable stories.</value>
+  </data>
+  <data name="ChannelNeedBoostsAlreadyBoostedDescriptionLevelNext" xml:space="preserve">
+    <value>This channel need {0} to be able post **{1}** per day.</value>
+  </data>
+  <data name="ChannelNeedBoostsDescriptionLevel1" xml:space="preserve">
+    <value>This channel need {0} to enable stories. Help make it possible!</value>
+  </data>
+  <data name="ChannelNeedBoostsDescriptionLevelNext" xml:space="preserve">
+    <value>This channel need {0} to be able post **{1}** per day. Help make it possible!</value>
   </data>
   <data name="ChannelOtherMembers" xml:space="preserve">
     <value>Other members</value>
@@ -2673,8 +2730,14 @@ Anyone from the channel will be able to see messages in this group.</value>
   <data name="EditAdminDeleteMessages" xml:space="preserve">
     <value>Delete Messages of Others</value>
   </data>
+  <data name="EditAdminDeleteStories" xml:space="preserve">
+    <value>Delete Stories of Others</value>
+  </data>
   <data name="EditAdminEditMessages" xml:space="preserve">
     <value>Edit Messages of Others</value>
+  </data>
+  <data name="EditAdminEditStories" xml:space="preserve">
+    <value>Edit Stories of Others</value>
   </data>
   <data name="EditAdminGroupDeleteMessages" xml:space="preserve">
     <value>Delete Messages</value>
@@ -2687,6 +2750,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   </data>
   <data name="EditAdminPostMessages" xml:space="preserve">
     <value>Post Messages</value>
+  </data>
+  <data name="EditAdminPostStories" xml:space="preserve">
+    <value>Post Stories</value>
   </data>
   <data name="EditAdminPromotedBy" xml:space="preserve">
     <value>Promoted by {0}</value>
@@ -3081,8 +3147,14 @@ Learn more at telegram.org</value>
   <data name="EventLogPromotedDeleteMessages" xml:space="preserve">
     <value>Delete messages</value>
   </data>
+  <data name="EventLogPromotedDeleteStories" xml:space="preserve">
+    <value>Delete stories</value>
+  </data>
   <data name="EventLogPromotedEditMessages" xml:space="preserve">
     <value>Edit messages</value>
+  </data>
+  <data name="EventLogPromotedEditStories" xml:space="preserve">
+    <value>Edit stories</value>
   </data>
   <data name="EventLogPromotedManageCall" xml:space="preserve">
     <value>Manage video chats</value>
@@ -3092,6 +3164,9 @@ Learn more at telegram.org</value>
   </data>
   <data name="EventLogPromotedPostMessages" xml:space="preserve">
     <value>Post messages</value>
+  </data>
+  <data name="EventLogPromotedPostStories" xml:space="preserve">
+    <value>Post stories</value>
   </data>
   <data name="EventLogPromotedRemovedTitle" xml:space="preserve">
     <value>Title</value>
@@ -3727,6 +3802,9 @@ They can still join via an invite link as long as they are not on the Removed Us
   </data>
   <data name="Hashtags" xml:space="preserve">
     <value>HASHTAGS</value>
+  </data>
+  <data name="HelpUpgradeChannel" xml:space="preserve">
+    <value>Help Upgrade This Channel</value>
   </data>
   <data name="HidAccount" xml:space="preserve">
     <value>The account was hidden by the user</value>
@@ -4532,6 +4610,12 @@ Minimum length is 5 characters.</value>
   <data name="Months_other" xml:space="preserve">
     <value>{0} months</value>
   </data>
+  <data name="MoreBoosts_one" xml:space="preserve">
+    <value>**{0}** more boost</value>
+  </data>
+  <data name="MoreBoosts_other" xml:space="preserve">
+    <value>**{0}** more boosts</value>
+  </data>
   <data name="MoreInfo" xml:space="preserve">
     <value>Learn more</value>
   </data>
@@ -5326,6 +5410,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PremiumMore" xml:space="preserve">
     <value>More</value>
   </data>
+  <data name="PremiumNeeded" xml:space="preserve">
+    <value>Premuim needed!</value>
+  </data>
+  <data name="PremiumNeededForBoosting" xml:space="preserve">
+    <value>Only **Telegram Premium** subscribers can boost channels. Do you want to subscribe to **Telegram Premium?**</value>
+  </data>
   <data name="PremiumPreviewAdvancedChatManagement" xml:space="preserve">
     <value>Advanced Chat Management</value>
   </data>
@@ -5623,6 +5713,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ProfileStoriesArchive" xml:space="preserve">
     <value>Story Archive</value>
   </data>
+  <data name="ProfileStoriesArchiveChannelHint" xml:space="preserve">
+    <value>Only admins can see archived stories unless you choose to post them to channel profile.</value>
+  </data>
   <data name="ProfileStoriesArchiveHint" xml:space="preserve">
     <value>Only you can see archived stories unless you choose to post them to your profile.</value>
   </data>
@@ -5778,6 +5871,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="RenameCurrentDevice" xml:space="preserve">
     <value>Rename current device</value>
+  </data>
+  <data name="Replace" xml:space="preserve">
+    <value>Replace</value>
+  </data>
+  <data name="ReplaceBoostChannelDescription" xml:space="preserve">
+    <value>You currently boost **{0}**. Do you want to boost **{1}** instead?</value>
   </data>
   <data name="ReplaceEmoji" xml:space="preserve">
     <value>Replace Emoji Automatically</value>
@@ -6680,10 +6779,10 @@ and enter your phone number.</value>
     <value>Story posted to your profile.</value>
   </data>
   <data name="StorySelectedContactsHint" xml:space="preserve">
-    <value>Only some contacts **{0}** selected can view this story.</value>
+    <value>Only some users **{0}** selected can view this story.</value>
   </data>
   <data name="StorySelectedContactsHintSelf" xml:space="preserve">
-    <value>Only some contacts you selected can view this story.</value>
+    <value>Only some users you selected can view this story.</value>
   </data>
   <data name="StoryShownHint" xml:space="preserve">
     <value>**{0}** will be able to see your stories again.</value>
@@ -7914,6 +8013,9 @@ Participants will see that the chat is being recorded.</value>
   </data>
   <data name="YouBlockedUser" xml:space="preserve">
     <value>Sorry, you can&apos;t add this user or bot to groups because you&apos;ve blocked them. Please unblock to proceed.</value>
+  </data>
+  <data name="YouBoostedChannel" xml:space="preserve">
+    <value>You Boosted The Channel</value>
   </data>
   <data name="YouHaveNewMessage" xml:space="preserve">
     <value>You have a new message</value>
