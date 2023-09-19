@@ -41,8 +41,8 @@ namespace Telegram.Views.Chats.Popups
             ChatPhoto.SetChat(clientService, chat, 28);
 
             TextBlockHelper.SetMarkdown(Description, status.Level == 0
-                ? string.Format(Strings.ChannelNeedBoostsDescriptionLevel1, status.NextLevelBoostCount - status.BoostCount)
-                : string.Format(Strings.ChannelNeedBoostsAlreadyBoostedDescriptionLevelNext, status.NextLevelBoostCount - status.BoostCount, status.Level + 1));
+                ? string.Format(Strings.ChannelNeedBoostsDescriptionLevel1, Locale.Declension(Strings.R.MoreBoosts, status.NextLevelBoostCount - status.BoostCount))
+                : string.Format(Strings.ChannelNeedBoostsDescriptionLevelNext, Locale.Declension(Strings.R.MoreBoosts, status.NextLevelBoostCount - status.BoostCount), Locale.Declension(Strings.R.BoostStories, status.Level + 1)));
 
             var justReached = status.IsBoosted
                 ? status.CurrentLevelBoostCount - status.BoostCount == 0
@@ -52,13 +52,13 @@ namespace Telegram.Views.Chats.Popups
             {
                 TextBlockHelper.SetMarkdown(DescriptionBoosted, status.Level == 0
                     ? Strings.ChannelBoostsJustReachedLevel1
-                    : string.Format(Strings.ChannelBoostsJustReachedLevelNext, status.Level + 1, status.Level + 1));
+                    : string.Format(Strings.ChannelBoostsJustReachedLevelNext, status.Level + 1, Locale.Declension(Strings.R.BoostStories, status.Level + 1)));
             }
             else
             {
                 TextBlockHelper.SetMarkdown(DescriptionBoosted, status.Level == 0
-                    ? string.Format(Strings.ChannelNeedBoostsAlreadyBoostedDescriptionLevel1, status.NextLevelBoostCount - status.BoostCount - 1)
-                    : string.Format(Strings.ChannelNeedBoostsAlreadyBoostedDescriptionLevelNext, status.NextLevelBoostCount - status.BoostCount - 1, status.Level + 1));
+                    ? string.Format(Strings.ChannelNeedBoostsAlreadyBoostedDescriptionLevel1, Locale.Declension(Strings.R.MoreBoosts, status.NextLevelBoostCount - status.BoostCount - 1))
+                    : string.Format(Strings.ChannelNeedBoostsAlreadyBoostedDescriptionLevelNext, Locale.Declension(Strings.R.MoreBoosts, status.NextLevelBoostCount - status.BoostCount - 1), Locale.Declension(Strings.R.BoostStories, status.Level + 1)));
             }
 
             DescriptionBoosted.Opacity = status.IsBoosted ? 1 : 0;
@@ -162,6 +162,8 @@ namespace Telegram.Views.Chats.Popups
                     panel.Children.Add(label);
                     panel.Children.Add(chevron);
 
+                    // Boost badge is missing
+
                     var confirm = await MessagePopup.ShowAsync(target: null, panel, Strings.Replace, Strings.Cancel);
                     if (confirm != ContentDialogResult.Primary)
                     {
@@ -176,7 +178,7 @@ namespace Telegram.Views.Chats.Popups
             }
             else if (_result is CanBoostChatResultWaitNeeded resultWaitNeeded)
             {
-                await MessagePopup.ShowAsync(target: null, string.Format(Strings.CantBoostToOftenDescription, Locale.FormatCallDuration(resultWaitNeeded.RetryAfter)), Strings.CantBoostToOften, Strings.OK);
+                await MessagePopup.ShowAsync(target: null, string.Format(Strings.CantBoostTooOftenDescription, Locale.FormatCallDuration(resultWaitNeeded.RetryAfter)), Strings.CantBoostTooOften, Strings.OK);
             }
             else if (_result is CanBoostChatResultPremiumSubscriptionNeeded)
             {

@@ -201,7 +201,7 @@ namespace Telegram.Controls.Messages.Content
                 if (run1 != null)
                 {
                     run1.Text = run3.Text = string.Empty;
-                    run2.Text = Strings.BoostChannel.ToUpper();
+                    run2.Text = Strings.BoostLinkButton;
                     run3.Foreground = null;
                 }
 
