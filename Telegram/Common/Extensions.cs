@@ -188,7 +188,7 @@ namespace Telegram.Common
 
         public static Version ToVersion(this PackageVersion version)
         {
-            return new Version(version.Major, version.Minor, Constants.BuildNumber, version.Revision);
+            return new Version(version.Major, version.Minor, version.Build, Constants.BuildNumber);
         }
 
         public static void TryNotifyMutedChanged(this VoipCallCoordinator coordinator, bool muted)
