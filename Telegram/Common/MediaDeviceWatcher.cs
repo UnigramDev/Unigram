@@ -137,15 +137,22 @@ namespace Telegram.Common
 
         private string GetDefault()
         {
-            switch (_class)
+            try
             {
-                case DeviceClass.AudioCapture:
-                    return MediaDevice.GetDefaultAudioCaptureId(AudioDeviceRole.Communications);
-                case DeviceClass.AudioRender:
-                    return MediaDevice.GetDefaultAudioRenderId(AudioDeviceRole.Communications);
-                case DeviceClass.VideoCapture:
-                default:
-                    return Constants.DefaultDeviceId;
+                switch (_class)
+                {
+                    case DeviceClass.AudioCapture:
+                        return MediaDevice.GetDefaultAudioCaptureId(AudioDeviceRole.Communications);
+                    case DeviceClass.AudioRender:
+                        return MediaDevice.GetDefaultAudioRenderId(AudioDeviceRole.Communications);
+                    case DeviceClass.VideoCapture:
+                    default:
+                        return Constants.DefaultDeviceId;
+                }
+            }
+            catch
+            {
+                return string.Empty;
             }
         }
 

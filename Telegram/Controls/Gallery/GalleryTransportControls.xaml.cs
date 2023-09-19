@@ -128,27 +128,30 @@ namespace Telegram.Controls.Gallery
         private void Slider_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             _scrubbing = true;
-            _mediaPlayer.SetPause(true);
+            _mediaPlayer?.SetPause(true);
         }
 
         private void Slider_PointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            _mediaPlayer.Time = (long)Slider.Value;
+            if (_mediaPlayer != null)
+            {
+                _mediaPlayer.Time = (long)Slider.Value;
+            }
 
             _scrubbing = false;
-            _mediaPlayer.SetPause(false);
+            _mediaPlayer?.SetPause(false);
         }
 
         private void Slider_PointerCanceled(object sender, PointerRoutedEventArgs e)
         {
             _scrubbing = false;
-            _mediaPlayer.SetPause(false);
+            _mediaPlayer?.SetPause(false);
         }
 
         private void Slider_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
         {
             _scrubbing = false;
-            _mediaPlayer.SetPause(false);
+            _mediaPlayer?.SetPause(false);
         }
 
         #endregion

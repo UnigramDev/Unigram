@@ -41,18 +41,25 @@ namespace Telegram.Views
 
         private void Chats_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
         {
-            if (e.Items[0] is Chat chat)
+            try
             {
-                var position = chat.GetPosition(ViewModel.Items.ChatList);
-                if (position == null || !position.IsPinned || e.Items.Count > 1 || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
+                if (e.Items[0] is Chat chat)
                 {
-                    ChatsList.CanReorderItems = false;
-                    e.Cancel = true;
+                    var position = chat.GetPosition(ViewModel.Items.ChatList);
+                    if (position == null || !position.IsPinned || e.Items.Count > 1 || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
+                    {
+                        ChatsList.CanReorderItems = false;
+                        e.Cancel = true;
+                    }
+                    else
+                    {
+                        ChatsList.CanReorderItems = true;
+                    }
                 }
-                else
-                {
-                    ChatsList.CanReorderItems = true;
-                }
+            }
+            catch
+            {
+                e.Cancel = true;
             }
         }
 
