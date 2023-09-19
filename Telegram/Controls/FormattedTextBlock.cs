@@ -288,7 +288,8 @@ namespace Telegram.Controls
 
             foreach (var part in styled.Paragraphs)
             {
-                text = styled.Text.Substring(part.Offset, part.Length);
+                // This should not happen, but it does.
+                text = styled.Text.Substring(part.Offset, Math.Min(part.Length, styled.Text.Length - part.Offset));
                 lastFormatted = false;
 
                 var runs = part.Runs;
