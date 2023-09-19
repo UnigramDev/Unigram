@@ -59,19 +59,11 @@ namespace Telegram.Navigation
 
             All.Add(this);
 
-            window.CoreWindow.Closed += (s, e) =>
-            {
-                All.Remove(this);
-            };
-            window.Closed += (s, e) =>
-            {
-                All.Remove(this);
-            };
-
             _lifetime = TLContainer.Current.Lifetime;
             _inputListener = new InputListener(window);
 
             window.Activated += OnActivated;
+            window.Closed += OnClosed;
             window.CoreWindow.ResizeStarted += OnResizeStarted;
             window.CoreWindow.ResizeCompleted += OnResizeCompleted;
 
@@ -91,40 +83,54 @@ namespace Telegram.Navigation
                 Lock(true);
             }
 
-            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+            if (IsInMainView)
+            {
+                SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+            }
+
             ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
         }
 
         private void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
         {
-            if (IsInMainView)
-            {
-                SystemTray.CloseRequested(e);
-            }
+            SystemTray.CloseRequested(e);
         }
 
         public async Task ConsolidateAsync()
         {
-            if (await ApplicationView.GetForCurrentView().TryConsolidateAsync())
+            var sender = ApplicationView.GetForCurrentView();
+            if (await sender.TryConsolidateAsync())
             {
                 return;
             }
 
-            OnConsolidated();
+            OnConsolidated(sender);
         }
 
         private void OnConsolidated(ApplicationView sender, ApplicationViewConsolidatedEventArgs args)
         {
-            OnConsolidated();
+            OnConsolidated(sender);
         }
 
-        private void OnConsolidated()
+        private void OnConsolidated(ApplicationView sender)
         {
-            if (!IsInMainView)
-            {
-                Window.Current.Content = null;
-                Window.Current.Close();
-            }
+            _inputListener.Release();
+            sender.Consolidated -= OnConsolidated;
+
+            // TODO: since we can't call Close directly,
+            // Closed event will be never fired.
+            OnClosed(null, null);
+        }
+
+        private void OnClosed(object sender, CoreWindowEventArgs e)
+        {
+            All.Remove(this);
+            NavigationServices.Clear();
+
+            _window.Activated -= OnActivated;
+            _window.Closed -= OnClosed;
+            _window.CoreWindow.ResizeStarted -= OnResizeStarted;
+            _window.CoreWindow.ResizeCompleted -= OnResizeCompleted;
         }
 
         public bool IsInMainView { get; }

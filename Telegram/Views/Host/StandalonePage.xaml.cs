@@ -37,8 +37,6 @@ namespace Telegram.Views.Host
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
 
-            InitializeTitleBar();
-
             _navigationService = navigationService;
             _shortcutsService = TLContainer.Current.Resolve<IShortcutsService>(navigationService.SessionId);
 
@@ -94,11 +92,13 @@ namespace Telegram.Views.Host
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
             WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
+            InitializeTitleBar();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+            UnloadTitleBar();
         }
 
         private void InitializeTitleBar()
@@ -108,6 +108,13 @@ namespace Telegram.Views.Host
             sender.LayoutMetricsChanged += OnLayoutMetricsChanged;
 
             OnLayoutMetricsChanged(sender, null);
+        }
+
+        private void UnloadTitleBar()
+        {
+            var sender = CoreApplication.GetCurrentView().TitleBar;
+            sender.IsVisibleChanged -= OnLayoutMetricsChanged;
+            sender.LayoutMetricsChanged -= OnLayoutMetricsChanged;
         }
 
         private void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object args)

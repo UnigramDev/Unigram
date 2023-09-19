@@ -44,7 +44,7 @@ namespace Telegram.Services.ViewService
     // it to the user, etc.) When the reference count drops to zero, the secondary view is closed.
     public sealed class ViewLifetimeControl
     {
-        private static readonly ConcurrentDictionary<int, ViewLifetimeControl> WindowControlsMap = new ConcurrentDictionary<int, ViewLifetimeControl>();
+        private static readonly ConcurrentDictionary<int, ViewLifetimeControl> WindowControlsMap = new();
 
         #region CoreDispatcher
         // Dispatcher for this view. Kept here for sending messages between this view and the main view.
@@ -101,7 +101,6 @@ namespace Telegram.Services.ViewService
 
         private void RegisterForEvents()
         {
-            Window.Current.Closed += OnClosed;
             ApplicationView.GetForCurrentView().Consolidated += ViewConsolidated;
         }
 
@@ -109,15 +108,9 @@ namespace Telegram.Services.ViewService
         {
             try
             {
-                Window.Current.Closed -= OnClosed;
                 ApplicationView.GetForCurrentView().Consolidated -= ViewConsolidated;
             }
             catch { }
-        }
-
-        private void OnClosed(object sender, CoreWindowEventArgs e)
-        {
-            Closed?.Invoke(this, EventArgs.Empty);
         }
 
         // A view is consolidated with other views hen there's no way for the user to get to it (it's not in the list of recently used apps, cannot be
@@ -150,6 +143,10 @@ namespace Telegram.Services.ViewService
                 UnregisterForEvents();
                 InternalReleased?.Invoke(this, new EventArgs());
                 WindowControlsMap.TryRemove(Id, out _);
+
+                // Explicitly calling Close breaks everything
+                Window.Current.Content = null;
+                //Window.Current.Close();
             }
         }
 
@@ -238,8 +235,6 @@ namespace Telegram.Services.ViewService
 
             return refCountCopy;
         }
-
-        public event EventHandler Closed;
 
         // Signals to consumers that its time to close the view so that
         // they can clean up (including calling Window.Close() when finished)

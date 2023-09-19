@@ -26,6 +26,12 @@ namespace Telegram.Services.Keyboard
             _window.CoreWindow.PointerPressed += OnPointerPressed;
         }
 
+        public void Release()
+        {
+            _window.Dispatcher.AcceleratorKeyActivated -= OnAcceleratorKeyActivated;
+            _window.CoreWindow.PointerPressed -= OnPointerPressed;
+        }
+
         private void OnAcceleratorKeyActivated(CoreDispatcher sender, AcceleratorKeyEventArgs e)
         {
             if (e.EventType is not CoreAcceleratorKeyEventType.KeyDown and not CoreAcceleratorKeyEventType.SystemKeyDown || e.Handled)

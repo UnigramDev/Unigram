@@ -222,6 +222,6 @@ namespace Telegram.Services.ViewService
             }
         }
 
-        private readonly ConcurrentDictionary<object, IDispatcherContext> _windows = new ConcurrentDictionary<object, IDispatcherContext>();
+        private readonly ConcurrentDictionary<object, IDispatcherContext> _windows = new();
     }
 }
