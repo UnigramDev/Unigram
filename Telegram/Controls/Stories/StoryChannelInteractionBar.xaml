@@ -1,0 +1,54 @@
+﻿<UserControl x:Class="Telegram.Controls.Stories.StoryChannelInteractionBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Telegram.Controls.Stories"
+             xmlns:controls="using:Telegram.Controls"
+             xmlns:messages="using:Telegram.Controls.Messages"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignHeight="300"
+             d:DesignWidth="400">
+
+    <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+          CornerRadius="0,0,15,15"
+          Height="56"
+          Padding="0,8,0,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="ViewersIcon"
+                   Text="&#xEA2A;"
+                   VerticalAlignment="Center"
+                   Foreground="#FFFFFF"
+                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                   FontSize="20"
+                   Margin="12,0,0,0" />
+        <controls:AnimatedTextBlock x:Name="ViewersCount"
+                                    VerticalAlignment="Center"
+                                    Foreground="#FFFFFF"
+                                    Margin="8,1,12,3"
+                                    Grid.Column="1" />
+
+        <controls:GlyphButton x:Name="ShareButton"
+                              Glyph="&#xE72D;"
+                              Grid.Column="3" />
+
+        <controls:GlyphButton x:Name="ReactButton"
+                              Glyph="&#xE74D;"
+                              CornerRadius="4,13,13,4"
+                              Grid.Column="4" />
+
+        <controls:AnimatedTextBlock x:Name="ReactionCount"
+                                    VerticalAlignment="Center"
+                                    Foreground="#FFFFFF"
+                                    Margin="4,1,12,3"
+                                    Grid.Column="5" />
+        
+    </Grid>
+</UserControl>

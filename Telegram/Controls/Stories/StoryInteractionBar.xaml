@@ -10,8 +10,9 @@
              d:DesignWidth="400">
 
     <Grid Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-          CornerRadius="15"
-          Height="48">
+          CornerRadius="0,0,15,15"
+          Padding="0,8,0,0"
+          Height="56">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />

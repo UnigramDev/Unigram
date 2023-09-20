@@ -341,18 +341,29 @@ namespace Telegram.Controls.Stories
                         if (viewModel.Items[real].IsMyStory)
                         {
                             Interactions.Visibility = Visibility.Visible;
+                            ChannelInteractions.Visibility = Visibility.Collapsed;
                             TextArea.Visibility = Visibility.Collapsed;
 
                             Interactions.Update(viewModel.Items[real].SelectedItem);
                         }
+                        else if (viewModel.Items[real].Chat.Type is ChatTypeSupergroup)
+                        {
+                            Interactions.Visibility = Visibility.Collapsed;
+                            ChannelInteractions.Visibility = Visibility.Visible;
+                            TextArea.Visibility = Visibility.Collapsed;
+
+                            ChannelInteractions.Update(viewModel.Items[real].SelectedItem);
+                        }
                         else if (viewModel.Items[real].SelectedItem.CanBeReplied)
                         {
                             Interactions.Visibility = Visibility.Collapsed;
+                            ChannelInteractions.Visibility = Visibility.Collapsed;
                             TextArea.Visibility = Visibility.Visible;
                         }
                         else
                         {
                             Interactions.Visibility = Visibility.Collapsed;
+                            ChannelInteractions.Visibility = Visibility.Collapsed;
                             TextArea.Visibility = Visibility.Collapsed;
                         }
                     }
@@ -422,6 +433,7 @@ namespace Telegram.Controls.Stories
 
             Viewport.Width = x + 48;
             Composer.Width = x + 24;
+            Composer.Margin = new Thickness(0, 0, 0, (ActualHeight - y) / 2 - Composer.ActualHeight + 8);
 
             StickersPanel.Width = x + 24;
         }
@@ -587,7 +599,7 @@ namespace Telegram.Controls.Stories
 
         private void OnCompleted(object sender, EventArgs e)
         {
-            if (Move(Direction.Forward))
+            //if (Move(Direction.Forward))
             {
                 return;
             }
@@ -705,6 +717,14 @@ namespace Telegram.Controls.Stories
             {
                 ActiveCard.Resume(StoryPauseSource.Popup);
             }
+        }
+
+        private void Interactions_ShareClick(object sender, RoutedEventArgs e)
+        {
+            var user = ViewModel.Items[_index];
+            var story = user.SelectedItem;
+
+            ShareStory(story);
         }
 
         private async Task<bool> ContinuePopupAsync(bool shouldPurchase, PremiumStoryFeature feature)

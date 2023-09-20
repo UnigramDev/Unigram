@@ -218,6 +218,7 @@
         <Grid x:Name="LayoutRoot"
               HorizontalAlignment="Stretch"
               SizeChanged="OnSizeChanged"
+              Canvas.ZIndex="1"
               Grid.Row="1">
             <local:StoryContent Click="Story_Click"
                                 MoreClick="Story_ContextRequested" />
@@ -286,7 +287,8 @@
                       Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                       MinHeight="{StaticResource TelegramToolBarHeight}"
                       SizeChanged="TextArea_SizeChanged"
-                      CornerRadius="15">
+                      Padding="0,8,0,0"
+                      CornerRadius="0,0,15,15">
                     <Grid x:Name="TextMain"
                           VerticalAlignment="Bottom">
                         <Grid.RowDefinitions>
@@ -416,6 +418,11 @@
                                        DeleteClick="Interactions_DeleteClick"
                                        VerticalAlignment="Bottom"
                                        Margin="12,0,12,8" />
+
+            <local:StoryChannelInteractionBar x:Name="ChannelInteractions"
+                                              ShareClick="Interactions_ShareClick"
+                                              VerticalAlignment="Bottom"
+                                              Margin="12,0,12,8" />
         </Grid>
 
     </Grid>
