@@ -1,5 +1,6 @@
 ﻿using LinqToVisualTree;
 using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Numerics;
 using Telegram.Common;
@@ -29,11 +30,9 @@ namespace Telegram.Controls.Stories
             _scrollTracker = new DispatcherTimer();
             _scrollTracker.Interval = TimeSpan.FromMilliseconds(33);
             _scrollTracker.Tick += OnTick;
-
-            ScrollingHost.ItemContainerGenerator.ItemsChanged += OnItemsChanged;
         }
 
-        private void OnItemsChanged(object sender, ItemsChangedEventArgs e)
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (ScrollingHost.Items.Count > 0)
             {
@@ -231,6 +230,9 @@ namespace Telegram.Controls.Stories
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            var debouncer = new EventDebouncer<NotifyCollectionChangedEventArgs>(100, handler => ViewModel.Items.CollectionChanged += new NotifyCollectionChangedEventHandler(handler));
+            debouncer.Invoked += OnCollectionChanged;
+
             if (_controlledList != null && _scrollViewer == null)
             {
                 SetControlledList(_controlledList);
