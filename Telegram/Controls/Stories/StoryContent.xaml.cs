@@ -368,30 +368,121 @@ namespace Telegram.Controls.Stories
 
             foreach (var area in story.Areas)
             {
-                var button = new HyperlinkButton
+                FrameworkElement element;
+                if (area.Type is StoryAreaTypeSuggestedReaction suggestedReaction)
                 {
-                    Content = new Border
+                    var flipped = suggestedReaction.IsFlipped;
+                    var test = new Grid
                     {
-                        Width = 24,
-                        Height = 24,
-                        HorizontalAlignment = HorizontalAlignment.Center
-                    },
-                    Width = area.Position.WidthPercentage / 100 * ActualWidth,
-                    Height = area.Position.HeightPercentage / 100 * ActualHeight,
-                    RenderTransformOrigin = new Point(0.5, 0.5),
-                    RenderTransform = new RotateTransform
+                        //Background = new SolidColorBrush(Color.FromArgb(0x7F, 0xFF, 0, 0)),
+                        Width = area.Position.WidthPercentage / 100 * ActualWidth,
+                        Height = area.Position.HeightPercentage / 100 * ActualHeight,
+                        RenderTransformOrigin = new Point(0.5, 0.5),
+                        RenderTransform = new RotateTransform
+                        {
+                            Angle = area.Position.RotationAngle
+                        }
+                    };
+
+                    var data = new GeometryGroup
                     {
-                        Angle = area.Position.RotationAngle
-                    }
-                };
+                        FillRule = FillRule.Nonzero
+                    };
+                    data.Children.Add(new EllipseGeometry
+                    {
+                        Center = new Point(flipped ? 52 : 50, 50),
+                        RadiusX = 50,
+                        RadiusY = 50
+                    });
+                    data.Children.Add(new EllipseGeometry
+                    {
+                        Center = new Point(flipped ? 21 : 83, 83),
+                        RadiusX = 12.5,
+                        RadiusY = 12.5
+                    });
+                    data.Children.Add(new EllipseGeometry
+                    {
+                        Center = new Point(flipped ? 5 : 98, 98),
+                        RadiusX = 5,
+                        RadiusY = 5
+                    });
 
-                Canvas.SetLeft(button, area.Position.XPercentage / 100 * ActualWidth - button.Width / 2);
-                Canvas.SetTop(button, area.Position.YPercentage / 100 * ActualHeight - button.Height / 2);
+                    var path = new Path
+                    {
+                        Data = data,
+                        Fill = new SolidColorBrush(suggestedReaction.IsDark ? Colors.Black : Colors.White),
+                        Opacity = suggestedReaction.IsDark ? 0.5 : 1,
+                        StrokeThickness = 0,
+                        Stretch = Stretch.Uniform,
+                        HorizontalAlignment = HorizontalAlignment.Stretch,
+                        VerticalAlignment = VerticalAlignment.Stretch,
+                        Width = 103,
+                        Height = 103
+                    };
 
-                AreasPanel.Children.Add(button);
+                    var shadow = new Border();
 
-                button.Tag = area;
-                button.Click += Area_Click;
+                    DropShadowEx.Attach(path, target: shadow);
+
+                    var test2 = new Grid();
+                    test2.Padding = new Thickness(6);
+
+                    var side = Math.Sqrt((100 * 100) / 2);
+                    var margin = (100 - side) / 2;
+
+                    var lottie = new AnimatedImage
+                    {
+                        Width = side,
+                        Height = side,
+                        DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                        FrameSize = new Windows.Foundation.Size(side, side),
+                        Source = new ReactionFileSource(ViewModel.ClientService, suggestedReaction.ReactionType),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        VerticalAlignment = VerticalAlignment.Top,
+                        Margin = new Thickness(flipped ? margin + 3 : margin, margin, 0, 0),
+                        AutoPlay = true
+                    };
+
+                    test2.Children.Add(shadow);
+                    test2.Children.Add(path);
+                    test2.Children.Add(lottie);
+
+                    test.Children.Add(new Viewbox
+                    {
+                        Child = test2
+                    });
+
+                    element = test;
+                }
+                else
+                {
+                    var button = new HyperlinkButton
+                    {
+                        Content = new Border
+                        {
+                            Width = 24,
+                            Height = 24,
+                            HorizontalAlignment = HorizontalAlignment.Center
+                        },
+                        Width = area.Position.WidthPercentage / 100 * ActualWidth,
+                        Height = area.Position.HeightPercentage / 100 * ActualHeight,
+                        RenderTransformOrigin = new Point(0.5, 0.5),
+                        RenderTransform = new RotateTransform
+                        {
+                            Angle = area.Position.RotationAngle
+                        }
+                    };
+
+                    button.Click += Area_Click;
+                    element = button;
+                }
+
+                Canvas.SetLeft(element, area.Position.XPercentage / 100 * ActualWidth - element.Width / 2);
+                Canvas.SetTop(element, area.Position.YPercentage / 100 * ActualHeight - element.Height / 2);
+
+                AreasPanel.Children.Add(element);
+
+                element.Tag = area;
             }
         }
 
