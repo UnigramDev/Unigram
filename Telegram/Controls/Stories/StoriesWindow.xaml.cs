@@ -599,7 +599,7 @@ namespace Telegram.Controls.Stories
 
         private void OnCompleted(object sender, EventArgs e)
         {
-            //if (Move(Direction.Forward))
+            if (Move(Direction.Forward))
             {
                 return;
             }
