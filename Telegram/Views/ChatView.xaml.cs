@@ -2075,13 +2075,13 @@ namespace Telegram.Views
 
                     if (chat.CanBeReported)
                     {
-                        flyout.CreateFlyoutItem(ViewModel.ReportSelectedMessages, "Report Selected", Icons.ShieldError);
+                        flyout.CreateFlyoutItem(ViewModel.ReportSelectedMessages, Strings.ReportSelectedMessages, Icons.ShieldError);
                     }
 
                     flyout.CreateFlyoutItem(ViewModel.DeleteSelectedMessages, Strings.DeleteSelected, Icons.Delete, destructive: true);
                     flyout.CreateFlyoutItem(ViewModel.UnselectMessages, Strings.ClearSelection);
                     flyout.CreateFlyoutSeparator();
-                    flyout.CreateFlyoutItem(ViewModel.CopySelectedMessages, "Copy Selected as Text", Icons.DocumentCopy);
+                    flyout.CreateFlyoutItem(ViewModel.CopySelectedMessages, Strings.CopySelectedMessages, Icons.DocumentCopy);
                 }
                 else
                 {

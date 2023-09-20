@@ -1512,6 +1512,12 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BotWebAppInstantViewOpen" xml:space="preserve">
     <value>Launch</value>
   </data>
+  <data name="BotWebViewChangesMayNotBeSaved" xml:space="preserve">
+    <value>Changes that you made may not be saved.</value>
+  </data>
+  <data name="BotWebViewCloseAnyway" xml:space="preserve">
+    <value>Close anyway</value>
+  </data>
   <data name="BotWebViewDeleteBot" xml:space="preserve">
     <value>Remove from Menu</value>
   </data>
@@ -1833,10 +1839,10 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
     <value>This channel need {0} more boosts to enable stories.</value>
   </data>
   <data name="ChannelNeedBoostsAlreadyBoostedDescriptionLevelNext" xml:space="preserve">
-    <value>This channel need {0} to be able post **{1}** per day.</value>
+    <value>This channel needs {0} to be able to post **{1}** per day.</value>
   </data>
   <data name="ChannelNeedBoostsDescriptionLevel1" xml:space="preserve">
-    <value>This channel need {0} to enable stories. Help make it possible!</value>
+    <value>This channel needs {0} to enable stories. Help make it possible!</value>
   </data>
   <data name="ChannelNeedBoostsDescriptionLevelNext" xml:space="preserve">
     <value>This channel need {0} to be able post **{1}** per day. Help make it possible!</value>
@@ -2291,6 +2297,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="CopyLink" xml:space="preserve">
     <value>Copy Link</value>
+  </data>
+  <data name="CopySelectedMessages" xml:space="preserve">
+    <value>Copy Selected as Text</value>
   </data>
   <data name="CopySelectedText" xml:space="preserve">
     <value>Copy Selected Text</value>
@@ -5928,6 +5937,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="ReportFalsePositive" xml:space="preserve">
     <value>Report False Positive</value>
+  </data>
+  <data name="ReportSelectedMessages" xml:space="preserve">
+    <value>Report Selected</value>
   </data>
   <data name="ReportSpam" xml:space="preserve">
     <value>REPORT SPAM</value>
