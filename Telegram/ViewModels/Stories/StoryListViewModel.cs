@@ -66,7 +66,14 @@ namespace Telegram.ViewModels.Stories
                 return;
             }
 
-            NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+            if (chat.Type is ChatTypePrivate)
+            {
+                NavigationService.Navigate(typeof(ProfilePage), chat.Id);
+            }
+            else
+            {
+                NavigationService.NavigateToChat(chat);
+            }
         }
 
         public void MuteProfile(ActiveStoriesViewModel activeStories)
@@ -87,6 +94,10 @@ namespace Telegram.ViewModels.Stories
             {
                 Window.Current.ShowTeachingTip(string.Format(settings.MuteStories ? Strings.NotificationsStoryMutedHint : Strings.NotificationsStoryUnmutedHint, user.FirstName));
             }
+            else
+            {
+                Window.Current.ShowTeachingTip(string.Format(settings.MuteStories ? Strings.NotificationsStoryMutedHint : Strings.NotificationsStoryUnmutedHint, activeStories.Chat.Title));
+            }
         }
 
         public void HideProfile(ActiveStoriesViewModel activeStories)
@@ -97,6 +108,10 @@ namespace Telegram.ViewModels.Stories
             {
                 Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToContacts, user.FirstName));
             }
+            else
+            {
+                Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToContacts, activeStories.Chat.Title));
+            }
         }
 
         public void ShowProfile(ActiveStoriesViewModel activeStories)
@@ -106,6 +121,10 @@ namespace Telegram.ViewModels.Stories
             if (ClientService.TryGetUser(activeStories.Chat, out User user))
             {
                 Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToDialogs, user.FirstName));
+            }
+            else
+            {
+                Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToDialogs, activeStories.Chat.Title));
             }
         }
 

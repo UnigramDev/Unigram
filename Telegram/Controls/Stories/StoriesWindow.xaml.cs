@@ -897,11 +897,14 @@ namespace Telegram.Controls.Stories
             var muted = ViewModel.Settings.Notifications.GetMuteStories(activeStories.Chat);
             var archived = activeStories.List is StoryListArchive;
 
+            var admin = ViewModel.ClientService.TryGetSupergroup(story.Chat, out Supergroup supergroup) && (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator);
+
             if (story.CanToggleIsPinned)
             {
                 flyout.CreateFlyoutItem(ViewModel.ToggleStory, story, story.IsPinned ? Strings.ArchiveStory : Strings.SaveToProfile, story.IsPinned ? Icons.StoriesPinnedOff : Icons.StoriesPinned);
             }
-            else
+
+            if (!admin && !activeStories.IsMyStory)
             {
                 flyout.CreateFlyoutItem(ViewModel.MuteProfile, activeStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
             }

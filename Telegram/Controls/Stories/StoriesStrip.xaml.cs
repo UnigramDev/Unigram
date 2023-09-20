@@ -128,10 +128,24 @@ namespace Telegram.Controls.Stories
             var muted = ViewModel.Settings.Notifications.GetMuteStories(activeStories.Chat);
             var archived = activeStories.List is StoryListArchive;
 
+            var admin = ViewModel.ClientService.TryGetSupergroup(activeStories.Chat, out Supergroup supergroup) && (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator);
+
             var flyout = new MenuFlyout();
-            flyout.CreateFlyoutItem(ViewModel.SendMessage, activeStories, Strings.SendMessage, Icons.ChatEmpty);
-            flyout.CreateFlyoutItem(ViewModel.OpenProfile, activeStories, Strings.OpenProfile, Icons.Person);
-            flyout.CreateFlyoutItem(ViewModel.MuteProfile, activeStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
+
+            if (activeStories.Chat.Type is ChatTypePrivate)
+            {
+                flyout.CreateFlyoutItem(ViewModel.SendMessage, activeStories, Strings.SendMessage, Icons.ChatEmpty);
+                flyout.CreateFlyoutItem(ViewModel.OpenProfile, activeStories, Strings.OpenProfile, Icons.Person);
+            }
+            else if (activeStories.Chat.Type is ChatTypeSupergroup typeSupergroup && typeSupergroup.IsChannel)
+            {
+                flyout.CreateFlyoutItem(ViewModel.OpenProfile, activeStories, Strings.OpenChannel2, Icons.Megaphone);
+            }
+
+            if (!admin && !activeStories.IsMyStory)
+            {
+                flyout.CreateFlyoutItem(ViewModel.MuteProfile, activeStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
+            }
 
             if (archived)
             {

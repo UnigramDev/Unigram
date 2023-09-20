@@ -4965,6 +4965,9 @@ Stories</value>
   <data name="OpenChannel" xml:space="preserve">
     <value>VIEW CHANNEL</value>
   </data>
+  <data name="OpenChannel2" xml:space="preserve">
+    <value>Open Channel</value>
+  </data>
   <data name="OpenFile" xml:space="preserve">
     <value>OPEN FILE</value>
   </data>
