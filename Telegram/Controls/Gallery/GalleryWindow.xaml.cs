@@ -167,7 +167,6 @@ namespace Telegram.Controls.Gallery
             var back = ElementCompositionPreview.GetElementVisual(BackButton);
 
             parent.Opacity = next.Opacity = prev.Opacity = back.Opacity = 1;
-            return;
 
             var batch = parent.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
