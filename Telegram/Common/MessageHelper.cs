@@ -300,7 +300,7 @@ namespace Telegram.Common
                 var response3 = await clientService.SendAsync(new GetChatBoostStatus(linkInfo.ChatId));
                 if (response2 is CanBoostChatResult result && response3 is ChatBoostStatus status)
                 {
-                    await new ChatBoostPopup(clientService, chat, status, result).ShowQueuedAsync();
+                    await new ChatBoostPopup(clientService, navigation, chat, status, result).ShowQueuedAsync();
                 }
             }
         }

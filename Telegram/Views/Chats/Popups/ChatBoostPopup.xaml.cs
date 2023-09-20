@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
@@ -16,15 +17,19 @@ namespace Telegram.Views.Chats.Popups
     public sealed partial class ChatBoostPopup : ContentPopup
     {
         private readonly IClientService _clientService;
+        private readonly INavigationService _navigationService;
+
         private readonly Chat _chat;
         private readonly ChatBoostStatus _status;
         private readonly CanBoostChatResult _result;
 
-        public ChatBoostPopup(IClientService clientService, Chat chat, ChatBoostStatus status, CanBoostChatResult result)
+        public ChatBoostPopup(IClientService clientService, INavigationService navigationService, Chat chat, ChatBoostStatus status, CanBoostChatResult result)
         {
             InitializeComponent();
 
             _clientService = clientService;
+            _navigationService = navigationService;
+
             _chat = chat;
             _status = status;
             _result = result;
@@ -189,7 +194,9 @@ namespace Telegram.Views.Chats.Popups
                 var confirm = await MessagePopup.ShowAsync(target: null, Strings.PremiumNeededForBoosting, Strings.PremiumNeeded, Strings.OK, Strings.Cancel);
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    // TODO: do the premium thing
+                    Hide();
+
+                    _navigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureChatBoost()));
                 }
             }
         }
