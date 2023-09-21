@@ -2781,8 +2781,7 @@ namespace Telegram.Views
                 SetPivotIndex(0);
                 ViewModel.RaisePropertyChanged(nameof(ViewModel.SelectedFolder));
             }
-            else if (ViewModel.Chats.Items.ChatList is ChatListArchive
-                || ViewModel.Folders.Count > 0 && !ViewModel.Chats.Items.ChatList.ListEquals(ViewModel.Folders[0].ChatList))
+            else if (ViewModel.Chats.Items.ChatList is ChatListArchive)
             {
                 UpdateFolder(ViewModel.Folders.Count > 0 ? ViewModel.Folders[0] : ChatFolderViewModel.Main);
             }
