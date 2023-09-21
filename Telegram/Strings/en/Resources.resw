@@ -1542,6 +1542,9 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="BotWebViewSettings" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="BotWebViewStartPermission" xml:space="preserve">
+    <value>To launch this web app, you will connect to its website.</value>
+  </data>
   <data name="BubbleRadius" xml:space="preserve">
     <value>Message corners</value>
   </data>
@@ -4618,6 +4621,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="Months_other" xml:space="preserve">
     <value>{0} months</value>
+  </data>
+  <data name="MoreAboutThisBot" xml:space="preserve">
+    <value>More about this bot</value>
   </data>
   <data name="MoreBoosts_one" xml:space="preserve">
     <value>**{0}** more boost</value>

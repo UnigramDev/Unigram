@@ -204,7 +204,7 @@ namespace Telegram.ViewModels
 
         public void OpenUrl(string url, bool untrust)
         {
-            MessageHelper.OpenUrl(ClientService, NavigationService, url, untrust);
+            MessageHelper.OpenUrl(ClientService, NavigationService, url, untrust, Chat == null ? null : new OpenUrlSourceChat(Chat.Id));
         }
 
         public string GetAdminTitle(MessageViewModel message)

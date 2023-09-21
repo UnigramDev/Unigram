@@ -16,6 +16,7 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Streams;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Stories;
@@ -40,6 +41,21 @@ using User = Telegram.Td.Api.User;
 
 namespace Telegram.Common
 {
+    public class OpenUrlSource
+    {
+
+    }
+
+    public class OpenUrlSourceChat : OpenUrlSource
+    {
+        public long ChatId { get; }
+
+        public OpenUrlSourceChat(long chatId)
+        {
+            ChatId = chatId;
+        }
+    }
+
     public class MessageHelper
     {
         public static async void CopyLink(IClientService clientService, InternalLinkType type)
@@ -97,7 +113,7 @@ namespace Telegram.Common
             return string.Equals(uri.Scheme, "tg", StringComparison.OrdinalIgnoreCase);
         }
 
-        public static async void OpenTelegramUrl(IClientService clientService, INavigationService navigation, Uri uri)
+        public static async void OpenTelegramUrl(IClientService clientService, INavigationService navigation, Uri uri, OpenUrlSource source = null)
         {
             var url = uri.ToString();
             if (url.Contains("telegra.ph"))
@@ -109,7 +125,7 @@ namespace Telegram.Common
             var response = await clientService.SendAsync(new GetInternalLinkType(url));
             if (response is InternalLinkType internalLink)
             {
-                OpenTelegramUrl(clientService, navigation, internalLink);
+                OpenTelegramUrl(clientService, navigation, internalLink, source);
             }
             else if (!string.Equals(uri.Scheme, "tg", StringComparison.OrdinalIgnoreCase))
             {
@@ -145,7 +161,7 @@ namespace Telegram.Common
             }
         }
 
-        public static void OpenTelegramUrl(IClientService clientService, INavigationService navigation, InternalLinkType internalLink)
+        public static void OpenTelegramUrl(IClientService clientService, INavigationService navigation, InternalLinkType internalLink, OpenUrlSource source = null)
         {
             if (internalLink is InternalLinkTypeActiveSessions)
             {
@@ -281,7 +297,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypeWebApp webApp)
             {
-                NavigateToWebApp(clientService, navigation, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName);
+                NavigateToWebApp(clientService, navigation, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName, source);
             }
         }
 
@@ -292,7 +308,7 @@ namespace Telegram.Common
             {
                 if (linkInfo.ChatId == 0 || !clientService.TryGetChat(linkInfo.ChatId, out Chat chat))
                 {
-                    await MessagePopup.ShowAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
+                    Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                     return;
                 }
 
@@ -333,11 +349,11 @@ namespace Telegram.Common
             }
             else
             {
-                await MessagePopup.ShowAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
+                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
-        private static async void NavigateToWebApp(IClientService clientService, INavigationService navigation, string botUsername, string startParameter, string webAppShortName)
+        private static async void NavigateToWebApp(IClientService clientService, INavigationService navigation, string botUsername, string startParameter, string webAppShortName, OpenUrlSource source)
         {
             var response = await clientService.SendAsync(new SearchPublicChat(botUsername));
             if (response is Chat chat && clientService.TryGetUser(chat, out User user))
@@ -350,10 +366,47 @@ namespace Telegram.Common
                 var responss = await clientService.SendAsync(new SearchWebApp(user.Id, webAppShortName));
                 if (responss is FoundWebApp foundWebApp)
                 {
-                    // TODO: confirmation
-                    return;
+                    var popup = new MessagePopup
+                    {
+                        Title = Strings.AppName,
+                        Message = Strings.BotWebViewStartPermission,
+                        PrimaryButtonText = Strings.Start,
+                        SecondaryButtonText = Strings.Cancel,
+                    };
 
-                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(0, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, false));
+                    if (foundWebApp.RequestWriteAccess)
+                    {
+                        var textBlock = new TextBlock
+                        {
+                            TextWrapping = TextWrapping.Wrap
+                        };
+
+                        var markdown = Client.Execute(new ParseMarkdown(new FormattedText(string.Format(Strings.OpenUrlOption2, user.FirstName), Array.Empty<TextEntity>()))) as FormattedText;
+                        if (markdown != null)
+                        {
+                            TextBlockHelper.SetFormattedText(textBlock, markdown);
+                        }
+                        else
+                        {
+                            textBlock.Text = Strings.OpenUrlOption2;
+                        }
+
+                        popup.CheckBoxLabel = textBlock;
+                    }
+
+                    var confirm = await popup.ShowQueuedAsync();
+                    if (confirm != ContentDialogResult.Primary)
+                    {
+                        return;
+                    }
+
+                    var chatId = source switch
+                    {
+                        OpenUrlSourceChat sourceMessage => sourceMessage.ChatId,
+                        _ => 0
+                    };
+
+                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(chatId, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, foundWebApp.RequestWriteAccess && popup.IsChecked is true));
                     if (responsa is HttpUrl url)
                     {
                         await new WebBotPopup(clientService, navigation, user, url.Url).ShowQueuedAsync();
@@ -361,8 +414,12 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    // TODO: error
+                    navigation.NavigateToChat(chat);
                 }
+            }
+            else
+            {
+                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -649,12 +706,12 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    await MessagePopup.ShowAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
+                    Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                 }
             }
             else
             {
-                await MessagePopup.ShowAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
+                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -679,7 +736,7 @@ namespace Telegram.Common
             }
             else
             {
-                await MessagePopup.ShowAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
+                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -714,7 +771,7 @@ namespace Telegram.Common
             }
             else
             {
-                await MessagePopup.ShowAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
+                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -867,13 +924,13 @@ namespace Telegram.Common
             return (symbol >= 'a' && symbol <= 'z') || (symbol >= 'A' && symbol <= 'Z') || (symbol >= '0' && symbol <= '9') || symbol == '_';
         }
 
-        public static async void OpenUrl(IClientService clientService, INavigationService navigationService, string url, bool untrust = false)
+        public static async void OpenUrl(IClientService clientService, INavigationService navigationService, string url, bool untrust = false, OpenUrlSource source = null)
         {
             if (TryCreateUri(url, out Uri uri))
             {
                 if (clientService != null && navigationService != null && IsTelegramUrl(uri))
                 {
-                    OpenTelegramUrl(clientService, navigationService, uri);
+                    OpenTelegramUrl(clientService, navigationService, uri, source);
                 }
                 else
                 {
