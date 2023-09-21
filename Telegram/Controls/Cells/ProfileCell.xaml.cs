@@ -454,7 +454,7 @@ namespace Telegram.Controls.Cells
             }
             else if (args.Phase == 1)
             {
-                SubtitleLabel.Text = string.Format(Strings.BoostExpireOn, Formatter.DateAt(boost.ExpireDate));
+                SubtitleLabel.Text = string.Format(Strings.BoostExpireOn, Formatter.DateAt(boost.ExpirationDate));
             }
             else if (args.Phase == 2)
             {
