@@ -10,9 +10,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Telegram.Assets.Icons;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Common.Chats;
+using Telegram.Controls;
 using Telegram.Controls.Chats;
 using Telegram.Converters;
 using Telegram.Navigation;
@@ -20,6 +22,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Factories;
 using Telegram.Services.Updates;
+using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
@@ -2516,7 +2519,18 @@ namespace Telegram.ViewModels
             var response = await ClientService.SendAsync(new JoinChat(chat.Id));
             if (response is Error error)
             {
+                if (error.MessageEquals(ErrorType.INVITE_REQUEST_SENT))
+                {
+                    await MessagePopup.ShowAsync(chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription, Strings.RequestToJoinSent, Strings.OK);
+                    return;
 
+                    var message = Strings.RequestToJoinSent + Environment.NewLine + (chat.Type is ChatTypeSupergroup supergroup2 && supergroup2.IsChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription);
+                    var entity = new TextEntity(0, Strings.RequestToJoinSent.Length, new TextEntityTypeBold());
+
+                    var text = new FormattedText(message, new[] { entity });
+
+                    Window.Current.ShowTeachingTip(text, new LocalFileSource("ms-appx:///Assets/Toasts/JoinRequested.tgs"));
+                }
             }
         }
 

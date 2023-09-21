@@ -803,10 +803,10 @@ namespace Telegram.Common
                     {
                         if (error.MessageEquals(ErrorType.INVITE_REQUEST_SENT))
                         {
-                            await MessagePopup.ShowAsync(Strings.RequestToJoinChannelSentDescription, Strings.RequestToJoinSent, Strings.OK);
+                            await MessagePopup.ShowAsync(info.Type is InviteLinkChatTypeChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription, Strings.RequestToJoinSent, Strings.OK);
                             return;
 
-                            var message = Strings.RequestToJoinSent + Environment.NewLine + Strings.RequestToJoinChannelSentDescription;
+                            var message = Strings.RequestToJoinSent + Environment.NewLine + (info.Type is InviteLinkChatTypeChannel ? Strings.RequestToJoinChannelSentDescription : Strings.RequestToJoinGroupSentDescription);
                             var entity = new TextEntity(0, Strings.RequestToJoinSent.Length, new TextEntityTypeBold());
 
                             var text = new FormattedText(message, new[] { entity });

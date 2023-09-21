@@ -4462,7 +4462,11 @@ namespace Telegram.Views
             {
                 if ((group.Status is ChatMemberStatusLeft && (group.IsPublic() || ViewModel.ClientService.IsChatAccessible(chat))) || (group.Status is ChatMemberStatusCreator creator && !creator.IsMember))
                 {
-                    if (ViewModel.Type == DialogType.Thread)
+                    if (group.JoinByRequest)
+                    {
+                        ShowAction(Strings.ChannelJoinRequest, true);
+                    }
+                    else if (ViewModel.Type == DialogType.Thread)
                     {
                         if (!chat.Permissions.CanSendBasicMessages)
                         {

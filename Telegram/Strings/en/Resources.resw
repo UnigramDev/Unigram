@@ -1808,6 +1808,9 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChannelJoined" xml:space="preserve">
     <value>You joined this channel</value>
   </data>
+  <data name="ChannelJoinRequest" xml:space="preserve">
+    <value>APPLY TO JOIN GROUP</value>
+  </data>
   <data name="ChannelLeaveAlert" xml:space="preserve">
     <value>Are you sure you want to leave this channel?</value>
   </data>
@@ -5993,6 +5996,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="RequestToJoinChannelSentDescription" xml:space="preserve">
     <value>You will be added to the channel once its admins approve your request.</value>
+  </data>
+  <data name="RequestToJoinGroupSentDescription" xml:space="preserve">
+    <value>You will be added to the group once an admin approves your request.</value>
   </data>
   <data name="RequestToJoinSent" xml:space="preserve">
     <value>Join request sent</value>
