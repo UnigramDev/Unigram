@@ -46,7 +46,7 @@ namespace Telegram.Controls.Stories
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UpdateIndexes();
+            _scrollDebouncer?.Invoke();
         }
 
         private int _first = 0;
@@ -241,11 +241,12 @@ namespace Telegram.Controls.Stories
         private ExpressionAnimation _progressAnimation;
 
         private DispatcherTimer _scrollTracker;
+        private EventDebouncer<NotifyCollectionChangedEventArgs> _scrollDebouncer;
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var debouncer = new EventDebouncer<NotifyCollectionChangedEventArgs>(100, handler => ViewModel.Items.CollectionChanged += new NotifyCollectionChangedEventHandler(handler));
-            debouncer.Invoked += OnCollectionChanged;
+            _scrollDebouncer = new EventDebouncer<NotifyCollectionChangedEventArgs>(100, handler => ViewModel.Items.CollectionChanged += new NotifyCollectionChangedEventHandler(handler));
+            _scrollDebouncer.Invoked += OnCollectionChanged;
 
             if (_controlledList != null && _scrollViewer == null)
             {

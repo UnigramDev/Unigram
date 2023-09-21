@@ -111,5 +111,16 @@ namespace Telegram.Common
             _timer?.Start();
             _backgroundTimer?.Change(_interval, TimeSpan.Zero);
         }
+
+        public void Invoke()
+        {
+            _timer?.Stop();
+            _backgroundTimer?.Change(Timeout.Infinite, Timeout.Infinite);
+
+            _lastSender = null;
+            _lastArgs = default;
+            _timer?.Start();
+            _backgroundTimer?.Change(_interval, TimeSpan.Zero);
+        }
     }
 }
