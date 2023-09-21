@@ -108,7 +108,7 @@ namespace Telegram.Common
                 Content = control =>
                 {
                     var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, SessionId, "Payments" + Guid.NewGuid(), false);
-                    nav.Navigate(typeof(PaymentFormPage), state: Navigation.Services.NavigationState.GetInvoice(message.ChatId, message.Id));
+                    nav.Navigate(typeof(PaymentFormPage), new InputInvoiceMessage(message.ChatId, message.Id));
 
                     return BootStrapper.Current.CreateRootElement(nav);
 
@@ -129,7 +129,7 @@ namespace Telegram.Common
                 Content = control =>
                 {
                     var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, SessionId, "Payments" + Guid.NewGuid(), false);
-                    nav.Navigate(typeof(PaymentFormPage), state: Navigation.Services.NavigationState.GetInvoice(inputInvoice));
+                    nav.Navigate(typeof(PaymentFormPage), inputInvoice);
 
                     return BootStrapper.Current.CreateRootElement(nav);
 

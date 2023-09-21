@@ -33,15 +33,14 @@ namespace Telegram.ViewModels.Payments
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (state.TryGet("chatId", out long chatId)
-                && state.TryGet("messageId", out long messageId))
+            if (parameter is InputInvoiceMessage invoiceMessage)
             {
-                var message = await ClientService.SendAsync(new GetMessage(chatId, messageId)) as Message;
+                var message = await ClientService.SendAsync(new GetMessage(invoiceMessage.ChatId, invoiceMessage.MessageId)) as Message;
                 if (message?.Content is MessageInvoice invoice)
                 {
                     if (invoice.ReceiptMessageId == 0)
                     {
-                        await InitializeForm(new InputInvoiceMessage(chatId, messageId));
+                        await InitializeForm(invoiceMessage);
                     }
                     else
                     {
@@ -54,9 +53,9 @@ namespace Telegram.ViewModels.Payments
                 }
 
             }
-            else if (state.TryGet("name", out string name))
+            else if (parameter is InputInvoiceName invoiceName)
             {
-                await InitializeForm(new InputInvoiceName(name));
+                await InitializeForm(invoiceName);
             }
         }
 
