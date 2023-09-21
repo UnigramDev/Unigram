@@ -2019,7 +2019,10 @@ namespace Telegram.ViewModels
 
             void Remove(string reason)
             {
-                Settings.Chats.Clear();
+                Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.ReadInboxMaxId, out long _);
+                Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Index, out long _);
+                Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Pixel, out double _);
+
                 Logger.Debug(string.Format("{0} - Removing scrolling position, {1}", chat.Id, reason));
             }
 
