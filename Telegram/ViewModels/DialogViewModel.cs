@@ -1000,17 +1000,9 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (direction == null)
+            if (direction == null && TryGetFirstVisibleMessageId(out long firstVisibleId))
             {
-                var field = HistoryField;
-                if (field != null)
-                {
-                    var panel = field.ItemsPanelRoot as ItemsStackPanel;
-                    if (panel != null && panel.FirstVisibleIndex >= 0 && panel.FirstVisibleIndex < Items.Count && Items.Count > 0)
-                    {
-                        direction = Items[panel.FirstVisibleIndex].Id < maxId ? ScrollIntoViewAlignment.Default : ScrollIntoViewAlignment.Leading;
-                    }
-                }
+                direction = firstVisibleId < maxId ? ScrollIntoViewAlignment.Default : ScrollIntoViewAlignment.Leading;
             }
 
             if (alignment == VerticalAlignment.Bottom && pixel == null)
@@ -1214,9 +1206,12 @@ namespace Telegram.ViewModels
                             lastMessageId = chat.LastMessage?.Id ?? long.MaxValue;
                         }
 
+                        var maxIdIncluded = messages.MessagesValue[0].Id >= maxId && messages.MessagesValue[^1].Id <= maxId;
+                        var lastReadIdIncluded = messages.MessagesValue[0].Id >= lastReadMessageId && messages.MessagesValue[^1].Id <= lastReadMessageId;
+
                         // If we're loading from the last read message
                         // then we want to skip it to align first unread message at top
-                        if (lastReadMessageId != 0 && lastReadMessageId != lastMessageId && maxId >= lastReadMessageId)
+                        if (lastReadMessageId != 0 && lastReadMessageId != lastMessageId && maxIdIncluded && lastReadIdIncluded /*maxId >= lastReadMessageId*/)
                         {
                             var target = default(Message);
                             var index = -1;
@@ -1262,7 +1257,7 @@ namespace Telegram.ViewModels
                                     Logger.Debug("Looking for first unread message, can't find it");
                                 }
 
-                                if (maxId == lastReadMessageId)
+                                if (maxId == lastReadMessageId && pixel == null)
                                 {
                                     maxId = target.Id;
                                     pixel = 28 + 48;
@@ -1270,7 +1265,7 @@ namespace Telegram.ViewModels
                             }
                         }
 
-                        if (firstVisibleItem != null)
+                        if (firstVisibleItem != null && pixel == null)
                         {
                             maxId = firstVisibleItem.Id;
                         }
@@ -1843,7 +1838,7 @@ namespace Telegram.ViewModels
 
                 if (TryRemove(chat.Id, out long readInboxMaxId, out long start) &&
                     readInboxMaxId == lastReadMessageId &&
-                    start < lastReadMessageId)
+                    start <= lastReadMessageId)
                 {
                     if (Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Pixel, out double pixel))
                     {
@@ -2022,23 +2017,17 @@ namespace Telegram.ViewModels
 
             ClientService.Send(new CloseChat(chat.Id));
 
+            void Remove(string reason)
+            {
+                Settings.Chats.Clear();
+                Logger.Debug(string.Format("{0} - Removing scrolling position, {1}", chat.Id, reason));
+            }
+
             try
             {
                 var field = HistoryField;
-                if (field == null)
+                if (field != null && TryGetLastVisibleMessageId(out long start, out int lastVisibleIndex))
                 {
-                    Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Index, out long index);
-                    Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Pixel, out double pixel);
-
-                    Logger.Debug(string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
-
-                    return;
-                }
-
-                var panel = field.ItemsPanelRoot as ItemsStackPanel;
-                if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < Items.Count - 1 && Items.Count > 0)
-                {
-                    var start = Items[panel.LastVisibleIndex].Id;
                     if (start != 0 && start != chat.LastMessage?.Id)
                     {
                         long lastReadMessageId;
@@ -2053,53 +2042,38 @@ namespace Telegram.ViewModels
                             lastReadMessageId = chat.LastReadInboxMessageId;
                         }
 
-                        var container = field.ContainerFromIndex(panel.LastVisibleIndex) as ListViewItem;
+                        Settings.Chats[chat.Id, ThreadId, ChatSetting.ReadInboxMaxId] = lastReadMessageId;
+                        Settings.Chats[chat.Id, ThreadId, ChatSetting.Index] = start;
+
+                        var container = field.ContainerFromIndex(lastVisibleIndex) as ListViewItem;
                         if (container != null)
                         {
                             var transform = container.TransformToVisual(field);
                             var position = transform.TransformPoint(new Point());
 
-                            Settings.Chats[chat.Id, ThreadId, ChatSetting.ReadInboxMaxId] = lastReadMessageId;
-                            Settings.Chats[chat.Id, ThreadId, ChatSetting.Index] = start;
                             Settings.Chats[chat.Id, ThreadId, ChatSetting.Pixel] = field.ActualHeight - (position.Y + container.ActualHeight);
-
-                            Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, Items[panel.LastVisibleIndex].Id, field.ActualHeight - (position.Y + container.ActualHeight)));
+                            Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, start, field.ActualHeight - (position.Y + container.ActualHeight)));
                         }
                         else
                         {
-                            Settings.Chats[chat.Id, ThreadId, ChatSetting.ReadInboxMaxId] = lastReadMessageId;
-                            Settings.Chats[chat.Id, ThreadId, ChatSetting.Index] = start;
                             Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Pixel, out double pixel);
-
-                            Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, Items[panel.LastVisibleIndex].Id));
+                            Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, start));
                         }
 
                     }
                     else
                     {
-                        Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.ReadInboxMaxId, out long _);
-                        Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Index, out long _);
-                        Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Pixel, out double _);
-
-                        Logger.Debug(string.Format("{0} - Removing scrolling position, as last item is chat.LastMessage", chat.Id));
+                        Remove("as last item is chat.LastMessage");
                     }
                 }
                 else
                 {
-                    Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.ReadInboxMaxId, out long _);
-                    Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Index, out long _);
-                    Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Pixel, out double _);
-
-                    Logger.Debug(string.Format("{0} - Removing scrolling position, generic reason", chat.Id));
+                    Remove("generic reason");
                 }
             }
             catch
             {
-                Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.ReadInboxMaxId, out long _);
-                Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Index, out long _);
-                Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Pixel, out double _);
-
-                Logger.Debug(string.Format("{0} - Removing scrolling position, exception", chat.Id));
+                Remove("exception");
             }
 
             SaveDraft();
