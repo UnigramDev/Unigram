@@ -803,16 +803,75 @@ namespace Telegram.ViewModels
 
         public Task LoadLastSliceAsync()
         {
-            if (_thread is MessageThreadInfo thread)
+            var chat = _chat;
+            if (chat == null)
             {
-                return LoadMessageSliceAsync(null, thread.ReplyInfo?.LastMessageId ?? 0, VerticalAlignment.Top, disableAnimation: false);
-            }
-            else if (_chat is Chat chat)
-            {
-                return LoadMessageSliceAsync(null, chat.LastMessage?.Id ?? 0, VerticalAlignment.Top, disableAnimation: false);
+                return Task.CompletedTask;
             }
 
-            return Task.CompletedTask;
+            long lastReadMessageId;
+            long lastMessageId;
+
+            if (_topic is ForumTopic topic)
+            {
+                lastReadMessageId = topic.LastReadInboxMessageId;
+                lastMessageId = topic.LastMessage?.Id ?? long.MaxValue;
+            }
+            else if (_thread is MessageThreadInfo thread)
+            {
+                lastReadMessageId = thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
+                lastMessageId = thread.ReplyInfo?.LastMessageId ?? long.MaxValue;
+            }
+            else
+            {
+                lastReadMessageId = chat.LastReadInboxMessageId;
+                lastMessageId = chat.LastMessage?.Id ?? long.MaxValue;
+            }
+
+            if (TryGetLastVisibleMessageId(out long id, out _) && id < lastReadMessageId)
+            {
+                return LoadMessageSliceAsync(null, lastReadMessageId, VerticalAlignment.Top, disableAnimation: false);
+            }
+            else
+            {
+                return LoadMessageSliceAsync(null, lastMessageId, VerticalAlignment.Top, disableAnimation: false);
+            }
+        }
+
+        private bool TryGetLastVisibleMessageId(out long id, out int index)
+        {
+            var field = HistoryField;
+            if (field != null)
+            {
+                var panel = field.ItemsPanelRoot as ItemsStackPanel;
+                if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < Items.Count - 1 && Items.Count > 0)
+                {
+                    id = Items[panel.LastVisibleIndex].Id;
+                    index = panel.LastVisibleIndex;
+                    return true;
+                }
+            }
+
+            id = -1;
+            index = -1;
+            return false;
+        }
+
+        private bool TryGetFirstVisibleMessageId(out long id)
+        {
+            var field = HistoryField;
+            if (field != null)
+            {
+                var panel = field.ItemsPanelRoot as ItemsStackPanel;
+                if (panel != null && panel.FirstVisibleIndex >= 0 && panel.FirstVisibleIndex < Items.Count && Items.Count > 0)
+                {
+                    id = Items[panel.FirstVisibleIndex].Id;
+                    return true;
+                }
+            }
+
+            id = -1;
+            return false;
         }
 
         private async void LoadPinnedMessagesSliceAsync(long maxId, VerticalAlignment direction = VerticalAlignment.Center)
