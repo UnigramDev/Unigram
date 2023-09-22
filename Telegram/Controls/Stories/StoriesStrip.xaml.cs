@@ -120,7 +120,7 @@ namespace Telegram.Controls.Stories
             var element = sender as FrameworkElement;
             var activeStories = ScrollingHost.ItemFromContainer(sender) as ActiveStoriesViewModel;
 
-            if (activeStories == null || activeStories.IsMyStory)
+            if (activeStories == null || activeStories.IsMyStory || (activeStories.ClientService.TryGetUser(activeStories.Chat, out User user) && user.IsSupport))
             {
                 return;
             }

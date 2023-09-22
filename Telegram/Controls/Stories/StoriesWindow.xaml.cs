@@ -850,7 +850,7 @@ namespace Telegram.Controls.Stories
             var flyout = new MenuFlyout();
             flyout.Closing += Flyout_Closing;
 
-            if (story.Chat.Type is ChatTypePrivate)
+            if (story.Chat.Type is ChatTypePrivate && story.CanBeReplied)
             {
                 flyout.Opened += async (s, args) =>
                 {
@@ -884,7 +884,7 @@ namespace Telegram.Controls.Stories
             var flyout = new MenuFlyout();
             flyout.Closing += Flyout_Closing;
 
-            if (story.Chat.Type is ChatTypePrivate)
+            if (story.Chat.Type is ChatTypePrivate && story.CanBeReplied)
             {
                 flyout.Opened += async (s, args) =>
                 {
@@ -913,6 +913,21 @@ namespace Telegram.Controls.Stories
             var story = activeStories?.SelectedItem;
             if (story == null)
             {
+                return;
+            }
+
+            if (activeStories.ClientService.TryGetUser(activeStories.Chat, out User supportUser) && supportUser.IsSupport)
+            {
+                if (story.CanBeForwarded && story.Content is StoryContentPhoto or StoryContentVideo && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
+                {
+                    flyout.CreateFlyoutItem(SaveStory, story, story.Content is StoryContentPhoto ? Strings.SavePhoto : Strings.SaveVideo, story.ClientService.IsPremium ? Icons.SaveAs : Icons.SaveAsLocked);
+                }
+
+                if (story.Chat.Type is ChatTypePrivate && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
+                {
+                    flyout.CreateFlyoutItem(StealthStory, story, Strings.StealthMode, story.ClientService.IsPremium ? Icons.Stealth : Icons.StealthLocked);
+                }
+
                 return;
             }
 
