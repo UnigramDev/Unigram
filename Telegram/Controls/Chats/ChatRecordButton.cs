@@ -336,7 +336,7 @@ namespace Telegram.Controls.Chats
 
                     var formatted = string.Format(message, ViewModel.Chat.Title);
                     var markdown = Client.Execute(new ParseMarkdown(new FormattedText(formatted, new TextEntity[0]))) as FormattedText;
-                    Window.Current.ShowTeachingTip(this, markdown, TeachingTipPlacementMode.TopLeft);
+                    Window.Current.ShowTeachingTip(this, markdown, TeachingTipPlacementMode.TopLeft, autoDismiss: true);
                     return;
                 }
 
@@ -408,7 +408,7 @@ namespace Telegram.Controls.Chats
                 Logger.Debug("Recording is locked, abort");
                 return;
             }
-            if (_recordAudioVideoRunnableStarted)
+            if (_recordAudioVideoRunnableStarted && _timer.IsEnabled)
             {
                 Logger.Debug("Timer should still tick, change mode to: " + (Mode == ChatRecordMode.Video ? ChatRecordMode.Voice : ChatRecordMode.Video));
 
@@ -419,7 +419,7 @@ namespace Telegram.Controls.Chats
                     ? Strings.HoldToVideo
                     : Strings.HoldToAudio;
 
-                Window.Current.ShowTeachingTip(this, message, TeachingTipPlacementMode.TopLeft);
+                Window.Current.ShowTeachingTip(this, message, TeachingTipPlacementMode.TopLeft, autoDismiss: true);
             }
             else if (!_hasRecordVideo || _calledRecordRunnable)
             {
