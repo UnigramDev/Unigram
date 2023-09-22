@@ -174,6 +174,10 @@ namespace Telegram.Common
                     clientService.Send(new CheckAuthenticationCode(authenticationCode.Code));
                 }
             }
+            else if (internalLink is InternalLinkTypeAttachmentMenuBot attachmentMenuBot)
+            {
+                NavigateToAttachmentMenuBot(clientService, navigation, attachmentMenuBot);
+            }
             else if (internalLink is InternalLinkTypeBackground background)
             {
                 NavigateToBackground(clientService, navigation, background.BackgroundName);
@@ -298,6 +302,70 @@ namespace Telegram.Common
             else if (internalLink is InternalLinkTypeWebApp webApp)
             {
                 NavigateToWebApp(clientService, navigation, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName, source);
+            }
+        }
+
+        private static async void NavigateToAttachmentMenuBot(IClientService clientService, INavigationService navigation, InternalLinkTypeAttachmentMenuBot attachmentMenuBot)
+        {
+            var response = await clientService.SendAsync(new SearchPublicChat(attachmentMenuBot.BotUsername));
+            if (response is Chat chat && clientService.TryGetUser(chat, out User botUser))
+            {
+                if (botUser.Type is not UserTypeBot userTypeBot || !userTypeBot.CanBeAddedToAttachmentMenu)
+                {
+                    return;
+                }
+
+                var response2 = await clientService.SendAsync(new GetAttachmentMenuBot(botUser.Id));
+                if (response2 is AttachmentMenuBot menuBot)
+                {
+                    OpenMiniApp(clientService, navigation, botUser, menuBot, attachmentMenuBot.Url);
+                }
+            }
+        }
+
+        public static async void OpenMiniApp(IClientService clientService, INavigationService navigation, User user, AttachmentMenuBot bot, string url, Action<bool> continuation = null)
+        {
+            if (bot.ShowDisclaimerInSideMenu || !clientService.IsBotAddedToAttachmentMenu(bot.BotUserId))
+            {
+                var textBlock = new TextBlock();
+
+                var markdown = Client.Execute(new ParseMarkdown(new FormattedText(Strings.BotWebAppDisclaimerCheck, Array.Empty<TextEntity>()))) as FormattedText;
+                if (markdown != null && markdown.Entities.Count == 1)
+                {
+                    markdown.Entities[0].Type = new TextEntityTypeTextUrl(Strings.WebAppDisclaimerUrl);
+                    TextBlockHelper.SetFormattedText(textBlock, markdown);
+                }
+                else
+                {
+                    textBlock.Text = Strings.BotWebAppDisclaimerCheck;
+                }
+
+                var popup = new MessagePopup
+                {
+                    Title = Strings.TermsOfUse,
+                    Message = Strings.BotWebAppDisclaimerSubtitle,
+                    CheckBoxLabel = textBlock,
+                    PrimaryButtonText = Strings.Continue,
+                    SecondaryButtonText = Strings.Cancel,
+                    IsCheckedRequired = true
+                };
+
+                var confirm = await popup.ShowQueuedAsync();
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    continuation?.Invoke(false);
+                    return;
+                }
+
+                await clientService.SendAsync(new ToggleBotIsAddedToAttachmentMenu(bot.BotUserId, true, true));
+            }
+
+            continuation?.Invoke(true);
+
+            var response = await clientService.SendAsync(new GetWebAppUrl(bot.BotUserId, url, Theme.Current.Parameters, Strings.AppName));
+            if (response is HttpUrl httpUrl)
+            {
+                await new WebBotPopup(clientService, navigation, user, httpUrl.Url, bot).ShowQueuedAsync();
             }
         }
 

@@ -1022,23 +1022,7 @@ namespace Telegram.ViewModels
             }
             else if (inline.Type is InlineKeyboardButtonTypeUrl urlButton)
             {
-                if (MessageHelper.TryCreateUri(urlButton.Url, out Uri uri))
-                {
-                    if (MessageHelper.IsTelegramUrl(uri))
-                    {
-                        MessageHelper.OpenTelegramUrl(ClientService, NavigationService, uri);
-                    }
-                    else
-                    {
-                        var confirm = await ShowPopupAsync(string.Format(Strings.OpenUrlAlert, urlButton.Url), Strings.AppName, Strings.OK, Strings.Cancel);
-                        if (confirm != ContentDialogResult.Primary)
-                        {
-                            return;
-                        }
-
-                        await Launcher.LaunchUriAsync(uri);
-                    }
-                }
+                MessageHelper.OpenUrl(ClientService, NavigationService, urlButton.Url, true, new OpenUrlSourceChat(chat.Id));
             }
             else if (inline.Type is InlineKeyboardButtonTypeCallback callback)
             {

@@ -103,6 +103,8 @@ namespace Telegram.Services
 
         bool IsChatAccessible(Chat chat);
 
+        bool IsBotAddedToAttachmentMenu(long userId);
+
         bool CanPostMessages(Chat chat);
         bool CanInviteUsers(Chat chat);
 
@@ -1031,6 +1033,19 @@ namespace Telegram.Services
             if (_chatAccessibleUntil.TryGetValue(chat.Id, out DateTime until))
             {
                 return until > DateTime.Now;
+            }
+
+            return false;
+        }
+
+        public bool IsBotAddedToAttachmentMenu(long userId)
+        {
+            foreach (var menuBot in _attachmentMenuBots)
+            {
+                if (menuBot.BotUserId == userId)
+                {
+                    return true;
+                }
             }
 
             return false;

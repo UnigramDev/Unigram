@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Telegram.Assets.Icons;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Common.Chats;
@@ -2877,6 +2876,14 @@ namespace Telegram.ViewModels
 
                     ClientService.Send(new SendBotStartMessage(_currentInlineBot.Id, chat.Id, startBot.Parameter));
                     NavigationService.NavigateToChat(chat);
+                }
+            }
+            else if (InlineBotResults.Button.Type is InlineQueryResultsButtonTypeWebApp webApp)
+            {
+                var response = await ClientService.SendAsync(new GetWebAppUrl(_currentInlineBot.Id, webApp.Url, Theme.Current.Parameters, Strings.AppName));
+                if (response is HttpUrl httpUrl)
+                {
+                    await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, _currentInlineBot, httpUrl.Url));
                 }
             }
         }

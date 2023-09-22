@@ -11,7 +11,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -504,7 +503,7 @@ namespace Telegram.ViewModels
         }
 
         // TODO: unify with DialogViewModel.Messages.cs 
-        public async void OpenMiniApp(AttachmentMenuBot bot, Action<bool> continuation)
+        public void OpenMiniApp(AttachmentMenuBot bot, Action<bool> continuation)
         {
             var user = ClientService.GetUser(bot.BotUserId);
             if (user == null)
@@ -513,46 +512,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (bot.ShowDisclaimerInSideMenu)
-            {
-                var textBlock = new TextBlock();
-
-                var markdown = Client.Execute(new ParseMarkdown(new FormattedText(Strings.BotWebAppDisclaimerCheck, Array.Empty<TextEntity>()))) as FormattedText;
-                if (markdown != null && markdown.Entities.Count == 1)
-                {
-                    markdown.Entities[0].Type = new TextEntityTypeTextUrl(Strings.WebAppDisclaimerUrl);
-                    TextBlockHelper.SetFormattedText(textBlock, markdown);
-                }
-                else
-                {
-                    textBlock.Text = Strings.BotWebAppDisclaimerCheck;
-                }
-
-                var popup = new MessagePopup
-                {
-                    Title = Strings.TermsOfUse,
-                    Message = Strings.BotWebAppDisclaimerSubtitle,
-                    CheckBoxLabel = textBlock,
-                    PrimaryButtonText = Strings.Continue,
-                    SecondaryButtonText = Strings.Cancel,
-                    IsCheckedRequired = true
-                };
-
-                var confirm = await ShowPopupAsync(popup);
-                if (confirm != ContentDialogResult.Primary)
-                {
-                    continuation(false);
-                    return;
-                }
-            }
-
-            continuation(true);
-
-            var response = await ClientService.SendAsync(new GetWebAppUrl(bot.BotUserId, string.Empty, Theme.Current.Parameters, Strings.AppName));
-            if (response is HttpUrl httpUrl)
-            {
-                await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, user, httpUrl.Url, bot));
-            }
+            MessageHelper.OpenMiniApp(ClientService, NavigationService, user, bot, string.Empty, continuation);
         }
 
         public async void RemoveMiniApp(AttachmentMenuBot bot)
