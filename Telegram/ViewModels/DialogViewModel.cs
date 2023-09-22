@@ -1208,12 +1208,15 @@ namespace Telegram.ViewModels
                             lastMessageId = chat.LastMessage?.Id ?? long.MaxValue;
                         }
 
-                        var maxIdIncluded = messages.MessagesValue[0].Id >= maxId && messages.MessagesValue[^1].Id <= maxId;
-                        var lastReadIdIncluded = messages.MessagesValue[0].Id >= lastReadMessageId && messages.MessagesValue[^1].Id <= lastReadMessageId;
+                        bool Included(long id)
+                        {
+                            return true;
+                            return messages.MessagesValue.Count > 0 && messages.MessagesValue[0].Id >= id && messages.MessagesValue[^1].Id <= id;
+                        }
 
                         // If we're loading from the last read message
                         // then we want to skip it to align first unread message at top
-                        if (lastReadMessageId != 0 && lastReadMessageId != lastMessageId && maxIdIncluded && lastReadIdIncluded /*maxId >= lastReadMessageId*/)
+                        if (lastReadMessageId != 0 && lastReadMessageId != lastMessageId && Included(maxId) && Included(lastReadMessageId) /*maxId >= lastReadMessageId*/)
                         {
                             var target = default(Message);
                             var index = -1;
