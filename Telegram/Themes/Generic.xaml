@@ -615,38 +615,52 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="stories:StoryReactionButton">
-                    <Grid x:Name="LayoutRoot"
-                          Background="{ThemeResource MessageReactionBackgroundBrush}"
-                          CornerRadius="12">
+                    <Grid x:Name="RootGrid"
+                          Background="Transparent"
+                          CornerRadius="4,4,13,4"
+                          Margin="4">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver" />
-                                <VisualState x:Name="Pressed" />
-                                <VisualState x:Name="Checked">
-                                    <VisualState.Setters>
-                                        <Setter Target="LayoutRoot.Background"
-                                                Value="{ThemeResource MessageReactionChosenBackgroundBrush}" />
-                                        <Setter Target="Count.Foreground"
-                                                Value="{ThemeResource MessageReactionChosenForegroundBrush}" />
-                                    </VisualState.Setters>
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
                                 </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled" />
+                                <VisualState x:Name="Checked" />
                                 <VisualState x:Name="CheckedPointerOver">
-                                    <VisualState.Setters>
-                                        <Setter Target="LayoutRoot.Background"
-                                                Value="{ThemeResource MessageReactionChosenBackgroundBrush}" />
-                                        <Setter Target="Count.Foreground"
-                                                Value="{ThemeResource MessageReactionChosenForegroundBrush}" />
-                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="CheckedPressed">
-                                    <VisualState.Setters>
-                                        <Setter Target="LayoutRoot.Background"
-                                                Value="{ThemeResource MessageReactionChosenBackgroundBrush}" />
-                                        <Setter Target="Count.Foreground"
-                                                Value="{ThemeResource MessageReactionChosenForegroundBrush}" />
-                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                       Storyboard.TargetName="RootGrid">
+                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                    Value="{ThemeResource NavigationViewItemBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
                                 </VisualState>
+                                <VisualState x:Name="CheckedDisabled" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
@@ -668,8 +682,7 @@
 
                         <local:AnimatedTextBlock x:Name="Count"
                                                  x:Load="False"
-                                                 Foreground="{ThemeResource MessageReactionForegroundBrush}"
-                                                 TextStyle="{StaticResource CaptionTextBlockStyle}"
+                                                 Foreground="#FFFFFF"
                                                  VerticalAlignment="Center"
                                                  AutomationProperties.AccessibilityView="Raw"
                                                  IsTabStop="False"

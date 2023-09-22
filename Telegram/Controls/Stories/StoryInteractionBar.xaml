@@ -58,7 +58,7 @@
 
         <controls:GlyphButton x:Name="DeleteButton"
                               Glyph="&#xE74D;"
-                              CornerRadius="4,13,13,4"
+                              CornerRadius="4,4,13,4"
                               Grid.Column="2" />
     </Grid>
 </UserControl>

@@ -50,20 +50,7 @@
                               Glyph="&#xE72D;"
                               Grid.Column="3" />
 
-        <controls:GlyphButton x:Name="ReactButton"
-                              Click="ReactButton_Click"
-                              Glyph="&#xE987;"
-                              CornerRadius="4,13,13,4"
-                              Grid.Column="4" />
-
-        <controls:AnimatedTextBlock x:Name="ReactionCount"
-                                    VerticalAlignment="Center"
-                                    Foreground="#FFFFFF"
-                                    Margin="4,1,12,3"
-                                    Grid.Column="5" />
-
-        <local:StoryReactionButton x:Name="ReactButton2"
-                                   Visibility="Collapsed"
+        <local:StoryReactionButton x:Name="ReactButton"
                                    Grid.Column="6" />
 
     </Grid>

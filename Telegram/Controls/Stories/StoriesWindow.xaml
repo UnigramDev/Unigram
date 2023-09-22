@@ -339,7 +339,7 @@
                                 Grid.Column="1"
                                 Grid.Row="1">
                             <controls:GlyphButton x:Name="ButtonAttach"
-                                                  CornerRadius="13,4,4,13"
+                                                  CornerRadius="4,4,4,13"
                                                   Click="Attach_Click"
                                                   Glyph="&#xE9D8;"
                                                   AllowFocusOnInteraction="False"
@@ -378,7 +378,7 @@
                                 <chats:ChatRecordButton x:Name="btnVoiceMessage"
                                                         RecordingStarted="ButtonRecord_Started"
                                                         RecordingStopped="ButtonRecord_Stopped"
-                                                        CornerRadius="4,13,13,4"
+                                                        CornerRadius="4,4,13,4"
                                                         AllowFocusOnInteraction="False"
                                                         Glyph="&#xE9E4;"
                                                         CheckedGlyph="&#xE9E0;"
@@ -390,7 +390,7 @@
                             </Grid>
 
                             <chats:ChatSendButton x:Name="btnSendMessage"
-                                                  CornerRadius="4,13,13,4"
+                                                  CornerRadius="4,4,13,4"
                                                   ContextRequested="Send_ContextRequested"
                                                   VerticalAlignment="Bottom"
                                                   Click="btnSendMessage_Click"

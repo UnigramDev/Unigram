@@ -38,7 +38,7 @@ namespace Telegram.Controls.Stories
         {
             _viewModel = story;
 
-            if (story.CanBeReplied)
+            if (story.Chat.Type is ChatTypeSupergroup)
             {
                 ReplyDisabled.Visibility = Visibility.Collapsed;
 
@@ -46,10 +46,10 @@ namespace Telegram.Controls.Stories
                 {
                     ViewersCount.Text = story.InteractionInfo.ViewCount.ToString("N0");
 
-                    ReactionCount.Text = story.InteractionInfo.ReactionCount.ToString("N0");
-                    ReactionCount.Visibility = story.InteractionInfo.ReactionCount > 0
-                            ? Visibility.Visible
-                            : Visibility.Collapsed;
+                    //ReactionCount.Text = story.InteractionInfo.ReactionCount.ToString("N0");
+                    //ReactionCount.Visibility = story.InteractionInfo.ReactionCount > 0
+                    //        ? Visibility.Visible
+                    //        : Visibility.Collapsed;
                 }
                 else
                 {
@@ -67,20 +67,20 @@ namespace Telegram.Controls.Stories
 
                 if (story.ChosenReactionType == null)
                 {
-                    ReactButton2.SetReaction(story, reactionType, defaultReaction, defaultReaction);
+                    ReactButton.SetReaction(story, reactionType, defaultReaction, defaultReaction);
                 }
                 else if (reactionType is ReactionTypeEmoji emoji)
                 {
                     if (story.ClientService.TryGetCachedReaction(emoji.Emoji, out EmojiReaction reaction))
                     {
-                        ReactButton2.SetReaction(story, reactionType, reaction, defaultReaction);
+                        ReactButton.SetReaction(story, reactionType, reaction, defaultReaction);
                     }
                     else
                     {
                         var response = await story.ClientService.SendAsync(new GetEmojiReaction(emoji.Emoji));
                         if (response is EmojiReaction reaction2)
                         {
-                            ReactButton2.SetReaction(story, reactionType, reaction2, defaultReaction);
+                            ReactButton.SetReaction(story, reactionType, reaction2, defaultReaction);
                         }
                     }
                 }
@@ -88,17 +88,19 @@ namespace Telegram.Controls.Stories
                 {
                     if (EmojiCache.TryGet(customEmoji.CustomEmojiId, out Sticker sticker))
                     {
-                        ReactButton2.SetReaction(story, reactionType, sticker, defaultReaction);
+                        ReactButton.SetReaction(story, reactionType, sticker, defaultReaction);
                     }
                     else
                     {
                         var response = await EmojiCache.GetAsync(story.ClientService, customEmoji.CustomEmojiId);
                         if (response is Sticker sticker2)
                         {
-                            ReactButton2.SetReaction(story, reactionType, sticker2, defaultReaction);
+                            ReactButton.SetReaction(story, reactionType, sticker2, defaultReaction);
                         }
                     }
                 }
+
+                ShareButton.CornerRadius = new CornerRadius(4);
             }
             else
             {
@@ -108,7 +110,8 @@ namespace Telegram.Controls.Stories
                 ViewersCount.Visibility = Visibility.Collapsed;
 
                 ReactButton.Visibility = Visibility.Collapsed;
-                ReactionCount.Visibility = Visibility.Collapsed;
+
+                ShareButton.CornerRadius = new CornerRadius(4, 4, 13, 4);
             }
         }
 
