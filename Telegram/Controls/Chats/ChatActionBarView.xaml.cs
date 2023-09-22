@@ -11,6 +11,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -128,7 +129,7 @@ namespace Telegram.Controls.Chats
 
             void handler(object sender, RoutedEventArgs e)
             {
-                button.Click -= handler;
+                //button.Click -= handler;
                 command();
             };
 
@@ -140,14 +141,16 @@ namespace Telegram.Controls.Chats
         {
             var label = new TextBlock();
             label.Style = BootStrapper.Current.Resources["CaptionTextBlockStyle"] as Style;
-            label.Foreground = BootStrapper.Current.Resources[danger ? "DangerButtonBackground" : "SystemControlHighlightAccentBrush"] as Brush;
+            label.FontWeight = FontWeights.SemiBold;
             label.Text = text;
 
             var button = new Button();
-            button.Style = BootStrapper.Current.Resources["EmptyButtonStyle"] as Style;
+            button.Style = BootStrapper.Current.Resources[danger ? "DangerTextButtonStyle" : "AccentTextButtonStyle"] as Style;
             button.Background = new SolidColorBrush(Colors.Transparent);
             button.HorizontalContentAlignment = HorizontalAlignment.Center;
             button.VerticalContentAlignment = VerticalAlignment.Center;
+            button.HorizontalAlignment = HorizontalAlignment.Stretch;
+            button.VerticalAlignment = VerticalAlignment.Stretch;
             button.Content = label;
 
             LayoutRoot.ColumnDefinitions.Add(new ColumnDefinition());
