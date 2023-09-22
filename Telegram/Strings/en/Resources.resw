@@ -314,7 +314,7 @@
     <value>You allowed this bot to message you when you logged in on {0}.</value>
   </data>
   <data name="ActionBotAllowedWebapp" xml:space="preserve">
-    <value>You allowed this bot to message you in web-app</value>
+    <value>You allowed this bot to message you in its web-app</value>
   </data>
   <data name="ActionBotDocumentAddress" xml:space="preserve">
     <value>Address</value>
@@ -1507,7 +1507,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>I agree to the **Terms of Use**</value>
   </data>
   <data name="BotWebAppDisclaimerSubtitle" xml:space="preserve">
-    <value>You are about to use a mini app operated by an independent party **not affiliated with Telegram**. You must agree to the Terms of Use of mini apps to continue.</value>
+    <value>You are about to use a mini app operated by an independent party **not affiliated with Telegram**. You must agree to the Terms of Use for mini apps to continue.</value>
   </data>
   <data name="BotWebAppInstantViewOpen" xml:space="preserve">
     <value>Launch</value>
@@ -1743,7 +1743,7 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
     <value>This channel reached **Level 1** and can now post stories.</value>
   </data>
   <data name="ChannelBoostsJustReachedLevelNext" xml:space="preserve">
-    <value>This channel reached **Level {0}** and can now post **{1}** per day.</value>
+    <value>This channel reached **Level {0}** and can now post {1} per day.</value>
   </data>
   <data name="ChannelBots" xml:space="preserve">
     <value>Bots</value>
@@ -1842,16 +1842,16 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
     <value>MUTE</value>
   </data>
   <data name="ChannelNeedBoostsAlreadyBoostedDescriptionLevel1" xml:space="preserve">
-    <value>This channel need {0} more boosts to enable stories.</value>
+    <value>This channel needs {0} to enable stories.</value>
   </data>
   <data name="ChannelNeedBoostsAlreadyBoostedDescriptionLevelNext" xml:space="preserve">
-    <value>This channel needs {0} to be able to post **{1}** per day.</value>
+    <value>This channel needs {0} to be able to post {1} per day.</value>
   </data>
   <data name="ChannelNeedBoostsDescriptionLevel1" xml:space="preserve">
     <value>This channel needs {0} to enable stories. Help make it possible!</value>
   </data>
   <data name="ChannelNeedBoostsDescriptionLevelNext" xml:space="preserve">
-    <value>This channel need {0} to be able post **{1}** per day. Help make it possible!</value>
+    <value>This channel needs {0} to be able to post {1} per day. Help make it possible!</value>
   </data>
   <data name="ChannelOtherMembers" xml:space="preserve">
     <value>Other members</value>
@@ -3690,7 +3690,7 @@ Duration: {1}</value>
     <value>Gift Premium</value>
   </data>
   <data name="GiftPremiumListFeaturesAndTerms" xml:space="preserve">
-    <value>You can review the list of features and terms of use for Telegram Premium *here*.</value>
+    <value>You can review the list of features and Terms of Use for Telegram Premium *here*.</value>
   </data>
   <data name="GiftPremiumOptionDiscount" xml:space="preserve">
     <value>-{0}%</value>
@@ -3837,7 +3837,7 @@ They can still join via an invite link as long as they are not on the Removed Us
     <value>Hide Caption</value>
   </data>
   <data name="HideNewChatsAlertText" xml:space="preserve">
-    <value>You are receiving many new chats from users who are not in your Contacts List. Do you want to have such chats **automatically muted** and **archived**?</value>
+    <value>You are receiving many new chats from users who are not in your Contact List. Do you want to have such chats **automatically muted** and **archived**?</value>
   </data>
   <data name="HideNewChatsAlertTitle" xml:space="preserve">
     <value>Hide new chats?</value>
@@ -5438,7 +5438,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Premuim needed!</value>
   </data>
   <data name="PremiumNeededForBoosting" xml:space="preserve">
-    <value>Only **Telegram Premium** subscribers can boost channels. Do you want to subscribe to **Telegram Premium?**</value>
+    <value>Only **Telegram Premium** subscribers can boost channels. Do you want to subscribe to **Telegram Premium**?</value>
   </data>
   <data name="PremiumPreviewAdvancedChatManagement" xml:space="preserve">
     <value>Advanced Chat Management</value>
@@ -7250,7 +7250,7 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
     <value>Press and hold user to unblock.</value>
   </data>
   <data name="UnconfirmedAuthConfirm" xml:space="preserve">
-    <value>Yes, it’s me</value>
+    <value>Yes, it&apos;s me</value>
   </data>
   <data name="UnconfirmedAuthConfirmed" xml:space="preserve">
     <value>New Login Allowed</value>
