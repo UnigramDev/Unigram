@@ -1441,6 +1441,58 @@ namespace Telegram.Controls.Stories
                 MessageHelper.CopyLink(story.ClientService, new InternalLinkTypeStory(username, story.StoryId));
             }
         }
+
+        private void Caption_TextEntityClick(object sender, TextEntityClickEventArgs e)
+        {
+            if (e.Type is TextEntityTypeBotCommand && e.Data is string command)
+            {
+                ViewModel.Delegate.SendBotCommand(command);
+            }
+            else if (e.Type is TextEntityTypeEmailAddress)
+            {
+                ViewModel.Delegate.OpenUrl("mailto:" + e.Data, false);
+            }
+            else if (e.Type is TextEntityTypePhoneNumber)
+            {
+                ViewModel.Delegate.OpenUrl("tel:" + e.Data, false);
+            }
+            else if (e.Type is TextEntityTypeHashtag or TextEntityTypeCashtag && e.Data is string hashtag)
+            {
+                ViewModel.Delegate.OpenHashtag(hashtag);
+            }
+            else if (e.Type is TextEntityTypeMention && e.Data is string username)
+            {
+                ViewModel.Delegate.OpenUsername(username);
+            }
+            else if (e.Type is TextEntityTypeMentionName mentionName)
+            {
+                ViewModel.Delegate.OpenUser(mentionName.UserId);
+            }
+            else if (e.Type is TextEntityTypeTextUrl textUrl)
+            {
+                ViewModel.Delegate.OpenUrl(textUrl.Url, true);
+            }
+            else if (e.Type is TextEntityTypeUrl && e.Data is string url)
+            {
+                ViewModel.Delegate.OpenUrl(url, false);
+            }
+            else if (e.Type is TextEntityTypeBankCardNumber && e.Data is string cardNumber)
+            {
+                ViewModel.Delegate.OpenBankCardNumber(cardNumber);
+            }
+            else if (e.Type is TextEntityTypeMediaTimestamp mediaTimestamp)
+            {
+                // Never happens here
+            }
+            else if (e.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode && e.Data is string code)
+            {
+                MessageHelper.CopyText(code);
+            }
+            else if (e.Type is TextEntityTypeSpoiler)
+            {
+                Caption.IgnoreSpoilers = true;
+            }
+        }
     }
 
     public class StoryContentPhotoTimer

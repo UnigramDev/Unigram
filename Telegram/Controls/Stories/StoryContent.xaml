@@ -207,6 +207,7 @@
                                                  MaxLines="2"
                                                  TextTrimming="CharacterEllipsis"
                                                  OverflowContentTarget="{x:Bind Overflow}"
+                                                 TextEntityClick="Caption_TextEntityClick"
                                                  Grid.ColumnSpan="2" />
                     <RichTextBlockOverflow x:Name="Overflow"
                                            HorizontalAlignment="Left"

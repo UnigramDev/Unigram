@@ -24,6 +24,8 @@ namespace Telegram.ViewModels.Stories
         private readonly ChatActiveStories _activeStories;
         private readonly Dictionary<int, StoryViewModel> _stories = new();
 
+        private readonly ChatMessageDelegate _messageDelegate;
+
         private readonly TaskCompletionSource<bool> _task;
 
         public ChatActiveStories Item => _activeStories;
@@ -40,6 +42,8 @@ namespace Telegram.ViewModels.Stories
             Chat = clientService.GetChat(activeStories.ChatId);
             IsMyStory = Chat.Type is ChatTypePrivate privata && privata.UserId == clientService.Options.MyId;
 
+            _messageDelegate = new ChatMessageDelegate(this, Chat);
+
             Items = new ObservableCollection<StoryViewModel>();
             Update(activeStories);
         }
@@ -53,6 +57,8 @@ namespace Telegram.ViewModels.Stories
             Chat = clientService.GetChat(selectedItem.ChatId);
             IsMyStory = Chat.Type is ChatTypePrivate privata && privata.UserId == clientService.Options.MyId;
 
+            _messageDelegate = new ChatMessageDelegate(this, Chat);
+
             Items = stories;
             SelectedItem = selectedItem;
         }
@@ -65,6 +71,8 @@ namespace Telegram.ViewModels.Stories
 
             Chat = clientService.GetChat(selectedItem.ChatId);
             IsMyStory = Chat.Type is ChatTypePrivate privata && privata.UserId == clientService.Options.MyId;
+
+            _messageDelegate = new ChatMessageDelegate(this, Chat);
 
             Items = new ObservableCollection<StoryViewModel> { selectedItem };
             SelectedItem = selectedItem;
@@ -83,6 +91,8 @@ namespace Telegram.ViewModels.Stories
         public bool IsMyStory { get; }
 
         public ObservableCollection<StoryViewModel> Items { get; }
+
+        public MessageDelegate Delegate => _messageDelegate;
 
         private StoryViewModel _selectedItem;
         public StoryViewModel SelectedItem

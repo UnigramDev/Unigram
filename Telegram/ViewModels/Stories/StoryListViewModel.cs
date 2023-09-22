@@ -9,6 +9,7 @@ using Telegram.Common;
 using Telegram.Controls.Stories;
 using Telegram.Native;
 using Telegram.Navigation;
+using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
@@ -44,6 +45,16 @@ namespace Telegram.ViewModels.Stories
         }
 
         public ITranslateService TranslateService => _translateService;
+
+        public override INavigationService NavigationService
+        {
+            get => base.NavigationService;
+            set
+            {
+                base.NavigationService = value;
+                this.Items.ForEach(x => x.NavigationService = value);
+            }
+        }
 
         public ObservableCollection<ActiveStoriesViewModel> Items { get; }
 
@@ -183,7 +194,10 @@ namespace Telegram.ViewModels.Stories
 
         protected ActiveStoriesViewModel Create(ChatActiveStories activeStories)
         {
-            return new ActiveStoriesViewModel(ClientService, Settings, Aggregator, activeStories);
+            return new ActiveStoriesViewModel(ClientService, Settings, Aggregator, activeStories)
+            {
+                NavigationService = NavigationService
+            };
         }
 
         public void OpenStory(ActiveStoriesViewModel activeStories, Rect origin, Func<ActiveStoriesViewModel, Rect> closing)

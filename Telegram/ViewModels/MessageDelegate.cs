@@ -406,6 +406,12 @@ namespace Telegram.ViewModels
             _chat = chat;
         }
 
+        public ChatMessageDelegate(ViewModelBase viewModel, Chat chat)
+            : base(viewModel)
+        {
+            _chat = chat;
+        }
+
         public override Chat Chat => _chat;
     }
 
