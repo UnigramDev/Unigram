@@ -13,6 +13,52 @@
              HorizontalAlignment="Center"
              VerticalAlignment="Center">
 
+    <UserControl.Resources>
+        <Style x:Name="SuggestedReactionButtonStyle"
+               TargetType="local:StoryReactionButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="local:StoryReactionButton">
+                        <Grid x:Name="LayoutRoot"
+                              Background="Transparent">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid Margin="0,-4">
+                                <Image x:Name="Presenter"
+                                       Width="70"
+                                       Height="70" />
+                                <controls:CustomEmojiIcon x:Name="Icon"
+                                                          x:Load="False"
+                                                          Width="52"
+                                                          Height="52"
+                                                          FrameSize="52,52"
+                                                          IsViewportAware="False" />
+                                <Popup x:Name="Overlay"
+                                       IsHitTestVisible="False"
+                                       Margin="-70"
+                                       Width="210"
+                                       Height="210" />
+                            </Grid>
+
+                            <controls:AnimatedTextBlock x:Name="Count"
+                                                        x:Load="False"
+                                                        Foreground="{TemplateBinding Foreground}"
+                                                        FontWeight="SemiBold"
+                                                        VerticalAlignment="Center"
+                                                        HorizontalAlignment="Center"
+                                                        AutomationProperties.AccessibilityView="Raw"
+                                                        IsTabStop="False"
+                                                        Margin="0,4,0,0"
+                                                        Grid.Row="1" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
     <Grid>
         <Grid x:Name="LayoutRoot"
               Background="Black">

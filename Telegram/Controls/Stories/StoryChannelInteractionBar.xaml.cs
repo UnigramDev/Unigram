@@ -178,6 +178,8 @@ namespace Telegram.Controls.Stories
         public EmojiReaction EmojiReaction => _reaction;
         public Sticker CustomReaction => _sticker;
 
+        public int FrameSize => _defaultValue != null ? 32 : 70;
+
         private long _presenterId;
 
         public void SetUnread(UnreadReaction unread)
@@ -233,7 +235,7 @@ namespace Telegram.Controls.Stories
 
             if (center.Local.IsDownloadingCompleted)
             {
-                Presenter.Source = await GetLottieFrame(center.Local.Path, 0, 32, 32);
+                Presenter.Source = await GetLottieFrame(center.Local.Path, 0, FrameSize, FrameSize);
             }
             else
             {
@@ -288,12 +290,31 @@ namespace Telegram.Controls.Stories
             Count ??= GetTemplateChild(nameof(Count)) as AnimatedTextBlock;
             Count.Visibility = Windows.UI.Xaml.Visibility.Visible;
 
-            Count.Text = Formatter.ShortNumber(story.InteractionInfo.ReactionCount);
+            if (_defaultValue != null)
+            {
+                Count.Text = Formatter.ShortNumber(story.InteractionInfo.ReactionCount);
+                Count.Visibility = story.InteractionInfo.ReactionCount > 0
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+            }
+            else
+            {
+                foreach (var area in story.Areas)
+                {
+                    if (area.Type is StoryAreaTypeSuggestedReaction suggestedReaction && suggestedReaction.ReactionType.AreTheSame(interaction))
+                    {
+                        Count.Text = Formatter.ShortNumber(suggestedReaction.TotalCount);
+                        Count.Visibility = suggestedReaction.TotalCount > 0
+                            ? Visibility.Visible
+                            : Visibility.Collapsed;
+                    }
+                }
+            }
         }
 
         private async void UpdateFile(object target, File file)
         {
-            Presenter.Source = await GetLottieFrame(file.Local.Path, 0, 32, 32);
+            Presenter.Source = await GetLottieFrame(file.Local.Path, 0, FrameSize, FrameSize);
         }
 
         private static async Task<ImageSource> GetLottieFrame(string path, int frame, int width, int height)
@@ -352,7 +373,7 @@ namespace Telegram.Controls.Stories
             }
 
             var chosen = story.ChosenReactionType != null;
-            if (chosen)
+            if (chosen && _defaultValue != null)
             {
                 _story.ClientService.Send(new SetStoryReaction(_story.ChatId, _story.StoryId, null, false));
                 SetReaction(_story, new ReactionTypeEmoji(_defaultValue.Emoji), _defaultValue, _defaultValue);
@@ -397,10 +418,10 @@ namespace Telegram.Controls.Stories
                         var dispatcher = Windows.System.DispatcherQueue.GetForCurrentThread();
 
                         var aroundView = new AnimatedImage();
-                        aroundView.Width = 32 * 3;
-                        aroundView.Height = 32 * 3;
+                        aroundView.Width = FrameSize * 3;
+                        aroundView.Height = FrameSize * 3;
                         aroundView.LoopCount = 1;
-                        aroundView.FrameSize = new Size(32 * 3, 32 * 3);
+                        aroundView.FrameSize = new Size(FrameSize * 3, FrameSize * 3);
                         aroundView.DecodeFrameType = DecodePixelType.Logical;
                         aroundView.AutoPlay = true;
                         aroundView.Source = new LocalFileSource(around);
@@ -410,8 +431,8 @@ namespace Telegram.Controls.Stories
                         };
 
                         var root = new Grid();
-                        root.Width = 32 * 3;
-                        root.Height = 32 * 3;
+                        root.Width = FrameSize * 3;
+                        root.Height = FrameSize * 3;
                         root.Children.Add(aroundView);
 
                         popup.Child = root;
@@ -445,10 +466,10 @@ namespace Telegram.Controls.Stories
                 var dispatcher = Windows.System.DispatcherQueue.GetForCurrentThread();
 
                 var centerView = new AnimatedImage();
-                centerView.Width = 32;
-                centerView.Height = 32;
+                centerView.Width = FrameSize;
+                centerView.Height = FrameSize;
                 centerView.LoopCount = 1;
-                centerView.FrameSize = new Size(32, 32);
+                centerView.FrameSize = new Size(FrameSize, FrameSize);
                 centerView.DecodeFrameType = DecodePixelType.Logical;
                 centerView.AutoPlay = true;
                 centerView.Source = new LocalFileSource(center);
@@ -462,10 +483,10 @@ namespace Telegram.Controls.Stories
                 };
 
                 var aroundView = new AnimatedImage();
-                aroundView.Width = 32 * 3;
-                aroundView.Height = 32 * 3;
+                aroundView.Width = FrameSize * 3;
+                aroundView.Height = FrameSize * 3;
                 aroundView.LoopCount = 1;
-                aroundView.FrameSize = new Size(32 * 3, 32 * 3);
+                aroundView.FrameSize = new Size(FrameSize * 3, FrameSize * 3);
                 aroundView.DecodeFrameType = DecodePixelType.Logical;
                 aroundView.AutoPlay = true;
                 aroundView.Source = new LocalFileSource(around);
@@ -475,8 +496,8 @@ namespace Telegram.Controls.Stories
                 };
 
                 var root = new Grid();
-                root.Width = 32 * 3;
-                root.Height = 32 * 3;
+                root.Width = FrameSize * 3;
+                root.Height = FrameSize * 3;
                 root.Children.Add(centerView);
                 root.Children.Add(aroundView);
 

@@ -123,13 +123,14 @@ namespace Telegram.Controls.Stories
             }
 
             var translation = composer.Compositor.CreateScalarKeyFrameAnimation();
-            translation.InsertKeyFrame(0, 48 + 8);
+            translation.InsertKeyFrame(0, -48);
             translation.InsertKeyFrame(1, 0);
             translation.Duration = Constants.FastAnimation;
 
             layer.StartAnimation("Opacity", opacity);
             backButton.StartAnimation("Opacity", opacity);
             viewport.StartAnimation("Opacity", opacity);
+            composer.StartAnimation("Opacity", opacity);
             composer.StartAnimation("Translation.Y", translation);
         }
 
@@ -193,13 +194,14 @@ namespace Telegram.Controls.Stories
             }
 
             var translation = composer.Compositor.CreateScalarKeyFrameAnimation();
-            translation.InsertKeyFrame(1, 48 + 8);
+            translation.InsertKeyFrame(1, -48);
             translation.InsertKeyFrame(0, 0);
             translation.Duration = Constants.FastAnimation;
 
             layer.StartAnimation("Opacity", opacity);
             backButton.StartAnimation("Opacity", opacity);
             viewport.StartAnimation("Opacity", opacity);
+            composer.StartAnimation("Opacity", opacity);
             composer.StartAnimation("Translation.Y", translation);
 
             batch.End();
@@ -599,7 +601,7 @@ namespace Telegram.Controls.Stories
 
         private void OnCompleted(object sender, EventArgs e)
         {
-            if (Move(Direction.Forward))
+            //if (Move(Direction.Forward))
             {
                 return;
             }

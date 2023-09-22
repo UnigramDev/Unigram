@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
+using Telegram.Controls.Messages;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
@@ -371,16 +372,21 @@ namespace Telegram.Controls.Stories
                 FrameworkElement element;
                 if (area.Type is StoryAreaTypeSuggestedReaction suggestedReaction)
                 {
+                    var desiredWidth = area.Position.WidthPercentage / 100 * ActualWidth;
+                    var desiredHeight = area.Position.HeightPercentage / 100 * ActualHeight;
+
                     var flipped = suggestedReaction.IsFlipped;
                     var test = new Grid
                     {
                         //Background = new SolidColorBrush(Color.FromArgb(0x7F, 0xFF, 0, 0)),
-                        Width = area.Position.WidthPercentage / 100 * ActualWidth,
-                        Height = area.Position.HeightPercentage / 100 * ActualHeight,
+                        Width = 115,
+                        Height = 115,
                         RenderTransformOrigin = new Point(0.5, 0.5),
-                        RenderTransform = new RotateTransform
+                        RenderTransform = new CompositeTransform
                         {
-                            Angle = area.Position.RotationAngle
+                            Rotation = area.Position.RotationAngle,
+                            ScaleX = desiredWidth / 115,
+                            ScaleY = desiredHeight / 115
                         }
                     };
 
@@ -427,30 +433,45 @@ namespace Telegram.Controls.Stories
                     var test2 = new Grid();
                     test2.Padding = new Thickness(6);
 
-                    var side = Math.Sqrt((100 * 100) / 2);
+                    var side = 70; //Math.Sqrt((100 * 100) / 2);
                     var margin = (100 - side) / 2;
 
-                    var lottie = new AnimatedImage
+                    //var lottie = new AnimatedImage
+                    //{
+                    //    Width = side,
+                    //    Height = side,
+                    //    DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
+                    //    FrameSize = new Windows.Foundation.Size(side, side),
+                    //    Source = new ReactionFileSource(ViewModel.ClientService, suggestedReaction.ReactionType),
+                    //    HorizontalAlignment = HorizontalAlignment.Left,
+                    //    VerticalAlignment = VerticalAlignment.Top,
+                    //    Margin = new Thickness(flipped ? margin + 3 : margin, margin, 0, 0),
+                    //    AutoPlay = true 
+                    //};
+
+                    var lottie = new StoryReactionButton
                     {
                         Width = side,
                         Height = side,
-                        DecodeFrameType = Windows.UI.Xaml.Media.Imaging.DecodePixelType.Logical,
-                        FrameSize = new Windows.Foundation.Size(side, side),
-                        Source = new ReactionFileSource(ViewModel.ClientService, suggestedReaction.ReactionType),
+                        Foreground = new SolidColorBrush(suggestedReaction.IsDark ? Colors.White : Colors.Black),
                         HorizontalAlignment = HorizontalAlignment.Left,
                         VerticalAlignment = VerticalAlignment.Top,
                         Margin = new Thickness(flipped ? margin + 3 : margin, margin, 0, 0),
-                        AutoPlay = true
+                        Style = Resources["SuggestedReactionButtonStyle"] as Style
                     };
+
+                    LoadButton(story, lottie, suggestedReaction);
 
                     test2.Children.Add(shadow);
                     test2.Children.Add(path);
                     test2.Children.Add(lottie);
 
-                    test.Children.Add(new Viewbox
-                    {
-                        Child = test2
-                    });
+                    //test.Children.Add(new Viewbox
+                    //{
+                    //    Child = test2
+                    //});
+
+                    test.Children.Add(test2);
 
                     element = test;
                 }
@@ -483,6 +504,41 @@ namespace Telegram.Controls.Stories
                 AreasPanel.Children.Add(element);
 
                 element.Tag = area;
+            }
+        }
+
+        private async void LoadButton(StoryViewModel story, StoryReactionButton button, StoryAreaTypeSuggestedReaction suggestedReaction)
+        {
+            var reactionType = suggestedReaction.ReactionType;
+            if (reactionType is ReactionTypeEmoji emoji)
+            {
+                if (story.ClientService.TryGetCachedReaction(emoji.Emoji, out EmojiReaction reaction))
+                {
+                    button.SetReaction(story, reactionType, reaction, null);
+                }
+                else
+                {
+                    var response = await story.ClientService.SendAsync(new GetEmojiReaction(emoji.Emoji));
+                    if (response is EmojiReaction reaction2)
+                    {
+                        button.SetReaction(story, reactionType, reaction2, null);
+                    }
+                }
+            }
+            else if (reactionType is ReactionTypeCustomEmoji customEmoji)
+            {
+                if (EmojiCache.TryGet(customEmoji.CustomEmojiId, out Sticker sticker))
+                {
+                    button.SetReaction(story, reactionType, sticker, null);
+                }
+                else
+                {
+                    var response = await EmojiCache.GetAsync(story.ClientService, customEmoji.CustomEmojiId);
+                    if (response is Sticker sticker2)
+                    {
+                        button.SetReaction(story, reactionType, sticker2, null);
+                    }
+                }
             }
         }
 
