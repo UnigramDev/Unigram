@@ -7,6 +7,7 @@
                     xmlns:local="using:Telegram.Controls"
                     xmlns:chats="using:Telegram.Controls.Chats"
                     xmlns:messages="using:Telegram.Controls.Messages"
+                    xmlns:stories="using:Telegram.Controls.Stories"
                     xmlns:navigation="using:Telegram.Navigation.Services">
 
     <ResourceDictionary.MergedDictionaries>
@@ -603,6 +604,77 @@
                                                AutomationProperties.AccessibilityView="Raw"
                                                IsTabStop="False"
                                                Grid.Column="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style TargetType="stories:StoryReactionButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="stories:StoryReactionButton">
+                    <Grid x:Name="LayoutRoot"
+                          Background="{ThemeResource MessageReactionBackgroundBrush}"
+                          CornerRadius="12">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background"
+                                                Value="{ThemeResource MessageReactionChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background"
+                                                Value="{ThemeResource MessageReactionChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background"
+                                                Value="{ThemeResource MessageReactionChosenBackgroundBrush}" />
+                                        <Setter Target="Count.Foreground"
+                                                Value="{ThemeResource MessageReactionChosenForegroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid Margin="0,-4">
+                            <Image x:Name="Presenter"
+                                   Width="32"
+                                   Height="32" />
+                            <local:CustomEmojiIcon x:Name="Icon"
+                                                   x:Load="False" />
+                            <Popup x:Name="Overlay"
+                                   IsHitTestVisible="False"
+                                   Margin="-32"
+                                   Width="96"
+                                   Height="96" />
+                        </Grid>
+
+                        <local:AnimatedTextBlock x:Name="Count"
+                                                 x:Load="False"
+                                                 Foreground="{ThemeResource MessageReactionForegroundBrush}"
+                                                 TextStyle="{StaticResource CaptionTextBlockStyle}"
+                                                 VerticalAlignment="Center"
+                                                 AutomationProperties.AccessibilityView="Raw"
+                                                 IsTabStop="False"
+                                                 Margin="0,1,8,2"
+                                                 Grid.Column="1" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

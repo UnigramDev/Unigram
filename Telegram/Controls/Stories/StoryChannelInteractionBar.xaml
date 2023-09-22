@@ -21,6 +21,7 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <TextBlock x:Name="ViewersIcon"
                    Text="&#xEA2A;"
@@ -40,15 +41,36 @@
                               Grid.Column="3" />
 
         <controls:GlyphButton x:Name="ReactButton"
-                              Glyph="&#xE74D;"
+                              Click="ReactButton_Click"
+                              Glyph="&#xE987;"
                               CornerRadius="4,13,13,4"
                               Grid.Column="4" />
+
+        <Grid IsHitTestVisible="False"
+              Margin="0,-4"
+              Grid.Column="4">
+            <Image x:Name="Presenter"
+                   Width="32"
+                   Height="32" />
+            <controls:CustomEmojiIcon x:Name="Icon"
+                                      x:Load="False" />
+            <Popup x:Name="Overlay"
+                   IsHitTestVisible="False"
+                   Margin="-32"
+                   Width="96"
+                   Height="96" />
+        </Grid>
+
 
         <controls:AnimatedTextBlock x:Name="ReactionCount"
                                     VerticalAlignment="Center"
                                     Foreground="#FFFFFF"
                                     Margin="4,1,12,3"
                                     Grid.Column="5" />
-        
+
+        <local:StoryReactionButton x:Name="ReactButton2"
+                                   Visibility="Collapsed"
+                                   Grid.Column="6" />
+
     </Grid>
 </UserControl>
