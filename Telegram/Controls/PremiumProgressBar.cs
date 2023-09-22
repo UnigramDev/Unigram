@@ -65,6 +65,7 @@ namespace Telegram.Controls
 
             ValueText.Text = Value.ToString("F0");
 
+            OnValueChanged(_prevValue, Value);
             base.OnApplyTemplate();
         }
 
@@ -253,13 +254,13 @@ namespace Telegram.Controls
             width = ActualSize.X * (float)((value - Minimum) / (Maximum - Minimum));
             var center = Thumb.ActualSize.X / 2;
 
-            if (width < center)
+            if (width < center || value == Minimum)
             {
                 alignment = HorizontalAlignment.Left;
                 return 0;
                 //_thumb.Offset = new Vector3(width, 0, 0);
             }
-            else if (width > ActualWidth - center)
+            else if (width > ActualWidth - center || value == Maximum)
             {
                 alignment = HorizontalAlignment.Right;
                 return ActualSize.X - center * 2;
