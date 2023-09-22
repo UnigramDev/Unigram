@@ -227,7 +227,7 @@ namespace Telegram.Services
 
         #region App version
 
-        public const ulong CurrentVersion = (9UL << 48) | (6UL << 32) | (0UL << 16);
+        public const ulong CurrentVersion = (10UL << 48) | (1UL << 32) | (0UL << 16);
 
         public int Session => _session;
 
