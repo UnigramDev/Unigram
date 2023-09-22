@@ -124,6 +124,7 @@ namespace Telegram.Navigation
 
         private void OnClosed(object sender, CoreWindowEventArgs e)
         {
+            //Current = null;
             All.Remove(this);
             NavigationServices.Clear();
 

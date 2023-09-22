@@ -189,7 +189,7 @@ namespace Telegram.Controls.Chats
                 if (_loadMoreCount < 3)
                 {
                     // Not sure if this is extremely effective, but we try
-                    await this.UpdateLayoutAsync();
+                    await Task.WhenAny(this.UpdateLayoutAsync(), Task.Delay(100));
                 }
             }
         }

@@ -16,7 +16,7 @@ namespace Telegram.Common
 {
     public static class DropShadowEx
     {
-        public static SpriteVisual Attach(UIElement element, float radius = 20, float opacity = 0.25f)
+        public static SpriteVisual Attach(UIElement element, float radius = 20, float opacity = 0.25f, UIElement target = null)
         {
             var shadow = Window.Current.Compositor.CreateDropShadow();
             shadow.BlurRadius = radius;
@@ -42,7 +42,7 @@ namespace Telegram.Common
                     break;
             }
 
-            ElementCompositionPreview.SetElementChildVisual(element, visual);
+            ElementCompositionPreview.SetElementChildVisual(target ?? element, visual);
             return visual;
         }
     }

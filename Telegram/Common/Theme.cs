@@ -41,10 +41,16 @@ namespace Telegram.Common
                 var vazir = "ms-appx:///Assets/Fonts/Vazirmatn-UI-NL-Regular.ttf#Vazirmatn UI NL";
                 var symbols = "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram";
 
+                var auto = FontFamily.XamlAutoFontFamily.Source;
+                if (auto == "Segoe UI Variable")
+                {
+                    auto = "Segoe UI";
+                }
+
                 var emoji = SettingsService.Current.Appearance.EmojiSet switch
                 {
                     "microsoft" => FontFamily.XamlAutoFontFamily.Source,
-                    _ => $"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji"
+                    _ => $"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji, {auto}"
                 };
 
                 this.Add("EmojiThemeFontFamily", new FontFamily(/*$"{vazir}, {emoji}"*/ emoji));
