@@ -44,26 +44,38 @@ namespace Telegram.Views.Chats.Popups
 
             ChatTitle.Text = chat.Title;
             ChatPhoto.SetChat(clientService, chat, 28);
+            
+            static string MoreBoosts(int count)
+            {
+                return Locale.Declension(Strings.R.MoreBoosts, count);
+            }
+
+            static string BoostStories(int count)
+            {
+                return Locale.Declension(Strings.R.BoostStories, count);
+            }
 
             TextBlockHelper.SetMarkdown(Description, status.Level == 0
-                ? string.Format(Strings.ChannelNeedBoostsDescriptionLevel1, Locale.Declension(Strings.R.MoreBoosts, status.NextLevelBoostCount - status.BoostCount))
-                : string.Format(Strings.ChannelNeedBoostsDescriptionLevelNext, Locale.Declension(Strings.R.MoreBoosts, status.NextLevelBoostCount - status.BoostCount), Locale.Declension(Strings.R.BoostStories, status.Level + 1)));
+                ? string.Format(Strings.ChannelNeedBoostsDescriptionLevel1, MoreBoosts(status.NextLevelBoostCount - status.BoostCount))
+                : string.Format(Strings.ChannelNeedBoostsDescriptionLevelNext, MoreBoosts(status.NextLevelBoostCount - status.BoostCount), BoostStories(status.Level + 1)));
 
             var justReached = status.IsBoosted
                 ? status.CurrentLevelBoostCount - status.BoostCount == 0
                 : status.NextLevelBoostCount - status.BoostCount == 1;
 
+            var nextLevel = status.IsBoosted ? status.Level : status.Level + 1;
+
             if (justReached)
             {
                 TextBlockHelper.SetMarkdown(DescriptionBoosted, status.Level == 0
                     ? Strings.ChannelBoostsJustReachedLevel1
-                    : string.Format(Strings.ChannelBoostsJustReachedLevelNext, status.Level + 1, Locale.Declension(Strings.R.BoostStories, status.Level + 1)));
+                    : string.Format(Strings.ChannelBoostsJustReachedLevelNext, nextLevel, BoostStories(nextLevel)));
             }
             else
             {
                 TextBlockHelper.SetMarkdown(DescriptionBoosted, status.Level == 0
-                    ? string.Format(Strings.ChannelNeedBoostsAlreadyBoostedDescriptionLevel1, Locale.Declension(Strings.R.MoreBoosts, status.NextLevelBoostCount - status.BoostCount - 1))
-                    : string.Format(Strings.ChannelNeedBoostsAlreadyBoostedDescriptionLevelNext, Locale.Declension(Strings.R.MoreBoosts, status.NextLevelBoostCount - status.BoostCount - 1), Locale.Declension(Strings.R.BoostStories, status.Level + 1)));
+                    ? string.Format(Strings.ChannelNeedBoostsAlreadyBoostedDescriptionLevel1, MoreBoosts(status.NextLevelBoostCount - status.BoostCount - 1))
+                    : string.Format(Strings.ChannelNeedBoostsAlreadyBoostedDescriptionLevelNext, MoreBoosts(status.NextLevelBoostCount - status.BoostCount - 1), BoostStories(nextLevel)));
             }
 
             DescriptionBoosted.Opacity = status.IsBoosted ? 1 : 0;
