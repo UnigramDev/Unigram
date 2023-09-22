@@ -242,42 +242,42 @@ namespace Telegram.Common
             }
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, string text, ElementTheme requestedTheme = ElementTheme.Dark)
+        public static TeachingTip ShowTeachingTip(this Window app, string text, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            return ShowTeachingTip(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme);
+            return ShowTeachingTip(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, string text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark)
+        public static TeachingTip ShowTeachingTip(this Window app, string text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            return ShowTeachingTip(app, null, ComposeViewModel.GetFormattedText(text), icon, TeachingTipPlacementMode.Center, requestedTheme);
+            return ShowTeachingTip(app, null, ComposeViewModel.GetFormattedText(text), icon, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark)
+        public static TeachingTip ShowTeachingTip(this Window app, FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            return ShowTeachingTip(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme);
+            return ShowTeachingTip(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FormattedText text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark)
+        public static TeachingTip ShowTeachingTip(this Window app, FormattedText text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            return ShowTeachingTip(app, null, text, icon, TeachingTipPlacementMode.Center, requestedTheme);
+            return ShowTeachingTip(app, null, text, icon, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark)
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            return ShowTeachingTip(app, target, text, null, placement, requestedTheme);
+            return ShowTeachingTip(app, target, text, null, placement, requestedTheme, autoDismiss);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark)
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            return ShowTeachingTip(app, target, ComposeViewModel.GetFormattedText(text), icon, placement, requestedTheme);
+            return ShowTeachingTip(app, target, ComposeViewModel.GetFormattedText(text), icon, placement, requestedTheme, autoDismiss);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark)
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            return ShowTeachingTip(app, target, text, null, placement, requestedTheme);
+            return ShowTeachingTip(app, target, text, null, placement, requestedTheme, autoDismiss);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark)
+        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
             var label = new TextBlock
             {
@@ -315,7 +315,7 @@ namespace Telegram.Common
             {
                 Target = target,
                 PreferredPlacement = placement,
-                IsLightDismissEnabled = target != null,
+                IsLightDismissEnabled = target != null && autoDismiss is not true,
                 Content = content,
                 HorizontalContentAlignment = HorizontalAlignment.Stretch,
                 VerticalContentAlignment = VerticalAlignment.Stretch,
@@ -332,7 +332,7 @@ namespace Telegram.Common
                 element.Resources["TeachingTip"] = tip;
             }
 
-            if (target == null)
+            if (target == null || autoDismiss == true)
             {
                 var timer = new DispatcherTimer();
                 timer.Interval = TimeSpan.FromSeconds(3);
