@@ -541,12 +541,10 @@ namespace Telegram.Services
 
         private void UpdateVersion()
         {
-            ulong major = (_settings.Version & 0xFFFF000000000000L) >> 48;
-            ulong minor = (_settings.Version & 0x0000FFFF00000000L) >> 32;
-            ulong revision = (_settings.Version & 0x00000000FFFF0000L) >> 16;
-
-            _settings.UpdateVersion();
-            Send(new AddApplicationChangelog($"{major}.{minor}.{revision}"));
+            if (_settings.UpdateVersion(out string previousVersion))
+            {
+                Send(new AddApplicationChangelog(previousVersion));
+            }
         }
 
         public void CleanUp()

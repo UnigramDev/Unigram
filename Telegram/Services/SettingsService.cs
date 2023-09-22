@@ -35,7 +35,7 @@ namespace Telegram.Services
         ulong Version { get; }
         ulong SystemVersion { get; }
 
-        void UpdateVersion();
+        bool UpdateVersion(out string previousVersion);
 
         ChatSettingsBase Chats { get; }
         NotificationsSettings Notifications { get; }
@@ -245,14 +245,28 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _systemVersion, "SystemVersion", value);
         }
 
-        public void UpdateVersion()
+        public bool UpdateVersion(out string previousVersion)
         {
             string deviceFamilyVersion = AnalyticsInfo.VersionInfo.DeviceFamilyVersion;
             ulong version = ulong.Parse(deviceFamilyVersion);
             ulong build = (version & 0x00000000FFFF0000L) >> 16;
 
+            ulong oldMajor = (Version & 0xFFFF000000000000L) >> 48;
+            ulong oldMinor = (Version & 0x0000FFFF00000000L) >> 32;
+            ulong oldRevision = (Version & 0x00000000FFFF0000L) >> 16;
+
+            ulong newMajor = (CurrentVersion & 0xFFFF000000000000L) >> 48;
+            ulong newMinor = (CurrentVersion & 0x0000FFFF00000000L) >> 32;
+            ulong newRevision = (CurrentVersion & 0x00000000FFFF0000L) >> 16;
+
             Version = CurrentVersion;
             SystemVersion = build;
+
+            previousVersion = $"{oldMajor}.{oldMinor}.{oldRevision}";
+
+            var oldVersion = new Version((int)oldMajor, (int)oldMinor, (int)oldRevision);
+            var newVersion = new Version((int)newMajor, (int)newMinor, (int)newRevision);
+            return newVersion > oldVersion; 
         }
 
         #endregion
