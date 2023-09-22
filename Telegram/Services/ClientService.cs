@@ -804,7 +804,7 @@ namespace Telegram.Services
                             bots.Add(bot);
                         }
                     }
-                    
+
                     if (bot.SupportsChannelChats)
                     {
                         if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
@@ -813,7 +813,7 @@ namespace Telegram.Services
                             bots.Add(bot);
                         }
                     }
-                    
+
                     if (bot.SupportsUserChats || bot.SupportsBotChats || bot.SupportsSelfChat)
                     {
                         if (TryGetUser(chat, out User user))
@@ -845,7 +845,7 @@ namespace Telegram.Services
                 if (bot.ShowInSideMenu)
                 {
                     hash = ((hash * 20261) + 0x80000000L + bot.BotUserId) % 0x80000000L;
-                    
+
                     if (bot.ShowDisclaimerInSideMenu)
                     {
                         hash = ((hash * 20261) + 0x80000001L) % 0x80000000L;

@@ -4,7 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Telegram.Controls;
+using Windows.ApplicationModel;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using Windows.System.Profile;
 using Windows.System.UserProfile;
@@ -72,7 +72,22 @@ namespace Telegram.Services
             }
         }
 
-        public string ApplicationVersion => VersionLabel.GetVersion();
+        public string ApplicationVersion
+        {
+            get
+            {
+                Package package = Package.Current;
+                PackageId packageId = package.Id;
+                PackageVersion version = packageId.Version;
+
+                if (version.Build > 0)
+                {
+                    return string.Format("{0}.{1}.{2} ({3})", version.Major, version.Minor, version.Build, Constants.BuildNumber);
+                }
+
+                return string.Format("{0}.{1} ({2})", version.Major, version.Minor, Constants.BuildNumber);
+            }
+        }
 
         public string SystemLanguageCode => GlobalizationPreferences.Languages.Count > 0
             ? GlobalizationPreferences.Languages[0] : "en";
