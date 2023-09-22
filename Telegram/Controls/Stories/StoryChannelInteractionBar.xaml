@@ -15,7 +15,8 @@
           Height="56"
           Padding="0,8,0,0">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto"
+                              MinWidth="48" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
@@ -23,6 +24,15 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        <TextBlock x:Name="ReplyDisabled"
+                   Text="{CustomResource StoryReplyDisabled}"
+                   TextAlignment="Center"
+                   VerticalAlignment="Center"
+                   Style="{StaticResource InfoBodyTextBlockStyle}"
+                   Visibility="Collapsed"
+                   Grid.Column="1"
+                   Grid.ColumnSpan="2" />
+
         <TextBlock x:Name="ViewersIcon"
                    Text="&#xEA2A;"
                    VerticalAlignment="Center"
@@ -45,22 +55,6 @@
                               Glyph="&#xE987;"
                               CornerRadius="4,13,13,4"
                               Grid.Column="4" />
-
-        <Grid IsHitTestVisible="False"
-              Margin="0,-4"
-              Grid.Column="4">
-            <Image x:Name="Presenter"
-                   Width="32"
-                   Height="32" />
-            <controls:CustomEmojiIcon x:Name="Icon"
-                                      x:Load="False" />
-            <Popup x:Name="Overlay"
-                   IsHitTestVisible="False"
-                   Margin="-32"
-                   Width="96"
-                   Height="96" />
-        </Grid>
-
 
         <controls:AnimatedTextBlock x:Name="ReactionCount"
                                     VerticalAlignment="Center"

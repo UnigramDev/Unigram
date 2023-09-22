@@ -348,7 +348,7 @@ namespace Telegram.Controls.Stories
 
                             Interactions.Update(viewModel.Items[real].SelectedItem);
                         }
-                        else if (viewModel.Items[real].Chat.Type is ChatTypeSupergroup)
+                        else if (viewModel.Items[real].Chat.Type is ChatTypeSupergroup || !viewModel.Items[real].SelectedItem.CanBeReplied)
                         {
                             Interactions.Visibility = Visibility.Collapsed;
                             ChannelInteractions.Visibility = Visibility.Visible;
@@ -601,7 +601,7 @@ namespace Telegram.Controls.Stories
 
         private void OnCompleted(object sender, EventArgs e)
         {
-            //if (Move(Direction.Forward))
+            if (Move(Direction.Forward))
             {
                 return;
             }
