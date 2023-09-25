@@ -128,8 +128,6 @@ namespace Telegram.Controls.Stories
             var muted = ViewModel.Settings.Notifications.GetMuteStories(activeStories.Chat);
             var archived = activeStories.List is StoryListArchive;
 
-            var admin = ViewModel.ClientService.TryGetSupergroup(activeStories.Chat, out Supergroup supergroup) && (supergroup.Status is ChatMemberStatusCreator or ChatMemberStatusAdministrator);
-
             var flyout = new MenuFlyout();
 
             if (activeStories.Chat.Type is ChatTypePrivate)
@@ -142,7 +140,7 @@ namespace Telegram.Controls.Stories
                 flyout.CreateFlyoutItem(ViewModel.OpenProfile, activeStories, Strings.OpenChannel2, Icons.Megaphone);
             }
 
-            if (!admin && !activeStories.IsMyStory)
+            if (activeStories.Chat.Type is ChatTypePrivate && !activeStories.IsMyStory)
             {
                 flyout.CreateFlyoutItem(ViewModel.MuteProfile, activeStories, muted ? Strings.NotificationsStoryUnmute2 : Strings.NotificationsStoryMute2, muted ? Icons.Alert : Icons.AlertOff);
             }
