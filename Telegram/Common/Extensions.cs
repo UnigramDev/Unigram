@@ -7,7 +7,6 @@
 using LinqToVisualTree;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -49,26 +48,6 @@ namespace Telegram.Common
 {
     public static class Extensions
     {
-        public static int Read(this Stream stream, Span<byte> buffer)
-        {
-            byte[] sharedBuffer = ArrayPool<byte>.Shared.Rent(buffer.Length);
-            try
-            {
-                int numRead = stream.Read(sharedBuffer, 0, buffer.Length);
-                if ((uint)numRead > (uint)buffer.Length)
-                {
-                    throw new IOException("IO_StreamTooLong");
-                }
-
-                new ReadOnlySpan<byte>(sharedBuffer, 0, numRead).CopyTo(buffer);
-                return numRead;
-            }
-            finally
-            {
-                ArrayPool<byte>.Shared.Return(sharedBuffer);
-            }
-        }
-
         // TODO: this is a duplicat of INavigationService.ShowPopupAsync, and it's needed by GamePage, GroupCallPage and LiveStreamPage.
         // Must be removed at some point.
         public static Task<ContentDialogResult> ShowPopupAsync(this Page frame, int sessionId, Type sourcePopupType, object parameter = null, TaskCompletionSource<object> tsc = null)

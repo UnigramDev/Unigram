@@ -313,6 +313,10 @@
       <DependentUpon>Composition\DirectRectangleClip.idl</DependentUpon>
     </ClInclude>
     <ClInclude Include="DebugUtils.h" />
+    <ClInclude Include="FileStreamFromApp.h">
+      <DependentUpon>FileStreamFromApp.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Helpers\COMHelper.h" />
     <ClInclude Include="Helpers\DebugHelper.h" />
     <ClInclude Include="Helpers\LibraryHelper.h" />
@@ -893,6 +897,10 @@
     <ClCompile Include="..\Libraries\libwebp\src\utils\utils.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FileStreamFromApp.cpp">
+      <DependentUpon>FileStreamFromApp.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Highlight\Highlight.cpp" />
     <ClCompile Include="Highlight\LanguageTree.cpp" />
     <ClCompile Include="Highlight\SyntaxHighlighter.cpp" />
@@ -1137,6 +1145,9 @@
     </Midl>
     <Midl Include="Composition\CompositionDevice.idl" />
     <Midl Include="Composition\DirectRectangleClip.idl" />
+    <Midl Include="FileStreamFromApp.idl">
+      <SubType>Designer</SubType>
+    </Midl>
     <Midl Include="Highlight\SyntaxToken.idl" />
     <Midl Include="Highlight\TextToken.idl" />
     <Midl Include="HttpProxyWatcher.idl">

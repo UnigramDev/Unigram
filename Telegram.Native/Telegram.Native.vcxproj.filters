@@ -678,75 +678,6 @@
     <ClCompile Include="..\Libraries\libwebp\src\dsp\yuv_sse41.c">
       <Filter>libwebp\dsp</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\filter_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\frame_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\histogram_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\iterator_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\near_lossless_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\picture_csp_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\picture_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\picture_psnr_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\picture_rescale_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\picture_tools_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\predictor_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\quant_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\syntax_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\token_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\tree_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\vp8l_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\webp_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\alpha_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\analysis_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\backward_references_cost_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\backward_references_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\config_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libwebp\src\enc\cost_enc.c">
-      <Filter>libwebp\enc</Filter>
-    </ClCompile>
     <ClCompile Include="..\Libraries\libwebp\src\utils\bit_reader_utils.c">
       <Filter>libwebp\utils</Filter>
     </ClCompile>
@@ -1160,21 +1091,6 @@
     <ClInclude Include="..\Libraries\libwebp\src\dsp\yuv.h">
       <Filter>libwebp\dsp</Filter>
     </ClInclude>
-    <ClInclude Include="..\Libraries\libwebp\src\enc\cost_enc.h">
-      <Filter>libwebp\enc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\libwebp\src\enc\histogram_enc.h">
-      <Filter>libwebp\enc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\libwebp\src\enc\vp8i_enc.h">
-      <Filter>libwebp\enc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\libwebp\src\enc\vp8li_enc.h">
-      <Filter>libwebp\enc</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\libwebp\src\enc\backward_references_enc.h">
-      <Filter>libwebp\enc</Filter>
-    </ClInclude>
     <ClInclude Include="..\Libraries\libwebp\src\utils\bit_reader_inl_utils.h">
       <Filter>libwebp\utils</Filter>
     </ClInclude>
@@ -1287,5 +1203,6 @@
     <Midl Include="Highlight\TextToken.idl">
       <Filter>Highlight</Filter>
     </Midl>
+    <Midl Include="FileStreamFromApp.idl" />
   </ItemGroup>
 </Project>

@@ -6,7 +6,7 @@
 //
 using LibVLCSharp.Shared;
 using System;
-using Telegram.Common;
+using Telegram.Native;
 using Telegram.Services;
 using Telegram.Td.Api;
 
@@ -18,7 +18,7 @@ namespace Telegram.Streams
 
         private readonly RemoteFileSource _source;
 
-        private System.IO.Stream _fileStream;
+        private FileStreamFromApp _fileStream;
         private string _filePath;
 
         private bool _disposed;
@@ -64,9 +64,9 @@ namespace Telegram.Streams
                 var path = _file.Local.Path;
                 if (path.Length > 0 && !_source.IsCanceled && (_fileStream == null || _filePath != path))
                 {
-                    _fileStream?.Dispose();
+                    _fileStream?.Close();
 
-                    _fileStream = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite | System.IO.FileShare.Delete);
+                    _fileStream = new FileStreamFromApp(path);
                     _filePath = path;
                 }
                 else if (_fileStream == null)
@@ -74,10 +74,10 @@ namespace Telegram.Streams
                     return 0;
                 }
 
-                _fileStream.Seek(_source.Offset, System.IO.SeekOrigin.Begin);
+                _fileStream.Seek(_source.Offset);
                 _source.SeekCallback(_source.Offset + len);
 
-                return _fileStream.Read(new Span<byte>(buf.ToPointer(), (int)len));
+                return _fileStream.Read((long)buf, len);
             }
             catch
             {

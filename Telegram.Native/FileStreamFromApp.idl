@@ -1,0 +1,15 @@
+namespace Telegram.Native
+{
+    [default_interface]
+    runtimeclass FileStreamFromApp
+    {
+        FileStreamFromApp(String path);
+
+        Boolean IsValid{ get; };
+
+        Boolean Seek(Int64 offset);
+        Int32 Read(Int64 pointer, UInt32 length);
+
+        void Close();
+    }
+}
