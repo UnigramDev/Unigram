@@ -1317,9 +1317,9 @@ namespace Telegram.Controls.Messages
                     {
                         content = string.Format(Strings.AutoDeleteGlobalActionFromYou, Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime));
                     }
-                    else if (chatSetMessageAutoDeleteTime.FromUserId != 0)
+                    else if (chatSetMessageAutoDeleteTime.FromUserId != 0 && message.ClientService.TryGetUser(chatSetMessageAutoDeleteTime.FromUserId, out User fromUser))
                     {
-                        content = ReplaceWithLink(string.Format(Strings.AutoDeleteGlobalAction, "un1", Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime)), "un1", message.GetSender(), entities);
+                        content = ReplaceWithLink(string.Format(Strings.AutoDeleteGlobalAction, Locale.FormatTtl(chatSetMessageAutoDeleteTime.MessageAutoDeleteTime)), "un1", fromUser, entities);
                     }
                     else if (message.IsOutgoing)
                     {
