@@ -301,10 +301,8 @@ namespace Telegram.Views.Host
 
             Photo.SetUser(clientService, user, 48);
             NameLabel.Text = user.FullName();
-#if DEBUG
-            PhoneLabel.Text = "+42 --- --- ----";
-#else
-            if (clientService.Options.TestMode)
+
+            if (clientService.Options.TestMode || SettingsService.Current.Diagnostics.HidePhoneNumber)
             {
                 PhoneLabel.Text = "+42 --- --- ----";
             }
@@ -312,7 +310,7 @@ namespace Telegram.Views.Host
             {
                 PhoneLabel.Text = PhoneNumber.Format(user.PhoneNumber);
             }
-#endif
+
             Expanded.IsChecked = SettingsService.Current.IsAccountsSelectorExpanded;
         }
 

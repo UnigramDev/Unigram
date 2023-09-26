@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Settings;
@@ -33,10 +34,7 @@ namespace Telegram.Views.Settings
         {
             Photo.SetUser(ViewModel.ClientService, user, 96);
 
-#if DEBUG
-            PhoneNumber.Badge = "+42 --- --- ----";
-#else
-            if (ViewModel.Settings.UseTestDC)
+            if (ViewModel.ClientService.Options.TestMode || SettingsService.Current.Diagnostics.HidePhoneNumber)
             {
                 PhoneNumber.Badge = "+42 --- --- ----";
             }
@@ -44,7 +42,6 @@ namespace Telegram.Views.Settings
             {
                 PhoneNumber.Badge = Common.PhoneNumber.Format(user.PhoneNumber);
             }
-#endif
 
             if (user.HasActiveUsername(out string username))
             {

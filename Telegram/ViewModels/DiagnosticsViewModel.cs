@@ -170,6 +170,16 @@ namespace Telegram.ViewModels
             }
         }
 
+        public bool HidePhoneNumber
+        {
+            get => SettingsService.Current.Diagnostics.HidePhoneNumber;
+            set
+            {
+                SettingsService.Current.Diagnostics.HidePhoneNumber = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool PreferIpv6
         {
             get => ClientService.Options.PreferIpv6;

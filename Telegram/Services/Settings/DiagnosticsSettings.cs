@@ -105,6 +105,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _useStorageOptimizer, "UseStorageOptimizer", value);
         }
 
+        private bool? _hidePhoneNumber;
+        public bool HidePhoneNumber
+        {
+            get => _hidePhoneNumber ??= GetValueOrDefault("HidePhoneNumber", false);
+            set => AddOrUpdateValue(ref _hidePhoneNumber, "HidePhoneNumber", value);
+        }
+
         public bool IsLastErrorDiskFull { get; set; }
     }
 }

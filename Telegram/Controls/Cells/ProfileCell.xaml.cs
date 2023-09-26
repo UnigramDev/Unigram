@@ -62,10 +62,7 @@ namespace Telegram.Controls.Cells
 
             if (phoneNumber)
             {
-#if DEBUG
-                SubtitleLabel.Text = "+42 --- --- ----";
-#else
-                if (clientService.Options.TestMode)
+                if (clientService.Options.TestMode || SettingsService.Current.Diagnostics.HidePhoneNumber)
                 {
                     SubtitleLabel.Text = "+42 --- --- ----";
                 }
@@ -73,7 +70,6 @@ namespace Telegram.Controls.Cells
                 {
                     SubtitleLabel.Text = PhoneNumber.Format(user.PhoneNumber);
                 }
-#endif
             }
             else
             {
@@ -454,7 +450,7 @@ namespace Telegram.Controls.Cells
             }
             else if (args.Phase == 1)
             {
-                SubtitleLabel.Text = string.Format(Strings.BoostExpireOn, Formatter.DateAt(boost.ExpirationDate));
+                SubtitleLabel.Text = string.Format(Strings.BoostExpireOn, Formatter.ShortDate.Format(Formatter.ToLocalTime(boost.ExpirationDate)));
             }
             else if (args.Phase == 2)
             {
