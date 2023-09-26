@@ -2,7 +2,6 @@
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
-using Telegram.Controls.Chats;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
 
@@ -40,7 +39,7 @@ namespace Telegram.Views.Popups
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new AccessibleChatListViewItem();
+                args.ItemContainer = new TextListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
             }
