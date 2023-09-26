@@ -740,12 +740,17 @@ namespace Telegram.Views
 
         public void OnBackRequesting(HandledEventArgs args)
         {
-            if (!_searchCollapsed)
+            if (Root?.IsPaneOpen is true)
+            {
+                Root.IsPaneOpen = false;
+                args.Handled = true;
+            }
+            else if (!_searchCollapsed)
             {
                 Search_LostFocus(null, null);
                 args.Handled = true;
             }
-            if (!_topicListCollapsed)
+            else if (!_topicListCollapsed)
             {
                 ShowHideTopicList(false);
                 UpdateListViewsSelectedItem(0);
