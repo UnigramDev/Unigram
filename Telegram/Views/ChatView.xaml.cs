@@ -855,7 +855,11 @@ namespace Telegram.Views
                     return;
                 }
 
-                _focusState.Set(FocusState.Programmatic);
+                var element = FocusManager.GetFocusedElement();
+                if (element is not TextBox and not RichEditBox)
+                {
+                    _focusState.Set(FocusState.Programmatic);
+                }
             }
         }
 
