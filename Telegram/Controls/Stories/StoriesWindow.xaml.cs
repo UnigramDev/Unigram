@@ -845,67 +845,32 @@ namespace Telegram.Controls.Stories
         private void Story_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var activeStories = _viewModel.Items[_index];
-            var story = activeStories.SelectedItem;
 
             var flyout = new MenuFlyout();
             flyout.Closing += Flyout_Closing;
 
-            if (story.Chat.Type is ChatTypePrivate && story.CanBeReplied)
-            {
-                flyout.Opened += async (s, args) =>
-                {
-                    var response = await activeStories.ClientService.SendAsync(new GetStoryAvailableReactions(8));
-                    if (response is AvailableReactions reactions && flyout.IsOpen)
-                    {
-                        if (reactions.TopReactions.Count > 0
-                            || reactions.PopularReactions.Count > 0
-                            || reactions.RecentReactions.Count > 0)
-                        {
-                            ReactionsMenuFlyout.ShowAt(reactions, story, null, flyout);
-                        }
-                    }
-                };
-            }
-
-            ActiveCard.Suspend(StoryPauseSource.Flyout);
-
             PopulateMenuFlyout(flyout, activeStories);
 
-            args.ShowAt(flyout, sender as FrameworkElement);
+            if (args.ShowAt(flyout, sender as FrameworkElement))
+            {
+                ActiveCard.Suspend(StoryPauseSource.Flyout);
+            }
         }
 
         private void Story_ContextRequested(object sender, StoryEventArgs e)
         {
             var element = sender as FrameworkElement;
-
             var activeStories = e.ActiveStories;
-            var story = activeStories.SelectedItem;
 
             var flyout = new MenuFlyout();
             flyout.Closing += Flyout_Closing;
 
-            if (story.Chat.Type is ChatTypePrivate && story.CanBeReplied)
-            {
-                flyout.Opened += async (s, args) =>
-                {
-                    var response = await activeStories.ClientService.SendAsync(new GetStoryAvailableReactions(8));
-                    if (response is AvailableReactions reactions && flyout.IsOpen)
-                    {
-                        if (reactions.TopReactions.Count > 0
-                            || reactions.PopularReactions.Count > 0
-                            || reactions.RecentReactions.Count > 0)
-                        {
-                            ReactionsMenuFlyout.ShowAt(reactions, story, null, flyout);
-                        }
-                    }
-                };
-            }
-
-            ActiveCard.Suspend(StoryPauseSource.Flyout);
-
             PopulateMenuFlyout(flyout, e.ActiveStories);
 
-            flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.BottomEdgeAlignedRight);
+            if (flyout.ShowAt(sender as FrameworkElement, FlyoutPlacementMode.BottomEdgeAlignedRight))
+            {
+                ActiveCard.Suspend(StoryPauseSource.Flyout);
+            }
         }
 
         private void PopulateMenuFlyout(MenuFlyout flyout, ActiveStoriesViewModel activeStories)
@@ -914,6 +879,23 @@ namespace Telegram.Controls.Stories
             if (story == null)
             {
                 return;
+            }
+
+            if (story.CanBeReplied)
+            {
+                flyout.Opened += async (s, args) =>
+                {
+                    var response = await activeStories.ClientService.SendAsync(new GetStoryAvailableReactions(8));
+                    if (response is AvailableReactions reactions && flyout.IsOpen)
+                    {
+                        if (reactions.TopReactions.Count > 0
+                            || reactions.PopularReactions.Count > 0
+                            || reactions.RecentReactions.Count > 0)
+                        {
+                            ReactionsMenuFlyout.ShowAt(reactions, story, null, flyout);
+                        }
+                    }
+                };
             }
 
             if (activeStories.ClientService.TryGetUser(activeStories.Chat, out User supportUser) && supportUser.IsSupport)

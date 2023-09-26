@@ -2000,13 +2000,8 @@ namespace Telegram.Views
                 }
             }
 
-            if (message == null || message.Id == 0)
-            {
-                return;
-            }
-
-            var chat = message.Chat;
-            if (chat == null)
+            var chat = message?.Chat;
+            if (chat == null || message.Id == 0)
             {
                 return;
             }
@@ -2040,7 +2035,7 @@ namespace Telegram.Views
                 if (message.Content is MessageAlbum album)
                 {
                     var child = children.FirstOrDefault(x => x is IContent) as IContent;
-                    if (child != null)
+                    if (child?.Message != null)
                     {
                         message = child.Message;
                     }
@@ -2049,7 +2044,7 @@ namespace Telegram.Views
             else if (message.Content is MessageAlbum album && args.OriginalSource is DependencyObject originaSource)
             {
                 var ancestor = originaSource.AncestorsAndSelf<IContent>().FirstOrDefault();
-                if (ancestor != null)
+                if (ancestor?.Message != null)
                 {
                     message = ancestor.Message;
                 }

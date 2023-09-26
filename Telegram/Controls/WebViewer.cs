@@ -154,7 +154,14 @@ namespace Telegram.Controls
         {
             if (await _templatedApplied.Task && View != null)
             {
-                await View.InvokeScriptAsync("eval", new[] { javaScript });
+                try
+                {
+                    await View.InvokeScriptAsync("eval", new[] { javaScript });
+                }
+                catch
+                {
+                    // This method can throw exceptions if fails to evaluate
+                }
             }
         }
 
@@ -263,7 +270,14 @@ postEvent: function(eventType, eventData) {
         {
             if (await _templatedApplied.Task && View?.CoreWebView2 != null)
             {
-                await View.CoreWebView2.ExecuteScriptAsync(javaScript);
+                try
+                {
+                    await View.CoreWebView2.ExecuteScriptAsync(javaScript);
+                }
+                catch
+                {
+                    // This method can throw exceptions if fails to evaluate
+                }
             }
         }
 

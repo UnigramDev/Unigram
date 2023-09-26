@@ -261,6 +261,11 @@ namespace Telegram.Controls.Stories
             var clip1 = compositor.CreateGeometricClip(geometry1);
             root.Clip = clip1;
 
+            if (story == null)
+            {
+                return;
+            }
+
             if (open && (story.StoryId != _storyId || !_open))
             {
                 if (story.ChatId != _openedChatId || story.StoryId != _openedStoryId)

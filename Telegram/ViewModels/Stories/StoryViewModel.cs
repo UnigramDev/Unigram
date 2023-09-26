@@ -17,6 +17,7 @@ namespace Telegram.ViewModels.Stories
             ClientService = clientService;
 
             ChatId = chatId;
+            Chat = ClientService.GetChat(chatId);
 
             Date = storyInfo.Date;
             StoryId = storyInfo.StoryId;
@@ -27,6 +28,7 @@ namespace Telegram.ViewModels.Stories
             ClientService = clientService;
 
             ChatId = story.SenderChatId;
+            Chat = ClientService.GetChat(story.SenderChatId);
 
             Date = story.Date;
             StoryId = story.Id;
@@ -38,7 +40,7 @@ namespace Telegram.ViewModels.Stories
 
         public long ChatId { get; set; }
 
-        public Chat Chat => ClientService.GetChat(ChatId);
+        public Chat Chat { get; private set; }
 
         public int StoryId { get; set; }
 

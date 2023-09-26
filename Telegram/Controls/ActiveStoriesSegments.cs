@@ -39,6 +39,11 @@ namespace Telegram.Controls
 
         public async void Open(INavigationService navigationService, IClientService clientService, Chat chat, int side, Func<ActiveStoriesViewModel, Rect> origin)
         {
+            if (chat == null)
+            {
+                return;
+            }
+
             var transform = TransformToVisual(Window.Current.Content);
             var point = transform.TransformPoint(new Point());
 

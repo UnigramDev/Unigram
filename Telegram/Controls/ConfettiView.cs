@@ -35,7 +35,8 @@ namespace Telegram.Controls
         private const int _particlesCount = 60; //(SharedConfig.getDevicePerfomanceClass() == 0 ? 50 : 60);
         private int _fallingDownCount;
         private readonly long lastUpdateTime;
-        private readonly List<Particle> _particles = new List<Particle>(_particlesCount + _fallParticlesCount);
+        private readonly List<Particle> _particles = new(_particlesCount + _fallParticlesCount);
+        private readonly object _particlesLock = new();
         private float _speedCoef = 1.0f;
         private bool _started;
         private bool _startedFall;
@@ -89,68 +90,74 @@ namespace Telegram.Controls
 
         private void OnDraw(ICanvasAnimatedControl sender, CanvasAnimatedDrawEventArgs args)
         {
-            if (_started is false)
+            lock (_particlesLock)
             {
-                sender.Paused = true;
-                return;
-            }
-
-            int i = (int)args.Timing.ElapsedTime.TotalMilliseconds;
-            if (i > 18)
-            {
-                i = 16;
-            }
-
-            for (int j = 0; j < _particles.Count; j++)
-            {
-                _particles[j].Draw(args);
-
-                if (_particles[j].Update(i))
+                if (_started is false)
                 {
-                    _particles.RemoveAt(j);
-                    j--;
+                    sender.Paused = true;
+                    return;
                 }
-            }
 
-            if (_fallingDownCount >= _particlesCount / 2 && _speedCoef > 0.2f)
-            {
-                StartFall();
-
-                _speedCoef -= i / 16.0f * 0.15f;
-
-                if (_speedCoef < 0.2f)
+                int i = (int)args.Timing.ElapsedTime.TotalMilliseconds;
+                if (i > 18)
                 {
-                    _speedCoef = 0.2f;
+                    i = 16;
                 }
-            }
 
-            if (_particles.Count > 0)
-            {
-                //invalidate();
-                return;
-            }
+                for (int j = 0; j < _particles.Count; j++)
+                {
+                    _particles[j].Draw(args);
 
-            _started = false;
-            Completed?.Invoke(this, EventArgs.Empty);
+                    if (_particles[j].Update(i))
+                    {
+                        _particles.RemoveAt(j);
+                        j--;
+                    }
+                }
+
+                if (_fallingDownCount >= _particlesCount / 2 && _speedCoef > 0.2f)
+                {
+                    StartFall();
+
+                    _speedCoef -= i / 16.0f * 0.15f;
+
+                    if (_speedCoef < 0.2f)
+                    {
+                        _speedCoef = 0.2f;
+                    }
+                }
+
+                if (_particles.Count > 0)
+                {
+                    //invalidate();
+                    return;
+                }
+
+                _started = false;
+                Completed?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         public void Start()
         {
-            _particles.Clear();
-            _started = true;
-            _startedFall = false;
-            _fallingDownCount = 0;
-            _speedCoef = 1.0f;
-
-            for (int i = 0; i < _particlesCount; i++)
+            lock (_particlesLock)
             {
-                _particles.Add(CreateParticle(false));
-            }
+                _particles.Clear();
+                _started = true;
+                _startedFall = false;
+                _fallingDownCount = 0;
+                _speedCoef = 1.0f;
 
-            //invalidate();
-            if (Canvas != null)
-            {
-                Canvas.Paused = false;
+                for (int i = 0; i < _particlesCount; i++)
+                {
+                    _particles.Add(CreateParticle(false));
+                }
+
+                //invalidate();
+                if (Canvas != null)
+                {
+                    Canvas.Paused = false;
+                }
             }
         }
 

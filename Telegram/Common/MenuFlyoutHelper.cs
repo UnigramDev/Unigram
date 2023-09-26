@@ -22,16 +22,25 @@ namespace Telegram.Common
 {
     public static class MenuFlyoutHelper
     {
-        public static void ShowAt(this FlyoutBase flyout, DependencyObject placementTarget, FlyoutPlacementMode placement)
+        public static bool ShowAt(this FlyoutBase flyout, DependencyObject placementTarget, FlyoutPlacementMode placement)
         {
-            flyout.ShowAt(placementTarget, new FlyoutShowOptions
+            try
             {
-                Placement = placement
-            });
+                flyout.ShowAt(placementTarget, new FlyoutShowOptions
+                {
+                    Placement = placement
+                });
+                return true;
+            }
+            catch { }
+
+            return false;
         }
 
-        public static void ShowAt(this ContextRequestedEventArgs args, MenuFlyout flyout, FrameworkElement element)
+        public static bool ShowAt(this ContextRequestedEventArgs args, MenuFlyout flyout, FrameworkElement element)
         {
+            args.Handled = true;
+
             if (flyout.Items.Count > 0 && args.TryGetPosition(element, out Point point))
             {
                 if (point.X < 0 || point.Y < 0)
@@ -42,6 +51,7 @@ namespace Telegram.Common
                 try
                 {
                     flyout.ShowAt(element, point);
+                    return true;
                 }
                 catch { }
             }
@@ -50,11 +60,12 @@ namespace Telegram.Common
                 try
                 {
                     flyout.ShowAt(element);
+                    return true;
                 }
                 catch { }
             }
 
-            args.Handled = true;
+            return false;
         }
 
         public static void ShowAt<T>(this ItemContextRequestedEventArgs<T> args, MenuFlyout flyout, FrameworkElement element)

@@ -66,7 +66,7 @@ namespace Telegram.Converters
         {
             if (user == null)
             {
-                return null;
+                return string.Empty;
             }
 
             if (IsServiceUser(user))

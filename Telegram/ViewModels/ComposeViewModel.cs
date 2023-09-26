@@ -806,11 +806,12 @@ namespace Telegram.ViewModels
 
         public Task SendMessageAsync(FormattedText formattedText, MessageSendOptions options = null, MessageReplyTo reply = null)
         {
-            return SendMessageAsync(formattedText.Text, formattedText.Entities, options, reply);
+            return SendMessageAsync(formattedText?.Text, formattedText?.Entities, options, reply);
         }
 
         public async Task SendMessageAsync(string text, IList<TextEntity> entities = null, MessageSendOptions options = null, MessageReplyTo reply = null)
         {
+            text ??= string.Empty;
             text = text.Replace('\v', '\n').Replace('\r', '\n');
 
             if (Chat is not Chat chat)

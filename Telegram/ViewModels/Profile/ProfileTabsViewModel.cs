@@ -218,26 +218,26 @@ namespace Telegram.ViewModels.Profile
                 // This should really rarely happen
                 cached ??= await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
 
-                if (cached.HasPinnedStories)
+                if (cached != null && cached.HasPinnedStories)
                 {
                     Items.Insert(0, new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
                     HasPinnedStories = true;
                 }
-                if (cached.GroupInCommonCount > 0)
+                if (cached != null && cached.GroupInCommonCount > 0)
                 {
                     Items.Add(new ProfileTabItem(Strings.SharedGroupsTab2, typeof(ProfileGroupsTabPage)));
                     HasSharedGroups = true;
                 }
             }
-            else if (chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            else if (chat.Type is ChatTypeSupergroup typeSupergroup && typeSupergroup.IsChannel)
             {
-                var user = ClientService.GetSupergroup(chat);
+                var supergroup = ClientService.GetSupergroup(chat);
                 var cached = ClientService.GetSupergroupFull(chat);
 
                 // This should really rarely happen
-                cached ??= await ClientService.SendAsync(new GetSupergroupFullInfo(user.Id)) as SupergroupFullInfo;
+                cached ??= await ClientService.SendAsync(new GetSupergroupFullInfo(supergroup.Id)) as SupergroupFullInfo;
 
-                if (cached.HasPinnedStories)
+                if (cached != null && cached.HasPinnedStories)
                 {
                     Items.Insert(0, new ProfileTabItem(Strings.ProfileStories, typeof(ProfileStoriesTabPage)));
                     HasPinnedStories = true;

@@ -320,8 +320,11 @@ namespace Telegram.Controls.Gallery
             _controls.Attach(_mediaPlayer);
             _playbackQueue.Enqueue(() =>
             {
-                _mediaPlayer.Play(new LibVLCSharp.Shared.Media(_library, stream));
-                _mediaPlayer.Time = position;
+                if (_mediaPlayer != null && !_unloaded)
+                {
+                    _mediaPlayer.Play(new LibVLCSharp.Shared.Media(_library, stream));
+                    _mediaPlayer.Time = position;
+                }
             });
 
             _controls = null;
