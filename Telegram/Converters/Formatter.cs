@@ -35,10 +35,15 @@ namespace Telegram.Converters
         static Formatter()
         {
             var culture = NativeUtils.GetCurrentCulture();
-            var languages = new[] { culture }.Union(GlobalizationPreferences.Languages);
+            var languages = GlobalizationPreferences.Languages.ToList();
             var region = GlobalizationPreferences.HomeGeographicRegion;
             var calendar = GlobalizationPreferences.Calendars.FirstOrDefault();
             var clock = GlobalizationPreferences.Clocks.FirstOrDefault();
+
+            if (Windows.Globalization.Language.IsWellFormed(culture))
+            {
+                languages.Insert(0, culture);
+            }
 
             ShortDate = new DateTimeFormatter("shortdate", languages, region, calendar, clock);
             ShortTime = new DateTimeFormatter("shorttime", languages, region, calendar, clock);
