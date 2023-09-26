@@ -119,6 +119,11 @@ namespace Telegram.ViewModels.Supergroups
                 {
                     LoadUsername(chat.Id);
                 }
+                else
+                {
+                    _username.Value = item.EditableUsername();
+                    RaisePropertyChanged(nameof(Username));
+                }
             }
             else if (chat.Type is ChatTypeBasicGroup basic)
             {
