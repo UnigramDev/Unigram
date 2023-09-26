@@ -21,8 +21,11 @@ namespace Telegram.Collections
         private readonly long _threadId;
         private readonly string _query;
         private readonly MessageSender _sender;
+        private readonly bool _secretChat;
 
         private long _fromMessageId;
+        private string _fromOffset = string.Empty;
+
         private bool _hasMoreItems = true;
 
         private readonly SearchMessagesFilter _filter;
@@ -37,9 +40,14 @@ namespace Telegram.Collections
             _sender = sender;
             _fromMessageId = fromMessageId;
             _filter = filter;
+
+            if (clientService.TryGetChat(chatId, out Chat chat))
+            {
+                _secretChat = chat.Type is ChatTypeSecret;
+            }
         }
 
-
+        public IClientService ClientService => _clientService;
 
         public int TotalCount { get; private set; }
 
@@ -47,29 +55,58 @@ namespace Telegram.Collections
         {
             return AsyncInfo.Run(async token =>
             {
-                var fromMessageId = _fromMessageId;
-                var offset = -49;
-
-                var last = this.LastOrDefault();
-                if (last != null)
+                Function function;
+                if (_secretChat)
                 {
-                    fromMessageId = last.Id;
-                    offset = 0;
+                    function = new SearchSecretMessages(_chatId, _query, _fromOffset, 50, _filter);
+                }
+                else
+                {
+                    var fromMessageId = _fromMessageId;
+                    var offset = -49;
+
+                    var last = this.LastOrDefault();
+                    if (last != null)
+                    {
+                        fromMessageId = last.Id;
+                        offset = 0;
+                    }
+
+                    function = new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId);
                 }
 
-                var response = await _clientService.SendAsync(new SearchChatMessages(_chatId, _query, _sender, fromMessageId, offset, (int)count, _filter, _threadId));
-                if (response is FoundChatMessages messages)
+                var response = await _clientService.SendAsync(function);
+                if (response is FoundChatMessages chatMessages)
+                {
+                    TotalCount = chatMessages.TotalCount;
+                    AddRange(chatMessages.Messages);
+
+                    _fromMessageId = chatMessages.NextFromMessageId;
+                    _hasMoreItems = chatMessages.NextFromMessageId != 0;
+
+                    return new LoadMoreItemsResult
+                    {
+                        Count = (uint)chatMessages.Messages.Count
+                    };
+                }
+                else if (response is FoundMessages messages)
                 {
                     TotalCount = messages.TotalCount;
                     AddRange(messages.Messages);
 
-                    _fromMessageId = messages.NextFromMessageId;
-                    _hasMoreItems = messages.NextFromMessageId != 0;
+                    _fromOffset = messages.NextOffset;
+                    _hasMoreItems = messages.NextOffset.Length > 0;
 
-                    return new LoadMoreItemsResult { Count = (uint)messages.Messages.Count };
+                    return new LoadMoreItemsResult
+                    {
+                        Count = (uint)messages.Messages.Count
+                    };
                 }
 
-                return new LoadMoreItemsResult { Count = 0 };
+                return new LoadMoreItemsResult
+                {
+                    Count = 0
+                };
             });
         }
 
