@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Microsoft.UI.Xaml.Controls;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Numerics;
 using Telegram.Common;
@@ -30,6 +31,7 @@ namespace Telegram.Views.Popups
         private readonly IClientService _clientService;
         private readonly INavigationService _navigationService;
 
+        private readonly Chat _sourceChat;
         private readonly User _botUser;
         private readonly AttachmentMenuBot _menuBot;
 
@@ -37,7 +39,7 @@ namespace Telegram.Views.Popups
         private bool _closeNeedConfirmation;
 
         // TODO: constructor should take a function and URL should be loaded asynchronously
-        public WebBotPopup(IClientService clientService, INavigationService navigationService, User user, WebAppInfo info, AttachmentMenuBot menuBot = null)
+        public WebBotPopup(IClientService clientService, INavigationService navigationService, User user, WebAppInfo info, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
         {
             InitializeComponent();
 
@@ -46,6 +48,7 @@ namespace Telegram.Views.Popups
 
             _botUser = user;
             _menuBot = menuBot;
+            _sourceChat = sourceChat;
 
             Title.Text = user.FullName();
 
@@ -57,7 +60,7 @@ namespace Telegram.Views.Popups
         }
 
         // TODO: constructor should take a function and URL should be loaded asynchronously
-        public WebBotPopup(IClientService clientService, INavigationService navigationService, User user, string url, AttachmentMenuBot menuBot = null)
+        public WebBotPopup(IClientService clientService, INavigationService navigationService, User user, string url, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
         {
             InitializeComponent();
 
@@ -66,6 +69,7 @@ namespace Telegram.Views.Popups
 
             _botUser = user;
             _menuBot = menuBot;
+            _sourceChat = sourceChat;
 
             Title.Text = user.FullName();
 
@@ -580,12 +584,62 @@ namespace Telegram.Views.Popups
 
         private void SwitchInlineQueryMessage(JsonObject eventData)
         {
+            var query = eventData.GetNamedString("query", string.Empty);
+            if (string.IsNullOrEmpty(query))
+            {
+                return;
+            }
 
+            var types = eventData.GetNamedArray("chat_types", null);
+            var values = new HashSet<string>();
+
+            foreach (var type in types)
+            {
+                if (type.ValueType == JsonValueType.String)
+                {
+                    values.Add(type
+                        .GetString()
+                        .ToLowerInvariant());
+                }
+            }
+
+            var target = new TargetChatChosen
+            {
+                AllowBotChats = values.Contains("bots"),
+                AllowUserChats = values.Contains("users"),
+                AllowGroupChats = values.Contains("groups"),
+                AllowChannelChats = values.Contains("channels")
+            };
+
+            Hide();
+
+            if (target.AllowBotChats || target.AllowUserChats || target.AllowGroupChats || target.AllowChannelChats)
+            {
+                _navigationService.ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationSwitchInline(query, target, _botUser));
+            }
+            else if (_sourceChat != null)
+            {
+                var aggregator = TLContainer.Current.Resolve<IEventAggregator>(_clientService.SessionId);
+                aggregator.Publish(new UpdateChatSwitchInlineQuery(_sourceChat.Id, _botUser.Id, query));
+            }
         }
 
         private void SendDataMessage(JsonObject eventData)
         {
+            var data = eventData.GetNamedString("data");
+            if (string.IsNullOrEmpty(data))
+            {
+                return;
+            }
 
+            /*if (!_context
+		|| _context->fromSwitch
+		|| _context->fromBotApp
+		|| _context->fromMainMenu
+		|| _context->action.history->peer != _bot
+		|| _lastShownQueryId) {
+		return;
+	}*/
         }
 
         private void PostEvent(string eventName, string eventData = "null")

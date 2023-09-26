@@ -247,6 +247,9 @@
     <Compile Include="Controls\Stories\StoryContent.xaml.cs">
       <DependentUpon>StoryContent.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Stories\StoryChannelInteractionBar.xaml.cs">
+      <DependentUpon>StoryChannelInteractionBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Stories\StoryInteractionBar.xaml.cs">
       <DependentUpon>StoryInteractionBar.xaml</DependentUpon>
     </Compile>
@@ -266,6 +269,7 @@
     <Compile Include="Streams\LocalFileSource.cs" />
     <Compile Include="Streams\RemoteFileSource.cs" />
     <Compile Include="Td\Api\MessageAsyncStory.cs" />
+    <Compile Include="Td\Api\UpdateChatSwitchInlineQuery.cs" />
     <Compile Include="Videolan\Platforms\Windows\InitializedEventArgs.cs" />
     <Compile Include="Videolan\Platforms\Windows\VideoView.cs" />
     <Compile Include="Videolan\Platforms\Windows\VideoViewBase.cs" />
@@ -2146,6 +2150,10 @@
     <Page Include="Controls\Stories\StoryContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Stories\StoryChannelInteractionBar.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Stories\StoryInteractionBar.xaml">
       <SubType>Designer</SubType>

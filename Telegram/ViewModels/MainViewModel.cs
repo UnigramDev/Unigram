@@ -512,7 +512,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            MessageHelper.OpenMiniApp(ClientService, NavigationService, user, bot, string.Empty, continuation);
+            MessageHelper.OpenMiniApp(ClientService, NavigationService, user, bot, string.Empty, null, continuation);
         }
 
         public async void RemoveMiniApp(AttachmentMenuBot bot)

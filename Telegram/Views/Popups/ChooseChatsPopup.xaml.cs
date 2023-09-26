@@ -182,13 +182,16 @@ namespace Telegram.Views.Popups
 
     public class ChooseChatsConfigurationSwitchInline : ChooseChatsConfiguration
     {
-        public ChooseChatsConfigurationSwitchInline(InlineKeyboardButtonTypeSwitchInline switchInline, User bot)
+        public ChooseChatsConfigurationSwitchInline(string query, TargetChat targetChat, User bot)
         {
-            SwitchInline = switchInline;
+            Query = query;
+            TargetChat = targetChat;
             Bot = bot;
         }
 
-        public InlineKeyboardButtonTypeSwitchInline SwitchInline { get; }
+        public string Query { get; }
+
+        public TargetChat TargetChat { get; }
 
         public User Bot { get; }
     }

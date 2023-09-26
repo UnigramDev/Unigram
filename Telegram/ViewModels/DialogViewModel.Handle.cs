@@ -26,6 +26,7 @@ namespace Telegram.ViewModels
         public override void Subscribe()
         {
             Aggregator.Subscribe<UpdateWindowActivated>(this, Handle)
+                .Subscribe<UpdateChatSwitchInlineQuery>(Handle)
                 .Subscribe<UpdateChatActiveStories>(Handle)
                 .Subscribe<UpdateChatPermissions>(Handle)
                 .Subscribe<UpdateChatReplyMarkup>(Handle)
@@ -294,6 +295,21 @@ namespace Telegram.ViewModels
         }
 
         #endregion
+
+        public void Handle(UpdateChatSwitchInlineQuery update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                var bot = ClientService.GetUser(update.BotUserId);
+                if (bot == null || !bot.HasActiveUsername(out string username))
+                {
+                    return;
+                }
+
+                SetText(string.Format("@{0} {1}", username, update.Query), focus: true);
+                ResolveInlineBot(username, update.Query);
+            }
+        }
 
         public void Handle(UpdateChatPendingJoinRequests update)
         {

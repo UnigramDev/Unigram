@@ -1015,9 +1015,13 @@ namespace Telegram.ViewModels
                     SetText(string.Format("@{0} {1}", username, switchInline.Query), focus: true);
                     ResolveInlineBot(username, switchInline.Query);
                 }
+                else if (switchInline.TargetChat is TargetChatInternalLink internalLink)
+                {
+                    // TODO
+                }
                 else
                 {
-                    await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationSwitchInline(switchInline, bot));
+                    await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationSwitchInline(switchInline.Query, switchInline.TargetChat, bot));
                 }
             }
             else if (inline.Type is InlineKeyboardButtonTypeUrl urlButton)
@@ -1167,7 +1171,7 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.Id, webApp.Url, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
                 if (response is WebAppInfo webAppInfo)
                 {
-                    await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, bot, webAppInfo));
+                    await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, bot, webAppInfo, null, chat));
                 }
             }
         }
@@ -1232,7 +1236,7 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.UserId, webApp.Url, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
                 if (response is WebAppInfo webAppInfo)
                 {
-                    await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, user, webAppInfo));
+                    await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, user, webAppInfo, null, chat));
                 }
             }
         }
@@ -1254,7 +1258,7 @@ namespace Telegram.ViewModels
             var response = await ClientService.SendAsync(new OpenWebApp(chat.Id, bot.BotUserId, string.Empty, Theme.Current.Parameters, Strings.AppName, ThreadId, null));
             if (response is WebAppInfo webAppInfo)
             {
-                await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, user, webAppInfo, bot));
+                await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, user, webAppInfo, bot, chat));
             }
         }
 

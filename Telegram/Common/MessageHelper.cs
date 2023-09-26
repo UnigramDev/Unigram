@@ -176,7 +176,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypeAttachmentMenuBot attachmentMenuBot)
             {
-                NavigateToAttachmentMenuBot(clientService, navigation, attachmentMenuBot);
+                NavigateToAttachmentMenuBot(clientService, navigation, attachmentMenuBot, source);
             }
             else if (internalLink is InternalLinkTypeBackground background)
             {
@@ -305,7 +305,7 @@ namespace Telegram.Common
             }
         }
 
-        private static async void NavigateToAttachmentMenuBot(IClientService clientService, INavigationService navigation, InternalLinkTypeAttachmentMenuBot attachmentMenuBot)
+        private static async void NavigateToAttachmentMenuBot(IClientService clientService, INavigationService navigation, InternalLinkTypeAttachmentMenuBot attachmentMenuBot, OpenUrlSource source)
         {
             var response = await clientService.SendAsync(new SearchPublicChat(attachmentMenuBot.BotUsername));
             if (response is Chat chat && clientService.TryGetUser(chat, out User botUser))
@@ -315,15 +315,21 @@ namespace Telegram.Common
                     return;
                 }
 
+                var sourceChat = source switch
+                {
+                    OpenUrlSourceChat sourceMessage => clientService.GetChat(sourceMessage.ChatId),
+                    _ => null
+                };
+
                 var response2 = await clientService.SendAsync(new GetAttachmentMenuBot(botUser.Id));
                 if (response2 is AttachmentMenuBot menuBot)
                 {
-                    OpenMiniApp(clientService, navigation, botUser, menuBot, attachmentMenuBot.Url);
+                    OpenMiniApp(clientService, navigation, botUser, menuBot, attachmentMenuBot.Url, sourceChat);
                 }
             }
         }
 
-        public static async void OpenMiniApp(IClientService clientService, INavigationService navigation, User user, AttachmentMenuBot bot, string url, Action<bool> continuation = null)
+        public static async void OpenMiniApp(IClientService clientService, INavigationService navigation, User user, AttachmentMenuBot bot, string url, Chat sourceChat = null, Action<bool> continuation = null)
         {
             if (bot.ShowDisclaimerInSideMenu || !clientService.IsBotAddedToAttachmentMenu(bot.BotUserId))
             {
@@ -365,7 +371,7 @@ namespace Telegram.Common
             var response = await clientService.SendAsync(new GetWebAppUrl(bot.BotUserId, url, Theme.Current.Parameters, Strings.AppName));
             if (response is HttpUrl httpUrl)
             {
-                await new WebBotPopup(clientService, navigation, user, httpUrl.Url, bot).ShowQueuedAsync();
+                await new WebBotPopup(clientService, navigation, user, httpUrl.Url, bot, sourceChat).ShowQueuedAsync();
             }
         }
 
@@ -468,16 +474,16 @@ namespace Telegram.Common
                         return;
                     }
 
-                    var chatId = source switch
+                    var sourceChat = source switch
                     {
-                        OpenUrlSourceChat sourceMessage => sourceMessage.ChatId,
-                        _ => 0
+                        OpenUrlSourceChat sourceMessage => clientService.GetChat(sourceMessage.ChatId),
+                        _ => null
                     };
 
-                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(chatId, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, foundWebApp.RequestWriteAccess && popup.IsChecked is true));
+                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(sourceChat.Id, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, foundWebApp.RequestWriteAccess && popup.IsChecked is true));
                     if (responsa is HttpUrl url)
                     {
-                        await new WebBotPopup(clientService, navigation, user, url.Url).ShowQueuedAsync();
+                        await new WebBotPopup(clientService, navigation, user, url.Url, null, sourceChat).ShowQueuedAsync();
                     }
                 }
                 else

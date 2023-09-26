@@ -2886,7 +2886,7 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new GetWebAppUrl(_currentInlineBot.Id, webApp.Url, Theme.Current.Parameters, Strings.AppName));
                 if (response is HttpUrl httpUrl)
                 {
-                    await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, _currentInlineBot, httpUrl.Url));
+                    await ShowPopupAsync(new WebBotPopup(ClientService, NavigationService, _currentInlineBot, httpUrl.Url, null, Chat));
                 }
             }
         }

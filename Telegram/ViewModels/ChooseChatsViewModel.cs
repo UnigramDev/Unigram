@@ -120,8 +120,15 @@ namespace Telegram.ViewModels
                 IsCommentEnabled = false;
                 IsChatSelection = false;
 
-                SwitchInline = configurationSwitchInline.SwitchInline;
-                SwitchInlineBot = configurationSwitchInline.Bot;
+                SwitchInline = configurationSwitchInline;
+
+                if (configurationSwitchInline.TargetChat is TargetChatChosen chosen)
+                {
+                    Options.AllowBotChats = chosen.AllowBotChats;
+                    Options.AllowUserChats = chosen.AllowUserChats;
+                    Options.AllowGroupChats = chosen.AllowGroupChats;
+                    Options.AllowChannelChats = chosen.AllowChannelChats;
+                }
             }
             else if (parameter is ChooseChatsConfigurationPostText configurationPostText)
             {
@@ -446,18 +453,11 @@ namespace Telegram.ViewModels
             set => Set(ref _isSendCopyEnabled, value);
         }
 
-        private InlineKeyboardButtonTypeSwitchInline _switchInline;
-        public InlineKeyboardButtonTypeSwitchInline SwitchInline
+        private ChooseChatsConfigurationSwitchInline _switchInline;
+        public ChooseChatsConfigurationSwitchInline SwitchInline
         {
             get => _switchInline;
             set => _switchInline = value;
-        }
-
-        private User _switchInlineBot;
-        public User SwitchInlineBot
-        {
-            get => _switchInlineBot;
-            set => _switchInlineBot = value;
         }
 
         private DataPackageView _package;
@@ -592,7 +592,7 @@ namespace Telegram.ViewModels
                     service?.NavigateToChat(chat, accessToken: _inviteToken);
                 }
             }
-            else if (_switchInline != null && _switchInlineBot != null)
+            else if (_switchInline?.Bot != null)
             {
                 var chat = chats.FirstOrDefault();
                 if (chat == null)
@@ -601,7 +601,7 @@ namespace Telegram.ViewModels
                 }
 
                 var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
-                service?.NavigateToChat(chat, state: NavigationState.GetSwitchQuery(_switchInline.Query, _switchInlineBot.Id));
+                service?.NavigateToChat(chat, state: NavigationState.GetSwitchQuery(_switchInline.Query, _switchInline.Bot.Id));
             }
             else if (_package != null)
             {
