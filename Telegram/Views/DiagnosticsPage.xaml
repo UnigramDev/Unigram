@@ -37,6 +37,10 @@
                               Content="Show stickers panel on pointer over"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox IsChecked="{x:Bind ViewModel.ShowMemoryUsage, Mode=TwoWay}"
+                              Content="Show memory usage"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind ViewModel.HidePhoneNumber, Mode=TwoWay}"
                               Content="Hide phone number in navigation"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

@@ -65,6 +65,9 @@ namespace Telegram.Views
 
         private readonly AnimatedListHandler _handler;
 
+        private readonly DispatcherTimer _memoryUsageTimer;
+        private double _memoryUsage;
+
         private bool _unloaded;
 
         public MainPage()
@@ -98,6 +101,24 @@ namespace Telegram.Views
             //ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
 
             ElementCompositionPreview.SetIsTranslationEnabled(ManagePanel, true);
+
+            if (SettingsService.Current.Diagnostics.ShowMemoryUsage)
+            {
+                _memoryUsageTimer = new DispatcherTimer();
+                _memoryUsageTimer.Interval = TimeSpan.FromSeconds(1);
+                _memoryUsageTimer.Tick += MemoryUsageTimer_Tick;
+                _memoryUsageTimer.Start();
+            }
+        }
+
+        private void MemoryUsageTimer_Tick(object sender, object e)
+        {
+            var memoryUsage = Math.Round(Windows.System.MemoryManager.AppMemoryUsage / 1024.0 / 1024.0);
+            if (memoryUsage != _memoryUsage)
+            {
+                _memoryUsage = memoryUsage;
+                MemoryLabel.Text = $"- {memoryUsage:F0} MB";
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -508,7 +529,7 @@ namespace Telegram.Views
             State.IsIndeterminate = true;
             StateLabel.Text = text;
 
-            var peer = FrameworkElementAutomationPeer.FromElement(StateLabel);
+            var peer = FrameworkElementAutomationPeer.FromElement(TitleText);
             peer?.RaiseAutomationEvent(AutomationEvents.LiveRegionChanged);
 
             try
@@ -1024,8 +1045,7 @@ namespace Telegram.Views
             var invoked = ViewModel.ShortcutService.Process(args);
             foreach (var command in invoked.Commands)
             {
-#if DEBUG
-                if (command == ShortcutCommand.Quit)
+                if (SettingsService.Current.Diagnostics.ShowMemoryUsage && command == ShortcutCommand.Quit)
                 {
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
@@ -1033,7 +1053,6 @@ namespace Telegram.Views
 
                     return;
                 }
-#endif
 
                 ProcessChatCommands(command, args);
                 ProcessFolderCommands(command, args);
@@ -1437,7 +1456,7 @@ namespace Telegram.Views
                 }
 
                 Header.Visibility = Visibility.Visible;
-                StateLabel.Visibility = Visibility.Visible;
+                TitleText.Visibility = Visibility.Visible;
             }
             else
             {
@@ -1448,7 +1467,7 @@ namespace Telegram.Views
                 }
 
                 Header.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
-                StateLabel.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
+                TitleText.Visibility = MasterDetail.CurrentState == MasterDetailState.Expanded ? Visibility.Visible : Visibility.Collapsed;
             }
 
             UpdatePaneToggleButtonVisibility();

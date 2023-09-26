@@ -140,7 +140,7 @@
                 </Grid>
             </HyperlinkButton>
 
-            <TextBlock x:Name="StateLabel"
+            <TextBlock x:Name="TitleText"
                        VerticalAlignment="Center"
                        TextLineBounds="TrimToCapHeight"
                        TextWrapping="NoWrap"
@@ -149,7 +149,10 @@
                        Style="{StaticResource CaptionTextBlockStyle}"
                        IsHitTestVisible="False"
                        Margin="0,2,6,0"
-                       Grid.Column="2" />
+                       Grid.Column="2">
+                <Run x:Name="StateLabel" />
+                <Run x:Name="MemoryLabel" />
+            </TextBlock>
         </Grid>
 
         <Border BackgroundSizing="OuterBorderEdge"

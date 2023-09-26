@@ -180,6 +180,16 @@ namespace Telegram.ViewModels
             }
         }
 
+        public bool ShowMemoryUsage
+        {
+            get => SettingsService.Current.Diagnostics.ShowMemoryUsage;
+            set
+            {
+                SettingsService.Current.Diagnostics.ShowMemoryUsage = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool PreferIpv6
         {
             get => ClientService.Options.PreferIpv6;
