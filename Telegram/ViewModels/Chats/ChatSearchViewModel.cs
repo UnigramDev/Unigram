@@ -14,6 +14,8 @@ using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Popups;
+using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Chats
 {
@@ -174,6 +176,18 @@ namespace Telegram.ViewModels.Chats
         }
 
         #endregion
+
+        public async void ShowResults()
+        {
+            var popup = new SearchChatResultsPopup(Items);
+
+            var confirm = await ShowPopupAsync(popup);
+            if (confirm == ContentDialogResult.Primary && popup.SelectedItem != null)
+            {
+                SelectedItem = popup.SelectedItem;
+                await Dialog.LoadMessageSliceAsync(null, popup.SelectedItem.Id);
+            }
+        }
 
         public async void Search(string query, MessageSender from, SearchMessagesFilter filter)
         {

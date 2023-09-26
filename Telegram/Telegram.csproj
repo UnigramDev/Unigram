@@ -929,6 +929,9 @@
     <Compile Include="Views\Popups\BackgroundsPopup.xaml.cs">
       <DependentUpon>BackgroundsPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\SearchChatResultsPopup.xaml.cs">
+      <DependentUpon>SearchChatResultsPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\StickersPopup.xaml.cs">
       <DependentUpon>StickersPopup.xaml</DependentUpon>
     </Compile>
@@ -2378,6 +2381,10 @@
     <Page Include="Views\Popups\BackgroundsPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\SearchChatResultsPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Popups\StickersPopup.xaml">
       <Generator>MSBuild:Compile</Generator>

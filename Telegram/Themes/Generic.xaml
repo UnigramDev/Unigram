@@ -2422,7 +2422,7 @@
                                                 <RowDefinition Height="*" />
                                             </Grid.RowDefinitions>
                                             <ContentControl x:Name="Title"
-                                                            Margin="{StaticResource ContentDialogTitleMargin}"
+                                                            Margin="0,0,-24,12"
                                                             Content="{TemplateBinding Title}"
                                                             ContentTemplate="{TemplateBinding TitleTemplate}"
                                                             FontSize="20"

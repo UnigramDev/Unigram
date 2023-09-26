@@ -299,14 +299,16 @@
                                              Style="{StaticResource Test}"
                                              Grid.ColumnSpan="3" />
 
-                    <TextBlock x:Name="FieldInfo"
-                               Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.Items.TotalCount), Mode=OneWay, FallbackValue=''}"
-                               Visibility="{x:Bind ViewModel.Items, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                               Style="{StaticResource CaptionTextBlockStyle}"
-                               HorizontalAlignment="Right"
-                               VerticalAlignment="Center"
-                               IsHitTestVisible="False"
-                               Grid.Column="1" />
+                    <Button Click="{x:Bind ViewModel.ShowResults}"
+                            Visibility="{x:Bind ViewModel.Items, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                            Style="{StaticResource AccentTextButtonStyle}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Padding="4,2"
+                            Grid.Column="1">
+                        <TextBlock Text="{x:Bind ConvertOf(ViewModel.SelectedIndex, ViewModel.Items.TotalCount), Mode=OneWay, FallbackValue=''}"
+                                   Style="{StaticResource InfoCaptionTextBlockStyle}" />
+                    </Button>
 
                     <controls:GlyphButton x:Name="DeleteButton"
                                           Click="Delete_Click"
@@ -331,23 +333,33 @@
                                           VerticalAlignment="Center" />
                 </Grid>
 
-                <controls:GlyphButton x:Name="SearchPrevious"
-                                      Command="{x:Bind ViewModel.PreviousCommand}"
-                                      Glyph="&#xE0E4;"
-                                      AllowFocusOnInteraction="False"
-                                      FontSize="{StaticResource GlyphMediumFontSize}"
-                                      AutomationProperties.Name="{CustomResource AccDescrSearchNext}"
-                                      ToolTipService.ToolTip="{CustomResource AccDescrSearchNext}"
-                                      Width="40" />
-                <controls:GlyphButton x:Name="SearchNext"
-                                      Command="{x:Bind ViewModel.NextCommand}"
-                                      Glyph="&#xE0E5;"
-                                      AllowFocusOnInteraction="False"
-                                      FontSize="{StaticResource GlyphMediumFontSize}"
-                                      AutomationProperties.Name="{CustomResource AccDescrSearchPrev}"
-                                      ToolTipService.ToolTip="{CustomResource AccDescrSearchPrev}"
-                                      Width="40"
-                                      Grid.Column="1" />
+                <Button x:Name="SearchPrevious"
+                        Command="{x:Bind ViewModel.PreviousCommand}"
+                        AllowFocusOnInteraction="False"
+                        AutomationProperties.Name="{CustomResource AccDescrSearchNext}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrSearchNext}"
+                        Content="&#xE0E4;"
+                        FontSize="20"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        BorderThickness="1,1,0,1"
+                        CornerRadius="4,0,0,4"
+                        Padding="4"
+                        Height="32"
+                        Margin="8,0,0,0"/>
+                <Button x:Name="SearchNext"
+                        Command="{x:Bind ViewModel.NextCommand}"
+                        AllowFocusOnInteraction="False"
+                        AutomationProperties.Name="{CustomResource AccDescrSearchPrev}"
+                        ToolTipService.ToolTip="{CustomResource AccDescrSearchPrev}"
+                        Content="&#xE0E5;"
+                        FontSize="20"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        CornerRadius="0,4,4,0"
+                        Padding="4"
+                        Height="32"
+                        Margin="0,0,4,0"
+                        Grid.Column="1"
+                        Canvas.ZIndex="-1" />
 
                 <Grid x:Name="RightPanel"
                       Grid.Column="3">
