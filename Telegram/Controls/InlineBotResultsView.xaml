@@ -118,7 +118,12 @@
                                           Click="{x:Bind ViewModel.ActivateInlineBot}"
                                           Content="{x:Bind ViewModel.InlineBotResults.ButtonText, Mode=OneWay}"
                                           Visibility="{x:Bind ViewModel.InlineBotResults.ButtonText, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
-                                          Style="{StaticResource SwitchPmButtonStyle}" />
+                                          Style="{StaticResource AccentTextButtonStyle}"
+                                          HorizontalContentAlignment="Center"
+                                          FontWeight="SemiBold"
+                                          Padding="12,3,12,5"
+                                          Margin="4"
+                                          Height="32"/>
                 </ListView.Header>
             </ListView>
         </Grid>
