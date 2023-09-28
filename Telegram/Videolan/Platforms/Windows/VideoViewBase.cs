@@ -91,11 +91,18 @@ namespace LibVLCSharp.Platforms.Windows
         {
             if (_swapChain != null)
             {
-                using var backBuffer = _swapChain.GetBackBuffer<Texture2D>(0);
-                using var target = new RenderTargetView(_d3D11Device, backBuffer);
+                try
+                {
+                    using var backBuffer = _swapChain.GetBackBuffer<Texture2D>(0);
+                    using var target = new RenderTargetView(_d3D11Device, backBuffer);
 
-                _deviceContext.ClearRenderTargetView(target, new RawColor4(0, 0, 0, 0));
-                _swapChain.Present(0, PresentFlags.None);
+                    _deviceContext.ClearRenderTargetView(target, new RawColor4(0, 0, 0, 0));
+                    _swapChain.Present(0, PresentFlags.None);
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
             }
         }
 
