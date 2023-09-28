@@ -71,7 +71,7 @@ namespace Telegram.Views.Popups
         public string Footer { get; set; }
     }
 
-    public class SettingsOptionItem : BindableBase
+    public class SettingsOptionItem
     {
         public SettingsOptionItem(string text)
         {
@@ -79,13 +79,6 @@ namespace Telegram.Views.Popups
         }
 
         public string Text { get; set; }
-
-        private bool _isChecked;
-        public bool IsChecked
-        {
-            get => _isChecked;
-            set => Set(ref _isChecked, value);
-        }
     }
 
     public class SettingsOptionItem<T> : SettingsOptionItem

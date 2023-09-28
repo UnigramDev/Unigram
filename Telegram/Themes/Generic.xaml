@@ -116,7 +116,7 @@
                                                     TabIndex="1">
                                     <muxc:BreadcrumbBar.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding Title}" />
+                                            <TextBlock Text="{Binding Title, Mode=OneTime}" />
                                         </DataTemplate>
                                     </muxc:BreadcrumbBar.ItemTemplate>
                                 </muxc:BreadcrumbBar>

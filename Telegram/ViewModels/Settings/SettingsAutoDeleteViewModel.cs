@@ -35,12 +35,12 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public ObservableCollection<SettingsOptionItem<int>> Items { get; } = new()
+        public ObservableCollection<SettingsAutoDeleteItem> Items { get; } = new()
         {
-            new SettingsOptionItem<int>(0,                 Strings.ShortMessageLifetimeForever),
-            new SettingsOptionItem<int>(60 * 60 * 24,      Locale.FormatTtl(60 * 60 * 24)),
-            new SettingsOptionItem<int>(60 * 60 * 24 * 7,  Locale.FormatTtl(60 * 60 * 24 * 7)),
-            new SettingsOptionItem<int>(60 * 60 * 24 * 31, Locale.FormatTtl(60 * 60 * 24 * 31))
+            new SettingsAutoDeleteItem(0,                 Strings.ShortMessageLifetimeForever),
+            new SettingsAutoDeleteItem(60 * 60 * 24,      Locale.FormatTtl(60 * 60 * 24)),
+            new SettingsAutoDeleteItem(60 * 60 * 24 * 7,  Locale.FormatTtl(60 * 60 * 24 * 7)),
+            new SettingsAutoDeleteItem(60 * 60 * 24 * 31, Locale.FormatTtl(60 * 60 * 24 * 31))
         };
 
         public async void SetCustomTime()
@@ -88,10 +88,33 @@ namespace Telegram.ViewModels.Settings
                     Items.RemoveAt(4);
                 }
 
-                Items.Add(new SettingsOptionItem<int>(value, Locale.FormatTtl(value)) { IsChecked = true });
+                Items.Add(new SettingsAutoDeleteItem(value, Locale.FormatTtl(value))
+                {
+                    IsChecked = true
+                });
             }
 
             ClientService.Send(new SetDefaultMessageAutoDeleteTime(new MessageAutoDeleteTime(value)));
+        }
+    }
+
+    public class SettingsAutoDeleteItem : BindableBase
+    {
+        public SettingsAutoDeleteItem(int value, string text)
+        {
+            Value = value;
+            Text = text;
+        }
+
+        public string Text { get; set; }
+
+        public int Value { get; set; }
+
+        private bool _isChecked;
+        public bool IsChecked
+        {
+            get => _isChecked;
+            set => Set(ref _isChecked, value);
         }
     }
 }

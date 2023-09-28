@@ -3,7 +3,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:local="using:Telegram.Views"
                   xmlns:controls="using:Telegram.Controls"
-                  xmlns:popups="using:Telegram.Views.Popups"
+                  xmlns:settings="using:Telegram.ViewModels.Settings"
                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d">
@@ -40,7 +40,7 @@
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
-                                <DataTemplate x:DataType="popups:SettingsOptionItem">
+                                <DataTemplate x:DataType="settings:SettingsAutoDeleteItem">
                                     <controls:FauxRadioButton Content="{x:Bind Text}"
                                                               IsChecked="{x:Bind IsChecked, Mode=OneWay}"
                                                               Click="OnChecked"
