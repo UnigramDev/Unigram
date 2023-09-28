@@ -314,11 +314,12 @@ namespace Telegram.Views
         {
             _properties.InsertScalar("ActualHeight", ProfileHeader.ActualSize.Y + 16);
             ViewModel.HeaderHeight = e.NewSize.Height;
+            MediaFrame.MinHeight = ScrollingHost.ActualHeight + e.NewSize.Height - 48;
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            MediaFrame.MinHeight = e.NewSize.Height - 48;
+            MediaFrame.MinHeight = Header.ActualHeight + e.NewSize.Height - 48;
 
             if (MediaFrame.Content is not ProfileTabPage tabPage || tabPage.ScrollingHost is not ListViewBase scrollingHost)
             {

@@ -23,7 +23,8 @@
                       SizeChanged="OnSizeChanged"
                       ViewChanged="OnViewChanged">
             <Grid>
-                <StackPanel SizeChanged="ProfileHeader_SizeChanged"
+                <StackPanel x:Name="Header"
+                            SizeChanged="ProfileHeader_SizeChanged"
                             VerticalAlignment="Top"
                             Canvas.ZIndex="1">
                     <controls:ProfileHeader x:Name="ProfileHeader"
