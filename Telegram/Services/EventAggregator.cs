@@ -59,7 +59,11 @@ namespace Telegram.Services
         {
             foreach (var item in _typeHandlers)
             {
-                item.Value.Unsubscribe(subscriber);
+                if (item.Value.Unsubscribe(subscriber))
+                {
+                    // TODO: is this safe for real? Can't be done with normal Dictionary
+                    _typeHandlers.TryRemove(item.Key, out _);
+                }
             }
 
             if (_longSubscribers.TryGetValue(subscriber, out var prev))
@@ -122,10 +126,12 @@ namespace Telegram.Services
 
             public bool Unsubscribe(object subscriber)
             {
-                _count--;
-                _delegates.Remove(subscriber);
+                if (_delegates.Remove(subscriber))
+                {
+                    _count--;
+                }
 
-                return _count == 0;
+                return _count <= 0;
             }
         }
 
