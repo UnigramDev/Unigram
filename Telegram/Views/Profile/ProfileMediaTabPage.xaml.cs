@@ -68,12 +68,7 @@ namespace Telegram.Views.Profile
             }
         }
 
-        protected override float TopPadding => 0;
-
-        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
+        public override float TopPadding => 0;
 
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {

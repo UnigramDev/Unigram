@@ -44,10 +44,5 @@ namespace Telegram.Views.Profile
                 linkCell.Tag = message;
             }
         }
-
-        private void List_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
     }
 }

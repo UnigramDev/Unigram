@@ -79,6 +79,13 @@ namespace Telegram.ViewModels
             set => Set(ref _members, value);
         }
 
+        private double _headerHeight;
+        public double HeaderHeight
+        {
+            get => _headerHeight;
+            set => Set(ref _headerHeight, value);
+        }
+
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             if (parameter is string pair)

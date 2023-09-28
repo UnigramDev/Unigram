@@ -4,6 +4,7 @@
                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   xmlns:controls="using:Telegram.Controls"
+                  xmlns:messages="using:Telegram.Controls.Messages"
                   xmlns:local="using:Telegram.Views"
                   mc:Ignorable="d"
                   ShowHeader="False"
@@ -18,10 +19,58 @@
     </Page.Transitions>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <controls:ProfileHeader x:Name="ProfileHeader"
-                                x:Load="True" />
+        <ScrollViewer x:Name="ScrollingHost"
+                      SizeChanged="OnSizeChanged"
+                      ViewChanged="OnViewChanged">
+            <Grid>
+                <StackPanel SizeChanged="ProfileHeader_SizeChanged"
+                            VerticalAlignment="Top"
+                            Canvas.ZIndex="1">
+                    <controls:ProfileHeader x:Name="ProfileHeader"
+                                            Margin="0,0,0,16" />
 
-        <Frame x:Name="MediaFrame"
-               Navigated="OnNavigated" />
+                    <Grid x:Name="HeaderPanel"
+                          Opacity="{x:Bind ViewModel.Items.Count, Mode=OneWay}"
+                          Canvas.ZIndex="1">
+                        <Border x:Name="ClipperBackground"
+                                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                                BorderThickness="0,0,0,1"
+                                BackgroundSizing="InnerBorderEdge" />
+
+                        <Grid CornerRadius="8,8,0,0"
+                              MaxWidth="1000"
+                              Margin="24,0">
+                            <Border x:Name="CardBackground"
+                                    Background="{ThemeResource SettingsItemBackground}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="8,8,0,0" />
+                            <controls:TopNavView IsItemClickEnabled="True"
+                                                 ItemClick="Header_ItemClick"
+                                                 ItemsSource="{x:Bind ViewModel.Items}"
+                                                 SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                                 DisplayMemberPath="Text"
+                                                 Height="40"
+                                                 Margin="0,4" />
+                        </Grid>
+                        <messages:MessageService x:Name="DateHeader"
+                                                 Visibility="Collapsed"
+                                                 VerticalAlignment="Bottom"
+                                                 Margin="0,0,0,-30">
+                            <TextBlock x:Name="DateHeaderLabel"
+                                       Text="31 dicembre 2017"
+                                       Foreground="White"
+                                       TextAlignment="Center"
+                                       Style="{StaticResource CaptionTextBlockStyle}" />
+                        </messages:MessageService>
+                    </Grid>
+                </StackPanel>
+
+                <Frame x:Name="MediaFrame"
+                       Navigating="OnNavigating"
+                       Navigated="OnNavigated" />
+            </Grid>
+        </ScrollViewer>
     </Grid>
 </local:HostedPage>

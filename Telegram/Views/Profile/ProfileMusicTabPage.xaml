@@ -16,58 +16,31 @@
         <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ViewModel.Music, Mode=OneWay}"
                                 SelectionMode="None"
-                                Loaded="List_Loaded"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging">
             <common:SelectedItemsBinder.Attached>
                 <common:SelectedItemsBinder SelectionMode="Auto"
                                             SelectedItems="{x:Bind ViewModel.SelectedItems}" />
             </common:SelectedItemsBinder.Attached>
+            <ListView.Template>
+                <ControlTemplate TargetType="ListView">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                            Background="{TemplateBinding Background}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                        <ItemsPresenter Header="{TemplateBinding Header}"
+                                        HeaderTemplate="{TemplateBinding HeaderTemplate}"
+                                        HeaderTransitions="{TemplateBinding HeaderTransitions}"
+                                        Footer="{TemplateBinding Footer}"
+                                        FooterTemplate="{TemplateBinding FooterTemplate}"
+                                        FooterTransitions="{TemplateBinding FooterTransitions}"
+                                        Padding="{TemplateBinding Padding}" />
+                    </Border>
+                </ControlTemplate>
+            </ListView.Template>
             <ListView.Header>
                 <StackPanel>
-                    <controls:ProfileHeader x:Name="ProfileHeader"
-                                            Chat="{x:Bind ViewModel.Chat}"
-                                            SizeChanged="ProfileHeader_SizeChanged"
-                                            HorizontalContentAlignment="Stretch"
-                                            VerticalContentAlignment="Stretch"
-                                            Margin="0,0,0,16" />
-
-                    <Grid x:Name="HeaderPanel"
-                          MaxWidth="1000"
-                          Margin="24,0"
-                          Canvas.ZIndex="1">
-                        <Border x:Name="ClipperBackground"
-                                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                                BorderThickness="0,0,0,1"
-                                BackgroundSizing="InnerBorderEdge"
-                                Margin="-24,0,-24,0"
-                                Grid.ColumnSpan="2" />
-
-                        <Grid CornerRadius="8,8,0,0">
-                            <Border x:Name="CardBackground"
-                                    Background="{ThemeResource SettingsItemBackground}"
-                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="8,8,0,0" />
-                            <controls:TopNavView IsItemClickEnabled="True"
-                                                 ItemClick="Header_ItemClick"
-                                                 ItemsSource="{x:Bind ViewModel.Items}"
-                                                 SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
-                                                 DisplayMemberPath="Text"
-                                                 Grid.RowSpan="1" />
-                        </Grid>
-                        <messages:MessageService x:Name="DateHeader"
-                                                 Visibility="Collapsed"
-                                                 VerticalAlignment="Bottom"
-                                                 Margin="0,0,0,-30">
-                            <TextBlock x:Name="DateHeaderLabel"
-                                       Text="31 dicembre 2017"
-                                       Foreground="White"
-                                       TextAlignment="Center"
-                                       Style="{StaticResource CaptionTextBlockStyle}" />
-                        </messages:MessageService>
-                    </Grid>
+                    <Border Height="{x:Bind ViewModel.HeaderHeight, Mode=OneWay}" />
 
                     <Grid MaxWidth="1000"
                           Margin="24,0">
@@ -83,10 +56,9 @@
                     </Grid>
                 </StackPanel>
             </ListView.Header>
-            <!--<ListView.Footer>
-                <muxc:ProgressBar Background="Transparent"
-                                       IsIndeterminate="{x:Bind ViewModel.Music.IsLoading, Mode=OneWay}" />
-            </ListView.Footer>-->
+            <ListView.Footer>
+                <Border Height="60" />
+            </ListView.Footer>
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <cells:SharedAudioCell />

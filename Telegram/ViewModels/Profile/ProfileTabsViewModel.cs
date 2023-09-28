@@ -160,8 +160,6 @@ namespace Telegram.ViewModels.Profile
             set => Set(ref _selectedItem, value);
         }
 
-        public double VerticalOffset { get; set; }
-
         public bool HasPinnedStories { get; private set; }
         public bool HasSharedGroups { get; private set; }
         public bool HasSharedMembers { get; private set; }

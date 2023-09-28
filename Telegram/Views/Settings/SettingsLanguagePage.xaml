@@ -92,7 +92,7 @@
                 <Border Height="16"/>
             </ListView.Header>-->
             <ListView.Footer>
-                <Border Height="32" />
+                <Border Height="60" />
             </ListView.Footer>
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
