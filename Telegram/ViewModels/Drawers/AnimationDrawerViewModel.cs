@@ -42,6 +42,11 @@ namespace Telegram.ViewModels.Drawers
             Subscribe();
         }
 
+        public static void Remove(int windowId)
+        {
+            _windowContext.TryRemove(windowId, out _);
+        }
+
         public override void Subscribe()
         {
             Aggregator.Subscribe<UpdateSavedAnimations>(this, Handle);

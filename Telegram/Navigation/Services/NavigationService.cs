@@ -42,6 +42,7 @@ namespace Telegram.Navigation.Services
 
         void Refresh();
 
+        void Suspend();
 
 
         Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null, Size size = default);
@@ -252,6 +253,27 @@ namespace Telegram.Navigation.Services
 
                 OverlayWindow.Current?.TryHide(ContentDialogResult.None);
             };
+        }
+
+        public void Suspend()
+        {
+            var page = FrameFacade.Content as Page;
+            if (page != null)
+            {
+                // call navagable override (navigating)
+                var dataContext = ViewModelForPage(page);
+                if (dataContext != null)
+                {
+                    // allow the viewmodel to cancel navigation
+                    NavigatingFrom(page, null, null, dataContext, true, NavigationMode.New);
+                    NavigateFrom(page, dataContext, true);
+                }
+
+                if (page is IActivablePage cleanup)
+                {
+                    cleanup.Deactivate(true);
+                }
+            }
         }
 
         private INavigable ViewModelForPage(Page page)

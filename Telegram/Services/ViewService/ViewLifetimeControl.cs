@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Threading;
 using Telegram.Navigation;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -92,7 +93,7 @@ namespace Telegram.Services.ViewService
             WindowWrapper = WindowContext.Current;
             Dispatcher = WindowWrapper.Dispatcher;
             Window = Window.Current;
-            Id = ApplicationView.GetApplicationViewIdForWindow(newWindow);
+            Id = WindowWrapper.Id;
 
             // This class will automatically tell the view when its time to close
             // or stay alive in a few cases
@@ -144,9 +145,30 @@ namespace Telegram.Services.ViewService
                 InternalReleased?.Invoke(this, new EventArgs());
                 WindowControlsMap.TryRemove(Id, out _);
 
+                static void handler(object sender, RoutedEventArgs e)
+                {
+                    if (sender is FrameworkElement element)
+                    {
+                        element.Loaded -= handler;
+                    }
+
+                    WindowContext.Current = null;
+                }
+
+                if (Window.Current.Content is FrameworkElement element)
+                {
+                    element.Loaded += handler;
+                }
+
                 // Explicitly calling Close breaks everything
                 Window.Current.Content = null;
-                //Window.Current.Close();
+                Window.Current.Close();
+
+                // TODO: needed? From some tests, this prevented the whole Window root to be garbage collected
+                if (SynchronizationContext.Current is SecondaryViewSynchronizationContextDecorator decorator)
+                {
+                    SynchronizationContext.SetSynchronizationContext(decorator.Context);
+                }
             }
         }
 

@@ -21,11 +21,6 @@ namespace Telegram.Controls.Media
         private bool m_isConnected;
         private CompositionBrush m_brush;
 
-        public SolidGaussianBrush()
-        {
-            PowerSavingPolicy.Changed += PowerSavingPolicy_Changed;
-        }
-
         private void PowerSavingPolicy_Changed(object sender, EventArgs e)
         {
             if (m_isConnected)
@@ -116,6 +111,8 @@ namespace Telegram.Controls.Media
 
         protected override void OnConnected()
         {
+            PowerSavingPolicy.Changed += PowerSavingPolicy_Changed;
+
             try
             {
                 UpdateBrush();
@@ -131,6 +128,8 @@ namespace Telegram.Controls.Media
 
         protected override void OnDisconnected()
         {
+            PowerSavingPolicy.Changed -= PowerSavingPolicy_Changed;
+
             m_isConnected = false;
 
             if (m_brush != null)

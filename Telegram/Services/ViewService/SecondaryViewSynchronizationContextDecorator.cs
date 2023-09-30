@@ -14,12 +14,13 @@ namespace Telegram.Services.ViewService
         private readonly ViewLifetimeControl _control;
         private readonly SynchronizationContext _context;
 
+        public SynchronizationContext Context => _context;
+
         public SecondaryViewSynchronizationContextDecorator(ViewLifetimeControl control, SynchronizationContext context)
         {
             _control = control ?? throw new ArgumentNullException(nameof(control));
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-
 
         public override void OperationStarted()
         {

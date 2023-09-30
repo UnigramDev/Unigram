@@ -14,6 +14,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Drawers;
 using Telegram.Views;
 using Telegram.Views.Authorization;
 using Telegram.Views.Popups;
@@ -44,12 +45,15 @@ namespace Telegram.Navigation
         private readonly InputListener _inputListener;
         public InputListener InputListener => _inputListener;
 
+        public int Id { get; }
+
         public WindowContext(Window window)
         {
             _window = window;
 
             Current = this;
             Dispatcher = new DispatcherContext(window.CoreWindow.DispatcherQueue);
+            Id = ApplicationView.GetApplicationViewIdForWindow(window.CoreWindow);
 
             if (CoreApplication.MainView == CoreApplication.GetCurrentView())
             {
@@ -126,7 +130,12 @@ namespace Telegram.Navigation
         {
             //Current = null;
             All.Remove(this);
+            NavigationServices.ForEach(x => x.Suspend());
             NavigationServices.Clear();
+
+            AnimationDrawerViewModel.Remove(Id);
+            EmojiDrawerViewModel.Remove(Id);
+            StickerDrawerViewModel.Remove(Id);
 
             _window.Activated -= OnActivated;
             _window.Closed -= OnClosed;

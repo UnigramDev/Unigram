@@ -65,6 +65,11 @@ namespace Telegram.ViewModels.Drawers
             Aggregator.Subscribe<UpdateInstalledStickerSets>(this, Handle);
         }
 
+        public static void Remove(int windowId)
+        {
+            _windowContext.TryRemove(windowId, out _);
+        }
+
         private static readonly ConcurrentDictionary<int, Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>>> _windowContext = new();
         public static EmojiDrawerViewModel GetForCurrentView(int sessionId, EmojiDrawerMode mode = EmojiDrawerMode.Chat)
         {
