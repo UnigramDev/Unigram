@@ -800,8 +800,7 @@ namespace Telegram.ViewModels
                 return new FormattedText();
             }
 
-            text = text.Format();
-            return Client.Execute(new ParseMarkdown(new FormattedText(text, new TextEntity[0]))) as FormattedText;
+            return ClientEx.ParseMarkdown(text.Format());
         }
 
         public Task SendMessageAsync(FormattedText formattedText, MessageSendOptions options = null, MessageReplyTo reply = null)

@@ -335,7 +335,7 @@ namespace Telegram.Controls.Chats
                         : Strings.VoiceMessagesRestrictedByPrivacy;
 
                     var formatted = string.Format(message, ViewModel.Chat.Title);
-                    var markdown = Client.Execute(new ParseMarkdown(new FormattedText(formatted, new TextEntity[0]))) as FormattedText;
+                    var markdown = ClientEx.ParseMarkdown(formatted);
                     Window.Current.ShowTeachingTip(this, markdown, TeachingTipPlacementMode.TopLeft, autoDismiss: true);
                     return;
                 }

@@ -246,7 +246,7 @@ namespace Telegram.Controls.Messages.Content
                     break;
             }
 
-            var formatted = Client.Execute(new ParseMarkdown(new FormattedText(text, new TextEntity[0]))) as FormattedText;
+            var formatted = ClientEx.ParseMarkdown(text);
             Window.Current.ShowTeachingTip(this, formatted, _message.IsOutgoing && !_message.IsChannelPost ? TeachingTipPlacementMode.TopLeft : TeachingTipPlacementMode.TopRight);
         }
 

@@ -1505,7 +1505,7 @@ namespace Telegram.Controls.Messages
                 content = ReplaceWithLink(content, "un2", giftedPremium, entities);
             }
 
-            var formatted = Client.Execute(new ParseMarkdown(new FormattedText(content, (IList<TextEntity>)entities ?? Array.Empty<TextEntity>()))) as FormattedText;
+            var formatted = ClientEx.ParseMarkdown(content, (IList<TextEntity>)entities ?? Array.Empty<TextEntity>());
 
             return (formatted.Text, formatted.Entities);
         }

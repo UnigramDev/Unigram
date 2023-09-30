@@ -871,7 +871,7 @@ namespace Telegram.Controls
             var entities = TextStyleRun.GetEntities(text, runs);
 
             text = text.Replace('\v', '\n').Replace('\r', '\n');
-            return Client.Execute(new ParseMarkdown(new FormattedText(text, entities))) as FormattedText;
+            return ClientEx.ParseMarkdown(text, entities);
         }
 
         protected virtual void OnGettingFormattedText()

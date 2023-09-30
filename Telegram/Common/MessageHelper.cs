@@ -344,7 +344,7 @@ namespace Telegram.Common
             {
                 var textBlock = new TextBlock();
 
-                var markdown = Client.Execute(new ParseMarkdown(new FormattedText(Strings.BotWebAppDisclaimerCheck, Array.Empty<TextEntity>()))) as FormattedText;
+                var markdown = ClientEx.ParseMarkdown(Strings.BotWebAppDisclaimerCheck);
                 if (markdown != null && markdown.Entities.Count == 1)
                 {
                     markdown.Entities[0].Type = new TextEntityTypeTextUrl(Strings.WebAppDisclaimerUrl);
@@ -464,7 +464,7 @@ namespace Telegram.Common
                             TextWrapping = TextWrapping.Wrap
                         };
 
-                        var markdown = Client.Execute(new ParseMarkdown(new FormattedText(string.Format(Strings.OpenUrlOption2, user.FirstName), Array.Empty<TextEntity>()))) as FormattedText;
+                        var markdown = ClientEx.ParseMarkdown(string.Format(Strings.OpenUrlOption2, user.FirstName));
                         if (markdown != null)
                         {
                             TextBlockHelper.SetFormattedText(textBlock, markdown);

@@ -349,7 +349,7 @@
       <DependentUpon>SearchChatsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Td\Api\UpdateUserIsContact.cs" />
-    <Compile Include="Td\TdClientExtensions.cs" />
+    <Compile Include="Td\ClientEx.cs" />
     <Compile Include="Td\TdCompletionSource.cs" />
     <Compile Include="Td\TdHandler.cs" />
     <Compile Include="Td\Api\MessageAlbum.cs" />

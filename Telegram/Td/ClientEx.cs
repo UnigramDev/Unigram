@@ -5,12 +5,13 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Td.Api;
 
 namespace Telegram.Td
 {
-    static class TdClientExtensions
+    static class ClientEx
     {
         public static void Send(this Client client, Function function, Action<BaseObject> handler)
         {
@@ -46,6 +47,27 @@ namespace Telegram.Td
             }
 
             return false;
+        }
+
+        public static FormattedText ParseMarkdown(string text)
+        {
+            return ParseMarkdown(new FormattedText(text, Array.Empty<TextEntity>()));
+        }
+
+        public static FormattedText ParseMarkdown(string text, IList<TextEntity> entities)
+        {
+            return ParseMarkdown(new FormattedText(text, entities));
+        }
+
+        public static FormattedText ParseMarkdown(FormattedText text)
+        {
+            var result = Client.Execute(new ParseMarkdown(text));
+            if (result is FormattedText formatted)
+            {
+                return formatted;
+            }
+
+            return text;
         }
     }
 }

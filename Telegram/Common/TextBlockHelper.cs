@@ -61,7 +61,7 @@ namespace Telegram.Common
                 }
             }
 
-            var formatted = Client.Execute(new ParseMarkdown(new FormattedText(markdown, entities.Entities))) as FormattedText;
+            var formatted = ClientEx.ParseMarkdown(markdown, entities.Entities);
             var text = formatted.Text;
             var previous = 0;
 

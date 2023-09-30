@@ -462,7 +462,7 @@ namespace Telegram.ViewModels
             var entity = new TextEntity(0, Strings.RequestToJoinSent.Length, new TextEntityTypeBold());
 
             var markdown = new FormattedText(message, new[] { entity });
-            var text = Client.Execute(new ParseMarkdown(markdown)) as FormattedText;
+            var text = ClientEx.ParseMarkdown(markdown);
 
             Window.Current.ShowTeachingTip(text, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
         }
