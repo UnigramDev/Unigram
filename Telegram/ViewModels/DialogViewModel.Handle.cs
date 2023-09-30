@@ -14,7 +14,6 @@ using Telegram.Controls.Messages;
 using Telegram.Controls.Messages.Content;
 using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -25,8 +24,7 @@ namespace Telegram.ViewModels
     {
         public override void Subscribe()
         {
-            Aggregator.Subscribe<UpdateWindowActivated>(this, Handle)
-                .Subscribe<UpdateChatSwitchInlineQuery>(Handle)
+            Aggregator.Subscribe<UpdateChatSwitchInlineQuery>(this, Handle)
                 .Subscribe<UpdateChatActiveStories>(Handle)
                 .Subscribe<UpdateChatPermissions>(Handle)
                 .Subscribe<UpdateChatReplyMarkup>(Handle)

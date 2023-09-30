@@ -845,7 +845,8 @@ namespace Telegram.Views
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)
         {
-            if (Window.Current.CoreWindow.ActivationMode == CoreWindowActivationMode.ActivatedInForeground)
+            var mode = Window.Current.CoreWindow.ActivationMode;
+            if (mode == CoreWindowActivationMode.ActivatedInForeground)
             {
                 ViewVisibleMessages(true);
 
@@ -860,6 +861,10 @@ namespace Telegram.Views
                 {
                     _focusState.Set(FocusState.Programmatic);
                 }
+            }
+            else if (mode == CoreWindowActivationMode.Deactivated)
+            {
+                ViewModel.SaveDraft();
             }
         }
 

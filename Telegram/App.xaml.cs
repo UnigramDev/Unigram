@@ -53,7 +53,6 @@ using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.ExtendedExecution;
-using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -103,24 +102,10 @@ namespace Telegram
             SystemTray.EnteringBackground(e);
         }
 
-        protected override void OnWindowCreated(WindowCreatedEventArgs args)
+        protected override void OnWindowActivated(bool active)
         {
-            args.Window.Activated += Window_Activated;
-            //args.Window.CoreWindow.FlowDirection = LocaleService.Current.FlowDirection == FlowDirection.RightToLeft
-            //    ? CoreWindowFlowDirection.RightToLeft
-            //    : CoreWindowFlowDirection.LeftToRight;
-
-            base.OnWindowCreated(args);
-        }
-
-        private void Window_Activated(object sender, WindowActivatedEventArgs e)
-        {
-            HandleActivated(e.WindowActivationState != CoreWindowActivationState.Deactivated);
             SettingsService.Current.Appearance.UpdateTimer();
-        }
 
-        private void HandleActivated(bool active)
-        {
             var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
             aggregator?.Publish(new UpdateWindowActivated(active));
 

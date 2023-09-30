@@ -20,7 +20,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Factories;
-using Telegram.Services.Updates;
 using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -126,14 +125,6 @@ namespace Telegram.ViewModels
         {
             System.Diagnostics.Debug.WriteLine("Disposing DialogViewModel");
             _groupedMessages.Clear();
-        }
-
-        public void Handle(UpdateWindowActivated update)
-        {
-            if (!update.IsActive)
-            {
-                BeginOnUIThread(SaveDraft);
-            }
         }
 
         public Action<Sticker> Sticker_Click;

@@ -71,7 +71,35 @@ namespace Telegram.Navigation
             CustomXamlResourceLoader.Current = new XamlResourceLoader();
             CreateWindowWrapper(args.Window);
             ViewService.OnWindowCreated();
+
+            args.Window.Activated += OnActivated;
+            args.Window.Closed += OnClosed;
             base.OnWindowCreated(args);
+        }
+
+        private void OnActivated(object sender, WindowActivatedEventArgs e)
+        {
+            OnWindowActivated(e.WindowActivationState != CoreWindowActivationState.Deactivated);
+        }
+
+        private void OnClosed(object sender, CoreWindowEventArgs e)
+        {
+            SystemNavigationManager.GetForCurrentView().BackRequested -= BackHandler;
+
+            Window.Current.Activated -= OnActivated;
+            Window.Current.Closed -= OnClosed;
+
+            OnWindowClosed();
+        }
+
+        protected virtual void OnWindowClosed()
+        {
+
+        }
+
+        protected virtual void OnWindowActivated(bool active)
+        {
+
         }
 
         private WindowContext CreateWindowWrapper(Window window)
