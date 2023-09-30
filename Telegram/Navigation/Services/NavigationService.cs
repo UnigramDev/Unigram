@@ -190,7 +190,7 @@ namespace Telegram.Navigation.Services
             SessionId = session;
             Dispatcher = new DispatcherContext(DispatcherQueue.GetForCurrentThread());
             FrameFacade = new FrameFacade(this, frame, id);
-            FrameFacade.Navigating += async (s, e) =>
+            FrameFacade.Navigating += (s, e) =>
             {
                 if (e.Suspending)
                 {
@@ -222,10 +222,13 @@ namespace Telegram.Navigation.Services
                     {
                         // allow the viewmodel to cancel navigation
                         e.Cancel = !NavigatingFrom(page, e.SourcePageType, e.Parameter, dataContext, false, e.NavigationMode);
-                        if (!e.Cancel)
+
+                        if (e.Cancel)
                         {
-                            await NavigateFromAsync(page, dataContext, false);
+                            return;
                         }
+
+                        NavigateFrom(page, dataContext, false);
                     }
 
                     if (page is IActivablePage cleanup)
@@ -314,7 +317,7 @@ namespace Telegram.Navigation.Services
         }
 
         // after navigate
-        private async Task NavigateFromAsync(Page page, INavigable dataContext, bool suspending)
+        private void NavigateFrom(Page page, INavigable dataContext, bool suspending)
         {
             Logger.Info($"Suspending: {suspending}");
 
@@ -323,7 +326,7 @@ namespace Telegram.Navigation.Services
             dataContext.SessionState = BootStrapper.Current.SessionState;
 
             var pageState = FrameFacade.PageStateSettingsService(page.GetType()).Values;
-            await dataContext.NavigatedFromAsync(pageState, suspending);
+            dataContext.NavigatedFrom(pageState, suspending);
         }
 
         private async Task NavigateToAsync(NavigationMode mode, object parameter, object frameContent = null)
@@ -388,7 +391,7 @@ namespace Telegram.Navigation.Services
 
                     void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
                     {
-                        _ = viewModel.NavigatedFromAsync(null, false);
+                        viewModel.NavigatedFrom(null, false);
                         popup.Closed -= OnClosed;
                     }
 
@@ -606,7 +609,7 @@ namespace Telegram.Navigation.Services
                 var dataContext = ViewModelForPage(page);
                 if (dataContext != null)
                 {
-                    await NavigateFromAsync(page, dataContext, true);
+                    NavigateFrom(page, dataContext, true);
                 }
             }
         }

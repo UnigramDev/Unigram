@@ -112,10 +112,9 @@ namespace Telegram.ViewModels.Authorization
             return Task.CompletedTask;
         }
 
-        protected override Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)
+        protected override void OnNavigatedFrom(NavigationState suspensionState, bool suspending)
         {
             LocaleService.Current.Changed -= OnLocaleChanged;
-            return Task.CompletedTask;
         }
 
         private void OnLocaleChanged(object sender, LocaleChangedEventArgs e)

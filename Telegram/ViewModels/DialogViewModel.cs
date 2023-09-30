@@ -1980,7 +1980,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public override void NavigatingFrom(NavigatingEventArgs args)
+        protected override void OnNavigatedFrom(NavigationState suspensionState, bool suspending)
         {
             // Explicit unsubscribe because NavigatedFrom
             // is not invoked when switching between chats.

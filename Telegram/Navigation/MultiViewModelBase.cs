@@ -76,15 +76,15 @@ namespace Telegram.Navigation
             await Task.WhenAll(Children.Select(x => x.NavigatedToAsync(parameter, mode, state)));
         }
 
-        public override async Task NavigatedFromAsync(NavigationState suspensionState, bool suspending)
+        public override void NavigatedFrom(NavigationState suspensionState, bool suspending)
         {
             if (this is IHandle)
             {
                 Unsubscribe();
             }
 
-            await OnNavigatedFromAsync(suspensionState, suspending);
-            await Task.WhenAll(Children.Select(x => x.NavigatedFromAsync(suspensionState, suspending)));
+            OnNavigatedFrom(suspensionState, suspending);
+            Children.ForEach(x => x.NavigatedFrom(suspensionState, suspending));
         }
 
         public override void NavigatingFrom(NavigatingEventArgs args)

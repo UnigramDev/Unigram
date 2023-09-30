@@ -67,7 +67,7 @@ namespace Telegram.Common
 
                     void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
                     {
-                        _ = viewModel.NavigatedFromAsync(null, false);
+                        viewModel.NavigatedFrom(null, false);
                         popup.Closed -= OnClosed;
                     }
 

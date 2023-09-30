@@ -35,13 +35,12 @@ namespace Telegram.ViewModels.Settings
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             PowerSavingPolicy.Changed += PowerSavingPolicy_Changed;
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            return Task.CompletedTask;
         }
 
-        protected override Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)
+        protected override void OnNavigatedFrom(NavigationState suspensionState, bool suspending)
         {
             PowerSavingPolicy.Changed -= PowerSavingPolicy_Changed;
-            return base.OnNavigatedFromAsync(suspensionState, suspending);
         }
 
         private void PowerSavingPolicy_Changed(object sender, EventArgs e)

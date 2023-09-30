@@ -131,7 +131,7 @@ namespace Telegram.ViewModels.Settings
             return Task.CompletedTask;
         }
 
-        protected override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
+        protected override void OnNavigatedFrom(NavigationState pageState, bool suspending)
         {
             if (_type is StickersType.Installed or StickersType.Masks or StickersType.Emoji)
             {
@@ -141,8 +141,6 @@ namespace Telegram.ViewModels.Settings
                     ClientService.Send(new ReorderInstalledStickerSets(StickerType, _newOrder));
                 }
             }
-
-            return Task.CompletedTask;
         }
 
         public override void Subscribe()

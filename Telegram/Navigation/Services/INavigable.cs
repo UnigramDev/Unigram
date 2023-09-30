@@ -14,7 +14,7 @@ namespace Telegram.Navigation.Services
     public interface INavigable
     {
         Task NavigatedToAsync(object parameter, NavigationMode mode, NavigationState state);
-        Task NavigatedFromAsync(NavigationState suspensionState, bool suspending);
+        void NavigatedFrom(NavigationState suspensionState, bool suspending);
         void NavigatingFrom(NavigatingEventArgs args);
         INavigationService NavigationService { get; set; }
         IDispatcherContext Dispatcher { get; set; }

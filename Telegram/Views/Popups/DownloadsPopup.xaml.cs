@@ -40,7 +40,7 @@ namespace Telegram.Views.Popups
 
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
-            _ = ViewModel.NavigatedFromAsync(null, false);
+            ViewModel.NavigatedFrom(null, false);
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

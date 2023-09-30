@@ -50,19 +50,19 @@ namespace Telegram.Navigation
             return Task.CompletedTask;
         }
 
-        public virtual Task NavigatedFromAsync(NavigationState suspensionState, bool suspending)
+        public virtual void NavigatedFrom(NavigationState suspensionState, bool suspending)
         {
             if (this is IHandle)
             {
                 Unsubscribe();
             }
 
-            return OnNavigatedFromAsync(suspensionState, suspending);
+            OnNavigatedFrom(suspensionState, suspending);
         }
 
-        protected virtual Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)
+        protected virtual void OnNavigatedFrom(NavigationState suspensionState, bool suspending)
         {
-            return Task.CompletedTask;
+
         }
 
         public virtual void NavigatingFrom(NavigatingEventArgs args)

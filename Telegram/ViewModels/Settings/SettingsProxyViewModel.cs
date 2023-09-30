@@ -73,10 +73,9 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        protected override Task OnNavigatedFromAsync(NavigationState pageState, bool suspending)
+        protected override void OnNavigatedFrom(NavigationState pageState, bool suspending)
         {
             _networkService.ProxyChanged -= OnSystemProxyChanged;
-            return base.OnNavigatedFromAsync(pageState, suspending);
         }
 
         public override void Subscribe()

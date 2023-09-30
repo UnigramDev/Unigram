@@ -44,10 +44,9 @@ namespace Telegram.ViewModels.Settings
             Aggregator.Subscribe<UpdateAppVersion>(this, Handle);
         }
 
-        protected override Task OnNavigatedFromAsync(NavigationState suspensionState, bool suspending)
+        protected override void OnNavigatedFrom(NavigationState suspensionState, bool suspending)
         {
             UpdateManager.Unsubscribe(this, ref _fileToken);
-            return Task.CompletedTask;
         }
 
         #region Updates
