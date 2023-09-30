@@ -25,7 +25,6 @@ using Telegram.Views.Premium.Popups;
 using Telegram.Views.Supergroups;
 using Telegram.Views.Supergroups.Popups;
 using Telegram.Views.Users;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -488,9 +487,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var dataPackage = new DataPackage();
-            dataPackage.SetText($"+{user.PhoneNumber}");
-            ClipboardEx.TrySetContent(dataPackage);
+            MessageHelper.CopyText(PhoneNumber.Format(user.PhoneNumber));
         }
 
         public string CopyDescription()
@@ -539,9 +536,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                var dataPackage = new DataPackage();
-                dataPackage.SetText($"@{username}");
-                ClipboardEx.TrySetContent(dataPackage);
+                MessageHelper.CopyText($"@{username}");
             }
             else
             {
@@ -551,9 +546,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                var dataPackage = new DataPackage();
-                dataPackage.SetText($"@{username}");
-                ClipboardEx.TrySetContent(dataPackage);
+                MessageHelper.CopyText($"@{username}");
             }
         }
 

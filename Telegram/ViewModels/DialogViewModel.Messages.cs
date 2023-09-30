@@ -453,9 +453,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(builder.ToString());
-                ClipboardEx.TrySetContent(dataPackage);
+                MessageHelper.CopyText(builder.ToString());
             }
         }
 
@@ -622,6 +620,8 @@ namespace Telegram.ViewModels
                 }
 
                 ClipboardEx.TrySetContent(dataPackage);
+
+                Window.Current.ShowTeachingTip(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
             }
         }
 
@@ -672,11 +672,7 @@ namespace Telegram.ViewModels
             var response = await ClientService.SendAsync(new GetMessageLink(chat.Id, message.Id, 0, false, ThreadId != 0));
             if (response is MessageLink link)
             {
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(link.Link);
-                ClipboardEx.TrySetContent(dataPackage);
-
-                Window.Current.ShowTeachingTip(link.IsPublic ? Strings.LinkCopied : Strings.LinkCopiedPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/LinkCopied.tgs"));
+                MessageHelper.CopyLink(link.Link, link.IsPublic);
             }
         }
 

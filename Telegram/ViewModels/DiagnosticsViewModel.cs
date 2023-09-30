@@ -18,7 +18,6 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.Core;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Devices.Enumeration;
 using Windows.Media.Capture;
 using Windows.Media.MediaProperties;
@@ -333,9 +332,7 @@ namespace Telegram.ViewModels
                 await FillVideoCaptureCapabilityFromDeviceWithoutProfiles(builder, device.Id);
             }
 
-            var dataPackage = new DataPackage();
-            dataPackage.SetText(builder.ToString());
-            ClipboardEx.TrySetContent(dataPackage);
+            MessageHelper.CopyText(builder.ToString());
 
             try
             {

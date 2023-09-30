@@ -67,13 +67,22 @@ namespace Telegram.Common
             }
         }
 
-        public static void CopyLink(string link)
+        public static void CopyLink(string link, bool publiz = true)
         {
             var dataPackage = new DataPackage();
             dataPackage.SetText(link);
             ClipboardEx.TrySetContent(dataPackage);
 
-            Window.Current.ShowTeachingTip(Strings.LinkCopied, new LocalFileSource("ms-appx:///Assets/Toasts/LinkCopied.tgs"));
+            Window.Current.ShowTeachingTip(publiz ? Strings.LinkCopied : Strings.LinkCopiedPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/LinkCopied.tgs"));
+        }
+
+        public static void CopyText(string text)
+        {
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(text);
+            ClipboardEx.TrySetContent(dataPackage);
+
+            Window.Current.ShowTeachingTip(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
         }
 
         public static bool TryCreateUri(string url, out Uri uri)
@@ -1137,9 +1146,13 @@ namespace Telegram.Common
                     {
                         flyout.CreateFlyoutItem(LinkOpen_Click, link, Strings.Open, Icons.OpenIn);
                     }
-                }
 
-                flyout.CreateFlyoutItem(LinkCopy_Click, link, Strings.Copy, Icons.DocumentCopy);
+                    flyout.CreateFlyoutItem(LinkCopy_Click, link, Strings.Copy, Icons.DocumentCopy);
+                }
+                else
+                {
+                    flyout.CreateFlyoutItem(CopyText, link, Strings.Copy, Icons.DocumentCopy);
+                }
             }
         }
 
@@ -1180,16 +1193,7 @@ namespace Telegram.Common
 
         private static void LinkCopy_Click(string link)
         {
-            try
-            {
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(link);
-                ClipboardEx.TrySetContent(dataPackage);
-            }
-            catch
-            {
-                Logger.Error();
-            }
+            CopyLink(link);
         }
 
         private static async void LinkTranslate_Click(Tuple<ITranslateService, string> tuple)
@@ -1200,13 +1204,6 @@ namespace Telegram.Common
             var language = LanguageIdentification.IdentifyLanguage(entity);
             var popup = new TranslatePopup(service, entity, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, true);
             await popup.ShowQueuedAsync();
-        }
-
-        public static void CopyText(string text)
-        {
-            var dataPackage = new DataPackage();
-            dataPackage.SetText(text);
-            ClipboardEx.TrySetContent(dataPackage);
         }
 
 

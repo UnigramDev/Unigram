@@ -6992,6 +6992,9 @@ Here’s what is now unlocked.</value>
   <data name="TermsOfUse" xml:space="preserve">
     <value>Terms of Use</value>
   </data>
+  <data name="TextCopied" xml:space="preserve">
+    <value>Text copied to clipboard.</value>
+  </data>
   <data name="TextSize" xml:space="preserve">
     <value>Message Text Size</value>
   </data>
