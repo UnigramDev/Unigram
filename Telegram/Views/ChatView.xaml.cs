@@ -133,6 +133,7 @@ namespace Telegram.Views
             {
                 _myPeople = true;
                 WindowContext.Current.ContactPanel.LaunchFullAppRequested += ContactPanel_LaunchFullAppRequested;
+                WatchDog.TrackEvent("ContactPanel");
             }
 
             Messages.Delegate = this;

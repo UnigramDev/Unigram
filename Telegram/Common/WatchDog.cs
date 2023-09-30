@@ -140,6 +140,16 @@ namespace Telegram
                 });
         }
 
+        public static void TrackEvent(string name)
+        {
+            if (_disabled)
+            {
+                return;
+            }
+
+            Analytics.TrackEvent(name);
+        }
+
         private static void Read()
         {
             if (File.Exists(_crashLog))
