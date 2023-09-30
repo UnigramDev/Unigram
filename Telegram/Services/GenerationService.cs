@@ -489,7 +489,18 @@ namespace Telegram.Services
                     mode = ThumbnailMode.MusicView;
                 }
 
-                using (var thumbnail = await file.GetThumbnailAsync(mode, 90))
+                var request = file.GetThumbnailAsync(mode, 90).AsTask();
+
+                var response = await Task.WhenAny(request, Task.Delay(2000));
+                if (response != request)
+                {
+                    // In case of timeout, the thumbnail will leak.
+
+                    _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID Timeout")));
+                    return;
+                }
+
+                using (var thumbnail = await request)
                 {
                     if (thumbnail != null && thumbnail.Type == ThumbnailType.Image)
                     {

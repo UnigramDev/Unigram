@@ -54,9 +54,8 @@ namespace Telegram.Services
             _syncLock = new DisposableMutex();
             _importedPhonesRoot = new object();
 
-            _contacts = new HashSet<long>();
-
-            _aggregator.Subscribe<Td.Api.UpdateAuthorizationState>(this, Handle);
+            _aggregator.Subscribe<Td.Api.UpdateAuthorizationState>(this, Handle)
+                .Subscribe<Td.Api.UpdateUser>(Handle);
         }
 
         public async void Handle(Td.Api.UpdateAuthorizationState update)
@@ -69,6 +68,11 @@ namespace Telegram.Services
 
         public async void Handle(Td.Api.UpdateUser update)
         {
+            if (_contacts == null)
+            {
+                return;
+            }
+
             if (update.User.IsContact && !_contacts.Contains(update.User.Id))
             {
                 // New contact

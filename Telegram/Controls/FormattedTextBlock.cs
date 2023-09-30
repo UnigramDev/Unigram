@@ -10,6 +10,7 @@ using System.Numerics;
 using System.Threading;
 using Telegram.Common;
 using Telegram.Native;
+using Telegram.Native.Highlight;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
@@ -74,6 +75,15 @@ namespace Telegram.Controls
                 if (_hasCodeBlocks != value)
                 {
                     _hasCodeBlocks = value;
+
+                    if (value)
+                    {
+                        ActualThemeChanged += OnActualThemeChanged;
+                    }
+                    else
+                    {
+                        ActualThemeChanged -= OnActualThemeChanged;
+                    }
                 }
             }
         }
@@ -292,6 +302,8 @@ namespace Telegram.Controls
                 text = styled.Text.Substring(part.Offset, Math.Min(part.Length, styled.Text.Length - part.Offset));
                 lastFormatted = false;
 
+                TextDirectionality? direction = null;
+
                 var runs = part.Runs;
                 var previous = 0;
 
@@ -338,12 +350,18 @@ namespace Telegram.Controls
                             preformatted = true;
                             lastFormatted = true;
 
+                            //var first = part == styled.Paragraphs[0];
                             var last = part == styled.Paragraphs[^1];
 
                             var temp = direct.GetObject(paragraph) as Paragraph;
                             temp.Margin = new Thickness(8, 6, 8, last ? 0 : 8);
 
                             _codeBlocks.Add(temp);
+
+                            if (entity.Type is TextEntityTypePreCode preCode && preCode.Language.Length > 0)
+                            {
+                                ProcessCodeBlock(temp.Inlines, data, preCode.Language);
+                            }
                         }
                     }
                     else
@@ -428,6 +446,9 @@ namespace Telegram.Controls
 
                         if (entity.Type is TextEntityTypeCustomEmoji customEmoji && ((_ignoreSpoilers && entity.HasFlag(Common.TextStyle.Spoiler)) || !entity.HasFlag(Common.TextStyle.Spoiler)))
                         {
+                            //direction ??= NativeUtils.GetDirectionality(text);
+
+                            //var right = direction == TextDirectionality.RightToLeft /*&& entity.Offset > 0 && entity.End < text.Length*/;
                             var player = new CustomEmojiIcon();
                             player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
                             player.HorizontalAlignment = HorizontalAlignment.Left;
@@ -566,6 +587,16 @@ namespace Telegram.Controls
             }
         }
 
+        private void OnActualThemeChanged(FrameworkElement sender, object args)
+        {
+            var resources = sender.ActualTheme == ElementTheme.Light ? _light : _dark;
+
+            foreach (var item in _brushes)
+            {
+                item.Value.Color = resources[item.Key];
+            }
+        }
+
         private Run CreateRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
         {
             var direct = XamlDirect.GetDefault();
@@ -613,6 +644,147 @@ namespace Telegram.Controls
 
             return run;
         }
+
+        #region PreCode
+
+        private async void ProcessCodeBlock(InlineCollection inlines, string text, string language)
+        {
+            var tokens = await SyntaxToken.TokenizeAsync(language, text);
+
+            inlines.Clear();
+            ProcessCodeBlock(inlines, tokens.Children);
+        }
+
+        private void ProcessCodeBlock(InlineCollection inlines, IList<Token> tokens)
+        {
+            foreach (var token in tokens)
+            {
+                if (token is SyntaxToken syntax)
+                {
+                    var color = GetColor(syntax.Type);
+                    if (color == null && syntax.Alias.Length > 0)
+                    {
+                        color = GetColor(syntax.Alias);
+                    }
+
+                    var span = new Span
+                    {
+                        FontFamily = new FontFamily("Consolas")
+                    };
+
+                    if (color != null)
+                    {
+                        span.Foreground = color;
+                    }
+
+                    if (syntax.Type == "bold")
+                    {
+                        span.FontWeight = FontWeights.SemiBold;
+                    }
+                    else if (syntax.Type == "italic")
+                    {
+                        span.FontStyle = FontStyle.Italic;
+                    }
+
+                    ProcessCodeBlock(span.Inlines, syntax.Children);
+                    inlines.Add(span);
+                }
+                else if (token is TextToken text)
+                {
+                    inlines.Add(new Run
+                    {
+                        Text = text.Value
+                    });
+                }
+            }
+        }
+
+        SolidColorBrush GetColor(string type)
+        {
+            if (_brushes.TryGetValue(type, out var brush))
+            {
+                return brush;
+            }
+
+            var target = ActualTheme == ElementTheme.Light ? _light : _dark;
+            if (target.TryGetValue(type, out var color))
+            {
+                _brushes[type] = new SolidColorBrush(color);
+                return _brushes[type];
+            }
+
+            return null;
+        }
+
+        private readonly Dictionary<string, Color> _light = new()
+        {
+            { "comment", Colors.SlateGray },
+            { "block-comment", Colors.SlateGray },
+            { "prolog", Colors.SlateGray },
+            { "doctype", Colors.SlateGray },
+            { "cdata", Colors.SlateGray },
+            { "punctuation", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
+            { "property", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
+            { "tag", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
+            { "boolean", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
+            { "number", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
+            { "constant", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
+            { "symbol", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
+            { "deleted", Color.FromArgb(0xFF, 0x99, 0x00, 0x55) },
+            { "selector", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
+            { "attr-name", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
+            { "string", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
+            { "char", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
+            { "builtin", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
+            { "inserted", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
+            { "operator", Color.FromArgb(0xFF, 0x9a, 0x6e, 0x3a) },
+            { "entity", Color.FromArgb(0xFF, 0x9a, 0x6e, 0x3a) },
+            { "url", Color.FromArgb(0xFF, 0x9a, 0x6e, 0x3a) },
+            { "atrule", Color.FromArgb(0xFF, 0x00, 0x77, 0xAA) },
+            { "attr-value", Color.FromArgb(0xFF, 0x00, 0x77, 0xAA) },
+            { "keyword", Color.FromArgb(0xFF, 0x00, 0x77, 0xAA) },
+            { "function", Color.FromArgb(0xFF, 0x00, 0x77, 0xAA) },
+            { "class-name", Color.FromArgb(0xFF, 0xDD, 0x4A, 0x68) },
+        };
+
+        private readonly Dictionary<string, Color> _dark = new()
+        {
+            { "comment", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
+            { "block-comment", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
+            { "prolog", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
+            { "doctype", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
+            { "cdata", Color.FromArgb(0xFF, 0x99, 0x99, 0x99) },
+            { "punctuation", Color.FromArgb(0xFF, 0xCC, 0xCC, 0xCC) },
+            { "property", Color.FromArgb(0xFF, 0xf8, 0xc5, 0x55) },
+            { "tag", Color.FromArgb(0xFF, 0xe2, 0x77, 0x7a) },
+            { "boolean", Color.FromArgb(0xFF, 0xf0, 0x8d, 0x49) },
+            { "number", Color.FromArgb(0xFF, 0xf0, 0x8d, 0x49) },
+            { "constant", Color.FromArgb(0xFF, 0xf8, 0xc5, 0x55) },
+            { "symbol", Color.FromArgb(0xFF, 0xf8, 0xc5, 0x55) },
+            { "deleted", Color.FromArgb(0xFF, 0xe2, 0x77, 0x7a) },
+            { "selector", Color.FromArgb(0xFF, 0xcc, 0x99, 0xcd) },
+            { "attr-name", Color.FromArgb(0xFF, 0xe2, 0x77, 0x7a) },
+            { "string", Color.FromArgb(0xFF, 0x7e, 0xc6, 0x99) },
+            { "char", Color.FromArgb(0xFF, 0x7e, 0xc6, 0x99) },
+            { "builtin", Color.FromArgb(0xFF, 0xcc, 0x99, 0xcd) },
+            { "inserted", Color.FromArgb(0xFF, 0x66, 0x99, 0x00) },
+            { "operator", Color.FromArgb(0xFF, 0x67, 0xcd, 0xcc) },
+            { "entity", Color.FromArgb(0xFF, 0x67, 0xcd, 0xcc) },
+            { "url", Color.FromArgb(0xFF, 0x67, 0xcd, 0xcc) },
+            { "atrule", Color.FromArgb(0xFF, 0xcc, 0x99, 0xcd) },
+            { "attr-value", Color.FromArgb(0xFF, 0x7e, 0xc6, 0x99) },
+            { "keyword", Color.FromArgb(0xFF, 0xcc, 0x99, 0xcd) },
+            { "function", Color.FromArgb(0xFF, 0xf0, 0x8d, 0x49) },
+            { "class-name", Color.FromArgb(0xFF, 0xf8, 0xc5, 0x55) },
+            // namespace 0xe2, 0x77, 0x7a
+            // function-name 6196cc
+        };
+
+        private readonly Dictionary<string, SolidColorBrush> _brushes = new();
+
+        private CancellationTokenSource _token;
+
+        #endregion
 
         private Brush GetBrush(string key)
         {
