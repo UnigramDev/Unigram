@@ -92,23 +92,26 @@ namespace Telegram.Controls
         {
             Loaded -= OnLoaded;
 
-            var service = NavigationService;
-            if (service != null)
+            if (NavigationService != null)
             {
-                service.FrameFacade.BackRequested -= OnBackRequested;
-                service.BackStackChanged -= OnBackStackChanged;
+                NavigationService.FrameFacade.BackRequested -= OnBackRequested;
+                NavigationService.BackStackChanged -= OnBackStackChanged;
             }
 
-            var panel = AdaptivePanel;
-            if (panel != null)
+            if (AdaptivePanel != null)
             {
-                panel.ViewStateChanged -= OnViewStateChanged;
+                AdaptivePanel.ViewStateChanged -= OnViewStateChanged;
             }
 
-            var frame = DetailFrame;
-            if (frame != null)
+            if (DetailFrame != null)
             {
-                frame.Navigated -= OnNavigated;
+                DetailFrame.Navigated -= OnNavigated;
+            }
+
+            if (DetailHeaderPresenter != null)
+            {
+                DetailHeaderPresenter.ItemsSource = null;
+                DetailHeaderPresenter.ItemClicked -= DetailHeaderPresenter_ItemClicked;
             }
         }
 
@@ -193,6 +196,7 @@ namespace Telegram.Controls
         {
             if (_backgroundType == show || BackgroundPart == null)
             {
+                _backgroundType = show;
                 return;
             }
 

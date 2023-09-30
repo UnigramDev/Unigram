@@ -823,11 +823,6 @@ namespace Telegram.Views
                 FindName(nameof(BackgroundControl));
                 BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
             }
-            else if (!Windows.ApplicationModel.Core.CoreApplication.GetCurrentView().IsMain)
-            {
-                FindName(nameof(BackgroundControl));
-                BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
-            }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)

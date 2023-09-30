@@ -58,7 +58,12 @@ namespace Telegram.Views.Host
             var aggregator = TLContainer.Current.Resolve<IEventAggregator>(navigationService.SessionId);
 
             MasterDetail.Initialize(navigationService as NavigationService, null, new StandaloneViewModel(clientService, settingsService, aggregator), false);
-            MasterDetail.NavigationService.Navigating += OnNavigating;
+            MasterDetail.NavigationService.FrameFacade.Navigating += OnNavigating;
+
+            OnNavigating(null, new NavigatingEventArgs(null, null, null, null)
+            {
+                SourcePageType = MasterDetail.NavigationService.CurrentPageType
+            });
         }
 
         private void OnNavigating(object sender, NavigatingEventArgs e)
@@ -97,6 +102,9 @@ namespace Telegram.Views.Host
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            MasterDetail.NavigationService.FrameFacade.Navigating -= OnNavigating;
+            MasterDetail.Dispose();
+
             WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
             UnloadTitleBar();
         }
