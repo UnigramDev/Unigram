@@ -2096,6 +2096,17 @@ namespace Telegram.Views
 
                 flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.CopyMessage, message, Strings.Copy, Icons.DocumentCopy);
                 flyout.CreateFlyoutItem(MessageDelete_Loaded, ViewModel.DeleteMessage, message, Strings.Delete, Icons.Delete, destructive: true);
+
+                if (message.SendingState is MessageSendingStateFailed sendingStateFailed)
+                {
+                    flyout.CreateFlyoutSeparator();
+                    flyout.Items.Add(new MenuFlyoutLabel
+                    {
+                        Padding = new Thickness(12, 4, 12, 4),
+                        MaxWidth = 178,
+                        Text = sendingStateFailed.Error.Message
+                    });
+                }
             }
             else
             {

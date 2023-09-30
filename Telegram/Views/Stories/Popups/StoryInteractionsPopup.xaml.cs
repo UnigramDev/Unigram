@@ -106,7 +106,9 @@ namespace Telegram.Views.Stories.Popups
                 }
 
                 Navigation.Visibility = Visibility.Collapsed;
-                Title = Locale.Declension(Strings.R.Views, story.InteractionInfo.ViewCount);
+                Title = story.InteractionInfo != null
+                    ? Locale.Declension(Strings.R.Views, story.InteractionInfo.ViewCount)
+                    : Strings.StatisticViews;
 
                 LayoutRoot.Margin = new Thickness(-24, -24, -24, -24);
             }

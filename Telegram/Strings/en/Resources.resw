@@ -5435,7 +5435,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>More</value>
   </data>
   <data name="PremiumNeeded" xml:space="preserve">
-    <value>Premuim needed!</value>
+    <value>Premium needed!</value>
   </data>
   <data name="PremiumNeededForBoosting" xml:space="preserve">
     <value>Only **Telegram Premium** subscribers can boost channels. Do you want to subscribe to **Telegram Premium**?</value>

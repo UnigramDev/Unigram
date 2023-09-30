@@ -878,8 +878,13 @@ namespace Telegram.Views.Host
         private void UpdateNavigation()
         {
             var clientService = TLContainer.Current.Resolve<IClientService>(_navigationService.SessionId);
-            var bots = clientService.GetBotsForMenu(out long botsHash);
+            if (clientService == null)
+            {
+                // TODO: this should never be happening
+                return;
+            }
 
+            var bots = clientService.GetBotsForMenu(out long botsHash);
             var index = -1;
 
             if (_attachmentMenuBots != botsHash)

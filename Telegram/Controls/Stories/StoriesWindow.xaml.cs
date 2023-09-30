@@ -340,23 +340,29 @@ namespace Telegram.Controls.Stories
 
                         Composer.DataContext = viewModel.Items[real];
 
+                        var selectedItem = viewModel.Items[real].SelectedItem;
+                        if (selectedItem == null)
+                        {
+                            return;
+                        }
+
                         if (viewModel.Items[real].IsMyStory)
                         {
                             Interactions.Visibility = Visibility.Visible;
                             ChannelInteractions.Visibility = Visibility.Collapsed;
                             TextArea.Visibility = Visibility.Collapsed;
 
-                            Interactions.Update(viewModel.Items[real].SelectedItem);
+                            Interactions.Update(selectedItem);
                         }
-                        else if (viewModel.Items[real].Chat.Type is ChatTypeSupergroup || !viewModel.Items[real].SelectedItem.CanBeReplied)
+                        else if (selectedItem.Chat.Type is ChatTypeSupergroup || !selectedItem.CanBeReplied)
                         {
                             Interactions.Visibility = Visibility.Collapsed;
                             ChannelInteractions.Visibility = Visibility.Visible;
                             TextArea.Visibility = Visibility.Collapsed;
 
-                            ChannelInteractions.Update(viewModel.Items[real].SelectedItem);
+                            ChannelInteractions.Update(selectedItem);
                         }
-                        else if (viewModel.Items[real].SelectedItem.CanBeReplied)
+                        else if (selectedItem.CanBeReplied)
                         {
                             Interactions.Visibility = Visibility.Collapsed;
                             ChannelInteractions.Visibility = Visibility.Collapsed;

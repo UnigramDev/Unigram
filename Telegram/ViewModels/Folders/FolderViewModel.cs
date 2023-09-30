@@ -186,7 +186,7 @@ namespace Telegram.ViewModels.Folders
             }
         }
 
-        private IList<long> _pinnedChatIds;
+        private IList<long> _pinnedChatIds = Array.Empty<long>();
 
         public MvxObservableCollection<ChatFolderElement> Include { get; private set; }
         public MvxObservableCollection<ChatFolderElement> Exclude { get; private set; }
