@@ -264,6 +264,12 @@ namespace Telegram.Views.Chats.Popups
             visual1.StartAnimation("Opacity", animFade1);
             visual2.StartAnimation("Opacity", animFade2);
 
+            Title = show
+                ? Strings.YouBoostedChannel
+                : _status.Level == 0
+                ? Strings.BoostingEnableStoriesForChannel
+                : Strings.HelpUpgradeChannel;
+
             PurchaseCommand.Content = show
                 ? Strings.OK
                 : Strings.BoostChannel;
