@@ -25,22 +25,6 @@ namespace Telegram.Common
 {
     public static class PlaceholderHelper
     {
-        public static ImageSource GetIdenticon(IList<byte> hash, int side)
-        {
-            var bitmap = new BitmapImage();
-            using (var stream = new InMemoryRandomAccessStream())
-            {
-                try
-                {
-                    PlaceholderImageHelper.Current.DrawIdenticon(hash, side, stream);
-                    bitmap.SetSource(stream);
-                }
-                catch { }
-            }
-
-            return bitmap;
-        }
-
         public static ImageSource GetBitmap(IClientService clientService, PhotoSize photoSize)
         {
             return GetBitmap(clientService, photoSize.Photo, photoSize.Width, photoSize.Height);

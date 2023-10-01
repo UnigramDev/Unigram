@@ -13,11 +13,22 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Border Margin="0,0,0,8">
-            <Image x:Name="Texture"
-                   Width="192"
-                   Height="192" />
-        </Border>
+        <Grid Width="192"
+              Height="192"
+              Margin="0,0,0,8">
+            <Path x:Name="Layer0"
+                  Fill="#FFFFFF"
+                  StrokeThickness="0" />
+            <Path x:Name="Layer1"
+                  Fill="#D5E6F3"
+                  StrokeThickness="0" />
+            <Path x:Name="Layer2"
+                  Fill="#2D5775"
+                  StrokeThickness="0" />
+            <Path x:Name="Layer3"
+                  Fill="#2F99C9"
+                  StrokeThickness="0" />
+        </Grid>
         <TextBlock x:Name="Hash"
                    FontFamily="Consolas"
                    HorizontalAlignment="Center"

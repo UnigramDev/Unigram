@@ -215,11 +215,6 @@ namespace winrt::Telegram::Native::implementation
         winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, dpi, size));
     }
 
-    void PlaceholderImageHelper::DrawIdenticon(IVector<uint8_t> hash, int side, IRandomAccessStream randomAccessStream)
-    {
-        winrt::check_hresult(InternalDrawIdenticon(hash, side, randomAccessStream));
-    }
-
     void PlaceholderImageHelper::DrawThumbnailPlaceholder(hstring fileName, float blurAmount, IRandomAccessStream randomAccessStream)
     {
         winrt::check_hresult(InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
@@ -361,64 +356,6 @@ namespace winrt::Telegram::Native::implementation
         return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
     }
 
-    HRESULT PlaceholderImageHelper::InternalDrawIdenticon(IVector<uint8_t> hash, int side, IRandomAccessStream randomAccessStream)
-    {
-        slim_lock_guard const guard(m_criticalSection);
-
-        HRESULT result;
-
-        m_d2dContext->SetTarget(m_targetBitmap.get());
-        m_d2dContext->BeginDraw();
-
-        auto width = side;
-        auto height = side;
-
-        if (16 == hash.Size())
-        {
-            int bitPointer = 0;
-            float rectSize = (float)std::floor(std::min(width, height) / 8.0f);
-            float xOffset = std::max(0.0f, (width - rectSize * 8) / 2);
-            float yOffset = std::max(0.0f, (height - rectSize * 8) / 2);
-            for (int iy = 0; iy < 8; iy++)
-            {
-                for (int ix = 0; ix < 8; ix++)
-                {
-                    int byteValue = (hash.GetAt(bitPointer / 8) >> (bitPointer % 8)) & 0x3;
-                    bitPointer += 2;
-                    int colorIndex = std::abs(byteValue) % 4;
-                    D2D1_RECT_F layoutRect = { (int)(xOffset + ix * rectSize), (int)(iy * rectSize + yOffset), (int)(xOffset + ix * rectSize + rectSize), (int)(iy * rectSize + rectSize + yOffset) };
-                    m_d2dContext->FillRectangle(layoutRect, m_identiconBrushes[colorIndex].get());
-                }
-            }
-        }
-        else
-        {
-            int bitPointer = 0;
-            float rectSize = (float)std::floor(std::min(width, height) / 12.0f);
-            float xOffset = std::max(0.0f, (width - rectSize * 12) / 2);
-            float yOffset = std::max(0.0f, (height - rectSize * 12) / 2);
-            for (int iy = 0; iy < 12; iy++)
-            {
-                for (int ix = 0; ix < 12; ix++)
-                {
-                    int byteValue = (hash.GetAt(bitPointer / 8) >> (bitPointer % 8)) & 0x3;
-                    int colorIndex = std::abs(byteValue) % 4;
-                    D2D1_RECT_F layoutRect = { (int)(xOffset + ix * rectSize), (int)(iy * rectSize + yOffset), (int)(xOffset + ix * rectSize + rectSize), (int)(iy * rectSize + rectSize + yOffset) };
-                    m_d2dContext->FillRectangle(layoutRect, m_identiconBrushes[colorIndex].get());
-                    bitPointer += 2;
-                }
-            }
-        }
-
-        if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
-        {
-            ReturnIfFailed(result, CreateDeviceResources());
-            return InternalDrawIdenticon(hash, side, randomAccessStream);
-        }
-
-        return SaveImageToStream(m_targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
-    }
-
     HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(hstring fileName, float blurAmount, IRandomAccessStream randomAccessStream)
     {
         slim_lock_guard const guard(m_criticalSection);
@@ -556,45 +493,6 @@ namespace winrt::Telegram::Native::implementation
         ReturnIfFailed(result, m_dwriteFactory->RegisterFontCollectionLoader(m_customLoader.get()));
         ReturnIfFailed(result, m_dwriteFactory->CreateCustomFontCollection(m_customLoader.get(), keys, keySize, m_fontCollection.put()));
         ReturnIfFailed(result, m_dwriteFactory->GetSystemFontCollection(m_systemCollection.put()));
-
-        ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
-            L"Telegram",							// font family name
-            m_fontCollection.get(),					// system font collection
-            DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
-            DWRITE_FONT_STYLE_NORMAL,				// font style
-            DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
-            92.0f,									// font size
-            L"",									// locale name
-            m_symbolFormat.put()
-        ));
-        ReturnIfFailed(result, m_symbolFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
-        ReturnIfFailed(result, m_symbolFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
-
-        ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
-            L"Segoe MDL2 Assets",					// font family name
-            nullptr,								// system font collection
-            DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
-            DWRITE_FONT_STYLE_NORMAL,				// font style
-            DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
-            82.0f,									// font size
-            L"",									// locale name
-            m_mdl2Format.put()
-        ));
-        ReturnIfFailed(result, m_mdl2Format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
-        ReturnIfFailed(result, m_mdl2Format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
-
-        ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
-            L"Segoe UI",							// font family name
-            nullptr,								// system font collection
-            DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
-            DWRITE_FONT_STYLE_NORMAL,				// font style
-            DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
-            82.0f,									// font size
-            L"",									// locale name
-            m_textFormat.put()
-        ));
-        ReturnIfFailed(result, m_textFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
-        return m_textFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
     }
 
     HRESULT PlaceholderImageHelper::CreateDeviceResources()
@@ -634,35 +532,8 @@ namespace winrt::Telegram::Native::implementation
         ReturnIfFailed(result, m_d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, d2dContext.put()));
         m_d2dContext = d2dContext.as<ID2D1DeviceContext2>();
 
-        ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), m_textBrush.put()));
-        ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::Black), m_black.put()));
-        ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), m_transparent.put()));
         ReturnIfFailed(result, m_d2dContext->CreateEffect(CLSID_D2D1GaussianBlur, m_gaussianBlurEffect.put()));
         ReturnIfFailed(result, m_gaussianBlurEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_BORDER_MODE, D2D1_BORDER_MODE_HARD));
-
-        /*            Color.FromArgb(0xff, 0xff, 0xff, 0xff),
-                Color.FromArgb(0xff, 0xd5, 0xe6, 0xf3),
-                Color.FromArgb(0xff, 0x2d, 0x57, 0x75),
-                Color.FromArgb(0xff, 0x2f, 0x99, 0xc9)
-    */
-
-        winrt::com_ptr<ID2D1SolidColorBrush> color1;
-        winrt::com_ptr<ID2D1SolidColorBrush> color2;
-        winrt::com_ptr<ID2D1SolidColorBrush> color3;
-        winrt::com_ptr<ID2D1SolidColorBrush> color4;
-        ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(D2D1::ColorF::White), color1.put()));
-        ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(0xd5 / 255.0f, 0xe6 / 255.0f, 0xf3 / 255.0f, 1.0f), color2.put()));
-        ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(0x2d / 255.0f, 0x57 / 255.0f, 0x75 / 255.0f, 1.0f), color3.put()));
-        ReturnIfFailed(result, m_d2dContext->CreateSolidColorBrush(D2D1::ColorF(0x2f / 255.0f, 0x99 / 255.0f, 0xc9 / 255.0f, 1.0f), color4.put()));
-
-        m_identiconBrushes.push_back(color1);
-        m_identiconBrushes.push_back(color2);
-        m_identiconBrushes.push_back(color3);
-        m_identiconBrushes.push_back(color4);
-
-        D2D1_SIZE_U size = { 192, 192 };
-        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
-        ReturnIfFailed(result, m_d2dContext->CreateBitmap(size, nullptr, 0, &properties, m_targetBitmap.put()));
 
         m_d2dContext->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 

@@ -55,7 +55,6 @@ namespace winrt::Telegram::Native::implementation
 
         winrt::Windows::Foundation::IAsyncAction DrawSvgAsync(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, double dpi);
         void DrawSvg(hstring path, _In_ Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size);
-        void DrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);
 
         void DrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
         void DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
@@ -71,9 +70,6 @@ namespace winrt::Telegram::Native::implementation
         //PlaceholderImageHelper();
 
         HRESULT InternalDrawSvg(hstring data, _In_ Color foreground, _In_ IRandomAccessStream randomAccessStream, double dpi, _Out_ Windows::Foundation::Size& size);
-        HRESULT InternalDrawQr(hstring data, _In_ Color foreground, _In_ Color background, double scale, _In_ IRandomAccessStream randomAccessStream);
-        HRESULT InternalDrawIdenticon(_In_ IVector<uint8_t> hash, _In_ int side, _In_ IRandomAccessStream randomAccessStream);
-        HRESULT InternalDrawProfilePlaceholder(hstring glyph, Color top, Color bottom, float offset, IDWriteTextFormat* format, IRandomAccessStream randomAccessStream);
         HRESULT InternalDrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
         HRESULT InternalDrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
         HRESULT InternalDrawThumbnailPlaceholder(_In_ IWICBitmapSource* wicBitmapSource, float blurAmount, _In_ IRandomAccessStream randomAccessStream, bool minithumbnail);
@@ -99,16 +95,8 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<IDWriteFontCollectionLoader> m_customLoader;
         winrt::com_ptr<IDWriteFontCollection> m_fontCollection;
         winrt::com_ptr<IDWriteFontCollection> m_systemCollection;
-        winrt::com_ptr<IDWriteTextFormat> m_symbolFormat;
-        winrt::com_ptr<IDWriteTextFormat> m_mdl2Format;
-        winrt::com_ptr<IDWriteTextFormat> m_textFormat;
         winrt::com_ptr<IDWriteTextFormat> m_appleFormat;
-        winrt::com_ptr<ID2D1SolidColorBrush> m_textBrush;
-        winrt::com_ptr<ID2D1SolidColorBrush> m_black;
-        winrt::com_ptr<ID2D1SolidColorBrush> m_transparent;
-        std::vector<winrt::com_ptr<ID2D1SolidColorBrush>> m_identiconBrushes;
         winrt::com_ptr<ID2D1Effect> m_gaussianBlurEffect;
-        winrt::com_ptr<ID2D1Bitmap1> m_targetBitmap;
         winrt::slim_mutex m_criticalSection;
     };
 } // namespace winrt::Telegram::Native::implementation
