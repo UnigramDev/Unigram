@@ -160,28 +160,23 @@ namespace Telegram.Services
             item.Aggregator.Unsubscribe(item);
             //WindowContext.Unsubscribe(item);
 
-            // TODO: check if this can be replaced with ForEach
-            // but most likely not (because of Close)
-            foreach (var window in WindowContext.All.ToArray())
+            await WindowContext.ForEachAsync(async window =>
             {
-                await window.Dispatcher.DispatchAsync(async () =>
+                if (window.Content is RootPage root && replace != null)
                 {
-                    if (window.Content is RootPage root && replace != null)
-                    {
-                        root.Switch(replace);
-                    }
+                    root.Switch(replace);
+                }
 
-                    if (window.IsInMainView)
-                    {
-                        window.NavigationServices.RemoveByFrameId($"{item.Id}");
-                        window.NavigationServices.RemoveByFrameId($"Main{item.Id}");
-                    }
-                    else
-                    {
-                        await WindowContext.Current.ConsolidateAsync();
-                    }
-                });
-            }
+                if (window.IsInMainView)
+                {
+                    window.NavigationServices.RemoveByFrameId($"{item.Id}");
+                    window.NavigationServices.RemoveByFrameId($"Main{item.Id}");
+                }
+                else
+                {
+                    await WindowContext.Current.ConsolidateAsync();
+                }
+            });
 
             await Task.Factory.StartNew(() =>
             {

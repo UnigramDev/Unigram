@@ -61,7 +61,10 @@ namespace Telegram.Navigation
                 IsInMainView = true;
             }
 
-            All.Add(this);
+            lock (_allLock)
+            {
+                All.Add(this);
+            }
 
             _lifetime = TLContainer.Current.Lifetime;
             _inputListener = new InputListener(window);
@@ -124,12 +127,16 @@ namespace Telegram.Navigation
             // TODO: since we can't call Close directly,
             // Closed event will be never fired.
             OnClosed(null, null);
+            ClearTitleBar(sender);
         }
 
         private void OnClosed(object sender, CoreWindowEventArgs e)
         {
-            //Current = null;
-            All.Remove(this);
+            lock (_allLock)
+            {
+                All.Remove(this);
+            }
+
             NavigationServices.ForEach(x => x.Suspend());
             NavigationServices.Clear();
 
@@ -626,25 +633,40 @@ namespace Telegram.Navigation
             titleBar.ButtonHoverBackgroundColor = buttonHover;
         }
 
+        private void ClearTitleBar(ApplicationView view)
+        {
+            var titleBar = view.TitleBar;
+            titleBar.ForegroundColor = null;
+            titleBar.ButtonForegroundColor = null;
+            titleBar.ButtonHoverForegroundColor = null;
+            titleBar.ButtonBackgroundColor = null;
+            titleBar.ButtonInactiveBackgroundColor = null;
+            titleBar.ButtonPressedBackgroundColor = null;
+            titleBar.ButtonHoverBackgroundColor = null;
+        }
+
         #endregion
 
         #region Static code
 
         public static bool IsKeyDown(Windows.System.VirtualKey key)
         {
-            return Window.Current.CoreWindow.GetKeyState(key).HasFlag(CoreVirtualKeyStates.Down);
+            return (Window.Current.CoreWindow.GetKeyState(key) & CoreVirtualKeyStates.Down) != 0;
         }
 
         public static bool IsKeyDownAsync(Windows.System.VirtualKey key)
         {
-            return Window.Current.CoreWindow.GetAsyncKeyState(key).HasFlag(CoreVirtualKeyStates.Down);
+            return (Window.Current.CoreWindow.GetAsyncKeyState(key) & CoreVirtualKeyStates.Down) != 0;
         }
 
         public static void ForEach(Action<WindowContext> action)
         {
-            foreach (var window in All.ToArray())
+            lock (_allLock)
             {
-                window.Dispatcher.Dispatch(() => action(window));
+                foreach (var window in All)
+                {
+                    window.Dispatcher.Dispatch(() => action(window));
+                }
             }
         }
 
@@ -652,14 +674,18 @@ namespace Telegram.Navigation
         {
             var tasks = new List<Task>();
 
-            foreach (var window in All.ToArray())
+            lock (_allLock)
             {
-                tasks.Add(window.Dispatcher.DispatchAsync(() => action(window)));
+                foreach (var window in All)
+                {
+                    tasks.Add(window.Dispatcher.DispatchAsync(() => action(window)));
+                }
             }
 
             return Task.WhenAll(tasks);
         }
 
+        private static readonly object _allLock = new();
         public static readonly List<WindowContext> All = new();
 
         private static readonly object _activeLock = new();
