@@ -309,7 +309,7 @@ namespace Telegram.Common
                 {
                     if (Frame.Content is ChatPage chatPage && thread == null && !scheduled && !force)
                     {
-                        chatPage.ViewModel.NavigatingFrom(null);
+                        chatPage.ViewModel.NavigatedFrom(null, false);
 
                         chatPage.Deactivate(true);
                         chatPage.Activate(SessionId);
