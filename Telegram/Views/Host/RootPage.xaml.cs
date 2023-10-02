@@ -236,24 +236,18 @@ namespace Telegram.Views.Host
             var detail = WindowContext.Current.NavigationServices.GetByFrameId($"Main{master.FrameFacade.FrameId}");
             if (detail != null)
             {
-                detail.Navigate(typeof(BlankPage));
-                detail.ClearCache();
-            }
-
-            var corpus = WindowContext.Current.NavigationServices.GetByFrameId($"Profile{master.FrameFacade.FrameId}");
-            if (corpus != null)
-            {
-                corpus.Navigate(typeof(BlankPage));
-                corpus.ClearCache();
+                //detail.Navigate(typeof(BlankPage));
+                //detail.ClearCache();
+                detail.Suspend();
             }
 
             master.Frame.Navigating -= OnNavigating;
             master.Frame.Navigated -= OnNavigated;
-            master.Frame.Navigate(typeof(BlankPage));
+            //master.Frame.Navigate(typeof(BlankPage));
+            master.Suspend();
 
             WindowContext.Current.NavigationServices.Remove(master);
             WindowContext.Current.NavigationServices.Remove(detail);
-            WindowContext.Current.NavigationServices.Remove(corpus);
         }
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
@@ -282,10 +276,10 @@ namespace Telegram.Views.Host
 
         private void InitializeNavigation(Frame frame)
         {
-            if (frame?.Content is MainPage main)
+            if (frame?.Content is MainPage page && page.ViewModel != null)
             {
-                InitializeUser(main.ViewModel.ClientService);
-                InitializeSessions(main.ViewModel.ClientService, SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
+                InitializeUser(page.ViewModel.ClientService);
+                InitializeSessions(page.ViewModel.ClientService, SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
             }
         }
 
@@ -316,9 +310,9 @@ namespace Telegram.Views.Host
 
         private void InitializeSessions(bool show, IList<ISessionService> items)
         {
-            if (_navigationService.Content is MainPage main)
+            if (_navigationService.Content is MainPage page)
             {
-                InitializeSessions(main.ViewModel.ClientService, SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
+                InitializeSessions(page.ViewModel.ClientService, SettingsService.Current.IsAccountsSelectorExpanded, _lifetime.Items);
             }
         }
 
@@ -657,6 +651,25 @@ namespace Telegram.Views.Host
             {
                 if (session.IsActive)
                 {
+                    if (SettingsService.Current.Diagnostics.ShowMemoryUsage)
+                    {
+                        Destroy(_navigationService);
+
+                        var butt = new Button();
+                        butt.HorizontalAlignment = HorizontalAlignment.Center;
+                        butt.Content = "GC";
+                        butt.Click += (s, args) =>
+                        {
+                            GC.Collect();
+                            GC.WaitForPendingFinalizers();
+                            GC.Collect();
+
+                        };
+
+                        Navigation.Content = butt;
+                        _navigationService = null;
+                    }
+
                     return;
                 }
 

@@ -13,7 +13,6 @@ using Telegram.Services.ViewService;
 using Telegram.Views;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
@@ -186,9 +185,9 @@ namespace Telegram.Navigation.Services
 
         public NavigationService(Frame frame, int session, string id)
         {
-            IsInMainView = CoreApplication.MainView == CoreApplication.GetCurrentView();
+            IsInMainView = WindowContext.Current.IsInMainView;
+            Dispatcher = WindowContext.Current.Dispatcher;
             SessionId = session;
-            Dispatcher = new DispatcherContext(DispatcherQueue.GetForCurrentThread());
             FrameFacade = new FrameFacade(this, frame, id);
             FrameFacade.Navigating += (s, e) =>
             {
