@@ -92,7 +92,7 @@ namespace Telegram.Services
         Task ConsolidateAsync();
     }
 
-    public class VoipGroupService : ViewModelBase, IVoipGroupService
+    public class VoipGroupService : ServiceBase, IVoipGroupService
     {
         private readonly IViewService _viewService;
 
@@ -152,7 +152,7 @@ namespace Telegram.Services
             Subscribe();
         }
 
-        public override void Subscribe()
+        private void Subscribe()
         {
             Aggregator.Subscribe<UpdateGroupCall>(this, Handle)
                 .Subscribe<UpdateGroupCallParticipant>(Handle);

@@ -260,6 +260,7 @@
       <DependentUpon>UnconfirmedSessionCard.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\ClientService.StoryList.cs" />
+    <Compile Include="Services\ServiceBase.cs" />
     <Compile Include="Services\VoipGroupService.cs" />
     <Compile Include="Services\VoipService.cs" />
     <Compile Include="Streams\AnimatedImageSource.cs" />

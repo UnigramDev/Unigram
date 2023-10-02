@@ -89,7 +89,6 @@ namespace Telegram.ViewModels
             Children.Add(Settings);
 
             // Any additional child
-            Children.Add(_voipService as ViewModelBase);
             Children.Add(SearchChats);
             Children.Add(Topics);
             Children.Add(Stories);

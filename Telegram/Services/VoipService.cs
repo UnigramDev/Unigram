@@ -66,7 +66,7 @@ namespace Telegram.Services
 #endif
     }
 
-    public class VoipService : ViewModelBase
+    public class VoipService : ServiceBase
         , IVoipService
     //, IHandle<UpdateCall>
     //, IHandle<UpdateNewCallSignalingData>
@@ -109,7 +109,7 @@ namespace Telegram.Services
             Subscribe();
         }
 
-        public override void Subscribe()
+        private void Subscribe()
         {
             Aggregator.Subscribe<UpdateCall>(this, Handle)
                 .Subscribe<UpdateNewCallSignalingData>(Handle);
