@@ -257,10 +257,11 @@ namespace Telegram.Controls.Chats
                 sprite.CenterPoint = new Vector3(15);
 
                 var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/Reply.png"));
-                surface.LoadCompleted += (s, e) =>
+                void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
                 {
+                    s.LoadCompleted -= handler;
                     sprite.Brush = _visual.Compositor.CreateSurfaceBrush(s);
-                };
+                }
 
                 var ellipse = _visual.Compositor.CreateEllipseGeometry();
                 ellipse.Radius = new Vector2(15);

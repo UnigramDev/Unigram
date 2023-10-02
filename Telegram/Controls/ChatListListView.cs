@@ -271,10 +271,13 @@ namespace Telegram.Controls
                 sprite.CenterPoint = new Vector3(15);
 
                 var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/Reply.png"));
-                surface.LoadCompleted += (s, e) =>
+                void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
                 {
+                    s.LoadCompleted -= handler;
                     sprite.Brush = _visual.Compositor.CreateSurfaceBrush(s);
-                };
+                }
+
+                surface.LoadCompleted += handler;
 
                 var ellipse = _visual.Compositor.CreateEllipseGeometry();
                 ellipse.Radius = new Vector2(15);
@@ -411,7 +414,7 @@ namespace Telegram.Controls
 
             _multi = true;
             _list = list;
-            RegisterPropertyChangedCallback(IsSelectedProperty, OnSelectedChanged);
+            //RegisterPropertyChangedCallback(IsSelectedProperty, OnSelectedChanged);
         }
 
         private void OnSelectedChanged(DependencyObject sender, DependencyProperty dp)
