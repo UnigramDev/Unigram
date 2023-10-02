@@ -150,9 +150,7 @@ namespace Telegram.Views
                 MasterDetail.NavigationService.FrameFacade.Navigating -= OnNavigating;
                 MasterDetail.NavigationService.FrameFacade.Navigated -= OnNavigated;
                 MasterDetail.Dispose();
-
                 SettingsView?.Dispose();
-                ChatsList.Main = null;
 
                 _viewModel = null;
 
@@ -2196,6 +2194,9 @@ namespace Telegram.Views
                 SetPivotIndex(0);
             }
 
+            ChatsList.CanGoNext = ViewModel.Folders.Count > 0 && ViewModel.Folders[^1] != folder;
+            ChatsList.CanGoPrev = ViewModel.Folders.Count > 0 && ViewModel.Folders[0] != folder;
+
             return folder;
         }
 
@@ -3382,6 +3383,11 @@ namespace Telegram.Views
                     }
                 }
             }
+        }
+
+        private void ChatsList_Swiped(object sender, ChatListSwipedEventArgs e)
+        {
+            ScrollFolder(e.Direction == CarouselDirection.Next ? 1 : -1, true);
         }
 
         #endregion

@@ -826,9 +826,6 @@
     <Compile Include="Views\ChatEventLogPage.xaml.cs">
       <DependentUpon>ChatEventLogPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ChatListPage.xaml.cs">
-      <DependentUpon>ChatListPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\ChatPinnedPage.xaml.cs">
       <DependentUpon>ChatPinnedPage.xaml</DependentUpon>
     </Compile>
@@ -2250,10 +2247,6 @@
     <Page Include="Views\ChatEventLogPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ChatListPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ChatPinnedPage.xaml">
       <SubType>Designer</SubType>

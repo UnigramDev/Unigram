@@ -658,24 +658,24 @@
                                         </Border>
                                     </StackPanel>
 
-                                    <local:ChatListPage x:Name="ChatsList"
-                                                        ItemClick="ListView_ItemClick"
-                                                        IsItemClickEnabled="True"
-                                                        AutomationProperties.LandmarkType="Main"
-                                                        Main="{x:Bind ViewModel}"
-                                                        DataContext="{x:Bind ViewModel.Chats}"
-                                                        ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
-                                                        SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
-                                                        SelectionChanged="ListView_SelectionChanged"
-                                                        ChoosingItemContainer="ChatsList_ChoosingItemContainer"
-                                                        SizeChanged="ChatList_SizeChanged"
-                                                        DragItemsStarting="Chats_DragItemsStarting"
-                                                        DragItemsCompleted="Chats_DragItemsCompleted"
-                                                        AllowDrop="True"
-                                                        CanDragItems="True"
-                                                        CanReorderItems="False"
-                                                        Orientation="Vertical"
-                                                        Grid.RowSpan="2">
+                                    <controls:ChatListListView x:Name="ChatsList"
+                                                               ItemClick="ListView_ItemClick"
+                                                               IsItemClickEnabled="True"
+                                                               AutomationProperties.LandmarkType="Main"
+                                                               DataContext="{x:Bind ViewModel.Chats}"
+                                                               ItemsSource="{x:Bind ViewModel.Chats.Items, Mode=OneWay}"
+                                                               SelectionMode="{x:Bind ViewModel.Chats.SelectionMode, Mode=TwoWay}"
+                                                               SelectionChanged="ListView_SelectionChanged"
+                                                               ChoosingItemContainer="ChatsList_ChoosingItemContainer"
+                                                               SizeChanged="ChatList_SizeChanged"
+                                                               DragItemsStarting="Chats_DragItemsStarting"
+                                                               DragItemsCompleted="Chats_DragItemsCompleted"
+                                                               Swiped="ChatsList_Swiped"
+                                                               AllowDrop="True"
+                                                               CanDragItems="True"
+                                                               CanReorderItems="False"
+                                                               Orientation="Vertical"
+                                                               Grid.RowSpan="2">
                                         <ListView.Header>
                                             <StackPanel>
                                                 <controls:UnconfirmedSessionCard x:Name="UnconfirmedCard"
@@ -729,7 +729,7 @@
                                                     <EntranceThemeTransition IsStaggeringEnabled="False" />-->
                                             </TransitionCollection>
                                         </ListView.ItemContainerTransitions>
-                                    </local:ChatListPage>
+                                    </controls:ChatListListView>
 
                                     <Grid x:Name="TopicListPresenter"
                                           x:Load="False"
