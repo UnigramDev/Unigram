@@ -27,8 +27,15 @@ namespace Telegram.Controls
         {
             DefaultStyleKey = typeof(ListView);
 
+            Unloaded += OnUnloaded;
             ContainerContentChanging += OnContainerContentChanging;
+
             RegisterPropertyChangedCallback(SelectionModeProperty, OnSelectionModeChanged);
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            _itemToSelector.Clear();
         }
 
         public bool TryGetChatAndCell(long chatId, out Chat chat, out ChatCell cell)

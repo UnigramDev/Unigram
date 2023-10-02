@@ -592,8 +592,7 @@
                        Margin="0,-72,0,0"
                        IsLocked="True"
                        Grid.Row="1">
-                    <PivotItem x:Name="TabChats"
-                               Header="Chats">
+                    <PivotItem Header="{CustomResource FilterChats}">
                         <Grid Margin="0,0,0,0">
                             <views:SearchChatsView x:Name="DialogsSearchPanel"
                                                    x:Load="False"
@@ -670,6 +669,12 @@
                                                         SelectionChanged="ListView_SelectionChanged"
                                                         ChoosingItemContainer="ChatsList_ChoosingItemContainer"
                                                         SizeChanged="ChatList_SizeChanged"
+                                                        DragItemsStarting="Chats_DragItemsStarting"
+                                                        DragItemsCompleted="Chats_DragItemsCompleted"
+                                                        AllowDrop="True"
+                                                        CanDragItems="True"
+                                                        CanReorderItems="False"
+                                                        Orientation="Vertical"
                                                         Grid.RowSpan="2">
                                         <ListView.Header>
                                             <StackPanel>
@@ -714,6 +719,16 @@
                                                                 SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
+                                        <ListView.ItemContainerTransitions>
+                                            <TransitionCollection>
+                                                <!-- Reordering items for some reason requires AddDeleteThemeTransition. -->
+                                                <!-- https://github.com/microsoft/microsoft-ui-xaml/issues/3543 -->
+                                                <!--<AddDeleteThemeTransition />
+                                                    <ContentThemeTransition />
+                                                    <ReorderThemeTransition />
+                                                    <EntranceThemeTransition IsStaggeringEnabled="False" />-->
+                                            </TransitionCollection>
+                                        </ListView.ItemContainerTransitions>
                                     </local:ChatListPage>
 
                                     <Grid x:Name="TopicListPresenter"

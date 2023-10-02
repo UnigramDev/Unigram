@@ -82,23 +82,19 @@ namespace Telegram.Views
             ViewModel.Chats.Delegate = this;
             ViewModel.PlaybackService.SourceChanged += OnPlaybackSourceChanged;
 
-            NavigationCacheMode = NavigationCacheMode.Disabled;
-
             InitializeTitleBar();
-            InitializeLocalization();
             InitializeSearch();
             InitializeLock();
 
             DropShadowEx.Attach(UpdateShadow);
-            Window.Current.SetTitleBar(TitleBarHandle);
 
             ChatsList.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
             //var show = !((TLViewModelBase)ViewModel).Settings.CollapseArchivedChats;
-            var show = !((ViewModelBase)ViewModel).Settings.HideArchivedChats;
-
-            ArchivedChatsPanel.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
             //ArchivedChatsCompactPanel.Visibility = show ? Visibility.Collapsed : Visibility.Visible;
+            ArchivedChatsPanel.Visibility = ViewModel.Settings.Settings.HideArchivedChats
+                ? Visibility.Collapsed
+                : Visibility.Visible;
 
             ElementCompositionPreview.SetIsTranslationEnabled(ManagePanel, true);
 
@@ -137,6 +133,7 @@ namespace Telegram.Views
             try
             {
                 Bindings.StopTracking();
+                DataContext = null;
 
                 var viewModel = ViewModel;
                 if (viewModel != null)
@@ -152,9 +149,18 @@ namespace Telegram.Views
 
                 MasterDetail.NavigationService.FrameFacade.Navigating -= OnNavigating;
                 MasterDetail.NavigationService.FrameFacade.Navigated -= OnNavigated;
-
                 MasterDetail.Dispose();
+
                 SettingsView?.Dispose();
+                ChatsList.Main = null;
+
+                _viewModel = null;
+
+                if (_memoryUsageTimer != null)
+                {
+                    _memoryUsageTimer.Tick -= MemoryUsageTimer_Tick;
+                    _memoryUsageTimer.Stop();
+                }
             }
             catch { }
         }
@@ -188,11 +194,6 @@ namespace Telegram.Views
             {
                 // Most likely InvalidComObjectException
             }
-        }
-
-        private void InitializeLocalization()
-        {
-            TabChats.Header = Strings.FilterChats;
         }
 
         private void InitializeLock()
@@ -2450,49 +2451,6 @@ namespace Telegram.Views
             }
 
             Search_LostFocus(null, null);
-            return;
-
-            var visual = ElementCompositionPreview.GetElementVisual(TabChats);
-            ElementCompositionPreview.SetIsTranslationEnabled(TabChats, true);
-
-            var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                ViewModel.SelectedFolder = folder;
-
-                if (update)
-                {
-                    ConvertFolder(folder);
-                }
-
-                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                offset.InsertKeyFrame(0, new Vector3(0, 16, 0));
-                offset.InsertKeyFrame(1, new Vector3(0, 0, 0));
-                offset.Duration = Constants.FastAnimation;
-
-                var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                opacity.InsertKeyFrame(0, 0);
-                opacity.InsertKeyFrame(1, 1);
-                opacity.Duration = Constants.FastAnimation;
-
-                visual.StartAnimation("Translation", offset);
-                visual.StartAnimation("Opacity", opacity);
-            };
-
-            var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(0, new Vector3());
-            offset.InsertKeyFrame(1, new Vector3(0, -16, 0));
-            offset.Duration = Constants.FastAnimation;
-
-            var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            opacity.InsertKeyFrame(0, 1);
-            opacity.InsertKeyFrame(1, 0);
-            opacity.Duration = Constants.FastAnimation;
-
-            visual.StartAnimation("Translation", offset);
-            visual.StartAnimation("Opacity", opacity);
-
-            batch.End();
         }
 
         #region Selection
@@ -2840,7 +2798,6 @@ namespace Telegram.Views
             if (args.ItemContainer == null)
             {
                 args.ItemContainer = new ChatListListViewItem(ChatsList);
-                //args.ItemContainer.Style = ChatsList.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = ChatsList.ItemTemplate;
                 args.ItemContainer.ContextRequested += Chat_ContextRequested;
             }
@@ -3342,6 +3299,92 @@ namespace Telegram.Views
                 });
             }
         }
+
+        #region Chat List
+
+        private void Chats_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
+        {
+            try
+            {
+                if (e.Items[0] is Chat chat)
+                {
+                    var position = chat.GetPosition(ViewModel.Chats.Items.ChatList);
+                    if (position == null || !position.IsPinned || e.Items.Count > 1 || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
+                    {
+                        ChatsList.CanReorderItems = false;
+                        e.Cancel = true;
+                    }
+                    else
+                    {
+                        ChatsList.CanReorderItems = true;
+                    }
+                }
+            }
+            catch
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void Chats_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
+        {
+            ChatsList.CanReorderItems = false;
+
+            var chatList = ViewModel.Chats.Items.ChatList;
+            if (chatList == null)
+            {
+                return;
+            }
+
+            if (args.DropResult == DataPackageOperation.Move && args.Items.Count == 1 && args.Items[0] is Chat chat)
+            {
+                var items = ViewModel.Chats.Items;
+                if (items.Count == 1)
+                {
+                    return;
+                }
+
+                var index = items.IndexOf(chat);
+                var compare = items[index > 0 ? index - 1 : index + 1];
+
+                var position = compare.GetPosition(items.ChatList);
+                if (position == null)
+                {
+                    return;
+                }
+
+                if (position.Source != null && index > 0)
+                {
+                    position = items[index + 1].GetPosition(items.ChatList);
+                }
+
+                if (position.IsPinned)
+                {
+                    var pinned = items.Where(x =>
+                    {
+                        var position = x.GetPosition(items.ChatList);
+                        if (position == null)
+                        {
+                            return false;
+                        }
+
+                        return position.IsPinned;
+                    }).Select(x => x.Id).ToArray();
+
+                    ViewModel.ClientService.Send(new SetPinnedChats(chatList, pinned));
+                }
+                else
+                {
+                    var real = chat.GetPosition(items.ChatList);
+                    if (real != null)
+                    {
+                        items.Handle(chat.Id, real.Order);
+                    }
+                }
+            }
+        }
+
+        #endregion
     }
 
     public enum HostedNavigationMode

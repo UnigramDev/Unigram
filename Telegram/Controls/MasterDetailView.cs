@@ -113,6 +113,11 @@ namespace Telegram.Controls
                 DetailHeaderPresenter.ItemsSource = null;
                 DetailHeaderPresenter.ItemClicked -= DetailHeaderPresenter_ItemClicked;
             }
+
+            NavigationService = null;
+            ViewModel = null;
+            DetailFrame = null;
+            ParentFrame = null;
         }
 
         private void OnBackRequested(object sender, BackRequestedRoutedEventArgs args)

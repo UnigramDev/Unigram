@@ -9,13 +9,10 @@ using System;
 using System.Linq;
 using System.Numerics;
 using Telegram.Controls;
-using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -34,94 +31,10 @@ namespace Telegram.Views
             InitializeComponent();
 
             Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
         }
-
-        #region Reorder
-
-        private void Chats_DragItemsStarting(object sender, DragItemsStartingEventArgs e)
-        {
-            try
-            {
-                if (e.Items[0] is Chat chat)
-                {
-                    var position = chat.GetPosition(ViewModel.Items.ChatList);
-                    if (position == null || !position.IsPinned || e.Items.Count > 1 || ChatsList.SelectionMode == ListViewSelectionMode.Multiple)
-                    {
-                        ChatsList.CanReorderItems = false;
-                        e.Cancel = true;
-                    }
-                    else
-                    {
-                        ChatsList.CanReorderItems = true;
-                    }
-                }
-            }
-            catch
-            {
-                e.Cancel = true;
-            }
-        }
-
-        private void Chats_DragItemsCompleted(ListViewBase sender, DragItemsCompletedEventArgs args)
-        {
-            ChatsList.CanReorderItems = false;
-
-            var chatList = ViewModel?.Items.ChatList;
-            if (chatList == null)
-            {
-                return;
-            }
-
-            if (args.DropResult == DataPackageOperation.Move && args.Items.Count == 1 && args.Items[0] is Chat chat)
-            {
-                var items = ViewModel.Items;
-                if (items.Count == 1)
-                {
-                    return;
-                }
-
-                var index = items.IndexOf(chat);
-                var compare = items[index > 0 ? index - 1 : index + 1];
-
-                var position = compare.GetPosition(items.ChatList);
-                if (position == null)
-                {
-                    return;
-                }
-
-                if (position.Source != null && index > 0)
-                {
-                    position = items[index + 1].GetPosition(items.ChatList);
-                }
-
-                if (position.IsPinned)
-                {
-                    var pinned = items.Where(x =>
-                    {
-                        var position = x.GetPosition(items.ChatList);
-                        if (position == null)
-                        {
-                            return false;
-                        }
-
-                        return position.IsPinned;
-                    }).Select(x => x.Id).ToArray();
-
-                    ViewModel.ClientService.Send(new SetPinnedChats(chatList, pinned));
-                }
-                else
-                {
-                    var real = chat.GetPosition(items.ChatList);
-                    if (real != null)
-                    {
-                        items.Handle(chat.Id, real.Order);
-                    }
-                }
-            }
-        }
-
-        #endregion
 
         private SpriteVisual _hitTest;
         private ContainerVisual _container;
@@ -158,6 +71,20 @@ namespace Telegram.Views
             }
 
             _hasInitialLoadedEventFired = true;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (_hasInitialLoadedEventFired)
+            {
+                _tracker.Dispose();
+                _tracker = null;
+
+                _interactionSource.Dispose();
+                _interactionSource = null;
+            }
+
+            _hasInitialLoadedEventFired = false;
         }
 
         private void ConfigureInteractionTracker()

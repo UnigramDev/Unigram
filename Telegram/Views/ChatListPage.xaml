@@ -9,13 +9,9 @@
                            d:DesignWidth="400"
                            x:Name="ChatsList"
                            AutomationProperties.LandmarkType="Main"
-                           IsItemClickEnabled="False"
-                           SelectionMode="None"
                            AllowDrop="True"
                            CanDragItems="True"
                            CanReorderItems="False"
-                           DragItemsStarting="Chats_DragItemsStarting"
-                           DragItemsCompleted="Chats_DragItemsCompleted"
                            Orientation="Vertical">
     <!--
     ItemClick="ChatsList_ItemClick"-->
