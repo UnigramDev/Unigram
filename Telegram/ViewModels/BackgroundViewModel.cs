@@ -484,11 +484,11 @@ namespace Telegram.ViewModels
                 {
                     if (_messageId is long messageId && background.Type.GetType() == _background?.Type.GetType())
                     {
-                        ClientService.Send(new SetChatBackground(chatId, new InputBackgroundPrevious(messageId), background.Type, 0));
+                        ClientService.Send(new SetChatBackground(chatId, new InputBackgroundPrevious(messageId), background.Type, 30));
                     }
                     else
                     {
-                        ClientService.Send(new SetChatBackground(chatId, background.Background, background.Type, 0));
+                        ClientService.Send(new SetChatBackground(chatId, background.Background, background.Type, 30));
                     }
                 }
                 else
