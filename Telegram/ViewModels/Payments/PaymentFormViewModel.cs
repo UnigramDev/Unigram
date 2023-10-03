@@ -23,8 +23,6 @@ namespace Telegram.ViewModels.Payments
 {
     public class PaymentFormViewModel : ViewModelBase
     {
-        private readonly bool _save;
-
         public PaymentFormViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
@@ -63,7 +61,7 @@ namespace Telegram.ViewModels.Payments
         {
             IsReceipt = false;
 
-            var paymentForm = await ClientService.SendAsync(new GetPaymentForm(invoice, new ThemeParameters())) as PaymentForm;
+            var paymentForm = await ClientService.SendAsync(new GetPaymentForm(invoice, Theme.Current.Parameters)) as PaymentForm;
             if (paymentForm == null)
             {
                 return;
