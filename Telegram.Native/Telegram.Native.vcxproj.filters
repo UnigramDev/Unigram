@@ -70,9 +70,6 @@
     <Filter Include="Highlight">
       <UniqueIdentifier>{3795340d-96c8-44cd-9b1f-85bbe0b2927a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Highlight\third-party">
-      <UniqueIdentifier>{f12fe99a-19fa-46f9-a769-12ab5e616ea8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="libwebp">
       <UniqueIdentifier>{ece67f00-1732-4ef2-acfd-51f2a52475fc}</UniqueIdentifier>
     </Filter>
@@ -738,9 +735,6 @@
     <ClCompile Include="..\Libraries\libprisma\libprisma\TokenList.cpp">
       <Filter>Highlight</Filter>
     </ClCompile>
-    <ClCompile Include="..\Libraries\libprisma\third-party\json11.cpp">
-      <Filter>Highlight\third-party</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -1165,9 +1159,6 @@
     </ClInclude>
     <ClInclude Include="..\Libraries\libprisma\libprisma\TokenList.h">
       <Filter>Highlight</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Libraries\libprisma\third-party\json11.hpp">
-      <Filter>Highlight\third-party</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

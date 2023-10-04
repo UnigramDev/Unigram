@@ -60,38 +60,6 @@ namespace winrt::Telegram::Native::Highlight::implementation
         co_return tokens;
     }
 
-    inline std::string DecompressFromFile(winrt::hstring filePath)
-    {
-        FILE* file;
-        _wfopen_s(&file, filePath.c_str(), L"rb, ccs=utf-8");
-        if (file == NULL)
-        {
-            return "";
-        }
-
-        fseek(file, 0, SEEK_END);
-        size_t length = ftell(file);
-        fseek(file, 0, SEEK_SET);
-        char* buffer = (char*)malloc(length);
-        fread(buffer, 1, length, file);
-        fclose(file);
-
-        std::string data;
-
-        //bool compressed = gzip::is_compressed(buffer, length);
-        //if (compressed)
-        //{
-        //    data = gzip::decompress(buffer, length);
-        //}
-        //else
-        {
-            data = std::string(buffer, length);
-        }
-
-        free(buffer);
-        return data;
-    }
-
     bool SyntaxToken::m_initialize = true;
     winrt::slim_mutex SyntaxToken::m_initializeLock;
     std::shared_ptr<SyntaxHighlighter> SyntaxToken::m_highlighter;
@@ -103,9 +71,7 @@ namespace winrt::Telegram::Native::Highlight::implementation
         if (m_initialize)
         {
             m_initialize = false;
-
-            const auto& text = DecompressFromFile(L"Assets\\highlight.json");
-            m_highlighter = std::make_shared<SyntaxHighlighter>(text);
+            m_highlighter = std::make_shared<SyntaxHighlighter>("Assets\\grammars.dat");
         }
     }
 

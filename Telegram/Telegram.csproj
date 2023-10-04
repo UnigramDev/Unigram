@@ -1612,6 +1612,9 @@
     <Content Include="Assets\Toasts\Info.tgs" />
     <Content Include="Assets\Toasts\LinkCopied.tgs" />
     <Content Include="Assets\Animations\Banned.tgs" />
+    <Content Include="..\Libraries\libprisma\libprisma\grammars.dat">
+      <Link>Assets\grammars.dat</Link>
+    </Content>
     <None Include="Assets\i420.hlsl" />
     <Content Include="Assets\Images\Reply.scale-100.png" />
     <Content Include="Assets\Images\Reply.scale-125.png" />
@@ -1774,7 +1777,6 @@
       <SubType>Designer</SubType>
     </PRIResource>
     <Content Include="Assets\Toasts\JoinRequested.tgs" />
-    <Content Include="Assets\highlight.json" />
     <Content Include="Assets\Toasts\AutoRemoveOff.tgs" />
     <Content Include="Assets\Toasts\AutoRemoveOn.tgs" />
     <Content Include="Assets\Toasts\Success.tgs" />
