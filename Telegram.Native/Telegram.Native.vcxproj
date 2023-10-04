@@ -255,7 +255,6 @@
     <ClInclude Include="..\Libraries\libprisma\libprisma\LanguageTree.h" />
     <ClInclude Include="..\Libraries\libprisma\libprisma\SyntaxHighlighter.h" />
     <ClInclude Include="..\Libraries\libprisma\libprisma\TokenList.h" />
-    <ClInclude Include="..\Libraries\libprisma\third-party\json11.hpp" />
     <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv.h" />
     <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv_cpu.h" />
     <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv_csp.h" />
@@ -463,9 +462,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Libraries\libprisma\libprisma\TokenList.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\Libraries\libprisma\third-party\json11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Libraries\libtextclassifier\lang_id\common\embedding-feature-extractor.cc">
