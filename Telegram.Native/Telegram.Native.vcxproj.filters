@@ -435,26 +435,11 @@
     <ClCompile Include="PixelBuffer.cpp" />
     <ClCompile Include="TelegramWebviewProxy.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="Highlight\Highlight.cpp">
-      <Filter>Highlight</Filter>
-    </ClCompile>
-    <ClCompile Include="Highlight\LanguageTree.cpp">
-      <Filter>Highlight</Filter>
-    </ClCompile>
-    <ClCompile Include="Highlight\SyntaxHighlighter.cpp">
-      <Filter>Highlight</Filter>
-    </ClCompile>
     <ClCompile Include="Highlight\SyntaxToken.cpp">
       <Filter>Highlight</Filter>
     </ClCompile>
     <ClCompile Include="Highlight\TextToken.cpp">
       <Filter>Highlight</Filter>
-    </ClCompile>
-    <ClCompile Include="Highlight\TokenList.cpp">
-      <Filter>Highlight</Filter>
-    </ClCompile>
-    <ClCompile Include="Highlight\third-party\json11.cpp">
-      <Filter>Highlight\third-party</Filter>
     </ClCompile>
     <ClCompile Include="..\Libraries\libwebp\src\dec\alpha_dec.c">
       <Filter>libwebp\dec</Filter>
@@ -741,6 +726,21 @@
     <ClCompile Include="..\Libraries\libwebp\src\demux\demux.c">
       <Filter>libwebp\demux</Filter>
     </ClCompile>
+    <ClCompile Include="..\Libraries\libprisma\libprisma\Highlight.cpp">
+      <Filter>Highlight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libprisma\libprisma\LanguageTree.cpp">
+      <Filter>Highlight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libprisma\libprisma\SyntaxHighlighter.cpp">
+      <Filter>Highlight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libprisma\libprisma\TokenList.cpp">
+      <Filter>Highlight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Libraries\libprisma\third-party\json11.cpp">
+      <Filter>Highlight\third-party</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -1019,26 +1019,11 @@
     <ClInclude Include="PixelBuffer.h" />
     <ClInclude Include="TelegramWebviewProxy.h" />
     <ClInclude Include="DebugUtils.h" />
-    <ClInclude Include="Highlight\Highlight.h">
-      <Filter>Highlight</Filter>
-    </ClInclude>
-    <ClInclude Include="Highlight\LanguageTree.h">
-      <Filter>Highlight</Filter>
-    </ClInclude>
-    <ClInclude Include="Highlight\SyntaxHighlighter.h">
-      <Filter>Highlight</Filter>
-    </ClInclude>
     <ClInclude Include="Highlight\SyntaxToken.h">
       <Filter>Highlight</Filter>
     </ClInclude>
     <ClInclude Include="Highlight\TextToken.h">
       <Filter>Highlight</Filter>
-    </ClInclude>
-    <ClInclude Include="Highlight\TokenList.h">
-      <Filter>Highlight</Filter>
-    </ClInclude>
-    <ClInclude Include="Highlight\third-party\json11.hpp">
-      <Filter>Highlight\third-party</Filter>
     </ClInclude>
     <ClInclude Include="..\Libraries\libwebp\src\dec\alphai_dec.h">
       <Filter>libwebp\dec</Filter>
@@ -1168,6 +1153,21 @@
     </ClInclude>
     <ClInclude Include="..\Libraries\libwebp\sharpyuv\sharpyuv_gamma.h">
       <Filter>libwebp\sharpyuv</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\libprisma\libprisma\Highlight.h">
+      <Filter>Highlight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\libprisma\libprisma\LanguageTree.h">
+      <Filter>Highlight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\libprisma\libprisma\SyntaxHighlighter.h">
+      <Filter>Highlight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\libprisma\libprisma\TokenList.h">
+      <Filter>Highlight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\libprisma\third-party\json11.hpp">
+      <Filter>Highlight\third-party</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

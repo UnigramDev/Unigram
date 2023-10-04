@@ -1,0 +1,20 @@
+namespace Telegram.Native.Highlight
+{
+    unsealed runtimeclass Token
+    {
+
+    };
+
+    [default_interface]
+    runtimeclass SyntaxToken : Token, Windows.Foundation.IStringable
+    {
+        String Type{ get; };
+        String Alias{ get; };
+        Windows.Foundation.Collections.IVector<Token> Children{ get; };
+
+        static Windows.Foundation.Collections.IVector<String> Languages{ get; };
+
+        static SyntaxToken Tokenize(String language, String coddiri);
+        static Windows.Foundation.IAsyncOperation<SyntaxToken> TokenizeAsync(String language, String coddiri);
+    }
+}
