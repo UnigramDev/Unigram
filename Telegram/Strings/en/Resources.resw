@@ -6270,6 +6270,15 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="SendByEnter" xml:space="preserve">
     <value>Send with Enter</value>
   </data>
+  <data name="SendByEnter2" xml:space="preserve">
+    <value>Send Messages With</value>
+  </data>
+  <data name="SendByEnterCtrl" xml:space="preserve">
+    <value>Ctrl+Enter</value>
+  </data>
+  <data name="SendByEnterKey" xml:space="preserve">
+    <value>Enter</value>
+  </data>
   <data name="SendingAudio" xml:space="preserve">
     <value>sending audio...</value>
   </data>

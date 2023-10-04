@@ -220,16 +220,6 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public bool IsSendByEnterEnabled
-        {
-            get => Settings.IsSendByEnterEnabled;
-            set
-            {
-                Settings.IsSendByEnterEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool IsReplaceEmojiEnabled
         {
             get => Settings.IsReplaceEmojiEnabled;
@@ -249,6 +239,31 @@ namespace Telegram.ViewModels.Settings
                 RaisePropertyChanged();
             }
         }
+
+        public int SendBy
+        {
+            get => Array.IndexOf(_sendByIndexer, Settings.IsSendByEnterEnabled);
+            set
+            {
+                if (value >= 0 && value < _sendByIndexer.Length && Settings.IsSendByEnterEnabled != _sendByIndexer[value])
+                {
+                    Settings.IsSendByEnterEnabled = _sendByIndexer[value];
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private readonly bool[] _sendByIndexer = new[]
+        {
+            true,
+            false
+        };
+
+        public List<SettingsOptionItem<bool>> SendByOptions { get; } = new()
+        {
+            new SettingsOptionItem<bool>(true, Strings.SendByEnterKey),
+            new SettingsOptionItem<bool>(false, Strings.SendByEnterCtrl),
+        };
 
         public int DistanceUnit
         {

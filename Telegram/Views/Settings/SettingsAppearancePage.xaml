@@ -187,10 +187,6 @@
                               Content="{CustomResource UseSystemSpellChecker}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsSendByEnterEnabled, Mode=TwoWay}"
-                              Content="{CustomResource SendByEnter}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
                     <CheckBox IsChecked="{x:Bind ViewModel.IsReplaceEmojiEnabled, Mode=TwoWay}"
                               Content="{CustomResource ReplaceEmoji}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
@@ -199,9 +195,18 @@
                               Content="{CustomResource AdaptiveLayout}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <controls:BadgeButton Content="{CustomResource SendByEnter2}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE919;">
+                        <controls:BadgeButton.Badge>
+                            <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.SendByOptions}"
+                                                       SelectedIndex="{x:Bind ViewModel.SendBy, Mode=TwoWay}"
+                                                       DisplayMemberPath="Text" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
                     <controls:BadgeButton Content="{CustomResource DistanceUnits}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xEA01;">
+                                          Glyph="&#xE1C4;">
                         <controls:BadgeButton.Badge>
                             <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.DistanceUnitOptions}"
                                                        SelectedIndex="{x:Bind ViewModel.DistanceUnit, Mode=TwoWay}"
