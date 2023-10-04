@@ -2697,6 +2697,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   <data name="Downloading" xml:space="preserve">
     <value>Downloading</value>
   </data>
+  <data name="DownloadPath" xml:space="preserve">
+    <value>Download Path</value>
+  </data>
   <data name="DownloadSelected" xml:space="preserve">
     <value>Download Selected</value>
   </data>
@@ -6967,6 +6970,12 @@ Here’s what is now unlocked.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Telegram tones</value>
+  </data>
+  <data name="TemporaryFolder" xml:space="preserve">
+    <value>Temporary Folder</value>
+  </data>
+  <data name="TemporaryFolderHint" xml:space="preserve">
+    <value>Files downloaded to temporary folder are deleted whenever you log out or uninstall the app.</value>
   </data>
   <data name="Terminate" xml:space="preserve">
     <value>Terminate</value>

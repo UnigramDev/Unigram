@@ -604,6 +604,13 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _isStreamingEnabled, "IsStreamingEnabled", value);
         }
 
+        private bool? _isDownloadFolderEnabled;
+        public bool IsDownloadFolderEnabled
+        {
+            get => _isDownloadFolderEnabled ??= GetValueOrDefault("IsDownloadFolderEnabled", true);
+            set => AddOrUpdateValue(ref _isDownloadFolderEnabled, "IsDownloadFolderEnabled", value);
+        }
+
         private static double? _volumeLevel;
         public double VolumeLevel
         {

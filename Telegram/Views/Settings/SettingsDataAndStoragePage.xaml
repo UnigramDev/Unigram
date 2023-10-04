@@ -65,18 +65,22 @@
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="DownloadFolder"
-                                          x:Load="{x:Bind ViewModel.HasDownloadFolder}">
-                    <Grid>
+                                          x:Load="{x:Bind ViewModel.HasDownloadFolder}"
+                                          Header="{CustomResource DownloadPath}"
+                                          Footer="{CustomResource TemporaryFolderHint}">
+                    <RadioButton IsChecked="{x:Bind ViewModel.IsDownloadFolderEnabled, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                 Content="{CustomResource TemporaryFolder}"
+                                 Style="{StaticResource SettingsRadioButtonStyle}"
+                                 GroupName="DownloadFolder" />
+                    <Grid Margin="0,0,0,0"
+                          Canvas.ZIndex="-1">
+                        <RadioButton IsChecked="{x:Bind ViewModel.IsDownloadFolderEnabled, Mode=TwoWay}"
+                                     Content="{CustomResource DownloadFolder}"
+                                     Tag="{x:Bind ViewModel.DownloadFolder, Mode=OneWay}"
+                                     Style="{StaticResource SettingsSubRadioButtonStyle}"
+                                     GroupName="DownloadFolder" />
                         <controls:BadgeButton Click="{x:Bind ViewModel.ChooseDownloadFolder}"
-                                              Content="{CustomResource DownloadFolder}"
-                                              Badge="{x:Bind ViewModel.DownloadFolder, Mode=OneWay}"
-                                              Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}"
-                                              Glyph="&#xEA10;" />
-
-                        <controls:BadgeButton x:Name="ResetDownloadFolder"
-                                              x:Load="{x:Bind ConvertResetDownloadFolder(ViewModel.DownloadFolder), Mode=OneWay}"
-                                              Click="{x:Bind ViewModel.ResetDownloadFolder}"
-                                              Content="{CustomResource Reset}"
+                                              Content="{CustomResource Change}"
                                               Style="{StaticResource PillButtonStyle}"
                                               HorizontalAlignment="Right"
                                               VerticalAlignment="Center"

@@ -110,7 +110,7 @@ namespace Telegram.Services
             {
                 return null;
             }
-            else if (ApiInfo.HasCacheOnly)
+            else if (ApiInfo.HasCacheOnly || !SettingsService.Current.IsDownloadFolderEnabled)
             {
                 return await GetFileAsync(file, true);
             }
@@ -162,7 +162,7 @@ namespace Telegram.Services
         {
             Send(new AddFileToDownloads(file.Id, chatId, messageId, priority));
 
-            if (ApiInfo.HasCacheOnly || Future.Contains(file.Remote.UniqueId, true) || await Future.ContainsAsync(file.Remote.UniqueId))
+            if (ApiInfo.HasCacheOnly || !SettingsService.Current.IsDownloadFolderEnabled || Future.Contains(file.Remote.UniqueId, true) || await Future.ContainsAsync(file.Remote.UniqueId))
             {
                 return;
             }
@@ -181,6 +181,7 @@ namespace Telegram.Services
         private async void TrackDownloadedFile(File file)
         {
             if (ApiInfo.HasDownloadFolder
+                && SettingsService.Current.IsDownloadFolderEnabled
                 && file.Local.IsDownloadingCompleted
                 && file.Remote.IsUploadingCompleted
                 && Future.Contains(file.Remote.UniqueId, true))
