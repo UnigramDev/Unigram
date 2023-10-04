@@ -263,6 +263,8 @@ namespace Telegram.Controls.Chats
                     sprite.Brush = _visual.Compositor.CreateSurfaceBrush(s);
                 }
 
+                surface.LoadCompleted += handler;
+
                 var ellipse = _visual.Compositor.CreateEllipseGeometry();
                 ellipse.Radius = new Vector2(15);
 

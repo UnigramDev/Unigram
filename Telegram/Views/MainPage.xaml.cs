@@ -104,6 +104,8 @@ namespace Telegram.Views
                 _memoryUsageTimer.Interval = TimeSpan.FromSeconds(1);
                 _memoryUsageTimer.Tick += MemoryUsageTimer_Tick;
                 _memoryUsageTimer.Start();
+
+                MemoryUsageTimer_Tick(null, null);
             }
         }
 
@@ -1010,7 +1012,7 @@ namespace Telegram.Views
 
         private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
         {
-            if (MasterDetail.NavigationService.Frame.Content is BlankPage == false)
+            if (MasterDetail.NavigationService?.Frame.Content is not BlankPage)
             {
                 return;
             }

@@ -404,7 +404,7 @@ namespace Telegram.Views
 
         private void Header_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (e.ClickedItem is ProfileTabItem page && page.Type != MediaFrame.Content.GetType())
+            if (e.ClickedItem is ProfileTabItem page && page.Type != MediaFrame.Content?.GetType())
             {
                 MediaFrame.Navigate(page.Type, null, new SuppressNavigationTransitionInfo());
             }
