@@ -333,20 +333,12 @@ namespace Telegram.Common
 
         public static StyledText GetText(FormattedText text)
         {
-            return new StyledText
-            {
-                Text = text.Text,
-                Paragraphs = GetParagraphs(text.Text, text.Entities)
-            };
+            return new StyledText(text.Text, GetParagraphs(text.Text, text.Entities));
         }
 
         public static StyledText GetText(string text, IList<TextEntity> entities)
         {
-            return new StyledText
-            {
-                Text = text,
-                Paragraphs = GetParagraphs(text, entities ?? Array.Empty<TextEntity>())
-            };
+            return new StyledText(text, GetParagraphs(text, entities ?? Array.Empty<TextEntity>()));
         }
 
         private static IList<StyledParagraph> GetParagraphs(string text, IList<TextEntity> entities)
@@ -403,17 +395,19 @@ namespace Telegram.Common
                 var prev = 0;
                 var list = new List<StyledParagraph>();
 
-                for (int i = 0; i < indexes.Count; i++)
+                // The code may generate duplicate indexes (example: https://t.me/c/1896357006/2)
+                // District is used to avoid that, but it would be better to fix the algorithm.
+                foreach (var index in indexes.Distinct())
                 {
-                    var length = indexes[i] - prev;
-                    var regular = text[indexes[i]] == '\n';
+                    var length = index - prev;
+                    var regular = text[index] == '\n';
 
                     if (length > 0 || regular)
                     {
                         list.Add(Split(text, entities, prev, length));
                     }
 
-                    prev = indexes[i] + (regular ? 1 : 0);
+                    prev = index + (regular ? 1 : 0);
                 }
 
                 if (text.Length > prev)
@@ -426,12 +420,7 @@ namespace Telegram.Common
 
             return new[]
             {
-                new StyledParagraph
-                {
-                    Offset = 0,
-                    Length = text.Length,
-                    Runs = GetRuns(text, entities)
-                }
+                new StyledParagraph(0, text.Length, GetRuns(text, entities))
             };
         }
 
@@ -439,12 +428,11 @@ namespace Telegram.Common
         {
             if (length <= 0)
             {
-                return new StyledParagraph
-                {
-                    Offset = (int)startIndex,
-                    Length = (int)length,
-                    Runs = Array.Empty<TextStyleRun>()
-                };
+                return new StyledParagraph(
+                    (int)startIndex,
+                    (int)length,
+                    Array.Empty<TextStyleRun>()
+                );
             }
 
             var message = text.Substring((int)startIndex, Math.Min(text.Length - (int)startIndex, (int)length));
@@ -482,12 +470,11 @@ namespace Telegram.Common
                 }
             }
 
-            return new StyledParagraph
-            {
-                Offset = (int)startIndex,
-                Length = message.Length,
-                Runs = GetRuns(message, sub)
-            };
+            return new StyledParagraph(
+                (int)startIndex,
+                message.Length,
+                GetRuns(message, sub)
+            );
         }
 
         #endregion
@@ -507,19 +494,7 @@ namespace Telegram.Common
         Emoji = 256
     }
 
-    public class StyledText
-    {
-        public string Text { get; set; }
+    public record StyledText(string Text, IList<StyledParagraph> Paragraphs);
 
-        public IList<StyledParagraph> Paragraphs { get; set; }
-    }
-
-    public class StyledParagraph
-    {
-        public int Offset { get; set; }
-
-        public int Length { get; set; }
-
-        public IList<TextStyleRun> Runs { get; set; }
-    }
+    public record StyledParagraph(int Offset, int Length, IList<TextStyleRun> Runs);
 }
