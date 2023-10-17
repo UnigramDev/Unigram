@@ -2627,6 +2627,9 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DiscussionInfo" xml:space="preserve">
     <value>Add a group chat for comments</value>
   </data>
+  <data name="DiscussionInfoShort" xml:space="preserve">
+    <value>Add</value>
+  </data>
   <data name="DiscussionLinkGroup" xml:space="preserve">
     <value>Link Group</value>
   </data>

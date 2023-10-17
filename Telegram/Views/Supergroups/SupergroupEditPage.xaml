@@ -93,7 +93,8 @@
                     <controls:BadgeButton x:Name="ChatLinked"
                                           Content="{CustomResource Discussion}"
                                           Click="{x:Bind ViewModel.EditLinkedChat}"
-                                          Style="{StaticResource GlyphSubbadgeBadgeButtonStyle}" />
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          IsChevronVisible="True" />
 
                     <controls:BadgeButton x:Name="ChatHistory"
                                           Content="{CustomResource ChatHistory}"
@@ -105,6 +106,11 @@
                                                        DisplayMemberPath="Text" />
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
+
+                    <CheckBox x:Name="ChannelSignMessages"
+                              IsChecked="{x:Bind ViewModel.IsSignatures, Mode=TwoWay}"
+                              Content="{CustomResource ChannelSignMessages}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="InviteLinkPanel"
@@ -116,13 +122,6 @@
                     <controls:BadgeButton x:Name="RevokeLink"
                                           Content="{CustomResource RevokeLink}"
                                           Click="{x:Bind ViewModel.Links}" />
-                </controls:HeaderedControl>
-
-                <controls:HeaderedControl x:Name="ChannelSignMessagesPanel"
-                                          Footer="{CustomResource ChannelSignMessagesInfo}">
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsSignatures, Mode=TwoWay}"
-                              Content="{CustomResource ChannelSignMessages}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl x:Name="GroupMembersPanel">
