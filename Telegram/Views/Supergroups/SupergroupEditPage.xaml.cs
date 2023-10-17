@@ -29,6 +29,11 @@ namespace Telegram.Views.Supergroups
 
         private string ConvertHistory(int available)
         {
+            if (ViewModel.Chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
+            {
+                return Strings.ChannelSignMessagesInfo;
+            }
+
             return ViewModel.AllHistoryAvailableOptions[available].Value
                 ? Strings.ChatHistoryVisibleInfo
                 : Strings.ChatHistoryHiddenInfo;
@@ -106,7 +111,7 @@ namespace Telegram.Views.Supergroups
             ChatHistory.Visibility = group.CanChangeInfo() && !group.HasActiveUsername() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
-            ChannelSignMessagesPanel.Visibility = group.CanChangeInfo() && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+            ChannelSignMessages.Visibility = group.CanChangeInfo() && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             GroupStickersPanel.Visibility = Visibility.Collapsed;
 
             ChatLinked.Visibility = group.IsChannel ? Visibility.Visible : group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
@@ -135,13 +140,20 @@ namespace Telegram.Views.Supergroups
             ViewModel.IsAllHistoryAvailable = fullInfo.IsAllHistoryAvailable ? 0 : 1;
 
             var linkedChat = ViewModel.ClientService.GetChat(fullInfo.LinkedChatId);
-            if (linkedChat != null)
+            if (linkedChat != null && ViewModel.ClientService.TryGetSupergroup(linkedChat, out Supergroup linkedSupergroup))
             {
-                ChatLinked.Badge = linkedChat.Title;
+                if (linkedSupergroup.HasActiveUsername(out string username))
+                {
+                    ChatLinked.Badge = $"@{username}";
+                }
+                else
+                {
+                    ChatLinked.Badge = linkedChat.Title;
+                }
             }
             else
             {
-                ChatLinked.Badge = Strings.DiscussionInfo;
+                ChatLinked.Badge = Strings.DiscussionInfoShort;
             }
 
             Admins.Badge = fullInfo.AdministratorCount;
@@ -226,7 +238,7 @@ namespace Telegram.Views.Supergroups
 
             InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
             ChatLinked.Visibility = Visibility.Collapsed;
-            ChannelSignMessagesPanel.Visibility = Visibility.Collapsed;
+            ChannelSignMessages.Visibility = Visibility.Collapsed;
             GroupStickersPanel.Visibility = Visibility.Collapsed;
 
             Permissions.Badge = string.Format("{0}/{1}", chat.Permissions.Count(), chat.Permissions.Total());
