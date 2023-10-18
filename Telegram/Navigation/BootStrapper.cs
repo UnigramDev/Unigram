@@ -593,7 +593,7 @@ namespace Telegram.Navigation
         private void InitializeFrame(IActivatedEventArgs e)
         {
             /*
-                InitializeFrameAsync creates a default Frame preceeded by the optional 
+                InitializeFrameAsync creates a default Frame preceded by the optional 
                 splash screen, then OnInitialzieAsync, then the new frame (if necessary).
                 This is private because there's no reason for the developer to call this.
             */

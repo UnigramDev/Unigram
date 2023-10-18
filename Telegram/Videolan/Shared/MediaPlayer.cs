@@ -1537,7 +1537,7 @@ namespace LibVLCSharp.Shared
         /// Set video track.
         /// </summary>
         /// <param name="trackIndex">the track ID (i_id field from track description)</param>
-        /// <returns>true on sucess, false out of range</returns>
+        /// <returns>true on success, false out of range</returns>
         public bool SetVideoTrack(int trackIndex) => Native.LibVLCVideoSetTrack(NativeReference, trackIndex) == 0;
 
         /// <summary>

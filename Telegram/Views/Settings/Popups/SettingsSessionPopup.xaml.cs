@@ -26,13 +26,13 @@ namespace Telegram.Views.Settings.Popups
 
             var icon = SessionCell.IconForSession(session);
 
-            IconBackground.Background = new SolidColorBrush(icon.Backgroud);
+            IconBackground.Background = new SolidColorBrush(icon.Background);
 
             if (icon.Animation != null)
             {
                 Icon.Source = new LocalFileSource($"ms-appx:///Assets/Animations/Device{icon.Animation}.json")
                 {
-                    ColorReplacements = new Dictionary<int, int> { { 0x000000, icon.Backgroud.ToValue() } }
+                    ColorReplacements = new Dictionary<int, int> { { 0x000000, icon.Background.ToValue() } }
                 };
             }
             else
