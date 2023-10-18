@@ -3,7 +3,7 @@
 namespace LibVLCSharp.Shared
 {
     /// <summary>
-    /// This exception is thrown when a problem with VLC occured
+    /// This exception is thrown when a problem with VLC occurred
     /// </summary>
     public class VLCException : Exception
     {

@@ -634,7 +634,7 @@ namespace LibVLCSharp.Shared
 
         internal override void OnNativeInstanciationError()
         {
-            throw new VLCException("Failed to instanciate the Media on the native side. " +
+            throw new VLCException("Failed to instantiate the Media on the native side. " +
                     $"{Environment.NewLine}Have you installed the latest LibVLC package from nuget for your target platform?" +
                     $"{Environment.NewLine}Is your MRL correct Do check the native LibVLC verbose logs for more information.");
         }

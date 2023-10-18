@@ -347,7 +347,7 @@
                                      Stroke="{ThemeResource RadioButtonOuterEllipseStroke}"
                                      Fill="{ThemeResource RadioButtonOuterEllipseFill}"
                                      StrokeThickness="{ThemeResource RadioButtonBorderThemeThickness}" />
-                            <!-- A seperate element is added since the two orthogonal state groups that cannot touch the same property -->
+                            <!-- A separate element is added since the two orthogonal state groups that cannot touch the same property -->
                             <Ellipse x:Name="CheckOuterEllipse"
                                      Width="20"
                                      Height="20"
@@ -364,7 +364,7 @@
                                      Fill="{ThemeResource RadioButtonCheckGlyphFill}"
                                      Stroke="{ThemeResource RadioButtonCheckGlyphStroke}">
                             </Ellipse>
-                            <!-- A seperate element is added since the two orthogonal state groups that cannot touch the same property -->
+                            <!-- A separate element is added since the two orthogonal state groups that cannot touch the same property -->
                             <Border x:Name="PressedCheckGlyph"
                                     Width="4"
                                     Height="4"

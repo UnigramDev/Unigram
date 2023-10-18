@@ -42,14 +42,14 @@ namespace Telegram.Controls.Cells
             var icon = IconForSession(session);
 
             Glyph.Text = icon.Glyph;
-            GlyphBackground.Background = new SolidColorBrush(icon.Backgroud);
+            GlyphBackground.Background = new SolidColorBrush(icon.Background);
 
             Name.Text = session.DeviceModel;
             Title.Text = string.Format("{0} {1}", session.ApplicationName, session.ApplicationVersion);
             Subtitle.Text = string.Format("{0} \u2022 {1}", session.Location, session.IsCurrent ? Strings.Online : Formatter.DateExtended(session.LastActiveDate));
         }
 
-        public static (string Glyph, Color Backgroud, string Animation) IconForSession(Session session)
+        public static (string Glyph, Color Background, string Animation) IconForSession(Session session)
         {
             return session.Type switch
             {
