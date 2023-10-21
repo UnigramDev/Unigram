@@ -38,7 +38,7 @@ namespace winrt::Telegram::Native::Highlight::implementation
         IVector<winrt::Telegram::Native::Highlight::Token> m_children;
 
         static bool m_initialize;
-        static winrt::slim_mutex m_initializeLock;
+        static std::mutex m_initializeLock;
         static std::shared_ptr<SyntaxHighlighter> m_highlighter;
     };
 }
