@@ -61,17 +61,51 @@ namespace winrt::Telegram::Native::Highlight::implementation
     }
 
     bool SyntaxToken::m_initialize = true;
-    winrt::slim_mutex SyntaxToken::m_initializeLock;
+    std::mutex SyntaxToken::m_initializeLock;
     std::shared_ptr<SyntaxHighlighter> SyntaxToken::m_highlighter;
+
+    inline std::string DecompressFromFile(winrt::hstring filePath)
+    {
+        FILE* file;
+        _wfopen_s(&file, filePath.c_str(), L"rb");
+        if (file == NULL)
+        {
+            return "";
+        }
+
+        fseek(file, 0, SEEK_END);
+        size_t length = ftell(file);
+        fseek(file, 0, SEEK_SET);
+        char* buffer = (char*)malloc(length);
+        fread(buffer, 1, length, file);
+        fclose(file);
+
+        std::string data;
+
+        //bool compressed = gzip::is_compressed(buffer, length);
+        //if (compressed)
+        //{
+        //    data = gzip::decompress(buffer, length);
+        //}
+        //else
+        {
+            data = std::string(buffer, length);
+        }
+
+        free(buffer);
+        return data;
+    }
 
     void SyntaxToken::Initialize()
     {
-        slim_lock_guard const guard(m_initializeLock);
+        std::lock_guard const guard(m_initializeLock);
 
         if (m_initialize)
         {
             m_initialize = false;
-            m_highlighter = std::make_shared<SyntaxHighlighter>("Assets\\grammars.dat");
+
+            auto grammars = DecompressFromFile(L"Assets\\grammars.dat");
+            m_highlighter = std::make_shared<SyntaxHighlighter>(grammars);
         }
     }
 
@@ -83,7 +117,7 @@ namespace winrt::Telegram::Native::Highlight::implementation
 
         for (const auto& lang : m_highlighter->languages())
         {
-            languages.Append(winrt::to_hstring(lang));
+            languages.Append(winrt::to_hstring(lang.first));
         }
 
         return languages;
