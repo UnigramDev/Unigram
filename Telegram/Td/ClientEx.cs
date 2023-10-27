@@ -7,7 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Controls;
+using Telegram.Services;
 using Telegram.Td.Api;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Td
 {
@@ -68,6 +71,19 @@ namespace Telegram.Td
             }
 
             return text;
+        }
+
+
+
+        public static SolidColorBrush GetAccentBrush(this IClientService clientService, AccentColorId id)
+        {
+            var accent = clientService.GetAccentColor(id);
+            if (accent != null)
+            {
+                return new SolidColorBrush(accent[0]);
+            }
+
+            return PlaceholderImage.GetBrush(id);
         }
     }
 }

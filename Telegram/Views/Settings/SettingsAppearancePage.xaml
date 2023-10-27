@@ -74,17 +74,27 @@
                         </GridView.Footer>
                     </GridView>
 
-                    <controls:BadgeButton Content="{CustomResource ShowAllThemes}"
+                    <controls:BadgeButton Content="{CustomResource ChatThemes}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Click="{x:Bind ViewModel.OpenThemes}"
                                           Glyph="&#xE90E;"
                                           IsChevronVisible="True" />
 
-                    <controls:BadgeButton Content="{CustomResource ChatBackground}"
+                    <controls:BadgeButton Content="{CustomResource ChatWallpaper}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Click="{x:Bind ViewModel.OpenWallpaper}"
                                           Glyph="&#xE9E7;"
                                           IsChevronVisible="True" />
+
+                    <controls:BadgeButton Content="{CustomResource YourNameColor}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.OpenProfileColor}"
+                                          Glyph="&#xE2B1;"
+                                          IsChevronVisible="True">
+                        <controls:BadgeButton.Badge>
+                            <controls:BadgeControl x:Name="NameColorBadge" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>

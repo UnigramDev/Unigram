@@ -115,5 +115,26 @@ namespace Telegram.Common
             DependencyProperty.RegisterAttached("IsScaleEnabled", typeof(bool), typeof(UIElement), new PropertyMetadata(true));
 
         #endregion
+
+
+
+
+        public static void QueueCallbackForCompositionRendering(Action callback)
+        {
+            void handler(object sender, object e)
+            {
+                CompositionTarget.Rendering -= handler;
+                callback();
+            }
+
+            try
+            {
+                CompositionTarget.Rendering += handler;
+            }
+            catch
+            {
+                // Bla bla
+            }
+        }
     }
 }

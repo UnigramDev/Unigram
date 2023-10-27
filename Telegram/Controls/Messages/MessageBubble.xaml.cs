@@ -1560,14 +1560,7 @@ namespace Telegram.Controls.Messages
 
             if (content is MessageText textMessage && textMessage.WebPage != null)
             {
-                if (textMessage.WebPage.IsSmallPhoto())
-                {
-                    Media.Child = new WebPageSmallPhotoContent(message);
-                }
-                else
-                {
-                    Media.Child = new WebPageContent(message);
-                }
+                Media.Child = new WebPageContent(message);
             }
             else if (content is MessageAlbum)
             {
@@ -2567,6 +2560,131 @@ namespace Telegram.Controls.Messages
             UpdateMockup();
         }
 
+        public void Mockup(IClientService clientService, string message, MessageSender sender, string reply, WebPage webPage, bool outgoing, DateTime date, bool first = true, bool last = true)
+        {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    Mockup(clientService, message, sender, reply, webPage, outgoing, date, first, last);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
+            UpdateMockup(outgoing, first, last);
+
+            Header.Visibility = Visibility.Visible;
+
+            var obj = clientService.GetMessageSender(sender);
+            var title = obj switch
+            {
+                User u => u.FullName(),
+                Chat c => c.Title,
+                _ => null
+            };
+
+            if (Reply == null)
+            {
+                void layoutUpdated(object o, object e)
+                {
+                    Reply.LayoutUpdated -= layoutUpdated;
+                    Reply.Mockup(title, reply);
+
+                    if (obj is User user)
+                    {
+                        Reply.UpdateMockup(clientService, user.BackgroundCustomEmojiId, user.AccentColorId.Id);
+                    }
+                    else if (obj is Chat chat)
+                    {
+                        Reply.UpdateMockup(clientService, chat.BackgroundCustomEmojiId, chat.AccentColorId.Id);
+                    }
+                }
+
+                Reply = GetTemplateChild(nameof(Reply)) as MessageReference;
+                Reply.LayoutUpdated += layoutUpdated;
+
+                Panel.Reply = Reply;
+            }
+            else
+            {
+                Reply.Visibility = Visibility.Visible;
+                Reply.Mockup(title, reply);
+            }
+
+            {
+                var presenter = new WebPageContent();
+
+                void layoutUpdated(object o, object e)
+                {
+                    presenter.LayoutUpdated -= layoutUpdated;
+                    presenter.Mockup(webPage);
+
+                    if (obj is User user)
+                    {
+                        presenter.UpdateMockup(clientService, user.AccentColorId.Id);
+                    }
+                    else if (obj is Chat chat)
+                    {
+                        presenter.UpdateMockup(clientService, chat.AccentColorId.Id);
+                    }
+                }
+
+                presenter.LayoutUpdated += layoutUpdated;
+                Media.Child = presenter;
+            }
+
+            Footer.Mockup(outgoing, date);
+            Panel.Content = new MessageText { Text = new FormattedText(message, new TextEntity[0]) };
+
+            ContentPanel.Padding = new Thickness(0, 4, 0, 0);
+            Media.Margin = new Thickness(10, -6, 10, 0);
+            FooterToNormal();
+            Grid.SetRow(Footer, 4);
+            Grid.SetRow(Message, 2);
+            Panel.Placeholder = false;
+
+            Message.SetText(null, message, new TextEntity[0]);
+
+            LoadObject(ref HeaderPanel, nameof(HeaderPanel));
+            LoadObject(ref HeaderLabel, nameof(HeaderLabel));
+
+            var hyperlink = new Hyperlink();
+            hyperlink.Inlines.Add(new Run { Text = title });
+            hyperlink.UnderlineStyle = UnderlineStyle.None;
+            hyperlink.Foreground = GetBrush("MessageHeaderForegroundBrush");
+            //hyperlink.Click += (s, args) => FwdFrom_Click(message);
+
+            HeaderLabel.Inlines.Add(hyperlink);
+
+            Header.Visibility = Visibility.Visible;
+            HeaderPanel.Visibility = Visibility.Visible;
+            HeaderLabel.Visibility = Visibility.Visible;
+
+            if (Photo == null)
+            {
+                Photo = GetTemplateChild(nameof(Photo)) as ProfilePicture;
+                Photo.Click += Photo_Click;
+            }
+
+            Photo.Visibility = Visibility.Visible;
+
+            if (obj is User user)
+            {
+                Photo.SetUser(clientService, user, 30);
+            }
+            else if (obj is Chat chat)
+            {
+                Photo.SetChat(clientService, chat, 30);
+            }
+
+            PhotoColumn.Width = new GridLength(38, GridUnitType.Pixel);
+
+            UpdateMockup();
+        }
+
         public void Mockup(MessageContent content, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
             if (!_templateApplied)
@@ -2677,6 +2795,33 @@ namespace Telegram.Controls.Messages
         {
             Message.SetFontSize((double)Navigation.BootStrapper.Current.Resources["MessageFontSize"]);
             ContentPanel.CornerRadius = new CornerRadius(SettingsService.Current.Appearance.BubbleRadius);
+        }
+
+        public void UpdateMockup(IClientService clientService, long customEmojiId, int color)
+        {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    UpdateMockup(clientService, customEmojiId, color);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
+            if (Media.Child is WebPageContent webPageContent)
+            {
+                webPageContent.UpdateMockup(clientService, color);
+            }
+
+            Reply?.UpdateMockup(clientService, customEmojiId, color);
+
+            if (HeaderLabel?.Inlines.Count > 0 && HeaderLabel.Inlines[0] is Hyperlink hyperlink)
+            {
+                hyperlink.Foreground = clientService.GetAccentBrush(new AccentColorId(color));
+            }
         }
 
         private void UpdateMockup(bool outgoing, bool first, bool last)

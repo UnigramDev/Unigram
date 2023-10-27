@@ -162,6 +162,10 @@ namespace Telegram.Controls.Drawers
             {
                 ViewModel.UpdateChatPhoto();
             }
+            else if (_mode == EmojiDrawerMode.Background)
+            {
+                ViewModel.UpdateBackground();
+            }
             else
             {
                 ViewModel.Update();

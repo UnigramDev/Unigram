@@ -351,6 +351,14 @@ namespace Telegram.ViewModels.Supergroups
             }
         }
 
+        public async void EditColor()
+        {
+            if (_chat is Chat chat)
+            {
+                await ShowPopupAsync(new ChooseNameColorPopup(ClientService, new MessageSenderChat(chat.Id)));
+            }
+        }
+
         public void Links()
         {
             if (_chat is Chat chat)

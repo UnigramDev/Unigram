@@ -26,6 +26,16 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Messages
 {
+    public class EmojiSelectedEventArgs : EventArgs
+    {
+        public long CustomEmojiId { get; }
+
+        public EmojiSelectedEventArgs(long customEmojiId)
+        {
+            CustomEmojiId = customEmojiId;
+        }
+    }
+
     public sealed partial class EmojiMenuFlyout : UserControl
     {
         private readonly IClientService _clientService;
@@ -38,6 +48,8 @@ namespace Telegram.Controls.Messages
         private readonly FrameworkElement _reserved;
 
         private readonly Popup _popup;
+
+        public event EventHandler<EmojiSelectedEventArgs> EmojiSelected;
 
         public static EmojiMenuFlyout ShowAt(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions)
         {
@@ -58,18 +70,17 @@ namespace Telegram.Controls.Messages
             Initialize(message.ClientService, element, HorizontalAlignment.Center);
         }
 
-        public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, HorizontalAlignment alignment, MessageViewModel message = null, AvailableReactions reactions = null)
+        public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, HorizontalAlignment alignment)
         {
-            return new EmojiMenuFlyout(clientService, mode, element, alignment, message, reactions);
+            return new EmojiMenuFlyout(clientService, mode, element, alignment);
         }
 
-        private EmojiMenuFlyout(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, HorizontalAlignment alignment, MessageViewModel message = null, AvailableReactions reactions = null)
+        private EmojiMenuFlyout(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, HorizontalAlignment alignment)
         {
             InitializeComponent();
 
             _clientService = clientService;
             _mode = mode;
-            _message = message;
 
             _popup = new Popup();
 
@@ -137,6 +148,10 @@ namespace Telegram.Controls.Messages
             {
                 view.Activate(null, EmojiSearchType.EmojiStatus);
                 viewModel.UpdateStatuses();
+            }
+            else if (_mode == EmojiDrawerMode.Background)
+            {
+                viewModel.UpdateBackground();
             }
             else if (_mode == EmojiDrawerMode.Reactions)
             {
@@ -450,6 +465,11 @@ namespace Telegram.Controls.Messages
             if (e.ClickedItem is StickerViewModel sticker)
             {
                 _popup.IsOpen = false;
+
+                if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji2)
+                {
+                    EmojiSelected?.Invoke(this, new EmojiSelectedEventArgs(customEmoji2.CustomEmojiId));
+                }
 
                 if (_story != null)
                 {

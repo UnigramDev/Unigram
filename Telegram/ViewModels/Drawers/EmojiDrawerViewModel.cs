@@ -27,7 +27,8 @@ namespace Telegram.ViewModels.Drawers
         Reactions,
         CustomEmojis,
         ChatPhoto,
-        UserPhoto
+        UserPhoto,
+        Background
     }
 
     public class EmojiDrawerViewModel : ViewModelBase
@@ -342,26 +343,30 @@ namespace Telegram.ViewModels.Drawers
 
             if (result1 is StickerSets sets && result2 is TrendingStickerSets trending)
             {
-                var stickers = new List<object>();
-
                 var installedSets = new Dictionary<long, StickerSetViewModel>();
 
-                if (sets.Sets.Count > 0)
+                var filtered = sets.Sets.Where(x => _mode != EmojiDrawerMode.Background || x.NeedsRepainting).ToList();
+                if (filtered.Count > 0)
                 {
-                    var result3 = await ClientService.SendAsync(new GetStickerSet(sets.Sets[0].Id));
+                    var result3 = await ClientService.SendAsync(new GetStickerSet(filtered[0].Id));
                     if (result3 is StickerSet set)
                     {
                         installedSets[set.Id] = new StickerSetViewModel(ClientService, sets.Sets[0], set);
                     }
 
-                    for (int i = installedSets.Count; i < sets.Sets.Count; i++)
+                    for (int i = installedSets.Count; i < filtered.Count; i++)
                     {
-                        installedSets[sets.Sets[i].Id] = new StickerSetViewModel(ClientService, sets.Sets[i]);
+                        installedSets[filtered[i].Id] = new StickerSetViewModel(ClientService, filtered[i]);
                     }
 
                     foreach (var item in trending.Sets)
                     {
                         if (installedSets.ContainsKey(item.Id))
+                        {
+                            continue;
+                        }
+
+                        if (_mode == EmojiDrawerMode.Background && !item.NeedsRepainting)
                         {
                             continue;
                         }
@@ -577,6 +582,17 @@ namespace Telegram.ViewModels.Drawers
             _ = UpdateAsync();
 
             var response = await ClientService.SendAsync(new GetDefaultChatPhotoCustomEmojiStickers()) as Stickers;
+            if (response is Stickers stickers)
+            {
+                _reactionTopSet.Update(stickers.StickersValue, true);
+            }
+        }
+
+        public async void UpdateBackground()
+        {
+            _ = UpdateAsync();
+
+            var response = await ClientService.SendAsync(new GetDefaultBackgroundCustomEmojiStickers()) as Stickers;
             if (response is Stickers stickers)
             {
                 _reactionTopSet.Update(stickers.StickersValue, true);

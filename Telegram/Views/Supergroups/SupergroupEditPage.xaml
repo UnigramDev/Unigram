@@ -107,6 +107,17 @@
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
 
+                    <controls:BadgeButton x:Name="ChannelColor"
+                                          Content="{CustomResource ChannelColor}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.EditColor}"
+                                          Glyph="&#xE2B1;"
+                                          IsChevronVisible="True">
+                        <controls:BadgeButton.Badge>
+                            <controls:BadgeControl x:Name="ChannelColorBadge" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
+
                     <CheckBox x:Name="ChannelSignMessages"
                               IsChecked="{x:Bind ViewModel.IsSignatures, Mode=TwoWay}"
                               Content="{CustomResource ChannelSignMessages}"

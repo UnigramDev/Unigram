@@ -83,6 +83,73 @@
                                    Width="3" />
                         <controls:DashPath x:Name="AccentDash" />
 
+                        <local:MessageReferencePattern x:Name="Pattern"
+                                                       FrameSize="20,20"
+                                                       DecodeFrameType="Logical"
+                                                       AutoPlay="False"
+                                                       IsViewportAware="True"
+                                                       Grid.Column="2"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Top"
+                                                       ReplacementColor="{TemplateBinding BorderBrush}"
+                                                       Margin="0,-3,7,0">
+                            <local:MessageReferencePattern.Template>
+                                <ControlTemplate TargetType="local:MessageReferencePattern">
+                                    <Canvas x:Name="LayoutRoot"
+                                            Width="122">
+                                        <Image x:Name="Image1"
+                                               Canvas.Left="9"
+                                               Canvas.Top="5"
+                                               Width="20"
+                                               Height="20"
+                                               Opacity="0.1" />
+                                        <Image x:Name="Image2"
+                                               Canvas.Left="41"
+                                               Canvas.Top="12"
+                                               Width="19"
+                                               Height="19"
+                                               Opacity="0.2" />
+                                        <Image x:Name="Image3"
+                                               Canvas.Left="64"
+                                               Canvas.Top="0"
+                                               Width="13"
+                                               Height="13"
+                                               Opacity="0.2" />
+                                        <Image x:Name="Image4"
+                                               Canvas.Left="77"
+                                               Canvas.Top="18"
+                                               Width="15"
+                                               Height="15"
+                                               Opacity="0.3" />
+                                        <Image x:Name="Image5"
+                                               Canvas.Left="103"
+                                               Canvas.Top="7"
+                                               Width="19"
+                                               Height="19"
+                                               Opacity="0.4" />
+                                        <Image x:Name="Image6"
+                                               Canvas.Left="23"
+                                               Canvas.Top="33"
+                                               Width="13"
+                                               Height="13"
+                                               Opacity="0.2" />
+                                        <Image x:Name="Image7"
+                                               Canvas.Left="58"
+                                               Canvas.Top="37"
+                                               Width="19"
+                                               Height="19"
+                                               Opacity="0.3" />
+                                        <Image x:Name="Image8"
+                                               Canvas.Left="99"
+                                               Canvas.Top="34"
+                                               Width="15"
+                                               Height="15"
+                                               Opacity="0.4" />
+                                    </Canvas>
+                                </ControlTemplate>
+                            </local:MessageReferencePattern.Template>
+                        </local:MessageReferencePattern>
+
                         <Border x:Name="ThumbRoot"
                                 x:DeferLoadStrategy="Lazy"
                                 Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"

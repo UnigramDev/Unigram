@@ -637,6 +637,23 @@ namespace Telegram.Controls
 
         public Color BottomColor { get; }
 
+        public PlaceholderImage(string initials, bool isGlyph, AccentColorId id)
+        {
+            Initials = initials;
+            IsGlyph = isGlyph;
+
+            if (id == null)
+            {
+                TopColor = _disabledTop;
+                BottomColor = _disabled;
+            }
+            else
+            {
+                TopColor = _colorsTop[Math.Abs(id.Id % _colors.Length)];
+                BottomColor = _colors[Math.Abs(id.Id % _colors.Length)];
+            }
+        }
+
         public PlaceholderImage(string initials, bool isGlyph, long id)
         {
             Initials = initials;

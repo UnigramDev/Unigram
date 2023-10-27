@@ -12,6 +12,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Supergroups
 {
@@ -111,8 +112,26 @@ namespace Telegram.Views.Supergroups
             ChatHistory.Visibility = group.CanChangeInfo() && !group.HasActiveUsername() && !group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
-            ChannelSignMessages.Visibility = group.CanChangeInfo() && group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
             GroupStickersPanel.Visibility = Visibility.Collapsed;
+
+            if (group.IsChannel && group.CanChangeInfo())
+            {
+                ChannelColor.Visibility = Visibility.Visible;
+                ChannelSignMessages.Visibility = Visibility.Visible;
+
+                var accent = ViewModel.ClientService.GetAccentColor(chat.AccentColorId);
+                if (accent != null)
+                {
+                    ChannelColorBadge.Background = new SolidColorBrush(accent[0]) { Opacity = 0.1 };
+                    ChannelColorBadge.Foreground = new SolidColorBrush(accent[0]);
+                    ChannelColorBadge.Text = chat.Title;
+                }
+            }
+            else
+            {
+                ChannelColor.Visibility = Visibility.Collapsed;
+                ChannelSignMessages.Visibility = Visibility.Collapsed;
+            }
 
             ChatLinked.Visibility = group.IsChannel ? Visibility.Visible : group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
             ChatLinked.Content = group.IsChannel ? Strings.Discussion : Strings.LinkedChannel;
@@ -238,6 +257,7 @@ namespace Telegram.Views.Supergroups
 
             InviteLinkPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
             ChatLinked.Visibility = Visibility.Collapsed;
+            ChannelColor.Visibility = Visibility.Collapsed;
             ChannelSignMessages.Visibility = Visibility.Collapsed;
             GroupStickersPanel.Visibility = Visibility.Collapsed;
 

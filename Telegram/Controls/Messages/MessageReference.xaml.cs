@@ -20,6 +20,34 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
+    public class MessageReferencePattern : AnimatedImage
+    {
+        private readonly Image[] _images = new Image[8];
+
+        public MessageReferencePattern()
+        {
+            DefaultStyleKey = typeof(MessageReferencePattern);
+        }
+
+        protected override void OnApplyTemplate()
+        {
+            for (int i = 0; i < _images.Length; i++)
+            {
+                _images[i] = GetTemplateChild($"Image{i + 1}") as Image;
+            }
+
+            base.OnApplyTemplate();
+        }
+
+        public override void Invalidate(ImageSource source)
+        {
+            for (int i = 0; i < _images.Length; i++)
+            {
+                _images[i].Source = source;
+            }
+        }
+    }
+
     public sealed class MessageReference : MessageReferenceBase
     {
         public MessageReference()
@@ -99,6 +127,7 @@ namespace Telegram.Controls.Messages
         private Border ThumbRoot;
         private Border ThumbEllipse;
         private ImageBrush ThumbImage;
+        private MessageReferencePattern Pattern;
 
         protected override void OnApplyTemplate()
         {
@@ -106,6 +135,8 @@ namespace Telegram.Controls.Messages
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as Run;
             ServiceLabel = GetTemplateChild(nameof(ServiceLabel)) as Run;
             MessageLabel = GetTemplateChild(nameof(MessageLabel)) as Span;
+            AccentDash = GetTemplateChild(nameof(AccentDash)) as DashPath;
+            Pattern = GetTemplateChild(nameof(Pattern)) as MessageReferencePattern;
 
             _templateApplied = true;
 
@@ -204,7 +235,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        protected override void SetText(IClientService clientService, bool outgoing, MessageSender sender, string title, string service, FormattedText text)
+        protected override void SetText(IClientService clientService, bool outgoing, MessageSender messageSender, string title, string service, FormattedText text)
         {
             if (TitleLabel != null)
             {
@@ -223,11 +254,22 @@ namespace Telegram.Controls.Messages
                     Chat chat => chat.AccentColorId,
                     _ => null
                 };
+
+                var customEmojiId = sender switch
                 {
-                    MessageSenderUser user => user.UserId,
-                    MessageSenderChat chat => chat.ChatId,
+                    User user2 => user2.BackgroundCustomEmojiId,
+                    Chat chat2 => chat2.BackgroundCustomEmojiId,
                     _ => 0
                 };
+
+                if (customEmojiId != 0)
+                {
+                    Pattern.Source = new CustomEmojiFileSource(clientService, customEmojiId);
+                }
+                else
+                {
+                    Pattern.Source = null;
+                }
 
                 if (_light)
                 {
@@ -345,6 +387,29 @@ namespace Telegram.Controls.Messages
             }
 
             return base.ArrangeOverride(finalSize);
+        }
+
+        public void UpdateMockup(IClientService clientService, long customEmojiId, int color)
+        {
+            if (Pattern != null)
+            {
+                Pattern.Source = new CustomEmojiFileSource(clientService, customEmojiId);
+            }
+
+            var accent = clientService.GetAccentColor(new AccentColorId(color));
+
+            HeaderBrush =
+                BorderBrush = new SolidColorBrush(accent[0]);
+
+            if (AccentDash != null)
+            {
+                AccentDash.Stripe1 = accent.Length > 1
+                    ? new SolidColorBrush(accent[1])
+                    : null;
+                AccentDash.Stripe2 = accent.Length > 2
+                    ? new SolidColorBrush(accent[2])
+                    : null;
+            }
         }
     }
 
