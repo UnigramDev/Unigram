@@ -43,7 +43,7 @@
                     </Border>
 
                     <TextBlock x:Name="Title"
-                               Text="{CustomResource StealthMode}"
+                               Text="{CustomResource StealthModeTitle}"
                                FontSize="20"
                                FontFamily="XamlAutoFontFamily"
                                FontWeight="SemiBold"
