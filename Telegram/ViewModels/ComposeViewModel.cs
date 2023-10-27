@@ -32,7 +32,7 @@ namespace Telegram.ViewModels
 
         protected abstract void HideStickers();
 
-        protected abstract MessageReplyTo GetReply(bool clear, bool notify = true);
+        protected abstract InputMessageReplyTo GetReply(bool clear, bool notify = true);
 
         public abstract FormattedText GetFormattedText(bool clear);
 
@@ -478,7 +478,7 @@ namespace Telegram.ViewModels
 
         protected abstract bool CanSchedule { get; }
 
-        private async Task SendStorageMediaAsync(StorageMedia storage, MessageReplyTo reply, FormattedText caption, bool asFile, MessageSendOptions options)
+        private async Task SendStorageMediaAsync(StorageMedia storage, InputMessageReplyTo reply, FormattedText caption, bool asFile, MessageSendOptions options)
         {
             if (storage is StorageDocument or StorageAudio)
             {
@@ -494,7 +494,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        private async Task SendDocumentAsync(StorageFile file, MessageReplyTo reply, FormattedText caption = null, MessageSendOptions options = null)
+        private async Task SendDocumentAsync(StorageFile file, InputMessageReplyTo reply, FormattedText caption = null, MessageSendOptions options = null)
         {
             var factory = await MessageFactory.CreateDocumentAsync(file, false);
             if (factory != null)
@@ -506,7 +506,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        private async Task SendPhotoAsync(StorageFile file, MessageReplyTo reply, FormattedText caption, bool asFile, bool spoiler = false, MessageSelfDestructType ttl = null, BitmapEditState editState = null, MessageSendOptions options = null)
+        private async Task SendPhotoAsync(StorageFile file, InputMessageReplyTo reply, FormattedText caption, bool asFile, bool spoiler = false, MessageSelfDestructType ttl = null, BitmapEditState editState = null, MessageSendOptions options = null)
         {
             var factory = await MessageFactory.CreatePhotoAsync(file, asFile, spoiler, ttl, editState);
             if (factory != null)
@@ -518,7 +518,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async Task SendVideoAsync(StorageFile file, MessageReplyTo reply, FormattedText caption, bool animated, bool asFile, bool spoiler = false, MessageSelfDestructType ttl = null, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null, MessageSendOptions options = null)
+        public async Task SendVideoAsync(StorageFile file, InputMessageReplyTo reply, FormattedText caption, bool animated, bool asFile, bool spoiler = false, MessageSelfDestructType ttl = null, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null, MessageSendOptions options = null)
         {
             var factory = await MessageFactory.CreateVideoAsync(file, animated, asFile, spoiler, ttl, profile, transform);
             if (factory != null)
@@ -648,7 +648,7 @@ namespace Telegram.ViewModels
 
         public abstract Task<MessageSendOptions> PickMessageSendOptionsAsync(bool? schedule = null, bool? silent = null, bool reorder = false);
 
-        protected async Task<BaseObject> SendMessageAsync(MessageReplyTo replyTo, InputMessageContent inputMessageContent, MessageSendOptions options)
+        protected async Task<BaseObject> SendMessageAsync(InputMessageReplyTo replyTo, InputMessageContent inputMessageContent, MessageSendOptions options)
         {
             if (Chat is not Chat chat)
             {
@@ -734,7 +734,7 @@ namespace Telegram.ViewModels
             await SendMessageAsync(reply, input, options);
         }
 
-        private async Task<BaseObject> SendGroupedAsync(ICollection<StorageMedia> items, MessageReplyTo reply, FormattedText caption, MessageSendOptions options, bool asFile)
+        private async Task<BaseObject> SendGroupedAsync(ICollection<StorageMedia> items, InputMessageReplyTo reply, FormattedText caption, MessageSendOptions options, bool asFile)
         {
             if (Chat is not Chat chat)
             {
@@ -803,12 +803,12 @@ namespace Telegram.ViewModels
             return ClientEx.ParseMarkdown(text.Format());
         }
 
-        public Task SendMessageAsync(FormattedText formattedText, MessageSendOptions options = null, MessageReplyTo reply = null)
+        public Task SendMessageAsync(FormattedText formattedText, MessageSendOptions options = null, InputMessageReplyTo reply = null)
         {
             return SendMessageAsync(formattedText?.Text, formattedText?.Entities, options, reply);
         }
 
-        public async Task SendMessageAsync(string text, IList<TextEntity> entities = null, MessageSendOptions options = null, MessageReplyTo reply = null)
+        public async Task SendMessageAsync(string text, IList<TextEntity> entities = null, MessageSendOptions options = null, InputMessageReplyTo reply = null)
         {
             text ??= string.Empty;
             text = text.Replace('\v', '\n').Replace('\r', '\n');
@@ -871,9 +871,9 @@ namespace Telegram.ViewModels
             }
         }
 
-        protected virtual bool DisableWebPreview()
+        protected virtual LinkPreviewOptions DisableWebPreview()
         {
-            return false;
+            return null;
         }
 
         protected virtual Task<bool> BeforeSendMessageAsync(FormattedText formattedText)

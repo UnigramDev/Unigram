@@ -509,7 +509,7 @@ namespace Telegram.ViewModels
             {
                 foreach (var chat in chats)
                 {
-                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(_caption, false, false)));
+                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(_caption, null, false)));
                 }
             }
 
@@ -565,7 +565,7 @@ namespace Telegram.ViewModels
 
                 foreach (var chat in chats)
                 {
-                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(formatted, false, false)));
+                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(formatted, null, false)));
                 }
 
                 //NavigationService.GoBack();
@@ -625,7 +625,7 @@ namespace Telegram.ViewModels
 
                     foreach (var chat in chats)
                     {
-                        await ClientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(formatted, false, false)));
+                        await ClientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, new InputMessageText(formatted, null, false)));
                     }
                 }
             }

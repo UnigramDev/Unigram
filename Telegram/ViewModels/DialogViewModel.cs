@@ -739,10 +739,10 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    content = new MessageText(text, null);
+                    content = new MessageText(text, null, string.Empty);
                 }
 
-                Items.Insert(0, CreateMessage(new Message(0, new MessageSenderUser(user.Id), chat.Id, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, content, null)));
+                Items.Insert(0, CreateMessage(new Message(0, new MessageSenderUser(user.Id), chat.Id, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, 0, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, content, null)));
                 return;
             }
 
@@ -760,19 +760,19 @@ namespace Telegram.ViewModels
 
                 if (Items.Count > 0)
                 {
-                    Items.Insert(0, CreateMessage(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageCustomServiceAction(Strings.DiscussionStarted), null)));
+                    Items.Insert(0, CreateMessage(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageCustomServiceAction(Strings.DiscussionStarted), null)));
                 }
                 else
                 {
-                    Items.Insert(0, CreateMessage(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageCustomServiceAction(Strings.NoComments), null)));
+                    Items.Insert(0, CreateMessage(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageCustomServiceAction(Strings.NoComments), null)));
                 }
 
                 Items.Insert(0, previous);
-                Items.Insert(0, CreateMessage(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
+                Items.Insert(0, CreateMessage(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
             }
             else if (previous != null)
             {
-                Items.Insert(0, CreateMessage(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
+                Items.Insert(0, CreateMessage(new Message(0, previous.SenderId, previous.ChatId, null, null, previous.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, previous.IsChannelPost, previous.IsTopicMessage, false, previous.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
             }
         }
 
@@ -1245,7 +1245,7 @@ namespace Telegram.ViewModels
                             {
                                 if (index >= 0 && index < messages.MessagesValue.Count - 1)
                                 {
-                                    messages.MessagesValue.Insert(index + 1, new Message(0, target.SenderId, target.ChatId, null, null, target.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, target.IsChannelPost, target.IsTopicMessage, false, target.Date, 0, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null));
+                                    messages.MessagesValue.Insert(index + 1, new Message(0, target.SenderId, target.ChatId, null, null, target.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, target.IsChannelPost, target.IsTopicMessage, false, target.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null));
                                     unread = true;
                                 }
                                 else if (maxId == lastReadMessageId)
@@ -1406,7 +1406,7 @@ namespace Telegram.ViewModels
                     var target = replied.FirstOrDefault();
                     if (target != null)
                     {
-                        replied.Insert(0, CreateMessage(new Message(0, target.SenderId, target.ChatId, null, target.SchedulingState, target.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, target.IsChannelPost, target.IsTopicMessage, false, target.Date, 0, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
+                        replied.Insert(0, CreateMessage(new Message(0, target.SenderId, target.ChatId, null, target.SchedulingState, target.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, target.IsChannelPost, target.IsTopicMessage, false, target.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null)));
                     }
 
                     Items.ReplaceWith(replied);
@@ -2272,7 +2272,7 @@ namespace Telegram.ViewModels
                     formattedText = formattedText.Substring(0, ClientService.Options.MessageTextLengthMax * 4);
                 }
 
-                draft = new DraftMessage(reply, 0, new InputMessageText(formattedText, false, false));
+                draft = new DraftMessage(reply, 0, new InputMessageText(formattedText, null, false));
             }
 
             ClientService.Send(new SetChatDraftMessage(_chat.Id, ThreadId, draft));
@@ -2350,7 +2350,7 @@ namespace Telegram.ViewModels
             TextField?.Focus(FocusState.Programmatic);
         }
 
-        protected override MessageReplyTo GetReply(bool clean, bool notify = true)
+        protected override InputMessageReplyTo GetReply(bool clean, bool notify = true)
         {
             var embedded = _composerHeader;
             if (embedded == null || embedded.ReplyToMessage == null)
@@ -2370,7 +2370,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return new MessageReplyToMessage(embedded.ReplyToMessage.ChatId, embedded.ReplyToMessage.Id);
+            return new InputMessageReplyToMessage(/*embedded.ReplyToMessage.ChatId,*/ embedded.ReplyToMessage.Id);
         }
 
         #endregion
@@ -2380,12 +2380,10 @@ namespace Telegram.ViewModels
             await SendMessageAsync(args);
         }
 
-        protected override bool DisableWebPreview()
+        protected override LinkPreviewOptions DisableWebPreview()
         {
             var header = _composerHeader;
-            var disablePreview = header?.WebPageDisabled ?? false;
-
-            return disablePreview;
+            return header?.WebPageOptions;
         }
 
         protected override async Task<bool> BeforeSendMessageAsync(FormattedText formattedText)
@@ -2396,7 +2394,7 @@ namespace Telegram.ViewModels
             }
 
             var header = _composerHeader;
-            var disablePreview = header?.WebPageDisabled ?? false;
+            var disablePreview = DisableWebPreview();
 
             if (header?.EditingMessage == null)
             {
@@ -2408,9 +2406,15 @@ namespace Telegram.ViewModels
             var factory = header.EditingMessageMedia;
             if (factory != null)
             {
-                var input = factory.Delegate(factory.InputFile, header.EditingMessageCaption);
+                InputMessageContent input = factory.Delegate(factory.InputFile, header.EditingMessageCaption);
+                InputMessageReplyTo replyTo = editing.ReplyTo switch
+                {
+                    MessageReplyToMessage message => new InputMessageReplyToMessage(message.MessageId),
+                    MessageReplyToStory story => new InputMessageReplyToStory(story.StorySenderChatId, story.StoryId),
+                    _ => null
+                };
 
-                var response = await ClientService.SendAsync(new SendMessageAlbum(editing.ChatId, editing.MessageThreadId, editing.ReplyTo, null, new[] { input }, true));
+                var response = await ClientService.SendAsync(new SendMessageAlbum(editing.ChatId, editing.MessageThreadId, replyTo, null, new[] { input }, true));
                 if (response is Messages messages && messages.MessagesValue.Count == 1)
                 {
                     _contentOverrides[editing.CombinedId] = messages.MessagesValue[0].Content;
@@ -3811,7 +3815,7 @@ namespace Telegram.ViewModels
                 var previousDate = Formatter.ToLocalTime(GetMessageDate(next));
                 if (previousDate.Date != itemDate.Date)
                 {
-                    return new MessageViewModel(next.ClientService, next.PlaybackService, next.Delegate, next.Chat, new Message(0, next.SenderId, next.ChatId, null, next.SchedulingState, next.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, next.IsChannelPost, next.IsTopicMessage, false, next.Date, 0, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null));
+                    return new MessageViewModel(next.ClientService, next.PlaybackService, next.Delegate, next.Chat, new Message(0, next.SenderId, next.ChatId, null, next.SchedulingState, next.IsOutgoing, false, false, false, false, true, false, false, false, false, false, false, false, false, next.IsChannelPost, next.IsTopicMessage, false, next.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderDate(), null));
                 }
             }
 
@@ -3926,13 +3930,13 @@ namespace Telegram.ViewModels
                 {
                     return fromChannel1.ChatId == fromChannel2.ChatId && message1.ForwardInfo.FromChatId == message2.ForwardInfo.FromChatId;
                 }
-                else if (message1.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport1 && message2.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport2)
-                {
-                    return fromImport1.SenderName == fromImport2.SenderName;
-                }
                 else if (message1.ForwardInfo?.Origin is MessageForwardOriginHiddenUser hiddenUser1 && message2.ForwardInfo?.Origin is MessageForwardOriginHiddenUser hiddenUser2)
                 {
                     return hiddenUser1.SenderName == hiddenUser2.SenderName;
+                }
+                else if (message1.ImportInfo != null && message2.ImportInfo != null)
+                {
+                    return message1.ImportInfo.SenderName == message2.ImportInfo.SenderName;
                 }
 
                 return false;

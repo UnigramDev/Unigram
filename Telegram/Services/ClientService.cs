@@ -91,7 +91,8 @@ namespace Telegram.Services
         ConnectionState ConnectionState { get; }
 
         string GetTitle(Chat chat, bool tiny = false);
-        string GetTitle(MessageForwardInfo info);
+        string GetTitle(long chatId, bool tiny = false);
+        string GetTitle(MessageForwardInfo forward, MessageImportInfo import);
 
         bool TryGetCachedReaction(string emoji, out EmojiReaction value);
         Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync();
@@ -946,6 +947,16 @@ namespace Telegram.Services
             return _selectedBackground;
         }
 
+        public string GetTitle(long chatId, bool tiny = false)
+        {
+            if (_chats.TryGetValue(chatId, out var chat))
+            {
+                return GetTitle(chat, tiny);
+            }
+
+            return string.Empty;
+        }
+
         public string GetTitle(Chat chat, bool tiny = false)
         {
             if (chat == null)
@@ -977,27 +988,27 @@ namespace Telegram.Services
             return chat.Title;
         }
 
-        public string GetTitle(MessageForwardInfo info)
+        public string GetTitle(MessageForwardInfo forward, MessageImportInfo import)
         {
-            if (info?.Origin is MessageForwardOriginUser fromUser)
+            if (forward?.Origin is MessageForwardOriginUser fromUser)
             {
                 return GetUser(fromUser.SenderUserId)?.FullName();
             }
-            else if (info?.Origin is MessageForwardOriginChat fromChat)
+            else if (forward?.Origin is MessageForwardOriginChat fromChat)
             {
                 return GetTitle(GetChat(fromChat.SenderChatId));
             }
-            else if (info?.Origin is MessageForwardOriginChannel fromChannel)
+            else if (forward?.Origin is MessageForwardOriginChannel fromChannel)
             {
                 return GetTitle(GetChat(fromChannel.ChatId));
             }
-            else if (info?.Origin is MessageForwardOriginMessageImport fromImport)
-            {
-                return fromImport.SenderName;
-            }
-            else if (info?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+            else if (forward?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
             {
                 return fromHiddenUser.SenderName;
+            }
+            else if (import != null)
+            {
+                return import.SenderName;
             }
 
             return null;
@@ -1877,6 +1888,13 @@ namespace Telegram.Services
                 if (_chats.TryGetValue(updateChatAccentColor.ChatId, out Chat value))
                 {
                     value.AccentColorId = updateChatAccentColor.AccentColorId;
+                }
+            }
+            else if (update is UpdateChatBackgroundCustomEmoji updateChatBackgroundCustomEmoji)
+            {
+                if (_chats.TryGetValue(updateChatBackgroundCustomEmoji.ChatId, out Chat value))
+                {
+                    value.BackgroundCustomEmojiId = updateChatBackgroundCustomEmoji.BackgroundCustomEmojiId;
                 }
             }
             else if (update is UpdateChatBlockList updateChatBlockList)

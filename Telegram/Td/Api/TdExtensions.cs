@@ -559,6 +559,16 @@ namespace Telegram.Td.Api
             return new InputThumbnail(new InputFileId(photo.Photo.Id), photo.Width, photo.Height);
         }
 
+        public static Thumbnail ToThumbnail(this PhotoSize photo)
+        {
+            if (photo == null)
+            {
+                return null;
+            }
+
+            return new Thumbnail(new ThumbnailFormatJpeg(), photo.Width, photo.Height, photo.Photo);
+        }
+
         public static InputThumbnail ToInput(this Thumbnail thumbnail)
         {
             if (thumbnail == null)
@@ -1581,13 +1591,13 @@ namespace Telegram.Td.Api
             {
                 return message.ForwardInfo.FromChatId != 0;
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport)
-            {
-                return true;
-            }
             else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
             {
                 return message.ChatId == savedMessagesId;
+            }
+            else if (message.ImportInfo != null)
+            {
+                return true;
             }
 
             return false;
@@ -1677,7 +1687,7 @@ namespace Telegram.Td.Api
 
         public static StickerSetInfo ToInfo(this StickerSet set)
         {
-            return new StickerSetInfo(set.Id, set.Title, set.Name, set.Thumbnail, set.ThumbnailOutline, set.IsInstalled, set.IsArchived, set.IsOfficial, set.StickerFormat, set.StickerType, set.IsViewed, set.Stickers.Count, set.Stickers);
+            return new StickerSetInfo(set.Id, set.Title, set.Name, set.Thumbnail, set.ThumbnailOutline, set.IsInstalled, set.IsArchived, set.IsOfficial, set.StickerFormat, set.StickerType, set.NeedsRepainting, set.IsViewed, set.Stickers.Count, set.Stickers);
         }
 
         public static string GetStartsAt(this MessageVideoChatScheduled messageVideoChatScheduled)

@@ -354,6 +354,7 @@ namespace Telegram.ViewModels
         public MessageSelfDestructType SelfDestructType => _message.SelfDestructType;
         public MessageReplyTo ReplyTo { get => _message.ReplyTo; set => _message.ReplyTo = value; }
         public MessageForwardInfo ForwardInfo => _message.ForwardInfo;
+        public MessageImportInfo ImportInfo => _message.ImportInfo;
         public IList<UnreadReaction> UnreadReactions { get => _message.UnreadReactions; set => _message.UnreadReactions = value; }
         public int EditDate { get => _message.EditDate; set => _message.EditDate = value; }
         public int Date => _message.Date;

@@ -605,14 +605,14 @@ namespace Telegram.Controls
                 {
                     SetChat(message.ClientService, fromChannelChat, 30);
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
-                {
-                    Source = PlaceholderImage.GetNameForUser(fromImport.SenderName);
-                    Shape = ProfilePictureShape.Ellipse;
-                }
                 else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
                 {
                     Source = PlaceholderImage.GetNameForUser(fromHiddenUser.SenderName);
+                    Shape = ProfilePictureShape.Ellipse;
+                }
+                else if (message.ImportInfo != null)
+                {
+                    Source = PlaceholderImage.GetNameForUser(message.ImportInfo.SenderName);
                     Shape = ProfilePictureShape.Ellipse;
                 }
             }
@@ -698,9 +698,25 @@ namespace Telegram.Controls
         private static readonly Color _disabledTop = Color.FromArgb(0xFF, 0xA6, 0xAB, 0xB7);
         private static readonly Color _disabled = Color.FromArgb(0xFF, 0x86, 0x89, 0x92);
 
-        public static SolidColorBrush GetBrush(long i)
+        public static Color GetColor(long i)
         {
-            return new SolidColorBrush(_colors[Math.Abs(i % _colors.Length)]);
+            return _colors[Math.Abs(i % _colors.Length)];
+        }
+
+        public static SolidColorBrush GetBrush(long i, double opacity = 1)
+        {
+            return new SolidColorBrush(_colors[Math.Abs(i % _colors.Length)])
+            {
+                Opacity = opacity
+            };
+        }
+
+        public static SolidColorBrush GetBrush(AccentColorId i, double opacity = 1)
+        {
+            return new SolidColorBrush(_colors[Math.Abs(i.Id % _colors.Length)])
+            {
+                Opacity = opacity
+            };
         }
 
         public static CompositionBrush GetBrush(Compositor compositor, long i)
@@ -710,39 +726,17 @@ namespace Telegram.Controls
 
         public static PlaceholderImage GetChat(Chat chat)
         {
-            if (chat.Type is ChatTypePrivate privata)
-            {
-                return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, privata.UserId);
-            }
-            else if (chat.Type is ChatTypeSecret secret)
-            {
-                return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, secret.UserId);
-            }
-            else if (chat.Type is ChatTypeBasicGroup basic)
-            {
-                return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, basic.BasicGroupId);
-            }
-            else if (chat.Type is ChatTypeSupergroup super)
-            {
-                return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, super.SupergroupId);
-            }
-
-            return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, 5);
+            return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, chat.AccentColorId);
         }
 
         public static PlaceholderImage GetChat(ChatInviteLinkInfo chat)
         {
-            if (chat.ChatId != 0)
-            {
-                return new PlaceholderImage(InitialNameStringConverter.Convert(chat.Title), false, chat.ChatId);
-            }
-
-            return new PlaceholderImage(InitialNameStringConverter.Convert(chat.Title), false, 5);
+            return new PlaceholderImage(InitialNameStringConverter.Convert(chat.Title), false, chat.AccentColorId);
         }
 
         public static PlaceholderImage GetUser(User user)
         {
-            return new PlaceholderImage(InitialNameStringConverter.Convert(user), false, user.Id);
+            return new PlaceholderImage(InitialNameStringConverter.Convert(user), false, user.AccentColorId);
         }
 
         public static PlaceholderImage GetNameForUser(string firstName, string lastName, long id = 5)
