@@ -38,6 +38,8 @@ namespace Telegram.Views.Popups
         private bool _blockingAction;
         private bool _closeNeedConfirmation;
 
+        private bool _settingsVisible;
+
         // TODO: constructor should take a function and URL should be loaded asynchronously
         public WebBotPopup(IClientService clientService, INavigationService navigationService, User user, WebAppInfo info, AttachmentMenuBot menuBot = null, Chat sourceChat = null)
         {
@@ -121,6 +123,10 @@ namespace Telegram.Views.Popups
             else if (eventName == "web_app_setup_back_button")
             {
                 ProcessBackButtonMessage(eventData);
+            }
+            else if (eventName == "web_app_setup_settings_button")
+            {
+                ProcessSettingsButtonMessage(eventData);
             }
             else if (eventName == "web_app_request_theme")
             {
@@ -451,6 +457,11 @@ namespace Telegram.Views.Popups
             ShowHideBackButton(eventData.GetNamedBoolean("is_visible", false));
         }
 
+        private void ProcessSettingsButtonMessage(JsonObject eventData)
+        {
+            _settingsVisible = eventData.GetNamedBoolean("is_visible", false);
+        }
+
         private bool _backButtonCollapsed = true;
 
         private void ShowHideBackButton(bool show)
@@ -671,7 +682,7 @@ namespace Telegram.Views.Popups
         {
             var flyout = new MenuFlyout();
 
-            if (_menuBot != null && _menuBot.SupportsSettings)
+            if (_settingsVisible)
             {
                 flyout.CreateFlyoutItem(MenuItemSettings, Strings.BotWebViewSettings, Icons.Settings);
             }
@@ -691,9 +702,6 @@ namespace Telegram.Views.Popups
 
         private void MenuItemSettings()
         {
-            PostEvent("popup_closed", "{ status: \"cancelled\" }");
-
-
             PostEvent("settings_button_pressed");
         }
 
