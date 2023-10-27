@@ -9,6 +9,10 @@
                     d:DesignWidth="400">
 
     <Style TargetType="local:WebPageContent">
+        <Setter Property="HeaderBrush"
+                Value="{ThemeResource MessageHeaderForegroundBrush}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource MessageHeaderBorderBrush}" />
         <Setter Property="Margin"
                 Value="0,8,0,6" />
         <Setter Property="IsTabStop"
@@ -16,21 +20,44 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:WebPageContent">
-                    <StackPanel>
-                        <StackPanel BorderBrush="{ThemeResource MessageHeaderBorderBrush}"
-                                    BorderThickness="2,0,0,0"
-                                    Padding="8,0,0,0">
+                    <Grid CornerRadius="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Rectangle Fill="{TemplateBinding BorderBrush}"
+                                   Opacity="0.1"
+                                   Grid.ColumnSpan="2" />
+                        <Rectangle Fill="{TemplateBinding BorderBrush}"
+                                   HorizontalAlignment="Left"
+                                   Width="3" />
+                        <controls:DashPath x:Name="AccentDash" />
+
+                        <Grid Padding="8,0,8,0"
+                              Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition MaxHeight="68" />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
                             <RichTextBlock x:Name="Label"
                                            TextAlignment="DetectFromContent"
                                            IsTextSelectionEnabled="False"
-                                           Margin="0,0,0,8"
-                                           MaxLines="6"
+                                           Margin="0,4,0,0"
+                                           MaxLines="4"
                                            TextTrimming="CharacterEllipsis"
                                            Style="{StaticResource CaptionRichTextBlockStyle}"
                                            FontFamily="{ThemeResource EmojiThemeFontFamily}">
                                 <Paragraph>
                                     <Run x:Name="TitleLabel"
-                                         Foreground="{ThemeResource MessageHeaderForegroundBrush}"
+                                         Foreground="{Binding HeaderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                          FontWeight="SemiBold" />
                                     <Run x:Name="SubtitleLabel"
                                          FontWeight="SemiBold" />
@@ -38,7 +65,30 @@
                                 </Paragraph>
                             </RichTextBlock>
 
-                            <Grid HorizontalAlignment="Left">
+                            <Border x:Name="SmallPanel"
+                                    Width="48"
+                                    Height="48"
+                                    CornerRadius="4"
+                                    Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                    Margin="8,8,0,0"
+                                    VerticalAlignment="Top"
+                                    Grid.Column="1">
+                                <Image x:Name="Texture"
+                                       Stretch="UniformToFill"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                            </Border>
+
+                            <RichTextBlockOverflow x:Name="OverflowArea"
+                                                   MaxLines="6"
+                                                   Grid.ColumnSpan="2"
+                                                   Grid.Row="1" />
+
+                            <Grid x:Name="MediaPanel"
+                                  HorizontalAlignment="Left"
+                                  Margin="0,0,0,8"
+                                  Grid.Row="2"
+                                  Grid.ColumnSpan="2">
                                 <Border x:Name="Media"
                                         CornerRadius="4" />
 
@@ -52,25 +102,29 @@
                                         Margin="4">
                                     <TextBlock x:Name="Subtitle"
                                                Style="{StaticResource CaptionTextBlockStyle}"
-                                               Foreground="White"
+                                               Foreground="#FFFFFF"
                                                TextAlignment="Right" />
                                 </Border>
                             </Grid>
-                        </StackPanel>
 
-                        <Button x:Name="Button"
-                                Style="{StaticResource InstantViewButtonStyle}">
-                            <TextBlock FontWeight="SemiBold"
-                                       Style="{StaticResource CaptionTextBlockStyle}">
-                                <Run x:Name="Run1"
-                                     FontFamily="{StaticResource TelegramThemeFontFamily}" />
-                                <Run x:Name="Run2" />
-                                <Run x:Name="Run3"
-                                     Foreground="{x:Null}"
-                                     FontFamily="{StaticResource TelegramThemeFontFamily}" />
-                            </TextBlock>
-                        </Button>
-                    </StackPanel>
+                            <Rectangle x:Name="ButtonLine"
+                                       Fill="{TemplateBinding BorderBrush}"
+                                       Height="1"
+                                       Opacity="0.2"
+                                       Grid.Row="3"
+                                       Grid.ColumnSpan="2" />
+
+                            <Button x:Name="Button"
+                                    Style="{StaticResource AccentTextButtonStyle}"
+                                    Foreground="{TemplateBinding HeaderBrush}"
+                                    FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                    HorizontalAlignment="Stretch"
+                                    FontWeight="SemiBold"
+                                    FontSize="12"
+                                    Grid.Row="4"
+                                    Grid.ColumnSpan="2" />
+                        </Grid>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

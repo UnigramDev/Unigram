@@ -335,7 +335,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        protected override void SetText(IClientService clientService, MessageSender sender, string title, string service, FormattedText text)
+        protected override void SetText(IClientService clientService, bool outgoing, MessageSender sender, string title, string service, FormattedText text)
         {
             _alternativeText = title + ": ";
             TitleLabel.Text = title;

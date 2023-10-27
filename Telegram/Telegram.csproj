@@ -224,6 +224,7 @@
     <Compile Include="Controls\Contacts\ContactsSortedByHeader.xaml.cs">
       <DependentUpon>ContactsSortedByHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DashPath.cs" />
     <Compile Include="Controls\Gallery\GalleryCompactWindow.xaml.cs">
       <DependentUpon>GalleryCompactWindow.xaml</DependentUpon>
     </Compile>
@@ -649,12 +650,8 @@
     <Compile Include="Controls\Messages\Content\VideoNoteContent.xaml.cs">
       <DependentUpon>VideoNoteContent.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\Content\WebPageContentBase.cs" />
     <Compile Include="Controls\Messages\Content\WebPageContent.xaml.cs">
       <DependentUpon>WebPageContent.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Messages\Content\WebPageSmallPhotoContent.xaml.cs">
-      <DependentUpon>WebPageSmallPhotoContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\IContent.cs" />
     <Compile Include="Controls\Messages\Content\VenueContent.xaml.cs">
@@ -2108,10 +2105,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\Content\WebPageContent.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Messages\Content\WebPageSmallPhotoContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

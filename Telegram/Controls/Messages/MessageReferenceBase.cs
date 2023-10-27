@@ -81,6 +81,7 @@ namespace Telegram.Controls.Messages
                 }
 
                 SetText(null,
+                    true,
                     null,
                     embedded.WebPagePreview.SiteName,
                     string.Empty,
@@ -102,7 +103,7 @@ namespace Telegram.Controls.Messages
 
         public void Mockup(string sender, string message)
         {
-            SetText(null, null, sender, string.Empty, new FormattedText { Text = message });
+            SetText(null, true, null, sender, string.Empty, new FormattedText { Text = message });
         }
 
         public void UpdateMessageReply(MessageViewModel message)
@@ -309,7 +310,8 @@ namespace Telegram.Controls.Messages
             Visibility = Visibility.Visible;
 
             SetText(clientService,
-                outgoing ? null : new MessageSenderChat(story.SenderChatId),
+                outgoing,
+                new MessageSenderChat(story.SenderChatId),
                 GetFromLabel(clientService, story, title),
                 Strings.Story,
                 null);
@@ -336,7 +338,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 string.Empty,
                 text.Text);
@@ -351,7 +354,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 dice.Emoji,
                 null);
@@ -366,7 +370,8 @@ namespace Telegram.Controls.Messages
             // 🖼
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 Strings.AttachPhoto,
                 photo.Caption);
@@ -393,7 +398,8 @@ namespace Telegram.Controls.Messages
             if (caption != null && !string.IsNullOrEmpty(caption.Text))
             {
                 SetText(clientService,
-                    outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                     GetFromLabel(clientService, message, title),
                     null,
                     caption);
@@ -401,7 +407,8 @@ namespace Telegram.Controls.Messages
             else
             {
                 SetText(clientService,
-                    outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                     GetFromLabel(clientService, message, title),
                     invoice.Title,
                     null);
@@ -417,7 +424,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation,
                 null);
@@ -432,7 +440,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 Strings.AttachLocation,
                 new FormattedText(venue.Venue.Title, null));
@@ -447,7 +456,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 call.ToOutcomeText(message.IsOutgoing),
                 null);
@@ -460,7 +470,8 @@ namespace Telegram.Controls.Messages
             Visibility = Visibility.Visible;
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 $"\uD83C\uDFAE {game.Game.Title}",
                 null);
@@ -477,7 +488,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 Strings.AttachContact,
                 null);
@@ -505,7 +517,8 @@ namespace Telegram.Controls.Messages
             }
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 service,
                 audio.Caption);
@@ -520,7 +533,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 $"\uD83D\uDCCA {poll.Poll.Question.Replace('\n', ' ')}",
                 null);
@@ -535,7 +549,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 Strings.AttachAudio,
                 voiceNote.Caption);
@@ -548,7 +563,8 @@ namespace Telegram.Controls.Messages
             Visibility = Visibility.Visible;
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 Strings.AttachVideo,
                 video.Caption);
@@ -570,7 +586,8 @@ namespace Telegram.Controls.Messages
             Visibility = Visibility.Visible;
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 Strings.AttachRound,
                 null);
@@ -587,7 +604,8 @@ namespace Telegram.Controls.Messages
             if (animatedEmoji.AnimatedEmoji?.Sticker?.FullType is StickerFullTypeCustomEmoji customEmoji)
             {
                 SetText(clientService,
-                    outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                     GetFromLabel(clientService, message, title),
                     string.Empty,
                     new FormattedText(animatedEmoji.Emoji, new[]
@@ -598,7 +616,8 @@ namespace Telegram.Controls.Messages
             else
             {
                 SetText(clientService,
-                    outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                     GetFromLabel(clientService, message, title),
                     animatedEmoji.Emoji,
                     null);
@@ -614,7 +633,8 @@ namespace Telegram.Controls.Messages
             Visibility = Visibility.Visible;
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 Strings.AttachGif,
                 animation.Caption);
@@ -631,7 +651,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 string.IsNullOrEmpty(sticker.Sticker.Emoji) ? Strings.AttachSticker : $"{sticker.Sticker.Emoji} {Strings.AttachSticker}",
                 null);
@@ -646,7 +667,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 Strings.Story,
                 null);
@@ -661,7 +683,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 document.Document.FileName,
                 document.Caption);
@@ -676,7 +699,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 MessageService.GetText(message),
                 null);
@@ -691,7 +715,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(null,
-                outgoing ? null : message?.SenderId,
+                outgoing,
+                message?.SenderId,
                 title,
                 Strings.Loading,
                 null);
@@ -710,6 +735,7 @@ namespace Telegram.Controls.Messages
                 if (clientService.TryGetChat(replyToStory.StorySenderChatId, out Chat chat))
                 {
                     SetText(null,
+                        true,
                         null,
                         chat.Title,
                         Icons.ExpiredStory + "\u00A0" + Strings.ExpiredStory,
@@ -718,6 +744,7 @@ namespace Telegram.Controls.Messages
                 else
                 {
                     SetText(null,
+                        true,
                         null,
                         null,
                         Icons.ExpiredStory + "\u00A0" + Strings.ExpiredStory,
@@ -727,6 +754,7 @@ namespace Telegram.Controls.Messages
             else
             {
                 SetText(null,
+                    true,
                     null,
                     null,
                     Strings.DeletedMessage,
@@ -743,7 +771,8 @@ namespace Telegram.Controls.Messages
             HideThumbnail();
 
             SetText(clientService,
-                outgoing ? null : message.SenderId,
+                outgoing,
+                message.SenderId,
                 GetFromLabel(clientService, message, title),
                 Strings.UnsupportedAttachment,
                 null);
@@ -761,7 +790,7 @@ namespace Telegram.Controls.Messages
         protected abstract void ShowThumbnail(CornerRadius radius = default);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected abstract void SetText(IClientService clientService, MessageSender sender, string title, string service, FormattedText text);
+        protected abstract void SetText(IClientService clientService, bool outgoing, MessageSender sender, string title, string service, FormattedText text);
 
         #endregion
 
@@ -772,7 +801,7 @@ namespace Telegram.Controls.Messages
                 return title;
             }
 
-            var forwardedTitle = clientService.GetTitle(message.ForwardInfo);
+            var forwardedTitle = clientService.GetTitle(message.ForwardInfo, message.ImportInfo);
             if (forwardedTitle != null)
             {
                 return forwardedTitle;

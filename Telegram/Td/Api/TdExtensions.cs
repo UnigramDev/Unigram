@@ -316,6 +316,17 @@ namespace Telegram.Td.Api
             return null;
         }
 
+        public static JsonValueArray GetNamedArray(this JsonValueObject json, string key)
+        {
+            var member = json.GetNamedValue(key);
+            if (member?.Value is JsonValueArray value)
+            {
+                return value;
+            }
+
+            return null;
+        }
+
         public static JsonObjectMember GetNamedValue(this JsonValueObject json, string key)
         {
             if (json == null)
@@ -826,6 +837,48 @@ namespace Telegram.Td.Api
             return (null, null, null);
         }
 
+        public static Thumbnail GetThumbnail(this WebPage webPage)
+        {
+            if (webPage.Animation != null)
+            {
+                return webPage.Animation.Thumbnail;
+            }
+            else if (webPage.Audio != null)
+            {
+                return webPage.Audio.AlbumCoverThumbnail;
+            }
+            else if (webPage.Document != null)
+            {
+                return webPage.Document.Thumbnail;
+            }
+            else if (webPage.Sticker != null)
+            {
+                return null;
+            }
+            else if (webPage.Video != null)
+            {
+                return webPage.Video.Thumbnail;
+            }
+            else if (webPage.VideoNote != null)
+            {
+                return webPage.VideoNote.Thumbnail;
+            }
+            else if (webPage.VoiceNote != null)
+            {
+                return null;
+            }
+            else if (webPage.Photo != null)
+            {
+                var small = webPage.Photo.GetSmall();
+                if (small != null)
+                {
+                    return small.ToThumbnail();
+                }
+            }
+
+            return null;
+        }
+
         public static File GetFile(this MessageWithOwner message)
         {
             if (message is MessageViewModel viewModel)
@@ -1251,7 +1304,7 @@ namespace Telegram.Td.Api
             return false;
         }
 
-        public static bool IsSmallPhoto(this WebPage webPage)
+        public static bool IsSmall(this WebPage webPage)
         {
             if (webPage.Photo != null && (webPage.SiteName.Length > 0 || webPage.Title.Length > 0 || webPage.Author.Length > 0 || webPage.Description?.Text.Length > 0))
             {

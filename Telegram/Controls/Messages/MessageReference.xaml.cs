@@ -93,6 +93,7 @@ namespace Telegram.Controls.Messages
         private Run TitleLabel;
         private Run ServiceLabel;
         private Span MessageLabel;
+        private DashPath AccentDash;
 
         // Lazy loaded
         private Border ThumbRoot;
@@ -203,7 +204,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        protected override void SetText(IClientService clientService, MessageSender sender, string title, string service, FormattedText text)
+        protected override void SetText(IClientService clientService, bool outgoing, MessageSender sender, string title, string service, FormattedText text)
         {
             if (TitleLabel != null)
             {
@@ -215,7 +216,13 @@ namespace Telegram.Controls.Messages
                     ServiceLabel.Text += ", ";
                 }
 
-                _tintId = sender switch
+                var sender = clientService?.GetMessageSender(messageSender);
+                var tintId = outgoing ? null : sender switch
+                {
+                    User user => user.AccentColorId,
+                    Chat chat => chat.AccentColorId,
+                    _ => null
+                };
                 {
                     MessageSenderUser user => user.UserId,
                     MessageSenderChat chat => chat.ChatId,
@@ -230,6 +237,9 @@ namespace Telegram.Controls.Messages
                         SubtleBrush =
                         HeaderBrush =
                         BorderBrush = new SolidColorBrush(Colors.White);
+
+                    AccentDash.Stripe1 = null;
+                    AccentDash.Stripe2 = null;
                 }
                 else
                 {
@@ -238,17 +248,31 @@ namespace Telegram.Controls.Messages
                     ClearValue(ForegroundProperty);
                     ClearValue(SubtleBrushProperty);
 
-                    if (_tintId != 0)
+                    if (tintId != null)
                     {
+                        var accent = clientService.GetAccentColor(tintId);
+
                         HeaderBrush =
-                            BorderBrush = PlaceholderImage.GetBrush(_tintId);
+                            BorderBrush = new SolidColorBrush(accent[0]);
+
+                        AccentDash.Stripe1 = accent.Length > 1
+                            ? new SolidColorBrush(accent[1])
+                            : null;
+                        AccentDash.Stripe2 = accent.Length > 2
+                            ? new SolidColorBrush(accent[2])
+                            : null;
                     }
                     else
                     {
                         ClearValue(HeaderBrushProperty);
                         ClearValue(BorderBrushProperty);
+
+                        AccentDash.Stripe1 = null;
+                        AccentDash.Stripe2 = null;
                     }
                 }
+
+                _tintId = tintId?.Id ?? -1;
 
                 MessageLabel.Inlines.Clear();
 

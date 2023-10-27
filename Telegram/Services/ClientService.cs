@@ -11,11 +11,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Services.Updates;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Storage;
+using Windows.UI;
 
 namespace Telegram.Services
 {
@@ -59,6 +62,13 @@ namespace Telegram.Services
 
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
+
+        /* temp */
+        IDictionary<int, Color[]> AccentColors { get; }
+        IList<int> AvailableAccentColors { get; }
+
+        Color[] GetAccentColor(AccentColorId id);
+        /* temp */
 
         ReactionType DefaultReaction { get; }
 
@@ -536,7 +546,68 @@ namespace Telegram.Services
             if (value is JsonValueObject obj)
             {
                 _config = obj;
+
+                // TODO: remove when implemented in TDLib:
+                var peerColors = obj.GetNamedObject("peer_colors");
+                var peerColorsAvailable = obj.GetNamedArray("peer_colors_available");
+
+                if (peerColors != null && peerColorsAvailable != null)
+                {
+                    var available = new List<int>();
+                    var colors = new Dictionary<int, Color[]>();
+
+                    for (int i = 0; i < 7; i++)
+                    {
+                        colors[i] = new[]
+                        {
+                            PlaceholderImage.GetColor(i)
+                        };
+                    }
+
+                    foreach (var id in peerColorsAvailable.Values)
+                    {
+                        if (id is JsonValueNumber number)
+                        {
+                            available.Add((int)number.Value);
+                        }
+                    }
+
+                    foreach (var keys in peerColors.Members)
+                    {
+                        if (int.TryParse(keys.Key, out int key) && keys.Value is JsonValueArray color)
+                        {
+                            var values = new Color[color.Values.Count];
+
+                            for (int i = 0; i < color.Values.Count; i++)
+                            {
+                                var item = color.Values[i];
+                                if (item is JsonValueString str && ColorEx.TryParse(str.Value, out Color part))
+                                {
+                                    values[i] = part;
+                                }
+                            }
+
+                            colors[key] = values;
+                        }
+                    }
+
+                    AccentColors = colors;
+                    AvailableAccentColors = available;
+                }
             }
+        }
+
+        public IDictionary<int, Color[]> AccentColors { get; private set; }
+        public IList<int> AvailableAccentColors { get; private set; }
+
+        public Color[] GetAccentColor(AccentColorId id)
+        {
+            if (AccentColors != null && AccentColors.TryGetValue(id.Id, out var accentColor))
+            {
+                return accentColor;
+            }
+
+            return null;
         }
 
         private void UpdateVersion()
@@ -1799,6 +1870,13 @@ namespace Telegram.Services
                 if (_chats.TryGetValue(updateChatHasScheduledMessages.ChatId, out Chat value))
                 {
                     value.HasScheduledMessages = updateChatHasScheduledMessages.HasScheduledMessages;
+                }
+            }
+            else if (update is UpdateChatAccentColor updateChatAccentColor)
+            {
+                if (_chats.TryGetValue(updateChatAccentColor.ChatId, out Chat value))
+                {
+                    value.AccentColorId = updateChatAccentColor.AccentColorId;
                 }
             }
             else if (update is UpdateChatBlockList updateChatBlockList)
