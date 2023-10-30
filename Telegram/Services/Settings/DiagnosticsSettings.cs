@@ -119,6 +119,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _showMemoryUsage, "ShowMemoryUsage", value);
         }
 
+        private bool? _showIds;
+        public bool ShowIds
+        {
+            get => _showIds ??= GetValueOrDefault("ShowIds", false);
+            set => AddOrUpdateValue(ref _showIds, "ShowIds", value);
+        }
+
         public bool IsLastErrorDiskFull { get; set; }
     }
 }

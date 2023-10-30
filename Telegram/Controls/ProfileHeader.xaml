@@ -28,7 +28,7 @@
                                          Height="140"
                                          IsEnabled="False" />
             </controls:ActiveStoriesSegments>
-            
+
             <Border Height="140"
                     Width="140"
                     Margin="12,8">
@@ -220,6 +220,32 @@
                            VerticalAlignment="Top" />
             </controls:BadgeButton>
 
+            <controls:BadgeButton x:Name="ChatId"
+                                  Click="{x:Bind ViewModel.CopyId}"
+                                  Visibility="Collapsed"
+                                  Style="{StaticResource GlyphBadgeButtonStyle}"
+                                  Glyph="&#xEA42;">
+                <Button.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="{CustomResource Copy}"
+                                        Click="{x:Bind ViewModel.CopyId}">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE8C8;"
+                                          Style="{StaticResource DefaultFontIconStyle}" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </Button.ContextFlyout>
+                <controls:BadgeButton.ContentTemplate>
+                    <DataTemplate>
+                        <TextBlock>
+                            <Run Text="{Binding}"
+                                 FontFamily="Consolas" />
+                            <Run Text="&#x2004;&#x200A;" />
+                        </TextBlock>
+                    </DataTemplate>
+                </controls:BadgeButton.ContentTemplate>
+            </controls:BadgeButton>
 
             <controls:BadgeButton x:Name="Location"
                                   Visibility="Collapsed"

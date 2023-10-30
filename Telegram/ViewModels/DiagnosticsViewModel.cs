@@ -189,6 +189,16 @@ namespace Telegram.ViewModels
             }
         }
 
+        public bool ShowIds
+        {
+            get => SettingsService.Current.Diagnostics.ShowIds;
+            set
+            {
+                SettingsService.Current.Diagnostics.ShowIds = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public bool PreferIpv6
         {
             get => ClientService.Options.PreferIpv6;
