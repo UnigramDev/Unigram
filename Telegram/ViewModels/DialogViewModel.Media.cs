@@ -158,6 +158,17 @@ namespace Telegram.ViewModels
 
                     SendFileExecute(media, caption);
                 }
+                else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
+                {
+                    var field = TextField;
+                    if (field == null)
+                    {
+                        return;
+                    }
+
+                    var link = await package.GetWebLinkAsync();
+                    field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, link.AbsoluteUri);
+                }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
                 {
                     var items = await package.GetStorageItemsAsync();
