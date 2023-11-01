@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls.Gallery;
 using Telegram.Services.Updates;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Gallery;
@@ -47,13 +48,39 @@ namespace Telegram.ViewModels
             {
                 if (message.ReplyTo is MessageReplyToMessage replyToMessage)
                 {
-                    if (replyToMessage.ChatId == message.ChatId || replyToMessage.ChatId == 0)
+                    if (replyToMessage.ChatId != message.ChatId && ClientService.TryGetChat(replyToMessage.ChatId, out Chat replyToChat))
+                    {
+                        if (ClientService.TryGetSupergroup(replyToChat, out Supergroup supergroup))
+                        {
+                            if (supergroup.Status is ChatMemberStatusLeft && !supergroup.IsPublic() && !ClientService.IsChatAccessible(replyToChat))
+                            {
+                                if (supergroup.IsChannel)
+                                {
+                                    Window.Current.ShowTeachingTip(Strings.QuotePrivateChannel, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                                }
+                                else
+                                {
+                                    Window.Current.ShowTeachingTip(Strings.QuotePrivateGroup, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                                }
+
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            Window.Current.ShowTeachingTip(Strings.QuotePrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                            return;
+                        }
+
+                        NavigationService.NavigateToChat(replyToChat, replyToMessage.MessageId);
+                    }
+                    else if (replyToMessage.Origin != null)
+                    {
+                        Window.Current.ShowTeachingTip(Strings.QuotePrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    }
+                    else if (replyToMessage.ChatId == message.ChatId || replyToMessage.ChatId == 0)
                     {
                         await LoadMessageSliceAsync(message.Id, replyToMessage.MessageId);
-                    }
-                    else
-                    {
-                        NavigationService.NavigateToChat(replyToMessage.ChatId, replyToMessage.MessageId);
                     }
                 }
             }
