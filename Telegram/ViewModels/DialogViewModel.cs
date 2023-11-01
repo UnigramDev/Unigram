@@ -1648,14 +1648,20 @@ namespace Telegram.ViewModels
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ProcessReplies(Chat chat, MessageViewModel message)
         {
-            var thread = _thread;
-            if (thread != null &&
-                message.ReplyTo is MessageReplyToMessage replyToMessage &&
-                thread?.ChatId == replyToMessage.ChatId &&
-                thread?.Messages[^1].Id == replyToMessage.MessageId)
+            if (message.ReplyTo is MessageReplyToMessage replyToMessage)
             {
-                message.ReplyToState = MessageReplyToState.Hidden;
-                return;
+                if (_thread?.ChatId == replyToMessage.ChatId &&
+                    _thread?.Messages[^1].Id == replyToMessage.MessageId)
+                {
+                    message.ReplyToState = MessageReplyToState.Hidden;
+                    return;
+                }
+                else if (replyToMessage.Origin != null)
+                {
+                    message.ReplyToState = MessageReplyToState.None;
+                    message.ReplyToItem = replyToMessage;
+                    return;
+                }
             }
 
             if (message.ReplyTo is not null ||
