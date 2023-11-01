@@ -400,11 +400,23 @@ namespace Telegram.ViewModels
 
             var self = ClientService.IsSavedMessages(chat);
 
-            var mediaAllowed = permissions.CanSendPhotos
-                ? items.All(x => x is StoragePhoto)
-                ? permissions.CanSendVideos
-                : items.All(x => x is StoragePhoto or StorageVideo)
-                : permissions.CanSendVideos && items.All(x => x is StorageVideo);
+            bool mediaAllowed;
+            if (permissions.CanSendVideos && permissions.CanSendVideos)
+            {
+                mediaAllowed = items.All(x => x is StoragePhoto or StorageVideo);
+            }
+            else if (permissions.CanSendPhotos)
+            {
+                mediaAllowed = items.All(x => x is StoragePhoto);
+            }
+            else if (permissions.CanSendVideos)
+            {
+                mediaAllowed = items.All(x => x is StorageVideo);
+            }
+            else
+            {
+                mediaAllowed = false;
+            }
 
             var popup = new SendFilesPopup(this, items, media, mediaAllowed, permissions.CanSendDocuments || permissions.CanSendAudios, chat.Type is ChatTypePrivate && !self, CanSchedule, self);
             popup.Caption = caption;

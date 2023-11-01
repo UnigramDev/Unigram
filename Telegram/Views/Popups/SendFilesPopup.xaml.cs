@@ -481,7 +481,7 @@ namespace Telegram.Views.Popups
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsMediaOnly)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsAlbumAvailable)));
 
-            if (IsMediaSelected && !IsMediaOnly)
+            if (IsMediaSelected && !IsMediaOnly && !_mediaAllowed)
             {
                 IsMediaSelected = false;
                 IsFilesSelected = true;
