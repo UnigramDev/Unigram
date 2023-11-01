@@ -122,6 +122,7 @@ namespace Telegram.Controls.Messages
         private Run ServiceLabel;
         private Span MessageLabel;
         private DashPath AccentDash;
+        private TextBlock Quote;
 
         // Lazy loaded
         private Border ThumbRoot;
@@ -136,6 +137,7 @@ namespace Telegram.Controls.Messages
             ServiceLabel = GetTemplateChild(nameof(ServiceLabel)) as Run;
             MessageLabel = GetTemplateChild(nameof(MessageLabel)) as Span;
             AccentDash = GetTemplateChild(nameof(AccentDash)) as DashPath;
+            Quote = GetTemplateChild(nameof(Quote)) as TextBlock;
             Pattern = GetTemplateChild(nameof(Pattern)) as MessageReferencePattern;
 
             _templateApplied = true;
@@ -235,7 +237,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        protected override void SetText(IClientService clientService, bool outgoing, MessageSender messageSender, string title, string service, FormattedText text)
+        protected override void SetText(IClientService clientService, bool outgoing, MessageSender messageSender, string title, string service, FormattedText text, bool quote)
         {
             if (TitleLabel != null)
             {
@@ -246,6 +248,10 @@ namespace Telegram.Controls.Messages
                 {
                     ServiceLabel.Text += ", ";
                 }
+
+                Quote.Visibility = quote
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
 
                 var sender = clientService?.GetMessageSender(messageSender);
                 var tintId = outgoing ? null : sender switch

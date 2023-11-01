@@ -90,12 +90,12 @@ namespace Telegram.Controls.Messages
             else if (embedded.EditingMessage != null)
             {
                 MessageId = embedded.EditingMessage.Id;
-                GetMessageTemplate(embedded.EditingMessage.ClientService, embedded.EditingMessage, Strings.Edit, true);
+                GetMessageTemplate(embedded.EditingMessage.ClientService, embedded.EditingMessage, null, Strings.Edit, true, false);
             }
             else if (embedded.ReplyToMessage != null)
             {
                 MessageId = embedded.ReplyToMessage.Id;
-                GetMessageTemplate(embedded.ReplyToMessage.ClientService, embedded.ReplyToMessage, null, true);
+                GetMessageTemplate(embedded.ReplyToMessage.ClientService, embedded.ReplyToMessage, embedded.ReplyToQuote, null, true, false);
             }
         }
 
@@ -124,11 +124,15 @@ namespace Telegram.Controls.Messages
             }
             else if (message.ReplyToItem is MessageViewModel replyToMessage)
             {
-                GetMessageTemplate(message.ClientService, replyToMessage, null, outgoing);
+                GetMessageTemplate(message.ClientService, replyToMessage, null, null, outgoing, message.ForwardInfo != null);
             }
             else if (message.ReplyToItem is Story replyToStory)
             {
                 GetStoryTemplate(message.ClientService, replyToStory, null, outgoing);
+            }
+            else if (message.ReplyToItem is MessageReplyToMessage replyToMessageInfo)
+            {
+                GetMessageTemplate(message.ClientService, replyToMessageInfo, null, outgoing);
             }
             else if (message.ReplyToState == MessageReplyToState.Loading)
             {
@@ -157,7 +161,7 @@ namespace Telegram.Controls.Messages
             else
             {
                 MessageId = message.Id;
-                GetMessageTemplate(message.ClientService, message, title, true);
+                GetMessageTemplate(message.ClientService, message, null, title, true, message.ForwardInfo != null);
             }
         }
 
@@ -256,53 +260,123 @@ namespace Telegram.Controls.Messages
 
         #region Reply
 
-        private bool GetMessageTemplate(IClientService clientService, MessageViewModel message, string title, bool outgoing)
+        private bool GetMessageTemplate(IClientService clientService, MessageViewModel message, FormattedText text, string title, bool outgoing, bool forward)
         {
+            title = GetFromLabel(clientService, message, title, forward);
+
             switch (message.Content)
             {
-                case MessageText text:
-                    return SetTextTemplate(clientService, message, text, title, outgoing);
+                case MessageText text1:
+                    return SetTextTemplate(clientService, message.SenderId, text1, text, title, outgoing);
                 case MessageAnimatedEmoji animatedEmoji:
-                    return SetAnimatedEmojiTemplate(clientService, message, animatedEmoji, title, outgoing);
+                    return SetAnimatedEmojiTemplate(clientService, message.SenderId, animatedEmoji, title, outgoing);
                 case MessageAnimation animation:
-                    return SetAnimationTemplate(clientService, message, animation, title, outgoing);
+                    return SetAnimationTemplate(clientService, message.SenderId, text, false, animation, title, outgoing);
                 case MessageAudio audio:
-                    return SetAudioTemplate(clientService, message, audio, title, outgoing);
+                    return SetAudioTemplate(clientService, message.SenderId, text, false, audio, title, outgoing);
                 case MessageCall call:
-                    return SetCallTemplate(clientService, message, call, title, outgoing);
+                    return SetCallTemplate(clientService, message.SenderId, call, title, outgoing);
                 case MessageContact contact:
-                    return SetContactTemplate(clientService, message, contact, title, outgoing);
+                    return SetContactTemplate(clientService, message.SenderId, contact, title, outgoing);
                 case MessageDice dice:
-                    return SetDiceTemplate(clientService, message, dice, title, outgoing);
+                    return SetDiceTemplate(clientService, message.SenderId, dice, title, outgoing);
                 case MessageDocument document:
-                    return SetDocumentTemplate(clientService, message, document, title, outgoing);
+                    return SetDocumentTemplate(clientService, message.SenderId, text, false, document, title, outgoing);
                 case MessageGame game:
-                    return SetGameTemplate(clientService, message, game, title, outgoing);
+                    return SetGameTemplate(clientService, message.SenderId, game, title, outgoing);
                 case MessageInvoice invoice:
-                    return SetInvoiceTemplate(clientService, message, invoice, title, outgoing);
+                    return SetInvoiceTemplate(clientService, message.SenderId, invoice, title, outgoing);
                 case MessageLocation location:
-                    return SetLocationTemplate(clientService, message, location, title, outgoing);
+                    return SetLocationTemplate(clientService, message.SenderId, location, title, outgoing);
                 case MessagePhoto photo:
-                    return SetPhotoTemplate(clientService, message, photo, title, outgoing);
+                    return SetPhotoTemplate(clientService, message.SenderId, text, false, photo, title, outgoing, message.SelfDestructType is null);
                 case MessagePoll poll:
-                    return SetPollTemplate(clientService, message, poll, title, outgoing);
+                    return SetPollTemplate(clientService, message.SenderId, poll, title, outgoing);
                 case MessageSticker sticker:
-                    return SetStickerTemplate(clientService, message, sticker, title, outgoing);
+                    return SetStickerTemplate(clientService, message.SenderId, sticker, title, outgoing);
                 case MessageStory story:
-                    return SetStoryTemplate(clientService, message, story, title, outgoing);
+                    return SetStoryTemplate(clientService, message.SenderId, story, title, outgoing);
                 case MessageUnsupported:
                     return SetUnsupportedTemplate(clientService, message, title, outgoing);
                 case MessageVenue venue:
-                    return SetVenueTemplate(clientService, message, venue, title, outgoing);
+                    return SetVenueTemplate(clientService, message.SenderId, venue, title, outgoing);
                 case MessageVideo video:
-                    return SetVideoTemplate(clientService, message, video, title, outgoing);
+                    return SetVideoTemplate(clientService, message.SenderId, text, false, video, title, outgoing, message.SelfDestructType is null);
                 case MessageVideoNote videoNote:
-                    return SetVideoNoteTemplate(clientService, message, videoNote, title, outgoing);
+                    return SetVideoNoteTemplate(clientService, message.SenderId, videoNote, title, outgoing);
                 case MessageVoiceNote voiceNote:
-                    return SetVoiceNoteTemplate(clientService, message, voiceNote, title, outgoing);
+                    return SetVoiceNoteTemplate(clientService, message.SenderId, text, false, voiceNote, title, outgoing);
                 default:
                     return SetServiceTextTemplate(clientService, message, title, outgoing);
             }
+        }
+
+        private bool GetMessageTemplate(IClientService clientService, MessageReplyToMessage message, string title, bool outgoing)
+        {
+            title = GetFromLabel(clientService, message, title);
+
+            MessageSender sender = message.Origin switch
+            {
+                MessageOriginUser originUser => new MessageSenderUser(originUser.SenderUserId),
+                MessageOriginChat fromChat => new MessageSenderChat(fromChat.SenderChatId),
+                MessageOriginChannel fromChannel => new MessageSenderChat(fromChannel.ChatId),
+                _ => null
+            };
+
+            switch (message.Content)
+            {
+                case MessageAnimation animation:
+                    return SetAnimationTemplate(clientService, sender, message.Quote, message.IsQuoteManual, animation, title, outgoing);
+                case MessageAudio audio:
+                    return SetAudioTemplate(clientService, sender, message.Quote, message.IsQuoteManual, audio, title, outgoing);
+                case MessageContact contact:
+                    return SetContactTemplate(clientService, sender, contact, title, outgoing);
+                case MessageDice dice:
+                    return SetDiceTemplate(clientService, sender, dice, title, outgoing);
+                case MessageDocument document:
+                    return SetDocumentTemplate(clientService, sender, message.Quote, message.IsQuoteManual, document, title, outgoing);
+                case MessageGame game:
+                    return SetGameTemplate(clientService, sender, game, title, outgoing);
+                case MessageInvoice invoice:
+                    return SetInvoiceTemplate(clientService, sender, invoice, title, outgoing);
+                case MessageLocation location:
+                    return SetLocationTemplate(clientService, sender, location, title, outgoing);
+                case MessagePhoto photo:
+                    return SetPhotoTemplate(clientService, sender, message.Quote, message.IsQuoteManual, photo, title, outgoing, true);
+                case MessagePoll poll:
+                    return SetPollTemplate(clientService, sender, poll, title, outgoing);
+                case MessageSticker sticker:
+                    return SetStickerTemplate(clientService, sender, sticker, title, outgoing);
+                case MessageStory story:
+                    return SetStoryTemplate(clientService, sender, story, title, outgoing);
+                case MessageVenue venue:
+                    return SetVenueTemplate(clientService, sender, venue, title, outgoing);
+                case MessageVideo video:
+                    return SetVideoTemplate(clientService, sender, message.Quote, message.IsQuoteManual, video, title, outgoing, true);
+                case MessageVideoNote videoNote:
+                    return SetVideoNoteTemplate(clientService, sender, videoNote, title, outgoing);
+                case MessageVoiceNote voiceNote:
+                    return SetVoiceNoteTemplate(clientService, sender, message.Quote, message.IsQuoteManual, voiceNote, title, outgoing);
+                default:
+                    return SetReplyToMessageTemplate(clientService, message, sender, title, outgoing);
+            }
+        }
+
+        private bool SetReplyToMessageTemplate(IClientService clientService, MessageReplyToMessage message, MessageSender sender, string title, bool outgoing)
+        {
+            Visibility = Visibility.Visible;
+
+            HideThumbnail();
+
+            SetText(clientService,
+                outgoing,
+                sender,
+                title,
+                string.Empty,
+                message.Quote,
+                message.IsQuoteManual);
+
+            return true;
         }
 
         private void GetStoryTemplate(IClientService clientService, Story story, string title, bool outgoing)
@@ -331,7 +405,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private bool SetTextTemplate(IClientService clientService, MessageViewModel message, MessageText text, string title, bool outgoing)
+        private bool SetTextTemplate(IClientService clientService, MessageSender sender, MessageText text, FormattedText quote, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -339,15 +413,15 @@ namespace Telegram.Controls.Messages
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 string.Empty,
-                text.Text);
+                quote ?? text.Text);
 
             return true;
         }
 
-        private bool SetDiceTemplate(IClientService clientService, MessageViewModel message, MessageDice dice, string title, bool outgoing)
+        private bool SetDiceTemplate(IClientService clientService, MessageSender sender, MessageDice dice, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -355,15 +429,15 @@ namespace Telegram.Controls.Messages
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 dice.Emoji,
                 null);
 
             return true;
         }
 
-        private bool SetPhotoTemplate(IClientService clientService, MessageViewModel message, MessagePhoto photo, string title, bool outgoing)
+        private bool SetPhotoTemplate(IClientService clientService, MessageSender sender, FormattedText text, bool quote, MessagePhoto photo, string title, bool outgoing, bool thumbnail)
         {
             Visibility = Visibility.Visible;
 
@@ -371,45 +445,54 @@ namespace Telegram.Controls.Messages
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 Strings.AttachPhoto,
-                photo.Caption);
+                text ?? photo.Caption,
+                quote);
 
-            if (message.SelfDestructType is not null)
+            if (thumbnail)
             {
-                HideThumbnail();
+                UpdateThumbnail(clientService, photo.Photo.GetSmall(), photo.Photo.Minithumbnail);
             }
             else
             {
-                UpdateThumbnail(clientService, photo.Photo.GetSmall(), photo.Photo.Minithumbnail);
+                HideThumbnail();
             }
 
             return true;
         }
 
-        private bool SetInvoiceTemplate(IClientService clientService, MessageViewModel message, MessageInvoice invoice, string title, bool outgoing)
+        private bool SetInvoiceTemplate(IClientService clientService, MessageSender sender, MessageInvoice invoice, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             HideThumbnail();
 
-            var caption = message.GetCaption();
+            var caption = invoice.ExtendedMedia switch
+            {
+                MessageExtendedMediaPreview preview => preview.Caption,
+                MessageExtendedMediaPhoto photo => photo.Caption,
+                MessageExtendedMediaVideo video => video.Caption,
+                MessageExtendedMediaUnsupported unsupported => unsupported.Caption,
+                _ => null,
+            };
+
             if (caption != null && !string.IsNullOrEmpty(caption.Text))
             {
                 SetText(clientService,
-                outgoing,
-                message.SenderId,
-                    GetFromLabel(clientService, message, title),
+                    outgoing,
+                    sender,
+                    title,
                     null,
                     caption);
             }
             else
             {
                 SetText(clientService,
-                outgoing,
-                message.SenderId,
-                    GetFromLabel(clientService, message, title),
+                    outgoing,
+                    sender,
+                    title,
                     invoice.Title,
                     null);
             }
@@ -417,7 +500,7 @@ namespace Telegram.Controls.Messages
             return true;
         }
 
-        private bool SetLocationTemplate(IClientService clientService, MessageViewModel message, MessageLocation location, string title, bool outgoing)
+        private bool SetLocationTemplate(IClientService clientService, MessageSender sender, MessageLocation location, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -425,15 +508,15 @@ namespace Telegram.Controls.Messages
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 location.LivePeriod > 0 ? Strings.AttachLiveLocation : Strings.AttachLocation,
                 null);
 
             return true;
         }
 
-        private bool SetVenueTemplate(IClientService clientService, MessageViewModel message, MessageVenue venue, string title, bool outgoing)
+        private bool SetVenueTemplate(IClientService clientService, MessageSender sender, MessageVenue venue, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -441,15 +524,15 @@ namespace Telegram.Controls.Messages
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 Strings.AttachLocation,
                 new FormattedText(venue.Venue.Title, null));
 
             return true;
         }
 
-        private bool SetCallTemplate(IClientService clientService, MessageViewModel message, MessageCall call, string title, bool outgoing)
+        private bool SetCallTemplate(IClientService clientService, MessageSender sender, MessageCall call, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -457,22 +540,22 @@ namespace Telegram.Controls.Messages
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
-                call.ToOutcomeText(message.IsOutgoing),
+                sender,
+                title,
+                call.ToOutcomeText(outgoing),
                 null);
 
             return true;
         }
 
-        private bool SetGameTemplate(IClientService clientService, MessageViewModel message, MessageGame game, string title, bool outgoing)
+        private bool SetGameTemplate(IClientService clientService, MessageSender sender, MessageGame game, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 $"\uD83C\uDFAE {game.Game.Title}",
                 null);
 
@@ -481,7 +564,7 @@ namespace Telegram.Controls.Messages
             return true;
         }
 
-        private bool SetContactTemplate(IClientService clientService, MessageViewModel message, MessageContact contact, string title, bool outgoing)
+        private bool SetContactTemplate(IClientService clientService, MessageSender sender, MessageContact contact, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -489,15 +572,15 @@ namespace Telegram.Controls.Messages
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 Strings.AttachContact,
                 null);
 
             return true;
         }
 
-        private bool SetAudioTemplate(IClientService clientService, MessageViewModel message, MessageAudio audio, string title, bool outgoing)
+        private bool SetAudioTemplate(IClientService clientService, MessageSender sender, FormattedText text, bool quote, MessageAudio audio, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -518,15 +601,16 @@ namespace Telegram.Controls.Messages
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 service,
-                audio.Caption);
+                text ?? audio.Caption,
+                quote);
 
             return true;
         }
 
-        private bool SetPollTemplate(IClientService clientService, MessageViewModel message, MessagePoll poll, string title, bool outgoing)
+        private bool SetPollTemplate(IClientService clientService, MessageSender sender, MessagePoll poll, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -534,15 +618,15 @@ namespace Telegram.Controls.Messages
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 $"\uD83D\uDCCA {poll.Poll.Question.Replace('\n', ' ')}",
                 null);
 
             return true;
         }
 
-        private bool SetVoiceNoteTemplate(IClientService clientService, MessageViewModel message, MessageVoiceNote voiceNote, string title, bool outgoing)
+        private bool SetVoiceNoteTemplate(IClientService clientService, MessageSender sender, FormattedText text, bool quote, MessageVoiceNote voiceNote, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -550,45 +634,47 @@ namespace Telegram.Controls.Messages
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 Strings.AttachAudio,
-                voiceNote.Caption);
+                text ?? voiceNote.Caption,
+                quote);
 
             return true;
         }
 
-        private bool SetVideoTemplate(IClientService clientService, MessageViewModel message, MessageVideo video, string title, bool outgoing)
+        private bool SetVideoTemplate(IClientService clientService, MessageSender sender, FormattedText text, bool quote, MessageVideo video, string title, bool outgoing, bool thumbnail)
         {
             Visibility = Visibility.Visible;
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 Strings.AttachVideo,
-                video.Caption);
+                text ?? video.Caption,
+                quote);
 
-            if (message.SelfDestructType is not null)
-            {
-                HideThumbnail();
-            }
-            else
+            if (thumbnail)
             {
                 UpdateThumbnail(clientService, video.Video.Thumbnail, video.Video.Minithumbnail);
             }
+            else
+            {
+                HideThumbnail();
+            }
 
             return true;
         }
 
-        private bool SetVideoNoteTemplate(IClientService clientService, MessageViewModel message, MessageVideoNote videoNote, string title, bool outgoing)
+        private bool SetVideoNoteTemplate(IClientService clientService, MessageSender sender, MessageVideoNote videoNote, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 Strings.AttachRound,
                 null);
 
@@ -597,7 +683,7 @@ namespace Telegram.Controls.Messages
             return true;
         }
 
-        private bool SetAnimatedEmojiTemplate(IClientService clientService, MessageViewModel message, MessageAnimatedEmoji animatedEmoji, string title, bool outgoing)
+        private bool SetAnimatedEmojiTemplate(IClientService clientService, MessageSender sender, MessageAnimatedEmoji animatedEmoji, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -605,8 +691,8 @@ namespace Telegram.Controls.Messages
             {
                 SetText(clientService,
                 outgoing,
-                message.SenderId,
-                    GetFromLabel(clientService, message, title),
+                sender,
+                    title,
                     string.Empty,
                     new FormattedText(animatedEmoji.Emoji, new[]
                     {
@@ -617,8 +703,8 @@ namespace Telegram.Controls.Messages
             {
                 SetText(clientService,
                 outgoing,
-                message.SenderId,
-                    GetFromLabel(clientService, message, title),
+                sender,
+                    title,
                     animatedEmoji.Emoji,
                     null);
             }
@@ -628,23 +714,24 @@ namespace Telegram.Controls.Messages
             return true;
         }
 
-        private bool SetAnimationTemplate(IClientService clientService, MessageViewModel message, MessageAnimation animation, string title, bool outgoing)
+        private bool SetAnimationTemplate(IClientService clientService, MessageSender sender, FormattedText text, bool quote, MessageAnimation animation, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 Strings.AttachGif,
-                animation.Caption);
+                text ?? animation.Caption,
+                quote);
 
             UpdateThumbnail(clientService, animation.Animation.Thumbnail, animation.Animation.Minithumbnail);
 
             return true;
         }
 
-        private bool SetStickerTemplate(IClientService clientService, MessageViewModel message, MessageSticker sticker, string title, bool outgoing)
+        private bool SetStickerTemplate(IClientService clientService, MessageSender sender, MessageSticker sticker, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -652,15 +739,15 @@ namespace Telegram.Controls.Messages
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 string.IsNullOrEmpty(sticker.Sticker.Emoji) ? Strings.AttachSticker : $"{sticker.Sticker.Emoji} {Strings.AttachSticker}",
                 null);
 
             return true;
         }
 
-        private bool SetStoryTemplate(IClientService clientService, MessageViewModel message, MessageStory story, string title, bool outgoing)
+        private bool SetStoryTemplate(IClientService clientService, MessageSender sender, MessageStory story, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -668,15 +755,15 @@ namespace Telegram.Controls.Messages
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 Strings.Story,
                 null);
 
             return true;
         }
 
-        private bool SetDocumentTemplate(IClientService clientService, MessageViewModel message, MessageDocument document, string title, bool outgoing)
+        private bool SetDocumentTemplate(IClientService clientService, MessageSender sender, FormattedText text, bool quote, MessageDocument document, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -684,10 +771,11 @@ namespace Telegram.Controls.Messages
 
             SetText(clientService,
                 outgoing,
-                message.SenderId,
-                GetFromLabel(clientService, message, title),
+                sender,
+                title,
                 document.Document.FileName,
-                document.Caption);
+                text ?? document.Caption,
+                quote);
 
             return true;
         }
@@ -701,14 +789,14 @@ namespace Telegram.Controls.Messages
             SetText(clientService,
                 outgoing,
                 message.SenderId,
-                GetFromLabel(clientService, message, title),
+                title,
                 MessageService.GetText(message),
                 null);
 
             return true;
         }
 
-        private bool SetLoadingTemplate(IClientService clientService, MessageViewModel message, string title, bool outgoing)
+        private bool SetLoadingTemplate(IClientService clientService, MessageSender sender, string title, bool outgoing)
         {
             Visibility = Visibility.Visible;
 
@@ -716,7 +804,7 @@ namespace Telegram.Controls.Messages
 
             SetText(null,
                 outgoing,
-                message?.SenderId,
+                sender,
                 title,
                 Strings.Loading,
                 null);
@@ -773,7 +861,7 @@ namespace Telegram.Controls.Messages
             SetText(clientService,
                 outgoing,
                 message.SenderId,
-                GetFromLabel(clientService, message, title),
+                title,
                 Strings.UnsupportedAttachment,
                 null);
 
@@ -790,29 +878,68 @@ namespace Telegram.Controls.Messages
         protected abstract void ShowThumbnail(CornerRadius radius = default);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        protected abstract void SetText(IClientService clientService, bool outgoing, MessageSender sender, string title, string service, FormattedText text);
+        protected abstract void SetText(IClientService clientService, bool outgoing, MessageSender sender, string title, string service, FormattedText text, bool quote = false);
 
         #endregion
 
-        private string GetFromLabel(IClientService clientService, MessageViewModel message, string title)
+        private string GetFromLabel(IClientService clientService, MessageViewModel message, string title, bool forward)
         {
             if (!string.IsNullOrWhiteSpace(title))
             {
                 return title;
             }
 
-            var forwardedTitle = clientService.GetTitle(message.ForwardInfo, message.ImportInfo);
-            if (forwardedTitle != null)
+            if (forward)
             {
-                return forwardedTitle;
+                var forwardedTitle = clientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo);
+                if (forwardedTitle != null)
+                {
+                    return forwardedTitle;
+                }
             }
             else if (clientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 return clientService.GetTitle(senderChat);
             }
-            if (clientService.TryGetUser(message.SenderId, out User user))
+            else if (clientService.TryGetUser(message.SenderId, out User user))
             {
                 return user.FullName();
+            }
+
+            return title ?? string.Empty;
+        }
+
+        private string GetFromLabel(IClientService clientService, MessageReplyToMessage message, string title)
+        {
+            if (!string.IsNullOrWhiteSpace(title))
+            {
+                return title;
+            }
+
+            // TODO: Icons are wrong
+
+            if (message.Origin is MessageOriginUser fromUser)
+            {
+                var fullName = clientService.GetUser(fromUser.SenderUserId)?.FullName();
+
+                if (clientService.TryGetChat(message.ChatId, out Chat senderChat))
+                {
+                    return fullName + " " + Icons.PeopleFilled + " " + senderChat.Title;
+                }
+
+                return clientService.GetUser(fromUser.SenderUserId)?.FullName();
+            }
+            else if (message.Origin is MessageOriginChat fromChat)
+            {
+                return clientService.GetTitle(fromChat.SenderChatId);
+            }
+            else if (message.Origin is MessageOriginChannel fromChannel)
+            {
+                return Icons.MegaphoneOffFilled + " " + clientService.GetTitle(fromChannel.ChatId);
+            }
+            else if (message.Origin is MessageOriginHiddenUser fromHiddenUser)
+            {
+                return fromHiddenUser.SenderName;
             }
 
             return title ?? string.Empty;

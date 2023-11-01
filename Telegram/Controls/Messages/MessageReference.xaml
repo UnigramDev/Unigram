@@ -186,6 +186,17 @@
                                      Foreground="{Binding SubtleBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}" /><Span x:Name="MessageLabel" />
                             </Paragraph>
                         </RichTextBlock>
+
+                        <TextBlock x:Name="Quote"
+                                   Visibility="Collapsed"
+                                   Text="&#xEA01;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="16"
+                                   Foreground="{TemplateBinding BorderBrush}"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   Margin="4"
+                                   Grid.Column="2" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
