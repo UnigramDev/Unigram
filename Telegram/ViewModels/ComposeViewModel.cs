@@ -802,7 +802,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return await ClientService.SendAsync(new SendMessageAlbum(chat.Id, ThreadId, reply, options, operations, false));
+            return await ClientService.SendAsync(new SendMessageAlbum(chat.Id, ThreadId, reply, options, operations));
         }
 
         public static FormattedText GetFormattedText(string text)
@@ -815,19 +815,19 @@ namespace Telegram.ViewModels
             return ClientEx.ParseMarkdown(text.Format());
         }
 
-        public Task SendMessageAsync(FormattedText formattedText, MessageSendOptions options = null, InputMessageReplyTo reply = null)
+        public Task<BaseObject> SendMessageAsync(FormattedText formattedText, MessageSendOptions options = null, InputMessageReplyTo reply = null)
         {
             return SendMessageAsync(formattedText?.Text, formattedText?.Entities, options, reply);
         }
 
-        public async Task SendMessageAsync(string text, IList<TextEntity> entities = null, MessageSendOptions options = null, InputMessageReplyTo reply = null)
+        public async Task<BaseObject> SendMessageAsync(string text, IList<TextEntity> entities = null, MessageSendOptions options = null, InputMessageReplyTo reply = null)
         {
             text ??= string.Empty;
             text = text.Replace('\v', '\n').Replace('\r', '\n');
 
             if (Chat is not Chat chat)
             {
-                return;
+                return null;
             }
 
             FormattedText formattedText;
@@ -843,18 +843,20 @@ namespace Telegram.ViewModels
             var applied = await BeforeSendMessageAsync(formattedText);
             if (applied)
             {
-                return;
+                return null;
             }
 
             options ??= await PickMessageSendOptionsAsync();
 
             if (options == null)
             {
-                return;
+                return null;
             }
 
             var disablePreview = DisableWebPreview();
-            reply ??= GetReply(true, options?.SchedulingState != null);
+            reply ??= GetReply(options.OnlyPreview == false, options.SchedulingState != null);
+
+            BaseObject response = null;
 
             if (ClientService.IsDiceEmoji(text, out string dice))
             {
@@ -868,19 +870,21 @@ namespace Telegram.ViewModels
                     foreach (var split in formattedText.Split(ClientService.Options.MessageTextLengthMax))
                     {
                         var input = new InputMessageText(split, disablePreview, true);
-                        await SendMessageAsync(reply, input, options);
+                        response ??= await SendMessageAsync(reply, input, options);
                     }
                 }
                 else if (text.Length > 0)
                 {
                     var input = new InputMessageText(formattedText, disablePreview, true);
-                    await SendMessageAsync(reply, input, options);
+                    response ??= await SendMessageAsync(reply, input, options);
                 }
                 else
                 {
                     await AfterSendMessageAsync();
                 }
             }
+
+            return response;
         }
 
         protected virtual LinkPreviewOptions DisableWebPreview()

@@ -239,7 +239,7 @@ namespace Telegram.Controls.Messages
 
             if (message.IsSaved)
             {
-                title = message.ClientService.GetTitle(message.ForwardInfo);
+                title = message.ClientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo);
             }
             else if (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel)
             {
@@ -301,17 +301,17 @@ namespace Telegram.Controls.Messages
 
             if (message.ForwardInfo != null)
             {
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser)
                 {
                     title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
                     builder.AppendLine($"{Strings.AccDescrForwarding} {title}. ");
                 }
-                if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+                if (message.ForwardInfo?.Origin is MessageOriginChat fromChat)
                 {
                     title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChat.SenderChatId));
                     builder.AppendLine($"{Strings.AccDescrForwarding} {title}. ");
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
                 {
                     title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChannel.ChatId));
                     builder.AppendLine($"{Strings.AccDescrForwarding} {title}. ");
@@ -594,20 +594,20 @@ namespace Telegram.Controls.Messages
 
             if (message.IsSaved)
             {
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser)
                 {
                     message.Delegate.OpenUser(fromUser.SenderUserId);
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat)
                 {
                     message.Delegate.OpenChat(fromChat.SenderChatId, true);
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
                 {
                     // TODO: verify if this is sufficient
                     message.Delegate.OpenChat(fromChannel.ChatId);
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
+                else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
                 {
                     Window.Current.ShowTeachingTip(sender as FrameworkElement, Strings.HidAccount);
                     //await MessagePopup.ShowAsync(Strings.HidAccount, Strings.AppName, Strings.OK);
@@ -669,7 +669,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.IsSaved)
             {
-                if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport or MessageForwardOriginHiddenUser && Action != null)
+                if ((message.ImportInfo != null || message.ForwardInfo?.Origin is MessageOriginHiddenUser) && Action != null)
                 {
                     Action.Visibility = Visibility.Collapsed;
                 }
@@ -732,11 +732,11 @@ namespace Telegram.Controls.Messages
             }
             else if (message.IsSaved)
             {
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser or MessageForwardOriginChat)
+                if (message.ForwardInfo?.Origin is MessageOriginUser or MessageOriginChat)
                 {
                     message.Delegate.OpenChat(message.ForwardInfo.FromChatId, message.ForwardInfo.FromMessageId);
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
                 {
                     message.Delegate.OpenChat(fromChannel.ChatId, fromChannel.MessageId);
                 }
@@ -792,26 +792,26 @@ namespace Telegram.Controls.Messages
                     var title = string.Empty;
                     var foreground = default(SolidColorBrush);
 
-                    if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                    if (message.ForwardInfo?.Origin is MessageOriginUser fromUser)
                     {
                         title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
                         foreground = PlaceholderImage.GetBrush(fromUser.SenderUserId);
                     }
-                    else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+                    else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat)
                     {
                         title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChat.SenderChatId));
                     }
-                    else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                    else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
                     {
                         title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChannel.ChatId));
                     }
-                    else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
-                    {
-                        title = fromImport.SenderName;
-                    }
-                    else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+                    else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser fromHiddenUser)
                     {
                         title = fromHiddenUser.SenderName;
+                    }
+                    else if (message.ImportInfo != null)
+                    {
+                        title = message.ImportInfo.SenderName;
                     }
 
                     var hyperlink = new Hyperlink();
@@ -836,7 +836,7 @@ namespace Telegram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(CreateRun(senderUser.FullName()));
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = PlaceholderImage.GetBrush(senderUser.Id);
+                    hyperlink.Foreground = message.ClientService.GetAccentBrush(senderUser.AccentColorId);
                     hyperlink.Click += From_Click;
 
                     LoadHeaderLabel();
@@ -852,7 +852,7 @@ namespace Telegram.Controls.Messages
                     var hyperlink = new Hyperlink();
                     hyperlink.Inlines.Add(CreateRun(senderChat.Title));
                     hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = PlaceholderImage.GetBrush(senderChat.Id);
+                    hyperlink.Foreground = message.ClientService.GetAccentBrush(senderChat.AccentColorId);
                     hyperlink.Click += From_Click;
 
                     LoadHeaderLabel();
@@ -883,26 +883,28 @@ namespace Telegram.Controls.Messages
                 var title = string.Empty;
                 var foreground = default(SolidColorBrush);
 
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
                 {
-                    title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
-                    foreground = PlaceholderImage.GetBrush(fromUser.SenderUserId);
+                    title = fromUserUser.FullName();
+                    foreground = message.ClientService.GetAccentBrush(fromUserUser.AccentColorId);
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
                 {
-                    title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChat.SenderChatId));
+                    title = message.ClientService.GetTitle(fromChatChat);
+                    foreground = message.ClientService.GetAccentBrush(fromChatChat.AccentColorId);
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
                 {
-                    title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChannel.ChatId));
+                    title = message.ClientService.GetTitle(fromChannelChat);
+                    foreground = message.ClientService.GetAccentBrush(fromChannelChat.AccentColorId);
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
-                {
-                    title = fromImport.SenderName;
-                }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+                else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser fromHiddenUser)
                 {
                     title = fromHiddenUser.SenderName;
+                }
+                else if (message.ImportInfo != null)
+                {
+                    title = message.ImportInfo.SenderName;
                 }
 
                 var hyperlink = new Hyperlink();
@@ -995,26 +997,26 @@ namespace Telegram.Controls.Messages
                 var title = string.Empty;
                 var bold = true;
 
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser)
                 {
                     title = message.ClientService.GetUser(fromUser.SenderUserId)?.FullName();
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat)
                 {
                     title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChat.SenderChatId));
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
                 {
                     title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChannel.ChatId));
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport fromImport)
-                {
-                    title = fromImport.SenderName;
-                }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+                else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser fromHiddenUser)
                 {
                     title = fromHiddenUser.SenderName;
                     bold = false;
+                }
+                else if (message.ImportInfo != null)
+                {
+                    title = message.ImportInfo.SenderName;
                 }
 
                 var hyperlink = new Hyperlink();
@@ -1137,19 +1139,19 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser)
+            if (message.ForwardInfo?.Origin is MessageOriginUser fromUser)
             {
                 message.Delegate.OpenUser(fromUser.SenderUserId);
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+            else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat)
             {
                 message.Delegate.OpenChat(fromChat.SenderChatId, true);
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+            else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
             {
                 message.Delegate.OpenChat(fromChannel.ChatId, fromChannel.MessageId);
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
+            else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
             {
                 Window.Current.ShowTeachingTip(HeaderLabel, Strings.HidAccount);
             }

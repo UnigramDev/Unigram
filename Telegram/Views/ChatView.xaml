@@ -972,9 +972,6 @@
                                                    Click="Reply_Click"
                                                    VerticalAlignment="Stretch"
                                                    VerticalContentAlignment="Center"
-                                                   Margin="-8,0,0,0"
-                                                   Padding="0"
-                                                   BorderThickness="0"
                                                    Grid.Column="1" />
                         <FontIcon x:Name="ComposerHeaderGlyph"
                                   Foreground="{ThemeResource MessageHeaderBorderBrush}"

@@ -170,6 +170,50 @@ namespace Telegram.Common
             return new Version(version.Major, version.Minor, version.Build, Constants.BuildNumber);
         }
 
+        public static int Shift(this TextPointer pointer)
+        {
+            var index = 0;
+
+            bool Inside(InlineCollection inlines)
+            {
+                foreach (var element in inlines)
+                {
+                    index++;
+
+                    if (element == pointer.Parent)
+                    {
+                        return true;
+                    }
+                    else if (element is Span span1)
+                    {
+                        if (Inside(span1.Inlines))
+                        {
+                            return true;
+                        }
+                    }
+
+                    index++;
+                }
+
+                return false;
+            }
+
+            if (pointer.VisualParent is RichTextBlock textBlock)
+            {
+                foreach (var block in textBlock.Blocks)
+                {
+                    index++;
+
+                    if (block is Paragraph paragraph && Inside(paragraph.Inlines))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return pointer.Offset - index;
+        }
+
         public static void TryNotifyMutedChanged(this VoipCallCoordinator coordinator, bool muted)
         {
             try

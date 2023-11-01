@@ -621,7 +621,7 @@ namespace Telegram.Controls.Cells
             {
                 if (message.IsSaved(_clientService.Options.MyId))
                 {
-                    result = string.Format(format, _clientService.GetTitle(message.ForwardInfo));
+                    result = string.Format(format, _clientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo));
                 }
                 else if (message.IsOutgoing)
                 {

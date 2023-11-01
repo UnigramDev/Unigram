@@ -1579,19 +1579,19 @@ namespace Telegram.Td.Api
 
         public static bool IsSaved(this Message message, long savedMessagesId)
         {
-            if (message.ForwardInfo?.Origin is MessageForwardOriginUser)
+            if (message.ForwardInfo?.Origin is MessageOriginUser)
             {
                 return message.ForwardInfo.FromChatId != 0;
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginChat)
+            else if (message.ForwardInfo?.Origin is MessageOriginChat)
             {
                 return message.ForwardInfo.FromChatId != 0;
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel)
+            else if (message.ForwardInfo?.Origin is MessageOriginChannel)
             {
                 return message.ForwardInfo.FromChatId != 0;
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser)
+            else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
             {
                 return message.ChatId == savedMessagesId;
             }

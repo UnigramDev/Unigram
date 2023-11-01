@@ -92,7 +92,7 @@ namespace Telegram.Services
 
         string GetTitle(Chat chat, bool tiny = false);
         string GetTitle(long chatId, bool tiny = false);
-        string GetTitle(MessageForwardInfo forward, MessageImportInfo import);
+        string GetTitle(MessageOrigin origin, MessageImportInfo import);
 
         bool TryGetCachedReaction(string emoji, out EmojiReaction value);
         Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync();
@@ -608,7 +608,10 @@ namespace Telegram.Services
                 return accentColor;
             }
 
-            return null;
+            return new[]
+            {
+                PlaceholderImage.GetColor(id.Id)
+            };
         }
 
         private void UpdateVersion()
@@ -988,21 +991,21 @@ namespace Telegram.Services
             return chat.Title;
         }
 
-        public string GetTitle(MessageForwardInfo forward, MessageImportInfo import)
+        public string GetTitle(MessageOrigin origin, MessageImportInfo import)
         {
-            if (forward?.Origin is MessageForwardOriginUser fromUser)
+            if (origin is MessageOriginUser fromUser)
             {
                 return GetUser(fromUser.SenderUserId)?.FullName();
             }
-            else if (forward?.Origin is MessageForwardOriginChat fromChat)
+            else if (origin is MessageOriginChat fromChat)
             {
-                return GetTitle(GetChat(fromChat.SenderChatId));
+                return GetTitle(fromChat.SenderChatId);
             }
-            else if (forward?.Origin is MessageForwardOriginChannel fromChannel)
+            else if (origin is MessageOriginChannel fromChannel)
             {
-                return GetTitle(GetChat(fromChannel.ChatId));
+                return GetTitle(fromChannel.ChatId);
             }
-            else if (forward?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+            else if (origin is MessageOriginHiddenUser fromHiddenUser)
             {
                 return fromHiddenUser.SenderName;
             }

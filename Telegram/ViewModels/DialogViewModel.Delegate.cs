@@ -95,14 +95,14 @@ namespace Telegram.ViewModels
 
             if (message.ChatId == ClientService.Options.RepliesBotChatId)
             {
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser or MessageForwardOriginChat)
+                if (message.ForwardInfo?.Origin is MessageOriginUser or MessageOriginChat)
                 {
                     chatId = message.ForwardInfo.FromChatId;
                     threadId = message.ForwardInfo.FromMessageId;
 
                     messageId = threadId;
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
                 {
                     chatId = fromChannel.ChatId;
                     threadId = fromChannel.MessageId;

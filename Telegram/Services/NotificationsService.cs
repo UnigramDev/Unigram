@@ -706,8 +706,8 @@ namespace Telegram.Services
                     var messageText = text.Replace("\r\n", "\n").Replace('\v', '\n').Replace('\r', '\n');
                     var formatted = ClientEx.ParseMarkdown(messageText);
 
-                    var replyToMsgId = data.ContainsKey("msg_id") ? new InputMessageReplyToMessage(long.Parse(data["msg_id"])) : null;
-                    var response = await _clientService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, false, false, null, 0), null, new InputMessageText(formatted, null, false)));
+                    var replyToMsgId = data.ContainsKey("msg_id") ? new InputMessageReplyToMessage(0, long.Parse(data["msg_id"]), null) : null;
+                    var response = await _clientService.SendAsync(new SendMessage(chat.Id, 0, replyToMsgId, new MessageSendOptions(false, true, false, false, null, 0, false), null, new InputMessageText(formatted, null, false)));
 
                     if (chat.Type is ChatTypePrivate && chat.LastMessage != null)
                     {

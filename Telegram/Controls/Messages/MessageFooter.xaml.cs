@@ -137,9 +137,9 @@ namespace Telegram.Controls.Messages
             {
                 _dateLabel = string.Empty;
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginMessageImport)
+            else if (message.ImportInfo != null)
             {
-                var original = Formatter.ToLocalTime(message.ForwardInfo.Date);
+                var original = Formatter.ToLocalTime(message.ImportInfo.Date);
                 var date = Formatter.ShortDate.Format(original);
                 var time = Formatter.ShortTime.Format(original);
 
@@ -190,7 +190,7 @@ namespace Telegram.Controls.Messages
             {
                 _authorLabel = $"{message.AuthorSignature}, ";
             }
-            else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel && !string.IsNullOrEmpty(fromChannel.AuthorSignature))
+            else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel && !string.IsNullOrEmpty(fromChannel.AuthorSignature))
             {
                 _authorLabel = $"{fromChannel.AuthorSignature}, ";
             }

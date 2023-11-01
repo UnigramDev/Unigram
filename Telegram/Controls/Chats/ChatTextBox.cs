@@ -745,7 +745,7 @@ namespace Telegram.Controls.Chats
 
             Sending?.Invoke(this, EventArgs.Empty);
 
-            var options = new MessageSendOptions(disableNotification, false, false, false, null, 0);
+            var options = new MessageSendOptions(disableNotification, false, false, false, null, 0, false);
 
             var text = GetFormattedText(true);
             await ViewModel.SendMessageAsync(text, options);
@@ -759,7 +759,7 @@ namespace Telegram.Controls.Chats
 
             if (whenOnline)
             {
-                options = new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendWhenOnline(), 0);
+                options = new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendWhenOnline(), 0, false);
             }
             else
             {

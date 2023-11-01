@@ -37,6 +37,13 @@ using static Telegram.Services.GenerationService;
 
 namespace Telegram.ViewModels
 {
+    public class MessageQuote
+    {
+        public MessageViewModel Message { get; set; }
+
+        public FormattedText Quote { get; set; }
+    }
+
     public partial class DialogViewModel
     {
         #region Reply
@@ -97,7 +104,35 @@ namespace Telegram.ViewModels
                 message = album.Messages.FirstOrDefault();
             }
 
-            ComposerHeader = new MessageComposerHeader { ReplyToMessage = message };
+            ComposerHeader = new MessageComposerHeader(ClientService)
+            {
+                ReplyToMessage = message
+            };
+
+            TextField?.Focus(FocusState.Keyboard);
+        }
+
+        public void QuoteToMessage(MessageQuote quote)
+        {
+            DisposeSearch();
+
+            var message = quote?.Message;
+            if (message == null)
+            {
+                return;
+            }
+
+            if (message.Content is MessageAlbum album)
+            {
+                message = album.Messages.FirstOrDefault();
+            }
+
+            ComposerHeader = new MessageComposerHeader(ClientService)
+            {
+                ReplyToMessage = message,
+                ReplyToQuote = quote.Quote
+            };
+
             TextField?.Focus(FocusState.Keyboard);
         }
 
@@ -302,25 +337,25 @@ namespace Telegram.ViewModels
                     var date = Formatter.ToLocalTime(message.Date);
                     builder.AppendLine(string.Format("{0}, [{1} {2}]", title, Formatter.ShortDate.Format(date), Formatter.ShortTime.Format(date)));
 
-                    if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat)
+                    if (message.ForwardInfo?.Origin is MessageOriginChat fromChat)
                     {
                         var from = ClientService.GetChat(fromChat.SenderChatId);
                         builder.AppendLine($"[{Strings.ForwardedMessage}]");
                         builder.AppendLine($"[{Strings.From} {ClientService.GetTitle(from)}]");
                     }
-                    else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel forwardedPost)
+                    else if (message.ForwardInfo?.Origin is MessageOriginChannel forwardedPost)
                     {
                         var from = ClientService.GetChat(forwardedPost.ChatId);
                         builder.AppendLine($"[{Strings.ForwardedMessage}]");
                         builder.AppendLine($"[{Strings.From} {ClientService.GetTitle(from)}]");
                     }
-                    else if (message.ForwardInfo?.Origin is MessageForwardOriginUser forwardedFromUser)
+                    else if (message.ForwardInfo?.Origin is MessageOriginUser forwardedFromUser)
                     {
                         var from = ClientService.GetUser(forwardedFromUser.SenderUserId);
                         builder.AppendLine($"[{Strings.ForwardedMessage}]");
                         builder.AppendLine($"[{Strings.From} {from.FullName()}]");
                     }
-                    else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser forwardedFromHiddenUser)
+                    else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser forwardedFromHiddenUser)
                     {
                         builder.AppendLine($"[{Strings.ForwardedMessage}]");
                         builder.AppendLine($"[{Strings.From} {forwardedFromHiddenUser.SenderName}]");
@@ -720,8 +755,11 @@ namespace Telegram.ViewModels
             DisposeSearch();
             SaveDraft();
 
-            var container = new MessageComposerHeader { EditingMessage = message };
             var input = message.GetCaption();
+            var container = new MessageComposerHeader(ClientService)
+            {
+                EditingMessage = message
+            };
 
             if (message.Content is MessageText text)
             {
@@ -891,7 +929,7 @@ namespace Telegram.ViewModels
 
         public async void ShowMessageInteractions(MessageViewModel message)
         {
-            await ShowPopupAsync(typeof(InteractionsPopup), new MessageReplyToMessage(message.ChatId, message.Id));
+            await ShowPopupAsync(typeof(InteractionsPopup), new MessageReplyToMessage(message.ChatId, message.Id, null, false, null, 0, null));
         }
 
         #endregion
@@ -1219,7 +1257,7 @@ namespace Telegram.ViewModels
             else if (keyboardButton.Type is KeyboardButtonTypeText)
             {
                 var input = new InputMessageText(new FormattedText(keyboardButton.Text, null), null, true);
-                await SendMessageAsync(chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup ? new InputMessageReplyToMessage(message.Id) : null, input, null);
+                await SendMessageAsync(chat.Type is ChatTypeSupergroup or ChatTypeBasicGroup ? new InputMessageReplyToMessage(0, message.Id, null) : null, input, null);
             }
             else if (keyboardButton.Type is KeyboardButtonTypeWebApp webApp && message.SenderId is MessageSenderUser bot)
             {
@@ -1549,6 +1587,10 @@ namespace Telegram.ViewModels
                         //ClientService.Send(new SetChatBackground(Chat.Id, ))
                     }
                 }
+            }
+            else if (message.Content is MessagePremiumGiftCode premiumGiftCode)
+            {
+                MessageHelper.OpenTelegramUrl(ClientService, NavigationService, new InternalLinkTypePremiumGiftCode(premiumGiftCode.Code));
             }
         }
 

@@ -77,16 +77,16 @@ namespace Telegram.ViewModels
 
                 if (dialog.IsUntilOnline)
                 {
-                    return new MessageSendOptions(false, false, false, Settings.Stickers.DynamicPackOrder && reorder, new MessageSchedulingStateSendWhenOnline(), 0);
+                    return new MessageSendOptions(false, false, false, Settings.Stickers.DynamicPackOrder && reorder, new MessageSchedulingStateSendWhenOnline(), 0, false);
                 }
                 else
                 {
-                    return new MessageSendOptions(false, false, false, Settings.Stickers.DynamicPackOrder && reorder, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()), 0);
+                    return new MessageSendOptions(false, false, false, Settings.Stickers.DynamicPackOrder && reorder, new MessageSchedulingStateSendAtDate(dialog.Value.ToTimestamp()), 0, false);
                 }
             }
             else
             {
-                return new MessageSendOptions(silent ?? false, false, false, Settings.Stickers.DynamicPackOrder && reorder, null, 0);
+                return new MessageSendOptions(silent ?? false, false, false, Settings.Stickers.DynamicPackOrder && reorder, null, 0, false);
             }
         }
 
@@ -214,17 +214,6 @@ namespace Telegram.ViewModels
                     }
 
                     field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, text);
-                }
-                else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
-                {
-                    var field = TextField;
-                    if (field == null)
-                    {
-                        return;
-                    }
-
-                    var link = await package.GetWebLinkAsync();
-                    field.Document.GetRange(field.Document.Selection.EndPosition, field.Document.Selection.EndPosition).SetText(TextSetOptions.None, link.AbsoluteUri);
                 }
             }
             catch { }

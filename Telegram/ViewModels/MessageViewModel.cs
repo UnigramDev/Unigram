@@ -178,7 +178,7 @@ namespace Telegram.ViewModels
             {
                 return false;
             }
-            else if (ForwardInfo?.Origin is MessageForwardOriginChannel && !IsOutgoing)
+            else if (ForwardInfo?.Origin is MessageOriginChannel && !IsOutgoing)
             {
                 return true;
             }

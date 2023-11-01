@@ -395,7 +395,7 @@ namespace Telegram.Common
             }
             else if (!light && /*message.IsFirst &&*/ message.IsSaved(clientService.Options.MyId))
             {
-                title = clientService.GetTitle(message.ForwardInfo);
+                title = clientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo);
             }
 
             var builder = new StringBuilder();
