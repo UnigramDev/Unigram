@@ -3,6 +3,7 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       xmlns:common="using:Telegram.Common"
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:chats="using:Telegram.Controls.Chats"
                        xmlns:messages="using:Telegram.Controls.Messages"
@@ -31,23 +32,23 @@
         <GridView x:Name="List"
                   Background="{ThemeResource SettingsItemBackground}"
                   BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                  BorderThickness="0,0,0,1"
                   SelectionMode="Single"
                   SelectionChanged="OnSelectionChanged"
                   ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  ScrollViewer.HorizontalScrollMode="Auto"
-                  ScrollViewer.VerticalScrollBarVisibility="Disabled"
-                  ScrollViewer.VerticalScrollMode="Disabled"
                   ItemContainerTransitions="{x:Null}"
-                  Padding="24,16,0,12"
+                  Padding="10,10,10,10"
+                  common:FluidGridView.OrientationOnly="False"
                   Grid.Row="1">
+            <common:FluidGridView.Triggers>
+                <common:FluidGridViewTrigger RowsOrColumns="7" />
+            </common:FluidGridView.Triggers>
             <GridView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Background="Blue"
-                          CornerRadius="20"
-                          Width="40"
-                          Height="40">
+                    <Grid SizeChanged="NameColor_SizeChanged"
+                          Background="Blue"
+                          CornerRadius="20">
                         <Polygon Points="40,0 40,40 0,40" />
 
                         <Rectangle Width="16"
@@ -68,7 +69,13 @@
                     <Setter Property="HorizontalContentAlignment"
                             Value="Stretch" />
                     <Setter Property="Margin"
-                            Value="0,0,4,4" />
+                            Value="2" />
+                    <Setter Property="Padding"
+                            Value="0" />
+                    <Setter Property="MinWidth"
+                            Value="0" />
+                    <Setter Property="MinHeight"
+                            Value="0" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="GridViewItem">
@@ -111,13 +118,11 @@
 
                                     <ContentPresenter />
 
-                                    <Border x:Name="SelectionIndicatorBorder"
-                                            BorderBrush="#FFFFFF"
-                                            BorderThickness="2"
-                                            CornerRadius="18"
-                                            Width="36"
-                                            Height="36"
-                                            Opacity="0" />
+                                    <Ellipse x:Name="SelectionIndicatorBorder"
+                                             Stroke="#FFFFFF"
+                                             StrokeThickness="2"
+                                             Margin="2"
+                                             Opacity="0" />
                                 </Grid>
                             </ControlTemplate>
                         </Setter.Value>
@@ -126,7 +131,7 @@
             </GridView.ItemContainerStyle>
             <GridView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <ItemsStackPanel Orientation="Horizontal" />
+                    <ItemsWrapGrid Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </GridView.ItemsPanel>
             <GridView.Footer>

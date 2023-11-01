@@ -164,7 +164,10 @@ namespace Telegram.Views.Popups
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is Grid content && content.Children[0] is Polygon polygon && content.Children[1] is Rectangle rectangle && args.Item is NameColor colors)
+            else if (args.ItemContainer.ContentTemplateRoot is Grid content
+                && content.Children[0] is Polygon polygon
+                && content.Children[1] is Rectangle rectangle
+                && args.Item is NameColor colors)
             {
                 content.Background = new SolidColorBrush(colors.Colors[0]);
                 polygon.Fill = colors.Colors.Length > 1
@@ -248,6 +251,21 @@ namespace Telegram.Views.Popups
                 {
                     // TODO: show premium toast
                 }
+            }
+        }
+
+        private void NameColor_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (sender is Grid content && content.Children[0] is Polygon polygon)
+            {
+                content.CornerRadius = new CornerRadius(e.NewSize.Width / 2);
+
+                polygon.Points = new PointCollection
+                {
+                    new Windows.Foundation.Point(e.NewSize.Width, 0),
+                    new Windows.Foundation.Point(e.NewSize.Width, e.NewSize.Height),
+                    new Windows.Foundation.Point(0, e.NewSize.Height)
+                };
             }
         }
     }
