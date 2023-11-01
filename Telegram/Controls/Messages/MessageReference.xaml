@@ -45,14 +45,14 @@
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
-                                    <VisualState.Setters>
-                                        <Setter Target="Overlay.Opacity"
-                                                Value="0.1" />
-                                    </VisualState.Setters>
+                                    <!--<VisualState.Setters>
+                                        <Setter Target="BackgroundOverlay.Opacity"
+                                                Value="0.2" />
+                                    </VisualState.Setters>-->
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
-                                        <Setter Target="Overlay.Opacity"
+                                        <Setter Target="BackgroundOverlay.Opacity"
                                                 Value="0.15" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -73,7 +73,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Rectangle x:Name="Overlay"
+                        <Rectangle x:Name="BackgroundOverlay"
                                    Fill="{TemplateBinding BorderBrush}"
                                    Opacity="0.1"
                                    Grid.ColumnSpan="3" />

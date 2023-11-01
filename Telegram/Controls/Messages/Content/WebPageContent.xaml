@@ -4,9 +4,7 @@
                     xmlns:controls="using:Telegram.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    mc:Ignorable="d"
-                    d:DesignHeight="300"
-                    d:DesignWidth="400">
+                    mc:Ignorable="d">
 
     <Style TargetType="local:WebPageContent">
         <Setter Property="HeaderBrush"
@@ -21,11 +19,29 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:WebPageContent">
                     <Grid CornerRadius="4">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <!--<VisualState.Setters>
+                                        <Setter Target="BackgroundOverlay.Opacity"
+                                                Value="0.2" />
+                                    </VisualState.Setters>-->
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundOverlay.Opacity"
+                                                Value="0.15" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Rectangle Fill="{TemplateBinding BorderBrush}"
+                        <Rectangle x:Name="BackgroundOverlay"
+                                   Fill="{TemplateBinding BorderBrush}"
                                    Opacity="0.1"
                                    Grid.ColumnSpan="2" />
                         <Rectangle Fill="{TemplateBinding BorderBrush}"
@@ -36,7 +52,7 @@
                         <Grid Padding="8,0,8,0"
                               Grid.Column="1">
                             <Grid.RowDefinitions>
-                                <RowDefinition MaxHeight="68" />
+                                <RowDefinition MaxHeight="64" />
                                 <RowDefinition />
                                 <RowDefinition />
                                 <RowDefinition />
@@ -51,7 +67,7 @@
                                            TextAlignment="DetectFromContent"
                                            IsTextSelectionEnabled="False"
                                            Margin="0,4,0,0"
-                                           MaxLines="4"
+                                           MaxLines="3"
                                            TextTrimming="CharacterEllipsis"
                                            Style="{StaticResource CaptionRichTextBlockStyle}"
                                            FontFamily="{ThemeResource EmojiThemeFontFamily}">
@@ -66,8 +82,8 @@
                             </RichTextBlock>
 
                             <Border x:Name="SmallPanel"
-                                    Width="48"
-                                    Height="48"
+                                    Width="44"
+                                    Height="44"
                                     CornerRadius="4"
                                     Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
                                     Margin="8,8,0,0"
@@ -107,22 +123,25 @@
                                 </Border>
                             </Grid>
 
-                            <Rectangle x:Name="ButtonLine"
-                                       Fill="{TemplateBinding BorderBrush}"
-                                       Height="1"
-                                       Opacity="0.2"
-                                       Grid.Row="3"
-                                       Grid.ColumnSpan="2" />
+                            <Grid x:Name="ButtonLine"
+                                  Height="32"
+                                  Grid.Row="4"
+                                  Grid.ColumnSpan="2">
+                                <Rectangle VerticalAlignment="Top"
+                                           Fill="{TemplateBinding BorderBrush}"
+                                           Height="1"
+                                           Opacity="0.2"
+                                           Grid.Row="3"
+                                           Grid.ColumnSpan="2" />
 
-                            <Button x:Name="Button"
-                                    Style="{StaticResource AccentTextButtonStyle}"
-                                    Foreground="{TemplateBinding HeaderBrush}"
-                                    FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
-                                    HorizontalAlignment="Stretch"
-                                    FontWeight="SemiBold"
-                                    FontSize="12"
-                                    Grid.Row="4"
-                                    Grid.ColumnSpan="2" />
+                                <TextBlock x:Name="Button"
+                                           Foreground="{TemplateBinding HeaderBrush}"
+                                           FontFamily="{StaticResource EmojiThemeFontFamilyWithSymbols}"
+                                           TextAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontWeight="SemiBold"
+                                           FontSize="12" />
+                            </Grid>
                         </Grid>
                     </Grid>
                 </ControlTemplate>

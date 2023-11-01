@@ -5,21 +5,24 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Numerics;
 using System.Threading;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class WebPageContent : Control, IContentWithPlayback
+    public sealed class WebPageContent : HyperlinkButton, IContentWithPlayback
     {
         private CancellationTokenSource _instantViewToken;
 
@@ -53,8 +56,8 @@ namespace Telegram.Controls.Messages.Content
         private Border Media;
         private Border Overlay;
         private TextBlock Subtitle;
-        private Rectangle ButtonLine;
-        private Button Button;
+        private Grid ButtonLine;
+        private TextBlock Button;
         private bool _templateApplied;
 
         protected override void OnApplyTemplate()
@@ -70,11 +73,11 @@ namespace Telegram.Controls.Messages.Content
             Media = GetTemplateChild(nameof(Media)) as Border;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
-            ButtonLine = GetTemplateChild(nameof(ButtonLine)) as Rectangle;
-            Button = GetTemplateChild(nameof(Button)) as Button;
+            ButtonLine = GetTemplateChild(nameof(ButtonLine)) as Grid;
+            Button = GetTemplateChild(nameof(Button)) as TextBlock;
 
             Label.OverflowContentTarget = OverflowArea;
-            Button.Click += Button_Click;
+            Click += Button_Click;
 
             _templateApplied = true;
 
@@ -249,7 +252,11 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (webPage.Animation != null)
             {
-                Media.Child = new AnimationContent(message) { MaxWidth = maxWidth };
+                Media.Child = new AnimationContent(message)
+                {
+                    MaxWidth = maxWidth,
+                    IsEnabled = false
+                };
             }
             else if (webPage.Audio != null)
             {
@@ -276,7 +283,10 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (webPage.Video != null)
             {
-                Media.Child = new VideoContent(message) { MaxWidth = maxWidth };
+                Media.Child = new VideoContent(message)
+                {
+                    MaxWidth = maxWidth
+                };
             }
             else if (webPage.VideoNote != null)
             {
@@ -289,7 +299,11 @@ namespace Telegram.Controls.Messages.Content
             else if (webPage.Photo != null)
             {
                 // Photo at last: web page preview might have both a file and a thumbnail
-                Media.Child = new PhotoContent(message) { MaxWidth = maxWidth };
+                Media.Child = new PhotoContent(message)
+                {
+                    MaxWidth = maxWidth,
+                    IsEnabled = false
+                };
             }
             else
             {
@@ -354,7 +368,6 @@ namespace Telegram.Controls.Messages.Content
             OverflowArea.Margin = new Thickness(0, 0, 0, 0);
 
             ButtonLine.Visibility = Visibility.Collapsed;
-            Button.Visibility = Visibility.Collapsed;
         }
 
         public void UpdateMockup(IClientService clientService, int color)
@@ -451,7 +464,6 @@ namespace Telegram.Controls.Messages.Content
                 if (webPage.IsInstantGallery())
                 {
                     ButtonLine.Visibility = Visibility.Collapsed;
-                    Button.Visibility = Visibility.Collapsed;
                 }
                 else
                 {
@@ -505,7 +517,6 @@ namespace Telegram.Controls.Messages.Content
             else
             {
                 ButtonLine.Visibility = Visibility.Collapsed;
-                Button.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -513,15 +524,14 @@ namespace Telegram.Controls.Messages.Content
         {
             if (string.IsNullOrEmpty(glyph))
             {
-                Button.Content = text.ToUpper();
+                Button.Text = text.ToUpper();
             }
             else
             {
-                Button.Content = $"{glyph}  {text.ToUpper()}";
+                Button.Text = $"{glyph}\u2004\u200A{text.ToUpper()}";
             }
 
             ButtonLine.Visibility = Visibility.Visible;
-            Button.Visibility = Visibility.Visible;
         }
 
         private async void UpdateInstantView(WebPage webPage, CancellationToken token)

@@ -104,17 +104,11 @@ namespace Telegram.ViewModels
         {
             if (webPage.InstantViewVersion != 0)
             {
-                //if (NavigationService is UnigramNavigationService asdas)
-                //{
-                //    asdas.NavigateToInstant(webPage.Url);
-                //    return;
-                //}
-
                 NavigationService.NavigateToInstant(webPage.Url);
             }
-            else if (MessageHelper.TryCreateUri(webPage.Url, out Uri uri))
+            else
             {
-                MessageHelper.OpenTelegramUrl(ClientService, NavigationService, uri);
+                MessageHelper.OpenUrl(ClientService, NavigationService, webPage.Url, !webPage.SkipConfirmation);
             }
         }
 
