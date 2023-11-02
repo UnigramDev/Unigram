@@ -453,7 +453,7 @@ namespace Telegram.Controls
                             player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
                             player.HorizontalAlignment = HorizontalAlignment.Left;
                             player.FlowDirection = FlowDirection.LeftToRight;
-                            player.Margin = new Thickness(-20, -4, 0, -4);
+                            player.Margin = new Thickness(-20, -2, 0, -6);
 
                             var inline = new InlineUIContainer();
                             inline.Child = player;
