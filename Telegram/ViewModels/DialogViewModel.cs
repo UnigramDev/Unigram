@@ -1979,10 +1979,16 @@ namespace Telegram.ViewModels
             ShowReplyMarkup(chat);
             ShowDraftMessage(chat);
             ShowSwitchInline(state);
+            ShowReplyTo(state);
 
             if (_type == DialogType.History && App.DataPackages.TryRemove(chat.Id, out DataPackageView package))
             {
                 await HandlePackageAsync(package);
+            }
+            else if (_type == DialogType.History && state.TryGet("package", out DataPackageView packageView))
+            {
+                state.Remove("package");
+                await HandlePackageAsync(packageView);
             }
         }
 
@@ -2099,6 +2105,25 @@ namespace Telegram.ViewModels
 
                 SetText(string.Format("@{0} {1}", username, query), focus: true);
                 ResolveInlineBot(username, query);
+            }
+        }
+
+        private void ShowReplyTo(IDictionary<string, object> state)
+        {
+            if (_type == DialogType.History && state.TryGet("reply_to", out Message message))
+            {
+                state.TryGet("reply_to_quote", out FormattedText quote);
+
+                state.Remove("reply_to");
+                state.Remove("reply_to_quote");
+
+                ComposerHeader = new MessageComposerHeader(ClientService)
+                {
+                    ReplyToMessage = CreateMessage(message),
+                    ReplyToQuote = quote
+                };
+
+                TextField?.Focus(FocusState.Keyboard);
             }
         }
 

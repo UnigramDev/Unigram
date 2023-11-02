@@ -89,11 +89,15 @@ namespace Telegram.ViewModels
             }
         }
 
+        private ChooseChatsConfiguration _configuration;
+
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             // The following is absolutely awful
 
             #region Configuration
+
+            _configuration = parameter as ChooseChatsConfiguration;
 
             if (parameter is ChooseChatsConfigurationGroupCall configurationGroupCall)
             {
@@ -101,8 +105,6 @@ namespace Telegram.ViewModels
                 Options = ChooseChatsOptions.PostMessages;
                 IsCommentEnabled = true;
                 IsChatSelection = false;
-
-                GroupCall = configurationGroupCall.GroupCall;
             }
             else if (parameter is ChooseChatsConfigurationDataPackage configurationDataPackage)
             {
@@ -110,8 +112,6 @@ namespace Telegram.ViewModels
                 Options = ChooseChatsOptions.PostMessages;
                 IsCommentEnabled = false;
                 IsChatSelection = false;
-
-                Package = configurationDataPackage.Package;
             }
             else if (parameter is ChooseChatsConfigurationSwitchInline configurationSwitchInline)
             {
@@ -119,8 +119,6 @@ namespace Telegram.ViewModels
                 Options = ChooseChatsOptions.PostMessages;
                 IsCommentEnabled = false;
                 IsChatSelection = false;
-
-                SwitchInline = configurationSwitchInline;
 
                 if (configurationSwitchInline.TargetChat is TargetChatChosen chosen)
                 {
@@ -138,6 +136,14 @@ namespace Telegram.ViewModels
                 IsChatSelection = false;
 
                 SendMessage = configurationPostText.Text;
+            }
+            else if (parameter is ChooseChatsConfigurationReplyToMessage)
+            {
+                SelectionMode = ListViewSelectionMode.None;
+                Options = ChooseChatsOptions.PostMessages;
+                IsCommentEnabled = false;
+                IsSendAsCopyEnabled = false;
+                IsChatSelection = false;
             }
             else if (parameter is ChooseChatsConfigurationShareMessage configurationShareMessage)
             {
@@ -222,8 +228,6 @@ namespace Telegram.ViewModels
                 Options = ChooseChatsOptions.PostMessages;
                 IsCommentEnabled = true;
                 IsChatSelection = false;
-
-                InputMedia = configurationPostMessage.Content;
             }
             else if (parameter is ChooseChatsConfigurationStartBot configurationStartBot)
             {
@@ -231,9 +235,6 @@ namespace Telegram.ViewModels
                 Options = ChooseChatsOptions.InviteUsers;
                 IsCommentEnabled = false;
                 IsChatSelection = false;
-
-                InviteBot = configurationStartBot.Bot;
-                InviteToken = configurationStartBot.Token;
             }
 
             #endregion
@@ -360,50 +361,6 @@ namespace Telegram.ViewModels
 
         public IList<MessageReplyTo> Sharing { get; set; }
 
-        private GroupCall _groupCall;
-        public GroupCall GroupCall
-        {
-            get => _groupCall;
-            set
-            {
-                Set(ref _groupCall, value);
-                RaisePropertyChanged(nameof(IsSpeakerLinkEnabled));
-            }
-        }
-
-        public bool IsSpeakerLinkEnabled
-        {
-            get => _groupCall != null && _groupCall.CanBeManaged && _groupCall.MuteNewParticipants;
-        }
-
-        private bool _isSpeakerLink;
-        public bool IsSpeakerLink
-        {
-            get => _isSpeakerLink;
-            set => Set(ref _isSpeakerLink, value);
-        }
-
-        private User _inviteBot;
-        public User InviteBot
-        {
-            get => _inviteBot;
-            set => Set(ref _inviteBot, value);
-        }
-
-        private string _inviteToken;
-        public string InviteToken
-        {
-            get => _inviteToken;
-            set => Set(ref _inviteToken, value);
-        }
-
-        private InputMessageContent _inputMedia;
-        public InputMessageContent InputMedia
-        {
-            get => _inputMedia;
-            set => Set(ref _inputMedia, value);
-        }
-
         public bool IsWithMyScore { get; set; }
 
         public bool IsCopyLinkEnabled
@@ -453,20 +410,6 @@ namespace Telegram.ViewModels
             set => Set(ref _isSendCopyEnabled, value);
         }
 
-        private ChooseChatsConfigurationSwitchInline _switchInline;
-        public ChooseChatsConfigurationSwitchInline SwitchInline
-        {
-            get => _switchInline;
-            set => _switchInline = value;
-        }
-
-        private DataPackageView _package;
-        public DataPackageView Package
-        {
-            get => _package;
-            set => _package = value;
-        }
-
         public FormattedText SendMessage { get; set; }
 
         public bool IsChatSelection { get; set; }
@@ -513,7 +456,15 @@ namespace Telegram.ViewModels
                 }
             }
 
-            if (_messages != null)
+            if (_configuration is ChooseChatsConfigurationReplyToMessage configurationReplyToMessage)
+            {
+                NavigationService.NavigateToChat(chats[0], state: new NavigationState
+                {
+                    { "reply_to", configurationReplyToMessage.Message },
+                    { "reply_to_quote", configurationReplyToMessage.Quote }
+                });
+            }
+            else if (_messages != null)
             {
                 foreach (var chat in chats)
                 {
@@ -550,11 +501,11 @@ namespace Telegram.ViewModels
                     }
                 }
             }
-            else if (InputMedia != null)
+            else if (_configuration is ChooseChatsConfigurationPostMessage configurationPostMessage)
             {
                 foreach (var chat in chats)
                 {
-                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, InputMedia));
+                    var response = await ClientService.SendAsync(new SendMessage(chat.Id, 0, null, null, null, configurationPostMessage.Content));
                 }
 
                 //NavigationService.GoBack();
@@ -570,7 +521,7 @@ namespace Telegram.ViewModels
 
                 //NavigationService.GoBack();
             }
-            else if (_inviteBot != null)
+            else if (_configuration is ChooseChatsConfigurationStartBot configurationStartBot)
             {
                 var chat = chats.FirstOrDefault();
                 if (chat == null)
@@ -578,47 +529,32 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                var response = await ClientService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(_inviteBot.Id)));
+                var response = await ClientService.SendAsync(new GetChatMember(chat.Id, new MessageSenderUser(configurationStartBot.Bot.Id)));
                 if (response is ChatMember member && member.Status is ChatMemberStatusLeft)
                 {
-                    await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, new MessageSenderUser(_inviteBot.Id), new ChatMemberStatusMember()));
+                    await ClientService.SendAsync(new SetChatMemberStatus(chat.Id, new MessageSenderUser(configurationStartBot.Bot.Id), new ChatMemberStatusMember()));
                 }
 
-                if (_inviteToken != null)
+                if (configurationStartBot.Token != null)
                 {
-                    response = await ClientService.SendAsync(new SendBotStartMessage(_inviteBot.Id, chat.Id, _inviteToken));
-
-                    var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
-                    service?.NavigateToChat(chat, accessToken: _inviteToken);
+                    response = await ClientService.SendAsync(new SendBotStartMessage(configurationStartBot.Bot.Id, chat.Id, configurationStartBot.Token));
+                    NavigationService.NavigateToChat(chat, accessToken: configurationStartBot.Token);
                 }
             }
-            else if (_switchInline?.Bot != null)
+            else if (_configuration is ChooseChatsConfigurationSwitchInline configurationSwitchInline)
             {
-                var chat = chats.FirstOrDefault();
-                if (chat == null)
-                {
-                    return;
-                }
-
-                var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
-                service?.NavigateToChat(chat, state: NavigationState.GetSwitchQuery(_switchInline.Query, _switchInline.Bot.Id));
+                NavigationService.NavigateToChat(chats[0], state: NavigationState.GetSwitchQuery(configurationSwitchInline.Query, configurationSwitchInline.Bot.Id));
             }
-            else if (_package != null)
+            else if (_configuration is ChooseChatsConfigurationDataPackage configurationDataPackage)
             {
-                var chat = chats.FirstOrDefault();
-                if (chat == null)
+                NavigationService.NavigateToChat(chats[0], state: new NavigationState
                 {
-                    return;
-                }
-
-                App.DataPackages[chat.Id] = _package;
-
-                var service = WindowContext.Current.NavigationServices.GetByFrameId("Main" + ClientService.SessionId);
-                service?.NavigateToChat(chat);
+                    { "package", configurationDataPackage.Package }
+                });
             }
-            else if (_groupCall != null)
+            else if (_configuration is ChooseChatsConfigurationGroupCall configurationGroupCall)
             {
-                var response = await ClientService.SendAsync(new GetGroupCallInviteLink(_groupCall.Id, _isSpeakerLink));
+                var response = await ClientService.SendAsync(new GetGroupCallInviteLink(configurationGroupCall.GroupCall.Id, false));
                 if (response is HttpUrl httpUrl)
                 {
                     var formatted = new FormattedText(string.Format(Strings.VoipGroupInviteText, httpUrl.Url), new TextEntity[0]);

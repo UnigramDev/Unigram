@@ -90,7 +90,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public void ReplyToMessage(MessageViewModel message)
+        public async void ReplyToMessage(MessageViewModel message)
         {
             DisposeSearch();
 
@@ -104,15 +104,22 @@ namespace Telegram.ViewModels
                 message = album.Messages.FirstOrDefault();
             }
 
-            ComposerHeader = new MessageComposerHeader(ClientService)
+            if (ShouldReplyInAnotherChat(message))
             {
-                ReplyToMessage = message
-            };
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message.Get(), null));
+            }
+            else
+            {
+                ComposerHeader = new MessageComposerHeader(ClientService)
+                {
+                    ReplyToMessage = message
+                };
 
-            TextField?.Focus(FocusState.Keyboard);
+                TextField?.Focus(FocusState.Keyboard);
+            }
         }
 
-        public void QuoteToMessage(MessageQuote quote)
+        public async void QuoteToMessage(MessageQuote quote)
         {
             DisposeSearch();
 
@@ -127,13 +134,39 @@ namespace Telegram.ViewModels
                 message = album.Messages.FirstOrDefault();
             }
 
-            ComposerHeader = new MessageComposerHeader(ClientService)
+            if (ShouldReplyInAnotherChat(message))
             {
-                ReplyToMessage = message,
-                ReplyToQuote = quote.Quote
-            };
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message.Get(), quote.Quote));
+            }
+            else
+            {
+                ComposerHeader = new MessageComposerHeader(ClientService)
+                {
+                    ReplyToMessage = message,
+                    ReplyToQuote = quote.Quote
+                };
 
-            TextField?.Focus(FocusState.Keyboard);
+                TextField?.Focus(FocusState.Keyboard);
+            }
+        }
+
+        private bool ShouldReplyInAnotherChat(MessageViewModel message)
+        {
+            if (message.CanBeRepliedInAnotherChat is false)
+            {
+                return false;
+            }
+
+            var chat = message.Chat;
+            if (chat != null && ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
+            {
+                if (supergroup.IsChannel)
+                {
+                    return supergroup.Status is not ChatMemberStatusCreator and not ChatMemberStatusAdministrator;
+                }
+            }
+
+            return false;
         }
 
         #endregion

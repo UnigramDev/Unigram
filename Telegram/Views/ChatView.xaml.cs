@@ -2479,6 +2479,11 @@ namespace Telegram.Views
                 return false;
             }
 
+            if (message.CanBeRepliedInAnotherChat)
+            {
+                return true;
+            }
+
             var chat = message.Chat;
             if (chat != null && chat.Type is ChatTypeSupergroup supergroupType)
             {
