@@ -1397,7 +1397,7 @@ namespace Telegram.Views
                         return;
                     }
 
-                    clientService.Send(new GetWebPagePreview(new FormattedText(urls, new TextEntity[0])), result);
+                    clientService.Send(new GetWebPagePreview(new FormattedText(urls, Array.Empty<TextEntity>()), null), result);
                 }
                 else
                 {
@@ -1406,7 +1406,7 @@ namespace Telegram.Views
             }
             else
             {
-                clientService.Send(new GetWebPagePreview(new FormattedText(text.Format(), new TextEntity[0])), result);
+                clientService.Send(new GetWebPagePreview(new FormattedText(text.Format(), Array.Empty<TextEntity>()), null), result);
             }
         }
 

@@ -42,7 +42,7 @@ namespace Telegram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            var response = await ClientService.SendAsync(new GetWebPagePreview(new FormattedText((string)parameter, new TextEntity[0])));
+            var response = await ClientService.SendAsync(new GetWebPagePreview(new FormattedText((string)parameter, Array.Empty<TextEntity>()), null));
             if (response is WebPage webPage)
             {
                 Title = webPage.SiteName;
