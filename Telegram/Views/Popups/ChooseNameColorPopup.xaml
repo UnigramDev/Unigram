@@ -186,7 +186,7 @@
                                   Padding="16,3,16,5"
                                   CornerRadius="4"
                                   Margin="0"
-                                  Height="36" />
+                                  Height="32" />
         </Grid>
 
         <controls:GlyphButton Click="{x:Bind Close}"

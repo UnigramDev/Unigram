@@ -159,7 +159,7 @@
                        RadiusY="4" />
             <Border Background="{StaticResource PremiumLinearGradientBrush}"
                     CornerRadius="4"
-                    Height="36" />
+                    Height="32" />
             <controls:BadgeButton x:Name="PurchaseCommand"
                                   Click="Purchase_Click"
                                   Style="{StaticResource StartButtonStyle}"
@@ -169,7 +169,7 @@
                                   Padding="16,3,16,5"
                                   CornerRadius="4"
                                   Margin="0"
-                                  Height="36">
+                                  Height="32">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
