@@ -390,6 +390,13 @@ namespace Telegram.Services
                     ProcessFiles(botInfo.Photo);
                 }
             }
+            else if (target is BotWriteAccessAllowReasonLaunchedWebApp botWriteAccessAllowReasonLaunchedWebApp)
+            {
+                if (botWriteAccessAllowReasonLaunchedWebApp.WebApp != null)
+                {
+                    ProcessFiles(botWriteAccessAllowReasonLaunchedWebApp.WebApp);
+                }
+            }
             else if (target is Chat chat)
             {
                 if (chat.Background != null)
@@ -819,6 +826,10 @@ namespace Telegram.Services
                 {
                     ProcessFiles(message.Content);
                 }
+                if (message.ReplyTo != null)
+                {
+                    ProcessFiles(message.ReplyTo);
+                }
             }
             else if (target is MessageAnimatedEmoji messageAnimatedEmoji)
             {
@@ -843,9 +854,9 @@ namespace Telegram.Services
             }
             else if (target is MessageBotWriteAccessAllowed messageBotWriteAccessAllowed)
             {
-                if (messageBotWriteAccessAllowed.WebApp != null)
+                if (messageBotWriteAccessAllowed.Reason != null)
                 {
-                    ProcessFiles(messageBotWriteAccessAllowed.WebApp);
+                    ProcessFiles(messageBotWriteAccessAllowed.Reason);
                 }
             }
             else if (target is MessageCalendar messageCalendar)
@@ -952,6 +963,27 @@ namespace Telegram.Services
                 if (messagePhoto.Photo != null)
                 {
                     ProcessFiles(messagePhoto.Photo);
+                }
+            }
+            else if (target is MessagePremiumGiftCode messagePremiumGiftCode)
+            {
+                if (messagePremiumGiftCode.Sticker != null)
+                {
+                    ProcessFiles(messagePremiumGiftCode.Sticker);
+                }
+            }
+            else if (target is MessagePremiumGiveaway messagePremiumGiveaway)
+            {
+                if (messagePremiumGiveaway.Sticker != null)
+                {
+                    ProcessFiles(messagePremiumGiveaway.Sticker);
+                }
+            }
+            else if (target is MessageReplyToMessage messageReplyToMessage)
+            {
+                if (messageReplyToMessage.Content != null)
+                {
+                    ProcessFiles(messageReplyToMessage.Content);
                 }
             }
             else if (target is Messages messages)
