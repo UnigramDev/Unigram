@@ -1415,14 +1415,28 @@ namespace Telegram.Controls.Messages
             Panel.Content = message?.GeneratedContent ?? message?.Content;
 
             var content = message.GeneratedContent ?? message.Content;
-            if (content is MessageText text && text.WebPage == null)
+            if (content is MessageText text)
             {
-                ContentPanel.Padding = new Thickness(0, 4, 0, 0);
-                Media.Margin = new Thickness(0);
-                FooterToNormal();
-                Grid.SetRow(Footer, 2);
-                Grid.SetRow(Message, 2);
-                Panel.Placeholder = true;
+                if (text.WebPage == null)
+                {
+                    ContentPanel.Padding = new Thickness(0, 4, 0, 0);
+                    Media.Margin = new Thickness(0);
+                    FooterToNormal();
+                    Grid.SetRow(Footer, 2);
+                    Grid.SetRow(Message, 2);
+                    Panel.Placeholder = true;
+                }
+                else
+                {
+                    var caption = text.WebPage.ShowAboveText;
+
+                    ContentPanel.Padding = new Thickness(0, 4, 0, 0);
+                    Media.Margin = new Thickness(10, caption ? -4 : -6, 10, -2);
+                    FooterToNormal();
+                    Grid.SetRow(Footer, caption ? 4 : 4);
+                    Grid.SetRow(Message, caption ? 4 : 2);
+                    Panel.Placeholder = caption;
+                }
             }
             else if (IsFullMedia(content))
             {
@@ -1483,7 +1497,7 @@ namespace Telegram.Controls.Messages
                     Panel.Placeholder = content is MessageBigEmoji;
                 }
             }
-            else if ((content is MessageText webPage && webPage.WebPage != null) || content is MessageGame || content is MessageAsyncStory)
+            else if (content is MessageGame or MessagePremiumGiveaway or MessageAsyncStory)
             {
                 ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                 Media.Margin = new Thickness(10, -6, 10, 0);
