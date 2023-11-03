@@ -336,7 +336,7 @@ namespace Telegram.Controls.Messages
             var fromUser = message.GetSender();
 
             content = ReplaceWithLink(Strings.EventLogChangedColor, "un1", fromUser, entities);
-            content = string.Format(content, accentColorChanged.OldAccentColorId.Id, accentColorChanged.NewAccentColorId.Id);
+            content = string.Format(content, accentColorChanged.OldAccentColorId, accentColorChanged.NewAccentColorId);
 
             return (content, entities);
         }

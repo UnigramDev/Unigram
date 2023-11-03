@@ -394,7 +394,7 @@ namespace Telegram.Controls
                 return PlaceholderHelper.GetBlurred(chat.Photo.Minithumbnail.Data);
             }
 
-            return PlaceholderImage.GetChat(chat);
+            return PlaceholderImage.GetChat(clientService, chat);
         }
 
         #endregion
@@ -465,7 +465,7 @@ namespace Telegram.Controls
                 return PlaceholderHelper.GetBlurred(user.ProfilePhoto.Minithumbnail.Data);
             }
 
-            return PlaceholderImage.GetUser(user);
+            return PlaceholderImage.GetUser(clientService, user);
         }
 
 
@@ -525,7 +525,7 @@ namespace Telegram.Controls
                 return PlaceholderHelper.GetBlurred(chat.Photo.Minithumbnail.Data);
             }
 
-            return PlaceholderImage.GetChat(chat);
+            return PlaceholderImage.GetChat(clientService, chat);
         }
 
         #endregion
@@ -593,19 +593,19 @@ namespace Telegram.Controls
         {
             if (message.IsSaved)
             {
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
+                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
                 {
                     SetUser(message.ClientService, fromUserUser, 30);
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
+                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
                 {
                     SetChat(message.ClientService, fromChatChat, 30);
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
+                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
                 {
                     SetChat(message.ClientService, fromChannelChat, 30);
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+                else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser fromHiddenUser)
                 {
                     Source = PlaceholderImage.GetNameForUser(fromHiddenUser.SenderName);
                     Shape = ProfilePictureShape.Ellipse;
@@ -637,20 +637,20 @@ namespace Telegram.Controls
 
         public Color BottomColor { get; }
 
-        public PlaceholderImage(string initials, bool isGlyph, AccentColorId id)
+        public PlaceholderImage(string initials, bool isGlyph, NameColor color)
         {
             Initials = initials;
             IsGlyph = isGlyph;
 
-            if (id == null)
+            if (color == null)
             {
                 TopColor = _disabledTop;
                 BottomColor = _disabled;
             }
             else
             {
-                TopColor = _colorsTop[Math.Abs(id.Id % _colors.Length)];
-                BottomColor = _colors[Math.Abs(id.Id % _colors.Length)];
+                TopColor = _colorsTop[Math.Abs(color.BuiltInAccentColorId % _colors.Length)];
+                BottomColor = _colors[Math.Abs(color.BuiltInAccentColorId % _colors.Length)];
             }
         }
 
@@ -711,32 +711,24 @@ namespace Telegram.Controls
             };
         }
 
-        public static SolidColorBrush GetBrush(AccentColorId i, double opacity = 1)
-        {
-            return new SolidColorBrush(_colors[Math.Abs(i.Id % _colors.Length)])
-            {
-                Opacity = opacity
-            };
-        }
-
         public static CompositionBrush GetBrush(Compositor compositor, long i)
         {
             return compositor.CreateColorBrush(_colors[Math.Abs(i % _colors.Length)]);
         }
 
-        public static PlaceholderImage GetChat(Chat chat)
+        public static PlaceholderImage GetChat(IClientService clientService, Chat chat)
         {
-            return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, chat.AccentColorId);
+            return new PlaceholderImage(InitialNameStringConverter.Convert(chat), false, clientService.GetAccentColor(chat.AccentColorId));
         }
 
-        public static PlaceholderImage GetChat(ChatInviteLinkInfo chat)
+        public static PlaceholderImage GetChat(IClientService clientService, ChatInviteLinkInfo chat)
         {
-            return new PlaceholderImage(InitialNameStringConverter.Convert(chat.Title), false, chat.AccentColorId);
+            return new PlaceholderImage(InitialNameStringConverter.Convert(chat.Title), false, clientService.GetAccentColor(chat.AccentColorId));
         }
 
-        public static PlaceholderImage GetUser(User user)
+        public static PlaceholderImage GetUser(IClientService clientService, User user)
         {
-            return new PlaceholderImage(InitialNameStringConverter.Convert(user), false, user.AccentColorId);
+            return new PlaceholderImage(InitialNameStringConverter.Convert(user), false, clientService.GetAccentColor(user.AccentColorId));
         }
 
         public static PlaceholderImage GetNameForUser(string firstName, string lastName, long id = 5)

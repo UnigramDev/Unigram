@@ -47,8 +47,8 @@ namespace Telegram.Views.Settings
                 var accent = ViewModel.ClientService.GetAccentColor(user.AccentColorId);
                 if (accent != null)
                 {
-                    NameColorBadge.Background = new SolidColorBrush(accent[0]) { Opacity = 0.1 };
-                    NameColorBadge.Foreground = new SolidColorBrush(accent[0]);
+                    NameColorBadge.Background = new SolidColorBrush(accent.LightThemeColors[0]) { Opacity = 0.1 };
+                    NameColorBadge.Foreground = new SolidColorBrush(accent.LightThemeColors[0]);
                     NameColorBadge.Text = user.FullName();
                 }
             }

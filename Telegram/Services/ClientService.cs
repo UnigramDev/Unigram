@@ -11,14 +11,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Common;
-using Telegram.Controls;
 using Telegram.Services.Updates;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Storage;
-using Windows.UI;
 
 namespace Telegram.Services
 {
@@ -63,12 +60,10 @@ namespace Telegram.Services
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
 
-        /* temp */
-        IDictionary<int, Color[]> AccentColors { get; }
+        IDictionary<int, NameColor> AccentColors { get; }
         IList<int> AvailableAccentColors { get; }
 
-        Color[] GetAccentColor(AccentColorId id);
-        /* temp */
+        NameColor GetAccentColor(int id);
 
         ReactionType DefaultReaction { get; }
 
@@ -547,71 +542,20 @@ namespace Telegram.Services
             if (value is JsonValueObject obj)
             {
                 _config = obj;
-
-                // TODO: remove when implemented in TDLib:
-                var peerColors = obj.GetNamedObject("peer_colors");
-                var peerColorsAvailable = obj.GetNamedArray("peer_colors_available");
-
-                if (peerColors != null && peerColorsAvailable != null)
-                {
-                    var available = new List<int>();
-                    var colors = new Dictionary<int, Color[]>();
-
-                    for (int i = 0; i < 7; i++)
-                    {
-                        colors[i] = new[]
-                        {
-                            PlaceholderImage.GetColor(i)
-                        };
-                    }
-
-                    foreach (var id in peerColorsAvailable.Values)
-                    {
-                        if (id is JsonValueNumber number)
-                        {
-                            available.Add((int)number.Value);
-                        }
-                    }
-
-                    foreach (var keys in peerColors.Members)
-                    {
-                        if (int.TryParse(keys.Key, out int key) && keys.Value is JsonValueArray color)
-                        {
-                            var values = new Color[color.Values.Count];
-
-                            for (int i = 0; i < color.Values.Count; i++)
-                            {
-                                var item = color.Values[i];
-                                if (item is JsonValueString str && ColorEx.TryParse(str.Value, out Color part))
-                                {
-                                    values[i] = part;
-                                }
-                            }
-
-                            colors[key] = values;
-                        }
-                    }
-
-                    AccentColors = colors;
-                    AvailableAccentColors = available;
-                }
             }
         }
 
-        public IDictionary<int, Color[]> AccentColors { get; private set; }
+        public IDictionary<int, NameColor> AccentColors { get; private set; }
         public IList<int> AvailableAccentColors { get; private set; }
 
-        public Color[] GetAccentColor(AccentColorId id)
+        public NameColor GetAccentColor(int id)
         {
-            if (AccentColors != null && AccentColors.TryGetValue(id.Id, out var accentColor))
+            if (AccentColors != null && AccentColors.TryGetValue(id, out var accentColor))
             {
                 return accentColor;
             }
 
-            return new[]
-            {
-                PlaceholderImage.GetColor(id.Id)
-            };
+            return new NameColor(id);
         }
 
         private void UpdateVersion()
@@ -2152,6 +2096,23 @@ namespace Telegram.Services
             else if (update is UpdateAttachmentMenuBots updateAttachmentMenuBots)
             {
                 _attachmentMenuBots = updateAttachmentMenuBots.Bots;
+            }
+            else if (update is UpdateAccentColors updateAccentColors)
+            {
+                var colors = new Dictionary<int, NameColor>();
+
+                for (int i = 0; i < 7; i++)
+                {
+                    colors[i] = new NameColor(i);
+                }
+
+                foreach (var color in updateAccentColors.Colors)
+                {
+                    colors[color.Id] = new NameColor(color);
+                }
+
+                AvailableAccentColors = updateAccentColors.AvailableAccentColorIds.ToList();
+                AccentColors = colors;
             }
 
             _aggregator.Publish(update);

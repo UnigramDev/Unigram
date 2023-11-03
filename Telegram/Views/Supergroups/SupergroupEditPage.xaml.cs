@@ -122,8 +122,8 @@ namespace Telegram.Views.Supergroups
                 var accent = ViewModel.ClientService.GetAccentColor(chat.AccentColorId);
                 if (accent != null)
                 {
-                    ChannelColorBadge.Background = new SolidColorBrush(accent[0]) { Opacity = 0.1 };
-                    ChannelColorBadge.Foreground = new SolidColorBrush(accent[0]);
+                    ChannelColorBadge.Background = new SolidColorBrush(accent.LightThemeColors[0]) { Opacity = 0.1 };
+                    ChannelColorBadge.Foreground = new SolidColorBrush(accent.LightThemeColors[0]);
                     ChannelColorBadge.Text = chat.Title;
                 }
             }

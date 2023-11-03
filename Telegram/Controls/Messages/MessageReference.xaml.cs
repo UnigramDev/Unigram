@@ -164,7 +164,7 @@ namespace Telegram.Controls.Messages
         #endregion
 
         private bool _light;
-        private long _tintId;
+        private NameColor _accent;
 
         public void ToLightState()
         {
@@ -190,15 +190,26 @@ namespace Telegram.Controls.Messages
                 ClearValue(ForegroundProperty);
                 ClearValue(SubtleBrushProperty);
 
-                if (_tintId != 0)
+                var accent = _accent;
+                if (accent != null)
                 {
                     HeaderBrush =
-                        BorderBrush = PlaceholderImage.GetBrush(_tintId);
+                        BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
+
+                    AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
+                        ? new SolidColorBrush(accent.LightThemeColors[1])
+                        : null;
+                    AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
+                        ? new SolidColorBrush(accent.LightThemeColors[2])
+                        : null;
                 }
                 else
                 {
                     ClearValue(HeaderBrushProperty);
                     ClearValue(BorderBrushProperty);
+
+                    AccentDash.Stripe1 = null;
+                    AccentDash.Stripe2 = null;
                 }
             }
         }
@@ -254,10 +265,10 @@ namespace Telegram.Controls.Messages
                     : Visibility.Collapsed;
 
                 var sender = clientService?.GetMessageSender(messageSender);
-                var tintId = outgoing ? null : sender switch
+                var accent = outgoing ? null : sender switch
                 {
-                    User user => user.AccentColorId,
-                    Chat chat => chat.AccentColorId,
+                    User user => clientService.GetAccentColor(user.AccentColorId),
+                    Chat chat => clientService.GetAccentColor(chat.AccentColorId),
                     _ => null
                 };
 
@@ -296,18 +307,16 @@ namespace Telegram.Controls.Messages
                     ClearValue(ForegroundProperty);
                     ClearValue(SubtleBrushProperty);
 
-                    if (tintId != null)
+                    if (accent != null)
                     {
-                        var accent = clientService.GetAccentColor(tintId);
-
                         HeaderBrush =
-                            BorderBrush = new SolidColorBrush(accent[0]);
+                            BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
 
-                        AccentDash.Stripe1 = accent.Length > 1
-                            ? new SolidColorBrush(accent[1])
+                        AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
+                            ? new SolidColorBrush(accent.LightThemeColors[1])
                             : null;
-                        AccentDash.Stripe2 = accent.Length > 2
-                            ? new SolidColorBrush(accent[2])
+                        AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
+                            ? new SolidColorBrush(accent.LightThemeColors[2])
                             : null;
                     }
                     else
@@ -320,7 +329,7 @@ namespace Telegram.Controls.Messages
                     }
                 }
 
-                _tintId = tintId?.Id ?? -1;
+                _accent = accent;
 
                 MessageLabel.Inlines.Clear();
 
@@ -402,18 +411,18 @@ namespace Telegram.Controls.Messages
                 Pattern.Source = new CustomEmojiFileSource(clientService, customEmojiId);
             }
 
-            var accent = clientService.GetAccentColor(new AccentColorId(color));
+            var accent = clientService.GetAccentColor(color);
 
             HeaderBrush =
-                BorderBrush = new SolidColorBrush(accent[0]);
+                BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
 
             if (AccentDash != null)
             {
-                AccentDash.Stripe1 = accent.Length > 1
-                    ? new SolidColorBrush(accent[1])
+                AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
+                    ? new SolidColorBrush(accent.LightThemeColors[1])
                     : null;
-                AccentDash.Stripe2 = accent.Length > 2
-                    ? new SolidColorBrush(accent[2])
+                AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
+                    ? new SolidColorBrush(accent.LightThemeColors[2])
                     : null;
             }
         }

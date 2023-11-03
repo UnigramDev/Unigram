@@ -15,7 +15,6 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -24,19 +23,6 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views.Popups
 {
-    public class NameColor
-    {
-        public int Id { get; }
-
-        public Color[] Colors { get; }
-
-        public NameColor(int id, Color[] colors)
-        {
-            Id = id;
-            Colors = colors;
-        }
-    }
-
     public sealed partial class ChooseNameColorPopup : ContentPopup
     {
         private readonly IClientService _clientService;
@@ -62,9 +48,9 @@ namespace Telegram.Views.Popups
 
             foreach (var id in peerColorsAvailable)
             {
-                if (peerColors.TryGetValue(id, out Color[] value))
+                if (peerColors.TryGetValue(id, out NameColor value))
                 {
-                    colors.Add(new NameColor(id, value));
+                    colors.Add(value);
                 }
             }
 
@@ -79,7 +65,7 @@ namespace Telegram.Views.Popups
             if (clientService.TryGetUser(sender, out User user))
             {
                 customEmojiId = user.BackgroundCustomEmojiId;
-                accentColorId = user.AccentColorId.Id;
+                accentColorId = user.AccentColorId;
 
                 var webPage = new WebPage
                 {
@@ -100,7 +86,7 @@ namespace Telegram.Views.Popups
             else if (clientService.TryGetChat(sender, out Chat chat))
             {
                 customEmojiId = chat.BackgroundCustomEmojiId;
-                accentColorId = chat.AccentColorId.Id;
+                accentColorId = chat.AccentColorId;
 
                 var webPage = new WebPage
                 {
@@ -128,7 +114,7 @@ namespace Telegram.Views.Popups
                 Badge.Glyph = string.Empty;
 
                 Animated.Source = new CustomEmojiFileSource(clientService, customEmojiId);
-                Animated.ReplacementColor = new SolidColorBrush(accent.Colors[0]);
+                Animated.ReplacementColor = new SolidColorBrush(accent.LightThemeColors[0]);
             }
             else
             {
@@ -169,13 +155,13 @@ namespace Telegram.Views.Popups
                 && content.Children[1] is Rectangle rectangle
                 && args.Item is NameColor colors)
             {
-                content.Background = new SolidColorBrush(colors.Colors[0]);
-                polygon.Fill = colors.Colors.Length > 1
-                    ? new SolidColorBrush(colors.Colors[1])
+                content.Background = new SolidColorBrush(colors.LightThemeColors[0]);
+                polygon.Fill = colors.LightThemeColors.Count > 1
+                    ? new SolidColorBrush(colors.LightThemeColors[1])
                     : null;
 
-                rectangle.Fill = colors.Colors.Length > 2
-                    ? new SolidColorBrush(colors.Colors[2])
+                rectangle.Fill = colors.LightThemeColors.Count > 2
+                    ? new SolidColorBrush(colors.LightThemeColors[2])
                     : null;
             }
         }
@@ -203,7 +189,7 @@ namespace Telegram.Views.Popups
 
             if (List.SelectedItem is NameColor accent)
             {
-                Animated.ReplacementColor = new SolidColorBrush(accent.Colors[0]);
+                Animated.ReplacementColor = new SolidColorBrush(accent.LightThemeColors[0]);
             }
         }
 

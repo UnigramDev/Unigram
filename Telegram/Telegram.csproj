@@ -271,6 +271,7 @@
     <Compile Include="Streams\LocalFileSource.cs" />
     <Compile Include="Streams\RemoteFileSource.cs" />
     <Compile Include="Td\Api\MessageAsyncStory.cs" />
+    <Compile Include="Td\Api\NameColor.cs" />
     <Compile Include="Td\Api\UpdateChatSwitchInlineQuery.cs" />
     <Compile Include="Videolan\Platforms\Windows\InitializedEventArgs.cs" />
     <Compile Include="Videolan\Platforms\Windows\VideoView.cs" />

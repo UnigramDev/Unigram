@@ -150,25 +150,23 @@ namespace Telegram.Controls.Messages.Content
             var outgoing = message.IsOutgoing && !message.IsChannelPost;
             var sender = message.GetSender();
 
-            var tintId = outgoing ? null : sender switch
+            var accent = outgoing ? null : sender switch
             {
-                User user => user.AccentColorId,
-                Chat chat => chat.AccentColorId,
+                User user => message.ClientService.GetAccentColor(user.AccentColorId),
+                Chat chat => message.ClientService.GetAccentColor(chat.AccentColorId),
                 _ => null
             };
 
-            if (tintId != null)
+            if (accent != null)
             {
-                var accent = message.ClientService.GetAccentColor(tintId);
-
                 HeaderBrush =
-                    BorderBrush = new SolidColorBrush(accent[0]);
+                    BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
 
-                AccentDash.Stripe1 = accent.Length > 1
-                    ? new SolidColorBrush(accent[1])
+                AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
+                    ? new SolidColorBrush(accent.LightThemeColors[1])
                     : null;
-                AccentDash.Stripe2 = accent.Length > 2
-                    ? new SolidColorBrush(accent[2])
+                AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
+                    ? new SolidColorBrush(accent.LightThemeColors[2])
                     : null;
             }
             else
@@ -372,18 +370,18 @@ namespace Telegram.Controls.Messages.Content
 
         public void UpdateMockup(IClientService clientService, int color)
         {
-            var accent = clientService.GetAccentColor(new AccentColorId(color));
+            var accent = clientService.GetAccentColor(color);
 
             HeaderBrush =
-                BorderBrush = new SolidColorBrush(accent[0]);
+                BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
 
             if (AccentDash != null)
             {
-                AccentDash.Stripe1 = accent.Length > 1
-                    ? new SolidColorBrush(accent[1])
+                AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
+                    ? new SolidColorBrush(accent.LightThemeColors[1])
                     : null;
-                AccentDash.Stripe2 = accent.Length > 2
-                    ? new SolidColorBrush(accent[2])
+                AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
+                    ? new SolidColorBrush(accent.LightThemeColors[2])
                     : null;
             }
         }

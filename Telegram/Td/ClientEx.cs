@@ -75,12 +75,12 @@ namespace Telegram.Td
 
 
 
-        public static SolidColorBrush GetAccentBrush(this IClientService clientService, AccentColorId id)
+        public static SolidColorBrush GetAccentBrush(this IClientService clientService, int id)
         {
             var accent = clientService.GetAccentColor(id);
             if (accent != null)
             {
-                return new SolidColorBrush(accent[0]);
+                return new SolidColorBrush(accent.LightThemeColors[0]);
             }
 
             return PlaceholderImage.GetBrush(id);
