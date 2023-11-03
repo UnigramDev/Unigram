@@ -38,7 +38,7 @@ namespace Telegram.Common
 
         public bool HasFlag(TextStyle flag)
         {
-            return Flags.HasFlag(flag);
+            return (Flags & flag) != 0;
         }
 
         private void Merge(TextStyleRun run)
