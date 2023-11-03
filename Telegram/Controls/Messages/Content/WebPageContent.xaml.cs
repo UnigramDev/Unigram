@@ -136,7 +136,7 @@ namespace Telegram.Controls.Messages.Content
                 Media.Visibility = Visibility.Visible;
                 OverflowArea.Margin = new Thickness(0, 0, 0, 8);
 
-                UpdateContent(message, webPage);
+                UpdateContent(message, webPage, empty);
             }
             else
             {
@@ -228,7 +228,7 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void UpdateContent(MessageViewModel message, WebPage webPage)
+        private void UpdateContent(MessageViewModel message, WebPage webPage, bool empty)
         {
             if (Media.Child is IContent media)
             {
@@ -255,7 +255,7 @@ namespace Telegram.Controls.Messages.Content
                 Media.Child = new AnimationContent(message)
                 {
                     MaxWidth = maxWidth,
-                    IsEnabled = false
+                    IsEnabled = empty
                 };
             }
             else if (webPage.Audio != null)
@@ -302,7 +302,7 @@ namespace Telegram.Controls.Messages.Content
                 Media.Child = new PhotoContent(message)
                 {
                     MaxWidth = maxWidth,
-                    IsEnabled = false
+                    IsEnabled = empty
                 };
             }
             else
@@ -361,7 +361,7 @@ namespace Telegram.Controls.Messages.Content
 
         public void Mockup(WebPage webPage)
         {
-            UpdateWebPage(webPage);
+            UpdateWebPage(webPage, out _);
 
             SmallPanel.Visibility = Visibility.Collapsed;
             Media.Visibility = Visibility.Collapsed;
@@ -388,9 +388,9 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void UpdateWebPage(WebPage webPage)
+        private void UpdateWebPage(WebPage webPage, out bool empty)
         {
-            var empty = true;
+            empty = true;
 
             if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
             {
