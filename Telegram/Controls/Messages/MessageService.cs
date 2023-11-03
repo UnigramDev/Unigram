@@ -13,15 +13,18 @@ using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
@@ -96,7 +99,18 @@ namespace Telegram.Controls.Messages
 
         private void UpdateContent(MessageViewModel message)
         {
-            if (message.Content is MessageChatChangePhoto chatChangePhoto)
+            if (message.Content is MessagePremiumGiftCode premiumGiftCode)
+            {
+                var animation = FindName("Animation") as AnimatedImage;
+                animation.Source = new DelayedFileSource(message.ClientService, premiumGiftCode.Sticker.StickerValue);
+
+                if (premiumGiftCode.Sticker.StickerValue.Local.IsDownloadingCompleted is false)
+                {
+                    CompositionPathParser.ParseThumbnail(premiumGiftCode.Sticker, out ShapeVisual visual, false);
+                    ElementCompositionPreview.SetElementChildVisual(animation, visual);
+                }
+            }
+            else if (message.Content is MessageChatChangePhoto chatChangePhoto)
             {
                 var segments = FindName("Segments") as ActiveStoriesSegments;
                 var photo = segments.Content as ProfilePicture;
@@ -232,6 +246,8 @@ namespace Telegram.Controls.Messages
                 MessageGiftedPremium giftedPremium => UpdateGiftedPremium(message, giftedPremium, active),
                 MessageInviteVideoChatParticipants inviteVideoChatParticipants => UpdateInviteVideoChatParticipants(message, inviteVideoChatParticipants, active),
                 MessageProximityAlertTriggered proximityAlertTriggered => UpdateProximityAlertTriggered(message, proximityAlertTriggered, active),
+                MessagePremiumGiveawayCreated premiumGiveawayCreated => UpdatePremiumGiveawayCreated(message, premiumGiveawayCreated, active),
+                MessagePremiumGiftCode premiumGiftCode => UpdatePremiumGiftCode(message, premiumGiftCode, active),
                 MessagePassportDataSent passportDataSent => UpdatePassportDataSent(message, passportDataSent, active),
                 MessagePaymentSuccessful paymentSuccessful => UpdatePaymentSuccessful(message, paymentSuccessful, active),
                 MessagePinMessage pinMessage => UpdatePinMessage(message, pinMessage, active),
@@ -242,7 +258,6 @@ namespace Telegram.Controls.Messages
                 MessageVideoChatEnded videoChatEnded => UpdateVideoChatEnded(message, videoChatEnded, active),
                 MessageVideoChatScheduled videoChatScheduled => UpdateVideoChatScheduled(message, videoChatScheduled, active),
                 MessageVideoChatStarted videoChatStarted => UpdateVideoChatStarted(message, videoChatStarted, active),
-                MessageWebsiteConnected websiteConnected => UpdateWebsiteConnected(message, websiteConnected, active),
                 MessageWebAppDataSent webAppDataSent => UpdateWebAppDataSent(message, webAppDataSent, active),
                 MessageExpiredPhoto expiredPhoto => UpdateExpiredPhoto(message, expiredPhoto, active),
                 MessageExpiredVideo expiredVideo => UpdateExpiredVideo(message, expiredVideo, active),
@@ -283,6 +298,8 @@ namespace Telegram.Controls.Messages
                     ChatEventForumTopicEdited forumTopicEdited => UpdateChatEventForumTopicEdited(message, forumTopicEdited, active),
                     ChatEventForumTopicPinned forumTopicPinned => UpdateChatEventForumTopicPinned(message, forumTopicPinned, active),
                     ChatEventForumTopicToggleIsClosed forumTopicToggleIsClosed => UpdateChatEventForumTopicToggleIsClosed(message, forumTopicToggleIsClosed, active),
+                    ChatEventAccentColorChanged accentColorChanged => UpdateChatEventAccentColorChanged(message, accentColorChanged, active),
+                    ChatEventBackgroundCustomEmojiChanged backgroundCustomEmojiChanged => UpdateChatEventBackgroundCustomEmojiChanged(message, backgroundCustomEmojiChanged, active),
                     //ChatEventActiveUsernamesChanged activeUsernamesChanged => UpdateChatEventActiveUsernames(message, activeUsernamesChanged, active),
                     _ => (string.Empty, null)
                 },
@@ -310,6 +327,59 @@ namespace Telegram.Controls.Messages
         #endregion
 
         #region Event log
+
+        private static (string Text, IList<TextEntity> Entities) UpdateChatEventAccentColorChanged(MessageViewModel message, ChatEventAccentColorChanged accentColorChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            content = ReplaceWithLink(Strings.EventLogChangedColor, "un1", fromUser, entities);
+            content = string.Format(content, accentColorChanged.OldAccentColorId.Id, accentColorChanged.NewAccentColorId.Id);
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdateChatEventBackgroundCustomEmojiChanged(MessageViewModel message, ChatEventBackgroundCustomEmojiChanged backgroundCustomEmojiChanged, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            var fromUser = message.GetSender();
+
+            content = ReplaceWithLink(Strings.EventLogChangedEmoji, "un1", fromUser, entities);
+
+            var index1 = content.IndexOf("{0}");
+            if (index1 != -1)
+            {
+                if (backgroundCustomEmojiChanged.OldBackgroundCustomEmojiId != 0)
+                {
+                    entities.Add(new TextEntity(index1, 3, new TextEntityTypeCustomEmoji(backgroundCustomEmojiChanged.OldBackgroundCustomEmojiId)));
+                }
+                else
+                {
+                    content = content.Remove(index1, 3);
+                    content = content.Insert(index1, Strings.EventLogEmojiNone);
+                }
+            }
+
+            var index2 = content.IndexOf("{1}");
+            if (index2 != -1)
+            {
+                if (backgroundCustomEmojiChanged.NewBackgroundCustomEmojiId != 0)
+                {
+                    entities.Add(new TextEntity(index2, 3, new TextEntityTypeCustomEmoji(backgroundCustomEmojiChanged.NewBackgroundCustomEmojiId)));
+                }
+                else
+                {
+                    content = content.Remove(index2, 3);
+                    content = content.Insert(index2, Strings.EventLogEmojiNone);
+                }
+            }
+
+            return (content, entities);
+        }
 
         private static (string Text, IList<TextEntity> Entities) UpdateSlowModeDelayChanged(MessageViewModel message, ChatEventSlowModeDelayChanged slowModeDelayChanged, bool active)
         {
@@ -938,6 +1008,22 @@ namespace Telegram.Controls.Messages
 
         private static (string, IList<TextEntity>) UpdateBotWriteAccessAllowed(MessageViewModel message, MessageBotWriteAccessAllowed botWriteAccessAllowed, bool active)
         {
+            if (botWriteAccessAllowed.Reason is BotWriteAccessAllowReasonConnectedWebsite websiteConnected)
+            {
+                var content = Strings.ActionBotAllowed;
+                var entities = active ? new List<TextEntity>() : null;
+
+                var start = content.IndexOf("{0}");
+                content = string.Format(content, websiteConnected.DomainName);
+
+                if (start >= 0 && active)
+                {
+                    entities.Add(new TextEntity(start, websiteConnected.DomainName.Length, new TextEntityTypeUrl()));
+                }
+
+                return (content, entities);
+            }
+
             return (Strings.ActionBotAllowedWebapp, null);
         }
 
@@ -1653,9 +1739,46 @@ namespace Telegram.Controls.Messages
             return (content, entities);
         }
 
-        private static (string Text, IList<TextEntity> Entities) UpdatePassportDataSent(MessageViewModel message, MessagePassportDataSent passportDataSent, bool active)
+        private static (string, IList<TextEntity>) UpdatePremiumGiveawayCreated(MessageViewModel message, MessagePremiumGiveawayCreated premiumGiveawayCreated, bool active)
         {
             var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            content = string.Format(Strings.BoostingGiveawayJustStarted, message.Chat.Title);
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdatePremiumGiftCode(MessageViewModel message, MessagePremiumGiftCode premiumGiftCode, bool active)
+        {
+            string content;
+            IList<TextEntity> entities = active ? new List<TextEntity>() : null;
+
+            if (active && message.ClientService.TryGetChat(premiumGiftCode.CreatorId, out Chat chat))
+            {
+                var text = premiumGiftCode.IsFromGiveaway
+                    ? Strings.BoostingReceivedPrizeFrom
+                    : Strings.BoostingReceivedGiftFrom;
+
+                var months = Locale.Declension(Strings.R.Months, premiumGiftCode.MonthCount, false);
+                var duration = string.Format(Strings.BoostingReceivedPrizeDuration, string.Format(months, $"**{premiumGiftCode.MonthCount}**"));
+
+                var markdown = ClientEx.ParseMarkdown(string.Format($"{text}\n\n{duration}", chat.Title));
+
+                content = markdown.Text;
+                entities = active ? markdown.Entities : null;
+            }
+            else
+            {
+                content = Strings.BoostingReceivedGiftNoName;
+            }
+
+            return (content, entities);
+        }
+
+        private static (string Text, IList<TextEntity> Entities) UpdatePassportDataSent(MessageViewModel message, MessagePassportDataSent passportDataSent, bool active)
+        {
+            string content;
 
             StringBuilder str = new StringBuilder();
             for (int a = 0, size = passportDataSent.Types.Count; a < size; a++)
@@ -1940,22 +2063,6 @@ namespace Telegram.Controls.Messages
             else if (chat != null)
             {
                 content = ReplaceWithLink(Strings.ActionRequestedPeerUser, "un2", chat, entities);
-            }
-
-            return (content, entities);
-        }
-
-        private static (string Text, IList<TextEntity> Entities) UpdateWebsiteConnected(MessageViewModel message, MessageWebsiteConnected websiteConnected, bool active)
-        {
-            var content = Strings.ActionBotAllowed;
-            var entities = active ? new List<TextEntity>() : null;
-
-            var start = content.IndexOf("{0}");
-            content = string.Format(content, websiteConnected.DomainName);
-
-            if (start >= 0 && active)
-            {
-                entities.Add(new TextEntity(start, websiteConnected.DomainName.Length, new TextEntityTypeUrl()));
             }
 
             return (content, entities);
