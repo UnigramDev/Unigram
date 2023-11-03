@@ -66,7 +66,7 @@ namespace Telegram.ViewModels
                                 return;
                             }
                         }
-                        else
+                        else if (replyToMessage.MessageId == 0)
                         {
                             Window.Current.ShowTeachingTip(Strings.QuotePrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                             return;
@@ -74,13 +74,13 @@ namespace Telegram.ViewModels
 
                         NavigationService.NavigateToChat(replyToChat, replyToMessage.MessageId);
                     }
-                    else if (replyToMessage.Origin != null)
+                    else if (replyToMessage.Origin != null && replyToMessage.MessageId == 0)
                     {
                         Window.Current.ShowTeachingTip(Strings.QuotePrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                     }
                     else if (replyToMessage.ChatId == message.ChatId || replyToMessage.ChatId == 0)
                     {
-                        await LoadMessageSliceAsync(message.Id, replyToMessage.MessageId);
+                        await LoadMessageSliceAsync(message.Id, replyToMessage.MessageId, highlight: replyToMessage.IsQuoteManual ? replyToMessage.Quote : null);
                     }
                 }
             }
