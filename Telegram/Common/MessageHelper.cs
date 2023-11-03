@@ -26,6 +26,7 @@ using Telegram.Views.Folders;
 using Telegram.Views.Folders.Popups;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
+using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
@@ -483,16 +484,16 @@ namespace Telegram.Common
                         return;
                     }
 
-                    var sourceChat = source switch
+                    var chatId = source switch
                     {
-                        OpenUrlSourceChat sourceMessage => clientService.GetChat(sourceMessage.ChatId),
-                        _ => null
+                        OpenUrlSourceChat sourceMessage => sourceMessage.ChatId,
+                        _ => 0
                     };
 
-                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(sourceChat.Id, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, foundWebApp.RequestWriteAccess && popup.IsChecked is true));
+                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(chatId, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, foundWebApp.RequestWriteAccess && popup.IsChecked is true));
                     if (responsa is HttpUrl url)
                     {
-                        await new WebBotPopup(clientService, navigation, user, url.Url, null, sourceChat).ShowQueuedAsync();
+                        await new WebBotPopup(clientService, navigation, user, url.Url).ShowQueuedAsync();
                     }
                 }
                 else
