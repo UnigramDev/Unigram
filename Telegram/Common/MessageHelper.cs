@@ -253,6 +253,10 @@ namespace Telegram.Common
             {
                 navigation.ShowPromo(new PremiumSourceLink(premiumFeatures.Referrer));
             }
+            else if (internalLink is InternalLinkTypePremiumGiftCode premiumGiftCode)
+            {
+                NavigateToPremiumGiftCode(clientService, navigation, premiumGiftCode.Code);
+            }
             else if (internalLink is InternalLinkTypePrivacyAndSecuritySettings)
             {
                 navigation.Navigate(typeof(SettingsPrivacyAndSecurityPage));
@@ -312,6 +316,19 @@ namespace Telegram.Common
             else if (internalLink is InternalLinkTypeWebApp webApp)
             {
                 NavigateToWebApp(clientService, navigation, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName, source);
+            }
+        }
+
+        private static async void NavigateToPremiumGiftCode(IClientService clientService, INavigationService navigation, string code)
+        {
+            var response = await clientService.SendAsync(new CheckPremiumGiftCode(code));
+            if (response is PremiumGiftCodeInfo info)
+            {
+                await new GiftCodePopup(clientService, navigation, info, code).ShowQueuedAsync();
+            }
+            else
+            {
+                // TODO: error
             }
         }
 

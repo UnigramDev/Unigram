@@ -23,7 +23,7 @@ namespace Telegram.Views.Chats
             {
                 return;
             }
-            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
+            else if (args.ItemContainer.ContentTemplateRoot is BoostCell content)
             {
                 content.UpdateChatBoost(ViewModel.ClientService, args, OnContainerContentChanging);
             }

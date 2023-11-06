@@ -21,7 +21,7 @@
                     <controls:PremiumProgressBar x:Name="Progress"
                                                  Minimum="{x:Bind ViewModel.CurrentLevelBoostCount, Mode=OneWay}"
                                                  Maximum="{x:Bind ViewModel.NextLevelBoostCount, Mode=OneWay}"
-                                                 Value="{x:Bind ViewModel.BoostCount}"
+                                                 Value="{x:Bind ViewModel.BoostCount, Mode=OneWay}"
                                                  MinimumText="{x:Bind ConvertLevel(ViewModel.Level, x:False), Mode=OneWay}"
                                                  MaximumText="{x:Bind ConvertLevel(ViewModel.Level, x:True), Mode=OneWay}"
                                                  Glyph="&#xEA3A;"
@@ -79,7 +79,7 @@
                                     <RowDefinition />
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <TextBlock Text="{x:Bind ViewModel.CurrentLevelBoostCount, Mode=OneWay}"
+                                <TextBlock Text="{x:Bind ViewModel.BoostCount, Mode=OneWay}"
                                            Style="{StaticResource BodyStrongTextBlockStyle}" />
                                 <TextBlock Text="{CustomResource BoostsExisting}"
                                            Style="{StaticResource InfoCaptionTextBlockStyle}"
@@ -126,8 +126,8 @@
             </ListView.Footer>-->
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
-                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                    <cells:BoostCell Background="{ThemeResource SettingsItemBackground}"
+                                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.Footer>
