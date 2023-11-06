@@ -116,6 +116,7 @@ namespace Telegram.Controls
         protected override void OnApplyTemplate()
         {
             TextBlock = GetTemplateChild(nameof(TextBlock)) as RichTextBlock;
+            TextBlock.LostFocus += OnLostFocus;
             TextBlock.SizeChanged += OnSizeChanged;
             TextBlock.ContextMenuOpening += _contextMenuOpening;
 
@@ -130,6 +131,11 @@ namespace Telegram.Controls
                     SetQuery(string.Empty);
                 }
             }
+        }
+
+        private void OnLostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBlock.Select(TextBlock.ContentStart, TextBlock.ContentStart);
         }
 
         public void Clear()
