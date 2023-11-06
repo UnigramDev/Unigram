@@ -128,7 +128,7 @@ namespace Telegram.Controls
 
                 if (_query != null || _spoiler != null)
                 {
-                    SetQuery(string.Empty);
+                    SetQuery(_query, true);
                 }
             }
         }
@@ -193,9 +193,9 @@ namespace Telegram.Controls
             }
         }
 
-        public void SetQuery(string query)
+        public void SetQuery(string query, bool force = false)
         {
-            if ((_query ?? string.Empty) == (query ?? string.Empty) && _isHighlighted == (_spoiler != null))
+            if ((_query ?? string.Empty) == (query ?? string.Empty) && _isHighlighted == (_spoiler != null) && !force)
             {
                 return;
             }
@@ -215,10 +215,20 @@ namespace Telegram.Controls
                     var find = _text.Text.IndexOf(query, StringComparison.OrdinalIgnoreCase);
                     if (find != -1)
                     {
+                        var shift = 0;
+
+                        foreach (var para in _text.Paragraphs)
+                        {
+                            if (para.Offset + para.Length < find)
+                            {
+                                shift++;
+                            }
+                        }
+
                         var highligher = new TextHighlighter();
                         highligher.Foreground = new SolidColorBrush(Colors.White);
                         highligher.Background = new SolidColorBrush(Colors.Orange);
-                        highligher.Ranges.Add(new TextRange { StartIndex = find, Length = query.Length });
+                        highligher.Ranges.Add(new TextRange { StartIndex = find - shift, Length = query.Length });
 
                         _isHighlighted = true;
                         TextBlock.TextHighlighters.Add(highligher);
