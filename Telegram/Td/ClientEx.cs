@@ -73,6 +73,17 @@ namespace Telegram.Td
             return text;
         }
 
+        public static int SearchQuote(FormattedText text, FormattedText quote, int quotePosition)
+        {
+            var result = Client.Execute(new SearchQuote(text, quote, quotePosition));
+            if (result is FoundPosition position)
+            {
+                return position.Position;
+            }
+
+            return -1;
+        }
+
 
 
         public static SolidColorBrush GetAccentBrush(this IClientService clientService, int id)

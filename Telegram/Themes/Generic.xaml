@@ -1015,18 +1015,21 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:FormattedTextBlock">
-                    <RichTextBlock x:Name="TextBlock"
-                                   Foreground="{TemplateBinding Foreground}"
-                                   Style="{TemplateBinding TextStyle}"
-                                   Padding="{TemplateBinding Padding}"
-                                   IsTextSelectionEnabled="{TemplateBinding IsTextSelectionEnabled}"
-                                   FontFamily="{TemplateBinding FontFamily}"
-                                   TextAlignment="{TemplateBinding TextAlignment}"
-                                   TextTrimming="{TemplateBinding TextTrimming}"
-                                   MaxLines="{TemplateBinding MaxLines}"
-                                   OverflowContentTarget="{TemplateBinding OverflowContentTarget}"
-                                   TextReadingOrder="DetectFromContent"
-                                   OpticalMarginAlignment="None" />
+                    <Grid>
+                        <Canvas x:Name="Below" />
+                        <RichTextBlock x:Name="TextBlock"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       Style="{TemplateBinding TextStyle}"
+                                       Padding="{TemplateBinding Padding}"
+                                       IsTextSelectionEnabled="{TemplateBinding IsTextSelectionEnabled}"
+                                       FontFamily="{TemplateBinding FontFamily}"
+                                       TextAlignment="{TemplateBinding TextAlignment}"
+                                       TextTrimming="{TemplateBinding TextTrimming}"
+                                       MaxLines="{TemplateBinding MaxLines}"
+                                       OverflowContentTarget="{TemplateBinding OverflowContentTarget}"
+                                       TextReadingOrder="DetectFromContent"
+                                       OpticalMarginAlignment="None" />
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

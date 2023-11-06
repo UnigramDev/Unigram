@@ -279,7 +279,7 @@ namespace Telegram.Controls
 
             var left = (float)Padding.Left;
             var top = (float)Padding.Top;
-            var rects = PlaceholderImageHelper.Current.LineMetrics(PlaceholderText ?? string.Empty, _placeholder.FontSize, _placeholder.DesiredSize.Width - Padding.Left - Padding.Right, IsPlaceholderRightToLeft);
+            var rects = PlaceholderImageHelper.Current.LineMetrics(PlaceholderText ?? string.Empty, Array.Empty<PlaceholderEntity>(), _placeholder.FontSize, _placeholder.DesiredSize.Width - Padding.Left - Padding.Right, IsPlaceholderRightToLeft);
 
             foreach (var rect in rects)
             {

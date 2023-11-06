@@ -704,6 +704,18 @@ namespace Telegram.Common
             return new InputThumbnail(await file.ToGeneratedAsync(conversion, arguments), width, height);
         }
 
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> seenKeys = new();
+            foreach (TSource element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
+        }
+
         public static T RemoveLast<T>(this List<T> list)
         {
             if (list.Count > 0)

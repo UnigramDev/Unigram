@@ -640,43 +640,30 @@ namespace Telegram.Td.Api
 
         public static FormattedText Substring(this FormattedText text, long startIndex, long length)
         {
+            return Substring(text, (int)startIndex, (int)length);
+        }
+
+        public static FormattedText Substring(this FormattedText text, int startIndex, int length)
+        {
             if (text.Text.Length < length)
             {
                 return text;
             }
 
-            var message = text.Text.Substring((int)startIndex, Math.Min(text.Text.Length - (int)startIndex, (int)length));
+            var message = text.Text.Substring(startIndex, Math.Min(text.Text.Length - startIndex, length));
             IList<TextEntity> sub = null;
 
             foreach (var entity in text.Entities)
             {
-                // Included, Included
-                if (entity.Offset > startIndex && entity.Offset + entity.Length <= startIndex + length)
+                if (TextStyleRun.GetRelativeRange(entity.Offset, entity.Length, startIndex, length, out int newOffset, out int newLength))
                 {
-                    var replace = new TextEntity { Offset = entity.Offset - (int)startIndex, Length = entity.Length, Type = entity.Type };
                     sub ??= new List<TextEntity>();
-                    sub.Add(replace);
-                }
-                // Before, Included
-                else if (entity.Offset <= startIndex && entity.Offset + entity.Length > startIndex && entity.Offset + entity.Length < startIndex + length)
-                {
-                    var replace = new TextEntity { Offset = 0, Length = entity.Length - ((int)startIndex - entity.Offset), Type = entity.Type };
-                    sub ??= new List<TextEntity>();
-                    sub.Add(replace);
-                }
-                // Included, After
-                else if (entity.Offset > startIndex && entity.Offset < startIndex + length && entity.Offset + entity.Length > startIndex + length)
-                {
-                    var replace = new TextEntity { Offset = entity.Offset - (int)startIndex, Length = ((int)startIndex + (int)length) + entity.Offset, Type = entity.Type };
-                    sub ??= new List<TextEntity>();
-                    sub.Add(replace);
-                }
-                // Before, After
-                else if (entity.Offset <= startIndex && entity.Offset + entity.Length >= startIndex + length)
-                {
-                    var replace = new TextEntity { Offset = 0, Length = message.Length, Type = entity.Type };
-                    sub ??= new List<TextEntity>();
-                    sub.Add(replace);
+                    sub.Add(new TextEntity
+                    {
+                        Offset = newOffset,
+                        Length = newLength,
+                        Type = entity.Type
+                    });
                 }
             }
 
@@ -1209,6 +1196,11 @@ namespace Telegram.Td.Api
         public static FormattedText GetCaption(this Message message)
         {
             return message.Content.GetCaption();
+        }
+
+        public static StyledText GetText(this MessageContent content)
+        {
+            return TextStyleRun.GetText(GetCaption(content));
         }
 
         public static FormattedText GetCaption(this MessageContent content)
