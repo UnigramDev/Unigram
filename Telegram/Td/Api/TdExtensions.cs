@@ -56,6 +56,16 @@ namespace Telegram.Td.Api
             return 0;
         }
 
+        public static bool AreTheSame(this FormattedText x, FormattedText y)
+        {
+            if (x == null || y == null)
+            {
+                return x == null && y == null;
+            }
+
+            return string.Equals(x.ToString(), y.ToString());
+        }
+
         public static Vector2 ToVector2(this Point point)
         {
             return new Vector2((float)point.X, (float)point.Y);

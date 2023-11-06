@@ -2175,15 +2175,19 @@ namespace Telegram.ViewModels
             if (!force)
             {
                 var current = GetFormattedText();
-                var previous = _draft?.InputMessageText as InputMessageText;
 
-                var text = draft?.InputMessageText as InputMessageText;
+                var prev = _draft?.InputMessageText as InputMessageText;
+                var next = draft?.InputMessageText as InputMessageText;
 
-                if (previous != null && !string.Equals(previous.Text.Text, current.Text))
+                if (prev != null && !prev.Text.AreTheSame(current))
                 {
                     return;
                 }
-                else if (previous != null && text != null && string.Equals(previous.Text.Text, text.Text.Text))
+                else if (next != null && prev != null && next.Text.AreTheSame(prev.Text))
+                {
+                    return;
+                }
+                else if (next != null && next.Text.AreTheSame(current))
                 {
                     return;
                 }
