@@ -240,6 +240,9 @@
     <Compile Include="Controls\Gallery\GalleryWindow.xaml.cs">
       <DependentUpon>GalleryWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\Content\PremiumGiveawayContent.xaml.cs">
+      <DependentUpon>PremiumGiveawayContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\ReactionsMenuFlyout.xaml.cs">
       <DependentUpon>ReactionsMenuFlyout.xaml</DependentUpon>
     </Compile>
@@ -2019,6 +2022,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Messages\Content\InvoicePreviewContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\Content\PremiumGiveawayContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

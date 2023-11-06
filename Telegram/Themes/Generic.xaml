@@ -27,6 +27,7 @@
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/LocationContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PhotoContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PollContent.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/PremiumGiveawayContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/StickerContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/VenueContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/VideoContent.xaml" />

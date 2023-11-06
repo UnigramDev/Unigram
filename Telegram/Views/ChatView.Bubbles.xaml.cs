@@ -726,7 +726,11 @@ namespace Telegram.Views
 
             if (message.IsService)
             {
-                if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto or MessageAsyncStory)
+                if (message.Content is MessagePremiumGiftCode)
+                {
+                    return "ServiceMessageGiftTemplate";
+                }
+                else if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto or MessageAsyncStory)
                 {
                     return "ServiceMessagePhotoTemplate";
                 }
