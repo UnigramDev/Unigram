@@ -15,6 +15,7 @@ using Telegram.Common;
 using Telegram.Common.Chats;
 using Telegram.Controls;
 using Telegram.Controls.Chats;
+using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -978,7 +979,7 @@ namespace Telegram.ViewModels
             MessageSliceLoaded = null;
         }
 
-        public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool? disableAnimation = null, bool second = false)
+        public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool? disableAnimation = null, FormattedText highlight = null, bool second = false)
         {
             if (_type is not DialogType.History and not DialogType.Thread and not DialogType.Pinned)
             {
@@ -1033,7 +1034,7 @@ namespace Telegram.ViewModels
                 var field = HistoryField;
                 if (field != null)
                 {
-                    await field.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
+                    await field.ScrollToItem(already, alignment, alignment == VerticalAlignment.Center ? new MessageBubbleHighlightOptions(highlight) : null, pixel, direction ?? ScrollIntoViewAlignment.Leading, disableAnimation);
                 }
 
                 if (previousId.HasValue && !_repliesStack.Contains(previousId.Value))
@@ -1346,7 +1347,7 @@ namespace Telegram.ViewModels
                 LoadPinnedMessagesSliceAsync(maxId, VerticalAlignment.Center);
             }
 
-            await LoadMessageSliceAsync(previousId, maxId, alignment, pixel, direction, disableAnimation, true);
+            await LoadMessageSliceAsync(previousId, maxId, alignment, pixel, direction, disableAnimation, highlight, true);
         }
 
         private async Task AddSponsoredMessagesAsync()

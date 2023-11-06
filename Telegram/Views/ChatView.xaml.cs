@@ -576,7 +576,7 @@ namespace Telegram.Views
 
                 if (message.IsOutgoing && message.SendingState is MessageSendingStatePending && !Messages.IsBottomReached)
                 {
-                    await Messages.ScrollToItem(message, VerticalAlignment.Bottom, false);
+                    await Messages.ScrollToItem(message, VerticalAlignment.Bottom, null);
                 }
 
                 var withinViewport = panel.FirstVisibleIndex <= args.NewStartingIndex && panel.LastVisibleIndex >= args.NewStartingIndex;

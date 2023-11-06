@@ -60,7 +60,8 @@ namespace winrt::Telegram::Native::implementation
         void DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 
         float2 ContentEnd(hstring text, IVector<PlaceholderEntity> entities, double fontSize, double width);
-        IVector<Windows::Foundation::Rect> LineMetrics(hstring text, double fontSize, double width, bool rtl);
+        IVector<Windows::Foundation::Rect> LineMetrics(hstring text, IVector<PlaceholderEntity> entities, double fontSize, double width, bool rtl);
+        IVector<Windows::Foundation::Rect> RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<PlaceholderEntity> entities, double fontSize, double width, bool rtl);
         //IVector<Windows::Foundation::Rect> EntityMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl);
 
     //internal:

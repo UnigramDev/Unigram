@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Gallery;
+using Telegram.Controls.Messages;
 using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Native;
@@ -65,7 +66,7 @@ namespace Telegram.ViewModels
             if (last != null)
             {
                 ReplyToMessage(last);
-                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, true);
+                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions());
             }
         }
 
@@ -82,7 +83,7 @@ namespace Telegram.ViewModels
             if (last != null)
             {
                 ReplyToMessage(last);
-                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, true);
+                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions());
             }
             else
             {
@@ -754,7 +755,7 @@ namespace Telegram.ViewModels
             if (last != null)
             {
                 EditMessage(last);
-                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, true);
+                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions());
             }
         }
 

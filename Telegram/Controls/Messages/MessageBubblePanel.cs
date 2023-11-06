@@ -22,6 +22,9 @@ namespace Telegram.Controls.Messages
         // Needed for Text CanvasTextLayout
         public MessageContent Content { get; set; }
 
+        // Needed for Text CanvasTextLayout
+        public StyledText Text { get; set; }
+
         // Needed for Measure
         public MessageReference Reply { get; set; }
 
@@ -198,7 +201,7 @@ namespace Telegram.Controls.Messages
 
         private Vector2 ContentEnd(double availableWidth)
         {
-            var caption = Content?.GetCaption();
+            var caption = Text;
             if (string.IsNullOrEmpty(caption?.Text))
             {
                 return Vector2.Zero;
@@ -223,20 +226,45 @@ namespace Telegram.Controls.Messages
             return new Vector2(int.MaxValue, 0);
         }
 
-        private FormattedText _prevText;
+        private StyledText _prevText;
         private IList<PlaceholderEntity> _prevTextEntities;
 
         // Not the most elegant solution
-        private (string Text, IList<PlaceholderEntity> Entities) FormatText(FormattedText text)
+        private (string Text, IList<PlaceholderEntity> Entities) FormatText(StyledText text)
         {
             if (text == _prevText)
             {
                 return (_prevText.Text, _prevTextEntities);
             }
 
+            IList<PlaceholderEntity> entities = ConvertEntities(text);
+
+            _prevText = text;
+            _prevTextEntities = entities ?? Array.Empty<PlaceholderEntity>();
+
+            return (text.Text, _prevTextEntities);
+        }
+
+        public static IList<PlaceholderEntity> ConvertEntities(StyledText text)
+        {
+            if (text.Paragraphs.Count == 0)
+            {
+                return null;
+            }
+
+            return ConvertEntities(text.Paragraphs[^1].Entities);
+        }
+
+        public static IList<PlaceholderEntity> ConvertEntities(FormattedText text)
+        {
+            return ConvertEntities(text.Entities);
+        }
+
+        public static IList<PlaceholderEntity> ConvertEntities(IList<TextEntity> items)
+        {
             IList<PlaceholderEntity> entities = null;
 
-            foreach (var entity in text.Entities)
+            foreach (var entity in items)
             {
                 if (entity.Type is TextEntityTypeCustomEmoji
                     or TextEntityTypeSpoiler
@@ -264,10 +292,7 @@ namespace Telegram.Controls.Messages
                 });
             }
 
-            _prevText = text;
-            _prevTextEntities = entities ?? Array.Empty<PlaceholderEntity>();
-
-            return (text.Text, _prevTextEntities);
+            return entities;
         }
     }
 }
