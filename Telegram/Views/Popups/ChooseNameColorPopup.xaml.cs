@@ -79,7 +79,6 @@ namespace Telegram.Views.Popups
                 Badge.Content = Strings.UserReplyIcon;
 
                 ColorHint.Text = Strings.UserColorHint;
-                IconHint.Text = Strings.UserReplyIconHint;
 
                 PurchaseCommand.Content = Strings.UserColorApplyIcon;
             }
@@ -100,9 +99,8 @@ namespace Telegram.Views.Popups
                 Badge.Content = Strings.ChannelReplyIcon;
 
                 ColorHint.Text = Strings.ChannelColorHint;
-                IconHint.Text = Strings.ChannelReplyIconHint;
 
-                PurchaseCommand.Content = Strings.ChannelColorApplyIcon;
+                PurchaseCommand.Content = Strings.ChannelColorApply;
             }
 
             var accent = colors.FirstOrDefault(x => x.Id == accentColorId);
