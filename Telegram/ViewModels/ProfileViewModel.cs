@@ -490,6 +490,24 @@ namespace Telegram.ViewModels
             MessageHelper.CopyText(PhoneNumber.Format(user.PhoneNumber));
         }
 
+        public void CopyId()
+        {
+            var chat = _chat;
+            if (chat == null)
+            {
+                return;
+            }
+
+            if (ClientService.TryGetUser(chat, out User user))
+            {
+                MessageHelper.CopyText(user.Id.ToString());
+            }
+            else
+            {
+                MessageHelper.CopyText(chat.Id.ToString());
+            }
+        }
+
         public string CopyDescription()
         {
             var chat = _chat;

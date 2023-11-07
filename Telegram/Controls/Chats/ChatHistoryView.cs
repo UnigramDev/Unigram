@@ -261,7 +261,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        public async Task ScrollToItem(MessageViewModel item, VerticalAlignment alignment, bool highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
+        public async Task ScrollToItem(MessageViewModel item, VerticalAlignment alignment, MessageBubbleHighlightOptions highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
         {
             _raiseViewChanged = false;
 
@@ -313,10 +313,10 @@ namespace Telegram.Controls.Chats
                 }
             }
 
-            if (highlight)
+            if (highlight != null)
             {
                 var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault();
-                bubble?.Highlight();
+                bubble?.Highlight(highlight);
             }
 
             if (scrollViewer.VerticalOffset < scrollViewer.ScrollableHeight || position.Y < scrollViewer.ScrollableHeight)

@@ -66,6 +66,17 @@ namespace Telegram.Td.Api
             return string.Equals(x.ToString(), y.ToString());
         }
 
+        public static long UserId(this ChatBoost boost)
+        {
+            return boost.Source switch
+            {
+                ChatBoostSourceGiftCode giftCode => giftCode.UserId,
+                ChatBoostSourceGiveaway giveaway => giveaway.UserId,
+                ChatBoostSourcePremium premium => premium.UserId,
+                _ => 0
+            };
+        }
+
         public static Vector2 ToVector2(this Point point)
         {
             return new Vector2((float)point.X, (float)point.Y);

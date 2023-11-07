@@ -612,7 +612,7 @@ namespace Telegram.ViewModels
 
         public void ResendMessage(MessageViewModel message)
         {
-            ClientService.Send(new ResendMessages(message.ChatId, new[] { message.Id }));
+            ClientService.Send(new ResendMessages(message.ChatId, new[] { message.Id }, null));
         }
 
         #endregion

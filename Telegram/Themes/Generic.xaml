@@ -3267,7 +3267,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:BadgeControl">
                     <Grid x:Name="LayoutRoot"
-                          Background="{ThemeResource ChatUnreadBadgeBrush}"
+                          Background="{TemplateBinding Background}"
                           CornerRadius="{TemplateBinding CornerRadius}"
                           Height="16"
                           MinWidth="16">
@@ -3285,7 +3285,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <TextBlock x:Name="Label"
-                                   Foreground="{ThemeResource ChatUnreadLabelBrush}"
+                                   Foreground="{TemplateBinding Foreground}"
                                    Text="{TemplateBinding Text}"
                                    TextLineBounds="Tight"
                                    TextAlignment="Center"

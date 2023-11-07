@@ -108,15 +108,16 @@
               Grid.Row="1">
             <controls:BadgeButton x:Name="PurchaseCommand"
                                   Click="PurchaseCommand_Click"
-                                  Style="{StaticResource PillButtonStyle}"
+                                  Style="{StaticResource AccentButtonStyle}"
                                   HorizontalAlignment="Stretch"
                                   HorizontalContentAlignment="Center"
                                   Typography.NumeralAlignment="Tabular"
                                   FontWeight="SemiBold"
                                   Padding="16,3,16,5"
+                                  BorderThickness="0,0,0,1"
                                   CornerRadius="4"
                                   Margin="0"
-                                  Height="36" />
+                                  Height="32" />
         </Grid>
 
         <controls:GlyphButton Click="{x:Bind Close}"
