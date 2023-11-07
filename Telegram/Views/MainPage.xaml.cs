@@ -2301,7 +2301,7 @@ namespace Telegram.Views
 
                 if (((ViewModelBase)ViewModel).Settings.HideArchivedChats)
                 {
-                    Window.Current.ShowTeachingTip(Photo, Strings.ArchiveMoveToMainMenuInfo, TeachingTipPlacementMode.BottomRight);
+                    Window.Current.ShowToast(Photo, Strings.ArchiveMoveToMainMenuInfo, TeachingTipPlacementMode.BottomRight);
                 }
             }
 

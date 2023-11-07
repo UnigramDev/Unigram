@@ -585,7 +585,7 @@ namespace Telegram.Views.Popups
             void Update(MessageSelfDestructType ttl)
             {
                 media.Ttl = ttl;
-                Window.Current.ShowTeachingTip(sender as FrameworkElement,
+                Window.Current.ShowToast(sender as FrameworkElement,
                     media is StorageVideo
                         ? ttl is MessageSelfDestructTypeTimer timer1
                         ? Locale.Declension(Strings.R.TimerPeriodVideoSetSeconds, timer1.SelfDestructTime)

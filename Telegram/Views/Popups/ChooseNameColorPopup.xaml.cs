@@ -213,7 +213,7 @@ namespace Telegram.Views.Popups
                 if (response is ChatBoostStatus status && status.Level >= _clientService.Options.ChannelCustomAccentColorBoostLevelMin)
                 {
                     _clientService.Send(new SetChatAccentColor(chat.ChatId, IndexToId, _customEmojiId));
-                    Window.Current.ShowTeachingTip(Strings.ChannelColorChanged, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+                    Window.Current.ShowToast(Strings.ChannelColorApplied, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
 
                     Hide();
                 }
@@ -227,13 +227,13 @@ namespace Telegram.Views.Popups
                 if (_clientService.IsPremium)
                 {
                     _clientService.Send(new SetAccentColor(IndexToId, _customEmojiId));
-                    Window.Current.ShowTeachingTip(Strings.UserColorChanged, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+                    Window.Current.ShowToast(Strings.UserColorApplied, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
 
                     Hide();
                 }
                 else
                 {
-                    // TODO: show premium toast
+                    Window.Current.ShowToast(new PremiumFeatureAccentColor());
                 }
             }
         }

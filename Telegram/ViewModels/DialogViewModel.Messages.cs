@@ -690,7 +690,7 @@ namespace Telegram.ViewModels
 
                 ClipboardEx.TrySetContent(dataPackage);
 
-                Window.Current.ShowTeachingTip(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+                Window.Current.ShowToast(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
             }
         }
 

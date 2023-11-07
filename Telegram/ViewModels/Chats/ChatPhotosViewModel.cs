@@ -221,7 +221,7 @@ namespace Telegram.ViewModels.Chats
             }
 
             ClientService.Send(new SetChatPhoto(_chat.Id, new InputChatPhotoPrevious(item.Id)));
-            Window.Current.ShowTeachingTip(_chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
+            Window.Current.ShowToast(_chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
                 ? item.IsVideo ? Strings.MainChannelProfileVideoSetHint : Strings.MainChannelProfilePhotoSetHint
                 : item.IsVideo ? Strings.MainGroupProfileVideoSetHint : Strings.MainGroupProfilePhotoSetHint);
         }

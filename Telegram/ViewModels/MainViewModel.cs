@@ -463,7 +463,7 @@ namespace Telegram.ViewModels
             var markdown = new FormattedText(message, new[] { entity });
             var text = ClientEx.ParseMarkdown(markdown);
 
-            Window.Current.ShowTeachingTip(text, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+            Window.Current.ShowToast(text, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
         }
 
         public async void DenySession()

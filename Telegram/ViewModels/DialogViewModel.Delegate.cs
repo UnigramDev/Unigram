@@ -56,11 +56,15 @@ namespace Telegram.ViewModels
                             {
                                 if (supergroup.IsChannel)
                                 {
-                                    Window.Current.ShowTeachingTip(Strings.QuotePrivateChannel, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                                    Window.Current.ShowToast(replyToMessage.IsQuoteManual
+                                        ? Strings.QuotePrivateChannel
+                                        : Strings.ReplyPrivateChannel, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                                 }
                                 else
                                 {
-                                    Window.Current.ShowTeachingTip(Strings.QuotePrivateGroup, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                                    Window.Current.ShowToast(replyToMessage.IsQuoteManual
+                                        ? Strings.QuotePrivateGroup
+                                        : Strings.ReplyPrivateGroup, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                                 }
 
                                 return;
@@ -68,7 +72,9 @@ namespace Telegram.ViewModels
                         }
                         else if (replyToMessage.MessageId == 0)
                         {
-                            Window.Current.ShowTeachingTip(Strings.QuotePrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                            Window.Current.ShowToast(replyToMessage.IsQuoteManual
+                                        ? Strings.QuotePrivate
+                                        : Strings.ReplyPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                             return;
                         }
 
@@ -76,7 +82,9 @@ namespace Telegram.ViewModels
                     }
                     else if (replyToMessage.Origin != null && replyToMessage.MessageId == 0)
                     {
-                        Window.Current.ShowTeachingTip(Strings.QuotePrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                        Window.Current.ShowToast(replyToMessage.IsQuoteManual
+                                        ? Strings.QuotePrivate
+                                        : Strings.ReplyPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                     }
                     else if (replyToMessage.ChatId == message.ChatId || replyToMessage.ChatId == 0)
                     {
