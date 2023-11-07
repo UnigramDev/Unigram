@@ -860,7 +860,7 @@ namespace Telegram.Td.Api
             }
             else if (webPage.Sticker != null)
             {
-                return null;
+                return webPage.Sticker.Thumbnail;
             }
             else if (webPage.Video != null)
             {
@@ -1276,23 +1276,21 @@ namespace Telegram.Td.Api
             return new Photo(false, chatPhoto.Minithumbnail, chatPhoto.Sizes);
         }
 
-        public static bool IsSimple(this WebPage webPage)
-        {
-            return webPage.Animation == null && webPage.Audio == null && webPage.Document == null && webPage.Sticker == null && webPage.Video == null && webPage.VideoNote == null && webPage.VoiceNote == null && webPage.Photo == null;
-        }
-
-        public static bool IsMedia(this WebPage webPage)
+        public static bool HasMedia(this WebPage webPage)
         {
             if (string.Equals(webPage.Type, "telegram_background", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
 
-            return webPage.Animation != null || webPage.Audio != null || webPage.Document != null || webPage.Sticker != null || webPage.Video != null || webPage.VideoNote != null || webPage.VoiceNote != null || webPage.IsPhoto();
+            return webPage.Animation != null || webPage.Audio != null || webPage.Document != null || webPage.Sticker != null || webPage.Video != null || webPage.VideoNote != null || webPage.VoiceNote != null || webPage.Photo != null;
+            return webPage.Animation != null || webPage.Audio != null || webPage.Document != null || webPage.Sticker != null || webPage.Video != null || webPage.VideoNote != null || webPage.VoiceNote != null || webPage.HasPhoto();
         }
 
-        public static bool IsPhoto(this WebPage webPage)
+        public static bool HasPhoto(this WebPage webPage)
         {
+            return webPage.Photo != null && webPage.ShowLargeMedia;
+
             if (webPage.Photo != null && webPage.Type != null)
             {
                 if (string.Equals(webPage.Type, "photo", StringComparison.OrdinalIgnoreCase) ||
@@ -1316,11 +1314,18 @@ namespace Telegram.Td.Api
             return false;
         }
 
-        public static bool IsSmall(this WebPage webPage)
+        public static bool CanBeSmall(this WebPage webPage)
         {
+            if (webPage.Audio != null || webPage.Document != null || webPage.VoiceNote != null)
+            {
+                return false;
+            }
+
+            return webPage.SiteName.Length > 0 || webPage.Title.Length > 0 || webPage.Author.Length > 0 || webPage.Description?.Text.Length > 0;
+
             if (webPage.Photo != null && (webPage.SiteName.Length > 0 || webPage.Title.Length > 0 || webPage.Author.Length > 0 || webPage.Description?.Text.Length > 0))
             {
-                return !webPage.IsMedia();
+                return !webPage.HasMedia();
             }
 
             return false;

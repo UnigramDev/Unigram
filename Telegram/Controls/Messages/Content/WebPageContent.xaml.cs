@@ -96,7 +96,7 @@ namespace Telegram.Controls.Messages.Content
 
             _message = message;
 
-            var text = message.Content as MessageText;
+            var text = GetContent(message);
             if (text == null || !_templateApplied)
             {
                 return;
@@ -111,32 +111,32 @@ namespace Telegram.Controls.Messages.Content
             Texture.Source = null;
             UpdateManager.Unsubscribe(this, ref _fileToken, true);
 
-            UpdateWebPage(webPage);
+            UpdateWebPage(webPage, out bool empty);
             UpdateInstantView(webPage);
             UpdateInstantView(webPage, _instantViewToken.Token);
 
-            if (webPage.ForceSmallMedia || (!webPage.ForceLargeMedia && webPage.IsSmall()))
+            if (webPage.HasMedia())
             {
-                SmallPanel.Visibility = Visibility.Visible;
-                Media.Visibility = Visibility.Collapsed;
-                OverflowArea.Margin = new Thickness(0, 0, 0, 0);
-
-                Media.Child = null;
-
                 var small = webPage.GetThumbnail();
-                if (small != null)
+                if (small == null || webPage.ShowLargeMedia || !webPage.CanBeSmall())
                 {
+                    SmallPanel.Visibility = Visibility.Collapsed;
+                    Media.Visibility = Visibility.Visible;
+                    OverflowArea.Margin = new Thickness(0, 0, 0, 8);
+
+                    UpdateContent(message, webPage, empty);
+                }
+                else
+                {
+                    SmallPanel.Visibility = Visibility.Visible;
+                    Media.Visibility = Visibility.Collapsed;
+                    OverflowArea.Margin = new Thickness(0, 0, 0, 0);
+
+                    Media.Child = null;
+
                     UpdateManager.Subscribe(this, message, small.File, ref _fileToken, UpdateFile, true);
                     UpdateFile(message, small.File);
                 }
-            }
-            else if (webPage.IsMedia())
-            {
-                SmallPanel.Visibility = Visibility.Collapsed;
-                Media.Visibility = Visibility.Visible;
-                OverflowArea.Margin = new Thickness(0, 0, 0, 8);
-
-                UpdateContent(message, webPage, empty);
             }
             else
             {
@@ -186,7 +186,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateFile(MessageViewModel message, File file)
         {
-            var text = message.Content as MessageText;
+            var text = GetContent(message);
             if (text == null || !_templateApplied)
             {
                 return;
@@ -326,6 +326,17 @@ namespace Telegram.Controls.Messages.Content
             return content is MessageText text && text.WebPage != null;
         }
 
+        private MessageText GetContent(MessageViewModel message)
+        {
+            var content = message.GeneratedContent ?? message.Content;
+            if (content is MessageText text)
+            {
+                return text;
+            }
+
+            return null;
+        }
+
         public IPlayerView GetPlaybackElement()
         {
             if (Media?.Child is IContentWithPlayback content)
@@ -342,7 +353,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var text = _message?.Content as MessageText;
+            var text = GetContent(_message);
             if (text == null)
             {
                 return;
@@ -608,6 +619,62 @@ namespace Telegram.Controls.Messages.Content
 
         public static readonly DependencyProperty HeaderBrushProperty =
             DependencyProperty.Register("HeaderBrush", typeof(Brush), typeof(WebPageContent), new PropertyMetadata(null));
+
+        #endregion
+
+        #region Skeleton
+
+        public void ShowSkeleton()
+        {
+            if (ActualSize.X == 0 || ActualSize.Y == 0)
+            {
+                return;
+            }
+
+            var compositor = Window.Current.Compositor;
+            var rectangle = compositor.CreateRoundedRectangleGeometry();
+            rectangle.Size = new Vector2(ActualSize.X - 2, ActualSize.Y - 2);
+            rectangle.Offset = new Vector2(1, 1);
+            rectangle.CornerRadius = new Vector2(4);
+
+            var strokeColor = BorderBrush is SolidColorBrush brush ? brush.Color : Colors.White;
+
+            var stroke = compositor.CreateLinearGradientBrush();
+            stroke.ColorStops.Add(compositor.CreateColorGradientStop(0.0f, Color.FromArgb(0x00, strokeColor.R, strokeColor.G, strokeColor.B)));
+            stroke.ColorStops.Add(compositor.CreateColorGradientStop(0.5f, Color.FromArgb(0x55, strokeColor.R, strokeColor.G, strokeColor.B)));
+            stroke.ColorStops.Add(compositor.CreateColorGradientStop(1.0f, Color.FromArgb(0x00, strokeColor.R, strokeColor.G, strokeColor.B)));
+
+            var fill = compositor.CreateLinearGradientBrush();
+            fill.ColorStops.Add(compositor.CreateColorGradientStop(0.0f, Color.FromArgb(0x00, strokeColor.R, strokeColor.G, strokeColor.B)));
+            fill.ColorStops.Add(compositor.CreateColorGradientStop(0.5f, Color.FromArgb(0x22, strokeColor.R, strokeColor.G, strokeColor.B)));
+            fill.ColorStops.Add(compositor.CreateColorGradientStop(1.0f, Color.FromArgb(0x00, strokeColor.R, strokeColor.G, strokeColor.B)));
+
+            var shape = compositor.CreateSpriteShape();
+            shape.Geometry = rectangle;
+            shape.FillBrush = fill;
+            shape.StrokeBrush = stroke;
+            shape.StrokeThickness = 1;
+
+            var visual = compositor.CreateShapeVisual();
+            visual.Size = new Vector2(ActualSize.X, ActualSize.Y);
+            visual.Shapes.Add(shape);
+
+            var endless = compositor.CreateScalarKeyFrameAnimation();
+            endless.InsertKeyFrame(0, -ActualSize.X);
+            endless.InsertKeyFrame(1, +ActualSize.X);
+            endless.IterationBehavior = AnimationIterationBehavior.Forever;
+            endless.Duration = TimeSpan.FromMilliseconds(1500);
+
+            stroke.StartAnimation("Offset.X", endless);
+            fill.StartAnimation("Offset.X", endless);
+
+            ElementCompositionPreview.SetElementChildVisual(this, visual);
+        }
+
+        public void HideSkeleton()
+        {
+            ElementCompositionPreview.SetElementChildVisual(this, Window.Current.Compositor.CreateSpriteVisual());
+        }
 
         #endregion
     }

@@ -353,7 +353,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
-                return text.WebPage.IsPhoto();
+                return text.WebPage.HasPhoto();
             }
             else if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaPhoto)
             {
