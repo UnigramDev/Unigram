@@ -1520,7 +1520,7 @@ namespace Telegram.Controls.Messages
                     Panel.Placeholder = content is MessageBigEmoji;
                 }
             }
-            else if (content is MessageGame or MessagePremiumGiveaway or MessageAsyncStory)
+            else if (content is MessageGame or MessagePremiumGiveaway or MessageUnsupported or MessageAsyncStory)
             {
                 ContentPanel.Padding = new Thickness(0, 4, 0, 0);
                 Media.Margin = new Thickness(10, -6, 10, 0);
@@ -1699,6 +1699,10 @@ namespace Telegram.Controls.Messages
             {
                 Media.Child = new VoiceNoteContent(message);
             }
+            else if (content is MessagePremiumGiveaway)
+            {
+                Media.Child = new PremiumGiveawayContent(message);
+            }
             else if (content is MessageAsyncStory story && story.State != MessageStoryState.Expired)
             {
                 Media.Child = new AspectView
@@ -1713,6 +1717,10 @@ namespace Telegram.Controls.Messages
                     Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f),
                     Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f)
                 };
+            }
+            else if (content is MessageUnsupported)
+            {
+                Media.Child = new UnsupportedContent(message);
             }
             else
             {
@@ -1737,7 +1745,6 @@ namespace Telegram.Controls.Messages
         private void UpdateMessageText(MessageViewModel message)
         {
             var result = false;
-            var cleanup = false;
 
             if (message.Text != null)
             {
@@ -1796,8 +1803,10 @@ namespace Telegram.Controls.Messages
             }
             else if (content is MessageUnsupported)
             {
-                result = GetEntities(message, Strings.UnsupportedMedia);
-                cleanup = true;
+                var usupported = Strings.UnsupportedMessage;
+                var entity = new TextEntity(0, Strings.UnsupportedMessage.Length, new TextEntityTypeItalic());
+
+                result = ReplaceEntities(message, new FormattedText(usupported, new[] { entity }));
             }
             else if (content is MessageVenue venue)
             {
@@ -1808,7 +1817,6 @@ namespace Telegram.Controls.Messages
                 };
 
                 result = ReplaceEntities(message, venueText, venueEntities);
-                cleanup = true;
             }
             else if (content is MessageBigEmoji bigEmoji)
             {
@@ -1818,16 +1826,10 @@ namespace Telegram.Controls.Messages
                 //Message.Blocks.Clear();
                 //Message.Blocks.Add(paragraph);
                 result = ReplaceEntities(message, bigEmoji.Text, 32);
-                cleanup = true;
             }
 
             Message.Visibility = result ? Visibility.Visible : Visibility.Collapsed;
             //Footer.HorizontalAlignment = adjust ? HorizontalAlignment.Left : HorizontalAlignment.Right;
-
-            if (cleanup)
-            {
-                Message.Cleanup();
-            }
         }
 
         private bool GetEntities(MessageViewModel message, string text)

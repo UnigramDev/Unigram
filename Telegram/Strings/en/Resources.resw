@@ -1550,6 +1550,15 @@ Subscription for {1}.</value>
   <data name="BoostingGiveawayPrizes" xml:space="preserve">
     <value>**Giveaway Prizes**</value>
   </data>
+  <data name="BoostingGiveawayTakePart" xml:space="preserve">
+    <value>To take part in this giveaway please join channel **{0}** before **{1}**.</value>
+  </data>
+  <data name="BoostingGiveawayTakePartMultiPlural_one" xml:space="preserve">
+    <value>To take part in this giveaway please join channel **{1}** (and **{0}** other listed channel) before **{2}**.</value>
+  </data>
+  <data name="BoostingGiveawayTakePartMultiPlural_other" xml:space="preserve">
+    <value>To take part in this giveaway please join channel **{1}** (and **{0}** other listed channels) before **{2}**.</value>
+  </data>
   <data name="BoostingGiveawayUsedLinksPlural_one" xml:space="preserve">
     <value>**{0}** of the winners already used their gift links.</value>
   </data>
@@ -2005,7 +2014,7 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
     <value>Apply Color and Icon</value>
   </data>
   <data name="ChannelColorHint" xml:space="preserve">
-    <value>This color will be used for your name, the links you send, and replies to your messages.</value>
+    <value>This color will be used for your channel&apos;s name, the links it sends, and replies to its messages.</value>
   </data>
   <data name="ChannelColorPreview" xml:space="preserve">
     <value>The name of the channel and replies to its message will be shown in the selected color.</value>
@@ -7733,6 +7742,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="UnsupportedMedia" xml:space="preserve">
     <value>This message is not supported by your version of Telegram. Update the app to view: https://telegram.org/update</value>
   </data>
+  <data name="UnsupportedMessage" xml:space="preserve">
+    <value>This message is not supported by your version of Telegram. Update the app to view:</value>
+  </data>
   <data name="Unvote" xml:space="preserve">
     <value>Retract Vote</value>
   </data>
@@ -7845,7 +7857,7 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
     <value>Subscribe to **Telegram Premium** to choose a custom color for your name.</value>
   </data>
   <data name="UserColorHint" xml:space="preserve">
-    <value>You can choose a color to tint your name, the links you send, and replies to your messages.</value>
+    <value>This color will be used for your name, the links you send, and replies to your messages.</value>
   </data>
   <data name="UserColorPreview" xml:space="preserve">
     <value>Your name and replies to your messages will be shown in the selected color.</value>

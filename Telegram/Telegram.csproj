@@ -241,6 +241,9 @@
     <Compile Include="Controls\Gallery\GalleryWindow.xaml.cs">
       <DependentUpon>GalleryWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Messages\Content\UnsupportedContent.xaml.cs">
+      <DependentUpon>UnsupportedContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\Messages\Content\PremiumGiveawayContent.xaml.cs">
       <DependentUpon>PremiumGiveawayContent.xaml</DependentUpon>
     </Compile>
