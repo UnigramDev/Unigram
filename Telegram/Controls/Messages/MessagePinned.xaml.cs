@@ -382,6 +382,7 @@ namespace Telegram.Controls.Messages
                         player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
                         player.Margin = new Thickness(0, -2, 0, -6);
                         player.IsHitTestVisible = false;
+                        player.IsEnabled = false;
 
                         var inline = new InlineUIContainer();
                         inline.Child = player;

@@ -500,6 +500,8 @@ namespace Telegram.Controls
                             player.HorizontalAlignment = HorizontalAlignment.Left;
                             player.FlowDirection = FlowDirection.LeftToRight;
                             player.Margin = new Thickness(-20, -2, 0, -6);
+                            player.IsHitTestVisible = false;
+                            player.IsEnabled = false;
 
                             var inline = new InlineUIContainer();
                             inline.Child = player;
