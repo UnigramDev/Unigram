@@ -508,6 +508,15 @@ namespace Telegram.Controls.Cells
 
             FromLabel.Text = UpdateFromLabel(chat, position, out bool draft);
 
+            if (draft)
+            {
+                FromLabel.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
+            }
+            else
+            {
+                FromLabel.ClearValue(TextBlock.ForegroundProperty);
+            }
+
             _dateLabel = UpdateTimeLabel(chat, position);
             _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
             TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
@@ -1069,6 +1078,7 @@ namespace Telegram.Controls.Cells
                         player.Source = new CustomEmojiFileSource(_clientService, customEmoji.CustomEmojiId);
                         player.Margin = new Thickness(0, -2, 0, -6);
                         player.IsHitTestVisible = false;
+                        player.IsEnabled = false;
 
                         var inline = new InlineUIContainer();
                         inline.Child = player;
@@ -1291,6 +1301,10 @@ namespace Telegram.Controls.Cells
 
                 return new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>());
             }
+            else if (message.Content is MessagePremiumGiveaway)
+            {
+                return Text(Strings.BoostingGiveaway);
+            }
 
             return message.Content switch
             {
@@ -1341,7 +1355,7 @@ namespace Telegram.Controls.Cells
             {
                 if (message.IsSaved(clientService.Options.MyId))
                 {
-                    return string.Format(format, clientService.GetTitle(message.ForwardInfo));
+                    return string.Format(format, clientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo));
                 }
                 else if (message.IsOutgoing)
                 {
@@ -1706,11 +1720,10 @@ namespace Telegram.Controls.Cells
                 }
 
                 var service = WindowContext.Current.NavigationServices.GetByFrameId($"Main{_clientService.SessionId}") as NavigationService;
-                if (service != null)
+                service?.NavigateToChat(chat, state: new NavigationState
                 {
-                    App.DataPackages[chat.Id] = e.DataView;
-                    service.NavigateToChat(chat);
-                }
+                    { "package", e.DataView }
+                });
             }
             catch { }
 
