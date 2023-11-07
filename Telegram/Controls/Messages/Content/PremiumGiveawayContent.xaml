@@ -46,7 +46,8 @@
                                    Style="{StaticResource BodyTextBlockStyle}" />
 
                         <controls:WrapPanel x:Name="ParticipantsPanel"
-                                            HorizontalAlignment="Center" />
+                                            HorizontalAlignment="Center"
+                                            Margin="0,0,-2,0" />
 
                         <TextBlock x:Name="FromLabel"
                                    TextAlignment="Center"

@@ -215,6 +215,7 @@
     <Compile Include="Controls\Cells\StoryCell.xaml.cs">
       <DependentUpon>StoryCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ChatPill.cs" />
     <Compile Include="Controls\Chats\ChatHistoryArrows.xaml.cs">
       <DependentUpon>ChatHistoryArrows.xaml</DependentUpon>
     </Compile>

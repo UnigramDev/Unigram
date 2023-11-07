@@ -40,10 +40,7 @@ namespace Telegram.Views.Chats.Popups
                 ? Strings.BoostingEnableStoriesForChannel
                 : Strings.HelpUpgradeChannel;
 
-            ChatPhoto.Width = ChatPhoto.Height = 28;
-
-            ChatTitle.Text = chat.Title;
-            ChatPhoto.SetChat(clientService, chat, 28);
+            Pill.SetChat(clientService, chat);
             
             static string MoreBoosts(int count)
             {

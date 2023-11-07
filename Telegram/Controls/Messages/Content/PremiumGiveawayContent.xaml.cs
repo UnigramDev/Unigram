@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System.Linq;
 using System.Text;
 using Telegram.Common;
 using Telegram.Converters;
@@ -91,19 +90,30 @@ namespace Telegram.Controls.Messages.Content
 
             TextBlockHelper.SetMarkdown(PrizesLabel, duration);
 
-            // TODO: declension
             ParticipantsLabel.Text = giveaway.Parameters.OnlyNewMembers
-                ? Strings.BoostingGiveawayMsgNewSubs
-                : Strings.BoostingGiveawayMsgAllSubs;
+                ? Locale.Declension(Strings.R.BoostingGiveawayMsgNewSubsPlural, 1 + giveaway.Parameters.AdditionalChatIds.Count, false)
+                : Locale.Declension(Strings.R.BoostingGiveawayMsgAllSubsPlural, 1 + giveaway.Parameters.AdditionalChatIds.Count, false);
 
             ParticipantsPanel.Children.Clear();
 
-            foreach (var chat in message.ClientService.GetChats(new[] { giveaway.Parameters.BoostedChatId }.Union(giveaway.Parameters.AdditionalChatIds)))
+            if (message.ClientService.TryGetChat(giveaway.Parameters.BoostedChatId, out Chat boostedChat))
             {
-                ParticipantsPanel.Children.Add(new Button
-                {
-                    Content = chat.Title
-                });
+                var button = new ChatPill();
+                button.SetChat(message.ClientService, boostedChat);
+                button.Click += Chat_Click;
+                button.Margin = new Thickness(0, 2, 2, 0);
+
+                ParticipantsPanel.Children.Add(button);
+            }
+
+            foreach (var chat in message.ClientService.GetChats(giveaway.Parameters.AdditionalChatIds))
+            {
+                var button = new ChatPill();
+                button.SetChat(message.ClientService, chat);
+                button.Click += Chat_Click;
+                button.Margin = new Thickness(0, 2, 2, 0);
+
+                ParticipantsPanel.Children.Add(button);
             }
 
             if (giveaway.Parameters.CountryCodes.Count > 0)
@@ -132,6 +142,14 @@ namespace Telegram.Controls.Messages.Content
             }
 
             WinnersLabel.Text = Formatter.DateAt(giveaway.Parameters.WinnersSelectionDate);
+        }
+
+        private void Chat_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is ChatPill pill)
+            {
+                _message.Delegate.OpenChat(pill.ChatId);
+            }
         }
 
         public void Recycle()
@@ -192,8 +210,11 @@ namespace Telegram.Controls.Messages.Content
 
                 if (giveaway.Parameters.AdditionalChatIds.Count > 0)
                 {
-                    message2 = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubTextDateSeveral, giveaway.WinnerCount, false);
-                    message2 = string.Format(message2, string.Empty, selectionDate, giveaway.WinnerCount, boostedChat.Title, giveaway.Parameters.AdditionalChatIds.Count, creationTime, creationDate);
+                    var several = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubTextDateSeveral2, giveaway.Parameters.AdditionalChatIds.Count, false);
+                    several = string.Format(several, giveaway.Parameters.AdditionalChatIds.Count, creationTime, creationDate);
+
+                    message2 = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubTextDateSeveral1, giveaway.WinnerCount, false);
+                    message2 = string.Format(message2, string.Empty, selectionDate, giveaway.WinnerCount, boostedChat.Title, several);
                 }
                 else
                 {
@@ -205,8 +226,10 @@ namespace Telegram.Controls.Messages.Content
             {
                 if (giveaway.Parameters.AdditionalChatIds.Count > 0)
                 {
-                    message2 = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubTextSeveral, giveaway.WinnerCount, false);
-                    message2 = string.Format(message2, string.Empty, selectionDate, giveaway.WinnerCount, boostedChat.Title, giveaway.Parameters.AdditionalChatIds.Count);
+                    var several = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubTextSeveral2, giveaway.Parameters.AdditionalChatIds.Count);
+
+                    message2 = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubTextSeveral1, giveaway.WinnerCount, false);
+                    message2 = string.Format(message2, string.Empty, selectionDate, giveaway.WinnerCount, boostedChat.Title, several);
                 }
                 else
                 {
@@ -224,7 +247,7 @@ namespace Telegram.Controls.Messages.Content
             {
                 if (completed.ActivationCount > 0)
                 {
-                    message2 += " " + string.Format(Strings.BoostingGiveawayUsedLinks, completed.ActivationCount);
+                    message2 += " " + Locale.Declension(Strings.R.BoostingGiveawayUsedLinksPlural, completed.ActivationCount);
                 }
 
                 title = Strings.BoostingGiveawayEnd;
@@ -246,10 +269,28 @@ namespace Telegram.Controls.Messages.Content
             {
                 string Participating()
                 {
+                    if (giveaway.Parameters.AdditionalChatIds.Count > 0)
+                    {
+                        return Locale.Declension(Strings.R.BoostingGiveawayParticipantMultiPlural, giveaway.Parameters.AdditionalChatIds.Count, boostedChat.Title);
+                    }
+
+                    return string.Format(Strings.BoostingGiveawayParticipant, boostedChat.Title);
+                }
+
+                string Eligible()
+                {
                     string title = null;
                     int count = 0;
 
-                    foreach (var chat in _message.ClientService.GetChats(new[] { giveaway.Parameters.BoostedChatId }.Union(giveaway.Parameters.AdditionalChatIds)))
+                    if (_message.ClientService.TryGetSupergroup(boostedChat, out Supergroup boostedSupergroup))
+                    {
+                        if (boostedSupergroup.IsMember())
+                        {
+                            title = boostedChat.Title;
+                        }
+                    }
+
+                    foreach (var chat in _message.ClientService.GetChats(giveaway.Parameters.AdditionalChatIds))
                     {
                         if (_message.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
                         {
@@ -269,15 +310,24 @@ namespace Telegram.Controls.Messages.Content
 
                     if (count > 0)
                     {
-                        return string.Format(Strings.BoostingGiveawayParticipantMulti, title, count);
+                        return Locale.Declension(Strings.R.BoostingGiveawayTakePartMultiPlural, count, title);
                     }
 
-                    return string.Format(Strings.BoostingGiveawayParticipant, title);
+                    return string.Format(Strings.BoostingGiveawayTakePart, title);
+
+                    // Simplified version
+                    if (giveaway.Parameters.AdditionalChatIds.Count > 0)
+                    {
+                        return Locale.Declension(Strings.R.BoostingGiveawayTakePartMultiPlural, giveaway.Parameters.AdditionalChatIds.Count, boostedChat.Title);
+                    }
+
+                    return string.Format(Strings.BoostingGiveawayTakePart, boostedChat.Title);
                 }
 
                 title = Strings.BoostingGiveAwayAbout;
                 message3 = ongoing.Status switch
                 {
+                    PremiumGiveawayParticipantStatusEligible => Eligible(),
                     PremiumGiveawayParticipantStatusParticipating => Participating(),
                     PremiumGiveawayParticipantStatusAdministrator administrator => string.Format(Strings.BoostingGiveawayNotEligibleAdmin, _message.ClientService.GetTitle(administrator.ChatId)),
                     PremiumGiveawayParticipantStatusAlreadyWasMember already => string.Format(Strings.BoostingGiveawayNotEligible, Formatter.DateAt(already.JoinedChatDate)),

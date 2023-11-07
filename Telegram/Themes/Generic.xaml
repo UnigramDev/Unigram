@@ -1036,6 +1036,51 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:ChatPill">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ChatPill">
+                    <Grid CornerRadius="14">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundOverlay.Opacity"
+                                                Value="0.15" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Rectangle x:Name="BackgroundOverlay"
+                                   Fill="{TemplateBinding Background}"
+                                   Opacity="0.1"
+                                   Grid.ColumnSpan="2" />
+
+                        <local:ProfilePicture x:Name="Photo"
+                                              Width="28"
+                                              Height="28" />
+
+                        <TextBlock x:Name="Title"
+                                   Foreground="{TemplateBinding Background}"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                   FontWeight="SemiBold"
+                                   VerticalAlignment="Center"
+                                   Margin="8,1,12,3"
+                                   Grid.Column="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="chats:ChatBackgroundPresenter">
         <Setter Property="IsTabStop"
                 Value="False" />
