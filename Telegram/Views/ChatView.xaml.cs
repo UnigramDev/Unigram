@@ -2132,16 +2132,23 @@ namespace Telegram.Views
                     LoadMessageViewers(message, flyout);
                 }
 
-                // Generic
+                MessageQuote quote = null;
                 if (selectionEnd - selectionStart > 0)
                 {
                     var caption = message.GetCaption();
-                    var quote = new MessageQuote
+                    if (caption != null)
                     {
-                        Message = message,
-                        Quote = caption.Substring(selectionStart, selectionEnd - selectionStart)
-                    };
+                        quote = new MessageQuote
+                        {
+                            Message = message,
+                            Quote = caption.Substring(selectionStart, selectionEnd - selectionStart)
+                        };
+                    }
+                }
 
+                // Generic
+                if (quote != null)
+                {
                     flyout.CreateFlyoutItem(MessageQuote_Loaded, ViewModel.QuoteToMessage, quote, Strings.QuoteSelectedPart, Icons.ArrowReply);
                 }
                 else
@@ -2167,10 +2174,10 @@ namespace Telegram.Views
                 flyout.CreateFlyoutSeparator();
 
                 // Copy
-                if (selectionEnd - selectionStart > 0)
+                if (quote != null)
                 {
                     // TODO: copy selection
-                    flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.CopyMessage, message, Strings.CopySelectedText, Icons.DocumentCopy);
+                    flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.CopyMessage, quote, Strings.CopySelectedText, Icons.DocumentCopy);
                 }
                 else
                 {
@@ -2665,6 +2672,11 @@ namespace Telegram.Views
             }
 
             return false;
+        }
+
+        private bool MessageCopy_Loaded(MessageQuote quote)
+        {
+            return MessageCopy_Loaded(quote.Message);
         }
 
         private bool MessageCopy_Loaded(MessageViewModel message)
