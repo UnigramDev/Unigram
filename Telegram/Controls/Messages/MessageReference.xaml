@@ -9,6 +9,8 @@
                     mc:Ignorable="d">
 
     <Style TargetType="local:MessageReference">
+        <Setter Property="CornerRadius"
+                Value="4" />
         <Setter Property="BorderThickness"
                 Value="2,0,0,0" />
         <Setter Property="Foreground"
@@ -39,7 +41,7 @@
                     <Grid x:Name="LayoutRoot"
                           Background="Transparent"
                           MinHeight="44"
-                          CornerRadius="4"
+                          CornerRadius="{TemplateBinding CornerRadius}"
                           Margin="{TemplateBinding Padding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -87,7 +89,7 @@
                                                        FrameSize="20,20"
                                                        DecodeFrameType="Logical"
                                                        AutoPlay="False"
-                                                       IsViewportAware="True"
+                                                       IsViewportAware="False"
                                                        Grid.Column="2"
                                                        HorizontalAlignment="Right"
                                                        VerticalAlignment="Top"
