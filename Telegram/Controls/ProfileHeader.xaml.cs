@@ -759,16 +759,16 @@ namespace Telegram.Controls
                 if (fullInfo != null && fullInfo.CanGetStatistics)
                 {
                     flyout.CreateFlyoutItem(ViewModel.OpenStatistics, Strings.Statistics, Icons.DataUsage);
+
+                    if (super.IsChannel)
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.OpenBoosts, Strings.Boosts, Icons.Boosts);
+                    }
                 }
 
-                if (super.IsChannel && (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator))
+                if (super.IsChannel && supergroup.CanEditStories())
                 {
-                    flyout.CreateFlyoutItem(ViewModel.OpenBoosts, Strings.Boosts, Icons.Boosts);
-
-                    if (supergroup.CanEditStories())
-                    {
-                        flyout.CreateFlyoutItem(ViewModel.OpenArchivedStories, Strings.ArchivedStories, Icons.Archive);
-                    }
+                    flyout.CreateFlyoutItem(ViewModel.OpenArchivedStories, Strings.ArchivedStories, Icons.Archive);
                 }
 
                 if (!super.IsChannel)
