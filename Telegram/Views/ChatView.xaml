@@ -972,10 +972,14 @@
                                                    Click="Reply_Click"
                                                    VerticalAlignment="Stretch"
                                                    VerticalContentAlignment="Center"
+                                                   Margin="0,0,-44,-4"
+                                                   CornerRadius="4,13,4,4"
                                                    Grid.Column="1" />
                         <FontIcon x:Name="ComposerHeaderGlyph"
                                   Foreground="{ThemeResource MessageHeaderBorderBrush}"
-                                  Style="{StaticResource DefaultFontIconStyle}" />
+                                  Style="{StaticResource DefaultFontIconStyle}"
+                                  Margin="0,0,0,-4"
+                                  FontSize="24" />
 
                         <controls:ProgressBarRing x:Name="ComposerHeaderUpload"
                                                   Background="Transparent"
@@ -984,9 +988,10 @@
                         <controls:GlyphButton x:Name="ComposerHeaderCancel"
                                               Click="{x:Bind ViewModel.ClearReply}"
                                               FontSize="{StaticResource GlyphLargeFontSize}"
-                                              Height="{StaticResource TelegramToolBarHeight}"
                                               AllowFocusOnInteraction="False"
                                               Glyph="&#xE711;"
+                                              Margin="0,0,0,-4"
+                                              Height="52"
                                               Grid.Column="2" />
                     </Grid>
 

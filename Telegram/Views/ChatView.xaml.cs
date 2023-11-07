@@ -3930,7 +3930,7 @@ namespace Telegram.Views
                     }
 
 
-                    ComposerHeaderGlyph.Glyph = Icons.Edit;
+                    ComposerHeaderGlyph.Glyph = Icons.Edit24;
 
                     Automation.SetToolTip(ComposerHeaderCancel, Strings.AccDescrCancelEdit);
 
@@ -3946,11 +3946,11 @@ namespace Telegram.Views
 
                     if (header.WebPagePreview != null)
                     {
-                        ComposerHeaderGlyph.Glyph = Icons.Globe;
+                        ComposerHeaderGlyph.Glyph = Icons.Link24;
                     }
                     else if (header.ReplyToMessage != null)
                     {
-                        ComposerHeaderGlyph.Glyph = Icons.ArrowReply;
+                        ComposerHeaderGlyph.Glyph = Icons.ArrowReply24;
                     }
                     else
                     {
@@ -3967,7 +3967,7 @@ namespace Telegram.Views
             }
         }
 
-        private bool _composerHeaderCollapsed = false;
+        private bool _composerHeaderCollapsed = true;
         private bool _botCommandsCollapsed = true;
         private bool _autocompleteCollapsed = true;
 
