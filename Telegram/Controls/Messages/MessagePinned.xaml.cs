@@ -355,6 +355,7 @@ namespace Telegram.Controls.Messages
             }
 
             var messageShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
+            var labelShow = _textVisual == _textVisual1 ? TextLabel1 : TextLabel2;
             messageShow.Inlines.Clear();
 
             if (text != null)
@@ -381,11 +382,12 @@ namespace Telegram.Controls.Messages
                         var player = new CustomEmojiIcon();
                         player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
                         player.Margin = new Thickness(0, -2, 0, -6);
+                        player.IsViewportAware = false;
                         player.IsHitTestVisible = false;
                         player.IsEnabled = false;
 
                         var inline = new InlineUIContainer();
-                        inline.Child = player;
+                        inline.Child = new CustomEmojiContainer(labelShow, player);
 
                         messageShow.Inlines.Add(inline);
 

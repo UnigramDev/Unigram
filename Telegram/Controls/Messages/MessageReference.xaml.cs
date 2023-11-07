@@ -118,6 +118,7 @@ namespace Telegram.Controls.Messages
         #region InitializeComponent
 
         private Grid LayoutRoot;
+        private RichTextBlock Label;
         private Run TitleLabel;
         private Run ServiceLabel;
         private Span MessageLabel;
@@ -133,6 +134,7 @@ namespace Telegram.Controls.Messages
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
+            Label = GetTemplateChild(nameof(Label)) as RichTextBlock;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as Run;
             ServiceLabel = GetTemplateChild(nameof(ServiceLabel)) as Run;
             MessageLabel = GetTemplateChild(nameof(MessageLabel)) as Span;
@@ -355,11 +357,12 @@ namespace Telegram.Controls.Messages
                             var player = new CustomEmojiIcon();
                             player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
                             player.Margin = new Thickness(0, -2, 0, -6);
+                            player.IsViewportAware = false;
                             player.IsHitTestVisible = false;
                             player.IsEnabled = false;
 
                             var inline = new InlineUIContainer();
-                            inline.Child = player;
+                            inline.Child = new CustomEmojiContainer(Label, player);
 
                             MessageLabel.Inlines.Add(inline);
 

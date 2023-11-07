@@ -1077,11 +1077,12 @@ namespace Telegram.Controls.Cells
                         var player = new CustomEmojiIcon();
                         player.Source = new CustomEmojiFileSource(_clientService, customEmoji.CustomEmojiId);
                         player.Margin = new Thickness(0, -2, 0, -6);
+                        player.IsViewportAware = false;
                         player.IsHitTestVisible = false;
                         player.IsEnabled = false;
 
                         var inline = new InlineUIContainer();
-                        inline.Child = player;
+                        inline.Child = new CustomEmojiContainer(BriefText, player);
 
                         BriefLabel.Inlines.Add(inline);
 
