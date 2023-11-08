@@ -6,6 +6,7 @@
 //
 using System;
 using System.Numerics;
+using System.Text;
 using System.Threading;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -15,6 +16,7 @@ using Telegram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Hosting;
@@ -41,6 +43,38 @@ namespace Telegram.Controls.Messages.Content
         public WebPageContent()
         {
             DefaultStyleKey = typeof(WebPageContent);
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new WebPageContentAutomationPeer(this);
+        }
+
+        public string GetAutomationName()
+        {
+            if (!_templateApplied)
+            {
+                return Strings.AccDescrLinkPreview;
+            }
+
+            var builder = new StringBuilder();
+            builder.Append(TitleLabel.Text);
+            builder.Prepend(SubtitleLabel.Text, ", ");
+            builder.Prepend(ContentLabel.Text, ", ");
+
+            if (builder.Length > 0)
+            {
+                builder.Insert(0, ": ");
+            }
+
+            builder.Insert(0, Strings.AccDescrLinkPreview);
+
+            if (ButtonLine.Visibility == Visibility.Visible)
+            {
+                builder.Prepend(Button.Text, ", ");
+            }
+
+            return builder.ToString();
         }
 
         #region InitializeComponent
@@ -683,5 +717,21 @@ namespace Telegram.Controls.Messages.Content
         }
 
         #endregion
+    }
+
+    public class WebPageContentAutomationPeer : HyperlinkButtonAutomationPeer
+    {
+        private WebPageContent _owner;
+
+        public WebPageContentAutomationPeer(WebPageContent owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override string GetNameCore()
+        {
+            return _owner.GetAutomationName();
+        }
     }
 }

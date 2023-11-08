@@ -151,6 +151,9 @@
   <data name="AccDescrHideAccounts" xml:space="preserve">
     <value>Hide accounts</value>
   </data>
+  <data name="AccDescrLinkPreview" xml:space="preserve">
+    <value>Link Preview</value>
+  </data>
   <data name="AccDescrMentionCount_one" xml:space="preserve">
     <value>{0} mention</value>
   </data>

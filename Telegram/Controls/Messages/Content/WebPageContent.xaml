@@ -14,7 +14,7 @@
         <Setter Property="Margin"
                 Value="0,8,0,6" />
         <Setter Property="IsTabStop"
-                Value="False" />
+                Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:WebPageContent">

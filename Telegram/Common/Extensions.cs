@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -212,6 +213,16 @@ namespace Telegram.Common
             }
 
             return pointer.Offset - index;
+        }
+
+        public static void Prepend(this StringBuilder builder, string text, string prefix)
+        {
+            if (builder.Length > 0)
+            {
+                builder.Append(prefix);
+            }
+
+            builder.Append(text);
         }
 
         public static void TryNotifyMutedChanged(this VoipCallCoordinator coordinator, bool muted)
