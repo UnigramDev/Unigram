@@ -94,6 +94,7 @@
                                                        HorizontalAlignment="Right"
                                                        VerticalAlignment="Top"
                                                        ReplacementColor="{TemplateBinding BorderBrush}"
+                                                       IsTabStop="False"
                                                        Margin="0,-3,7,0">
                             <local:MessageReferencePattern.Template>
                                 <ControlTemplate TargetType="local:MessageReferencePattern">
