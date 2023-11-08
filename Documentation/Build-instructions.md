@@ -42,7 +42,7 @@ Now that vcpkg is ready, you must customize the **ffmpeg** port to be built with
 ```
 Now that everything is properly configured go back to the terminal and enter the following:
 ```
-> ./vcpkg.exe install ffmpeg[opus,vpx]:$arch$-uwp lz4:$arch$-uwp openssl:$arch$-uwp zlib:$arch$-uwp libogg:$arch$-uwp opus:$arch$-uwp
+> ./vcpkg.exe install ffmpeg[opus,vpx]:$arch$-uwp lz4:$arch$-uwp openssl:$arch$-uwp zlib:$arch$-uwp libogg:$arch$-uwp opus:$arch$-uwp boost-regex:$arch$-uwp
 > ./vcpkg.exe integrate install
 ```
 Make sure to replace `$arch$` with either `x64`, `x86` or `arm64` depending on your build target.
