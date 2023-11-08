@@ -336,6 +336,11 @@ namespace Telegram.Controls.Messages
                     title = message.ClientService.GetTitle(message.ClientService.GetChat(fromChannel.ChatId));
                     builder.AppendLine($"{Strings.AccDescrForwarding} {title}. ");
                 }
+                else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser hiddenUser)
+                {
+                    title = hiddenUser.SenderName;
+                    builder.AppendLine($"{Strings.AccDescrForwarding} {title}. ");
+                }
             }
 
             builder.Append(Automation.GetSummary(message, true));
