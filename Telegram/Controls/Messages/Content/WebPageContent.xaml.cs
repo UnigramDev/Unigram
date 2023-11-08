@@ -158,6 +158,7 @@ namespace Telegram.Controls.Messages.Content
                     SmallPanel.Visibility = Visibility.Collapsed;
                     Media.Visibility = Visibility.Visible;
                     OverflowArea.Margin = new Thickness(0, 0, 0, 8);
+                    ButtonLine.Margin = new Thickness(0, 0, 0, 0);
 
                     UpdateContent(message, webPage, empty);
                     UpdateInstantView(webPage, _instantViewToken.Token);
@@ -167,6 +168,7 @@ namespace Telegram.Controls.Messages.Content
                     SmallPanel.Visibility = Visibility.Visible;
                     Media.Visibility = Visibility.Collapsed;
                     OverflowArea.Margin = new Thickness(0, 0, 0, 4);
+                    ButtonLine.Margin = new Thickness(0, 4, 0, 0);
 
                     MediaPanel.Visibility = Visibility.Collapsed;
                     Media.Child = null;
@@ -180,6 +182,7 @@ namespace Telegram.Controls.Messages.Content
                 SmallPanel.Visibility = Visibility.Collapsed;
                 Media.Visibility = Visibility.Collapsed;
                 OverflowArea.Margin = new Thickness(0, 0, 0, 4);
+                ButtonLine.Margin = new Thickness(0, 4, 0, 0);
 
                 MediaPanel.Visibility = Visibility.Collapsed;
                 Media.Child = null;
