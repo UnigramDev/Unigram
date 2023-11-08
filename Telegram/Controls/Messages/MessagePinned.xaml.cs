@@ -345,12 +345,20 @@ namespace Telegram.Controls.Messages
 
             if (!string.IsNullOrEmpty(service))
             {
-                _alternativeText += service += ", ";
+                _alternativeText += service;
+
+                if (!string.IsNullOrEmpty(text?.Text))
+                {
+                    _alternativeText += ", " + text.Text;
+                }
+            }
+            else if (!string.IsNullOrEmpty(text?.Text))
+            {
+                _alternativeText += text.Text;
             }
 
             if (!string.IsNullOrEmpty(text?.Text) && !string.IsNullOrEmpty(service))
             {
-                _alternativeText += ", " + text.Text;
                 serviceShow.Text += ", ";
             }
 
