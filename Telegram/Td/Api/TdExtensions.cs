@@ -681,6 +681,16 @@ namespace Telegram.Td.Api
             return new FormattedText(message, sub ?? Array.Empty<TextEntity>());
         }
 
+        public static FormattedText ToFormattedText(this PageBlockCaption caption)
+        {
+            return caption.Text.ToFormattedText();
+        }
+
+        public static FormattedText ToFormattedText(this RichText text)
+        {
+            return new FormattedText(text.ToPlainText(), Array.Empty<TextEntity>());
+        }
+
         public static string ToPlainText(this PageBlockCaption caption)
         {
             return caption.Text.ToPlainText();

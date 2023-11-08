@@ -12,7 +12,7 @@ namespace Telegram.ViewModels.Gallery
     public class GalleryAnimation : GalleryMedia
     {
         private readonly Animation _animation;
-        private readonly string _caption;
+        private readonly FormattedText _caption;
 
         public GalleryAnimation(IClientService clientService, Animation animation)
             : base(clientService)
@@ -20,7 +20,7 @@ namespace Telegram.ViewModels.Gallery
             _animation = animation;
         }
 
-        public GalleryAnimation(IClientService clientService, Animation animation, string caption)
+        public GalleryAnimation(IClientService clientService, Animation animation, FormattedText caption)
             : base(clientService)
         {
             _animation = animation;
@@ -46,7 +46,7 @@ namespace Telegram.ViewModels.Gallery
 
         public override object Constraint => _animation;
 
-        public override string Caption => _caption;
+        public override FormattedText Caption => _caption;
 
         public override bool IsVideo => true;
         public override bool IsLoop => true;

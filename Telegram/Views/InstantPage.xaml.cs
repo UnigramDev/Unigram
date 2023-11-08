@@ -834,7 +834,7 @@ namespace Telegram.Views
 
         private FrameworkElement ProcessPhoto(PageBlockPhoto block)
         {
-            var galleryItem = new GalleryPhoto(ViewModel.ClientService, block.Photo, block.Caption.ToPlainText());
+            var galleryItem = new GalleryPhoto(ViewModel.ClientService, block.Photo, block.Caption.ToFormattedText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = CreateMessage(new MessagePhoto(block.Photo, null, false, false));
@@ -860,7 +860,7 @@ namespace Telegram.Views
 
         private FrameworkElement ProcessVideo(PageBlockVideo block)
         {
-            var galleryItem = new GalleryVideo(ViewModel.ClientService, block.Video, block.Caption.ToPlainText());
+            var galleryItem = new GalleryVideo(ViewModel.ClientService, block.Video, block.Caption.ToFormattedText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = CreateMessage(new MessageVideo(block.Video, null, false, false));
@@ -886,7 +886,7 @@ namespace Telegram.Views
 
         private FrameworkElement ProcessAnimation(PageBlockAnimation block)
         {
-            var galleryItem = new GalleryAnimation(ViewModel.ClientService, block.Animation, block.Caption.ToPlainText());
+            var galleryItem = new GalleryAnimation(ViewModel.ClientService, block.Animation, block.Caption.ToFormattedText());
             ViewModel.Gallery.Items.Add(galleryItem);
 
             var message = CreateMessage(new MessageAnimation(block.Animation, null, false, false));
@@ -991,7 +991,7 @@ namespace Telegram.Views
             {
                 if (item is PageBlockPhoto photoBlock)
                 {
-                    var galleryItem = new GalleryPhoto(ViewModel.ClientService, photoBlock.Photo, block.Caption.ToPlainText());
+                    var galleryItem = new GalleryPhoto(ViewModel.ClientService, photoBlock.Photo, block.Caption.ToFormattedText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
                     var message = CreateMessage(new MessagePhoto(photoBlock.Photo, null, false, false));
@@ -1006,7 +1006,7 @@ namespace Telegram.Views
                 }
                 else if (item is PageBlockVideo videoBlock)
                 {
-                    var galleryItem = new GalleryVideo(ViewModel.ClientService, videoBlock.Video, block.Caption.ToPlainText());
+                    var galleryItem = new GalleryVideo(ViewModel.ClientService, videoBlock.Video, block.Caption.ToFormattedText());
                     ViewModel.Gallery.Items.Add(galleryItem);
 
                     var message = CreateMessage(new MessageVideo(videoBlock.Video, null, false, false));

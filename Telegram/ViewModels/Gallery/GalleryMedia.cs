@@ -28,7 +28,7 @@ namespace Telegram.ViewModels.Gallery
 
         public virtual object From { get; private set; }
 
-        public virtual string Caption { get; private set; }
+        public virtual FormattedText Caption { get; private set; }
 
         public virtual int Date { get; private set; }
 

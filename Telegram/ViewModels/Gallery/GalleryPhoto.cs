@@ -12,7 +12,7 @@ namespace Telegram.ViewModels.Gallery
     public class GalleryPhoto : GalleryMedia
     {
         private readonly Photo _photo;
-        private readonly string _caption;
+        private readonly FormattedText _caption;
 
         public GalleryPhoto(IClientService clientService, Photo photo)
             : base(clientService)
@@ -20,7 +20,7 @@ namespace Telegram.ViewModels.Gallery
             _photo = photo;
         }
 
-        public GalleryPhoto(IClientService clientService, Photo photo, string caption)
+        public GalleryPhoto(IClientService clientService, Photo photo, FormattedText caption)
             : base(clientService)
         {
             _photo = photo;
@@ -39,7 +39,7 @@ namespace Telegram.ViewModels.Gallery
 
         public override object Constraint => _photo;
 
-        public override string Caption => _caption;
+        public override FormattedText Caption => _caption;
 
         public override bool HasStickers => _photo.HasStickers;
 

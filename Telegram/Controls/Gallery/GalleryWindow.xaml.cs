@@ -613,6 +613,17 @@ namespace Telegram.Controls.Gallery
             return string.Format(Strings.Of, index, count);
         }
 
+        private Visibility ConvertCaption(FormattedText text)
+        {
+            if (string.IsNullOrEmpty(text?.Text))
+            {
+                return Visibility.Collapsed;
+            }
+
+            Caption.SetText(ViewModel.ClientService, text);
+            return Visibility.Visible;
+        }
+
         #endregion
 
         private GalleryContent _current;

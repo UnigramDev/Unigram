@@ -80,7 +80,7 @@ namespace Telegram.ViewModels.Gallery
             }
         }
 
-        public override string Caption => _message.GetCaption()?.Text;
+        public override FormattedText Caption => _message.GetCaption();
         public override int Date => _message.Date;
 
         public override bool IsVideo
