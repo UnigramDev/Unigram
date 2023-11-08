@@ -284,7 +284,7 @@ namespace Telegram.Controls.Messages.Content
 
                     if (_message.ClientService.TryGetSupergroup(boostedChat, out Supergroup boostedSupergroup))
                     {
-                        if (boostedSupergroup.IsMember())
+                        if (!boostedSupergroup.IsMember())
                         {
                             title = boostedChat.Title;
                         }
@@ -294,7 +294,7 @@ namespace Telegram.Controls.Messages.Content
                     {
                         if (_message.ClientService.TryGetSupergroup(chat, out Supergroup supergroup))
                         {
-                            if (supergroup.IsMember())
+                            if (!supergroup.IsMember())
                             {
                                 if (title == null)
                                 {
@@ -310,10 +310,10 @@ namespace Telegram.Controls.Messages.Content
 
                     if (count > 0)
                     {
-                        return Locale.Declension(Strings.R.BoostingGiveawayTakePartMultiPlural, count, title);
+                        return Locale.Declension(Strings.R.BoostingGiveawayTakePartMultiPlural, count, title, selectionDate);
                     }
 
-                    return string.Format(Strings.BoostingGiveawayTakePart, title);
+                    return string.Format(Strings.BoostingGiveawayTakePart, title, selectionDate);
 
                     // Simplified version
                     if (giveaway.Parameters.AdditionalChatIds.Count > 0)
