@@ -250,11 +250,16 @@ namespace Telegram.ViewModels
                 var folders = chatFolders.ToList();
                 var index = Math.Min(mainChatListPosition, folders.Count);
 
-                folders.Insert(index, new ChatFolderInfo { Id = Constants.ChatListMain, Title = Strings.FilterAllChats, Icon = new ChatFolderIcon("All") });
+                folders.Insert(index, new ChatFolderInfo
+                {
+                    Id = Constants.ChatListMain,
+                    Title = Strings.FilterAllChats,
+                    Icon = new ChatFolderIcon("All")
+                });
 
-                Merge(Folders, folders);
+                Merge(Folders, folders, selected, out bool updateSelection);
 
-                if (Chats.Items.ChatList is ChatListFolder already && already.ChatFolderId != selected)
+                if (updateSelection || (Chats.Items.ChatList is ChatListFolder already && already.ChatFolderId != selected))
                 {
                     SelectedFolder = Folders[0];
                 }
@@ -286,8 +291,10 @@ namespace Telegram.ViewModels
             }
         }
 
-        private void Merge(IList<ChatFolderViewModel> destination, IList<ChatFolderInfo> origin)
+        private void Merge(IList<ChatFolderViewModel> destination, IList<ChatFolderInfo> origin, int selectedFolderId, out bool updateSelection)
         {
+            updateSelection = false;
+
             if (destination.Count > 0)
             {
                 for (int i = 0; i < destination.Count; i++)
@@ -306,6 +313,11 @@ namespace Telegram.ViewModels
 
                     if (index == -1)
                     {
+                        if (selectedFolderId == user.ChatFolderId)
+                        {
+                            updateSelection = true;
+                        }
+
                         destination.Remove(user);
                         i--;
                     }
