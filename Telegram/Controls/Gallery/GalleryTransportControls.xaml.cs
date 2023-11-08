@@ -160,7 +160,7 @@ namespace Telegram.Controls.Gallery
         {
             _loopingEnabled = item.IsLoop;
 
-            Visibility = item.IsVideo && !item.IsLoop
+            Visibility = item.IsVideo && (item.IsVideoNote || !item.IsLoop)
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
