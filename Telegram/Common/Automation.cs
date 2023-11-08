@@ -162,15 +162,31 @@ namespace Telegram.Common
             {
                 if (album.IsMedia)
                 {
+                    var caption = string.Empty;
+                    if (!string.IsNullOrEmpty(album.Caption.Text))
+                    {
+                        caption = album.Caption.Text + ", ";
+                    }
+
                     var photos = album.Messages.Count(x => x.Content is MessagePhoto);
                     var videos = album.Messages.Count - photos;
 
                     if (album.Messages.Count > 0 && album.Messages[0].Content is MessageVideo)
                     {
-                        return Locale.Declension(Strings.R.Videos, videos) + ", " + Locale.Declension(Strings.R.Photos, photos) + ", ";
+                        if (photos > 0)
+                        {
+                            return Locale.Declension(Strings.R.Videos, videos) + ", " + Locale.Declension(Strings.R.Photos, photos) + ", " + caption;
+                        }
+
+                        return Locale.Declension(Strings.R.Videos, videos) + ", " + caption;
                     }
 
-                    return Locale.Declension(Strings.R.Photos, photos) + ", " + Locale.Declension(Strings.R.Videos, videos) + ", ";
+                    if (videos > 0)
+                    {
+                        return Locale.Declension(Strings.R.Photos, photos) + ", " + Locale.Declension(Strings.R.Videos, videos) + ", " + caption;
+                    }
+
+                    return Locale.Declension(Strings.R.Photos, photos) + ", " + caption;
                 }
                 else if (album.Messages.Count > 0 && album.Messages[0].Content is MessageAudio)
                 {

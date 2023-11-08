@@ -338,7 +338,7 @@ namespace Telegram.Controls.Messages
                 }
             }
 
-            builder.Append(Automation.GetSummary(message.ClientService, message.Get(), true));
+            builder.Append(Automation.GetSummary(message, true));
 
             if (message.AuthorSignature.Length > 0)
             {
