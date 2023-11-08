@@ -117,7 +117,7 @@
                                       Glyph="&#xE104;"
                                       Grid.Column="2" />
                 <controls:BadgeButton x:Name="Join"
-                                      Content="{CustomResource VoipGroupJoin}"
+                                      Content="{CustomResource ChannelJoin2}"
                                       Click="{x:Bind ViewModel.Join}"
                                       Style="{StaticResource GlyphGridBadgeButtonStyle}"
                                       Glyph="&#xE99B;"
