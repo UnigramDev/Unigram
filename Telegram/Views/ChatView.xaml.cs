@@ -922,7 +922,7 @@ namespace Telegram.Views
         {
             if (args.VirtualKey == VirtualKey.Delete)
             {
-                if (ViewModel.IsSelectionEnabled && ViewModel.SelectedItems.Count > 0)
+                if (ViewModel.IsSelectionEnabled && ViewModel.SelectedItems.Count > 0 && ViewModel.CanDeleteSelectedMessages)
                 {
                     ViewModel.DeleteSelectedMessages();
                     args.Handled = true;
@@ -930,17 +930,29 @@ namespace Telegram.Views
                 else
                 {
                     var focused = FocusManager.GetFocusedElement();
-                    if (focused is MessageSelector selector)
+                    if (focused is MessageSelector selector && MessageDelete_Loaded(selector.Message))
                     {
                         ViewModel.DeleteMessage(selector.Message);
                         args.Handled = true;
                     }
                 }
             }
-            else if (args.VirtualKey == VirtualKey.C && args.OnlyControl && ViewModel.IsSelectionEnabled && ViewModel.SelectedItems.Count > 0)
+            else if (args.VirtualKey == VirtualKey.C && args.OnlyControl)
             {
-                ViewModel.CopySelectedMessages();
-                args.Handled = true;
+                if (ViewModel.IsSelectionEnabled && ViewModel.SelectedItems.Count > 0 && ViewModel.CanCopySelectedMessage)
+                {
+                    ViewModel.CopySelectedMessages();
+                    args.Handled = true;
+                }
+                else
+                {
+                    var focused = FocusManager.GetFocusedElement();
+                    if (focused is MessageSelector selector && MessageCopy_Loaded(selector.Message))
+                    {
+                        ViewModel.CopyMessage(selector.Message);
+                        args.Handled = true;
+                    }
+                }
             }
             else if (args.VirtualKey == VirtualKey.R && args.RepeatCount == 1 && args.OnlyControl)
             {
