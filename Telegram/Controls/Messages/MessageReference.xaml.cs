@@ -362,7 +362,7 @@ namespace Telegram.Controls.Messages
                             player.IsEnabled = false;
 
                             var inline = new InlineUIContainer();
-                            inline.Child = new CustomEmojiContainer(Label, player);
+                            inline.Child = new CustomEmojiContainer(Label, player, 16);
 
                             MessageLabel.Inlines.Add(inline);
 

@@ -23,11 +23,13 @@ namespace Telegram.Controls
     {
         private readonly RichTextBlock _parent;
         private readonly CustomEmojiIcon _child;
+        private readonly int _baseline;
 
-        public CustomEmojiContainer(RichTextBlock parent, CustomEmojiIcon child)
+        public CustomEmojiContainer(RichTextBlock parent, CustomEmojiIcon child, int baseline = 0)
         {
             _parent = parent;
             _child = child;
+            _baseline = baseline;
 
             Children.Add(child);
 
@@ -47,7 +49,8 @@ namespace Telegram.Controls
                 var transform = TransformToVisual(_parent);
                 var point = transform.TransformPoint(new Point());
 
-                if (point.Y < -1 || point.X < 0)
+                // This is mostly heuristics, not sure it works in all scenarios.
+                if (point.Y <= _baseline || point.X < 0)
                 {
                     _child.Visibility = Visibility.Collapsed;
                     return;
