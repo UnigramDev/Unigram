@@ -53,6 +53,7 @@ namespace Telegram.Controls.Messages.Content
         private Run ContentLabel;
         private Border SmallPanel;
         private Image Texture;
+        private Grid MediaPanel;
         private Border Media;
         private Border Overlay;
         private TextBlock Subtitle;
@@ -70,6 +71,7 @@ namespace Telegram.Controls.Messages.Content
             ContentLabel = GetTemplateChild(nameof(ContentLabel)) as Run;
             SmallPanel = GetTemplateChild(nameof(SmallPanel)) as Border;
             Texture = GetTemplateChild(nameof(Texture)) as Image;
+            MediaPanel = GetTemplateChild(nameof(MediaPanel)) as Grid;
             Media = GetTemplateChild(nameof(Media)) as Border;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
@@ -113,7 +115,6 @@ namespace Telegram.Controls.Messages.Content
 
             UpdateWebPage(webPage, out bool empty);
             UpdateInstantView(webPage);
-            UpdateInstantView(webPage, _instantViewToken.Token);
 
             if (webPage.HasMedia())
             {
@@ -125,13 +126,15 @@ namespace Telegram.Controls.Messages.Content
                     OverflowArea.Margin = new Thickness(0, 0, 0, 8);
 
                     UpdateContent(message, webPage, empty);
+                    UpdateInstantView(webPage, _instantViewToken.Token);
                 }
                 else
                 {
                     SmallPanel.Visibility = Visibility.Visible;
                     Media.Visibility = Visibility.Collapsed;
-                    OverflowArea.Margin = new Thickness(0, 0, 0, 0);
+                    OverflowArea.Margin = new Thickness(0, 0, 0, 4);
 
+                    MediaPanel.Visibility = Visibility.Collapsed;
                     Media.Child = null;
 
                     UpdateManager.Subscribe(this, message, small.File, ref _fileToken, UpdateFile, true);
@@ -142,8 +145,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 SmallPanel.Visibility = Visibility.Collapsed;
                 Media.Visibility = Visibility.Collapsed;
-                OverflowArea.Margin = new Thickness(0, 0, 0, 0);
+                OverflowArea.Margin = new Thickness(0, 0, 0, 4);
 
+                MediaPanel.Visibility = Visibility.Collapsed;
                 Media.Child = null;
             }
 
@@ -228,6 +232,8 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateContent(MessageViewModel message, WebPage webPage, bool empty)
         {
+            MediaPanel.Visibility = Visibility.Visible;
+
             if (Media.Child is IContent media)
             {
                 if (media.IsValid(message.Content, false))
