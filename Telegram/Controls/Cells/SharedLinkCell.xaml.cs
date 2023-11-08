@@ -43,13 +43,13 @@ namespace Telegram.Controls.Cells
             var text = message.Content as MessageText;
 
             var links = new List<string>();
-            var hasThumb = false;
 
             string title = null;
             string description = null;
             string description2 = null;
             string webPageLink = null;
             bool webPageCached = false;
+            Thumbnail webPageThumbnail = null;
 
             var webPage = text?.WebPage;
             if (webPage != null)
@@ -64,8 +64,7 @@ namespace Telegram.Controls.Cells
                 description = string.IsNullOrEmpty(webPage.Description?.Text) ? null : webPage.Description?.Text;
                 webPageLink = webPage.Url;
                 webPageCached = webPage.InstantViewVersion != 0;
-
-                //hasThumb = webPage.HasPhoto && webPage.Photo is TLPhoto photo && photo.Thumb != null;
+                webPageThumbnail = webPage.GetThumbnail();
             }
 
             if (caption.Entities.Count > 0)
@@ -224,6 +223,8 @@ namespace Telegram.Controls.Cells
 
             LinksPanel.Children.Clear();
             LinksPanel.RowDefinitions.Clear();
+
+            Photo.Source = null;
 
             for (int i = 0; i < links.Count; i++)
             {

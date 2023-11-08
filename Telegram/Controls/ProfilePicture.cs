@@ -211,6 +211,10 @@ namespace Telegram.Controls
             {
                 SetChatPhoto(chatPhoto.ClientService, chatPhoto.Photo, chatPhoto.Side, false);
             }
+            else if (_parameters is StoryParameters story)
+            {
+                SetStory(story.ClientService, story.Story, story.Side, false);
+            }
         }
 
         #region MessageSender
@@ -308,7 +312,6 @@ namespace Telegram.Controls
         }
 
         #endregion
-
 
         #region Chat
 
