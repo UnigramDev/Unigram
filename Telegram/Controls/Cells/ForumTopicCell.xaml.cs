@@ -191,16 +191,6 @@ namespace Telegram.Controls.Cells
             var builder = new StringBuilder();
 
             {
-                //if (topic.Type is ForumTopicTypeSupergroup super && super.IsChannel)
-                //{
-                //    builder.Append(Strings.AccDescrChannel);
-                //}
-                //else
-                //{
-                //    builder.Append(Strings.AccDescrGroup);
-                //}
-
-                builder.Append(", ");
                 builder.Append(topic.Info.Name);
                 builder.Append(", ");
             }
@@ -228,7 +218,7 @@ namespace Telegram.Controls.Cells
             {
                 if (message.IsOutgoing)
                 {
-                    //if (!(topic.Type is ForumTopicTypePrivate priv && priv.UserId == fromUser?.Id) && !message.IsChannelPost)
+                    //if (!(chat.Type is ChatTypePrivate priv && priv.UserId == fromUser?.Id) && !message.IsChannelPost)
                     {
                         builder.Append(Strings.FromYou);
                         builder.Append(": ");

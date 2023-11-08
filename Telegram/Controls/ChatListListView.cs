@@ -469,12 +469,14 @@ namespace Telegram.Controls
 
         protected override string GetNameCore()
         {
-            if (_owner.ContentTemplateRoot is ChatCell cell)
+            var name = _owner.ContentTemplateRoot switch
             {
-                return cell.GetAutomationName() ?? base.GetNameCore();
-            }
+                ChatCell chat => chat.GetAutomationName(),
+                ForumTopicCell topic => topic.GetAutomationName(),
+                _ => null
+            };
 
-            return base.GetNameCore();
+            return name?? base.GetNameCore();
         }
     }
 }
