@@ -6,7 +6,6 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
@@ -151,7 +150,7 @@ namespace Telegram.ViewModels.Chats
 
             if (userId != 0 && userId != ClientService.Options.MyId)
             {
-                NavigationService.Navigate(typeof(ProfilePage), userId);
+                NavigationService.NavigateToUser(userId);
             }
             else if (userId == 0)
             {

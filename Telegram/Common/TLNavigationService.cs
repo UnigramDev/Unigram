@@ -139,15 +139,11 @@ namespace Telegram.Common
             await _viewService.OpenAsync(parameters);
         }
 
-        public async void NavigateToSender(MessageSender sender)
+        public void NavigateToSender(MessageSender sender)
         {
             if (sender is MessageSenderUser user)
             {
-                var response = await ClientService.SendAsync(new CreatePrivateChat(user.UserId, false));
-                if (response is Chat chat)
-                {
-                    Navigate(typeof(ProfilePage), chat.Id);
-                }
+                NavigateToUser(user.UserId);
             }
             else if (sender is MessageSenderChat chat)
             {
@@ -371,6 +367,22 @@ namespace Telegram.Common
             }
 
             NavigateToChat(chat, message, thread, accessToken, state, scheduled, force, createNewWindow);
+        }
+
+        public async void NavigateToUser(long userId)
+        {
+            if (_clientService.TryGetChatFromUser(userId, out Chat chat))
+            {
+                Navigate(typeof(ProfilePage), chat.Id);
+            }
+            else
+            {
+                var response = await _clientService.SendAsync(new CreatePrivateChat(userId, false));
+                if (response is Chat created)
+                {
+                    Navigate(typeof(ProfilePage), created.Id);
+                }
+            }
         }
 
         public async void NavigateToPasscode()
