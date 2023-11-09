@@ -1,15 +1,30 @@
-﻿using Telegram.Collections;
+﻿using System;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Views
 {
+    public class ItemContextRequestedEventArgs : EventArgs
+    {
+        public ItemContextRequestedEventArgs(object item, ContextRequestedEventArgs eventArgs)
+        {
+            Item = item;
+            EventArgs = eventArgs;
+        }
+
+        public object Item { get; }
+
+        public ContextRequestedEventArgs EventArgs { get; }
+    }
+
     public sealed partial class SearchChatsView : UserControl
     {
         private SearchChatsViewModel _viewModel;
@@ -21,6 +36,8 @@ namespace Telegram.Controls.Views
         }
 
         public event ItemClickEventHandler ItemClick;
+
+        public event TypedEventHandler<UIElement, ItemContextRequestedEventArgs> ItemContextRequested;
 
         public ListView Root => ScrollingHost;
 
@@ -148,6 +165,7 @@ namespace Telegram.Controls.Views
                 else
                 {
                     // TODO: forward ContextRequested event to parent
+                    ItemContextRequested?.Invoke(sender, new ItemContextRequestedEventArgs(result, args));
                 }
             }
         }

@@ -598,6 +598,7 @@
                                                    x:Load="False"
                                                    DataContext="{x:Bind ViewModel.SearchChats}"
                                                    ItemClick="ListView_ItemClick"
+                                                   ItemContextRequested="DialogsSearchPanel_ItemContextRequested"
                                                    Margin="0,72,0,0" />
                             <Grid x:Name="DialogsPanel">
                                 <Grid x:Name="ChatsPanel">
