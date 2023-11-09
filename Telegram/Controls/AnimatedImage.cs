@@ -96,7 +96,10 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            //Logger.Debug();
+            if (Parent == null)
+            {
+                return;
+            }
 
             _loaded++;
             Prepare();
@@ -107,7 +110,10 @@ namespace Telegram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            //Logger.Debug();
+            if (Parent != null)
+            {
+                return;
+            }
 
             _loaded--;
             Unload();
@@ -379,7 +385,7 @@ namespace Telegram.Controls
 
         private void Unload()
         {
-            if (_loaded <= 0 && _presenter != null)
+            if (_presenter != null && _loaded <= 0)
             {
                 _presenter.Unload(this, _state == PlayingState.Playing);
                 _presenter.LoopCompleted -= LoopCompleted;
