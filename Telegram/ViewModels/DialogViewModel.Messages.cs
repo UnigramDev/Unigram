@@ -66,7 +66,7 @@ namespace Telegram.ViewModels
             if (last != null)
             {
                 ReplyToMessage(last);
-                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions());
+                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions(false));
             }
         }
 
@@ -83,7 +83,7 @@ namespace Telegram.ViewModels
             if (last != null)
             {
                 ReplyToMessage(last);
-                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions());
+                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions(false));
             }
             else
             {
@@ -816,7 +816,7 @@ namespace Telegram.ViewModels
             if (last != null)
             {
                 EditMessage(last);
-                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions());
+                await HistoryField?.ScrollToItem(last, VerticalAlignment.Center, new MessageBubbleHighlightOptions(false));
             }
         }
 

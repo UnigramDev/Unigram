@@ -50,12 +50,14 @@ namespace Telegram.Controls.Messages
             Quote = quote;
         }
 
-        public MessageBubbleHighlightOptions()
+        public MessageBubbleHighlightOptions(bool moveFocus = true)
         {
-
+            MoveFocus = moveFocus;
         }
 
         public FormattedText Quote { get; }
+
+        public bool MoveFocus { get; }
     }
 
     public sealed class MessageBubble : Control
