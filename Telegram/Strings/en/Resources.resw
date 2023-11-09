@@ -133,6 +133,9 @@
   <data name="AccDescrExpandPanel" xml:space="preserve">
     <value>Expand panel</value>
   </data>
+  <data name="AccDescrFlip" xml:space="preserve">
+    <value>Flip</value>
+  </data>
   <data name="AccDescrForwarding" xml:space="preserve">
     <value>Forwarding from</value>
   </data>

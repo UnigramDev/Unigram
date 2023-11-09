@@ -4,21 +4,20 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
+using System.ComponentModel;
 using Windows.System;
-using Windows.UI.Core;
 
 namespace Telegram.Services.Keyboard
 {
-    public class InputKeyDownEventArgs : EventArgs
+    public class InputKeyDownEventArgs : HandledEventArgs
     {
-        public bool Handled { get; set; } = false;
         public bool AltKey { get; set; }
         public bool ControlKey { get; set; }
         public bool ShiftKey { get; set; }
         public VirtualKey VirtualKey { get; set; }
-        public AcceleratorKeyEventArgs EventArgs { get; set; }
         public bool WindowsKey { get; internal set; }
+
+        public uint RepeatCount { get; set; }
 
         public bool OnlyWindows => WindowsKey & !AltKey & !ControlKey & !ShiftKey;
         public bool OnlyAlt => !WindowsKey & AltKey & !ControlKey & !ShiftKey;
@@ -26,8 +25,6 @@ namespace Telegram.Services.Keyboard
         public bool OnlyShift => !WindowsKey & !AltKey & !ControlKey & ShiftKey;
 
         public bool OnlyKey => !WindowsKey && !AltKey && !ControlKey && !ShiftKey;
-
-        public uint RepeatCount => EventArgs.KeyStatus.RepeatCount;
 
         public override string ToString()
         {

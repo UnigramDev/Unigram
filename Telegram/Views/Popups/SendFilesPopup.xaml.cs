@@ -33,6 +33,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views.Popups
 {
@@ -724,6 +726,16 @@ namespace Telegram.Views.Popups
             var focused = FocusManager.GetFocusedElement();
             if (focused is null or (not TextBox and not RichEditBox and not Button and not MenuFlyoutItem))
             {
+                var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
+
+                foreach (var popup in popups)
+                {
+                    if (popup.Child is not SendFilesPopup and not Rectangle)
+                    {
+                        return;
+                    }
+                }
+
                 if (character == "\u0016" && CaptionInput.CanPasteClipboardContent)
                 {
                     CaptionInput.Focus(FocusState.Keyboard);
