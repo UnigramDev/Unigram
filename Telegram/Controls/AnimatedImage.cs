@@ -1522,11 +1522,6 @@ namespace Telegram.Controls
 
                 if (TryGetDelegate(work.CorrelationId, out var target))
                 {
-                    if (work.Presentation.Source.ReplacementColor != default)
-                    {
-                        animation.SetColor(work.Presentation.Source.ReplacementColor);
-                    }
-
                     target.Ready(new LottieAnimatedImageTask(animation, work.Presentation));
                 }
                 else
