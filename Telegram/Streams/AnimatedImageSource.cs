@@ -8,7 +8,6 @@ using RLottie;
 using System.Collections.Generic;
 using Telegram.Native;
 using Windows.Foundation.Metadata;
-using Windows.UI;
 
 namespace Telegram.Streams
 {
@@ -17,7 +16,7 @@ namespace Telegram.Streams
     {
         #region Properties
 
-        public Color ReplacementColor { get; set; }
+        public bool NeedsRepainting { get; set; }
 
         #endregion
 

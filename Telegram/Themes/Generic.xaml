@@ -987,6 +987,8 @@
 
     <Style TargetType="local:CustomEmojiIcon"
            BasedOn="{StaticResource DefaultAnimatedImageStyle}">
+        <Setter Property="ReplacementColor"
+                Value="{ThemeResource TelegramForegroundAccentBrush}" />
         <Setter Property="IsViewportAware"
                 Value="True" />
         <Setter Property="AutoPlay"
@@ -1014,6 +1016,14 @@
                 Value="{StaticResource BodyRichTextBlockStyle}" />
         <Setter Property="TextAlignment"
                 Value="DetectFromContent" />
+        <Setter Property="EmojiStyle">
+            <Setter.Value>
+                <Style TargetType="local:CustomEmojiIcon">
+                    <Setter Property="ReplacementColor"
+                            Value="{ThemeResource MessageForegroundBrush}" />
+                </Style>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:FormattedTextBlock">

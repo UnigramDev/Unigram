@@ -38,6 +38,9 @@ namespace Telegram.Streams
                     if (response is Stickers stickers && stickers.StickersValue.Count == 1)
                     {
                         _file = stickers.StickersValue[0].StickerValue;
+
+                        NeedsRepainting = stickers.StickersValue[0].FullType is StickerFullTypeCustomEmoji customEmoji
+                            && customEmoji.NeedsRepainting;
                     }
                 }
 

@@ -500,6 +500,7 @@ namespace Telegram.Controls
                             player.HorizontalAlignment = HorizontalAlignment.Left;
                             player.FlowDirection = FlowDirection.LeftToRight;
                             player.Margin = new Thickness(-20, -2, 0, -6);
+                            player.Style = EmojiStyle;
                             player.IsHitTestVisible = false;
                             player.IsEnabled = false;
 
@@ -887,6 +888,19 @@ namespace Telegram.Controls
 
         public static readonly DependencyProperty TextStyleProperty =
             DependencyProperty.Register("TextStyle", typeof(Style), typeof(FormattedTextBlock), new PropertyMetadata(null));
+
+        #endregion
+
+        #region EmojiStyle
+
+        public Style EmojiStyle
+        {
+            get { return (Style)GetValue(EmojiStyleProperty); }
+            set { SetValue(EmojiStyleProperty, value); }
+        }
+
+        public static readonly DependencyProperty EmojiStyleProperty =
+            DependencyProperty.Register("EmojiStyle", typeof(Style), typeof(FormattedTextBlock), new PropertyMetadata(null));
 
         #endregion
 

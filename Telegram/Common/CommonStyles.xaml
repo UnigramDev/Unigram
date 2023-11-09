@@ -3,6 +3,18 @@
                     xmlns:controls="using:Telegram.Controls"
                     xmlns:messages="using:Telegram.Controls.Messages">
 
+    <Style x:Name="MessageCustomEmojiStyle"
+           TargetType="controls:CustomEmojiIcon">
+        <Setter Property="ReplacementColor"
+                Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+    </Style>
+
+    <Style x:Name="InfoCustomEmojiStyle"
+           TargetType="controls:CustomEmojiIcon">
+        <Setter Property="ReplacementColor"
+                Value="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}" />
+    </Style>
+
     <Style x:Key="DefaultChatTextBoxStyle"
            TargetType="controls:FormattedTextBox">
         <Setter Property="MinWidth"

@@ -45,6 +45,16 @@ namespace Telegram.Controls.Messages
             {
                 _images[i].Source = source;
             }
+
+            if (_clean && source != null)
+            {
+                _clean = false;
+
+                if (ReplacementColor != null)
+                {
+                    ReplacementColorChanged();
+                }
+            }
         }
     }
 
@@ -356,14 +366,15 @@ namespace Telegram.Controls.Messages
 
                             var player = new CustomEmojiIcon();
                             player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
-                            player.Margin = new Thickness(0, -2, 0, -6);
-                            player.IsViewportAware = false;
-                            player.IsHitTestVisible = false;
-                            player.IsEnabled = false;
+                            player.Style = App.Current.Resources["MessageCustomEmojiStyle"] as Style;
 
                             var inline = new InlineUIContainer();
-                            inline.Child = new CustomEmojiContainer(Label, player, 16);
+                            inline.Child = new CustomEmojiContainer(Label, player, 14)
+                            {
+                                Margin = new Thickness(0, -2, 0, -6)
+                            };
 
+                            //MessageLabel.Inlines.Add(new Run { Text = "\U0001F921", FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
                             MessageLabel.Inlines.Add(inline);
 
                             previous = entity.Offset + entity.Length;

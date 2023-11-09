@@ -47,7 +47,8 @@
                                         DecodeFrameType="Logical"
                                         Width="32"
                                         Height="32"
-                                        Ready="Player_Ready" />
+                                        Ready="Player_Ready"
+                                        ReplacementColor="{ThemeResource TelegramForegroundAccentBrush}" />
             </Grid>
         </DataTemplate>
 
@@ -447,7 +448,8 @@
                                                             DecodeFrameType="Logical"
                                                             Ready="Toolbar_Ready"
                                                             Width="24"
-                                                            Height="24" />
+                                                            Height="24"
+                                                            ReplacementColor="{ThemeResource TelegramForegroundAccentBrush}" />
                                 </Grid>
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.ItemTemplate>

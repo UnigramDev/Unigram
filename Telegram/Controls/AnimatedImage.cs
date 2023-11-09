@@ -58,7 +58,7 @@ namespace Telegram.Controls
         private AnimatedImagePresenter _presenter;
         private int _suppressEvents;
 
-        private bool _clean = true;
+        protected bool _clean = true;
 
         public AnimatedImage()
         {
@@ -186,7 +186,7 @@ namespace Telegram.Controls
 
         private void OnEffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
         {
-            var within = args.BringIntoViewDistanceX == 0 || args.BringIntoViewDistanceY == 0;
+            var within = args.BringIntoViewDistanceX == 0 && args.BringIntoViewDistanceY == 0;
             if (within && !_withinViewport)
             {
                 _withinViewport = true;
@@ -503,7 +503,7 @@ namespace Telegram.Controls
             ReplacementColorChanged();
         }
 
-        private void ReplacementColorChanged()
+        protected void ReplacementColorChanged()
         {
             if (_needsBrushUpdate)
             {
@@ -523,9 +523,15 @@ namespace Telegram.Controls
                 return;
             }
             
-            if (ReplacementColor is not SolidColorBrush replacement)
+            if (ReplacementColor is not SolidColorBrush replacement || _presenter?.Presentation.Source.NeedsRepainting is not true)
             {
-                // TODO: reset
+                if (_effectFactory != null)
+                {
+                    LayoutRoot.Opacity = 1;
+                    ElementCompositionPreview.SetElementChildVisual(this, null);
+                }
+
+                _effectFactory = null;
                 return;
             }
 

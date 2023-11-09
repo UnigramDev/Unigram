@@ -23,7 +23,7 @@ namespace Telegram.Controls
     {
         private readonly RichTextBlock _parent;
         private readonly CustomEmojiIcon _child;
-        private readonly int _baseline;
+        private readonly double _baseline;
 
         public CustomEmojiContainer(RichTextBlock parent, CustomEmojiIcon child, int baseline = 0)
         {
@@ -31,7 +31,15 @@ namespace Telegram.Controls
             _child = child;
             _baseline = baseline;
 
+            child.IsViewportAware = false;
+            child.IsHitTestVisible = false;
+            child.IsEnabled = false;
+
             Children.Add(child);
+
+            HorizontalAlignment = HorizontalAlignment.Left;
+            FlowDirection = FlowDirection.LeftToRight;
+            Margin = new Thickness(-20, -2, 0, -6);
 
             EffectiveViewportChanged += OnEffectiveViewportChanged;
         }
@@ -40,7 +48,7 @@ namespace Telegram.Controls
 
         private void OnEffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
         {
-            var within = args.BringIntoViewDistanceX == 0 || args.BringIntoViewDistanceY == 0;
+            var within = args.BringIntoViewDistanceX == 0 && args.BringIntoViewDistanceY == 0;
             if (within && !_withinViewport)
             {
                 // TODO: performance here is a little concerning.
