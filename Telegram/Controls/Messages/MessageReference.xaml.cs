@@ -52,7 +52,7 @@ namespace Telegram.Controls.Messages
 
                 if (ReplacementColor != null)
                 {
-                    ReplacementColorChanged();
+                    ReplacementColorChanged(true);
                 }
             }
         }

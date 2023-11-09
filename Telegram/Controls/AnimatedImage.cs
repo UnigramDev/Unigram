@@ -414,7 +414,7 @@ namespace Telegram.Controls
 
                 if (ReplacementColor != null)
                 {
-                    ReplacementColorChanged();
+                    ReplacementColorChanged(true);
                 }
             }
         }
@@ -509,10 +509,15 @@ namespace Telegram.Controls
             ReplacementColorChanged();
         }
 
-        protected void ReplacementColorChanged()
+        protected void ReplacementColorChanged(bool fast = false)
         {
             if (_needsBrushUpdate)
             {
+                return;
+            }
+            else if (fast)
+            {
+                UpdateBrush();
                 return;
             }
 
