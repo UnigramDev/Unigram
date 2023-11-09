@@ -3035,16 +3035,12 @@ namespace Telegram.Views
 
         private void InlinePanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             _textShadowVisual.IsVisible = Math.Round(e.NewSize.Height) > ViewModel.Settings.Appearance.BubbleRadius
                 || ReplyMarkupPanel.Visibility == Visibility.Visible;
         }
 
         private void TextArea_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             _rootVisual.Size = e.NewSize.ToVector2();
         }
 
@@ -3254,15 +3250,10 @@ namespace Telegram.Views
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
-
         }
 
         private void ContentPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             if (ListInline != null)
             {
                 ListInline.MaxHeight = Math.Min(320, Math.Max(e.NewSize.Height - 48, 0));
@@ -3273,8 +3264,6 @@ namespace Telegram.Views
 
         private void DateHeaderPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             ElementCompositionPreview.GetElementVisual(sender as UIElement).CenterPoint = new Vector3((float)e.NewSize.Width / 2f, (float)e.NewSize.Height / 2f, 0);
         }
 

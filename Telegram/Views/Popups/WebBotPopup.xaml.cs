@@ -84,8 +84,6 @@ namespace Telegram.Views.Popups
 
         private void View_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             SendViewport();
         }
 

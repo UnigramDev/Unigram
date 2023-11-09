@@ -49,7 +49,6 @@ namespace Telegram.Controls
                 if (ActualWidth >= columnMinimalWidthLeft + columnMinimalWidthMain && dialogsWidthRatio == 0 && _allowCompact != value)
                 {
                     _allowCompact = value;
-                    Logger.Debug();
                     InvalidateMeasure();
                 }
                 else
@@ -69,8 +68,6 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var banner = Children[0];
             var detail = Children[1];
             var master = Children[2];
@@ -125,8 +122,6 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var banner = Children[0];
             var detail = Children[1];
             var master = Children[2];
@@ -267,7 +262,6 @@ namespace Telegram.Controls
             dialogsWidthRatio = gripWidthRatio;
             SettingsService.Current.DialogsWidthRatio = gripWidthRatio;
 
-            Logger.Debug();
             InvalidateMeasure();
 
             grip.ReleasePointerCapture(e.Pointer);

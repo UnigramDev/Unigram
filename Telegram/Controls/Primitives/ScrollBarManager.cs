@@ -25,7 +25,6 @@ namespace Telegram.Controls.Primitives
                     var scrollViewer = VisualTreeHelper.GetParent(parent3) as ScrollViewer;
                     if (scrollViewer != null)
                     {
-                        Logger.Debug();
                         GoToState(scrollViewer, "NoIndicator", true);
                     }
                 }

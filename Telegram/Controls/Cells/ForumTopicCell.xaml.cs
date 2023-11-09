@@ -1388,8 +1388,6 @@ namespace Telegram.Controls.Cells
     {
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var PhotoPanel = Children[0];
 
             var TypeIcon = Children[1];
@@ -1461,8 +1459,6 @@ namespace Telegram.Controls.Cells
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var PhotoPanel = Children[0];
 
             var TypeIcon = Children[1];

@@ -16,8 +16,6 @@ namespace Telegram.Common
     {
         private static void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             var triggers = GetTriggers(sender as ItemsControl);
 
             var reference = GetReference(triggers?.Owner);

@@ -178,7 +178,6 @@ namespace Telegram.Controls
             Canvas.SetZIndex(container, -index);
             _layoutRoot.Children.Insert(index, container);
 
-            Logger.Debug();
             InvalidateMeasure();
             AnimateAlignment();
 
@@ -226,7 +225,6 @@ namespace Telegram.Controls
                 _layoutRoot.Children.Insert(count, container);
             }
 
-            Logger.Debug();
             InvalidateMeasure();
             AnimateAlignment();
 
@@ -315,7 +313,6 @@ namespace Telegram.Controls
                     _toBeRemoved.Clear();
                 }
 
-                Logger.Debug();
                 InvalidateMeasure();
             };
 
@@ -427,8 +424,6 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var count = Math.Min(_maxCount, _items.Count);
             var width = count * (float)(_itemSize + 4) - ((count - 1) * _itemOverlap);
 
@@ -438,8 +433,6 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             return base.ArrangeOverride(finalSize);
         }
     }

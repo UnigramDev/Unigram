@@ -41,8 +41,6 @@ namespace Telegram.Controls.Messages.Content
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var album = _message?.Content as MessageAlbum;
             if (album == null || album.Messages.Count <= 1)
             {
@@ -76,8 +74,6 @@ namespace Telegram.Controls.Messages.Content
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var album = _message?.Content as MessageAlbum;
             if (album == null || album.Messages.Count <= 1)
             {

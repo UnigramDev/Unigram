@@ -278,8 +278,6 @@ namespace Telegram.Controls.Messages
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var totalMeasure = new Size();
             var parentMeasure = new Size(availableSize.Width, availableSize.Height);
             var lineMeasure = new Size(Padding.Left, 0);
@@ -343,8 +341,6 @@ namespace Telegram.Controls.Messages
         /// <inheritdoc />
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var parentMeasure = new Size(finalSize.Width, finalSize.Height);
             var position = new Size(Padding.Left, Padding.Top);
             var count = 1;

@@ -51,8 +51,6 @@ namespace Telegram.Controls.Chats
 
         private void ElapsedPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             var point = _elapsedVisual.Offset;
             point.X = (float)-e.NewSize.Width;
 
@@ -62,8 +60,6 @@ namespace Telegram.Controls.Chats
 
         private void SlidePanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             var point = _slideVisual.Offset;
             point.X = (float)e.NewSize.Width + 36;
 

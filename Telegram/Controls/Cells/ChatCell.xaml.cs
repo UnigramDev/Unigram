@@ -1579,8 +1579,6 @@ namespace Telegram.Controls.Cells
 
                         void handler(object sender, SizeChangedEventArgs args)
                         {
-                            Logger.Debug();
-
                             bubble.SizeChanged -= handler;
                             background.Width = args.NewSize.Width;
                             background.Height = args.NewSize.Height;

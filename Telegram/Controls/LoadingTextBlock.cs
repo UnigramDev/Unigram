@@ -144,7 +144,6 @@ namespace Telegram.Controls
                 return;
             }
 
-            Logger.Debug();
             InvalidateMeasure();
 
             await this.UpdateLayoutAsync();
@@ -241,8 +240,6 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             availableSize = base.MeasureOverride(availableSize);
 
             if (HorizontalAlignment != HorizontalAlignment.Stretch)
@@ -265,8 +262,6 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             finalSize = base.ArrangeOverride(finalSize);
 
             if (_placeholder.DesiredSize.Width == 0)
