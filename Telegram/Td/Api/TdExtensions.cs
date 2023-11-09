@@ -1237,7 +1237,14 @@ namespace Telegram.Td.Api
                 MessageVoiceNote voiceNote => voiceNote.Caption,
                 MessageBigEmoji bigEmoji => bigEmoji.Text,
                 MessageText text => text.Text,
-                MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, new TextEntity[0]),
+                MessageAnimatedEmoji animatedEmoji => animatedEmoji.AnimatedEmoji.Sticker?.FullType switch
+                {
+                    StickerFullTypeCustomEmoji customEmoji => new FormattedText(animatedEmoji.Emoji, new[]
+                    {
+                        new TextEntity(0, animatedEmoji.Emoji.Length, new TextEntityTypeCustomEmoji(customEmoji.CustomEmojiId))
+                    }),
+                    _ => new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>())
+                },
                 MessageInvoice invoice => invoice.ExtendedMedia switch
                 {
                     MessageExtendedMediaPreview preview => preview.Caption,
