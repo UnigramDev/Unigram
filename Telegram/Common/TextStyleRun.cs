@@ -342,7 +342,7 @@ namespace Telegram.Common
 
         public static StyledText GetText(FormattedText text)
         {
-            if (text == null)
+            if (string.IsNullOrEmpty(text?.Text))
             {
                 return null;
             }
@@ -383,6 +383,11 @@ namespace Telegram.Common
 
             int Break(int previous, int limit)
             {
+                if (limit - previous < 0)
+                {
+                    return previous;
+                }
+
                 var index = text.IndexOf('\n', previous, limit - previous);
 
                 while (index != -1)
