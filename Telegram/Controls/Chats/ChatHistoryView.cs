@@ -434,6 +434,7 @@ namespace Telegram.Controls.Chats
         private bool _operation;
         private SelectionDirection _direction;
 
+        private bool _raised;
         private bool _pressed;
         private Point _position;
 
@@ -443,6 +444,7 @@ namespace Telegram.Controls.Chats
         {
             if (args.TapCount == 2 && args.PointerDeviceType == PointerDeviceType.Mouse)
             {
+                _raised = true;
                 sender.CompleteGesture();
 
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(args.Position, this);
@@ -485,7 +487,8 @@ namespace Telegram.Controls.Chats
                 _recognizer.CompleteGesture();
             }
 
-            _pressed = true;
+            _pressed = !_raised;
+            _raised = false;
         }
 
         internal void OnPointerEntered(MessageSelector item, PointerRoutedEventArgs e)
