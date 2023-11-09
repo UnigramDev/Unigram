@@ -6745,6 +6745,8 @@
                 Value="Left" />
         <Setter Property="TextStyle"
                 Value="{StaticResource BodyTextBlockStyle}" />
+        <Setter Property="IsTabStop"
+                Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AnimatedTextBlock">
