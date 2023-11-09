@@ -146,12 +146,12 @@ namespace Telegram.Common
             return builder.ToString();
         }
 
-        public static string GetSummary(MessageWithOwner message, bool details = false)
+        public static string GetSummary(MessageWithOwner message, bool details = false, bool addCaption = true)
         {
-            return GetSummary(message.ClientService, message.Get(), details);
+            return GetSummary(message.ClientService, message.Get(), details, addCaption);
         }
 
-        public static string GetSummary(IClientService clientService, Message message, bool details = false)
+        public static string GetSummary(IClientService clientService, Message message, bool details = false, bool addCaption = true)
         {
             if (message.IsService() && clientService.TryGetChat(message.ChatId, out Chat chat))
             {
@@ -244,7 +244,7 @@ namespace Telegram.Common
 
             string GetCaption(string caption)
             {
-                return string.IsNullOrEmpty(caption) ? string.Empty : ", " + caption;
+                return !addCaption || string.IsNullOrEmpty(caption) ? string.Empty : ", " + caption;
             }
 
             if (message.Content is MessageVoiceNote voiceNote)
