@@ -508,6 +508,15 @@ namespace Telegram.Controls.Cells
 
             FromLabel.Text = UpdateFromLabel(chat, position, out bool draft);
 
+            if (draft)
+            {
+                FromLabel.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
+            }
+            else
+            {
+                FromLabel.ClearValue(TextBlock.ForegroundProperty);
+            }
+
             _dateLabel = UpdateTimeLabel(chat, position);
             _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, chat.DraftMessage, chat.LastMessage, chat.LastMessage?.SendingState);
             TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
@@ -1067,13 +1076,13 @@ namespace Telegram.Controls.Cells
 
                         var player = new CustomEmojiIcon();
                         player.Source = new CustomEmojiFileSource(_clientService, customEmoji.CustomEmojiId);
-                        player.Margin = new Thickness(0, -4, 0, -4);
-                        player.IsHitTestVisible = false;
+                        player.Style = BootStrapper.Current.Resources["InfoCustomEmojiStyle"] as Style;
 
                         var inline = new InlineUIContainer();
-                        inline.Child = player;
+                        inline.Child = new CustomEmojiContainer(BriefText, player);
 
                         BriefLabel.Inlines.Add(inline);
+                        BriefLabel.Inlines.Add("\u200D");
 
                         previous = entity.Offset + entity.Length;
                         hasCustomEmoji = true;
@@ -1291,6 +1300,10 @@ namespace Telegram.Controls.Cells
 
                 return new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>());
             }
+            else if (message.Content is MessagePremiumGiveaway)
+            {
+                return Text(Strings.BoostingGiveaway);
+            }
 
             return message.Content switch
             {
@@ -1341,7 +1354,7 @@ namespace Telegram.Controls.Cells
             {
                 if (message.IsSaved(clientService.Options.MyId))
                 {
-                    return string.Format(format, clientService.GetTitle(message.ForwardInfo));
+                    return string.Format(format, clientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo));
                 }
                 else if (message.IsOutgoing)
                 {
@@ -1566,8 +1579,6 @@ namespace Telegram.Controls.Cells
 
                         void handler(object sender, SizeChangedEventArgs args)
                         {
-                            Logger.Debug();
-
                             bubble.SizeChanged -= handler;
                             background.Width = args.NewSize.Width;
                             background.Height = args.NewSize.Height;
@@ -1706,11 +1717,10 @@ namespace Telegram.Controls.Cells
                 }
 
                 var service = WindowContext.Current.NavigationServices.GetByFrameId($"Main{_clientService.SessionId}") as NavigationService;
-                if (service != null)
+                service?.NavigateToChat(chat, state: new NavigationState
                 {
-                    App.DataPackages[chat.Id] = e.DataView;
-                    service.NavigateToChat(chat);
-                }
+                    { "package", e.DataView }
+                });
             }
             catch { }
 

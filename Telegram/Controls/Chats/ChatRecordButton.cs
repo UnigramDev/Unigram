@@ -336,7 +336,7 @@ namespace Telegram.Controls.Chats
 
                     var formatted = string.Format(message, ViewModel.Chat.Title);
                     var markdown = ClientEx.ParseMarkdown(formatted);
-                    Window.Current.ShowTeachingTip(this, markdown, TeachingTipPlacementMode.TopLeft, autoDismiss: true);
+                    Window.Current.ShowToast(this, markdown, TeachingTipPlacementMode.TopLeft, autoDismiss: true);
                     return;
                 }
 
@@ -419,7 +419,7 @@ namespace Telegram.Controls.Chats
                     ? Strings.HoldToVideo
                     : Strings.HoldToAudio;
 
-                Window.Current.ShowTeachingTip(this, message, TeachingTipPlacementMode.TopLeft, autoDismiss: true);
+                Window.Current.ShowToast(this, message, TeachingTipPlacementMode.TopLeft, autoDismiss: true);
             }
             else if (!_hasRecordVideo || _calledRecordRunnable)
             {

@@ -133,6 +133,9 @@
   <data name="AccDescrExpandPanel" xml:space="preserve">
     <value>Expand panel</value>
   </data>
+  <data name="AccDescrFlip" xml:space="preserve">
+    <value>Flip</value>
+  </data>
   <data name="AccDescrForwarding" xml:space="preserve">
     <value>Forwarding from</value>
   </data>
@@ -150,6 +153,9 @@
   </data>
   <data name="AccDescrHideAccounts" xml:space="preserve">
     <value>Hide accounts</value>
+  </data>
+  <data name="AccDescrLinkPreview" xml:space="preserve">
+    <value>Link Preview</value>
   </data>
   <data name="AccDescrMentionCount_one" xml:space="preserve">
     <value>{0} mention</value>
@@ -1378,6 +1384,18 @@ Please enable Unigram in the Startup Apps Settings.</value>
   <data name="Bold" xml:space="preserve">
     <value>Bold</value>
   </data>
+  <data name="BoldMonths_one" xml:space="preserve">
+    <value>**{0}** month</value>
+  </data>
+  <data name="BoldMonths_other" xml:space="preserve">
+    <value>**{0}** months</value>
+  </data>
+  <data name="BoldYears_one" xml:space="preserve">
+    <value>**{0}** year</value>
+  </data>
+  <data name="BoldYears_other" xml:space="preserve">
+    <value>**{0}** years</value>
+  </data>
   <data name="BoostChannel" xml:space="preserve">
     <value>Boost Channel</value>
   </data>
@@ -1390,8 +1408,237 @@ Please enable Unigram in the Startup Apps Settings.</value>
   <data name="BoostExpireOn" xml:space="preserve">
     <value>boost expires on {0}</value>
   </data>
+  <data name="BoostingCongratulations" xml:space="preserve">
+    <value>Congratulations!</value>
+  </data>
+  <data name="BoostingDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
   <data name="BoostingEnableStoriesForChannel" xml:space="preserve">
     <value>Enable Stories for The Channel</value>
+  </data>
+  <data name="BoostingFrom" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="BoostingGift" xml:space="preserve">
+    <value>Gift</value>
+  </data>
+  <data name="BoostingGiftLink" xml:space="preserve">
+    <value>Gift Link</value>
+  </data>
+  <data name="BoostingGiveaway" xml:space="preserve">
+    <value>Giveaway</value>
+  </data>
+  <data name="BoostingGiveAwayAbout" xml:space="preserve">
+    <value>About this giveaway</value>
+  </data>
+  <data name="BoostingGiveawayCanceledByPayment" xml:space="preserve">
+    <value>The channel cancelled the prizes by reversing the payment for them.</value>
+  </data>
+  <data name="BoostingGiveawayEnd" xml:space="preserve">
+    <value>Giveaway ended</value>
+  </data>
+  <data name="BoostingGiveAwayFromCountries" xml:space="preserve">
+    <value>from {0}</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubText_one" xml:space="preserve">
+    <value>On **{1}**, Telegram will automatically select **{2}** random user that joined **{3}**.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubText_other" xml:space="preserve">
+    <value>On **{1}**, Telegram will automatically select **{2}** random users that joined **{3}**.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextDate_one" xml:space="preserve">
+    <value>On **{1}**, Telegram will automatically select **{2}** random user that joined **{3}** after **{4}** on **{5}**.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextDate_other" xml:space="preserve">
+    <value>On **{1}**, Telegram will automatically select **{2}** random users that joined **{3}** after **{4}** on **{5}**.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextDateEnd_one" xml:space="preserve">
+    <value>On **{1}**, Telegram automatically selected **{2}** random user that joined **{3}** after **{4}** on **{5}**.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextDateEnd_other" xml:space="preserve">
+    <value>On **{1}**, Telegram automatically selected **{2}** random users that joined **{3}** after **{4}** on **{5}**.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextDateSeveral1_one" xml:space="preserve">
+    <value>On **{1}**, Telegram will automatically select **{2}** random user that joined **{3}** {4}.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextDateSeveral1_other" xml:space="preserve">
+    <value>On **{1}**, Telegram will automatically select **{2}** random users that joined **{3}** {4}.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextDateSeveral2_one" xml:space="preserve">
+    <value>and **{0}** other listed channel after **{1}** on **{2}**</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextDateSeveral2_other" xml:space="preserve">
+    <value>and **{0}** other listed channels after **{1}** on **{2}**</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextDateSeveralEnd1_one" xml:space="preserve">
+    <value>On **{1}**, Telegram automatically selected **{2}** random user that joined **{3}** {4}.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextDateSeveralEnd1_other" xml:space="preserve">
+    <value>On **{1}**, Telegram automatically selected **{2}** random users that joined **{3}** {4}.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextEnd_one" xml:space="preserve">
+    <value>On **{1}**, Telegram automatically selected **{2}** random user that joined **{3}**.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextEnd_other" xml:space="preserve">
+    <value>On **{1}**, Telegram automatically selected **{2}** random users that joined **{3}**.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextSeveral1_one" xml:space="preserve">
+    <value>On **{1}**, Telegram will automatically select **{2}** random user that joined **{3}** {4}.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextSeveral1_other" xml:space="preserve">
+    <value>On **{1}**, Telegram will automatically select **{2}** random users that joined **{3}** {4}.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextSeveral2_one" xml:space="preserve">
+    <value>and **{0}** other listed channel</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextSeveral2_other" xml:space="preserve">
+    <value>and **{0}** other listed channels</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextSeveralEnd1_one" xml:space="preserve">
+    <value>On **{1}**, Telegram automatically selected **{2}** random user that joined **{3}** {4}.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksSubTextSeveralEnd1_other" xml:space="preserve">
+    <value>On **{1}**, Telegram automatically selected **{2}** random users that joined **{3}** {4}.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksText_one" xml:space="preserve">
+    <value>This giveaway is sponsored by the admins of **{1}**, who acquired **{2} Telegram Premium** subscription for {3} for its followers.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksText_other" xml:space="preserve">
+    <value>This giveaway is sponsored by the admins of **{1}**, who acquired **{2} Telegram Premium** subscriptions for {3} for its followers.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksTextEnd_one" xml:space="preserve">
+    <value>This giveaway was sponsored by the admins of **{1}**, who acquired **{2} Telegram Premium** subscription for {3} for its followers.</value>
+  </data>
+  <data name="BoostingGiveawayHowItWorksTextEnd_other" xml:space="preserve">
+    <value>This giveaway was sponsored by the admins of **{1}**, who acquired **{2} Telegram Premium** subscriptions for {3} for its followers.</value>
+  </data>
+  <data name="BoostingGiveawayJustStarted" xml:space="preserve">
+    <value>{0} just started a giveaway of Telegram Premium subscriptions to its followers.</value>
+  </data>
+  <data name="BoostingGiveawayMsgAllSubsPlural_one" xml:space="preserve">
+    <value>All subscribers of the channel:</value>
+  </data>
+  <data name="BoostingGiveawayMsgAllSubsPlural_other" xml:space="preserve">
+    <value>All subscribers of the channels:</value>
+  </data>
+  <data name="BoostingGiveawayMsgInfo" xml:space="preserve">
+    <value>**{0}** Telegram Premium
+Subscription for {1}.</value>
+  </data>
+  <data name="BoostingGiveawayMsgNewSubsPlural_one" xml:space="preserve">
+    <value>New subscribers of the channel:</value>
+  </data>
+  <data name="BoostingGiveawayMsgNewSubsPlural_other" xml:space="preserve">
+    <value>New subscribers of the channels:</value>
+  </data>
+  <data name="BoostingGiveawayMsgParticipants" xml:space="preserve">
+    <value>**Participants**</value>
+  </data>
+  <data name="BoostingGiveawayNotEligible" xml:space="preserve">
+    <value>You are not eligible to participate in this giveaway, because you joined this channel on **{0}**, which is before the contest started.</value>
+  </data>
+  <data name="BoostingGiveawayNotEligibleAdmin" xml:space="preserve">
+    <value>You are not eligible to participate in this giveaway, because you are an admin of participating channel (**{0}**).</value>
+  </data>
+  <data name="BoostingGiveawayNotEligibleCountry" xml:space="preserve">
+    <value>You are not eligible to participate in this giveaway, because your country is not included in the terms of the giveaway.</value>
+  </data>
+  <data name="BoostingGiveawayParticipant" xml:space="preserve">
+    <value>You are participating in this giveaway, because you have joined channel **{0}**.</value>
+  </data>
+  <data name="BoostingGiveawayParticipantMultiPlural_one" xml:space="preserve">
+    <value>You are participating in this giveaway, because you have joined channel **{1}** (and **{0}** other listed channel).</value>
+  </data>
+  <data name="BoostingGiveawayParticipantMultiPlural_other" xml:space="preserve">
+    <value>You are participating in this giveaway, because you have joined channel **{1}** (and **{0}** other listed channels).</value>
+  </data>
+  <data name="BoostingGiveawayPrizes" xml:space="preserve">
+    <value>**Giveaway Prizes**</value>
+  </data>
+  <data name="BoostingGiveawayTakePart" xml:space="preserve">
+    <value>To take part in this giveaway please join channel **{0}** before **{1}**.</value>
+  </data>
+  <data name="BoostingGiveawayTakePartMultiPlural_one" xml:space="preserve">
+    <value>To take part in this giveaway please join channel **{1}** (and **{0}** other listed channel) before **{2}**.</value>
+  </data>
+  <data name="BoostingGiveawayTakePartMultiPlural_other" xml:space="preserve">
+    <value>To take part in this giveaway please join channel **{1}** (and **{0}** other listed channels) before **{2}**.</value>
+  </data>
+  <data name="BoostingGiveawayUsedLinksPlural_one" xml:space="preserve">
+    <value>**{0}** of the winners already used their gift links.</value>
+  </data>
+  <data name="BoostingGiveawayUsedLinksPlural_other" xml:space="preserve">
+    <value>**{0}** of the winners already used their gift links.</value>
+  </data>
+  <data name="BoostingGiveawayViewPrize" xml:space="preserve">
+    <value>View my prize</value>
+  </data>
+  <data name="BoostingGiveawayYouNotWon" xml:space="preserve">
+    <value>You didn&apos;t win a prize in this giveaway.</value>
+  </data>
+  <data name="BoostingGiveawayYouWon" xml:space="preserve">
+    <value>You won a prize in this giveaway 🏆</value>
+  </data>
+  <data name="BoostingHowItWork" xml:space="preserve">
+    <value>LEARN MORE</value>
+  </data>
+  <data name="BoostingLinkAllows" xml:space="preserve">
+    <value>This link allows you to activate
+a **Telegram Premium** subscription.</value>
+  </data>
+  <data name="BoostingLinkUsed" xml:space="preserve">
+    <value>This link was used to activate
+a **Telegram Premium** subscription.</value>
+  </data>
+  <data name="BoostingReason" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="BoostingReceivedGiftFrom" xml:space="preserve">
+    <value>You&apos;ve received a gift
+from **{0}**.</value>
+  </data>
+  <data name="BoostingReceivedGiftNoName" xml:space="preserve">
+    <value>You&apos;ve received a gift.</value>
+  </data>
+  <data name="BoostingReceivedGiftOpenBtn" xml:space="preserve">
+    <value>Open Gift Link</value>
+  </data>
+  <data name="BoostingReceivedPrizeDuration" xml:space="preserve">
+    <value>Your prize is a **Telegram Premium** subscription for {0}.</value>
+  </data>
+  <data name="BoostingReceivedPrizeFrom" xml:space="preserve">
+    <value>You won a prize in a giveaway organized by **{0}**.</value>
+  </data>
+  <data name="BoostingSendLinkToFriends" xml:space="preserve">
+    <value>You can also **send this link** to a friend as a gift.</value>
+  </data>
+  <data name="BoostingTelegramPremiumFor" xml:space="preserve">
+    <value>Telegram Premium for {0}</value>
+  </data>
+  <data name="BoostingTo" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="BoostingToBeDistributed" xml:space="preserve">
+    <value>To be distributed</value>
+  </data>
+  <data name="BoostingUnclaimed" xml:space="preserve">
+    <value>Unclaimed</value>
+  </data>
+  <data name="BoostingUsedGiftLink" xml:space="preserve">
+    <value>Used Gift Link</value>
+  </data>
+  <data name="BoostingUsedLinkDate" xml:space="preserve">
+    <value>This link was used on {0}.</value>
+  </data>
+  <data name="BoostingUseLink" xml:space="preserve">
+    <value>Use Link</value>
+  </data>
+  <data name="BoostingWinnersDate" xml:space="preserve">
+    <value>**Winners Selection Date**</value>
+  </data>
+  <data name="BoostingYouWereSelected" xml:space="preserve">
+    <value>You were selected by the channel</value>
   </data>
   <data name="BoostLinkButton" xml:space="preserve">
     <value>BOOST</value>
@@ -1400,7 +1647,7 @@ Please enable Unigram in the Startup Apps Settings.</value>
     <value>Boosts</value>
   </data>
   <data name="BoostsExisting" xml:space="preserve">
-    <value>Existing Boosts</value>
+    <value>Active Boosts</value>
   </data>
   <data name="BoostsLevel" xml:space="preserve">
     <value>Level {0}</value>
@@ -1627,13 +1874,13 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>{0} can join</value>
   </data>
   <data name="CantBoostTooOften" xml:space="preserve">
-    <value>Can’t boost too often!</value>
+    <value>Can&apos;t boost too often!</value>
   </data>
   <data name="CantBoostTooOftenDescription" xml:space="preserve">
-    <value>You can change the channel you boost only once a day. Next time you can boost is in **{0}.**</value>
+    <value>You can only change the channel you boost once a day. You will be able to boost in **{0}.**</value>
   </data>
   <data name="CantBoostWithGiftedPremium" xml:space="preserve">
-    <value>Can’t boost with gifted Premium!</value>
+    <value>Can&apos;t boost with gifted Premium!</value>
   </data>
   <data name="CantBoostWithGiftedPremiumDescription" xml:space="preserve">
     <value>Because your **Telegram Premium** subscription was gifted to you, you can’t use it to boost channels.</value>
@@ -1650,6 +1897,9 @@ It will be able to access your **IP address** and basic device info.</value>
   <data name="Change" xml:space="preserve">
     <value>Change</value>
   </data>
+  <data name="ChangeChatBackground" xml:space="preserve">
+    <value>Change Chat Background</value>
+  </data>
   <data name="ChangeColors" xml:space="preserve">
     <value>Change colors</value>
   </data>
@@ -1658,6 +1908,9 @@ It will be able to access your **IP address** and basic device info.</value>
   </data>
   <data name="ChangeEmojiStatus" xml:space="preserve">
     <value>Change Status</value>
+  </data>
+  <data name="ChangeNameColor" xml:space="preserve">
+    <value>Change Name Color</value>
   </data>
   <data name="ChangePasscode" xml:space="preserve">
     <value>Change Passcode</value>
@@ -1756,6 +2009,33 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   </data>
   <data name="ChannelCantSendMessage" xml:space="preserve">
     <value>Sorry, you can&apos;t send messages to this channel.</value>
+  </data>
+  <data name="ChannelColor" xml:space="preserve">
+    <value>Channel Color</value>
+  </data>
+  <data name="ChannelColorApplied" xml:space="preserve">
+    <value>Your channel color has been updated!</value>
+  </data>
+  <data name="ChannelColorApply" xml:space="preserve">
+    <value>Apply Color and Icon</value>
+  </data>
+  <data name="ChannelColorHint" xml:space="preserve">
+    <value>This color will be used for your channel&apos;s name, the links it sends, and replies to its messages.</value>
+  </data>
+  <data name="ChannelColorPreview" xml:space="preserve">
+    <value>The name of the channel and replies to its message will be shown in the selected color.</value>
+  </data>
+  <data name="ChannelColorPreviewLinkDescription" xml:space="preserve">
+    <value>Your selected color will also tint the link preview.</value>
+  </data>
+  <data name="ChannelColorPreviewLinkTitle" xml:space="preserve">
+    <value>Link Preview</value>
+  </data>
+  <data name="ChannelColorPreviewReply" xml:space="preserve">
+    <value>Reply to your channel message</value>
+  </data>
+  <data name="ChannelColorTitle" xml:space="preserve">
+    <value>Your Channel Color</value>
   </data>
   <data name="ChannelCreator" xml:space="preserve">
     <value>Owner</value>
@@ -1879,6 +2159,12 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   </data>
   <data name="ChannelRemoveUserAdmin" xml:space="preserve">
     <value>Dismiss admin</value>
+  </data>
+  <data name="ChannelReplyIcon" xml:space="preserve">
+    <value>Add Icons to Replies</value>
+  </data>
+  <data name="ChannelReplyIconHint" xml:space="preserve">
+    <value>Make replies to your messages stand out by adding custom icons to them.</value>
   </data>
   <data name="Channels_one" xml:space="preserve">
     <value>{0} channel</value>
@@ -2068,8 +2354,14 @@ Minimum length is 5 characters.</value>
   <data name="ChatThemeDisabledYou" xml:space="preserve">
     <value>You disabled the chat theme</value>
   </data>
+  <data name="ChatThemes" xml:space="preserve">
+    <value>Chat Themes</value>
+  </data>
   <data name="ChatVideo" xml:space="preserve">
     <value>Video</value>
+  </data>
+  <data name="ChatWallpaper" xml:space="preserve">
+    <value>Chat Wallpaper</value>
   </data>
   <data name="ChatYourSelf" xml:space="preserve">
     <value>forward here to save</value>
@@ -2211,6 +2503,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="ColorPickerMainColor" xml:space="preserve">
     <value>Accent Color</value>
+  </data>
+  <data name="ColorTheme" xml:space="preserve">
+    <value>Color theme</value>
   </data>
   <data name="ColorThemes" xml:space="preserve">
     <value>Color Themes</value>
@@ -2682,6 +2977,12 @@ Anyone from the channel will be able to see messages in this group.</value>
   <data name="Done" xml:space="preserve">
     <value>Done</value>
   </data>
+  <data name="DoNotLinkPreview" xml:space="preserve">
+    <value>Do Not Preview</value>
+  </data>
+  <data name="DoNotReply" xml:space="preserve">
+    <value>Do Not Reply</value>
+  </data>
   <data name="DoNotTranslate" xml:space="preserve">
     <value>Do Not Translate</value>
   </data>
@@ -3027,6 +3328,12 @@ Learn more at telegram.org</value>
   <data name="EventLogAllEvents" xml:space="preserve">
     <value>All actions</value>
   </data>
+  <data name="EventLogChangedColor" xml:space="preserve">
+    <value>un1 changed channel color from {0} to {1}</value>
+  </data>
+  <data name="EventLogChangedEmoji" xml:space="preserve">
+    <value>un1 changed channel emoji from {0} to {1}</value>
+  </data>
   <data name="EventLogChangedGroupLink" xml:space="preserve">
     <value>un1 changed the group link:</value>
   </data>
@@ -3080,6 +3387,9 @@ Learn more at telegram.org</value>
   </data>
   <data name="EventLogEditTopic" xml:space="preserve">
     <value>un1 changed topic name from un2 to un3</value>
+  </data>
+  <data name="EventLogEmojiNone" xml:space="preserve">
+    <value>none</value>
   </data>
   <data name="EventLogEndedLiveStream" xml:space="preserve">
     <value>un1 ended the live stream</value>
@@ -3169,13 +3479,13 @@ Learn more at telegram.org</value>
     <value>Delete messages</value>
   </data>
   <data name="EventLogPromotedDeleteStories" xml:space="preserve">
-    <value>Delete stories</value>
+    <value>Delete stories of others</value>
   </data>
   <data name="EventLogPromotedEditMessages" xml:space="preserve">
     <value>Edit messages</value>
   </data>
   <data name="EventLogPromotedEditStories" xml:space="preserve">
-    <value>Edit stories</value>
+    <value>Edit stories of others</value>
   </data>
   <data name="EventLogPromotedManageCall" xml:space="preserve">
     <value>Manage video chats</value>
@@ -3327,7 +3637,7 @@ Duration: {1}</value>
     <value>List of viewers becomes unavailable **24 hours** after the story expires.</value>
   </data>
   <data name="ExpiredViewsStubPremiumDescription" xml:space="preserve">
-    <value>To unlock viewer lists for expired and saved stories, subscribe to **Telegram Premium**.</value>
+    <value>To unlock viewer lists for expired and posted stories, subscribe to **Telegram Premium**.</value>
   </data>
   <data name="Fade" xml:space="preserve">
     <value>Fade</value>
@@ -3696,7 +4006,7 @@ Duration: {1}</value>
     <value>Gift Premium</value>
   </data>
   <data name="GiftPremiumListFeaturesAndTerms" xml:space="preserve">
-    <value>You can review the list of features and Terms of Use for Telegram Premium *here*.</value>
+    <value>You can review the list of features and more details about Telegram Premium *here*.</value>
   </data>
   <data name="GiftPremiumOptionDiscount" xml:space="preserve">
     <value>-{0}%</value>
@@ -4178,7 +4488,7 @@ You can change your language back at any time in Settings.</value>
 Upgrade to **Telegram Premium** to create up to **{1}**.</value>
   </data>
   <data name="LimitReachedFolderLinksLocked" xml:space="preserve">
-    <value>You can only create {0} invite links. This limit may increase in the future.</value>
+    <value>You can only create {0} invite links. This number may increase in the future.</value>
   </data>
   <data name="LimitReachedFolderLinksPremium" xml:space="preserve">
     <value>You can only create {0} invite links. Try deleting some folder invite links.</value>
@@ -4215,13 +4525,19 @@ Upgrade to **Telegram Premium** to create up to **{1}**.</value>
 Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   </data>
   <data name="LimitReachedSharedFoldersLocked" xml:space="preserve">
-    <value>You can only have {0} shareable folders. We are working to let you increase this limit in the future.</value>
+    <value>You can only have {0} shareable folders. This number may increase in the future.</value>
   </data>
   <data name="LimitReachedSharedFoldersPremium" xml:space="preserve">
-    <value>You can only have {0} shareable folders. Try deleting some shareable folder.</value>
+    <value>You can only have {0} shareable folders. Try deleting one of your shareable folders.</value>
+  </data>
+  <data name="LinkAbove" xml:space="preserve">
+    <value>Move Up</value>
   </data>
   <data name="LinkAvailable" xml:space="preserve">
     <value>{0} is available.</value>
+  </data>
+  <data name="LinkBelow" xml:space="preserve">
+    <value>Move Down</value>
   </data>
   <data name="LinkChecking" xml:space="preserve">
     <value>Checking name…</value>
@@ -4241,6 +4557,12 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   <data name="LinkInfo" xml:space="preserve">
     <value>Anyone who has Telegram installed will be able to join your group by following this link.</value>
   </data>
+  <data name="LinkMediaLarger" xml:space="preserve">
+    <value>Enlarge Photo</value>
+  </data>
+  <data name="LinkMediaSmaller" xml:space="preserve">
+    <value>Shrink Photo</value>
+  </data>
   <data name="LinkNotFound" xml:space="preserve">
     <value>Unfortunately, you can&apos;t access this message. You aren&apos;t a member of the chat where it was posted.</value>
   </data>
@@ -4252,6 +4574,12 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
   </data>
   <data name="LinksCreatedByOtherAdmins" xml:space="preserve">
     <value>Links created by other admins</value>
+  </data>
+  <data name="LinkVideoLarger" xml:space="preserve">
+    <value>Enlarge Video</value>
+  </data>
+  <data name="LinkVideoSmaller" xml:space="preserve">
+    <value>Shrink Video</value>
   </data>
   <data name="Listening" xml:space="preserve">
     <value>listening</value>
@@ -4543,6 +4871,12 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="MessageLifetimeYouRemoved" xml:space="preserve">
     <value>You disabled the self-destruct timer</value>
+  </data>
+  <data name="MessageOptionsReplySubtitle" xml:space="preserve">
+    <value>You can select a specific part to quote</value>
+  </data>
+  <data name="MessageOptionsReplyTitle" xml:space="preserve">
+    <value>Reply to Message</value>
   </data>
   <data name="MessagePlayed_one" xml:space="preserve">
     <value>Played</value>
@@ -5498,7 +5832,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Profile Badge</value>
   </data>
   <data name="PremiumPreviewProfileBadgeDescription" xml:space="preserve">
-    <value>A badge next to your name showing that you are helping support Telegram.</value>
+    <value>An exclusive badge next to your name showing that you subscribe to Telegram Premium.</value>
   </data>
   <data name="PremiumPreviewReactions2" xml:space="preserve">
     <value>Infinite Reactions</value>
@@ -5744,7 +6078,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Story Archive</value>
   </data>
   <data name="ProfileStoriesArchiveChannelHint" xml:space="preserve">
-    <value>Only admins can see archived stories unless you choose to post them to channel profile.</value>
+    <value>Only admins of the channel can see archived stories unless they are posted to the channel page.</value>
   </data>
   <data name="ProfileStoriesArchiveHint" xml:space="preserve">
     <value>Only you can see archived stories unless you choose to post them to your profile.</value>
@@ -5824,6 +6158,24 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="QuizPoll" xml:space="preserve">
     <value>Quiz</value>
   </data>
+  <data name="Quote" xml:space="preserve">
+    <value>Quote</value>
+  </data>
+  <data name="QuotePrivate" xml:space="preserve">
+    <value>This quote is from a private chat.</value>
+  </data>
+  <data name="QuotePrivateChannel" xml:space="preserve">
+    <value>This quote is from a private channel.</value>
+  </data>
+  <data name="QuotePrivateGroup" xml:space="preserve">
+    <value>This quote is from a private group.</value>
+  </data>
+  <data name="QuoteSelectedPart" xml:space="preserve">
+    <value>Quote Selected Part</value>
+  </data>
+  <data name="QuoteToAnotherChat" xml:space="preserve">
+    <value>Reply in Another Chat</value>
+  </data>
   <data name="Reacted_one" xml:space="preserve">
     <value>{0} Reacted</value>
   </data>
@@ -5896,6 +6248,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="RemovePublicPhoto" xml:space="preserve">
     <value>Remove Public Photo</value>
   </data>
+  <data name="RemoveQuote" xml:space="preserve">
+    <value>Remove Quote</value>
+  </data>
   <data name="Rename" xml:space="preserve">
     <value>Rename</value>
   </data>
@@ -5923,8 +6278,26 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="Reply" xml:space="preserve">
     <value>Reply</value>
   </data>
+  <data name="ReplyPrivate" xml:space="preserve">
+    <value>This reply is from a private chat.</value>
+  </data>
+  <data name="ReplyPrivateChannel" xml:space="preserve">
+    <value>This reply is from a private channel.</value>
+  </data>
+  <data name="ReplyPrivateGroup" xml:space="preserve">
+    <value>This reply is from a private group.</value>
+  </data>
   <data name="ReplyPrivately" xml:space="preserve">
     <value>Reply privately...</value>
+  </data>
+  <data name="ReplyTo" xml:space="preserve">
+    <value>Reply to {0}</value>
+  </data>
+  <data name="ReplyToAnotherChat" xml:space="preserve">
+    <value>Reply in Another Chat</value>
+  </data>
+  <data name="ReplyToQuote" xml:space="preserve">
+    <value>Reply to quote by {0}</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Report</value>
@@ -6537,6 +6910,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="ShowInChat" xml:space="preserve">
     <value>Show in chat</value>
   </data>
+  <data name="ShowInChat2" xml:space="preserve">
+    <value>Show in Chat</value>
+  </data>
   <data name="ShowInChats" xml:space="preserve">
     <value>Show in Chats</value>
   </data>
@@ -6688,6 +7064,9 @@ and enter your phone number.</value>
   <data name="StealthModeActiveHint" xml:space="preserve">
     <value>Stealth Mode active – {0}</value>
   </data>
+  <data name="StealthModeButton" xml:space="preserve">
+    <value>Hide My View</value>
+  </data>
   <data name="StealthModeHint" xml:space="preserve">
     <value>Turn Stealth Mode on to watch stories without appearing in the list of viewers.</value>
   </data>
@@ -6699,6 +7078,9 @@ and enter your phone number.</value>
   </data>
   <data name="StealthModePremiumHint" xml:space="preserve">
     <value>Subscribe to Telegram Premium to watch stories without appearing in the list of viewers.</value>
+  </data>
+  <data name="StealthModeTitle" xml:space="preserve">
+    <value>Stealth Mode</value>
   </data>
   <data name="Stickers_one" xml:space="preserve">
     <value>{0} sticker</value>
@@ -6761,7 +7143,7 @@ and enter your phone number.</value>
     <value>{0} stories</value>
   </data>
   <data name="StoriesMovedToContacts" xml:space="preserve">
-    <value>Stories of **{0}** were moved to **Archive**.</value>
+    <value>Stories of **{0}** were moved to the **Archive**.</value>
   </data>
   <data name="StoriesMovedToDialogs" xml:space="preserve">
     <value>Stories of **{0}** were moved to **Chats**.</value>
@@ -6969,7 +7351,7 @@ Here’s what is now unlocked.</value>
     <value>You are all set!</value>
   </data>
   <data name="TelegramPremiumSubtitle" xml:space="preserve">
-    <value>Go **beyond the limits**, get **exclusive features** and support us by subscribing to **Telegram Premium**.</value>
+    <value>Go **beyond the limits** and **unlock dozens of exclusive** features by subscribing to **Telegram Premium**.</value>
   </data>
   <data name="TelegramTones" xml:space="preserve">
     <value>Telegram tones</value>
@@ -7080,7 +7462,7 @@ Here’s what is now unlocked.</value>
     <value>View Once</value>
   </data>
   <data name="TimerPeriodPhotoKeep" xml:space="preserve">
-    <value>Photo will be kept.</value>
+    <value>Photo will be kept in chat.</value>
   </data>
   <data name="TimerPeriodPhotoSetOnce" xml:space="preserve">
     <value>Photo set to view once</value>
@@ -7095,7 +7477,7 @@ Here’s what is now unlocked.</value>
     <value>Video will be kept.</value>
   </data>
   <data name="TimerPeriodVideoSetOnce" xml:space="preserve">
-    <value>Video set to view once</value>
+    <value>Video set to view once.</value>
   </data>
   <data name="TimerPeriodVideoSetSeconds_one" xml:space="preserve">
     <value>Video will be deleted in **{0}** second after opening.</value>
@@ -7366,6 +7748,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="UnsupportedMedia" xml:space="preserve">
     <value>This message is not supported by your version of Telegram. Update the app to view: https://telegram.org/update</value>
   </data>
+  <data name="UnsupportedMessage" xml:space="preserve">
+    <value>This message is not supported by your version of Telegram. Update the app to view:</value>
+  </data>
   <data name="Unvote" xml:space="preserve">
     <value>Retract Vote</value>
   </data>
@@ -7468,6 +7853,36 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="UserBioInfo" xml:space="preserve">
     <value>You can add a few lines about yourself. Anyone who opens your profile will see this text.</value>
   </data>
+  <data name="UserColorApplied" xml:space="preserve">
+    <value>Your name color has been updated!</value>
+  </data>
+  <data name="UserColorApplyIcon" xml:space="preserve">
+    <value>Apply Color and Icon</value>
+  </data>
+  <data name="UserColorApplyPremium" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to choose a custom color for your name.</value>
+  </data>
+  <data name="UserColorHint" xml:space="preserve">
+    <value>This color will be used for your name, the links you send, and replies to your messages.</value>
+  </data>
+  <data name="UserColorPreview" xml:space="preserve">
+    <value>Your name and replies to your messages will be shown in the selected color.</value>
+  </data>
+  <data name="UserColorPreviewLinkDescription" xml:space="preserve">
+    <value>Your selected color will also tint the link preview.</value>
+  </data>
+  <data name="UserColorPreviewLinkTitle" xml:space="preserve">
+    <value>Link Preview</value>
+  </data>
+  <data name="UserColorPreviewReply" xml:space="preserve">
+    <value>Reply to your message</value>
+  </data>
+  <data name="UserColorPreviewTitle" xml:space="preserve">
+    <value>Color Preview</value>
+  </data>
+  <data name="UserColorTitle" xml:space="preserve">
+    <value>Your Name Color</value>
+  </data>
   <data name="Username" xml:space="preserve">
     <value>Username</value>
   </data>
@@ -7543,6 +7958,15 @@ However, it is currently available for purchase. **Learn more…**</value>
   </data>
   <data name="UsernamesProfileHelp" xml:space="preserve">
     <value>Drag and drop links to change the order in which they will be displayed on your info page.</value>
+  </data>
+  <data name="UserReplyIcon" xml:space="preserve">
+    <value>Add Icons to Replies</value>
+  </data>
+  <data name="UserReplyIconHint" xml:space="preserve">
+    <value>Make replies to your messages stand out by adding custom icons to them.</value>
+  </data>
+  <data name="UserReplyIconOff" xml:space="preserve">
+    <value>Off</value>
   </data>
   <data name="UserRestricted" xml:space="preserve">
     <value>Sorry, you are not allowed to do this.</value>
@@ -8099,6 +8523,9 @@ If you forget your password, you will lose access to your Telegram account. Ther
   </data>
   <data name="YourName" xml:space="preserve">
     <value>Your Name</value>
+  </data>
+  <data name="YourNameColor" xml:space="preserve">
+    <value>Your Name Color</value>
   </data>
   <data name="YourPhone" xml:space="preserve">
     <value>Your Phone</value>

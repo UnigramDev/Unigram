@@ -166,7 +166,7 @@ namespace Telegram.ViewModels
                 var field = HistoryField;
                 if (field != null)
                 {
-                    await field.ScrollToItem(already, VerticalAlignment.Bottom, false, int.MaxValue, ScrollIntoViewAlignment.Leading, true);
+                    await field.ScrollToItem(already, VerticalAlignment.Bottom, null, int.MaxValue, ScrollIntoViewAlignment.Leading, true);
                 }
             }
         }
@@ -242,7 +242,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, true, false, false, false, false, false, false, false, false, false, isChannel, false, false, chatEvent.Date, 0, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
+            return new Message(chatEvent.Id, sender, chatId, null, null, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, isChannel, false, false, chatEvent.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, null, null);
         }
 
         private MessageViewModel GetMessage(long chatId, bool isChannel, ChatEvent chatEvent, bool child = false)
@@ -303,6 +303,8 @@ namespace Telegram.ViewModels
                     case ChatEventForumTopicEdited:
                     case ChatEventForumTopicPinned:
                     case ChatEventForumTopicToggleIsClosed:
+                    case ChatEventAccentColorChanged:
+                    case ChatEventBackgroundCustomEmojiChanged:
                         message = GetMessage(_chat.Id, channel, item);
                         message.Content = new MessageChatEvent(item);
                         break;
@@ -371,7 +373,7 @@ namespace Telegram.ViewModels
                 var text = new FormattedText(descriptionChanged.NewDescription, new TextEntity[0]);
                 var webPage = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new WebPage { SiteName = Strings.EventLogPreviousGroupDescription, Description = new FormattedText { Text = descriptionChanged.OldDescription } };
 
-                return new MessageText(text, webPage);
+                return new MessageText(text, webPage, null);
             }
             else if (item.Action is ChatEventUsernameChanged usernameChanged)
             {
@@ -380,7 +382,7 @@ namespace Telegram.ViewModels
                 var text = new FormattedText(link, new[] { new TextEntity(0, link.Length, new TextEntityTypeUrl()) });
                 var webPage = string.IsNullOrEmpty(usernameChanged.OldUsername) ? null : new WebPage { SiteName = Strings.EventLogPreviousLink, Description = new FormattedText { Text = MeUrlPrefixConverter.Convert(ClientService, usernameChanged.OldUsername) } };
 
-                return new MessageText(text, webPage);
+                return new MessageText(text, webPage, null);
             }
             else if (item.Action is ChatEventPermissionsChanged permissionChanged)
             {
@@ -470,7 +472,7 @@ namespace Telegram.ViewModels
 
                 string text = rights.ToString();
 
-                return new MessageText(new FormattedText(text, entities), null);
+                return new MessageText(new FormattedText(text, entities), null, null);
             }
             else if (item.Action is ChatEventMemberRestricted memberRestricted)
             {
@@ -675,7 +677,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                return new MessageText(new FormattedText(text, entities), null);
+                return new MessageText(new FormattedText(text, entities), null, null);
             }
             else if (item.Action is ChatEventMemberPromoted memberPromoted)
             {
@@ -691,7 +693,7 @@ namespace Telegram.ViewModels
 
                 if (memberPromoted.NewStatus is ChatMemberStatusCreator)
                 {
-                    return new MessageText(new FormattedText(builder.ToString(), entities), null);
+                    return new MessageText(new FormattedText(builder.ToString(), entities), null, null);
                 }
 
                 ChatAdministratorRights o = null;
@@ -811,7 +813,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                return new MessageText(new FormattedText(builder.ToString(), entities), null);
+                return new MessageText(new FormattedText(builder.ToString(), entities), null, null);
             }
             else if (item.Action is ChatEventMessageDeleted messageDeleted)
             {

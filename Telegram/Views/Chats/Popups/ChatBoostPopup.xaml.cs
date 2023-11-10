@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
-using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Updates;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Chats.Popups
 {
@@ -21,9 +17,9 @@ namespace Telegram.Views.Chats.Popups
 
         private readonly Chat _chat;
         private readonly ChatBoostStatus _status;
-        private readonly CanBoostChatResult _result;
+        private readonly ChatBoostSlots _result;
 
-        public ChatBoostPopup(IClientService clientService, INavigationService navigationService, Chat chat, ChatBoostStatus status, CanBoostChatResult result)
+        public ChatBoostPopup(IClientService clientService, INavigationService navigationService, Chat chat, ChatBoostStatus status, ChatBoostSlots result)
         {
             InitializeComponent();
 
@@ -34,16 +30,13 @@ namespace Telegram.Views.Chats.Popups
             _status = status;
             _result = result;
 
-            Title = status.IsBoosted
+            Title = status.AppliedSlotIds.Count > 0
                 ? Strings.YouBoostedChannel
                 : status.Level == 0
                 ? Strings.BoostingEnableStoriesForChannel
                 : Strings.HelpUpgradeChannel;
 
-            ChatPhoto.Width = ChatPhoto.Height = 28;
-
-            ChatTitle.Text = chat.Title;
-            ChatPhoto.SetChat(clientService, chat, 28);
+            Pill.SetChat(clientService, chat);
             
             static string MoreBoosts(int count)
             {
@@ -57,32 +50,34 @@ namespace Telegram.Views.Chats.Popups
 
             TextBlockHelper.SetMarkdown(Description, status.Level == 0
                 ? string.Format(Strings.ChannelNeedBoostsDescriptionLevel1, MoreBoosts(status.NextLevelBoostCount - status.BoostCount))
-                : string.Format(Strings.ChannelNeedBoostsDescriptionLevelNext, MoreBoosts(status.NextLevelBoostCount - status.BoostCount), BoostStories(status.Level + 1)));
+                : string.Format(Strings.ChannelNeedBoostsDescriptionLevelNext.Replace("**{1}**", "{1}"), MoreBoosts(status.NextLevelBoostCount - status.BoostCount), BoostStories(status.Level + 1)));
 
-            var justReached = status.IsBoosted
+            var justReached = status.AppliedSlotIds.Count > 0
                 ? status.CurrentLevelBoostCount - status.BoostCount == 0
                 : status.NextLevelBoostCount - status.BoostCount == 1;
 
-            var nextLevel = status.IsBoosted ? status.Level : status.Level + 1;
+            var nextLevel = status.AppliedSlotIds.Count > 0
+                ? status.Level
+                : status.Level + 1;
 
             if (justReached)
             {
                 TextBlockHelper.SetMarkdown(DescriptionBoosted, status.Level == 0
                     ? Strings.ChannelBoostsJustReachedLevel1
-                    : string.Format(Strings.ChannelBoostsJustReachedLevelNext, nextLevel, BoostStories(nextLevel)));
+                    : string.Format(Strings.ChannelBoostsJustReachedLevelNext.Replace("**{1}**", "{1}"), nextLevel, BoostStories(nextLevel)));
             }
             else
             {
                 TextBlockHelper.SetMarkdown(DescriptionBoosted, status.Level == 0
-                    ? string.Format(Strings.ChannelNeedBoostsAlreadyBoostedDescriptionLevel1, MoreBoosts(status.NextLevelBoostCount - status.BoostCount - 1))
-                    : string.Format(Strings.ChannelNeedBoostsAlreadyBoostedDescriptionLevelNext, MoreBoosts(status.NextLevelBoostCount - status.BoostCount - 1), BoostStories(nextLevel)));
+                    ? string.Format(Strings.ChannelNeedBoostsAlreadyBoostedDescriptionLevel1.Replace("**{0}**", "{0}"), MoreBoosts(status.NextLevelBoostCount - status.BoostCount - 1))
+                    : string.Format(Strings.ChannelNeedBoostsAlreadyBoostedDescriptionLevelNext.Replace("**{1}**", "{1}"), MoreBoosts(status.NextLevelBoostCount - status.BoostCount - 1), BoostStories(nextLevel)));
             }
 
-            DescriptionBoosted.Opacity = status.IsBoosted ? 1 : 0;
-            Description.Opacity = status.IsBoosted ? 0 : 1;
+            DescriptionBoosted.Opacity = status.AppliedSlotIds.Count > 0 ? 1 : 0;
+            Description.Opacity = status.AppliedSlotIds.Count > 0 ? 0 : 1;
 
-            _alreadyBoostedCollapsed = !status.IsBoosted;
-            PurchaseCommand.Content = status.IsBoosted
+            _alreadyBoostedCollapsed = status.AppliedSlotIds.Count == 0;
+            PurchaseCommand.Content = status.AppliedSlotIds.Count > 0
                 ? Strings.OK
                 : Strings.BoostChannel;
 
@@ -90,7 +85,7 @@ namespace Telegram.Views.Chats.Popups
             Progress.Maximum = status.NextLevelBoostCount;
             Progress.Value = status.BoostCount;
 
-            if (justReached && status.IsBoosted)
+            if (justReached && status.AppliedSlotIds.Count > 0)
             {
                 Progress.Minimum = 0;
                 Progress.Maximum = status.BoostCount;
@@ -120,97 +115,97 @@ namespace Telegram.Views.Chats.Popups
 
         private async void Purchase_Click(object sender, RoutedEventArgs e)
         {
-            if (_alreadyBoostedCollapsed is false)
-            {
-                Hide();
-            }
-            else if (_result is CanBoostChatResultOk resultOk)
-            {
-                if (_clientService.TryGetChat(resultOk.CurrentlyBoostedChatId, out Chat currently))
-                {
-                    var panel = new Grid();
-                    panel.ColumnDefinitions.Add(new ColumnDefinition());
-                    panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-                    panel.ColumnDefinitions.Add(new ColumnDefinition());
-                    panel.RowDefinitions.Add(new RowDefinition());
-                    panel.RowDefinitions.Add(new RowDefinition());
+            //if (_alreadyBoostedCollapsed is false)
+            //{
+            //    Hide();
+            //}
+            //else if (_result is CanBoostChatResultOk resultOk)
+            //{
+            //    if (_clientService.TryGetChat(resultOk.CurrentlyBoostedChatId, out Chat currently))
+            //    {
+            //        var panel = new Grid();
+            //        panel.ColumnDefinitions.Add(new ColumnDefinition());
+            //        panel.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            //        panel.ColumnDefinitions.Add(new ColumnDefinition());
+            //        panel.RowDefinitions.Add(new RowDefinition());
+            //        panel.RowDefinitions.Add(new RowDefinition());
 
-                    var photo1 = new ProfilePicture
-                    {
-                        Width = 64,
-                        Height = 64,
-                        HorizontalAlignment = HorizontalAlignment.Right
-                    };
+            //        var photo1 = new ProfilePicture
+            //        {
+            //            Width = 64,
+            //            Height = 64,
+            //            HorizontalAlignment = HorizontalAlignment.Right
+            //        };
 
-                    var photo2 = new ProfilePicture
-                    {
-                        Width = 64,
-                        Height = 64,
-                        HorizontalAlignment = HorizontalAlignment.Left
-                    };
+            //        var photo2 = new ProfilePicture
+            //        {
+            //            Width = 64,
+            //            Height = 64,
+            //            HorizontalAlignment = HorizontalAlignment.Left
+            //        };
 
-                    photo1.SetChat(_clientService, currently, 64);
-                    photo2.SetChat(_clientService, _chat, 64);
+            //        photo1.SetChat(_clientService, currently, 64);
+            //        photo2.SetChat(_clientService, _chat, 64);
 
-                    var label = new TextBlock
-                    {
-                        TextWrapping = TextWrapping.Wrap,
-                        Margin = new Thickness(0, 16, 0, 0)
-                    };
+            //        var label = new TextBlock
+            //        {
+            //            TextWrapping = TextWrapping.Wrap,
+            //            Margin = new Thickness(0, 16, 0, 0)
+            //        };
 
-                    var chevron = new TextBlock
-                    {
-                        Text = "\uE0E3",
-                        Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush,
-                        FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily,
-                        FontSize = 28,
-                        VerticalAlignment = VerticalAlignment.Center
-                    };
+            //        var chevron = new TextBlock
+            //        {
+            //            Text = "\uE0E3",
+            //            Foreground = BootStrapper.Current.Resources["SystemControlDisabledChromeDisabledLowBrush"] as Brush,
+            //            FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily,
+            //            FontSize = 28,
+            //            VerticalAlignment = VerticalAlignment.Center
+            //        };
 
-                    TextBlockHelper.SetMarkdown(label, string.Format(Strings.ReplaceBoostChannelDescription, currently.Title, _chat.Title));
-                    Grid.SetColumnSpan(label, 3);
-                    Grid.SetRow(label, 1);
+            //        TextBlockHelper.SetMarkdown(label, string.Format(Strings.ReplaceBoostChannelDescription, currently.Title, _chat.Title));
+            //        Grid.SetColumnSpan(label, 3);
+            //        Grid.SetRow(label, 1);
 
-                    Grid.SetColumn(chevron, 1);
-                    Grid.SetColumn(photo2, 2);
+            //        Grid.SetColumn(chevron, 1);
+            //        Grid.SetColumn(photo2, 2);
 
-                    panel.Children.Add(photo1);
-                    panel.Children.Add(photo2);
-                    panel.Children.Add(label);
-                    panel.Children.Add(chevron);
+            //        panel.Children.Add(photo1);
+            //        panel.Children.Add(photo2);
+            //        panel.Children.Add(label);
+            //        panel.Children.Add(chevron);
 
-                    // Boost badge is missing
+            //        // Boost badge is missing
 
-                    var confirm = await MessagePopup.ShowAsync(target: null, panel, Strings.Replace, Strings.Cancel);
-                    if (confirm != ContentDialogResult.Primary)
-                    {
-                        return;
-                    }
+            //        var confirm = await MessagePopup.ShowAsync(target: null, panel, Strings.Replace, Strings.Cancel);
+            //        if (confirm != ContentDialogResult.Primary)
+            //        {
+            //            return;
+            //        }
 
-                    await Task.Delay(333);
-                }
+            //        await Task.Delay(333);
+            //    }
 
-                _clientService.Send(new BoostChat(_chat.Id));
-                ShowHideAlreadyBoosted(true);
-            }
-            else if (_result is CanBoostChatResultWaitNeeded resultWaitNeeded)
-            {
-                await MessagePopup.ShowAsync(target: null, string.Format(Strings.CantBoostTooOftenDescription, Locale.FormatCallDuration(resultWaitNeeded.RetryAfter)), Strings.CantBoostTooOften, Strings.OK);
-            }
-            else if (_result is CanBoostChatResultPremiumSubscriptionNeeded)
-            {
-                await MessagePopup.ShowAsync(target: null, Strings.CantBoostWithGiftedPremiumDescription, Strings.CantBoostWithGiftedPremium, Strings.OK);
-            }
-            else if (_result is CanBoostChatResultPremiumNeeded)
-            {
-                var confirm = await MessagePopup.ShowAsync(target: null, Strings.PremiumNeededForBoosting, Strings.PremiumNeeded, Strings.OK, Strings.Cancel);
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    Hide();
+            //    _clientService.Send(new BoostChat(_chat.Id));
+            //    ShowHideAlreadyBoosted(true);
+            //}
+            //else if (_result is CanBoostChatResultWaitNeeded resultWaitNeeded)
+            //{
+            //    await MessagePopup.ShowAsync(target: null, string.Format(Strings.CantBoostTooOftenDescription, Locale.FormatCallDuration(resultWaitNeeded.RetryAfter)), Strings.CantBoostTooOften, Strings.OK);
+            //}
+            //else if (_result is CanBoostChatResultPremiumSubscriptionNeeded)
+            //{
+            //    await MessagePopup.ShowAsync(target: null, Strings.CantBoostWithGiftedPremiumDescription, Strings.CantBoostWithGiftedPremium, Strings.OK);
+            //}
+            //else if (_result is CanBoostChatResultPremiumNeeded)
+            //{
+            //    var confirm = await MessagePopup.ShowAsync(target: null, Strings.PremiumNeededForBoosting, Strings.PremiumNeeded, Strings.OK, Strings.Cancel);
+            //    if (confirm == ContentDialogResult.Primary)
+            //    {
+            //        Hide();
 
-                    _navigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureChatBoost()));
-                }
-            }
+            //        _navigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureChatBoost()));
+            //    }
+            //}
         }
 
         private bool _alreadyBoostedCollapsed = true;

@@ -81,8 +81,6 @@ namespace Telegram.Controls.Chats
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             if (_hitTest != null && _requiresArrange)
             {
                 _hitTest.Size = finalSize.ToVector2();
@@ -217,7 +215,7 @@ namespace Telegram.Controls.Chats
         public void PrepareForItemOverride(MessageViewModel message, bool canReply)
         {
             var share = SettingsService.Current.SwipeToShare && message.CanBeForwarded;
-            var reply = SettingsService.Current.SwipeToReply && canReply && ContentTemplateRoot is MessageSelector;
+            var reply = SettingsService.Current.SwipeToReply && (canReply || message.CanBeRepliedInAnotherChat) && ContentTemplateRoot is MessageSelector;
 
             if (_tracker != null)
             {

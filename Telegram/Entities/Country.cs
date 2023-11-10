@@ -59,16 +59,20 @@ namespace Telegram.Entities
         static Country()
         {
             var keyed = new Dictionary<string, Country>();
+            var iso = new Dictionary<string, Country>();
 
             foreach (var country in All)
             {
                 keyed[country.PhoneCode] = country;
+                iso[country.Code] = country;
             }
 
             KeyedCountries = keyed;
+            Codes = iso;
         }
 
         public static readonly Dictionary<string, Country> KeyedCountries;
+        public static readonly Dictionary<string, Country> Codes;
 
         public static readonly IList<Country> All = new List<Country>
         {

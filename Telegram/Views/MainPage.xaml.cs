@@ -18,6 +18,7 @@ using Telegram.Controls.Cells;
 using Telegram.Controls.Gallery;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
+using Telegram.Controls.Views;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -2077,7 +2078,6 @@ namespace Telegram.Views
             button.IconSource = entry.Icon;
 
             var icon = button.Descendants<Microsoft.UI.Xaml.Controls.AnimatedIcon>().FirstOrDefault() as UIElement;
-            Logger.Debug();
             icon?.InvalidateMeasure();
 
             if (entry.Parent == null)
@@ -2301,7 +2301,7 @@ namespace Telegram.Views
 
                 if (((ViewModelBase)ViewModel).Settings.HideArchivedChats)
                 {
-                    Window.Current.ShowTeachingTip(Photo, Strings.ArchiveMoveToMainMenuInfo, TeachingTipPlacementMode.BottomRight);
+                    Window.Current.ShowToast(Photo, Strings.ArchiveMoveToMainMenuInfo, TeachingTipPlacementMode.BottomRight);
                 }
             }
 
@@ -2830,7 +2830,27 @@ namespace Telegram.Views
 
         #region Context menu
 
-        private async void Chat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+
+        private void DialogsSearchPanel_ItemContextRequested(UIElement sender, ItemContextRequestedEventArgs args)
+        {
+            if (args.Item is SearchResult result && result.Chat != null)
+            {
+                var element = sender as FrameworkElement;
+                var chat = result.Chat;
+
+                Chat_ContextRequested(chat, element, args.EventArgs, false);
+            }
+        }
+
+        private void Chat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var element = sender as FrameworkElement;
+            var chat = element.Tag as Chat;
+
+            Chat_ContextRequested(chat, sender, args, true);
+        }
+
+        private async void Chat_ContextRequested(Chat chat, UIElement sender, ContextRequestedEventArgs args, bool allowSelection)
         {
             var viewModel = ViewModel.Chats;
             if (viewModel == null)
@@ -2839,9 +2859,7 @@ namespace Telegram.Views
             }
 
             var flyout = new MenuFlyout();
-
             var element = sender as FrameworkElement;
-            var chat = element.Tag as Chat;
 
             var position = chat?.GetPosition(viewModel.Items.ChatList);
             if (position == null)
@@ -2936,8 +2954,12 @@ namespace Telegram.Views
             {
                 flyout.CreateFlyoutSeparator();
                 flyout.CreateFlyoutItem(viewModel.OpenChat, chat, Strings.OpenInNewWindow, Icons.WindowNew);
-                flyout.CreateFlyoutSeparator();
-                flyout.CreateFlyoutItem(viewModel.SelectChat, chat, Strings.Select, Icons.CheckmarkCircle);
+
+                if (allowSelection)
+                {
+                    flyout.CreateFlyoutSeparator();
+                    flyout.CreateFlyoutItem(viewModel.SelectChat, chat, Strings.Select, Icons.CheckmarkCircle);
+                }
             }
 
             args.ShowAt(flyout, element);
@@ -3239,8 +3261,6 @@ namespace Telegram.Views
 
         private void ChatList_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
             if (element == null)
             {
@@ -3256,8 +3276,6 @@ namespace Telegram.Views
 
         private void Banner_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             MasterDetail.BackgroundMargin = new Thickness(0, -e.NewSize.Height, 0, 0);
         }
 

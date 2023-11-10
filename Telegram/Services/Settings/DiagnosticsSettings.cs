@@ -14,13 +14,6 @@ namespace Telegram.Services.Settings
         {
         }
 
-        private bool? _disableRendering;
-        public bool DisableRendering
-        {
-            get => _disableRendering ??= GetValueOrDefault("DisableRendering", false);
-            set => AddOrUpdateValue(ref _disableRendering, "DisableRendering", value);
-        }
-
         private bool? _disableClipping;
         public bool DisableClipping
         {
@@ -117,6 +110,13 @@ namespace Telegram.Services.Settings
         {
             get => _showMemoryUsage ??= GetValueOrDefault("ShowMemoryUsage", false);
             set => AddOrUpdateValue(ref _showMemoryUsage, "ShowMemoryUsage", value);
+        }
+
+        private bool? _showIds;
+        public bool ShowIds
+        {
+            get => _showIds ??= GetValueOrDefault("ShowIds", false);
+            set => AddOrUpdateValue(ref _showIds, "ShowIds", value);
         }
 
         public bool IsLastErrorDiskFull { get; set; }

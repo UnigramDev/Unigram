@@ -334,8 +334,6 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, WindowSizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             //UpdateViewBase();
         }
 

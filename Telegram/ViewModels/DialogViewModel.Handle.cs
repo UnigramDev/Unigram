@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Messages;
@@ -781,7 +780,7 @@ namespace Telegram.ViewModels
                 {
                     bubble.UpdateMessage(message);
                     Delegate?.ViewVisibleMessages();
-                });
+                }, update.Message.Id);
 
                 if (Settings.Notifications.InAppSounds)
                 {
@@ -805,7 +804,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        private void Handle(long messageId, Func<MessageViewModel, bool> update, Action<MessageBubble, MessageViewModel> action = null)
+        private void Handle(long messageId, Func<MessageViewModel, bool> update, Action<MessageBubble, MessageViewModel> action = null, long? newMessageId = null)
         {
             BeginOnUIThread(() =>
             {
@@ -833,12 +832,23 @@ namespace Telegram.ViewModels
                             }
                         }
                     }
-                    else if (update == null || update(message))
+                    else
                     {
-                        // UpdateMessageSendSucceeded changes the message id
-                        if (action != null)
+                        // if this is coming from UpdateMessageSendSucceded,
+                        // but we already have a message with the new ID there was a race condition:
+                        // in this case we just delete the temporary message and that's it.
+                        if (newMessageId.HasValue && Items.TryGetValue(newMessageId.Value, out MessageViewModel duplicate))
                         {
-                            Delegate?.UpdateBubbleWithMessageId(messageId, bubble => action(bubble, message));
+                            Items.Remove(duplicate);
+                        }
+
+                        if (update == null || update(message))
+                        {
+                            // UpdateMessageSendSucceeded changes the message id
+                            if (action != null)
+                            {
+                                Delegate?.UpdateBubbleWithMessageId(messageId, bubble => action(bubble, message));
+                            }
                         }
                     }
 
@@ -899,7 +909,7 @@ namespace Telegram.ViewModels
             });
         }
 
-        private async void InsertMessage(Message message, long? oldMessageId = null)
+        private async void InsertMessage(Message message)
         {
             using (await _loadMoreLock.WaitAsync())
             {
@@ -914,15 +924,6 @@ namespace Telegram.ViewModels
 
                     if (result.Count > 0)
                     {
-                        if (oldMessageId != null)
-                        {
-                            var oldMessage = Items.FirstOrDefault(x => x.Id == oldMessageId);
-                            if (oldMessage != null)
-                            {
-                                Items.Remove(oldMessage);
-                            }
-                        }
-
                         InsertMessageInOrder(Items, result[0]);
                     }
                 }

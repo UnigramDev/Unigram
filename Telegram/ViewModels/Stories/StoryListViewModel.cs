@@ -103,11 +103,11 @@ namespace Telegram.ViewModels.Stories
 
             if (ClientService.TryGetUser(activeStories.Chat, out User user))
             {
-                Window.Current.ShowTeachingTip(string.Format(settings.MuteStories ? Strings.NotificationsStoryMutedHint : Strings.NotificationsStoryUnmutedHint, user.FirstName));
+                Window.Current.ShowToast(string.Format(settings.MuteStories ? Strings.NotificationsStoryMutedHint : Strings.NotificationsStoryUnmutedHint, user.FirstName));
             }
             else
             {
-                Window.Current.ShowTeachingTip(string.Format(settings.MuteStories ? Strings.NotificationsStoryMutedHint : Strings.NotificationsStoryUnmutedHint, activeStories.Chat.Title));
+                Window.Current.ShowToast(string.Format(settings.MuteStories ? Strings.NotificationsStoryMutedHint : Strings.NotificationsStoryUnmutedHint, activeStories.Chat.Title));
             }
         }
 
@@ -117,11 +117,11 @@ namespace Telegram.ViewModels.Stories
 
             if (ClientService.TryGetUser(activeStories.Chat, out User user))
             {
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToContacts, user.FirstName));
+                Window.Current.ShowToast(string.Format(Strings.StoriesMovedToContacts, user.FirstName));
             }
             else
             {
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToContacts, activeStories.Chat.Title));
+                Window.Current.ShowToast(string.Format(Strings.StoriesMovedToContacts, activeStories.Chat.Title));
             }
         }
 
@@ -131,11 +131,11 @@ namespace Telegram.ViewModels.Stories
 
             if (ClientService.TryGetUser(activeStories.Chat, out User user))
             {
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToDialogs, user.FirstName));
+                Window.Current.ShowToast(string.Format(Strings.StoriesMovedToDialogs, user.FirstName));
             }
             else
             {
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoriesMovedToDialogs, activeStories.Chat.Title));
+                Window.Current.ShowToast(string.Format(Strings.StoriesMovedToDialogs, activeStories.Chat.Title));
             }
         }
 
@@ -171,7 +171,7 @@ namespace Telegram.ViewModels.Stories
         {
             ClientService.Send(new ToggleStoryIsPinned(story.ChatId, story.StoryId, !story.IsPinned));
 
-            Window.Current.ShowTeachingTip(story.IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
+            Window.Current.ShowToast(story.IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }
 
         public async Task ReportStoryAsync(StoryViewModel story)

@@ -60,6 +60,11 @@ namespace Telegram.Services
         IOptionsService Options { get; }
         JsonValueObject Config { get; }
 
+        IDictionary<int, NameColor> AccentColors { get; }
+        IList<int> AvailableAccentColors { get; }
+
+        NameColor GetAccentColor(int id);
+
         ReactionType DefaultReaction { get; }
 
         IList<ChatFolderInfo> ChatFolders { get; }
@@ -81,7 +86,8 @@ namespace Telegram.Services
         ConnectionState ConnectionState { get; }
 
         string GetTitle(Chat chat, bool tiny = false);
-        string GetTitle(MessageForwardInfo info);
+        string GetTitle(long chatId, bool tiny = false);
+        string GetTitle(MessageOrigin origin, MessageImportInfo import);
 
         bool TryGetCachedReaction(string emoji, out EmojiReaction value);
         Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync();
@@ -539,6 +545,19 @@ namespace Telegram.Services
             }
         }
 
+        public IDictionary<int, NameColor> AccentColors { get; private set; }
+        public IList<int> AvailableAccentColors { get; private set; }
+
+        public NameColor GetAccentColor(int id)
+        {
+            if (AccentColors != null && AccentColors.TryGetValue(id, out var accentColor))
+            {
+                return accentColor;
+            }
+
+            return new NameColor(id);
+        }
+
         private void UpdateVersion()
         {
             if (_settings.UpdateVersion(out string previousVersion))
@@ -875,6 +894,16 @@ namespace Telegram.Services
             return _selectedBackground;
         }
 
+        public string GetTitle(long chatId, bool tiny = false)
+        {
+            if (_chats.TryGetValue(chatId, out var chat))
+            {
+                return GetTitle(chat, tiny);
+            }
+
+            return string.Empty;
+        }
+
         public string GetTitle(Chat chat, bool tiny = false)
         {
             if (chat == null)
@@ -906,27 +935,27 @@ namespace Telegram.Services
             return chat.Title;
         }
 
-        public string GetTitle(MessageForwardInfo info)
+        public string GetTitle(MessageOrigin origin, MessageImportInfo import)
         {
-            if (info?.Origin is MessageForwardOriginUser fromUser)
+            if (origin is MessageOriginUser fromUser)
             {
                 return GetUser(fromUser.SenderUserId)?.FullName();
             }
-            else if (info?.Origin is MessageForwardOriginChat fromChat)
+            else if (origin is MessageOriginChat fromChat)
             {
-                return GetTitle(GetChat(fromChat.SenderChatId));
+                return GetTitle(fromChat.SenderChatId);
             }
-            else if (info?.Origin is MessageForwardOriginChannel fromChannel)
+            else if (origin is MessageOriginChannel fromChannel)
             {
-                return GetTitle(GetChat(fromChannel.ChatId));
+                return GetTitle(fromChannel.ChatId);
             }
-            else if (info?.Origin is MessageForwardOriginMessageImport fromImport)
-            {
-                return fromImport.SenderName;
-            }
-            else if (info?.Origin is MessageForwardOriginHiddenUser fromHiddenUser)
+            else if (origin is MessageOriginHiddenUser fromHiddenUser)
             {
                 return fromHiddenUser.SenderName;
+            }
+            else if (import != null)
+            {
+                return import.SenderName;
             }
 
             return null;
@@ -1801,6 +1830,20 @@ namespace Telegram.Services
                     value.HasScheduledMessages = updateChatHasScheduledMessages.HasScheduledMessages;
                 }
             }
+            else if (update is UpdateChatAccentColor updateChatAccentColor)
+            {
+                if (_chats.TryGetValue(updateChatAccentColor.ChatId, out Chat value))
+                {
+                    value.AccentColorId = updateChatAccentColor.AccentColorId;
+                }
+            }
+            else if (update is UpdateChatBackgroundCustomEmoji updateChatBackgroundCustomEmoji)
+            {
+                if (_chats.TryGetValue(updateChatBackgroundCustomEmoji.ChatId, out Chat value))
+                {
+                    value.BackgroundCustomEmojiId = updateChatBackgroundCustomEmoji.BackgroundCustomEmojiId;
+                }
+            }
             else if (update is UpdateChatBlockList updateChatBlockList)
             {
                 if (_chats.TryGetValue(updateChatBlockList.ChatId, out Chat value))
@@ -2053,6 +2096,23 @@ namespace Telegram.Services
             else if (update is UpdateAttachmentMenuBots updateAttachmentMenuBots)
             {
                 _attachmentMenuBots = updateAttachmentMenuBots.Bots;
+            }
+            else if (update is UpdateAccentColors updateAccentColors)
+            {
+                var colors = new Dictionary<int, NameColor>();
+
+                for (int i = 0; i < 7; i++)
+                {
+                    colors[i] = new NameColor(i);
+                }
+
+                foreach (var color in updateAccentColors.Colors)
+                {
+                    colors[color.Id] = new NameColor(color);
+                }
+
+                AvailableAccentColors = updateAccentColors.AvailableAccentColorIds.ToList();
+                AccentColors = colors;
             }
 
             _aggregator.Publish(update);

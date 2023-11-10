@@ -145,11 +145,11 @@ namespace Telegram.Controls.Messages.Content
 
                     if (message.SelfDestructType is MessageSelfDestructTypeTimer timer)
                     {
-                        Subtitle.Text = Icons.ArrowClockwiseFilled12 + "\u2004\u200A" + Locale.FormatTtl(Math.Max(timer.SelfDestructTime, animation.Duration), true);
+                        Subtitle.Text = Icons.PlayFilled12 + "\u2004\u200A" + Locale.FormatTtl(Math.Max(timer.SelfDestructTime, animation.Duration), true);
                     }
                     else
                     {
-                        Subtitle.Text = Icons.PlayFilled12 + "\u2004\u200A1";
+                        Subtitle.Text = Icons.ArrowClockwiseFilled12 + "\u2004\u200A1";
                     }
 
                     Overlay.Opacity = 1;

@@ -913,7 +913,7 @@ namespace Telegram.Controls.Stories
 
                 if (story.Chat.Type is ChatTypePrivate && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
                 {
-                    flyout.CreateFlyoutItem(StealthStory, story, Strings.StealthMode, story.ClientService.IsPremium ? Icons.Stealth : Icons.StealthLocked);
+                    flyout.CreateFlyoutItem(StealthStory, story, Strings.StealthModeButton, story.ClientService.IsPremium ? Icons.Stealth : Icons.StealthLocked);
                 }
 
                 return;
@@ -941,7 +941,7 @@ namespace Telegram.Controls.Stories
 
             if (story.Chat.Type is ChatTypePrivate && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
             {
-                flyout.CreateFlyoutItem(StealthStory, story, Strings.StealthMode, story.ClientService.IsPremium ? Icons.Stealth : Icons.StealthLocked);
+                flyout.CreateFlyoutItem(StealthStory, story, Strings.StealthModeButton, story.ClientService.IsPremium ? Icons.Stealth : Icons.StealthLocked);
             }
 
             if (story.ClientService.TryGetUser(story.Chat, out User user) && user.HasActiveUsername(out _))
@@ -1015,7 +1015,7 @@ namespace Telegram.Controls.Stories
                 var text = Strings.StealthModeOn + Environment.NewLine + Strings.StealthModeOnHint;
                 var entity = new TextEntity(0, Strings.StealthModeOn.Length, new TextEntityTypeBold());
 
-                Window.Current.ShowTeachingTip(new FormattedText(text, new[] { entity }));
+                Window.Current.ShowToast(new FormattedText(text, new[] { entity }));
             }
             else if (story.ClientService.IsPremium)
             {
@@ -1067,7 +1067,7 @@ namespace Telegram.Controls.Stories
 
         public void ShowTeachingTip(FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight)
         {
-            var tip = Window.Current.ShowTeachingTip(target, text, icon, placement, ElementTheme.Dark);
+            var tip = Window.Current.ShowToast(target, text, icon, placement, ElementTheme.Dark);
             tip.Closing += TeachingTip_Closing;
             ActiveCard.Suspend(StoryPauseSource.TeachingTip);
         }

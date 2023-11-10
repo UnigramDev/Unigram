@@ -1,19 +1,24 @@
-﻿using RLottie;
+﻿using Microsoft.Graphics.Canvas.Effects;
+using RLottie;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls.Messages;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Streams;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.System;
+using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -53,7 +58,7 @@ namespace Telegram.Controls
         private AnimatedImagePresenter _presenter;
         private int _suppressEvents;
 
-        private bool _clean = true;
+        protected bool _clean = true;
 
         public AnimatedImage()
         {
@@ -80,7 +85,7 @@ namespace Telegram.Controls
             public void Dispose()
             {
                 --_owner._suppressEvents;
-                _owner.Prepare();
+                _owner.Load();
             }
         }
 
@@ -91,23 +96,28 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            //Logger.Debug();
-
             _loaded++;
-            Prepare();
-
-            XamlRoot.Changed -= OnRasterizationScaleChanged;
-            XamlRoot.Changed += OnRasterizationScaleChanged;
+            Changed();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            //Logger.Debug();
-
             _loaded--;
-            Unload();
+            Changed();
+        }
 
-            XamlRoot.Changed -= OnRasterizationScaleChanged;
+        private void Changed()
+        {
+            if (_loaded == 1)
+            {
+                Load();
+                XamlRoot.Changed += OnRasterizationScaleChanged;
+            }
+            else if (_loaded == 0)
+            {
+                Unload();
+                XamlRoot.Changed -= OnRasterizationScaleChanged;
+            }
         }
 
         public bool IsPlaying => _delayedPlay || _state == PlayingState.Playing;
@@ -181,7 +191,7 @@ namespace Telegram.Controls
 
         private void OnEffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
         {
-            var within = args.BringIntoViewDistanceX == 0 || args.BringIntoViewDistanceY == 0;
+            var within = args.BringIntoViewDistanceX == 0 && args.BringIntoViewDistanceY == 0;
             if (within && !_withinViewport)
             {
                 _withinViewport = true;
@@ -327,10 +337,10 @@ namespace Telegram.Controls
 
         private static void OnPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AnimatedImage)d).Prepare();
+            ((AnimatedImage)d).Load();
         }
 
-        private void Prepare()
+        private void Load()
         {
             if (_suppressEvents > 0)
             {
@@ -374,7 +384,7 @@ namespace Telegram.Controls
 
         private void Unload()
         {
-            if (_loaded <= 0 && _presenter != null)
+            if (_presenter != null && _loaded <= 0)
             {
                 _presenter.Unload(this, _state == PlayingState.Playing);
                 _presenter.LoopCompleted -= LoopCompleted;
@@ -390,7 +400,7 @@ namespace Telegram.Controls
             _state = PlayingState.Paused;
         }
 
-        public void Invalidate(ImageSource source)
+        public virtual void Invalidate(ImageSource source)
         {
             Canvas.ImageSource = source;
 
@@ -400,21 +410,33 @@ namespace Telegram.Controls
 
                 Ready?.Invoke(this, EventArgs.Empty);
                 ElementCompositionPreview.SetElementChildVisual(this, null);
+
+                if (ReplacementColor != null)
+                {
+                    ReplacementColorChanged(true);
+                }
             }
         }
 
         private ImageBrush Canvas;
+        private FrameworkElement LayoutRoot;
 
         protected override void OnApplyTemplate()
         {
             //Logger.Debug();
             Canvas = GetTemplateChild(nameof(Canvas)) as ImageBrush;
-            Canvas.Stretch = Stretch;
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as FrameworkElement;
+
+            if (Canvas != null)
+            {
+                Canvas.Stretch = Stretch;
+            }
 
             _templateApplied = true;
             _rasterizationScale = XamlRoot.RasterizationScale;
 
-            Prepare();
+            Load();
+            ReplacementColorChanged();
             base.OnApplyTemplate();
         }
 
@@ -423,7 +445,7 @@ namespace Telegram.Controls
             if (_rasterizationScale != sender.RasterizationScale && DecodeFrameType == DecodePixelType.Logical)
             {
                 _rasterizationScale = sender.RasterizationScale;
-                Prepare();
+                Load();
             }
         }
 
@@ -440,6 +462,149 @@ namespace Telegram.Controls
         void IPlayerView.Unload()
         {
             Pause();
+        }
+
+        #endregion
+
+        #region ReplacementColor
+
+        private bool _needsBrushUpdate;
+        private Color _replacementColor;
+        private long _replacementColorToken;
+        private CompositionEffectFactory _effectFactory;
+
+        // Implemented as Brush so that we can receive Color changed updates
+        public Brush ReplacementColor
+        {
+            get { return (Brush)GetValue(ReplacementColorProperty); }
+            set { SetValue(ReplacementColorProperty, value); }
+        }
+
+        public static readonly DependencyProperty ReplacementColorProperty =
+            DependencyProperty.Register("ReplacementColor", typeof(Brush), typeof(AnimatedImage), new PropertyMetadata(null, OnReplacementColorChanged));
+
+        private static void OnReplacementColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AnimatedImage)d).OnReplacementColorChanged(e.NewValue as SolidColorBrush, e.OldValue as SolidColorBrush);
+        }
+
+        private void OnReplacementColorChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
+        {
+            if (oldValue != null && _replacementColorToken != 0)
+            {
+                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _replacementColorToken);
+            }
+
+            if (newValue != null)
+            {
+                _replacementColorToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnReplacementColorChanged);
+            }
+
+            ReplacementColorChanged();
+        }
+
+        private void OnReplacementColorChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            ReplacementColorChanged();
+        }
+
+        protected void ReplacementColorChanged(bool fast = false)
+        {
+            if (_needsBrushUpdate)
+            {
+                return;
+            }
+            else if (fast)
+            {
+                UpdateBrush();
+                return;
+            }
+
+            _needsBrushUpdate = true;
+            VisualUtilities.QueueCallbackForCompositionRendering(UpdateBrush);
+        }
+
+        private void UpdateBrush()
+        {
+            _needsBrushUpdate = false;
+
+            if (LayoutRoot == null)
+            {
+                return;
+            }
+            
+            if (ReplacementColor is not SolidColorBrush replacement || _presenter?.Presentation.Source.NeedsRepainting is not true)
+            {
+                if (_effectFactory != null)
+                {
+                    LayoutRoot.Opacity = 1;
+                    ElementCompositionPreview.SetElementChildVisual(this, null);
+                }
+
+                _effectFactory = null;
+                return;
+            }
+
+            // This code mostly comes from MonochromaticOverlayPresenter
+
+            if (replacement.Color != _replacementColor)
+            {
+                _replacementColor = replacement.Color;
+                _effectFactory = null;
+            }
+
+            var compositor = Window.Current.Compositor;
+
+            if (_effectFactory == null)
+            {
+                // Build an effect that takes the source image and uses the alpha channel and replaces all other channels with
+                // the ReplacementColor's RGB.
+                var colorMatrixEffect = new ColorMatrixEffect();
+                colorMatrixEffect.Source = new CompositionEffectSourceParameter("source");
+                var colorMatrix = new Matrix5x4();
+
+                // If the ReplacementColor is not transparent then use the RGB values as the new color. Otherwise
+                // just show the target by using an Identity colorMatrix.
+                if (_replacementColor.A != 0)
+                {
+                    colorMatrix.M51 = (float)(_replacementColor.R / 255.0);
+                    colorMatrix.M52 = (float)(_replacementColor.G / 255.0);
+                    colorMatrix.M53 = (float)(_replacementColor.B / 255.0);
+                    colorMatrix.M44 = 1;
+                }
+                else
+                {
+                    colorMatrix.M11 = colorMatrix.M22 = colorMatrix.M33 = colorMatrix.M44 = 1;
+                }
+                colorMatrixEffect.ColorMatrix = colorMatrix;
+
+                _effectFactory = compositor.CreateEffectFactory(colorMatrixEffect);
+            }
+
+            var actualSize = this is MessageReferencePattern ? new Vector2(122, 55) : FrameSize.ToVector2();
+            var offset = Vector2.Zero;
+
+            // Create a VisualSurface positioned at the same location as this control and feed that
+            // through the color effect.
+            var surfaceBrush = compositor.CreateSurfaceBrush();
+            surfaceBrush.Stretch = CompositionStretch.None;
+            var surface = compositor.CreateVisualSurface();
+
+            // Select the source visual and the offset/size of this control in that element's space.
+            surface.SourceVisual = ElementCompositionPreview.GetElementVisual(LayoutRoot);
+            surface.SourceOffset = offset;
+            surface.SourceSize = actualSize;
+            surfaceBrush.Surface = surface;
+            surfaceBrush.Stretch = CompositionStretch.None;
+            var compBrush = _effectFactory.CreateBrush();
+            compBrush.SetSourceParameter("source", surfaceBrush);
+
+            var visual = compositor.CreateSpriteVisual();
+            visual.Size = actualSize;
+            visual.Brush = compBrush;
+
+            LayoutRoot.Opacity = 0;
+            ElementCompositionPreview.SetElementChildVisual(this, visual);
         }
 
         #endregion
@@ -1221,7 +1386,7 @@ namespace Telegram.Controls
             {
                 if (_rendering == null)
                 {
-                    CompositionTarget.Rendering += OnRendering;
+                    Windows.UI.Xaml.Media.CompositionTarget.Rendering += OnRendering;
                 }
 
                 _rendering += value;
@@ -1232,7 +1397,7 @@ namespace Telegram.Controls
 
                 if (_rendering == null)
                 {
-                    CompositionTarget.Rendering -= OnRendering;
+                    Windows.UI.Xaml.Media.CompositionTarget.Rendering -= OnRendering;
                 }
             }
         }
@@ -1367,11 +1532,6 @@ namespace Telegram.Controls
 
                 if (TryGetDelegate(work.CorrelationId, out var target))
                 {
-                    if (work.Presentation.Source.ReplacementColor != default)
-                    {
-                        animation.SetColor(work.Presentation.Source.ReplacementColor);
-                    }
-
                     target.Ready(new LottieAnimatedImageTask(animation, work.Presentation));
                 }
                 else

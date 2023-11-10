@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -170,6 +171,86 @@ namespace Telegram.Common
             return new Version(version.Major, version.Minor, version.Build, Constants.BuildNumber);
         }
 
+        public static int Shift(this TextPointer pointer)
+        {
+            var index = 0;
+            var emoji = false;
+
+            bool Inside(InlineCollection inlines)
+            {
+                foreach (var element in inlines)
+                {
+                    if (element.ElementStart.Offset <= pointer.Offset && element.ElementEnd.Offset > pointer.Offset)
+                    {
+                        if (element.ElementStart.Offset < pointer.Offset && element.ContentEnd.Offset > element.ContentStart.Offset)
+                        {
+                            index++;
+                        }
+                        else if (element.ContentEnd.Offset <= pointer.Offset)
+                        {
+                            index--;
+                        }
+
+                        return true;
+                    }
+
+                    index++;
+
+                    if (element is InlineUIContainer)
+                    {
+                        index -= 2;
+                        emoji = true;
+                    }
+                    else if (element is Run run && emoji)
+                    {
+                        index++;
+                        emoji = false;
+                    }
+
+                    if (element is Span span1)
+                    {
+                        if (Inside(span1.Inlines))
+                        {
+                            return true;
+                        }
+                    }
+
+                    index++;
+                }
+
+                return false;
+            }
+
+            if (pointer.VisualParent is RichTextBlock textBlock)
+            {
+                foreach (var block in textBlock.Blocks)
+                {
+                    index++;
+
+                    if (block == pointer.Parent && block.ContentStart.Offset == pointer.Offset)
+                    {
+                        break;
+                    }
+                    else if (block is Paragraph paragraph && Inside(paragraph.Inlines))
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return pointer.Offset - index;
+        }
+
+        public static void Prepend(this StringBuilder builder, string text, string prefix)
+        {
+            if (builder.Length > 0)
+            {
+                builder.Append(prefix);
+            }
+
+            builder.Append(text);
+        }
+
         public static void TryNotifyMutedChanged(this VoipCallCoordinator coordinator, bool muted)
         {
             try
@@ -221,42 +302,59 @@ namespace Telegram.Common
             }
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, string text, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
+        public static TeachingTip ShowToast(this Window app, PremiumFeature source)
         {
-            return ShowTeachingTip(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
+            var text = source switch
+            {
+                PremiumFeatureAccentColor => Strings.UserColorApplyPremium,
+                _ => Strings.UnlockPremium
+            };
+
+            var markdown = ClientEx.ParseMarkdown(text);
+            if (markdown.Entities.Count == 1)
+            {
+                // TODO: replace with link
+            }
+
+            return ShowToast(app, markdown);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, string text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
+        public static TeachingTip ShowToast(this Window app, string text, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            return ShowTeachingTip(app, null, ComposeViewModel.GetFormattedText(text), icon, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
+            return ShowToast(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
+        public static TeachingTip ShowToast(this Window app, string text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            return ShowTeachingTip(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
+            return ShowToast(app, null, ComposeViewModel.GetFormattedText(text), icon, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FormattedText text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
+        public static TeachingTip ShowToast(this Window app, FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            return ShowTeachingTip(app, null, text, icon, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
+            return ShowToast(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
+        public static TeachingTip ShowToast(this Window app, FormattedText text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            return ShowTeachingTip(app, target, text, null, placement, requestedTheme, autoDismiss);
+            return ShowToast(app, null, text, icon, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
+        public static TeachingTip ShowToast(this Window app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            return ShowTeachingTip(app, target, ComposeViewModel.GetFormattedText(text), icon, placement, requestedTheme, autoDismiss);
+            return ShowToast(app, target, text, null, placement, requestedTheme, autoDismiss);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
+        public static TeachingTip ShowToast(this Window app, FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            return ShowTeachingTip(app, target, text, null, placement, requestedTheme, autoDismiss);
+            return ShowToast(app, target, ComposeViewModel.GetFormattedText(text), icon, placement, requestedTheme, autoDismiss);
         }
 
-        public static TeachingTip ShowTeachingTip(this Window app, FrameworkElement target, FormattedText text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
+        public static TeachingTip ShowToast(this Window app, FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
+        {
+            return ShowToast(app, target, text, null, placement, requestedTheme, autoDismiss);
+        }
+
+        public static TeachingTip ShowToast(this Window app, FrameworkElement target, FormattedText text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
             var label = new TextBlock
             {
@@ -468,6 +566,14 @@ namespace Telegram.Common
             }
         }
 
+        public static void Add(this InlineCollection inline, string text)
+        {
+            inline.Add(new Run
+            {
+                Text = text
+            });
+        }
+
 
 
         public static uint GetHeight(this VideoProperties props)
@@ -658,6 +764,18 @@ namespace Telegram.Common
             int height = (int)(originalHeight * ratio);
 
             return new InputThumbnail(await file.ToGeneratedAsync(conversion, arguments), width, height);
+        }
+
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
+        {
+            HashSet<TKey> seenKeys = new();
+            foreach (TSource element in source)
+            {
+                if (seenKeys.Add(keySelector(element)))
+                {
+                    yield return element;
+                }
+            }
         }
 
         public static T RemoveLast<T>(this List<T> list)

@@ -246,14 +246,11 @@ namespace Telegram.Controls
                 ChangePartText(ref NextPart, nameof(NextPart), newValue, true);
             }
 
-            Logger.Debug();
             InvalidateMeasure();
         }
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             SizeChanged -= OnSizeChanged;
 
             var newSize = e.NewSize.ToVector2();
@@ -286,8 +283,6 @@ namespace Telegram.Controls
 
         public Size DoMeasure(Size availableSize)
         {
-            Logger.Debug();
-
             PrefixPart?.Measure(availableSize);
             SuffixPart?.Measure(availableSize);
             PrevPart?.Measure(availableSize);
@@ -318,8 +313,6 @@ namespace Telegram.Controls
 
         public Size DoArrange(Size finalSize)
         {
-            Logger.Debug();
-
             PrefixPart?.Arrange(new Rect(0, 0, PrefixPart.DesiredSize.Width, PrefixPart.DesiredSize.Height));
             var width = PrefixPart?.DesiredSize.Width ?? 0;
 

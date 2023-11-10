@@ -106,7 +106,6 @@ namespace Telegram.Controls
 
         private static void OnConstraintChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Logger.Debug();
             ((ImageView)d).InvalidateMeasure();
         }
 
@@ -114,8 +113,6 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             if (Constraint == null)
             {
                 return base.MeasureOverride(availableSize);

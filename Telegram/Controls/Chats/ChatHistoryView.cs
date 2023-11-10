@@ -113,7 +113,6 @@ namespace Telegram.Controls.Chats
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
             ViewChanging();
         }
 
@@ -261,7 +260,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        public async Task ScrollToItem(MessageViewModel item, VerticalAlignment alignment, bool highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
+        public async Task ScrollToItem(MessageViewModel item, VerticalAlignment alignment, MessageBubbleHighlightOptions highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
         {
             _raiseViewChanged = false;
 
@@ -313,20 +312,30 @@ namespace Telegram.Controls.Chats
                 }
             }
 
-            if (highlight)
+            if (highlight != null)
             {
                 var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault();
-                bubble?.Highlight();
+                bubble?.Highlight(highlight);
             }
 
             if (scrollViewer.VerticalOffset < scrollViewer.ScrollableHeight || position.Y < scrollViewer.ScrollableHeight)
             {
                 if (scrollViewer.VerticalOffset.AlmostEquals(position.Y))
                 {
+                    if (highlight == null || highlight.MoveFocus)
+                    {
+                        selectorItem.Focus(FocusState.Pointer);
+                    }
+
                     goto Exit;
                 }
 
                 await scrollViewer.ChangeViewAsync(null, position.Y, disableAnimation ?? alignment != VerticalAlignment.Center, false);
+            }
+
+            if (highlight == null || highlight.MoveFocus)
+            {
+                selectorItem.Focus(FocusState.Pointer);
             }
 
         Exit:
@@ -425,6 +434,7 @@ namespace Telegram.Controls.Chats
         private bool _operation;
         private SelectionDirection _direction;
 
+        private bool _raised;
         private bool _pressed;
         private Point _position;
 
@@ -434,6 +444,7 @@ namespace Telegram.Controls.Chats
         {
             if (args.TapCount == 2 && args.PointerDeviceType == PointerDeviceType.Mouse)
             {
+                _raised = true;
                 sender.CompleteGesture();
 
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(args.Position, this);
@@ -476,7 +487,8 @@ namespace Telegram.Controls.Chats
                 _recognizer.CompleteGesture();
             }
 
-            _pressed = true;
+            _pressed = !_raised;
+            _raised = false;
         }
 
         internal void OnPointerEntered(MessageSelector item, PointerRoutedEventArgs e)

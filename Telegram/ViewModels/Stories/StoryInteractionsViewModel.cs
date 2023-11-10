@@ -149,7 +149,7 @@ namespace Telegram.ViewModels
                 viewer.BlockList = new BlockListStories();
 
                 ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(user.Id), new BlockListStories()));
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoryHiddenHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                Window.Current.ShowToast(string.Format(Strings.StoryHiddenHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -160,7 +160,7 @@ namespace Telegram.ViewModels
                 viewer.BlockList = null;
 
                 ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(user.Id), null));
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoryShownHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                Window.Current.ShowToast(string.Format(Strings.StoryShownHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -171,7 +171,7 @@ namespace Telegram.ViewModels
                 viewer.BlockList = null;
 
                 ClientService.Send(new SetMessageSenderBlockList(new MessageSenderUser(user.Id), null));
-                Window.Current.ShowTeachingTip(string.Format(Strings.StoryShownHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                Window.Current.ShowToast(string.Format(Strings.StoryShownHint, user.FirstName), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 

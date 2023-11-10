@@ -214,7 +214,7 @@ namespace Telegram.Controls.Gallery
             this.BeginOnUIThread(() =>
             {
                 var viewModel = ViewModel;
-                if (viewModel != null && viewModel.SelectedItem is GalleryMessage message && message.Id == update.MessageId && message.ChatId == update.ChatId && update.NewContent is MessageExpiredPhoto or MessageExpiredVideo)
+                if (viewModel != null && viewModel.SelectedItem is GalleryMessage message && message.ChatId == update.ChatId && message.Id == update.MessageId && message.SelfDestructType is MessageSelfDestructTypeTimer)
                 {
                     OnBackRequestedOverride(this, new BackRequestedRoutedEventArgs());
                 }
@@ -613,6 +613,17 @@ namespace Telegram.Controls.Gallery
             return string.Format(Strings.Of, index, count);
         }
 
+        private Visibility ConvertCaption(FormattedText text)
+        {
+            if (string.IsNullOrEmpty(text?.Text))
+            {
+                return Visibility.Collapsed;
+            }
+
+            Caption.SetText(ViewModel.ClientService, text);
+            return Visibility.Visible;
+        }
+
         #endregion
 
         private GalleryContent _current;
@@ -768,8 +779,6 @@ namespace Telegram.Controls.Gallery
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             LayoutRoot.Width = finalSize.Width;
             LayoutRoot.Height = finalSize.Height - Padding.Top;
 

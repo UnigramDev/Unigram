@@ -7,7 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Controls;
+using Telegram.Services;
 using Telegram.Td.Api;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Td
 {
@@ -68,6 +71,51 @@ namespace Telegram.Td
             }
 
             return text;
+        }
+
+        public static FormattedText GetMarkdownText(string text)
+        {
+            return GetMarkdownText(new FormattedText(text, Array.Empty<TextEntity>()));
+        }
+
+        public static FormattedText GetMarkdownText(string text, IList<TextEntity> entities)
+        {
+            return GetMarkdownText(new FormattedText(text, entities));
+        }
+
+        public static FormattedText GetMarkdownText(FormattedText text)
+        {
+            var result = Client.Execute(new GetMarkdownText(text));
+            if (result is FormattedText formatted)
+            {
+                return formatted;
+            }
+
+            return text;
+        }
+
+        public static int SearchQuote(FormattedText text, FormattedText quote, int quotePosition)
+        {
+            var result = Client.Execute(new SearchQuote(text, quote, quotePosition));
+            if (result is FoundPosition position)
+            {
+                return position.Position;
+            }
+
+            return -1;
+        }
+
+
+
+        public static SolidColorBrush GetAccentBrush(this IClientService clientService, int id)
+        {
+            var accent = clientService.GetAccentColor(id);
+            if (accent != null)
+            {
+                return new SolidColorBrush(accent.LightThemeColors[0]);
+            }
+
+            return PlaceholderImage.GetBrush(id);
         }
     }
 }

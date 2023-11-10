@@ -206,12 +206,17 @@
     <Compile Include="Controls\ActiveStoriesSegments.cs" />
     <Compile Include="Controls\AnimatedImage.cs" />
     <Compile Include="Controls\BadgeControl.cs" />
+    <Compile Include="Controls\BlockQuote.cs" />
     <Compile Include="Controls\Cells\ActiveStoriesCell.xaml.cs">
       <DependentUpon>ActiveStoriesCell.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Cells\BoostCell.xaml.cs">
+      <DependentUpon>BoostCell.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Cells\StoryCell.xaml.cs">
       <DependentUpon>StoryCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ChatPill.cs" />
     <Compile Include="Controls\Chats\ChatHistoryArrows.xaml.cs">
       <DependentUpon>ChatHistoryArrows.xaml</DependentUpon>
     </Compile>
@@ -224,6 +229,7 @@
     <Compile Include="Controls\Contacts\ContactsSortedByHeader.xaml.cs">
       <DependentUpon>ContactsSortedByHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DashPath.cs" />
     <Compile Include="Controls\Gallery\GalleryCompactWindow.xaml.cs">
       <DependentUpon>GalleryCompactWindow.xaml</DependentUpon>
     </Compile>
@@ -235,6 +241,12 @@
     </Compile>
     <Compile Include="Controls\Gallery\GalleryWindow.xaml.cs">
       <DependentUpon>GalleryWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Messages\Content\UnsupportedContent.xaml.cs">
+      <DependentUpon>UnsupportedContent.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Messages\Content\PremiumGiveawayContent.xaml.cs">
+      <DependentUpon>PremiumGiveawayContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\ReactionsMenuFlyout.xaml.cs">
       <DependentUpon>ReactionsMenuFlyout.xaml</DependentUpon>
@@ -270,6 +282,7 @@
     <Compile Include="Streams\LocalFileSource.cs" />
     <Compile Include="Streams\RemoteFileSource.cs" />
     <Compile Include="Td\Api\MessageAsyncStory.cs" />
+    <Compile Include="Td\Api\NameColor.cs" />
     <Compile Include="Td\Api\UpdateChatSwitchInlineQuery.cs" />
     <Compile Include="Videolan\Platforms\Windows\InitializedEventArgs.cs" />
     <Compile Include="Videolan\Platforms\Windows\VideoView.cs" />
@@ -649,12 +662,8 @@
     <Compile Include="Controls\Messages\Content\VideoNoteContent.xaml.cs">
       <DependentUpon>VideoNoteContent.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Messages\Content\WebPageContentBase.cs" />
     <Compile Include="Controls\Messages\Content\WebPageContent.xaml.cs">
       <DependentUpon>WebPageContent.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\Messages\Content\WebPageSmallPhotoContent.xaml.cs">
-      <DependentUpon>WebPageSmallPhotoContent.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\IContent.cs" />
     <Compile Include="Controls\Messages\Content\VenueContent.xaml.cs">
@@ -1236,6 +1245,9 @@
     <Compile Include="Views\Premium\Popups\FeaturesPopup.xaml.cs">
       <DependentUpon>FeaturesPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Premium\Popups\GiftCodePopup.xaml.cs">
+      <DependentUpon>GiftCodePopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Premium\Popups\GiftPopup.xaml.cs">
       <DependentUpon>GiftPopup.xaml</DependentUpon>
     </Compile>
@@ -1269,6 +1281,9 @@
     <Compile Include="Views\Profile\ProfileTabPage.cs" />
     <Compile Include="Views\Profile\ProfileVoiceTabPage.xaml.cs">
       <DependentUpon>ProfileVoiceTabPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ChooseNameColorPopup.xaml.cs">
+      <DependentUpon>ChooseNameColorPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Stories\Popups\StoryInteractionsPopup.xaml.cs">
       <DependentUpon>StoryInteractionsPopup.xaml</DependentUpon>
@@ -1847,6 +1862,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Cells\BoostCell.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Cells\ProfileCell.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2011,6 +2030,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Messages\Content\UnsupportedContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Messages\Content\PremiumGiveawayContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Messages\Content\VideoStickerContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2108,10 +2135,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\Content\WebPageContent.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\Messages\Content\WebPageSmallPhotoContent.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2579,6 +2602,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Premium\Popups\GiftCodePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Premium\Popups\GiftPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2620,6 +2647,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Profile\ProfileVoiceTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ChooseNameColorPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2947,7 +2978,7 @@
       <Version>4.5.0</Version>
     </PackageReference>
     <PackageReference Include="Telegram.Td.UWP">
-      <Version>1.8.19</Version>
+      <Version>1.8.21</Version>
     </PackageReference>
     <PackageReference Include="VideoLAN.LibVLC.UWP">
       <Version>3.3.7</Version>

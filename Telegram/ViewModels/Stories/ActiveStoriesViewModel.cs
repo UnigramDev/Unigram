@@ -170,9 +170,9 @@ namespace Telegram.ViewModels.Stories
             //throw new NotImplementedException();
         }
 
-        protected override MessageReplyTo GetReply(bool clear, bool notify = true)
+        protected override InputMessageReplyTo GetReply(bool clear, bool notify = true)
         {
-            return new MessageReplyToStory(ChatId, SelectedItem.StoryId);
+            return new InputMessageReplyToStory(ChatId, SelectedItem.StoryId);
         }
 
         public override FormattedText GetFormattedText(bool clear)
@@ -187,7 +187,7 @@ namespace Telegram.ViewModels.Stories
 
         public override Task<MessageSendOptions> PickMessageSendOptionsAsync(bool? schedule = null, bool? silent = null, bool reorder = false)
         {
-            return Task.FromResult(new MessageSendOptions(silent ?? false, false, false, Settings.Stickers.DynamicPackOrder && reorder, null, 0));
+            return Task.FromResult(new MessageSendOptions(silent ?? false, false, false, Settings.Stickers.DynamicPackOrder && reorder, null, 0, false));
         }
 
         public void Handle(UpdateStory update)

@@ -70,7 +70,7 @@ namespace Telegram.Services.Keyboard
                 }
                 finally
                 {
-                    e.Handled = e.Handled;
+                    e.Handled = args.Handled;
                 }
             }
         }
@@ -98,8 +98,8 @@ namespace Telegram.Services.Keyboard
         {
             return new InputKeyDownEventArgs
             {
-                EventArgs = e,
                 VirtualKey = e.VirtualKey,
+                RepeatCount = e.KeyStatus.RepeatCount,
                 AltKey = WindowContext.IsKeyDown(VirtualKey.Menu),
                 ControlKey = WindowContext.IsKeyDown(VirtualKey.Control),
                 ShiftKey = WindowContext.IsKeyDown(VirtualKey.Shift),

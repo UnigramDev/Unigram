@@ -29,7 +29,9 @@ using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
@@ -40,10 +42,13 @@ namespace Telegram.Controls
 
         private bool _updateLocked;
         private bool _fromTextChanging;
+        private bool _undoGroup;
 
         private int _selectionIndex;
 
         public CustomEmojiCanvas CustomEmoji { get; set; }
+        private Grid Blocks;
+        private ScrollViewer ContentElement;
 
         public FormattedTextBox()
         {
@@ -52,6 +57,7 @@ namespace Telegram.Controls
             ClipboardCopyFormat = RichEditClipboardFormat.PlainText;
 
             Paste += OnPaste;
+            PreviewKeyDown += OnPreviewKeyDown;
 
             _proofingFlyout = new MenuFlyoutSubItem();
             _proofingFlyout.Text = Strings.Spelling;
@@ -98,11 +104,22 @@ namespace Telegram.Controls
         private void OnTextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
         {
             _fromTextChanging = true;
+
+            if (args.IsContentChanging)
+            {
+                UpdateFormat();
+            }
+            else if (_undoGroup)
+            {
+                _undoGroup = false;
+                Document.EndUndoGroup();
+            }
         }
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
         {
             UpdateCustomEmoji();
+            UpdateBlocks();
         }
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)
@@ -122,8 +139,6 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             if (double.IsNaN(Height))
             {
                 return;
@@ -134,8 +149,33 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
-            CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
             base.OnApplyTemplate();
+
+            CustomEmoji ??= GetTemplateChild(nameof(CustomEmoji)) as CustomEmojiCanvas;
+            Blocks = GetTemplateChild(nameof(Blocks)) as Grid;
+            ContentElement = GetTemplateChild(nameof(ContentElement)) as ScrollViewer;
+
+            if (Blocks == null)
+            {
+                return;
+            }
+
+            ElementCompositionPreview.SetIsTranslationEnabled(Blocks, true);
+
+            var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(ContentElement);
+            var visual = ElementCompositionPreview.GetElementVisual(Blocks);
+            //var wrap = ElementCompositionPreview.GetElementVisual(Wrap);
+
+            //wrap.Clip = visual.Compositor.CreateInsetClip();
+
+            var translation = visual.Compositor.CreateExpressionAnimation("scrollViewer.Translation.Y");
+            translation.SetReferenceParameter("scrollViewer", props);
+            visual.StartAnimation("Translation.Y", translation);
+
+            if (ContentElement.Content is FrameworkElement element)
+            {
+                element.SizeChanged += Element_SizeChanged;
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -300,6 +340,7 @@ namespace Telegram.Controls
                 Icon = MenuFlyoutHelper.CreateIcon(Icons.TextFont)
             };
 
+            formatting.CreateFlyoutItem(length, ToggleQuote, Strings.Quote, Icons.QuoteBlock);
             formatting.CreateFlyoutItem(length, ToggleBold, Strings.Bold, Icons.TextBold, VirtualKey.B);
             formatting.CreateFlyoutItem(length, ToggleItalic, Strings.Italic, Icons.TextItalic, VirtualKey.I);
             formatting.CreateFlyoutItem(length, ToggleUnderline, Strings.Underline, Icons.TextUnderline, VirtualKey.U);
@@ -343,6 +384,13 @@ namespace Telegram.Controls
             {
                 flyout.Items.Clear();
             }
+        }
+
+        public void ToggleQuote()
+        {
+            InsertBlockquote(Document.Selection);
+
+            _selectionFlyout.Update(Document.Selection.CharacterFormat);
         }
 
         public void ToggleBold()
@@ -760,6 +808,11 @@ namespace Telegram.Controls
                 var range = Document.GetRange(i, i + 1);
                 var flags = default(TextStyle);
 
+                if (range.ParagraphFormat.SpaceAfter != 0)
+                {
+                    flags = TextStyle.Quote;
+                }
+
                 if (range.Text == "￼")
                 {
                     range.GetText(TextGetOptions.UseObjectText, out string obj);
@@ -786,7 +839,7 @@ namespace Telegram.Controls
                 }
                 else if (string.Equals(range.CharacterFormat.Name, "Consolas", StringComparison.OrdinalIgnoreCase))
                 {
-                    flags = TextStyle.Monospace;
+                    flags |= TextStyle.Monospace;
                 }
                 else
                 {
@@ -975,7 +1028,11 @@ namespace Telegram.Controls
                     {
                         var range = Document.GetRange(entity.Offset - hidden, entity.Offset - hidden + entity.Length);
 
-                        if (entity.Type is TextEntityTypeBold)
+                        if (entity.Type is TextEntityTypeBlockQuote)
+                        {
+                            InsertBlockquote(range, false);
+                        }
+                        else if (entity.Type is TextEntityTypeBold)
                         {
                             range.CharacterFormat.Bold = FormatEffect.On;
                         }
@@ -1162,6 +1219,91 @@ namespace Telegram.Controls
             range.InsertImage(20, 18, 0, VerticalCharacterAlignment.Top, $"{emoji};{customEmojiId}", stream);
         }
 
+        public void InsertBlockquote(string quote)
+        {
+            Document.Selection.SetText(TextSetOptions.None, quote);
+            InsertBlockquote(Document.Selection);
+        }
+
+        public void InsertBlockquote(ITextRange textRange, bool batch = true)
+        {
+            var start = textRange.StartPosition;
+            var end = textRange.EndPosition;
+
+            if (batch)
+            {
+                Document.BeginUndoGroup();
+                //Document.BatchDisplayUpdates();
+            }
+
+            var range = Document.GetRange(start, end);
+            var moveStart = range.StartOf(TextRangeUnit.Paragraph, true);
+            var moveEnd = range.EndOf(TextRangeUnit.Paragraph, true);
+
+            if (moveEnd != 0 && moveEnd != 1)
+            {
+                range.SetRange(end, end);
+                range.SetText(TextSetOptions.None, "\r");
+            }
+            else
+            {
+                range.SetRange(range.EndPosition - 1, range.EndPosition);
+                range.Character = '\r';
+
+                end -= (1 - moveEnd);
+            }
+
+            if (moveStart != 0 || (textRange.Length == 0 && moveStart != 0 && (moveEnd == 0 || moveEnd == 1)))
+            {
+                range.SetRange(start, start);
+                range.SetText(TextSetOptions.None, "\r");
+
+                if (moveStart != 0)
+                {
+                    start++;
+                }
+
+                end++;
+            }
+            else if (start > 0)
+            {
+                range.SetRange(start - 1, start);
+                range.Character = '\r';
+            }
+
+            // Not sure about what's the logic exactly, but 14pt in XAML equals to 10.5pt in TOM.
+
+            float magic = 0.75f;
+
+            range.SetRange(start, Math.Max(start + 1, end));
+            range.CharacterFormat.Size = 12 * magic;
+            range.ParagraphFormat.SpaceBefore = 6 * magic;
+            range.ParagraphFormat.SpaceAfter = 8 * magic;
+            range.ParagraphFormat.SetIndents(0, 8 * magic, 24 * magic);
+
+            MergeParagraphs(range);
+
+            if (batch)
+            {
+                Document.Selection.SetRange(end, end);
+
+                //Document.ApplyDisplayUpdates();
+                Document.EndUndoGroup();
+            }
+        }
+
+        private void MergeParagraphs(ITextRange range)
+        {
+            ITextRange searchRange = Document.GetRange(range.StartPosition + 1, range.EndPosition - 1);
+            while (searchRange.FindText("\r", range.Length, FindOptions.None) > 0 && searchRange.EndPosition < range.EndPosition)
+            {
+                if (searchRange.StartPosition > range.StartPosition)
+                {
+                    searchRange.Character = '\v';
+                }
+            }
+        }
+
         private void UpdateCustomEmoji()
         {
             if (_updateLocked)
@@ -1204,6 +1346,207 @@ namespace Telegram.Controls
             if (CustomEmoji != null && DataContext is ViewModelBase viewModel)
             {
                 CustomEmoji.UpdateEntities(viewModel.ClientService, positions);
+            }
+        }
+
+        private void UpdateFormat()
+        {
+            var range = Document.GetRange(0, 0);
+
+            do
+            {
+                if (range.MoveEnd(TextRangeUnit.CharacterFormat, 1) <= 0)
+                {
+                    break;
+                }
+
+                if (range.ParagraphFormat.SpaceAfter != 0 && range.CharacterFormat.Size != 9)
+                {
+                    _undoGroup = true;
+                    Document.BeginUndoGroup();
+
+                    range.CharacterFormat.Size = 9;
+                }
+                else if (range.ParagraphFormat.SpaceAfter == 0 && range.CharacterFormat.Size != 10.5f)
+                {
+                    _undoGroup = true;
+                    Document.BeginUndoGroup();
+
+                    range.CharacterFormat.Size = 10.5f;
+                }
+            } while (range.MoveStart(TextRangeUnit.CharacterFormat, 1) > 0);
+
+            if (_undoGroup)
+            {
+                _undoGroup = false;
+                Document.EndUndoGroup();
+            }
+        }
+
+        private void UpdateBlocks()
+        {
+            if (Blocks == null)
+            {
+                return;
+            }
+
+            var range = Document.GetRange(0, 0);
+            var rects = 0;
+
+            do
+            {
+                if (range.MoveEnd(TextRangeUnit.HardParagraph, 1) <= 0)
+                {
+                    break;
+                }
+
+                if (range.StartPosition == 0)
+                {
+                    //ContentElement.Padding = new Thickness(48, range.ParagraphFormat.SpaceAfter == 0 ? 13 : 7, 0, 15);
+                    ContentElement.Padding = new Thickness(48, 13, 0, 15);
+                    ContentElement.Margin = new Thickness(0, range.ParagraphFormat.SpaceAfter == 0 ? 0 : -6, 0, 0);
+                    Blocks.Margin = new Thickness(0, range.ParagraphFormat.SpaceAfter == 0 ? 0 : -6, 0, 0);
+                }
+
+                if (range.ParagraphFormat.SpaceAfter != 0)
+                {
+                    range.GetRect(PointOptions.None, out Rect rect, out _);
+                    rects++;
+
+                    if (Blocks.Children.Count < rects)
+                    {
+                        Blocks.Children.Add(CreateBlock(rect));
+                    }
+                    else if (Blocks.Children[rects - 1] is FrameworkElement block)
+                    {
+                        block.Margin = new Thickness(0, rect.Y + 2, 8, 0);
+                        block.Height = rect.Height - 6;
+                        block.Width = ActualWidth - 48;
+                    }
+                }
+            } while (range.MoveStart(TextRangeUnit.HardParagraph, 1) > 0);
+
+            for (int i = rects; i < Blocks.Children.Count; i++)
+            {
+                Blocks.Children.RemoveAt(i);
+            }
+        }
+
+        private UIElement CreateBlock(Rect rect)
+        {
+            var field = new Grid
+            {
+                CornerRadius = new CornerRadius(4),
+                Background = new SolidColorBrush(Color.FromArgb(0xFF, 0xe5, 0xf1, 0xff)),
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(-3, rect.Y + 4, 8, 0),
+                Height = rect.Height - 4,
+                Width = ActualWidth - 48,
+                IsHitTestVisible = false
+            };
+
+            field.Children.Add(new TextBlock
+            {
+                Text = "\uE9B1",
+                Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x7a, 0xff)),
+                FontFamily = new FontFamily("Segoe Fluent Icons"),
+                FontSize = 24,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Margin = new Thickness(4)
+            });
+
+            field.Children.Add(new Border
+            {
+                BorderBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x00, 0x7a, 0xff)),
+                BorderThickness = new Thickness(3, 0, 0, 0)
+            });
+
+            return new BlockQuote
+            {
+                Glyph = Icons.QuoteBlockFilled16,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(0, rect.Y + 4, 8, 0),
+                Height = rect.Height - 4,
+                Width = ActualWidth - 48,
+                IsHitTestVisible = false
+            };
+        }
+
+        private void Element_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            Blocks.Height = e.NewSize.Height;
+        }
+
+        private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Enter)
+            {
+                //e.Handled = true;
+                //Document.Selection.SetText(TextSetOptions.None, "\v");
+                //Document.Selection.SetRange(Document.Selection.StartPosition + 1, Document.Selection.StartPosition + 1);
+            }
+            else if (e.Key == Windows.System.VirtualKey.Down && Document.Selection.ParagraphFormat.SpaceAfter != 0)
+            {
+                var range = Document.Selection.GetClone();
+
+                var start = range.MoveStart(TextRangeUnit.HardParagraph, 1);
+                if (start == 0)
+                {
+                    e.Handled = true;
+
+                    _undoGroup = true;
+                    Document.BeginUndoGroup();
+
+                    range.SetText(TextSetOptions.None, "\r");
+                    range.SetRange(range.StartPosition + 1, range.StartPosition + 1);
+                    range.ParagraphFormat = Document.GetDefaultParagraphFormat();
+                    Document.Selection.SetRange(range.StartPosition + 1, range.StartPosition + 1);
+                }
+            }
+            else if (e.Key == Windows.System.VirtualKey.Back)
+            {
+                var range = Document.Selection.GetClone();
+
+                var start = range.StartOf(TextRangeUnit.Line, true);
+                if (start == 0 && range.ParagraphFormat.SpaceAfter != 0)
+                {
+                    //_undoGroup = true;
+                    //Document.BeginUndoGroup();
+
+                    //range.EndOf(TextRangeUnit.Line, true);
+                    //range.SetRange(range.EndPosition - 1, range.EndPosition);
+                    //range.Character = '\r';
+                    //return;
+
+                    range.MoveStart(TextRangeUnit.Line, 1);
+
+                    if (range.ParagraphFormat.SpaceAfter == 0)
+                    {
+                        if (range.Character == '\v')
+                        {
+                            _undoGroup = true;
+                            Document.BeginUndoGroup();
+
+                            range.Character = '\r';
+                        }
+                    }
+                }
+
+                var end = range.MoveEnd(TextRangeUnit.Line, -1);
+                if (end == -1 && range.ParagraphFormat.SpaceAfter != 0)
+                {
+                    range.MoveStart(TextRangeUnit.Line, 1);
+
+                    if (range.Character == '\v')
+                    {
+                        _undoGroup = true;
+                        Document.BeginUndoGroup();
+
+                        range.Character = '\r';
+                    }
+                }
             }
         }
     }

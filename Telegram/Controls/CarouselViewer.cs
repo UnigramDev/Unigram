@@ -154,8 +154,6 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             ConfigureElements();
             ConfigureAnimations(_restingValue);
 
@@ -189,8 +187,6 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             if (e.NewSize.Width != e.PreviousSize.Width)
             {
                 ConfigureAnimations(_restingValue);

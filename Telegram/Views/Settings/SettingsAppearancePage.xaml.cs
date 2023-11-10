@@ -9,11 +9,13 @@ using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.Services.Settings;
+using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Settings
@@ -39,6 +41,17 @@ namespace Telegram.Views.Settings
             BackgroundControl.Update(ViewModel.ClientService, ViewModel.Aggregator);
 
             ViewModel.PropertyChanged += OnPropertyChanged;
+
+            if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
+            {
+                var accent = ViewModel.ClientService.GetAccentColor(user.AccentColorId);
+                if (accent != null)
+                {
+                    NameColorBadge.Background = new SolidColorBrush(accent.LightThemeColors[0]) { Opacity = 0.1 };
+                    NameColorBadge.Foreground = new SolidColorBrush(accent.LightThemeColors[0]);
+                    NameColorBadge.Text = user.FullName();
+                }
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

@@ -105,6 +105,11 @@ namespace Telegram.Controls
                 }
             }
 
+            if (scrollViewer == null)
+            {
+                return;
+            }
+
             _scrollViewer = scrollViewer;
             _propertySet = Window.Current.Compositor.CreatePropertySet();
             _propertySet.InsertScalar("ScrollableHeight", (float)scrollViewer.ScrollableHeight);
@@ -135,8 +140,6 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             if (_scrollViewer != null)
             {
                 _propertySet.InsertScalar("ScrollableHeight", (float)_scrollViewer.ScrollableHeight);

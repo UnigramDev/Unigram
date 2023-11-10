@@ -23,24 +23,10 @@
                               Margin="0,-64,-24,0"
                               CornerRadius="20" />
 
-        <Button HorizontalAlignment="Center"
-                Margin="0,-8,0,0"
-                CornerRadius="16"
-                Padding="0">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <controls:ProfilePicture x:Name="ChatPhoto" />
-                <TextBlock x:Name="ChatTitle"
-                           Style="{StaticResource BodyTextBlockStyle}"
-                           FontFamily="{ThemeResource EmojiThemeFontFamily}"
+        <controls:ChatPill x:Name="Pill"
+                           Margin="0,-4,0,4"
                            VerticalAlignment="Center"
-                           Margin="8,1,8,3"
-                           Grid.Column="1" />
-            </Grid>
-        </Button>
+                           HorizontalAlignment="Center" />
 
         <controls:PremiumProgressBar x:Name="Progress"
                                      Glyph="&#xEA3A;"
@@ -78,7 +64,7 @@
             </Rectangle>
             <Border Background="{StaticResource PremiumLinearGradientBrush}"
                     CornerRadius="4"
-                    Height="36" />
+                    Height="32" />
             <controls:BadgeButton x:Name="PurchaseCommand"
                                   Click="Purchase_Click"
                                   Style="{StaticResource StartButtonStyle}"
@@ -88,7 +74,7 @@
                                   Padding="16,3,16,5"
                                   CornerRadius="4"
                                   Margin="0"
-                                  Height="36" />
+                                  Height="32" />
         </Grid>
 
     </Grid>

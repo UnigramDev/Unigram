@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Globalization;
 using Windows.UI;
 
 namespace Telegram.Common
@@ -222,6 +223,18 @@ namespace Telegram.Common
         public static Color WithAlpha(this Color color, byte alpha)
         {
             return Color.FromArgb(alpha, color.R, color.G, color.B);
+        }
+
+        public static bool TryParse(string hex, out Color color)
+        {
+            if (int.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int value))
+            {
+                color = FromHex(value, false);
+                return true;
+            }
+
+            color = default;
+            return false;
         }
 
         public static Color FromHex(uint hexValue, bool allowDefault = false)

@@ -69,15 +69,15 @@ namespace Telegram.ViewModels
         {
             if (pageBlock is PageBlockPhoto photoBlock)
             {
-                return new GalleryPhoto(clientService, photoBlock.Photo, photoBlock.Caption.ToPlainText());
+                return new GalleryPhoto(clientService, photoBlock.Photo, photoBlock.Caption.ToFormattedText());
             }
             else if (pageBlock is PageBlockVideo videoBlock)
             {
-                return new GalleryVideo(clientService, videoBlock.Video, videoBlock.Caption.ToPlainText());
+                return new GalleryVideo(clientService, videoBlock.Video, videoBlock.Caption.ToFormattedText());
             }
             else if (pageBlock is PageBlockAnimation animationBlock)
             {
-                return new GalleryAnimation(clientService, animationBlock.Animation, animationBlock.Caption.ToPlainText());
+                return new GalleryAnimation(clientService, animationBlock.Animation, animationBlock.Caption.ToFormattedText());
             }
 
             return null;

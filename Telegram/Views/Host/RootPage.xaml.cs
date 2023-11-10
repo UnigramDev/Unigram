@@ -86,9 +86,7 @@ namespace Telegram.Views.Host
             service.Frame.Navigated += OnNavigated;
 
             _navigationService = service;
-
             InitializeNavigation(service.Frame);
-            InitializeLocalization();
 
             Navigation.Content = _navigationService.Frame;
 
@@ -121,7 +119,6 @@ namespace Telegram.Views.Host
             NavigationViewList.ItemsSource = _navigationViewItems;
 
             InitializeNavigation(_navigationService.Frame);
-            InitializeLocalization();
 
             Switch(_lifetime.ActiveItem);
         }
@@ -171,7 +168,7 @@ namespace Telegram.Views.Host
             var service = WindowContext.Current.NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
             if (service == null)
             {
-                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame(), session.Id, $"{session.Id}", true) as NavigationService;
+                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame { CacheSize = 0 }, session.Id, $"{session.Id}", true) as NavigationService;
                 service.Frame.Navigating += OnNavigating;
                 service.Frame.Navigated += OnNavigated;
 
@@ -265,13 +262,6 @@ namespace Telegram.Views.Host
                 content.Root = this;
                 InitializeNavigation(sender as Frame);
             }
-        }
-
-        private void InitializeLocalization()
-        {
-            //NavigationChats.Text = Strings.Additional.Chats;
-            //NavigationAbout.Content = Strings.Additional.About;
-            //NavigationNews.Text = Strings.Additional.News;
         }
 
         private void InitializeNavigation(Frame frame)
@@ -621,8 +611,7 @@ namespace Telegram.Views.Host
                         break;
 
                     case RootDestination.ShowAccounts:
-                        // TODO: this is absolutely terrible, find a better way
-                        content.Text = "'";
+                        content.Text = Icons.Spacing;
                         content.Glyph = string.Empty;
                         break;
                 }
@@ -645,6 +634,44 @@ namespace Telegram.Views.Host
             }
         }
 
+        private void TestDestroy()
+        {
+            Destroy(_navigationService);
+
+            var butt = new RepeatButton();
+            butt.HorizontalAlignment = HorizontalAlignment.Center;
+            butt.Content = "GC";
+            butt.Click += (s, args) =>
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+            };
+
+            var swit = new Button();
+            swit.HorizontalAlignment = HorizontalAlignment.Center;
+            swit.Content = "SW";
+            swit.Click += async (s, args) =>
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    Switch(_lifetime.ActiveItem);
+                    await Task.Delay(2000);
+                }
+
+                TestDestroy();
+            };
+
+            var panel = new StackPanel();
+            panel.VerticalAlignment = VerticalAlignment.Center;
+            panel.HorizontalAlignment = HorizontalAlignment.Center;
+            panel.Children.Add(butt);
+            panel.Children.Add(swit);
+
+            Navigation.Content = panel;
+            _navigationService = null;
+        }
+
         private void OnItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is ISessionService session)
@@ -653,21 +680,7 @@ namespace Telegram.Views.Host
                 {
                     if (SettingsService.Current.Diagnostics.ShowMemoryUsage)
                     {
-                        Destroy(_navigationService);
-
-                        var butt = new Button();
-                        butt.HorizontalAlignment = HorizontalAlignment.Center;
-                        butt.Content = "GC";
-                        butt.Click += (s, args) =>
-                        {
-                            GC.Collect();
-                            GC.WaitForPendingFinalizers();
-                            GC.Collect();
-
-                        };
-
-                        Navigation.Content = butt;
-                        _navigationService = null;
+                        TestDestroy();
                     }
 
                     return;

@@ -38,8 +38,6 @@ namespace Telegram.Views
 
         private void OnViewSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             if (Messages.ScrollingHost.ScrollableHeight > 0)
             {
                 return;
@@ -411,13 +409,10 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    var container = Messages.ContainerFromItem(message) as ListViewItem;
-                    if (container == null)
+                    if (_messageIdToSelector.TryGetValue(message.Id, out SelectorItem container))
                     {
-                        return;
+                        Play(new (SelectorItem, MessageViewModel)[] { (container, message) });
                     }
-
-                    Play(new (SelectorItem, MessageViewModel)[] { (container, message) });
                 }
             }
         }
@@ -651,8 +646,6 @@ namespace Telegram.Views
 
         private void Item_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             var next = e.NewSize.ToVector2();
             var prev = e.PreviousSize.ToVector2();
 
@@ -726,7 +719,11 @@ namespace Telegram.Views
 
             if (message.IsService)
             {
-                if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto or MessageAsyncStory)
+                if (message.Content is MessagePremiumGiftCode)
+                {
+                    return "ServiceMessageGiftTemplate";
+                }
+                else if (message.Content is MessageChatChangePhoto or MessageSuggestProfilePhoto or MessageAsyncStory)
                 {
                     return "ServiceMessagePhotoTemplate";
                 }

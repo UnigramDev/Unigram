@@ -191,16 +191,6 @@ namespace Telegram.Controls.Cells
             var builder = new StringBuilder();
 
             {
-                //if (topic.Type is ForumTopicTypeSupergroup super && super.IsChannel)
-                //{
-                //    builder.Append(Strings.AccDescrChannel);
-                //}
-                //else
-                //{
-                //    builder.Append(Strings.AccDescrGroup);
-                //}
-
-                builder.Append(", ");
                 builder.Append(topic.Info.Name);
                 builder.Append(", ");
             }
@@ -228,7 +218,7 @@ namespace Telegram.Controls.Cells
             {
                 if (message.IsOutgoing)
                 {
-                    //if (!(topic.Type is ForumTopicTypePrivate priv && priv.UserId == fromUser?.Id) && !message.IsChannelPost)
+                    //if (!(chat.Type is ChatTypePrivate priv && priv.UserId == fromUser?.Id) && !message.IsChannelPost)
                     {
                         builder.Append(Strings.FromYou);
                         builder.Append(": ");
@@ -621,7 +611,7 @@ namespace Telegram.Controls.Cells
             {
                 if (message.IsSaved(_clientService.Options.MyId))
                 {
-                    result = string.Format(format, _clientService.GetTitle(message.ForwardInfo));
+                    result = string.Format(format, _clientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo));
                 }
                 else if (message.IsOutgoing)
                 {
@@ -1398,8 +1388,6 @@ namespace Telegram.Controls.Cells
     {
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var PhotoPanel = Children[0];
 
             var TypeIcon = Children[1];
@@ -1471,8 +1459,6 @@ namespace Telegram.Controls.Cells
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var PhotoPanel = Children[0];
 
             var TypeIcon = Children[1];

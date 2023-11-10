@@ -178,7 +178,7 @@ namespace Telegram.ViewModels
             {
                 return false;
             }
-            else if (ForwardInfo?.Origin is MessageForwardOriginChannel && !IsOutgoing)
+            else if (ForwardInfo?.Origin is MessageOriginChannel && !IsOutgoing)
             {
                 return true;
             }
@@ -267,6 +267,7 @@ namespace Telegram.ViewModels
             _message.CanBeForwarded = message.CanBeForwarded;
             _message.CanGetMessageThread = message.CanGetMessageThread;
             _message.CanGetStatistics = message.CanGetStatistics;
+            _message.CanBeRepliedInAnotherChat = message.CanBeRepliedInAnotherChat;
             _message.ChatId = message.ChatId;
             _message.ContainsUnreadMention = message.ContainsUnreadMention;
             //_message.Content = message.Content;
@@ -354,6 +355,7 @@ namespace Telegram.ViewModels
         public MessageSelfDestructType SelfDestructType => _message.SelfDestructType;
         public MessageReplyTo ReplyTo { get => _message.ReplyTo; set => _message.ReplyTo = value; }
         public MessageForwardInfo ForwardInfo => _message.ForwardInfo;
+        public MessageImportInfo ImportInfo => _message.ImportInfo;
         public IList<UnreadReaction> UnreadReactions { get => _message.UnreadReactions; set => _message.UnreadReactions = value; }
         public int EditDate { get => _message.EditDate; set => _message.EditDate = value; }
         public int Date => _message.Date;
@@ -362,6 +364,7 @@ namespace Telegram.ViewModels
         public bool IsTopicMessage => _message.IsTopicMessage;
         public bool CanBeDeletedForAllUsers => _message.CanBeDeletedForAllUsers;
         public bool CanBeDeletedOnlyForSelf => _message.CanBeDeletedOnlyForSelf;
+        public bool CanBeRepliedInAnotherChat => _message.CanBeRepliedInAnotherChat;
         public bool CanBeForwarded => _message.CanBeForwarded;
         public bool CanBeEdited => _message.CanBeEdited;
         public bool CanBeSaved => _message.CanBeSaved;

@@ -183,9 +183,10 @@ namespace Telegram.Controls
                     view.DecodeFrameType = DecodePixelType.Logical;
                     view.Width = 20;
                     view.Height = 20;
+                    view.ReplacementColor = foreground;
                     view.Source = new DelayedFileSource(clientService, item.Icon.StickerValue)
                     {
-                        ReplacementColor = foreground.Color
+                        NeedsRepainting = true
                     };
 
                     var button = new RadioButton

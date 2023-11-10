@@ -16,7 +16,6 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.Foundation;
-using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -161,6 +160,10 @@ namespace Telegram.Controls.Drawers
             if (_mode == EmojiDrawerMode.ChatPhoto)
             {
                 ViewModel.UpdateChatPhoto();
+            }
+            else if (_mode == EmojiDrawerMode.Background)
+            {
+                ViewModel.UpdateBackground();
             }
             else
             {
@@ -706,16 +709,6 @@ namespace Telegram.Controls.Drawers
             }
         }
 
-        private Color GetTintColor(StickerFullType info)
-        {
-            if (info is StickerFullTypeCustomEmoji customEmoji && customEmoji.NeedsRepainting)
-            {
-                return Theme.Accent;
-            }
-
-            return default;
-        }
-
         private void UpdateContainerContent(Sticker sticker, Grid content, bool toolbar)
         {
             var file = sticker?.StickerValue;
@@ -727,7 +720,8 @@ namespace Telegram.Controls.Drawers
             var animated = content.Children[0] as AnimatedImage;
             animated.Source = new DelayedFileSource(ViewModel.ClientService, file)
             {
-                ReplacementColor = GetTintColor(sticker.FullType)
+                NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji customEmoji
+                    && customEmoji.NeedsRepainting
             };
 
             //if (toolbar)

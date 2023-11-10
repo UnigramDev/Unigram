@@ -8,6 +8,8 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -335,7 +337,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        protected override void SetText(IClientService clientService, MessageSender sender, string title, string service, FormattedText text)
+        protected override void SetText(IClientService clientService, bool outgoing, MessageSender sender, string title, string service, FormattedText text, bool quote)
         {
             _alternativeText = title + ": ";
             TitleLabel.Text = title;
@@ -345,16 +347,25 @@ namespace Telegram.Controls.Messages
 
             if (!string.IsNullOrEmpty(service))
             {
-                _alternativeText += service += ", ";
+                _alternativeText += service;
+
+                if (!string.IsNullOrEmpty(text?.Text))
+                {
+                    _alternativeText += ", " + text.Text;
+                }
+            }
+            else if (!string.IsNullOrEmpty(text?.Text))
+            {
+                _alternativeText += text.Text;
             }
 
             if (!string.IsNullOrEmpty(text?.Text) && !string.IsNullOrEmpty(service))
             {
-                _alternativeText += ", " + text.Text;
                 serviceShow.Text += ", ";
             }
 
             var messageShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
+            var labelShow = _textVisual == _textVisual1 ? TextLabel2 : TextLabel1;
             messageShow.Inlines.Clear();
 
             if (text != null)
@@ -380,13 +391,13 @@ namespace Telegram.Controls.Messages
 
                         var player = new CustomEmojiIcon();
                         player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
-                        player.Margin = new Thickness(0, -4, 0, -4);
-                        player.IsHitTestVisible = false;
+                        player.Style = BootStrapper.Current.Resources["MessageCustomEmojiStyle"] as Style;
 
                         var inline = new InlineUIContainer();
-                        inline.Child = player;
+                        inline.Child = new CustomEmojiContainer(labelShow, player, -2);
 
                         messageShow.Inlines.Add(inline);
+                        messageShow.Inlines.Add("\u200D");
 
                         previous = entity.Offset + entity.Length;
                     }

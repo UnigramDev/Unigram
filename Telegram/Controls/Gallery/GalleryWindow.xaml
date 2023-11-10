@@ -149,17 +149,15 @@
                                                 MaxWidth="396"
                                                 Visibility="Collapsed" />
                 <Border Background="{ThemeResource SystemControlPageBackgroundAltMediumBrush}"
-                        Visibility="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+                        Visibility="{x:Bind ConvertCaption(ViewModel.SelectedItem.Caption), Mode=OneWay}"
                         HorizontalAlignment="Center"
                         CornerRadius="4"
                         Padding="8"
                         Margin="0,8,0,0">
-                    <TextBlock x:Name="Caption"
-                               Text="{x:Bind ViewModel.SelectedItem.Caption, Mode=OneWay}"
-                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                               Style="{StaticResource BodyTextBlockStyle}"
-                               TextTrimming="CharacterEllipsis"
-                               MaxLines="5" />
+                    <controls:FormattedTextBlock x:Name="Caption"
+                                                 FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                 TextTrimming="CharacterEllipsis"
+                                                 MaxLines="5" />
                 </Border>
             </StackPanel>
         </local:GalleryBottomPanel>

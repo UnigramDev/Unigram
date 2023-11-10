@@ -2,12 +2,15 @@
                     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="using:Telegram.Controls.Messages"
+                    xmlns:controls="using:Telegram.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     d:DesignHeight="36"
                     mc:Ignorable="d">
 
     <Style TargetType="local:MessageReference">
+        <Setter Property="CornerRadius"
+                Value="4" />
         <Setter Property="BorderThickness"
                 Value="2,0,0,0" />
         <Setter Property="Foreground"
@@ -37,27 +40,22 @@
                 <ControlTemplate TargetType="local:MessageReference">
                     <Grid x:Name="LayoutRoot"
                           Background="Transparent"
-                          MinHeight="36"
-                          BorderBrush="{TemplateBinding BorderBrush}"
-                          BorderThickness="{TemplateBinding BorderThickness}"
+                          MinHeight="44"
+                          CornerRadius="{TemplateBinding CornerRadius}"
                           Margin="{TemplateBinding Padding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
-                                    <VisualState.Setters>
-                                        <Setter Target="Overlay.Visibility"
-                                                Value="Visible" />
-                                        <Setter Target="Overlay.Opacity"
-                                                Value="0.05" />
-                                    </VisualState.Setters>
+                                    <!--<VisualState.Setters>
+                                        <Setter Target="BackgroundOverlay.Opacity"
+                                                Value="0.2" />
+                                    </VisualState.Setters>-->
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
-                                        <Setter Target="Overlay.Visibility"
-                                                Value="Visible" />
-                                        <Setter Target="Overlay.Opacity"
-                                                Value="0.1" />
+                                        <Setter Target="BackgroundOverlay.Opacity"
+                                                Value="0.15" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -74,14 +72,94 @@
                         </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
+                        <Rectangle x:Name="BackgroundOverlay"
+                                   Fill="{TemplateBinding BorderBrush}"
+                                   Opacity="0.1"
+                                   Grid.ColumnSpan="3" />
+                        <Rectangle x:Name="Pill"
+                                   Fill="{TemplateBinding BorderBrush}"
+                                   HorizontalAlignment="Left"
+                                   Width="3" />
+                        <controls:DashPath x:Name="AccentDash" />
+
+                        <local:MessageReferencePattern x:Name="Pattern"
+                                                       FrameSize="20,20"
+                                                       DecodeFrameType="Logical"
+                                                       AutoPlay="False"
+                                                       IsViewportAware="False"
+                                                       Grid.Column="2"
+                                                       HorizontalAlignment="Right"
+                                                       VerticalAlignment="Top"
+                                                       ReplacementColor="{TemplateBinding BorderBrush}"
+                                                       IsTabStop="False"
+                                                       Margin="0,-3,7,0">
+                            <local:MessageReferencePattern.Template>
+                                <ControlTemplate TargetType="local:MessageReferencePattern">
+                                    <Canvas x:Name="LayoutRoot"
+                                            Width="122">
+                                        <Image x:Name="Image1"
+                                               Canvas.Left="9"
+                                               Canvas.Top="5"
+                                               Width="20"
+                                               Height="20"
+                                               Opacity="0.1" />
+                                        <Image x:Name="Image2"
+                                               Canvas.Left="41"
+                                               Canvas.Top="12"
+                                               Width="19"
+                                               Height="19"
+                                               Opacity="0.2" />
+                                        <Image x:Name="Image3"
+                                               Canvas.Left="64"
+                                               Canvas.Top="0"
+                                               Width="13"
+                                               Height="13"
+                                               Opacity="0.2" />
+                                        <Image x:Name="Image4"
+                                               Canvas.Left="77"
+                                               Canvas.Top="18"
+                                               Width="15"
+                                               Height="15"
+                                               Opacity="0.3" />
+                                        <Image x:Name="Image5"
+                                               Canvas.Left="103"
+                                               Canvas.Top="7"
+                                               Width="19"
+                                               Height="19"
+                                               Opacity="0.4" />
+                                        <Image x:Name="Image6"
+                                               Canvas.Left="23"
+                                               Canvas.Top="33"
+                                               Width="13"
+                                               Height="13"
+                                               Opacity="0.2" />
+                                        <Image x:Name="Image7"
+                                               Canvas.Left="58"
+                                               Canvas.Top="37"
+                                               Width="19"
+                                               Height="19"
+                                               Opacity="0.3" />
+                                        <Image x:Name="Image8"
+                                               Canvas.Left="99"
+                                               Canvas.Top="34"
+                                               Width="15"
+                                               Height="15"
+                                               Opacity="0.4" />
+                                    </Canvas>
+                                </ControlTemplate>
+                            </local:MessageReferencePattern.Template>
+                        </local:MessageReferencePattern>
+
                         <Border x:Name="ThumbRoot"
                                 x:DeferLoadStrategy="Lazy"
                                 Background="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
                                 Width="36"
                                 Height="36"
-                                Margin="8,0,0,0">
+                                Margin="8,0,0,0"
+                                Grid.Column="1">
                             <Border x:Name="ThumbEllipse">
                                 <Border.Background>
                                     <ImageBrush x:Name="ThumbImage"
@@ -93,17 +171,18 @@
                         </Border>
 
                         <RichTextBlock x:Name="Label"
-                                       Margin="8,0,0,2"
+                                       Margin="8,0,8,2"
                                        VerticalAlignment="Center"
                                        MaxLines="2"
                                        IsTextSelectionEnabled="False"
                                        Foreground="{TemplateBinding Foreground}"
                                        FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                        Style="{StaticResource ReplyBodyRichTextBlockStyle}"
-                                       Grid.Column="1">
+                                       Grid.Column="2">
                             <Paragraph>
                                 <Run x:Name="TitleLabel"
-                                     Foreground="{Binding HeaderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                     Foreground="{Binding HeaderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                     FontWeight="SemiBold" />
                             </Paragraph>
                             <Paragraph>
                                 <Run x:Name="ServiceLabel"
@@ -111,13 +190,16 @@
                             </Paragraph>
                         </RichTextBlock>
 
-                        <Rectangle x:Name="Overlay"
-                                   Fill="{TemplateBinding BorderBrush}"
+                        <TextBlock x:Name="Quote"
                                    Visibility="Collapsed"
-                                   Margin="-6,-2,-4,-2"
-                                   RadiusX="4"
-                                   RadiusY="4"
-                                   Grid.ColumnSpan="2" />
+                                   Text="&#xEA01;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="16"
+                                   Foreground="{TemplateBinding BorderBrush}"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   Margin="4"
+                                   Grid.Column="2" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

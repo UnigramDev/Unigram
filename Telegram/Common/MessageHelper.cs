@@ -26,6 +26,7 @@ using Telegram.Views.Folders;
 using Telegram.Views.Folders.Popups;
 using Telegram.Views.Host;
 using Telegram.Views.Popups;
+using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
@@ -73,7 +74,7 @@ namespace Telegram.Common
             dataPackage.SetText(link);
             ClipboardEx.TrySetContent(dataPackage);
 
-            Window.Current.ShowTeachingTip(publiz ? Strings.LinkCopied : Strings.LinkCopiedPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/LinkCopied.tgs"));
+            Window.Current.ShowToast(publiz ? Strings.LinkCopied : Strings.LinkCopiedPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/LinkCopied.tgs"));
         }
 
         public static void CopyText(string text)
@@ -82,7 +83,7 @@ namespace Telegram.Common
             dataPackage.SetText(text);
             ClipboardEx.TrySetContent(dataPackage);
 
-            Window.Current.ShowTeachingTip(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+            Window.Current.ShowToast(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
         }
 
         public static bool TryCreateUri(string url, out Uri uri)
@@ -252,6 +253,10 @@ namespace Telegram.Common
             {
                 navigation.ShowPromo(new PremiumSourceLink(premiumFeatures.Referrer));
             }
+            else if (internalLink is InternalLinkTypePremiumGiftCode premiumGiftCode)
+            {
+                NavigateToPremiumGiftCode(clientService, navigation, premiumGiftCode.Code);
+            }
             else if (internalLink is InternalLinkTypePrivacyAndSecuritySettings)
             {
                 navigation.Navigate(typeof(SettingsPrivacyAndSecurityPage));
@@ -311,6 +316,19 @@ namespace Telegram.Common
             else if (internalLink is InternalLinkTypeWebApp webApp)
             {
                 NavigateToWebApp(clientService, navigation, webApp.BotUsername, webApp.StartParameter, webApp.WebAppShortName, source);
+            }
+        }
+
+        private static async void NavigateToPremiumGiftCode(IClientService clientService, INavigationService navigation, string code)
+        {
+            var response = await clientService.SendAsync(new CheckPremiumGiftCode(code));
+            if (response is PremiumGiftCodeInfo info)
+            {
+                await new GiftCodePopup(clientService, navigation, info, code).ShowQueuedAsync();
+            }
+            else
+            {
+                // TODO: error
             }
         }
 
@@ -391,13 +409,14 @@ namespace Telegram.Common
             {
                 if (linkInfo.ChatId == 0 || !clientService.TryGetChat(linkInfo.ChatId, out Chat chat))
                 {
-                    Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                     return;
                 }
 
-                var response2 = await clientService.SendAsync(new CanBoostChat(linkInfo.ChatId));
+                var response2 = await clientService.SendAsync(new GetAvailableChatBoostSlots());
                 var response3 = await clientService.SendAsync(new GetChatBoostStatus(linkInfo.ChatId));
-                if (response2 is CanBoostChatResult result && response3 is ChatBoostStatus status)
+
+                if (response2 is ChatBoostSlots result && response3 is ChatBoostStatus status)
                 {
                     await new ChatBoostPopup(clientService, navigation, chat, status, result).ShowQueuedAsync();
                 }
@@ -427,12 +446,12 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    Window.Current.ShowTeachingTip(Strings.StoryNotFound, new LocalFileSource("ms-appx:///Assets/Toasts/ExpiredStory.tgs"));
+                    Window.Current.ShowToast(Strings.StoryNotFound, new LocalFileSource("ms-appx:///Assets/Toasts/ExpiredStory.tgs"));
                 }
             }
             else
             {
-                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -483,16 +502,16 @@ namespace Telegram.Common
                         return;
                     }
 
-                    var sourceChat = source switch
+                    var chatId = source switch
                     {
-                        OpenUrlSourceChat sourceMessage => clientService.GetChat(sourceMessage.ChatId),
-                        _ => null
+                        OpenUrlSourceChat sourceMessage => sourceMessage.ChatId,
+                        _ => 0
                     };
 
-                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(sourceChat.Id, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, foundWebApp.RequestWriteAccess && popup.IsChecked is true));
+                    var responsa = await clientService.SendAsync(new GetWebAppLinkUrl(chatId, user.Id, webAppShortName, startParameter, Theme.Current.Parameters, Strings.AppName, foundWebApp.RequestWriteAccess && popup.IsChecked is true));
                     if (responsa is HttpUrl url)
                     {
-                        await new WebBotPopup(clientService, navigation, user, url.Url, null, sourceChat).ShowQueuedAsync();
+                        await new WebBotPopup(clientService, navigation, user, url.Url).ShowQueuedAsync();
                     }
                 }
                 else
@@ -502,7 +521,7 @@ namespace Telegram.Common
             }
             else
             {
-                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -789,12 +808,12 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                 }
             }
             else
             {
-                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -819,7 +838,7 @@ namespace Telegram.Common
             }
             else
             {
-                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -854,7 +873,7 @@ namespace Telegram.Common
             }
             else
             {
-                Window.Current.ShowTeachingTip(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -894,7 +913,7 @@ namespace Telegram.Common
 
                             var text = new FormattedText(message, new[] { entity });
 
-                            Window.Current.ShowTeachingTip(text, new LocalFileSource("ms-appx:///Assets/Toasts/JoinRequested.tgs"));
+                            Window.Current.ShowToast(text, new LocalFileSource("ms-appx:///Assets/Toasts/JoinRequested.tgs"));
                         }
                         else if (error.MessageEquals(ErrorType.FLOOD_WAIT))
                         {

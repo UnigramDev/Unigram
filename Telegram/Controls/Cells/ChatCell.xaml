@@ -9,6 +9,13 @@
                     d:DesignHeight="300"
                     d:DesignWidth="400">
 
+    <Style x:Key="FromTextBlockStyle"
+           TargetType="TextBlock"
+           BasedOn="{StaticResource BodyTextBlockStyle}">
+        <Setter Property="Foreground"
+                Value="{ThemeResource ChatFromLabelBrush}" />
+    </Style>
+
     <Style TargetType="local:ChatCell">
         <Setter Property="AllowDrop"
                 Value="True" />
@@ -153,9 +160,8 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <TextBlock x:Name="FromLabel"
-                                       Style="{StaticResource BodyTextBlockStyle}"
+                                       Style="{StaticResource FromTextBlockStyle}"
                                        FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                       Foreground="{ThemeResource ChatFromLabelBrush}"
                                        TextTrimming="CharacterEllipsis"
                                        TextWrapping="NoWrap"
                                        VerticalAlignment="Top"

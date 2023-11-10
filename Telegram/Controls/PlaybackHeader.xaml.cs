@@ -474,39 +474,9 @@ namespace Telegram.Controls
 
             if (args.Item is PlaybackItem item && args.ItemContainer.ContentTemplateRoot is SharedAudioCell cell)
             {
+                AutomationProperties.SetName(args.ItemContainer, Automation.GetSummary(item.Message, true, false));
+
                 cell.UpdateMessage(_playbackService, item.Message);
-
-                var message = item.Message;
-                var webPage = message.Content is MessageText text ? text.WebPage : null;
-
-                if (message.Content is MessageVoiceNote || message.Content is MessageVideoNote || webPage?.VoiceNote != null || webPage?.VideoNote != null)
-                {
-                    if (_clientService.TryGetUser(message.SenderId, out Telegram.Td.Api.User senderUser))
-                    {
-                        AutomationProperties.SetName(args.ItemContainer, senderUser.Id == _clientService.Options.MyId ? Strings.ChatYourSelfName : senderUser.FullName());
-                    }
-                    else if (_clientService.TryGetChat(message.SenderId, out Chat senderChat))
-                    {
-                        AutomationProperties.SetName(args.ItemContainer, _clientService.GetTitle(senderChat));
-                    }
-                }
-                else if (message.Content is MessageAudio || webPage?.Audio != null)
-                {
-                    var audio = message.Content is MessageAudio messageAudio ? messageAudio.Audio : webPage?.Audio;
-                    if (audio == null)
-                    {
-                        return;
-                    }
-
-                    if (audio.Performer.Length > 0 && audio.Title.Length > 0)
-                    {
-                        AutomationProperties.SetName(args.ItemContainer, $"{audio.Title} - {audio.Performer}");
-                    }
-                    else
-                    {
-                        AutomationProperties.SetName(args.ItemContainer, audio.FileName);
-                    }
-                }
             }
         }
 

@@ -88,7 +88,7 @@ namespace Telegram.ViewModels.Chats
                 Items.Remove(story);
             }
 
-            Window.Current.ShowTeachingTip(IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
+            Window.Current.ShowToast(IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }
 
         public void ToggleSelectedStories()
@@ -105,7 +105,7 @@ namespace Telegram.ViewModels.Chats
                 }
             }
 
-            Window.Current.ShowTeachingTip(Locale.Declension(IsPinned ? Strings.R.StoriesRemovedFromProfile : Strings.R.StoriesSavedToProfile, selection.Length));
+            Window.Current.ShowToast(Locale.Declension(IsPinned ? Strings.R.StoriesRemovedFromProfile : Strings.R.StoriesSavedToProfile, selection.Length));
             UnselectStories();
         }
 

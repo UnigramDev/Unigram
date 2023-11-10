@@ -17,6 +17,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -72,11 +73,14 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
+            var flip = false;
+
             if (message.Content is MessageAnimatedEmoji animatedEmoji)
             {
                 Width = Player.Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Height = Player.Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                //Player.IsFlipped = false;
+
+                Player.RenderTransform = null;
 
                 var sound = animatedEmoji.AnimatedEmoji.Sound;
                 if (sound != null && sound.Local.CanBeDownloaded && !sound.Local.IsDownloadingActive)
@@ -88,14 +92,29 @@ namespace Telegram.Controls.Messages.Content
             {
                 Width = Player.Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
                 Height = Player.Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                //Player.IsFlipped = false;
+
+                Player.RenderTransform = null;
             }
             else
             {
                 var premiumAnimation = sticker.FullType is StickerFullTypeRegular regular && regular.PremiumAnimation != null;
                 Width = Player.Width = premiumAnimation ? 180 : 180;
                 Height = Player.Height = 180;
-                //Player.IsFlipped = premium && premiumAnimation && !message.IsOutgoing;
+
+                flip = premium && premiumAnimation && (message.IsChannelPost || !message.IsOutgoing);
+            }
+
+            if (flip)
+            {
+                Player.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
+                Player.RenderTransform = new ScaleTransform
+                {
+                    ScaleX = -1
+                };
+            }
+            else
+            {
+                Player.RenderTransform = null;
             }
 
             _isEmoji = message.Content is not MessageSticker;
@@ -329,6 +348,15 @@ namespace Telegram.Controls.Messages.Content
                         InteractionsPopup.IsOpen = false;
                     });
                 };
+
+                if (message.IsChannelPost || !message.IsOutgoing)
+                {
+                    player.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
+                    player.RenderTransform = new ScaleTransform
+                    {
+                        ScaleX = -1
+                    };
+                }
 
                 var random = new Random();
                 var x = Player.Height * (0.08 - (0.16 * random.NextDouble()));

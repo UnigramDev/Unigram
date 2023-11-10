@@ -12,7 +12,7 @@ namespace Telegram.ViewModels.Gallery
     public class GalleryVideo : GalleryMedia
     {
         private readonly Video _video;
-        private readonly string _caption;
+        private readonly FormattedText _caption;
 
         public GalleryVideo(IClientService clientService, Video video)
             : base(clientService)
@@ -20,7 +20,7 @@ namespace Telegram.ViewModels.Gallery
             _video = video;
         }
 
-        public GalleryVideo(IClientService clientService, Video video, string caption)
+        public GalleryVideo(IClientService clientService, Video video, FormattedText caption)
             : base(clientService)
         {
             _video = video;
@@ -46,7 +46,7 @@ namespace Telegram.ViewModels.Gallery
 
         public override object Constraint => _video;
 
-        public override string Caption => _caption;
+        public override FormattedText Caption => _caption;
 
         public override bool HasStickers => _video.HasStickers;
 

@@ -216,7 +216,7 @@ namespace Telegram.Controls.Chats
                 }
                 else if (e.Key is VirtualKey.Up or VirtualKey.Down)
                 {
-                    if (ControlledList != null && ViewModel.Autocomplete?.Orientation == Orientation.Vertical)
+                    if (ControlledList != null && ControlledList.Items.Count > 0 && ViewModel.Autocomplete?.Orientation == Orientation.Vertical)
                     {
                         ControlledList.SelectionMode = ListViewSelectionMode.Single;
 
@@ -234,7 +234,7 @@ namespace Telegram.Controls.Chats
             }
             else if (e.Key is VirtualKey.Left or VirtualKey.Right)
             {
-                if (ControlledList != null && ViewModel.Autocomplete?.Orientation == Orientation.Horizontal)
+                if (ControlledList != null && ControlledList.Items.Count > 0 && ViewModel.Autocomplete?.Orientation == Orientation.Horizontal)
                 {
                     if (ControlledList.SelectedIndex == 0 && e.Key == VirtualKey.Left)
                     {
@@ -745,7 +745,7 @@ namespace Telegram.Controls.Chats
 
             Sending?.Invoke(this, EventArgs.Empty);
 
-            var options = new MessageSendOptions(disableNotification, false, false, false, null, 0);
+            var options = new MessageSendOptions(disableNotification, false, false, false, null, 0, false);
 
             var text = GetFormattedText(true);
             await ViewModel.SendMessageAsync(text, options);
@@ -759,7 +759,7 @@ namespace Telegram.Controls.Chats
 
             if (whenOnline)
             {
-                options = new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendWhenOnline(), 0);
+                options = new MessageSendOptions(false, false, false, false, new MessageSchedulingStateSendWhenOnline(), 0, false);
             }
             else
             {

@@ -35,8 +35,7 @@ namespace Telegram.Views.Profile
                 return;
             }
 
-            AutomationProperties.SetName(args.ItemContainer,
-                Automation.GetSummary(message, true));
+            AutomationProperties.SetName(args.ItemContainer, Automation.GetSummary(message, true));
 
             if (args.ItemContainer.ContentTemplateRoot is SharedAudioCell audioCell)
             {

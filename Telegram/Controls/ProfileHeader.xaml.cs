@@ -11,6 +11,7 @@ using Telegram.Controls.Gallery;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
@@ -169,6 +170,24 @@ namespace Telegram.Controls
             UpdateChatActiveStories(chat);
 
             UpdateChatNotificationSettings(chat);
+
+            if (SettingsService.Current.Diagnostics.ShowIds)
+            {
+                ChatId.Visibility = Visibility.Visible;
+
+                if (chat.Type is ChatTypePrivate privata)
+                {
+                    ChatId.Content = privata.UserId;
+                }
+                else
+                {
+                    ChatId.Content = chat.Id;
+                }
+            }
+            else
+            {
+                ChatId.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void UpdateChatTitle(Chat chat)
@@ -740,16 +759,16 @@ namespace Telegram.Controls
                 if (fullInfo != null && fullInfo.CanGetStatistics)
                 {
                     flyout.CreateFlyoutItem(ViewModel.OpenStatistics, Strings.Statistics, Icons.DataUsage);
+
+                    if (super.IsChannel)
+                    {
+                        flyout.CreateFlyoutItem(ViewModel.OpenBoosts, Strings.Boosts, Icons.Boosts);
+                    }
                 }
 
-                if (super.IsChannel && (supergroup.Status is ChatMemberStatusCreator || supergroup.Status is ChatMemberStatusAdministrator))
+                if (super.IsChannel && supergroup.CanEditStories())
                 {
-                    flyout.CreateFlyoutItem(ViewModel.OpenBoosts, Strings.Boosts, Icons.Boosts);
-
-                    if (supergroup.CanEditStories())
-                    {
-                        flyout.CreateFlyoutItem(ViewModel.OpenArchivedStories, Strings.ArchivedStories, Icons.Archive);
-                    }
+                    flyout.CreateFlyoutItem(ViewModel.OpenArchivedStories, Strings.ArchivedStories, Icons.Archive);
                 }
 
                 if (!super.IsChannel)

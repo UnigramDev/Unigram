@@ -617,7 +617,12 @@ namespace winrt::Telegram::Native::implementation
         return float2(metrics.left + metrics.width, metrics.top + metrics.height);
     }
 
-    IVector<Windows::Foundation::Rect> PlaceholderImageHelper::LineMetrics(hstring text, double fontSize, double width, bool rtl)
+    IVector<Windows::Foundation::Rect> PlaceholderImageHelper::LineMetrics(hstring text, IVector<PlaceholderEntity> entities, double fontSize, double width, bool rtl)
+    {
+        return RangeMetrics(text, 0, text.size(), entities, fontSize, width, rtl);
+    }
+
+    IVector<Windows::Foundation::Rect> PlaceholderImageHelper::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<PlaceholderEntity> entities, double fontSize, double width, bool rtl)
     {
         winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
             L"Segoe UI Emoji",						// font family name
@@ -643,13 +648,41 @@ namespace winrt::Telegram::Native::implementation
             textLayout.put()				// The IDWriteTextLayout interface pointer.
         ));
 
+        for (const PlaceholderEntity& entity : entities)
+        {
+            UINT32 startPosition = entity.Offset;
+            UINT32 length = entity.Length;
+
+            switch (entity.Type)
+            {
+            case PlaceholderEntityType::Bold:
+                textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length });
+                break;
+            case PlaceholderEntityType::Italic:
+                textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length });
+                break;
+            case PlaceholderEntityType::Strikethrough:
+                textLayout->SetStrikethrough(TRUE, { startPosition, length });
+                break;
+            case PlaceholderEntityType::Underline:
+                textLayout->SetUnderline(TRUE, { startPosition, length });
+                break;
+            case PlaceholderEntityType::Code:
+                textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length });
+                textLayout->SetFontFamilyName(L"Consolas", { startPosition, length });
+                break;
+            default:
+                break;
+            }
+        }
+
         DWRITE_TEXT_METRICS metrics;
         winrt::check_hresult(textLayout->GetMetrics(&metrics));
 
         UINT32 maxHitTestMetricsCount = metrics.lineCount * metrics.maxBidiReorderingDepth;
         UINT32 actualTestsCount;
         DWRITE_HIT_TEST_METRICS* ranges = new DWRITE_HIT_TEST_METRICS[maxHitTestMetricsCount];
-        winrt::check_hresult(textLayout->HitTestTextRange(0, text.size(), 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount));
+        winrt::check_hresult(textLayout->HitTestTextRange(offset, length, 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount));
 
         std::vector<Windows::Foundation::Rect> rects;
 

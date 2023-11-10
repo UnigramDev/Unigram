@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls.Gallery;
 using Telegram.Services.Updates;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Gallery;
@@ -47,13 +48,47 @@ namespace Telegram.ViewModels
             {
                 if (message.ReplyTo is MessageReplyToMessage replyToMessage)
                 {
-                    if (replyToMessage.ChatId == message.ChatId || replyToMessage.ChatId == 0)
+                    if (replyToMessage.ChatId != message.ChatId && ClientService.TryGetChat(replyToMessage.ChatId, out Chat replyToChat))
                     {
-                        await LoadMessageSliceAsync(message.Id, replyToMessage.MessageId);
+                        if (ClientService.TryGetSupergroup(replyToChat, out Supergroup supergroup))
+                        {
+                            if (supergroup.Status is ChatMemberStatusLeft && !supergroup.IsPublic() && !ClientService.IsChatAccessible(replyToChat))
+                            {
+                                if (supergroup.IsChannel)
+                                {
+                                    Window.Current.ShowToast(replyToMessage.IsQuoteManual
+                                        ? Strings.QuotePrivateChannel
+                                        : Strings.ReplyPrivateChannel, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                                }
+                                else
+                                {
+                                    Window.Current.ShowToast(replyToMessage.IsQuoteManual
+                                        ? Strings.QuotePrivateGroup
+                                        : Strings.ReplyPrivateGroup, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                                }
+
+                                return;
+                            }
+                        }
+                        else if (replyToMessage.MessageId == 0)
+                        {
+                            Window.Current.ShowToast(replyToMessage.IsQuoteManual
+                                        ? Strings.QuotePrivate
+                                        : Strings.ReplyPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                            return;
+                        }
+
+                        NavigationService.NavigateToChat(replyToChat, replyToMessage.MessageId);
                     }
-                    else
+                    else if (replyToMessage.Origin != null && replyToMessage.MessageId == 0)
                     {
-                        NavigationService.NavigateToChat(replyToMessage.ChatId, replyToMessage.MessageId);
+                        Window.Current.ShowToast(replyToMessage.IsQuoteManual
+                                        ? Strings.QuotePrivate
+                                        : Strings.ReplyPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    }
+                    else if (replyToMessage.ChatId == message.ChatId || replyToMessage.ChatId == 0)
+                    {
+                        await LoadMessageSliceAsync(message.Id, replyToMessage.MessageId, highlight: replyToMessage.IsQuoteManual ? replyToMessage.Quote : null);
                     }
                 }
             }
@@ -68,14 +103,14 @@ namespace Telegram.ViewModels
 
             if (message.ChatId == ClientService.Options.RepliesBotChatId)
             {
-                if (message.ForwardInfo?.Origin is MessageForwardOriginUser or MessageForwardOriginChat)
+                if (message.ForwardInfo?.Origin is MessageOriginUser or MessageOriginChat)
                 {
                     chatId = message.ForwardInfo.FromChatId;
                     threadId = message.ForwardInfo.FromMessageId;
 
                     messageId = threadId;
                 }
-                else if (message.ForwardInfo?.Origin is MessageForwardOriginChannel fromChannel)
+                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel)
                 {
                     chatId = fromChannel.ChatId;
                     threadId = fromChannel.MessageId;
@@ -104,17 +139,11 @@ namespace Telegram.ViewModels
         {
             if (webPage.InstantViewVersion != 0)
             {
-                //if (NavigationService is UnigramNavigationService asdas)
-                //{
-                //    asdas.NavigateToInstant(webPage.Url);
-                //    return;
-                //}
-
                 NavigationService.NavigateToInstant(webPage.Url);
             }
-            else if (MessageHelper.TryCreateUri(webPage.Url, out Uri uri))
+            else
             {
-                MessageHelper.OpenTelegramUrl(ClientService, NavigationService, uri);
+                MessageHelper.OpenUrl(ClientService, NavigationService, webPage.Url, !webPage.SkipConfirmation);
             }
         }
 

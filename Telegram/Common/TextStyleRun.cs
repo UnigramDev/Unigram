@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Telegram.Native;
 using Telegram.Td.Api;
 
 namespace Telegram.Common
@@ -38,7 +39,7 @@ namespace Telegram.Common
 
         public bool HasFlag(TextStyle flag)
         {
-            return Flags.HasFlag(flag);
+            return (Flags & flag) != 0;
         }
 
         private void Merge(TextStyleRun run)
@@ -118,6 +119,10 @@ namespace Telegram.Common
                 else if (entity.Type is TextEntityTypeItalic)
                 {
                     newRun.Flags = TextStyle.Italic;
+                }
+                else if (entity.Type is TextEntityTypeBlockQuote)
+                {
+                    newRun.Flags = TextStyle.Quote;
                 }
                 else if (entity.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
                 {
@@ -286,6 +291,10 @@ namespace Telegram.Common
                     {
                         CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypeSpoiler());
                     }
+                    if (run.HasFlag(TextStyle.Quote))
+                    {
+                        CreateOrMerge(run.Offset, run.Length, results, new TextEntityTypeBlockQuote());
+                    }
 
                     if (run.Type != null)
                     {
@@ -333,6 +342,11 @@ namespace Telegram.Common
 
         public static StyledText GetText(FormattedText text)
         {
+            if (string.IsNullOrEmpty(text?.Text))
+            {
+                return null;
+            }
+
             return new StyledText(text.Text, GetParagraphs(text.Text, text.Entities));
         }
 
@@ -341,52 +355,104 @@ namespace Telegram.Common
             return new StyledText(text, GetParagraphs(text, entities ?? Array.Empty<TextEntity>()));
         }
 
+        struct Break
+        {
+            public int Offset;
+
+            public int Length;
+
+            public TextDirectionality? Direction;
+
+            public Break(int offset, int length, TextDirectionality? direction = null)
+            {
+                Offset = offset;
+                Length = length;
+                Direction = direction;
+            }
+
+            public override string ToString()
+            {
+                return Offset.ToString();
+            }
+        }
+
         private static IList<StyledParagraph> GetParagraphs(string text, IList<TextEntity> entities)
         {
-            List<int> indexes = null;
+            List<Break> indexes = null;
             var previous = 0;
 
-            foreach (var entity in entities)
+            int Break(int previous, int limit)
             {
-                if (entity.Type is TextEntityTypePre or TextEntityTypePreCode)
+                if (limit - previous < 0)
                 {
-                    var offset = entity.Offset;
+                    return previous;
+                }
 
-                    // It can happen that the line break happens within the code formatting
-                    if (offset > 0 && text[offset] == '\n' && text[offset - 1] != '\n')
-                    {
-                        offset++;
-                    }
+                var index = text.IndexOf('\n', previous, limit - previous);
 
-                    var index = text.IndexOf('\n', previous, offset - previous);
-                    if (index == -1 && offset > 0)
-                    {
-                        indexes ??= new();
-                        indexes.Add(offset);
-                    }
-
-                    while (index != -1)
+                while (index != -1)
+                {
+                    var direction = NativeUtils.GetDirectionality(text, previous, index - previous);
+                    if (indexes == null || indexes[^1].Direction != direction)
                     {
                         indexes ??= new();
-                        indexes.Add(index);
-
-                        index = text.IndexOf('\n', index + 1, offset - index - 1);
+                        indexes.Add(new Break(index, 1, direction));
+                    }
+                    else if (indexes != null)
+                    {
+                        indexes[^1] = new Break(index, 1, direction);
                     }
 
-                    previous = entity.Offset + entity.Length - 1;
+                    previous = index + 1;
+                    index = text.IndexOf('\n', index + 1, limit - index);
+                }
+
+                return previous;
+            }
+
+            for (int i = 0; i < entities.Count; i++)
+            {
+                var entity = entities[i];
+                if (entity.Type is TextEntityTypePre or TextEntityTypePreCode or TextEntityTypeBlockQuote)
+                {
+                    if (entity.Offset > 0 && text[entity.Offset - 1] != '\n')
+                    {
+                        indexes ??= new();
+                        indexes.Add(new Break(entity.Offset, 0));
+                    }
+
+                    Break(previous, entity.Offset);
+
+                    if (text.Length > entity.Offset + entity.Length && text[entity.Offset + entity.Length] != '\n' && text[entity.Offset + entity.Length - 1] != '\n')
+                    {
+                        indexes ??= new();
+                        indexes.Add(new Break(entity.Offset + entity.Length, 0));
+                    }
+                    else if (text.Length > entity.Offset + entity.Length && text[entity.Offset + entity.Length - 1] == '\n')
+                    {
+                        indexes ??= new();
+                        indexes.Add(new Break(entity.Offset + entity.Length - 1, 1));
+                    }
+
+                    previous = entity.Offset + entity.Length;
                 }
             }
 
             if (text.Length > previous)
             {
-                var index = text.IndexOf('\n', previous);
-
-                while (index != -1)
+                var ziocane = Break(previous, text.Length - 1);
+                if (ziocane <= text.Length && indexes != null)
                 {
-                    indexes ??= new();
-                    indexes.Add(index);
+                    var direction = NativeUtils.GetDirectionality(text, ziocane);
+                    if (direction == indexes[^1].Direction)
+                    {
+                        indexes.RemoveAt(indexes.Count - 1);
+                    }
 
-                    index = text.IndexOf('\n', index + 1);
+                    if (indexes.Count == 0)
+                    {
+                        indexes = null;
+                    }
                 }
             }
 
@@ -397,22 +463,15 @@ namespace Telegram.Common
 
                 // The code may generate duplicate indexes (example: https://t.me/c/1896357006/2)
                 // District is used to avoid that, but it would be better to fix the algorithm.
-                foreach (var index in indexes.Distinct())
+                foreach (var index in indexes.DistinctBy(x => x.Offset).OrderBy(x => x.Offset))
                 {
-                    var length = index - prev;
-                    var regular = text[index] == '\n';
-
-                    if (length > 0 || regular)
-                    {
-                        list.Add(Split(text, entities, prev, length));
-                    }
-
-                    prev = index + (regular ? 1 : 0);
+                    list.Add(Split(text, entities, prev, index.Offset - prev, index.Direction));
+                    prev = index.Offset + index.Length;
                 }
 
                 if (text.Length > prev)
                 {
-                    list.Add(Split(text, entities, prev, text.Length - prev));
+                    list.Add(Split(text, entities, prev, text.Length - prev, null));
                 }
 
                 return list;
@@ -420,61 +479,71 @@ namespace Telegram.Common
 
             return new[]
             {
-                new StyledParagraph(0, text.Length, GetRuns(text, entities))
+                new StyledParagraph(text, 0, text.Length, entities)
             };
         }
 
-        private static StyledParagraph Split(string text, IList<TextEntity> entities, long startIndex, long length)
+        private static StyledParagraph Split(string text, IList<TextEntity> entities, int startIndex, int length, TextDirectionality? direction)
         {
             if (length <= 0)
             {
-                return new StyledParagraph(
-                    (int)startIndex,
-                    (int)length,
-                    Array.Empty<TextStyleRun>()
-                );
+                return new StyledParagraph(string.Empty, startIndex, length, null);
             }
 
-            var message = text.Substring((int)startIndex, Math.Min(text.Length - (int)startIndex, (int)length));
+            var message = text.Substring(startIndex, Math.Min(text.Length - startIndex, length));
             IList<TextEntity> sub = null;
 
             foreach (var entity in entities)
             {
-                // Included, Included
-                if (entity.Offset > startIndex && entity.Offset + entity.Length <= startIndex + length)
+                if (GetRelativeRange(entity.Offset, entity.Length, startIndex, length, out int newOffset, out int newLength))
                 {
-                    var replace = new TextEntity { Offset = entity.Offset - (int)startIndex, Length = entity.Length, Type = entity.Type };
                     sub ??= new List<TextEntity>();
-                    sub.Add(replace);
-                }
-                // Before, Included
-                else if (entity.Offset <= startIndex && entity.Offset + entity.Length > startIndex && entity.Offset + entity.Length < startIndex + length)
-                {
-                    var replace = new TextEntity { Offset = 0, Length = entity.Length - ((int)startIndex - entity.Offset), Type = entity.Type };
-                    sub ??= new List<TextEntity>();
-                    sub.Add(replace);
-                }
-                // Included, After
-                else if (entity.Offset > startIndex && entity.Offset < startIndex + length && entity.Offset + entity.Length > startIndex + length)
-                {
-                    var replace = new TextEntity { Offset = entity.Offset - (int)startIndex, Length = ((int)startIndex + (int)length) + entity.Offset, Type = entity.Type };
-                    sub ??= new List<TextEntity>();
-                    sub.Add(replace);
-                }
-                // Before, After
-                else if (entity.Offset <= startIndex && entity.Offset + entity.Length >= startIndex + length)
-                {
-                    var replace = new TextEntity { Offset = 0, Length = message.Length, Type = entity.Type };
-                    sub ??= new List<TextEntity>();
-                    sub.Add(replace);
+                    sub.Add(new TextEntity
+                    {
+                        Offset = newOffset,
+                        Length = newLength,
+                        Type = entity.Type
+                    });
                 }
             }
 
-            return new StyledParagraph(
-                (int)startIndex,
-                message.Length,
-                GetRuns(message, sub)
-            );
+            return new StyledParagraph(message, startIndex, message.Length, sub, direction);
+        }
+
+        public static bool GetRelativeRange(int offset, int length, int relativeOffset, int relativeLength, out int newOffset, out int newLength)
+        {
+            // Included, Included
+            if (offset > relativeOffset && offset + length <= relativeOffset + relativeLength)
+            {
+                newOffset = offset - relativeOffset;
+                newLength = length;
+            }
+            // Before, Included
+            else if (offset <= relativeOffset && offset + length > relativeOffset && offset + length < relativeOffset + relativeLength)
+            {
+                newOffset = 0;
+                newLength = length - (relativeOffset - offset);
+            }
+            // Included, After
+            else if (offset > relativeOffset && offset < relativeOffset + relativeLength && offset + length > relativeOffset + relativeLength)
+            {
+                newOffset = offset - relativeOffset;
+                newLength = (relativeOffset + relativeLength) - offset;
+            }
+            // Before, After
+            else if (offset <= relativeOffset && offset + length >= relativeOffset + relativeLength)
+            {
+                newOffset = 0;
+                newLength = relativeLength;
+            }
+            else
+            {
+                newOffset = -1;
+                newLength = length;
+                return false;
+            }
+
+            return true;
         }
 
         #endregion
@@ -491,10 +560,50 @@ namespace Telegram.Common
         Spoiler = 32,
         Mention = 64,
         Url = 128,
-        Emoji = 256
+        Emoji = 256,
+        Quote = 512,
     }
 
     public record StyledText(string Text, IList<StyledParagraph> Paragraphs);
 
-    public record StyledParagraph(int Offset, int Length, IList<TextStyleRun> Runs);
+    public class StyledParagraph
+    {
+        public StyledParagraph(string text, int offset, int length, IList<TextEntity> entities, TextDirectionality? direction = null)
+        {
+            Offset = offset;
+            Length = length;
+            Entities = entities ?? Array.Empty<TextEntity>();
+            Runs = TextStyleRun.GetRuns(text, entities);
+            Direction = direction ?? NativeUtils.GetDirectionality(text);
+
+            if (entities?.Count > 0)
+            {
+                Type = entities[0].Type switch
+                {
+                    TextEntityTypePre or TextEntityTypePreCode => ParagraphStyle.Monospace,
+                    TextEntityTypeBlockQuote => ParagraphStyle.Quote,
+                    _ => ParagraphStyle.None
+                };
+            }
+        }
+
+        public int Offset { get; }
+
+        public int Length { get; }
+
+        public IList<TextEntity> Entities { get; }
+
+        public IList<TextStyleRun> Runs { get; }
+
+        public TextDirectionality Direction { get; }
+
+        public ParagraphStyle Type { get; }
+    }
+
+    public enum ParagraphStyle
+    {
+        None,
+        Monospace,
+        Quote,
+    }
 }

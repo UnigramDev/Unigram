@@ -6,9 +6,9 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Numerics;
 using System.Threading;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Native;
 using Telegram.Native.Highlight;
 using Telegram.Navigation;
@@ -16,24 +16,28 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.UI;
-using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
     public class TextEntityClickEventArgs : EventArgs
     {
-        public TextEntityClickEventArgs(TextEntityType type, object data)
+        public TextEntityClickEventArgs(int offset, int length, TextEntityType type, object data)
         {
+            Offset = offset;
+            Length = length;
             Type = type;
             Data = data;
         }
+
+        public int Offset { get; }
+
+        public int Length { get; }
 
         public TextEntityType Type { get; }
 
@@ -55,6 +59,7 @@ namespace Telegram.Controls
 
         private TextHighlighter _spoiler;
 
+        private Canvas Below;
         private RichTextBlock TextBlock;
 
         private bool _templateApplied;
@@ -115,7 +120,10 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
+            Below = GetTemplateChild(nameof(Below)) as Canvas;
+
             TextBlock = GetTemplateChild(nameof(TextBlock)) as RichTextBlock;
+            TextBlock.LostFocus += OnLostFocus;
             TextBlock.SizeChanged += OnSizeChanged;
             TextBlock.ContextMenuOpening += _contextMenuOpening;
 
@@ -127,9 +135,14 @@ namespace Telegram.Controls
 
                 if (_query != null || _spoiler != null)
                 {
-                    SetQuery(string.Empty);
+                    SetQuery(_query, true);
                 }
             }
+        }
+
+        private void OnLostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBlock.Select(TextBlock.ContentStart, TextBlock.ContentStart);
         }
 
         public void Clear()
@@ -187,9 +200,9 @@ namespace Telegram.Controls
             }
         }
 
-        public void SetQuery(string query)
+        public void SetQuery(string query, bool force = false)
         {
-            if ((_query ?? string.Empty) == (query ?? string.Empty) && _isHighlighted == (_spoiler != null))
+            if ((_query ?? string.Empty) == (query ?? string.Empty) && _isHighlighted == (_spoiler != null) && !force)
             {
                 return;
             }
@@ -209,10 +222,20 @@ namespace Telegram.Controls
                     var find = _text.Text.IndexOf(query, StringComparison.OrdinalIgnoreCase);
                     if (find != -1)
                     {
+                        var shift = 0;
+
+                        foreach (var para in _text.Paragraphs)
+                        {
+                            if (para.Offset + para.Length < find)
+                            {
+                                shift++;
+                            }
+                        }
+
                         var highligher = new TextHighlighter();
                         highligher.Foreground = new SolidColorBrush(Colors.White);
                         highligher.Background = new SolidColorBrush(Colors.Orange);
-                        highligher.Ranges.Add(new TextRange { StartIndex = find, Length = query.Length });
+                        highligher.Ranges.Add(new TextRange { StartIndex = find - shift, Length = query.Length });
 
                         _isHighlighted = true;
                         TextBlock.TextHighlighters.Add(highligher);
@@ -290,6 +313,7 @@ namespace Telegram.Controls
 
             var preformatted = false;
             var lastFormatted = false;
+            var firstFormatted = false;
 
             var direct = XamlDirect.GetDefault();
             var text = styled.Text;
@@ -302,8 +326,6 @@ namespace Telegram.Controls
                 text = styled.Text.Substring(part.Offset, Math.Min(part.Length, styled.Text.Length - part.Offset));
                 lastFormatted = false;
 
-                TextDirectionality? direction = null;
-
                 var runs = part.Runs;
                 var previous = 0;
 
@@ -313,6 +335,25 @@ namespace Telegram.Controls
                 if (AutoFontSize)
                 {
                     direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
+                }
+
+                if (part.Type == Common.ParagraphStyle.Quote)
+                {
+                    lastFormatted = true;
+
+                    if (!firstFormatted && part == styled.Paragraphs[0])
+                    {
+                        firstFormatted = true;
+                    }
+
+                    var first = part == styled.Paragraphs[0];
+                    var last = part == styled.Paragraphs[^1];
+
+                    var temp = direct.GetObject(paragraph) as Paragraph;
+                    temp.Margin = new Thickness(8, first ? 10 : 6, 24, last ? 0 : 8);
+                    temp.FontSize = Theme.Current.MessageFontSize - 2;
+
+                    _codeBlocks.Add(temp);
                 }
 
                 foreach (var entity in runs)
@@ -335,7 +376,7 @@ namespace Telegram.Controls
                         if (entity.Type is TextEntityTypeCode)
                         {
                             var hyperlink = new Hyperlink();
-                            hyperlink.Click += (s, args) => Entity_Click(entity.Type, data);
+                            hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, data);
                             hyperlink.Foreground = TextBlock.Foreground;
                             hyperlink.UnderlineStyle = UnderlineStyle.None;
 
@@ -350,11 +391,16 @@ namespace Telegram.Controls
                             preformatted = true;
                             lastFormatted = true;
 
-                            //var first = part == styled.Paragraphs[0];
+                            if (!firstFormatted && part == styled.Paragraphs[0])
+                            {
+                                firstFormatted = true;
+                            }
+
+                            var first = part == styled.Paragraphs[0];
                             var last = part == styled.Paragraphs[^1];
 
                             var temp = direct.GetObject(paragraph) as Paragraph;
-                            temp.Margin = new Thickness(8, 6, 8, last ? 0 : 8);
+                            temp.Margin = new Thickness(8, first ? 10 : 6, 24, last ? 0 : 8);
 
                             _codeBlocks.Add(temp);
 
@@ -371,7 +417,7 @@ namespace Telegram.Controls
                         if (_ignoreSpoilers is false && entity.HasFlag(Common.TextStyle.Spoiler))
                         {
                             var hyperlink = new Hyperlink();
-                            hyperlink.Click += (s, args) => Entity_Click(new TextEntityTypeSpoiler(), null);
+                            hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, new TextEntityTypeSpoiler(), null);
                             hyperlink.Foreground = null;
                             hyperlink.UnderlineStyle = UnderlineStyle.None;
                             hyperlink.FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily;
@@ -404,7 +450,7 @@ namespace Telegram.Controls
                                     data = mentionName.UserId;
                                 }
 
-                                hyperlink.Click += (s, args) => Entity_Click(entity.Type, null);
+                                hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, null);
                                 hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
                                 hyperlink.UnderlineStyle = HyperlinkStyle;
                                 hyperlink.FontWeight = HyperlinkFontWeight;
@@ -426,7 +472,7 @@ namespace Telegram.Controls
                                 //    data = text.Substring(original.Offset, original.Length);
                                 //}
 
-                                hyperlink.Click += (s, args) => Entity_Click(entity.Type, data);
+                                hyperlink.Click += (s, args) => Entity_Click(entity.Offset, entity.Length, entity.Type, data);
                                 hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
                                 hyperlink.UnderlineStyle = HyperlinkStyle;
                                 hyperlink.FontWeight = HyperlinkFontWeight;
@@ -453,14 +499,17 @@ namespace Telegram.Controls
                             player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
                             player.HorizontalAlignment = HorizontalAlignment.Left;
                             player.FlowDirection = FlowDirection.LeftToRight;
-                            player.Margin = new Thickness(-20, -4, 0, -4);
+                            player.Margin = new Thickness(0, -2, 0, -6);
+                            player.Style = EmojiStyle;
+                            player.IsHitTestVisible = false;
+                            player.IsEnabled = false;
 
                             var inline = new InlineUIContainer();
                             inline.Child = player;
 
                             // TODO: see if there's a better way
-                            direct.AddToCollection(inlines, CreateDirectRun("\U0001F921", fontFamily: BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily));
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
+                            direct.AddToCollection(inlines, CreateDirectRun("\u200D"));
                         }
                         else
                         {
@@ -506,6 +555,8 @@ namespace Telegram.Controls
                 parag++;
             }
 
+            //Padding = new Thickness(0, firstFormatted ? 4 : 0, 0, 0);
+
             //ContentPanel.MaxWidth = preformatted ? double.PositiveInfinity : 432;
 
             //_isFormatted = runs.Count > 0 || fontSize != 0;
@@ -523,9 +574,11 @@ namespace Telegram.Controls
                 _spoiler = null;
             }
 
-            if (AdjustLineEnding)
+            if (AdjustLineEnding && styled.Paragraphs.Count > 0)
             {
-                var direction = NativeUtils.GetDirectionality(text);
+                //var direction = NativeUtils.GetDirectionality(text);
+
+                var direction = styled.Paragraphs[^1].Direction;
                 if (direction == TextDirectionality.RightToLeft && LocaleService.Current.FlowDirection == FlowDirection.LeftToRight)
                 {
                     TextBlock.FlowDirection = FlowDirection.RightToLeft;
@@ -550,40 +603,20 @@ namespace Telegram.Controls
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var visual = ElementCompositionPreview.GetElementChildVisual(this) as ShapeVisual;
-            if (visual == null)
-            {
-                visual = Window.Current.Compositor.CreateShapeVisual();
-                visual.Opacity = 0.2f;
-
-                ElementCompositionPreview.SetElementChildVisual(this, visual);
-            }
-
-            visual.Size = e.NewSize.ToVector2();
-            visual.Shapes.Clear();
-
-            CompositionColorBrush brush = null;
+            Below.Children.Clear();
 
             foreach (var block in _codeBlocks)
             {
                 var start = block.ContentStart.GetCharacterRect(block.ContentStart.LogicalDirection);
                 var end = block.ContentEnd.GetCharacterRect(block.ContentEnd.LogicalDirection);
 
-                var rect = visual.Compositor.CreateRoundedRectangleGeometry();
-                rect.Offset = new Vector2(0, (float)start.Y - 2);
-                rect.Size = new Vector2((float)e.NewSize.Width, (float)(end.Bottom - start.Y) + 6);
-                rect.CornerRadius = new Vector2(4);
+                var rect = new BlockQuote();
+                rect.Width = e.NewSize.Width;
+                rect.Height = (end.Bottom - start.Y) + 6;
+                rect.Glyph = block.FontSize == Theme.Current.MessageFontSize ? Icons.CodeBlockFilled16 : Icons.QuoteBlockFilled16;
+                Canvas.SetTop(rect, start.Y - 2);
 
-                if (brush == null && CodeBlockBackground is SolidColorBrush solid)
-                {
-                    brush = visual.Compositor.CreateColorBrush(solid.Color);
-                }
-
-                var shape = visual.Compositor.CreateSpriteShape();
-                shape.Geometry = rect;
-                shape.FillBrush = brush;
-
-                visual.Shapes.Add(shape);
+                Below.Children.Add(rect);
             }
         }
 
@@ -816,7 +849,7 @@ namespace Telegram.Controls
             }
         }
 
-        private void Entity_Click(TextEntityType type, object data)
+        private void Entity_Click(int offset, int length, TextEntityType type, object data)
         {
             foreach (Paragraph block in TextBlock.Blocks)
             {
@@ -829,7 +862,7 @@ namespace Telegram.Controls
                 }
             }
 
-            TextEntityClick?.Invoke(this, new TextEntityClickEventArgs(type, data));
+            TextEntityClick?.Invoke(this, new TextEntityClickEventArgs(offset, length, type, data));
         }
 
         #region TextAlignment
@@ -855,6 +888,19 @@ namespace Telegram.Controls
 
         public static readonly DependencyProperty TextStyleProperty =
             DependencyProperty.Register("TextStyle", typeof(Style), typeof(FormattedTextBlock), new PropertyMetadata(null));
+
+        #endregion
+
+        #region EmojiStyle
+
+        public Style EmojiStyle
+        {
+            get { return (Style)GetValue(EmojiStyleProperty); }
+            set { SetValue(EmojiStyleProperty, value); }
+        }
+
+        public static readonly DependencyProperty EmojiStyleProperty =
+            DependencyProperty.Register("EmojiStyle", typeof(Style), typeof(FormattedTextBlock), new PropertyMetadata(null));
 
         #endregion
 
@@ -919,19 +965,6 @@ namespace Telegram.Controls
         public SolidColorBrush HyperlinkForeground { get; set; }
 
         public FontWeight HyperlinkFontWeight { get; set; } = FontWeights.Normal;
-
-        #endregion
-
-        #region CodeBlockBackground
-
-        public Brush CodeBlockBackground
-        {
-            get { return (Brush)GetValue(CodeBlockBackgroundProperty); }
-            set { SetValue(CodeBlockBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty CodeBlockBackgroundProperty =
-            DependencyProperty.Register("CodeBlockBackground", typeof(Brush), typeof(FormattedTextBlock), new PropertyMetadata(null));
 
         #endregion
 

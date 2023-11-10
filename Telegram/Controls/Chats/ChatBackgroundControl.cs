@@ -80,7 +80,10 @@ namespace Telegram.Controls.Chats
             _aggregator = aggregator;
             _aggregator?.Subscribe<UpdateSelectedBackground>(this, Handle);
 
-            UpdateBackground(clientService.SelectedBackground, IsDarkTheme, 0);
+            var background = clientService.GetSelectedBackground(IsDarkTheme);
+
+            SyncBackgroundWithChatTheme(ref background, IsDarkTheme, out int dimming);
+            UpdateBackground(background, IsDarkTheme, dimming);
         }
 
         public void Update(Background background, bool forDarkTheme)
@@ -223,8 +226,6 @@ namespace Telegram.Controls.Chats
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            Logger.Debug();
-
             if (_fill is BackgroundFillFreeformGradient freeform)
             {
                 _background.UpdateLayout(Background as ImageBrush, e.NewSize.Width, e.NewSize.Height, freeform);

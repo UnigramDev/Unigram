@@ -13,6 +13,8 @@ namespace Telegram.Controls.Media
 {
     public class Icons
     {
+        public const string Spacing = "\u2004\u200A";
+
         public const string PictureInPictureEnter = "\uE92C";
         public const string PictureInPictureExit = "\uE92D";
 
@@ -27,13 +29,29 @@ namespace Telegram.Controls.Media
         public const string ArrowMinimize = "\uE965";
         public const string ArrowMaximize = "\uE966";
 
+        public const string PersonFilled16 = "\uEA48";
+        public const string MegaphoneFilled16 = "\uEA47";
+
+        public const string CodeBlockFilled16 = "\uEA3D";
+        public const string QuoteBlockFilled16 = "\uEA01";
+        public const string QuoteBlock = "\uEA3E";
+
         public const string Globe = "\uE774";
         public const string Loading = "\uE1CD";
+
+        public const string ArrowReply24 = "\uEA4A";
+        public const string Link24 = "\uEA49";
+        public const string Edit24 = "\uEA4B";
 
         public const string Attach = "\uE917";
         public const string Attach24 = "\uE9D8";
         public const string AttachArrowRight = "\uE918";
         public const string AttachArrowRight24 = "\uE9DD";
+
+        public const string MoveUp = "\uEA44";
+        public const string MoveDown = "\uEA43";
+        public const string Enlarge = "\uEA45";
+        public const string Shrink = "\uEA46";
 
         // TODO: wrong name
         public const string Location = "\uE1C4";
@@ -323,6 +341,8 @@ namespace Telegram.Controls.Media
         public const string Fake16 = "\uE9F5";
 
         public const string PersonFilled = "\uE9B8";
+        public const string PersonQuestionMarkFilled = "\uEA41";
+        public const string PersonDeleteFilled = "\uEA40";
         public const string PeopleFilled = "\uE9B9";
         public const string PinFilled = "\uE9BB";
         public const string LinkFilled = "\uE9BC";

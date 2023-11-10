@@ -144,7 +144,6 @@ namespace Telegram.Controls
                 return;
             }
 
-            Logger.Debug();
             InvalidateMeasure();
 
             await this.UpdateLayoutAsync();
@@ -241,8 +240,6 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             availableSize = base.MeasureOverride(availableSize);
 
             if (HorizontalAlignment != HorizontalAlignment.Stretch)
@@ -265,8 +262,6 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             finalSize = base.ArrangeOverride(finalSize);
 
             if (_placeholder.DesiredSize.Width == 0)
@@ -279,7 +274,7 @@ namespace Telegram.Controls
 
             var left = (float)Padding.Left;
             var top = (float)Padding.Top;
-            var rects = PlaceholderImageHelper.Current.LineMetrics(PlaceholderText ?? string.Empty, _placeholder.FontSize, _placeholder.DesiredSize.Width - Padding.Left - Padding.Right, IsPlaceholderRightToLeft);
+            var rects = PlaceholderImageHelper.Current.LineMetrics(PlaceholderText ?? string.Empty, Array.Empty<PlaceholderEntity>(), _placeholder.FontSize, _placeholder.DesiredSize.Width - Padding.Left - Padding.Right, IsPlaceholderRightToLeft);
 
             foreach (var rect in rects)
             {

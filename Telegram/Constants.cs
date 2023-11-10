@@ -6,6 +6,7 @@
 //
 using Rg.DiffUtils;
 using System;
+using Telegram.Td.Api;
 
 namespace Telegram
 {
@@ -56,6 +57,8 @@ namespace Telegram
             AllowBatching = false,
             DetectMoves = true
         };
+
+        public static MessageSendOptions PreviewOnly = new(false, false, false, false, null, 0, true);
 
 #if DEBUG
         // We use properties in debug so that the duration is re-evaluated

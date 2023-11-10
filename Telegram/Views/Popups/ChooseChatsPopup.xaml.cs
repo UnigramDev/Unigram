@@ -219,6 +219,19 @@ namespace Telegram.Views.Popups
         public bool WithMyScore { get; }
     }
 
+    public class ChooseChatsConfigurationReplyToMessage : ChooseChatsConfiguration
+    {
+        public ChooseChatsConfigurationReplyToMessage(Message message, FormattedText quote)
+        {
+            Message = message;
+            Quote = quote;
+        }
+
+        public Message Message { get; }
+
+        public FormattedText Quote { get; }
+    }
+
     public class ChooseChatsConfigurationShareStory : ChooseChatsConfiguration
     {
         public ChooseChatsConfigurationShareStory(long chatId, int storyId)
@@ -307,6 +320,11 @@ namespace Telegram.Views.Popups
             IsPrimaryButtonSplit = ViewModel.IsSendAsCopyEnabled;
             EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
             ViewModel.PropertyChanged += OnPropertyChanged;
+
+            if (ViewModel.SelectionMode == ListViewSelectionMode.None)
+            {
+                PrimaryButtonText = string.Empty;
+            }
         }
 
         protected override void OnApplyTemplate()
@@ -749,7 +767,7 @@ namespace Telegram.Views.Popups
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (ViewModel.Options.CanPostMessages && e.ClickedItem is Chat chat && ViewModel.ClientService.IsSavedMessages(chat))
+            if (ViewModel.Options.CanPostMessages && e.ClickedItem is Chat chat && (ViewModel.ClientService.IsSavedMessages(chat) || ViewModel.SelectionMode == ListViewSelectionMode.None))
             {
                 if (ViewModel.SelectedItems.Empty())
                 {

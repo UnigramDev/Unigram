@@ -37,7 +37,7 @@ namespace Telegram.Common
             return false;
         }
 
-        public static bool ShowAt(this ContextRequestedEventArgs args, MenuFlyout flyout, FrameworkElement element)
+        public static bool ShowAt(this ContextRequestedEventArgs args, MenuFlyout flyout, FrameworkElement element, FlyoutShowMode mode = FlyoutShowMode.Auto)
         {
             args.Handled = true;
 
@@ -50,7 +50,11 @@ namespace Telegram.Common
 
                 try
                 {
-                    flyout.ShowAt(element, point);
+                    flyout.ShowAt(element, new FlyoutShowOptions
+                    {
+                        Position = point,
+                        ShowMode = mode
+                    });
                     return true;
                 }
                 catch { }

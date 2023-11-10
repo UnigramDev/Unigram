@@ -42,7 +42,6 @@ namespace Telegram.Controls
         private static void OrientationPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var wrapPanel = d as WrapPanel;
-            Logger.Debug();
             wrapPanel?.InvalidateMeasure();
             wrapPanel?.InvalidateArrange();
         }
@@ -50,8 +49,6 @@ namespace Telegram.Controls
         /// <inheritdoc />
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var totalMeasure = new UvMeasure();
             var parentMeasure = new UvMeasure(Orientation, availableSize.Width, availableSize.Height);
             var lineMeasure = new UvMeasure();
@@ -107,8 +104,6 @@ namespace Telegram.Controls
         /// <inheritdoc />
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var parentMeasure = new UvMeasure(Orientation, finalSize.Width, finalSize.Height);
             var position = new UvMeasure();
 

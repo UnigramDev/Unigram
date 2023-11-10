@@ -70,16 +70,9 @@ namespace Telegram.Services
                         {
                             _haveFullChatList[index] = true;
                         }
-                        else if (error.Code == 400 && chatList is ChatListFolder chatListFolder)
+                        else
                         {
-                            // TODO: this is a workaround to try to recover the chat folder.
-                            // Figure out the exact error here.
-
-                            var folder = await SendAsync(new GetChatFolder(chatListFolder.ChatFolderId)) as ChatFolder;
-                            if (folder != null)
-                            {
-                                await SendAsync(new EditChatFolder(chatListFolder.ChatFolderId, folder));
-                            }
+                            return null;
                         }
                     }
 

@@ -28,8 +28,6 @@ namespace Telegram.Controls
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Logger.Debug();
-
             var accumulated = IsFooter ? 0 : 64d;
 
             foreach (UIElement child in Children)
@@ -60,8 +58,6 @@ namespace Telegram.Controls
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Logger.Debug();
-
             var accumulated = IsFooter ? 0 : 64d;
 
             foreach (var child in Children)
