@@ -349,15 +349,6 @@ namespace Telegram.Controls.Messages.Content
                     });
                 };
 
-                if (message.IsChannelPost || !message.IsOutgoing)
-                {
-                    player.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
-                    player.RenderTransform = new ScaleTransform
-                    {
-                        ScaleX = -1
-                    };
-                }
-
                 var random = new Random();
                 var x = Player.Height * (0.08 - (0.16 * random.NextDouble()));
                 var y = Player.Height * (0.08 - (0.16 * random.NextDouble()));
@@ -424,6 +415,15 @@ namespace Telegram.Controls.Messages.Content
                         InteractionsPopup.IsOpen = false;
                     });
                 };
+
+                if (message.IsChannelPost || !message.IsOutgoing)
+                {
+                    player.RenderTransformOrigin = new Windows.Foundation.Point(0.5, 0.5);
+                    player.RenderTransform = new ScaleTransform
+                    {
+                        ScaleX = -1
+                    };
+                }
 
                 var left = 75;
                 var right = 15;
