@@ -87,7 +87,7 @@
                                         <Setter Target="Header.VerticalAlignment"
                                                 Value="Top" />
                                         <Setter Target="Header.CornerRadius"
-                                                Value="8" />
+                                                Value="4" />
                                         <Setter Target="Header.Padding"
                                                 Value="8,2,8,4" />
                                         <Setter Target="Header.(Grid.Row)"
@@ -173,7 +173,6 @@
                                                       Grid.Row="1">
                                 <controls:FormattedTextBlock x:Name="Message"
                                                              Foreground="{ThemeResource MessageForegroundBrush}"
-                                                             CodeBlockBackground="{ThemeResource MessageCodeBlockBackgroundBrush}"
                                                              AdjustLineEnding="True"
                                                              Margin="10,0,10,6"
                                                              Grid.Column="1"

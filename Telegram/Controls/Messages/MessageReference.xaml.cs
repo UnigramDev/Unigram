@@ -190,6 +190,14 @@ namespace Telegram.Controls.Messages
                     SubtleBrush =
                     HeaderBrush =
                     BorderBrush = new SolidColorBrush(Colors.White);
+
+                if (AccentDash != null)
+                {
+                    AccentDash.Stripe1 = null;
+                    AccentDash.Stripe2 = null;
+                }
+
+                Margin = new Thickness(-8, -6, -8, -6);
             }
         }
 
@@ -224,6 +232,8 @@ namespace Telegram.Controls.Messages
                     AccentDash.Stripe1 = null;
                     AccentDash.Stripe2 = null;
                 }
+
+                Margin = new Thickness(0);
             }
         }
 
@@ -312,6 +322,8 @@ namespace Telegram.Controls.Messages
 
                     AccentDash.Stripe1 = null;
                     AccentDash.Stripe2 = null;
+
+                    Margin = new Thickness(-8, -6, -8, -6);
                 }
                 else
                 {
@@ -340,6 +352,8 @@ namespace Telegram.Controls.Messages
                         AccentDash.Stripe1 = null;
                         AccentDash.Stripe2 = null;
                     }
+
+                    Margin = new Thickness(0);
                 }
 
                 _accent = accent;
