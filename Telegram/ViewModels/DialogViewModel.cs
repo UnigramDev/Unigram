@@ -748,10 +748,9 @@ namespace Telegram.ViewModels
             }
 
         AddDate:
-            var thread = _thread;
-            if (thread != null && !thread.Messages.Any(x => x.IsTopicMessage))
+            if (_topic == null && _thread != null)
             {
-                var replied = thread.Messages.OrderBy(x => x.Id)
+                var replied = _thread.Messages.OrderBy(x => x.Id)
                     .Select(x => CreateMessage(x))
                     .ToList();
 
@@ -1328,7 +1327,7 @@ namespace Telegram.ViewModels
                     IsLastSliceLoaded = null;
                     IsFirstSliceLoaded = IsEndReached();
 
-                    if (_thread != null && _thread.Messages.Any(x => x.Id == maxId))
+                    if (_topic == null && _thread != null && _thread.Messages.Any(x => x.Id == maxId))
                     {
                         await AddHeaderAsync();
                     }
@@ -1499,7 +1498,7 @@ namespace Telegram.ViewModels
             for (int i = 0; i < messages.Count; i++)
             {
                 var message = messages[i];
-                if (message.Content is MessageForumTopicCreated && Type == DialogType.Thread)
+                if (message.Content is MessageForumTopicCreated or MessageChatUpgradeFrom && Type == DialogType.Thread)
                 {
                     messages.RemoveAt(i);
                     i--;
