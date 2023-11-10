@@ -174,18 +174,40 @@ namespace Telegram.Common
         public static int Shift(this TextPointer pointer)
         {
             var index = 0;
+            var emoji = false;
 
             bool Inside(InlineCollection inlines)
             {
                 foreach (var element in inlines)
                 {
-                    index++;
-
-                    if (element == pointer.Parent)
+                    if (element.ElementStart.Offset <= pointer.Offset && element.ElementEnd.Offset > pointer.Offset)
                     {
+                        if (element.ElementStart.Offset < pointer.Offset && element.ContentEnd.Offset > element.ContentStart.Offset)
+                        {
+                            index++;
+                        }
+                        else if (element.ContentEnd.Offset <= pointer.Offset)
+                        {
+                            index--;
+                        }
+
                         return true;
                     }
-                    else if (element is Span span1)
+
+                    index++;
+
+                    if (element is InlineUIContainer)
+                    {
+                        index -= 2;
+                        emoji = true;
+                    }
+                    else if (element is Run run && emoji)
+                    {
+                        index++;
+                        emoji = false;
+                    }
+
+                    if (element is Span span1)
                     {
                         if (Inside(span1.Inlines))
                         {
@@ -205,7 +227,11 @@ namespace Telegram.Common
                 {
                     index++;
 
-                    if (block is Paragraph paragraph && Inside(paragraph.Inlines))
+                    if (block == pointer.Parent && block.ContentStart.Offset == pointer.Offset)
+                    {
+                        break;
+                    }
+                    else if (block is Paragraph paragraph && Inside(paragraph.Inlines))
                     {
                         break;
                     }

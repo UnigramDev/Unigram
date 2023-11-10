@@ -528,7 +528,7 @@ namespace Telegram.Common
             else if (offset > relativeOffset && offset < relativeOffset + relativeLength && offset + length > relativeOffset + relativeLength)
             {
                 newOffset = offset - relativeOffset;
-                newLength = (offset + length) - (relativeOffset + relativeLength);
+                newLength = (relativeOffset + relativeLength) - offset;
             }
             // Before, After
             else if (offset <= relativeOffset && offset + length >= relativeOffset + relativeLength)

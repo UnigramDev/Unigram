@@ -2029,7 +2029,7 @@ namespace Telegram.Views
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(point, element);
 
                 var textBlock = children.FirstOrDefault() as RichTextBlock;
-                if (textBlock != null && textBlock.SelectedText.Length == 0)
+                if (textBlock != null && (textBlock.SelectionEnd == null || textBlock.SelectionStart == null))
                 {
                     MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, textBlock, args);
 
@@ -2142,7 +2142,7 @@ namespace Telegram.Views
                 if (selectionEnd - selectionStart > 0)
                 {
                     var caption = message.GetCaption();
-                    if (caption != null)
+                    if (caption != null && caption.Text.Length > selectionEnd && selectionEnd > 0 && selectionStart >= 0)
                     {
                         quote = new MessageQuote
                         {
