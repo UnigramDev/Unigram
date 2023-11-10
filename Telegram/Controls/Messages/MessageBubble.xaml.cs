@@ -636,7 +636,7 @@ namespace Telegram.Controls.Messages
                 }
                 else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
                 {
-                    Window.Current.ShowToast(sender as FrameworkElement, Strings.HidAccount);
+                    Window.Current.ShowToast(Strings.HidAccount);
                     //await MessagePopup.ShowAsync(Strings.HidAccount, Strings.AppName, Strings.OK);
                 }
             }
@@ -1182,7 +1182,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
             {
-                Window.Current.ShowToast(HeaderLabel, Strings.HidAccount);
+                Window.Current.ShowToast(Strings.HidAccount);
             }
             else if (message.Content is MessageAsyncStory asyncStory)
             {
