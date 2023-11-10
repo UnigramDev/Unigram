@@ -38,8 +38,9 @@
                           ChoosingItemContainer="OnChoosingItemContainer"
                           ContainerContentChanging="OnContainerContentChanging"
                           ItemContainerTransitions="{x:Null}"
-                          Padding="10,10,10,10"
+                          Padding="10,10,0,10"
                           common:FluidGridView.OrientationOnly="False"
+                          common:FluidGridView.Padding="0,0,10,0"
                           Grid.Row="1">
                     <common:FluidGridView.Triggers>
                         <common:FluidGridViewTrigger RowsOrColumns="7" />
@@ -119,7 +120,7 @@
                                             <ContentPresenter />
 
                                             <Ellipse x:Name="SelectionIndicatorBorder"
-                                                     Stroke="#FFFFFF"
+                                                     Stroke="{ThemeResource ContentDialogBackground}"
                                                      StrokeThickness="2"
                                                      Margin="2"
                                                      Opacity="0" />

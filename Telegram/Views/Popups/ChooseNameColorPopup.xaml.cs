@@ -193,7 +193,7 @@ namespace Telegram.Views.Popups
 
         private void Badge_Click(object sender, RoutedEventArgs e)
         {
-            var flyout = EmojiMenuFlyout.ShowAt(_clientService, EmojiDrawerMode.Background, Animated, HorizontalAlignment.Left);
+            var flyout = EmojiMenuFlyout.ShowAt(_clientService, EmojiDrawerMode.Background, Animated, EmojiFlyoutAlignment.TopLeft);
             flyout.EmojiSelected += Flyout_EmojiSelected;
         }
 
