@@ -837,7 +837,7 @@ namespace Telegram.ViewModels
                         // if this is coming from UpdateMessageSendSucceded,
                         // but we already have a message with the new ID there was a race condition:
                         // in this case we just delete the temporary message and that's it.
-                        if (newMessageId.HasValue && Items.TryGetValue(newMessageId.Value, out MessageViewModel duplicate))
+                        if (newMessageId.HasValue && newMessageId != messageId && Items.TryGetValue(newMessageId.Value, out MessageViewModel duplicate))
                         {
                             Items.Remove(duplicate);
                         }
