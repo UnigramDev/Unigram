@@ -31,7 +31,18 @@ namespace Telegram.Controls.Chats
         public ScrollViewer ScrollingHost { get; private set; }
         public ItemsStackPanel ItemsStack { get; private set; }
 
-        public bool IsBottomReached => ScrollingHost?.VerticalOffset == ScrollingHost?.ScrollableHeight;
+        public bool IsBottomReached
+        {
+            get
+            {
+                if (ScrollingHost != null)
+                {
+                    return ScrollingHost.VerticalOffset.AlmostEquals(ScrollingHost.ScrollableHeight);
+                }
+
+                return true;
+            }
+        }
 
         private readonly DisposableMutex _loadMoreLock = new();
         private int _loadMoreCount = 0;
