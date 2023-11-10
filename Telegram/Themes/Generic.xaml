@@ -6186,6 +6186,8 @@
                 Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin"
                 Value="0" />
+        <Setter Property="CornerRadius"
+                Value="4" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListViewItem">
@@ -6195,6 +6197,7 @@
                           Background="{TemplateBinding Background}"
                           BorderBrush="{TemplateBinding BorderBrush}"
                           BorderThickness="{TemplateBinding BorderThickness}"
+                          CornerRadius="{TemplateBinding CornerRadius}"
                           RenderTransformOrigin="0.5,0.5">
 
                         <Grid.RenderTransform>

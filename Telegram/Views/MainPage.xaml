@@ -308,6 +308,7 @@
 
         <controls:MenuButton x:Name="Photo"
                              Click="Photo_Click"
+                             GettingFocus="Photo_GettingFocus"
                              Type="Back"
                              TabIndex="0"
                              HorizontalAlignment="Left"

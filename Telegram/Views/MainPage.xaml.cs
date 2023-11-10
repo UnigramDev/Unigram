@@ -2776,6 +2776,14 @@ namespace Telegram.Views
             }
         }
 
+        private void Photo_GettingFocus(UIElement sender, GettingFocusEventArgs args)
+        {
+            if (args.Direction == FocusNavigationDirection.None)
+            {
+                args.TrySetNewFocusedElement(ChatsList);
+            }
+        }
+
         private void ChatFolders_ChoosingGroupHeaderContainer(ListViewBase sender, ChoosingGroupHeaderContainerEventArgs args)
         {
             args.GroupHeaderContainer = new ListViewHeaderItem
