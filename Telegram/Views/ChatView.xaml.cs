@@ -731,13 +731,7 @@ namespace Telegram.Views
         {
             foreach (var message in items)
             {
-                if (message == null)
-                {
-                    continue;
-                }
-
-                var container = Messages.ContainerFromItem(message) as SelectorItem;
-                if (container == null)
+                if (message == null || !_messageIdToSelector.TryGetValue(message.Id, out var container))
                 {
                     continue;
                 }

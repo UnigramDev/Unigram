@@ -3741,11 +3741,10 @@ namespace Telegram.ViewModels
                 base.InsertItem(index, item);
 
                 var prevUpdate = AttachHash(prev);
-
-                AttachChanged?.Invoke(new[]
+                if (prevUpdate != prevHash)
                 {
-                    prevHash != prevUpdate ? prev : null,
-                });
+                    AttachChanged?.Invoke(new[] { prev });
+                }
             }
             else if (_suppressPrev)
             {
@@ -3771,11 +3770,10 @@ namespace Telegram.ViewModels
                 }
 
                 var nextUpdate = AttachHash(next);
-
-                AttachChanged?.Invoke(new[]
+                if (nextUpdate != nextHash)
                 {
-                    nextHash != nextUpdate ? next : null
-                });
+                    AttachChanged?.Invoke(new[] { next });
+                }
             }
             else
             {
@@ -3830,11 +3828,14 @@ namespace Telegram.ViewModels
                 var nextUpdate = AttachHash(next);
                 var prevUpdate = AttachHash(prev);
 
-                AttachChanged?.Invoke(new[]
+                if (prevHash != prevUpdate || nextHash != nextUpdate)
                 {
-                    prevHash != prevUpdate ? prev : null,
-                    nextHash != nextUpdate ? next : null
-                });
+                    AttachChanged?.Invoke(new[]
+                    {
+                        prevHash != prevUpdate ? prev : null,
+                        nextHash != nextUpdate ? next : null
+                    });
+                }
             }
         }
 
@@ -3853,11 +3854,14 @@ namespace Telegram.ViewModels
             var update2 = AttachHash(next);
             var update3 = AttachHash(previous);
 
-            AttachChanged?.Invoke(new[]
+            if (hash3 != update3 || hash2 != update2)
             {
-                hash3 != update3 ? previous : null,
-                hash2 != update2 ? next : null
-            });
+                AttachChanged?.Invoke(new[]
+                {
+                    hash3 != update3 ? previous : null,
+                    hash2 != update2 ? next : null
+                });
+            }
 
             base.RemoveItem(index);
 

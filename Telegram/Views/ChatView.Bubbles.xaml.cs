@@ -409,13 +409,10 @@ namespace Telegram.Views
                 }
                 else
                 {
-                    var container = Messages.ContainerFromItem(message) as ListViewItem;
-                    if (container == null)
+                    if (_messageIdToSelector.TryGetValue(message.Id, out SelectorItem container))
                     {
-                        return;
+                        Play(new (SelectorItem, MessageViewModel)[] { (container, message) });
                     }
-
-                    Play(new (SelectorItem, MessageViewModel)[] { (container, message) });
                 }
             }
         }
