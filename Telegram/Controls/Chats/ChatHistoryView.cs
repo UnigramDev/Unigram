@@ -322,7 +322,7 @@ namespace Telegram.Controls.Chats
             {
                 if (scrollViewer.VerticalOffset.AlmostEquals(position.Y))
                 {
-                    if (highlight != null && highlight.MoveFocus)
+                    if (highlight == null || highlight.MoveFocus)
                     {
                         selectorItem.Focus(FocusState.Pointer);
                     }
@@ -333,7 +333,7 @@ namespace Telegram.Controls.Chats
                 await scrollViewer.ChangeViewAsync(null, position.Y, disableAnimation ?? alignment != VerticalAlignment.Center, false);
             }
 
-            if (highlight != null && highlight.MoveFocus)
+            if (highlight == null || highlight.MoveFocus)
             {
                 selectorItem.Focus(FocusState.Pointer);
             }
