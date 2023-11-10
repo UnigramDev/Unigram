@@ -508,8 +508,8 @@ namespace Telegram.Controls
                             inline.Child = player;
 
                             // TODO: see if there's a better way
-                            direct.AddToCollection(inlines, CreateDirectRun("\u200D"));
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
+                            direct.AddToCollection(inlines, CreateDirectRun("\u200D"));
                         }
                         else
                         {

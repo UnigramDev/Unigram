@@ -85,7 +85,7 @@ namespace Telegram.Controls
             public void Dispose()
             {
                 --_owner._suppressEvents;
-                _owner.Prepare();
+                _owner.Load();
             }
         }
 
@@ -110,7 +110,7 @@ namespace Telegram.Controls
         {
             if (_loaded == 1)
             {
-                Prepare();
+                Load();
                 XamlRoot.Changed += OnRasterizationScaleChanged;
             }
             else if (_loaded == 0)
@@ -337,10 +337,10 @@ namespace Telegram.Controls
 
         private static void OnPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((AnimatedImage)d).Prepare();
+            ((AnimatedImage)d).Load();
         }
 
-        private void Prepare()
+        private void Load()
         {
             if (_suppressEvents > 0)
             {
@@ -435,7 +435,7 @@ namespace Telegram.Controls
             _templateApplied = true;
             _rasterizationScale = XamlRoot.RasterizationScale;
 
-            Prepare();
+            Load();
             ReplacementColorChanged();
             base.OnApplyTemplate();
         }
@@ -445,7 +445,7 @@ namespace Telegram.Controls
             if (_rasterizationScale != sender.RasterizationScale && DecodeFrameType == DecodePixelType.Logical)
             {
                 _rasterizationScale = sender.RasterizationScale;
-                Prepare();
+                Load();
             }
         }
 

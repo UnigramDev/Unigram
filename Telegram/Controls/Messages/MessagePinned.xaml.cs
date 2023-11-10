@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -364,7 +365,7 @@ namespace Telegram.Controls.Messages
             }
 
             var messageShow = _textVisual == _textVisual1 ? MessageLabel2 : MessageLabel1;
-            var labelShow = _textVisual == _textVisual1 ? TextLabel1 : TextLabel2;
+            var labelShow = _textVisual == _textVisual1 ? TextLabel2 : TextLabel1;
             messageShow.Inlines.Clear();
 
             if (text != null)
@@ -390,13 +391,13 @@ namespace Telegram.Controls.Messages
 
                         var player = new CustomEmojiIcon();
                         player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
-                        player.Style = App.Current.Resources["MessageCustomEmojiStyle"] as Style;
+                        player.Style = BootStrapper.Current.Resources["MessageCustomEmojiStyle"] as Style;
 
                         var inline = new InlineUIContainer();
-                        inline.Child = new CustomEmojiContainer(labelShow, player);
+                        inline.Child = new CustomEmojiContainer(labelShow, player, -2);
 
-                        messageShow.Inlines.Add("\u200D");
                         messageShow.Inlines.Add(inline);
+                        messageShow.Inlines.Add("\u200D");
 
                         previous = entity.Offset + entity.Length;
                     }

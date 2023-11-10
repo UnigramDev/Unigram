@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml;
 using Windows.Foundation;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls
 {
@@ -29,7 +29,7 @@ namespace Telegram.Controls
         {
             _parent = parent;
             _child = child;
-            _baseline = baseline;
+            _baseline = baseline + 0.01;
 
             child.IsViewportAware = false;
             child.IsHitTestVisible = false;
@@ -40,6 +40,9 @@ namespace Telegram.Controls
             HorizontalAlignment = HorizontalAlignment.Left;
             FlowDirection = FlowDirection.LeftToRight;
             Margin = new Thickness(0, -2, 0, -6);
+
+            Width = 20;
+            Height = 20;
 
             EffectiveViewportChanged += OnEffectiveViewportChanged;
         }

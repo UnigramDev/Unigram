@@ -1081,8 +1081,8 @@ namespace Telegram.Controls.Cells
                         var inline = new InlineUIContainer();
                         inline.Child = new CustomEmojiContainer(BriefText, player);
 
-                        BriefLabel.Inlines.Add("\u200D");
                         BriefLabel.Inlines.Add(inline);
+                        BriefLabel.Inlines.Add("\u200D");
 
                         previous = entity.Offset + entity.Length;
                         hasCustomEmoji = true;

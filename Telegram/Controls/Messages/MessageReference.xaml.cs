@@ -372,8 +372,8 @@ namespace Telegram.Controls.Messages
                             var inline = new InlineUIContainer();
                             inline.Child = new CustomEmojiContainer(Label, player, 14);
 
-                            MessageLabel.Inlines.Add(new Run { Text = "\u200D" });
                             MessageLabel.Inlines.Add(inline);
+                            MessageLabel.Inlines.Add(new Run { Text = "\u200D" });
 
                             previous = entity.Offset + entity.Length;
                         }
