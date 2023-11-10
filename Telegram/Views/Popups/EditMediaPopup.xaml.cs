@@ -99,9 +99,19 @@ namespace Telegram.Views.Popups
                     Canvas.Undo();
                     args.Handled = true;
                 }
-                if (args.VirtualKey == Windows.System.VirtualKey.Y && args.OnlyControl && Canvas.CanRedo)
+                else if (args.VirtualKey == Windows.System.VirtualKey.Y && args.OnlyControl && Canvas.CanRedo)
                 {
                     Canvas.Redo();
+                    args.Handled = true;
+                }
+                else if (args.VirtualKey == Windows.System.VirtualKey.D && args.OnlyControl)
+                {
+                    Brush_Click(null, null);
+                    args.Handled = true;
+                }
+                else if (args.VirtualKey == Windows.System.VirtualKey.E && args.OnlyControl)
+                {
+                    Erase_Click(null, null);
                     args.Handled = true;
                 }
             }
@@ -249,6 +259,8 @@ namespace Telegram.Views.Popups
                 DrawSlider.Visibility = Visibility.Collapsed;
 
                 SettingsService.Current.Pencil = DrawSlider.GetDefault();
+
+                Cancel();
             }
         }
 
