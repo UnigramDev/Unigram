@@ -75,7 +75,7 @@ namespace Telegram.Views.Settings
 
         private void Reaction_Click(object sender, RoutedEventArgs e)
         {
-            EmojiMenuFlyout.ShowAt(ViewModel.ClientService, EmojiDrawerMode.Reactions, IconPanel, HorizontalAlignment.Right);
+            EmojiMenuFlyout.ShowAt(ViewModel.ClientService, EmojiDrawerMode.Reactions, IconPanel, EmojiFlyoutAlignment.TopRight);
         }
     }
 }

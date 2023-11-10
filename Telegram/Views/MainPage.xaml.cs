@@ -3090,7 +3090,7 @@ namespace Telegram.Views
         {
             if (ViewModel.IsPremium)
             {
-                EmojiMenuFlyout.ShowAt(ViewModel.ClientService, EmojiDrawerMode.CustomEmojis, TitleBarLogo, HorizontalAlignment.Left);
+                EmojiMenuFlyout.ShowAt(ViewModel.ClientService, EmojiDrawerMode.CustomEmojis, TitleBarLogo, EmojiFlyoutAlignment.TopLeft);
             }
         }
 

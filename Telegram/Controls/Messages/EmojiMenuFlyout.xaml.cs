@@ -36,6 +36,15 @@ namespace Telegram.Controls.Messages
         }
     }
 
+    public enum EmojiFlyoutAlignment
+    {
+        TopLeft,
+        TopRight,
+        BottomLeft,
+        BottomRight,
+        Center
+    }
+
     public sealed partial class EmojiMenuFlyout : UserControl
     {
         private readonly IClientService _clientService;
@@ -67,15 +76,15 @@ namespace Telegram.Controls.Messages
 
             _popup = new Popup();
 
-            Initialize(message.ClientService, element, HorizontalAlignment.Center);
+            Initialize(message.ClientService, element, EmojiFlyoutAlignment.Center);
         }
 
-        public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, HorizontalAlignment alignment)
+        public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment)
         {
             return new EmojiMenuFlyout(clientService, mode, element, alignment);
         }
 
-        private EmojiMenuFlyout(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, HorizontalAlignment alignment)
+        private EmojiMenuFlyout(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment)
         {
             InitializeComponent();
 
@@ -103,10 +112,10 @@ namespace Telegram.Controls.Messages
 
             _popup = new Popup();
 
-            Initialize(story.ClientService, element, HorizontalAlignment.Center);
+            Initialize(story.ClientService, element, EmojiFlyoutAlignment.Center);
         }
 
-        private void Initialize(IClientService clientService, FrameworkElement element, HorizontalAlignment alignment)
+        private void Initialize(IClientService clientService, FrameworkElement element, EmojiFlyoutAlignment alignment)
         {
             var transform = element.TransformToVisual(Window.Current.Content);
             var position = transform.TransformPoint(new Point());
@@ -173,12 +182,12 @@ namespace Telegram.Controls.Messages
             var figure = new PathFigure();
             figure.StartPoint = new Point(radius, yy);
 
-            if (alignment == HorizontalAlignment.Left)
+            if (alignment == EmojiFlyoutAlignment.TopLeft)
             {
                 figure.Segments.Add(new LineSegment { Point = new Point(18 + 20, yy + 0) });
                 figure.Segments.Add(new ArcSegment { Point = new Point(18 + 20 + 14, yy + 0), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
             }
-            else if (alignment == HorizontalAlignment.Right)
+            else if (alignment == EmojiFlyoutAlignment.TopRight)
             {
                 figure.Segments.Add(new LineSegment { Point = new Point(width - 18 - 20 - 14, yy + 0) });
                 figure.Segments.Add(new ArcSegment { Point = new Point(width - 18 - 20, yy + 0), Size = new Size(7, 7), RotationAngle = 180, SweepDirection = SweepDirection.Clockwise });
@@ -202,11 +211,11 @@ namespace Telegram.Controls.Messages
             data.FillRule = FillRule.Nonzero;
             data.Children.Add(path);
 
-            if (alignment == HorizontalAlignment.Left)
+            if (alignment == EmojiFlyoutAlignment.TopLeft)
             {
                 data.Children.Add(new EllipseGeometry { Center = new Point(20 + 18, 7), RadiusX = 3.5, RadiusY = 3.5 });
             }
-            else if (alignment == HorizontalAlignment.Right)
+            else if (alignment == EmojiFlyoutAlignment.TopRight)
             {
                 data.Children.Add(new EllipseGeometry { Center = new Point(width - 20 - 18, 7), RadiusX = 3.5, RadiusY = 3.5 });
             }
@@ -237,11 +246,11 @@ namespace Telegram.Controls.Messages
             var x = position.X /*- 18 + padding*/;
             var y = position.Y + element.ActualHeight - 4;
 
-            if (alignment == HorizontalAlignment.Right)
+            if (alignment == EmojiFlyoutAlignment.TopRight)
             {
                 x = position.X - width + element.ActualWidth + 6;
             }
-            else if (alignment == HorizontalAlignment.Center)
+            else if (alignment == EmojiFlyoutAlignment.Center)
             {
                 y = position.Y - 44;
                 x = position.X - 8;
@@ -260,7 +269,7 @@ namespace Telegram.Controls.Messages
             //return;
 
             var visualPill = ElementCompositionPreview.GetElementVisual(Pill);
-            visualPill.CenterPoint = new Vector3(alignment == HorizontalAlignment.Left ? 36 / 2 : width - 36 / 2, yy + 36 / 2, 0);
+            visualPill.CenterPoint = new Vector3(alignment == EmojiFlyoutAlignment.TopLeft ? 36 / 2 : width - 36 / 2, yy + 36 / 2, 0);
 
             var visualExpand = ElementCompositionPreview.GetElementVisual(Expand);
             visualExpand.CenterPoint = new Vector3(32 / 2f, 24 / 2f, 0);
@@ -305,7 +314,7 @@ namespace Telegram.Controls.Messages
 
 
             var resize = compositor.CreateVector2KeyFrameAnimation();
-            if (alignment == HorizontalAlignment.Center)
+            if (alignment == EmojiFlyoutAlignment.Center)
             {
                 resize.InsertKeyFrame(0, new Vector2(228, 40 * ratio));
                 resize.InsertKeyFrame(1, new Vector2(width, height));
@@ -320,17 +329,17 @@ namespace Telegram.Controls.Messages
             clip.StartAnimation("Size", resize);
 
             var move = compositor.CreateVector2KeyFrameAnimation();
-            if (alignment == HorizontalAlignment.Center)
+            if (alignment == EmojiFlyoutAlignment.Center)
             {
                 move.InsertKeyFrame(0, new Vector2(0, yy + 82));
                 move.InsertKeyFrame(1, new Vector2(0, yy));
             }
-            else if (alignment == HorizontalAlignment.Right)
+            else if (alignment == EmojiFlyoutAlignment.TopRight)
             {
                 move.InsertKeyFrame(0, new Vector2(width - 36, yy));
                 move.InsertKeyFrame(1, new Vector2());
             }
-            else if (alignment == HorizontalAlignment.Left)
+            else if (alignment == EmojiFlyoutAlignment.TopLeft)
             {
                 move.InsertKeyFrame(0, new Vector2(36, yy));
                 move.InsertKeyFrame(1, new Vector2());
