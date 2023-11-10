@@ -214,7 +214,7 @@ namespace Telegram.Controls.Gallery
             this.BeginOnUIThread(() =>
             {
                 var viewModel = ViewModel;
-                if (viewModel != null && viewModel.SelectedItem is GalleryMessage message && message.Id == update.MessageId && message.ChatId == update.ChatId && update.NewContent is MessageExpiredPhoto or MessageExpiredVideo)
+                if (viewModel != null && viewModel.SelectedItem is GalleryMessage message && message.ChatId == update.ChatId && message.Id == update.MessageId && message.SelfDestructType is MessageSelfDestructTypeTimer)
                 {
                     OnBackRequestedOverride(this, new BackRequestedRoutedEventArgs());
                 }
