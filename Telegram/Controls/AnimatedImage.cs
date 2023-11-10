@@ -96,29 +96,28 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (Parent == null)
-            {
-                return;
-            }
-
             _loaded++;
-            Prepare();
-
-            XamlRoot.Changed -= OnRasterizationScaleChanged;
-            XamlRoot.Changed += OnRasterizationScaleChanged;
+            Changed();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (Parent != null)
-            {
-                return;
-            }
-
             _loaded--;
-            Unload();
+            Changed();
+        }
 
-            XamlRoot.Changed -= OnRasterizationScaleChanged;
+        private void Changed()
+        {
+            if (_loaded == 1)
+            {
+                Prepare();
+                XamlRoot.Changed += OnRasterizationScaleChanged;
+            }
+            else if (_loaded == 0)
+            {
+                Unload();
+                XamlRoot.Changed -= OnRasterizationScaleChanged;
+            }
         }
 
         public bool IsPlaying => _delayedPlay || _state == PlayingState.Playing;
