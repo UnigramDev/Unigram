@@ -1347,6 +1347,7 @@ namespace Telegram.Views
                             EditingMessage = embedded?.EditingMessage,
                             ReplyToMessage = embedded?.ReplyToMessage,
                             ReplyToQuote = embedded?.ReplyToQuote,
+                            LinkPreviewOptions = embedded?.LinkPreviewOptions,
                             WebPagePreview = webPage,
                             WebPageUrl = webPage.Url
                         };
@@ -1591,7 +1592,12 @@ namespace Telegram.Views
 
         private async void Reply_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MessageReferenceBase referenceBase)
+            if (sender is not MessageReferenceBase referenceBase)
+            {
+                return;
+            }
+
+            //if (sender is MessagePinned || WindowContext.IsKeyDown(VirtualKey.Control))
             {
                 var message = referenceBase.MessageId;
                 if (message != 0)
@@ -1602,16 +1608,21 @@ namespace Telegram.Views
                     ViewVisibleMessages();
                 }
             }
-            else
-            {
-                var reference = sender as MessageReference;
-                var message = reference.MessageId;
+            //else if (ViewModel.ComposerHeader?.WebPagePreview != null)
+            //{
+            //    var options = new MessageSendOptions(false, false, false, false, null, 0, true);
+            //    var text = TextField.GetFormattedText(false);
 
-                if (message != 0)
-                {
-                    await ViewModel.LoadMessageSliceAsync(null, message);
-                }
-            }
+            //    var response = await ViewModel.SendMessageAsync(text, options);
+            //    if (response is Message message)
+            //    {
+            //        await new ComposeWebPagePopup(ViewModel, ViewModel.ComposerHeader, message).ShowQueuedAsync();
+            //    }
+            //}
+            //else if (ViewModel.ComposerHeader?.ReplyToMessage != null)
+            //{
+            //    await new ComposeInfoPopup(ViewModel, ViewModel.ComposerHeader).ShowQueuedAsync();
+            //}
         }
 
         private void PinnedAction_Click(object sender, RoutedEventArgs e)
@@ -1988,6 +1999,30 @@ namespace Telegram.Views
             flyout.CreateFlyoutItem(async () => await TextField.ScheduleAsync(false), self ? Strings.SetReminder : Strings.ScheduleMessage, Icons.CalendarClock);
 
             flyout.ShowAt(sender, FlyoutPlacementMode.TopEdgeAlignedRight);
+        }
+
+        private void Reply_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            return;
+
+            var flyout = new MenuFlyout();
+
+            var header = ViewModel.ComposerHeader;
+            if (header?.WebPagePreview != null)
+            {
+                flyout.CreateFlyoutItem((web) => { }, header, true ? Strings.LinkBelow : Strings.LinkAbove);
+
+                if (header.WebPagePreview.HasLargeMedia)
+                {
+                    flyout.CreateFlyoutItem((web) => { }, header, header.LinkPreviewOptions.ForceSmallMedia ? Strings.LinkMediaLarger : Strings.LinkMediaSmaller);
+                }
+
+                flyout.CreateFlyoutSeparator();
+
+                flyout.CreateFlyoutItem(ViewModel.ClearReply, Strings.DoNotLinkPreview, Icons.Delete, destructive: true);
+            }
+
+            args.ShowAt(flyout, sender as FrameworkElement);
         }
 
         private async void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -2756,7 +2791,7 @@ namespace Telegram.Views
             }
             else if (message.Content is MessageText text)
             {
-                return text.WebPage != null && text.WebPage.IsPhoto();
+                return text.WebPage != null && text.WebPage.HasPhoto();
             }
 
             return false;

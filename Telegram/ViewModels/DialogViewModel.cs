@@ -2448,7 +2448,7 @@ namespace Telegram.ViewModels
         protected override LinkPreviewOptions DisableWebPreview()
         {
             var header = _composerHeader;
-            return header?.WebPageOptions;
+            return header?.LinkPreviewOptions;
         }
 
         protected override async Task<bool> BeforeSendMessageAsync(FormattedText formattedText)
@@ -4137,11 +4137,20 @@ namespace Telegram.ViewModels
 
         public bool WebPageDisabled
         {
-            get => WebPageOptions.IsDisabled;
-            set => WebPageOptions.IsDisabled = value;
+            get => LinkPreviewOptions?.IsDisabled ?? false;
+            set
+            {
+                if (LinkPreviewOptions == null && !value)
+                {
+                    return;
+                }
+
+                LinkPreviewOptions ??= new();
+                LinkPreviewOptions.IsDisabled = value;
+            }
         }
 
-        public LinkPreviewOptions WebPageOptions { get; } = new();
+        public LinkPreviewOptions LinkPreviewOptions { get; set; } = new();
 
         public bool IsEmpty
         {

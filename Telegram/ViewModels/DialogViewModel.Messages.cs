@@ -862,6 +862,7 @@ namespace Telegram.ViewModels
                 {
                     container.WebPagePreview = text.WebPage;
                     container.WebPageUrl = text.WebPage.Url;
+                    container.LinkPreviewOptions = text.LinkPreviewOptions;
                 }
                 else
                 {

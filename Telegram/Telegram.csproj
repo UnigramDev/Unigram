@@ -905,6 +905,12 @@
     <Compile Include="Views\Popups\ChooseSoundPopup.xaml.cs">
       <DependentUpon>ChooseSoundPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\ComposeWebPagePopup.xaml.cs">
+      <DependentUpon>ComposeWebPagePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ComposeInfoPopup.xaml.cs">
+      <DependentUpon>ComposeInfoPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\CreateChatPhotoPopup.xaml.cs">
       <DependentUpon>CreateChatPhotoPopup.xaml</DependentUpon>
     </Compile>
@@ -1244,6 +1250,9 @@
     </Compile>
     <Compile Include="Views\Premium\Popups\FeaturesPopup.xaml.cs">
       <DependentUpon>FeaturesPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Premium\Popups\GiftBoostsPopup.xaml.cs">
+      <DependentUpon>GiftBoostsPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Premium\Popups\GiftCodePopup.xaml.cs">
       <DependentUpon>GiftCodePopup.xaml</DependentUpon>
@@ -2362,6 +2371,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Popups\ComposeWebPagePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ComposeInfoPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Popups\CreateChatPhotoPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -2403,8 +2420,8 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\SearchChatResultsPopup.xaml">
-      <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\StickersPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2601,6 +2618,10 @@
     <Page Include="Views\Premium\Popups\FeaturesPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Premium\Popups\GiftBoostsPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Premium\Popups\GiftCodePopup.xaml">
       <Generator>MSBuild:Compile</Generator>

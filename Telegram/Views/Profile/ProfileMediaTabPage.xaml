@@ -67,6 +67,12 @@
                         <controls:ImageView Click="Photo_Click"
                                             Stretch="UniformToFill" />
 
+                        <!--<controls:BadgeControl Text="00:08"
+                                               Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Bottom"
+                                               Margin="4" />-->
+
                         <Border x:Name="Overlay"
                                 Background="{ThemeResource MessageOverlayBackgroundBrush}"
                                 CornerRadius="{ThemeResource MessageOverlayCornerRadius}"

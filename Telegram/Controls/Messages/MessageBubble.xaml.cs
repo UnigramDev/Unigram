@@ -45,9 +45,10 @@ namespace Telegram.Controls.Messages
 {
     public class MessageBubbleHighlightOptions
     {
-        public MessageBubbleHighlightOptions(FormattedText quote)
+        public MessageBubbleHighlightOptions(FormattedText quote, bool moveFocus = true)
         {
             Quote = quote;
+            MoveFocus = moveFocus;
         }
 
         public MessageBubbleHighlightOptions(bool moveFocus = true)
@@ -1929,7 +1930,7 @@ namespace Telegram.Controls.Messages
 
         private void Message_TextEntityClick(object sender, TextEntityClickEventArgs e)
         {
-            if (_message is not MessageViewModel message)
+            if (_message is not MessageViewModel message || message.PlaybackService == null)
             {
                 return;
             }
@@ -2387,7 +2388,7 @@ namespace Telegram.Controls.Messages
                     var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor;
                     var quoteSize = (Theme.Current.MessageFontSize - 2) * BootStrapper.Current.UISettings.TextScaleFactor;
 
-                    var width = Math.Ceiling(rich.ActualWidth); //Panel.MeasuredWidth; //Message.ActualWidth;
+                    var width = Math.Ceiling(rich.ActualWidth + 1); //Panel.MeasuredWidth; //Message.ActualWidth;
 
                     var minX = double.MaxValue;
                     var minY = double.MaxValue;
@@ -2530,13 +2531,16 @@ namespace Telegram.Controls.Messages
                     solid.CenterPoint = new Vector3(new Windows.Foundation.Point(maxX - (wwidth / 2), maxY - (hheight / 2)).ToVector2(), 0);
                     solid.CenterPoint = new Vector3(new Windows.Foundation.Point(minX + 16, minY + 8).ToVector2(), 0);
 
-                    if (_cornerRadius != null)
+                    if (ApiInfo.IsWindows11)
                     {
-                        solid.Clip = Window.Current.Compositor.CreateRectangleClip(0, 0, (float)target.ActualWidth, (float)target.ActualHeight, new Vector2(_cornerRadius.TopLeft), new Vector2(_cornerRadius.TopRight), new Vector2(_cornerRadius.BottomRight), new Vector2(_cornerRadius.BottomLeft));
-                    }
-                    else
-                    {
-                        solid.Clip = Window.Current.Compositor.CreateRectangleClip(0, 0, (float)target.ActualWidth, (float)target.ActualHeight, new Vector2((float)ContentPanel.CornerRadius.TopLeft), new Vector2((float)ContentPanel.CornerRadius.TopRight), new Vector2((float)ContentPanel.CornerRadius.BottomRight), new Vector2((float)ContentPanel.CornerRadius.BottomLeft));
+                        if (_cornerRadius != null)
+                        {
+                            solid.Clip = Window.Current.Compositor.CreateRectangleClip(0, 0, (float)target.ActualWidth, (float)target.ActualHeight, new Vector2(_cornerRadius.TopLeft), new Vector2(_cornerRadius.TopRight), new Vector2(_cornerRadius.BottomRight), new Vector2(_cornerRadius.BottomLeft));
+                        }
+                        else
+                        {
+                            solid.Clip = Window.Current.Compositor.CreateRectangleClip(0, 0, (float)target.ActualWidth, (float)target.ActualHeight, new Vector2((float)ContentPanel.CornerRadius.TopLeft), new Vector2((float)ContentPanel.CornerRadius.TopRight), new Vector2((float)ContentPanel.CornerRadius.BottomRight), new Vector2((float)ContentPanel.CornerRadius.BottomLeft));
+                        }
                     }
 
                     _highlight.Children.InsertAtTop(visual);

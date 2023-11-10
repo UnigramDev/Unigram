@@ -1020,6 +1020,7 @@
                         </Grid.ColumnDefinitions>
                         <messages:MessageReference x:Name="ComposerHeaderReference"
                                                    Click="Reply_Click"
+                                                   ContextRequested="Reply_ContextRequested"
                                                    VerticalAlignment="Stretch"
                                                    VerticalContentAlignment="Center"
                                                    Margin="0,0,-44,-4"
@@ -1038,6 +1039,7 @@
                         <controls:GlyphButton x:Name="ComposerHeaderCancel"
                                               Click="{x:Bind ViewModel.ClearReply}"
                                               FontSize="{StaticResource GlyphLargeFontSize}"
+                                              Foreground="{ThemeResource MessageHeaderBorderBrush}"
                                               AllowFocusOnInteraction="False"
                                               Glyph="&#xE711;"
                                               Margin="0,0,0,-4"

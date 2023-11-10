@@ -364,7 +364,6 @@ namespace Telegram
                 ProfilePage profile => TLContainer.Current.Resolve<ProfileViewModel, IProfileDelegate>(profile, sessionId),
                 InstantPage => TLContainer.Current.Resolve<InstantViewModel>(sessionId),
                 //
-                MainPage => TLContainer.Current.Resolve<MainViewModel>(sessionId),
                 SettingsPage settings => TLContainer.Current.Resolve<SettingsViewModel, ISettingsDelegate>(settings, sessionId),
                 UserCreatePage => TLContainer.Current.Resolve<UserCreateViewModel>(sessionId),
                 UserEditPage userEdit => TLContainer.Current.Resolve<UserEditViewModel, IUserDelegate>(userEdit, sessionId),
