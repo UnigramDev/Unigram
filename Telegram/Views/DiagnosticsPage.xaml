@@ -21,10 +21,6 @@
                               Content="Use Test DC"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.DisableRendering, Mode=TwoWay}"
-                              Content="Disable D2D1 rendering"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
                     <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.DisableClipping, Mode=TwoWay}"
                               Content="Disable DComp clipping"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
@@ -42,7 +38,7 @@
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.ShowIds, Mode=TwoWay}"
-                              Content="Show IDs"
+                              Content="Show user and chat IDs"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.HidePhoneNumber, Mode=TwoWay}"
