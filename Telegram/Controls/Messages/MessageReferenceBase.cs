@@ -958,6 +958,11 @@ namespace Telegram.Controls.Messages
             }
             else if (message.Origin is MessageOriginHiddenUser fromHiddenUser)
             {
+                if (clientService.TryGetChat(message.ChatId, out Chat senderChat))
+                {
+                    return fromHiddenUser.SenderName + Icons.Spacing + Icons.PeopleFilled16 + Icons.Spacing + senderChat.Title;
+                }
+
                 return Icons.PersonFilled16 + Icons.Spacing + fromHiddenUser.SenderName;
             }
 
