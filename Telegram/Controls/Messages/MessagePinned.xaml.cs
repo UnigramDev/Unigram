@@ -8,6 +8,7 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -392,12 +393,9 @@ namespace Telegram.Controls.Messages
                         player.Style = App.Current.Resources["MessageCustomEmojiStyle"] as Style;
 
                         var inline = new InlineUIContainer();
-                        inline.Child = new CustomEmojiContainer(labelShow, player)
-                        {
-                            Margin = new Thickness(0, -2, 0, -6)
-                        };
+                        inline.Child = new CustomEmojiContainer(labelShow, player);
 
-                        //messageShow.Inlines.Add(new Run { Text = "\U0001F921", FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
+                        messageShow.Inlines.Add("\u200D");
                         messageShow.Inlines.Add(inline);
 
                         previous = entity.Offset + entity.Length;

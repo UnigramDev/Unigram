@@ -1076,12 +1076,12 @@ namespace Telegram.Controls.Cells
 
                         var player = new CustomEmojiIcon();
                         player.Source = new CustomEmojiFileSource(_clientService, customEmoji.CustomEmojiId);
-                        player.Style = App.Current.Resources["InfoCustomEmojiStyle"] as Style;
+                        player.Style = BootStrapper.Current.Resources["InfoCustomEmojiStyle"] as Style;
 
                         var inline = new InlineUIContainer();
                         inline.Child = new CustomEmojiContainer(BriefText, player);
 
-                        BriefLabel.Inlines.Add(new Run { Text = "\U0001F921", FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
+                        BriefLabel.Inlines.Add("\u200D");
                         BriefLabel.Inlines.Add(inline);
 
                         previous = entity.Offset + entity.Length;

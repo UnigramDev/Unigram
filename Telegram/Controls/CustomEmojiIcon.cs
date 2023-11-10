@@ -39,7 +39,7 @@ namespace Telegram.Controls
 
             HorizontalAlignment = HorizontalAlignment.Left;
             FlowDirection = FlowDirection.LeftToRight;
-            Margin = new Thickness(-20, -2, 0, -6);
+            Margin = new Thickness(0, -2, 0, -6);
 
             EffectiveViewportChanged += OnEffectiveViewportChanged;
         }

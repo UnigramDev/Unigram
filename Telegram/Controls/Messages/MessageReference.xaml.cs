@@ -6,6 +6,7 @@
 //
 using System;
 using System.Text;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -366,15 +367,12 @@ namespace Telegram.Controls.Messages
 
                             var player = new CustomEmojiIcon();
                             player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
-                            player.Style = App.Current.Resources["MessageCustomEmojiStyle"] as Style;
+                            player.Style = BootStrapper.Current.Resources["MessageCustomEmojiStyle"] as Style;
 
                             var inline = new InlineUIContainer();
-                            inline.Child = new CustomEmojiContainer(Label, player, 14)
-                            {
-                                Margin = new Thickness(0, -2, 0, -6)
-                            };
+                            inline.Child = new CustomEmojiContainer(Label, player, 14);
 
-                            //MessageLabel.Inlines.Add(new Run { Text = "\U0001F921", FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
+                            MessageLabel.Inlines.Add(new Run { Text = "\u200D" });
                             MessageLabel.Inlines.Add(inline);
 
                             previous = entity.Offset + entity.Length;

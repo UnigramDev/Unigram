@@ -499,7 +499,7 @@ namespace Telegram.Controls
                             player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
                             player.HorizontalAlignment = HorizontalAlignment.Left;
                             player.FlowDirection = FlowDirection.LeftToRight;
-                            player.Margin = new Thickness(-20, -2, 0, -6);
+                            player.Margin = new Thickness(0, -2, 0, -6);
                             player.Style = EmojiStyle;
                             player.IsHitTestVisible = false;
                             player.IsEnabled = false;
@@ -508,7 +508,7 @@ namespace Telegram.Controls
                             inline.Child = player;
 
                             // TODO: see if there's a better way
-                            direct.AddToCollection(inlines, CreateDirectRun("\U0001F921", fontFamily: BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily));
+                            direct.AddToCollection(inlines, CreateDirectRun("\u200D"));
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
                         }
                         else

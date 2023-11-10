@@ -540,6 +540,14 @@ namespace Telegram.Common
             }
         }
 
+        public static void Add(this InlineCollection inline, string text)
+        {
+            inline.Add(new Run
+            {
+                Text = text
+            });
+        }
+
 
 
         public static uint GetHeight(this VideoProperties props)
