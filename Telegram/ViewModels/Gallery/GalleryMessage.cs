@@ -181,6 +181,8 @@ namespace Telegram.ViewModels.Gallery
             _ => false
         };
 
+        public MessageSelfDestructType SelfDestructType => _message.SelfDestructType;
+
         public override int Duration
         {
             get
