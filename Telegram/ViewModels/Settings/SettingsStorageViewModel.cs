@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -130,8 +131,8 @@ namespace Telegram.ViewModels.Settings
                 return;
             }
 
-            var chatIds = new long[0];
-            var excludedChatIds = new long[0];
+            var chatIds = Array.Empty<long>();
+            var excludedChatIds = Array.Empty<long>();
 
             if (byChat.ChatId != 0)
             {

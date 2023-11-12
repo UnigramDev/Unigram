@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -162,11 +163,11 @@ namespace Telegram.ViewModels.Settings
                 badge = string.Format("{0} ({1})", badge, string.Join(", ", list));
             }
 
-            _restrictedUsers = restrictedUsers ?? new UserPrivacySettingRuleRestrictUsers(new long[0]);
-            _restrictedChatMembers = restrictedChatMembers ?? new UserPrivacySettingRuleRestrictChatMembers(new long[0]);
+            _restrictedUsers = restrictedUsers ?? new UserPrivacySettingRuleRestrictUsers(Array.Empty<long>());
+            _restrictedChatMembers = restrictedChatMembers ?? new UserPrivacySettingRuleRestrictChatMembers(Array.Empty<long>());
 
-            _allowedUsers = allowedUsers ?? new UserPrivacySettingRuleAllowUsers(new long[0]);
-            _allowedChatMembers = allowedChatMembers ?? new UserPrivacySettingRuleAllowChatMembers(new long[0]);
+            _allowedUsers = allowedUsers ?? new UserPrivacySettingRuleAllowUsers(Array.Empty<long>());
+            _allowedChatMembers = allowedChatMembers ?? new UserPrivacySettingRuleAllowChatMembers(Array.Empty<long>());
 
             BeginOnUIThread(() =>
             {

@@ -256,7 +256,7 @@ namespace Telegram.Views.Popups
             Hide();
 
             var text = builder.ToString();
-            var formatted = new FormattedText(text, new TextEntity[0]);
+            var formatted = new FormattedText(text, Array.Empty<TextEntity>());
 
             // TODO: currently not used
             //await new ChooseChatsPopup().ShowAsync(formatted);

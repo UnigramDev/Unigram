@@ -211,7 +211,7 @@ namespace Telegram.Services
                 return new InvokedShortcut(modifiers, key, value);
             }
 
-            return new InvokedShortcut(VirtualKeyModifiers.None, VirtualKey.None, new ShortcutCommand[0]);
+            return new InvokedShortcut(VirtualKeyModifiers.None, VirtualKey.None, Array.Empty<ShortcutCommand>());
         }
 
         //[DllImport("user32.dll")]

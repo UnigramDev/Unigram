@@ -426,7 +426,7 @@ namespace Telegram.Services
                     var value = GetValueOrDefault<string>(_local, "AccountsSelectorOrder", null);
                     if (value == null)
                     {
-                        _accountsSelectorOrder = new int[0];
+                        _accountsSelectorOrder = Array.Empty<int>();
                     }
                     else
                     {

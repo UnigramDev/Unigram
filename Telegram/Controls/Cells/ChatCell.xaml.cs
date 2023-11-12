@@ -1106,7 +1106,7 @@ namespace Telegram.Controls.Cells
         {
             if (position?.Source is ChatSourcePublicServiceAnnouncement psa && !string.IsNullOrEmpty(psa.Text))
             {
-                return new FormattedText(psa.Text.Replace('\n', ' '), new TextEntity[0]);
+                return new FormattedText(psa.Text.Replace('\n', ' '), Array.Empty<TextEntity>());
             }
 
             var topMessage = chat.LastMessage;
@@ -1121,20 +1121,20 @@ namespace Telegram.Controls.Cells
                 {
                     if (secret.State is SecretChatStateReady)
                     {
-                        return new FormattedText(secret.IsOutbound ? string.Format(Strings.EncryptedChatStartedOutgoing, _clientService.GetTitle(chat)) : Strings.EncryptedChatStartedIncoming, new TextEntity[0]);
+                        return new FormattedText(secret.IsOutbound ? string.Format(Strings.EncryptedChatStartedOutgoing, _clientService.GetTitle(chat)) : Strings.EncryptedChatStartedIncoming, Array.Empty<TextEntity>());
                     }
                     else if (secret.State is SecretChatStatePending)
                     {
-                        return new FormattedText(string.Format(Strings.AwaitingEncryption, _clientService.GetTitle(chat)), new TextEntity[0]);
+                        return new FormattedText(string.Format(Strings.AwaitingEncryption, _clientService.GetTitle(chat)), Array.Empty<TextEntity>());
                     }
                     else if (secret.State is SecretChatStateClosed)
                     {
-                        return new FormattedText(Strings.EncryptionRejected, new TextEntity[0]);
+                        return new FormattedText(Strings.EncryptionRejected, Array.Empty<TextEntity>());
                     }
                 }
             }
 
-            return new FormattedText(string.Empty, new TextEntity[0]);
+            return new FormattedText(string.Empty, Array.Empty<TextEntity>());
         }
 
         public static FormattedText UpdateBriefLabel(Chat chat, Message message, bool draft)

@@ -177,7 +177,7 @@ namespace Telegram.ViewModels.Stories
 
         public override FormattedText GetFormattedText(bool clear)
         {
-            return new FormattedText(string.Empty, new TextEntity[0]);
+            return new FormattedText(string.Empty, Array.Empty<TextEntity>());
         }
 
         protected override void SetFormattedText(FormattedText text)

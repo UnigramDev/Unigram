@@ -512,7 +512,7 @@ namespace Telegram.ViewModels
             }
             else if (ShareLink != null)
             {
-                var formatted = new FormattedText(ShareLink.Url, new TextEntity[0]);
+                var formatted = new FormattedText(ShareLink.Url, Array.Empty<TextEntity>());
 
                 foreach (var chat in chats)
                 {
@@ -557,7 +557,7 @@ namespace Telegram.ViewModels
                 var response = await ClientService.SendAsync(new GetGroupCallInviteLink(configurationGroupCall.GroupCall.Id, false));
                 if (response is HttpUrl httpUrl)
                 {
-                    var formatted = new FormattedText(string.Format(Strings.VoipGroupInviteText, httpUrl.Url), new TextEntity[0]);
+                    var formatted = new FormattedText(string.Format(Strings.VoipGroupInviteText, httpUrl.Url), Array.Empty<TextEntity>());
 
                     foreach (var chat in chats)
                     {

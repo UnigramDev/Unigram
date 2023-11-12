@@ -173,7 +173,7 @@ namespace Telegram.ViewModels.Folders
                     return;
                 }
 
-                clientService.Send(new DeleteChatFolder(info.Id, new long[0]));
+                clientService.Send(new DeleteChatFolder(info.Id, Array.Empty<long>()));
             }
         }
 

@@ -735,7 +735,7 @@ namespace Telegram.Common
                 }
             }
 
-            return new int[0];
+            return Array.Empty<int>();
         }
 
     }

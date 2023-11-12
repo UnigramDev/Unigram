@@ -64,7 +64,7 @@ namespace Telegram.Collections
             //    }
             //    catch
             //    {
-            //        result = new T[0];
+            //        result = Array.Empty<T>();
             //    }
 
             //    await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>

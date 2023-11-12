@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -183,7 +184,7 @@ namespace Telegram.Views.Popups
             };
 
             var areAllAdministratorsSelected = ScrollingHost.Items.All(x => ScrollingHost.SelectedItems.Contains(x));
-            UserIds = areAllAdministratorsSelected ? new long[0] : ScrollingHost.SelectedItems.OfType<ChatMember>().Select(x => x.MemberId).OfType<MessageSenderUser>().Select(x => x.UserId).ToArray();
+            UserIds = areAllAdministratorsSelected ? Array.Empty<long>() : ScrollingHost.SelectedItems.OfType<ChatMember>().Select(x => x.MemberId).OfType<MessageSenderUser>().Select(x => x.UserId).ToArray();
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

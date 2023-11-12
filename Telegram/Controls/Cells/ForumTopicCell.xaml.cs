@@ -506,7 +506,7 @@ namespace Telegram.Controls.Cells
                 return UpdateBriefLabel(topic, topMessage, true, true);
             }
 
-            return new FormattedText(string.Empty, new TextEntity[0]);
+            return new FormattedText(string.Empty, Array.Empty<TextEntity>());
         }
 
         private FormattedText UpdateBriefLabel(ForumTopic topic, Message value, bool showContent, bool draft)
@@ -537,7 +537,7 @@ namespace Telegram.Controls.Cells
 
             if (!showContent)
             {
-                return new FormattedText(Strings.Message, new TextEntity[0]);
+                return new FormattedText(Strings.Message, Array.Empty<TextEntity>());
             }
 
             return value.Content switch
@@ -549,17 +549,17 @@ namespace Telegram.Controls.Cells
                 MessageVideo video => video.Caption,
                 MessageVoiceNote voiceNote => voiceNote.Caption,
                 MessageText text => text.Text,
-                MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, new TextEntity[0]),
-                MessageDice dice => new FormattedText(dice.Emoji, new TextEntity[0]),
+                MessageAnimatedEmoji animatedEmoji => new FormattedText(animatedEmoji.Emoji, Array.Empty<TextEntity>()),
+                MessageDice dice => new FormattedText(dice.Emoji, Array.Empty<TextEntity>()),
                 MessageInvoice invoice => invoice.ExtendedMedia switch
                 {
                     MessageExtendedMediaPreview preview => preview.Caption,
                     MessageExtendedMediaPhoto photo => photo.Caption,
                     MessageExtendedMediaVideo video => video.Caption,
                     MessageExtendedMediaUnsupported unsupported => unsupported.Caption,
-                    _ => new FormattedText(string.Empty, new TextEntity[0])
+                    _ => new FormattedText(string.Empty, Array.Empty<TextEntity>())
                 },
-                _ => new FormattedText(string.Empty, new TextEntity[0]),
+                _ => new FormattedText(string.Empty, Array.Empty<TextEntity>()),
             };
         }
 

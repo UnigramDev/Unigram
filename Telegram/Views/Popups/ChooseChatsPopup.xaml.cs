@@ -375,7 +375,7 @@ namespace Telegram.Views.Popups
             popup.Legacy();
             popup.ViewModel.Title = title;
 
-            var confirm = await popup.PickAsync(new long[0], options, ListViewSelectionMode.Single);
+            var confirm = await popup.PickAsync(Array.Empty<long>(), options, ListViewSelectionMode.Single);
             if (confirm != ContentDialogResult.Primary)
             {
                 return null;
@@ -407,7 +407,7 @@ namespace Telegram.Views.Popups
 
         public static async Task<IList<User>> PickUsersAsync(IClientService clientService, string title)
         {
-            return (await PickChatsAsync(title, new long[0], ChooseChatsOptions.InviteUsers))?.Select(x => clientService.GetUser(x)).Where(x => x != null).ToList();
+            return (await PickChatsAsync(title, Array.Empty<long>(), ChooseChatsOptions.InviteUsers))?.Select(x => clientService.GetUser(x)).Where(x => x != null).ToList();
         }
 
         public Task<ContentDialogResult> PickAsync(IList<long> selectedItems, ChooseChatsOptions options, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)

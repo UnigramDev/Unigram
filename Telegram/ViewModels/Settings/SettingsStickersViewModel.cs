@@ -170,7 +170,7 @@ namespace Telegram.ViewModels.Settings
                     var union = await ClientService.SendAsync(new GetRecentStickers(_type == StickersType.Masks));
                     if (union is Stickers recents && recents.StickersValue.Count > 0)
                     {
-                        BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, StickerType, false, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                        BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, Array.Empty<ClosedVectorPath>(), false, false, false, null, StickerType, false, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
                     }
                     else
                     {
@@ -214,7 +214,7 @@ namespace Telegram.ViewModels.Settings
                     {
                         if (resultRecent is Stickers recents && recents.StickersValue.Count > 0)
                         {
-                            BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, StickerType, false, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
+                            BeginOnUIThread(() => Items.ReplaceDiff(new[] { new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, Array.Empty<ClosedVectorPath>(), false, false, false, null, StickerType, false, false, recents.StickersValue.Count, recents.StickersValue) }.Union(stickerSets.Sets)));
                         }
                         else
                         {
@@ -450,7 +450,7 @@ namespace Telegram.ViewModels.Settings
                         var recentResponse = await _clientService.SendAsync(new GetRecentStickers(_type is StickerTypeMask));
                         if (recentResponse is Stickers stickers && stickers.StickersValue.Count > 0)
                         {
-                            Add(new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, new ClosedVectorPath[0], false, false, false, null, _type, false, false, stickers.StickersValue.Count, stickers.StickersValue));
+                            Add(new StickerSetInfo(0, Strings.RecentStickers, "tg/recentlyUsed", null, Array.Empty<ClosedVectorPath>(), false, false, false, null, _type, false, false, stickers.StickersValue.Count, stickers.StickersValue));
                         }
                     }
 

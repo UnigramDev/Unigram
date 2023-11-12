@@ -50,7 +50,7 @@ namespace Telegram.Views.Popups
             Title.Text = Strings.ThemePreviewTitle;
             Subtitle.Text = string.Format("{0} {1} {2}", Strings.LastSeen, Strings.TodayAt, Formatter.ShortTime.Format(DateTime.Now.AddHours(-1)));
 
-            Message1.Mockup(new MessagePhoto(new Photo(false, null, new[] { new PhotoSize("i", TdExtensions.GetLocalFile("Assets\\Mockup\\theme_preview_image.jpg"), 500, 302, new int[0]) }), new FormattedText(), false, false), Strings.ThemePreviewLine4, false, DateTime.Now.AddSeconds(-25), true, true);
+            Message1.Mockup(new MessagePhoto(new Photo(false, null, new[] { new PhotoSize("i", TdExtensions.GetLocalFile("Assets\\Mockup\\theme_preview_image.jpg"), 500, 302, Array.Empty<int>()) }), new FormattedText(), false, false), Strings.ThemePreviewLine4, false, DateTime.Now.AddSeconds(-25), true, true);
             Message2.Mockup(Strings.ThemePreviewLine1, true, DateTime.Now, true, false);
             //Message3.Mockup(Strings.FontSizePreviewLine1, Strings.FontSizePreviewName, Strings.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
             Message3.Mockup(new MessageVoiceNote(new VoiceNote(3, new byte[]

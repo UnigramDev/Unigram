@@ -1296,7 +1296,7 @@ namespace Telegram.Td.Api
 
         public static Photo ToPhoto(this ChatPhotoInfo chatPhoto)
         {
-            return new Photo(false, null, new PhotoSize[] { new PhotoSize("t", chatPhoto.Small, 160, 160, new int[0]), new PhotoSize("i", chatPhoto.Big, 640, 640, new int[0]) });
+            return new Photo(false, null, new PhotoSize[] { new PhotoSize("t", chatPhoto.Small, 160, 160, Array.Empty<int>()), new PhotoSize("i", chatPhoto.Big, 640, 640, Array.Empty<int>()) });
         }
 
         public static Photo ToPhoto(this ChatPhoto chatPhoto)
@@ -2340,7 +2340,7 @@ namespace Telegram.Td.Api
                 query.TryGetValue("mode", out string modeKey);
                 query.TryGetValue("bg_color", out string bg_colorKey);
 
-                var modeSplit = modeKey?.ToLower().Split('+') ?? new string[0];
+                var modeSplit = modeKey?.ToLower().Split('+') ?? Array.Empty<string>();
 
                 BackgroundFill fill = null;
                 if (bg_colorKey != null && TryGetColors(bg_colorKey, '-', 1, 2, out int[] patternLinear))

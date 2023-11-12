@@ -246,7 +246,7 @@ namespace Telegram.Services
 
         private ReactionType _defaultReaction;
 
-        private IList<ChatFolderInfo> _chatFolders = new ChatFolderInfo[0];
+        private IList<ChatFolderInfo> _chatFolders = Array.Empty<ChatFolderInfo>();
         private int _mainChatListPosition = 0;
 
         private IList<string> _reactions = Array.Empty<string>();
@@ -341,7 +341,7 @@ namespace Telegram.Services
             _users[10] = new User(10, "Alex",     "Hunter",     null, string.Empty, null,                               ProfilePhoto("Avatar13.png"), null, false, false, false, false, false, string.Empty, false, false, false, new UserTypeRegular(), string.Empty, false);
             _users[11] = new User(11, "X",        string.Empty, null, string.Empty, null,                               ProfilePhoto("Avatar14.png"), null, false, false, false, false, false, string.Empty, false, false, false, new UserTypeRegular(), string.Empty, false);
 
-            _secretChats[1] = new SecretChat(1, 3, new SecretChatStateReady(), false, new byte[0], 75);
+            _secretChats[1] = new SecretChat(1, 3, new SecretChatStateReady(), false, Array.Empty<byte>(), 75);
 
             _supergroups[0 ] = new Supergroup(0,  null, 0, new ChatMemberStatusMember(), 2503, false, false, false, false, false, false, false, false, false, false, string.Empty, false, false);
             _supergroups[1 ] = new Supergroup(1,  null, 0, new ChatMemberStatusMember(), 0,    false, false, false, false, false, false, true,  false, false, false, string.Empty, false, false);
@@ -380,19 +380,19 @@ namespace Telegram.Services
                 return (int)(last.ToUniversalTime() - dtDateTime).TotalSeconds;
             }
 
-            var lastMessage0  = new Message(long.MaxValue, new MessageSenderUser(0),  0,  null, null, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 41),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Bob says hi.", new TextEntity[0]), null), null);
-            var lastMessage1  = new Message(long.MaxValue, new MessageSenderUser(1),  1,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 41),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Say hello to Alice.", new TextEntity[0]), null), null);
-            var lastMessage2  = new Message(long.MaxValue, new MessageSenderUser(9),  2,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 41),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Sometimes possession is an abstract concept. They took my purse, but the...", new TextEntity[0]), null), null);
-            var lastMessage3  = new Message(long.MaxValue, new MessageSenderUser(3),  3,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 22),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageVideo(new Sticker(0, 0, 0, "😍", null, null, null, null, null), new FormattedText("Moar ct videos in this channel?", new TextEntity[0]), false, false), null);
-            var lastMessage4  = new Message(long.MaxValue, new MessageSenderUser(4),  4,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 12),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Don't tell mom yet, but I got the job! I'm going to ROME!", new TextEntity[0]), null), null);
-            var lastMessage5  = new Message(long.MaxValue, new MessageSenderUser(5),  5,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(20, 28),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageDocument(new FormattedText("I looove new Surfaces! If fact, they invited me to a focus group.", new TextEntity[0]), null), null);
+            var lastMessage0  = new Message(long.MaxValue, new MessageSenderUser(0),  0,  null, null, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 41),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Bob says hi.", Array.Empty<TextEntity>()), null), null);
+            var lastMessage1  = new Message(long.MaxValue, new MessageSenderUser(1),  1,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 41),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Say hello to Alice.", Array.Empty<TextEntity>()), null), null);
+            var lastMessage2  = new Message(long.MaxValue, new MessageSenderUser(9),  2,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 41),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Sometimes possession is an abstract concept. They took my purse, but the...", Array.Empty<TextEntity>()), null), null);
+            var lastMessage3  = new Message(long.MaxValue, new MessageSenderUser(3),  3,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 22),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageVideo(new Sticker(0, 0, 0, "😍", null, null, null, null, null), new FormattedText("Moar ct videos in this channel?", Array.Empty<TextEntity>()), false, false), null);
+            var lastMessage4  = new Message(long.MaxValue, new MessageSenderUser(4),  4,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(21, 12),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Don't tell mom yet, but I got the job! I'm going to ROME!", Array.Empty<TextEntity>()), null), null);
+            var lastMessage5  = new Message(long.MaxValue, new MessageSenderUser(5),  5,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(20, 28),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageDocument(new FormattedText("I looove new Surfaces! If fact, they invited me to a focus group.", Array.Empty<TextEntity>()), null), null);
             var lastMessage6  = new Message(long.MaxValue, new MessageSenderUser(6),  6,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(19, 36),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageVideoNote(null, false, false), null);
-            var lastMessage7  = new Message(long.MaxValue, new MessageSenderUser(7),  7,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessagePhoto(new Document("LaserBlastSafetyGuide.pdf", string.Empty, null, null, null), new FormattedText(string.Empty, new TextEntity[0])), null);
-            var lastMessage8  = new Message(long.MaxValue, new MessageSenderUser(8),  8,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("It's impossible.", new TextEntity[0]), null), null);
-            var lastMessage9  = new Message(long.MaxValue, new MessageSenderUser(9),  9,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Hola!", new TextEntity[0]), null), null);
-            var lastMessage10 = new Message(long.MaxValue, new MessageSenderUser(17), 12, null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Let's design more robust memes", new TextEntity[0]), null), null);
-            var lastMessage11 = new Message(long.MaxValue, new MessageSenderUser(18), 13, null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("What?! 😱", new TextEntity[0]), null), null);
-            var lastMessage12 = new Message(long.MaxValue, new MessageSenderUser(8),  9,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(15, 30),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Wait, we could have made so much money on this!", new TextEntity[0]), null), null);
+            var lastMessage7  = new Message(long.MaxValue, new MessageSenderUser(7),  7,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessagePhoto(new Document("LaserBlastSafetyGuide.pdf", string.Empty, null, null, null), new FormattedText(string.Empty, Array.Empty<TextEntity>())), null);
+            var lastMessage8  = new Message(long.MaxValue, new MessageSenderUser(8),  8,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("It's impossible.", Array.Empty<TextEntity>()), null), null);
+            var lastMessage9  = new Message(long.MaxValue, new MessageSenderUser(9),  9,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Hola!", Array.Empty<TextEntity>()), null), null);
+            var lastMessage10 = new Message(long.MaxValue, new MessageSenderUser(17), 12, null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Let's design more robust memes", Array.Empty<TextEntity>()), null), null);
+            var lastMessage11 = new Message(long.MaxValue, new MessageSenderUser(18), 13, null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TuesdayDate(),      0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("What?! 😱", Array.Empty<TextEntity>()), null), null);
+            var lastMessage12 = new Message(long.MaxValue, new MessageSenderUser(8),  9,  null, null, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, TodayDate(15, 30),  0, null, null, null, 0, 0, 0, 0, 0, 0, 0, string.Empty, 0, string.Empty, new MessageText(new FormattedText("Wait, we could have made so much money on this!", Array.Empty<TextEntity>()), null), null);
 
             var permissions = new ChatPermissions(true, true, true, true, true, true, true, true);
 
@@ -602,7 +602,7 @@ namespace Telegram.Services
             _installedMaskSets = null;
             _installedEmojiSets = null;
 
-            _chatFolders = new ChatFolderInfo[0];
+            _chatFolders = Array.Empty<ChatFolderInfo>();
 
             _animationSearchParameters = null;
 
@@ -878,7 +878,7 @@ namespace Telegram.Services
             return (IList<AttachmentMenuBot>)bots ?? Array.Empty<AttachmentMenuBot>();
         }
 
-        public IList<string> AnimationSearchEmojis => _animationSearchParameters?.Emojis ?? new string[0];
+        public IList<string> AnimationSearchEmojis => _animationSearchParameters?.Emojis ?? Array.Empty<string>();
 
         public string AnimationSearchProvider => _animationSearchParameters?.Provider;
 
@@ -1586,7 +1586,7 @@ namespace Telegram.Services
 
         public IList<ChatTheme> GetChatThemes()
         {
-            return _chatThemes?.ChatThemes ?? new ChatTheme[0];
+            return _chatThemes?.ChatThemes ?? Array.Empty<ChatTheme>();
         }
 
         public bool IsDiceEmoji(string text, out string dice)

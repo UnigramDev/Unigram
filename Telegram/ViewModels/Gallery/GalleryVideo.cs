@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using Telegram.Services;
 using Telegram.Td.Api;
 
@@ -61,7 +62,7 @@ namespace Telegram.ViewModels.Gallery
 
         public override InputMessageContent ToInput()
         {
-            return new InputMessageVideo(new InputFileId(_video.VideoValue.Id), _video.Thumbnail?.ToInput(), new int[0], _video.Duration, _video.Width, _video.Height, _video.SupportsStreaming, null, null, false);
+            return new InputMessageVideo(new InputFileId(_video.VideoValue.Id), _video.Thumbnail?.ToInput(), Array.Empty<int>(), _video.Duration, _video.Width, _video.Height, _video.SupportsStreaming, null, null, false);
         }
     }
 }

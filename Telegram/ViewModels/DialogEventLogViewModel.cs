@@ -38,7 +38,7 @@ namespace Telegram.ViewModels
             set => Set(ref _filters, value);
         }
 
-        private IList<long> _userIds = new long[0];
+        private IList<long> _userIds = Array.Empty<long>();
         public IList<long> UserIds
         {
             get => _userIds;
@@ -370,7 +370,7 @@ namespace Telegram.ViewModels
         {
             if (item.Action is ChatEventDescriptionChanged descriptionChanged)
             {
-                var text = new FormattedText(descriptionChanged.NewDescription, new TextEntity[0]);
+                var text = new FormattedText(descriptionChanged.NewDescription, Array.Empty<TextEntity>());
                 var webPage = string.IsNullOrEmpty(descriptionChanged.OldDescription) ? null : new WebPage { SiteName = Strings.EventLogPreviousGroupDescription, Description = new FormattedText { Text = descriptionChanged.OldDescription } };
 
                 return new MessageText(text, webPage, null);

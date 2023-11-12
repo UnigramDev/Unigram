@@ -785,7 +785,7 @@ namespace Telegram.Controls
 
             if (IsEmpty)
             {
-                return new FormattedText(string.Empty, new TextEntity[0]);
+                return new FormattedText(string.Empty, Array.Empty<TextEntity>());
             }
 
             _updateLocked = true;

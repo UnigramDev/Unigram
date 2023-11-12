@@ -137,7 +137,7 @@ namespace Telegram.Services
 #if DEBUG
                 await clientService.SendAsync(new SynchronizeLanguagePack(info.Id));
 
-                var test = await clientService.SendAsync(new GetLanguagePackStrings(info.Id, new string[0]));
+                var test = await clientService.SendAsync(new GetLanguagePackStrings(info.Id, Array.Empty<string>()));
                 if (test is LanguagePackStrings strings)
                 {
                     SaveRemoteLocaleStrings(info.Id, strings);

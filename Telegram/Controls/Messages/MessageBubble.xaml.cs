@@ -1862,7 +1862,7 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    return ReplaceEntities(message, text, new TextEntity[0]);
+                    return ReplaceEntities(message, text, Array.Empty<TextEntity>());
                 }
             }
         }
@@ -2706,7 +2706,7 @@ namespace Telegram.Controls.Messages
             Grid.SetRow(Message, 2);
             Panel.Placeholder = true;
 
-            Message.SetText(null, message, new TextEntity[0]);
+            Message.SetText(null, message, Array.Empty<TextEntity>());
 
             UpdateMockup();
         }
@@ -2730,7 +2730,7 @@ namespace Telegram.Controls.Messages
             Header.Visibility = Visibility.Collapsed;
 
             Footer.Mockup(outgoing, date);
-            Panel.Content = new MessageText { Text = new FormattedText(message, new TextEntity[0]) };
+            Panel.Content = new MessageText { Text = new FormattedText(message, Array.Empty<TextEntity>()) };
             Panel.Text = Panel.Content.GetText();
 
             Media.Margin = new Thickness(0);
@@ -2739,7 +2739,7 @@ namespace Telegram.Controls.Messages
             Grid.SetRow(Message, 2);
             Panel.Placeholder = true;
 
-            Message.SetText(null, message, new TextEntity[0]);
+            Message.SetText(null, message, Array.Empty<TextEntity>());
 
             LoadObject(ref HeaderPanel, nameof(HeaderPanel));
             LoadObject(ref HeaderLabel, nameof(HeaderLabel));
@@ -2801,7 +2801,7 @@ namespace Telegram.Controls.Messages
             }
 
             Footer.Mockup(outgoing, date);
-            Panel.Content = new MessageText { Text = new FormattedText(message, new TextEntity[0]) };
+            Panel.Content = new MessageText { Text = new FormattedText(message, Array.Empty<TextEntity>()) };
             Panel.Text = Panel.Content.GetText();
 
             Media.Margin = new Thickness(0);
@@ -2810,7 +2810,7 @@ namespace Telegram.Controls.Messages
             Grid.SetRow(Message, 2);
             Panel.Placeholder = true;
 
-            Message.SetText(null, message, new TextEntity[0]);
+            Message.SetText(null, message, Array.Empty<TextEntity>());
 
             UpdateMockup();
         }
@@ -2892,7 +2892,7 @@ namespace Telegram.Controls.Messages
             }
 
             Footer.Mockup(outgoing, date);
-            Panel.Content = new MessageText { Text = new FormattedText(message, new TextEntity[0]) };
+            Panel.Content = new MessageText { Text = new FormattedText(message, Array.Empty<TextEntity>()) };
             Panel.Text = Panel.Content.GetText();
 
             ContentPanel.Padding = new Thickness(0, 4, 0, 0);
@@ -2902,7 +2902,7 @@ namespace Telegram.Controls.Messages
             Grid.SetRow(Message, 2);
             Panel.Placeholder = false;
 
-            Message.SetText(null, message, new TextEntity[0]);
+            Message.SetText(null, message, Array.Empty<TextEntity>());
 
             LoadObject(ref HeaderPanel, nameof(HeaderPanel));
             LoadObject(ref HeaderLabel, nameof(HeaderLabel));
@@ -3044,7 +3044,7 @@ namespace Telegram.Controls.Messages
                 Media.Child = presenter;
             }
 
-            Message.SetText(null, caption, new TextEntity[0]);
+            Message.SetText(null, caption, Array.Empty<TextEntity>());
 
             UpdateMockup();
         }

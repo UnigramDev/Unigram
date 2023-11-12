@@ -1190,7 +1190,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return new ChatMember[0];
+            return Array.Empty<ChatMember>();
         }
 
         protected override bool GetHasMoreItems()
@@ -1348,7 +1348,7 @@ namespace Telegram.ViewModels
                 }
             }
 
-            return new ChatMember[0];
+            return Array.Empty<ChatMember>();
         }
 
         protected override bool GetHasMoreItems()

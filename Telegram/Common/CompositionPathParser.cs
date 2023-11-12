@@ -205,7 +205,7 @@ namespace Telegram.Common
             public PathSegment(SegmentType type = SegmentType.M, float[] data = null)
             {
                 this.type = type;
-                this.data = data ?? new float[0];
+                this.data = data ?? Array.Empty<float>();
             }
 
             public bool isAbsolute()

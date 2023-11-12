@@ -125,7 +125,7 @@ namespace Telegram.Common
         {
             if (TopColor == null || BottomColor == null)
             {
-                return new GradientStop[0];
+                return Array.Empty<GradientStop>();
             }
 
             var top = TopColor.Color;

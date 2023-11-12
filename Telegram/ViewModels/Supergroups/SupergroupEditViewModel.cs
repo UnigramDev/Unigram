@@ -17,6 +17,7 @@ using Telegram.Views;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Supergroups;
+using Telegram.Views.Supergroups.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -416,7 +417,7 @@ namespace Telegram.ViewModels.Supergroups
         {
             if (_chat is Chat chat)
             {
-                NavigationService.Navigate(typeof(SupergroupReactionsPage), chat.Id);
+                NavigationService.ShowPopupAsync(typeof(SupergroupReactionsPopup), chat.Id);
             }
         }
 

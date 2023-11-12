@@ -73,7 +73,7 @@ namespace Telegram.Services.Factories
             {
                 InputFile = generated,
                 Type = new FileTypePhoto(),
-                Delegate = (inputFile, caption) => new InputMessagePhoto(generated, thumbnail, new int[0], size.Width, size.Height, caption, ttl, spoiler)
+                Delegate = (inputFile, caption) => new InputMessagePhoto(generated, thumbnail, Array.Empty<int>(), size.Width, size.Height, caption, ttl, spoiler)
             };
         }
 
@@ -132,7 +132,7 @@ namespace Telegram.Services.Factories
                 {
                     InputFile = generated,
                     Type = new FileTypeAnimation(),
-                    Delegate = (inputFile, caption) => new InputMessageAnimation(inputFile, thumbnail, new int[0], duration, videoWidth, videoHeight, caption, spoiler)
+                    Delegate = (inputFile, caption) => new InputMessageAnimation(inputFile, thumbnail, Array.Empty<int>(), duration, videoWidth, videoHeight, caption, spoiler)
                 };
             }
 
@@ -140,7 +140,7 @@ namespace Telegram.Services.Factories
             {
                 InputFile = generated,
                 Type = new FileTypeVideo(),
-                Delegate = (inputFile, caption) => new InputMessageVideo(inputFile, thumbnail, new int[0], duration, videoWidth, videoHeight, true, caption, ttl, spoiler)
+                Delegate = (inputFile, caption) => new InputMessageVideo(inputFile, thumbnail, Array.Empty<int>(), duration, videoWidth, videoHeight, true, caption, ttl, spoiler)
             };
         }
 

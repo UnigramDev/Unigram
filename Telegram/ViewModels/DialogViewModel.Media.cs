@@ -152,7 +152,7 @@ namespace Telegram.ViewModels
                     if (captionElements.Count > 0)
                     {
                         var resultCaption = string.Join(Environment.NewLine, captionElements);
-                        caption = new FormattedText(resultCaption, new TextEntity[0])
+                        caption = new FormattedText(resultCaption, Array.Empty<TextEntity>())
                             .Substring(0, ClientService.Options.MessageCaptionLengthMax);
                     }
 
