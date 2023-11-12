@@ -323,7 +323,7 @@ namespace Telegram.Controls.Chats
                 }
             }
 
-            if (highlight != null)
+            if (highlight != null && highlight.Highlight)
             {
                 var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault();
                 bubble?.Highlight(highlight);
