@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -12,16 +13,20 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 
-namespace Telegram.Views.Supergroups
+namespace Telegram.Views.Supergroups.Popups
 {
-    public sealed partial class SupergroupReactionsPage : HostedPage
+    public sealed partial class SupergroupReactionsPopup : ContentPopup
     {
         public SupergroupReactionsViewModel ViewModel => DataContext as SupergroupReactionsViewModel;
 
-        public SupergroupReactionsPage()
+        public SupergroupReactionsPopup()
         {
             InitializeComponent();
+
             Title = Strings.Reactions;
+
+            PrimaryButtonText = Strings.Save;
+            SecondaryButtonText = Strings.Cancel;
         }
 
         private void OnContainerContentChanged(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -31,13 +36,12 @@ namespace Telegram.Views.Supergroups
                 return;
             }
 
-            var element = args.ItemContainer.ContentTemplateRoot as FrameworkElement;
-            var reaction = args.Item as SupergroupReactionOption;
+            var animated = args.ItemContainer.ContentTemplateRoot as AnimatedImage;
+            var reaction = args.Item as EmojiReaction;
 
-            var animated = element.FindName("Player") as AnimatedImage;
             if (animated != null)
             {
-                var file = reaction.Reaction.CenterAnimation.StickerValue;
+                var file = reaction.CenterAnimation.StickerValue;
                 animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
 
                 if (file.Local.IsDownloadingCompleted)
@@ -47,14 +51,23 @@ namespace Telegram.Views.Supergroups
                 {
                 }
             }
+
+            Automation.SetToolTip(args.ItemContainer, reaction.Title);
         }
 
         private void OnPointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            if (sender is FrameworkElement element)
+            if (sender is AnimatedImage player)
             {
-                var player = element.FindName("Player") as AnimatedImage;
-                player?.Play();
+                player.Play();
+            }
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (sender is AnimatedImage player)
+            {
+                player.FrameSize = e.NewSize;
             }
         }
 
@@ -94,5 +107,9 @@ namespace Telegram.Views.Supergroups
 
         #endregion
 
+        private void OnPrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            ViewModel.Execute();
+        }
     }
 }

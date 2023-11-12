@@ -1447,6 +1447,9 @@
     <Compile Include="Views\Supergroups\Popups\SupergroupEditRestrictedPopup.xaml.cs">
       <DependentUpon>SupergroupEditRestrictedPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Supergroups\Popups\SupergroupReactionsPopup.xaml.cs">
+      <DependentUpon>SupergroupReactionsPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Supergroups\Popups\SupergroupTopicPopup.xaml.cs">
       <DependentUpon>SupergroupTopicPopup.xaml</DependentUpon>
     </Compile>
@@ -1467,9 +1470,6 @@
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupEditPage.xaml.cs">
       <DependentUpon>SupergroupEditPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Supergroups\SupergroupReactionsPage.xaml.cs">
-      <DependentUpon>SupergroupReactionsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupEditStickerSetPage.xaml.cs">
       <DependentUpon>SupergroupEditStickerSetPage.xaml</DependentUpon>
@@ -2911,6 +2911,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Supergroups\Popups\SupergroupReactionsPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Supergroups\Popups\SupergroupTopicPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2938,10 +2942,6 @@
     <Page Include="Views\Supergroups\SupergroupEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Supergroups\SupergroupReactionsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Supergroups\SupergroupEditStickerSetPage.xaml">
       <Generator>MSBuild:Compile</Generator>

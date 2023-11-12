@@ -380,7 +380,7 @@ namespace Telegram
                 SupergroupEditPage supergroupEdit => TLContainer.Current.Resolve<SupergroupEditViewModel, ISupergroupEditDelegate>(supergroupEdit, sessionId),
                 SupergroupMembersPage supergroupMembers => TLContainer.Current.Resolve<SupergroupMembersViewModel, ISupergroupDelegate>(supergroupMembers, sessionId),
                 SupergroupPermissionsPage supergroupPermissions => TLContainer.Current.Resolve<SupergroupPermissionsViewModel, ISupergroupDelegate>(supergroupPermissions, sessionId),
-                SupergroupReactionsPage => TLContainer.Current.Resolve<SupergroupReactionsViewModel>(sessionId),
+                SupergroupReactionsPopup => TLContainer.Current.Resolve<SupergroupReactionsViewModel>(sessionId),
                 ChatBoostsPage => TLContainer.Current.Resolve<ChatBoostsViewModel>(sessionId),
                 //
                 AuthorizationRecoveryPage => TLContainer.Current.Resolve<AuthorizationRecoveryViewModel>(sessionId),
