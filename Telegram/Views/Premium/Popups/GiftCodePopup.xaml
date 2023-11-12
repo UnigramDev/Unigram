@@ -80,6 +80,7 @@
                         <RowDefinition Height="32" />
                     </Grid.RowDefinitions>
                     <Border Background="{ThemeResource ButtonBackground}"
+                            CornerRadius="0,2,2,0"
                             Grid.Column="1"
                             Grid.ColumnSpan="2"
                             Grid.RowSpan="9" />
@@ -176,7 +177,7 @@
                 <TextBlock x:Name="Footer"
                            Style="{StaticResource InfoCaptionTextBlockStyle}"
                            TextAlignment="Center"
-                           Margin="12,8,12,12" />
+                           Margin="12,8,12,8" />
             </StackPanel>
         </ScrollViewer>
 

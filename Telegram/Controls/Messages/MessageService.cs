@@ -101,6 +101,11 @@ namespace Telegram.Controls.Messages
         {
             if (message.Content is MessagePremiumGiftCode premiumGiftCode)
             {
+                var title = FindName("Title") as TextBlock;
+                title.Text = premiumGiftCode.IsUnclaimed
+                    ? Strings.BoostingUnclaimedPrize
+                    : Strings.BoostingCongratulations;
+
                 var animation = FindName("Animation") as AnimatedImage;
                 animation.Source = new DelayedFileSource(message.ClientService, premiumGiftCode.Sticker.StickerValue);
 
@@ -1756,12 +1761,16 @@ namespace Telegram.Controls.Messages
 
             if (active && message.ClientService.TryGetChat(premiumGiftCode.CreatorId, out Chat chat))
             {
-                var text = premiumGiftCode.IsFromGiveaway
+                var text = premiumGiftCode.IsUnclaimed
+                    ? Strings.BoostingYouHaveUnclaimedPrize
+                    : premiumGiftCode.IsFromGiveaway
                     ? Strings.BoostingReceivedPrizeFrom
                     : Strings.BoostingReceivedGiftFrom;
 
-                var months = Locale.Declension(Strings.R.Months, premiumGiftCode.MonthCount, false);
-                var duration = string.Format(Strings.BoostingReceivedPrizeDuration, string.Format(months, $"**{premiumGiftCode.MonthCount}**"));
+                var months = Locale.Declension(Strings.R.BoldMonths, premiumGiftCode.MonthCount);
+                var duration = string.Format(premiumGiftCode.IsUnclaimed
+                    ? Strings.BoostingUnclaimedPrizeDuration
+                    : Strings.BoostingReceivedPrizeDuration, months);
 
                 var markdown = ClientEx.ParseMarkdown(string.Format($"{text}\n\n{duration}", chat.Title));
 

@@ -36,10 +36,16 @@ namespace Telegram.Views.Premium.Popups
             // TODO:
             Link.Text = "t.me/giftcode/" + code;
 
+            clientService.TryGetUser(info.UserId, out User user);
+
             if (info.UseDate == 0)
             {
                 Title.Text = Strings.BoostingGiftLink;
-                TextBlockHelper.SetMarkdown(Subtitle, Strings.BoostingLinkAllows);
+                TextBlockHelper.SetMarkdown(Subtitle, user == null
+                    ? Strings.BoostingLinkAllowsAnyone
+                    : user.Id == clientService.Options.MyId
+                    ? Strings.BoostingLinkAllows
+                    : string.Format(Strings.BoostingLinkAllowsToUser, user.FullName()));
 
                 var footer = Strings.BoostingSendLinkToFriends;
                 
@@ -82,7 +88,7 @@ namespace Telegram.Views.Premium.Popups
                 FromTitle.Text = creatorUser.FullName();
             }
 
-            if (clientService.TryGetUser(info.UserId, out var user))
+            if (user != null)
             {
                 ToPhoto.SetUser(clientService, user, 24);
                 ToTitle.Text = user.FullName();
@@ -100,7 +106,9 @@ namespace Telegram.Views.Premium.Popups
                 var hyperlink = new Hyperlink();
                 hyperlink.Inlines.Add(new Run
                 {
-                    Text = Strings.BoostingGiveaway
+                    Text = info.UserId == 0
+                        ? Strings.BoostingIncompleteGiveaway
+                        : Strings.BoostingGiveaway
                 });
 
                 Reason.Inlines.Add(hyperlink);

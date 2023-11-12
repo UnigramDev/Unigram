@@ -1583,9 +1583,19 @@ Subscription for {1}.</value>
   <data name="BoostingHowItWork" xml:space="preserve">
     <value>LEARN MORE</value>
   </data>
+  <data name="BoostingIncompleteGiveaway" xml:space="preserve">
+    <value>Incomplete Giveaway</value>
+  </data>
   <data name="BoostingLinkAllows" xml:space="preserve">
     <value>This link allows you to activate
 a **Telegram Premium** subscription.</value>
+  </data>
+  <data name="BoostingLinkAllowsAnyone" xml:space="preserve">
+    <value>This link allows anyone to activate
+a **Telegram Premium** subscription.</value>
+  </data>
+  <data name="BoostingLinkAllowsToUser" xml:space="preserve">
+    <value>This link allows **{0}** to activate a **Telegram Premium** subscription.</value>
   </data>
   <data name="BoostingLinkUsed" xml:space="preserve">
     <value>This link was used to activate
@@ -1625,6 +1635,12 @@ from **{0}**.</value>
   <data name="BoostingUnclaimed" xml:space="preserve">
     <value>Unclaimed</value>
   </data>
+  <data name="BoostingUnclaimedPrize" xml:space="preserve">
+    <value>Unclaimed Prize</value>
+  </data>
+  <data name="BoostingUnclaimedPrizeDuration" xml:space="preserve">
+    <value>This prize is a **Telegram Premium** subscription for {0}.</value>
+  </data>
   <data name="BoostingUsedGiftLink" xml:space="preserve">
     <value>Used Gift Link</value>
   </data>
@@ -1636,6 +1652,9 @@ from **{0}**.</value>
   </data>
   <data name="BoostingWinnersDate" xml:space="preserve">
     <value>**Winners Selection Date**</value>
+  </data>
+  <data name="BoostingYouHaveUnclaimedPrize" xml:space="preserve">
+    <value>You have an unclaimed prize from a giveaway by **{0}**.</value>
   </data>
   <data name="BoostingYouWereSelected" xml:space="preserve">
     <value>You were selected by the channel</value>
