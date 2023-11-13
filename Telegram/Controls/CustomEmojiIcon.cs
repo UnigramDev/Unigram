@@ -61,6 +61,7 @@ namespace Telegram.Controls
                 var point = transform.TransformPoint(new Point());
 
                 // This is mostly heuristics, not sure it works in all scenarios.
+                // Does not seem to work when display scaling is set to 125%.
                 if (point.Y <= _baseline || point.X < 0)
                 {
                     _child.Visibility = Visibility.Collapsed;

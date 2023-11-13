@@ -209,6 +209,11 @@ namespace Telegram.Controls.Messages
             var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor;
             var width = availableWidth - text.Margin.Left - text.Margin.Right;
 
+            if (width <= 0)
+            {
+                return Vector2.Zero;
+            }
+
             try
             {
                 var bounds = PlaceholderImageHelper.Current.ContentEnd(formatted.Text, formatted.Entities, fontSize, width);
