@@ -86,7 +86,7 @@ namespace Telegram.Controls.Messages.Content
             Count.Text = $"X{giveaway.WinnerCount}";
 
             var months = Locale.Declension(Strings.R.Months, giveaway.MonthCount, false);
-            var duration = string.Format(Strings.BoostingGiveawayMsgInfo, giveaway.WinnerCount, string.Format(months, $"**{giveaway.MonthCount}**"));
+            var duration = string.Format(Strings.BoostingGiveawayMsgInfo, giveaway.WinnerCount.ToString("N0"), string.Format(months, $"**{giveaway.MonthCount}**"));
 
             TextBlockHelper.SetMarkdown(PrizesLabel, duration);
 
@@ -197,8 +197,14 @@ namespace Telegram.Controls.Messages.Content
                 _ => giveaway.Parameters.WinnersSelectionDate
             };
 
+            var winnerCount = response switch
+            {
+                PremiumGiveawayInfoCompleted completed6 => completed6.WinnerCount.ToString("N0"),
+                _ => giveaway.WinnerCount.ToString("N0")
+            };
+
             var message1 = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksText, giveaway.WinnerCount, false);
-            message1 = string.Format(message1, string.Empty, boostedChat.Title, giveaway.WinnerCount, Locale.Declension(Strings.R.BoldMonths, giveaway.MonthCount));
+            message1 = string.Format(message1, string.Empty, boostedChat.Title, winnerCount, Locale.Declension(Strings.R.BoldMonths, giveaway.MonthCount));
 
             var selectionDate = Formatter.DayMonthFull.Format(Formatter.ToLocalTime(selectionTimeStamp));
 
@@ -211,15 +217,23 @@ namespace Telegram.Controls.Messages.Content
                 if (giveaway.Parameters.AdditionalChatIds.Count > 0)
                 {
                     var several = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubTextDateSeveral2, giveaway.Parameters.AdditionalChatIds.Count, false);
+                    var key = response is PremiumGiveawayInfoCompleted
+                        ? Strings.R.BoostingGiveawayHowItWorksSubTextDateSeveralEnd1
+                        : Strings.R.BoostingGiveawayHowItWorksSubTextDateSeveral1;
+
                     several = string.Format(several, giveaway.Parameters.AdditionalChatIds.Count, creationTime, creationDate);
 
-                    message2 = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubTextDateSeveral1, giveaway.WinnerCount, false);
-                    message2 = string.Format(message2, string.Empty, selectionDate, giveaway.WinnerCount, boostedChat.Title, several);
+                    message2 = Locale.Declension(key, giveaway.WinnerCount, false);
+                    message2 = string.Format(message2, string.Empty, selectionDate, winnerCount, boostedChat.Title, several);
                 }
                 else
                 {
-                    message2 = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubTextDate, giveaway.WinnerCount, false);
-                    message2 = string.Format(message2, string.Empty, selectionDate, giveaway.WinnerCount, boostedChat.Title, creationTime, creationDate);
+                    var key = response is PremiumGiveawayInfoCompleted
+                        ? Strings.R.BoostingGiveawayHowItWorksSubTextDateEnd
+                        : Strings.R.BoostingGiveawayHowItWorksSubTextDate;
+
+                    message2 = Locale.Declension(key, giveaway.WinnerCount, false);
+                    message2 = string.Format(message2, string.Empty, selectionDate, winnerCount, boostedChat.Title, creationTime, creationDate);
                 }
             }
             else
@@ -227,14 +241,21 @@ namespace Telegram.Controls.Messages.Content
                 if (giveaway.Parameters.AdditionalChatIds.Count > 0)
                 {
                     var several = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubTextSeveral2, giveaway.Parameters.AdditionalChatIds.Count);
+                    var key = response is PremiumGiveawayInfoCompleted
+                        ? Strings.R.BoostingGiveawayHowItWorksSubTextSeveralEnd1
+                        : Strings.R.BoostingGiveawayHowItWorksSubTextSeveral1;
 
-                    message2 = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubTextSeveral1, giveaway.WinnerCount, false);
-                    message2 = string.Format(message2, string.Empty, selectionDate, giveaway.WinnerCount, boostedChat.Title, several);
+                    message2 = Locale.Declension(key, giveaway.WinnerCount, false);
+                    message2 = string.Format(message2, string.Empty, selectionDate, winnerCount, boostedChat.Title, several);
                 }
                 else
                 {
-                    message2 = Locale.Declension(Strings.R.BoostingGiveawayHowItWorksSubText, giveaway.WinnerCount, false);
-                    message2 = string.Format(message2, string.Empty, selectionDate, giveaway.WinnerCount, boostedChat.Title);
+                    var key = response is PremiumGiveawayInfoCompleted
+                        ? Strings.R.BoostingGiveawayHowItWorksSubTextEnd
+                        : Strings.R.BoostingGiveawayHowItWorksSubText;
+
+                    message2 = Locale.Declension(key, giveaway.WinnerCount, false);
+                    message2 = string.Format(message2, string.Empty, selectionDate, winnerCount, boostedChat.Title);
                 }
             }
 
