@@ -18,6 +18,7 @@ using Telegram.ViewModels.Settings.Privacy;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Password;
+using Telegram.Views.Settings.Popups;
 using Telegram.Views.Settings.Privacy;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -340,6 +341,11 @@ namespace Telegram.ViewModels.Settings
             {
                 var confirm = await ShowPopupAsync(Strings.EmailLoginChangeMessage, passwordState.LoginEmailAddressPattern, Strings.ChangeEmail, Strings.Cancel);
             }
+        }
+
+        public void ArchiveSettings()
+        {
+            ShowPopupAsync(new SettingsArchivePopup(ClientService));
         }
 
         public async void ClearDrafts()

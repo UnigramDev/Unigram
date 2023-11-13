@@ -114,11 +114,11 @@
                                           Glyph="&#xE720;" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Header="{CustomResource NewChatsFromNonContacts}"
-                                          Footer="{CustomResource ArchiveAndMuteInfo}">
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsArchiveAndMuteEnabled, Mode=TwoWay}"
-                              Content="{CustomResource ArchiveAndMute}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                <controls:HeaderedControl>
+                    <controls:BadgeButton Content="{CustomResource ArchiveSettings}"
+                                          Click="{x:Bind ViewModel.ArchiveSettings}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Glyph="&#xE7B8;" />
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl Header="{CustomResource PrivacyAdvanced}"
