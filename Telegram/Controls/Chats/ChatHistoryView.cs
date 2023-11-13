@@ -286,8 +286,20 @@ namespace Telegram.Controls.Chats
             var selectorItem = Delegate?.ContainerFromItem(item.Id);
             if (selectorItem == null)
             {
-                Logger.Debug("selectorItem == null, abort");
-                goto Exit;
+                // TODO: experimental
+                if (ViewModel.Items.ContainsKey(item.Id))
+                {
+                    Logger.Debug("selectorItem == null, but item exists, retry");
+
+                    await ScrollIntoViewAsync(item, direction);
+                    selectorItem = Delegate?.ContainerFromItem(item.Id);
+                }
+
+                if (selectorItem == null)
+                {
+                    Logger.Debug("selectorItem == null, abort");
+                    goto Exit;
+                }
             }
 
             // calculate the position object in order to know how much to scroll to
