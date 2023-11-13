@@ -673,6 +673,7 @@
                                                                DragItemsStarting="Chats_DragItemsStarting"
                                                                DragItemsCompleted="Chats_DragItemsCompleted"
                                                                Swiped="ChatsList_Swiped"
+                                                               SingleSelectionFollowsFocus="False"
                                                                AllowDrop="True"
                                                                CanDragItems="True"
                                                                CanReorderItems="False"
