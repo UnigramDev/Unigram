@@ -2177,7 +2177,7 @@ namespace Telegram.Views
                 if (selectionEnd - selectionStart > 0)
                 {
                     var caption = message.GetCaption();
-                    if (caption != null && caption.Text.Length > selectionEnd && selectionEnd > 0 && selectionStart >= 0)
+                    if (caption != null && caption.Text.Length >= selectionEnd && selectionEnd > 0 && selectionStart >= 0)
                     {
                         quote = new MessageQuote
                         {
