@@ -171,11 +171,6 @@ namespace Telegram.Controls.Messages
             ElementCompositionPreview.SetIsTranslationEnabled(Message, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Media, true);
 
-            if (!SettingsService.Current.Diagnostics.DisableClipping)
-            {
-                _cornerRadius = CompositionDevice.CreateRectangleClip(ContentPanel);
-            }
-
             _templateApplied = true;
 
             if (_message != null)

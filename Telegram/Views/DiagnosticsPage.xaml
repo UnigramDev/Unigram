@@ -21,12 +21,12 @@
                               Content="Use Test DC"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.DisableClipping, Mode=TwoWay}"
-                              Content="Disable DComp clipping"
+                    <CheckBox IsChecked="{x:Bind ViewModel.LoggerSink, Mode=TwoWay}"
+                              Content="Write App Logs to tdlib_log.txt"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.AllowRightToLeft, Mode=TwoWay}"
-                              Content="Allow right to left"
+                              Content="Allow Right to Left"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.IsPointerOverEnabled, Mode=TwoWay}"
@@ -34,15 +34,11 @@
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.ShowMemoryUsage, Mode=TwoWay}"
-                              Content="Show memory usage"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
-                    <CheckBox IsChecked="{x:Bind ViewModel.ShowIds, Mode=TwoWay}"
-                              Content="Show user and chat IDs"
+                              Content="Show Memory Usage"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.HidePhoneNumber, Mode=TwoWay}"
-                              Content="Hide phone number in navigation"
+                              Content="Hide Phone Number in Navigation"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
@@ -50,19 +46,13 @@
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 
-                <controls:HeaderedControl Header="Crash mitigation">
+                <controls:HeaderedControl Header="Crash Mitigation">
                     <CheckBox IsChecked="{x:Bind ViewModel.LegacyScrollBars, Mode=TwoWay}"
-                              Content="Legacy ScrollBar style"
+                              Content="Legacy ScrollBar Style"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.LegacyScrollViewers, Mode=TwoWay}"
-                              Content="Legacy ScrollViewer style"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-                </controls:HeaderedControl>
-
-                <controls:HeaderedControl Header="In-Memory Logs">
-                    <CheckBox IsChecked="{x:Bind ViewModel.LoggerSink, Mode=TwoWay}"
-                              Content="Write app logs to tdlib_log.txt"
+                              Content="Legacy ScrollViewer Style"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
 

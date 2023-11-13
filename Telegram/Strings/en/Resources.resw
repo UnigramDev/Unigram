@@ -2323,7 +2323,7 @@ Minimum length is 5 characters.</value>
     <value>Chats per Folder</value>
   </data>
   <data name="ChatQuickActions" xml:space="preserve">
-    <value>Swipe actions</value>
+    <value>Swipe Actions</value>
   </data>
   <data name="ChatResetTheme" xml:space="preserve">
     <value>Reset Theme</value>
@@ -3639,6 +3639,12 @@ Duration: {1}</value>
   </data>
   <data name="Exception_other" xml:space="preserve">
     <value>{0} exceptions</value>
+  </data>
+  <data name="ExperimentalSettings" xml:space="preserve">
+    <value>Experimental Settings</value>
+  </data>
+  <data name="ExperimentalSettingsHint" xml:space="preserve">
+    <value>Warning! These are experimental settings. Some may not work. Others may break the app. Any of them may disappear in the next version without a trace. Use at your own risk.</value>
   </data>
   <data name="Expired" xml:space="preserve">
     <value>Expired</value>
@@ -7332,6 +7338,9 @@ and enter your phone number.</value>
   <data name="SyncContactsInfoOn" xml:space="preserve">
     <value>Contacts from this device will be added to your account.</value>
   </data>
+  <data name="SystemIntegration" xml:space="preserve">
+    <value>System Integration</value>
+  </data>
   <data name="SystemTones" xml:space="preserve">
     <value>System tones</value>
   </data>
@@ -8058,6 +8067,12 @@ However, it is currently available for purchase. **Learn more…**</value>
   </data>
   <data name="UseSystemSpellChecker" xml:space="preserve">
     <value>Use System Spell Checker</value>
+  </data>
+  <data name="VersionAndUpdates" xml:space="preserve">
+    <value>Version and Updates</value>
+  </data>
+  <data name="VersionNumber" xml:space="preserve">
+    <value>Version {0}</value>
   </data>
   <data name="ViaBot" xml:space="preserve">
     <value>via</value>

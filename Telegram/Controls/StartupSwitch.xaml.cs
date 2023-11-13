@@ -7,6 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Services;
+using Telegram.ViewModels.Settings;
 using Windows.ApplicationModel;
 using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
@@ -16,22 +17,34 @@ namespace Telegram.Controls
 {
     public sealed partial class StartupSwitch : UserControl
     {
+        public SettingsAdvancedViewModel ViewModel => DataContext as SettingsAdvancedViewModel;
+
         public StartupSwitch()
         {
             InitializeComponent();
 
+            var integrated = false;
+
+            if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
+            {
+                integrated = true;
+                FindName(nameof(TraySwitch));
+            }
+
             if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.StartupTaskContract", 2))
             {
+                integrated = true;
+
 #if DESKTOP_BRIDGE
                 FindName(nameof(ToggleMinimized));
 #endif
 
                 OnLoaded();
             }
-            else
-            {
-                Visibility = Visibility.Collapsed;
-            }
+
+            Visibility = integrated
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private async void OnLoaded()

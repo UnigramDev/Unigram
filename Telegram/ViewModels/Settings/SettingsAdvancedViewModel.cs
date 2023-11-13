@@ -7,6 +7,7 @@
 using System;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Converters;
 using Telegram.Navigation;
@@ -29,6 +30,7 @@ namespace Telegram.ViewModels.Settings
             : base(clientService, settingsService, aggregator)
         {
             _cloudUpdateService = cloudUpdateService;
+            UpdateFooter = string.Format(Strings.VersionNumber, VersionLabel.GetVersion());
         }
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
