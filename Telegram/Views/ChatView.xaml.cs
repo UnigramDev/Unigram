@@ -3476,8 +3476,6 @@ namespace Telegram.Views
             ButtonAction.Visibility = Visibility.Visible;
             ChatFooter.Visibility = Visibility.Visible;
             TextArea.Visibility = Visibility.Collapsed;
-
-            ButtonAction.Focus(FocusState.Programmatic);
         }
 
         private void ShowArea(bool permanent = true)
