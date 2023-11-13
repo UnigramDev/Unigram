@@ -432,6 +432,35 @@ namespace Telegram.ViewModels
             }
         }
 
+        //private async Task<IList<Chat>> GetChatsFromSelectionAsync()
+        //{
+        //    List<Chat> results = null;
+
+        //    foreach (var item in SelectedItems)
+        //    {
+        //        if (item.Chat != null)
+        //        {
+        //            results.Add(item.Chat);
+        //        }
+        //        else if (item.User != null)
+        //        {
+        //            if (ClientService.TryGetChatFromUser(item.User.Id, out Chat cached))
+        //            {
+        //                results.Add(cached);
+        //            }
+        //            else
+        //            {
+        //                var response = await ClientService.SendAsync(new CreatePrivateChat(item.User.Id, false));
+        //                if (response is Chat chat)
+        //                {
+        //                    results.Add(chat);
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    return results;
+        //}
 
         public RelayCommand SendCommand { get; }
         private async void SendExecute()
@@ -662,7 +691,11 @@ namespace Telegram.ViewModels
                     {
                         if (user.Type is UserTypeBot)
                         {
-                            return Options.AllowBotChats;
+                            return Options.AllowBotChats && !Options.CanShareContact;
+                        }
+                        else if (Options.CanShareContact)
+                        {
+                            return user.PhoneNumber.Length > 0;
                         }
                     }
                     return Options.AllowUserChats;
@@ -717,7 +750,11 @@ namespace Telegram.ViewModels
             }
             else if (user.Type is UserTypeBot)
             {
-                return Options.AllowBotChats;
+                return Options.AllowBotChats && !Options.CanShareContact;
+            }
+            else if (Options.CanShareContact)
+            {
+                return user.PhoneNumber.Length > 0;
             }
 
             return Options.AllowUserChats;

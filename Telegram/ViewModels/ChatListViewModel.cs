@@ -899,6 +899,7 @@ namespace Telegram.ViewModels
         PublicChats,
 
         ChatMembers,
+        None
     }
 
     public class SearchResult
@@ -918,6 +919,13 @@ namespace Telegram.ViewModels
             Chat = chat;
             Query = query;
             Type = type;
+        }
+
+        public SearchResult(Chat chat)
+        {
+            Chat = chat;
+            Query = string.Empty;
+            Type = SearchResultType.None;
         }
 
         public SearchResult(User user, string query, SearchResultType type)

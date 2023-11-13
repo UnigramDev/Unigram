@@ -37,7 +37,7 @@ namespace Telegram.Views.Popups
 
     public record ChooseChatsOptions
     {
-        public bool AllowAll => AllowChannelChats && AllowGroupChats && AllowBotChats && AllowUserChats && AllowSecretChats && AllowSelf && !CanPostMessages && !CanInviteUsers;
+        public bool AllowAll => AllowChannelChats && AllowGroupChats && AllowBotChats && AllowUserChats && AllowSecretChats && AllowSelf && !CanPostMessages && !CanInviteUsers && !CanShareContact;
 
         public bool AllowChannelChats { get; set; } = true;
         public bool AllowGroupChats { get; set; } = true;
@@ -49,6 +49,7 @@ namespace Telegram.Views.Popups
 
         public bool CanPostMessages { get; set; } = false;
         public bool CanInviteUsers { get; set; } = false;
+        public bool CanShareContact { get; set; } = false;
 
         public bool ShowChats { get; set; } = true;
         public bool ShowContacts { get; set; } = false;
@@ -65,6 +66,7 @@ namespace Telegram.Views.Popups
             AllowSelf = true,
             CanPostMessages = false,
             CanInviteUsers = false,
+            CanShareContact = false,
             ShowChats = true,
             ShowContacts = false
         };
@@ -79,6 +81,7 @@ namespace Telegram.Views.Popups
             AllowSelf = false,
             CanPostMessages = false,
             CanInviteUsers = false,
+            CanShareContact = true,
             ShowChats = false,
             ShowContacts = true
         };
@@ -93,6 +96,7 @@ namespace Telegram.Views.Popups
             AllowSelf = false,
             CanPostMessages = false,
             CanInviteUsers = false,
+            CanShareContact = true,
             ShowChats = false,
             ShowContacts = true
         };
@@ -107,6 +111,7 @@ namespace Telegram.Views.Popups
             AllowSelf = false,
             CanPostMessages = false,
             CanInviteUsers = false,
+            CanShareContact = false,
             ShowChats = true,
             ShowContacts = false
         };
@@ -121,6 +126,7 @@ namespace Telegram.Views.Popups
             AllowSelf = true,
             CanPostMessages = true,
             CanInviteUsers = false,
+            CanShareContact = false,
             ShowChats = true,
             ShowContacts = false
         };
@@ -135,6 +141,7 @@ namespace Telegram.Views.Popups
             AllowSelf = false,
             CanPostMessages = false,
             CanInviteUsers = true,
+            CanShareContact = false,
             ShowChats = true,
             ShowContacts = false
         };
@@ -149,6 +156,7 @@ namespace Telegram.Views.Popups
             AllowSelf = false,
             CanPostMessages = false,
             CanInviteUsers = false,
+            CanShareContact = false,
             ShowChats = false,
             ShowContacts = true
         };
