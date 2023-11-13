@@ -374,13 +374,8 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupAddAdministratorViewModel):
-                    return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupAddAdministratorViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
-                case nameof(Telegram.ViewModels.Supergroups.SupergroupAddRestrictedViewModel):
-                    return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupAddRestrictedViewModel(
+                case nameof(Telegram.ViewModels.Supergroups.SupergroupChooseMemberViewModel):
+                    return (T)(object)new Telegram.ViewModels.Supergroups.SupergroupChooseMemberViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);

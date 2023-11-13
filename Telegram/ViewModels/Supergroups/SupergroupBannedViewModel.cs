@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
-using Telegram.Views.Supergroups;
+using Telegram.Views.Supergroups.Popups;
 
 namespace Telegram.ViewModels.Supergroups
 {
@@ -28,7 +28,7 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            NavigationService.Navigate(typeof(SupergroupAddRestrictedPage), chat.Id);
+            NavigationService.ShowPopupAsync(typeof(SupergroupChooseMemberPopup), new SupergroupChooseMemberArgs(chat.Id, SupergroupChooseMemberMode.Restrict));
         }
 
         #region Context menu

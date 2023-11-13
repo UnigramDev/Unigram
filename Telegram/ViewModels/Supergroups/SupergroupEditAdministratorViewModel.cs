@@ -15,7 +15,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
-using Telegram.Views.Supergroups;
 using Telegram.Views.Supergroups.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -511,12 +510,6 @@ namespace Telegram.ViewModels.Supergroups
             if (response is Ok)
             {
                 Delegate?.Hide();
-
-                if (NavigationService.CurrentPageType == typeof(SupergroupAddAdministratorPage))
-                {
-                    NavigationService.GoBack();
-                    NavigationService.Frame.ForwardStack.Clear();
-                }
             }
             else
             {
@@ -617,12 +610,6 @@ namespace Telegram.ViewModels.Supergroups
             if (response is Ok)
             {
                 Delegate?.Hide();
-
-                if (NavigationService.CurrentPageType == typeof(SupergroupAddAdministratorPage))
-                {
-                    NavigationService.GoBack();
-                    NavigationService.Frame.ForwardStack.Clear();
-                }
             }
             else
             {

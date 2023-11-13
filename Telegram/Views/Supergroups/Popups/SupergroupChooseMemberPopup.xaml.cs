@@ -5,52 +5,74 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.ComponentModel;
+using Telegram.Collections;
+using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Supergroups;
-using Telegram.Views.Supergroups.Popups;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
 
-namespace Telegram.Views.Supergroups
+namespace Telegram.Views.Supergroups.Popups
 {
-    public sealed partial class SupergroupAddRestrictedPage : HostedPage
+    public enum SupergroupChooseMemberMode
     {
-        public SupergroupAddRestrictedViewModel ViewModel => DataContext as SupergroupAddRestrictedViewModel;
+        Promote,
+        Restrict,
+        Block
+    }
 
-        public SupergroupAddRestrictedPage()
+    public class SupergroupChooseMemberArgs
+    {
+        public SupergroupChooseMemberArgs(long chatId, SupergroupChooseMemberMode mode)
         {
-            InitializeComponent();
-            Title = Strings.ChannelBlockUser;
-
-            //var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
-            //debouncer.Invoked += async (s, args) =>
-            //{
-            //    var items = ViewModel.Search;
-            //    if (items != null && string.Equals(SearchField.Text, items.Query))
-            //    {
-            //        await items.LoadMoreItemsAsync(0);
-            //        await items.LoadMoreItemsAsync(1);
-            //        await items.LoadMoreItemsAsync(2);
-            //        await items.LoadMoreItemsAsync(3);
-            //    }
-            //};
+            ChatId = chatId;
+            Mode = mode;
         }
 
-        public void OnBackRequested(HandledEventArgs args)
+        public long ChatId { get; }
+
+        public SupergroupChooseMemberMode Mode { get; }
+    }
+
+    public sealed partial class SupergroupChooseMemberPopup : ContentPopup
+    {
+        public SupergroupChooseMemberViewModel ViewModel => DataContext as SupergroupChooseMemberViewModel;
+
+        public SupergroupChooseMemberPopup()
         {
-            //if (ContentPanel.Visibility == Visibility.Collapsed)
-            //{
-            //    SearchField.Text = string.Empty;
-            //    Search_LostFocus(null, null);
-            //    args.Handled = true;
-            //}
+            InitializeComponent();
+
+            SecondaryButtonText = Strings.Cancel;
+
+            var debouncer = new EventDebouncer<TextChangedEventArgs>(Constants.TypingTimeout, handler => SearchField.TextChanged += new TextChangedEventHandler(handler));
+            debouncer.Invoked += async (s, args) =>
+            {
+                var items = ViewModel.Search;
+                if (items != null && string.Equals(SearchField.Text, items.Query))
+                {
+                    await items.LoadMoreItemsAsync(0);
+                    await items.LoadMoreItemsAsync(1);
+                    await items.LoadMoreItemsAsync(2);
+                    await items.LoadMoreItemsAsync(3);
+                }
+            };
+        }
+
+        public override void OnNavigatedTo()
+        {
+            Title = ViewModel.Mode switch
+            {
+                SupergroupChooseMemberMode.Promote => Strings.ChannelAddAdmin,
+                SupergroupChooseMemberMode.Restrict => Strings.ChannelAddException,
+                SupergroupChooseMemberMode.Block => Strings.ChannelBlockUser,
+                _ => string.Empty
+            };
         }
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -61,19 +83,33 @@ namespace Telegram.Views.Supergroups
                 return;
             }
 
+            Hide();
+
+            var sourcePopupType = ViewModel.Mode switch
+            {
+                SupergroupChooseMemberMode.Promote => typeof(SupergroupEditAdministratorPopup),
+                SupergroupChooseMemberMode.Restrict => typeof(SupergroupEditRestrictedPopup),
+                _ => null
+            };
+
+            if (sourcePopupType == null)
+            {
+                return;
+            }
+
             if (e.ClickedItem is ChatMember member)
             {
-                ViewModel.NavigationService.ShowPopupAsync(typeof(SupergroupEditRestrictedPopup), new SupergroupEditMemberArgs(chat.Id, member.MemberId));
+                ViewModel.NavigationService.ShowPopupAsync(sourcePopupType, new SupergroupEditMemberArgs(chat.Id, member.MemberId));
             }
             else if (e.ClickedItem is SearchResult result)
             {
                 if (result.User is User user)
                 {
-                    ViewModel.NavigationService.ShowPopupAsync(typeof(SupergroupEditRestrictedPopup), new SupergroupEditMemberArgs(chat.Id, new MessageSenderUser(user.Id)));
+                    ViewModel.NavigationService.ShowPopupAsync(sourcePopupType, new SupergroupEditMemberArgs(chat.Id, new MessageSenderUser(user.Id)));
                 }
                 else if (result.Chat is Chat temp && temp.Type is ChatTypePrivate privata)
                 {
-                    ViewModel.NavigationService.ShowPopupAsync(typeof(SupergroupEditRestrictedPopup), new SupergroupEditMemberArgs(chat.Id, new MessageSenderUser(privata.UserId)));
+                    ViewModel.NavigationService.ShowPopupAsync(sourcePopupType, new SupergroupEditMemberArgs(chat.Id, new MessageSenderUser(privata.UserId)));
                 }
             }
         }
@@ -213,16 +249,16 @@ namespace Telegram.Views.Supergroups
 
         private void Search_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //if (string.IsNullOrEmpty(SearchField.Text))
-            //{
-            //    ContentPanel.Visibility = Visibility.Visible;
-            //    ViewModel.Search = null;
-            //}
-            //else
-            //{
-            //    ContentPanel.Visibility = Visibility.Collapsed;
-            //    ViewModel.Search = new SearchMembersAndUsersCollection(ViewModel.ClientService, ViewModel.Chat.Id, new ChatMembersFilterMembers(), SearchField.Text);
-            //}
+            if (string.IsNullOrEmpty(SearchField.Text))
+            {
+                ContentPanel.Visibility = Visibility.Visible;
+                ViewModel.Search = null;
+            }
+            else
+            {
+                ContentPanel.Visibility = Visibility.Collapsed;
+                ViewModel.Search = new SearchMembersAndUsersCollection(ViewModel.ClientService, ViewModel.Chat.Id, new ChatMembersFilterMembers(), SearchField.Text);
+            }
         }
     }
 }

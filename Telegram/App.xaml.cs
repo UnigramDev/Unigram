@@ -368,8 +368,7 @@ namespace Telegram
                 UserCreatePage => TLContainer.Current.Resolve<UserCreateViewModel>(sessionId),
                 UserEditPage userEdit => TLContainer.Current.Resolve<UserEditViewModel, IUserDelegate>(userEdit, sessionId),
                 //
-                SupergroupAddAdministratorPage => TLContainer.Current.Resolve<SupergroupAddAdministratorViewModel>(sessionId),
-                SupergroupAddRestrictedPage => TLContainer.Current.Resolve<SupergroupAddRestrictedViewModel>(sessionId),
+                SupergroupChooseMemberPopup => TLContainer.Current.Resolve<SupergroupChooseMemberViewModel>(sessionId),
                 SupergroupAdministratorsPage supergroupAdministrators => TLContainer.Current.Resolve<SupergroupAdministratorsViewModel, ISupergroupDelegate>(supergroupAdministrators, sessionId),
                 SupergroupBannedPage supergroupBanned => TLContainer.Current.Resolve<SupergroupBannedViewModel, ISupergroupDelegate>(supergroupBanned, sessionId),
                 SupergroupEditAdministratorPopup supergroupEditAdministrator => TLContainer.Current.Resolve<SupergroupEditAdministratorViewModel, IMemberPopupDelegate>(supergroupEditAdministrator, sessionId),

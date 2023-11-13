@@ -59,7 +59,7 @@ namespace Telegram.ViewModels.Supergroups
         {
             if (_chat is Chat chat)
             {
-                NavigationService.Navigate(typeof(SupergroupAddAdministratorPage), chat.Id);
+                NavigationService.ShowPopupAsync(typeof(SupergroupChooseMemberPopup), new SupergroupChooseMemberArgs(chat.Id, SupergroupChooseMemberMode.Promote));
             }
         }
 

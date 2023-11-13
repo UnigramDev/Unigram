@@ -1121,8 +1121,7 @@
     <Compile Include="ViewModels\Settings\SettingsNotificationsViewModel.cs" />
     <Compile Include="ViewModels\SingleGalleryViewModel.cs" />
     <Compile Include="ViewModels\Delegates\IMemberPopupDelegate.cs" />
-    <Compile Include="ViewModels\Supergroups\SupergroupAddAdministratorViewModel.cs" />
-    <Compile Include="ViewModels\Supergroups\SupergroupAddRestrictedViewModel.cs" />
+    <Compile Include="ViewModels\Supergroups\SupergroupChooseMemberViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupAdministratorsViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupBannedViewModel.cs" />
     <Compile Include="ViewModels\Supergroups\SupergroupEditAdministratorViewModel.cs" />
@@ -1453,11 +1452,8 @@
     <Compile Include="Views\Supergroups\Popups\SupergroupTopicPopup.xaml.cs">
       <DependentUpon>SupergroupTopicPopup.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Supergroups\SupergroupAddAdministratorPage.xaml.cs">
-      <DependentUpon>SupergroupAddAdministratorPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Supergroups\SupergroupAddRestrictedPage.xaml.cs">
-      <DependentUpon>SupergroupAddRestrictedPage.xaml</DependentUpon>
+    <Compile Include="Views\Supergroups\Popups\SupergroupChooseMemberPopup.xaml.cs">
+      <DependentUpon>SupergroupChooseMemberPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Supergroups\SupergroupAdministratorsPage.xaml.cs">
       <DependentUpon>SupergroupAdministratorsPage.xaml</DependentUpon>
@@ -2919,11 +2915,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Supergroups\SupergroupAddAdministratorPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Supergroups\SupergroupAddRestrictedPage.xaml">
+    <Page Include="Views\Supergroups\Popups\SupergroupChooseMemberPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
