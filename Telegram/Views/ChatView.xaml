@@ -1018,14 +1018,16 @@
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <messages:MessageReference x:Name="ComposerHeaderReference"
-                                                   Click="Reply_Click"
-                                                   ContextRequested="Reply_ContextRequested"
-                                                   VerticalAlignment="Stretch"
-                                                   VerticalContentAlignment="Center"
-                                                   Margin="0,0,-44,-4"
-                                                   CornerRadius="4,13,4,4"
-                                                   Grid.Column="1" />
+                        <Border VerticalAlignment="Stretch"
+                                Margin="0,0,4,-4"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="2">
+                            
+                            <messages:MessageReference x:Name="ComposerHeaderReference"
+                                                       Click="Reply_Click"
+                                                       ContextRequested="Reply_ContextRequested"
+                                                       CornerRadius="4,13,4,4"/>
+                        </Border>
                         <FontIcon x:Name="ComposerHeaderGlyph"
                                   Foreground="{ThemeResource MessageHeaderBorderBrush}"
                                   Style="{StaticResource DefaultFontIconStyle}"
