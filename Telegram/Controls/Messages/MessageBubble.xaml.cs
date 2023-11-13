@@ -1755,7 +1755,7 @@ namespace Telegram.Controls.Messages
 
             if (message.Text != null)
             {
-                Message.SetText(message.ClientService, message.Text);
+                Message.SetText(message.ClientService, message.Text, message.GeneratedContent is MessageBigEmoji ? 32 : 0);
                 Message.SetQuery(_query);
 
                 ContentPanel.MaxWidth = Message.HasCodeBlocks ? double.PositiveInfinity : 432;
