@@ -603,7 +603,7 @@ namespace Telegram.ViewModels
 
         public void OpenMessageStatistics(MessageViewModel message)
         {
-            NavigationService.Navigate(typeof(MessageStatisticsPage), $"{message.ChatId};{message.Id}");
+            NavigationService.Navigate(typeof(MessageStatisticsPage), new ChatNavigationArgs(message.ChatId, message.Id));
         }
 
         #endregion

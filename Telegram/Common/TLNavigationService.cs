@@ -277,7 +277,7 @@ namespace Telegram.Common
                     if (thread != null)
                     {
                         target = typeof(ChatThreadPage);
-                        parameter = $"{chat.Id};{thread}";
+                        parameter = new ChatNavigationArgs(chat.Id, thread.Value);
                     }
                     else if (scheduled)
                     {
@@ -326,7 +326,7 @@ namespace Telegram.Common
                         if (thread != null)
                         {
                             target = typeof(ChatThreadPage);
-                            parameter = $"{chat.Id};{thread}";
+                            parameter = new ChatNavigationArgs(chat.Id, thread.Value);
 
                             if (CurrentPageType == typeof(ChatPage) && chat.Id.Equals((long)CurrentPageParam))
                             {

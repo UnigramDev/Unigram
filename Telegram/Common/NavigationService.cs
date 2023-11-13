@@ -267,13 +267,9 @@ namespace Telegram.Common
             }
             else if (service.CurrentPageType == typeof(ChatThreadPage))
             {
-                if (service.CurrentPageParam is string pair)
+                if (service.CurrentPageParam is ChatNavigationArgs args)
                 {
-                    var split = pair.Split(';');
-                    if (long.TryParse(split[0], out long chatId))
-                    {
-                        return chatId;
-                    }
+                    return args.ChatId;
                 }
             }
 
@@ -289,13 +285,9 @@ namespace Telegram.Common
                 }
                 else if (entry.SourcePageType == typeof(ChatThreadPage))
                 {
-                    if (entry.Parameter is string pair)
+                    if (entry.Parameter is ChatNavigationArgs args)
                     {
-                        var split = pair.Split(';');
-                        if (long.TryParse(split[0], out long chatId))
-                        {
-                            return chatId;
-                        }
+                        return args.ChatId;
                     }
                 }
             }

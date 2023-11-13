@@ -1444,7 +1444,7 @@ namespace Telegram.Views
 
             if (ViewModel.Topic != null)
             {
-                ViewModel.NavigationService.Navigate(typeof(ProfilePage), $"{chat.Id};{ViewModel.ThreadId}", infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
+                ViewModel.NavigationService.Navigate(typeof(ProfilePage), new ChatNavigationArgs(chat.Id, ViewModel.ThreadId), infoOverride: new SlideNavigationTransitionInfo { Effect = SlideNavigationTransitionEffect.FromRight });
             }
             else
             {

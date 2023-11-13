@@ -87,25 +87,11 @@ namespace Telegram.ViewModels
 
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (parameter is string pair)
+            if (parameter is ChatNavigationArgs args)
             {
-                var split = pair.Split(';');
-                if (split.Length != 2)
-                {
-                    return Task.CompletedTask;
-                }
+                parameter = args.ChatId;
 
-                var failed1 = !long.TryParse(split[0], out long result1);
-                var failed2 = !long.TryParse(split[1], out long result2);
-
-                if (failed1 || failed2)
-                {
-                    return Task.CompletedTask;
-                }
-
-                parameter = result1;
-
-                if (ClientService.TryGetTopicInfo(result1, result2, out ForumTopicInfo info))
+                if (ClientService.TryGetTopicInfo(args.ChatId, args.MessageId, out ForumTopicInfo info))
                 {
                     Topic = info;
                 }

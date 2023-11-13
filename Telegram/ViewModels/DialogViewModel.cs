@@ -40,6 +40,19 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.ViewModels
 {
+    public class ChatNavigationArgs
+    {
+        public ChatNavigationArgs(long chatId, long threadId)
+        {
+            ChatId = chatId;
+            MessageId = threadId;
+        }
+
+        public long ChatId { get; }
+
+        public long MessageId { get; }
+    }
+
     public partial class DialogViewModel : ComposeViewModel, IDelegable<IDialogDelegate>
     {
         private readonly ConcurrentDictionary<long, MessageViewModel> _selectedItems = new();
@@ -1727,28 +1740,14 @@ namespace Telegram.ViewModels
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            if (parameter is string pair)
+            if (parameter is ChatNavigationArgs args)
             {
-                var split = pair.Split(';');
-                if (split.Length != 2)
-                {
-                    return;
-                }
-
-                var failed1 = !long.TryParse(split[0], out long result1);
-                var failed2 = !long.TryParse(split[1], out long result2);
-
-                if (failed1 || failed2)
-                {
-                    return;
-                }
-
-                Topic = await ClientService.SendAsync(new GetForumTopic(result1, result2)) as ForumTopic;
-                Thread = await ClientService.SendAsync(new GetMessageThread(result1, result2)) as MessageThreadInfo;
+                Topic = await ClientService.SendAsync(new GetForumTopic(args.ChatId, args.MessageId)) as ForumTopic;
+                Thread = await ClientService.SendAsync(new GetMessageThread(args.ChatId, args.MessageId)) as MessageThreadInfo;
 
                 if (Topic != null)
                 {
-                    parameter = result1;
+                    parameter = args.ChatId;
                 }
                 else if (Thread != null)
                 {
