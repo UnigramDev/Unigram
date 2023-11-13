@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using LinqToVisualTree;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -271,7 +270,7 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        public async Task ScrollToItem(MessageViewModel item, VerticalAlignment alignment, MessageBubbleHighlightOptions highlight, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
+        public async Task ScrollToItem(MessageViewModel item, VerticalAlignment alignment, MessageBubbleHighlightOptions options, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
         {
             _raiseViewChanged = false;
 
@@ -323,20 +322,19 @@ namespace Telegram.Controls.Chats
                 }
             }
 
-            if (highlight != null && highlight.Highlight)
+            if (options != null && options.Highlight)
             {
-                var bubble = selectorItem.Descendants<MessageBubble>().FirstOrDefault();
-                bubble?.Highlight(highlight);
+                if (selectorItem.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
+                {
+                    bubble.Highlight(options);
+                }
             }
 
             if (scrollViewer.VerticalOffset < scrollViewer.ScrollableHeight || position.Y < scrollViewer.ScrollableHeight)
             {
                 if (scrollViewer.VerticalOffset.AlmostEquals(position.Y))
                 {
-                    if (highlight == null || highlight.MoveFocus)
-                    {
-                        selectorItem.Focus(FocusState.Pointer);
-                    }
+                    TryFocus(selectorItem, options);
 
                     goto Exit;
                 }
@@ -344,10 +342,7 @@ namespace Telegram.Controls.Chats
                 await scrollViewer.ChangeViewAsync(null, position.Y, disableAnimation ?? alignment != VerticalAlignment.Center, false);
             }
 
-            if (highlight == null || highlight.MoveFocus)
-            {
-                selectorItem.Focus(FocusState.Pointer);
-            }
+            TryFocus(selectorItem, options);
 
         Exit:
             Resume();
@@ -356,6 +351,21 @@ namespace Telegram.Controls.Chats
             {
                 ViewChanging();
                 ViewChanged?.Invoke(scrollViewer, null);
+            }
+        }
+
+        private void TryFocus(SelectorItem selectorItem, MessageBubbleHighlightOptions options)
+        {
+            try
+            {
+                if (options == null || options.MoveFocus)
+                {
+                    selectorItem.Focus(FocusState.Pointer);
+                }
+            }
+            catch
+            {
+                // Focus cannot be moved while getting or losing focus.
             }
         }
 
