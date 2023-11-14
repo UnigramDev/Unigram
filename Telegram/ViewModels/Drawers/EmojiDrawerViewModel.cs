@@ -169,15 +169,9 @@ namespace Telegram.ViewModels.Drawers
 
         public void Handle(UpdateInstalledStickerSets update)
         {
-            if (update.StickerType is not StickerTypeRegular)
+            if (update.StickerType is not StickerTypeCustomEmoji)
             {
                 return;
-            }
-
-            long hash = 0;
-            foreach (var elem in update.StickerSetIds)
-            {
-                hash = ((hash * 20261) + 0x80000000L + elem) % 0x80000000L;
             }
 
             BeginOnUIThread(() => Update());
@@ -216,7 +210,7 @@ namespace Telegram.ViewModels.Drawers
             }
             else
             {
-                var items = SearchStickers = new SearchStickerSetsCollection(ClientService, new StickerTypeRegular(), query, 0, emojiOnly);
+                var items = SearchStickers = new SearchStickerSetsCollection(ClientService, new StickerTypeCustomEmoji(), query, 0, emojiOnly);
                 await items.LoadMoreItemsAsync(0);
             }
         }
@@ -358,28 +352,21 @@ namespace Telegram.ViewModels.Drawers
                     {
                         installedSets[filtered[i].Id] = new StickerSetViewModel(ClientService, filtered[i]);
                     }
-
-                    foreach (var item in trending.Sets)
-                    {
-                        if (installedSets.ContainsKey(item.Id))
-                        {
-                            continue;
-                        }
-
-                        if (_mode == EmojiDrawerMode.Background && !item.NeedsRepainting)
-                        {
-                            continue;
-                        }
-
-                        installedSets[item.Id] = new StickerSetViewModel(ClientService, item);
-                    }
                 }
-                else if (trending.Sets.Count > 0)
+
+                foreach (var item in trending.Sets)
                 {
-                    for (int i = 0; i < trending.Sets.Count; i++)
+                    if (installedSets.ContainsKey(item.Id))
                     {
-                        installedSets[trending.Sets[i].Id] = new StickerSetViewModel(ClientService, trending.Sets[i]);
+                        continue;
                     }
+
+                    if (_mode == EmojiDrawerMode.Background && !item.NeedsRepainting)
+                    {
+                        continue;
+                    }
+
+                    installedSets[item.Id] = new StickerSetViewModel(ClientService, item);
                 }
 
                 _installedSets = installedSets;

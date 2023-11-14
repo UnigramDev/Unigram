@@ -123,6 +123,7 @@ namespace Telegram.Views.Popups
                 Animated.ReplacementColor = null;
             }
 
+            _customEmojiId = customEmojiId;
             List.SelectedItem = accent;
 
             BackgroundControl.Update(clientService, null);
