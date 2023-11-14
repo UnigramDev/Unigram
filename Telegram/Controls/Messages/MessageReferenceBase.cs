@@ -95,7 +95,7 @@ namespace Telegram.Controls.Messages
             else if (embedded.ReplyToMessage != null)
             {
                 MessageId = embedded.ReplyToMessage.Id;
-                GetMessageTemplate(embedded.ReplyToMessage.ClientService, embedded.ReplyToMessage, embedded.ReplyToQuote, embedded.ReplyToQuote != null, embedded.ReplyToQuote != null ? Strings.ReplyToQuote : Strings.ReplyTo, true, false);
+                GetMessageTemplate(embedded.ReplyToMessage.ClientService, embedded.ReplyToMessage, embedded.ReplyToQuote, false, embedded.ReplyToQuote != null ? Strings.ReplyToQuote : Strings.ReplyTo, true, false);
             }
         }
 
@@ -262,59 +262,60 @@ namespace Telegram.Controls.Messages
 
         private bool GetMessageTemplate(IClientService clientService, MessageViewModel message, FormattedText text, bool quote, string title, bool outgoing, bool forward)
         {
+            MessageSender sender;
             if (title == null)
             {
-                title = GetFromLabel(clientService, message, forward);
+                title = GetFromLabel(clientService, message, forward, out sender);
             }
             else
             {
-                title = string.Format(title, GetFromLabel(clientService, message, forward));
+                title = string.Format(title, GetFromLabel(clientService, message, forward, out sender));
             }
 
             switch (message.Content)
             {
                 case MessageText text1:
-                    return SetTextTemplate(clientService, message.SenderId, text1, text, quote, title, outgoing);
+                    return SetTextTemplate(clientService, sender, text1, text, quote, title, outgoing);
                 case MessageAnimatedEmoji animatedEmoji:
-                    return SetAnimatedEmojiTemplate(clientService, message.SenderId, animatedEmoji, title, outgoing);
+                    return SetAnimatedEmojiTemplate(clientService, sender, animatedEmoji, title, outgoing);
                 case MessageAnimation animation:
-                    return SetAnimationTemplate(clientService, message.SenderId, text, quote, animation, title, outgoing);
+                    return SetAnimationTemplate(clientService, sender, text, quote, animation, title, outgoing);
                 case MessageAudio audio:
-                    return SetAudioTemplate(clientService, message.SenderId, text, quote, audio, title, outgoing);
+                    return SetAudioTemplate(clientService, sender, text, quote, audio, title, outgoing);
                 case MessageCall call:
-                    return SetCallTemplate(clientService, message.SenderId, call, title, outgoing);
+                    return SetCallTemplate(clientService, sender, call, title, outgoing);
                 case MessageContact contact:
-                    return SetContactTemplate(clientService, message.SenderId, contact, title, outgoing);
+                    return SetContactTemplate(clientService, sender, contact, title, outgoing);
                 case MessageDice dice:
-                    return SetDiceTemplate(clientService, message.SenderId, dice, title, outgoing);
+                    return SetDiceTemplate(clientService, sender, dice, title, outgoing);
                 case MessageDocument document:
-                    return SetDocumentTemplate(clientService, message.SenderId, text, quote, document, title, outgoing);
+                    return SetDocumentTemplate(clientService, sender, text, quote, document, title, outgoing);
                 case MessageGame game:
-                    return SetGameTemplate(clientService, message.SenderId, game, title, outgoing);
+                    return SetGameTemplate(clientService, sender, game, title, outgoing);
                 case MessageInvoice invoice:
-                    return SetInvoiceTemplate(clientService, message.SenderId, invoice, title, outgoing);
+                    return SetInvoiceTemplate(clientService, sender, invoice, title, outgoing);
                 case MessageLocation location:
-                    return SetLocationTemplate(clientService, message.SenderId, location, title, outgoing);
+                    return SetLocationTemplate(clientService, sender, location, title, outgoing);
                 case MessagePhoto photo:
-                    return SetPhotoTemplate(clientService, message.SenderId, text, quote, photo, title, outgoing, message.SelfDestructType is null);
+                    return SetPhotoTemplate(clientService, sender, text, quote, photo, title, outgoing, message.SelfDestructType is null);
                 case MessagePoll poll:
-                    return SetPollTemplate(clientService, message.SenderId, poll, title, outgoing);
+                    return SetPollTemplate(clientService, sender, poll, title, outgoing);
                 case MessageSticker sticker:
-                    return SetStickerTemplate(clientService, message.SenderId, sticker, title, outgoing);
+                    return SetStickerTemplate(clientService, sender, sticker, title, outgoing);
                 case MessageStory story:
-                    return SetStoryTemplate(clientService, message.SenderId, story, title, outgoing);
+                    return SetStoryTemplate(clientService, sender, story, title, outgoing);
                 case MessageUnsupported:
                     return SetUnsupportedTemplate(clientService, message, title, outgoing);
                 case MessageVenue venue:
-                    return SetVenueTemplate(clientService, message.SenderId, venue, title, outgoing);
+                    return SetVenueTemplate(clientService, sender, venue, title, outgoing);
                 case MessageVideo video:
-                    return SetVideoTemplate(clientService, message.SenderId, text, quote, video, title, outgoing, message.SelfDestructType is null);
+                    return SetVideoTemplate(clientService, sender, text, quote, video, title, outgoing, message.SelfDestructType is null);
                 case MessageVideoNote videoNote:
-                    return SetVideoNoteTemplate(clientService, message.SenderId, videoNote, title, outgoing);
+                    return SetVideoNoteTemplate(clientService, sender, videoNote, title, outgoing);
                 case MessageVoiceNote voiceNote:
-                    return SetVoiceNoteTemplate(clientService, message.SenderId, text, quote, voiceNote, title, outgoing);
+                    return SetVoiceNoteTemplate(clientService, sender, text, quote, voiceNote, title, outgoing);
                 case MessagePremiumGiveaway premiumGiveaway:
-                    return SetPremiumGiveawayTemplate(clientService, message.SenderId, premiumGiveaway, title, outgoing);
+                    return SetPremiumGiveawayTemplate(clientService, sender, premiumGiveaway, title, outgoing);
                 default:
                     return SetServiceTextTemplate(clientService, message, title, outgoing);
             }
@@ -908,25 +909,48 @@ namespace Telegram.Controls.Messages
 
         #endregion
 
-        private string GetFromLabel(IClientService clientService, MessageViewModel message, bool forward)
+        private string GetFromLabel(IClientService clientService, MessageViewModel message, bool forward, out MessageSender sender)
         {
             if (forward)
             {
-                var forwardedTitle = clientService.GetTitle(message.ForwardInfo?.Origin, message.ImportInfo);
-                if (forwardedTitle != null)
+                if (message.ForwardInfo?.Origin is MessageOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
                 {
-                    return forwardedTitle;
+                    sender = new MessageSenderUser(fromUser.SenderUserId);
+                    return fromUserUser.FullName();
+                }
+                else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
+                {
+                    sender = new MessageSenderChat(fromChat.SenderChatId);
+                    return fromChatChat.Title;
+                }
+                else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
+                {
+                    sender = new MessageSenderChat(fromChannel.ChatId);
+                    return fromChannelChat.Title;
+                }
+                else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser fromHiddenUser)
+                {
+                    sender = null;
+                    return fromHiddenUser.SenderName;
+                }
+                else if (message.ImportInfo != null)
+                {
+                    sender = null;
+                    return message.ImportInfo.SenderName;
                 }
             }
             else if (clientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
+                sender = message.SenderId;
                 return clientService.GetTitle(senderChat);
             }
             else if (clientService.TryGetUser(message.SenderId, out User user))
             {
+                sender = message.SenderId;
                 return user.FullName();
             }
 
+            sender = null;
             return string.Empty;
         }
 
