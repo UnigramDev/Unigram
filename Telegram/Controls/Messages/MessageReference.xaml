@@ -8,6 +8,66 @@
                     d:DesignHeight="36"
                     mc:Ignorable="d">
 
+    <Style TargetType="local:MessageReferencePattern">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:MessageReferencePattern">
+                    <Canvas x:Name="LayoutRoot"
+                            Width="122">
+                        <Image x:Name="Image1"
+                               Canvas.Left="9"
+                               Canvas.Top="5"
+                               Width="20"
+                               Height="20"
+                               Opacity="0.1" />
+                        <Image x:Name="Image2"
+                               Canvas.Left="41"
+                               Canvas.Top="12"
+                               Width="19"
+                               Height="19"
+                               Opacity="0.2" />
+                        <Image x:Name="Image3"
+                               Canvas.Left="64"
+                               Canvas.Top="0"
+                               Width="13"
+                               Height="13"
+                               Opacity="0.2" />
+                        <Image x:Name="Image4"
+                               Canvas.Left="77"
+                               Canvas.Top="18"
+                               Width="15"
+                               Height="15"
+                               Opacity="0.3" />
+                        <Image x:Name="Image5"
+                               Canvas.Left="103"
+                               Canvas.Top="7"
+                               Width="19"
+                               Height="19"
+                               Opacity="0.4" />
+                        <Image x:Name="Image6"
+                               Canvas.Left="23"
+                               Canvas.Top="33"
+                               Width="13"
+                               Height="13"
+                               Opacity="0.2" />
+                        <Image x:Name="Image7"
+                               Canvas.Left="58"
+                               Canvas.Top="37"
+                               Width="19"
+                               Height="19"
+                               Opacity="0.3" />
+                        <Image x:Name="Image8"
+                               Canvas.Left="99"
+                               Canvas.Top="34"
+                               Width="15"
+                               Height="15"
+                               Opacity="0.4" />
+                    </Canvas>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:MessageReference">
         <Setter Property="CornerRadius"
                 Value="4" />
@@ -46,12 +106,8 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="PointerOver">
-                                    <!--<VisualState.Setters>
-                                        <Setter Target="BackgroundOverlay.Opacity"
-                                                Value="0.2" />
-                                    </VisualState.Setters>-->
-                                </VisualState>
+                                <VisualState x:Name="PointerOver" />
+
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
                                         <Setter Target="BackgroundOverlay.Opacity"
@@ -95,63 +151,7 @@
                                                        VerticalAlignment="Top"
                                                        ReplacementColor="{TemplateBinding BorderBrush}"
                                                        IsTabStop="False"
-                                                       Margin="0,-3,7,0">
-                            <local:MessageReferencePattern.Template>
-                                <ControlTemplate TargetType="local:MessageReferencePattern">
-                                    <Canvas x:Name="LayoutRoot"
-                                            Width="122">
-                                        <Image x:Name="Image1"
-                                               Canvas.Left="9"
-                                               Canvas.Top="5"
-                                               Width="20"
-                                               Height="20"
-                                               Opacity="0.1" />
-                                        <Image x:Name="Image2"
-                                               Canvas.Left="41"
-                                               Canvas.Top="12"
-                                               Width="19"
-                                               Height="19"
-                                               Opacity="0.2" />
-                                        <Image x:Name="Image3"
-                                               Canvas.Left="64"
-                                               Canvas.Top="0"
-                                               Width="13"
-                                               Height="13"
-                                               Opacity="0.2" />
-                                        <Image x:Name="Image4"
-                                               Canvas.Left="77"
-                                               Canvas.Top="18"
-                                               Width="15"
-                                               Height="15"
-                                               Opacity="0.3" />
-                                        <Image x:Name="Image5"
-                                               Canvas.Left="103"
-                                               Canvas.Top="7"
-                                               Width="19"
-                                               Height="19"
-                                               Opacity="0.4" />
-                                        <Image x:Name="Image6"
-                                               Canvas.Left="23"
-                                               Canvas.Top="33"
-                                               Width="13"
-                                               Height="13"
-                                               Opacity="0.2" />
-                                        <Image x:Name="Image7"
-                                               Canvas.Left="58"
-                                               Canvas.Top="37"
-                                               Width="19"
-                                               Height="19"
-                                               Opacity="0.3" />
-                                        <Image x:Name="Image8"
-                                               Canvas.Left="99"
-                                               Canvas.Top="34"
-                                               Width="15"
-                                               Height="15"
-                                               Opacity="0.4" />
-                                    </Canvas>
-                                </ControlTemplate>
-                            </local:MessageReferencePattern.Template>
-                        </local:MessageReferencePattern>
+                                                       Margin="0,-3,7,0" />
 
                         <Border x:Name="ThumbRoot"
                                 x:DeferLoadStrategy="Lazy"
