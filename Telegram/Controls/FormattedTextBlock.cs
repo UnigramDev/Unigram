@@ -619,7 +619,7 @@ namespace Telegram.Controls
 
                 var rect = new BlockQuote();
                 rect.Width = e.NewSize.Width;
-                rect.Height = (end.Bottom - start.Y) + 6;
+                rect.Height = Math.Max(end.Bottom - start.Y + 6, 0);
                 rect.Glyph = block.FontSize == Theme.Current.MessageFontSize ? Icons.CodeBlockFilled16 : Icons.QuoteBlockFilled16;
                 Canvas.SetTop(rect, start.Y - 2);
 
