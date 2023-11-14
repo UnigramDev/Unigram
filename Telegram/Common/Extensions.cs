@@ -235,6 +235,9 @@ namespace Telegram.Common
                     {
                         break;
                     }
+
+                    // Consequence of the ZWJ workaround
+                    index++;
                 }
             }
 

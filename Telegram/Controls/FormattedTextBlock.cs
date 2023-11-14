@@ -58,6 +58,7 @@ namespace Telegram.Controls
         private readonly List<Paragraph> _codeBlocks = new();
 
         private TextHighlighter _spoiler;
+        private bool _invalidateSpoilers;
 
         private Canvas Below;
         private RichTextBlock TextBlock;
@@ -202,12 +203,13 @@ namespace Telegram.Controls
 
         public void SetQuery(string query, bool force = false)
         {
-            if ((_query ?? string.Empty) == (query ?? string.Empty) && _isHighlighted == (_spoiler != null) && !force)
+            if ((_query ?? string.Empty) == (query ?? string.Empty) && _isHighlighted == (_spoiler != null) && !force && !_invalidateSpoilers)
             {
                 return;
             }
 
             _query = query;
+            _invalidateSpoilers = false;
 
             if (_text != null && TextBlock != null && TextBlock.IsLoaded)
             {
@@ -318,7 +320,7 @@ namespace Telegram.Controls
             var direct = XamlDirect.GetDefault();
             var text = styled.Text;
 
-            var parag = 0;
+            var workaround = 0;
 
             foreach (var part in styled.Paragraphs)
             {
@@ -424,7 +426,7 @@ namespace Telegram.Controls
                             //hyperlink.Foreground = foreground;
 
                             spoiler ??= new TextHighlighter();
-                            spoiler.Ranges.Add(new TextRange { StartIndex = part.Offset + entity.Offset - parag, Length = entity.Length });
+                            spoiler.Ranges.Add(new TextRange { StartIndex = part.Offset + entity.Offset - workaround, Length = entity.Length });
 
                             var temp = direct.GetXamlDirectObject(hyperlink);
 
@@ -509,7 +511,9 @@ namespace Telegram.Controls
 
                             // TODO: see if there's a better way
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
-                            direct.AddToCollection(inlines, CreateDirectRun("\u200D"));
+                            direct.AddToCollection(inlines, CreateDirectRun(Icons.ZWJ));
+
+                            workaround++;
                         }
                         else
                         {
@@ -551,8 +555,9 @@ namespace Telegram.Controls
                     direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous), fontSize: fontSize));
                 }
 
+                // ZWJ is added to workaround a crash caused by emoji ad the end of a paragraph that is being highlighted
+                direct.AddToCollection(inlines, CreateDirectRun(Icons.ZWJ));
                 TextBlock.Blocks.Add(direct.GetObject(paragraph) as Paragraph);
-                parag++;
             }
 
             //Padding = new Thickness(0, firstFormatted ? 4 : 0, 0, 0);
@@ -567,10 +572,12 @@ namespace Telegram.Controls
                 spoiler.Foreground = new SolidColorBrush(Colors.Transparent);
                 spoiler.Background = new SolidColorBrush(Colors.Black);
 
+                _invalidateSpoilers = _spoiler != null;
                 _spoiler = spoiler;
             }
             else
             {
+                _invalidateSpoilers = false;
                 _spoiler = null;
             }
 

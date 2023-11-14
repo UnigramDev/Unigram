@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using Telegram.Common;
+using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
@@ -397,7 +398,7 @@ namespace Telegram.Controls.Messages
                         inline.Child = new CustomEmojiContainer(labelShow, player, -2);
 
                         messageShow.Inlines.Add(inline);
-                        messageShow.Inlines.Add("\u200D");
+                        messageShow.Inlines.Add(Icons.ZWJ);
 
                         previous = entity.Offset + entity.Length;
                     }

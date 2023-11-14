@@ -13,6 +13,7 @@ namespace Telegram.Controls.Media
 {
     public class Icons
     {
+        public const string ZWJ = "\u200D";
         public const string Spacing = "\u2004\u200A";
 
         public const string PictureInPictureEnter = "\uE92C";

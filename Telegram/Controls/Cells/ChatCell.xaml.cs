@@ -1082,7 +1082,7 @@ namespace Telegram.Controls.Cells
                         inline.Child = new CustomEmojiContainer(BriefText, player);
 
                         BriefLabel.Inlines.Add(inline);
-                        BriefLabel.Inlines.Add("\u200D");
+                        BriefLabel.Inlines.Add(Icons.ZWJ);
 
                         previous = entity.Offset + entity.Length;
                         hasCustomEmoji = true;
