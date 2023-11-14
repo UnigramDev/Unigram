@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages
 {
@@ -131,6 +132,7 @@ namespace Telegram.Controls.Messages
         #region InitializeComponent
 
         private Grid LayoutRoot;
+        private Rectangle BackgroundOverlay;
         private RichTextBlock Label;
         private Run TitleLabel;
         private Run ServiceLabel;
@@ -147,6 +149,7 @@ namespace Telegram.Controls.Messages
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as Grid;
+            BackgroundOverlay = GetTemplateChild(nameof(BackgroundOverlay)) as Rectangle;
             Label = GetTemplateChild(nameof(Label)) as RichTextBlock;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as Run;
             ServiceLabel = GetTemplateChild(nameof(ServiceLabel)) as Run;
@@ -154,6 +157,8 @@ namespace Telegram.Controls.Messages
             AccentDash = GetTemplateChild(nameof(AccentDash)) as DashPath;
             Quote = GetTemplateChild(nameof(Quote)) as TextBlock;
             Pattern = GetTemplateChild(nameof(Pattern)) as MessageReferencePattern;
+
+            BackgroundOverlay.Margin = new Thickness(0, 0, -Padding.Right, 0);
 
             _templateApplied = true;
 
@@ -199,7 +204,7 @@ namespace Telegram.Controls.Messages
                     AccentDash.Stripe2 = null;
                 }
 
-                Margin = new Thickness(-8, -6, -8, -6);
+                Margin = new Thickness(-8, -2, -8, -2);
             }
         }
 
@@ -235,7 +240,7 @@ namespace Telegram.Controls.Messages
                     AccentDash.Stripe2 = null;
                 }
 
-                Margin = new Thickness(0);
+                Margin = new Thickness(0, 4, 0, 4);
             }
         }
 
@@ -325,7 +330,7 @@ namespace Telegram.Controls.Messages
                     AccentDash.Stripe1 = null;
                     AccentDash.Stripe2 = null;
 
-                    Margin = new Thickness(-8, -6, -8, -6);
+                    Margin = new Thickness(-8, -2, -8, -2);
                 }
                 else
                 {
@@ -355,7 +360,7 @@ namespace Telegram.Controls.Messages
                         AccentDash.Stripe2 = null;
                     }
 
-                    Margin = new Thickness(0);
+                    Margin = new Thickness(0, 4, 0, 4);
                 }
 
                 _accent = accent;

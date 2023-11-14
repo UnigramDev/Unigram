@@ -89,7 +89,7 @@
                 Value="Stretch" />
         <Setter Property="VerticalAlignment"
                 Value="Stretch" />
-        <Setter Property="Padding"
+        <Setter Property="Margin"
                 Value="0,4,0,4" />
         <Setter Property="UseSystemFocusVisuals"
                 Value="True" />
@@ -102,7 +102,7 @@
                           Background="Transparent"
                           MinHeight="44"
                           CornerRadius="{TemplateBinding CornerRadius}"
-                          Margin="{TemplateBinding Padding}">
+                          Padding="{TemplateBinding Padding}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
