@@ -22,7 +22,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -66,69 +65,20 @@ namespace Telegram.Controls.Chats
             base.OnTapped(e);
         }
 
-        protected override async void OnPaste(HandledEventArgs e)
+        protected override async void OnPaste(HandledEventArgs e, DataPackageView package)
         {
             try
             {
                 // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
                 // we have to handle the pasting operation manually to allow plaintext only.
-                var package = Clipboard.GetContent();
                 if (package.AvailableFormats.Contains(StandardDataFormats.Bitmap) || package.AvailableFormats.Contains(StandardDataFormats.StorageItems))
                 {
                     e.Handled = true;
                     await ViewModel.HandlePackageAsync(package);
                 }
-                else if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-tl-field-tags"))
+                else
                 {
-                    e.Handled = true;
-
-                    // This is our field format
-                    var text = await package.GetTextAsync();
-                    var data = await package.GetDataAsync("application/x-tl-field-tags") as IRandomAccessStream;
-                    var reader = new DataReader(data.GetInputStreamAt(0));
-                    var length = await reader.LoadAsync((uint)data.Size);
-
-                    var count = reader.ReadInt32();
-                    var entities = new List<TextEntity>(count);
-
-                    for (int i = 0; i < count; i++)
-                    {
-                        var entity = new TextEntity { Offset = reader.ReadInt32(), Length = reader.ReadInt32() };
-                        var type = reader.ReadByte();
-
-                        switch (type)
-                        {
-                            case 1:
-                                entity.Type = new TextEntityTypeBold();
-                                break;
-                            case 2:
-                                entity.Type = new TextEntityTypeItalic();
-                                break;
-                            case 3:
-                                entity.Type = new TextEntityTypePreCode();
-                                break;
-                            case 4:
-                                entity.Type = new TextEntityTypeTextUrl { Url = reader.ReadString(reader.ReadUInt32()) };
-                                break;
-                            case 5:
-                                entity.Type = new TextEntityTypeMentionName { UserId = reader.ReadInt32() };
-                                break;
-                        }
-
-                        entities.Add(entity);
-                    }
-
-                    InsertText(text, entities);
-                }
-                else if (package.AvailableFormats.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
-                {
-                    e.Handled = true;
-
-                    var text = await package.GetTextAsync();
-                    var start = Document.Selection.StartPosition;
-
-                    Document.Selection.SetText(TextSetOptions.None, text);
-                    Document.Selection.SetRange(start + text.Length, start + text.Length);
+                    base.OnPaste(e, package);
                 }
             }
             catch { }

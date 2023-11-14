@@ -20,7 +20,6 @@ using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.Views;
@@ -619,7 +618,7 @@ namespace Telegram.ViewModels
 
         #region Copy
 
-        public async void CopyMessage(MessageViewModel message)
+        public void CopyMessage(MessageViewModel message)
         {
             if (message == null)
             {
@@ -638,120 +637,16 @@ namespace Telegram.ViewModels
 
             if (input != null)
             {
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(input.Text);
-
-                if (input.Entities.Count > 0)
-                {
-                    using (var stream = new InMemoryRandomAccessStream())
-                    {
-                        using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
-                        {
-                            writer.WriteInt32(input.Entities.Count(x => x.IsEditable()));
-
-                            foreach (var entity in input.Entities.Where(x => x.IsEditable()))
-                            {
-                                writer.WriteInt32(entity.Offset);
-                                writer.WriteInt32(entity.Length);
-
-                                switch (entity.Type)
-                                {
-                                    case TextEntityTypeBold bold:
-                                        writer.WriteByte(1);
-                                        break;
-                                    case TextEntityTypeItalic italic:
-                                        writer.WriteByte(2);
-                                        break;
-                                    case TextEntityTypeCode code:
-                                    case TextEntityTypePre pre:
-                                    case TextEntityTypePreCode preCode:
-                                        writer.WriteByte(3);
-                                        break;
-                                    case TextEntityTypeTextUrl textUrl:
-                                        writer.WriteByte(4);
-                                        writer.WriteInt32(textUrl.Url.Length);
-                                        writer.WriteString(textUrl.Url);
-                                        break;
-                                    case TextEntityTypeMentionName mentionName:
-                                        writer.WriteByte(5);
-                                        writer.WriteInt64(mentionName.UserId);
-                                        break;
-                                }
-                            }
-
-                            await writer.FlushAsync();
-                            await writer.StoreAsync();
-                        }
-
-                        stream.Seek(0);
-                        dataPackage.SetData("application/x-tl-field-tags", stream.CloneStream());
-                    }
-                }
-
-                ClipboardEx.TrySetContent(dataPackage);
-
-                Window.Current.ShowToast(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+                MessageHelper.CopyText(input);
             }
         }
 
-        public async void CopyMessage(MessageQuote quote)
+        public void CopyMessage(MessageQuote quote)
         {
             var input = quote?.Quote;
             if (input != null)
             {
-                var dataPackage = new DataPackage();
-                dataPackage.SetText(input.Text);
-
-                if (input.Entities.Count > 0)
-                {
-                    using (var stream = new InMemoryRandomAccessStream())
-                    {
-                        using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
-                        {
-                            writer.WriteInt32(input.Entities.Count(x => x.IsEditable()));
-
-                            foreach (var entity in input.Entities.Where(x => x.IsEditable()))
-                            {
-                                writer.WriteInt32(entity.Offset);
-                                writer.WriteInt32(entity.Length);
-
-                                switch (entity.Type)
-                                {
-                                    case TextEntityTypeBold bold:
-                                        writer.WriteByte(1);
-                                        break;
-                                    case TextEntityTypeItalic italic:
-                                        writer.WriteByte(2);
-                                        break;
-                                    case TextEntityTypeCode code:
-                                    case TextEntityTypePre pre:
-                                    case TextEntityTypePreCode preCode:
-                                        writer.WriteByte(3);
-                                        break;
-                                    case TextEntityTypeTextUrl textUrl:
-                                        writer.WriteByte(4);
-                                        writer.WriteInt32(textUrl.Url.Length);
-                                        writer.WriteString(textUrl.Url);
-                                        break;
-                                    case TextEntityTypeMentionName mentionName:
-                                        writer.WriteByte(5);
-                                        writer.WriteInt64(mentionName.UserId);
-                                        break;
-                                }
-                            }
-
-                            await writer.FlushAsync();
-                            await writer.StoreAsync();
-                        }
-
-                        stream.Seek(0);
-                        dataPackage.SetData("application/x-tl-field-tags", stream.CloneStream());
-                    }
-                }
-
-                ClipboardEx.TrySetContent(dataPackage);
-
-                Window.Current.ShowToast(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+                MessageHelper.CopyText(input);
             }
         }
 

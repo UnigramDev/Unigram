@@ -32,6 +32,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources.Core;
 using Windows.Foundation;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -84,6 +85,163 @@ namespace Telegram.Common
             ClipboardEx.TrySetContent(dataPackage);
 
             Window.Current.ShowToast(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+        }
+
+        public static async void CopyText(FormattedText text)
+        {
+            var dataPackage = new DataPackage();
+            dataPackage.SetText(text.Text);
+
+            var entities = text.Entities.Where(x => x.IsEditable()).ToList();
+            if (entities.Count > 0)
+            {
+                using (var stream = new InMemoryRandomAccessStream())
+                {
+                    using (var writer = new DataWriter(stream.GetOutputStreamAt(0)))
+                    {
+                        writer.WriteInt32(entities.Count);
+
+                        foreach (var entity in entities)
+                        {
+                            writer.WriteInt32(entity.Offset);
+                            writer.WriteInt32(entity.Length);
+
+                            switch (entity.Type)
+                            {
+                                case TextEntityTypeBold:
+                                    writer.WriteByte(1);
+                                    break;
+                                case TextEntityTypeItalic:
+                                    writer.WriteByte(2);
+                                    break;
+                                case TextEntityTypeStrikethrough:
+                                    writer.WriteByte(3);
+                                    break;
+                                case TextEntityTypeUnderline:
+                                    writer.WriteByte(4);
+                                    break;
+                                case TextEntityTypeSpoiler:
+                                    writer.WriteByte(5);
+                                    break;
+                                case TextEntityTypeBlockQuote:
+                                    writer.WriteByte(6);
+                                    break;
+                                case TextEntityTypeCustomEmoji customEmoji:
+                                    writer.WriteByte(7);
+                                    writer.WriteInt64(customEmoji.CustomEmojiId);
+                                    break;
+                                case TextEntityTypeCode:
+                                    writer.WriteByte(8);
+                                    break;
+                                case TextEntityTypePre:
+                                    writer.WriteByte(9);
+                                    break;
+                                case TextEntityTypePreCode preCode:
+                                    writer.WriteByte(10);
+                                    writer.WriteUInt32(writer.MeasureString(preCode.Language));
+                                    writer.WriteString(preCode.Language);
+                                    break;
+                                case TextEntityTypeTextUrl textUrl:
+                                    writer.WriteByte(11);
+                                    writer.WriteUInt32(writer.MeasureString(textUrl.Url));
+                                    writer.WriteString(textUrl.Url);
+                                    break;
+                                case TextEntityTypeMentionName mentionName:
+                                    writer.WriteByte(12);
+                                    writer.WriteInt64(mentionName.UserId);
+                                    break;
+                            }
+                        }
+
+                        await writer.FlushAsync();
+                        await writer.StoreAsync();
+                    }
+
+                    stream.Seek(0);
+                    dataPackage.SetData("application/x-tl-field-tags", stream.CloneStream());
+                }
+            }
+
+            ClipboardEx.TrySetContent(dataPackage);
+
+            Window.Current.ShowToast(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+        }
+
+        public static async Task<FormattedText> PasteTextAsync(DataPackageView package)
+        {
+            if (package.AvailableFormats.Contains(StandardDataFormats.Text))
+            {
+                string text = await package.GetTextAsync();
+                IList<TextEntity> entities = null;
+
+                if (package.AvailableFormats.Contains("application/x-tl-field-tags"))
+                {
+                    var data = await package.GetDataAsync("application/x-tl-field-tags") as IRandomAccessStream;
+                    var reader = new DataReader(data.GetInputStreamAt(0));
+                    
+                    await reader.LoadAsync((uint)data.Size);
+
+                    var count = reader.ReadInt32();
+                    entities = new List<TextEntity>(count);
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        var entity = new TextEntity
+                        {
+                            Offset = reader.ReadInt32(),
+                            Length = reader.ReadInt32()
+                        };
+
+                        var type = reader.ReadByte();
+
+                        switch (type)
+                        {
+                            case 1:
+                                entity.Type = new TextEntityTypeBold();
+                                break;
+                            case 2:
+                                entity.Type = new TextEntityTypeItalic();
+                                break;
+                            case 3:
+                                entity.Type = new TextEntityTypeStrikethrough();
+                                break;
+                            case 4:
+                                entity.Type = new TextEntityTypeUnderline();
+                                break;
+                            case 5:
+                                entity.Type = new TextEntityTypeSpoiler();
+                                break;
+                            case 6:
+                                entity.Type = new TextEntityTypeBlockQuote();
+                                break;
+                            case 7:
+                                entity.Type = new TextEntityTypeCustomEmoji(reader.ReadInt64());
+                                break;
+                            case 8:
+                                entity.Type = new TextEntityTypeCode();
+                                break;
+                            case 9:
+                                entity.Type = new TextEntityTypePre();
+                                break;
+                            case 10:
+                                entity.Type = new TextEntityTypePreCode(reader.ReadString(reader.ReadUInt32()));
+                                break;
+                            case 11:
+                                entity.Type = new TextEntityTypeTextUrl(reader.ReadString(reader.ReadUInt32()));
+                                break;
+                            case 12:
+                                entity.Type = new TextEntityTypeMentionName(reader.ReadInt64());
+                                break;
+                        }
+
+                        entities.Add(entity);
+                    }
+                }
+
+                return new FormattedText(text, entities ?? Array.Empty<TextEntity>());
+            }
+
+            return null;
         }
 
         public static bool TryCreateUri(string url, out Uri uri)

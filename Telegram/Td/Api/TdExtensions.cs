@@ -746,6 +746,11 @@ namespace Telegram.Td.Api
             {
                 case TextEntityTypeBold:
                 case TextEntityTypeItalic:
+                case TextEntityTypeStrikethrough:
+                case TextEntityTypeUnderline:
+                case TextEntityTypeSpoiler:
+                case TextEntityTypeBlockQuote:
+                case TextEntityTypeCustomEmoji:
                 case TextEntityTypeCode:
                 case TextEntityTypePre:
                 case TextEntityTypePreCode:

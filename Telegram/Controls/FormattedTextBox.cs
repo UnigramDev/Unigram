@@ -633,65 +633,34 @@ namespace Telegram.Controls
 
         private void ContextPaste_Click()
         {
-            OnPaste(new HandledEventArgs(false));
+            var args = new HandledEventArgs(false);
+            var package = Clipboard.GetContent();
+
+            OnPaste(args, package);
         }
 
         private void OnPaste(object sender, TextControlPasteEventArgs e)
         {
             var args = new HandledEventArgs(false);
-            OnPaste(args);
+            var package = Clipboard.GetContent();
+
+            OnPaste(args, package);
 
             e.Handled = args.Handled;
         }
 
-        protected virtual async void OnPaste(HandledEventArgs e)
+        protected virtual async void OnPaste(HandledEventArgs e, DataPackageView package)
         {
             try
             {
                 // If the user tries to paste RTF content from any TOM control (Visual Studio, Word, Wordpad, browsers)
                 // we have to handle the pasting operation manually to allow plaintext only.
-                var package = Clipboard.GetContent();
                 if (package.AvailableFormats.Contains(StandardDataFormats.Text) && package.AvailableFormats.Contains("application/x-tl-field-tags"))
                 {
                     e.Handled = true;
 
-                    // This is our field format
-                    var text = await package.GetTextAsync();
-                    var data = await package.GetDataAsync("application/x-tl-field-tags") as IRandomAccessStream;
-                    var reader = new DataReader(data.GetInputStreamAt(0));
-                    var length = await reader.LoadAsync((uint)data.Size);
-
-                    var count = reader.ReadInt32();
-                    var entities = new List<TextEntity>(count);
-
-                    for (int i = 0; i < count; i++)
-                    {
-                        var entity = new TextEntity { Offset = reader.ReadInt32(), Length = reader.ReadInt32() };
-                        var type = reader.ReadByte();
-
-                        switch (type)
-                        {
-                            case 1:
-                                entity.Type = new TextEntityTypeBold();
-                                break;
-                            case 2:
-                                entity.Type = new TextEntityTypeItalic();
-                                break;
-                            case 3:
-                                entity.Type = new TextEntityTypePreCode();
-                                break;
-                            case 4:
-                                entity.Type = new TextEntityTypeTextUrl { Url = reader.ReadString(reader.ReadUInt32()) };
-                                break;
-                            case 5:
-                                entity.Type = new TextEntityTypeMentionName { UserId = reader.ReadInt32() };
-                                break;
-                        }
-
-                        entities.Add(entity);
-                    }
-
-                    InsertText(text, entities);
+                    var text = await MessageHelper.PasteTextAsync(package);
+                    InsertText(text.Text, text.Entities);
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
                 {
@@ -1080,7 +1049,7 @@ namespace Telegram.Controls
             }
         }
 
-        public void InsertText(string text, IList<TextEntity> entities)
+        public async void InsertText(string text, IList<TextEntity> entities)
         {
             _updateLocked = true;
 
@@ -1095,19 +1064,37 @@ namespace Telegram.Controls
 
                 if (entities != null && entities.Count > 0)
                 {
+                    var hidden = 0;
+
                     // We want to enumerate entities from last to first to not
                     // fuck up ranges due to hidden texts when formatting a link
                     foreach (var entity in entities.Reverse())
                     {
-                        var range = Document.GetRange(index + entity.Offset, index + entity.Offset + entity.Length);
+                        var range = Document.GetRange(index + entity.Offset - hidden, index + entity.Offset - hidden + entity.Length);
 
-                        if (entity.Type is TextEntityTypeBold)
+                        if (entity.Type is TextEntityTypeBlockQuote)
+                        {
+                            InsertBlockquote(range, false);
+                        }
+                        else if (entity.Type is TextEntityTypeBold)
                         {
                             range.CharacterFormat.Bold = FormatEffect.On;
                         }
                         else if (entity.Type is TextEntityTypeItalic)
                         {
                             range.CharacterFormat.Italic = FormatEffect.On;
+                        }
+                        else if (entity.Type is TextEntityTypeUnderline)
+                        {
+                            range.CharacterFormat.Underline = UnderlineType.Single;
+                        }
+                        else if (entity.Type is TextEntityTypeStrikethrough)
+                        {
+                            range.CharacterFormat.Strikethrough = FormatEffect.On;
+                        }
+                        else if (entity.Type is TextEntityTypeSpoiler)
+                        {
+                            range.CharacterFormat.BackgroundColor = Colors.Gray;
                         }
                         else if (entity.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
                         {
@@ -1120,6 +1107,15 @@ namespace Telegram.Controls
                         else if (entity.Type is TextEntityTypeMentionName mentionName && IsSafe(text, entity))
                         {
                             range.Link = $"\"tg-user://{mentionName.UserId}\"";
+                        }
+                        else if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
+                        {
+                            var emoji = text.Substring(entity.Offset, entity.Length);
+
+                            range.SetText(TextSetOptions.None, string.Empty);
+                            await InsertEmojiAsync(range, emoji, customEmoji.CustomEmojiId);
+
+                            hidden += emoji.Length - 1;
                         }
                     }
                 }

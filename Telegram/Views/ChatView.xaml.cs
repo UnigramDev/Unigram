@@ -946,6 +946,34 @@ namespace Telegram.Views
                         ViewModel.CopyMessage(selector.Message);
                         args.Handled = true;
                     }
+                    else if (focused is RichTextBlock textBlock)
+                    {
+                        var message = textBlock.Ancestors<MessageSelector>().FirstOrDefault()?.Message;
+                        if (message != null)
+                        {
+                            var selectionStart = textBlock.SelectionStart.Shift();
+                            var selectionEnd = textBlock.SelectionEnd.Shift();
+
+                            if (selectionEnd - selectionStart > 0)
+                            {
+                                var caption = message.GetCaption();
+                                if (caption != null && caption.Text.Length >= selectionEnd && selectionEnd > 0 && selectionStart >= 0)
+                                {
+                                    var quote = new MessageQuote
+                                    {
+                                        Message = message,
+                                        Quote = caption.Substring(selectionStart, selectionEnd - selectionStart)
+                                    };
+
+                                    if (MessageCopy_Loaded(quote))
+                                    {
+                                        ViewModel.CopyMessage(quote);
+                                        args.Handled = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
             else if (args.VirtualKey == VirtualKey.R && args.RepeatCount == 1 && args.OnlyControl)
