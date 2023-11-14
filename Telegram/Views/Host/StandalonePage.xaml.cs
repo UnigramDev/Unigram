@@ -146,6 +146,10 @@ namespace Telegram.Views.Host
         private void OnAcceleratorKeyActivated(Window sender, InputKeyDownEventArgs args)
         {
             var invoked = _shortcutsService.Process(args);
+            if (invoked == null)
+            {
+                return;
+            }
 
             foreach (var command in invoked.Commands)
             {

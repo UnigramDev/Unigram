@@ -1044,7 +1044,12 @@ namespace Telegram.Views
 
         private void OnAcceleratorKeyActivated(Window sender, InputKeyDownEventArgs args)
         {
-            var invoked = ViewModel.ShortcutService.Process(args);
+            var invoked = ViewModel?.ShortcutService.Process(args);
+            if (invoked == null)
+            {
+                return;
+            }
+
             foreach (var command in invoked.Commands)
             {
                 if (SettingsService.Current.Diagnostics.ShowMemoryUsage && command == ShortcutCommand.Quit)
