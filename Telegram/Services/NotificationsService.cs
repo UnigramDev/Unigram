@@ -245,7 +245,7 @@ namespace Telegram.Services
             }
         }
 
-        public async void Handle(UpdateUnreadMessageCount update)
+        public void Handle(UpdateUnreadMessageCount update)
         {
             if (!_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
@@ -263,11 +263,11 @@ namespace Telegram.Services
                     _unreadCount.Set(update.UnreadUnmutedCount);
                 }
 
-                await SystemTray.SendUnreadCountAsync(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
+                SystemTray.SendUnreadCount(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
             }
         }
 
-        public async void Handle(UpdateUnreadChatCount update)
+        public void Handle(UpdateUnreadChatCount update)
         {
             if (_settings.Notifications.CountUnreadMessages || !_sessionService.IsActive)
             {
@@ -285,7 +285,7 @@ namespace Telegram.Services
                     _unreadCount.Set(update.UnreadUnmutedCount);
                 }
 
-                await SystemTray.SendUnreadCountAsync(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
+                SystemTray.SendUnreadCount(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
             }
         }
 

@@ -194,8 +194,10 @@ namespace Telegram.Stub
         //[DllImport("user32.dll", SetLastError = true)]
         //static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-        private void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        private async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
         {
+            var deferral = args.GetDeferral();
+
             if (args.Request.Message.TryGetValue("FlashWindow", out object flash))
             {
                 //#if DEBUG
@@ -241,6 +243,19 @@ namespace Telegram.Stub
 
                 _notifyIcon.Dispose();
                 Application.Exit();
+            }
+
+            try
+            {
+                await args.Request.SendResponseAsync(new ValueSet());
+            }
+            catch
+            {
+                // All the remote procedure calls must be wrapped in a try-catch block
+            }
+            finally
+            {
+                deferral.Complete();
             }
         }
 

@@ -25,9 +25,11 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.ApplicationModel;
+using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Calls;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
@@ -252,6 +254,11 @@ namespace Telegram.Common
             }
 
             builder.Append(text);
+        }
+
+        public static IAsyncOperation<AppServiceResponse> SendMessageAsync(this AppServiceConnection connection, string message, object parameter = null)
+        {
+            return connection.SendMessageAsync(new ValueSet { { message, parameter ?? true } });
         }
 
         public static void TryNotifyMutedChanged(this VoipCallCoordinator coordinator, bool muted)

@@ -277,12 +277,12 @@ namespace Telegram
             {
                 return;
             }
+#endif
 
             if (SettingsService.Current.IsTrayVisible)
             {
                 await SystemTray.LaunchAsync();
             }
-#endif
 
             Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);
         }
@@ -314,7 +314,7 @@ namespace Telegram
 
         private void ExtendedExecutionSession_Revoked(object sender, ExtendedExecutionRevokedEventArgs args)
         {
-            Logger.Warning("ExtendedExecutionSession.Revoked");
+            Logger.Warning(args.Reason);
 
             if (_extendedSession != null)
             {

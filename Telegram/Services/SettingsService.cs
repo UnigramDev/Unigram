@@ -391,7 +391,12 @@ namespace Telegram.Services
         private static bool? _isTrayVisible;
         public bool IsTrayVisible
         {
-            get => _isTrayVisible ??= GetValueOrDefault(_local, "IsTrayVisible", true);
+            get => _isTrayVisible ??= GetValueOrDefault(_local, "IsTrayVisible",
+#if DEBUG
+                false);
+#else
+                true);
+#endif
             set => AddOrUpdateValue(ref _isTrayVisible, _local, "IsTrayVisible", value);
         }
 

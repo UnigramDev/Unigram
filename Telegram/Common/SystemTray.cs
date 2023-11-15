@@ -41,23 +41,53 @@ namespace Telegram.Common
             _deferral = deferral;
         }
 
-        public static Task ExitAsync()
+        public static async Task ExitAsync()
         {
-            return SendAsync("Exit");
+            if (_connection != null)
+            {
+                try
+                {
+                    await _connection.SendMessageAsync("Exit");
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
+            }
         }
 
-        public static Task CloseRequestedAsync()
+        public static async Task CloseRequestedAsync()
         {
-            return SendAsync("CloseRequested");
+            if (_connection != null)
+            {
+                try
+                {
+                    await _connection.SendMessageAsync("CloseRequested");
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
+            }
         }
 
         public static async void CloseRequested(SystemNavigationCloseRequestedPreviewEventArgs args)
         {
             if (_connection != null)
             {
-                using (args.GetDeferral())
+                var deferral = args.GetDeferral();
+
+                try
                 {
-                    await SendAsync("CloseRequested");
+                    await _connection.SendMessageAsync("CloseRequested");
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
+                finally
+                {
+                    deferral.Complete();
                 }
             }
         }
@@ -66,36 +96,51 @@ namespace Telegram.Common
         {
             if (_connection != null)
             {
-                using (args.GetDeferral())
+                var deferral = args.GetDeferral();
+
+                try
                 {
-                    await SendAsync("CloseRequested");
+                    await _connection.SendMessageAsync("CloseRequested");
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
+                finally
+                {
+                    deferral.Complete();
                 }
             }
         }
 
-        public static Task LoopbackExemptAsync(bool enabled)
-        {
-            return SendAsync("LoopbackExempt", enabled);
-        }
-
-        public static Task SendAsync(string message, object parameter = null)
+        public static void LoopbackExempt(bool enabled)
         {
             if (_connection != null)
             {
-                return _connection.SendMessageAsync(new ValueSet { { message, parameter ?? true } }).AsTask();
+                try
+                {
+                    _ = _connection.SendMessageAsync("LoopbackExempt", enabled);
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
             }
-
-            return Task.CompletedTask;
         }
 
-        public static Task SendUnreadCountAsync(int unreadCount, int unreadMutedCount)
+        public static void SendUnreadCount(int unreadCount, int unreadMutedCount)
         {
             if (_connection != null)
             {
-                return _connection.SendMessageAsync(new ValueSet { { "UnreadCount", unreadCount }, { "UnreadUnmutedCount", unreadMutedCount } }).AsTask();
+                try
+                {
+                    _ = _connection.SendMessageAsync(new ValueSet { { "UnreadCount", unreadCount }, { "UnreadUnmutedCount", unreadMutedCount } });
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
             }
-
-            return Task.CompletedTask;
         }
 
         private static async void OnRequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
