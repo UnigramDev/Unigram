@@ -21,24 +21,28 @@
                               Content="Use Test DC"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.LoggerSink, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.LoggerSink, Mode=TwoWay}"
                               Content="Write App Logs to tdlib_log.txt"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.AllowRightToLeft, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.AllowRightToLeft, Mode=TwoWay}"
                               Content="Allow Right to Left"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsPointerOverEnabled, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Stickers.IsPointerOverEnabled, Mode=TwoWay}"
                               Content="Show stickers panel on pointer over"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.ShowMemoryUsage, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.ShowMemoryUsage, Mode=TwoWay}"
                               Content="Show Memory Usage"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind ViewModel.HidePhoneNumber, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.HidePhoneNumber, Mode=TwoWay}"
                               Content="Hide Phone Number in Navigation"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.ForceRawAudio, Mode=TwoWay}"
+                              Content="Force Raw Audio"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"

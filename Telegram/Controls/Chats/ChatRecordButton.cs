@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -1040,7 +1041,7 @@ namespace Telegram.Controls.Chats
                 {
                     settings = new MediaCaptureInitializationSettings();
                     settings.MediaCategory = MediaCategory.Media;
-                    settings.AudioProcessing = AudioProcessing.Default;
+                    settings.AudioProcessing = m_isVideo ? AudioProcessing.Default : SettingsService.Current.Diagnostics.ForceRawAudio ? AudioProcessing.Raw : AudioProcessing.Default;
                     settings.MemoryPreference = MediaCaptureMemoryPreference.Auto;
                     settings.SharingMode = MediaCaptureSharingMode.SharedReadOnly;
                     settings.StreamingCaptureMode = m_isVideo ? StreamingCaptureMode.AudioAndVideo : StreamingCaptureMode.Audio;

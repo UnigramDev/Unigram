@@ -149,46 +149,6 @@ namespace Telegram.ViewModels
             }
         }
 
-        public bool AllowRightToLeft
-        {
-            get => SettingsService.Current.Diagnostics.AllowRightToLeft;
-            set
-            {
-                SettingsService.Current.Diagnostics.AllowRightToLeft = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool IsPointerOverEnabled
-        {
-            get => SettingsService.Current.Stickers.IsPointerOverEnabled;
-            set
-            {
-                SettingsService.Current.Stickers.IsPointerOverEnabled = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool HidePhoneNumber
-        {
-            get => SettingsService.Current.Diagnostics.HidePhoneNumber;
-            set
-            {
-                SettingsService.Current.Diagnostics.HidePhoneNumber = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool ShowMemoryUsage
-        {
-            get => SettingsService.Current.Diagnostics.ShowMemoryUsage;
-            set
-            {
-                SettingsService.Current.Diagnostics.ShowMemoryUsage = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool PreferIpv6
         {
             get => ClientService.Options.PreferIpv6;

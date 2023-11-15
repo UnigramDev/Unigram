@@ -112,6 +112,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _showIds, "ShowIds", value);
         }
 
+        private bool? _forceRawAudio;
+        public bool ForceRawAudio
+        {
+            get => _forceRawAudio ??= GetValueOrDefault("ForceRawAudio", false);
+            set => AddOrUpdateValue(ref _forceRawAudio, "ForceRawAudio", value);
+        }
+
         public bool IsLastErrorDiskFull { get; set; }
     }
 }
