@@ -84,16 +84,14 @@ namespace Telegram.Services.ViewService
         #endregion
 
         #region WindowWrapper
-        public WindowContext WindowWrapper { get; }
         public Window Window { get; }
         #endregion
 
         private ViewLifetimeControl(CoreWindow newWindow)
         {
-            WindowWrapper = WindowContext.Current;
-            Dispatcher = WindowWrapper.Dispatcher;
             Window = Window.Current;
-            Id = WindowWrapper.Id;
+            Dispatcher = WindowContext.Current.Dispatcher;
+            Id = ApplicationView.GetApplicationViewIdForWindow(newWindow);
 
             // This class will automatically tell the view when its time to close
             // or stay alive in a few cases
@@ -149,22 +147,23 @@ namespace Telegram.Services.ViewService
                 {
                     if (sender is FrameworkElement element)
                     {
-                        element.Loaded -= handler;
+                        element.Unloaded -= handler;
                     }
 
+                    Window.Current.Close();
                     WindowContext.Current = null;
                 }
 
                 if (Window.Current.Content is FrameworkElement element)
                 {
-                    element.Loaded += handler;
+                    element.Unloaded += handler;
                 }
 
                 // Explicitly calling Close breaks everything
                 Window.Current.Content = null;
-                Window.Current.Close();
+                //Window.Current.Close();
 
-                // TODO: needed? From some tests, this prevented the whole Window root to be garbage collected
+                // TODO: needed? From some tests, this prevented the whole Window root from being garbage collected
                 if (SynchronizationContext.Current is SecondaryViewSynchronizationContextDecorator decorator)
                 {
                     SynchronizationContext.SetSynchronizationContext(decorator.Context);

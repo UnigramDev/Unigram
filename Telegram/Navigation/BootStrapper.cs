@@ -206,7 +206,7 @@ namespace Telegram.Navigation
             CallOnStart(e, true, StartKind.Activate);
 
             // ensure active (this will hide any custom splashscreen)
-            CallActivateWindow(WindowLogic.ActivateWindowSources.Activating);
+            CallActivateWindow(ActivateWindowSources.Activating);
         }
 
         #endregion
@@ -299,7 +299,7 @@ namespace Telegram.Navigation
                 CallOnStart(e, true, kind);
             }
 
-            CallActivateWindow(WindowLogic.ActivateWindowSources.Launching);
+            CallActivateWindow(ActivateWindowSources.Launching);
         }
 
         private void BackHandler(object sender, BackRequestedEventArgs args)
@@ -614,10 +614,9 @@ namespace Telegram.Navigation
 
         #endregion
 
-        private readonly WindowLogic _WindowLogic = new WindowLogic();
-        private void CallActivateWindow(WindowLogic.ActivateWindowSources source)
+        private void CallActivateWindow(ActivateWindowSources source)
         {
-            _WindowLogic.ActivateWindow(source);
+            Window.Current.Activate();
             CurrentState = States.Running;
         }
 
@@ -825,21 +824,11 @@ namespace Telegram.Navigation
             }
         }
 
-        private class WindowLogic
+        public enum ActivateWindowSources
         {
-            public enum ActivateWindowSources { Launching, Activating, Resuming }
-            /// <summary>
-            /// Override this method only if you (the developer) wants to programmatically
-            /// control the means by which and when the Core Window is activated by Template 10.
-            /// One scenario might be a delayed activation for Splash Screen.
-            /// </summary>
-            /// <param name="source">Reason for the call from Template 10</param>
-            public void ActivateWindow(ActivateWindowSources source)
-            {
-                Logger.Info($"source:{source}");
-
-                Window.Current.Activate();
-            }
+            Launching,
+            Activating,
+            Resuming
         }
     }
 

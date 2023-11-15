@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Navigation;
@@ -107,9 +106,9 @@ namespace Telegram.Services.ViewService
             await _mainWindowCreated.Task;
 
             var newView = CoreApplication.CreateNewView();
-            var dispatcher = new DispatcherContext(newView.DispatcherQueue);
+            var tsc = new TaskCompletionSource<ViewLifetimeControl>();
 
-            var newControl = await dispatcher.DispatchAsync(async () =>
+            newView.DispatcherQueue.TryEnqueue(() =>
             {
                 var newWindow = Window.Current;
                 var newAppView = ApplicationView.GetForCurrentView();
@@ -121,19 +120,19 @@ namespace Telegram.Services.ViewService
                 newWindow.Content = parameters.Content(control);
                 newWindow.Activate();
 
-                var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
-                if (parameters.Width != 0 && parameters.Height != 0)
-                {
-                    preferences.CustomSize = new Size(parameters.Width, parameters.Height);
-                }
+                tsc.SetResult(control);
+            });
 
-                await ApplicationViewSwitcher.TryShowAsViewModeAsync(newAppView.Id, parameters.ViewMode, preferences);
-                newAppView.TryResizeView(preferences.CustomSize);
+            var control = await tsc.Task;
 
-                return control;
-            }).ConfigureAwait(false);
+            var preferences = ViewModePreferences.CreateDefault(parameters.ViewMode);
+            if (parameters.Width != 0 && parameters.Height != 0)
+            {
+                preferences.CustomSize = new Size(parameters.Width, parameters.Height);
+            }
 
-            return newControl;
+            await ApplicationViewSwitcher.TryShowAsViewModeAsync(control.Id, parameters.ViewMode, preferences);
+            return control;
         }
 
         public async Task<ViewLifetimeControl> OpenAsync(Type page, object parameter = null, string title = null,
@@ -148,80 +147,47 @@ namespace Telegram.Services.ViewService
 
 
 
+            // TODO: find a better way to find already existing chat
 
+            //var newControl = await value.DispatchAsync(async () =>
+            //{
+            //    var control = ViewLifetimeControl.GetForCurrentView();
+            //    var newAppView = ApplicationView.GetForCurrentView();
 
+            //    await ApplicationViewSwitcher
+            //        .SwitchAsync(newAppView.Id, currentView.Id, ApplicationViewSwitchingOptions.Default);
 
+            //    return control;
+            //}).ConfigureAwait(false);
+            //return newControl;
 
-            if (parameter != null && _windows.TryGetValue(parameter, out IDispatcherContext value))
+            await _mainWindowCreated.Task;
+
+            var newView = CoreApplication.CreateNewView();
+            var tsc = new TaskCompletionSource<ViewLifetimeControl>();
+
+            newView.DispatcherQueue.TryEnqueue(() =>
             {
-                var newControl = await value.DispatchAsync(async () =>
-                {
-                    var control = ViewLifetimeControl.GetForCurrentView();
-                    var newAppView = ApplicationView.GetForCurrentView();
+                var newWindow = Window.Current;
+                var newAppView = ApplicationView.GetForCurrentView();
 
-                    await ApplicationViewSwitcher
-                        .SwitchAsync(newAppView.Id, currentView.Id, ApplicationViewSwitchingOptions.Default);
+                newAppView.Title = title;
+                newAppView.PersistedStateId = "Floating";
 
-                    return control;
-                }).ConfigureAwait(false);
-                return newControl;
-            }
-            else
-            {
-                //if (ApiInformation.IsPropertyPresent("Windows.UI.ViewManagement.ApplicationView", "PersistedStateId"))
-                //{
-                //    try
-                //    {
-                //        ApplicationView.ClearPersistedState("Calls");
-                //    }
-                //    catch { }
-                //}
-                await _mainWindowCreated.Task;
+                var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, id, false);
+                nav.Navigate(page, parameter);
 
-                var newView = CoreApplication.CreateNewView();
-                var dispatcher = new DispatcherContext(newView.DispatcherQueue);
+                var control = ViewLifetimeControl.GetForCurrentView();
+                newWindow.Content = BootStrapper.Current.CreateRootElement(nav);
+                newWindow.Activate();
 
-                if (parameter != null)
-                {
-                    _windows[parameter] = dispatcher;
-                }
+                tsc.SetResult(control);
+            });
 
-                var bounds = Window.Current.Bounds;
+            var control = await tsc.Task;
 
-                var newControl = await dispatcher.DispatchAsync(async () =>
-                {
-                    var newWindow = Window.Current;
-                    var newAppView = ApplicationView.GetForCurrentView();
-                    newAppView.Title = title;
-                    newAppView.PersistedStateId = "Floating";
-
-                    var control = ViewLifetimeControl.GetForCurrentView();
-                    control.Released += (s, args) =>
-                    {
-                        if (parameter != null)
-                        {
-                            _windows.TryRemove(parameter, out IDispatcherContext _);
-                        }
-
-                        //newWindow.Close();
-                    };
-
-                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, session, id, false);
-                    nav.Navigate(page, parameter);
-                    newWindow.Content = BootStrapper.Current.CreateRootElement(nav);
-                    newWindow.Activate();
-
-                    await ApplicationViewSwitcher
-                        .TryShowAsStandaloneAsync(newAppView.Id, ViewSizePreference.Default, currentView.Id, ViewSizePreference.UseHalf);
-                    //newAppView.TryResizeView(new Windows.Foundation.Size(360, bounds.Height));
-                    newAppView.TryResizeView(size);
-
-                    return control;
-                }).ConfigureAwait(false);
-                return newControl;
-            }
+            await ApplicationViewSwitcher.TryShowAsStandaloneAsync(control.Id, ViewSizePreference.Default, currentView.Id, ViewSizePreference.UseHalf);
+            return control;
         }
-
-        private readonly ConcurrentDictionary<object, IDispatcherContext> _windows = new();
     }
 }

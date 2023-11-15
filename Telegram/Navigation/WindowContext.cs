@@ -126,7 +126,7 @@ namespace Telegram.Navigation
 
             // TODO: since we can't call Close directly,
             // Closed event will be never fired.
-            OnClosed(null, null);
+            //OnClosed(null, null);
             ClearTitleBar(sender);
         }
 
