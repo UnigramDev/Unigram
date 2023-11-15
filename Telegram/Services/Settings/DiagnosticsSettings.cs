@@ -119,6 +119,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _forceRawAudio, "ForceRawAudio", value);
         }
 
+        private bool? _fullBridgeLifecycle;
+        public bool FullBridgeLifecycle
+        {
+            get => _fullBridgeLifecycle ??= GetValueOrDefault("FullBridgeLifecycle", true);
+            set => AddOrUpdateValue(ref _fullBridgeLifecycle, "FullBridgeLifecycle", value);
+        }
+
         public bool IsLastErrorDiskFull { get; set; }
     }
 }

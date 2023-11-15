@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Telegram.Navigation;
+using Telegram.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
@@ -73,7 +74,7 @@ namespace Telegram.Common
 
         public static async void CloseRequested(SystemNavigationCloseRequestedPreviewEventArgs args)
         {
-            if (_connection != null)
+            if (_connection != null && SettingsService.Current.Diagnostics.FullBridgeLifecycle)
             {
                 var deferral = args.GetDeferral();
 
@@ -94,7 +95,7 @@ namespace Telegram.Common
 
         public static async void EnteringBackground(EnteredBackgroundEventArgs args)
         {
-            if (_connection != null)
+            if (_connection != null && SettingsService.Current.Diagnostics.FullBridgeLifecycle)
             {
                 var deferral = args.GetDeferral();
 

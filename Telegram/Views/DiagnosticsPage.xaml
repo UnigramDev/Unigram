@@ -25,6 +25,10 @@
                               Content="Write App Logs to tdlib_log.txt"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.FullBridgeLifecycle, Mode=TwoWay}"
+                              Content="Full Bridge Lifecycle"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.AllowRightToLeft, Mode=TwoWay}"
                               Content="Allow Right to Left"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
