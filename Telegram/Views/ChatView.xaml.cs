@@ -2092,19 +2092,20 @@ namespace Telegram.Views
                 var children = VisualTreeHelper.FindElementsInHostCoordinates(point, element);
 
                 var textBlock = children.FirstOrDefault() as RichTextBlock;
-                if (textBlock != null && (textBlock.SelectionEnd == null || textBlock.SelectionStart == null))
-                {
-                    MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, textBlock, args);
-
-                    if (args.Handled)
-                    {
-                        return;
-                    }
-                }
-                else if (textBlock != null)
+                if (textBlock?.SelectionStart != null && textBlock?.SelectionEnd != null)
                 {
                     selectionStart = textBlock.SelectionStart.Shift();
                     selectionEnd = textBlock.SelectionEnd.Shift();
+
+                    if (selectionEnd - selectionStart <= 0)
+                    {
+                        MessageHelper.Hyperlink_ContextRequested(ViewModel.TranslateService, textBlock, args);
+
+                        if (args.Handled)
+                        {
+                            return;
+                        }
+                    }
                 }
 
                 var button = children.FirstOrDefault(x => x is Button inline && inline.Tag is InlineKeyboardButton) as Button;
