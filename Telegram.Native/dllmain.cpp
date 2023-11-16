@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "NativeUtils.h"
+#include "OrphanTerminator.h"
 #include "DebugUtils.h"
+
+#define DMANIP_DELEGATE_THREAD L"DManip Delegate Thread"
 
 using namespace winrt::Telegram::Native::implementation;
 
@@ -26,6 +29,22 @@ STDAPI_(BOOL) DllMain(_In_opt_ HINSTANCE hinst, DWORD reason, _In_opt_ void* res
     if (reason == DLL_THREAD_ATTACH)
     {
         SetUnhandledExceptionFilter(Filter);
+    }
+    else if (reason == DLL_THREAD_DETACH)
+    {
+        HANDLE hThread = GetCurrentThread();
+        PWSTR pDescription;
+
+        HRESULT hr = GetThreadDescription(hThread, &pDescription);
+
+        if (SUCCEEDED(hr))
+        {
+            int compare = wcscmp(pDescription, DMANIP_DELEGATE_THREAD);
+            if (compare == 0)
+            {
+                OrphanTerminator::DetachingThread();
+            }
+        }
     }
 
     return TRUE;

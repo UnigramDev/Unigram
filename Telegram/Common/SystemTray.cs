@@ -90,6 +90,8 @@ namespace Telegram.Common
                 {
                     deferral.Complete();
                 }
+
+                Logger.Info("Completed");
             }
         }
 
@@ -111,6 +113,8 @@ namespace Telegram.Common
                 {
                     deferral.Complete();
                 }
+
+                Logger.Info("Completed");
             }
         }
 

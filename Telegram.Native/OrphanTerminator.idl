@@ -1,0 +1,12 @@
+namespace Telegram.Native
+{
+    [default_interface]
+    runtimeclass OrphanTerminator 
+    {
+        static void Start();
+        static void Stop();
+
+        static void ShutdownCompleted();
+        static void DetachingThread();
+    }
+}

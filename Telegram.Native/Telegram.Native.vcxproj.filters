@@ -1195,5 +1195,6 @@
       <Filter>Highlight</Filter>
     </Midl>
     <Midl Include="FileStreamFromApp.idl" />
+    <Midl Include="OrphanTerminator.idl" />
   </ItemGroup>
 </Project>

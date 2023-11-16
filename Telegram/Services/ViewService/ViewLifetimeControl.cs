@@ -28,7 +28,7 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Threading;
+using Telegram.Native;
 using Telegram.Navigation;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -100,6 +100,7 @@ namespace Telegram.Services.ViewService
 
         private void RegisterForEvents()
         {
+            Window.Current.CoreWindow.DispatcherQueue.ShutdownCompleted += ShutdownCompleted;
             ApplicationView.GetForCurrentView().Consolidated += ViewConsolidated;
         }
 
@@ -110,6 +111,12 @@ namespace Telegram.Services.ViewService
                 ApplicationView.GetForCurrentView().Consolidated -= ViewConsolidated;
             }
             catch { }
+        }
+
+        private void ShutdownCompleted(Windows.System.DispatcherQueue sender, object args)
+        {
+            sender.ShutdownCompleted -= ShutdownCompleted;
+            OrphanTerminator.ShutdownCompleted();
         }
 
         // A view is consolidated with other views hen there's no way for the user to get to it (it's not in the list of recently used apps, cannot be
@@ -143,31 +150,9 @@ namespace Telegram.Services.ViewService
                 InternalReleased?.Invoke(this, new EventArgs());
                 WindowControlsMap.TryRemove(Id, out _);
 
-                static void handler(object sender, RoutedEventArgs e)
-                {
-                    if (sender is FrameworkElement element)
-                    {
-                        element.Unloaded -= handler;
-                    }
-
-                    Window.Current.Close();
-                    WindowContext.Current = null;
-                }
-
-                if (Window.Current.Content is FrameworkElement element)
-                {
-                    element.Unloaded += handler;
-                }
-
                 // Explicitly calling Close breaks everything
                 Window.Current.Content = null;
-                //Window.Current.Close();
-
-                // TODO: needed? From some tests, this prevented the whole Window root from being garbage collected
-                if (SynchronizationContext.Current is SecondaryViewSynchronizationContextDecorator decorator)
-                {
-                    SynchronizationContext.SetSynchronizationContext(decorator.Context);
-                }
+                Window.Current.Close();
             }
         }
 
