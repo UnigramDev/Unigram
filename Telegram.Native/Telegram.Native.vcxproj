@@ -364,10 +364,6 @@
       <DependentUpon>Opus\OpusOutput.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="OrphanTerminator.h">
-      <DependentUpon>OrphanTerminator.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="PixelBuffer.h">
       <DependentUpon>PixelBuffer.idl</DependentUpon>
     </ClInclude>
@@ -918,10 +914,6 @@
     </ClCompile>
     <ClCompile Include="Highlight\SyntaxToken.cpp" />
     <ClCompile Include="Highlight\TextToken.cpp" />
-    <ClCompile Include="OrphanTerminator.cpp">
-      <DependentUpon>OrphanTerminator.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="VideoAnimationStreamSource.cpp">
       <DependentUpon>VideoAnimationStreamSource.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1170,9 +1162,6 @@
     </Midl>
     <Midl Include="NativeUtils.idl" />
     <Midl Include="Opus\OpusOutput.idl">
-      <SubType>Designer</SubType>
-    </Midl>
-    <Midl Include="OrphanTerminator.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="PixelBuffer.idl" />

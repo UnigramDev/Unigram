@@ -80,7 +80,6 @@ namespace Telegram
 
         public static void Initialize()
         {
-            OrphanTerminator.Start();
             NativeUtils.SetFatalErrorCallback(FatalErrorCallback);
 
 #if DEBUG

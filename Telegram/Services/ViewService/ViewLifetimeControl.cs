@@ -28,7 +28,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using Telegram.Native;
 using Telegram.Navigation;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -100,7 +99,6 @@ namespace Telegram.Services.ViewService
 
         private void RegisterForEvents()
         {
-            Window.Current.CoreWindow.DispatcherQueue.ShutdownCompleted += ShutdownCompleted;
             ApplicationView.GetForCurrentView().Consolidated += ViewConsolidated;
         }
 
@@ -111,12 +109,6 @@ namespace Telegram.Services.ViewService
                 ApplicationView.GetForCurrentView().Consolidated -= ViewConsolidated;
             }
             catch { }
-        }
-
-        private void ShutdownCompleted(Windows.System.DispatcherQueue sender, object args)
-        {
-            sender.ShutdownCompleted -= ShutdownCompleted;
-            OrphanTerminator.ShutdownCompleted();
         }
 
         // A view is consolidated with other views hen there's no way for the user to get to it (it's not in the list of recently used apps, cannot be
@@ -166,17 +158,6 @@ namespace Telegram.Services.ViewService
             /*BUG: use this strange way to get Id as for ShareTarget hosted window on desktop version ApplicationView.GetForCurrentView() throws "Catastrofic failure" COMException.
               Link to question on msdn: https://social.msdn.microsoft.com/Forums/security/en-US/efa50111-043a-4007-8af8-2b53f72ba207/uwp-c-xaml-comexception-catastrofic-failure-due-to-applicationviewgetforcurrentview-in?forum=wpdevelop  */
             return WindowControlsMap.GetOrAdd(ApplicationView.GetApplicationViewIdForWindow(wnd), id => new ViewLifetimeControl(wnd));
-        }
-
-        /// <summary>
-        /// Tries to retrieve existing instance of <see cref="ViewLifetimeControl"/> for current <see cref="CoreWindow"/>
-        /// </summary>
-        /// <returns>Instance of <see cref="ViewLifetimeControl"/> that is associated with current window or <value>null</value> if no calls to <see cref="GetForCurrentView"/> were made
-        /// before.</returns>
-        public static ViewLifetimeControl TryGetForCurrentView()
-        {
-            WindowControlsMap.TryGetValue(ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow), out ViewLifetimeControl res);
-            return res;
         }
 
         // Signals that the view is being interacted with by another view,
