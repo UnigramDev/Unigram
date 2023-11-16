@@ -99,7 +99,14 @@ namespace Telegram
 
         private void OnEnteringBackground(object sender, EnteredBackgroundEventArgs e)
         {
-            SystemTray.EnteringBackground(e);
+            if (SettingsService.Current.Diagnostics.FullBridgeLifecycle)
+            {
+                SystemTray.EnteringBackground(e);
+            }
+            else
+            {
+                SystemTray.EnteringBackgroundSync(e);
+            }
         }
 
         protected override void OnWindowActivated(bool active)

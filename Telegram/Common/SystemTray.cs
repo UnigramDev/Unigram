@@ -74,7 +74,7 @@ namespace Telegram.Common
 
         public static async void CloseRequested(SystemNavigationCloseRequestedPreviewEventArgs args)
         {
-            if (_connection != null && SettingsService.Current.Diagnostics.FullBridgeLifecycle)
+            if (_connection != null)
             {
                 var deferral = args.GetDeferral();
 
@@ -95,9 +95,26 @@ namespace Telegram.Common
             }
         }
 
+        public static void CloseRequestedSync(SystemNavigationCloseRequestedPreviewEventArgs args)
+        {
+            if (_connection != null)
+            {
+                try
+                {
+                    _ = _connection.SendMessageAsync("CloseRequested");
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
+                }
+
+                Logger.Info("Completed");
+            }
+        }
+
         public static async void EnteringBackground(EnteredBackgroundEventArgs args)
         {
-            if (_connection != null && SettingsService.Current.Diagnostics.FullBridgeLifecycle)
+            if (_connection != null)
             {
                 var deferral = args.GetDeferral();
 
@@ -112,6 +129,23 @@ namespace Telegram.Common
                 finally
                 {
                     deferral.Complete();
+                }
+
+                Logger.Info("Completed");
+            }
+        }
+
+        public static void EnteringBackgroundSync(EnteredBackgroundEventArgs args)
+        {
+            if (_connection != null)
+            {
+                try
+                {
+                    _ = _connection.SendMessageAsync("CloseRequested");
+                }
+                catch
+                {
+                    // All the remote procedure calls must be wrapped in a try-catch block
                 }
 
                 Logger.Info("Completed");

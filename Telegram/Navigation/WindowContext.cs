@@ -100,7 +100,14 @@ namespace Telegram.Navigation
 
         private void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
         {
-            SystemTray.CloseRequested(e);
+            if (SettingsService.Current.Diagnostics.FullBridgeLifecycle)
+            {
+                SystemTray.CloseRequested(e);
+            }
+            else
+            {
+                SystemTray.CloseRequestedSync(e);
+            }
         }
 
         public async Task ConsolidateAsync()
