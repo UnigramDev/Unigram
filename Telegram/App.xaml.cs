@@ -93,20 +93,6 @@ namespace Telegram
             {
                 args.Handled = args.Exception is not LayoutCycleException;
             };
-
-            EnteredBackground += OnEnteringBackground;
-        }
-
-        private void OnEnteringBackground(object sender, EnteredBackgroundEventArgs e)
-        {
-            if (SettingsService.Current.Diagnostics.FullBridgeLifecycle)
-            {
-                SystemTray.EnteringBackground(e);
-            }
-            else
-            {
-                SystemTray.EnteringBackgroundSync(e);
-            }
         }
 
         protected override void OnWindowActivated(bool active)

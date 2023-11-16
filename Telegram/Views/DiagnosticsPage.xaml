@@ -25,16 +25,12 @@
                               Content="Write App Logs to tdlib_log.txt"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.FullBridgeLifecycle, Mode=TwoWay}"
-                              Content="Full Bridge Lifecycle"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
-
                     <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.AllowRightToLeft, Mode=TwoWay}"
                               Content="Allow Right to Left"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Stickers.IsPointerOverEnabled, Mode=TwoWay}"
-                              Content="Show stickers panel on pointer over"
+                              Content="Show Stickers Panel on Pointer Over"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.ShowMemoryUsage, Mode=TwoWay}"

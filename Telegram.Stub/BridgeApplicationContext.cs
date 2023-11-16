@@ -21,7 +21,8 @@ namespace Telegram.Stub
         private AppServiceConnection _connection = null;
         private NotifyIcon _notifyIcon = null;
 
-        private bool _closeRequested;
+        private bool _closeRequested = true;
+        private int _processId;
 
         //private InterceptKeys _intercept;
 
@@ -74,6 +75,16 @@ namespace Telegram.Stub
                 _connection.ServiceClosed -= OnServiceClosed;
                 _connection.Dispose();
                 _connection = null;
+            }
+
+            if (_processId != 0)
+            {
+                try
+                {
+                    var process = Process.GetProcessById(_processId);
+                    process?.Kill();
+                }
+                catch { }
             }
 
             _notifyIcon.Dispose();
@@ -198,7 +209,11 @@ namespace Telegram.Stub
         {
             var deferral = args.GetDeferral();
 
-            if (args.Request.Message.TryGetValue("FlashWindow", out object flash))
+            if (args.Request.Message.TryGetValue("ProcessId", out object process) && process is int processId)
+            {
+                _processId = processId;
+            }
+            else if (args.Request.Message.TryGetValue("FlashWindow", out object flash))
             {
                 //#if DEBUG
                 //                var handle = FindWindow("ApplicationFrameWindow", "Telegram");
@@ -267,7 +282,7 @@ namespace Telegram.Stub
 
             if (_closeRequested)
             {
-                _closeRequested = false;
+                _closeRequested = true;
                 Connect();
             }
             else

@@ -1,13 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Telegram.Navigation;
-using Telegram.Services;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Background;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
-using Windows.UI.Core.Preview;
 
 namespace Telegram.Common
 {
@@ -40,6 +39,8 @@ namespace Telegram.Common
             _connection.ServiceClosed += OnServiceClosed;
 
             _deferral = deferral;
+
+            _ = _connection.SendMessageAsync(new ValueSet { { "ProcessId", Process.GetCurrentProcess().Id } });
         }
 
         public static async Task ExitAsync()
@@ -69,86 +70,6 @@ namespace Telegram.Common
                 {
                     // All the remote procedure calls must be wrapped in a try-catch block
                 }
-            }
-        }
-
-        public static async void CloseRequested(SystemNavigationCloseRequestedPreviewEventArgs args)
-        {
-            if (_connection != null)
-            {
-                var deferral = args.GetDeferral();
-
-                try
-                {
-                    await _connection.SendMessageAsync("CloseRequested");
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block
-                }
-                finally
-                {
-                    deferral.Complete();
-                }
-
-                Logger.Info("Completed");
-            }
-        }
-
-        public static void CloseRequestedSync(SystemNavigationCloseRequestedPreviewEventArgs args)
-        {
-            if (_connection != null)
-            {
-                try
-                {
-                    _ = _connection.SendMessageAsync("CloseRequested");
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block
-                }
-
-                Logger.Info("Completed");
-            }
-        }
-
-        public static async void EnteringBackground(EnteredBackgroundEventArgs args)
-        {
-            if (_connection != null)
-            {
-                var deferral = args.GetDeferral();
-
-                try
-                {
-                    await _connection.SendMessageAsync("CloseRequested");
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block
-                }
-                finally
-                {
-                    deferral.Complete();
-                }
-
-                Logger.Info("Completed");
-            }
-        }
-
-        public static void EnteringBackgroundSync(EnteredBackgroundEventArgs args)
-        {
-            if (_connection != null)
-            {
-                try
-                {
-                    _ = _connection.SendMessageAsync("CloseRequested");
-                }
-                catch
-                {
-                    // All the remote procedure calls must be wrapped in a try-catch block
-                }
-
-                Logger.Info("Completed");
             }
         }
 
