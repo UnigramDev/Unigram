@@ -265,6 +265,9 @@
   <data name="AccDescrStickers" xml:space="preserve">
     <value>Stickers</value>
   </data>
+  <data name="AccDescrStoryBy" xml:space="preserve">
+    <value>Story by {0}</value>
+  </data>
   <data name="AccDescrVerified" xml:space="preserve">
     <value>Verified</value>
   </data>
@@ -1542,16 +1545,16 @@ Subscription for {1}.</value>
     <value>You are not eligible to participate in this giveaway, because you are an admin of participating channel (**{0}**).</value>
   </data>
   <data name="BoostingGiveawayNotEligibleCountry" xml:space="preserve">
-    <value>You are not eligible to participate in this giveaway, because your country is not included in the terms of the giveaway.</value>
+    <value>You are not eligible to participate in this giveaway because your country is not included in the terms of the giveaway.</value>
   </data>
   <data name="BoostingGiveawayParticipant" xml:space="preserve">
-    <value>You are participating in this giveaway, because you have joined channel **{0}**.</value>
+    <value>You are participating in this giveaway because you joined the channel **{0}**.</value>
   </data>
   <data name="BoostingGiveawayParticipantMultiPlural_one" xml:space="preserve">
-    <value>You are participating in this giveaway, because you have joined channel **{1}** (and **{0}** other listed channel).</value>
+    <value>You are participating in this giveaway because you joined the channel **{1}** (and **{0}** other listed channel).</value>
   </data>
   <data name="BoostingGiveawayParticipantMultiPlural_other" xml:space="preserve">
-    <value>You are participating in this giveaway, because you have joined channel **{1}** (and **{0}** other listed channels).</value>
+    <value>You are participating in this giveaway because you joined the channel **{1}** (and **{0}** other listed channels).</value>
   </data>
   <data name="BoostingGiveawayPrizes" xml:space="preserve">
     <value>**Giveaway Prizes**</value>
@@ -1917,7 +1920,7 @@ It will be able to access your **IP address** and basic device info.</value>
     <value>Change</value>
   </data>
   <data name="ChangeChatBackground" xml:space="preserve">
-    <value>Change Chat Background</value>
+    <value>Change Chat Wallpaper</value>
   </data>
   <data name="ChangeColors" xml:space="preserve">
     <value>Change colors</value>
@@ -5872,10 +5875,10 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Exclusive enlarged stickers featuring additional effects, updated monthly.</value>
   </data>
   <data name="PremiumPreviewStories" xml:space="preserve">
-    <value>Upgraded Stories</value>
+    <value>Stories</value>
   </data>
   <data name="PremiumPreviewStoriesDescription" xml:space="preserve">
-    <value>Priority order, stealth mode, permanent view history and more.</value>
+    <value>Unlimited posting, priority order, stealth mode, permanent view history and more.</value>
   </data>
   <data name="PremiumPreviewTranslations" xml:space="preserve">
     <value>Real-Time Translation</value>
@@ -5884,10 +5887,10 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Real-time translation of chats and channels into other languages.</value>
   </data>
   <data name="PremiumPreviewUploads" xml:space="preserve">
-    <value>4 GB Upload Size</value>
+    <value>Unlimited Cloud Storage</value>
   </data>
   <data name="PremiumPreviewUploadsDescription" xml:space="preserve">
-    <value>Increased upload size from 2 GB to 4 GB per document, unlimited storage overall.</value>
+    <value>4 GB per each document, unlimited storage for your chats and media overall.</value>
   </data>
   <data name="PremiumPreviewVoiceToText" xml:space="preserve">
     <value>Voice-to-Text Conversion</value>
@@ -7810,7 +7813,7 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
     <value>Updating...</value>
   </data>
   <data name="UpgradedStories" xml:space="preserve">
-    <value>Upgraded Stories</value>
+    <value>Stories</value>
   </data>
   <data name="UpgradePremiumPerMonth" xml:space="preserve">
     <value>Upgrade for {0} per year</value>

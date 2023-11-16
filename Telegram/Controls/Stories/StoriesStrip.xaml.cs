@@ -11,6 +11,7 @@ using Telegram.ViewModels.Stories;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -111,6 +112,7 @@ namespace Telegram.Controls.Stories
                 cell.Update(item);
                 cell.Update(args.ItemContainer, args.ItemIndex, _first, _last, _progress, _progressAnimation);
 
+                AutomationProperties.SetName(args.ItemContainer, cell.GetAutomationName());
                 Canvas.SetZIndex(args.ItemContainer, i >= _first && i <= _last ? 5 - i : -i);
             }
         }
@@ -186,9 +188,9 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        private void StoryCell_Click(object sender, StoryEventArgs e)
+        private void ScrollingHost_ItemClick(object sender, ItemClickEventArgs e)
         {
-            if (sender is FrameworkElement photo)
+            if (e.ClickedItem is ActiveStoriesViewModel activeStories)
             {
                 if (_collapsed)
                 {
@@ -196,12 +198,18 @@ namespace Telegram.Controls.Stories
                 }
                 else
                 {
-                    var transform = photo.TransformToVisual(Window.Current.Content);
+                    var container = ScrollingHost.ContainerFromItem(e.ClickedItem) as SelectorItem;
+                    if (container == null)
+                    {
+                        return;
+                    }
+
+                    var transform = container.TransformToVisual(Window.Current.Content);
                     var point = transform.TransformPoint(new Point());
 
                     var origin = new Rect(point.X + 8 + 4, point.Y + 12 + 4, 40, 40);
 
-                    ViewModel.OpenStory(e.ActiveStories, origin, GetOrigin);
+                    ViewModel.OpenStory(activeStories, origin, GetOrigin);
                 }
             }
 

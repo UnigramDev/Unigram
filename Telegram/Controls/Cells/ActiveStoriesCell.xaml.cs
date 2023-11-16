@@ -3,11 +3,9 @@ using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Globalization;
 using System.Numerics;
-using Telegram.Controls.Stories;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Windows.UI.Composition;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
@@ -24,6 +22,12 @@ namespace Telegram.Controls.Cells
         private ActiveStoriesViewModel _viewModel;
         public ActiveStoriesViewModel ViewModel => _viewModel;
 
+        private string _automationName;
+        public string GetAutomationName()
+        {
+            return _automationName;
+        }
+
         public void Update(ActiveStoriesViewModel activeStories)
         {
             _viewModel = activeStories;
@@ -33,18 +37,23 @@ namespace Telegram.Controls.Cells
             {
                 if (activeStories.IsMyStory)
                 {
+                    _automationName = Strings.MyStory;
                     Title.Text = Strings.MyStory;
                 }
                 else
                 {
+                    _automationName = string.Format(Strings.AccDescrStoryBy, user.FirstName);
                     Title.Text = user.FirstName;
                 }
 
                 Photo.SetUser(activeStories.ClientService, user, 40);
+
             }
             else
             {
+                _automationName = string.Format(Strings.AccDescrStoryBy, chat.Title);
                 Title.Text = chat.Title;
+
                 Photo.SetChat(activeStories.ClientService, chat, 40);
             }
 
@@ -266,13 +275,6 @@ namespace Telegram.Controls.Cells
             cross1.Opacity = 1;
             cross2.Opacity = 0;
             ciccio.Opacity = 1;
-        }
-
-        public event EventHandler<StoryEventArgs> Click;
-
-        private void Segments_Click(object sender, RoutedEventArgs e)
-        {
-            Click?.Invoke(this, new StoryEventArgs(_viewModel));
         }
     }
 }

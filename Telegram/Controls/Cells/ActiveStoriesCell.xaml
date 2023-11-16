@@ -10,7 +10,7 @@
              d:DesignWidth="400">
 
     <Grid Width="64"
-          Padding="0,12">
+          Padding="0,12,0,8">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
@@ -25,16 +25,23 @@
                   Width="48"
                   Height="48">
                 <controls:ProfilePicture x:Name="Photo"
+                                         IsEnabled="False"
+                                         IsHitTestVisible="False"
+                                         IsTabStop="False"
                                          Width="40"
                                          Height="40" />
                 <Grid x:Name="SegmentsRoot">
                     <controls:ActiveStoriesSegments x:Name="SegmentsSmall"
+                                                    IsEnabled="False"
                                                     IsHitTestVisible="False"
+                                                    IsTabStop="False"
                                                     Width="48"
                                                     Height="48"
                                                     Canvas.ZIndex="1" />
                     <controls:ActiveStoriesSegments x:Name="Segments"
-                                                    Click="Segments_Click"
+                                                    IsEnabled="False"
+                                                    IsHitTestVisible="False"
+                                                    IsTabStop="False"
                                                     Width="48"
                                                     Height="48" />
                 </Grid>

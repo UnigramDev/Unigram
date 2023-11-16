@@ -20,7 +20,9 @@
                   ScrollViewer.HorizontalScrollMode="Auto"
                   SizeChanged="OnSizeChanged"
                   SelectionMode="None"
-                  Padding="4,0">
+                  IsItemClickEnabled="True"
+                  ItemClick="ScrollingHost_ItemClick"
+                  Padding="4,0,0,4">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <ItemsStackPanel Orientation="Horizontal" />
@@ -28,8 +30,7 @@
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="viewModels:ActiveStoriesViewModel">
-                    <cells:ActiveStoriesCell Trigger="{x:Bind Item, Mode=OneWay}"
-                                             Click="StoryCell_Click" />
+                    <cells:ActiveStoriesCell Trigger="{x:Bind Item, Mode=OneWay}" />
                 </DataTemplate>
             </ListView.ItemTemplate>
             <ListView.ItemContainerStyle>
