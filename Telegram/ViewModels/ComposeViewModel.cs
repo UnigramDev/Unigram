@@ -401,7 +401,7 @@ namespace Telegram.ViewModels
             var self = ClientService.IsSavedMessages(chat);
 
             bool mediaAllowed;
-            if (permissions.CanSendVideos && permissions.CanSendVideos)
+            if (permissions.CanSendPhotos && permissions.CanSendVideos)
             {
                 mediaAllowed = items.All(x => x is StoragePhoto or StorageVideo);
             }
