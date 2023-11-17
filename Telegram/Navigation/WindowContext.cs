@@ -151,7 +151,7 @@ namespace Telegram.Navigation
 
         public ElementTheme ActualTheme => _window.Content is FrameworkElement element
             ? element.ActualTheme
-            : ElementTheme.Default;
+            : SettingsService.Current.Appearance.GetCalculatedElementTheme();
 
         public ElementTheme RequestedTheme
         {
