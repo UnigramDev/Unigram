@@ -402,7 +402,7 @@ namespace Telegram.ViewModels.Supergroups
                 var response = await ClientService.SendAsync(request);
                 if (response is Ok)
                 {
-                    NavigationService.RemovePeerFromStack(chat.Id);
+                    NavigationService.RemoveChatFromStack(chat.Id);
                 }
                 else if (response is Error error)
                 {

@@ -226,7 +226,7 @@ namespace Telegram.Common
             return Task.CompletedTask;
         }
 
-        public static void RemovePeerFromStack(this INavigationService service, long target)
+        public static void RemoveChatFromStack(this INavigationService service, long target)
         {
             long peer;
             bool found = false;
@@ -234,7 +234,7 @@ namespace Telegram.Common
             for (int i = 0; i < service.Frame.BackStackDepth; i++)
             {
                 var entry = service.Frame.BackStack[i];
-                if (TryGetPeerFromParameter(service, entry.Parameter, out peer))
+                if (TryGetChatFromParameter(service, entry.Parameter, out peer))
                 {
                     found = peer.Equals(target);
                 }
@@ -246,7 +246,7 @@ namespace Telegram.Common
                 }
             }
 
-            if (TryGetPeerFromParameter(service, service.CurrentPageParam, out peer))
+            if (TryGetChatFromParameter(service, service.CurrentPageParam, out peer))
             {
                 if (peer.Equals(target))
                 {
@@ -256,16 +256,27 @@ namespace Telegram.Common
             }
         }
 
-        public static long GetPeerFromBackStack(this INavigationService service)
+        public static bool IsChatOpen(this INavigationService service, long chatId, bool currentPageOnly = false)
+        {
+            return chatId == GetChatFromBackStack(service, currentPageOnly);
+        }
+
+        public static long GetChatFromBackStack(this INavigationService service, bool currentPageOnly = false)
         {
             if (service.CurrentPageType == typeof(ChatPage))
             {
-                if (TryGetPeerFromParameter(service, service.CurrentPageParam, out long chatId))
+                if (TryGetChatFromParameter(service, service.CurrentPageParam, out long chatId))
                 {
                     return chatId;
                 }
             }
-            else if (service.CurrentPageType == typeof(ChatThreadPage))
+            
+            if (currentPageOnly)
+            {
+                return 0;
+            }
+
+            if (service.CurrentPageType == typeof(ChatThreadPage))
             {
                 if (service.CurrentPageParam is ChatNavigationArgs args)
                 {
@@ -278,7 +289,7 @@ namespace Telegram.Common
                 var entry = service.Frame.BackStack[i];
                 if (entry.SourcePageType == typeof(ChatPage))
                 {
-                    if (TryGetPeerFromParameter(service, entry.Parameter, out long chatId))
+                    if (TryGetChatFromParameter(service, entry.Parameter, out long chatId))
                     {
                         return chatId;
                     }
@@ -295,7 +306,7 @@ namespace Telegram.Common
             return 0;
         }
 
-        public static bool TryGetPeerFromParameter(this INavigationService service, object parameter, out long chatId)
+        public static bool TryGetChatFromParameter(this INavigationService service, object parameter, out long chatId)
         {
             if (parameter is long)
             {

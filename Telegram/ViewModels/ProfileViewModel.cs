@@ -18,7 +18,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Profile;
 using Telegram.ViewModels.Supergroups;
-using Telegram.Views;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
@@ -344,17 +343,9 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var last = NavigationService.Frame.BackStack.LastOrDefault();
-            if (last?.SourcePageType == typeof(ChatPage) && NavigationService.TryGetPeerFromParameter(last.Parameter, out long chatId))
+            if (NavigationService.IsChatOpen(chat.Id, true))
             {
-                if (chat.Id == chatId)
-                {
-                    NavigationService.GoBack();
-                }
-                else
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
+                NavigationService.GoBack();
             }
             else
             {
@@ -732,13 +723,9 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var last = NavigationService.Frame.BackStack.LastOrDefault();
-            if (last?.SourcePageType == typeof(ChatPage) && NavigationService.TryGetPeerFromParameter(last.Parameter, out long chatId))
+            if (NavigationService.IsChatOpen(chat.Id, true))
             {
-                if (chat.Id == chatId)
-                {
-                    NavigationService.GoBack(new NavigationState { { "search", query } });
-                }
+                NavigationService.GoBack(new NavigationState { { "search", query } });
             }
             else
             {

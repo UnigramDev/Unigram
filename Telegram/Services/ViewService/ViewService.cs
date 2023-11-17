@@ -7,6 +7,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Views.Host;
 using Windows.ApplicationModel.Core;
@@ -143,23 +144,31 @@ namespace Telegram.Services.ViewService
             var currentView = ApplicationView.GetForCurrentView();
             title ??= currentView.Title;
 
+            ViewLifetimeControl oldControl = null;
+            await WindowContext.ForEachAsync(window =>
+            {
+                if (window.IsInMainView)
+                {
+                    return Task.CompletedTask;
+                }
 
+                foreach (var service in window.NavigationServices)
+                {
+                    if (parameter is long chatId && service.IsChatOpen(chatId))
+                    {
+                        oldControl = ViewLifetimeControl.GetForCurrentView();
+                        return Task.CompletedTask;
+                    }
+                }
 
+                return Task.CompletedTask;
+            });
 
-
-            // TODO: find a better way to find already existing chat
-
-            //var newControl = await value.DispatchAsync(async () =>
-            //{
-            //    var control = ViewLifetimeControl.GetForCurrentView();
-            //    var newAppView = ApplicationView.GetForCurrentView();
-
-            //    await ApplicationViewSwitcher
-            //        .SwitchAsync(newAppView.Id, currentView.Id, ApplicationViewSwitchingOptions.Default);
-
-            //    return control;
-            //}).ConfigureAwait(false);
-            //return newControl;
+            if (oldControl != null)
+            {
+                await ApplicationViewSwitcher.SwitchAsync(oldControl.Id, WindowContext.Current.Id, ApplicationViewSwitchingOptions.Default);
+                return oldControl;
+            }
 
             await _mainWindowCreated.Task;
 
