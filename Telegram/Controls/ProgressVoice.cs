@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using System.Collections.Generic;
 using Telegram.Td.Api;
 using Windows.Foundation;
@@ -38,21 +39,22 @@ namespace Telegram.Controls
             base.OnApplyTemplate();
         }
 
-        private IList<byte> _deferred;
+        private VoiceNote _deferred;
 
         public void UpdateWaveform(VoiceNote voiceNote)
         {
-            UpdateWaveform(voiceNote.Waveform);
-        }
-
-        public void UpdateWaveform(IList<byte> waveform)
-        {
             if (ProgressBarIndicator == null || HorizontalTrackRect == null)
             {
-                _deferred = waveform;
+                _deferred = voiceNote;
                 return;
             }
 
+            _deferred = null;
+            UpdateWaveform(voiceNote.Waveform, voiceNote.Duration);
+        }
+
+        private void UpdateWaveform(IList<byte> waveform, double duration)
+        {
             if (waveform.Count < 1)
             {
                 waveform = new byte[1] { 0 };
@@ -65,9 +67,18 @@ namespace Telegram.Controls
                 result[i] = ((waveform[j] | ((j + 1 < waveform.Count ? waveform[j + 1] : 0) << 8)) >> shift & 0x1F) / 31.0;
             }
 
+            var maxVoiceLength = 30.0;
+            var minVoiceLength = 2.0;
+
+            var minVoiceWidth = 68.0;
+            var maxVoiceWidth = 226.0;
+
+            var calcDuration = Math.Max(minVoiceLength, Math.Min(maxVoiceLength, duration));
+            var waveformWidth = minVoiceWidth + (maxVoiceWidth - minVoiceWidth) * (calcDuration - minVoiceLength) / (maxVoiceLength - minVoiceLength);
+
             //var imageWidth = 209.0;
             //var imageHeight = 24;
-            var imageWidth = 142d; // double.IsNaN(ActualWidth) ? 142 : ActualWidth;
+            var imageWidth = waveformWidth; // 142d; // double.IsNaN(ActualWidth) ? 142 : ActualWidth;
             var imageHeight = 20;
 
             var space = 1.0;
@@ -93,75 +104,10 @@ namespace Telegram.Controls
                 geometry2.Children.Add(new RectangleGeometry { Rect = new Rect(new Point(x1, y1), new Point(x2, y2)) });
             }
 
-            //var width = 142;
-            //if (waveform == null || width == 0)
-            //{
-            //    return;
-            //}
-
-            //float totalBarsCount = width / 3;
-            //if (totalBarsCount <= 0.1f)
-            //{
-            //    return;
-            //}
-
-            //int value;
-            //int samplesCount = (waveform.Count * 8 / 5);
-            //float samplesPerBar = samplesCount / totalBarsCount;
-            //float barCounter = 0;
-            //int nextBarNum = 0;
-
-            ////paintInner.setColor(messageObject != null && !messageObject.isOutOwner() && messageObject.isContentUnread() ? outerColor : (selected ? selectedColor : innerColor));
-            ////paintOuter.setColor(outerColor);
-
-            //int y = (24 - 14) / 2;
-            //int barNum = 0;
-            //int lastBarNum;
-            //int drawBarCount;
-
-            //var geometry1 = new GeometryGroup();
-            //var geometry2 = new GeometryGroup();
-
-            //for (int a = 0; a < samplesCount; a++)
-            //{
-            //    if (a != nextBarNum)
-            //    {
-            //        continue;
-            //    }
-            //    drawBarCount = 0;
-            //    lastBarNum = nextBarNum;
-            //    while (lastBarNum == nextBarNum)
-            //    {
-            //        barCounter += samplesPerBar;
-            //        nextBarNum = (int)barCounter;
-            //        drawBarCount++;
-            //    }
-
-            //    int bitPointer = a * 5;
-            //    int byteNum = bitPointer / 8;
-            //    int byteBitOffset = bitPointer - byteNum * 8;
-            //    int currentByteCount = 8 - byteBitOffset;
-            //    int nextByteRest = 5 - currentByteCount;
-            //    value = (byte)((waveform[byteNum] >> byteBitOffset) & ((2 << (Math.Min(5, currentByteCount) - 1)) - 1));
-            //    if (nextByteRest > 0)
-            //    {
-            //        value <<= nextByteRest;
-            //        value |= waveform[byteNum + 1] & ((2 << (nextByteRest - 1)) - 1);
-            //    }
-
-            //    for (int b = 0; b < drawBarCount; b++)
-            //    {
-            //        int x = barNum * 3;
-
-            //        geometry1.Children.Add(new RectangleGeometry { Rect = new Rect(new Point(x, y + 14 - Math.Max(1, 14.0f * value / 31.0f)), new Point(x + 2, y + 14)) });
-            //        geometry2.Children.Add(new RectangleGeometry { Rect = new Rect(new Point(x, y + 14 - Math.Max(1, 14.0f * value / 31.0f)), new Point(x + 2, y + 14)) });
-
-            //        barNum++;
-            //    }
-            //}
-
             ProgressBarIndicator.Data = geometry1;
             HorizontalTrackRect.Data = geometry2;
+
+            Width = waveformWidth;
         }
     }
 }
