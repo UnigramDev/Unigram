@@ -363,6 +363,10 @@ namespace Telegram.Common
             {
                 navigation.Navigate(typeof(SettingsProfilePage));
             }
+            else if (internalLink is InternalLinkTypeLanguageSettings)
+            {
+                navigation.Navigate(typeof(SettingsLanguagePage));
+            }
             else if (internalLink is InternalLinkTypeChatBoost chatBoost)
             {
                 NavigateToChatBoost(clientService, navigation, chatBoost.Url);
