@@ -605,6 +605,11 @@ namespace Telegram.Controls.Chats
                 _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             }
 
+            public static void Release()
+            {
+                _current = null;
+            }
+
             public async void Start(ChatRecordMode mode, Chat chat)
             {
                 Logger.Debug("Start invoked, mode: " + mode);

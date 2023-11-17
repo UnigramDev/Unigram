@@ -7,12 +7,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Controls.Chats;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Keyboard;
+using Telegram.Services.ViewService;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Telegram.Views;
@@ -73,6 +76,8 @@ namespace Telegram.Navigation
             window.CoreWindow.ResizeStarted += OnResizeStarted;
             window.CoreWindow.ResizeCompleted += OnResizeCompleted;
 
+            window.CoreWindow.DispatcherQueue.ShutdownCompleted += OnShutdownCompleted;
+
             Size = new Size(window.Bounds.Width, window.Bounds.Height);
 
             #region Legacy code
@@ -90,6 +95,26 @@ namespace Telegram.Navigation
             }
 
             ApplicationView.GetForCurrentView().Consolidated += OnConsolidated;
+        }
+
+        private void OnShutdownCompleted(Windows.System.DispatcherQueue sender, object args)
+        {
+            sender.ShutdownCompleted -= OnShutdownCompleted;
+            Current = null;
+
+            Theme.Current = null;
+
+            ThemeIncoming.Release();
+            ThemeOutgoing.Release();
+
+            AnimatedImageLoader.Release();
+            ChatRecordButton.Recorder.Release();
+
+            // TODO: needed? From some tests, this prevented the whole Window root from being garbage collected
+            if (SynchronizationContext.Current is SecondaryViewSynchronizationContextDecorator decorator)
+            {
+                SynchronizationContext.SetSynchronizationContext(decorator.Context);
+            }
         }
 
         public async Task ConsolidateAsync()

@@ -1379,6 +1379,11 @@ namespace Telegram.Controls
             Debug.Assert(_dispatcherQueue != null);
         }
 
+        public static void Release()
+        {
+            _current = null;
+        }
+
         private event EventHandler<object> _rendering;
         public event EventHandler<object> Rendering
         {

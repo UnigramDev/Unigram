@@ -571,6 +571,12 @@ namespace Telegram.Common
             { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0x33, 0x39, 0x3F), new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x39, 0x3F))) },
         };
 
+        public static void Release()
+        {
+            _light = null;
+            _dark = null;
+        }
+
         public ThemeOutgoing()
         {
             var light = new ResourceDictionary();
@@ -682,6 +688,12 @@ namespace Telegram.Common
             { "MessageReactionChosenBackgroundBrush", (Color.FromArgb(0xFF, 0x6E, 0xB2, 0xEE), new SolidColorBrush(Color.FromArgb(0xFF, 0x6E, 0xB2, 0xEE))) },
             { "MessageReactionChosenForegroundBrush", (Color.FromArgb(0xFF, 0x33, 0x39, 0x3F), new SolidColorBrush(Color.FromArgb(0xFF, 0x33, 0x39, 0x3F))) },
         };
+
+        public static void Release()
+        {
+            _light = null;
+            _dark = null;
+        }
 
         public ThemeIncoming()
         {
