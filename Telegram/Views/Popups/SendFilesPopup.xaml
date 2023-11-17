@@ -18,7 +18,7 @@
 
     <ContentControl.Resources>
         <DataTemplate x:Key="FileItemTemplate">
-            <Grid Padding="0,6">
+            <Grid Padding="0,6,0,6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -58,9 +58,10 @@
                                  MaxHeight="294">
                 <Image x:Name="Preview"
                        Source="{x:Bind Preview, Mode=OneWay}"
-                       Stretch="Uniform" />
+                       Stretch="UniformToFill" />
 
                 <Border x:Name="Overlay"
+                        Loaded="Grid_Loaded"
                         DataContextChanged="Grid_DataContextChanged"
                         Width="48"
                         Height="48"
@@ -68,7 +69,6 @@
                         Background="{ThemeResource MessageOverlayBackgroundBrush}"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center">
-                    <!--<controls:FileButton x:Name="Button" Style="{StaticResource InlineFileButtonStyle}"/>-->
                     <TextBlock x:Name="Glyph"
                                Text="&#xE768;"
                                Foreground="{ThemeResource MessageMediaForegroundBrush}"
@@ -80,7 +80,7 @@
 
                 <Grid HorizontalAlignment="Right"
                       VerticalAlignment="Bottom"
-                      Background="{ThemeResource MessageOverlayBackgroundBrush}"
+                      Background="{ThemeResource MessageServiceBackgroundBrush}"
                       RequestedTheme="Dark"
                       CornerRadius="15"
                       Margin="4">
@@ -95,43 +95,45 @@
                                                 CheckedGlyph="&#xE906;"
                                                 CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                                                 Tag="{x:Bind}"
-                                                Width="40"
-                                                Height="40"
+                                                Width="36"
+                                                Height="36"
                                                 FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                 FontSize="18"
                                                 CornerRadius="12,4,4,12" />
 
                     <controls:GlyphToggleButton x:Name="Crop"
                                                 Click="Crop_Click"
-                                                Glyph="&#xEE56;"
+                                                Glyph="&#xE7A8;"
                                                 CheckedGlyph="&#xE7A8;"
                                                 CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                                                 Tag="{x:Bind}"
-                                                Width="40"
-                                                Height="40"
+                                                Width="36"
+                                                Height="36"
                                                 IsChecked="{x:Bind IsEdited, Mode=OneWay}"
                                                 AutomationProperties.Name="{CustomResource CropImage}"
                                                 ToolTipService.ToolTip="{CustomResource CropImage}"
-                                                CornerRadius="12,4,4,12" />
+                                                CornerRadius="12,4,4,12"
+                                                Margin="0,0,-8,0" />
 
                     <controls:GlyphToggleButton x:Name="Ttl"
                                                 Click="Ttl_Click"
                                                 Tag="{x:Bind}"
-                                                Width="40"
-                                                Height="40"
+                                                Width="36"
+                                                Height="36"
                                                 IsChecked="{x:Bind IsSecret, Mode=OneWay}"
                                                 Glyph="&#xE916;"
                                                 CheckedGlyph="&#xE916;"
                                                 CheckedForeground="{ThemeResource TelegramBackgroundAccentBrush}"
                                                 AutomationProperties.Name="{CustomResource SetTimer}"
                                                 ToolTipService.ToolTip="{CustomResource SetTimer}"
+                                                Margin="0,0,-8,0"
                                                 Grid.Column="1" />
 
                     <controls:GlyphButton Glyph="&#xE74D;"
                                           Click="Remove_Click"
                                           Tag="{x:Bind}"
-                                          Width="40"
-                                          Height="40"
+                                          Width="36"
+                                          Height="36"
                                           CornerRadius="4,12,12,4"
                                           Grid.Column="2" />
                 </Grid>
@@ -150,7 +152,7 @@
 
         <ItemsPanelTemplate x:Key="AlbumPanelTemplate">
             <local:SendFilesAlbumPanel Loading="SendFilesAlbumPanel_Loading"
-                                       Margin="0,0,-2,-2" />
+                                       Margin="24,0,22,-2" />
         </ItemsPanelTemplate>
 
     </ContentControl.Resources>
@@ -183,11 +185,12 @@
                                         IsChecked="{x:Bind IsAlbum, Mode=OneWay}"
                                         IsOneWay="False"
                                         FontSize="24"
+                                        Margin="0,0,24,0"
                                         Grid.Column="2" />
         </Grid>
     </ContentDialog.Title>
 
-    <Grid Margin="0,0,-24,-16">
+    <Grid Margin="-24,0,-24,-16">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
@@ -204,7 +207,7 @@
                       CanReorderItems="True"
                       CanDragItems="True"
                       AllowDrop="True"
-                      Padding="0,0,24,16">
+                      Padding="24,0,24,16">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment"
@@ -235,7 +238,7 @@
                       DragEnter="ListView_DragEnter"
                       Drop="ListView_Drop"
                       AllowDrop="True"
-                      Padding="0,0,24,16">
+                      Padding="0,0,0,16">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment"
@@ -289,7 +292,7 @@
         </ListView>
 
         <Grid x:Name="CaptionPanel"
-              Margin="0,0,24,0"
+              Margin="24,0,24,0"
               Grid.Row="2">
             <controls:CaptionTextBox x:Name="CaptionInput"
                                      Loaded="OnLoaded"

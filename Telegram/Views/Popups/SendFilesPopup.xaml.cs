@@ -347,20 +347,24 @@ namespace Telegram.Views.Popups
             subtitle.Text = FileSizeConverter.Convert((long)storage.Size);
         }
 
+        private void Grid_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (sender is Border border && border.Parent is Grid root && root.DataContext is StorageMedia storage)
+            {
+                UpdateTemplate(root, storage);
+            }
+        }
+
         private void Grid_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            var storage = args.NewValue as StorageMedia;
-            if (storage == null)
+            if (sender.Parent is Grid root && args.NewValue is StorageMedia storage)
             {
-                return;
+                UpdateTemplate(root, storage);
             }
+        }
 
-            var root = sender.Parent as Grid;
-            if (root == null)
-            {
-                return;
-            }
-
+        private void UpdateTemplate(Grid root, StorageMedia storage)
+        {
             var overlay = root.FindName("Overlay") as Border;
 
             var mute = root.FindName("Mute") as ToggleButton;
