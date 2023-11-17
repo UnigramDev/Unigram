@@ -667,6 +667,9 @@ namespace Telegram.ViewModels
                 return null;
             }
 
+            options ??= new MessageSendOptions();
+            options.SendingId = 1;
+
             var response = await ClientService.SendAsync(new SendMessage(chat.Id, ThreadId, replyTo, options, null, inputMessageContent));
             if (response is Error error)
             {

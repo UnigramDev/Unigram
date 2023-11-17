@@ -568,9 +568,10 @@ namespace Telegram.Views
                 }
 
                 var content = message.GeneratedContent ?? message.Content;
+                var pending = message.SendingState is MessageSendingStatePending { SendingId: 1 };
                 var animateSendout = !message.IsChannelPost
                     && message.IsOutgoing
-                    && message.SendingState is MessageSendingStatePending
+                    && pending
                     && message.Content is MessageText or MessageDice or MessageAnimatedEmoji
                     && message.GeneratedContent is MessageBigEmoji or MessageSticker or null;
 
@@ -592,7 +593,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                if (animateSendout && ViewModel.ComposerHeader == null)
+                if (pending && ViewModel.ComposerHeader == null)
                 {
                     ShowHideComposerHeader(false, true);
                 }
