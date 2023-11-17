@@ -138,7 +138,7 @@ namespace Telegram.Views
                 Bindings.StopTracking();
                 DataContext = null;
 
-                var viewModel = ViewModel;
+                var viewModel = _viewModel;
                 if (viewModel != null)
                 {
                     viewModel.PlaybackService.SourceChanged -= OnPlaybackSourceChanged;
