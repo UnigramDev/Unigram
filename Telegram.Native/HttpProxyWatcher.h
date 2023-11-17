@@ -14,7 +14,8 @@ namespace winrt::Telegram::Native::implementation
         {
             auto lock = critical_section::scoped_lock(s_criticalSection);
 
-            if (s_current == nullptr) {
+            if (s_current == nullptr)
+            {
                 s_current = winrt::make_self<HttpProxyWatcher>();
             }
 
@@ -23,16 +24,21 @@ namespace winrt::Telegram::Native::implementation
 
         HttpProxyWatcher();
 
-        void Close() {
+        void Close()
+        {
             SetEvent(m_shutdownEvent);
             m_thread.join();
+
+            CloseHandle(m_shutdownEvent);
         }
 
-        hstring Server() {
+        hstring Server()
+        {
             return m_server;
         }
 
-        bool IsEnabled() {
+        bool IsEnabled()
+        {
             return m_isEnabled;
         }
 
@@ -40,7 +46,8 @@ namespace winrt::Telegram::Native::implementation
             winrt::Telegram::Native::HttpProxyWatcher,
             bool> const& value)
         {
-            if (!m_changed) {
+            if (!m_changed)
+            {
                 m_shutdownEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
                 m_thread = std::thread(ThreadLoop, this);
             }
@@ -52,7 +59,8 @@ namespace winrt::Telegram::Native::implementation
         {
             m_changed.remove(token);
 
-            if (!m_changed) {
+            if (!m_changed)
+            {
                 SetEvent(m_shutdownEvent);
                 m_thread.join();
             }
