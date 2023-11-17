@@ -585,7 +585,7 @@ namespace Telegram.Views
                 var withinViewport = panel.FirstVisibleIndex <= args.NewStartingIndex && panel.LastVisibleIndex >= args.NewStartingIndex;
                 if (withinViewport is false)
                 {
-                    if (animateSendout && ViewModel.ComposerHeader == null)
+                    if (pending && ViewModel.ComposerHeader == null)
                     {
                         ShowHideComposerHeader(false);
                     }
