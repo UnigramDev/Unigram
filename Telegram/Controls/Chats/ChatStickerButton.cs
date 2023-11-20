@@ -12,6 +12,7 @@ using Telegram.Controls.Media;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Views;
+using Telegram.Views.Popups;
 using Windows.Devices.Input;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
@@ -82,9 +83,13 @@ namespace Telegram.Controls.Chats
                 _stickersTimer.Stop();
 
                 var popups = VisualTreeHelper.GetOpenPopups(Window.Current);
-                if (popups.Count > 0)
+
+                foreach (var popup in popups)
                 {
-                    return;
+                    if (popup.Child is MenuFlyoutPresenter or ZoomableMediaPopup)
+                    {
+                        return;
+                    }
                 }
 
                 Collapse_Click(null, null);

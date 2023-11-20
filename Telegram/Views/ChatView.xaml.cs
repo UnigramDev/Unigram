@@ -377,17 +377,17 @@ namespace Telegram.Views
 
                 _cleanup = ViewModel.Items;
 
-                if (navigation)
+                if (navigation is false)
                 {
-                    return;
+                    Cleanup(ref _cleanup);
+
+                    _albumIdToSelector.Clear();
+                    _messageIdToSelector.Clear();
+                    _messageIdToMessageIds.Clear();
                 }
-
-                Cleanup(ref _cleanup);
-
-                _albumIdToSelector.Clear();
-                _messageIdToSelector.Clear();
-                _messageIdToMessageIds.Clear();
             }
+
+            ButtonStickers.Collapse();
         }
 
         private readonly SynchronizedCollection<MessageViewModel> _messages = new();
