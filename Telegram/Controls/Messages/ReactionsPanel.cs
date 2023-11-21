@@ -108,41 +108,51 @@ namespace Telegram.Controls.Messages
                     }
                 }
 
-                var prev = _prevValue ?? Array.Empty<MessageReaction>();
-                var diff = DiffUtil.CalculateDiff(prev, reactions, this, Constants.DiffOptions);
-
-                foreach (var step in diff.Steps)
+                if (_prevValue == null)
                 {
-                    if (step.Status == DiffStatus.Add)
+                    for (int i = 0; i < reactions.Count; i++)
                     {
-                        UpdateItem(step.Items[0].NewValue, null, step.NewStartIndex);
-                    }
-                    else if (step.Status == DiffStatus.Move && step.OldStartIndex < Children.Count && step.NewStartIndex < Children.Count)
-                    {
-                        UpdateItem(step.Items[0].OldValue, step.Items[0].NewValue);
-                        Children.Move((uint)step.OldStartIndex, (uint)step.NewStartIndex);
-                    }
-                    else if (step.Status == DiffStatus.Remove && step.OldStartIndex < Children.Count)
-                    {
-                        if (step.Items[0].OldValue is MessageReaction oldReaction)
-                        {
-                            if (oldReaction.Type is ReactionTypeEmoji oldEmoji)
-                            {
-                                _reactions.Remove(oldEmoji.Emoji);
-                            }
-                            else if (oldReaction.Type is ReactionTypeCustomEmoji oldCustomEmoji)
-                            {
-                                _customReactions.Remove(oldCustomEmoji.CustomEmojiId);
-                            }
-                        }
-
-                        Children.RemoveAt(step.OldStartIndex);
+                        UpdateItem(reactions[i], null, i);
                     }
                 }
-
-                foreach (var item in diff.NotMovedItems)
+                else
                 {
-                    UpdateItem(item.OldValue, item.NewValue);
+                    var prev = _prevValue ?? Array.Empty<MessageReaction>();
+                    var diff = DiffUtil.CalculateDiff(prev, reactions, this, Constants.DiffOptions);
+
+                    foreach (var step in diff.Steps)
+                    {
+                        if (step.Status == DiffStatus.Add)
+                        {
+                            UpdateItem(step.Items[0].NewValue, null, step.NewStartIndex);
+                        }
+                        else if (step.Status == DiffStatus.Move && step.OldStartIndex < Children.Count && step.NewStartIndex < Children.Count)
+                        {
+                            UpdateItem(step.Items[0].OldValue, step.Items[0].NewValue);
+                            Children.Move((uint)step.OldStartIndex, (uint)step.NewStartIndex);
+                        }
+                        else if (step.Status == DiffStatus.Remove && step.OldStartIndex < Children.Count)
+                        {
+                            if (step.Items[0].OldValue is MessageReaction oldReaction)
+                            {
+                                if (oldReaction.Type is ReactionTypeEmoji oldEmoji)
+                                {
+                                    _reactions.Remove(oldEmoji.Emoji);
+                                }
+                                else if (oldReaction.Type is ReactionTypeCustomEmoji oldCustomEmoji)
+                                {
+                                    _customReactions.Remove(oldCustomEmoji.CustomEmojiId);
+                                }
+                            }
+
+                            Children.RemoveAt(step.OldStartIndex);
+                        }
+                    }
+
+                    foreach (var item in diff.NotMovedItems)
+                    {
+                        UpdateItem(item.OldValue, item.NewValue);
+                    }
                 }
 
                 _chatId = message?.ChatId ?? 0;
