@@ -2022,12 +2022,11 @@ namespace Telegram.Controls.Messages
 
         private void FooterToLightMedia(bool isOut)
         {
-            if (_currentState != "LightState" + (isOut ? "Out" : string.Empty))
+            var state = "LightState" + (isOut ? "Out" : string.Empty);
+            if (state != _currentState)
             {
-                _currentState = "LightState" + (isOut ? "Out" : string.Empty);
-
-                VisualStateManager.GoToState(this, "LightState" + (isOut ? "Out" : string.Empty), false);
-                Reply?.ToLightState();
+                _currentState = state;
+                VisualStateManager.GoToState(this, state, false);
             }
 
             if (BackgroundPanel != null)
@@ -2041,9 +2040,7 @@ namespace Telegram.Controls.Messages
             if (_currentState != "MediaState")
             {
                 _currentState = "MediaState";
-
                 VisualStateManager.GoToState(this, "MediaState", false);
-                Reply?.ToNormalState();
             }
         }
 
@@ -2052,9 +2049,7 @@ namespace Telegram.Controls.Messages
             if (_currentState != "HiddenState")
             {
                 _currentState = "HiddenState";
-
                 VisualStateManager.GoToState(this, "HiddenState", false);
-                Reply?.ToNormalState();
             }
         }
 
@@ -2063,9 +2058,7 @@ namespace Telegram.Controls.Messages
             if (_currentState != "Normal")
             {
                 _currentState = "Normal";
-
                 VisualStateManager.GoToState(this, "Normal", false);
-                Reply?.ToNormalState();
             }
         }
 

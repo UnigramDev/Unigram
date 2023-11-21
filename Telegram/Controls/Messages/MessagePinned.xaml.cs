@@ -87,7 +87,7 @@ namespace Telegram.Controls.Messages
             ElementCompositionPreview.SetIsTranslationEnabled(parent, true);
         }
 
-        private readonly Queue<(Chat, MessageViewModel, bool, int, int)> _queue = new Queue<(Chat, MessageViewModel, bool, int, int)>();
+        private readonly Queue<(Chat, MessageViewModel, bool, int, int)> _queue = new();
         private bool _playing;
 
         public void UpdateMessage(Chat chat, MessageViewModel message, bool known, int value, int maximum, bool intermediate)
@@ -338,7 +338,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        protected override void SetText(IClientService clientService, bool outgoing, MessageSender sender, string title, string service, FormattedText text, bool quote)
+        protected override void SetText(IClientService clientService, bool outgoing, MessageSender sender, string title, string service, FormattedText text, bool quote, bool white)
         {
             _alternativeText = title + ": ";
             TitleLabel.Text = title;

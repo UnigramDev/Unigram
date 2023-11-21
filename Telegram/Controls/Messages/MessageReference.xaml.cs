@@ -162,11 +162,6 @@ namespace Telegram.Controls.Messages
 
             _templateApplied = true;
 
-            if (_light)
-            {
-                VisualStateManager.GoToState(this, "LightState", false);
-            }
-
             if (_messageReply != null)
             {
                 UpdateMessageReply(_messageReply);
@@ -185,64 +180,6 @@ namespace Telegram.Controls.Messages
 
         private bool _light;
         private NameColor _accent;
-
-        public void ToLightState()
-        {
-            if (_light is false)
-            {
-                _light = true;
-                VisualStateManager.GoToState(this, "LightState", false);
-
-                Foreground =
-                    SubtleBrush =
-                    HeaderBrush =
-                    BorderBrush = new SolidColorBrush(Colors.White);
-
-                if (AccentDash != null)
-                {
-                    AccentDash.Stripe1 = null;
-                    AccentDash.Stripe2 = null;
-                }
-
-                Margin = new Thickness(-8, -6, -8, -6);
-            }
-        }
-
-        public void ToNormalState()
-        {
-            if (_light)
-            {
-                _light = false;
-                VisualStateManager.GoToState(this, "NormalState", false);
-
-                ClearValue(ForegroundProperty);
-                ClearValue(SubtleBrushProperty);
-
-                var accent = _accent;
-                if (accent != null)
-                {
-                    HeaderBrush =
-                        BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
-
-                    AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
-                        ? new SolidColorBrush(accent.LightThemeColors[1])
-                        : null;
-                    AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
-                        ? new SolidColorBrush(accent.LightThemeColors[2])
-                        : null;
-                }
-                else
-                {
-                    ClearValue(HeaderBrushProperty);
-                    ClearValue(BorderBrushProperty);
-
-                    AccentDash.Stripe1 = null;
-                    AccentDash.Stripe2 = null;
-                }
-
-                Margin = new Thickness(0, 4, 0, 4);
-            }
-        }
 
         #region Overrides
 
@@ -278,7 +215,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        protected override void SetText(IClientService clientService, bool outgoing, MessageSender messageSender, string title, string service, FormattedText text, bool quote)
+        protected override void SetText(IClientService clientService, bool outgoing, MessageSender messageSender, string title, string service, FormattedText text, bool quote, bool white)
         {
             if (TitleLabel != null)
             {
@@ -318,10 +255,8 @@ namespace Telegram.Controls.Messages
                     Pattern.Source = null;
                 }
 
-                if (_light)
+                if (white && !_light)
                 {
-                    VisualStateManager.GoToState(this, "LightState", false);
-
                     Foreground =
                         SubtleBrush =
                         HeaderBrush =
@@ -332,10 +267,8 @@ namespace Telegram.Controls.Messages
 
                     Margin = new Thickness(-8, -6, -8, -6);
                 }
-                else
+                else if (_accent != accent && !white)
                 {
-                    VisualStateManager.GoToState(this, "NormalState", false);
-
                     ClearValue(ForegroundProperty);
                     ClearValue(SubtleBrushProperty);
 
@@ -363,7 +296,8 @@ namespace Telegram.Controls.Messages
                     Margin = new Thickness(0, 4, 0, 4);
                 }
 
-                _accent = accent;
+                _accent = white ? null : accent;
+                _light = white;
 
                 MessageLabel.Inlines.Clear();
 
