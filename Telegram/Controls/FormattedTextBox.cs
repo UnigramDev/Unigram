@@ -104,6 +104,7 @@ namespace Telegram.Controls
         private void OnTextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
         {
             _fromTextChanging = true;
+            _isEmpty = null;
 
             if (args.IsContentChanging)
             {
@@ -907,21 +908,22 @@ namespace Telegram.Controls
         }
 
         protected bool _wasEmpty;
-        public virtual bool IsEmpty
+
+        private bool? _isEmpty = true;
+        public virtual bool IsEmpty => _isEmpty ??= GetIsEmpty();
+
+        private bool GetIsEmpty()
         {
-            get
+            var end = Document.GetRange(int.MaxValue, int.MaxValue);
+            var empty = end.EndPosition == 0;
+
+            if (empty && !_wasEmpty)
             {
-                var end = Document.GetRange(int.MaxValue, int.MaxValue);
-                var empty = end.EndPosition == 0;
-
-                if (empty && !_wasEmpty)
-                {
-                    Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
-                }
-
-                _wasEmpty = empty;
-                return empty;
+                Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
             }
+
+            _wasEmpty = empty;
+            return empty;
         }
 
         public bool CanPasteClipboardContent => Document.Selection.CanPaste(0);
