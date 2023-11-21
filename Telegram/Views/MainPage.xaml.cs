@@ -1244,22 +1244,14 @@ namespace Telegram.Views
             }
             else
             {
-                var already = ViewModel.Chats.Items.FirstOrDefault(x => x.Id == ViewModel.Chats.SelectedItem);
-                if (already == null)
-                {
-                    return;
-                }
-
-                index = ViewModel.Chats.Items.IndexOf(already) + offset;
+                index = ChatsList.SelectedIndex + offset;
             }
 
             if (index >= 0 && index < ViewModel.Chats.Items.Count)
             {
-                ChatsList.SelectedIndex = index;
-
                 if (navigate)
                 {
-                    Navigate(ChatsList.SelectedItem);
+                    Navigate(ViewModel.Chats.Items[index]);
                 }
             }
             else if (index < 0 && offset == -1 && !navigate)
