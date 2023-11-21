@@ -537,15 +537,8 @@ namespace Telegram.ViewModels
 
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
 
-                //var first = Items.FirstOrDefault(x => x.Id != 0);
-                //if (first is TLMessage firstMessage && firstMessage.Media is TLMessageMediaGroup groupMedia)
-                //{
-                //    first = groupMedia.Layout.Messages.FirstOrDefault();
-                //}
-
-                //var maxId = first?.Id ?? int.MaxValue;
-                var maxId = Items.FirstOrDefault(x => x != null && x.Id != 0)?.Id;
-                if (maxId == null)
+                var maxId = Items.FirstId;
+                if (maxId == long.MaxValue)
                 {
                     _isLoadingNextSlice = false;
                     IsLoading = false;
@@ -558,42 +551,52 @@ namespace Telegram.ViewModels
                 Function func;
                 if (_topic != null)
                 {
-                    func = new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, maxId.Value, 0, 50);
+                    func = new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, maxId, 0, 50);
                 }
                 else if (ThreadId != 0)
                 {
-                    func = new GetMessageThreadHistory(chat.Id, ThreadId, maxId.Value, 0, 50);
+                    func = new GetMessageThreadHistory(chat.Id, ThreadId, maxId, 0, 50);
                 }
                 else if (_type == DialogType.Pinned)
                 {
-                    func = new SearchChatMessages(chat.Id, string.Empty, null, maxId.Value, 0, 50, new SearchMessagesFilterPinned(), 0);
+                    func = new SearchChatMessages(chat.Id, string.Empty, null, maxId, 0, 50, new SearchMessagesFilterPinned(), 0);
                 }
                 else
                 {
-                    func = new GetChatHistory(chat.Id, maxId.Value, 0, 50, false);
+                    func = new GetChatHistory(chat.Id, maxId, 0, 50, false);
                 }
 
-                var response = await ClientService.SendAsync(func);
-                if (response is FoundChatMessages foundChatMessages)
+                var tsc = new TaskCompletionSource<MessageCollection>();
+                void handler(BaseObject result)
                 {
-                    response = new Messages(foundChatMessages.TotalCount, foundChatMessages.Messages);
-                }
-
-                if (response is Messages messages)
-                {
-                    if (_chat?.Id != chat.Id)
+                    if (result is FoundChatMessages foundChatMessages)
                     {
-                        _isLoadingNextSlice = false;
-                        IsLoading = false;
-
-                        return;
+                        result = new Messages(foundChatMessages.TotalCount, foundChatMessages.Messages);
                     }
 
-                    var replied = new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => CreateMessage(x)));
+                    if (result is Messages messages)
+                    {
+                        var replied = new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => CreateMessage(x)));
+                        if (replied.Count > 0)
+                        {
+                            ProcessMessages(chat, replied);
+                        }
+
+                        tsc.SetResult(replied);
+                    }
+                    else
+                    {
+                        tsc.SetResult(null);
+                    }
+                }
+
+                ClientService.Send(func, handler);
+
+                var response = await tsc.Task;
+                if (response is MessageCollection replied)
+                {
                     if (replied.Count > 0)
                     {
-                        ProcessMessages(chat, replied);
-
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                         Items.RawInsertRange(0, replied, true, out bool empty);
                     }
@@ -608,7 +611,7 @@ namespace Telegram.ViewModels
                 _isLoadingNextSlice = false;
                 IsLoading = false;
 
-                LoadPinnedMessagesSliceAsync(maxId.Value, VerticalAlignment.Top);
+                LoadPinnedMessagesSliceAsync(maxId, VerticalAlignment.Top);
             }
         }
 
@@ -638,8 +641,8 @@ namespace Telegram.ViewModels
 
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
 
-                var maxId = Items.LastOrDefault(x => x != null && x.Id != 0)?.Id;
-                if (maxId == null)
+                var maxId = Items.LastId;
+                if (maxId == long.MinValue)
                 {
                     _isLoadingPreviousSlice = false;
                     IsLoading = false;
@@ -650,42 +653,52 @@ namespace Telegram.ViewModels
                 Function func;
                 if (_topic != null)
                 {
-                    func = new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, maxId.Value, -49, 50);
+                    func = new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, maxId, -49, 50);
                 }
                 else if (ThreadId != 0)
                 {
-                    func = new GetMessageThreadHistory(chat.Id, ThreadId, maxId.Value, -49, 50);
+                    func = new GetMessageThreadHistory(chat.Id, ThreadId, maxId, -49, 50);
                 }
                 else if (_type == DialogType.Pinned)
                 {
-                    func = new SearchChatMessages(chat.Id, string.Empty, null, maxId.Value, -49, 50, new SearchMessagesFilterPinned(), 0);
+                    func = new SearchChatMessages(chat.Id, string.Empty, null, maxId, -49, 50, new SearchMessagesFilterPinned(), 0);
                 }
                 else
                 {
-                    func = new GetChatHistory(chat.Id, maxId.Value, -49, 50, false);
+                    func = new GetChatHistory(chat.Id, maxId, -49, 50, false);
                 }
 
-                var response = await ClientService.SendAsync(func);
-                if (response is FoundChatMessages foundChatMessages)
+                var tsc = new TaskCompletionSource<MessageCollection>();
+                void handler(BaseObject result)
                 {
-                    response = new Messages(foundChatMessages.TotalCount, foundChatMessages.Messages);
-                }
-
-                if (response is Messages messages)
-                {
-                    if (_chat?.Id != chat.Id)
+                    if (result is FoundChatMessages foundChatMessages)
                     {
-                        _isLoadingPreviousSlice = false;
-                        IsLoading = false;
-
-                        return;
+                        result = new Messages(foundChatMessages.TotalCount, foundChatMessages.Messages);
                     }
 
-                    var replied = new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => CreateMessage(x)));
+                    if (result is Messages messages)
+                    {
+                        var replied = new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => CreateMessage(x)));
+                        if (replied.Count > 0)
+                        {
+                            ProcessMessages(chat, replied);
+                        }
+
+                        tsc.SetResult(replied);
+                    }
+                    else
+                    {
+                        tsc.SetResult(null);
+                    }
+                }
+
+                ClientService.Send(func, handler);
+
+                var response = await tsc.Task;
+                if (response is MessageCollection replied)
+                {
                     if (replied.Count > 0)
                     {
-                        ProcessMessages(chat, replied);
-
                         SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                         Items.RawAddRange(replied, true, out bool empty);
                     }
@@ -700,7 +713,7 @@ namespace Telegram.ViewModels
                 _isLoadingPreviousSlice = false;
                 IsLoading = false;
 
-                LoadPinnedMessagesSliceAsync(maxId.Value, VerticalAlignment.Bottom);
+                LoadPinnedMessagesSliceAsync(maxId, VerticalAlignment.Bottom);
             }
         }
 
@@ -3559,13 +3572,16 @@ namespace Telegram.ViewModels
         private readonly Dictionary<long, MessageViewModel> _messages = new();
 
         private long _first = long.MaxValue;
-        private long _last = long.MaxValue;
+        private long _last = long.MinValue;
 
         private bool _suppressOperations = false;
         private bool _suppressPrev = false;
         private bool _suppressNext = false;
 
         public ICollection<long> Ids => _messages.Keys;
+
+        public long FirstId => _first;
+        public long LastId => _last;
 
         public Action<IEnumerable<MessageViewModel>> AttachChanged;
 
