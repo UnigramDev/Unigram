@@ -229,20 +229,17 @@ namespace Telegram.Common
             return bitmap;
         }
 
-        public static ImageSource GetBlurred(IList<byte> bytes, float amount = 3)
+        public static async void GetBlurred(BitmapImage bitmap, IList<byte> bytes, float amount = 3)
         {
-            var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
                 {
-                    PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(bytes, amount, stream);
-                    bitmap.SetSource(stream);
+                    await Task.Run(() => PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(bytes, amount, stream));
+                    await bitmap.SetSourceAsync(stream);
                 }
                 catch { }
             }
-
-            return bitmap;
         }
 
         public static async Task<ImageSource> GetBlurredAsync(IList<byte> bytes, float amount = 3)

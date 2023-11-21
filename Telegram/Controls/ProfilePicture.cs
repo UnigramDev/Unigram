@@ -16,6 +16,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls
 {
@@ -301,11 +302,15 @@ namespace Telegram.Controls
 
             if (story.Content is StoryContentPhoto photo && photo.Photo.Minithumbnail != null)
             {
-                return PlaceholderHelper.GetBlurred(photo.Photo.Minithumbnail.Data);
+                var bitmap = new BitmapImage();
+                PlaceholderHelper.GetBlurred(bitmap, photo.Photo.Minithumbnail.Data);
+                return bitmap;
             }
             else if (story.Content is StoryContentVideo video && video.Video.Minithumbnail != null)
             {
-                return PlaceholderHelper.GetBlurred(video.Video.Minithumbnail.Data);
+                var bitmap = new BitmapImage();
+                PlaceholderHelper.GetBlurred(bitmap, video.Video.Minithumbnail.Data);
+                return bitmap;
             }
 
             return null;
@@ -394,7 +399,9 @@ namespace Telegram.Controls
 
             if (chat.Photo?.Minithumbnail != null)
             {
-                return PlaceholderHelper.GetBlurred(chat.Photo.Minithumbnail.Data);
+                var bitmap = new BitmapImage();
+                PlaceholderHelper.GetBlurred(bitmap, chat.Photo.Minithumbnail.Data);
+                return bitmap;
             }
 
             return PlaceholderImage.GetChat(clientService, chat);
@@ -465,7 +472,9 @@ namespace Telegram.Controls
 
             if (user.ProfilePhoto?.Minithumbnail != null)
             {
-                return PlaceholderHelper.GetBlurred(user.ProfilePhoto.Minithumbnail.Data);
+                var bitmap = new BitmapImage();
+                PlaceholderHelper.GetBlurred(bitmap, user.ProfilePhoto.Minithumbnail.Data);
+                return bitmap;
             }
 
             return PlaceholderImage.GetUser(clientService, user);
@@ -525,7 +534,9 @@ namespace Telegram.Controls
 
             if (chat.Photo?.Minithumbnail != null)
             {
-                return PlaceholderHelper.GetBlurred(chat.Photo.Minithumbnail.Data);
+                var bitmap = new BitmapImage();
+                PlaceholderHelper.GetBlurred(bitmap, chat.Photo.Minithumbnail.Data);
+                return bitmap;
             }
 
             return PlaceholderImage.GetChat(clientService, chat);
@@ -584,7 +595,9 @@ namespace Telegram.Controls
 
             if (photo.Minithumbnail != null)
             {
-                return PlaceholderHelper.GetBlurred(photo.Minithumbnail.Data);
+                var bitmap = new BitmapImage();
+                PlaceholderHelper.GetBlurred(bitmap, photo.Minithumbnail.Data);
+                return bitmap;
             }
 
             return null;
