@@ -72,8 +72,8 @@ namespace Telegram.ViewModels
 
         protected readonly IMessageDelegate _messageDelegate;
 
-        protected readonly DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadMention> _mentions;
-        protected readonly DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadReaction> _reactions;
+        protected readonly DialogUnreadMessagesViewModel _mentions;
+        protected readonly DialogUnreadMessagesViewModel _reactions;
 
         protected readonly ILocationService _locationService;
         protected readonly INotificationsService _notificationsService;
@@ -91,9 +91,8 @@ namespace Telegram.ViewModels
 
         public ITranslateService TranslateService => _translateService;
 
-        public DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadMention> Mentions => _mentions;
-
-        public DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadReaction> Reactions => _reactions;
+        public DialogUnreadMessagesViewModel Mentions => _mentions;
+        public DialogUnreadMessagesViewModel Reactions => _reactions;
 
         public IDialogDelegate Delegate { get; set; }
 
@@ -117,8 +116,8 @@ namespace Telegram.ViewModels
 
             _messageDelegate = new DialogMessageDelegate(this);
 
-            _mentions = new DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadMention>(this, true);
-            _reactions = new DialogUnreadMessagesViewModel<SearchMessagesFilterUnreadReaction>(this, false);
+            _mentions = new DialogUnreadMessagesViewModel(this, new SearchMessagesFilterUnreadMention());
+            _reactions = new DialogUnreadMessagesViewModel(this, new SearchMessagesFilterUnreadReaction());
 
             //Items = new LegacyMessageCollection();
             //Items.CollectionChanged += (s, args) => IsEmpty = Items.Count == 0;
@@ -4038,7 +4037,7 @@ namespace Telegram.ViewModels
         }
     }
 
-    public class DialogUnreadMessagesViewModel<T> : BindableBase where T : SearchMessagesFilter
+    public class DialogUnreadMessagesViewModel : BindableBase
     {
         private readonly DialogViewModel _viewModel;
         private readonly SearchMessagesFilter _filter;
@@ -4048,12 +4047,12 @@ namespace Telegram.ViewModels
         private List<long> _messages = new();
         private long _lastMessage;
 
-        public DialogUnreadMessagesViewModel(DialogViewModel viewModel, bool oldToNew)
+        public DialogUnreadMessagesViewModel(DialogViewModel viewModel, SearchMessagesFilter filter)
         {
             _viewModel = viewModel;
-            _filter = Activator.CreateInstance<T>();
+            _filter = filter;
 
-            _oldToNew = oldToNew;
+            _oldToNew = filter is SearchMessagesFilterUnreadMention;
         }
 
         public void SetLastViewedMessage(long messageId)
