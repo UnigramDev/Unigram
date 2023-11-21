@@ -357,18 +357,18 @@ namespace Telegram.Views
             {
                 if (date != 0)
                 {
-                    DateHeader.CommandParameter = null;
+                    DateHeader.Tag = null;
                     DateHeaderLabel.Text = string.Format(Strings.MessageScheduledOn, Formatter.DayGrouping(Formatter.ToLocalTime(date)));
                 }
                 else
                 {
-                    DateHeader.CommandParameter = null;
+                    DateHeader.Tag = null;
                     DateHeaderLabel.Text = Strings.MessageScheduledUntilOnline;
                 }
             }
             else
             {
-                DateHeader.CommandParameter = date;
+                DateHeader.Tag = date;
                 DateHeaderLabel.Text = Formatter.DayGrouping(Formatter.ToLocalTime(date));
             }
         }
