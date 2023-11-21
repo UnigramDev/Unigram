@@ -29,7 +29,7 @@ namespace Telegram.ViewModels
     {
         private readonly ViewModelBase _viewModel;
 
-        protected static readonly ConcurrentDictionary<long, IList<ChatAdministrator>> _admins = new();
+        protected static readonly ConcurrentDictionary<long, IDictionary<long, ChatAdministrator>> _admins = new();
 
         public MessageDelegate(ViewModelBase viewModel)
             : base(viewModel.ClientService, viewModel.Settings, viewModel.Aggregator)
@@ -229,10 +229,9 @@ namespace Telegram.ViewModels
                 return string.Empty;
             }
 
-            if (_admins.TryGetValue(chat.Id, out IList<ChatAdministrator> value))
+            if (_admins.TryGetValue(chat.Id, out IDictionary<long, ChatAdministrator> value))
             {
-                var admin = value.FirstOrDefault(x => x.UserId == userId);
-                if (admin != null)
+                if (value.TryGetValue(userId, out ChatAdministrator admin))
                 {
                     if (string.IsNullOrEmpty(admin.CustomTitle))
                     {
@@ -257,7 +256,7 @@ namespace Telegram.ViewModels
             {
                 if (result is ChatAdministrators users)
                 {
-                    _admins[chatId] = users.Administrators;
+                    _admins[chatId] = users.Administrators.ToDictionary(x => x.UserId);
                 }
             });
         }
