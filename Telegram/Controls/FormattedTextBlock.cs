@@ -313,8 +313,12 @@ namespace Telegram.Controls
                 }
             }
 
+            var direct = XamlDirect.GetDefault();
+            var directBlock = direct.GetXamlDirectObject(TextBlock);
+            var blocks = direct.GetXamlDirectObjectProperty(directBlock, XamlPropertyIndex.RichTextBlock_Blocks);
+
             _codeBlocks.Clear();
-            TextBlock.Blocks.Clear();
+            direct.ClearCollection(blocks);
 
             if (string.IsNullOrEmpty(styled?.Text))
             {
@@ -327,9 +331,7 @@ namespace Telegram.Controls
             var lastFormatted = false;
             var firstFormatted = false;
 
-            var direct = XamlDirect.GetDefault();
             var text = styled.Text;
-
             var workaround = 0;
 
             foreach (var part in styled.Paragraphs)
@@ -372,7 +374,7 @@ namespace Telegram.Controls
                 {
                     if (entity.Offset > previous)
                     {
-                        direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous, entity.Offset - previous), fontSize: fontSize));
+                        direct.AddToCollection(inlines, CreateDirectRun(direct, text.Substring(previous, entity.Offset - previous), fontSize: fontSize));
                     }
 
                     if (entity.Length + entity.Offset > text.Length)
@@ -398,7 +400,7 @@ namespace Telegram.Controls
                         else
                         {
                             direct.SetObjectProperty(paragraph, XamlPropertyIndex.TextElement_FontFamily, new FontFamily("Consolas"));
-                            direct.AddToCollection(inlines, CreateDirectRun(data));
+                            direct.AddToCollection(inlines, CreateDirectRun(direct, data));
 
                             preformatted = true;
                             lastFormatted = true;
@@ -521,13 +523,13 @@ namespace Telegram.Controls
 
                             // TODO: see if there's a better way
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
-                            direct.AddToCollection(inlines, CreateDirectRun(Icons.ZWJ));
+                            direct.AddToCollection(inlines, CreateDirectRun(direct, Icons.ZWJ));
 
                             workaround++;
                         }
                         else
                         {
-                            var run = CreateDirectRun(text.Substring(entity.Offset, entity.Length), fontSize: fontSize);
+                            var run = CreateDirectRun(direct, text.Substring(entity.Offset, entity.Length), fontSize: fontSize);
                             var decorations = TextDecorations.None;
 
                             if (entity.HasFlag(Common.TextStyle.Underline))
@@ -562,12 +564,12 @@ namespace Telegram.Controls
 
                 if (text.Length > previous)
                 {
-                    direct.AddToCollection(inlines, CreateDirectRun(text.Substring(previous), fontSize: fontSize));
+                    direct.AddToCollection(inlines, CreateDirectRun(direct, text.Substring(previous), fontSize: fontSize));
                 }
 
                 // ZWJ is added to workaround a crash caused by emoji ad the end of a paragraph that is being highlighted
-                direct.AddToCollection(inlines, CreateDirectRun(Icons.ZWJ));
-                TextBlock.Blocks.Add(direct.GetObject(paragraph) as Paragraph);
+                direct.AddToCollection(inlines, CreateDirectRun(direct, Icons.ZWJ));
+                direct.AddToCollection(blocks, paragraph);
             }
 
             //Padding = new Thickness(0, firstFormatted ? 4 : 0, 0, 0);
@@ -672,8 +674,8 @@ namespace Telegram.Controls
         }
 
         private IXamlDirectObject CreateDirectRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
+        private IXamlDirectObject CreateDirectRun(XamlDirect direct, string text, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
         {
-            var direct = XamlDirect.GetDefault();
             var run = direct.CreateInstance(XamlTypeIndex.Run);
             direct.SetStringProperty(run, XamlPropertyIndex.Run_Text, text);
 
