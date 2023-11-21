@@ -1164,7 +1164,7 @@
                                                       Click="Commands_Click"
                                                       AllowFocusOnInteraction="False"
                                                       Glyph="&#xE9DC;"
-                                                      Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                                      Visibility="{x:Bind ViewModel.HasBotCommands, Mode=OneWay}"
                                                       FontFamily="{StaticResource TelegramThemeFontFamily}"
                                                       FontSize="{StaticResource GlyphLargeFontSize}"
                                                       VerticalAlignment="Bottom"

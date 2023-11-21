@@ -1099,7 +1099,7 @@ namespace Telegram.Views
 
                 if (ReplyMarkupPanel.Visibility == Visibility.Visible && ButtonMarkup.Visibility == Visibility.Visible)
                 {
-                    CollapseMarkup(false);
+                    ShowHideMarkup(false, false);
                     args.Handled = true;
                 }
 
@@ -1671,7 +1671,7 @@ namespace Telegram.Views
 
             if (e.OneTime)
             {
-                CollapseMarkup(false);
+                ShowHideMarkup(false, false);
             }
         }
 
@@ -1685,39 +1685,50 @@ namespace Telegram.Views
         {
             if (ReplyMarkupPanel.Visibility == Visibility.Visible)
             {
-                CollapseMarkup(true);
+                ShowHideMarkup(false, true);
             }
             else
             {
-                ShowMarkup();
+                ShowHideMarkup(true);
             }
         }
 
-        private void CollapseMarkup(bool keyboard)
+        private bool _markupCollapsed = true;
+
+        public void ShowHideMarkup(bool show, bool keyboard = true)
         {
-            _textShadowVisual.IsVisible = Math.Round(InlinePanel.ActualHeight) > ViewModel.Settings.Appearance.BubbleRadius;
-            ReplyMarkupPanel.Visibility = Visibility.Collapsed;
-
-            ButtonMarkup.Glyph = Icons.BotMarkup24;
-            Automation.SetToolTip(ButtonMarkup, Strings.AccDescrBotCommands);
-
-            if (keyboard)
+            if (_markupCollapsed != show)
             {
-                Focus(FocusState.Programmatic);
-                _focusState.Set(FocusState.Keyboard);
+                return;
             }
-        }
 
-        public void ShowMarkup()
-        {
-            _textShadowVisual.IsVisible = true;
-            ReplyMarkupPanel.Visibility = Visibility.Visible;
+            _markupCollapsed = show;
 
-            ButtonMarkup.Glyph = Icons.ChevronDown;
-            Automation.SetToolTip(ButtonMarkup, Strings.AccDescrShowKeyboard);
+            if (show)
+            {
+                _textShadowVisual.IsVisible = true;
+                ReplyMarkupPanel.Visibility = Visibility.Visible;
 
-            Focus(FocusState.Programmatic);
-            _focusState.Set(FocusState.Programmatic);
+                ButtonMarkup.Glyph = Icons.ChevronDown;
+                Automation.SetToolTip(ButtonMarkup, Strings.AccDescrShowKeyboard);
+
+                Focus(FocusState.Programmatic);
+                _focusState.Set(FocusState.Programmatic);
+            }
+            else
+            {
+                _textShadowVisual.IsVisible = Math.Round(InlinePanel.ActualHeight) > ViewModel.Settings.Appearance.BubbleRadius;
+                ReplyMarkupPanel.Visibility = Visibility.Collapsed;
+
+                ButtonMarkup.Glyph = Icons.BotMarkup24;
+                Automation.SetToolTip(ButtonMarkup, Strings.AccDescrBotCommands);
+
+                if (keyboard)
+                {
+                    Focus(FocusState.Programmatic);
+                    _focusState.Set(FocusState.Keyboard);
+                }
+            }
         }
 
         private void TextField_Tapped(object sender, TappedRoutedEventArgs e)
@@ -3861,6 +3872,15 @@ namespace Telegram.Views
 
         public void UpdateChatReplyMarkup(Chat chat, MessageViewModel message)
         {
+            void SetReadOnly(bool readOnly)
+            {
+                if (_isTextReadOnly != readOnly)
+                {
+                    _isTextReadOnly = readOnly;
+                    TextField.IsReadOnly = readOnly;
+                }
+            }
+
             if (message?.ReplyMarkup is ReplyMarkupForceReply forceReply && forceReply.IsPersonal)
             {
                 ViewModel.ReplyToMessage(message);
@@ -3868,26 +3888,16 @@ namespace Telegram.Views
                 if (forceReply.InputFieldPlaceholder.Length > 0)
                 {
                     TextField.PlaceholderText = forceReply.InputFieldPlaceholder;
-
-                    if (_isTextReadOnly != false)
-                    {
-                        _isTextReadOnly = false;
-                        TextField.IsReadOnly = false;
-                    }
+                    SetReadOnly(false);
                 }
                 else
                 {
                     TextField.PlaceholderText = GetPlaceholder(chat, out bool readOnly);
-
-                    if (_isTextReadOnly != readOnly)
-                    {
-                        _isTextReadOnly = readOnly;
-                        TextField.IsReadOnly = readOnly;
-                    }
+                    SetReadOnly(readOnly);
                 }
 
                 ButtonMarkup.Visibility = Visibility.Collapsed;
-                CollapseMarkup(false);
+                ShowHideMarkup(false, false);
             }
             else
             {
@@ -3897,34 +3907,24 @@ namespace Telegram.Views
                     if (message.ReplyMarkup is ReplyMarkupShowKeyboard showKeyboard && showKeyboard.InputFieldPlaceholder.Length > 0)
                     {
                         TextField.PlaceholderText = showKeyboard.InputFieldPlaceholder;
-
-                        if (_isTextReadOnly != false)
-                        {
-                            _isTextReadOnly = false;
-                            TextField.IsReadOnly = false;
-                        }
+                        SetReadOnly(false);
                     }
                     else
                     {
                         TextField.PlaceholderText = GetPlaceholder(chat, out bool readOnly);
-
-                        if (_isTextReadOnly != readOnly)
-                        {
-                            _isTextReadOnly = readOnly;
-                            TextField.IsReadOnly = readOnly;
-                        }
+                        SetReadOnly(readOnly);
                     }
 
                     ButtonMarkup.Visibility = Visibility.Visible;
-                    ShowMarkup();
+                    ShowHideMarkup(true);
                 }
                 else
                 {
                     TextField.PlaceholderText = GetPlaceholder(chat, out bool readOnly);
-                    TextField.IsReadOnly = readOnly;
+                    SetReadOnly(readOnly);
 
                     ButtonMarkup.Visibility = Visibility.Collapsed;
-                    CollapseMarkup(false);
+                    ShowHideMarkup(false, false);
                 }
             }
         }

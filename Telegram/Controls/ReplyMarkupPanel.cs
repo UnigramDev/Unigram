@@ -5,8 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Td.Api;
@@ -44,6 +42,7 @@ namespace Telegram.Controls
     {
         private readonly double _keyboardHeight = 260;
 
+        private bool _empty;
         private bool _oneTime;
 
         private void UpdateSize(ReplyMarkup markup, bool inline)
@@ -70,35 +69,35 @@ namespace Telegram.Controls
 
         public bool Update(MessageViewModel message, ReplyMarkup markup, bool inline = true)
         {
-            //var inline = Message is TLMessage;
-            //var inline = true;
-            var resize = false;
-            var oneTime = false;
-
-            // PERF: This should be optimized, each execution with an actual keyboard takes >1ms
-            List<List<object>> rows = null;
-            if (markup is ReplyMarkupShowKeyboard keyboardMarkup && !inline)
+            if (_empty && (message == null || markup == null))
             {
-                rows = keyboardMarkup.Rows.Select(x => x.Select(y => y as object).ToList()).ToList();
-                resize = keyboardMarkup.ResizeKeyboard;
-                oneTime = keyboardMarkup.OneTime;
-            }
-            else if (markup is ReplyMarkupInlineKeyboard inlineMarkup && inline)
-            {
-                rows = inlineMarkup.Rows.Select(x => x.Select(y => y as object).ToList()).ToList();
-
-                //if (!double.IsNaN(Height))
-                //{
-                //    Height = double.NaN;
-                //}
+                return false;
             }
 
-            _oneTime = oneTime;
-            Tag = message;
+            _empty = message == null || markup == null;
 
             UpdateSize(markup, inline);
             Children.Clear();
             RowDefinitions.Clear();
+
+            if (markup is ReplyMarkupShowKeyboard keyboardMarkup && !inline)
+            {
+                return Update(message, keyboardMarkup);
+            }
+            else if (markup is ReplyMarkupInlineKeyboard inlineMarkup && inline)
+            {
+                return Update(message, inlineMarkup);
+            }
+
+            return false;
+        }
+
+        public bool Update(MessageViewModel message, ReplyMarkupInlineKeyboard inlineMarkup)
+        {
+            var rows = inlineMarkup.Rows;
+
+            _oneTime = false;
+            Tag = message;
 
             var receipt = false;
             if (message != null && message.Content is MessageInvoice invoice)
@@ -111,122 +110,151 @@ namespace Telegram.Controls
                 }
             }
 
-            if (rows != null && ((inline && markup is ReplyMarkupInlineKeyboard) || (!inline && markup is ReplyMarkupShowKeyboard)))
+            for (int j = 0; j < rows.Count; j++)
             {
-                for (int j = 0; j < rows.Count; j++)
+                var row = rows[j];
+
+                var panel = new ReplyMarkupRow();
+                panel.HorizontalAlignment = HorizontalAlignment.Stretch;
+                panel.VerticalAlignment = VerticalAlignment.Stretch;
+                panel.Margin = new Thickness(-1, 0, -1, 0);
+
+                for (int i = 0; i < row.Count; i++)
                 {
-                    var row = rows[j];
+                    var item = row[i];
+                    var button = new GlyphButton();
+                    button.Tag = item;
+                    button.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    button.VerticalAlignment = VerticalAlignment.Stretch;
+                    button.Click += Button_Click;
 
-                    var panel = new ReplyMarkupRow();
-                    panel.HorizontalAlignment = HorizontalAlignment.Stretch;
-                    panel.VerticalAlignment = VerticalAlignment.Stretch;
-                    panel.Margin = new Thickness(-1, 0, -1, 0);
+                    button.Style = BootStrapper.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
+                    button.Margin = new Thickness(1, 2, 1, 0);
 
-                    for (int i = 0; i < row.Count; i++)
+                    button.Content = item.Text;
+
+                    switch (item.Type)
                     {
-                        var button = new GlyphButton();
-                        button.Tag = row[i];
-                        button.HorizontalAlignment = HorizontalAlignment.Stretch;
-                        button.VerticalAlignment = VerticalAlignment.Stretch;
-                        button.Click += Button_Click;
+                        case InlineKeyboardButtonTypeUrl typeUrl:
+                            button.Glyph = "\uE9B7";
+                            ToolTipService.SetToolTip(button, typeUrl.Url);
+                            break;
+                        case InlineKeyboardButtonTypeLoginUrl:
+                            button.Glyph = "\uE9B7";
+                            break;
+                        case InlineKeyboardButtonTypeSwitchInline:
+                            button.Glyph = "\uEE35";
+                            break;
+                        case InlineKeyboardButtonTypeBuy:
+                            button.Glyph = Icons.Payment16;
 
-                        if (inline)
-                        {
-                            button.Style = BootStrapper.Current.Resources["ReplyInlineMarkupButtonStyle"] as Style;
-                            button.Margin = new Thickness(1, 2, 1, 0);
-                        }
-                        else
-                        {
-                            button.Style = BootStrapper.Current.Resources["ReplyKeyboardMarkupButtonStyle"] as Style;
-                            button.Margin = new Thickness(4, 8, 4, 0);
-                            button.Height = resize ? 36 : double.NaN;
-                        }
-
-                        if (row[i] is InlineKeyboardButton inlineButton)
-                        {
-                            button.Content = inlineButton.Text;
-
-                            if (inlineButton.Type is InlineKeyboardButtonTypeUrl typeUrl)
+                            if (receipt)
                             {
-                                button.Glyph = "\uE9B7";
-                                ToolTipService.SetToolTip(button, typeUrl.Url);
+                                button.Content = Strings.PaymentReceipt;
                             }
-                            else if (inlineButton.Type is InlineKeyboardButtonTypeLoginUrl loginUrl)
-                            {
-                                button.Glyph = "\uE9B7";
-                            }
-                            else if (inlineButton.Type is InlineKeyboardButtonTypeSwitchInline)
-                            {
-                                button.Glyph = "\uEE35";
-                            }
-                            else if (inlineButton.Type is InlineKeyboardButtonTypeBuy)
-                            {
-                                button.Glyph = Icons.Payment16;
-
-                                if (receipt)
-                                {
-                                    button.Content = Strings.PaymentReceipt;
-                                }
-                            }
-                            else if (inlineButton.Type is InlineKeyboardButtonTypeWebApp)
-                            {
-                                button.Glyph = Icons.Window16;
-                            }
-                        }
-                        else if (row[i] is KeyboardButton keyboardButton)
-                        {
-                            button.Content = keyboardButton.Text;
-
-                            if (keyboardButton.Type is KeyboardButtonTypeWebApp)
-                            {
-                                button.Glyph = Icons.Window16;
-                            }
-                        }
-
-                        if (inline)
-                        {
-                            var topLeft = 4d;
-                            var topRight = 4d;
-                            var bottomRight = 4d;
-                            var bottomLeft = 4d;
-
-                            if (j == rows.Count - 1)
-                            {
-                                if (i == 0)
-                                {
-                                    bottomLeft = CornerRadius.BottomLeft;
-                                }
-
-                                if (i == row.Count - 1)
-                                {
-                                    bottomRight = CornerRadius.BottomRight;
-                                }
-                            }
-
-                            button.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
-                        }
-
-                        panel.Children.Add(button);
+                            break;
+                        case InlineKeyboardButtonTypeWebApp:
+                            button.Glyph = Icons.Window16;
+                            break;
                     }
 
-                    SetRow(panel, j);
+                    var topLeft = 4d;
+                    var topRight = 4d;
+                    var bottomRight = 4d;
+                    var bottomLeft = 4d;
 
-                    RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, resize ? GridUnitType.Auto : GridUnitType.Star) });
-                    Children.Add(panel);
+                    if (j == rows.Count - 1)
+                    {
+                        if (i == 0)
+                        {
+                            bottomLeft = CornerRadius.BottomLeft;
+                        }
+
+                        if (i == row.Count - 1)
+                        {
+                            bottomRight = CornerRadius.BottomRight;
+                        }
+                    }
+
+                    button.CornerRadius = new CornerRadius(topLeft, topRight, bottomRight, bottomLeft);
+
+                    panel.Children.Add(button);
                 }
 
-                if (Children.Count > 0 && !inline)
+                SetRow(panel, j);
+
+                RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+                Children.Add(panel);
+            }
+
+            return false;
+        }
+
+        public bool Update(MessageViewModel message, ReplyMarkupShowKeyboard keyboardMarkup)
+        {
+            var rows = keyboardMarkup.Rows;
+            var resize = keyboardMarkup.ResizeKeyboard;
+            var oneTime = keyboardMarkup.OneTime;
+
+            _oneTime = oneTime;
+            Tag = message;
+
+            var receipt = false;
+            if (message != null && message.Content is MessageInvoice invoice)
+            {
+                receipt = invoice.ReceiptMessageId != 0;
+
+                if (invoice.ExtendedMedia is not MessageExtendedMediaUnsupported and not null)
                 {
-                    Padding = new Thickness(0, 0, 0, 4);
-                    return true;
-                }
-                else if (!inline)
-                {
-                    Padding = new Thickness();
-                    return false;
+                    rows = null;
                 }
             }
 
+            for (int j = 0; j < rows.Count; j++)
+            {
+                var row = rows[j];
+
+                var panel = new ReplyMarkupRow();
+                panel.HorizontalAlignment = HorizontalAlignment.Stretch;
+                panel.VerticalAlignment = VerticalAlignment.Stretch;
+                panel.Margin = new Thickness(-1, 0, -1, 0);
+
+                for (int i = 0; i < row.Count; i++)
+                {
+                    var item = row[i];
+                    var button = new GlyphButton();
+                    button.Tag = item;
+                    button.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    button.VerticalAlignment = VerticalAlignment.Stretch;
+                    button.Click += Button_Click;
+
+                    button.Style = BootStrapper.Current.Resources["ReplyKeyboardMarkupButtonStyle"] as Style;
+                    button.Margin = new Thickness(4, 8, 4, 0);
+                    button.Height = resize ? 36 : double.NaN;
+
+                    button.Content = item.Text;
+
+                    if (item.Type is KeyboardButtonTypeWebApp)
+                    {
+                        button.Glyph = Icons.Window16;
+                    }
+
+                    panel.Children.Add(button);
+                }
+
+                SetRow(panel, j);
+
+                RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, resize ? GridUnitType.Auto : GridUnitType.Star) });
+                Children.Add(panel);
+            }
+
+            if (Children.Count > 0)
+            {
+                Padding = new Thickness(0, 0, 0, 4);
+                return true;
+            }
+
+            Padding = new Thickness();
             return false;
         }
 
