@@ -983,8 +983,6 @@ namespace Telegram.Controls.Messages
                     ForwardLabel.Inlines.Add(hyperlink);
                     ForwardLabel.Visibility = Visibility.Visible;
                 }
-
-                shown = true;
             }
             else if (message.ForwardInfo != null && !message.IsSaved)
             {
@@ -1105,6 +1103,11 @@ namespace Telegram.Controls.Messages
                     UnloadObject(ref AdminLabel);
                 }
 
+                if (shown is false)
+                {
+                    Identity?.ClearStatus();
+                }
+
                 HeaderPanel.Visibility = Visibility.Visible;
                 Header.Visibility = Visibility.Visible;
 
@@ -1128,6 +1131,7 @@ namespace Telegram.Controls.Messages
                 if (HeaderPanel != null)
                 {
                     HeaderPanel.Visibility = Visibility.Collapsed;
+                    Identity.ClearStatus();
                 }
 
                 Header.Visibility = (message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden) || ForwardLabel?.Inlines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
