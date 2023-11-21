@@ -303,6 +303,16 @@ namespace Telegram.Controls
                 return;
             }
 
+            // PERF: fast path if both model and view have one paragraph with one run
+            if (styled != null && styled.Paragraphs.Count == 1 && styled.Paragraphs[0].Entities.Count == 0 && styled.Text.Length > 0)
+            {
+                if (TextBlock.Blocks.Count == 1 && TextBlock.Blocks[0] is Paragraph paragraph && paragraph.Inlines.Count == 1 && paragraph.Inlines[0] is Run run)
+                {
+                    run.Text = styled.Text;
+                    return;
+                }
+            }
+
             _codeBlocks.Clear();
             TextBlock.Blocks.Clear();
 
