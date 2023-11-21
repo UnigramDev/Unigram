@@ -1063,15 +1063,22 @@ namespace Telegram.Common
     {
         public static BitmapImage ToBitmap(string path, int width, int height)
         {
-            return new BitmapImage(ToLocal(path)) { DecodePixelWidth = width, DecodePixelHeight = height, DecodePixelType = DecodePixelType.Logical };
+            return new BitmapImage(ToLocal(path))
+            {
+                DecodePixelWidth = width,
+                DecodePixelHeight = height,
+                DecodePixelType = DecodePixelType.Logical
+            };
         }
 
         public static Uri ToLocal(string path)
         {
-            //return new Uri("file:///" + Uri.EscapeUriString(path.Replace('\\', '/')));
+            //var directory = Path.GetDirectoryName(path);
+            //var file = Path.GetFileName(path);
 
-            var directory = Path.GetDirectoryName(path);
-            var file = Path.GetFileName(path);
+            var index = path.LastIndexOf('\\');
+            var directory = path.Substring(0, index);
+            var file = path.Substring(index + 1);
 
             return new Uri("file:///" + directory + "\\" + Uri.EscapeUriString(file));
         }
