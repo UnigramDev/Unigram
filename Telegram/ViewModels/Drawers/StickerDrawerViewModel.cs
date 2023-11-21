@@ -43,6 +43,7 @@ namespace Telegram.ViewModels.Drawers
         private long _groupSetId;
         private long _groupSetChatId;
 
+        private bool _activated;
         private bool _updated;
         private bool _updating;
 
@@ -211,7 +212,7 @@ namespace Telegram.ViewModels.Drawers
 
         public void Handle(UpdateInstalledStickerSets update)
         {
-            if (update.StickerType is not StickerTypeRegular || _updating || !_updated)
+            if (update.StickerType is not StickerTypeRegular || _updating || !_updated || !_activated)
             {
                 return;
             }
@@ -312,6 +313,7 @@ namespace Telegram.ViewModels.Drawers
                 return;
             }
 
+            _activated = true;
             _updated = true;
             _updating = true;
 
