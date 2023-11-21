@@ -402,7 +402,7 @@ namespace Telegram.Controls.Chats
             return context;
         }
 
-        private static unsafe WriteableBitmap GenerateGradient(WriteableBitmap context, Color[] colors, Vector2[] positions)
+        private static unsafe void GenerateGradient(WriteableBitmap context, Color[] colors, Vector2[] positions)
         {
             var width = context.PixelWidth;
             var height = context.PixelHeight;
@@ -461,8 +461,6 @@ namespace Telegram.Controls.Chats
                     pixelBytes[3] = 0xff;
                 }
             }
-
-            return context;
         }
 
         public static unsafe byte[] GenerateGradientData(int width, int height, Color[] colors, Vector2[] positions)

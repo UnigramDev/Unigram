@@ -608,7 +608,7 @@ namespace Telegram.Common
 
             foreach (var value in target)
             {
-                var key = value.Key.Substring(0, value.Key.Length - "Brush".Length);
+                var key = value.Key[..^5];
                 if (values.TryGetValue($"{key}Outgoing", out Color color))
                 {
                     value.Value.Brush.Color = color;
@@ -726,7 +726,7 @@ namespace Telegram.Common
 
             foreach (var value in target)
             {
-                var key = value.Key.Substring(0, value.Key.Length - "Brush".Length);
+                var key = value.Key[..^5];
                 if (values.TryGetValue($"{key}Incoming", out Color color))
                 {
                     value.Value.Brush.Color = color;

@@ -434,6 +434,8 @@ namespace Telegram.Td.Api
             }
             else if (fill is BackgroundFillFreeformGradient freeformGradient)
             {
+                // PERF: ChatBackgroundFreeform.Create is not the fastest,
+                // would be better to execute it asynchronously.
                 return new ImageBrush
                 {
                     ImageSource = ChatBackgroundFreeform.Create(freeformGradient, offset),

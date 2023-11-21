@@ -75,6 +75,7 @@ namespace Telegram.Controls
             var resize = false;
             var oneTime = false;
 
+            // PERF: This should be optimized, each execution with an actual keyboard takes >1ms
             List<List<object>> rows = null;
             if (markup is ReplyMarkupShowKeyboard keyboardMarkup && !inline)
             {

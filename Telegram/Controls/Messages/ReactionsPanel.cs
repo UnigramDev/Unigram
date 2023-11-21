@@ -117,6 +117,7 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
+                    // PERF: run diff asynchronously?
                     var prev = _prevValue ?? Array.Empty<MessageReaction>();
                     var diff = DiffUtil.CalculateDiff(prev, reactions, this, Constants.DiffOptions);
 
