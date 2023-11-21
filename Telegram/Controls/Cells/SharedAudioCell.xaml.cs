@@ -14,7 +14,6 @@ using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Cells
 {
@@ -282,7 +281,7 @@ namespace Telegram.Controls.Cells
                 var width = (int)(thumbnail.Width * ratio);
                 var height = (int)(thumbnail.Height * ratio);
 
-                Texture.Background = new ImageBrush { ImageSource = new BitmapImage(UriEx.ToLocal(file.Local.Path)) { DecodePixelWidth = width, DecodePixelHeight = height }, Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
+                Texture.Background = new ImageBrush { ImageSource = UriEx.ToBitmap(file.Local.Path, width, height), Stretch = Stretch.UniformToFill, AlignmentX = AlignmentX.Center, AlignmentY = AlignmentY.Center };
                 Button.Style = BootStrapper.Current.Resources["ImmersiveFileButtonStyle"] as Style;
             }
             else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)

@@ -1073,12 +1073,20 @@ namespace Telegram.Common
 
         public static Uri ToLocal(string path)
         {
-            //var directory = Path.GetDirectoryName(path);
-            //var file = Path.GetFileName(path);
+            string directory;
+            string file;
 
             var index = path.LastIndexOf('\\');
-            var directory = path.Substring(0, index);
-            var file = path.Substring(index + 1);
+            if (index >= 0)
+            {
+                directory = path.Substring(0, index);
+                file = path.Substring(index + 1);
+            }
+            else
+            {
+                directory = Path.GetDirectoryName(path);
+                file = Path.GetFileName(path);
+            }
 
             return new Uri("file:///" + directory + "\\" + Uri.EscapeUriString(file));
         }
