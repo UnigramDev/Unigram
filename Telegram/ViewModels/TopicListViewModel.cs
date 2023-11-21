@@ -424,10 +424,13 @@ namespace Telegram.ViewModels
 
         public async void SetFilter(Chat chat)
         {
-            await Items.ReloadAsync(chat);
-            //Aggregator.Unsubscribe(Items);
-            //Items = new ItemsCollection(ClientService, Aggregator, this, chatList);
-            //RaisePropertyChanged(nameof(Items));
+            if (chat?.Id != Items.Chat?.Id)
+            {
+                await Items.ReloadAsync(chat);
+                //Aggregator.Unsubscribe(Items);
+                //Items = new ItemsCollection(ClientService, Aggregator, this, chatList);
+                //RaisePropertyChanged(nameof(Items));
+            }
         }
 
         public class ItemsCollection : ObservableCollection<ForumTopic>
