@@ -12,11 +12,14 @@
 #include <winrt/Windows.UI.h>
 #include <winrt/Windows.Storage.Streams.h>
 
+#include <winrt/Telegram.Td.Api.h>
+
 using namespace concurrency;
 using namespace winrt::Windows::UI;
 using namespace winrt::Windows::Foundation::Collections;
 using namespace winrt::Windows::Foundation::Numerics;
 using namespace winrt::Windows::Storage::Streams;
+using namespace winrt::Telegram::Td::Api;
 
 namespace winrt::Telegram::Native::implementation
 {
@@ -59,9 +62,9 @@ namespace winrt::Telegram::Native::implementation
         void DrawThumbnailPlaceholder(hstring fileName, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
         void DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, _In_ IRandomAccessStream randomAccessStream);
 
-        float2 ContentEnd(hstring text, IVector<PlaceholderEntity> entities, double fontSize, double width);
-        IVector<Windows::Foundation::Rect> LineMetrics(hstring text, IVector<PlaceholderEntity> entities, double fontSize, double width, bool rtl);
-        IVector<Windows::Foundation::Rect> RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<PlaceholderEntity> entities, double fontSize, double width, bool rtl);
+        float2 ContentEnd(hstring text, IVector<TextEntity> entities, double fontSize, double width);
+        IVector<Windows::Foundation::Rect> LineMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl);
+        IVector<Windows::Foundation::Rect> RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl);
         //IVector<Windows::Foundation::Rect> EntityMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl);
 
     //internal:

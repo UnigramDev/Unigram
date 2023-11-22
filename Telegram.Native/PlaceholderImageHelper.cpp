@@ -556,7 +556,7 @@ namespace winrt::Telegram::Native::implementation
         return textLayout->GetMetrics(textMetrics);
     }
 
-    float2 PlaceholderImageHelper::ContentEnd(hstring text, IVector<PlaceholderEntity> entities, double fontSize, double width)
+    float2 PlaceholderImageHelper::ContentEnd(hstring text, IVector<TextEntity> entities, double fontSize, double width)
     {
         winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
             L"Segoe UI Emoji",						// font family name
@@ -581,31 +581,32 @@ namespace winrt::Telegram::Native::implementation
             textLayout.put()				// The IDWriteTextLayout interface pointer.
         ));
 
-        for (const PlaceholderEntity& entity : entities)
+        for (const TextEntity& entity : entities)
         {
-            UINT32 startPosition = entity.Offset;
-            UINT32 length = entity.Length;
+            UINT32 startPosition = entity.Offset();
+            UINT32 length = entity.Length();
+            auto type = entity.Type();
 
-            switch (entity.Type)
+            if (type.try_as<TextEntityTypeBold>())
             {
-            case PlaceholderEntityType::Bold:
                 textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length });
-                break;
-            case PlaceholderEntityType::Italic:
+            }
+            else if (type.try_as<TextEntityTypeItalic>())
+            {
                 textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length });
-                break;
-            case PlaceholderEntityType::Strikethrough:
+            }
+            else if (type.try_as<TextEntityTypeStrikethrough>())
+            {
                 textLayout->SetStrikethrough(TRUE, { startPosition, length });
-                break;
-            case PlaceholderEntityType::Underline:
+            }
+            else if (type.try_as<TextEntityTypeUnderline>())
+            {
                 textLayout->SetUnderline(TRUE, { startPosition, length });
-                break;
-            case PlaceholderEntityType::Code:
+            }
+            else if (type.try_as<TextEntityTypeCode>())
+            {
                 textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length });
                 textLayout->SetFontFamilyName(L"Consolas", { startPosition, length });
-                break;
-            default:
-                break;
             }
         }
 
@@ -617,12 +618,12 @@ namespace winrt::Telegram::Native::implementation
         return float2(metrics.left + metrics.width, metrics.top + metrics.height);
     }
 
-    IVector<Windows::Foundation::Rect> PlaceholderImageHelper::LineMetrics(hstring text, IVector<PlaceholderEntity> entities, double fontSize, double width, bool rtl)
+    IVector<Windows::Foundation::Rect> PlaceholderImageHelper::LineMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl)
     {
         return RangeMetrics(text, 0, text.size(), entities, fontSize, width, rtl);
     }
 
-    IVector<Windows::Foundation::Rect> PlaceholderImageHelper::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<PlaceholderEntity> entities, double fontSize, double width, bool rtl)
+    IVector<Windows::Foundation::Rect> PlaceholderImageHelper::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl)
     {
         winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
             L"Segoe UI Emoji",						// font family name
@@ -648,31 +649,32 @@ namespace winrt::Telegram::Native::implementation
             textLayout.put()				// The IDWriteTextLayout interface pointer.
         ));
 
-        for (const PlaceholderEntity& entity : entities)
+        for (const TextEntity& entity : entities)
         {
-            UINT32 startPosition = entity.Offset;
-            UINT32 length = entity.Length;
+            UINT32 startPosition = entity.Offset();
+            UINT32 length = entity.Length();
+            auto type = entity.Type();
 
-            switch (entity.Type)
+            if (type.try_as<TextEntityTypeBold>())
             {
-            case PlaceholderEntityType::Bold:
                 textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length });
-                break;
-            case PlaceholderEntityType::Italic:
+            }
+            else if (type.try_as<TextEntityTypeItalic>())
+            {
                 textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length });
-                break;
-            case PlaceholderEntityType::Strikethrough:
+            }
+            else if (type.try_as<TextEntityTypeStrikethrough>())
+            {
                 textLayout->SetStrikethrough(TRUE, { startPosition, length });
-                break;
-            case PlaceholderEntityType::Underline:
+            }
+            else if (type.try_as<TextEntityTypeUnderline>())
+            {
                 textLayout->SetUnderline(TRUE, { startPosition, length });
-                break;
-            case PlaceholderEntityType::Code:
+            }
+            else if (type.try_as<TextEntityTypeCode>())
+            {
                 textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length });
                 textLayout->SetFontFamilyName(L"Consolas", { startPosition, length });
-                break;
-            default:
-                break;
             }
         }
 

@@ -2406,7 +2406,7 @@ namespace Telegram.Controls.Messages
                         }
 
                         var partial = message.Text.Text.Substring(styled.Offset, styled.Length);
-                        var entities = MessageBubblePanel.ConvertEntities(styled.Entities) ?? Array.Empty<PlaceholderEntity>();
+                        var entities = styled.Entities ?? Array.Empty<TextEntity>();
 
                         var size = styled.Runs.Count > 0 && styled.Runs[0].HasFlag(TextStyle.Quote)
                             ? quoteSize

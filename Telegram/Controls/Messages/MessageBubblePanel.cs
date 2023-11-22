@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Native;
@@ -203,7 +202,9 @@ namespace Telegram.Controls.Messages
                 return Vector2.Zero;
             }
 
-            var formatted = FormatText(caption);
+            var entities = caption.Paragraphs.Count > 0
+                ? caption.Paragraphs[^1].Entities
+                : Array.Empty<TextEntity>();
 
             var text = Children[0] as FormattedTextBlock;
             var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor;
@@ -216,7 +217,7 @@ namespace Telegram.Controls.Messages
 
             try
             {
-                var bounds = PlaceholderImageHelper.Current.ContentEnd(formatted.Text, formatted.Entities, fontSize, width);
+                var bounds = PlaceholderImageHelper.Current.ContentEnd(caption.Text, entities, fontSize, width);
                 if (bounds.Y < text.DesiredSize.Height)
                 {
                     return bounds;
@@ -225,75 +226,6 @@ namespace Telegram.Controls.Messages
             catch { }
 
             return new Vector2(int.MaxValue, 0);
-        }
-
-        private StyledText _prevText;
-        private IList<PlaceholderEntity> _prevTextEntities;
-
-        // Not the most elegant solution
-        private (string Text, IList<PlaceholderEntity> Entities) FormatText(StyledText text)
-        {
-            if (text == _prevText)
-            {
-                return (_prevText.Text, _prevTextEntities);
-            }
-
-            IList<PlaceholderEntity> entities = ConvertEntities(text);
-
-            _prevText = text;
-            _prevTextEntities = entities ?? Array.Empty<PlaceholderEntity>();
-
-            return (text.Text, _prevTextEntities);
-        }
-
-        public static IList<PlaceholderEntity> ConvertEntities(StyledText text)
-        {
-            if (text.Paragraphs.Count == 0)
-            {
-                return null;
-            }
-
-            return ConvertEntities(text.Paragraphs[^1].Entities);
-        }
-
-        public static IList<PlaceholderEntity> ConvertEntities(FormattedText text)
-        {
-            return ConvertEntities(text.Entities);
-        }
-
-        public static IList<PlaceholderEntity> ConvertEntities(IList<TextEntity> items)
-        {
-            IList<PlaceholderEntity> entities = null;
-
-            foreach (var entity in items)
-            {
-                if (entity.Type is TextEntityTypeCustomEmoji
-                    or TextEntityTypeSpoiler
-                    or TextEntityTypeMentionName
-                    or TextEntityTypeTextUrl)
-                {
-                    continue;
-                }
-
-                entities ??= new List<PlaceholderEntity>();
-                entities.Add(new PlaceholderEntity
-                {
-                    Offset = entity.Offset,
-                    Length = entity.Length,
-                    Type = entity.Type switch
-                    {
-                        TextEntityTypeBold => PlaceholderEntityType.Bold,
-                        TextEntityTypeCode => PlaceholderEntityType.Code,
-                        TextEntityTypeItalic => PlaceholderEntityType.Italic,
-                        TextEntityTypePre => PlaceholderEntityType.Code,
-                        TextEntityTypePreCode => PlaceholderEntityType.Code,
-                        TextEntityTypeStrikethrough => PlaceholderEntityType.Strikethrough,
-                        _ => PlaceholderEntityType.Underline
-                    }
-                });
-            }
-
-            return entities;
         }
     }
 }
