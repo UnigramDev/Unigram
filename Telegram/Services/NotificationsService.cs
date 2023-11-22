@@ -759,7 +759,7 @@ namespace Telegram.Services
                 return Strings.YouHaveNewMessage;
             }
 
-            var brief = ChatCell.UpdateBriefLabel(chat, message, false);
+            var brief = ChatCell.UpdateBriefLabel(chat, message, false, true, out _);
             var clean = brief.ReplaceSpoilers();
 
             return ChatCell.UpdateFromLabel(_clientService, chat, message) + clean.Text;

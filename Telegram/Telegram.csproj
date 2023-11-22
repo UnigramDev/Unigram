@@ -213,6 +213,7 @@
     <Compile Include="Controls\Cells\BoostCell.xaml.cs">
       <DependentUpon>BoostCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Td\Api\MinithumbnailId.cs" />
     <Compile Include="Controls\Cells\StoryCell.xaml.cs">
       <DependentUpon>StoryCell.xaml</DependentUpon>
     </Compile>
