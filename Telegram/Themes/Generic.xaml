@@ -2468,10 +2468,6 @@
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <Rectangle x:Name="LightDismiss"
-                                       Fill="Transparent"
-                                       Grid.ColumnSpan="3" />
-
                             <Border x:Name="BackgroundElement"
                                     Background="{TemplateBinding Background}"
                                     FlowDirection="{TemplateBinding FlowDirection}"
@@ -2479,12 +2475,32 @@
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     CornerRadius="{TemplateBinding CornerRadius}"
                                     MaxWidth="{TemplateBinding ContentMaxWidth}"
-                                    MaxHeight="{ThemeResource ContentDialogMaxHeight}"
+                                    MaxHeight="{TemplateBinding ContentMaxHeight}"
                                     MinWidth="320"
                                     MinHeight="{ThemeResource ContentDialogMinHeight}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     RenderTransformOrigin="0.5,0.5"
+                                    Grid.Column="1" />
+
+                            <Rectangle x:Name="LightDismiss"
+                                       Fill="Transparent"
+                                       Grid.ColumnSpan="3" />
+
+                            <Border x:Name="ContentElement"
+                                    Background="Transparent"
+                                    FlowDirection="{TemplateBinding FlowDirection}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="Transparent"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    MaxWidth="{TemplateBinding ContentMaxWidth}"
+                                    MaxHeight="{TemplateBinding ContentMaxHeight}"
+                                    MinWidth="320"
+                                    MinHeight="{ThemeResource ContentDialogMinHeight}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    RenderTransformOrigin="0.5,0.5"
+                                    Margin="0,40,0,40"
                                     Grid.Column="1">
                                 <Border.RenderTransform>
                                     <ScaleTransform x:Name="ScaleTransform" />
@@ -2619,6 +2635,11 @@
                                     </Grid>
                                 </Grid>
                             </Border>
+
+                            <Border x:Name="AnimationElement"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Grid.Column="1" />
                         </Grid>
                     </Border>
                 </ControlTemplate>
