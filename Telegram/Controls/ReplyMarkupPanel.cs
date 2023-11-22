@@ -110,6 +110,11 @@ namespace Telegram.Controls
                 }
             }
 
+            if (rows == null)
+            {
+                return false;
+            }
+
             for (int j = 0; j < rows.Count; j++)
             {
                 var row = rows[j];
