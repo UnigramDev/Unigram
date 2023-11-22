@@ -8,61 +8,27 @@
                     d:DesignHeight="36"
                     mc:Ignorable="d">
 
-    <Style TargetType="local:MessageReferencePattern">
+    <Style TargetType="local:MessageReplyPattern">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:MessageReferencePattern">
-                    <Canvas x:Name="LayoutRoot"
-                            Width="122">
-                        <Image x:Name="Image1"
-                               Canvas.Left="9"
-                               Canvas.Top="5"
-                               Width="20"
-                               Height="20"
-                               Opacity="0.1" />
-                        <Image x:Name="Image2"
-                               Canvas.Left="41"
-                               Canvas.Top="12"
-                               Width="19"
-                               Height="19"
-                               Opacity="0.2" />
-                        <Image x:Name="Image3"
-                               Canvas.Left="64"
-                               Canvas.Top="0"
-                               Width="13"
-                               Height="13"
-                               Opacity="0.2" />
-                        <Image x:Name="Image4"
-                               Canvas.Left="77"
-                               Canvas.Top="18"
-                               Width="15"
-                               Height="15"
-                               Opacity="0.3" />
-                        <Image x:Name="Image5"
-                               Canvas.Left="103"
-                               Canvas.Top="7"
-                               Width="19"
-                               Height="19"
-                               Opacity="0.4" />
-                        <Image x:Name="Image6"
-                               Canvas.Left="23"
-                               Canvas.Top="33"
-                               Width="13"
-                               Height="13"
-                               Opacity="0.2" />
-                        <Image x:Name="Image7"
-                               Canvas.Left="58"
-                               Canvas.Top="37"
-                               Width="19"
-                               Height="19"
-                               Opacity="0.3" />
-                        <Image x:Name="Image8"
-                               Canvas.Left="99"
-                               Canvas.Top="34"
-                               Width="15"
-                               Height="15"
-                               Opacity="0.4" />
-                    </Canvas>
+                <ControlTemplate TargetType="local:MessageReplyPattern">
+                    <Grid Width="122">
+                        <Border x:Name="LayoutRoot" />
+                        <controls:AnimatedImage x:Name="Animated"
+                                                FrameSize="20,20"
+                                                DecodeFrameType="Logical"
+                                                AutoPlay="False"
+                                                IsViewportAware="False"
+                                                ReplacementColor="{TemplateBinding Foreground}"
+                                                Source="{TemplateBinding Source}"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Top"
+                                                Width="20"
+                                                Height="20"
+                                                Margin="9,5,0,0"
+                                                Opacity="0.1"
+                                                IsTabStop="False" />
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -141,17 +107,13 @@
                                    Width="3" />
                         <controls:DashPath x:Name="AccentDash" />
 
-                        <local:MessageReferencePattern x:Name="Pattern"
-                                                       FrameSize="20,20"
-                                                       DecodeFrameType="Logical"
-                                                       AutoPlay="False"
-                                                       IsViewportAware="False"
-                                                       Grid.Column="2"
-                                                       HorizontalAlignment="Right"
-                                                       VerticalAlignment="Top"
-                                                       ReplacementColor="{TemplateBinding BorderBrush}"
-                                                       IsTabStop="False"
-                                                       Margin="0,-3,7,0" />
+                        <local:MessageReplyPattern x:Name="Pattern"
+                                                   Grid.Column="2"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Stretch"
+                                                   Foreground="{TemplateBinding BorderBrush}"
+                                                   IsTabStop="False"
+                                                   Margin="0,-3,7,0" />
 
                         <Border x:Name="ThumbRoot"
                                 x:DeferLoadStrategy="Lazy"

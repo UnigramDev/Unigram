@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Numerics;
 using System.Text;
 using Telegram.Common;
 using Telegram.Controls.Media;
@@ -15,51 +16,91 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages
 {
-    public class MessageReferencePattern : AnimatedImage
+    public class MessageReplyPattern : Control
     {
-        private readonly Image[] _images = new Image[8];
-
-        public MessageReferencePattern()
+        private static readonly Vector4[] _clones = new[]
         {
-            DefaultStyleKey = typeof(MessageReferencePattern);
+            new Vector4(9, 5, 20, 0.1f),
+            new Vector4(41, 12, 19, 0.2f),
+            new Vector4(64, 0, 13, 0.2f),
+            new Vector4(77, 18, 15, 0.3f),
+            new Vector4(103, 7, 19, 0.4f),
+            new Vector4(23, 33, 13, 0.2f),
+            new Vector4(58, 37, 19, 0.3f),
+            new Vector4(99, 34, 15, 0.4f),
+        };
+
+        public MessageReplyPattern()
+        {
+            DefaultStyleKey = typeof(MessageReplyPattern);
         }
 
         protected override void OnApplyTemplate()
         {
-            for (int i = 0; i < _images.Length; i++)
+            var animated = GetTemplateChild("Animated") as AnimatedImage;
+            var layoutRoot = GetTemplateChild("LayoutRoot") as Border;
+
+            var visual = ElementCompositionPreview.GetElementVisual(animated);
+            var compositor = visual.Compositor;
+
+            // Create a VisualSurface positioned at the same location as this control and feed that
+            // through the color effect.
+            var surfaceBrush = compositor.CreateSurfaceBrush();
+            var surface = compositor.CreateVisualSurface();
+
+            // Select the source visual and the offset/size of this control in that element's space.
+            surface.SourceVisual = visual;
+            surface.SourceOffset = new Vector2(0, 0);
+            surface.SourceSize = new Vector2(21, 21);
+            surfaceBrush.HorizontalAlignmentRatio = 0.5f;
+            surfaceBrush.VerticalAlignmentRatio = 0.5f;
+            surfaceBrush.Surface = surface;
+            surfaceBrush.Stretch = CompositionStretch.Fill;
+            surfaceBrush.BitmapInterpolationMode = CompositionBitmapInterpolationMode.NearestNeighbor;
+            surfaceBrush.SnapToPixels = true;
+
+            var container = compositor.CreateContainerVisual();
+            container.Size = new Vector2(122);
+
+            for (int i = 1; i < _clones.Length; i++)
             {
-                _images[i] = GetTemplateChild($"Image{i + 1}") as Image;
+                Vector4 clone = _clones[i];
+
+                var redirect = compositor.CreateSpriteVisual();
+                redirect.Size = new Vector2(clone.Z);
+                redirect.Offset = new Vector3(clone.X, clone.Y, 0);
+                redirect.Opacity = clone.W;
+                redirect.Brush = surfaceBrush;
+
+                container.Children.InsertAtTop(redirect);
             }
 
-            base.OnApplyTemplate();
+            ElementCompositionPreview.SetElementChildVisual(layoutRoot, container);
         }
 
-        public override void Invalidate(ImageSource source)
+        #region Source
+
+        public AnimatedImageSource Source
         {
-            for (int i = 0; i < _images.Length; i++)
-            {
-                _images[i].Source = source;
-            }
-
-            if (_clean && source != null)
-            {
-                _clean = false;
-
-                if (ReplacementColor != null)
-                {
-                    ReplacementColorChanged(true);
-                }
-            }
+            get { return (AnimatedImageSource)GetValue(SourceProperty); }
+            set { SetValue(SourceProperty, value); }
         }
+
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.Register("Source", typeof(AnimatedImageSource), typeof(MessageReplyPattern), new PropertyMetadata(null));
+
+        #endregion
     }
 
     public sealed class MessageReply : MessageReferenceBase
@@ -144,7 +185,7 @@ namespace Telegram.Controls.Messages
         private Border ThumbRoot;
         private Border ThumbEllipse;
         private ImageBrush ThumbImage;
-        private MessageReferencePattern Pattern;
+        private MessageReplyPattern Pattern;
 
         protected override void OnApplyTemplate()
         {
@@ -156,7 +197,7 @@ namespace Telegram.Controls.Messages
             MessageLabel = GetTemplateChild(nameof(MessageLabel)) as Span;
             AccentDash = GetTemplateChild(nameof(AccentDash)) as DashPath;
             Quote = GetTemplateChild(nameof(Quote)) as TextBlock;
-            Pattern = GetTemplateChild(nameof(Pattern)) as MessageReferencePattern;
+            Pattern = GetTemplateChild(nameof(Pattern)) as MessageReplyPattern;
 
             BackgroundOverlay.Margin = new Thickness(0, 0, -Padding.Right, 0);
 
@@ -267,7 +308,7 @@ namespace Telegram.Controls.Messages
 
                     Margin = new Thickness(-8, -6, -8, -6);
                 }
-                else if (_accent != accent && !white)
+                else if ((_accent != accent || _light) && !white)
                 {
                     ClearValue(ForegroundProperty);
                     ClearValue(SubtleBrushProperty);
