@@ -62,16 +62,16 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public sealed class MessageReference : MessageReferenceBase
+    public sealed class MessageReply : MessageReferenceBase
     {
-        public MessageReference()
+        public MessageReply()
         {
-            DefaultStyleKey = typeof(MessageReference);
+            DefaultStyleKey = typeof(MessageReply);
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
-            return new MessageReferenceAutomationPeer(this);
+            return new MessageReplyAutomationPeer(this);
         }
 
         public string GetNameCore()
@@ -112,7 +112,7 @@ namespace Telegram.Controls.Messages
         }
 
         public static readonly DependencyProperty HeaderBrushProperty =
-            DependencyProperty.Register("HeaderBrush", typeof(Brush), typeof(MessageReference), new PropertyMetadata(null));
+            DependencyProperty.Register("HeaderBrush", typeof(Brush), typeof(MessageReply), new PropertyMetadata(null));
 
         #endregion
 
@@ -125,7 +125,7 @@ namespace Telegram.Controls.Messages
         }
 
         public static readonly DependencyProperty SubtleBrushProperty =
-            DependencyProperty.Register("SubtleBrush", typeof(Brush), typeof(MessageReference), new PropertyMetadata(null));
+            DependencyProperty.Register("SubtleBrush", typeof(Brush), typeof(MessageReply), new PropertyMetadata(null));
 
         #endregion
 
@@ -392,11 +392,11 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public class MessageReferenceAutomationPeer : HyperlinkButtonAutomationPeer
+    public class MessageReplyAutomationPeer : HyperlinkButtonAutomationPeer
     {
-        private readonly MessageReference _owner;
+        private readonly MessageReply _owner;
 
-        public MessageReferenceAutomationPeer(MessageReference owner)
+        public MessageReplyAutomationPeer(MessageReply owner)
             : base(owner)
         {
             _owner = owner;

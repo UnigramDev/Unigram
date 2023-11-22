@@ -134,7 +134,7 @@ namespace Telegram.Controls.Messages
         private IdentityIcon Identity;
         private GlyphButton PsaInfo;
 
-        private MessageReference Reply;
+        private MessageReply Reply;
 
         private HyperlinkButton Thread;
         private StackPanel RecentRepliers;
@@ -783,7 +783,7 @@ namespace Telegram.Controls.Messages
 
             if (Reply == null && message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden)
             {
-                Reply = GetTemplateChild(nameof(Reply)) as MessageReference;
+                Reply = GetTemplateChild(nameof(Reply)) as MessageReply;
                 Reply.Click += Reply_Click;
 
                 Panel.Reply = Reply;
@@ -2781,7 +2781,7 @@ namespace Telegram.Controls.Messages
                     Reply.Mockup(sender, reply);
                 }
 
-                Reply = GetTemplateChild(nameof(Reply)) as MessageReference;
+                Reply = GetTemplateChild(nameof(Reply)) as MessageReply;
                 Reply.LayoutUpdated += layoutUpdated;
 
                 Panel.Reply = Reply;
@@ -2850,7 +2850,7 @@ namespace Telegram.Controls.Messages
                     }
                 }
 
-                Reply = GetTemplateChild(nameof(Reply)) as MessageReference;
+                Reply = GetTemplateChild(nameof(Reply)) as MessageReply;
                 Reply.LayoutUpdated += layoutUpdated;
 
                 Panel.Reply = Reply;

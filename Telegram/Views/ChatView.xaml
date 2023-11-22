@@ -658,10 +658,10 @@
                               Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
                               Background="{ThemeResource PageSubHeaderBackgroundBrush}"
                               MinHeight="{ThemeResource AppBarThemeCompactHeight}">
-                            <messages:MessageReference x:Name="CallbackQueryAnswer"
-                                                       VerticalAlignment="Stretch"
-                                                       Padding="12,6"
-                                                       IsHitTestVisible="False" />
+                            <messages:MessageReply x:Name="CallbackQueryAnswer"
+                                                   VerticalAlignment="Stretch"
+                                                   Padding="12,6"
+                                                   IsHitTestVisible="False" />
                         </Grid>
 
                         <Border x:Name="DateHeaderRelative"
@@ -1022,11 +1022,11 @@
                                 Margin="0,0,4,-4"
                                 Grid.Column="1"
                                 Grid.ColumnSpan="2">
-                            <messages:MessageReference x:Name="ComposerHeaderReference"
-                                                       Click="Reply_Click"
-                                                       ContextRequested="Reply_ContextRequested"
-                                                       CornerRadius="4,13,4,4"
-                                                       Padding="0,0,40,0" />
+                            <messages:MessageReply x:Name="ComposerHeaderReference"
+                                                   Click="Reply_Click"
+                                                   ContextRequested="Reply_ContextRequested"
+                                                   CornerRadius="4,13,4,4"
+                                                   Padding="0,0,40,0" />
                         </Border>
                         <FontIcon x:Name="ComposerHeaderGlyph"
                                   Foreground="{ThemeResource MessageHeaderBorderBrush}"

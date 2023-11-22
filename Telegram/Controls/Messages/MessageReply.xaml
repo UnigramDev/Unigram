@@ -68,7 +68,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="local:MessageReference">
+    <Style TargetType="local:MessageReply">
         <Setter Property="CornerRadius"
                 Value="4" />
         <Setter Property="BorderThickness"
@@ -97,7 +97,7 @@
                 Value="-3,0" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:MessageReference">
+                <ControlTemplate TargetType="local:MessageReply">
                     <Grid x:Name="LayoutRoot"
                           Background="Transparent"
                           MinHeight="44"

@@ -25,7 +25,7 @@ namespace Telegram.Controls.Messages
         public StyledText Text { get; set; }
 
         // Needed for Measure
-        public MessageReference Reply { get; set; }
+        public MessageReply Reply { get; set; }
 
         private bool _placeholder = true;
         public bool Placeholder

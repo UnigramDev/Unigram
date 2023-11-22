@@ -39,7 +39,7 @@
         <ResourceDictionary Source="ms-appx:///Controls/Messages/Content/UnsupportedContent.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageBubble.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageFooter.xaml" />
-        <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageReference.xaml" />
+        <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageReply.xaml" />
         <ResourceDictionary Source="ms-appx:///Controls/Messages/MessageSelector.xaml" />
     </ResourceDictionary.MergedDictionaries>
 

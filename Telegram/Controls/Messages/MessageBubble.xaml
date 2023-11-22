@@ -259,10 +259,10 @@
                                                       Grid.Column="1"
                                                       Grid.RowSpan="2" />
 
-                                <local:MessageReference x:Name="Reply"
-                                                        x:Load="False"
-                                                        Grid.ColumnSpan="2"
-                                                        Grid.Row="3" />
+                                <local:MessageReply x:Name="Reply"
+                                                    x:Load="False"
+                                                    Grid.ColumnSpan="2"
+                                                    Grid.Row="3" />
                             </Grid>
 
                             <HyperlinkButton x:Name="Thread"

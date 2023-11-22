@@ -1521,8 +1521,8 @@
     <Compile Include="Controls\GlyphButton.cs" />
     <Compile Include="Controls\MasterDetailView.cs" />
     <Compile Include="Controls\PivotRadioButton.cs" />
-    <Compile Include="Controls\Messages\MessageReference.xaml.cs">
-      <DependentUpon>MessageReference.xaml</DependentUpon>
+    <Compile Include="Controls\Messages\MessageReply.xaml.cs">
+      <DependentUpon>MessageReply.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\Formatter.cs" />
     <Compile Include="Converters\BooleanToVisibilityConverter.cs" />
@@ -2200,7 +2200,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Messages\MessageReference.xaml">
+    <Page Include="Controls\Messages\MessageReply.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
