@@ -5,8 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System.Numerics;
-using System;
-using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
@@ -16,7 +14,6 @@ using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Input;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Automation.Provider;
@@ -190,7 +187,7 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.CharacterReceived += OnCharacterReceived;
+            WindowContext.Current.InputListener.KeyDown += OnKeyDown;
 
             var canvas = VisualTreeHelper.GetParent(this) as Canvas;
             if (canvas != null)
@@ -210,24 +207,21 @@ namespace Telegram.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
+            WindowContext.Current.InputListener.KeyDown -= OnKeyDown;
         }
 
-        private void OnCharacterReceived(CoreWindow sender, CharacterReceivedEventArgs args)
+        private void OnKeyDown(Window sender, Services.Keyboard.InputKeyDownEventArgs args)
         {
-            var character = Encoding.UTF32.GetString(BitConverter.GetBytes(args.KeyCode));
-            if (character != "\r" || DefaultButton == ContentDialogButton.Primary)
+            if (args.VirtualKey == Windows.System.VirtualKey.Enter && args.OnlyKey && DefaultButton != ContentDialogButton.Primary)
             {
-                return;
-            }
+                // TODO: should the if be simplified to focused is null or not Control?
 
-            // TODO: should the if be simplified to focused is null or not Control?
-
-            var focused = FocusManager.GetFocusedElement();
-            if (focused is null or (not TextBox and not RichEditBox and not Button and not MenuFlyoutItem))
-            {
-                Hide(ContentDialogResult.Primary);
-                args.Handled = true;
+                var focused = FocusManager.GetFocusedElement();
+                if (focused is null or (not TextBox and not RichEditBox and not Button and not MenuFlyoutItem))
+                {
+                    Hide(ContentDialogResult.Primary);
+                    args.Handled = true;
+                }
             }
         }
 
