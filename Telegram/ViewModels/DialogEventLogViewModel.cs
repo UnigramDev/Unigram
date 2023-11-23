@@ -169,7 +169,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public override async Task LoadNextSliceAsync(bool force = false)
+        public override async Task LoadNextSliceAsync()
         {
             using (await _loadMoreLock.WaitAsync())
             {
@@ -195,7 +195,7 @@ namespace Telegram.ViewModels
                 {
                     if (events.Events.Count > 0)
                     {
-                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, force);
+                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                         Logger.Debug("Setting scroll mode to KeepLastItemInView");
                     }
 

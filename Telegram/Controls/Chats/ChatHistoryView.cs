@@ -171,7 +171,7 @@ namespace Telegram.Controls.Chats
                     && lastSlice)
                 {
                     Logger.Debug($"Going {direction}, loading history in the past");
-                    await ViewModel.LoadNextSliceAsync(direction != PanelScrollingDirection.None);
+                    await ViewModel.LoadNextSliceAsync();
                 }
                 else if (direction == PanelScrollingDirection.Forward
                     && ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
@@ -183,7 +183,7 @@ namespace Telegram.Controls.Chats
                     if (lastSlice && ItemsStack.FirstVisibleIndex == 0)
                     {
                         Logger.Debug($"Going {direction}, loading history in the past");
-                        await ViewModel.LoadNextSliceAsync(direction != PanelScrollingDirection.None);
+                        await ViewModel.LoadNextSliceAsync();
                     }
 
                     if (ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
@@ -208,7 +208,7 @@ namespace Telegram.Controls.Chats
             if (firstSlice)
             {
                 Logger.Debug($"Going {direction}, loading history in the future");
-                return ViewModel.LoadPreviousSliceAsync(direction != PanelScrollingDirection.None);
+                return ViewModel.LoadPreviousSliceAsync();
             }
 
             SetScrollingMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);

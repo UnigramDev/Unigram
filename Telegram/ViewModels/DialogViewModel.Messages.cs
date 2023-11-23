@@ -22,7 +22,6 @@ using Telegram.Native;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
-using Telegram.Views;
 using Telegram.Views.Chats;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;

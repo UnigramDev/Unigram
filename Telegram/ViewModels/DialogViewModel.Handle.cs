@@ -751,7 +751,7 @@ namespace Telegram.ViewModels
                 else
                 {
                     _hasLoadedLastPinnedMessage = false;
-                    BeginOnUIThread(() => LoadPinnedMessagesSliceAsync(update.MessageId, VerticalAlignment.Center));
+                    BeginOnUIThread(() => LoadPinnedMessagesSliceAsync(update.MessageId));
 
                     Handle(update.MessageId, message =>
                     {
