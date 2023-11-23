@@ -980,8 +980,9 @@ namespace Telegram.Views
                                     if (MessageCopy_Loaded(quote))
                                     {
                                         ViewModel.CopyMessage(quote);
-                                        args.Handled = true;
                                     }
+
+                                    args.Handled = true;
                                 }
                             }
                         }
