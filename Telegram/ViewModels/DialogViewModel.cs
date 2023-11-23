@@ -3899,7 +3899,7 @@ namespace Telegram.ViewModels
 
         private static MessageViewModel UpdateSeparatorOnInsert(MessageViewModel item, MessageViewModel next)
         {
-            if (item != null && next != null)
+            if (item != null && next != null && item.Content is not MessageHeaderDate && next.Content is not MessageHeaderDate)
             {
                 var itemDate = Formatter.ToLocalTime(GetMessageDate(item));
                 var previousDate = Formatter.ToLocalTime(GetMessageDate(next));
