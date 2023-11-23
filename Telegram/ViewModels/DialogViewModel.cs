@@ -1096,243 +1096,17 @@ namespace Telegram.ViewModels
 
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadMessageSliceAsync");
 
-                Task<BaseObject> func;
-                if (_topic != null)
+                var response = await Task.Run(() => LoadMessageSliceImpl(chat, maxId, alignment, direction, pixel));
+                if (response is LoadSliceResult slice)
                 {
-                    // TODO: Workaround, should be removed some day
-                    await ClientService.SendAsync(new GetMessage(chat.Id, _topic.Info.MessageThreadId));
-
-                    func = ClientService.SendAsync(new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, maxId, -25, 50));
-                }
-                else if (ThreadId != 0)
-                {
-                    // MaxId == 0 means that the thread was never opened
-                    if (maxId == 0 || Thread.Messages.Any(x => x.Id == maxId))
-                    {
-                        func = ClientService.SendAsync(new GetMessageThreadHistory(chat.Id, ThreadId, 1, -25, 50));
-                    }
-                    else
-                    {
-                        func = ClientService.SendAsync(new GetMessageThreadHistory(chat.Id, ThreadId, maxId, -25, 50));
-                    }
-                }
-                else if (_type == DialogType.Pinned)
-                {
-                    func = ClientService.SendAsync(new SearchChatMessages(chat.Id, string.Empty, null, maxId, -25, 50, new SearchMessagesFilterPinned(), 0));
-                }
-                else
-                {
-                    async Task<BaseObject> GetChatHistoryAsync(long chatId, long fromMessageId, int offset, int limit, bool onlyLocal)
-                    {
-                        var response = await ClientService.SendAsync(new GetChatHistory(chatId, fromMessageId, offset, limit, onlyLocal));
-                        if (response is Messages messages && onlyLocal)
-                        {
-                            var count = messages.MessagesValue.Count;
-                            var outOfRange = maxId != 0 && count > 0 && messages.MessagesValue[^1].Id > maxId;
-
-                            if (outOfRange || count < 5)
-                            {
-                                var force = await ClientService.SendAsync(new GetChatHistory(chat.Id, maxId, -25, 50, count > 0 && !outOfRange));
-                                if (force is Messages forceMessages)
-                                {
-                                    if (forceMessages.MessagesValue.Count == 0 && count > 0 && !outOfRange)
-                                    {
-                                        force = await ClientService.SendAsync(new GetChatHistory(chat.Id, maxId, -25, 50, false));
-
-                                        if (force is Messages forceMessages2)
-                                        {
-                                            return forceMessages2;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        return forceMessages;
-                                    }
-                                }
-                            }
-                        }
-
-                        return response;
-                    }
-
-                    func = GetChatHistoryAsync(chat.Id, maxId, -25, 50, alignment == VerticalAlignment.Top);
-                }
-
-                if (alignment != VerticalAlignment.Center)
-                {
-                    var wait = await Task.WhenAny(func, Task.Delay(200));
-                    if (wait != func)
-                    {
-                        Items.Clear();
-                        NotifyMessageSliceLoaded();
-                    }
-                }
-
-                var response = await func;
-                if (response is FoundChatMessages foundChatMessages)
-                {
-                    response = new Messages(foundChatMessages.TotalCount, foundChatMessages.Messages);
-                }
-
-                if (response is Messages messages)
-                {
-                    if (_chat?.Id != chat.Id)
-                    {
-                        _isLoadingNextSlice = false;
-                        _isLoadingPreviousSlice = false;
-                        IsLoading = false;
-
-                        NotifyMessageSliceLoaded();
-                        return;
-                    }
-
                     _groupedMessages.Clear();
 
-                    var firstVisibleIndex = -1;
-                    var firstVisibleItem = default(Message);
+                    pixel = slice.Pixel;
+                    alignment = slice.Alignment;
 
-                    var unread = false;
+                    SetScrollMode(slice.ScrollMode, true);
 
-                    if (alignment != VerticalAlignment.Center)
-                    {
-                        long lastReadMessageId;
-                        long lastMessageId;
-
-                        if (_topic is ForumTopic topic)
-                        {
-                            lastReadMessageId = topic.LastReadInboxMessageId;
-                            lastMessageId = topic.LastMessage?.Id ?? long.MaxValue;
-                        }
-                        else if (_thread is MessageThreadInfo thread)
-                        {
-                            lastReadMessageId = thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
-                            lastMessageId = thread.ReplyInfo?.LastMessageId ?? long.MaxValue;
-                        }
-                        else
-                        {
-                            lastReadMessageId = chat.LastReadInboxMessageId;
-                            lastMessageId = chat.LastMessage?.Id ?? long.MaxValue;
-                        }
-
-                        bool Included(long id)
-                        {
-                            return true;
-                            return messages.MessagesValue.Count > 0 && messages.MessagesValue[0].Id >= id && messages.MessagesValue[^1].Id <= id;
-                        }
-
-                        // If we're loading from the last read message
-                        // then we want to skip it to align first unread message at top
-                        if (lastReadMessageId != 0 && lastReadMessageId != lastMessageId && Included(maxId) && Included(lastReadMessageId) /*maxId >= lastReadMessageId*/)
-                        {
-                            var target = default(Message);
-                            var index = -1;
-
-                            for (int i = messages.MessagesValue.Count - 1; i >= 0; i--)
-                            {
-                                var current = messages.MessagesValue[i];
-                                if (current.Id > lastReadMessageId)
-                                {
-                                    if (index == -1)
-                                    {
-                                        firstVisibleIndex = i;
-                                        firstVisibleItem = current;
-                                    }
-
-                                    if ((target == null || target.IsOutgoing) && !current.IsOutgoing)
-                                    {
-                                        target = current;
-                                        index = i;
-                                    }
-                                    else if (current.IsOutgoing)
-                                    {
-                                        target = current;
-                                        index = -1;
-                                    }
-                                }
-                                else if (firstVisibleIndex == -1 && i == 0)
-                                {
-                                    firstVisibleIndex = i;
-                                    firstVisibleItem = current;
-                                }
-                            }
-
-                            if (target != null)
-                            {
-                                if (index >= 0 && index < messages.MessagesValue.Count - 1)
-                                {
-                                    messages.MessagesValue.Insert(index + 1, new Message(0, target.SenderId, target.ChatId, null, null, target.IsOutgoing, false, false, false, false, false, true, false, false, false, false, false, false, false, false, target.IsChannelPost, target.IsTopicMessage, false, target.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null));
-                                    unread = true;
-                                }
-                                else if (maxId == lastReadMessageId)
-                                {
-                                    Logger.Debug("Looking for first unread message, can't find it");
-                                }
-
-                                if (maxId == lastReadMessageId && pixel == null)
-                                {
-                                    maxId = target.Id;
-                                    pixel = 28 + 48;
-                                }
-                            }
-                        }
-
-                        if (firstVisibleItem != null && pixel == null)
-                        {
-                            maxId = firstVisibleItem.Id;
-                        }
-
-                        // If we're loading the last message and it has been read already
-                        // then we want to align it at bottom, as it might be taller than the window height
-                        if (maxId == lastMessageId)
-                        {
-                            alignment = VerticalAlignment.Bottom;
-                            pixel = null;
-                        }
-                    }
-
-                    if (firstVisibleIndex == -1)
-                    {
-                        for (int i = 0; i < messages.MessagesValue.Count; i++)
-                        {
-                            if (messages.MessagesValue[i].Id == maxId)
-                            {
-                                firstVisibleIndex = i;
-                                unread = false;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (firstVisibleIndex == -1)
-                    {
-                        System.Diagnostics.Debugger.Break();
-                    }
-
-                    IEnumerable<Message> values;
-                    if (alignment == VerticalAlignment.Bottom)
-                    {
-                        SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
-                        values = messages.MessagesValue;
-                    }
-                    else if (alignment == VerticalAlignment.Top)
-                    {
-                        if (unread)
-                        {
-                            firstVisibleIndex++;
-                        }
-
-                        SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
-                        values = firstVisibleIndex == -1
-                            ? messages.MessagesValue
-                            : messages.MessagesValue.Take(firstVisibleIndex + 1);
-                    }
-                    else
-                    {
-                        SetScrollMode(direction == ScrollIntoViewAlignment.Default ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView, true);
-                        values = messages.MessagesValue;
-                    }
-
-                    var replied = new MessageCollection(null, values.Select(x => CreateMessage(x)));
+                    var replied = slice.Items;
 
                     ProcessMessages(chat, replied);
                     Items.RawReplaceWith(replied);
@@ -1362,6 +1136,262 @@ namespace Telegram.ViewModels
             }
 
             await LoadMessageSliceAsync(previousId, maxId, alignment, pixel, direction, disableAnimation, highlight, true);
+        }
+
+        private async Task<LoadSliceResult> LoadMessageSliceImpl(Chat chat, long maxId, VerticalAlignment alignment, ScrollIntoViewAlignment? direction, double? pixel)
+        {
+            Task<BaseObject> func;
+            if (_topic != null)
+            {
+                // TODO: Workaround, should be removed some day
+                await ClientService.SendAsync(new GetMessage(chat.Id, _topic.Info.MessageThreadId));
+
+                func = ClientService.SendAsync(new GetMessageThreadHistory(chat.Id, _topic.Info.MessageThreadId, maxId, -25, 50));
+            }
+            else if (ThreadId != 0)
+            {
+                // MaxId == 0 means that the thread was never opened
+                if (maxId == 0 || Thread.Messages.Any(x => x.Id == maxId))
+                {
+                    func = ClientService.SendAsync(new GetMessageThreadHistory(chat.Id, ThreadId, 1, -25, 50));
+                }
+                else
+                {
+                    func = ClientService.SendAsync(new GetMessageThreadHistory(chat.Id, ThreadId, maxId, -25, 50));
+                }
+            }
+            else if (_type == DialogType.Pinned)
+            {
+                func = ClientService.SendAsync(new SearchChatMessages(chat.Id, string.Empty, null, maxId, -25, 50, new SearchMessagesFilterPinned(), 0));
+            }
+            else
+            {
+                async Task<BaseObject> GetChatHistoryAsync(long chatId, long fromMessageId, int offset, int limit, bool onlyLocal)
+                {
+                    var response = await ClientService.SendAsync(new GetChatHistory(chatId, fromMessageId, offset, limit, onlyLocal));
+                    if (response is Messages messages && onlyLocal)
+                    {
+                        var count = messages.MessagesValue.Count;
+                        var outOfRange = fromMessageId != 0 && count > 0 && messages.MessagesValue[^1].Id > fromMessageId;
+
+                        if (outOfRange || count < 5)
+                        {
+                            var force = await ClientService.SendAsync(new GetChatHistory(chatId, fromMessageId, offset, limit, count > 0 && !outOfRange));
+                            if (force is Messages forceMessages)
+                            {
+                                if (forceMessages.MessagesValue.Count == 0 && count > 0 && !outOfRange)
+                                {
+                                    force = await ClientService.SendAsync(new GetChatHistory(chatId, fromMessageId, offset, limit, false));
+
+                                    if (force is Messages forceMessages2)
+                                    {
+                                        return forceMessages2;
+                                    }
+                                }
+                                else
+                                {
+                                    return forceMessages;
+                                }
+                            }
+                        }
+                    }
+
+                    return response;
+                }
+
+                func = GetChatHistoryAsync(chat.Id, maxId, -25, 50, alignment == VerticalAlignment.Top);
+            }
+
+            if (alignment != VerticalAlignment.Center)
+            {
+                var wait = await Task.WhenAny(func, Task.Delay(200));
+                if (wait != func)
+                {
+                    Dispatcher.Dispatch(NotifyMessageSliceLoaded);
+                    //Items.Clear();
+                    //NotifyMessageSliceLoaded();
+                }
+            }
+
+            var response = await func;
+            if (response is FoundChatMessages foundChatMessages)
+            {
+                response = new Messages(foundChatMessages.TotalCount, foundChatMessages.Messages);
+            }
+
+            if (response is Messages messages)
+            {
+                _groupedMessages.Clear();
+
+                var firstVisibleIndex = -1;
+                var firstVisibleItem = default(Message);
+
+                var unread = false;
+
+                if (alignment != VerticalAlignment.Center)
+                {
+                    long lastReadMessageId;
+                    long lastMessageId;
+
+                    if (_topic is ForumTopic topic)
+                    {
+                        lastReadMessageId = topic.LastReadInboxMessageId;
+                        lastMessageId = topic.LastMessage?.Id ?? long.MaxValue;
+                    }
+                    else if (_thread is MessageThreadInfo thread)
+                    {
+                        lastReadMessageId = thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
+                        lastMessageId = thread.ReplyInfo?.LastMessageId ?? long.MaxValue;
+                    }
+                    else
+                    {
+                        lastReadMessageId = chat.LastReadInboxMessageId;
+                        lastMessageId = chat.LastMessage?.Id ?? long.MaxValue;
+                    }
+
+                    bool Included(long id)
+                    {
+                        return true;
+                        return messages.MessagesValue.Count > 0 && messages.MessagesValue[0].Id >= id && messages.MessagesValue[^1].Id <= id;
+                    }
+
+                    // If we're loading from the last read message
+                    // then we want to skip it to align first unread message at top
+                    if (lastReadMessageId != 0 && lastReadMessageId != lastMessageId && Included(maxId) && Included(lastReadMessageId) /*maxId >= lastReadMessageId*/)
+                    {
+                        var target = default(Message);
+                        var index = -1;
+
+                        for (int i = messages.MessagesValue.Count - 1; i >= 0; i--)
+                        {
+                            var current = messages.MessagesValue[i];
+                            if (current.Id > lastReadMessageId)
+                            {
+                                if (index == -1)
+                                {
+                                    firstVisibleIndex = i;
+                                    firstVisibleItem = current;
+                                }
+
+                                if ((target == null || target.IsOutgoing) && !current.IsOutgoing)
+                                {
+                                    target = current;
+                                    index = i;
+                                }
+                                else if (current.IsOutgoing)
+                                {
+                                    target = current;
+                                    index = -1;
+                                }
+                            }
+                            else if (firstVisibleIndex == -1 && i == 0)
+                            {
+                                firstVisibleIndex = i;
+                                firstVisibleItem = current;
+                            }
+                        }
+
+                        if (target != null)
+                        {
+                            if (index >= 0 && index < messages.MessagesValue.Count - 1)
+                            {
+                                messages.MessagesValue.Insert(index + 1, new Message(0, target.SenderId, target.ChatId, null, null, target.IsOutgoing, false, false, false, false, false, true, false, false, false, false, false, false, false, false, target.IsChannelPost, target.IsTopicMessage, false, target.Date, 0, null, null, null, null, null, 0, null, 0, 0, 0, string.Empty, 0, string.Empty, new MessageHeaderUnread(), null));
+                                unread = true;
+                            }
+                            else if (maxId == lastReadMessageId)
+                            {
+                                Logger.Debug("Looking for first unread message, can't find it");
+                            }
+
+                            if (maxId == lastReadMessageId && pixel == null)
+                            {
+                                maxId = target.Id;
+                                pixel = 28 + 48;
+                            }
+                        }
+                    }
+
+                    if (firstVisibleItem != null && pixel == null)
+                    {
+                        maxId = firstVisibleItem.Id;
+                    }
+
+                    // If we're loading the last message and it has been read already
+                    // then we want to align it at bottom, as it might be taller than the window height
+                    if (maxId == lastMessageId)
+                    {
+                        alignment = VerticalAlignment.Bottom;
+                        pixel = null;
+                    }
+                }
+
+                if (firstVisibleIndex == -1)
+                {
+                    for (int i = 0; i < messages.MessagesValue.Count; i++)
+                    {
+                        if (messages.MessagesValue[i].Id == maxId)
+                        {
+                            firstVisibleIndex = i;
+                            unread = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (firstVisibleIndex == -1)
+                {
+                    System.Diagnostics.Debugger.Break();
+                }
+
+                IEnumerable<Message> values;
+                ItemsUpdatingScrollMode scrollMode;
+                if (alignment == VerticalAlignment.Bottom)
+                {
+                    scrollMode = ItemsUpdatingScrollMode.KeepLastItemInView;
+                    values = messages.MessagesValue;
+                }
+                else if (alignment == VerticalAlignment.Top)
+                {
+                    if (unread)
+                    {
+                        firstVisibleIndex++;
+                    }
+
+                    scrollMode = ItemsUpdatingScrollMode.KeepItemsInView;
+                    values = firstVisibleIndex == -1
+                        ? messages.MessagesValue
+                        : messages.MessagesValue.Take(firstVisibleIndex + 1);
+                }
+                else
+                {
+                    scrollMode = direction == ScrollIntoViewAlignment.Default ? ItemsUpdatingScrollMode.KeepLastItemInView : ItemsUpdatingScrollMode.KeepItemsInView;
+                    values = messages.MessagesValue;
+                }
+
+                var replied = new MessageCollection(null, values.Select(x => CreateMessage(x)));
+                return new LoadSliceResult(replied, scrollMode, alignment, pixel);
+            }
+
+            return null;
+        }
+
+        private class LoadSliceResult
+        {
+            public LoadSliceResult(MessageCollection items, ItemsUpdatingScrollMode scrollMode, VerticalAlignment alignment, double? pixel)
+            {
+                Items = items;
+                ScrollMode = scrollMode;
+                Alignment = alignment;
+                Pixel = pixel;
+            }
+
+            public MessageCollection Items { get; }
+
+            public ItemsUpdatingScrollMode ScrollMode { get; }
+
+            public VerticalAlignment Alignment { get; }
+
+            public double? Pixel { get; }
         }
 
         private async Task AddSponsoredMessagesAsync()
