@@ -570,18 +570,11 @@ namespace Telegram.ViewModels
                 {
                     if (result is FoundChatMessages foundChatMessages)
                     {
-                        result = new Messages(foundChatMessages.TotalCount, foundChatMessages.Messages);
+                        tsc.SetResult(new MessageCollection(Items.Ids, foundChatMessages.Messages.Select(x => CreateMessage(x))));
                     }
-
-                    if (result is Messages messages)
+                    else if (result is Messages messages)
                     {
-                        var replied = new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => CreateMessage(x)));
-                        if (replied.Count > 0)
-                        {
-                            ProcessMessages(chat, replied);
-                        }
-
-                        tsc.SetResult(replied);
+                        tsc.SetResult(new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => CreateMessage(x))));
                     }
                     else
                     {
@@ -596,6 +589,8 @@ namespace Telegram.ViewModels
                 {
                     if (replied.Count > 0)
                     {
+                        ProcessMessages(chat, replied);
+
                         SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
                         Items.RawInsertRange(0, replied, true, out bool empty);
                     }
@@ -672,18 +667,11 @@ namespace Telegram.ViewModels
                 {
                     if (result is FoundChatMessages foundChatMessages)
                     {
-                        result = new Messages(foundChatMessages.TotalCount, foundChatMessages.Messages);
+                        tsc.SetResult(new MessageCollection(Items.Ids, foundChatMessages.Messages.Select(x => CreateMessage(x))));
                     }
-
-                    if (result is Messages messages)
+                    else if (result is Messages messages)
                     {
-                        var replied = new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => CreateMessage(x)));
-                        if (replied.Count > 0)
-                        {
-                            ProcessMessages(chat, replied);
-                        }
-
-                        tsc.SetResult(replied);
+                        tsc.SetResult(new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => CreateMessage(x))));
                     }
                     else
                     {
@@ -698,6 +686,8 @@ namespace Telegram.ViewModels
                 {
                     if (replied.Count > 0)
                     {
+                        ProcessMessages(chat, replied);
+
                         SetScrollMode(ItemsUpdatingScrollMode.KeepItemsInView, true);
                         Items.RawAddRange(replied, true, out bool empty);
                     }
