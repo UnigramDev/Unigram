@@ -120,50 +120,43 @@ namespace Telegram.Common
 
         public static CompositionAnimation CreateThumbnail(float width, float height, CompositionPath path, out ShapeVisual visual, bool animated = true)
         {
-            var transparent = Color.FromArgb(0x00, 0x7A, 0x8A, 0x96);
-            var foregroundColor = Color.FromArgb(0x33, 0x7A, 0x8A, 0x96);
             var backgroundColor = Color.FromArgb(0x33, 0x7A, 0x8A, 0x96);
 
-            var gradient = Window.Current.Compositor.CreateLinearGradientBrush();
-            gradient.StartPoint = new Vector2(0, 0);
-            gradient.EndPoint = new Vector2(1, 0);
-            gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.0f, transparent));
-            gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.5f, foregroundColor));
-            gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(1.0f, transparent));
-
-            var background = Window.Current.Compositor.CreateRectangleGeometry();
-            background.Size = new Vector2(width, height);
+            var background = Window.Current.Compositor.CreatePathGeometry(path);
             var backgroundShape = Window.Current.Compositor.CreateSpriteShape(background);
             backgroundShape.FillBrush = Window.Current.Compositor.CreateColorBrush(backgroundColor);
 
-            var foreground = Window.Current.Compositor.CreateRectangleGeometry();
-            foreground.Size = new Vector2(width, height);
-            var foregroundShape = Window.Current.Compositor.CreateSpriteShape(foreground);
-            foregroundShape.FillBrush = gradient;
-
-            var clip = Window.Current.Compositor.CreateGeometricClip(Window.Current.Compositor.CreatePathGeometry(path));
-            clip.ViewBox = Window.Current.Compositor.CreateViewBox();
-            clip.ViewBox.Size = new Vector2(width, height);
-            clip.ViewBox.Stretch = CompositionStretch.UniformToFill;
-
             visual = Window.Current.Compositor.CreateShapeVisual();
-            visual.Clip = clip;
             visual.Shapes.Add(backgroundShape);
-            visual.Shapes.Add(foregroundShape);
             visual.RelativeSizeAdjustment = Vector2.One;
             visual.ViewBox = Window.Current.Compositor.CreateViewBox();
             visual.ViewBox.Size = new Vector2(width, height);
-            visual.ViewBox.Stretch = CompositionStretch.UniformToFill;
+            visual.ViewBox.Stretch = CompositionStretch.Uniform;
 
             if (animated)
             {
+                var transparent = Color.FromArgb(0x00, 0x7A, 0x8A, 0x96);
+                var foregroundColor = Color.FromArgb(0x33, 0x7A, 0x8A, 0x96);
+
+                var gradient = Window.Current.Compositor.CreateLinearGradientBrush();
+                gradient.StartPoint = new Vector2(0, 0);
+                gradient.EndPoint = new Vector2(1, 0);
+                gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.0f, transparent));
+                gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(0.5f, foregroundColor));
+                gradient.ColorStops.Add(Window.Current.Compositor.CreateColorGradientStop(1.0f, transparent));
+
+                var foregroundShape = Window.Current.Compositor.CreateSpriteShape(background);
+                foregroundShape.FillBrush = gradient;
+
+                visual.Shapes.Add(foregroundShape);
+
                 var animation = Window.Current.Compositor.CreateVector2KeyFrameAnimation();
                 animation.InsertKeyFrame(0, new Vector2(-width, 0));
                 animation.InsertKeyFrame(1, new Vector2(width, 0));
                 animation.IterationBehavior = AnimationIterationBehavior.Forever;
                 animation.Duration = TimeSpan.FromSeconds(1);
 
-                foregroundShape.StartAnimation("Offset", animation);
+                gradient.StartAnimation("Offset", animation);
 
                 return animation;
             }
