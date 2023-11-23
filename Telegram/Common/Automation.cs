@@ -28,7 +28,10 @@ namespace Telegram.Common
                 var tooltip = ToolTipService.GetToolTip(element) as ToolTip;
                 if (tooltip == null)
                 {
-                    ToolTipService.SetToolTip(element, text);
+                    ToolTipService.SetToolTip(element, new ToolTip
+                    {
+                        Content = text
+                    });
                 }
                 else
                 {
