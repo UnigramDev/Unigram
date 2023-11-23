@@ -10,7 +10,6 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Controls.Messages;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Streams;
@@ -581,7 +580,7 @@ namespace Telegram.Controls
                 _effectFactory = compositor.CreateEffectFactory(colorMatrixEffect);
             }
 
-            var actualSize = this is MessageReferencePattern ? new Vector2(122, 55) : FrameSize.ToVector2();
+            var actualSize = FrameSize.ToVector2();
             var offset = Vector2.Zero;
 
             // Create a VisualSurface positioned at the same location as this control and feed that

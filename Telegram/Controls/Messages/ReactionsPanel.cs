@@ -19,8 +19,8 @@ namespace Telegram.Controls.Messages
 {
     public partial class ReactionsPanel : Panel, IDiffEqualityComparer<MessageReaction>
     {
-        private readonly Dictionary<string, WeakReference> _reactions = new();
-        private readonly Dictionary<long, WeakReference> _customReactions = new();
+        private readonly Dictionary<string, ReactionButton> _reactions = new();
+        private readonly Dictionary<long, ReactionButton> _customReactions = new();
 
         private long _chatId;
         private long _messageId;
@@ -195,10 +195,9 @@ namespace Telegram.Controls.Messages
 
         delegate bool TryGetValue<TKey, T>(TKey key, out T value);
 
-        private void UpdateButton<T, TValue>(IDictionary<T, WeakReference> cache, T key, MessageViewModel message, object value, Func<ReactionType, bool> animate)
+        private void UpdateButton<T, TValue>(IDictionary<T, ReactionButton> cache, T key, MessageViewModel message, object value, Func<ReactionType, bool> animate)
         {
-            if (cache.TryGetValue(key, out WeakReference reference)
-                && reference.Target is ReactionButton button)
+            if (cache.TryGetValue(key, out ReactionButton button))
             {
                 if (value is EmojiReaction reaction)
                 {
@@ -216,7 +215,7 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private bool UpdateButton<T, TValue>(IDictionary<T, WeakReference> cache, T key, MessageViewModel message, MessageReaction item, TryGetValue<T, TValue> tryGet, bool animate, int index)
+        private bool UpdateButton<T, TValue>(IDictionary<T, ReactionButton> cache, T key, MessageViewModel message, MessageReaction item, TryGetValue<T, TValue> tryGet, bool animate, int index)
         {
             var required = false;
 
@@ -256,16 +255,15 @@ namespace Telegram.Controls.Messages
             return required;
         }
 
-        private ReactionButton GetOrCreateButton<T>(IDictionary<T, WeakReference> cache, T key, MessageViewModel message, int index)
+        private ReactionButton GetOrCreateButton<T>(IDictionary<T, ReactionButton> cache, T key, MessageViewModel message, int index)
         {
-            if (cache.TryGetValue(key, out WeakReference reference)
-                && reference.Target is ReactionButton button)
+            if (cache.TryGetValue(key, out ReactionButton button))
             {
                 return button;
             }
 
             button = new ReactionButton();
-            cache[key] = new WeakReference(button);
+            cache[key] = button;
             Children.Insert(Math.Min(index, Children.Count), button);
 
             return button;

@@ -1542,7 +1542,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (message.Content is MessageText text && text.WebPage == null && !text.Text.Entities.Any(/*x => x.Type is not TextEntityTypeCustomEmoji*/))
+            if (message.Content is MessageText text && text.WebPage == null && text.Text.Entities.Count == 0)
             {
                 if (Emoji.TryCountEmojis(text.Text.Text, out int count, 3))
                 {
@@ -1988,8 +1988,6 @@ namespace Telegram.ViewModels
             _chatActionManager = null;
 
             SelectedItems.Clear();
-
-            OnlineCount = null;
 
             PinnedMessages.Clear();
             LastPinnedMessage = null;

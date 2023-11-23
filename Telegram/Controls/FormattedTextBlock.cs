@@ -6,6 +6,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using Telegram.Common;
 using Telegram.Controls.Media;
@@ -660,6 +661,7 @@ namespace Telegram.Controls
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Run CreateRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
         {
             var direct = XamlDirect.GetDefault();
@@ -684,7 +686,7 @@ namespace Telegram.Controls
             return direct.GetObject(run) as Run;
         }
 
-        private IXamlDirectObject CreateDirectRun(string text, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private IXamlDirectObject CreateDirectRun(XamlDirect direct, string text, FontWeight? fontWeight = null, FontFamily fontFamily = null, double fontSize = 0)
         {
             var run = direct.CreateInstance(XamlTypeIndex.Run);
