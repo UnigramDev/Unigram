@@ -275,15 +275,27 @@ namespace Telegram.Controls.Chats
             _raiseViewChanged = false;
 
             var scrollViewer = ScrollingHost;
-            if (scrollViewer == null)
+            var handler = Delegate;
+
+            if (scrollViewer == null || handler == null)
             {
                 Logger.Debug("ScrollingHost == null");
                 goto Exit;
             }
 
-            await ScrollIntoViewAsync(item, direction);
+            if (!handler.HasContainerForItem(item.Id))
+            {
+                if (alignment == VerticalAlignment.Top || (alignment == VerticalAlignment.Bottom && pixel == null))
+                {
+                    await this.UpdateLayoutAsync();
+                }
+                else
+                {
+                    await ScrollIntoViewAsync(item, direction);
+                }
+            }
 
-            var selectorItem = Delegate?.ContainerFromItem(item.Id);
+            var selectorItem = handler.ContainerFromItem(item.Id);
             if (selectorItem == null)
             {
                 // TODO: experimental
@@ -292,7 +304,7 @@ namespace Telegram.Controls.Chats
                     Logger.Debug("selectorItem == null, but item exists, retry");
 
                     await ScrollIntoViewAsync(item, direction);
-                    selectorItem = Delegate?.ContainerFromItem(item.Id);
+                    selectorItem = handler.ContainerFromItem(item.Id);
                 }
 
                 if (selectorItem == null)
