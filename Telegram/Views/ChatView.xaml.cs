@@ -142,7 +142,6 @@ namespace Telegram.Views
             Messages.ItemsSource = _messages;
             Messages.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, List_SelectionModeChanged);
 
-            InitializeAutomation();
             InitializeStickers();
 
             //ElementCompositionPreview.GetElementVisual(this).Clip = Window.Current.Compositor.CreateInsetClip();
@@ -228,18 +227,11 @@ namespace Telegram.Views
             PinnedMessage.InitializeParent(Clipper);
         }
 
-        private void InitializeAutomation()
-        {
-            Title.RegisterPropertyChangedCallback(TextBlock.TextProperty, OnHeaderContentChanged);
-            Subtitle.RegisterPropertyChangedCallback(TextBlock.TextProperty, OnHeaderContentChanged);
-            ChatActionLabel.RegisterPropertyChangedCallback(TextBlock.TextProperty, OnHeaderContentChanged);
-        }
-
-        private void OnHeaderContentChanged(DependencyObject sender, DependencyProperty dp)
+        public string GetAutomationName()
         {
             if (Title == null || Subtitle == null || ChatActionLabel == null)
             {
-                return;
+                return string.Empty;
             }
 
             var result = Title.Text.TrimEnd('.', ',');
@@ -252,7 +244,7 @@ namespace Telegram.Views
                 result += ", " + Subtitle.Text;
             }
 
-            AutomationProperties.SetName(Profile, result);
+            return result;
         }
 
         private void InitializeStickers()
@@ -5242,4 +5234,33 @@ namespace Telegram.Views
         }
     }
 
+    public class ChatHeaderButton : HyperlinkButton
+    {
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ChatHeaderButtonAutomationPeer(this);
+        }
+    }
+
+    public class ChatHeaderButtonAutomationPeer : HyperlinkButtonAutomationPeer
+    {
+        private readonly ChatHeaderButton _owner;
+
+        public ChatHeaderButtonAutomationPeer(ChatHeaderButton owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override string GetNameCore()
+        {
+            var view = _owner.Ancestors<ChatView>().FirstOrDefault();
+            if (view != null)
+            {
+                return view.GetAutomationName();
+            }
+
+            return base.GetNameCore();
+        }
+    }
 }
