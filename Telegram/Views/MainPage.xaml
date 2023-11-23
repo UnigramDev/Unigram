@@ -687,20 +687,22 @@
                                                                                  DenyClick="{x:Bind ViewModel.DenySession}" />
 
                                                 <Grid x:Name="ArchivedChatsPresenter">
-                                                    <Button x:Name="ArchivedChatsPanel"
-                                                            Click="ArchivedChats_Click"
-                                                            ContextRequested="ArchivedChats_ContextRequested"
-                                                            AutomationProperties.Name="{CustomResource ArchivedChats}"
-                                                            Style="{StaticResource EmptyButtonStyle}"
-                                                            Background="Transparent"
-                                                            Padding="4,2"
-                                                            CornerRadius="4">
-                                                        <cells:ChatCell x:Name="ArchivedChats"
-                                                                        Visibility="Collapsed"
-                                                                        Stroke="{ThemeResource ChatLastMessageStateBrush}"
-                                                                        SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                                                                        ActualThemeChanged="ArchivedChats_ActualThemeChanged" />
-                                                    </Button>
+                                                    <Border x:Name="ArchivedChatsPanel">
+                                                        <Button Visibility="{x:Bind ArchivedChats.Visibility, Mode=OneWay}"
+                                                                Click="ArchivedChats_Click"
+                                                                ContextRequested="ArchivedChats_ContextRequested"
+                                                                AutomationProperties.Name="{CustomResource ArchivedChats}"
+                                                                Style="{StaticResource EmptyButtonStyle}"
+                                                                Background="Transparent"
+                                                                Padding="4,2"
+                                                                CornerRadius="4">
+                                                            <cells:ChatCell x:Name="ArchivedChats"
+                                                                            Visibility="Collapsed"
+                                                                            Stroke="{ThemeResource ChatLastMessageStateBrush}"
+                                                                            SelectionStroke="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                                                            ActualThemeChanged="ArchivedChats_ActualThemeChanged" />
+                                                        </Button>
+                                                    </Border>
                                                     <!--<Border VerticalAlignment="Bottom">
                                                     <Border x:Name="ArchivedChatsCompactPanel"
                                                             Background="{ThemeResource PageBackgroundDarkBrush}">
