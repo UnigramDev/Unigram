@@ -1255,14 +1255,9 @@
               CornerRadius="15"
               Grid.Row="3">
             <chats:ChatBottomButton x:Name="ButtonAction"
+                                    LosingFocus="ButtonAction_LosingFocus"
                                     Click="{x:Bind ViewModel.Action}"
-                                    Height="{StaticResource TelegramToolBarHeight}">
-                <Button.Content>
-                    <TextBlock x:Name="LabelAction"
-                               TextWrapping="Wrap"
-                               TextAlignment="Center" />
-                </Button.Content>
-            </chats:ChatBottomButton>
+                                    Height="{StaticResource TelegramToolBarHeight}" />
         </Grid>
 
         <Grid x:Name="ManagePanel"

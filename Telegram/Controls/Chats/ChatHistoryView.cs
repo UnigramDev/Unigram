@@ -14,6 +14,7 @@ using Telegram.ViewModels.Delegates;
 using Windows.Devices.Input;
 using Windows.UI.Input;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
@@ -382,7 +383,7 @@ namespace Telegram.Controls.Chats
         {
             try
             {
-                if (options == null || options.MoveFocus)
+                if ((options == null || options.MoveFocus) && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
                 {
                     selectorItem.Focus(FocusState.Pointer);
                 }

@@ -47,7 +47,7 @@ using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
@@ -489,7 +489,7 @@ namespace Telegram.Views
                 TextField.IsSpellCheckEnabled = _useSystemSpellChecker;
             }
 
-            _focusState.Set(FocusState.Programmatic);
+            TrySetFocusState(FocusState.Programmatic, true);
 
             StickersPanel.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
 
@@ -811,9 +811,7 @@ namespace Telegram.Views
 
             ViewVisibleMessages();
 
-
-
-            _focusState.Set(FocusState.Programmatic);
+            TrySetFocusState(FocusState.Programmatic, true);
 
             if (WindowContext.Current.ContactPanel != null)
             {
@@ -852,12 +850,33 @@ namespace Telegram.Views
                 var element = FocusManager.GetFocusedElement();
                 if (element is not TextBox and not RichEditBox)
                 {
-                    _focusState.Set(FocusState.Programmatic);
+                    TrySetFocusState(FocusState.Programmatic, true);
                 }
             }
             else if (mode == CoreWindowActivationMode.Deactivated)
             {
                 ViewModel.SaveDraft();
+            }
+        }
+
+        private void TrySetFocusState(FocusState state, bool fast)
+        {
+            if (AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            {
+                return;
+            }
+
+//            if (fast)
+//            {
+//                if (CanFocusText(state))
+//                {
+//                    _focusState.Value = state;
+//                    FocusText(state);
+//                }
+//            }
+//            else
+            {
+                _focusState.Set(state);
             }
         }
 
@@ -3497,6 +3516,7 @@ namespace Telegram.Views
         }
 
         private bool? _replyEnabled = null;
+        private bool _actionCollapsed = true;
 
         private void ShowAction(string content, bool enabled, bool replyEnabled = false)
         {
@@ -3511,9 +3531,10 @@ namespace Telegram.Views
                 };
             }
 
-            //LabelAction.Text = content;
             _replyEnabled = replyEnabled;
             ButtonAction.IsEnabled = enabled;
+
+            _actionCollapsed = false;
             ButtonAction.Visibility = Visibility.Visible;
             ChatFooter.Visibility = Visibility.Visible;
             TextArea.Visibility = Visibility.Collapsed;
@@ -3526,12 +3547,20 @@ namespace Telegram.Views
                 _replyEnabled = null;
             }
 
-            ButtonAction.IsEnabled = false;
+            _actionCollapsed = true;
+            TextArea.Visibility = Visibility.Visible;
             ButtonAction.Visibility = Visibility.Collapsed;
             ChatFooter.Visibility = Visibility.Collapsed;
-            TextArea.Visibility = Visibility.Visible;
 
-            _focusState.Set(FocusState.Programmatic);
+            TrySetFocusState(FocusState.Programmatic, true);
+        }
+
+        private void ButtonAction_LosingFocus(UIElement sender, LosingFocusEventArgs args)
+        {
+            if (_actionCollapsed && !AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
+            {
+                args.TrySetNewFocusedElement(TextField);
+            }
         }
 
         private bool StillValid(Chat chat)
