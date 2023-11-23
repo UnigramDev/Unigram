@@ -470,7 +470,7 @@ namespace Telegram.Views
 
             //Playback.Update(ViewModel.ClientService, ViewModel.PlaybackService, ViewModel.NavigationService);
 
-            UpdateTextAreaRadius();
+            UpdateTextAreaRadius(false);
 
             TextField.IsReplaceEmojiEnabled = ViewModel.Settings.IsReplaceEmojiEnabled;
 
@@ -4285,10 +4285,18 @@ namespace Telegram.Views
             batch.End();
         }
 
+        private double _textAreaRadius = double.NaN;
 
-        private void UpdateTextAreaRadius()
+        private void UpdateTextAreaRadius(bool force = true)
         {
             var radius = SettingsService.Current.Appearance.BubbleRadius;
+            if (radius == _textAreaRadius && !force)
+            {
+                return;
+            }
+
+            _textAreaRadius = radius;
+
             var min = Math.Max(4, radius - 2);
             var max = ComposerHeader.Visibility == Visibility.Visible ? 4 : min;
 
@@ -4300,7 +4308,11 @@ namespace Telegram.Views
             ButtonManage.CornerRadius = new CornerRadius(min, 4, 4, min);
 
             ComposerHeaderCancel.CornerRadius = new CornerRadius(4, min, 4, 4);
-            TextRoot.CornerRadius = ChatFooter.CornerRadius = ChatRecord.CornerRadius = ManagePanel.CornerRadius = new CornerRadius(radius);
+            TextRoot.CornerRadius =
+                ChatFooter.CornerRadius =
+                ChatRecord.CornerRadius =
+                ManagePanel.CornerRadius =
+                ButtonAction.CornerRadius = new CornerRadius(radius);
 
             // It would be cool to have shadow to respect text field corner radius
             //Separator.CornerRadius = new CornerRadius(radius);
