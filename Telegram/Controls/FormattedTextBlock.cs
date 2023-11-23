@@ -593,6 +593,17 @@ namespace Telegram.Controls
                 _spoiler = null;
             }
 
+            if (firstFormatted)
+            {
+                Below.Margin = new Thickness(0, 4, 0, 0);
+                TextBlock.Margin = new Thickness(0, 4, 0, 0);
+            }
+            else
+            {
+                Below.Margin = new Thickness();
+                TextBlock.Margin = new Thickness();
+            }
+
             if (AdjustLineEnding && styled.Paragraphs.Count > 0)
             {
                 //var direction = NativeUtils.GetDirectionality(text);

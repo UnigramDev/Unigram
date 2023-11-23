@@ -1027,7 +1027,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:FormattedTextBlock">
-                    <Grid>
+                    <Grid x:Name="RootGrid">
                         <Canvas x:Name="Below" />
                         <RichTextBlock x:Name="TextBlock"
                                        Foreground="{TemplateBinding Foreground}"
