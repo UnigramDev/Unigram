@@ -29,6 +29,8 @@ namespace Telegram.Controls
 
         private UIElement _activeIndicator;
 
+        private bool _needsSelectionUpdate;
+
         public TopNavView()
         {
             DefaultStyleKey = typeof(TopNavView);
@@ -45,6 +47,19 @@ namespace Telegram.Controls
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (_needsSelectionUpdate)
+            {
+                return;
+            }
+
+            _needsSelectionUpdate = true;
+            VisualUtilities.QueueCallbackForCompositionRendering(UpdateSelection);
+        }
+
+        private void UpdateSelection()
+        {
+            _needsSelectionUpdate = false;
+
             if (SelectionMode == ListViewSelectionMode.Single)
             {
                 AnimateSelectionChanged(SelectedItem);
@@ -96,6 +111,22 @@ namespace Telegram.Controls
             DependencyProperty.Register("Orientation", typeof(Orientation), typeof(TopNavView), new PropertyMetadata(Orientation.Horizontal));
 
         #endregion
+
+        private void AnimateSelectionChanged()
+        {
+            AnimateSelectionChanged(SelectedItem);
+
+            if (FocusFollowsSingleSelection)
+            {
+                // TODO: would be cool to do this only on programmatic changes, but I'm afraid it's not possible.
+                _ = this.ScrollToItem2(SelectedItem, VerticalAlignment.Center);
+            }
+        }
+
+        private void ClearSelectionChanged()
+        {
+            AnimateSelectionChanged(null);
+        }
 
         private void AnimateSelectionChanged(object nextItem, bool retry = true)
         {
