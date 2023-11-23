@@ -155,6 +155,36 @@ namespace Telegram.ViewModels
             }
         }
 
+        public async void OpenGame(MessageViewModel message)
+        {
+            if (_chat is not Chat chat)
+            {
+                return;
+            }
+
+            var game = message.Content as MessageGame;
+            if (game == null)
+            {
+                return;
+            }
+
+            var response = await ClientService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadGame(game.Game.ShortName)));
+            if (response is CallbackQueryAnswer answer && !string.IsNullOrEmpty(answer.Url))
+            {
+                ChatActionManager.SetTyping(new ChatActionStartPlayingGame());
+
+                var viaBot = message.GetViaBotUser();
+                if (viaBot != null && viaBot.HasActiveUsername(out string username))
+                {
+                    NavigationService.Navigate(typeof(GamePage), new GameConfiguration(message, answer.Url, game.Game.Title, username));
+                }
+                else
+                {
+                    NavigationService.Navigate(typeof(GamePage), new GameConfiguration(message, answer.Url, game.Game.Title, string.Empty));
+                }
+            }
+        }
+
         public void Call(MessageViewModel message, bool video)
         {
             Call(video);

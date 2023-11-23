@@ -1163,27 +1163,7 @@ namespace Telegram.ViewModels
             }
             else if (inline.Type is InlineKeyboardButtonTypeCallbackGame)
             {
-                var game = message.Content as MessageGame;
-                if (game == null)
-                {
-                    return;
-                }
-
-                var response = await ClientService.SendAsync(new GetCallbackQueryAnswer(chat.Id, message.Id, new CallbackQueryPayloadGame(game.Game.ShortName)));
-                if (response is CallbackQueryAnswer answer && !string.IsNullOrEmpty(answer.Url))
-                {
-                    ChatActionManager.SetTyping(new ChatActionStartPlayingGame());
-
-                    var viaBot = message.GetViaBotUser();
-                    if (viaBot != null && viaBot.HasActiveUsername(out string username))
-                    {
-                        NavigationService.Navigate(typeof(GamePage), new GameConfiguration(message, answer.Url, game.Game.Title, username));
-                    }
-                    else
-                    {
-                        NavigationService.Navigate(typeof(GamePage), new GameConfiguration(message, answer.Url, game.Game.Title, string.Empty));
-                    }
-                }
+                OpenGame(message);
             }
             else if (inline.Type is InlineKeyboardButtonTypeWebApp webApp)
             {

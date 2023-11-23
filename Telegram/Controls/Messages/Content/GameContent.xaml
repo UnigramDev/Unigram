@@ -9,55 +9,69 @@
                     d:DesignWidth="400">
 
     <Style TargetType="local:GameContent">
+        <Setter Property="HeaderBrush"
+                Value="{ThemeResource MessageHeaderForegroundBrush}" />
         <Setter Property="BorderBrush"
                 Value="{ThemeResource MessageHeaderBorderBrush}" />
-        <Setter Property="BorderThickness"
-                Value="2,0,0,0" />
-        <Setter Property="Padding"
-                Value="8,0,0,0" />
         <Setter Property="Margin"
-                Value="0,4,0,6" />
+                Value="0,8,0,6" />
         <Setter Property="IsTabStop"
-                Value="False" />
+                Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:GameContent">
-                    <StackPanel BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Padding="{TemplateBinding Padding}">
-                        <StackPanel Margin="0,0,0,8">
-                            <TextBlock x:Name="TitleLabel"
-                                       MaxLines="1"
-                                       TextTrimming="CharacterEllipsis"
-                                       FontWeight="SemiBold"
-                                       Foreground="{ThemeResource MessageHeaderForegroundBrush}"
-                                       Style="{StaticResource CaptionTextBlockStyle}" />
-                            <RichTextBlock IsTextSelectionEnabled="False"
-                                           Foreground="{ThemeResource MessageForegroundBrush}"
-                                           Style="{StaticResource CaptionRichTextBlockStyle}">
-                                <Paragraph>
-                                    <Span x:Name="Span" />
-                                </Paragraph>
-                            </RichTextBlock>
+                    <Grid CornerRadius="4">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundOverlay.Opacity"
+                                                Value="0.15" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Rectangle x:Name="BackgroundOverlay"
+                                   Fill="{TemplateBinding BorderBrush}"
+                                   Opacity="0.1"
+                                   Grid.ColumnSpan="2" />
+                        <Rectangle Fill="{TemplateBinding BorderBrush}"
+                                   HorizontalAlignment="Left"
+                                   Width="3" />
+                        <controls:DashPath x:Name="AccentDash" />
+
+                        <StackPanel Padding="8,4,8,0"
+                                    Grid.Column="1">
+
+                            <StackPanel>
+                                <TextBlock x:Name="TitleLabel"
+                                           MaxLines="1"
+                                           TextTrimming="CharacterEllipsis"
+                                           FontWeight="SemiBold"
+                                           Foreground="{TemplateBinding HeaderBrush}"
+                                           Style="{StaticResource CaptionTextBlockStyle}" />
+                                <RichTextBlock IsTextSelectionEnabled="False"
+                                               Foreground="{ThemeResource MessageForegroundBrush}"
+                                               Style="{StaticResource CaptionRichTextBlockStyle}">
+                                    <Paragraph>
+                                        <Span x:Name="Span" />
+                                    </Paragraph>
+                                </RichTextBlock>
+                            </StackPanel>
+
+                            <Grid HorizontalAlignment="Left"
+                                  Margin="0,8,0,8">
+                                <Border x:Name="Media"
+                                        CornerRadius="4" />
+                            </Grid>
                         </StackPanel>
-
-                        <Grid HorizontalAlignment="Left">
-                            <Border x:Name="Media"
-                                    CornerRadius="4" />
-
-                            <Border Background="{ThemeResource MessageOverlayBackgroundBrush}"
-                                    CornerRadius="{ThemeResource MessageOverlayCornerRadius}"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Top"
-                                    Padding="8,4,8,4"
-                                    Margin="4">
-                                <TextBlock Text="{CustomResource AttachGame}"
-                                           Style="{StaticResource CaptionTextBlockStyle}"
-                                           Foreground="White"
-                                           TextAlignment="Right" />
-                            </Border>
-                        </Grid>
-                    </StackPanel>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

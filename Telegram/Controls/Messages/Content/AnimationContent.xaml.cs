@@ -67,7 +67,7 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = message;
 
-            var animation = GetContent(message, out bool isSecret);
+            var animation = GetContent(message, out bool isSecret, out _);
             if (animation == null || !_templateApplied)
             {
                 return;
@@ -89,7 +89,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateFile(MessageViewModel message, File file)
         {
-            var animation = GetContent(message, out bool isSecret);
+            var animation = GetContent(message, out bool isSecret, out bool isGame);
             if (animation == null || !_templateApplied)
             {
                 return;
@@ -106,7 +106,7 @@ namespace Telegram.Controls.Messages.Content
                 Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
-                Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
+                Subtitle.Text = isGame ? Strings.AttachGame : string.Format("{0} / {1}", FileSizeConverter.Convert(file.Local.DownloadedSize, size), FileSizeConverter.Convert(size));
                 Overlay.Opacity = 1;
 
                 Player.Source = null;
@@ -116,7 +116,7 @@ namespace Telegram.Controls.Messages.Content
                 Button.SetGlyph(file.Id, MessageContentState.Uploading);
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
-                Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
+                Subtitle.Text = isGame ? Strings.AttachGame : string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
                 Overlay.Opacity = 1;
 
                 Player.Source = null;
@@ -126,7 +126,7 @@ namespace Telegram.Controls.Messages.Content
                 Button.SetGlyph(file.Id, MessageContentState.Download);
                 Button.Progress = 0;
 
-                Subtitle.Text = Strings.AttachGif + ", " + FileSizeConverter.Convert(size);
+                Subtitle.Text = isGame ? Strings.AttachGame : (Strings.AttachGif + ", " + FileSizeConverter.Convert(size));
                 Overlay.Opacity = 1;
 
                 Player.Source = null;
@@ -161,7 +161,7 @@ namespace Telegram.Controls.Messages.Content
                     Button.SetGlyph(file.Id, MessageContentState.Animation);
                     Button.Progress = 1;
 
-                    Subtitle.Text = Strings.AttachGif;
+                    Subtitle.Text = isGame ? Strings.AttachGame : Strings.AttachGif;
                     Overlay.Opacity = 1;
 
                     Player.Source = new LocalFileSource(file);
@@ -172,7 +172,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(object target, File file)
         {
-            var animation = GetContent(_message, out bool isSecret);
+            var animation = GetContent(_message, out bool isSecret, out _);
             if (animation == null || !_templateApplied)
             {
                 return;
@@ -246,11 +246,13 @@ namespace Telegram.Controls.Messages.Content
             return false;
         }
 
-        private Animation GetContent(MessageViewModel message, out bool isSecret)
+        private Animation GetContent(MessageViewModel message, out bool isSecret, out bool isGame)
         {
+            isSecret = false;
+            isGame = false;
+
             if (message?.Delegate == null)
             {
-                isSecret = false;
                 return null;
             }
 
@@ -262,16 +264,14 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (content is MessageGame game)
             {
-                isSecret = false;
+                isGame = true;
                 return game.Game.Animation;
             }
             else if (content is MessageText text && text.WebPage != null)
             {
-                isSecret = false;
                 return text.WebPage.Animation;
             }
 
-            isSecret = false;
             return null;
         }
 
@@ -282,7 +282,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var animation = GetContent(_message, out _);
+            var animation = GetContent(_message, out _, out _);
             if (animation == null)
             {
                 return;

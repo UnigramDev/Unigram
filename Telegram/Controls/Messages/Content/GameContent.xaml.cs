@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class GameContent : Control, IContent, IContentWithPlayback
+    public sealed class GameContent : HyperlinkButton, IContent, IContentWithPlayback
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -31,6 +31,7 @@ namespace Telegram.Controls.Messages.Content
 
         #region InitializeComponent
 
+        private DashPath AccentDash;
         private TextBlock TitleLabel;
         private Span Span;
         private Border Media;
@@ -38,9 +39,12 @@ namespace Telegram.Controls.Messages.Content
 
         protected override void OnApplyTemplate()
         {
+            AccentDash = GetTemplateChild(nameof(AccentDash)) as DashPath;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as TextBlock;
             Span = GetTemplateChild(nameof(Span)) as Span;
             Media = GetTemplateChild(nameof(Media)) as Border;
+
+            Click += Button_Click;
 
             _templateApplied = true;
 
@@ -76,6 +80,37 @@ namespace Telegram.Controls.Messages.Content
             }
 
             UpdateContent(message, game.Game);
+
+            var outgoing = message.IsOutgoing && !message.IsChannelPost;
+            var sender = message.GetSender();
+
+            var accent = outgoing ? null : sender switch
+            {
+                User user => message.ClientService.GetAccentColor(user.AccentColorId),
+                Chat chat => message.ClientService.GetAccentColor(chat.AccentColorId),
+                _ => null
+            };
+
+            if (accent != null)
+            {
+                HeaderBrush =
+                    BorderBrush = new SolidColorBrush(accent.LightThemeColors[0]);
+
+                AccentDash.Stripe1 = accent.LightThemeColors.Count > 1
+                    ? new SolidColorBrush(accent.LightThemeColors[1])
+                    : null;
+                AccentDash.Stripe2 = accent.LightThemeColors.Count > 2
+                    ? new SolidColorBrush(accent.LightThemeColors[2])
+                    : null;
+            }
+            else
+            {
+                ClearValue(HeaderBrushProperty);
+                ClearValue(BorderBrushProperty);
+
+                AccentDash.Stripe1 = null;
+                AccentDash.Stripe2 = null;
+            }
         }
 
         private void UpdateContent(MessageViewModel message, Game game)
@@ -95,12 +130,17 @@ namespace Telegram.Controls.Messages.Content
 
             if (game.Animation != null)
             {
-                Media.Child = new AnimationContent(message);
+                Media.Child = new AnimationContent(message)
+                {
+                    IsEnabled = false
+                };
             }
             else if (game.Photo != null)
             {
-                // Photo at last: web page preview might have both a file and a thumbnail
-                Media.Child = new PhotoContent(message);
+                Media.Child = new PhotoContent(message)
+                {
+                    IsEnabled = false
+                };
             }
             else
             {
@@ -227,32 +267,20 @@ namespace Telegram.Controls.Messages.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var game = _message.Content as MessageGame;
-
-            var file = game.Game.Animation?.AnimationValue ?? game.Game.Photo?.GetBig()?.Photo;
-            if (file.Local.IsDownloadingActive)
-            {
-                _message.ClientService.CancelDownloadFile(file);
-            }
-            else if (file.Remote.IsUploadingActive || _message.SendingState is MessageSendingStateFailed)
-            {
-                if (_message.SendingState is MessageSendingStateFailed or MessageSendingStatePending)
-                {
-                    _message.ClientService.Send(new DeleteMessages(_message.ChatId, new[] { _message.Id }, true));
-                }
-                else
-                {
-                    _message.ClientService.Send(new CancelPreliminaryUploadFile(file.Id));
-                }
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive && !file.Local.IsDownloadingCompleted)
-            {
-                _message.ClientService.DownloadFile(file.Id, 30);
-            }
-            else
-            {
-                _message.Delegate.OpenFile(file);
-            }
+            _message.Delegate.OpenGame(_message);
         }
+
+        #region HeaderBrush
+
+        public Brush HeaderBrush
+        {
+            get { return (Brush)GetValue(HeaderBrushProperty); }
+            set { SetValue(HeaderBrushProperty, value); }
+        }
+
+        public static readonly DependencyProperty HeaderBrushProperty =
+            DependencyProperty.Register("HeaderBrush", typeof(Brush), typeof(GameContent), new PropertyMetadata(null));
+
+        #endregion
     }
 }

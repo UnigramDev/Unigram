@@ -79,7 +79,7 @@ namespace Telegram.Controls.Messages.Content
 
             _message = message;
 
-            var photo = GetContent(message, out bool hasSpoiler, out bool isSecret);
+            var photo = GetContent(message, out bool hasSpoiler, out bool isSecret, out _);
             if (photo == null || !_templateApplied)
             {
                 _hidden = (prevId != nextId || _hidden) && hasSpoiler;
@@ -146,7 +146,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateFile(MessageViewModel message, File file)
         {
-            var photo = GetContent(message, out bool hasSpoiler, out bool isSecret);
+            var photo = GetContent(message, out bool hasSpoiler, out bool isSecret, out bool isGame);
             if (photo == null || !_templateApplied)
             {
                 return;
@@ -158,6 +158,16 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
+            if (isGame)
+            {
+                Subtitle.Text = Strings.AttachGame;
+                Overlay.Opacity = 1;
+            }
+            else if (isSecret is false)
+            {
+                Overlay.Opacity = 0;
+            }
+
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive)
             {
@@ -166,7 +176,7 @@ namespace Telegram.Controls.Messages.Content
                 Button.Progress = (double)file.Local.DownloadedSize / size;
 
                 Button.Opacity = 1;
-                Overlay.Opacity = 0;
+                //Overlay.Opacity = 0;
             }
             else if (file.Remote.IsUploadingActive || message.SendingState is MessageSendingStateFailed)
             {
@@ -175,7 +185,7 @@ namespace Telegram.Controls.Messages.Content
                 Button.Progress = (double)file.Remote.UploadedSize / size;
 
                 Button.Opacity = 1;
-                Overlay.Opacity = 0;
+                //Overlay.Opacity = 0;
 
                 if (isSecret)
                 {
@@ -193,7 +203,7 @@ namespace Telegram.Controls.Messages.Content
                 Button.Progress = 0;
 
                 Button.Opacity = 1;
-                Overlay.Opacity = 0;
+                //Overlay.Opacity = 0;
 
                 if (message.Delegate.CanBeDownloaded(photo, file))
                 {
@@ -219,7 +229,7 @@ namespace Telegram.Controls.Messages.Content
                     }
                     else
                     {
-                        Subtitle.Text = Icons.ArrowClockwiseFilled12 +  "\u2004\u200A1";
+                        Subtitle.Text = Icons.ArrowClockwiseFilled12 + "\u2004\u200A1";
                     }
                 }
                 else
@@ -237,7 +247,7 @@ namespace Telegram.Controls.Messages.Content
                         Button.Opacity = 0;
                     }
 
-                    Overlay.Opacity = 0;
+                    //Overlay.Opacity = 0;
 
                     if (hasSpoiler && _hidden)
                     {
@@ -271,7 +281,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateThumbnail(object target, File file)
         {
-            var photo = GetContent(_message, out _, out bool isSecret);
+            var photo = GetContent(_message, out _, out bool isSecret, out _);
             if (photo == null || !_templateApplied)
             {
                 return;
@@ -363,12 +373,14 @@ namespace Telegram.Controls.Messages.Content
             return false;
         }
 
-        private Photo GetContent(MessageViewModel message, out bool hasSpoiler, out bool isSecret)
+        private Photo GetContent(MessageViewModel message, out bool hasSpoiler, out bool isSecret, out bool isGame)
         {
+            hasSpoiler = false;
+            isSecret = false;
+            isGame = false;
+
             if (message?.Delegate == null)
             {
-                hasSpoiler = false;
-                isSecret = false;
                 return null;
             }
 
@@ -381,31 +393,24 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (content is MessageGame game)
             {
-                hasSpoiler = false;
-                isSecret = false;
+                isGame = true;
                 return game.Game.Photo;
             }
             else if (content is MessageText text && text.WebPage != null)
             {
-                hasSpoiler = false;
-                isSecret = false;
                 return text.WebPage.Photo;
             }
             else if (content is MessageInvoice invoice && invoice.ExtendedMedia is MessageExtendedMediaPhoto extendedMediaPhoto)
             {
-                hasSpoiler = false;
-                isSecret = false;
                 return extendedMediaPhoto.Photo;
             }
 
-            hasSpoiler = false;
-            isSecret = false;
             return null;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var photo = GetContent(_message, out bool hasSpoiler, out _);
+            var photo = GetContent(_message, out bool hasSpoiler, out _, out _);
             if (photo == null)
             {
                 return;

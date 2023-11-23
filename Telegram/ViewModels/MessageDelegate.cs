@@ -312,6 +312,11 @@ namespace Telegram.ViewModels
         /// <summary>
         /// Only available when created through DialogViewModel
         /// </summary>
+        public virtual void OpenGame(MessageViewModel message) { }
+
+        /// <summary>
+        /// Only available when created through DialogViewModel
+        /// </summary>
         public virtual void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button) { }
 
         /// <summary>
@@ -439,6 +444,8 @@ namespace Telegram.ViewModels
         public override void OpenWebPage(WebPage webPage) => _viewModel.OpenWebPage(webPage);
 
         public override void OpenSticker(Sticker sticker) => _viewModel.OpenSticker(sticker);
+
+        public override void OpenGame(MessageViewModel message) => _viewModel.OpenGame(message);
 
         public override void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button) => _viewModel.OpenInlineButton(message, button);
 
