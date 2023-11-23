@@ -122,13 +122,12 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice)
+                if (_loadingSlice)
                 {
                     return;
                 }
 
-                _isLoadingNextSlice = true;
-                _isLoadingPreviousSlice = true;
+                _loadingSlice = true;
                 IsLastSliceLoaded = null;
                 IsFirstSliceLoaded = null;
                 IsLoading = true;
@@ -155,8 +154,7 @@ namespace Telegram.ViewModels
                     IsFirstSliceLoaded = true;
                 }
 
-                _isLoadingNextSlice = false;
-                _isLoadingPreviousSlice = false;
+                _loadingSlice = false;
                 IsLoading = false;
             }
 
@@ -181,12 +179,12 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || Items.Count < 1 || IsLastSliceLoaded == true)
+                if (_loadingSlice || Items.Count < 1 || IsLastSliceLoaded == true)
                 {
                     return;
                 }
 
-                _isLoadingNextSlice = true;
+                _loadingSlice = true;
                 IsLoading = true;
 
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
@@ -213,7 +211,7 @@ namespace Telegram.ViewModels
                     }
                 }
 
-                _isLoadingNextSlice = false;
+                _loadingSlice = false;
                 IsLoading = false;
             }
         }

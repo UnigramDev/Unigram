@@ -274,7 +274,7 @@ namespace Telegram.ViewModels
         {
             get
             {
-                return (_accessToken != null || _isEmpty) && !_isLoadingNextSlice && !_isLoadingPreviousSlice;
+                return (_accessToken != null || _isEmpty) && !_loadingSlice;
             }
         }
 
@@ -484,7 +484,7 @@ namespace Telegram.ViewModels
         private bool _isEmpty = true;
         public bool IsEmpty
         {
-            get => _isEmpty && !_isLoadingNextSlice && !_isLoadingPreviousSlice;
+            get => _isEmpty && !_loadingSlice;
             set
             {
                 Set(ref _isEmpty, value);
@@ -494,7 +494,7 @@ namespace Telegram.ViewModels
 
         public override bool IsLoading
         {
-            get => _isLoadingNextSlice || _isLoadingPreviousSlice;
+            get => _loadingSlice;
             set
             {
                 base.IsLoading = value;
@@ -503,8 +503,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        protected bool _isLoadingNextSlice;
-        protected bool _isLoadingPreviousSlice;
+        protected bool _loadingSlice;
 
         protected Stack<long> _repliesStack = new Stack<long>();
 
@@ -526,12 +525,12 @@ namespace Telegram.ViewModels
 
             using (await _loadMoreLock.WaitAsync())
             {
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat?.Id != chat.Id || Items.Count < 1 || IsLastSliceLoaded == true)
+                if (_loadingSlice || _chat?.Id != chat.Id || Items.Count < 1 || IsLastSliceLoaded == true)
                 {
                     return;
                 }
 
-                _isLoadingNextSlice = true;
+                _loadingSlice = true;
                 IsLoading = true;
 
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync");
@@ -539,13 +538,11 @@ namespace Telegram.ViewModels
                 var maxId = Items.FirstId;
                 if (maxId == long.MaxValue)
                 {
-                    _isLoadingNextSlice = false;
+                    _loadingSlice = false;
                     IsLoading = false;
 
                     return;
                 }
-
-                System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadNextSliceAsync: Begin request");
 
                 Function func;
                 if (_topic != null)
@@ -602,7 +599,7 @@ namespace Telegram.ViewModels
                     IsLastSliceLoaded = replied.Count == 0;
                 }
 
-                _isLoadingNextSlice = false;
+                _loadingSlice = false;
                 IsLoading = false;
 
                 LoadPinnedMessagesSliceAsync(maxId, VerticalAlignment.Top);
@@ -625,12 +622,12 @@ namespace Telegram.ViewModels
 
             using (await _loadMoreLock.WaitAsync())
             {
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat?.Id != chat.Id || Items.Count < 1)
+                if (_loadingSlice || _chat?.Id != chat.Id || Items.Count < 1)
                 {
                     return;
                 }
 
-                _isLoadingPreviousSlice = true;
+                _loadingSlice = true;
                 IsLoading = true;
 
                 System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadPreviousSliceAsync");
@@ -638,7 +635,7 @@ namespace Telegram.ViewModels
                 var maxId = Items.LastId;
                 if (maxId == long.MinValue)
                 {
-                    _isLoadingPreviousSlice = false;
+                    _loadingSlice = false;
                     IsLoading = false;
 
                     return;
@@ -699,7 +696,7 @@ namespace Telegram.ViewModels
                     IsFirstSliceLoaded = replied.Count == 0 || IsEndReached();
                 }
 
-                _isLoadingPreviousSlice = false;
+                _loadingSlice = false;
                 IsLoading = false;
 
                 LoadPinnedMessagesSliceAsync(maxId, VerticalAlignment.Bottom);
@@ -1082,14 +1079,13 @@ namespace Telegram.ViewModels
 
             using (await _loadMoreLock.WaitAsync())
             {
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice || _chat?.Id != chat.Id)
+                if (_loadingSlice || _chat?.Id != chat.Id)
                 {
                     NotifyMessageSliceLoaded();
                     return;
                 }
 
-                _isLoadingNextSlice = true;
-                _isLoadingPreviousSlice = true;
+                _loadingSlice = true;
                 IsLastSliceLoaded = null;
                 IsFirstSliceLoaded = null;
                 IsLoading = true;
@@ -1128,8 +1124,7 @@ namespace Telegram.ViewModels
                     await AddSponsoredMessagesAsync();
                 }
 
-                _isLoadingNextSlice = false;
-                _isLoadingPreviousSlice = false;
+                _loadingSlice = false;
                 IsLoading = false;
 
                 LoadPinnedMessagesSliceAsync(maxId, VerticalAlignment.Center);
@@ -1421,18 +1416,17 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                if (_isLoadingNextSlice || _isLoadingPreviousSlice)
+                if (_loadingSlice)
                 {
                     return;
                 }
 
-                _isLoadingNextSlice = true;
-                _isLoadingPreviousSlice = true;
+                _loadingSlice = true;
                 IsLastSliceLoaded = null;
                 IsFirstSliceLoaded = null;
                 IsLoading = true;
 
-                System.Diagnostics.Debug.WriteLine("DialogViewModel: LoadScheduledSliceAsync");
+                Logger.Info();
 
                 var response = await ClientService.SendAsync(new GetChatScheduledMessages(chat.Id));
                 if (response is Messages messages)
@@ -1460,8 +1454,7 @@ namespace Telegram.ViewModels
                     IsFirstSliceLoaded = true;
                 }
 
-                _isLoadingNextSlice = false;
-                _isLoadingPreviousSlice = false;
+                _loadingSlice = false;
                 IsLoading = false;
             }
         }
