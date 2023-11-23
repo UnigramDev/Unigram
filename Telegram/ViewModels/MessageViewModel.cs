@@ -294,6 +294,7 @@ namespace Telegram.ViewModels
             if (_message.Content is MessageAlbum album)
             {
                 FormattedText caption = null;
+                StyledText text = null;
 
                 if (album.IsMedia)
                 {
@@ -305,10 +306,12 @@ namespace Telegram.ViewModels
                             if (caption == null || string.IsNullOrEmpty(caption.Text))
                             {
                                 caption = childCaption;
+                                text = child.Text;
                             }
                             else
                             {
                                 caption = null;
+                                text = null;
                                 break;
                             }
                         }
@@ -317,10 +320,11 @@ namespace Telegram.ViewModels
                 else if (album.Messages.Count > 0)
                 {
                     caption = album.Messages[^1].GetCaption();
+                    text = album.Messages[^1].Text;
                 }
 
                 album.Caption = caption ?? new FormattedText();
-                SetText(caption);
+                Text = text;
             }
         }
     }
