@@ -470,6 +470,10 @@ namespace Telegram.ViewModels
 
                 return message.SchedulingState == null && message.MessageThreadId == ThreadId;
             }
+            else if (_type == DialogType.Pinned)
+            {
+                return message.SchedulingState == null && message.IsPinned;
+            }
 
             return message.SchedulingState == null && _type == DialogType.History;
         }
@@ -731,11 +735,17 @@ namespace Telegram.ViewModels
                 {
                     if (update.IsPinned)
                     {
-                        // TODO
+                        ClientService.Send(new GetMessage(update.ChatId, update.MessageId), response =>
+                        {
+                            if (response is Message message)
+                            {
+                                Handle(new UpdateNewMessage(message));
+                            }
+                        });
                     }
                     else
                     {
-                        Handle(new UpdateDeleteMessages(update.ChatId, new[] { update.MessageId }, true, true));
+                        Handle(new UpdateDeleteMessages(update.ChatId, new[] { update.MessageId }, true, false));
                     }
                 }
                 else
