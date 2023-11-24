@@ -24,6 +24,14 @@ namespace Telegram.Streams
             _file = file;
         }
 
+        public DelayedFileSource(IClientService clientService, Sticker sticker)
+            : this(clientService, sticker.StickerValue)
+        {
+            Width = sticker.Width;
+            Height = sticker.Height;
+            Outline = sticker.Outline;
+        }
+
         public override string FilePath => _file?.Local.Path;
 
         public override long Id => _file.Id;

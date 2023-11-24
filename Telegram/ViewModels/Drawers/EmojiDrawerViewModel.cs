@@ -376,7 +376,7 @@ namespace Telegram.ViewModels.Drawers
             return Array.Empty<StickerSetViewModel>();
         }
 
-        public async Task<List<(AvailableReaction, File)>> UpdateReactions(AvailableReactions available, IList<AvailableReaction> visible)
+        public async Task<List<(AvailableReaction, Sticker)>> UpdateReactions(AvailableReactions available, IList<AvailableReaction> visible)
         {
             if (available == null)
             {
@@ -387,7 +387,7 @@ namespace Telegram.ViewModels.Drawers
                 .Union(available.PopularReactions)
                 .Union(available.RecentReactions)
                 .Select(x => x.Type)
-                .Discern(out _, out var missingEmoji);
+                .Discern(out var missingReactions, out var missingEmoji);
 
             IDictionary<long, Sticker> assets = null;
             if (missingEmoji != null)
@@ -401,7 +401,7 @@ namespace Telegram.ViewModels.Drawers
                 assets = stickers.StickersValue.ToDictionary(x => x.FullType is StickerFullTypeCustomEmoji customEmoji ? customEmoji.CustomEmojiId : 0);
             }
 
-            var reactions = await ClientService.GetAllReactionsAsync();
+            var reactions = await ClientService.GetReactionsAsync(missingReactions);
 
             var items = new List<Sticker>();
             var top = new List<Sticker>();
@@ -481,11 +481,11 @@ namespace Telegram.ViewModels.Drawers
 
             _ = UpdateAsync();
 
-            var test = new List<(AvailableReaction, File)>();
+            var test = new List<(AvailableReaction, Sticker)>();
 
             for (int i = 0; i < Math.Min(top.Count, 6); i++)
             {
-                test.Add((source[i], top[i].StickerValue));
+                test.Add((source[i], top[i]));
             }
 
             return test;

@@ -16,10 +16,8 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.Views.Popups
@@ -177,16 +175,7 @@ namespace Telegram.Views.Popups
                     animated.FrameSize = new Size(64, 64);
                 }
 
-                animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
-            }
-
-            if (file.Local.IsDownloadingCompleted)
-            {
-            }
-            else
-            {
-                CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
-                ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
+                animated.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
             }
 
             args.Handled = true;

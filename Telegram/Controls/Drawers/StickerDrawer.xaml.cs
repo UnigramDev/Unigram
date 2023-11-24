@@ -13,7 +13,6 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Drawers;
 using Windows.Foundation;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
@@ -280,16 +279,7 @@ namespace Telegram.Controls.Drawers
             }
 
             var animation = content.Children[0] as AnimatedImage;
-            animation.Source = new DelayedFileSource(ViewModel.ClientService, file);
-
-            if (file.Local.IsDownloadingCompleted)
-            {
-            }
-            else
-            {
-                CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
-                ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
-            }
+            animation.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
         }
 
         private void Toolbar_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

@@ -718,7 +718,7 @@ namespace Telegram.Controls.Drawers
             }
 
             var animated = content.Children[0] as AnimatedImage;
-            animated.Source = new DelayedFileSource(ViewModel.ClientService, file)
+            animated.Source = new DelayedFileSource(ViewModel.ClientService, sticker)
             {
                 NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji customEmoji
                     && customEmoji.NeedsRepainting
@@ -732,15 +732,6 @@ namespace Telegram.Controls.Drawers
             //{
             //    content.Padding = new Thickness(_mode == EmojiDrawerMode.Reactions ? 0 : 8);
             //}
-
-            if (file.Local.IsDownloadingCompleted)
-            {
-            }
-            else
-            {
-                CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
-                ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
-            }
         }
 
         #endregion

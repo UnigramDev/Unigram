@@ -91,6 +91,7 @@ namespace Telegram.Services
 
         bool TryGetCachedReaction(string emoji, out EmojiReaction value);
         Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync();
+        Task<IDictionary<string, EmojiReaction>> GetReactionsAsync(IEnumerable<string> reactions);
 
         Chat GetChat(long id);
         IEnumerable<Chat> GetChats(IEnumerable<long> ids);
@@ -972,6 +973,22 @@ namespace Telegram.Services
             var result = new Dictionary<string, EmojiReaction>();
 
             foreach (var emoji in _reactions)
+            {
+                var response = await SendAsync(new GetEmojiReaction(emoji));
+                if (response is EmojiReaction reaction)
+                {
+                    result[emoji] = reaction;
+                }
+            }
+
+            return result;
+        }
+
+        public async Task<IDictionary<string, EmojiReaction>> GetReactionsAsync(IEnumerable<string> reactions)
+        {
+            var result = new Dictionary<string, EmojiReaction>();
+
+            foreach (var emoji in reactions)
             {
                 var response = await SendAsync(new GetEmojiReaction(emoji));
                 if (response is EmojiReaction reaction)

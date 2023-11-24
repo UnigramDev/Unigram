@@ -7,6 +7,7 @@
 using RLottie;
 using System.Collections.Generic;
 using Telegram.Native;
+using Telegram.Td.Api;
 using Windows.Foundation.Metadata;
 
 namespace Telegram.Streams
@@ -17,6 +18,14 @@ namespace Telegram.Streams
         #region Properties
 
         public bool NeedsRepainting { get; set; }
+
+        public IList<ClosedVectorPath> Outline { get; set; }
+
+        // Needed for Outline
+        public int Width { get; set; }
+
+        // Needed for Outline
+        public int Height { get; set; }
 
         #endregion
 

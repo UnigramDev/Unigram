@@ -291,10 +291,8 @@ namespace Telegram.Controls.Messages
                 var visible = Create(28, true);
                 var preload = Create(32, false);
 
-                var delayed = new DelayedFileSource(clientService, item.Item2);
-
-                visible.Source = delayed;
-                preload.Source = delayed;
+                visible.Source = new DelayedFileSource(clientService, item.Item2);
+                preload.Source = new DelayedFileSource(clientService, item.Item2.StickerValue);
                 preload.LoopCompleted += (s, args) => args.Cancel = true;
                 preload.Opacity = 0;
                 preload.Play();

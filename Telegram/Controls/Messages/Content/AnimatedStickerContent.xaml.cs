@@ -12,11 +12,9 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
@@ -30,8 +28,6 @@ namespace Telegram.Controls.Messages.Content
         private long _interactionToken;
 
         private bool _isEmoji;
-
-        private CompositionAnimation _thumbnailShimmer;
 
         public AnimatedStickerContent(MessageViewModel message)
         {
@@ -119,11 +115,6 @@ namespace Telegram.Controls.Messages.Content
 
             _isEmoji = message.Content is not MessageSticker;
 
-            if (!sticker.StickerValue.Local.IsDownloadingCompleted)
-            {
-                UpdateThumbnail(message, sticker);
-            }
-
             UpdateManager.Subscribe(this, message, sticker.StickerValue, ref _fileToken, UpdateFile, true);
             UpdateFile(message, sticker.StickerValue);
         }
@@ -160,7 +151,7 @@ namespace Telegram.Controls.Messages.Content
                 using (Player.BeginBatchUpdate())
                 {
                     Player.LoopCount = message.Content is MessageSticker && PowerSavingPolicy.AutoPlayStickersInChats ? 0 : 1;
-                    Player.Source = new LocalFileSource(file)
+                    Player.Source = new LocalFileSource(sticker)
                     {
                         FitzModifier = message.Content is MessageAnimatedEmoji animatedEmoji ? animatedEmoji.AnimatedEmoji.FitzpatrickType switch
                         {
@@ -184,17 +175,8 @@ namespace Telegram.Controls.Messages.Content
             }
         }
 
-        private void UpdateThumbnail(MessageViewModel message, Sticker sticker)
-        {
-            _thumbnailShimmer = CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual);
-            ElementCompositionPreview.SetElementChildVisual(Player, visual);
-        }
-
         private void Player_Ready(object sender, EventArgs e)
         {
-            _thumbnailShimmer = null;
-            ElementCompositionPreview.SetElementChildVisual(Player, null);
-
             var sticker = _message?.Content as MessageSticker;
             if (sticker?.Sticker.FullType is StickerFullTypeRegular regular && regular.PremiumAnimation != null && sticker.IsPremium && _message.GeneratedContentUnread && IsLoaded)
             {

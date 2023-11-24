@@ -18,13 +18,11 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
-using Windows.UI.Composition;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
@@ -107,13 +105,7 @@ namespace Telegram.Controls.Messages
                     : Strings.BoostingCongratulations;
 
                 var animation = FindName("Animation") as AnimatedImage;
-                animation.Source = new DelayedFileSource(message.ClientService, premiumGiftCode.Sticker.StickerValue);
-
-                if (premiumGiftCode.Sticker.StickerValue.Local.IsDownloadingCompleted is false)
-                {
-                    CompositionPathParser.ParseThumbnail(premiumGiftCode.Sticker, out ShapeVisual visual, false);
-                    ElementCompositionPreview.SetElementChildVisual(animation, visual);
-                }
+                animation.Source = new DelayedFileSource(message.ClientService, premiumGiftCode.Sticker);
             }
             else if (message.Content is MessageChatChangePhoto chatChangePhoto)
             {

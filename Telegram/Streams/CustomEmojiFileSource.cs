@@ -16,7 +16,7 @@ namespace Telegram.Streams
         private readonly long _customEmojiId;
 
         public CustomEmojiFileSource(IClientService clientService, long customEmojiId)
-            : base(clientService, null)
+            : base(clientService, null as File)
         {
             _clientService = clientService;
             _customEmojiId = customEmojiId;

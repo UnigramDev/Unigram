@@ -3493,19 +3493,9 @@ namespace Telegram.Views
             else if (args.Item is Sticker sticker)
             {
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
+                
                 var animated = content.Children[0] as AnimatedImage;
-
-                var file = sticker?.StickerValue;
-                if (file.Local.IsDownloadingCompleted)
-                {
-                }
-                else
-                {
-                    CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual, false);
-                    ElementCompositionPreview.SetElementChildVisual(content.Children[0], visual);
-                }
-
-                animated.Source = new DelayedFileSource(_viewModel.ClientService, file);
+                animated.Source = new DelayedFileSource(_viewModel.ClientService, sticker);
             }
         }
 

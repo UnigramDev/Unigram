@@ -4,15 +4,12 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using Telegram.Common;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -22,8 +19,6 @@ namespace Telegram.Controls.Messages.Content
         public MessageViewModel Message => _message;
 
         private long _fileToken;
-
-        private CompositionAnimation _thumbnailShimmer;
 
         public VideoStickerContent(MessageViewModel message)
         {
@@ -43,8 +38,6 @@ namespace Telegram.Controls.Messages.Content
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
             Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
-
-            Player.Ready += Player_Ready;
 
             _templateApplied = true;
 
@@ -79,11 +72,6 @@ namespace Telegram.Controls.Messages.Content
 
             LayoutRoot.Constraint = message;
 
-            if (!sticker.StickerValue.Local.IsDownloadingCompleted)
-            {
-                UpdateThumbnail(message, sticker);
-            }
-
             UpdateManager.Subscribe(this, message, sticker.StickerValue, ref _fileToken, UpdateFile, true);
             UpdateFile(message, sticker.StickerValue);
         }
@@ -112,7 +100,7 @@ namespace Telegram.Controls.Messages.Content
                 {
                     Player.LoopCount = PowerSavingPolicy.AutoPlayStickersInChats ? 0 : 1;
                     Player.FrameSize = ImageHelper.Scale(sticker.Width, sticker.Height, 180);
-                    Player.Source = new LocalFileSource(file);
+                    Player.Source = new LocalFileSource(sticker);
                 }
 
                 message.Delegate.ViewVisibleMessages();
@@ -122,18 +110,6 @@ namespace Telegram.Controls.Messages.Content
                 Player.Source = null;
                 message.ClientService.DownloadFile(file.Id, 1);
             }
-        }
-
-        private void UpdateThumbnail(MessageViewModel message, Sticker sticker)
-        {
-            _thumbnailShimmer = CompositionPathParser.ParseThumbnail(sticker, out ShapeVisual visual);
-            ElementCompositionPreview.SetElementChildVisual(Player, visual);
-        }
-
-        private void Player_Ready(object sender, EventArgs e)
-        {
-            _thumbnailShimmer = null;
-            ElementCompositionPreview.SetElementChildVisual(Player, null);
         }
 
         public void Recycle()

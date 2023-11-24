@@ -28,6 +28,14 @@ namespace Telegram.Streams
             Id = file.Id;
         }
 
+        public LocalFileSource(Sticker sticker)
+            : this(sticker.StickerValue)
+        {
+            Width = sticker.Width;
+            Height = sticker.Height;
+            Outline = sticker.Outline;
+        }
+
         public LocalFileSource(string path)
         {
             FilePath = UriToPath(path);

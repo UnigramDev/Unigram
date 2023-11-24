@@ -16,7 +16,7 @@ namespace Telegram.Streams
         private readonly ReactionType _reaction;
 
         public ReactionFileSource(IClientService clientService, ReactionType reaction)
-            : base(clientService, null)
+            : base(clientService, null as File)
         {
             _clientService = clientService;
             _reaction = reaction;

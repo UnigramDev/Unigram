@@ -11,10 +11,8 @@ using Telegram.Entities;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -75,14 +73,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            Animation.Source = new DelayedFileSource(message.ClientService, giveaway.Sticker.StickerValue);
-
-            if (giveaway.Sticker.StickerValue.Local.IsDownloadingCompleted is false)
-            {
-                CompositionPathParser.ParseThumbnail(giveaway.Sticker, out ShapeVisual visual, false);
-                ElementCompositionPreview.SetElementChildVisual(Animation, visual);
-            }
-
+            Animation.Source = new DelayedFileSource(message.ClientService, giveaway.Sticker);
             Count.Text = $"X{giveaway.WinnerCount}";
 
             var months = Locale.Declension(Strings.R.Months, giveaway.MonthCount, false);
