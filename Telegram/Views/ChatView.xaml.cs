@@ -1715,7 +1715,7 @@ namespace Telegram.Views
                 return;
             }
 
-            _markupCollapsed = show;
+            _markupCollapsed = !show;
 
             if (show)
             {
