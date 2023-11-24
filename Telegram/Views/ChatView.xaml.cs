@@ -1134,10 +1134,11 @@ namespace Telegram.Views
                 }
             }
 
+            Focus(FocusState.Programmatic);
+
             if (args.Handled)
             {
-                Focus(FocusState.Programmatic);
-                _focusState.Set(FocusState.Programmatic);
+                FocusText(FocusState.Programmatic);
             }
         }
 
@@ -3553,6 +3554,7 @@ namespace Telegram.Views
             if (_actionCollapsed && !AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
             {
                 args.TrySetNewFocusedElement(TextField);
+                args.Handled = true;
             }
         }
 

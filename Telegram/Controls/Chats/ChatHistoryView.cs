@@ -286,7 +286,7 @@ namespace Telegram.Controls.Chats
 
             if (!handler.HasContainerForItem(item.Id))
             {
-                if (alignment == VerticalAlignment.Top || (alignment == VerticalAlignment.Bottom && pixel == null))
+                if (alignment == VerticalAlignment.Top || (alignment == VerticalAlignment.Bottom && (pixel == null || pixel == int.MaxValue)))
                 {
                     await this.UpdateLayoutAsync();
                 }
@@ -385,7 +385,7 @@ namespace Telegram.Controls.Chats
             {
                 if ((options == null || options.MoveFocus) && AutomationPeer.ListenerExists(AutomationEvents.LiveRegionChanged))
                 {
-                    selectorItem.Focus(FocusState.Pointer);
+                    selectorItem.Focus(FocusState.Keyboard);
                 }
             }
             catch
