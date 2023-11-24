@@ -2773,11 +2773,23 @@ namespace Telegram.Views
             }
         }
 
-        private void Photo_GettingFocus(UIElement sender, GettingFocusEventArgs args)
+        private void ChatsList_GettingFocus(UIElement sender, GettingFocusEventArgs args)
         {
-            if (args.Direction == FocusNavigationDirection.None)
+            // ListViewBase ignores GettingFocus events with Direction equals to None
+            // What we do here is to simulate the default behavior, so that closing the active chat
+            // will move the focus to the last selected item in the chat list if possible.
+            if (args.Direction == FocusNavigationDirection.None && args.OldFocusedElement is not ChatListListViewItem)
             {
-                args.TrySetNewFocusedElement(ChatsList);
+                if (ChatsList.TryGetContainer(ViewModel.Chats.LastSelectedItem, out SelectorItem container))
+                {
+                    args.TrySetNewFocusedElement(container);
+                    args.Handled = true;
+                }
+                else if (sender != ChatsList)
+                {
+                    args.TrySetNewFocusedElement(ChatsList);
+                    args.Handled = true;
+                }
             }
         }
 

@@ -308,7 +308,7 @@
 
         <controls:MenuButton x:Name="Photo"
                              Click="Photo_Click"
-                             GettingFocus="Photo_GettingFocus"
+                             GettingFocus="ChatsList_GettingFocus"
                              Type="Back"
                              TabIndex="0"
                              HorizontalAlignment="Left"
@@ -673,6 +673,7 @@
                                                                DragItemsStarting="Chats_DragItemsStarting"
                                                                DragItemsCompleted="Chats_DragItemsCompleted"
                                                                Swiped="ChatsList_Swiped"
+                                                               GettingFocus="ChatsList_GettingFocus"
                                                                SingleSelectionFollowsFocus="False"
                                                                AllowDrop="True"
                                                                CanDragItems="True"

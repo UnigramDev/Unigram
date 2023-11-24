@@ -82,6 +82,11 @@ namespace Telegram.Controls
             return false;
         }
 
+        public bool TryGetContainer(long chatId, out SelectorItem container)
+        {
+            return _itemToSelector.TryGetValue(chatId, out container);
+        }
+
         public bool TryGetCell(Chat chat, out ChatCell cell)
         {
             if (_itemToSelector.TryGetValue(chat.Id, out SelectorItem container))
