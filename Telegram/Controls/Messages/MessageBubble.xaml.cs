@@ -683,7 +683,7 @@ namespace Telegram.Controls.Messages
                     ActionButton.Click += Action_Click;
                 }
 
-                ActionButton.Glyph = Icons.ChatEmpty;
+                ActionButton.Glyph = Icons.ChatEmptyFilled16;
                 Action.Visibility = Visibility.Visible;
 
                 Automation.SetToolTip(ActionButton, info.ReplyCount > 0
@@ -710,7 +710,7 @@ namespace Telegram.Controls.Messages
                         ActionButton.Click += Action_Click;
                     }
 
-                    ActionButton.Glyph = Icons.ArrowRight;
+                    ActionButton.Glyph = Icons.ArrowRightFilled16;
                     Action.Visibility = Visibility.Visible;
 
                     Automation.SetToolTip(ActionButton, Strings.AccDescrOpenChat);

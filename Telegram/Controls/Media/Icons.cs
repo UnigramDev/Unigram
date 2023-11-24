@@ -188,6 +188,7 @@ namespace Telegram.Controls.Media
         public const string StarOff = "\uE8D9";
 
         public const string ChatEmpty = "\uE8BD";
+        public const string ChatEmptyFilled16 = "\uEA4C";
 
         public const string Archive = "\uE7B8";
         public const string ArchiveFilled = "\uEA0E";
@@ -289,6 +290,7 @@ namespace Telegram.Controls.Media
         public const string Bookmark = "\uE907";
         public const string BookmarkFilled = "\uEA0F";
         public const string ArrowRight = "\uE72A";
+        public const string ArrowRightFilled16 = "\uEA4D";
         public const string ArrowLeft = "\uE72B";
         public const string Channel = "\uEC42";
         public const string Speaker3 = "\uEA12";
