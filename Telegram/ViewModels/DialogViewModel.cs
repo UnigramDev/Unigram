@@ -1051,6 +1051,7 @@ namespace Telegram.ViewModels
                 {
                     _groupedMessages.Clear();
 
+                    maxId = slice.FromMessageId;
                     pixel = slice.Pixel;
                     alignment = slice.Alignment;
 
@@ -1318,7 +1319,7 @@ namespace Telegram.ViewModels
                 }
 
                 var replied = new MessageCollection(null, values.Select(x => CreateMessage(x)));
-                return new LoadSliceResult(replied, scrollMode, alignment, pixel);
+                return new LoadSliceResult(replied, maxId, scrollMode, alignment, pixel);
             }
 
             return null;
@@ -1326,15 +1327,18 @@ namespace Telegram.ViewModels
 
         private class LoadSliceResult
         {
-            public LoadSliceResult(MessageCollection items, ItemsUpdatingScrollMode scrollMode, VerticalAlignment alignment, double? pixel)
+            public LoadSliceResult(MessageCollection items, long fromMessageId, ItemsUpdatingScrollMode scrollMode, VerticalAlignment alignment, double? pixel)
             {
                 Items = items;
+                FromMessageId = fromMessageId;
                 ScrollMode = scrollMode;
                 Alignment = alignment;
                 Pixel = pixel;
             }
 
             public MessageCollection Items { get; }
+
+            public long FromMessageId { get; }
 
             public ItemsUpdatingScrollMode ScrollMode { get; }
 
