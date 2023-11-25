@@ -757,6 +757,8 @@
                 Value="OuterBorderEdge" />
         <Setter Property="BorderBrush"
                 Value="{ThemeResource HyperlinkButtonBorderBrush}" />
+        <Setter Property="BorderThickness"
+                Value="0" />
         <Setter Property="CornerRadius"
                 Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="Template">
@@ -854,6 +856,8 @@
                 Value="OuterBorderEdge" />
         <Setter Property="BorderBrush"
                 Value="{ThemeResource HyperlinkButtonBorderBrush}" />
+        <Setter Property="BorderThickness"
+                Value="0" />
         <Setter Property="CornerRadius"
                 Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="Template">
