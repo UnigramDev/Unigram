@@ -29,7 +29,6 @@ namespace Telegram.Controls.Chats
         public IDialogDelegate Delegate { get; set; }
 
         public ScrollViewer ScrollingHost { get; private set; }
-        public ItemsStackPanel ItemsStack { get; private set; }
 
         public bool IsBottomReached
         {
@@ -47,7 +46,7 @@ namespace Telegram.Controls.Chats
         private readonly DisposableMutex _loadMoreLock = new();
         private int _loadMoreCount = 0;
 
-        private readonly TaskCompletionSource<ItemsStackPanel> _waitItemsPanelRoot = new();
+        private TaskCompletionSource<bool> _waitItemsPanelRoot = new();
 
         public PanelScrollingDirection ScrollingDirection { get; private set; }
 
@@ -83,14 +82,11 @@ namespace Telegram.Controls.Chats
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var panel = ItemsPanelRoot as ItemsStackPanel;
-            if (panel != null)
+            if (ItemsPanelRoot != null)
             {
-                ItemsStack = panel;
-                ItemsStack.SizeChanged -= OnSizeChanged;
-                ItemsStack.SizeChanged += OnSizeChanged;
+                ItemsPanelRoot.SizeChanged += OnSizeChanged;
 
-                _waitItemsPanelRoot.TrySetResult(panel);
+                _waitItemsPanelRoot.TrySetResult(true);
                 SetScrollingMode();
             }
 
@@ -99,8 +95,15 @@ namespace Telegram.Controls.Chats
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            Logger.Info($"ItemsPanelRoot.Children.Count: {ItemsStack?.Children.Count}");
+            Logger.Info($"ItemsPanelRoot.Children.Count: {ItemsPanelRoot?.Children.Count}");
             Logger.Info($"Items.Count: {Items.Count}");
+
+            if (ItemsPanelRoot != null)
+            {
+                ItemsPanelRoot.SizeChanged -= OnSizeChanged;
+            }
+
+            _waitItemsPanelRoot = new();
 
             // Note, this is done because of the following:
             // In some conditions (always?) ListView starts to store
@@ -155,7 +158,7 @@ namespace Telegram.Controls.Chats
         {
             ScrollingDirection = direction;
 
-            if (ScrollingHost == null || ItemsStack == null || ViewModel == null)
+            if (ScrollingHost == null || ItemsPanelRoot is not ItemsStackPanel panel || ViewModel == null)
             {
                 return;
             }
@@ -168,26 +171,26 @@ namespace Telegram.Controls.Chats
                 var firstSlice = ViewModel.IsFirstSliceLoaded != true;
 
                 if (direction == PanelScrollingDirection.Backward
-                    && ItemsStack.FirstCacheIndex == 0
+                    && panel.FirstCacheIndex == 0
                     && lastSlice)
                 {
                     Logger.Debug($"Going {direction}, loading history in the past");
                     await ViewModel.LoadNextSliceAsync();
                 }
                 else if (direction == PanelScrollingDirection.Forward
-                    && ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
+                    && panel.LastCacheIndex == ViewModel.Items.Count - 1)
                 {
                     await LoadPreviousSliceAsync(direction, firstSlice);
                 }
                 else if (direction == PanelScrollingDirection.None)
                 {
-                    if (lastSlice && ItemsStack.FirstVisibleIndex == 0)
+                    if (lastSlice && panel.FirstVisibleIndex == 0)
                     {
                         Logger.Debug($"Going {direction}, loading history in the past");
                         await ViewModel.LoadNextSliceAsync();
                     }
 
-                    if (ItemsStack.LastCacheIndex == ViewModel.Items.Count - 1)
+                    if (panel.LastCacheIndex == ViewModel.Items.Count - 1)
                     {
                         await LoadPreviousSliceAsync(direction, firstSlice);
                     }
@@ -219,8 +222,6 @@ namespace Telegram.Controls.Chats
         private ItemsUpdatingScrollMode _currentMode;
         private ItemsUpdatingScrollMode? _pendingMode;
         private bool? _pendingForce;
-
-        public ItemsUpdatingScrollMode ScrollingMode => ItemsStack?.ItemsUpdatingScrollMode ?? _currentMode;
 
         public void SetScrollingMode()
         {
@@ -284,17 +285,7 @@ namespace Telegram.Controls.Chats
                 goto Exit;
             }
 
-            if (!handler.HasContainerForItem(item.Id))
-            {
-                if (alignment == VerticalAlignment.Top || (alignment == VerticalAlignment.Bottom && (pixel == null || pixel == int.MaxValue)))
-                {
-                    await this.UpdateLayoutAsync();
-                }
-                else
-                {
-                    await ScrollIntoViewAsync(item, direction);
-                }
-            }
+            await ScrollIntoViewAsync(item, direction);
 
             var selectorItem = handler.ContainerFromItem(item.Id);
             if (selectorItem == null)
@@ -396,13 +387,26 @@ namespace Telegram.Controls.Chats
 
         private async Task ScrollIntoViewAsync(MessageViewModel item, ScrollIntoViewAlignment alignment)
         {
-            var index = Items.IndexOf(item);
-            var stack = await _waitItemsPanelRoot.Task;
+            if (ItemsPanelRoot == null)
+            {
+                await _waitItemsPanelRoot.Task;
+            }
 
-            if (stack == null || index >= ItemsStack.FirstCacheIndex && index <= ItemsStack.LastCacheIndex)
+            var index = Items.IndexOf(item);
+            var panel = ItemsPanelRoot as ItemsStackPanel;
+
+            if (panel == null || index >= panel.FirstCacheIndex && index <= panel.LastCacheIndex)
             {
                 return;
             }
+
+            // Judging from WinUI 3 source code, calling UpdateLayout on the panel should be
+            // enough to guarantee that the container we are scrolling to gets realized 
+            // 1.4-stable/dxaml/xcp/dxaml/lib/ModernCollectionBasePanel_WindowManagement_Partial.cpp#L2138
+
+            ScrollIntoView(item, alignment);
+            panel.UpdateLayout();
+            return;
 
             var tcs = new TaskCompletionSource<object>();
 

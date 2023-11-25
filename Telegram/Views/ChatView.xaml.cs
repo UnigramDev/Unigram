@@ -446,7 +446,7 @@ namespace Telegram.Views
 
         public void Activate(int sessionId)
         {
-            Logger.Info($"ItemsPanelRoot.Children.Count: {Messages.ItemsStack?.Children.Count}");
+            Logger.Info($"ItemsPanelRoot.Children.Count: {Messages.ItemsPanelRoot?.Children.Count}");
             Logger.Info($"Items.Count: {Messages.Items.Count}");
 
             DataContext = _viewModel = _getViewModel(this, sessionId);
@@ -517,7 +517,7 @@ namespace Telegram.Views
 
         private async void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
-            var panel = Messages.ItemsStack;
+            var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
             if (panel == null)
             {
                 return;
@@ -568,7 +568,7 @@ namespace Telegram.Views
                     && message.Content is MessageText or MessageDice or MessageAnimatedEmoji
                     && message.GeneratedContent is MessageBigEmoji or MessageSticker or null;
 
-                await Messages.ItemsStack.UpdateLayoutAsync();
+                await panel.UpdateLayoutAsync();
 
                 if (message.IsOutgoing && message.SendingState is MessageSendingStatePending && !Messages.IsBottomReached)
                 {

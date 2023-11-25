@@ -651,7 +651,7 @@ namespace Telegram.Views
 
             var diff = next.Y - prev.Y;
 
-            var panel = Messages.ItemsStack;
+            var panel = Messages.ItemsPanelRoot as ItemsStackPanel;
             if (panel == null || prev.Y == next.Y || Math.Abs(diff) <= 2)
             {
                 return;
@@ -678,7 +678,7 @@ namespace Telegram.Views
 
             if (index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex)
             {
-                var direction = Messages.ScrollingMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
+                var direction = panel.ItemsUpdatingScrollMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
                 var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
 
                 var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
