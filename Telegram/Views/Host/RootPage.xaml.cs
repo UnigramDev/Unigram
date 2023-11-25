@@ -54,7 +54,7 @@ namespace Telegram.Views.Host
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
 
-            _lifetime = TLContainer.Current.Lifetime;
+            _lifetime = TypeResolver.Current.Lifetime;
 
             _navigationViewSelected = RootDestination.Chats;
             _navigationViewItems = new MvxObservableCollection<object>
@@ -129,7 +129,7 @@ namespace Telegram.Views.Host
             var premium = 0;
             var count = 0;
 
-            foreach (var session in TLContainer.Current.Lifetime.Items)
+            foreach (var session in TypeResolver.Current.Lifetime.Items)
             {
                 if (session.Settings.UseTestDC)
                 {
@@ -910,7 +910,7 @@ namespace Telegram.Views.Host
 
         private void UpdateNavigation()
         {
-            var clientService = TLContainer.Current.Resolve<IClientService>(_navigationService.SessionId);
+            var clientService = TypeResolver.Current.Resolve<IClientService>(_navigationService.SessionId);
             if (clientService == null)
             {
                 // TODO: this should never be happening

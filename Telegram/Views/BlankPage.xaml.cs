@@ -27,7 +27,7 @@ namespace Telegram.Views
         {
             if (e.NavigationMode == NavigationMode.Back && Frame.ForwardStack.Any(x => x.SourcePageType == typeof(AuthorizationPage)))
             {
-                TLContainer.Current.Resolve<IClientService>().Send(new Destroy());
+                TypeResolver.Current.Resolve<IClientService>().Send(new Destroy());
             }
         }
     }

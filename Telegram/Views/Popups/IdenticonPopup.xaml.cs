@@ -28,7 +28,7 @@ namespace Telegram.Views.Popups
 
             if (chat.Type is ChatTypeSecret secret)
             {
-                var service = TLContainer.Current.Resolve<IClientService>(sessionId);
+                var service = TypeResolver.Current.Resolve<IClientService>(sessionId);
 
                 var secretChat = service.GetSecretChat(secret.SecretChatId);
                 if (secretChat == null)

@@ -38,7 +38,7 @@ namespace Telegram.Views.Popups
         public SendLocationPopup()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SendLocationViewModel>();
+            DataContext = TypeResolver.Current.Resolve<SendLocationViewModel>();
 
             Title = Strings.AttachLocation;
 

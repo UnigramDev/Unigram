@@ -24,7 +24,7 @@ namespace Telegram.Views.Popups
         public DownloadsPopup(int sessionId, INavigationService navigationService)
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<DownloadsViewModel>(sessionId);
+            DataContext = TypeResolver.Current.Resolve<DownloadsViewModel>(sessionId);
 
             PrimaryButtonText = Strings.Close;
 

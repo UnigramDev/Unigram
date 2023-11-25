@@ -24,7 +24,7 @@ namespace Telegram.Common
         public TLRootNavigationService(ISessionService sessionService, Frame frame, int session, string id)
             : base(frame, session, id)
         {
-            _lifetimeService = TLContainer.Current.Lifetime;
+            _lifetimeService = TypeResolver.Current.Lifetime;
         }
 
         public async void Handle(UpdateAuthorizationState update)

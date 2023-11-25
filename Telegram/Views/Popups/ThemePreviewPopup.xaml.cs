@@ -71,7 +71,7 @@ namespace Telegram.Views.Popups
         {
             try
             {
-                await TLContainer.Current.Resolve<IThemeService>().InstallThemeAsync(_file);
+                await TypeResolver.Current.Resolve<IThemeService>().InstallThemeAsync(_file);
             }
             catch { }
         }

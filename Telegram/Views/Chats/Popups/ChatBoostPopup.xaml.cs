@@ -271,7 +271,7 @@ namespace Telegram.Views.Chats.Popups
 
             if (show)
             {
-                var aggregator = TLContainer.Current.Resolve<IEventAggregator>(_clientService.SessionId);
+                var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(_clientService.SessionId);
                 aggregator.Publish(new UpdateConfetti());
             }
         }

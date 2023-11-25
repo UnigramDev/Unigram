@@ -42,7 +42,7 @@ namespace Telegram.Common
             : base(frame, session, id)
         {
             _clientService = clientService;
-            _passcodeService = TLContainer.Current.Passcode;
+            _passcodeService = TypeResolver.Current.Passcode;
             _viewService = viewService;
         }
 
@@ -404,7 +404,7 @@ namespace Telegram.Common
                 var confirm = await popup.ShowQueuedAsync();
                 if (confirm == ContentDialogResult.Primary)
                 {
-                    var viewModel = TLContainer.Current.Resolve<SettingsPasscodeViewModel>(SessionId);
+                    var viewModel = TypeResolver.Current.Resolve<SettingsPasscodeViewModel>(SessionId);
                     if (viewModel != null && await viewModel.ToggleAsync())
                     {
                         Navigate(typeof(SettingsPasscodePage));

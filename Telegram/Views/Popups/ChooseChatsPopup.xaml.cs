@@ -320,7 +320,7 @@ namespace Telegram.Views.Popups
         [Obsolete]
         public void Legacy()
         {
-            DataContext = TLContainer.Current.Resolve<ChooseChatsViewModel>();
+            DataContext = TypeResolver.Current.Resolve<ChooseChatsViewModel>();
         }
 
         public override void OnNavigatedTo()

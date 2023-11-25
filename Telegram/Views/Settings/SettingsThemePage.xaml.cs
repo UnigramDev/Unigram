@@ -18,7 +18,7 @@ namespace Telegram.Views.Settings
         public SettingsThemePage()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<SettingsThemeViewModel>();
+            DataContext = TypeResolver.Current.Resolve<SettingsThemeViewModel>();
 
 #if !DEBUG
             Microsoft.AppCenter.Analytics.Analytics.TrackEvent("SettingsThemePage");

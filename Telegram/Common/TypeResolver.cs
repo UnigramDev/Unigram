@@ -14,9 +14,9 @@ using Windows.Storage;
 
 namespace Telegram.Views
 {
-    public class TLContainer
+    public class TypeResolver
     {
-        private static readonly TLContainer _instance = new TLContainer();
+        private static readonly TypeResolver _instance = new TypeResolver();
 
         private readonly ConcurrentDictionary<int, TypeLocator> _containers = new ConcurrentDictionary<int, TypeLocator>();
         private readonly ILifetimeService _lifetime;
@@ -24,7 +24,7 @@ namespace Telegram.Views
         private readonly ILocaleService _locale;
         private readonly IPlaybackService _playback;
 
-        private TLContainer()
+        private TypeResolver()
         {
             _lifetime = new LifetimeService();
             _passcode = new PasscodeService(SettingsService.Current.PasscodeLock);
@@ -90,7 +90,7 @@ namespace Telegram.Views
         public ILocaleService Locale => _locale;
         public IPlaybackService Playback => _playback;
 
-        public static TLContainer Current
+        public static TypeResolver Current
         {
             get
             {

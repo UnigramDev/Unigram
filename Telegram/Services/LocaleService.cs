@@ -135,7 +135,7 @@ namespace Telegram.Services
 
             LoadCurrentCulture();
 
-            foreach (var clientService in TLContainer.Current.ResolveAll<IClientService>())
+            foreach (var clientService in TypeResolver.Current.ResolveAll<IClientService>())
             {
 #if DEBUG
                 await clientService.SendAsync(new SynchronizeLanguagePack(info.Id));

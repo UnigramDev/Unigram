@@ -112,7 +112,7 @@ namespace Telegram.ViewModels.Settings
             RaisePropertyChanged();
         }
 
-        public bool IsAllAccountsAvailable => TLContainer.Current.GetSessions().Count() > 1;
+        public bool IsAllAccountsAvailable => TypeResolver.Current.GetSessions().Count() > 1;
 
         public bool IsAllAccountsNotifications
         {

@@ -21,7 +21,7 @@ namespace Telegram.Views.Payments
         public PaymentCredentialsPopup(PaymentForm paymentForm)
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<PaymentCredentialsViewModel>();
+            DataContext = TypeResolver.Current.Resolve<PaymentCredentialsViewModel>();
 
             Title = Strings.PaymentCardInfo;
 
@@ -41,7 +41,7 @@ namespace Telegram.Views.Payments
         public PaymentCredentialsPopup(PaymentForm paymentForm, PaymentOption paymentOption)
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<PaymentCredentialsViewModel>();
+            DataContext = TypeResolver.Current.Resolve<PaymentCredentialsViewModel>();
 
             Title = Strings.PaymentCardInfo;
 

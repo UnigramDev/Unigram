@@ -466,7 +466,7 @@ namespace Telegram.Services
 
             var showPreview = _settings.Notifications.GetShowPreview(chat);
 
-            if (chat.Type is ChatTypeSecret || !showPreview || TLContainer.Current.Passcode.IsLockscreenRequired)
+            if (chat.Type is ChatTypeSecret || !showPreview || TypeResolver.Current.Passcode.IsLockscreenRequired)
             {
                 caption = Strings.AppName;
                 content = Strings.YouHaveNewMessage;

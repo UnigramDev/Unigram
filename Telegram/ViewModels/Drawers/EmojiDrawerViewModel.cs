@@ -85,7 +85,7 @@ namespace Telegram.ViewModels.Drawers
                     }
                     else
                     {
-                        var context2 = TLContainer.Current.Resolve<EmojiDrawerViewModel>();
+                        var context2 = TypeResolver.Current.Resolve<EmojiDrawerViewModel>();
                         value[mode] = context2;
 
                         context2.Mode = mode;
@@ -98,7 +98,7 @@ namespace Telegram.ViewModels.Drawers
                 _windowContext[id] = new Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>>();
             }
 
-            var context = TLContainer.Current.Resolve<EmojiDrawerViewModel>();
+            var context = TypeResolver.Current.Resolve<EmojiDrawerViewModel>();
             _windowContext[id][sessionId] = new Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>
             {
                 { mode, context }

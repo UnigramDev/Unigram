@@ -38,7 +38,7 @@ namespace Telegram.Views.Host
             InitializeComponent();
 
             _navigationService = navigationService;
-            _shortcutsService = TLContainer.Current.Resolve<IShortcutsService>(navigationService.SessionId);
+            _shortcutsService = TypeResolver.Current.Resolve<IShortcutsService>(navigationService.SessionId);
 
             //Grid.SetRow(navigationService.Frame, 2);
             //LayoutRoot.Children.Add(navigationService.Frame);
@@ -53,9 +53,9 @@ namespace Telegram.Views.Host
                 }
             }
 
-            var clientService = TLContainer.Current.Resolve<IClientService>(navigationService.SessionId);
-            var settingsService = TLContainer.Current.Resolve<ISettingsService>(navigationService.SessionId);
-            var aggregator = TLContainer.Current.Resolve<IEventAggregator>(navigationService.SessionId);
+            var clientService = TypeResolver.Current.Resolve<IClientService>(navigationService.SessionId);
+            var settingsService = TypeResolver.Current.Resolve<ISettingsService>(navigationService.SessionId);
+            var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(navigationService.SessionId);
 
             MasterDetail.Initialize(navigationService as NavigationService, null, new StandaloneViewModel(clientService, settingsService, aggregator), false);
             MasterDetail.NavigationService.FrameFacade.Navigating += OnNavigating;

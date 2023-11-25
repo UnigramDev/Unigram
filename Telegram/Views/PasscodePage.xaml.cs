@@ -32,7 +32,7 @@ namespace Telegram.Views
         {
             InitializeComponent();
 
-            _passcodeService = TLContainer.Current.Passcode;
+            _passcodeService = TypeResolver.Current.Passcode;
             _biometrics = biometrics;
 
             _retryTimer = new DispatcherTimer();

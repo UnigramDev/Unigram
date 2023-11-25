@@ -68,7 +68,7 @@ namespace Telegram.Navigation
                 All.Add(this);
             }
 
-            _lifetime = TLContainer.Current.Lifetime;
+            _lifetime = TypeResolver.Current.Lifetime;
             _inputListener = new InputListener(window);
 
             window.Activated += OnActivated;
@@ -89,7 +89,7 @@ namespace Telegram.Navigation
 
             #endregion
 
-            if (TLContainer.Current.Passcode.IsLockscreenRequired)
+            if (TypeResolver.Current.Passcode.IsLockscreenRequired)
             {
                 Lock(true);
             }

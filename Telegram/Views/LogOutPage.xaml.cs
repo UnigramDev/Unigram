@@ -19,7 +19,7 @@ namespace Telegram.Views
             InitializeComponent();
             Title = Strings.LogOutTitle;
 
-            if (TLContainer.Current.Count < 3)
+            if (TypeResolver.Current.Count < 3)
             {
                 FindName(nameof(AddAccount));
             }

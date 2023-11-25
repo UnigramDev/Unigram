@@ -59,13 +59,13 @@ namespace Telegram.Services
 
         public void Update()
         {
-            Items.ReplaceWith(TLContainer.Current.GetSessions());
+            Items.ReplaceWith(TypeResolver.Current.GetSessions());
             ActiveItem = Items.FirstOrDefault(x => x.IsActive) ?? Items.FirstOrDefault();
         }
 
         private void Update(ISessionService session)
         {
-            Items.ReplaceWith(TLContainer.Current.GetSessions());
+            Items.ReplaceWith(TypeResolver.Current.GetSessions());
             ActiveItem = session;
         }
 
@@ -110,13 +110,13 @@ namespace Telegram.Services
         public ISessionService Create(bool update = true, bool test = false)
         {
             var app = BootStrapper.Current as App;
-            var sessions = TLContainer.Current.GetSessions().ToList();
+            var sessions = TypeResolver.Current.GetSessions().ToList();
             var id = sessions.Count > 0 ? sessions.Max(x => x.Id) + 1 : 0;
 
             var settings = ApplicationData.Current.LocalSettings.CreateContainer($"{id}", ApplicationDataCreateDisposition.Always);
             settings.Values["UseTestDC"] = test;
 
-            var container = TLContainer.Current.Build(id);
+            var container = TypeResolver.Current.Build(id);
             var session = container.Resolve<ISessionService>();
             if (update)
             {
@@ -133,7 +133,7 @@ namespace Telegram.Services
 
         public ISessionService Remove(ISessionService item, ISessionService active)
         {
-            TLContainer.Current.Destroy(item.Id);
+            TypeResolver.Current.Destroy(item.Id);
             active ??= _previousItem ?? Create();
             Update(active);
 
@@ -154,7 +154,7 @@ namespace Telegram.Services
                 ActiveItem = replace = _previousItem ?? Items.FirstOrDefault(x => x.Id != item.Id) ?? Create(false);
             }
 
-            TLContainer.Current.Destroy(item.Id);
+            TypeResolver.Current.Destroy(item.Id);
             Update();
 
             item.Aggregator.Unsubscribe(item);

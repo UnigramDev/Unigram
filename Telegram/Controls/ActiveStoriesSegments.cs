@@ -63,8 +63,8 @@ namespace Telegram.Controls
 
             if (clientService.TryGetActiveStories(chat.Id, out ChatActiveStories chatActiveStories))
             {
-                var settings = TLContainer.Current.Resolve<ISettingsService>(clientService.SessionId);
-                var aggregator = TLContainer.Current.Resolve<IEventAggregator>(clientService.SessionId);
+                var settings = TypeResolver.Current.Resolve<ISettingsService>(clientService.SessionId);
+                var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(clientService.SessionId);
 
                 var activeStories = new ActiveStoriesViewModel(clientService, settings, aggregator, chatActiveStories);
                 await activeStories.Wait;

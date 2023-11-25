@@ -32,7 +32,7 @@ namespace Telegram.Views.Popups
         private StickersPopup()
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<StickersViewModel>();
+            DataContext = TypeResolver.Current.Resolve<StickersViewModel>();
 
             // TODO: this might need to change depending on context
             _handler = new AnimatedListHandler(ScrollingHost, AnimatedListType.Stickers);

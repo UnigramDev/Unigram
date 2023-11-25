@@ -21,7 +21,7 @@ namespace Telegram.Views.Payments
         public PaymentAddressPopup(InputInvoice inputInvoice, Invoice invoice, OrderInfo info)
         {
             InitializeComponent();
-            DataContext = TLContainer.Current.Resolve<PaymentAddressViewModel>();
+            DataContext = TypeResolver.Current.Resolve<PaymentAddressViewModel>();
 
             Title = Strings.PaymentShippingInfo;
             PrimaryButtonText = Strings.OK;

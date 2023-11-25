@@ -68,7 +68,7 @@ namespace Telegram.ViewModels.Drawers
                 _windowContext[id] = new Dictionary<int, AnimationDrawerViewModel>();
             }
 
-            var context = TLContainer.Current.Resolve<AnimationDrawerViewModel>();
+            var context = TypeResolver.Current.Resolve<AnimationDrawerViewModel>();
             _windowContext[id][sessionId] = context;
 
             return context;

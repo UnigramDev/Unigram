@@ -1548,8 +1548,8 @@ namespace Telegram.Controls.Cells
 
                 if (_clientService != null && _clientService.Notifications.InAppPreview && chat != null && message != null)
                 {
-                    var playback = TLContainer.Current.Playback;
-                    var settings = TLContainer.Current.Resolve<ISettingsService>(_clientService.SessionId);
+                    var playback = TypeResolver.Current.Playback;
+                    var settings = TypeResolver.Current.Resolve<ISettingsService>(_clientService.SessionId);
 
                     var hidePreview = !settings.Notifications.GetShowPreview(chat);
                     hidePreview |= chat.HasProtectedContent;

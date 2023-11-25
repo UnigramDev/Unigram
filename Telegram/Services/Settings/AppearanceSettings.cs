@@ -222,8 +222,8 @@ namespace Telegram.Services.Settings
 
             if (updateBackground)
             {
-                var aggregator = TLContainer.Current.Resolve<IEventAggregator>();
-                var clientService = TLContainer.Current.Resolve<IClientService>();
+                var aggregator = TypeResolver.Current.Resolve<IEventAggregator>();
+                var clientService = TypeResolver.Current.Resolve<IClientService>();
 
                 var dark = theme == ElementTheme.Dark;
                 aggregator.Publish(new UpdateSelectedBackground(dark, clientService.GetSelectedBackground(dark)));

@@ -27,7 +27,7 @@ namespace Telegram.Views
 
         private DialogViewModel CreateViewModel(IDialogDelegate delegato, int sessionId)
         {
-            var viewModel = TLContainer.Current.Resolve<DialogThreadViewModel, IDialogDelegate>(delegato, sessionId);
+            var viewModel = TypeResolver.Current.Resolve<DialogThreadViewModel, IDialogDelegate>(delegato, sessionId);
             DataContext = viewModel;
 
             return viewModel;

@@ -593,8 +593,8 @@ namespace Telegram.Common
                 var response2 = await clientService.SendAsync(new GetStory(chat.Id, storyId, false));
                 if (response2 is Story item)
                 {
-                    var settings = TLContainer.Current.Resolve<ISettingsService>(clientService.SessionId);
-                    var aggregator = TLContainer.Current.Resolve<IEventAggregator>(clientService.SessionId);
+                    var settings = TypeResolver.Current.Resolve<ISettingsService>(clientService.SessionId);
+                    var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(clientService.SessionId);
 
                     var story = new StoryViewModel(clientService, item);
 
