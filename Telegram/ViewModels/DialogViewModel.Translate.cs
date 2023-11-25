@@ -113,6 +113,11 @@ namespace Telegram.ViewModels
         private void UpdateChatIsTranslatable()
         {
             Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected);
+
+            if (IsTranslating)
+            {
+                Delegate?.ForEach(UpdateMessageTranslatedText);
+            }
         }
 
         public void HideTranslate()
