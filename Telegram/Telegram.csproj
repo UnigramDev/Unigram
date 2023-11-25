@@ -1802,6 +1802,7 @@
     <Content Include="Assets\Toasts\AutoRemoveOn.tgs" />
     <Content Include="Assets\Toasts\Success.tgs" />
     <Content Include="Assets\Toasts\Copied.tgs" />
+    <Content Include="Assets\Toasts\AutoNightOff.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>

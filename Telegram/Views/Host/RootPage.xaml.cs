@@ -20,6 +20,7 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Settings;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.Views.Authorization;
@@ -870,6 +871,12 @@ namespace Telegram.Views.Host
 
                 ellipse.StartAnimation("Path", anim);
                 batch.End();
+            }
+
+            if (SettingsService.Current.Appearance.NightMode != NightMode.Disabled)
+            {
+                SettingsService.Current.Appearance.NightMode = NightMode.Disabled;
+                Window.Current.ShowToast(Strings.AutoNightModeOff, new LocalFileSource("ms-appx:///Assets/Toasts/AutoNightOff.tgs"));
             }
 
             SettingsService.Current.Appearance.ForceNightMode = ActualTheme != ElementTheme.Dark;
