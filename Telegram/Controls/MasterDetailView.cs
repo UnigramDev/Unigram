@@ -630,22 +630,7 @@ namespace Telegram.Controls
 
         private bool _isMinimal = false;
         private bool IsMinimal =>
-            AdaptivePanel?.CurrentState == MasterDetailState.Minimal
-            && IsOnlyChild;
-
-        private bool _isOnlyChild = true;
-        public bool IsOnlyChild
-        {
-            get => _isOnlyChild;
-            set
-            {
-                if (_isOnlyChild != value)
-                {
-                    _isOnlyChild = value;
-                    OnViewStateChanged();
-                }
-            }
-        }
+            AdaptivePanel?.CurrentState == MasterDetailState.Minimal;
 
         #region Public methods
 

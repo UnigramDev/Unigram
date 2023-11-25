@@ -690,7 +690,6 @@ namespace Telegram.Views
             FindName(nameof(ChatTabsLeft));
 
             Root?.SetSidebarEnabled(show);
-            MasterDetail.IsOnlyChild = !show;
 
             Stories.TabsLeftCollapsed = !show;
 
@@ -2113,6 +2112,12 @@ namespace Telegram.Views
             {
                 rpMasterTitlebar.IsLocked = false;
                 rpMasterTitlebar.SelectedIndex = index;
+
+                if (MasterDetail.CurrentState == MasterDetailState.Minimal &&
+                    MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage))
+                {
+                    MasterDetail.NavigationService.GoBackAt(0);
+                }
             }
         }
 
