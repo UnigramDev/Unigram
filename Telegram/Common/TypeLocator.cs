@@ -6,7 +6,7 @@
 //
 namespace Telegram.Views
 {
-    public class TLLocator
+    public class TypeLocator
     {
         private readonly int _session;
 
@@ -38,7 +38,7 @@ namespace Telegram.Views
         private Telegram.Services.ITranslateService _translateService;
         private Telegram.Services.IProfilePhotoService _profilePhotoService;
 
-        public TLLocator(Telegram.Services.ILifetimeService lifetimeService, Telegram.Services.ILocaleService localeService, Telegram.Services.IPasscodeService passcodeService, Telegram.Services.IPlaybackService playbackService, int session, bool active)
+        public TypeLocator(Telegram.Services.ILifetimeService lifetimeService, Telegram.Services.ILocaleService localeService, Telegram.Services.IPasscodeService passcodeService, Telegram.Services.IPlaybackService playbackService, int session, bool active)
         {
             _session = session;
 

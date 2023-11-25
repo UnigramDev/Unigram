@@ -203,6 +203,7 @@
     <Compile Include="Collections\Handlers\ChatDiffHandler.cs" />
     <Compile Include="Common\ListViewExtensions.cs" />
     <Compile Include="Common\SystemTray.cs" />
+    <Compile Include="Common\TypeLocator.cs" />
     <Compile Include="Controls\ActiveStoriesSegments.cs" />
     <Compile Include="Controls\AnimatedImage.cs" />
     <Compile Include="Controls\BadgeControl.cs" />
@@ -416,7 +417,6 @@
     <Compile Include="Td\Api\TdExtensions.cs" />
     <Compile Include="Common\TextBlockHelper.cs" />
     <Compile Include="Common\Theme.cs" />
-    <Compile Include="Common\TLLocator.cs" />
     <Compile Include="Common\TLNavigationService.cs" />
     <Compile Include="Common\TLRootNavigationService.cs" />
     <Compile Include="Common\Toast.cs" />

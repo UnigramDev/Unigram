@@ -18,7 +18,7 @@ namespace Telegram.Views
     {
         private static readonly TLContainer _instance = new TLContainer();
 
-        private readonly ConcurrentDictionary<int, TLLocator> _containers = new ConcurrentDictionary<int, TLLocator>();
+        private readonly ConcurrentDictionary<int, TypeLocator> _containers = new ConcurrentDictionary<int, TypeLocator>();
         private readonly ILifetimeService _lifetime;
         private readonly IPasscodeService _passcode;
         private readonly ILocaleService _locale;
@@ -118,9 +118,9 @@ namespace Telegram.Views
             }
         }
 
-        public TLLocator Build(int id)
+        public TypeLocator Build(int id)
         {
-            return _containers[id] = new TLLocator(_lifetime, _locale, _passcode, _playback, id, id == SettingsService.Current.ActiveSession);
+            return _containers[id] = new TypeLocator(_lifetime, _locale, _passcode, _playback, id, id == SettingsService.Current.ActiveSession);
         }
 
         public void Destroy(int id)
@@ -140,7 +140,7 @@ namespace Telegram.Views
 
             var result = default(TService);
             //if (_containers.TryGetValue(account, out IContainer container))
-            if (_containers.TryGetValue(session, out TLLocator container))
+            if (_containers.TryGetValue(session, out TypeLocator container))
             {
                 result = container.Resolve<TService>();
             }
@@ -158,7 +158,7 @@ namespace Telegram.Views
             result = default;
 
             //if (_containers.TryGetValue(account, out IContainer container))
-            if (_containers.TryGetValue(session, out TLLocator container))
+            if (_containers.TryGetValue(session, out TypeLocator container))
             {
                 result = container.Resolve<TService>();
             }
@@ -177,7 +177,7 @@ namespace Telegram.Views
 
             var result = default(TService);
             //if (_containers.TryGetValue(account, out IContainer container))
-            if (_containers.TryGetValue(session, out TLLocator container))
+            if (_containers.TryGetValue(session, out TypeLocator container))
             {
                 result = container.Resolve<TService>();
             }
