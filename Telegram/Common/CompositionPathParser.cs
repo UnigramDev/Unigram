@@ -41,43 +41,43 @@ namespace Telegram.Common
             return new CompositionPath(Parse(null, contours));
         }
 
-        public static CanvasGeometry Parse(ICanvasResourceCreator sender, IList<ClosedVectorPath> contours, float scale = 1.0f)
+        public static CanvasGeometry Parse(ICanvasResourceCreator sender, IList<ClosedVectorPath> contours)
         {
             using var builder = new CanvasPathBuilder(sender);
 
             foreach (var path in contours)
             {
-                static void BeginFigure(CanvasPathBuilder builder, Point point, float scale)
-                {
-                    builder.BeginFigure((float)point.X * scale, (float)point.Y * scale);
-                }
+                var open = true;
 
-                static void AddLine(CanvasPathBuilder builder, Point point, float scale)
+                for (int i = 0; i <= path.Commands.Count; i++)
                 {
-                    builder.AddLine((float)point.X * scale, (float)point.Y * scale);
-                }
-
-                var last = path.Commands[^1];
-                if (last is VectorPathCommandLine lastLine)
-                {
-                    BeginFigure(builder, lastLine.EndPoint, scale);
-                }
-                else if (last is VectorPathCommandCubicBezierCurve lastCubicBezierCurve)
-                {
-                    BeginFigure(builder, lastCubicBezierCurve.EndPoint, scale);
-                }
-
-                foreach (var command in path.Commands)
-                {
+                    var command = path.Commands[i % path.Commands.Count];
                     if (command is VectorPathCommandLine line)
                     {
-                        AddLine(builder, line.EndPoint, scale);
+                        var point = line.EndPoint;
+                        if (open)
+                        {
+                            open = false;
+                            builder.BeginFigure((float)point.X, (float)point.Y);
+                        }
+                        else
+                        {
+                            builder.AddLine((float)point.X, (float)point.Y);
+                        }
                     }
                     else if (command is VectorPathCommandCubicBezierCurve cubicBezierCurve)
                     {
-                        builder.AddCubicBezier(cubicBezierCurve.StartControlPoint.ToVector2(scale),
-                            cubicBezierCurve.EndControlPoint.ToVector2(scale),
-                            cubicBezierCurve.EndPoint.ToVector2(scale));
+                        if (open)
+                        {
+                            open = false;
+                            builder.BeginFigure((float)cubicBezierCurve.EndPoint.X, (float)cubicBezierCurve.EndPoint.Y);
+                        }
+                        else
+                        {
+                            builder.AddCubicBezier(cubicBezierCurve.StartControlPoint.ToVector2(),
+                                cubicBezierCurve.EndControlPoint.ToVector2(),
+                                cubicBezierCurve.EndPoint.ToVector2());
+                        }
                     }
                 }
 
