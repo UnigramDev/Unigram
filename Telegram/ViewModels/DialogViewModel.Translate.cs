@@ -21,12 +21,13 @@ namespace Telegram.ViewModels
         private string _languageDetected;
 
         public string DetectedLanguage => _languageDetected;
-        public bool IsTranslatable => _chat.IsTranslatable && (_languageDetected == null || TranslateService.CanTranslate(_languageDetected, true));
+        
+        public bool CanTranslate => _chat.IsTranslatable && TranslateService.CanTranslate(_languageDetected, true);
 
         private bool _isTranslating;
         public bool IsTranslating
         {
-            get => _isTranslating && IsTranslatable;
+            get => _isTranslating && CanTranslate && ClientService.IsPremium;
             set => SetTranslating(value);
         }
 
@@ -58,7 +59,7 @@ namespace Telegram.ViewModels
 
         private void UpdateLanguageStatistics(MessageViewModel message)
         {
-            if (_languageDetected != null || message.IsOutgoing || message.Text == null || !IsTranslatable)
+            if (_languageDetected != null || message.IsOutgoing || message.Text == null || !ClientService.IsPremium)
             {
                 return;
             }
@@ -89,7 +90,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (_languageDetected != null || _languageBuilder == null || !IsTranslatable)
+            if (_languageDetected != null || _languageBuilder == null || !ClientService.IsPremium)
             {
                 return;
             }
@@ -187,6 +188,21 @@ namespace Telegram.ViewModels
 
             Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected);
             Delegate?.ForEach(UpdateMessageTranslatedText);
+        }
+
+        public bool TranslateChat()
+        {
+            if (ClientService.IsPremium)
+            {
+                IsTranslating = !_isTranslating;
+            }
+            else
+            {
+                IsTranslating = false;
+                NavigationService.ShowPromo(new PremiumSourceFeature(new PremiumFeatureRealTimeChatTranslation()));
+            }
+
+            return IsTranslating;
         }
     }
 }

@@ -31,9 +31,7 @@
                               Content="{CustomResource ShowTranslateButton}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <controls:FauxCheckBox x:Name="TranslateChats"
-                                           x:Load="{x:Bind ViewModel.IsPremium}"
-                                           Click="{x:Bind ViewModel.ChangeTranslateChat}"
+                    <controls:FauxCheckBox Click="{x:Bind ViewModel.ChangeTranslateChat}"
                                            IsChecked="{x:Bind ViewModel.TranslateChats, Mode=OneWay}"
                                            Content="{CustomResource ShowTranslateChatButton}"
                                            Style="{StaticResource SettingsCheckBoxStyle}" />

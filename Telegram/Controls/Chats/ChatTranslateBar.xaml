@@ -47,8 +47,17 @@
             </Grid>
         </Button>
 
-        <controls:MoreButton Click="Menu_ContextRequested"
+        <controls:MoreButton x:Name="MenuButton"
+                             Visibility="Collapsed"
+                             Click="Menu_ContextRequested"
                              Height="32"
                              Grid.Column="1" />
+
+        <controls:GlyphButton x:Name="HideButton"
+                              Visibility="Collapsed"
+                              Click="{x:Bind ViewModel.HideTranslate}"
+                              Glyph="&#xE711;"
+                              Height="32"
+                              Grid.Column="1" />
     </Grid>
 </UserControl>

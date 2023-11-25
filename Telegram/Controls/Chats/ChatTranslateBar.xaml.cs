@@ -42,10 +42,18 @@ namespace Telegram.Controls.Chats
 
         public void UpdateChatIsTranslatable(Chat chat, string language)
         {
-            var canTranslate = ViewModel.IsTranslatable;
+            var canTranslate = ViewModel.CanTranslate;
             if (canTranslate)
             {
                 TranslateTo.Text = string.Format(Strings.TranslateToButton, TranslateService.LanguageName(SettingsService.Current.Translate.To));
+
+                MenuButton.Visibility = ViewModel.IsPremium
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+
+                HideButton.Visibility = ViewModel.IsPremium
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
             }
 
             ShowHide(canTranslate);
@@ -126,14 +134,12 @@ namespace Telegram.Controls.Chats
 
         private void Translate_Click(object sender, RoutedEventArgs e)
         {
-            var show = !ViewModel.IsTranslating;
-            ViewModel.IsTranslating = show;
-            ShowHideOriginal(show, true);
+            ShowHideOriginal(ViewModel.TranslateChat());
         }
 
         private bool _showOriginal = false;
 
-        private async void ShowHideOriginal(bool show, bool animate)
+        private async void ShowHideOriginal(bool show, bool animate = true)
         {
             if (_showOriginal == show && animate)
             {

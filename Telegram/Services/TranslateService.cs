@@ -92,7 +92,7 @@ namespace Telegram.Services
         public bool CanTranslate(string language, bool entireChat)
         {
             var allowed = entireChat
-                ? _settings.Translate.Chats && _clientService.IsPremium
+                ? _settings.Translate.Chats
                 : _settings.Translate.Messages;
 
             if (string.IsNullOrEmpty(language) || !allowed)
@@ -107,6 +107,7 @@ namespace Telegram.Services
             {
                 // We always exclude the current UI language when translating whole chat
                 exclude.Add(LocaleService.Current.Id);
+                exclude.Add(LANG_UND);
             }
 
             foreach (var item in exclude)
