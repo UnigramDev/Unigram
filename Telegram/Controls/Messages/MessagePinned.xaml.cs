@@ -262,11 +262,7 @@ namespace Telegram.Controls.Messages
                 visual.Clip = null;
                 parent.Properties.InsertVector3("Translation", Vector3.Zero);
 
-                if (show)
-                {
-                    _collapsed = false;
-                }
-                else
+                if (_collapsed)
                 {
                     Visibility = Visibility.Collapsed;
                 }

@@ -82,14 +82,13 @@ namespace Telegram.Controls.Chats
                 visual.Clip = null;
                 visual.Offset = new Vector3();
 
-                if (show)
+                if (_collapsed)
                 {
-                    _collapsed = false;
-                    Field.Focus(FocusState.Keyboard);
+                    Visibility = Visibility.Collapsed;
                 }
                 else
                 {
-                    Visibility = Visibility.Collapsed;
+                    Field.Focus(FocusState.Keyboard);
                 }
             };
 

@@ -171,11 +171,7 @@ namespace Telegram.Controls.Gallery
             var batch = parent.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                if (show)
-                {
-                    _transportCollapsed = false;
-                }
-                else
+                if (_transportCollapsed)
                 {
                     BottomPanel.Visibility = Visibility.Collapsed;
                 }
