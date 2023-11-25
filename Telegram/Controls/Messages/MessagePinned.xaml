@@ -43,6 +43,10 @@
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Margin="-12,0,0,0"
+                Grid.ColumnSpan="4" />
 
         <local:MessagePinnedLine x:Name="Line"
                                  Stroke="{ThemeResource PinnedMessageForegroundBrush}"

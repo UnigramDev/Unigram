@@ -15,6 +15,9 @@
             <ColumnDefinition />
             <ColumnDefinition Width="48" />
         </Grid.ColumnDefinitions>
+        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Grid.ColumnSpan="2" />
 
         <Grid x:Name="LayoutRoot">
 
