@@ -44,6 +44,8 @@ namespace Telegram.ViewModels
             if (Set(ref _isTranslating, value, nameof(IsTranslating)))
             {
                 Settings.Chats[Chat.Id, ThreadId, ChatSetting.IsTranslating] = value;
+
+                Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected);
                 Delegate?.ForEach(UpdateMessageTranslatedText);
                 return true;
             }
@@ -156,6 +158,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
+            Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected);
             Delegate?.ForEach(UpdateMessageTranslatedText);
         }
 
@@ -167,13 +170,13 @@ namespace Telegram.ViewModels
             if (confirm == ContentDialogResult.Primary)
             {
                 Settings.Translate.To = popup.SelectedItem;
-                Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected);
 
                 if (SetTranslating(true))
                 {
                     return;
                 }
 
+                Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected);
                 Delegate?.ForEach(UpdateMessageTranslatedText);
             }
         }

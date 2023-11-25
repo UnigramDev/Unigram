@@ -63,6 +63,11 @@ namespace Telegram.Controls.Chats
 
         private void ShowHide(bool show)
         {
+            if (show)
+            {
+                ShowHideOriginal(ViewModel.IsTranslating, _collapsed != show);
+            }
+
             if (_collapsed != show)
             {
                 return;
@@ -70,11 +75,6 @@ namespace Telegram.Controls.Chats
 
             _collapsed = !show;
             Visibility = Visibility.Visible;
-
-            if (show)
-            {
-                ShowHideOriginal(ViewModel.IsTranslating, false);
-            }
 
             var parent = ElementCompositionPreview.GetElementVisual(_parent);
             var visual = ElementCompositionPreview.GetElementVisual(this);
