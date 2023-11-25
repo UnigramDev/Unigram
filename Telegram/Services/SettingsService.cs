@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using Telegram.Native.Calls;
@@ -100,7 +101,7 @@ namespace Telegram.Services
         string LanguageBaseId { get; set; }
         string LanguageShownId { get; set; }
 
-        string[] DoNotTranslate { get; set; }
+        HashSet<string> DoNotTranslate { get; set; }
 
         bool InstallBetaUpdates { get; set; }
 
@@ -702,15 +703,31 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _languageShownId, _local, "LanguageShownId", value);
         }
 
-        private string[] _doNotTranslate;
-        public string[] DoNotTranslate
+        private HashSet<string> _doNotTranslate;
+        public HashSet<string> DoNotTranslate
         {
-            get => _doNotTranslate ??= GetValueOrDefault<string>(_local, "DoNotTranslate", null)?.Split(';', StringSplitOptions.RemoveEmptyEntries);
+            get
+            {
+                _doNotTranslate ??= GetDoNotTranslate();
+                return new HashSet<string>(_doNotTranslate);
+            }
             set
             {
-                _doNotTranslate = value?.Length > 0 ? value : null;
-                AddOrUpdateValue(_local, "DoNotTranslate", value?.Length > 0 ? string.Join(';', value) : null);
+                _doNotTranslate = value;
+                AddOrUpdateValue(_local, "DoNotTranslate", value?.Count > 0 ? string.Join(';', value) : null);
             }
+        }
+
+        private HashSet<string> GetDoNotTranslate()
+        {
+            var value = GetValueOrDefault<string>(_local, "DoNotTranslate", null);
+            if (value == null)
+            {
+                return new HashSet<string>();
+            }
+
+            var split = value.Split(';', StringSplitOptions.RemoveEmptyEntries);
+            return new HashSet<string>(split);
         }
 
         private static bool? _installBetaUpdates;

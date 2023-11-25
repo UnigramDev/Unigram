@@ -79,18 +79,24 @@ namespace Telegram.ViewModels.Settings
             get
             {
                 var exclude = Settings.DoNotTranslate;
-                exclude ??= new[] { Settings.LanguagePackId };
-
-                if (exclude.Length == 1)
+                if (exclude.Count == 1)
                 {
-                    var item = _officialLanguages.FirstOrDefault(x => x.Id == exclude[0]);
+                    var first = exclude.First();
+
+                    var item = _officialLanguages.FirstOrDefault(x => x.Id == first);
                     if (item != null)
                     {
                         return item.Name;
                     }
+
+                    return first;
+                }
+                else if (exclude.Count > 0)
+                {
+                    return Locale.Declension(Strings.R.Languages, exclude.Count);
                 }
 
-                return Locale.Declension(Strings.R.Languages, exclude.Length);
+                return string.Empty;
             }
         }
 
@@ -107,20 +113,12 @@ namespace Telegram.ViewModels.Settings
         public async void ChangeDoNotTranslate()
         {
             var exclude = Settings.DoNotTranslate;
-            exclude ??= new[] { Settings.LanguagePackId };
-
             var popup = new DoNotTranslatePopup(_officialLanguages, exclude);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary && popup.SelectedItems != null)
             {
-                var updated = popup.SelectedItems;
-                if (updated.Count == 1 && updated[0] == Settings.LanguagePackId)
-                {
-                    updated = null;
-                }
-
-                Settings.DoNotTranslate = updated?.ToArray();
+                Settings.DoNotTranslate = popup.SelectedItems;
                 RaisePropertyChanged(nameof(DoNotTranslate));
             }
         }

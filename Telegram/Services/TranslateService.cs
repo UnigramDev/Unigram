@@ -53,7 +53,6 @@ namespace Telegram.Services
             var split = language.Split('-');
 
             var exclude = _settings.DoNotTranslate;
-            exclude ??= new[] { _settings.LanguagePackId };
 
             foreach (var item in exclude)
             {
