@@ -2785,7 +2785,7 @@ namespace Telegram.Views
             // will move the focus to the last selected item in the chat list if possible.
             if (args.Direction == FocusNavigationDirection.None && args.OldFocusedElement is not ChatListListViewItem)
             {
-                if (ChatsList.TryGetContainer(ViewModel.Chats.LastSelectedItem, out SelectorItem container))
+                if (ChatsList.TryGetContainer(ViewModel?.Chats.LastSelectedItem ?? 0, out SelectorItem container))
                 {
                     args.TrySetNewFocusedElement(container);
                     args.Handled = true;

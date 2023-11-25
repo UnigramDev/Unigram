@@ -2704,6 +2704,11 @@ namespace Telegram.Views
 
         private bool MessageDelete_Loaded(MessageViewModel message)
         {
+            if (message == null)
+            {
+                return false;
+            }
+
             return message.CanBeDeletedOnlyForSelf || message.CanBeDeletedForAllUsers;
         }
 
