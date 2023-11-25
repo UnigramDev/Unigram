@@ -25,6 +25,7 @@ namespace Telegram.Services
         Task<BaseObject> SetLanguageAsync(LanguagePackInfo info, bool refresh);
 
         CultureInfo CurrentCulture { get; }
+        string Id { get; }
 
         FlowDirection FlowDirection { get; }
 
@@ -115,6 +116,8 @@ namespace Telegram.Services
         public static ILocaleService Current => _current ??= new LocaleService();
 
         public CultureInfo CurrentCulture => _currentCulture;
+
+        public string Id => CurrentCulture.TwoLetterISOLanguageName;
 
         public FlowDirection FlowDirection => _currentCulture.TextInfo.IsRightToLeft && SettingsService.Current.Diagnostics.AllowRightToLeft
             ? FlowDirection.RightToLeft

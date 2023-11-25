@@ -1446,7 +1446,6 @@ namespace Telegram.Controls.Messages
             }
 
             Panel.Content = message?.GeneratedContent ?? message?.Content;
-            Panel.Text = message.Text;
 
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageText text)
@@ -1753,13 +1752,22 @@ namespace Telegram.Controls.Messages
             return null;
         }
 
-        private void UpdateMessageText(MessageViewModel message)
+        public void UpdateMessageText(MessageViewModel message)
         {
             var result = false;
-
-            if (message.Text != null)
+            var textz = message.TranslatedText switch
             {
-                Message.SetText(message.ClientService, message.Text, message.GeneratedContent is MessageBigEmoji ? 32 : 0);
+                MessageTranslateResultText translated => message.Delegate.IsTranslating
+                    ? translated.Text
+                    : message.Text,
+                _ => message.Text
+            };
+
+            Panel.Text = textz;
+
+            if (textz != null)
+            {
+                Message.SetText(message.ClientService, textz, message.GeneratedContent is MessageBigEmoji ? 32 : 0);
                 Message.SetQuery(_query);
 
                 ContentPanel.MaxWidth = Message.HasCodeBlocks ? double.PositiveInfinity : 432;

@@ -599,11 +599,11 @@ namespace Telegram.ViewModels
                 {
                     if (result is FoundChatMessages foundChatMessages)
                     {
-                        tsc.SetResult(new MessageCollection(Items.Ids, foundChatMessages.Messages.Select(x => CreateMessage(x))));
+                        tsc.SetResult(new MessageCollection(Items.Ids, foundChatMessages.Messages, CreateMessage));
                     }
                     else if (result is Messages messages)
                     {
-                        tsc.SetResult(new MessageCollection(Items.Ids, messages.MessagesValue.Select(x => CreateMessage(x))));
+                        tsc.SetResult(new MessageCollection(Items.Ids, messages.MessagesValue, CreateMessage));
                     }
                     else
                     {
@@ -643,6 +643,7 @@ namespace Telegram.ViewModels
                     if (direction == PanelScrollingDirection.Backward)
                     {
                         IsLastSliceLoaded = replied.Count == 0;
+                        UpdateDetectedLanguage();
                     }
                     else
                     {
@@ -1067,6 +1068,8 @@ namespace Telegram.ViewModels
                     IsLastSliceLoaded = null;
                     IsFirstSliceLoaded = IsEndReached();
 
+                    UpdateDetectedLanguage();
+
                     if (_topic == null && _thread != null && _thread.Messages.Any(x => x.Id == maxId))
                     {
                         await AddHeaderAsync();
@@ -1318,7 +1321,7 @@ namespace Telegram.ViewModels
                     values = messages.MessagesValue;
                 }
 
-                var replied = new MessageCollection(null, values.Select(x => CreateMessage(x)));
+                var replied = new MessageCollection(null, values, CreateMessage);
                 return new LoadSliceResult(replied, maxId, scrollMode, alignment, pixel);
             }
 
@@ -1477,14 +1480,21 @@ namespace Telegram.ViewModels
 
         public MessageCollection Items { get; } = new MessageCollection();
 
-        public MessageViewModel CreateMessage(Message message)
+        public MessageViewModel CreateMessage(Message message, bool forLanguageStatistics = false)
         {
             if (message == null)
             {
                 return null;
             }
 
-            return _messageFactory.Create(_messageDelegate, _chat, message);
+            var model = _messageFactory.Create(_messageDelegate, _chat, message, true);
+
+            if (forLanguageStatistics)
+            {
+                UpdateLanguageStatistics(model);
+            }
+
+            return model;
         }
 
         protected void ProcessMessages(Chat chat, IList<MessageViewModel> messages)
@@ -1757,6 +1767,7 @@ namespace Telegram.ViewModels
 
             Chat = chat;
             SetScrollMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+            SetTranslating();
 
             if (state.TryGet("access_token", out string accessToken))
             {
@@ -3558,7 +3569,7 @@ namespace Telegram.ViewModels
             _messages = new();
         }
 
-        public MessageCollection(ICollection<long> exclude, IEnumerable<MessageViewModel> source)
+        public MessageCollection(ICollection<long> exclude, IEnumerable<Message> source, Func<Message, bool, MessageViewModel> create)
         {
             foreach (var item in source)
             {
@@ -3567,7 +3578,7 @@ namespace Telegram.ViewModels
                     continue;
                 }
 
-                Insert(0, item);
+                Insert(0, create(item, true /* forLanguageStatistics */));
             }
         }
 

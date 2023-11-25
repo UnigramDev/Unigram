@@ -185,7 +185,8 @@ namespace Telegram.Views
                         _storageService ??= new Telegram.Services.StorageService(_clientService),
                         _translateService ??= new Telegram.Services.TranslateService(
                             _clientService,
-                            _settingsService),
+                            _settingsService,
+                            _eventAggregator),
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService));
@@ -207,7 +208,8 @@ namespace Telegram.Views
                         _storageService ??= new Telegram.Services.StorageService(_clientService),
                         _translateService ??= new Telegram.Services.TranslateService(
                             _clientService,
-                            _settingsService),
+                            _settingsService,
+                            _eventAggregator),
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService));
@@ -229,7 +231,8 @@ namespace Telegram.Views
                         _storageService ??= new Telegram.Services.StorageService(_clientService),
                         _translateService ??= new Telegram.Services.TranslateService(
                             _clientService,
-                            _settingsService),
+                            _settingsService,
+                            _eventAggregator),
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService));
@@ -251,7 +254,8 @@ namespace Telegram.Views
                         _storageService ??= new Telegram.Services.StorageService(_clientService),
                         _translateService ??= new Telegram.Services.TranslateService(
                             _clientService,
-                            _settingsService),
+                            _settingsService,
+                            _eventAggregator),
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService));
@@ -273,7 +277,8 @@ namespace Telegram.Views
                         _storageService ??= new Telegram.Services.StorageService(_clientService),
                         _translateService ??= new Telegram.Services.TranslateService(
                             _clientService,
-                            _settingsService),
+                            _settingsService,
+                            _eventAggregator),
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService));
@@ -313,7 +318,8 @@ namespace Telegram.Views
                         _storageService ??= new Telegram.Services.StorageService(_clientService),
                         _translateService ??= new Telegram.Services.TranslateService(
                             _clientService,
-                            _settingsService),
+                            _settingsService,
+                            _eventAggregator),
                         Resolve<Telegram.ViewModels.Profile.ProfileStoriesTabViewModel>(),
                         Resolve<Telegram.ViewModels.Profile.ProfileGroupsTabViewModel>(),
                         Resolve<Telegram.ViewModels.Profile.ProfileMembersTabViewModel>());
@@ -453,7 +459,8 @@ namespace Telegram.Views
                         _storageService ??= new Telegram.Services.StorageService(_clientService),
                         _translateService ??= new Telegram.Services.TranslateService(
                             _clientService,
-                            _settingsService),
+                            _settingsService,
+                            _eventAggregator),
                         _messageFactory ??= new Telegram.Services.Factories.MessageFactory(
                             _clientService,
                             _playbackService),
@@ -899,7 +906,8 @@ namespace Telegram.Views
                 case nameof(Telegram.Services.ITranslateService):
                     return (T)(_translateService ??= new Telegram.Services.TranslateService(
                         _clientService,
-                        _settingsService));
+                        _settingsService,
+                        _eventAggregator));
                 case nameof(Telegram.Services.IProfilePhotoService):
                     return (T)(_profilePhotoService ??= new Telegram.Services.ProfilePhotoService(_clientService));
                 default:

@@ -1283,7 +1283,7 @@ namespace Telegram.Common
             {
                 flyout.CreateFlyoutItem(LinkCopy_Click, text, Strings.Copy, Icons.DocumentCopy);
 
-                if (service != null && service.CanTranslate(text))
+                if (service != null && service.CanTranslateText(text))
                 {
                     flyout.CreateFlyoutItem(LinkTranslate_Click, Tuple.Create(service, text), Strings.TranslateMessage, Icons.Translate);
                 }
@@ -1383,7 +1383,7 @@ namespace Telegram.Common
             var service = tuple.Item1;
 
             var language = LanguageIdentification.IdentifyLanguage(entity);
-            var popup = new TranslatePopup(service, entity, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, true);
+            var popup = new TranslatePopup(service, entity, language, LocaleService.Current.Id, true);
             await popup.ShowQueuedAsync();
         }
 

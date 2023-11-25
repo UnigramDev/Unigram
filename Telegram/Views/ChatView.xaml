@@ -631,58 +631,64 @@
                     <chats:ChatActionBarView x:Name="ActionBar"
                                              Visibility="Collapsed"
                                              Canvas.ZIndex="1" />
-                    <Grid x:Name="Clipper">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <!--
+                    <StackPanel x:Name="ClipperTranslate">
+                        <chats:ChatTranslateBar x:Name="TranslateHeader"
+                                                Visibility="Collapsed"
+                                                Canvas.ZIndex="1" />
+                        <Grid x:Name="Clipper">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <!--
                         48: header
                         40: music player
                         40: active call
                         40: group call
                         40: join request
+                        32: translate
                         -->
-                        <Border x:Name="ClipperBackground"
-                                Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
-                                Margin="0,-208,0,0" />
+                            <Border x:Name="ClipperBackground"
+                                    Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+                                    Margin="0,-248,0,0" />
 
-                        <messages:MessagePinned x:Name="PinnedMessage"
-                                                Click="Reply_Click"
-                                                ActionClick="PinnedAction_Click"
-                                                HideClick="{x:Bind ViewModel.HidePinnedMessage}"
-                                                ListClick="{x:Bind ViewModel.OpenPinnedMessages}"
-                                                Visibility="Collapsed" />
+                            <messages:MessagePinned x:Name="PinnedMessage"
+                                                    Click="Reply_Click"
+                                                    ActionClick="PinnedAction_Click"
+                                                    HideClick="{x:Bind ViewModel.HidePinnedMessage}"
+                                                    ListClick="{x:Bind ViewModel.OpenPinnedMessages}"
+                                                    Visibility="Collapsed" />
 
-                        <Grid x:Name="CallbackQueryAnswerPanel"
-                              Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
-                              Background="{ThemeResource PageSubHeaderBackgroundBrush}"
-                              MinHeight="{ThemeResource AppBarThemeCompactHeight}">
-                            <messages:MessageReply x:Name="CallbackQueryAnswer"
-                                                   VerticalAlignment="Stretch"
-                                                   Padding="12,6"
-                                                   IsHitTestVisible="False" />
-                        </Grid>
+                            <Grid x:Name="CallbackQueryAnswerPanel"
+                                  Visibility="{x:Bind ViewModel.InformativeMessage, Converter={StaticResource NullToVisibilityConverter}, Mode=OneWay}"
+                                  Background="{ThemeResource PageSubHeaderBackgroundBrush}"
+                                  MinHeight="{ThemeResource AppBarThemeCompactHeight}">
+                                <messages:MessageReply x:Name="CallbackQueryAnswer"
+                                                       VerticalAlignment="Stretch"
+                                                       Padding="12,6"
+                                                       IsHitTestVisible="False" />
+                            </Grid>
 
-                        <Border x:Name="DateHeaderRelative"
-                                SizeChanged="DateHeaderPanel_SizeChanged"
-                                Grid.Row="1">
-                            <Border x:Name="DateHeaderPanel"
-                                    Visibility="Collapsed"
-                                    HorizontalAlignment="Center">
-                                <messages:MessageService x:Name="DateHeader"
-                                                         Click="Date_Click"
-                                                         BorderThickness="0,4,0,0">
-                                    <TextBlock x:Name="DateHeaderLabel"
-                                               Text="31 dicembre 2017"
-                                               Foreground="White"
-                                               TextAlignment="Center"
-                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                               Style="{StaticResource CaptionTextBlockStyle}" />
-                                </messages:MessageService>
+                            <Border x:Name="DateHeaderRelative"
+                                    SizeChanged="DateHeaderPanel_SizeChanged"
+                                    Grid.Row="1">
+                                <Border x:Name="DateHeaderPanel"
+                                        Visibility="Collapsed"
+                                        HorizontalAlignment="Center">
+                                    <messages:MessageService x:Name="DateHeader"
+                                                             Click="Date_Click"
+                                                             BorderThickness="0,4,0,0">
+                                        <TextBlock x:Name="DateHeaderLabel"
+                                                   Text="31 dicembre 2017"
+                                                   Foreground="White"
+                                                   TextAlignment="Center"
+                                                   FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                                   Style="{StaticResource CaptionTextBlockStyle}" />
+                                    </messages:MessageService>
+                                </Border>
                             </Border>
-                        </Border>
-                    </Grid>
+                        </Grid>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

@@ -223,6 +223,7 @@ namespace Telegram.Views
         {
             GroupCall.InitializeParent(ClipperOuter, ViewModel.ClientService);
             JoinRequests.InitializeParent(ClipperJoinRequests, ViewModel.ClientService);
+            TranslateHeader.InitializeParent(ClipperTranslate);
             ActionBar.InitializeParent(ClipperActionBar);
             PinnedMessage.InitializeParent(Clipper);
         }
@@ -1919,6 +1920,11 @@ namespace Telegram.Views
 
             flyout.CreateFlyoutItem(Search, Strings.Search, Icons.Search, VirtualKey.F);
 
+            if (ViewModel.TranslateService.CanTranslate(ViewModel.DetectedLanguage, true) && !chat.IsTranslatable)
+            {
+                flyout.CreateFlyoutItem(ViewModel.ShowTranslate, Strings.TranslateMessage, Icons.Translate);
+            }
+
             if (user != null && user.Type is not UserTypeDeleted && !secret)
             {
                 flyout.CreateFlyoutItem(ViewModel.ChangeTheme, Strings.SetWallpapers, Icons.PaintBrush);
@@ -2808,21 +2814,21 @@ namespace Telegram.Views
             var caption = message.GetCaption();
             if (caption != null)
             {
-                return ViewModel.TranslateService.CanTranslate(caption.Text);
+                return ViewModel.TranslateService.CanTranslateText(caption.Text);
             }
             else if (message.Content is MessageVoiceNote voiceNote
                 && voiceNote.VoiceNote.SpeechRecognitionResult is SpeechRecognitionResultText speechVoiceText)
             {
-                return ViewModel.TranslateService.CanTranslate(speechVoiceText.Text);
+                return ViewModel.TranslateService.CanTranslateText(speechVoiceText.Text);
             }
             else if (message.Content is MessageVideoNote videoNote
                 && videoNote.VideoNote.SpeechRecognitionResult is SpeechRecognitionResultText speechVideoText)
             {
-                return ViewModel.TranslateService.CanTranslate(speechVideoText.Text);
+                return ViewModel.TranslateService.CanTranslateText(speechVideoText.Text);
             }
             else if (message.Content is MessagePoll poll)
             {
-                return ViewModel.TranslateService.CanTranslate(poll.Poll.Question);
+                return ViewModel.TranslateService.CanTranslateText(poll.Poll.Question);
             }
 
             return false;
@@ -3584,6 +3590,7 @@ namespace Telegram.Views
 
             UpdateChatMessageSender(chat, chat.MessageSenderId);
             UpdateChatPendingJoinRequests(chat);
+            UpdateChatIsTranslatable(chat, ViewModel.DetectedLanguage);
             UpdateChatPermissions(chat);
             UpdateChatTheme(chat);
         }
@@ -3645,6 +3652,11 @@ namespace Telegram.Views
         public void UpdateChatPendingJoinRequests(Chat chat)
         {
             JoinRequests.UpdateChat(chat);
+        }
+
+        public void UpdateChatIsTranslatable(Chat chat, string language)
+        {
+            TranslateHeader.UpdateChatIsTranslatable(chat, language);
         }
 
         public void UpdateChatTitle(Chat chat)

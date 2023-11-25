@@ -29,6 +29,7 @@ namespace Telegram.ViewModels.Delegates
         void UpdateChatDefaultDisableNotification(Chat chat, bool defaultDisableNotification);
         void UpdateChatMessageSender(Chat chat, MessageSender defaultMessageSenderId);
         void UpdateChatPendingJoinRequests(Chat chat);
+        void UpdateChatIsTranslatable(Chat chat, string language);
 
         void UpdatePinnedMessage(Chat chat, bool known);
         void UpdateCallbackQueryAnswer(Chat chat, MessageViewModel answer);

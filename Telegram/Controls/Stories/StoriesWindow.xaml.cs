@@ -954,7 +954,7 @@ namespace Telegram.Controls.Stories
                 flyout.CreateFlyoutItem(ShareStory, story, Strings.StickersShare, Icons.Share);
             }
 
-            if (ViewModel.TranslateService.CanTranslate(story.Caption))
+            if (ViewModel.TranslateService.CanTranslateText(story.Caption))
             {
                 flyout.CreateFlyoutItem(TranslateStory, story, Strings.TranslateMessage, Icons.Translate);
             }

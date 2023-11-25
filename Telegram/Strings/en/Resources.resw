@@ -702,6 +702,9 @@ to: {1}</value>
   <data name="Added" xml:space="preserve">
     <value>Added</value>
   </data>
+  <data name="AddedToDoNotTranslate" xml:space="preserve">
+    <value>**{0}** added to your Do Not Translate list.</value>
+  </data>
   <data name="AddEmailSubtitle" xml:space="preserve">
     <value>You will now receive Telegram login codes via email and not SMS. Please enter an email address to which you have access.</value>
   </data>
@@ -1243,6 +1246,9 @@ All new messages in this chat will be automatically deleted {0} after they were 
   </data>
   <data name="AutoNightLocation" xml:space="preserve">
     <value>Use Local Sunset &amp; Sunrise</value>
+  </data>
+  <data name="AutoNightModeOff" xml:space="preserve">
+    <value>Auto-Night Mode is off</value>
   </data>
   <data name="AutoNightPreferred" xml:space="preserve">
     <value>Preferred night theme</value>
@@ -3007,6 +3013,9 @@ Anyone from the channel will be able to see messages in this group.</value>
   </data>
   <data name="DoNotTranslate" xml:space="preserve">
     <value>Do Not Translate</value>
+  </data>
+  <data name="DoNotTranslateLanguage" xml:space="preserve">
+    <value>Don&apos;t translate {0}</value>
   </data>
   <data name="DoubledLimits" xml:space="preserve">
     <value>Doubled Limits</value>
@@ -5149,6 +5158,9 @@ Minimum length is 5 characters.</value>
   <data name="NoReactions" xml:space="preserve">
     <value>No reactions</value>
   </data>
+  <data name="NoResult" xml:space="preserve">
+    <value>No results</value>
+  </data>
   <data name="NoRtmpStreamFromAppOwner" xml:space="preserve">
     <value>**Oops!** Telegram doesn&apos;t see any stream coming from your streaming app.
 
@@ -6956,8 +6968,17 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="ShowNotificationsForInfo" xml:space="preserve">
     <value>Turn this off if you want to receive notifications only from the account you are currently using.</value>
   </data>
+  <data name="ShowOriginalButton" xml:space="preserve">
+    <value>Show Original</value>
+  </data>
   <data name="ShowTranslateButton" xml:space="preserve">
     <value>Show Translate Button</value>
+  </data>
+  <data name="ShowTranslateChatButton" xml:space="preserve">
+    <value>Translate Entire Chats</value>
+  </data>
+  <data name="ShowTranslateChatButtonLocked" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to be able to translate all messages in a chat at once.</value>
   </data>
   <data name="ShowTrayIcon" xml:space="preserve">
     <value>Show Tray Icon</value>
@@ -7616,6 +7637,21 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="TranslateMessagesInfo2" xml:space="preserve">
     <value>Google may have access to the text of messages you translate.</value>
+  </data>
+  <data name="TranslateTo" xml:space="preserve">
+    <value>Translate To</value>
+  </data>
+  <data name="TranslateToButton" xml:space="preserve">
+    <value>Translate to {0}</value>
+  </data>
+  <data name="TranslationBarHiddenForChannel" xml:space="preserve">
+    <value>Translation bar is now hidden for this channel.</value>
+  </data>
+  <data name="TranslationBarHiddenForChat" xml:space="preserve">
+    <value>Translation bar is now hidden for this chat.</value>
+  </data>
+  <data name="TranslationBarHiddenForGroup" xml:space="preserve">
+    <value>Translation bar is now hidden for this group.</value>
   </data>
   <data name="TranslationFailedAlert1" xml:space="preserve">
     <value>Translation failed. Try again later.</value>

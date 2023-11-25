@@ -94,6 +94,34 @@ namespace Telegram.Td
             return text;
         }
 
+        public static IList<TextEntity> GetTextEntities(string text)
+        {
+            var result = Client.Execute(new GetTextEntities(text));
+            if (result is TextEntities entities)
+            {
+                return entities.Entities;
+            }
+
+            return Array.Empty<TextEntity>();
+        }
+
+        public static FormattedText MergeEntities(FormattedText text, IList<TextEntity> entities)
+        {
+            if (entities.Count > 0)
+            {
+                var merge = new FormattedText(text.Text, new List<TextEntity>(entities));
+
+                foreach (var entity in entities)
+                {
+                    merge.Entities.Add(entity);
+                }
+
+                return merge;
+            }
+
+            return text;
+        }
+
         public static int SearchQuote(FormattedText text, FormattedText quote, int quotePosition)
         {
             var result = Client.Execute(new SearchQuote(text, quote, quotePosition));

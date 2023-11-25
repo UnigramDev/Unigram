@@ -35,6 +35,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatDefaultDisableNotification>(Handle)
                 .Subscribe<UpdateChatMessageSender>(Handle)
                 .Subscribe<UpdateChatActionBar>(Handle)
+                .Subscribe<UpdateChatIsTranslatable>(Handle)
                 .Subscribe<UpdateChatHasScheduledMessages>(Handle)
                 .Subscribe<UpdateChatVideoChat>(Handle)
                 .Subscribe<UpdateChatPendingJoinRequests>(Handle)
@@ -51,6 +52,7 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateMessageIsPinned>(Handle)
                 .Subscribe<UpdateMessageSendFailed>(Handle)
                 .Subscribe<UpdateMessageSendSucceeded>(Handle)
+                .Subscribe<UpdateMessageTranslatedText>(Handle)
                 .Subscribe<UpdateAnimatedEmojiMessageClicked>(Handle)
                 .Subscribe<UpdateUser>(Handle)
                 .Subscribe<UpdateUserFullInfo>(Handle)
@@ -340,6 +342,14 @@ namespace Telegram.ViewModels
             }
         }
 
+        public void Handle(UpdateChatIsTranslatable update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                BeginOnUIThread(() => Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected));
+            }
+        }
+
         public void Handle(UpdateChatHasScheduledMessages update)
         {
             if (update.ChatId == _chat?.Id)
@@ -482,9 +492,13 @@ namespace Telegram.ViewModels
         {
             if (update.Message.ChatId == _chat?.Id && CheckSchedulingState(update.Message))
             {
+                var message = CreateMessage(update.Message);
+                message.GeneratedContentUnread = true;
+                message.IsInitial = false;
+
                 BeginOnUIThread(() =>
                 {
-                    InsertMessage(update.Message);
+                    InsertMessage(message);
 
                     if (!update.Message.IsOutgoing && Settings.Notifications.InAppSounds)
                     {
@@ -799,6 +813,19 @@ namespace Telegram.ViewModels
             }
         }
 
+        public void Handle(UpdateMessageTranslatedText update)
+        {
+            if (update.ChatId == _chat?.Id)
+            {
+                Handle(update.MessageId, message =>
+                {
+                    message.TranslatedText = update.TranslatedText;
+                    return true;
+                },
+                (bubble, message) => bubble.UpdateMessageText(message));
+            }
+        }
+
         public void Handle(UpdateAnimatedEmojiMessageClicked update)
         {
             if (update.ChatId == _chat?.Id)
@@ -919,17 +946,18 @@ namespace Telegram.ViewModels
             });
         }
 
-        private async void InsertMessage(Message message)
+        private async void InsertMessage(MessageViewModel message)
         {
             using (await _loadMoreLock.WaitAsync())
             {
                 if (IsFirstSliceLoaded == true || Type == DialogType.ScheduledMessages)
                 {
-                    var messageCommon = CreateMessage(message);
-                    messageCommon.GeneratedContentUnread = true;
-                    messageCommon.IsInitial = false;
+                    if (IsTranslating)
+                    {
+                        _translateService.Translate(message, Settings.Translate.To);
+                    }
 
-                    var result = new List<MessageViewModel> { messageCommon };
+                    var result = new List<MessageViewModel> { message };
                     ProcessMessages(_chat, result);
 
                     if (result.Count > 0)

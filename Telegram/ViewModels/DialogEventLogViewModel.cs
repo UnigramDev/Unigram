@@ -255,7 +255,7 @@ namespace Telegram.ViewModels
 
         private IList<MessageViewModel> ProcessEvents(ChatEvents events)
         {
-            var result = new MessageCollection(Items.Ids, Array.Empty<MessageViewModel>());
+            var result = new MessageCollection();
             var channel = _chat.Type is ChatTypeSupergroup super && super.IsChannel;
 
             foreach (var item in events.Events)

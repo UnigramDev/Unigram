@@ -5,9 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Native.Calls;
 using Telegram.Services.Settings;
 using Windows.Globalization;
@@ -47,6 +47,7 @@ namespace Telegram.Services
         PasscodeLockSettings PasscodeLock { get; }
         PlaybackSettings Playback { get; }
         VoIPSettings VoIP { get; }
+        TranslateSettings Translate { get; }
 
         DiagnosticsSettings Diagnostics { get; }
 
@@ -79,8 +80,6 @@ namespace Telegram.Services
 
         bool IsLeftTabsEnabled { get; set; }
 
-        bool IsTranslateEnabled { get; set; }
-
         Vector2 Pencil { get; set; }
 
         DistanceUnits DistanceUnits { get; set; }
@@ -100,8 +99,6 @@ namespace Telegram.Services
         string LanguagePluralId { get; set; }
         string LanguageBaseId { get; set; }
         string LanguageShownId { get; set; }
-
-        HashSet<string> DoNotTranslate { get; set; }
 
         bool InstallBetaUpdates { get; set; }
 
@@ -283,6 +280,9 @@ namespace Telegram.Services
 
         private static EmojiSettings _emoji;
         public EmojiSettings Emoji => _emoji ??= new EmojiSettings();
+
+        private static TranslateSettings _translate;
+        public TranslateSettings Translate => _translate ??= new TranslateSettings(_local);
 
         private AutoDownloadSettings _autoDownload;
         public AutoDownloadSettings AutoDownload
@@ -468,13 +468,6 @@ namespace Telegram.Services
         {
             get => _isLeftTabsEnabled ??= GetValueOrDefault(_local, "IsLeftTabsEnabled", false);
             set => AddOrUpdateValue(ref _isLeftTabsEnabled, _local, "IsLeftTabsEnabled", value);
-        }
-
-        private static bool? _isTranslateEnabled;
-        public bool IsTranslateEnabled
-        {
-            get => _isTranslateEnabled ??= GetValueOrDefault(_local, "IsTranslateEnabled", false);
-            set => AddOrUpdateValue(ref _isTranslateEnabled, _local, "IsTranslateEnabled", value);
         }
 
         private static bool? _swipeToShare;
@@ -703,33 +696,6 @@ namespace Telegram.Services
             set => AddOrUpdateValue(ref _languageShownId, _local, "LanguageShownId", value);
         }
 
-        private HashSet<string> _doNotTranslate;
-        public HashSet<string> DoNotTranslate
-        {
-            get
-            {
-                _doNotTranslate ??= GetDoNotTranslate();
-                return new HashSet<string>(_doNotTranslate);
-            }
-            set
-            {
-                _doNotTranslate = value;
-                AddOrUpdateValue(_local, "DoNotTranslate", value?.Count > 0 ? string.Join(';', value) : null);
-            }
-        }
-
-        private HashSet<string> GetDoNotTranslate()
-        {
-            var value = GetValueOrDefault<string>(_local, "DoNotTranslate", null);
-            if (value == null)
-            {
-                return new HashSet<string>();
-            }
-
-            var split = value.Split(';', StringSplitOptions.RemoveEmptyEntries);
-            return new HashSet<string>(split);
-        }
-
         private static bool? _installBetaUpdates;
         public bool InstallBetaUpdates
         {
@@ -786,15 +752,32 @@ namespace Telegram.Services
 
         public bool TryRemove<T>(long chatId, long threadId, ChatSetting key, out T value)
         {
-            if (_container.Values.ContainsKey(ConvertToKey(chatId, threadId, key)))
+            var setting = ConvertToKey(chatId, threadId, key);
+            if (_container.Values.TryGet(setting, out value))
             {
-                value = (T)_container.Values[ConvertToKey(chatId, threadId, key)];
-                _container.Values.Remove(ConvertToKey(chatId, threadId, key));
+                _container.Values.Remove(setting);
                 return true;
             }
 
             value = default;
             return false;
+        }
+
+        public bool TryGet<T>(long chatId, long threadId, ChatSetting key, out T value)
+        {
+            var setting = ConvertToKey(chatId, threadId, key);
+            return _container.Values.TryGet(setting, out value);
+        }
+
+        public T GetValueOrDefault<T>(long chatId, long threadId, ChatSetting key, T defaultValue)
+        {
+            var setting = ConvertToKey(chatId, threadId, key);
+            if (_container.Values.TryGet(setting, out T value))
+            {
+                return value;
+            }
+
+            return defaultValue;
         }
 
         private string ConvertToKey(long chatId, long threadId, ChatSetting setting)
@@ -812,6 +795,7 @@ namespace Telegram.Services
     {
         Index,
         Pixel,
-        ReadInboxMaxId
+        ReadInboxMaxId,
+        IsTranslating
     }
 }

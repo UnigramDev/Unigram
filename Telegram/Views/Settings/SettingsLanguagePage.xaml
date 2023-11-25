@@ -25,16 +25,23 @@
                                 SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}">
             <ListView.Header>
                 <controls:HeaderedControl Header="{CustomResource TranslateMessages}"
-                                          Footer="{x:Bind ConvertTranslateInfo(ViewModel.IsTranslateEnabled), Mode=OneWay}"
+                                          Footer="{x:Bind ConvertTranslateInfo(ViewModel.TranslateMessages), Mode=OneWay}"
                                           Margin="0,64,0,0">
-                    <CheckBox IsChecked="{x:Bind ViewModel.IsTranslateEnabled, Mode=TwoWay}"
+                    <CheckBox IsChecked="{x:Bind ViewModel.TranslateMessages, Mode=TwoWay}"
                               Content="{CustomResource ShowTranslateButton}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <controls:FauxCheckBox x:Name="TranslateChats"
+                                           x:Load="{x:Bind ViewModel.IsPremium}"
+                                           Click="{x:Bind ViewModel.ChangeTranslateChat}"
+                                           IsChecked="{x:Bind ViewModel.TranslateChats, Mode=OneWay}"
+                                           Content="{CustomResource ShowTranslateChatButton}"
+                                           Style="{StaticResource SettingsCheckBoxStyle}" />
 
                     <controls:BadgeButton Content="{CustomResource DoNotTranslate}"
                                           Badge="{x:Bind ViewModel.DoNotTranslate, Mode=OneWay}"
                                           Click="{x:Bind ViewModel.ChangeDoNotTranslate}"
-                                          Visibility="{x:Bind ViewModel.IsTranslateEnabled, Mode=OneWay}"
+                                          Visibility="{x:Bind ConvertDoNotTranslate(ViewModel.TranslateMessages, ViewModel.TranslateChats), Mode=OneWay}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE98B;" />
                 </controls:HeaderedControl>

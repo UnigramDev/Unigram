@@ -1875,6 +1875,13 @@ namespace Telegram.Services
                     value.IsMarkedAsUnread = updateChatIsMarkedAsUnread.IsMarkedAsUnread;
                 }
             }
+            else if (update is UpdateChatIsTranslatable updateChatIsTranslatable)
+            {
+                if (_chats.TryGetValue(updateChatIsTranslatable.ChatId, out Chat value))
+                {
+                    value.IsTranslatable = updateChatIsTranslatable.IsTranslatable;
+                }
+            }
             else if (update is UpdateChatNotificationSettings updateNotificationSettings)
             {
                 if (_chats.TryGetValue(updateNotificationSettings.ChatId, out Chat value))

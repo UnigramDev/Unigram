@@ -5,54 +5,109 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Concurrent;
+using System.Globalization;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Native;
+using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.ViewModels;
 
 namespace Telegram.Services
 {
     public interface ITranslateService
     {
-        bool CanTranslate(string text);
-        bool CanTranslate(FormattedText text);
+        bool CanTranslateText(string text);
+        bool CanTranslateText(FormattedText text);
+
+        bool CanTranslate(string language, bool entireChat);
 
         Task<object> TranslateAsync(long chatId, long messageId, string toLanguage);
         Task<object> TranslateAsync(string text, string toLanguage);
         Task<object> TranslateAsync(FormattedText text, string toLanguage);
+
+        bool Translate(MessageViewModel message, string toLanguage);
     }
 
     public class TranslateService : ITranslateService
     {
         private readonly IClientService _clientService;
         private readonly ISettingsService _settings;
+        private readonly IEventAggregator _aggregator;
 
-        public TranslateService(IClientService clientService, ISettingsService settings)
+        private const string LANG_UND = "und";
+        private const string LANG_AUTO = "auto";
+        private const string LANG_LATN = "latn";
+
+        public TranslateService(IClientService clientService, ISettingsService settings, IEventAggregator aggregator)
         {
             _clientService = clientService;
             _settings = settings;
+            _aggregator = aggregator;
         }
 
-        public bool CanTranslate(FormattedText text)
+        public static string LanguageName(string locale)
+        {
+            return LanguageName(locale, out _);
+        }
+
+        public static string LanguageName(string locale, out bool rtl)
+        {
+            if (locale == null || locale.Equals(LANG_UND) || locale.Equals(LANG_AUTO))
+            {
+                rtl = false;
+                return null;
+            }
+
+            var split = locale.Split('-');
+            var latin = split.Length > 1 && string.Equals(split[1], LANG_LATN, StringComparison.OrdinalIgnoreCase);
+
+            var culture = new CultureInfo(split[0]);
+            rtl = culture.TextInfo.IsRightToLeft && !latin;
+            return culture.DisplayName;
+        }
+
+        public bool CanTranslateText(FormattedText text)
         {
             if (text == null)
             {
                 return false;
             }
 
-            return CanTranslate(text.Text);
+            return CanTranslateText(text.Text);
         }
 
-        public bool CanTranslate(string text)
+        public bool CanTranslateText(string text)
         {
-            if (string.IsNullOrEmpty(text) || !_settings.IsTranslateEnabled)
+            if (string.IsNullOrEmpty(text))
             {
                 return false;
             }
 
             var language = LanguageIdentification.IdentifyLanguage(text);
-            var split = language.Split('-');
+            return CanTranslate(language, false);
+        }
 
-            var exclude = _settings.DoNotTranslate;
+        public bool CanTranslate(string language, bool entireChat)
+        {
+            var allowed = entireChat
+                ? _settings.Translate.Chats && _clientService.IsPremium
+                : _settings.Translate.Messages;
+
+            if (string.IsNullOrEmpty(language) || !allowed)
+            {
+                return false;
+            }
+
+            var split = language.Split('-');
+            var exclude = _settings.Translate.DoNot;
+
+            if (entireChat)
+            {
+                // We always exclude the current UI language when translating whole chat
+                exclude.Add(LocaleService.Current.Id);
+            }
 
             foreach (var item in exclude)
             {
@@ -79,6 +134,82 @@ namespace Telegram.Services
         public async Task<object> TranslateAsync(long chatId, long messageId, string toLanguage)
         {
             return await _clientService.SendAsync(new TranslateMessageText(chatId, messageId, toLanguage));
+        }
+
+        private readonly ConcurrentDictionary<TranslatedKey, TranslatedMessage> _translations = new();
+
+        public bool Translate(MessageViewModel message, string toLanguage)
+        {
+            if (message.IsOutgoing || message.Text == null)
+            {
+                return false;
+            }
+
+            var key = new TranslatedKey(message.ChatId, message.Id, toLanguage);
+            var cached = message.Text.Text;
+
+            if (_translations.TryGetValue(key, out var value))
+            {
+                if (string.Equals(cached, value.Text))
+                {
+                    message.TranslatedText = value.Result;
+                    return false;
+                }
+            }
+
+            if (CanTranslateText(message.Text.Text))
+            {
+                message.TranslatedText = new MessageTranslateResultPending();
+
+                _clientService.Send(new TranslateMessageText(message.ChatId, message.Id, toLanguage), handler =>
+                {
+                    if (handler is FormattedText text && string.Equals(message.Text?.Text, cached))
+                    {
+                        // Entities are lost!!!
+                        text = ClientEx.MergeEntities(text, ClientEx.GetTextEntities(text.Text));
+
+                        var styled = TextStyleRun.GetText(text);
+                        var result = new MessageTranslateResultText(toLanguage, styled);
+
+                        message.TranslatedText = result;
+
+                        _translations[key] = new TranslatedMessage(cached, result);
+                        _aggregator.Publish(new UpdateMessageTranslatedText(message.ChatId, message.Id, result));
+                    }
+                });
+
+                return true;
+            }
+
+            message.TranslatedText = null;
+            return false;
+        }
+
+
+        struct TranslatedKey
+        {
+            public TranslatedKey(long chatId, long messageId, string toLanguage)
+            {
+                ChatId = chatId;
+                MessageId = messageId;
+                ToLanguage = toLanguage;
+            }
+
+            public long ChatId;
+            public long MessageId;
+            public string ToLanguage;
+        }
+
+        struct TranslatedMessage
+        {
+            public TranslatedMessage(string text, MessageTranslateResultText result)
+            {
+                Text = text;
+                Result = result;
+            }
+
+            public string Text;
+            public MessageTranslateResultText Result;
         }
     }
 }

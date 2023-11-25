@@ -317,6 +317,7 @@ namespace Telegram.Common
             var text = source switch
             {
                 PremiumFeatureAccentColor => Strings.UserColorApplyPremium,
+                PremiumFeatureRealTimeChatTranslation => Strings.ShowTranslateChatButtonLocked,
                 _ => Strings.UnlockPremium
             };
 

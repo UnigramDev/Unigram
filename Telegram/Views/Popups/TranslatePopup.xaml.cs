@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Globalization;
 using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Services;
@@ -17,10 +16,6 @@ namespace Telegram.Views.Popups
 {
     public sealed partial class TranslatePopup : ContentPopup
     {
-        private const string LANG_UND = "und";
-        private const string LANG_AUTO = "auto";
-        private const string LANG_LATN = "latn";
-
         private readonly ITranslateService _translateService;
         private readonly string _toLanguage;
 
@@ -49,8 +44,8 @@ namespace Telegram.Views.Popups
             PrimaryButtonText = Strings.Close;
             //SecondaryButtonText = Strings.Language;
 
-            var fromName = LanguageName(fromLanguage, out bool rtl);
-            var toName = LanguageName(toLanguage, out _);
+            var fromName = TranslateService.LanguageName(fromLanguage, out bool rtl);
+            var toName = TranslateService.LanguageName(toLanguage);
 
             if (string.IsNullOrEmpty(fromName))
             {
@@ -126,22 +121,6 @@ namespace Telegram.Views.Popups
             }
 
             _loadingMore = false;
-        }
-
-        private string LanguageName(string locale, out bool rtl)
-        {
-            if (locale == null || locale.Equals(LANG_UND) || locale.Equals(LANG_AUTO))
-            {
-                rtl = false;
-                return null;
-            }
-
-            var split = locale.Split('-');
-            var latin = split.Length > 1 && string.Equals(split[1], LANG_LATN, StringComparison.OrdinalIgnoreCase);
-
-            var culture = new CultureInfo(split[0]);
-            rtl = culture.TextInfo.IsRightToLeft && !latin;
-            return culture.DisplayName;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

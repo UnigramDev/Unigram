@@ -22,7 +22,7 @@ namespace Telegram.Services.Factories
 {
     public interface IMessageFactory
     {
-        MessageViewModel Create(IMessageDelegate delegato, Chat chat, Message message);
+        MessageViewModel Create(IMessageDelegate delegato, Chat chat, Message message, bool processText);
     }
 
     public class MessageFactory : IMessageFactory
@@ -36,14 +36,14 @@ namespace Telegram.Services.Factories
             _playbackService = playbackService;
         }
 
-        public MessageViewModel Create(IMessageDelegate delegato, Chat chat, Message message)
+        public MessageViewModel Create(IMessageDelegate delegato, Chat chat, Message message, bool processText)
         {
             if (message == null)
             {
                 return null;
             }
 
-            return new MessageViewModel(_clientService, _playbackService, delegato, chat, message);
+            return new MessageViewModel(_clientService, _playbackService, delegato, chat, message, processText);
         }
 
 

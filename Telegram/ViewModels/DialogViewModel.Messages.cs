@@ -960,7 +960,7 @@ namespace Telegram.ViewModels
             }
 
             var language = LanguageIdentification.IdentifyLanguage(text);
-            var popup = new TranslatePopup(_translateService, chatId, messageId, text, language, LocaleService.Current.CurrentCulture.TwoLetterISOLanguageName, !message.CanBeSaved);
+            var popup = new TranslatePopup(_translateService, chatId, messageId, text, language, LocaleService.Current.Id, !message.CanBeSaved);
             await ShowPopupAsync(popup);
         }
 

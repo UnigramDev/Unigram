@@ -1562,7 +1562,7 @@ namespace Telegram.Controls.Cells
                     }
 
                     var delegato = new ChatMessageDelegate(_clientService, settings, chat);
-                    var viewModel = new MessageViewModel(_clientService, playback, delegato, chat, message);
+                    var viewModel = new MessageViewModel(_clientService, playback, delegato, chat, message, true);
 
                     var bubble = new MessageBubble();
                     if (viewModel.IsOutgoing && !viewModel.IsChannelPost)

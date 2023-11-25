@@ -78,7 +78,7 @@ namespace Telegram.ViewModels.Settings
         {
             get
             {
-                var exclude = Settings.DoNotTranslate;
+                var exclude = Settings.Translate.DoNot;
                 if (exclude.Count == 1)
                 {
                     var first = exclude.First();
@@ -100,25 +100,47 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public bool IsTranslateEnabled
+        public bool TranslateMessages
         {
-            get => Settings.IsTranslateEnabled;
+            get => Settings.Translate.Messages;
             set
             {
-                Settings.IsTranslateEnabled = value;
-                RaisePropertyChanged(nameof(IsTranslateEnabled));
+                Settings.Translate.Messages = value;
+                RaisePropertyChanged(nameof(TranslateMessages));
+            }
+        }
+
+        public bool TranslateChats
+        {
+            get => Settings.Translate.Chats && ClientService.IsPremium;
+            set
+            {
+                Settings.Translate.Chats = value;
+                RaisePropertyChanged(nameof(TranslateChats));
+            }
+        }
+
+        public void ChangeTranslateChat()
+        {
+            if (ClientService.IsPremium)
+            {
+                TranslateChats = !TranslateChats;
+            }
+            else
+            {
+                Window.Current.ShowToast(new PremiumFeatureRealTimeChatTranslation());
             }
         }
 
         public async void ChangeDoNotTranslate()
         {
-            var exclude = Settings.DoNotTranslate;
+            var exclude = Settings.Translate.DoNot;
             var popup = new DoNotTranslatePopup(_officialLanguages, exclude);
 
             var confirm = await ShowPopupAsync(popup);
             if (confirm == ContentDialogResult.Primary && popup.SelectedItems != null)
             {
-                Settings.DoNotTranslate = popup.SelectedItems;
+                Settings.Translate.DoNot = popup.SelectedItems;
                 RaisePropertyChanged(nameof(DoNotTranslate));
             }
         }

@@ -24,7 +24,7 @@ namespace Telegram.ViewModels
 
         private Action _updateSelection;
 
-        public MessageViewModel(IClientService clientService, IPlaybackService playbackService, IMessageDelegate delegato, Chat chat, Message message)
+        public MessageViewModel(IClientService clientService, IPlaybackService playbackService, IMessageDelegate delegato, Chat chat, Message message, bool processText = false)
             : base(clientService, message)
         {
             _playbackService = playbackService;
@@ -32,7 +32,10 @@ namespace Telegram.ViewModels
 
             _chat = chat;
 
-            SetText(message.Content?.GetCaption());
+            if (processText)
+            {
+                SetText(message.Content?.GetCaption());
+            }
         }
 
         public Chat Chat => _chat;
@@ -404,6 +407,8 @@ namespace Telegram.ViewModels
         }
 
         public StyledText Text { get; set; }
+
+        public MessageTranslateResult TranslatedText { get; set; }
 
         public override bool Equals(object obj)
         {

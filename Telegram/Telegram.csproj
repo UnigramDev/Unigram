@@ -220,6 +220,10 @@
     <Compile Include="Controls\Chats\ChatJoinRequestsHeader.xaml.cs">
       <DependentUpon>ChatJoinRequestsHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Chats\ChatTranslateBar.xaml.cs">
+      <DependentUpon>ChatTranslateBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Settings\TranslateSettings.cs" />
     <Compile Include="Td\Api\MinithumbnailId.cs" />
     <Compile Include="Controls\Cells\StoryCell.xaml.cs">
       <DependentUpon>StoryCell.xaml</DependentUpon>
@@ -292,6 +296,7 @@
     <Compile Include="Td\Api\MessageAsyncStory.cs" />
     <Compile Include="Td\Api\NameColor.cs" />
     <Compile Include="Td\Api\UpdateChatSwitchInlineQuery.cs" />
+    <Compile Include="Td\Api\UpdateMessageTranslatedText.cs" />
     <Compile Include="Videolan\Platforms\Windows\InitializedEventArgs.cs" />
     <Compile Include="Videolan\Platforms\Windows\VideoView.cs" />
     <Compile Include="Videolan\Platforms\Windows\VideoViewBase.cs" />
@@ -343,6 +348,8 @@
     <Compile Include="ViewModels\Chats\ChatStoriesViewModel.cs" />
     <Compile Include="ViewModels\ChooseChatsViewModel.cs" />
     <Compile Include="ViewModels\ComposeViewModel.cs" />
+    <Compile Include="ViewModels\DialogViewModel.Translate.cs" />
+    <Compile Include="Td\Api\MessageTranslateResult.cs" />
     <Compile Include="ViewModels\Profile\ProfileGroupsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileMembersTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileStoriesTabViewModel.cs" />
@@ -951,6 +958,9 @@
     </Compile>
     <Compile Include="Views\Popups\TranslatePopup.xaml.cs">
       <DependentUpon>TranslatePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\TranslateToPopup.xaml.cs">
+      <DependentUpon>TranslateToPopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\UnconfirmedSessionPopup.xaml.cs">
       <DependentUpon>UnconfirmedSessionPopup.xaml</DependentUpon>
@@ -1803,6 +1813,7 @@
     <Content Include="Assets\Toasts\Success.tgs" />
     <Content Include="Assets\Toasts\Copied.tgs" />
     <Content Include="Assets\Toasts\AutoNightOff.tgs" />
+    <Content Include="Assets\Toasts\Translate.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -1956,7 +1967,10 @@
     <Page Include="Controls\Chats\ChatJoinRequestsHeader.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\Chats\ChatTranslateBar.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\Chats\ChatActionBarView.xaml">
       <SubType>Designer</SubType>
@@ -2427,6 +2441,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\TranslatePopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Popups\TranslateToPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

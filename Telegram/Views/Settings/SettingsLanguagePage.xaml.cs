@@ -110,6 +110,13 @@ namespace Telegram.Views.Settings
             return enabled ? Strings.TranslateMessagesInfo1 : Strings.TranslateMessagesInfo1 + Environment.NewLine + Environment.NewLine + Strings.TranslateMessagesInfo2;
         }
 
+        private Visibility ConvertDoNotTranslate(bool messages, bool chats)
+        {
+            return messages || chats
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
         #endregion
 
     }
