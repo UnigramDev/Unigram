@@ -107,9 +107,9 @@ namespace Telegram.Td
 
         public static FormattedText MergeEntities(FormattedText text, IList<TextEntity> entities)
         {
-            if (entities.Count > 0)
+            if (entities.Count > 0 && text.Entities.Count > 0)
             {
-                var merge = new FormattedText(text.Text, new List<TextEntity>(entities));
+                var merge = new FormattedText(text.Text, new List<TextEntity>(text.Entities));
 
                 foreach (var entity in entities)
                 {
@@ -117,6 +117,10 @@ namespace Telegram.Td
                 }
 
                 return merge;
+            }
+            else if (entities.Count > 0)
+            {
+                return new FormattedText(text.Text, entities);
             }
 
             return text;
