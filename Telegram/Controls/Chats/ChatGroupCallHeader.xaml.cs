@@ -19,9 +19,9 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
-namespace Telegram.Controls
+namespace Telegram.Controls.Chats
 {
-    public sealed partial class GroupCallHeader : HyperlinkButton
+    public sealed partial class ChatGroupCallHeader : HyperlinkButton
     {
         private readonly DispatcherTimer _scheduledTimer;
 
@@ -30,7 +30,7 @@ namespace Telegram.Controls
         private UIElement _parent;
         private GroupCall _call;
 
-        public GroupCallHeader()
+        public ChatGroupCallHeader()
         {
             InitializeComponent();
 

@@ -1,4 +1,4 @@
-﻿<HyperlinkButton x:Class="Telegram.Controls.ChatJoinRequestsHeader"
+﻿<HyperlinkButton x:Class="Telegram.Controls.Chats.ChatJoinRequestsHeader"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -41,6 +41,9 @@
             <ColumnDefinition />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
+        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Grid.ColumnSpan="3" />
 
         <controls:RecentUserHeads x:Name="RecentUsers"
                                   RecentUserHeadChanged="RecentUsers_RecentUserHeadChanged"

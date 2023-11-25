@@ -14,7 +14,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 
-namespace Telegram.Controls
+namespace Telegram.Controls.Chats
 {
     public sealed partial class ChatJoinRequestsHeader : HyperlinkButton
     {

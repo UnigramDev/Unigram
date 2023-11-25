@@ -213,6 +213,12 @@
     <Compile Include="Controls\Cells\BoostCell.xaml.cs">
       <DependentUpon>BoostCell.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\Chats\ChatGroupCallHeader.xaml.cs">
+      <DependentUpon>ChatGroupCallHeader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Chats\ChatJoinRequestsHeader.xaml.cs">
+      <DependentUpon>ChatJoinRequestsHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Td\Api\MinithumbnailId.cs" />
     <Compile Include="Controls\Cells\StoryCell.xaml.cs">
       <DependentUpon>StoryCell.xaml</DependentUpon>
@@ -493,9 +499,6 @@
     <Compile Include="Controls\Cells\WebSessionCell.xaml.cs">
       <DependentUpon>WebSessionCell.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ChatJoinRequestsHeader.xaml.cs">
-      <DependentUpon>ChatJoinRequestsHeader.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\ChatListListView.cs" />
     <Compile Include="Controls\ChatStatisticsOverview.xaml.cs">
       <DependentUpon>ChatStatisticsOverview.xaml</DependentUpon>
@@ -565,9 +568,6 @@
     <Compile Include="Controls\ZoomViewer.cs" />
     <Compile Include="Controls\GroupCallActiveHeader.xaml.cs">
       <DependentUpon>GroupCallActiveHeader.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\GroupCallHeader.xaml.cs">
-      <DependentUpon>GroupCallHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\HeaderedControl.cs" />
     <Compile Include="Controls\IdentityIcon.cs" />
@@ -1944,11 +1944,16 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ChatJoinRequestsHeader.xaml">
+    <Page Include="Controls\ChatStatisticsOverview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\Chats\ChatGroupCallHeader.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\ChatStatisticsOverview.xaml">
+    <Page Include="Controls\Chats\ChatJoinRequestsHeader.xaml">
+      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2017,10 +2022,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Controls\GroupCallActiveHeader.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\GroupCallHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

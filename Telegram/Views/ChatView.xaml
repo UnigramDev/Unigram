@@ -618,16 +618,15 @@
         <StackPanel x:Name="ClipperOuter"
                     Canvas.ZIndex="2"
                     Grid.Row="2">
-            <controls:GroupCallHeader x:Name="GroupCall"
-                                      JoinClick="{x:Bind ViewModel.JoinGroupCall}"
-                                      Visibility="Collapsed"
-                                      Canvas.ZIndex="1" />
-
+            <chats:ChatGroupCallHeader x:Name="GroupCall"
+                                       JoinClick="{x:Bind ViewModel.JoinGroupCall}"
+                                       Visibility="Collapsed"
+                                       Canvas.ZIndex="1" />
             <StackPanel x:Name="ClipperJoinRequests">
-                <controls:ChatJoinRequestsHeader x:Name="JoinRequests"
-                                                 Click="{x:Bind ViewModel.ShowJoinRequests}"
-                                                 Visibility="Collapsed"
-                                                 Canvas.ZIndex="1" />
+                <chats:ChatJoinRequestsHeader x:Name="JoinRequests"
+                                              Click="{x:Bind ViewModel.ShowJoinRequests}"
+                                              Visibility="Collapsed"
+                                              Canvas.ZIndex="1" />
                 <StackPanel x:Name="ClipperActionBar">
                     <chats:ChatActionBarView x:Name="ActionBar"
                                              Visibility="Collapsed"
