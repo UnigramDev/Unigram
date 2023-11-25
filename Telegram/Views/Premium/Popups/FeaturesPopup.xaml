@@ -7,9 +7,10 @@
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:cells="using:Telegram.Controls.Cells.Premium"
                        xmlns:selectors="using:Telegram.Selectors"
-                       mc:Ignorable="d">
+                       mc:Ignorable="d"
+                       Padding="0">
 
-    <Grid Margin="-24">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="440" />
             <RowDefinition Height="Auto" />

@@ -7,9 +7,10 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        Title="{x:Null}"
                        TitleTemplate="{x:Null}"
+                       Padding="24,0,24,24"
                        mc:Ignorable="d">
 
-    <Grid Margin="0,-24,0,0">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

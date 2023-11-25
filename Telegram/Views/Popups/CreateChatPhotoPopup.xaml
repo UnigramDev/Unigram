@@ -16,7 +16,8 @@
                        PrimaryButtonClick="{x:Bind ViewModel.Send}"
                        IsPrimaryButtonEnabled="{x:Bind ConvertEnabled(ViewModel.SelectedBackground, ViewModel.SelectedForeground), Mode=OneWay}"
                        Closing="OnClosing"
-                       VerticalContentAlignment="Stretch">
+                       VerticalContentAlignment="Stretch"
+                       Padding="0">
 
     <controls:ContentPopup.Resources>
         <Style TargetType="GridViewItem"
@@ -580,7 +581,7 @@
         </Style>
     </controls:ContentPopup.Resources>
 
-    <Grid Margin="-24,-24,-24,-56">
+    <Grid Margin="0,0,0,-32">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

@@ -11,10 +11,10 @@
                        d:DesignHeight="300"
                        d:DesignWidth="400"
                        VerticalContentAlignment="Stretch"
+                       Padding="0"
                        Loaded="OnLoaded">
 
-    <Grid x:Name="LayoutRoot"
-          Margin="-24,-24,-24,-24">
+    <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

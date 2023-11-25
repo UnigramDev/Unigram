@@ -8,7 +8,8 @@
                        mc:Ignorable="d"
                        TitleTemplate="{x:Null}"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,24,0,0">
 
     <ContentDialog.Resources>
         <Style x:Key="DefaultCheckBoxStyle"
@@ -577,12 +578,10 @@
         </Style>
     </ContentDialog.Resources>
 
-    <Grid Background="{ThemeResource PageBackgroundDarkBrush}"
-          Margin="0,0,0,-24">
+    <Grid>
         <controls:TableListView x:Name="ScrollingHost"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="None"
-                                Margin="-24,0,-24,0"
                                 Padding="0,16,0,24">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem"

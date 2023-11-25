@@ -8,9 +8,10 @@
                        mc:Ignorable="d"
                        Title="TITLE"
                        PrimaryButtonText="Button1"
-                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
+                       PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+                       Padding="12,24">
 
-    <Grid Margin="-12,0">
+    <Grid>
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Items}"
                   SelectionMode="None"

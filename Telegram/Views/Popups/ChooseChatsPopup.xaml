@@ -16,10 +16,11 @@
                        IsPrimaryButtonEnabled="{x:Bind ConvertButtonEnabled(ViewModel.AllowEmptySelection, ViewModel.SelectedItems.Count), Mode=OneWay}"
                        SecondaryButtonText="Cancel"
                        VerticalContentAlignment="Stretch"
+                       Padding="24,20,24,0"
                        Opened="OnOpened"
                        Closing="OnClosing">
 
-    <Grid Margin="0,-4,0,-24">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

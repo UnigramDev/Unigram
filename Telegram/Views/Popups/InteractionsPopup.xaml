@@ -10,9 +10,10 @@
                        d:DesignHeight="300"
                        d:DesignWidth="400"
                        Title="{x:Bind ViewModel.Title}"
-                       VerticalContentAlignment="Stretch">
+                       VerticalContentAlignment="Stretch"
+                       Padding="0,24,0,0">
 
-    <Grid Margin="-24,0,-24,-24">
+    <Grid>
         <controls:TextListView x:Name="ScrollingHost"
                                ItemsSource="{x:Bind ViewModel.Items}"
                                ContainerContentChanging="OnContainerContentChanging"

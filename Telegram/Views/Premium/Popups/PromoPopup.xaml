@@ -5,16 +5,16 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:common="using:Telegram.Common"
                        xmlns:controls="using:Telegram.Controls"
-                       mc:Ignorable="d">
+                       mc:Ignorable="d"
+                       Padding="0">
 
-    <Grid Margin="0,-24,0,-24">
+    <Grid>
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Features}"
                   ItemClick="OnItemClick"
                   IsItemClickEnabled="True"
                   ContainerContentChanging="OnContainerContentChanging"
                   SelectionMode="None"
-                  Margin="-24,0"
                   Padding="12,0">
             <ListView.Header>
                 <Grid>
@@ -122,7 +122,7 @@
               x:Load="{x:Bind ViewModel.CanPurchase, Mode=OneWay}"
               VerticalAlignment="Bottom"
               HorizontalAlignment="Stretch"
-              Margin="0,12,0,24"
+              Margin="24,12,24,24"
               Grid.Row="1">
             <Rectangle x:Name="PurchaseShadow"
                        Loaded="PurchaseShadow_Loaded"
@@ -153,7 +153,6 @@
                               HorizontalAlignment="Right"
                               VerticalAlignment="Top"
                               Glyph="&#xE711;"
-                              Margin="0,0,-24,0"
                               CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>

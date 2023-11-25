@@ -13,11 +13,12 @@
                        PrimaryButtonClick="{x:Bind ViewModel.Execute}"
                        VerticalContentAlignment="Stretch"
                        ContentMaxHeight="500"
+                       Padding="0,10,0,0"
                        Closing="OnClosing"
                        Loaded="OnLoaded"
                        Unloaded="OnUnloaded">
 
-    <Grid Margin="-24,-14,-24,-24">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />

@@ -10,7 +10,8 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        Loaded="OnLoaded"
                        PrimaryButtonClick="ContentPopup_PrimaryButtonClick"
-                       mc:Ignorable="d">
+                       mc:Ignorable="d"
+                       Padding="0,24">
 
     <ListView x:Name="ScrollingHost"
               ItemsSource="{x:Bind ViewModel.Items}"
@@ -21,8 +22,7 @@
               DragItemsCompleted="OnDragItemsCompleted"
               CanReorderItems="True"
               CanDragItems="True"
-              AllowDrop="True"
-              Margin="-24,0">
+              AllowDrop="True">
         <ListView.Header>
             <StackPanel Margin="24,0">
                 <TextBox x:Name="Username"

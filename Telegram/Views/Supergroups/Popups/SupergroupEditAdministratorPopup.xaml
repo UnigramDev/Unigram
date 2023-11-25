@@ -6,9 +6,10 @@
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:cells="using:Telegram.Controls.Cells"
                        mc:Ignorable="d"
+                       Padding="0,24"
                        PrimaryButtonClick="{x:Bind ViewModel.Continue}">
 
-    <Grid Margin="-24,0">
+    <Grid>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">

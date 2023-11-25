@@ -12,7 +12,8 @@
                        PrimaryButtonText="{x:Bind ViewModel.PrimaryButtonText}"
                        SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,24,0,0">
 
     <controls:ContentPopup.Resources>
         <CollectionViewSource x:Name="ItemsSource"
@@ -20,7 +21,7 @@
                               IsSourceGrouped="True" />
     </controls:ContentPopup.Resources>
 
-    <Grid Margin="-24,0,-24,-24">
+    <Grid>
         <ListView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ItemsSource.View}"
                   SelectionMode="Multiple"

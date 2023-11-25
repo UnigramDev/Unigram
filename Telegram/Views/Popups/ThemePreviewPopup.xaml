@@ -15,14 +15,14 @@
                        PrimaryButtonText="Button1"
                        SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,6,0,24">
 
     <ContentDialog.Resources>
         <common:Theme x:Name="ThemePreview" />
     </ContentDialog.Resources>
 
     <Grid x:Name="LayoutRoot"
-          Margin="-24,-18,-24,0"
           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

@@ -11,9 +11,10 @@
                        PrimaryButtonText="Button1"
                        SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,24,0,0">
 
-    <Grid Margin="-24,0,-24,-24">
+    <Grid>
         <ListView x:Name="ScrollingHost"
                   SelectionMode="Multiple"
                   SelectionChanged="OnSelectionChanged"

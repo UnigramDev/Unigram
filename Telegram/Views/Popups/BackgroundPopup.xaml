@@ -9,7 +9,8 @@
                        xmlns:messages="using:Telegram.Controls.Messages"
                        mc:Ignorable="d"
                        Background="Black"
-                       VerticalContentAlignment="Stretch">
+                       VerticalContentAlignment="Stretch"
+                       Padding="0,24,0,0">
 
     <ContentDialog.Resources>
         <ResourceDictionary>
@@ -580,8 +581,7 @@
         </ResourceDictionary>
     </ContentDialog.Resources>
 
-    <Grid x:Name="LayoutRoot"
-          Margin="-24,0,-24,-24">
+    <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />

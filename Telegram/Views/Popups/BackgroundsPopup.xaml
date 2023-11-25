@@ -11,9 +11,10 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
                        VerticalContentAlignment="Stretch"
+                       Padding="0,24,0,0"
                        Closing="OnClosing">
 
-    <Grid Margin="-24,0,-24,-24">
+    <Grid>
         <GridView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Items}"
                   ItemClick="List_ItemClick"

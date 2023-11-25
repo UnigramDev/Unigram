@@ -7,19 +7,18 @@
                        xmlns:viewModels="using:Telegram.ViewModels.Supergroups"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                       VerticalContentAlignment="Stretch"
                        ContentMaxHeight="500"
                        mc:Ignorable="d"
+                       Padding="0,24,0,0"
                        PrimaryButtonClick="OnPrimaryButtonClick">
 
-    <Grid Margin="-24,0,-24,-24">
+    <Grid>
         <GridView x:Name="ScrollingHost"
                   ItemsSource="{x:Bind ViewModel.Items}"
                   IsItemClickEnabled="False"
                   SelectionMode="Multiple"
                   ContainerContentChanging="OnContainerContentChanged"
                   Padding="0,0,0,24"
-                  Grid.Row="1"
                   common:FluidGridView.OrientationOnly="False">
             <common:FluidGridView.Triggers>
                 <common:FluidGridViewTrigger RowsOrColumns="8" />

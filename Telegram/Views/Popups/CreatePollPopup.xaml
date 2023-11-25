@@ -12,9 +12,10 @@
                        SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                        SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-                       DefaultButton="None">
+                       DefaultButton="None"
+                       Padding="0,16,0,0">
 
-    <Grid Margin="-24,-8,-24,-24">
+    <Grid>
         <ScrollViewer x:Name="ScrollingHost"
                       VerticalScrollBarVisibility="Auto"
                       VerticalScrollMode="Auto">

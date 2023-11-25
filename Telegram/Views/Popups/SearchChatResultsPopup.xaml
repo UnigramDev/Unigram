@@ -5,9 +5,10 @@
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
                        xmlns:cells="using:Telegram.Controls.Cells"
-                       mc:Ignorable="d">
+                       mc:Ignorable="d"
+                       Padding="0,24,0,0">
 
-    <Grid Margin="-24,0,-24,-24">
+    <Grid>
         <ListView x:Name="ScrollingHost"
                   IsItemClickEnabled="True"
                   SelectionMode="None"

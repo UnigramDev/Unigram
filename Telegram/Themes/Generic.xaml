@@ -2218,6 +2218,8 @@
                 Value="{ThemeResource DefaultButtonStyle}" />
         <Setter Property="CornerRadius"
                 Value="{ThemeResource OverlayCornerRadius}" />
+        <Setter Property="Padding"
+                Value="24" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ContentPopup">
@@ -2557,7 +2559,8 @@
                                                               Content="{TemplateBinding Content}"
                                                               FontSize="{ThemeResource ControlContentThemeFontSize}"
                                                               FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                                              Margin="{ThemeResource ContentDialogContentMargin}"
+                                                              Margin="-24"
+                                                              Padding="{TemplateBinding Padding}"
                                                               Foreground="{TemplateBinding Foreground}"
                                                               Grid.Row="1"
                                                               TextWrapping="Wrap" />

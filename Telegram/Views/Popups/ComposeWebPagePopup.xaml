@@ -16,9 +16,10 @@
                        PrimaryButtonText="Button1"
                        SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,24">
 
-    <StackPanel Margin="-24,0">
+    <StackPanel>
         <Grid x:Name="Preview">
             <chats:ChatBackgroundControl x:Name="BackgroundControl" />
             <ScrollViewer x:Name="ScrollingHost"

@@ -11,15 +11,15 @@
                        PrimaryButtonText="Button1"
                        SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,24,0,0">
 
     <Grid>
         <ListView x:Name="ScrollingHost"
                   SelectionMode="Multiple"
                   ChoosingItemContainer="OnChoosingItemContainer"
                   ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
-                  Margin="-24,0"
-                  Padding="12,0">
+                  Padding="12,0,12,24">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="td:LanguagePackInfo">
                     <Grid Padding="12,6"

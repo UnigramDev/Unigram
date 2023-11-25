@@ -4,11 +4,11 @@
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:controls="using:Telegram.Controls"
-                       mc:Ignorable="d">
+                       mc:Ignorable="d"
+                       Padding="0">
 
-    <Grid Margin="0,-24,0,-24">
+    <Grid>
         <ScrollViewer x:Name="ScrollingHost"
-                      Margin="-24,0"
                       Padding="12,0">
             <StackPanel Margin="0,0,0,72">
                 <Grid>
@@ -138,7 +138,7 @@
         <Grid x:Name="PurchasePanel"
               VerticalAlignment="Bottom"
               HorizontalAlignment="Stretch"
-              Margin="0,12,0,24"
+              Margin="24,12,24,24"
               Grid.Row="1">
             <Rectangle x:Name="PurchaseShadow"
                        Loaded="PurchaseShadow_Loaded"
@@ -168,7 +168,6 @@
                               HorizontalAlignment="Right"
                               VerticalAlignment="Top"
                               Glyph="&#xE711;"
-                              Margin="0,0,-24,0"
                               CornerRadius="20" />
     </Grid>
 </controls:ContentPopup>
