@@ -2028,40 +2028,53 @@ namespace Telegram.ViewModels
             try
             {
                 var field = HistoryField;
-                if (field != null && TryGetLastVisibleMessageId(out long start, out int lastVisibleIndex))
+                if (field != null && TryGetLastVisibleMessageId(out long lastVisibleId, out int lastVisibleIndex))
                 {
-                    if (start != 0 && start != chat.LastMessage?.Id)
+                    var firstNonVisibleId = lastVisibleIndex < Items.Count - 2
+                        ? Items[lastVisibleIndex + 1].Id
+                        : lastVisibleId;
+
+                    if (lastVisibleId != 0 && lastVisibleId != chat.LastMessage?.Id)
                     {
                         long lastReadMessageId;
 
-                        var thread = _thread;
-                        if (thread != null)
+                        if (_topic is ForumTopic topic)
                         {
-                            lastReadMessageId = thread.ReplyInfo?.LastReadInboxMessageId ?? long.MaxValue;
+                            lastReadMessageId = topic.LastReadInboxMessageId;
+                        }
+                        else if (_thread is MessageThreadInfo thread)
+                        {
+                            lastReadMessageId = thread.ReplyInfo.LastReadInboxMessageId;
                         }
                         else
                         {
                             lastReadMessageId = chat.LastReadInboxMessageId;
                         }
 
-                        Settings.Chats[chat.Id, ThreadId, ChatSetting.ReadInboxMaxId] = lastReadMessageId;
-                        Settings.Chats[chat.Id, ThreadId, ChatSetting.Index] = start;
-
-                        var container = field.ContainerFromIndex(lastVisibleIndex) as ListViewItem;
-                        if (container != null)
+                        if (firstNonVisibleId < lastReadMessageId)
                         {
-                            var transform = container.TransformToVisual(field);
-                            var position = transform.TransformPoint(new Point());
+                            Settings.Chats[chat.Id, ThreadId, ChatSetting.ReadInboxMaxId] = lastReadMessageId;
+                            Settings.Chats[chat.Id, ThreadId, ChatSetting.Index] = lastVisibleId;
 
-                            Settings.Chats[chat.Id, ThreadId, ChatSetting.Pixel] = field.ActualHeight - (position.Y + container.ActualHeight);
-                            Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, start, field.ActualHeight - (position.Y + container.ActualHeight)));
+                            var container = field.ContainerFromIndex(lastVisibleIndex) as ListViewItem;
+                            if (container != null)
+                            {
+                                var transform = container.TransformToVisual(field);
+                                var position = transform.TransformPoint(new Point());
+
+                                Settings.Chats[chat.Id, ThreadId, ChatSetting.Pixel] = field.ActualHeight - (position.Y + container.ActualHeight);
+                                Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: {2}", chat.Id, lastVisibleId, field.ActualHeight - (position.Y + container.ActualHeight)));
+                            }
+                            else
+                            {
+                                Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Pixel, out double pixel);
+                                Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, lastVisibleId));
+                            }
                         }
                         else
                         {
-                            Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Pixel, out double pixel);
-                            Logger.Debug(string.Format("{0} - Saving scrolling position, message: {1}, pixel: none", chat.Id, start));
+                            Remove("as first non visible item is unread");
                         }
-
                     }
                     else
                     {
