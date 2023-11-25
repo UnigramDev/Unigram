@@ -516,6 +516,20 @@ namespace Telegram.Common
             return (number - other).AlmostEqualsToZero(epsilon);
         }
 
+        public static bool VisualContains(this FrameworkElement destination, FrameworkElement source)
+        {
+            var transform = source.TransformToVisual(destination);
+            var point = transform.TransformPoint(new Point());
+
+            var y1 = Math.Ceiling(point.Y);
+            var y2 = Math.Truncate(point.Y + source.ActualHeight);
+
+            var p1 = 0;
+            var p2 = Math.Truncate(destination.ActualHeight);
+
+            return y1 >= p1 && y2 <= p2;
+        }
+
         public static int ToTimestamp(this DateTime dateTime)
         {
             var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0);

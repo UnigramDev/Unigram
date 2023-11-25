@@ -676,18 +676,24 @@ namespace Telegram.Views
                 }
             }
 
-            if (index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex)
+            if (index >= panel.FirstVisibleIndex && index <= panel.LastVisibleIndex && sender is SelectorItem selector)
             {
                 var direction = panel.ItemsUpdatingScrollMode == ItemsUpdatingScrollMode.KeepItemsInView ? -1 : 1;
-                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                var edge = (index == panel.LastVisibleIndex && direction == 1) || index == panel.FirstVisibleIndex && direction == -1;
 
+                if (edge && !Messages.VisualContains(selector))
+                {
+                    direction *= -1;
+                }
+
+                var first = direction == 1 ? panel.FirstCacheIndex : index + 1;
+                var last = direction == 1 ? index : panel.LastCacheIndex;
+
+                var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
                 var anim = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
                 anim.InsertKeyFrame(0, diff * direction);
                 anim.InsertKeyFrame(1, 0);
                 //anim.Duration = TimeSpan.FromSeconds(5);
-
-                var first = direction == 1 ? panel.FirstCacheIndex : index + 1;
-                var last = direction == 1 ? index : panel.LastCacheIndex;
 
                 for (int i = first; i <= last; i++)
                 {
