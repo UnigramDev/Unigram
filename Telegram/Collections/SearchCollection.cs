@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Windows.Foundation;
 using Windows.UI.Xaml.Data;
@@ -77,22 +78,23 @@ namespace Telegram.Collections
                     using (await _mutex.WaitAsync())
                     {
                         await incremental.LoadMoreItemsAsync(0);
-                    }
 
-                    // 100% redundant
-                    if (token.IsCancellationRequested)
-                    {
-                        return;
-                    }
+                        // 100% redundant
+                        if (token.IsCancellationRequested)
+                        {
+                            return;
+                        }
 
-                    ReplaceDiff(source);
-                    UpdateEmpty();
+                        var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, source, DefaultDiffHandler, DefaultOptions));
+                        ReplaceDiff(diff);
+                        UpdateEmpty();
 
-                    if (Count < 1 && incremental.HasMoreItems)
-                    {
-                        // This is 100% illegal and will cause a lot
-                        // but really a lot of problems for sure.
-                        Add(default);
+                        if (Count < 1 && incremental.HasMoreItems)
+                        {
+                            // This is 100% illegal and will cause a lot
+                            // but really a lot of problems for sure.
+                            Add(default);
+                        }
                     }
                 }
             }
@@ -118,7 +120,8 @@ namespace Telegram.Collections
 
                     if (result.Count > 0)
                     {
-                        ReplaceDiff(_source);
+                        var diff = await Task.Run(() => DiffUtil.CalculateDiff(this, _source, DefaultDiffHandler, DefaultOptions));
+                        ReplaceDiff(diff);
                         UpdateEmpty();
                     }
 
