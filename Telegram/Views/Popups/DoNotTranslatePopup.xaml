@@ -17,6 +17,7 @@
         <ListView x:Name="ScrollingHost"
                   SelectionMode="Multiple"
                   ChoosingItemContainer="OnChoosingItemContainer"
+                  ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
                   Margin="-24,0"
                   Padding="12,0">
             <ListView.ItemTemplate>
@@ -27,13 +28,13 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <TextBlock Text="{x:Bind Name}"
+                        <TextBlock Text="{x:Bind NativeName}"
                                    VerticalAlignment="Bottom"
                                    Style="{StaticResource BaseTextBlockStyle}"
                                    TextWrapping="NoWrap"
                                    TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind NativeName}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        <TextBlock Text="{x:Bind Name}"
+                                   Style="{StaticResource InfoBodyTextBlockStyle}"
                                    VerticalAlignment="Top"
                                    TextWrapping="NoWrap"
                                    TextTrimming="CharacterEllipsis"

@@ -74,13 +74,13 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <TextBlock Text="{x:Bind Name}"
+                        <TextBlock Text="{x:Bind NativeName}"
                                    VerticalAlignment="Bottom"
                                    Style="{StaticResource BaseTextBlockStyle}"
                                    TextWrapping="NoWrap"
                                    TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind NativeName}"
-                                   Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                        <TextBlock Text="{x:Bind Name}"
+                                   Style="{StaticResource InfoBodyTextBlockStyle}"
                                    VerticalAlignment="Top"
                                    TextWrapping="NoWrap"
                                    TextTrimming="CharacterEllipsis"
