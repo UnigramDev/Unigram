@@ -2,7 +2,6 @@
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
-using Telegram.Controls.Messages;
 using Telegram.Native;
 using Telegram.Services;
 using Telegram.Streams;
@@ -21,7 +20,7 @@ namespace Telegram.ViewModels
         private string _languageDetected;
 
         public string DetectedLanguage => _languageDetected;
-        
+
         public bool CanTranslate => _chat.IsTranslatable && TranslateService.CanTranslate(_languageDetected, true);
 
         private bool _isTranslating;
@@ -45,18 +44,11 @@ namespace Telegram.ViewModels
             {
                 Settings.Chats[Chat.Id, ThreadId, ChatSetting.IsTranslating] = value;
 
-                Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected);
-                Delegate?.ForEach(UpdateMessageTranslatedText);
+                UpdateChatIsTranslatable();
                 return true;
             }
 
             return false;
-        }
-
-        private void UpdateMessageTranslatedText(MessageBubble bubble, MessageViewModel message)
-        {
-            _translateService.Translate(message, Settings.Translate.To);
-            bubble.UpdateMessageText(message);
         }
 
         private void UpdateLanguageStatistics(MessageViewModel message)
@@ -116,9 +108,17 @@ namespace Telegram.ViewModels
         {
             Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected);
 
-            if (IsTranslating)
+            var translating = IsTranslating;
+            var translateTo = Settings.Translate.To;
+
+            foreach (var message in Items)
             {
-                Delegate?.ForEach(UpdateMessageTranslatedText);
+                if (translating)
+                {
+                    _translateService.Translate(message, translateTo);
+                }
+
+                Delegate?.UpdateBubbleWithMessageId(message.Id, bubble => bubble.UpdateMessageText(message));
             }
         }
 
@@ -158,8 +158,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected);
-            Delegate?.ForEach(UpdateMessageTranslatedText);
+            UpdateChatIsTranslatable();
         }
 
         public async void EditTranslate()
@@ -176,8 +175,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected);
-                Delegate?.ForEach(UpdateMessageTranslatedText);
+                UpdateChatIsTranslatable();
             }
         }
 
@@ -194,8 +192,7 @@ namespace Telegram.ViewModels
 
             Settings.Translate.DoNot = languages;
 
-            Delegate?.UpdateChatIsTranslatable(_chat, _languageDetected);
-            Delegate?.ForEach(UpdateMessageTranslatedText);
+            UpdateChatIsTranslatable();
         }
 
         public bool TranslateChat()

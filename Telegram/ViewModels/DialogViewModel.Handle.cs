@@ -612,6 +612,11 @@ namespace Telegram.ViewModels
                         message.Reset();
                         message.Content = update.NewContent;
 
+                        if (IsTranslating)
+                        {
+                            _translateService.Translate(message, Settings.Translate.To);
+                        }
+
                         ProcessEmoji(message);
 
                         if (update.NewContent is MessageExpiredPhoto or MessageExpiredVideo)
