@@ -153,7 +153,12 @@ namespace Telegram.Services
             {
                 if (string.Equals(cached, value.Text))
                 {
-                    message.TranslatedText = value.Result;
+                    if (value.Result != null)
+                    {
+                        message.TranslatedText = value.Result;
+                    }
+
+                    message.TranslatedText ??= new MessageTranslateResultPending();
                     return false;
                 }
             }
@@ -162,6 +167,7 @@ namespace Telegram.Services
             {
                 message.TranslatedText = new MessageTranslateResultPending();
 
+                _translations[key] = new TranslatedMessage(cached, null);
                 _clientService.Send(new TranslateMessageText(message.ChatId, message.Id, toLanguage), handler =>
                 {
                     if (handler is FormattedText text && string.Equals(message.Text?.Text, cached))
