@@ -47,8 +47,6 @@
                     Value="{StaticResource GlyphLargeFontSize}" />
             <Setter Property="FontWeight"
                     Value="Normal" />
-            <Setter Property="Glyph"
-                    Value="&#xE700;" />
             <Setter Property="Height"
                     Value="48" />
             <Setter Property="Width"

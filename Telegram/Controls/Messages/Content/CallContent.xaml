@@ -32,8 +32,6 @@
                 Value="{StaticResource SymbolThemeFontFamily}" />
         <Setter Property="FontSize"
                 Value="{StaticResource GlyphLargeFontSize}" />
-        <Setter Property="Glyph"
-                Value="&#xE700;" />
         <Setter Property="Height"
                 Value="48" />
         <Setter Property="Width"

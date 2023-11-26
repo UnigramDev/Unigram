@@ -120,8 +120,6 @@
                 Value="Center" />
         <Setter Property="FontFamily"
                 Value="{StaticResource TelegramThemeFontFamily}" />
-        <Setter Property="Glyph"
-                Value="&#xE700;" />
         <Setter Property="Height"
                 Value="48" />
         <Setter Property="Width"
@@ -244,8 +242,6 @@
                 Value="Center" />
         <Setter Property="FontFamily"
                 Value="{StaticResource TelegramThemeFontFamily}" />
-        <Setter Property="Glyph"
-                Value="&#xE700;" />
         <Setter Property="Height"
                 Value="20" />
         <Setter Property="Width"
@@ -381,8 +377,6 @@
                 Value="Top" />
         <Setter Property="FontFamily"
                 Value="{StaticResource TelegramThemeFontFamily}" />
-        <Setter Property="Glyph"
-                Value="&#xE700;" />
         <Setter Property="Height"
                 Value="Auto" />
         <Setter Property="Width"
@@ -521,8 +515,6 @@
                 Value="Stretch" />
         <Setter Property="FontFamily"
                 Value="{StaticResource TelegramThemeFontFamily}" />
-        <Setter Property="Glyph"
-                Value="&#xE700;" />
         <Setter Property="Height"
                 Value="Auto" />
         <Setter Property="Width"

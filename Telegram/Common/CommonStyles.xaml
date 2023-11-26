@@ -1365,8 +1365,6 @@
                 Value="Center" />
         <Setter Property="FontFamily"
                 Value="{StaticResource SymbolThemeFontFamily}" />
-        <Setter Property="Glyph"
-                Value="&#xE700;" />
         <Setter Property="Height"
                 Value="48" />
         <Setter Property="Width"
@@ -1497,8 +1495,6 @@
                 Value="{StaticResource GlyphMediumFontSize}" />
         <Setter Property="FontWeight"
                 Value="Normal" />
-        <Setter Property="Glyph"
-                Value="&#xE700;" />
         <Setter Property="Height"
                 Value="48" />
         <Setter Property="Width"
@@ -3002,8 +2998,6 @@
                 Value="Center" />
         <Setter Property="FontFamily"
                 Value="{StaticResource SymbolThemeFontFamily}" />
-        <Setter Property="Glyph"
-                Value="&#xE700;" />
         <Setter Property="Height"
                 Value="48" />
         <Setter Property="Width"
@@ -3958,8 +3952,6 @@
                 Value="True" />
         <Setter Property="FocusVisualMargin"
                 Value="-3" />
-        <Setter Property="Glyph"
-                Value="" />
         <Setter Property="Width"
                 Value="Auto" />
         <Setter Property="Height"
@@ -4060,8 +4052,6 @@
                 Value="True" />
         <Setter Property="FocusVisualMargin"
                 Value="-3" />
-        <Setter Property="Glyph"
-                Value="" />
         <Setter Property="Width"
                 Value="Auto" />
         <Setter Property="Height"
