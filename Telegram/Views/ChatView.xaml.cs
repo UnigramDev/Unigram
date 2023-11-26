@@ -383,61 +383,7 @@ namespace Telegram.Views
             ButtonStickers.Collapse();
         }
 
-        private readonly SynchronizedCollection<MessageViewModel> _messages = new();
-
-        public class SynchronizedCollection<T> : MvxObservableCollection<T>, ISynchronizedList
-        {
-            private System.Collections.ObjectModel.ObservableCollection<T> _source;
-
-            public void UpdateSource(System.Collections.ObjectModel.ObservableCollection<T> source)
-            {
-                if (_source != null)
-                {
-                    _source.CollectionChanged -= OnCollectionChanged;
-                }
-
-                _source = source;
-
-                if (_source != null)
-                {
-                    _source.CollectionChanged += OnCollectionChanged;
-                    ReplaceWith(_source);
-                }
-                else
-                {
-                    Clear();
-                }
-            }
-
-            // TODO: this is needed because DialogViewModel may keep loading messages
-            // after the view is already unloaded, causing CollectionChanged handling to fail.
-            public void Disconnect()
-            {
-                if (_source != null)
-                {
-                    _source.CollectionChanged -= OnCollectionChanged;
-                }
-
-                _source = null;
-                Clear();
-            }
-
-            private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-            {
-                switch (e.Action)
-                {
-                    case NotifyCollectionChangedAction.Add:
-                        InsertRange(e.NewStartingIndex, e.NewItems);
-                        break;
-                    case NotifyCollectionChangedAction.Remove:
-                        RemoveRange(e.OldStartingIndex, e.OldItems.Count);
-                        break;
-                    case NotifyCollectionChangedAction.Reset:
-                        ReplaceWith(_source);
-                        break;
-                }
-            }
-        }
+        private readonly SynchronizedList<MessageViewModel> _messages = new();
 
         private void OnMessageSliceLoaded(object sender, EventArgs e)
         {

@@ -190,6 +190,7 @@
     <Compile Include="Charts\FastOutSlowInInterpolator.cs" />
     <Compile Include="Charts\LinearChartView.cs" />
     <Compile Include="Charts\LookupTableInterpolator.cs" />
+    <Compile Include="Collections\SynchronizedList.cs" />
     <Compile Include="Common\MathEx.cs" />
     <Compile Include="Common\MathFEx.cs" />
     <Compile Include="Charts\Paint.cs" />

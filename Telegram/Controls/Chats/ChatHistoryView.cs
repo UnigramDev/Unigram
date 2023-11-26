@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Collections;
 using Telegram.Common;
 using Telegram.Controls.Messages;
 using Telegram.ViewModels;
@@ -23,11 +24,6 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Chats
 {
-    public interface ISynchronizedList
-    {
-        void Disconnect();
-    }
-
     public class ChatHistoryView : ListView
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
