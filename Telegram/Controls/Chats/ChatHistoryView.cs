@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -24,6 +23,11 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Chats
 {
+    public interface ISynchronizedList
+    {
+        void Disconnect();
+    }
+
     public class ChatHistoryView : ListView
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
@@ -114,10 +118,10 @@ namespace Telegram.Controls.Chats
             // right before all of them get unloaded again.
             // Setting ItemsSource to null seems to prevent this from happening.
             // IMPORTANT: this must only happen on Unload (so when closing the chat page).
-            if (ItemsSource is IList source)
+            if (ItemsSource is ISynchronizedList source)
             {
                 ItemsSource = null;
-                source.Clear();
+                source.Disconnect();
             }
         }
 

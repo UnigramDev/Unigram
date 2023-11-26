@@ -385,7 +385,7 @@ namespace Telegram.Views
 
         private readonly SynchronizedCollection<MessageViewModel> _messages = new();
 
-        public class SynchronizedCollection<T> : MvxObservableCollection<T>
+        public class SynchronizedCollection<T> : MvxObservableCollection<T>, ISynchronizedList
         {
             private System.Collections.ObjectModel.ObservableCollection<T> _source;
 
@@ -407,6 +407,19 @@ namespace Telegram.Views
                 {
                     Clear();
                 }
+            }
+
+            // TODO: this is needed because DialogViewModel may keep loading messages
+            // after the view is already unloaded, causing CollectionChanged handling to fail.
+            public void Disconnect()
+            {
+                if (_source != null)
+                {
+                    _source.CollectionChanged -= OnCollectionChanged;
+                }
+
+                _source = null;
+                Clear();
             }
 
             private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
