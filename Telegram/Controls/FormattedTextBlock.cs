@@ -365,7 +365,7 @@ namespace Telegram.Controls
                     var last = part == styled.Paragraphs[^1];
 
                     var temp = direct.GetObject(paragraph) as Paragraph;
-                    temp.Margin = new Thickness(8, first ? 10 : 6, 24, last ? 0 : 8);
+                    temp.Margin = new Thickness(11, first ? 10 : 6, 24, last ? 0 : 8);
                     temp.FontSize = Theme.Current.MessageFontSize - 2;
 
                     _codeBlocks.Add(temp);
@@ -415,7 +415,7 @@ namespace Telegram.Controls
                             var last = part == styled.Paragraphs[^1];
 
                             var temp = direct.GetObject(paragraph) as Paragraph;
-                            temp.Margin = new Thickness(8, first ? 10 : 6, 24, last ? 0 : 8);
+                            temp.Margin = new Thickness(11, first ? 10 : 6, 24, last ? 0 : 8);
 
                             _codeBlocks.Add(temp);
 
