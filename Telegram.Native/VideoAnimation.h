@@ -14,6 +14,7 @@ extern "C"
 #include <libavutil/eval.h>
 #include <libswscale/swscale.h>
 #include <libavutil/imgutils.h>
+#include <libavcodec/avcodec.h>
 }
 
 static const std::string av_make_error_str(int errnum)
@@ -133,7 +134,8 @@ namespace winrt::Telegram::Native::implementation
         }
 
     private:
-        int decode_packet(VideoAnimation* info, int* got_frame);
+        int decode_packet(AVCodecContext* avctx, AVFrame* frame, int* got_frame, const AVPacket* pkt);
+        int decode_packet(int* got_frame);
         static void requestFd(VideoAnimation* info);
         static int readCallback(void* opaque, uint8_t* buf, int buf_size);
         static int64_t seekCallback(void* opaque, int64_t offset, int whence);

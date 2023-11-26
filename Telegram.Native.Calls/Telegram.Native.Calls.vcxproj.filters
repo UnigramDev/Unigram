@@ -180,6 +180,9 @@
     <ClCompile Include="..\Libraries\tgcalls\tgcalls\ChannelManager.cpp">
       <Filter>tgcalls</Filter>
     </ClCompile>
+    <ClCompile Include="..\Libraries\tgcalls\tgcalls\v2\DirectNetworkingImpl.cpp">
+      <Filter>tgcalls\v2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -396,6 +399,15 @@
       <Filter>tgcalls</Filter>
     </ClInclude>
     <ClInclude Include="..\Libraries\tgcalls\tgcalls\ChannelManager.h">
+      <Filter>tgcalls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\DirectNetworkingImpl.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\v2\InstanceNetworking.h">
+      <Filter>tgcalls\v2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Libraries\tgcalls\tgcalls\DirectConnectionChannel.h">
       <Filter>tgcalls</Filter>
     </ClInclude>
   </ItemGroup>

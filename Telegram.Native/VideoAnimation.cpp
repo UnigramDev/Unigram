@@ -16,7 +16,7 @@ namespace winrt::Telegram::Native::implementation
     {
         int ret, stream_index;
         AVStream* st;
-        AVCodec* dec = NULL;
+        const AVCodec* dec = NULL;
         AVDictionary* opts = NULL;
 
         ret = av_find_best_stream(fmt_ctx, type, -1, -1, NULL, 0);
@@ -62,34 +62,45 @@ namespace winrt::Telegram::Native::implementation
         return 0;
     }
 
-    int VideoAnimation::decode_packet(VideoAnimation* info, int* got_frame)
+    int VideoAnimation::decode_packet(AVCodecContext* avctx, AVFrame* frame, int* got_frame, const AVPacket* pkt)
     {
-        int ret = 0;
-        int decoded = info->pkt.size;
+        int ret;
+
         *got_frame = 0;
 
-        if (info->pkt.stream_index == info->video_stream_idx)
+        if (pkt)
         {
-#pragma warning(disable: 4996)
-            ret = avcodec_decode_video2(info->video_dec_ctx, info->frame, got_frame, &info->pkt);
-            if (ret != 0)
-            {
+            ret = avcodec_send_packet(avctx, pkt);
+            // In particular, we don't expect AVERROR(EAGAIN), because we read all
+            // decoded frames with avcodec_receive_frame() until done.
+            if (ret < 0 && ret != AVERROR_EOF)
                 return ret;
-            }
+        }
 
-            //ret = avcodec_send_packet(info->video_dec_ctx, &info->pkt);
-            //if (ret != 0)
-            //{
-            //	return ret;
-            //}
+        ret = avcodec_receive_frame(avctx, frame);
+        if (ret < 0 && ret != AVERROR(EAGAIN))
+            return ret;
+        if (ret >= 0)
+        {
+            frame->time_base = avctx->pkt_timebase;
 
-            //ret = avcodec_receive_frame(info->video_dec_ctx, info->frame);
-            //if (ret != 0)
-            //{
-            //	return ret;
-            //}
+            *got_frame = 1;
+        }
 
-            //*got_frame = ret == 0;
+        return 0;
+    }
+
+    int VideoAnimation::decode_packet(int* got_frame)
+    {
+        int ret = 0;
+        int decoded = pkt.size;
+        *got_frame = 0;
+
+        if (pkt.stream_index == video_stream_idx)
+        {
+            ret = decode_packet(video_dec_ctx, frame, got_frame, &pkt);
+            if (ret < 0 && ret != AVERROR_EOF)
+                return ret;
         }
 
         return decoded;
@@ -231,6 +242,7 @@ namespace winrt::Telegram::Native::implementation
             return nullptr;
         }
 
+#pragma warning(disable: 4996)
         av_init_packet(&info->pkt);
         info->pkt.data = NULL;
         info->pkt.size = 0;
@@ -314,7 +326,7 @@ namespace winrt::Telegram::Native::implementation
 
                 if (this->pkt.size > 0)
                 {
-                    ret = decode_packet(this, &got_frame);
+                    ret = decode_packet(&got_frame);
                     if (ret < 0)
                     {
                         if (this->has_decoded_frames)
@@ -337,7 +349,7 @@ namespace winrt::Telegram::Native::implementation
                 {
                     this->pkt.data = NULL;
                     this->pkt.size = 0;
-                    ret = decode_packet(this, &got_frame);
+                    ret = decode_packet(&got_frame);
                     if (ret < 0)
                     {
                         return;
@@ -409,7 +421,7 @@ namespace winrt::Telegram::Native::implementation
 
             if (this->pkt.size > 0)
             {
-                ret = decode_packet(this, &got_frame);
+                ret = decode_packet(&got_frame);
                 if (ret < 0)
                 {
                     if (this->has_decoded_frames)
@@ -434,7 +446,7 @@ namespace winrt::Telegram::Native::implementation
             {
                 this->pkt.data = NULL;
                 this->pkt.size = 0;
-                ret = decode_packet(this, &got_frame);
+                ret = decode_packet(&got_frame);
                 if (ret < 0)
                 {
                     //OutputDebugStringFormat(L"can't decode packet flushed %s", this->src);
@@ -560,7 +572,7 @@ namespace winrt::Telegram::Native::implementation
                     //delete[] pixels;
 
                     this->prevFrame = timestamp;
-                    this->prevDuration = (1000 * this->frame->pkt_duration * av_q2d(this->video_stream->time_base));
+                    this->prevDuration = (1000 * this->frame->duration * av_q2d(this->video_stream->time_base));
 
                     this->nextFrame = timestamp + this->limitedDuration;
                 }

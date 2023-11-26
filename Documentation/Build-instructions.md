@@ -29,7 +29,7 @@ Run the following commands to clone vcpkg:
 ```shell
 > git clone https://github.com/Microsoft/vcpkg.git
 > cd vcpkg
-> git checkout 1b1ae50e1a69f7c659bd7d731e80b358d21c86ad
+> git checkout cd5e746ec203c8c3c61647e0886a8df8c1e78e41
 > ./bootstrap-vcpkg.bat
 ```
 
@@ -64,7 +64,7 @@ Here is complete instruction for TDLib binaries building, taken from the officia
 > cd td
 > git clone https://github.com/Microsoft/vcpkg.git
 > cd vcpkg
-> git checkout 1b1ae50e1a69f7c659bd7d731e80b358d21c86ad
+> git checkout cd5e746ec203c8c3c61647e0886a8df8c1e78e41
 > ./bootstrap-vcpkg.bat
 > ./vcpkg.exe install gperf:x86-windows openssl:arm-uwp openssl:arm64-uwp openssl:x64-uwp openssl:x86-uwp zlib:arm-uwp zlib:arm64-uwp zlib:x64-uwp zlib:x86-uwp
 > cd ..
