@@ -146,32 +146,27 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
+            using (Player.BeginBatchUpdate())
+            {
+                Player.LoopCount = message.Content is MessageSticker && PowerSavingPolicy.AutoPlayStickersInChats ? 0 : 1;
+                Player.Source = new DelayedFileSource(_message.ClientService, sticker)
+                {
+                    FitzModifier = message.Content is MessageAnimatedEmoji animatedEmoji ? animatedEmoji.AnimatedEmoji.FitzpatrickType switch
+                    {
+                        1 => FitzModifier.Type12,
+                        2 => FitzModifier.Type12,
+                        3 => FitzModifier.Type3,
+                        4 => FitzModifier.Type4,
+                        5 => FitzModifier.Type5,
+                        6 => FitzModifier.Type6,
+                        _ => FitzModifier.None
+                    } : FitzModifier.None
+                };
+            }
+
             if (file.Local.IsDownloadingCompleted)
             {
-                using (Player.BeginBatchUpdate())
-                {
-                    Player.LoopCount = message.Content is MessageSticker && PowerSavingPolicy.AutoPlayStickersInChats ? 0 : 1;
-                    Player.Source = new LocalFileSource(sticker)
-                    {
-                        FitzModifier = message.Content is MessageAnimatedEmoji animatedEmoji ? animatedEmoji.AnimatedEmoji.FitzpatrickType switch
-                        {
-                            1 => FitzModifier.Type12,
-                            2 => FitzModifier.Type12,
-                            3 => FitzModifier.Type3,
-                            4 => FitzModifier.Type4,
-                            5 => FitzModifier.Type5,
-                            6 => FitzModifier.Type6,
-                            _ => FitzModifier.None
-                        } : FitzModifier.None
-                    };
-                }
-
                 message.Delegate.ViewVisibleMessages();
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                Player.Source = null;
-                message.ClientService.DownloadFile(file.Id, 1);
             }
         }
 

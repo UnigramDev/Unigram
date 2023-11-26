@@ -94,21 +94,16 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
+            using (Player.BeginBatchUpdate())
+            {
+                Player.LoopCount = PowerSavingPolicy.AutoPlayStickersInChats ? 0 : 1;
+                Player.FrameSize = ImageHelper.Scale(sticker.Width, sticker.Height, 180);
+                Player.Source = new DelayedFileSource(_message.ClientService, sticker);
+            }
+
             if (file.Local.IsDownloadingCompleted)
             {
-                using (Player.BeginBatchUpdate())
-                {
-                    Player.LoopCount = PowerSavingPolicy.AutoPlayStickersInChats ? 0 : 1;
-                    Player.FrameSize = ImageHelper.Scale(sticker.Width, sticker.Height, 180);
-                    Player.Source = new LocalFileSource(sticker);
-                }
-
                 message.Delegate.ViewVisibleMessages();
-            }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingActive)
-            {
-                Player.Source = null;
-                message.ClientService.DownloadFile(file.Id, 1);
             }
         }
 
