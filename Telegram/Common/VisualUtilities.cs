@@ -6,6 +6,7 @@
 //
 using System;
 using System.Numerics;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -135,6 +136,13 @@ namespace Telegram.Common
             {
                 // Bla bla
             }
+        }
+
+        public static Task WaitForCompositionRenderingAsync()
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            QueueCallbackForCompositionRendering(() => tsc.SetResult(true));
+            return tsc.Task;
         }
     }
 }

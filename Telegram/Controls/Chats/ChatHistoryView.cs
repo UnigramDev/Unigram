@@ -290,7 +290,7 @@ namespace Telegram.Controls.Chats
                 goto Exit;
             }
 
-            await ScrollIntoViewAsync(item, direction);
+            await ScrollIntoViewAsync(item, direction, true);
 
             var selectorItem = handler.ContainerFromItem(item.Id);
             if (selectorItem == null)
@@ -300,7 +300,7 @@ namespace Telegram.Controls.Chats
                 {
                     Logger.Debug("selectorItem == null, but item exists, retry");
 
-                    await ScrollIntoViewAsync(item, direction);
+                    await ScrollIntoViewAsync(item, direction, false);
                     selectorItem = handler.ContainerFromItem(item.Id);
                 }
 
@@ -390,11 +390,21 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private async Task ScrollIntoViewAsync(MessageViewModel item, ScrollIntoViewAlignment alignment)
+        private async Task ScrollIntoViewAsync(MessageViewModel item, ScrollIntoViewAlignment alignment, bool fastPath)
         {
             if (ItemsPanelRoot == null)
             {
-                await _waitItemsPanelRoot.Task;
+                // Some actions cause IsItemsHostInvalid to become true.
+                // If this is the case, ItemsPanelRoot will return null, and scrolling may not work.
+                // The current code should not invalidate the ItemsHost, but if this happens, we try to be prepared.
+                if (_waitItemsPanelRoot.Task.Status == TaskStatus.RanToCompletion)
+                {
+                    ScrollingHost.UpdateLayout();
+                }
+                else
+                {
+                    await _waitItemsPanelRoot.Task;
+                }
             }
 
             var index = Items.IndexOf(item);
@@ -408,10 +418,13 @@ namespace Telegram.Controls.Chats
             // Judging from WinUI 3 source code, calling UpdateLayout on the panel should be
             // enough to guarantee that the container we are scrolling to gets realized 
             // 1.4-stable/dxaml/xcp/dxaml/lib/ModernCollectionBasePanel_WindowManagement_Partial.cpp#L2138
+            if (fastPath)
+            {
+                ScrollIntoView(item, alignment);
+                panel.UpdateLayout();
 
-            ScrollIntoView(item, alignment);
-            panel.UpdateLayout();
-            return;
+                return;
+            }
 
             var tcs = new TaskCompletionSource<object>();
 
@@ -422,11 +435,11 @@ namespace Telegram.Controls.Chats
 
             void viewChanged(object s1, ScrollViewerViewChangedEventArgs e1)
             {
-                LayoutUpdated -= layoutUpdated;
+                panel.LayoutUpdated -= layoutUpdated;
 
                 if (e1.IsIntermediate is false)
                 {
-                    LayoutUpdated += layoutUpdated;
+                    panel.LayoutUpdated += layoutUpdated;
                     ScrollingHost.ViewChanged -= viewChanged;
                 }
             }
@@ -434,14 +447,14 @@ namespace Telegram.Controls.Chats
             try
             {
                 ScrollIntoView(item, alignment);
-                LayoutUpdated += layoutUpdated;
+                panel.LayoutUpdated += layoutUpdated;
                 ScrollingHost.ViewChanged += viewChanged;
 
                 await tcs.Task;
             }
             finally
             {
-                LayoutUpdated -= layoutUpdated;
+                panel.LayoutUpdated -= layoutUpdated;
                 ScrollingHost.ViewChanged -= viewChanged;
             }
         }
