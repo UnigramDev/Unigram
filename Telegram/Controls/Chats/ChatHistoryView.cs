@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
@@ -113,7 +114,11 @@ namespace Telegram.Controls.Chats
             // right before all of them get unloaded again.
             // Setting ItemsSource to null seems to prevent this from happening.
             // IMPORTANT: this must only happen on Unload (so when closing the chat page).
-            ItemsSource = null;
+            if (ItemsSource is IList source)
+            {
+                ItemsSource = null;
+                source.Clear();
+            }
         }
 
         protected override void OnApplyTemplate()

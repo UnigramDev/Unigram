@@ -438,8 +438,6 @@ namespace Telegram.Views
                 viewModel.MessageSliceLoaded -= OnMessageSliceLoaded;
             }
 
-            Messages.ItemsSource ??= _messages;
-
             Bindings.Update();
             Cleanup(ref _cleanup);
         }
@@ -460,6 +458,7 @@ namespace Telegram.Views
             ViewModel.SetText(null, false);
 
             Messages.SetScrollingMode(ItemsUpdatingScrollMode.KeepLastItemInView, true);
+            Messages.ItemsSource ??= _messages;
 
             CheckMessageBoxEmpty();
 
