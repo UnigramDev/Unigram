@@ -919,7 +919,14 @@ namespace Telegram.Controls
 
             if (empty && !_wasEmpty)
             {
-                Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
+                try
+                {
+                    Document.Selection.CharacterFormat = Document.GetDefaultCharacterFormat();
+                }
+                catch
+                {
+                    // All ...
+                }
             }
 
             _wasEmpty = empty;
