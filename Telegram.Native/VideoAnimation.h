@@ -73,6 +73,11 @@ namespace winrt::Telegram::Native::implementation
                 av_frame_free(&frame);
                 frame = nullptr;
             }
+            if (pkt)
+            {
+                av_packet_free(&pkt);
+                pkt = nullptr;
+            }
             if (ioContext != nullptr)
             {
                 if (ioContext->buffer)
@@ -91,11 +96,9 @@ namespace winrt::Telegram::Native::implementation
             {
                 CloseHandle(fd);
                 fd = INVALID_HANDLE_VALUE;
-                //close(fd);
-                //fd = -1;
             }
 
-            av_packet_unref(&orig_pkt);
+            //av_packet_unref(&orig_pkt);
 
             video_stream_idx = -1;
             video_stream = nullptr;
@@ -136,6 +139,7 @@ namespace winrt::Telegram::Native::implementation
     private:
         int decode_packet(AVCodecContext* avctx, AVFrame* frame, int* got_frame, const AVPacket* pkt);
         int decode_packet(int* got_frame);
+        void decode_frame(uint8_t* pixels, int32_t width, int32_t height, int32_t& seconds, bool& completed);
         static void requestFd(VideoAnimation* info);
         static int readCallback(void* opaque, uint8_t* buf, int buf_size);
         static int64_t seekCallback(void* opaque, int64_t offset, int whence);
@@ -154,8 +158,8 @@ namespace winrt::Telegram::Native::implementation
         AVCodecContext* video_dec_ctx = nullptr;
         AVFrame* frame = nullptr;
         bool has_decoded_frames = false;
-        AVPacket pkt;
-        AVPacket orig_pkt;
+        AVPacket* pkt;
+        //AVPacket orig_pkt;
         bool stopped = false;
         bool seeking = false;
 
@@ -183,6 +187,15 @@ namespace winrt::Telegram::Native::implementation
         int32_t rotation = 0;
         int32_t duration = 0;
         double framerate = 0;
+
+        enum Waiting
+        {
+            ReadFrame = 0,
+            SendPacket = 1,
+            ReceiveFrame = 2
+        };
+
+        Waiting waiting = Waiting::ReadFrame;
     };
 } // namespace winrt::Telegram::Native::implementation
 

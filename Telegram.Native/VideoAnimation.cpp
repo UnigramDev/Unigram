@@ -62,50 +62,6 @@ namespace winrt::Telegram::Native::implementation
         return 0;
     }
 
-    int VideoAnimation::decode_packet(AVCodecContext* avctx, AVFrame* frame, int* got_frame, const AVPacket* pkt)
-    {
-        int ret;
-
-        *got_frame = 0;
-
-        if (pkt)
-        {
-            ret = avcodec_send_packet(avctx, pkt);
-            // In particular, we don't expect AVERROR(EAGAIN), because we read all
-            // decoded frames with avcodec_receive_frame() until done.
-            if (ret < 0 && ret != AVERROR_EOF)
-                return ret;
-        }
-
-        ret = avcodec_receive_frame(avctx, frame);
-        if (ret < 0 && ret != AVERROR(EAGAIN))
-            return ret;
-        if (ret >= 0)
-        {
-            frame->time_base = avctx->pkt_timebase;
-
-            *got_frame = 1;
-        }
-
-        return 0;
-    }
-
-    int VideoAnimation::decode_packet(int* got_frame)
-    {
-        int ret = 0;
-        int decoded = pkt.size;
-        *got_frame = 0;
-
-        if (pkt.stream_index == video_stream_idx)
-        {
-            ret = decode_packet(video_dec_ctx, frame, got_frame, &pkt);
-            if (ret < 0 && ret != AVERROR_EOF)
-                return ret;
-        }
-
-        return decoded;
-    }
-
     void VideoAnimation::requestFd(VideoAnimation* info)
     {
         info->fd = CreateFile2FromAppW(info->file.FilePath().data(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, nullptr);
@@ -242,10 +198,9 @@ namespace winrt::Telegram::Native::implementation
             return nullptr;
         }
 
-#pragma warning(disable: 4996)
-        av_init_packet(&info->pkt);
-        info->pkt.data = NULL;
-        info->pkt.size = 0;
+        info->pkt = av_packet_alloc();
+        info->pkt->data = NULL;
+        info->pkt->size = 0;
 
         info->pixelWidth = info->video_dec_ctx->width;
         info->pixelHeight = info->video_dec_ctx->height;
@@ -296,88 +251,90 @@ namespace winrt::Telegram::Native::implementation
 
     void VideoAnimation::SeekToMilliseconds(int64_t ms, bool precise)
     {
-        this->seeking = false;
-        int64_t pts = (int64_t)(ms / av_q2d(this->video_stream->time_base) / 1000);
+        seeking = false;
+        int64_t pts = (int64_t)(ms / av_q2d(video_stream->time_base) / 1000);
         int ret = 0;
-        if ((ret = av_seek_frame(this->fmt_ctx, this->video_stream_idx, pts, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME)) < 0)
+        if ((ret = av_seek_frame(fmt_ctx, video_stream_idx, pts, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME)) < 0)
         {
-            //OutputDebugStringFormat(L"can't seek file %s, %s", this->src, av_err2str(ret));
+            //OutputDebugStringFormat(L"can't seek file %s, %s", src, av_err2str(ret));
             return;
         }
         else
         {
-            avcodec_flush_buffers(this->video_dec_ctx);
-            if (!precise)
-            {
-                return;
-            }
-            int got_frame = 0;
-            int32_t tries = 1000;
-            while (tries > 0)
-            {
-                if (this->pkt.size == 0)
-                {
-                    ret = av_read_frame(this->fmt_ctx, &this->pkt);
-                    if (ret >= 0)
-                    {
-                        this->orig_pkt = this->pkt;
-                    }
-                }
+            avcodec_flush_buffers(video_dec_ctx);
 
-                if (this->pkt.size > 0)
-                {
-                    ret = decode_packet(&got_frame);
-                    if (ret < 0)
-                    {
-                        if (this->has_decoded_frames)
-                        {
-                            ret = 0;
-                        }
-                        this->pkt.size = 0;
-                    }
-                    else
-                    {
-                        this->pkt.data += ret;
-                        this->pkt.size -= ret;
-                    }
-                    if (this->pkt.size == 0)
-                    {
-                        av_packet_unref(&this->orig_pkt);
-                    }
-                }
-                else
-                {
-                    this->pkt.data = NULL;
-                    this->pkt.size = 0;
-                    ret = decode_packet(&got_frame);
-                    if (ret < 0)
-                    {
-                        return;
-                    }
-                    if (got_frame == 0)
-                    {
-                        av_seek_frame(this->fmt_ctx, this->video_stream_idx, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME);
-                        return;
-                    }
-                }
-                if (ret < 0)
-                {
-                    return;
-                }
-                if (got_frame)
-                {
-                    if (this->frame->format == AV_PIX_FMT_YUV420P || this->frame->format == AV_PIX_FMT_BGRA || this->frame->format == AV_PIX_FMT_YUVJ420P)
-                    {
-                        int64_t pkt_pts = this->frame->best_effort_timestamp;
-                        if (pkt_pts >= pts)
-                        {
-                            return;
-                        }
-                    }
-                    av_frame_unref(this->frame);
-                }
-                tries--;
-            }
+            // TODO: Not currently supported
+            //if (!precise)
+            //{
+            //    return;
+            //}
+            //int got_frame = 0;
+            //int32_t tries = 1000;
+            //while (tries > 0)
+            //{
+            //    if (pkt->size == 0)
+            //    {
+            //        ret = av_read_frame(fmt_ctx, pkt);
+            //        if (ret >= 0)
+            //        {
+            //            orig_pkt = pkt;
+            //        }
+            //    }
+
+            //    if (pkt->size > 0)
+            //    {
+            //        ret = decode_packet(&got_frame);
+            //        if (ret < 0)
+            //        {
+            //            if (has_decoded_frames)
+            //            {
+            //                ret = 0;
+            //            }
+            //            pkt->size = 0;
+            //        }
+            //        else
+            //        {
+            //            pkt->data += ret;
+            //            pkt->size -= ret;
+            //        }
+            //        if (pkt->size == 0)
+            //        {
+            //            av_packet_unref(&orig_pkt);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        pkt->data = NULL;
+            //        pkt->size = 0;
+            //        ret = decode_packet(&got_frame);
+            //        if (ret < 0)
+            //        {
+            //            return;
+            //        }
+            //        if (got_frame == 0)
+            //        {
+            //            av_seek_frame(fmt_ctx, video_stream_idx, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME);
+            //            return;
+            //        }
+            //    }
+            //    if (ret < 0)
+            //    {
+            //        return;
+            //    }
+            //    if (got_frame)
+            //    {
+            //        if (frame->format == AV_PIX_FMT_YUV420P || frame->format == AV_PIX_FMT_BGRA || frame->format == AV_PIX_FMT_YUVJ420P)
+            //        {
+            //            int64_t pkt_pts = frame->best_effort_timestamp;
+            //            if (pkt_pts >= pts)
+            //            {
+            //                return;
+            //            }
+            //        }
+            //        av_frame_unref(frame);
+            //    }
+            //    tries--;
+            //}
         }
     }
 
@@ -397,196 +354,154 @@ namespace winrt::Telegram::Native::implementation
         //int64_t time = ConnectionsManager::getInstance(0).getCurrentTimeMonotonicMillis();
         completed = false;
 
-        if (this->limitFps && this->nextFrame && this->nextFrame < this->prevFrame + this->prevDuration + this->limitedDuration)
+        if (limitFps && nextFrame && nextFrame < prevFrame + prevDuration + limitedDuration)
         {
-            this->nextFrame += this->limitedDuration;
+            nextFrame += limitedDuration;
             return 0;
         }
 
         int ret = 0;
-        int got_frame = 0;
         int32_t triesCount = preview ? 50 : 6;
-        //this->has_decoded_frames = false;
-        while (!this->stopped && triesCount != 0)
+        //has_decoded_frames = false;
+        while (!stopped && triesCount != 0)
         {
-            if (this->pkt.size == 0)
+            if (waiting == Waiting::ReadFrame)
             {
-                ret = av_read_frame(this->fmt_ctx, &this->pkt);
-                //OutputDebugStringFormat(L"got packet with size %d", this->pkt.size);
+                ret = av_read_frame(fmt_ctx, pkt);
                 if (ret >= 0)
                 {
-                    this->orig_pkt = this->pkt;
+                    waiting = pkt->stream_index == video_stream_idx
+                        ? Waiting::SendPacket
+                        : Waiting::ReadFrame;
                 }
             }
 
-            if (this->pkt.size > 0)
+            if (waiting == Waiting::SendPacket)
             {
-                ret = decode_packet(&got_frame);
-                if (ret < 0)
+                ret = avcodec_send_packet(video_dec_ctx, pkt);
+                waiting = ret >= 0
+                    ? Waiting::ReceiveFrame
+                    : Waiting::ReadFrame;
+            }
+
+            if (waiting == Waiting::ReceiveFrame)
+            {
+                ret = avcodec_receive_frame(video_dec_ctx, frame);
+                if (ret >= 0)
                 {
-                    if (this->has_decoded_frames)
-                    {
-                        ret = 0;
-                    }
-                    this->pkt.size = 0;
+                    decode_frame(pixels, width, height, seconds, completed);
+                    return 1;
                 }
                 else
                 {
-                    //OutputDebugStringFormat(L"read size %d from packet", ret);
-                    this->pkt.data += ret;
-                    this->pkt.size -= ret;
+                    waiting = Waiting::ReadFrame;
+                    av_packet_unref(pkt);
                 }
 
-                if (this->pkt.size == 0)
-                {
-                    av_packet_unref(&this->orig_pkt);
-                }
             }
-            else
+
+            if (ret == AVERROR_EOF && has_decoded_frames && !preview)
             {
-                this->pkt.data = NULL;
-                this->pkt.size = 0;
-                ret = decode_packet(&got_frame);
+                completed = true;
+
+                ret = av_seek_frame(fmt_ctx, video_stream_idx, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME);
                 if (ret < 0)
                 {
-                    //OutputDebugStringFormat(L"can't decode packet flushed %s", this->src);
+                    //OutputDebugStringFormat(L"can't seek to begin of file %s, %s", src, av_err2str(ret));
                     return 0;
                 }
-                if (!preview && got_frame == 0)
-                {
-                    if (this->has_decoded_frames)
-                    {
-                        this->nextFrame = 0;
-                        completed = true;
-                        if ((ret = av_seek_frame(this->fmt_ctx, this->video_stream_idx, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME)) < 0)
-                        {
-                            //OutputDebugStringFormat(L"can't seek to begin of file %s, %s", this->src, av_err2str(ret));
-                            return 0;
-                        }
-                        else
-                        {
-                            avcodec_flush_buffers(this->video_dec_ctx);
-                        }
-                    }
-                }
+
+                avcodec_flush_buffers(video_dec_ctx);
             }
-            if (ret < 0 || this->seeking)
+            else if (ret < 0 && ret != AVERROR(EAGAIN))
             {
+                completed = true;
                 return 0;
             }
-            if (got_frame)
-            {
-                auto timestamp = (1000 * this->frame->best_effort_timestamp * av_q2d(this->video_stream->time_base));
 
-                if (this->limitFps && timestamp < this->nextFrame)
-                {
-                    this->has_decoded_frames = true;
-                    av_frame_unref(this->frame);
-
-                    continue;
-                }
-
-                //OutputDebugStringFormat(L"decoded frame with w = %d, h = %d, format = %d", this->frame->width, this->frame->height, this->frame->format);
-                if (this->frame->format == AV_PIX_FMT_YUV420P || this->frame->format == AV_PIX_FMT_YUVA420P || this->frame->format == AV_PIX_FMT_BGRA || this->frame->format == AV_PIX_FMT_YUVJ420P)
-                {
-                    //jint* dataArr = env->GetIntArrayElements(data, 0);
-
-                    //void* pixels;
-                    //if (pixels == nullptr) {
-                    //	pixels = new uint8_t[pixelWidth * pixelHeight * 4];
-                    //}
-
-                    if (this->sws_ctx == nullptr)
-                    {
-                        if (this->frame->format > AV_PIX_FMT_NONE && this->frame->format < AV_PIX_FMT_NB)
-                        {
-                            this->sws_ctx = sws_getContext(this->frame->width, this->frame->height, (AVPixelFormat)this->frame->format, width, height, AV_PIX_FMT_BGRA, SWS_BILINEAR, NULL, NULL, NULL);
-                        }
-                        else if (this->video_dec_ctx->pix_fmt > AV_PIX_FMT_NONE && this->video_dec_ctx->pix_fmt < AV_PIX_FMT_NB)
-                        {
-                            this->sws_ctx = sws_getContext(this->video_dec_ctx->width, this->video_dec_ctx->height, this->video_dec_ctx->pix_fmt, width, height, AV_PIX_FMT_BGRA, SWS_BILINEAR, NULL, NULL, NULL);
-                        }
-                    }
-
-
-                    if (this->sws_ctx == nullptr || ((intptr_t)pixels) % 16 != 0)
-                    {
-                        if (this->frame->format == AV_PIX_FMT_YUV420P || this->frame->format == AV_PIX_FMT_YUVA420P || this->frame->format == AV_PIX_FMT_YUVJ420P)
-                        {
-                            if (this->frame->colorspace == AVColorSpace::AVCOL_SPC_BT709)
-                            {
-                                libyuv::H420ToABGR(this->frame->data[0], this->frame->linesize[0], this->frame->data[2], this->frame->linesize[2], this->frame->data[1], this->frame->linesize[1], (uint8_t*)pixels, width * 4, width, height);
-                            }
-                            else
-                            {
-                                libyuv::I420ToABGR(this->frame->data[0], this->frame->linesize[0], this->frame->data[2], this->frame->linesize[2], this->frame->data[1], this->frame->linesize[1], (uint8_t*)pixels, width * 4, width, height);
-                            }
-                        }
-                        else if (this->frame->format == AV_PIX_FMT_RGBA)
-                        {
-                            libyuv::ARGBToABGR(this->frame->data[0], this->frame->linesize[0], (uint8_t*)pixels, width * 4, width, height);
-                        }
-                    }
-                    else
-                    {
-                        //int linesize[4];
-                        //UINT8* data[4];
-
-                        //if (av_image_check_size(width, height, 0, NULL) < 0)
-                        //{
-                        //	return E_FAIL;
-                        //}
-
-                        //if (av_image_fill_linesizes(linesize, AV_PIX_FMT_BGRA, width) < 0)
-                        //{
-                        //	return E_FAIL;
-                        //}
-
-                        //// fill pointers
-                        //if (av_image_fill_pointers(data, AV_PIX_FMT_BGRA, height, (uint8_t*)pixels, linesize) < 0)
-                        //{
-                        //	return E_FAIL;
-                        //}
-
-                        uint8_t* data = (uint8_t*)pixels;
-                        int32_t linesize = width * 4;
-                        sws_scale(this->sws_ctx, this->frame->data, this->frame->linesize, 0, this->frame->height, &data, &linesize);
-                        //sws_scale(this->sws_ctx, this->frame->data, this->frame->linesize, 0, this->frame->height, data, linesize);
-                    }
-
-                    // This is fine enough to premultiply straight alpha pixels
-                    // but we use I420AlphaToARGBMatrix to do everything in a single pass.
-                    if (this->frame->format == AV_PIX_FMT_YUVA420P)
-                    {
-                        for (int i = 0; i < width * height * 4; i += 4)
-                        {
-                            auto alpha = pixels[i + 3];
-                            pixels[i + 0] = FAST_DIV255(pixels[i + 0] * alpha);
-                            pixels[i + 1] = FAST_DIV255(pixels[i + 1] * alpha);
-                            pixels[i + 2] = FAST_DIV255(pixels[i + 2] * alpha);
-                        }
-                    }
-
-                    //bitmap.SetPixelBytes(winrt::array_view(pixels, pixelWidth * pixelHeight * 4));
-                    seconds = this->frame->best_effort_timestamp * av_q2d(this->video_stream->time_base);
-                    //delete[] pixels;
-
-                    this->prevFrame = timestamp;
-                    this->prevDuration = (1000 * this->frame->duration * av_q2d(this->video_stream->time_base));
-
-                    this->nextFrame = timestamp + this->limitedDuration;
-                }
-
-                this->has_decoded_frames = true;
-                av_frame_unref(this->frame);
-
-                return 1;
-            }
-            if (!this->has_decoded_frames)
+            if (!has_decoded_frames)
             {
                 triesCount--;
             }
         }
+
         return 0;
+    }
+
+    void VideoAnimation::decode_frame(uint8_t* pixels, int32_t width, int32_t height, int32_t& seconds, bool& completed)
+    {
+        auto timestamp = (1000 * frame->best_effort_timestamp * av_q2d(video_stream->time_base));
+
+        //if (limitFps && timestamp < nextFrame)
+        //{
+        //    has_decoded_frames = true;
+        //    av_frame_unref(frame);
+
+        //    continue;
+        //}
+
+        //OutputDebugStringFormat(L"decoded frame with w = %d, h = %d, format = %d", frame->width, frame->height, frame->format);
+        if (frame->format == AV_PIX_FMT_YUV420P || frame->format == AV_PIX_FMT_YUVA420P || frame->format == AV_PIX_FMT_BGRA || frame->format == AV_PIX_FMT_YUVJ420P)
+        {
+            if (sws_ctx == nullptr)
+            {
+                if (frame->format > AV_PIX_FMT_NONE && frame->format < AV_PIX_FMT_NB)
+                {
+                    sws_ctx = sws_getContext(frame->width, frame->height, (AVPixelFormat)frame->format, width, height, AV_PIX_FMT_BGRA, SWS_BILINEAR, NULL, NULL, NULL);
+                }
+                else if (video_dec_ctx->pix_fmt > AV_PIX_FMT_NONE && video_dec_ctx->pix_fmt < AV_PIX_FMT_NB)
+                {
+                    sws_ctx = sws_getContext(video_dec_ctx->width, video_dec_ctx->height, video_dec_ctx->pix_fmt, width, height, AV_PIX_FMT_BGRA, SWS_BILINEAR, NULL, NULL, NULL);
+                }
+            }
+
+            if (sws_ctx == nullptr || ((intptr_t)pixels) % 16 != 0)
+            {
+                if (frame->format == AV_PIX_FMT_YUV420P || frame->format == AV_PIX_FMT_YUVA420P || frame->format == AV_PIX_FMT_YUVJ420P)
+                {
+                    if (frame->colorspace == AVColorSpace::AVCOL_SPC_BT709)
+                    {
+                        libyuv::H420ToABGR(frame->data[0], frame->linesize[0], frame->data[2], frame->linesize[2], frame->data[1], frame->linesize[1], (uint8_t*)pixels, width * 4, width, height);
+                    }
+                    else
+                    {
+                        libyuv::I420ToABGR(frame->data[0], frame->linesize[0], frame->data[2], frame->linesize[2], frame->data[1], frame->linesize[1], (uint8_t*)pixels, width * 4, width, height);
+                    }
+                }
+                else if (frame->format == AV_PIX_FMT_RGBA)
+                {
+                    libyuv::ARGBToABGR(frame->data[0], frame->linesize[0], (uint8_t*)pixels, width * 4, width, height);
+                }
+            }
+            else
+            {
+                uint8_t* data = (uint8_t*)pixels;
+                int32_t linesize = width * 4;
+                sws_scale(sws_ctx, frame->data, frame->linesize, 0, frame->height, &data, &linesize);
+            }
+
+            // This is fine enough to premultiply straight alpha pixels
+            // but we use I420AlphaToARGBMatrix to do everything in a single pass.
+            if (frame->format == AV_PIX_FMT_YUVA420P)
+            {
+                for (int i = 0; i < width * height * 4; i += 4)
+                {
+                    auto alpha = pixels[i + 3];
+                    pixels[i + 0] = FAST_DIV255(pixels[i + 0] * alpha);
+                    pixels[i + 1] = FAST_DIV255(pixels[i + 1] * alpha);
+                    pixels[i + 2] = FAST_DIV255(pixels[i + 2] * alpha);
+                }
+            }
+
+            seconds = frame->best_effort_timestamp * av_q2d(video_stream->time_base);
+
+            prevFrame = timestamp;
+            prevDuration = (1000 * frame->duration * av_q2d(video_stream->time_base));
+
+            nextFrame = timestamp + limitedDuration;
+
+            has_decoded_frames = true;
+            av_packet_unref(pkt);
+        }
     }
 } // namespace winrt::Telegram::Native::implementation
