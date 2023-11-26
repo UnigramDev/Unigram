@@ -160,10 +160,11 @@ namespace Telegram.Common
 
         public static string GetSummary(MessageWithOwner message, bool details = false, bool addCaption = true)
         {
-            return GetSummary(message.ClientService, message.Get(), details, addCaption);
+            var altText = message.TranslatedText is MessageTranslateResultText text ? text.Text.Text : null;
+            return GetSummary(message.ClientService, message.Get(), details, addCaption, altText);
         }
 
-        public static string GetSummary(IClientService clientService, Message message, bool details = false, bool addCaption = true)
+        public static string GetSummary(IClientService clientService, Message message, bool details = false, bool addCaption = true, string altText = null)
         {
             if (message.IsService() && clientService.TryGetChat(message.ChatId, out Chat chat))
             {
@@ -211,6 +212,11 @@ namespace Telegram.Common
             }
             else if (message.Content is MessageText text)
             {
+                if (altText != null)
+                {
+                    return altText + ", ";
+                }
+
                 return text.Text.Text + ", ";
             }
             else if (message.Content is MessageDice dice)
@@ -256,7 +262,7 @@ namespace Telegram.Common
 
             string GetCaption(string caption)
             {
-                return !addCaption || string.IsNullOrEmpty(caption) ? string.Empty : ", " + caption;
+                return !addCaption || string.IsNullOrEmpty(altText ?? caption) ? string.Empty : ", " + (altText ?? caption);
             }
 
             if (message.Content is MessageVoiceNote voiceNote)
