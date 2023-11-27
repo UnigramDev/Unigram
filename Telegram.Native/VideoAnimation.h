@@ -58,6 +58,17 @@ namespace winrt::Telegram::Native::implementation
 
         void Close()
         {
+            // Flush the decoder by sending NULL to avcodec_send_packet
+            if (has_decoded_frames && video_dec_ctx && frame && avcodec_send_packet(video_dec_ctx, NULL) >= 0)
+            {
+                // Receive and process the remaining frames
+                while (avcodec_receive_frame(video_dec_ctx, frame) >= 0)
+                {
+                    // Process the remaining decoded frames
+                    // ...
+                }
+            }
+
             if (video_dec_ctx)
             {
                 avcodec_close(video_dec_ctx);
@@ -92,6 +103,11 @@ namespace winrt::Telegram::Native::implementation
                 sws_freeContext(sws_ctx);
                 sws_ctx = nullptr;
             }
+            if (dst_data != nullptr)
+            {
+                free(dst_data);
+                dst_data = nullptr;
+            }
             if (fd != INVALID_HANDLE_VALUE)
             {
                 CloseHandle(fd);
@@ -118,11 +134,13 @@ namespace winrt::Telegram::Native::implementation
 
         int PixelWidth()
         {
+            return maxWidth;
             return pixelWidth;
         }
 
         int PixelHeight()
         {
+            return maxHeight;
             return pixelHeight;
         }
 
@@ -163,8 +181,7 @@ namespace winrt::Telegram::Native::implementation
         bool stopped = false;
         bool seeking = false;
 
-        uint8_t* dst_data[1];
-        int32_t dst_linesize[1];
+        uint8_t* dst_data;
 
         struct SwsContext* sws_ctx = nullptr;
 
@@ -183,6 +200,9 @@ namespace winrt::Telegram::Native::implementation
 
         int32_t pixelWidth = 0;
         int32_t pixelHeight = 0;
+
+        int32_t maxWidth = 0;
+        int32_t maxHeight = 0;
 
         int32_t rotation = 0;
         int32_t duration = 0;

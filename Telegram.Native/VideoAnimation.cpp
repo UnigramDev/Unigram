@@ -199,11 +199,25 @@ namespace winrt::Telegram::Native::implementation
         }
 
         info->pkt = av_packet_alloc();
-        info->pkt->data = NULL;
-        info->pkt->size = 0;
+        if (info->pkt == nullptr)
+        {
+            //OutputDebugStringFormat(L"can't allocate packet %s", info->src);
+            //delete info;
+            return nullptr;
+        }
 
         info->pixelWidth = info->video_dec_ctx->width;
         info->pixelHeight = info->video_dec_ctx->height;
+
+        //int requestedMaxSide = 420;
+
+        //double ratioX = (double)requestedMaxSide / info->video_dec_ctx->width;
+        //double ratioY = (double)requestedMaxSide / info->video_dec_ctx->height;
+        //double ratio = std::max(ratioX, ratioY);
+
+        info->maxWidth = info->pixelWidth; // (int)(info->video_dec_ctx->width * ratio);
+        info->maxHeight = info->pixelHeight; // (int)(info->video_dec_ctx->height * ratio);
+
 
         //float pixelWidthHeightRatio = info->video_dec_ctx->sample_aspect_ratio.num / info->video_dec_ctx->sample_aspect_ratio.den; TODO support
         AVDictionaryEntry* rotate_tag = av_dict_get(info->video_stream->metadata, "rotate", NULL, 0);
@@ -370,9 +384,14 @@ namespace winrt::Telegram::Native::implementation
                 ret = av_read_frame(fmt_ctx, pkt);
                 if (ret >= 0)
                 {
-                    waiting = pkt->stream_index == video_stream_idx
-                        ? Waiting::SendPacket
-                        : Waiting::ReadFrame;
+                    if (pkt->stream_index == video_stream_idx)
+                    {
+                        waiting = Waiting::SendPacket;
+                    }
+                    else
+                    {
+                        av_packet_unref(pkt);
+                    }
                 }
             }
 
@@ -397,7 +416,6 @@ namespace winrt::Telegram::Native::implementation
                     waiting = Waiting::ReadFrame;
                     av_packet_unref(pkt);
                 }
-
             }
 
             if (ret == AVERROR_EOF && has_decoded_frames && !preview)
@@ -408,7 +426,7 @@ namespace winrt::Telegram::Native::implementation
                 if (ret < 0)
                 {
                     //OutputDebugStringFormat(L"can't seek to begin of file %s, %s", src, av_err2str(ret));
-                    return 0;
+                    goto cleanup;
                 }
 
                 avcodec_flush_buffers(video_dec_ctx);
@@ -416,7 +434,7 @@ namespace winrt::Telegram::Native::implementation
             else if (ret < 0 && ret != AVERROR(EAGAIN))
             {
                 completed = true;
-                return 0;
+                goto cleanup;
             }
 
             if (!has_decoded_frames)
@@ -425,7 +443,20 @@ namespace winrt::Telegram::Native::implementation
             }
         }
 
+    cleanup:
+        av_packet_unref(pkt);
         return 0;
+    }
+
+    inline bool is_aligned(const void* ptr, std::uintptr_t alignment) noexcept
+    {
+        auto iptr = reinterpret_cast<std::uintptr_t>(ptr);
+        return !(iptr % alignment);
+    }
+
+    inline int32_t ffalign(int32_t x, int32_t a)
+    {
+        return (((x)+(a)-1) & ~((a)-1));
     }
 
     void VideoAnimation::decode_frame(uint8_t* pixels, int32_t width, int32_t height, int32_t& seconds, bool& completed)
@@ -443,7 +474,7 @@ namespace winrt::Telegram::Native::implementation
         //OutputDebugStringFormat(L"decoded frame with w = %d, h = %d, format = %d", frame->width, frame->height, frame->format);
         if (frame->format == AV_PIX_FMT_YUV420P || frame->format == AV_PIX_FMT_YUVA420P || frame->format == AV_PIX_FMT_BGRA || frame->format == AV_PIX_FMT_YUVJ420P)
         {
-            if (sws_ctx == nullptr)
+            if (sws_ctx == nullptr && ((intptr_t)pixels) % 16 == 0)
             {
                 if (frame->format > AV_PIX_FMT_NONE && frame->format < AV_PIX_FMT_NB)
                 {
@@ -455,7 +486,7 @@ namespace winrt::Telegram::Native::implementation
                 }
             }
 
-            if (sws_ctx == nullptr || ((intptr_t)pixels) % 16 != 0)
+            if (sws_ctx == nullptr)
             {
                 if (frame->format == AV_PIX_FMT_YUV420P || frame->format == AV_PIX_FMT_YUVA420P || frame->format == AV_PIX_FMT_YUVJ420P)
                 {
@@ -475,9 +506,36 @@ namespace winrt::Telegram::Native::implementation
             }
             else
             {
-                uint8_t* data = (uint8_t*)pixels;
+                // In loving memory of the attempted upgrade to FFmpeg 6.1
+
+                //auto dstWidth = FFALIGN(width, 16);s
+                //auto dstDiff = dstWidth - width;
+
+                //auto srcWidth = frame->linesize[0] - width;
+                //auto srcDiff = FFALIGN(srcWidth, 12) - srcWidth;
+
+                //auto padding = srcDiff > 0 && dstDiff > 0
+                //    ? std::min(srcDiff, dstDiff)
+                //    : std::max(srcDiff, dstDiff);
+
+                //padding = std::min(padding, width % 16);
+
+                //if (padding == 0 || srcWidth % 30 == 0)
+                //{
                 int32_t linesize = width * 4;
-                sws_scale(sws_ctx, frame->data, frame->linesize, 0, frame->height, &data, &linesize);
+                sws_scale(sws_ctx, frame->data, frame->linesize, 0, frame->height, &pixels, &linesize);
+                //}
+                //else
+                //{
+                //    if (dst_data == nullptr)
+                //    {
+                //        int32_t paddedsize = std::max(width + padding, 16) * height * 4;
+                //        dst_data = (uint8_t*)malloc(paddedsize);
+                //    }
+
+                //    sws_scale(sws_ctx, frame->data, frame->linesize, 0, frame->height, &dst_data, &linesize);
+                //    memcpy(pixels, dst_data, linesize * height);
+                //}
             }
 
             // This is fine enough to premultiply straight alpha pixels
@@ -496,7 +554,7 @@ namespace winrt::Telegram::Native::implementation
             seconds = frame->best_effort_timestamp * av_q2d(video_stream->time_base);
 
             prevFrame = timestamp;
-            prevDuration = (1000 * frame->duration * av_q2d(video_stream->time_base));
+            prevDuration = (1000 * frame->pkt_duration * av_q2d(video_stream->time_base));
 
             nextFrame = timestamp + limitedDuration;
 
