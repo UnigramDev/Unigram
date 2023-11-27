@@ -1831,6 +1831,12 @@ namespace Telegram.ViewModels
                     lastMessageId = chat.LastMessage?.Id ?? long.MaxValue;
                 }
 
+                // TODO: verify this is valid in all cases
+                if (lastReadMessageId == 0 && _thread == null)
+                {
+                    lastReadMessageId = lastMessageId;
+                }
+
                 if (TryRemove(chat.Id, out long readInboxMaxId, out long start) &&
                     readInboxMaxId == lastReadMessageId &&
                     start <= lastReadMessageId)
