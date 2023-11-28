@@ -76,7 +76,7 @@ namespace Telegram.Views.Stories.Popups
                     Navigation.Visibility = Visibility.Collapsed;
                     Title = Locale.Declension(Strings.R.Views, story.InteractionInfo.ViewCount);
 
-                    LayoutRoot.Margin = new Thickness(-24, 0, -24, -24);
+                    Padding = new Thickness(0, 24, 0, 0);
                     SortBy.Margin = new Thickness(0, -36, 24, 12);
                 }
                 else
@@ -84,7 +84,7 @@ namespace Telegram.Views.Stories.Popups
                     Navigation.Visibility = Visibility.Visible;
                     Title = string.Empty;
 
-                    LayoutRoot.Margin = new Thickness(-24, -24, -24, -24);
+                    Padding = new Thickness(0);
                     SortBy.Margin = new Thickness(0, 0, 24, 0);
                 }
             }
@@ -110,7 +110,7 @@ namespace Telegram.Views.Stories.Popups
                     ? Locale.Declension(Strings.R.Views, story.InteractionInfo.ViewCount)
                     : Strings.StatisticViews;
 
-                LayoutRoot.Margin = new Thickness(-24, -24, -24, -24);
+                Padding = new Thickness(0);
             }
         }
 
