@@ -945,7 +945,7 @@ namespace Telegram.ViewModels
             MessageSliceLoaded = null;
         }
 
-        public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool? disableAnimation = null, FormattedText highlight = null, bool second = false)
+        public async Task LoadMessageSliceAsync(long? previousId, long maxId, VerticalAlignment alignment = VerticalAlignment.Center, double? pixel = null, ScrollIntoViewAlignment? direction = null, bool? disableAnimation = null, TextQuote highlight = null, bool second = false)
         {
             if (_type is not DialogType.History and not DialogType.Thread and not DialogType.Pinned)
             {
@@ -2122,7 +2122,7 @@ namespace Telegram.ViewModels
         {
             if (_type == DialogType.History && state.TryGet("reply_to", out Message message))
             {
-                state.TryGet("reply_to_quote", out FormattedText quote);
+                state.TryGet("reply_to_quote", out InputTextQuote quote);
 
                 state.Remove("reply_to");
                 state.Remove("reply_to_quote");
@@ -2314,7 +2314,7 @@ namespace Telegram.ViewModels
 
             var replyToMessageId = 0L;
             var replyToChatId = 0L;
-            var quote = default(FormattedText);
+            var quote = default(InputTextQuote);
 
             if (embedded != null && embedded.ReplyToMessage != null)
             {
@@ -4138,7 +4138,7 @@ namespace Telegram.ViewModels
         }
 
         public MessageViewModel ReplyToMessage { get; set; }
-        public FormattedText ReplyToQuote { get; set; }
+        public InputTextQuote ReplyToQuote { get; set; }
 
         public MessageViewModel EditingMessage { get; set; }
 

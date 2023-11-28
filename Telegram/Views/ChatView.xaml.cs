@@ -935,7 +935,8 @@ namespace Telegram.Views
                                     var quote = new MessageQuote
                                     {
                                         Message = message,
-                                        Quote = caption.Substring(selectionStart, selectionEnd - selectionStart)
+                                        Quote = caption.Substring(selectionStart, selectionEnd - selectionStart),
+                                        Position = selectionStart
                                     };
 
                                     if (MessageCopy_Loaded(quote))
@@ -2202,7 +2203,8 @@ namespace Telegram.Views
                         quote = new MessageQuote
                         {
                             Message = message,
-                            Quote = caption.Substring(selectionStart, selectionEnd - selectionStart)
+                            Quote = caption.Substring(selectionStart, selectionEnd - selectionStart),
+                            Position = selectionStart
                         };
                     }
                 }

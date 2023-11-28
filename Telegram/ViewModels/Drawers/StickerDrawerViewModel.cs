@@ -743,7 +743,7 @@ namespace Telegram.ViewModels.Drawers
                 }
                 else if (phase == 2 && !_emojiOnly)
                 {
-                    var response = await _clientService.SendAsync(new SearchStickerSets(_query));
+                    var response = await _clientService.SendAsync(new SearchStickerSets(_type, _query));
                     if (response is StickerSets sets)
                     {
                         foreach (var item in sets.Sets.Select(x => new StickerSetViewModel(_clientService, x, x.Covers)))

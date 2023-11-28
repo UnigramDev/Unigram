@@ -170,7 +170,7 @@ namespace Telegram.Controls.Chats
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.ClientService.Send(new SetChatBackground(_viewModel.Chat.Id, null, null, 0));
+            _viewModel.ClientService.Send(new SetChatBackground(_viewModel.Chat.Id, null, null, 0, true));
             ThemeSelected?.Invoke(this, new ChatThemeSelectedEventArgs(true));
         }
     }

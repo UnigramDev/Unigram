@@ -41,6 +41,13 @@ namespace Telegram.ViewModels
         public MessageViewModel Message { get; set; }
 
         public FormattedText Quote { get; set; }
+
+        public int Position { get; set; }
+
+        public InputTextQuote ToInput()
+        {
+            return new InputTextQuote(Quote, Position);
+        }
     }
 
     public partial class DialogViewModel
@@ -135,14 +142,14 @@ namespace Telegram.ViewModels
 
             if (ShouldReplyInAnotherChat(message))
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message.Get(), quote.Quote));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message.Get(), quote.ToInput()));
             }
             else
             {
                 ComposerHeader = new MessageComposerHeader(ClientService)
                 {
                     ReplyToMessage = message,
-                    ReplyToQuote = quote.Quote
+                    ReplyToQuote = quote.ToInput()
                 };
 
                 TextField?.Focus(FocusState.Keyboard);
@@ -919,7 +926,7 @@ namespace Telegram.ViewModels
 
         public async void ShowMessageInteractions(MessageViewModel message)
         {
-            await ShowPopupAsync(typeof(InteractionsPopup), new MessageReplyToMessage(message.ChatId, message.Id, null, false, null, 0, null));
+            await ShowPopupAsync(typeof(InteractionsPopup), new MessageReplyToMessage(message.ChatId, message.Id, null, null, 0, null));
         }
 
         #endregion

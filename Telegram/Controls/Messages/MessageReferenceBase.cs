@@ -95,7 +95,7 @@ namespace Telegram.Controls.Messages
             else if (embedded.ReplyToMessage != null)
             {
                 MessageId = embedded.ReplyToMessage.Id;
-                GetMessageTemplate(embedded.ReplyToMessage.ClientService, embedded.ReplyToMessage, embedded.ReplyToQuote, false, embedded.ReplyToQuote != null ? Strings.ReplyToQuote : Strings.ReplyTo, true, false, false);
+                GetMessageTemplate(embedded.ReplyToMessage.ClientService, embedded.ReplyToMessage, embedded.ReplyToQuote?.Text, false, embedded.ReplyToQuote != null ? Strings.ReplyToQuote : Strings.ReplyTo, true, false, false);
             }
         }
 
@@ -130,7 +130,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.ReplyToItem is MessageViewModel replyToMessage && message.ReplyTo is MessageReplyToMessage replyToMessage1)
             {
-                GetMessageTemplate(message.ClientService, replyToMessage, replyToMessage1.Quote, replyToMessage1.IsQuoteManual, null, outgoing, light, message.ForwardInfo != null);
+                GetMessageTemplate(message.ClientService, replyToMessage, replyToMessage1.Quote?.Text, replyToMessage1.Quote?.IsManual ?? false, null, outgoing, light, message.ForwardInfo != null);
             }
             else if (message.ReplyToItem is Story replyToStory)
             {
@@ -339,18 +339,21 @@ namespace Telegram.Controls.Messages
                 _ => null
             };
 
+            var quote = message.Quote?.Text;
+            var manual = message.Quote?.IsManual ?? false;
+
             switch (message.Content)
             {
                 case MessageAnimation animation:
-                    return SetAnimationTemplate(clientService, sender, message.Quote, message.IsQuoteManual, animation, title, outgoing, white);
+                    return SetAnimationTemplate(clientService, sender, quote, manual, animation, title, outgoing, white);
                 case MessageAudio audio:
-                    return SetAudioTemplate(clientService, sender, message.Quote, message.IsQuoteManual, audio, title, outgoing, white);
+                    return SetAudioTemplate(clientService, sender, quote, manual, audio, title, outgoing, white);
                 case MessageContact contact:
                     return SetContactTemplate(clientService, sender, contact, title, outgoing, white);
                 case MessageDice dice:
                     return SetDiceTemplate(clientService, sender, dice, title, outgoing, white);
                 case MessageDocument document:
-                    return SetDocumentTemplate(clientService, sender, message.Quote, message.IsQuoteManual, document, title, outgoing, white);
+                    return SetDocumentTemplate(clientService, sender, quote, manual, document, title, outgoing, white);
                 case MessageGame game:
                     return SetGameTemplate(clientService, sender, game, title, outgoing, white);
                 case MessageInvoice invoice:
@@ -358,7 +361,7 @@ namespace Telegram.Controls.Messages
                 case MessageLocation location:
                     return SetLocationTemplate(clientService, sender, location, title, outgoing, white);
                 case MessagePhoto photo:
-                    return SetPhotoTemplate(clientService, sender, message.Quote, message.IsQuoteManual, photo, title, outgoing, white, true);
+                    return SetPhotoTemplate(clientService, sender, quote, manual, photo, title, outgoing, white, true);
                 case MessagePoll poll:
                     return SetPollTemplate(clientService, sender, poll, title, outgoing, white);
                 case MessageSticker sticker:
@@ -368,11 +371,11 @@ namespace Telegram.Controls.Messages
                 case MessageVenue venue:
                     return SetVenueTemplate(clientService, sender, venue, title, outgoing, white);
                 case MessageVideo video:
-                    return SetVideoTemplate(clientService, sender, message.Quote, message.IsQuoteManual, video, title, outgoing, white, true);
+                    return SetVideoTemplate(clientService, sender, quote, manual, video, title, outgoing, white, true);
                 case MessageVideoNote videoNote:
                     return SetVideoNoteTemplate(clientService, sender, videoNote, title, outgoing, white);
                 case MessageVoiceNote voiceNote:
-                    return SetVoiceNoteTemplate(clientService, sender, message.Quote, message.IsQuoteManual, voiceNote, title, outgoing, white);
+                    return SetVoiceNoteTemplate(clientService, sender, quote, manual, voiceNote, title, outgoing, white);
                 default:
                     return SetReplyToMessageTemplate(clientService, message, sender, title, outgoing, white);
             }
@@ -389,8 +392,8 @@ namespace Telegram.Controls.Messages
                 sender,
                 title,
                 string.Empty,
-                message.Quote,
-                message.IsQuoteManual,
+                message.Quote?.Text,
+                message.Quote?.IsManual ?? false,
                 white);
 
             return true;

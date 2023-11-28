@@ -1978,6 +1978,13 @@ namespace Telegram.Services
                     value.VideoChat = updateChatVideoChat.VideoChat;
                 }
             }
+            else if (update is UpdateChatViewAsTopics updateChatViewAsTopics)
+            {
+                if (_chats.TryGetValue(updateChatViewAsTopics.ChatId, out Chat value))
+                {
+                    value.ViewAsTopics = updateChatViewAsTopics.ViewAsTopics;
+                }
+            }
             else if (update is UpdateConnectionState updateConnectionState)
             {
                 _connectionState = updateConnectionState.State;

@@ -56,13 +56,13 @@ namespace Telegram.ViewModels
                             {
                                 if (supergroup.IsChannel)
                                 {
-                                    Window.Current.ShowToast(replyToMessage.IsQuoteManual
+                                    Window.Current.ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivateChannel
                                         : Strings.ReplyPrivateChannel, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                                 }
                                 else
                                 {
-                                    Window.Current.ShowToast(replyToMessage.IsQuoteManual
+                                    Window.Current.ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivateGroup
                                         : Strings.ReplyPrivateGroup, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                                 }
@@ -72,7 +72,7 @@ namespace Telegram.ViewModels
                         }
                         else if (replyToMessage.MessageId == 0)
                         {
-                            Window.Current.ShowToast(replyToMessage.IsQuoteManual
+                            Window.Current.ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivate
                                         : Strings.ReplyPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                             return;
@@ -82,13 +82,13 @@ namespace Telegram.ViewModels
                     }
                     else if (replyToMessage.Origin != null && replyToMessage.MessageId == 0)
                     {
-                        Window.Current.ShowToast(replyToMessage.IsQuoteManual
+                        Window.Current.ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivate
                                         : Strings.ReplyPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                     }
                     else if (replyToMessage.ChatId == message.ChatId || replyToMessage.ChatId == 0)
                     {
-                        await LoadMessageSliceAsync(message.Id, replyToMessage.MessageId, highlight: replyToMessage.IsQuoteManual ? replyToMessage.Quote : null);
+                        await LoadMessageSliceAsync(message.Id, replyToMessage.MessageId, highlight: replyToMessage.Quote);
                     }
                 }
             }

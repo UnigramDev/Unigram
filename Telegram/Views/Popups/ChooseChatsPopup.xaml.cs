@@ -229,7 +229,7 @@ namespace Telegram.Views.Popups
 
     public class ChooseChatsConfigurationReplyToMessage : ChooseChatsConfiguration
     {
-        public ChooseChatsConfigurationReplyToMessage(Message message, FormattedText quote)
+        public ChooseChatsConfigurationReplyToMessage(Message message, InputTextQuote quote)
         {
             Message = message;
             Quote = quote;
@@ -237,7 +237,7 @@ namespace Telegram.Views.Popups
 
         public Message Message { get; }
 
-        public FormattedText Quote { get; }
+        public InputTextQuote Quote { get; }
     }
 
     public class ChooseChatsConfigurationShareStory : ChooseChatsConfiguration

@@ -126,9 +126,9 @@ namespace Telegram.Td
             return text;
         }
 
-        public static int SearchQuote(FormattedText text, FormattedText quote, int quotePosition)
+        public static int SearchQuote(FormattedText text, TextQuote quote)
         {
-            var result = Client.Execute(new SearchQuote(text, quote, quotePosition));
+            var result = Client.Execute(new SearchQuote(text, quote.Text, quote.Position));
             if (result is FoundPosition position)
             {
                 return position.Position;

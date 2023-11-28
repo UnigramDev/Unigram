@@ -45,7 +45,7 @@ namespace Telegram.Controls.Messages
 {
     public class MessageBubbleHighlightOptions
     {
-        public MessageBubbleHighlightOptions(FormattedText quote, bool moveFocus = true, bool highlight = true)
+        public MessageBubbleHighlightOptions(TextQuote quote, bool moveFocus = true, bool highlight = true)
         {
             Quote = quote;
             MoveFocus = moveFocus;
@@ -58,7 +58,7 @@ namespace Telegram.Controls.Messages
             Highlight = highlight;
         }
 
-        public FormattedText Quote { get; }
+        public TextQuote Quote { get; }
 
         public bool MoveFocus { get; } = true;
 
@@ -2381,10 +2381,10 @@ namespace Telegram.Controls.Messages
             _highlight.Children.InsertAtTop(solid);
             _highlight.Size = target.ActualSize;
 
-            if (options.Quote != null && message.Text != null)
+            if (options.Quote != null && options.Quote.IsManual && message.Text != null)
             {
                 var caption = content.GetCaption();
-                var index = ClientEx.SearchQuote(caption, options.Quote, 0);
+                var index = ClientEx.SearchQuote(caption, options.Quote);
                 if (index >= 0)
                 {
                     var rich = Message.Descendants<RichTextBlock>().FirstOrDefault();
@@ -2408,7 +2408,7 @@ namespace Telegram.Controls.Messages
                         StyledParagraph styled = message.Text.Paragraphs[j];
                         Paragraph paragraph = rich.Blocks[j] as Paragraph;
 
-                        if (!TextStyleRun.GetRelativeRange(index, options.Quote.Text.Length, styled.Offset, styled.Length, out int xoffset, out int xlength))
+                        if (!TextStyleRun.GetRelativeRange(index, options.Quote.Text.Text.Length, styled.Offset, styled.Length, out int xoffset, out int xlength))
                         {
                             continue;
                         }

@@ -133,23 +133,43 @@ namespace Telegram.ViewModels.Chats
                         ChartViewData.Create(channelStats.InstantViewInteractionGraph, Strings.IVInteractionsChartTitle, /*1*/6)
                     };
 
-                    var messages = await ClientService.SendAsync(new GetMessages(chatId, channelStats.RecentMessageInteractions.Select(x => x.MessageId).ToArray())) as Messages;
-                    if (messages == null)
+                    List<long> messageIds = null;
+                    List<int> storyIds = null;
+
+                    foreach (var interaction in channelStats.RecentInteractions)
                     {
-                        return;
+                        if (interaction.ObjectType is ChatStatisticsObjectTypeMessage typeMessage)
+                        {
+                            messageIds ??= new();
+                            messageIds.Add(typeMessage.MessageId);
+                        }
+                        else if (interaction.ObjectType is ChatStatisticsObjectTypeStory typeStory)
+                        {
+                            storyIds ??= new();
+                            storyIds.Add(typeStory.StoryId);
+                        }
                     }
 
-                    var interactions = new List<MessageInteractionCounters>(messages.MessagesValue.Count);
+                    Dictionary<long, Message> messages = null;
+                    Dictionary<long, Story> stories = null;
 
-                    foreach (var message in messages.MessagesValue)
+                    if (messageIds != null)
                     {
-                        if (message == null)
+                        var inner = await ClientService.SendAsync(new GetMessages(chatId, messageIds)) as Messages;
+                        if (inner != null)
                         {
-                            continue;
+                            messages = inner.MessagesValue.ToDictionary(x => x.Id);
                         }
+                    }
 
-                        var counters = channelStats.RecentMessageInteractions.FirstOrDefault(x => x.MessageId == message.Id);
-                        interactions.Add(new MessageInteractionCounters(message, counters.ForwardCount, counters.ViewCount));
+                    var interactions = new List<MessageInteractionCounters>(channelStats.RecentInteractions.Count);
+
+                    foreach (var interaction in channelStats.RecentInteractions)
+                    {
+                        if (interaction.ObjectType is ChatStatisticsObjectTypeMessage typeMessage && messages != null && messages.TryGetValue(typeMessage.MessageId, out Message message))
+                        {
+                            interactions.Add(new MessageInteractionCounters(message, interaction));
+                        }
                     }
 
                     Interactions.ReplaceWith(interactions);
@@ -215,15 +235,17 @@ namespace Telegram.ViewModels.Chats
 
     public class MessageInteractionCounters
     {
-        public Message Message { get; private set; }
-        public int ForwardCount { get; private set; }
-        public int ViewCount { get; private set; }
+        public Message Message { get; }
+        public int ForwardCount { get; }
+        public int ViewCount { get; }
+        public int ReactionCount { get; }
 
-        public MessageInteractionCounters(Message message, int forward, int view)
+        public MessageInteractionCounters(Message message, ChatStatisticsInteractionInfo info)
         {
             Message = message;
-            ForwardCount = forward;
-            ViewCount = view;
+            ForwardCount = info.ForwardCount;
+            ViewCount = info.ViewCount;
+            ReactionCount = info.ReactionCount;
         }
     }
 
