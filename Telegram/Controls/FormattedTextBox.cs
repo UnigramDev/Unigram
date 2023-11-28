@@ -56,6 +56,9 @@ namespace Telegram.Controls
 
             ClipboardCopyFormat = RichEditClipboardFormat.PlainText;
 
+            CopyingToClipboard += OnCopyingToClipboard;
+            CuttingToClipboard += OnCuttingToClipboard;
+
             Paste += OnPaste;
             PreviewKeyDown += OnPreviewKeyDown;
 
@@ -99,6 +102,26 @@ namespace Telegram.Controls
             TextChanged += OnTextChanged;
 
             SelectionChanged += OnSelectionChanged;
+        }
+
+        private void OnCopyingToClipboard(RichEditBox sender, TextControlCopyingToClipboardEventArgs args)
+        {
+            args.Handled = true;
+
+            if (Document.Selection.Length != 0)
+            {
+                MessageHelper.CopyText(GetFormattedText(Document.Selection), false);
+            }
+        }
+
+        private void OnCuttingToClipboard(RichEditBox sender, TextControlCuttingToClipboardEventArgs args)
+        {
+            args.Handled = true;
+
+            if (Document.Selection.Length != 0)
+            {
+                MessageHelper.CopyText(GetFormattedText(Document.Selection, true), false);
+            }
         }
 
         private void OnTextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
@@ -897,6 +920,154 @@ namespace Telegram.Controls
             return ClientEx.ParseMarkdown(text, entities);
         }
 
+        public FormattedText GetFormattedText(ITextRange selection, bool clear = false)
+        {
+            OnGettingFormattedText();
+
+            if (IsEmpty)
+            {
+                return new FormattedText(string.Empty, Array.Empty<TextEntity>());
+            }
+
+            _updateLocked = true;
+
+            Document.BatchDisplayUpdates();
+            selection.GetText(TextGetOptions.None, out string value);
+
+            value = value.TrimEnd('\v', '\r');
+
+            var builder = new StringBuilder(value);
+
+            List<TextStyleRun> runs = null;
+            TextStyleRun last = null;
+            TextEntityType type = default;
+
+            var hidden = 0;
+
+            for (int i = 0; i < value.Length; i++)
+            {
+                var range = Document.GetRange(selection.StartPosition + i, selection.StartPosition + i + 1);
+                var flags = default(TextStyle);
+
+                if (range.ParagraphFormat.SpaceAfter != 0)
+                {
+                    flags = TextStyle.Quote;
+                }
+
+                if (range.Text == "￼")
+                {
+                    range.GetText(TextGetOptions.UseObjectText, out string obj);
+
+                    var split = obj.Split(';');
+                    if (split.Length == 2 && long.TryParse(split[1], out long customEmojiId))
+                    {
+                        if (last != null)
+                        {
+                            runs ??= new();
+                            runs.Add(last);
+                            last = null;
+                        }
+
+                        runs ??= new();
+                        runs.Add(new TextStyleRun { Start = i - hidden, End = i - hidden + split[0].Length, Flags = TextStyle.Emoji, Type = new TextEntityTypeCustomEmoji(customEmojiId) });
+                        type = null;
+
+                        builder.Remove(i - hidden, 1);
+                        builder.Insert(i - hidden, split[0]);
+
+                        hidden -= split[0].Length - "￼".Length;
+                    }
+                }
+                else if (string.Equals(range.CharacterFormat.Name, "Consolas", StringComparison.OrdinalIgnoreCase))
+                {
+                    flags |= TextStyle.Monospace;
+                }
+                else
+                {
+                    if (range.CharacterFormat.Hidden == FormatEffect.On)
+                    {
+                        builder.Remove(i - hidden, 1);
+
+                        hidden++;
+                        continue;
+                    }
+
+                    if (range.CharacterFormat.Bold == FormatEffect.On)
+                    {
+                        flags |= TextStyle.Bold;
+                    }
+                    if (range.CharacterFormat.Italic == FormatEffect.On)
+                    {
+                        flags |= TextStyle.Italic;
+                    }
+                    if (range.CharacterFormat.Strikethrough == FormatEffect.On)
+                    {
+                        flags |= TextStyle.Strikethrough;
+                    }
+                    if (range.CharacterFormat.Underline == UnderlineType.Single)
+                    {
+                        flags |= TextStyle.Underline;
+                    }
+                    if (range.CharacterFormat.BackgroundColor == Colors.Gray)
+                    {
+                        flags |= TextStyle.Spoiler;
+                    }
+
+                    if (range.Link.Length > 0 && TryGetEntityType(range.Link, out type))
+                    {
+                        flags |= TextStyle.Url;
+                        flags &= ~TextStyle.Underline;
+                    }
+                    else
+                    {
+                        type = null;
+                    }
+                }
+
+                if (last != null && last.Flags == flags)
+                {
+                    last.End++;
+                }
+                else
+                {
+                    if (last != null)
+                    {
+                        runs ??= new();
+                        runs.Add(last);
+                        last = null;
+                    }
+
+                    if (flags != 0)
+                    {
+                        last = new TextStyleRun { Start = i - hidden, End = i - hidden + 1, Flags = flags, Type = type };
+                        type = null;
+                    }
+                }
+            }
+
+            if (last != null)
+            {
+                runs ??= new();
+                runs.Add(last);
+            }
+
+            if (clear)
+            {
+                selection.SetText(TextSetOptions.None, string.Empty);
+                SelectionFlyout.Hide();
+            }
+
+            Document.ApplyDisplayUpdates();
+
+            _updateLocked = false;
+
+            var text = builder.ToString();
+            var entities = TextStyleRun.GetEntities(text, runs);
+
+            text = text.Replace('\v', '\n').Replace('\r', '\n');
+            return ClientEx.ParseMarkdown(text, entities);
+        }
+
         protected virtual void OnGettingFormattedText()
         {
 
@@ -1341,7 +1512,7 @@ namespace Telegram.Controls
                     {
                         CustomEmojiId = customEmojiId,
                         X = (int)rect.X + 1,
-                        Y = (int)rect.Y
+                        Y = (int)rect.Y + 4
                     });
                 }
 
