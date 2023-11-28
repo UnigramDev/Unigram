@@ -37,9 +37,15 @@ namespace Telegram.Streams
                     var response = await _clientService.SendAsync(new GetCustomEmojiStickers(new[] { _customEmojiId }));
                     if (response is Stickers stickers && stickers.StickersValue.Count == 1)
                     {
-                        _file = stickers.StickersValue[0].StickerValue;
+                        var sticker = stickers.StickersValue[0];
 
-                        NeedsRepainting = stickers.StickersValue[0].FullType is StickerFullTypeCustomEmoji customEmoji
+                        _file = sticker.StickerValue;
+
+                        // TODO: implement outline lazy loading
+                        //Width = sticker.Width;
+                        //Height = sticker.Height;
+                        //Outline = sticker.Outline;
+                        NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji customEmoji
                             && customEmoji.NeedsRepainting;
                     }
                 }

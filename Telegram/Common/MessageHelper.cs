@@ -87,7 +87,7 @@ namespace Telegram.Common
             Window.Current.ShowToast(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
         }
 
-        public static async void CopyText(FormattedText text)
+        public static async void CopyText(FormattedText text, bool showToast = true)
         {
             var dataPackage = new DataPackage();
             dataPackage.SetText(text.Text);
@@ -164,7 +164,10 @@ namespace Telegram.Common
 
             ClipboardEx.TrySetContent(dataPackage);
 
-            Window.Current.ShowToast(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+            if (showToast)
+            {
+                Window.Current.ShowToast(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+            }
         }
 
         public static async Task<FormattedText> PasteTextAsync(DataPackageView package)

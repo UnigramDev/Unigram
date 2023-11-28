@@ -333,6 +333,8 @@ namespace Telegram.Views
 
         private void Cleanup(ref MessageCollection cache)
         {
+            cache = null;
+
             if (cache != null)
             {
                 //foreach (var message in cache)

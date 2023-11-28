@@ -201,8 +201,8 @@ namespace Telegram.Controls.Messages
                 content.Recycle();
             }
 
-            UnloadObject(ref Reactions);
-            UnloadObject(ref MediaReactions);
+            //UnloadObject(ref Reactions);
+            //UnloadObject(ref MediaReactions);
 
             UnregisterEvents();
         }

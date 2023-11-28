@@ -108,7 +108,18 @@ namespace Telegram.Views
 
                 MemoryUsageTimer_Tick(null, null);
             }
+
+#if DEBUG
+            FocusManager.GettingFocus += OnGettingFocus;
+#endif
         }
+
+#if DEBUG
+        private void OnGettingFocus(object sender, GettingFocusEventArgs args)
+        {
+            Logger.Info(string.Format("New: {0}, Old: {1}, {2}, {3}", args.NewFocusedElement?.GetType().Name ?? "null", args.OldFocusedElement?.GetType().Name ?? "null", args.Direction, args.InputDevice));
+        }
+#endif
 
         private void MemoryUsageTimer_Tick(object sender, object e)
         {
