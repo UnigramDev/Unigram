@@ -218,7 +218,7 @@ namespace Telegram.Views.Chats
                     photo.Source = null;
                 }
 
-                button.CommandParameter = counters.Message;
+                button.CommandParameter = counters;
                 button.Command = ViewModel.OpenPostCommand;
             }
             else

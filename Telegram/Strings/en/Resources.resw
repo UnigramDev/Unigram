@@ -266,7 +266,7 @@
     <value>Stickers</value>
   </data>
   <data name="AccDescrStoryBy" xml:space="preserve">
-    <value>Story by {0}</value>
+    <value>Story from {0}</value>
   </data>
   <data name="AccDescrVerified" xml:space="preserve">
     <value>Verified</value>
@@ -2048,7 +2048,7 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
     <value>Apply Color and Icon</value>
   </data>
   <data name="ChannelColorHint" xml:space="preserve">
-    <value>This color will be used for your channel&apos;s name, the links it sends, and replies to its messages.</value>
+    <value>This color will be used for your channel&apos;s name, the links it sends, and replies to its posts.</value>
   </data>
   <data name="ChannelColorPreview" xml:space="preserve">
     <value>The name of the channel and replies to its message will be shown in the selected color.</value>
@@ -6225,6 +6225,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="Reactions" xml:space="preserve">
     <value>Reactions</value>
   </data>
+  <data name="ReactionsByEmotionChartTitle" xml:space="preserve">
+    <value>Reactions</value>
+  </data>
   <data name="ReactionsCount_one" xml:space="preserve">
     <value>{0} reaction</value>
   </data>
@@ -6233,6 +6236,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="ReactionsOff" xml:space="preserve">
     <value>Off</value>
+  </data>
+  <data name="ReactionsPerPost" xml:space="preserve">
+    <value>Reactions Per Post</value>
   </data>
   <data name="Recent" xml:space="preserve">
     <value>Recent</value>
@@ -7230,6 +7236,9 @@ and enter your phone number.</value>
   <data name="StoryHideFrom" xml:space="preserve">
     <value>Hide My Stories From {0}</value>
   </data>
+  <data name="StoryInteractionsChartTitle" xml:space="preserve">
+    <value>Story Views and Shares</value>
+  </data>
   <data name="StoryMentionedAction" xml:space="preserve">
     <value>View Story</value>
   </data>
@@ -7244,6 +7253,9 @@ and enter your phone number.</value>
   </data>
   <data name="StoryNotFound" xml:space="preserve">
     <value>This story is no longer available</value>
+  </data>
+  <data name="StoryReactionsByEmotionChartTitle" xml:space="preserve">
+    <value>Story Reactions</value>
   </data>
   <data name="StoryRemovedFromProfile" xml:space="preserve">
     <value>Story removed from your profile.</value>

@@ -50,7 +50,7 @@ namespace Telegram.Td.Api
         {
             if (info != null)
             {
-                return (int)info.Reactions.Sum(x => x.TotalCount);
+                return info.Reactions.Sum(x => x.TotalCount);
             }
 
             return 0;

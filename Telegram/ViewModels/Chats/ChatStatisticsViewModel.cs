@@ -16,6 +16,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
+using Telegram.Views.Chats;
 using Windows.Data.Json;
 using Windows.UI.Xaml.Navigation;
 
@@ -28,14 +29,14 @@ namespace Telegram.ViewModels.Chats
         {
             Items = new MvxObservableCollection<ChartViewData>();
 
-            Interactions = new MvxObservableCollection<MessageInteractionCounters>();
+            Interactions = new MvxObservableCollection<ChatItemInteractionCounters>();
             TopInviters = new MvxObservableCollection<ChatStatisticsInviterInfo>();
             TopAdministrators = new MvxObservableCollection<ChatStatisticsAdministratorActionsInfo>();
             TopSenders = new MvxObservableCollection<ChatStatisticsMessageSenderInfo>();
             TopSendersLeft = new MvxObservableCollection<ChatStatisticsMessageSenderInfo>();
 
             OpenProfileCommand = new RelayCommand<long>(OpenProfileExecute);
-            OpenPostCommand = new RelayCommand<Message>(OpenPostExecute);
+            OpenPostCommand = new RelayCommand<ChatItemInteractionCounters>(OpenPostExecute);
         }
 
         private Chat _chat;
@@ -62,7 +63,7 @@ namespace Telegram.ViewModels.Chats
         public MvxObservableCollection<ChartViewData> Items { get; private set; }
 
 
-        public MvxObservableCollection<MessageInteractionCounters> Interactions { get; private set; }
+        public MvxObservableCollection<ChatItemInteractionCounters> Interactions { get; private set; }
 
         //
         // Summary:
@@ -94,10 +95,17 @@ namespace Telegram.ViewModels.Chats
             }
         }
 
-        public RelayCommand<Message> OpenPostCommand { get; }
-        private void OpenPostExecute(Message message)
+        public RelayCommand<ChatItemInteractionCounters> OpenPostCommand { get; }
+        private void OpenPostExecute(ChatItemInteractionCounters item)
         {
-            NavigationService.NavigateToChat(message.ChatId, message.Id);
+            if (item is MessageInteractionCounters message)
+            {
+                NavigationService.Navigate(typeof(MessageStatisticsPage), new ChatNavigationArgs(message.Message.ChatId, message.Message.Id));
+            }
+            else if (item is StoryInteractionCounters story)
+            {
+
+            }
         }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
@@ -120,7 +128,7 @@ namespace Telegram.ViewModels.Chats
                 {
                     Period = channelStats.Period;
 
-                    stats = new List<ChartViewData>(9)
+                    stats = new List<ChartViewData>(11)
                     {
                         ChartViewData.Create(channelStats.MemberCountGraph, Strings.GrowthChartTitle, 0),
                         ChartViewData.Create(channelStats.JoinGraph, Strings.FollowersChartTitle, 0),
@@ -130,7 +138,10 @@ namespace Telegram.ViewModels.Chats
                         ChartViewData.Create(channelStats.JoinBySourceGraph, Strings.NewFollowersBySourceChartTitle, 2),
                         ChartViewData.Create(channelStats.LanguageGraph, Strings.LanguagesChartTitle, 4),
                         ChartViewData.Create(channelStats.MessageInteractionGraph, Strings.InteractionsChartTitle, /*1*/6),
-                        ChartViewData.Create(channelStats.InstantViewInteractionGraph, Strings.IVInteractionsChartTitle, /*1*/6)
+                        ChartViewData.Create(channelStats.InstantViewInteractionGraph, Strings.IVInteractionsChartTitle, /*1*/6),
+                        ChartViewData.Create(channelStats.MessageReactionGraph, Strings.ReactionsByEmotionChartTitle, 2),
+                        ChartViewData.Create(channelStats.StoryInteractionGraph, Strings.StoryInteractionsChartTitle, 6),
+                        ChartViewData.Create(channelStats.StoryReactionGraph, Strings.StoryReactionsByEmotionChartTitle, 2)
                     };
 
                     List<long> messageIds = null;
@@ -162,7 +173,7 @@ namespace Telegram.ViewModels.Chats
                         }
                     }
 
-                    var interactions = new List<MessageInteractionCounters>(channelStats.RecentInteractions.Count);
+                    var interactions = new List<ChatItemInteractionCounters>(channelStats.RecentInteractions.Count);
 
                     foreach (var interaction in channelStats.RecentInteractions)
                     {
@@ -233,19 +244,40 @@ namespace Telegram.ViewModels.Chats
         }
     }
 
-    public class MessageInteractionCounters
+    public class ChatItemInteractionCounters
     {
-        public Message Message { get; }
         public int ForwardCount { get; }
         public int ViewCount { get; }
         public int ReactionCount { get; }
 
-        public MessageInteractionCounters(Message message, ChatStatisticsInteractionInfo info)
+        public ChatItemInteractionCounters(ChatStatisticsInteractionInfo info)
         {
-            Message = message;
             ForwardCount = info.ForwardCount;
             ViewCount = info.ViewCount;
             ReactionCount = info.ReactionCount;
+        }
+
+    }
+
+    public class MessageInteractionCounters : ChatItemInteractionCounters
+    {
+        public Message Message { get; }
+
+        public MessageInteractionCounters(Message message, ChatStatisticsInteractionInfo info)
+            : base(info)
+        {
+            Message = message;
+        }
+    }
+
+    public class StoryInteractionCounters : ChatItemInteractionCounters
+    {
+        public Story Story { get; }
+
+        public StoryInteractionCounters(Story story, ChatStatisticsInteractionInfo info)
+            : base(info)
+        {
+            Story = story;
         }
     }
 

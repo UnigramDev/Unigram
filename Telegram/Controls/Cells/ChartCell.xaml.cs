@@ -41,6 +41,8 @@ namespace Telegram.Controls.Cells
                 return;
             }
 
+            Visibility = Visibility.Visible;
+
             //if (args.ItemIndex != _loadIndex)
             //{
             //    root.Header = data.title;

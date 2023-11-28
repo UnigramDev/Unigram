@@ -36,6 +36,16 @@ namespace Telegram.Views.Chats
             return string.Empty;
         }
 
+        private string ConvertReactions(Message message)
+        {
+            if (message?.InteractionInfo != null)
+            {
+                return message.InteractionInfo.TotalReactions().ToString("N0");
+            }
+
+            return string.Empty;
+        }
+
         private string ConvertPublicShares(Message message, int totalCount)
         {
             return totalCount.ToString("N0");
@@ -75,7 +85,7 @@ namespace Telegram.Views.Chats
             var root = sender as ChartCell;
             var data = args.NewValue as ChartViewData;
 
-            if (root == null || data == null)
+            if (root == null)
             {
                 return;
             }
@@ -84,7 +94,7 @@ namespace Telegram.Views.Chats
             var border = root.Items[1] as AspectView;
             var checks = root.Items[2] as WrapPanel;
 
-            root.Header = data.title;
+            root.Header = data?.title ?? string.Empty;
             border.Children.Clear();
             border.Constraint = data;
 

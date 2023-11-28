@@ -47,6 +47,13 @@ namespace Telegram.ViewModels.Chats
             set => Set(ref _interactions, value);
         }
 
+        private ChartViewData _reactions;
+        public ChartViewData Reactions
+        {
+            get => _reactions;
+            set => Set(ref _reactions, value);
+        }
+
         private ItemsCollection _items;
         public ItemsCollection Items
         {
@@ -90,6 +97,7 @@ namespace Telegram.ViewModels.Chats
             if (response is MessageStatistics statistics)
             {
                 Interactions = ChartViewData.Create(statistics.MessageInteractionGraph, Strings.InteractionsChartTitle, /*1*/6);
+                Reactions = ChartViewData.Create(statistics.MessageReactionGraph, Strings.ReactionsByEmotionChartTitle, /*1*/2);
             }
 
             IsLoading = false;
