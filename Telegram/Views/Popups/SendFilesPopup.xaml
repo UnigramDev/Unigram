@@ -332,10 +332,9 @@
                                   Glyph="&#xE76E;"
                                   AllowFocusOnInteraction="False"
                                   HorizontalAlignment="Right"
-                                  VerticalAlignment="Top"
-                                  Width="40"
-                                  Height="40"
-                                  Margin="0,-4,-4,-4" />
+                                  VerticalAlignment="Bottom"
+                                  Width="36"
+                                  Height="32" />
         </Grid>
     </Grid>
 

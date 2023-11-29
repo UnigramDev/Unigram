@@ -206,7 +206,7 @@ namespace Telegram.Views.Popups
             SetResult(ContentDialogResult.Secondary);
         }
 
-        private async void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
+        private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
             var chat = ViewModel.Chat;
             if (chat == null)
@@ -264,8 +264,8 @@ namespace Telegram.Views.Popups
                     var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - result.Length, CaptionInput.Document.Selection.StartPosition);
                     range.SetText(TextSetOptions.None, string.Empty);
 
-                    await CaptionInput.InsertEmojiAsync(range, sticker.Emoji, customEmoji.CustomEmojiId);
-                    CaptionInput.Document.Selection.StartPosition = start;
+                    CaptionInput.InsertEmoji(range, sticker.Emoji, customEmoji.CustomEmojiId);
+                    CaptionInput.Document.Selection.StartPosition = range.EndPosition + 1;
                 }
             }
 

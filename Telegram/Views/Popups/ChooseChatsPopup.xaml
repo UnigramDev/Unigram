@@ -174,7 +174,7 @@
                                   Glyph="&#xE76E;"
                                   AllowFocusOnInteraction="False"
                                   HorizontalAlignment="Right"
-                                  VerticalAlignment="Center"
+                                  VerticalAlignment="Bottom"
                                   Width="36"
                                   Height="32" />
         </Grid>

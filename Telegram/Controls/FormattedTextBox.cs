@@ -8,9 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
@@ -21,7 +19,6 @@ using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
-using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
@@ -149,6 +146,12 @@ namespace Telegram.Controls
         private void OnSelectionChanged(object sender, RoutedEventArgs e)
         {
             var index = Document.Selection.EndPosition;
+
+            if (Document.Selection.Length == 0)
+            {
+                Document.Selection.StartOf(TextRangeUnit.Hidden, true);
+                Document.Selection.Collapse(true);
+            }
 
             OnSelectionChanged(this, _fromTextChanging || _selectionIndex == index);
 
@@ -806,12 +809,12 @@ namespace Telegram.Controls
                     flags = TextStyle.Quote;
                 }
 
-                if (range.Text == "￼")
+                if (range.Text == "\uEA4F")
                 {
-                    range.GetText(TextGetOptions.UseObjectText, out string obj);
+                    range.Move(TextRangeUnit.Hidden, -1);
+                    range.Expand(TextRangeUnit.Hidden);
 
-                    var split = obj.Split(';');
-                    if (split.Length == 2 && long.TryParse(split[1], out long customEmojiId))
+                    if (IsCustomEmoji(range, out string emoji, out long customEmojiId))
                     {
                         if (last != null)
                         {
@@ -821,13 +824,13 @@ namespace Telegram.Controls
                         }
 
                         runs ??= new();
-                        runs.Add(new TextStyleRun { Start = i - hidden, End = i - hidden + split[0].Length, Flags = TextStyle.Emoji, Type = new TextEntityTypeCustomEmoji(customEmojiId) });
+                        runs.Add(new TextStyleRun { Start = i - hidden, End = i - hidden + emoji.Length, Flags = TextStyle.Emoji, Type = new TextEntityTypeCustomEmoji(customEmojiId) });
                         type = null;
 
                         builder.Remove(i - hidden, 1);
-                        builder.Insert(i - hidden, split[0]);
+                        builder.Insert(i - hidden, emoji);
 
-                        hidden -= split[0].Length - "￼".Length;
+                        hidden -= emoji.Length - 1;
                     }
                 }
                 else if (string.Equals(range.CharacterFormat.Name, "Consolas", StringComparison.OrdinalIgnoreCase))
@@ -954,12 +957,12 @@ namespace Telegram.Controls
                     flags = TextStyle.Quote;
                 }
 
-                if (range.Text == "￼")
+                if (range.Text == "\uEA4F")
                 {
-                    range.GetText(TextGetOptions.UseObjectText, out string obj);
+                    range.Move(TextRangeUnit.Hidden, -1);
+                    range.Expand(TextRangeUnit.Hidden);
 
-                    var split = obj.Split(';');
-                    if (split.Length == 2 && long.TryParse(split[1], out long customEmojiId))
+                    if (IsCustomEmoji(range, out string emoji, out long customEmojiId))
                     {
                         if (last != null)
                         {
@@ -969,13 +972,13 @@ namespace Telegram.Controls
                         }
 
                         runs ??= new();
-                        runs.Add(new TextStyleRun { Start = i - hidden, End = i - hidden + split[0].Length, Flags = TextStyle.Emoji, Type = new TextEntityTypeCustomEmoji(customEmojiId) });
+                        runs.Add(new TextStyleRun { Start = i - hidden, End = i - hidden + emoji.Length, Flags = TextStyle.Emoji, Type = new TextEntityTypeCustomEmoji(customEmojiId) });
                         type = null;
 
                         builder.Remove(i - hidden, 1);
-                        builder.Insert(i - hidden, split[0]);
+                        builder.Insert(i - hidden, emoji);
 
-                        hidden -= split[0].Length - "￼".Length;
+                        hidden -= emoji.Length - 1;
                     }
                 }
                 else if (string.Equals(range.CharacterFormat.Name, "Consolas", StringComparison.OrdinalIgnoreCase))
@@ -1134,7 +1137,7 @@ namespace Telegram.Controls
             }
         }
 
-        public async void SetText(string text, IList<TextEntity> entities)
+        public void SetText(string text, IList<TextEntity> entities)
         {
             try
             {
@@ -1143,7 +1146,7 @@ namespace Telegram.Controls
                 Document.BeginUndoGroup();
                 Document.BatchDisplayUpdates();
 
-                await SetTextImpl(text, entities);
+                SetTextImpl(text, entities);
             }
             catch
             {
@@ -1158,7 +1161,7 @@ namespace Telegram.Controls
             }
         }
 
-        private async Task SetTextImpl(string text, IList<TextEntity> entities)
+        private void SetTextImpl(string text, IList<TextEntity> entities)
         {
             OnSettingText();
             Document.Clear();
@@ -1218,7 +1221,7 @@ namespace Telegram.Controls
                             var emoji = text.Substring(entity.Offset, entity.Length);
 
                             range.SetText(TextSetOptions.None, string.Empty);
-                            await InsertEmojiAsync(range, emoji, customEmoji.CustomEmojiId);
+                            InsertEmoji(range, emoji, customEmoji.CustomEmojiId);
 
                             hidden += emoji.Length - 1;
                         }
@@ -1229,7 +1232,7 @@ namespace Telegram.Controls
             }
         }
 
-        public async void InsertText(string text, IList<TextEntity> entities)
+        public void InsertText(string text, IList<TextEntity> entities)
         {
             _updateLocked = true;
 
@@ -1293,7 +1296,7 @@ namespace Telegram.Controls
                             var emoji = text.Substring(entity.Offset, entity.Length);
 
                             range.SetText(TextSetOptions.None, string.Empty);
-                            await InsertEmojiAsync(range, emoji, customEmoji.CustomEmojiId);
+                            InsertEmoji(range, emoji, customEmoji.CustomEmojiId);
 
                             hidden += emoji.Length - 1;
                         }
@@ -1366,33 +1369,28 @@ namespace Telegram.Controls
             }
         }
 
-        public async void InsertEmoji(Sticker sticker)
+        public void InsertEmoji(Sticker sticker)
         {
             if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
             {
-                await InsertEmojiAsync(Document.Selection, sticker.Emoji, customEmoji.CustomEmojiId);
+                InsertEmoji(Document.Selection, sticker.Emoji, customEmoji.CustomEmojiId);
                 Document.Selection.StartPosition = Document.Selection.EndPosition + 1;
             }
         }
 
-        public async Task InsertEmojiAsync(ITextRange range, string emoji, long customEmojiId)
+        public void InsertEmoji(ITextRange range, string emoji, long customEmojiId)
         {
-            var data = new byte[]
-            {
-                0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
-                0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
-                0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00,
-                0x05, 0x00, 0x01, 0x0D, 0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
-                0x42, 0x60, 0x82
-                //0x42, 0x4D, 0x1E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1A, 0x00, 0x00, 0x00, 0x0C, 0x00,
-                //0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x18, 0x00, 0x00, 0x00, 0xFF, 0x00
-            };
+            Document.BeginUndoGroup();
 
-            using var stream = new InMemoryRandomAccessStream();
-            await stream.WriteAsync(data.AsBuffer());
-            await stream.FlushAsync();
+            range.SetText(TextSetOptions.None, $"{emoji};{customEmojiId}");
+            range.CharacterFormat.Hidden = FormatEffect.On;
+            range.Gravity = RangeGravity.Forward;
 
-            range.InsertImage(20, 18, 0, VerticalCharacterAlignment.Top, $"{emoji};{customEmojiId}", stream);
+            var end = Document.GetRange(range.EndPosition, range.EndPosition);
+            end.SetText(TextSetOptions.None, "\uEA4F");
+            end.Gravity = RangeGravity.Backward;
+
+            Document.EndUndoGroup();
         }
 
         public void InsertBlockquote(string quote)
@@ -1487,42 +1485,64 @@ namespace Telegram.Controls
                 return;
             }
 
-            Document.GetText(TextGetOptions.None, out string value);
+            var range = Document.GetRange(0, 0);
+            var rects = 0;
+
+            var firstCall = true;
 
             HashSet<long> emoji = null;
             List<EmojiPosition> positions = null;
 
-            var index = value.IndexOf('￼');
-
-            while (index >= 0)
+            do
             {
-                var range = Document.GetRange(index, index + 1);
-
-                range.GetRect(PointOptions.ClientCoordinates, out Rect rect, out _);
-                range.GetText(TextGetOptions.UseObjectText, out string obj);
-
-                var split = obj.Split(';');
-                if (split.Length == 2 && long.TryParse(split[1], out long customEmojiId))
+                if (range.EndOf(TextRangeUnit.Hidden, true) <= 0 && !firstCall)
                 {
-                    emoji ??= new();
-                    emoji.Add(customEmojiId);
-
-                    positions ??= new();
-                    positions.Add(new EmojiPosition
-                    {
-                        CustomEmojiId = customEmojiId,
-                        X = (int)rect.X + 1,
-                        Y = (int)rect.Y + 4
-                    });
+                    break;
                 }
 
-                index = value.IndexOf('￼', index + 1);
-            }
+                firstCall = false;
+
+                if (range.CharacterFormat.Hidden == FormatEffect.On && range.Link.Length == 0)
+                {
+                    var follow = Document.GetRange(range.EndPosition, range.EndPosition);
+                    if (follow.Character != '\uEA4F')
+                    {
+                        continue;
+                    }
+
+                    range.GetRect(PointOptions.None, out Rect rect, out _);
+                    rects++;
+
+                    if (IsCustomEmoji(range, out _, out long customEmojiId))
+                    {
+                        emoji ??= new();
+                        emoji.Add(customEmojiId);
+
+                        positions ??= new();
+                        positions.Add(new EmojiPosition
+                        {
+                            CustomEmojiId = customEmojiId,
+                            X = (int)rect.X + 2,
+                            Y = (int)rect.Y + 3
+                        });
+                    }
+                }
+            } while (range.MoveStart(TextRangeUnit.Hidden, 1) > 0);
 
             if (CustomEmoji != null && DataContext is ViewModelBase viewModel)
             {
                 CustomEmoji.UpdateEntities(viewModel.ClientService, positions);
             }
+        }
+
+        private bool IsCustomEmoji(ITextRange range, out string emoji, out long customEmojiId)
+        {
+            var split = range.Text.Split(';');
+
+            emoji = split[0];
+            customEmojiId = 0;
+
+            return split.Length == 2 && long.TryParse(split[1], out customEmojiId);
         }
 
         private void UpdateFormat()
@@ -1536,18 +1556,22 @@ namespace Telegram.Controls
                     break;
                 }
 
-                if (range.ParagraphFormat.SpaceAfter != 0 && range.CharacterFormat.Size != 9)
+                if (range.CharacterFormat.Hidden == FormatEffect.On && range.Link.Length == 0)
                 {
-                    _undoGroup = true;
-                    Document.BeginUndoGroup();
+                    range.Expand(TextRangeUnit.Hidden);
 
+                    var follow = Document.GetRange(range.EndPosition, range.EndPosition);
+                    if (follow.Character != '\uEA4F' && IsCustomEmoji(range, out _, out _))
+                    {
+                        range.Delete(TextRangeUnit.Hidden, 1);
+                    }
+                }
+                else if (range.ParagraphFormat.SpaceAfter != 0 && range.CharacterFormat.Size != 9)
+                {
                     range.CharacterFormat.Size = 9;
                 }
                 else if (range.ParagraphFormat.SpaceAfter == 0 && range.CharacterFormat.Size != 10.5f)
                 {
-                    _undoGroup = true;
-                    Document.BeginUndoGroup();
-
                     range.CharacterFormat.Size = 10.5f;
                 }
             } while (range.MoveStart(TextRangeUnit.CharacterFormat, 1) > 0);
@@ -1724,6 +1748,14 @@ namespace Telegram.Controls
                     }
                 }
             }
+
+            if (_undoGroup)
+            {
+                return;
+            }
+
+            _undoGroup = true;
+            Document.BeginUndoGroup();
         }
     }
 }

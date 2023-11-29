@@ -3100,7 +3100,7 @@ namespace Telegram.Views
             _rootVisual.Size = e.NewSize.ToVector2();
         }
 
-        private async void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
+        private void Autocomplete_ItemClick(object sender, ItemClickEventArgs e)
         {
             var chat = ViewModel.Chat;
             if (chat == null)
@@ -3190,8 +3190,8 @@ namespace Telegram.Views
                     var range = TextField.Document.GetRange(index, TextField.Document.Selection.StartPosition);
                     range.SetText(TextSetOptions.None, string.Empty);
 
-                    await TextField.InsertEmojiAsync(range, sticker.Emoji, customEmoji.CustomEmojiId);
-                    TextField.Document.Selection.StartPosition = index + 1;
+                    TextField.InsertEmoji(range, sticker.Emoji, customEmoji.CustomEmojiId);
+                    TextField.Document.Selection.StartPosition = range.EndPosition + 1;
                 }
                 else
                 {

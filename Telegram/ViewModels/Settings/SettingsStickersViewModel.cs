@@ -21,7 +21,6 @@ using Telegram.Views.Settings;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -289,18 +288,8 @@ namespace Telegram.ViewModels.Settings
             {
                 if (value >= 0 && value < _emojiStyleIndexer.Length && Settings.Appearance.EmojiSet != _emojiStyleIndexer[value])
                 {
-                    switch (_emojiStyleIndexer[value])
-                    {
-                        case "microsoft":
-                            Theme.Current["EmojiThemeFontFamily"] = new FontFamily($"XamlAutoFontFamily");
-                            break;
-                        case "apple":
-                        default:
-                            Theme.Current["EmojiThemeFontFamily"] = new FontFamily($"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji");
-                            break;
-                    }
-
                     SettingsService.Current.Appearance.EmojiSet = _emojiStyleIndexer[value];
+                    Theme.Current.UpdateEmojiSet();
                     SettingsService.Current.Appearance.UpdateNightMode(true);
 
                     RaisePropertyChanged();

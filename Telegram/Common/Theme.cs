@@ -38,28 +38,11 @@ namespace Telegram.Common
                 _isolatedStore = ApplicationData.Current.LocalSettings.CreateContainer("Theme", ApplicationDataCreateDisposition.Always);
                 Current ??= this;
 
-                var vazir = "ms-appx:///Assets/Fonts/Vazirmatn-UI-NL-Regular.ttf#Vazirmatn UI NL";
-                var symbols = "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram";
-
-                var auto = FontFamily.XamlAutoFontFamily.Source;
-                if (auto == "Segoe UI Variable")
-                {
-                    auto = "Segoe UI";
-                }
-
-                var emoji = SettingsService.Current.Appearance.EmojiSet switch
-                {
-                    "microsoft" => FontFamily.XamlAutoFontFamily.Source,
-                    _ => $"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji, {auto}"
-                };
-
-                this.Add("EmojiThemeFontFamily", new FontFamily(/*$"{vazir}, {emoji}"*/ emoji));
-                this.Add("EmojiThemeFontFamilyWithSymbols", new FontFamily(/*$"{vazir}, {emoji}, {symbols}"*/ $"{emoji}, {symbols}"));
-
                 this.Add("MessageFontSize", GetValueOrDefault("MessageFontSize", 14d));
 
                 this.Add("ThreadStackLayout", new StackLayout());
 
+                UpdateEmojiSet();
                 UpdateScrolls();
             }
             catch { }
@@ -69,6 +52,27 @@ namespace Telegram.Common
                 Update(ApplicationTheme.Light);
                 Update(ApplicationTheme.Dark);
             }
+        }
+
+        public void UpdateEmojiSet()
+        {
+            var vazir = "ms-appx:///Assets/Fonts/Vazirmatn-UI-NL-Regular.ttf#Vazirmatn UI NL";
+            var symbols = "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram";
+
+            var auto = FontFamily.XamlAutoFontFamily.Source;
+            if (auto == "Segoe UI Variable")
+            {
+                auto = "Segoe UI";
+            }
+
+            var emoji = SettingsService.Current.Appearance.EmojiSet switch
+            {
+                "microsoft" => FontFamily.XamlAutoFontFamily.Source + ", ms-appx:///Assets/Emoji/microsoft.ttf#Segoe UI Emoji",
+                _ => $"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji, {auto}"
+            };
+
+            this["EmojiThemeFontFamily"] = new FontFamily(/*$"{vazir}, {emoji}"*/ emoji);
+            this["EmojiThemeFontFamilyWithSymbols"] = new FontFamily(/*$"{vazir}, {emoji}, {symbols}"*/ $"{emoji}, {symbols}");
         }
 
         private bool _legacyScrollBars;
