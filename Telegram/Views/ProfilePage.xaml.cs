@@ -105,44 +105,9 @@ namespace Telegram.Views
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("SharedCount"))
+            if (e.PropertyName.Equals("SharedCount") && ViewModel.SelectedItem is ProfileTabItem tab)
             {
-                if (ViewModel.HasSharedMembers)
-                {
-                    MediaFrame.Navigate(typeof(ProfileMembersTabPage), null, new SuppressNavigationTransitionInfo());
-                    return;
-                }
-                else if (ViewModel.HasPinnedStories)
-                {
-                    MediaFrame.Navigate(typeof(ProfileStoriesTabPage), null, new SuppressNavigationTransitionInfo());
-                    return;
-                }
-
-                var sharedCount = ViewModel.SharedCount;
-                if (sharedCount[0] > 0)
-                {
-                    MediaFrame.Navigate(typeof(ProfileMediaTabPage), null, new SuppressNavigationTransitionInfo());
-                }
-                else if (sharedCount[1] > 0)
-                {
-                    MediaFrame.Navigate(typeof(ProfileFilesTabPage), null, new SuppressNavigationTransitionInfo());
-                }
-                else if (sharedCount[2] > 0)
-                {
-                    MediaFrame.Navigate(typeof(ProfileLinksTabPage), null, new SuppressNavigationTransitionInfo());
-                }
-                else if (sharedCount[3] > 0)
-                {
-                    MediaFrame.Navigate(typeof(ProfileMusicTabPage), null, new SuppressNavigationTransitionInfo());
-                }
-                else if (sharedCount[4] > 0)
-                {
-                    MediaFrame.Navigate(typeof(ProfileVoiceTabPage), null, new SuppressNavigationTransitionInfo());
-                }
-                else if (ViewModel.HasSharedGroups)
-                {
-                    MediaFrame.Navigate(typeof(ProfileGroupsTabPage), null, new SuppressNavigationTransitionInfo());
-                }
+                MediaFrame.Navigate(tab.Type, null, new SuppressNavigationTransitionInfo());
             }
         }
 

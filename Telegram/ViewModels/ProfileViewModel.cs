@@ -40,34 +40,22 @@ namespace Telegram.ViewModels
         private readonly INotificationsService _notificationsService;
         private readonly ITranslateService _translateService;
 
-        private readonly ProfileStoriesTabViewModel _storiesTabViewModel;
-        private readonly ProfileGroupsTabViewModel _groupsTabViewModel;
-        private readonly ProfileMembersTabViewModel _membersTabVieModel;
-
-        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService, ProfileStoriesTabViewModel profileStoriesTabViewModel, ProfileGroupsTabViewModel profileGroupsTabViewModel, ProfileMembersTabViewModel profileMembersTabViewModel)
-            : base(clientService, settingsService, storageService, aggregator, playbackService)
+        public ProfileViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, IPlaybackService playbackService, IVoipService voipService, IVoipGroupService voipGroupService, INotificationsService notificationsService, IStorageService storageService, ITranslateService translateService, ProfileStoriesTabViewModel profileStoriesTabViewModel, ProfileGroupsTabViewModel profileGroupsTabViewModel, ProfileChannelsTabViewModel profileChannelsTabViewModel, ProfileMembersTabViewModel profileMembersTabViewModel)
+            : base(clientService, settingsService, storageService, aggregator, playbackService, profileStoriesTabViewModel, profileGroupsTabViewModel, profileChannelsTabViewModel, profileMembersTabViewModel)
         {
             _voipService = voipService;
             _voipGroupService = voipGroupService;
             _notificationsService = notificationsService;
             _translateService = translateService;
 
-            _storiesTabViewModel = profileStoriesTabViewModel;
-            _groupsTabViewModel = profileGroupsTabViewModel;
-            _membersTabVieModel = profileMembersTabViewModel;
-            _membersTabVieModel.IsEmbedded = true;
-
             SetTimerCommand = new RelayCommand<int?>(SetTimer);
-
-            Children.Add(profileStoriesTabViewModel);
-            Children.Add(profileGroupsTabViewModel);
-            Children.Add(profileMembersTabViewModel);
         }
 
         public ITranslateService TranslateService => _translateService;
 
         public ProfileStoriesTabViewModel StoriesTab => _storiesTabViewModel;
         public ProfileGroupsTabViewModel GroupsTab => _groupsTabViewModel;
+        public ProfileChannelsTabViewModel ChannelsTab => _channelsTabViewModel;
         public SupergroupMembersViewModel MembersTab => _membersTabVieModel;
 
         protected ObservableCollection<ChatMember> _members;

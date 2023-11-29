@@ -1,21 +1,23 @@
-<local:ProfileTabPage x:Class="Telegram.Views.Profile.ProfileGroupsTabPage"
+<local:ProfileTabPage x:Class="Telegram.Views.Profile.ProfileChannelsTabPage"
                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:controls="using:Telegram.Controls"
+                      xmlns:common="using:Telegram.Common"
                       xmlns:cells="using:Telegram.Controls.Cells"
                       xmlns:local="using:Telegram.Views.Profile"
                       mc:Ignorable="d">
 
     <Grid>
         <controls:TableListView x:Name="ScrollingHost"
-                                ItemsSource="{x:Bind ViewModel.GroupsTab.Items}"
+                                ItemsSource="{x:Bind ViewModel.ChannelsTab.Items}"
                                 ItemClick="ListView_ItemClick"
                                 IsItemClickEnabled="True"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
-                                SelectionMode="None">
+                                SelectionMode="None"
+                                VerticalAlignment="Top">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
@@ -42,7 +44,32 @@
                 <Border Height="{x:Bind ViewModel.HeaderHeight, Mode=OneWay}" />
             </ListView.Header>
             <ListView.Footer>
-                <Border Height="60" />
+                <Grid>
+                    <Border Height="60" />
+
+                    <Border x:Name="MoreSimilar"
+                            x:Load="{x:Bind ViewModel.ChannelsTab.CanUnlockMore, Mode=OneWay}"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            Background="{ThemeResource SettingsItemBackground}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            MaxWidth="1000"
+                            Margin="24,12"
+                            CornerRadius="4"
+                            BorderThickness="1"
+                            Padding="12">
+
+                        <StackPanel HorizontalAlignment="Center">
+                            <Button Click="{x:Bind ViewModel.ChannelsTab.UnlockMore}"
+                                    Content="{CustomResource MoreSimilarButton}"
+                                    Style="{StaticResource AccentButtonStyle}"
+                                    HorizontalAlignment="Stretch" />
+                            <TextBlock common:TextBlockHelper.FormattedText="{x:Bind ConvertMoreSimilar(ViewModel.ChannelsTab.TotalCount), Mode=OneWay}"
+                                       TextAlignment="Center"
+                                       Margin="0,8,0,0" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

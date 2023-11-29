@@ -7655,6 +7655,17 @@ namespace Telegram
         public static string MoreInfo => Resource.GetString("MoreInfo");
         
         /// <summary>
+        /// Localized resource similar to "Show More Channels"
+        /// </summary>
+        public static string MoreSimilarButton => Resource.GetString("MoreSimilarButton");
+        
+        /// <summary>
+        /// Localized resource similar to "Subscribe to **Telegram Premium**
+        ///to unlock up to {0} similar channels."
+        /// </summary>
+        public static string MoreSimilarText => Resource.GetString("MoreSimilarText");
+        
+        /// <summary>
         /// Localized resource similar to "Music"
         /// </summary>
         public static string Music => Resource.GetString("Music");
@@ -10810,6 +10821,11 @@ namespace Telegram
         /// Localized resource similar to "Sign Up"
         /// </summary>
         public static string SignUp => Resource.GetString("SignUp");
+        
+        /// <summary>
+        /// Localized resource similar to "Similar Channels"
+        /// </summary>
+        public static string SimilarChannelsTab => Resource.GetString("SimilarChannelsTab");
         
         /// <summary>
         /// Localized resource similar to "SLIDE TO CANCEL"

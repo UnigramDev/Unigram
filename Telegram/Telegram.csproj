@@ -352,6 +352,7 @@
     <Compile Include="ViewModels\ComposeViewModel.cs" />
     <Compile Include="ViewModels\DialogViewModel.Translate.cs" />
     <Compile Include="Td\Api\MessageTranslateResult.cs" />
+    <Compile Include="ViewModels\Profile\ProfileChannelsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileGroupsTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileMembersTabViewModel.cs" />
     <Compile Include="ViewModels\Profile\ProfileStoriesTabViewModel.cs" />
@@ -759,7 +760,7 @@
     <Compile Include="Services\Theme\ThemeCustomInfo.cs" />
     <Compile Include="Services\ThemeService.Defaults.cs" />
     <Compile Include="Services\TranslateService.cs" />
-    <Compile Include="Services\Updates\UpdatePremiumState.cs" />
+    <Compile Include="Td\Api\UpdatePremiumState.cs" />
     <Compile Include="Strings\en\Resources.cs">
       <DependentUpon>Resources.resw</DependentUpon>
     </Compile>
@@ -1279,6 +1280,9 @@
     </Compile>
     <Compile Include="Views\Profile\ProfileFilesTabPage.xaml.cs">
       <DependentUpon>ProfileFilesTabPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Profile\ProfileChannelsTabPage.xaml.cs">
+      <DependentUpon>ProfileChannelsTabPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Profile\ProfileGroupsTabPage.xaml.cs">
       <DependentUpon>ProfileGroupsTabPage.xaml</DependentUpon>
@@ -2658,6 +2662,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Profile\ProfileFilesTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Profile\ProfileChannelsTabPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

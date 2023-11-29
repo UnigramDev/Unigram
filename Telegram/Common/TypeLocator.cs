@@ -1,9 +1,3 @@
-//
-// Copyright Fela Ameghino 2015-2023
-//
-// Distributed under the GNU General Public License v3.0. (See accompanying
-// file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
-//
 namespace Telegram.Views
 {
     public class TypeLocator
@@ -322,19 +316,25 @@ namespace Telegram.Views
                             _eventAggregator),
                         Resolve<Telegram.ViewModels.Profile.ProfileStoriesTabViewModel>(),
                         Resolve<Telegram.ViewModels.Profile.ProfileGroupsTabViewModel>(),
+                        Resolve<Telegram.ViewModels.Profile.ProfileChannelsTabViewModel>(),
                         Resolve<Telegram.ViewModels.Profile.ProfileMembersTabViewModel>());
-                case nameof(Telegram.ViewModels.Profile.ProfileMembersTabViewModel):
-                    return (T)(object)new Telegram.ViewModels.Profile.ProfileMembersTabViewModel(
-                        _clientService,
-                        _settingsService,
-                        _eventAggregator);
                 case nameof(Telegram.ViewModels.Profile.ProfileStoriesTabViewModel):
                     return (T)(object)new Telegram.ViewModels.Profile.ProfileStoriesTabViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
+                case nameof(Telegram.ViewModels.Profile.ProfileMembersTabViewModel):
+                    return (T)(object)new Telegram.ViewModels.Profile.ProfileMembersTabViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case nameof(Telegram.ViewModels.Profile.ProfileGroupsTabViewModel):
                     return (T)(object)new Telegram.ViewModels.Profile.ProfileGroupsTabViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
+                case nameof(Telegram.ViewModels.Profile.ProfileChannelsTabViewModel):
+                    return (T)(object)new Telegram.ViewModels.Profile.ProfileChannelsTabViewModel(
                         _clientService,
                         _settingsService,
                         _eventAggregator);
@@ -415,13 +415,6 @@ namespace Telegram.Views
                         _clientService,
                         _settingsService,
                         _eventAggregator);
-                case nameof(Telegram.ViewModels.Profile.ProfileTabsViewModel):
-                    return (T)(object)new Telegram.ViewModels.Profile.ProfileTabsViewModel(
-                        _clientService,
-                        _settingsService,
-                        _storageService ??= new Telegram.Services.StorageService(_clientService),
-                        _eventAggregator,
-                        _playbackService);
                 case nameof(Telegram.ViewModels.Chats.ChatStatisticsViewModel):
                     return (T)(object)new Telegram.ViewModels.Chats.ChatStatisticsViewModel(
                         _clientService,

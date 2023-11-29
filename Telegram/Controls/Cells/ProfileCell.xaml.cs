@@ -745,6 +745,35 @@ namespace Telegram.Controls.Cells
             args.Handled = true;
         }
 
+        public void UpdateSimilarChannel(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var chat = args.Item as Chat;
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = chat.Title;
+            }
+            else if (args.Phase == 1)
+            {
+                if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    SubtitleLabel.Text = Locale.Declension(Strings.R.Subscribers, supergroup.MemberCount);
+                }
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
+
         public void UpdateStatisticsByChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
         {
             if (args.InRecycleQueue)

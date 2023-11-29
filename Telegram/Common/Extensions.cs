@@ -335,6 +335,17 @@ namespace Telegram.Common
             }
         }
 
+        public static FormattedText ReplacePremiumLink(string text)
+        {
+            var markdown = ClientEx.ParseMarkdown(text);
+            if (markdown.Entities.Count == 1)
+            {
+                // TODO: replace with link
+            }
+
+            return markdown;
+        }
+
         public static TeachingTip ShowToast(this Window app, PremiumFeature source)
         {
             var text = source switch
@@ -344,13 +355,7 @@ namespace Telegram.Common
                 _ => Strings.UnlockPremium
             };
 
-            var markdown = ClientEx.ParseMarkdown(text);
-            if (markdown.Entities.Count == 1)
-            {
-                // TODO: replace with link
-            }
-
-            return ShowToast(app, markdown);
+            return ShowToast(app, ReplacePremiumLink(text));
         }
 
         public static TeachingTip ShowToast(this Window app, string text, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)

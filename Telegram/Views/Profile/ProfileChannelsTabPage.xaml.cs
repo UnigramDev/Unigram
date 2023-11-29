@@ -12,9 +12,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Views.Profile
 {
-    public sealed partial class ProfileGroupsTabPage : ProfileTabPage
+    public sealed partial class ProfileChannelsTabPage : ProfileTabPage
     {
-        public ProfileGroupsTabPage()
+        public ProfileChannelsTabPage()
         {
             InitializeComponent();
         }
@@ -35,8 +35,9 @@ namespace Telegram.Views.Profile
             {
                 args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = ScrollingHost.ItemContainerStyle;
-                args.ItemContainer.ContentTemplate = ScrollingHost.ItemTemplate;
             }
+
+            args.ItemContainer.ContentTemplate = ScrollingHost.ItemTemplate;
 
             args.IsContainerPrepared = true;
         }
@@ -49,8 +50,13 @@ namespace Telegram.Views.Profile
             }
             else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
             {
-                content?.UpdateChat(ViewModel.ClientService, args, OnContainerContentChanging);
+                content?.UpdateSimilarChannel(ViewModel.ClientService, args, OnContainerContentChanging);
             }
+        }
+
+        private FormattedText ConvertMoreSimilar(int totalCount)
+        {
+            return Extensions.ReplacePremiumLink(string.Format(Strings.MoreSimilarText, "**100**"));
         }
     }
 }

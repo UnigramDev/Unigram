@@ -5014,6 +5014,13 @@ Minimum length is 5 characters.</value>
   <data name="MoreInfo" xml:space="preserve">
     <value>Learn more</value>
   </data>
+  <data name="MoreSimilarButton" xml:space="preserve">
+    <value>Show More Channels</value>
+  </data>
+  <data name="MoreSimilarText" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium**
+to unlock up to {0} similar channels.</value>
+  </data>
   <data name="Music" xml:space="preserve">
     <value>Music</value>
   </data>
@@ -7012,6 +7019,9 @@ The channel &quot;**{1}**&quot; will become private.</value>
   </data>
   <data name="SignUp" xml:space="preserve">
     <value>Sign Up</value>
+  </data>
+  <data name="SimilarChannelsTab" xml:space="preserve">
+    <value>Similar Channels</value>
   </data>
   <data name="SlideToCancel" xml:space="preserve">
     <value>SLIDE TO CANCEL</value>
