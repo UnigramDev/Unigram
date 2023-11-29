@@ -3253,16 +3253,35 @@ namespace Telegram.Views
                 return;
             }
 
+            var scrollingHost = VisualTreeHelper.GetChild(element, 0) as UIElement;
+
             var chats = ElementCompositionPreview.GetElementVisual(element);
             var panel = ElementCompositionPreview.GetElementVisual(TopicListPresenter);
 
+            var compositor = chats.Compositor;
+
+            var inset = 68;
+            var width = ChatsList.ActualSize.X - inset;
+
+            var sourceOffset = new Vector2(inset, 0);
+            var sourceSize = new Vector2(width, ChatsList.ActualSize.Y);
+
+            var redirect = compositor.CreateRedirectVisual(scrollingHost, sourceOffset, sourceSize);
+            redirect.Offset = new Vector3(sourceOffset, 0);
+            redirect.Size = sourceSize;
+            redirect.Clip = compositor.CreateInsetClip();
+
+            ElementCompositionPreview.SetElementChildVisual(ChatsList, redirect);
             ElementCompositionPreview.SetIsTranslationEnabled(TopicListPresenter, true);
 
-            chats.Clip ??= chats.Compositor.CreateInsetClip();
+            chats.Clip = compositor.CreateInsetClip(0, 0, width, 0);
 
-            var batch = chats.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
+                redirect.Size = Vector2.Zero;
+                ElementCompositionPreview.SetElementChildVisual(ChatsList, null);
+
                 if (_topicListCollapsed)
                 {
                     chats.Clip = null;
@@ -3270,20 +3289,24 @@ namespace Telegram.Views
                 }
             };
 
-            var x = TopicListPresenter.ActualSize.X;
-
-            var offset0 = chats.Compositor.CreateVector3KeyFrameAnimation();
-            offset0.InsertKeyFrame(0, new Vector3(show ? x : 0, 0, 0));
-            offset0.InsertKeyFrame(1, new Vector3(show ? 0 : x, 0, 0));
+            var offset0 = compositor.CreateVector3KeyFrameAnimation();
+            offset0.InsertKeyFrame(0, new Vector3(show ? width : 0, 0, 0));
+            offset0.InsertKeyFrame(1, new Vector3(show ? 0 : width, 0, 0));
             //offset0.Duration = Constants.FastAnimation;
 
-            var clip0 = chats.Compositor.CreateScalarKeyFrameAnimation();
-            clip0.InsertKeyFrame(0, show ? 0 : x);
-            clip0.InsertKeyFrame(1, show ? x : 0);
+            var offset1 = compositor.CreateScalarKeyFrameAnimation();
+            offset1.InsertKeyFrame(0, show ? inset : -width + inset);
+            offset1.InsertKeyFrame(1, show ? -width + inset : inset);
+            //offset0.Duration = Constants.FastAnimation;
+
+            var clip0 = compositor.CreateScalarKeyFrameAnimation();
+            clip0.InsertKeyFrame(0, show ? 0 : width);
+            clip0.InsertKeyFrame(1, show ? width : 0);
             //clip0.Duration = Constants.FastAnimation;
 
             panel.StartAnimation("Translation", offset0);
-            chats.Clip.StartAnimation("RightInset", clip0);
+            redirect.StartAnimation("Offset.X", offset1);
+            redirect.Clip.StartAnimation("LeftInset", clip0);
 
             ChatsList.UpdateViewState(show ? MasterDetailState.Compact : MasterDetail.CurrentState);
 
