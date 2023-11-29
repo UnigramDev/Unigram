@@ -13,8 +13,6 @@ using Telegram.Controls.Cells.Premium;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 
 namespace Telegram.Views.Premium.Popups
 {
@@ -48,27 +46,6 @@ namespace Telegram.Views.Premium.Popups
         {
             ShouldPurchase = true;
             Hide();
-        }
-
-        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems?.Count > 0)
-            {
-                var container = ScrollingHost.ContainerFromItem(e.AddedItems[0]) as SelectorItem;
-
-                var content = container?.ContentTemplateRoot as PremiumFeatureCell;
-                content?.PlayAnimation();
-
-                _clientService.Send(new ViewPremiumFeature(e.AddedItems[0] as PremiumFeature));
-            }
-
-            if (e.RemovedItems?.Count > 0)
-            {
-                var container = ScrollingHost.ContainerFromItem(e.RemovedItems[0]) as SelectorItem;
-
-                var content = container?.ContentTemplateRoot as PremiumFeatureCell;
-                content?.StopAnimation();
-            }
         }
 
         private void OnDataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)

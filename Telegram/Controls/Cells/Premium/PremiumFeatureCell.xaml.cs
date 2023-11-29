@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using System;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -55,6 +56,14 @@ namespace Telegram.Controls.Cells.Premium
 
             switch (feature)
             {
+                case PremiumFeatureAccentColor:
+                    titleValue = Strings.PremiumPreviewProfileColor;
+                    subtitleValue = Strings.PremiumPreviewProfileColorDescription;
+                    break;
+                case PremiumFeatureBackgroundForBoth:
+                    titleValue = Strings.PremiumPreviewWallpaper;
+                    subtitleValue = Strings.PremiumPreviewWallpaperDescription;
+                    break;
                 case PremiumFeatureAdvancedChatManagement:
                     titleValue = Strings.PremiumPreviewAdvancedChatManagement;
                     subtitleValue = Strings.PremiumPreviewAdvancedChatManagementDescription;
@@ -91,6 +100,10 @@ namespace Telegram.Controls.Cells.Premium
                     titleValue = Strings.PremiumPreviewProfileBadge;
                     subtitleValue = Strings.PremiumPreviewProfileBadgeDescription;
                     break;
+                case PremiumFeatureRealTimeChatTranslation:
+                    titleValue = Strings.PremiumPreviewTranslations;
+                    subtitleValue = Strings.PremiumPreviewTranslationsDescription;
+                    break;
                 case PremiumFeatureUniqueReactions:
                     titleValue = Strings.PremiumPreviewReactions2;
                     subtitleValue = Strings.PremiumPreviewReactions2Description;
@@ -98,6 +111,10 @@ namespace Telegram.Controls.Cells.Premium
                 case PremiumFeatureUniqueStickers:
                     titleValue = Strings.PremiumPreviewStickers;
                     subtitleValue = Strings.PremiumPreviewStickersDescription;
+                    break;
+                case PremiumFeatureUpgradedStories:
+                    titleValue = Strings.PremiumPreviewStories;
+                    subtitleValue = Strings.PremiumPreviewStoriesDescription;
                     break;
                 case PremiumFeatureVoiceRecognition:
                     titleValue = Strings.PremiumPreviewVoiceToText;
@@ -110,7 +127,12 @@ namespace Telegram.Controls.Cells.Premium
 
             if (value != null)
             {
-                Player.Source = new RemoteFileSource(clientService, value.AnimationValue);
+                Player.Source = new RemoteFileSource(clientService, value.AnimationValue)
+                {
+                    Width = 196,
+                    Height = 292,
+                    Outline = Array.Empty<ClosedVectorPath>()
+                };
             }
             else
             {

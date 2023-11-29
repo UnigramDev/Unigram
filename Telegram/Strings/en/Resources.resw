@@ -5874,6 +5874,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="PremiumPreviewProfileBadgeDescription" xml:space="preserve">
     <value>An exclusive badge next to your name showing that you subscribe to Telegram Premium.</value>
   </data>
+  <data name="PremiumPreviewProfileColor" xml:space="preserve">
+    <value>Name and Profile Colors</value>
+  </data>
+  <data name="PremiumPreviewProfileColorDescription" xml:space="preserve">
+    <value>Choose a color and logo for your profile and replies to your messages.</value>
+  </data>
   <data name="PremiumPreviewReactions2" xml:space="preserve">
     <value>Infinite Reactions</value>
   </data>
@@ -5909,6 +5915,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="PremiumPreviewVoiceToTextDescription" xml:space="preserve">
     <value>Ability to read the transcript of any incoming voice message.</value>
+  </data>
+  <data name="PremiumPreviewWallpaper" xml:space="preserve">
+    <value>Wallpaper for Both Sides</value>
+  </data>
+  <data name="PremiumPreviewWallpaperDescription" xml:space="preserve">
+    <value>Set custom wallpapers for you and your chat partner.</value>
   </data>
   <data name="PremiumStickers" xml:space="preserve">
     <value>Premium Stickers</value>

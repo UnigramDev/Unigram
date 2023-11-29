@@ -73,6 +73,18 @@ namespace Telegram.Views.Premium.Popups
 
             switch (feature)
             {
+                case PremiumFeatureAccentColor:
+                    iconValue = Icons.PaintBrushFilled;
+                    titleValue = Strings.PremiumPreviewProfileColor;
+                    subtitleValue = Strings.PremiumPreviewProfileColorDescription;
+                    badge = true;
+                    break;
+                case PremiumFeatureBackgroundForBoth:
+                    iconValue = Icons.WallpaperFilled;
+                    titleValue = Strings.PremiumPreviewWallpaper;
+                    subtitleValue = Strings.PremiumPreviewWallpaperDescription;
+                    badge = true;
+                    break;
                 case PremiumFeatureAdvancedChatManagement:
                     iconValue = Icons.ChatFilled;
                     titleValue = Strings.PremiumPreviewAdvancedChatManagement;
@@ -141,7 +153,6 @@ namespace Telegram.Views.Premium.Popups
                     iconValue = Icons.Stories;
                     titleValue = Strings.PremiumPreviewStories;
                     subtitleValue = Strings.PremiumPreviewStoriesDescription;
-                    badge = true;
                     break;
                 case PremiumFeatureVoiceRecognition:
                     iconValue = Icons.MicOnFilled;

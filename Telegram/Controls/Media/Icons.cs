@@ -321,6 +321,8 @@ namespace Telegram.Controls.Media
         public const string TopSpeed = "\uE90D";
 
         public const string PaintBrush = "\uE90E";
+        public const string PaintBrushFilled = "\uEA51";
+        public const string WallpaperFilled = "\uEA50";
 
         public const string Seen = "\uE96B";
 
