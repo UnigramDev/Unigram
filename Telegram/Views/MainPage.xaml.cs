@@ -785,8 +785,7 @@ namespace Telegram.Views
             }
             else if (!_topicListCollapsed)
             {
-                ShowHideTopicList(false);
-                UpdateListViewsSelectedItem(0);
+                HideTopicList();
                 args.Handled = true;
             }
             else if (ViewModel.Chats.SelectionMode == ListViewSelectionMode.Multiple)
@@ -1531,7 +1530,7 @@ namespace Telegram.Views
             //    : Icons.Hamburger;
         }
 
-        private void UpdateListViewsSelectedItem(long chatId)
+        private void UpdateListViewsSelectedItem(long chatId, bool fromSelection = false)
         {
             ViewModel.Chats.SelectedItem = chatId;
 
@@ -1544,9 +1543,15 @@ namespace Telegram.Views
                         ChatsList.SelectedItem = chat;
                     }
                 }
+                else if (fromSelection)
+                {
+                    // If we come from selection we need to delay this as ItemClick comes before SelectionChanged,
+                    // hence, if we unselect here, the ListView internal code will re-select the item right away.
+                    VisualUtilities.QueueCallbackForCompositionRendering(() => ChatsList.ClearValue(Selector.SelectedItemProperty));
+                }
                 else
                 {
-                    ChatsList.SelectedItem = null;
+                    ChatsList.ClearValue(Selector.SelectedItemProperty);
                 }
             }
         }
@@ -1670,18 +1675,15 @@ namespace Telegram.Views
             {
                 ViewModel.Chats.SelectedItem = chat.Id;
 
-                if (ViewModel.ClientService.TryGetSupergroup(chat, out Supergroup supergroup) && supergroup.IsForum)
+                if (chat.ViewAsTopics)
                 {
                     if (ViewModel.Chats.SelectedItem != ViewModel.Topics.Chat?.Id)
                     {
-                        ViewModel.Topics.SetFilter(chat);
-                        ShowHideTopicList(true);
+                        ShowTopicList(chat);
                     }
                     else
                     {
-                        ViewModel.Topics.SetFilter(null);
-                        ShowHideTopicList(false);
-                        UpdateListViewsSelectedItem(0);
+                        HideTopicList(true);
                     }
                 }
                 else
@@ -1689,8 +1691,7 @@ namespace Telegram.Views
                     MasterDetail.NavigationService.NavigateToChat(chat, force: false);
                     MasterDetail.NavigationService.GoBackAt(0, false);
 
-                    ViewModel.Topics.SetFilter(null);
-                    ShowHideTopicList(false);
+                    HideTopicList();
                 }
             }
             else if (item is ForumTopic topic)
@@ -2749,7 +2750,7 @@ namespace Telegram.Views
                 scrollingHost?.ChangeView(null, 0, null);
             }
 
-            ShowHideTopicList(false);
+            HideTopicList();
         }
 
         private void ArchivedChats_ActualThemeChanged(FrameworkElement sender, object args)
@@ -2771,8 +2772,7 @@ namespace Telegram.Views
             }
             else if (!_topicListCollapsed)
             {
-                ShowHideTopicList(false);
-                UpdateListViewsSelectedItem(0);
+                HideTopicList();
             }
             else if (rpMasterTitlebar.SelectedIndex > 0)
             {
@@ -3219,6 +3219,25 @@ namespace Telegram.Views
             cell.UpdateForumTopic(_clientService, topic, ViewModel.Topics.Chat);
         }
 
+        private void ShowTopicList(Chat chat)
+        {
+            ViewModel.Topics.SetFilter(chat);
+            ShowHideTopicList(true);
+        }
+
+        private void HideTopicList(bool fromSelection = false)
+        {
+            var chatId = ViewModel.Topics.Chat?.Id;
+
+            ViewModel.Topics.SetFilter(null);
+            ShowHideTopicList(false);
+
+            if (ViewModel.Chats.SelectedItem == chatId)
+            {
+                UpdateListViewsSelectedItem(0, fromSelection);
+            }
+        }
+
         private bool _topicListCollapsed = true;
 
         private async void ShowHideTopicList(bool show)
@@ -3236,6 +3255,11 @@ namespace Telegram.Views
             if (TopicListPresenter.ActualWidth == 0)
             {
                 await TopicListPresenter.UpdateLayoutAsync();
+            }
+
+            if (show)
+            {
+                Stories.Collapse();
             }
 
             void ShowHideTopicListCompleted()
@@ -3350,6 +3374,8 @@ namespace Telegram.Views
             {
                 Search_LostFocus(null, null);
             }
+
+            HideTopicList();
         }
 
         private void ComposeButton_Click(object sender, RoutedEventArgs e)

@@ -739,7 +739,7 @@
 
                                     <Grid x:Name="TopicListPresenter"
                                           x:Load="False"
-                                          Margin="72,0,0,0"
+                                          Margin="68,-78,0,0"
                                           Grid.Row="1">
                                         <Border Background="{ThemeResource SettingsItemBackground}"
                                                 BorderBrush="{ThemeResource SettingsItemBorderBrush}"

@@ -87,7 +87,8 @@ namespace Telegram.Controls
             var clip = compositor.CreateInsetClip();
             content.Clip = clip;
 
-            var redirect = CreateRedirect();
+            var redirect = compositor.CreateRedirectVisual(CommandSpace, Vector2.Zero, CommandSpace.ActualSize);
+            redirect.Size = CommandSpace.ActualSize;
             redirect.Offset = new Vector3(point.X, 0, 0);
 
             var translate = compositor.CreateScalarKeyFrameAnimation();
@@ -118,29 +119,6 @@ namespace Telegram.Controls
 
             CommandSpace.Opacity = 0;
             ElementCompositionPreview.SetElementChildVisual(AnimationElement, redirect);
-        }
-
-        private SpriteVisual CreateRedirect()
-        {
-            var compositor = Window.Current.Compositor;
-
-            // Create a VisualSurface positioned at the same location as this control and feed that
-            // through the color effect.
-            var surfaceBrush = compositor.CreateSurfaceBrush();
-            var surface = compositor.CreateVisualSurface();
-
-            // Select the source visual and the offset/size of this control in that element's space.
-            surface.SourceVisual = ElementCompositionPreview.GetElementVisual(CommandSpace);
-            surface.SourceOffset = new Vector2(0, 0);
-            surface.SourceSize = new Vector2(CommandSpace.ActualSize.X, CommandSpace.ActualSize.Y);
-            surfaceBrush.Surface = surface;
-            surfaceBrush.Stretch = CompositionStretch.None;
-
-            var sprite = compositor.CreateSpriteVisual();
-            sprite.Size = new Vector2(CommandSpace.ActualSize.X, CommandSpace.ActualSize.Y);
-            sprite.Brush = surfaceBrush;
-
-            return sprite;
         }
 
         private void Batch_Completed(object sender, CompositionBatchCompletedEventArgs args)

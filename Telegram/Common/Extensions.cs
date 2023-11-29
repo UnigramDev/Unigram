@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -35,12 +36,14 @@ using Windows.Storage.FileProperties;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
@@ -254,6 +257,26 @@ namespace Telegram.Common
             }
 
             builder.Append(text);
+        }
+
+        public static SpriteVisual CreateRedirectVisual(this Compositor compositor, UIElement source, Vector2 sourceOffset, Vector2 sourceSize)
+        {
+            // Create a VisualSurface positioned at the same location as this control and feed that
+            // through the color effect.
+            var surfaceBrush = compositor.CreateSurfaceBrush();
+            var surface = compositor.CreateVisualSurface();
+
+            // Select the source visual and the offset/size of this control in that element's space.
+            surface.SourceVisual = ElementCompositionPreview.GetElementVisual(source);
+            surface.SourceOffset = sourceOffset;
+            surface.SourceSize = sourceSize;
+            surfaceBrush.Surface = surface;
+            surfaceBrush.Stretch = CompositionStretch.None;
+
+            var redirect = compositor.CreateSpriteVisual();
+            redirect.Brush = surfaceBrush;
+
+            return redirect;
         }
 
         public static IAsyncOperation<AppServiceResponse> SendMessageAsync(this AppServiceConnection connection, string message, object parameter = null)
