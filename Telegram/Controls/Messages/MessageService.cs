@@ -261,6 +261,7 @@ namespace Telegram.Controls.Messages
                 MessageInviteVideoChatParticipants inviteVideoChatParticipants => UpdateInviteVideoChatParticipants(message, inviteVideoChatParticipants, active),
                 MessageProximityAlertTriggered proximityAlertTriggered => UpdateProximityAlertTriggered(message, proximityAlertTriggered, active),
                 MessagePremiumGiveawayCreated premiumGiveawayCreated => UpdatePremiumGiveawayCreated(message, premiumGiveawayCreated, active),
+                MessagePremiumGiveawayCompleted premiumGiveawayCompleted => UpdatePremiumGiveawayCompleted(message, premiumGiveawayCompleted, active),
                 MessagePremiumGiftCode premiumGiftCode => UpdatePremiumGiftCode(message, premiumGiftCode, active),
                 MessagePassportDataSent passportDataSent => UpdatePassportDataSent(message, passportDataSent, active),
                 MessagePaymentSuccessful paymentSuccessful => UpdatePaymentSuccessful(message, paymentSuccessful, active),
@@ -1768,6 +1769,21 @@ namespace Telegram.Controls.Messages
             var entities = active ? new List<TextEntity>() : null;
 
             content = string.Format(Strings.BoostingGiveawayJustStarted, message.Chat.Title);
+
+            return (content, entities);
+        }
+
+        private static (string, IList<TextEntity>) UpdatePremiumGiveawayCompleted(MessageViewModel message, MessagePremiumGiveawayCompleted premiumGiveawayCompleted, bool active)
+        {
+            var content = string.Empty;
+            var entities = active ? new List<TextEntity>() : null;
+
+            content = Locale.Declension(Strings.R.BoostingGiveawayServiceWinnersSelected, premiumGiveawayCompleted.WinnerCount);
+
+            if (premiumGiveawayCompleted.UnclaimedPrizeCount > 0)
+            {
+                content = string.Format("{0} {1}", content, Locale.Declension(Strings.R.BoostingGiveawayServiceUndistributed, premiumGiveawayCompleted.UnclaimedPrizeCount));
+            }
 
             return (content, entities);
         }

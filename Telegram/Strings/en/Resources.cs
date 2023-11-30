@@ -46,6 +46,8 @@ namespace Telegram
             public const string BoostingGiveawayMsgAllSubsPlural = "BoostingGiveawayMsgAllSubsPlural";
             public const string BoostingGiveawayMsgNewSubsPlural = "BoostingGiveawayMsgNewSubsPlural";
             public const string BoostingGiveawayParticipantMultiPlural = "BoostingGiveawayParticipantMultiPlural";
+            public const string BoostingGiveawayServiceUndistributed = "BoostingGiveawayServiceUndistributed";
+            public const string BoostingGiveawayServiceWinnersSelected = "BoostingGiveawayServiceWinnersSelected";
             public const string BoostingGiveawayTakePartMultiPlural = "BoostingGiveawayTakePartMultiPlural";
             public const string BoostingGiveawayUsedLinksPlural = "BoostingGiveawayUsedLinksPlural";
             public const string BoostStories = "BoostStories";

@@ -1578,6 +1578,10 @@ namespace Telegram.ViewModels
             {
                 MessageHelper.OpenTelegramUrl(ClientService, NavigationService, new InternalLinkTypePremiumGiftCode(premiumGiftCode.Code));
             }
+            else if (message.Content is MessagePremiumGiveawayCompleted premiumGiveawayCompleted)
+            {
+                await LoadMessageSliceAsync(message.Id, premiumGiveawayCompleted.GiveawayMessageId);
+            }
         }
 
         public async Task EditPhotoAsync(StorageMedia file)

@@ -1580,6 +1580,18 @@ Subscription for {1}.</value>
   <data name="BoostingGiveawayPrizes" xml:space="preserve">
     <value>**Giveaway Prizes**</value>
   </data>
+  <data name="BoostingGiveawayServiceUndistributed_one" xml:space="preserve">
+    <value>{0} undistributed link codes were forwarded to channel administrators.</value>
+  </data>
+  <data name="BoostingGiveawayServiceUndistributed_other" xml:space="preserve">
+    <value>{0} undistributed links codes were forwarded to channel administrators.</value>
+  </data>
+  <data name="BoostingGiveawayServiceWinnersSelected_one" xml:space="preserve">
+    <value>{0} winner of the giveaway were randomly selected by Telegram and received private message with giftcode.</value>
+  </data>
+  <data name="BoostingGiveawayServiceWinnersSelected_other" xml:space="preserve">
+    <value>{0} winners of the giveaway were randomly selected by Telegram and received private messages with giftcodes.</value>
+  </data>
   <data name="BoostingGiveawayTakePart" xml:space="preserve">
     <value>To take part in this giveaway please join channel **{0}** before **{1}**.</value>
   </data>
