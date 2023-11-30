@@ -2343,6 +2343,18 @@ namespace Telegram
         public static string BoostingGiveawayCanceledByPayment => Resource.GetString("BoostingGiveawayCanceledByPayment");
         
         /// <summary>
+        /// Localized resource similar to "Deleting this message won't cancel the giveaway - the winners will still be selected on **{0}**.
+        ///
+        ///Once deleted, the Giveaway Announcement cannot be restored."
+        /// </summary>
+        public static string BoostingGiveawayDeleteMsgText => Resource.GetString("BoostingGiveawayDeleteMsgText");
+        
+        /// <summary>
+        /// Localized resource similar to "Delete announcement"
+        /// </summary>
+        public static string BoostingGiveawayDeleteMsgTitle => Resource.GetString("BoostingGiveawayDeleteMsgTitle");
+        
+        /// <summary>
         /// Localized resource similar to "Giveaway ended"
         /// </summary>
         public static string BoostingGiveawayEnd => Resource.GetString("BoostingGiveawayEnd");

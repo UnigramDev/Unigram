@@ -1459,6 +1459,14 @@ Please enable Unigram in the Startup Apps Settings.</value>
   <data name="BoostingGiveawayCanceledByPayment" xml:space="preserve">
     <value>The channel cancelled the prizes by reversing the payment for them.</value>
   </data>
+  <data name="BoostingGiveawayDeleteMsgText" xml:space="preserve">
+    <value>Deleting this message won&apos;t cancel the giveaway - the winners will still be selected on **{0}**.
+
+Once deleted, the Giveaway Announcement cannot be restored.</value>
+  </data>
+  <data name="BoostingGiveawayDeleteMsgTitle" xml:space="preserve">
+    <value>Delete announcement</value>
+  </data>
   <data name="BoostingGiveawayEnd" xml:space="preserve">
     <value>Giveaway ended</value>
   </data>

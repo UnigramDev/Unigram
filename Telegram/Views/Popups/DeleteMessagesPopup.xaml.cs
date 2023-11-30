@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
+using Telegram.Converters;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Windows.UI.Xaml;
@@ -132,9 +133,17 @@ namespace Telegram.Views.Popups
                 }
                 else
                 {
-                    TextBlockHelper.SetMarkdown(Message, messages.Count == 1
-                        ? Strings.AreYouSureDeleteSingleMessage
-                        : Strings.AreYouSureDeleteFewMessages);
+                    if (messages.Count == 1 && messages[0].Content is MessagePremiumGiveaway giveaway)
+                    {
+                        Title = Strings.BoostingGiveawayDeleteMsgTitle;
+                        TextBlockHelper.SetMarkdown(Message, string.Format(Strings.BoostingGiveawayDeleteMsgText, Formatter.DateAt(giveaway.Parameters.WinnersSelectionDate)));
+                    }
+                    else
+                    {
+                        TextBlockHelper.SetMarkdown(Message, messages.Count == 1
+                            ? Strings.AreYouSureDeleteSingleMessage
+                            : Strings.AreYouSureDeleteFewMessages);
+                    }
                 }
             }
         }
