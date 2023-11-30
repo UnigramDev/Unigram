@@ -1,0 +1,9 @@
+namespace Telegram.Native
+{
+    [default_interface]
+    runtimeclass LokiRng 
+    {
+        LokiRng(UInt32 seed0, UInt32 seed1, UInt32 seed2);
+        Single Next();
+    }
+}

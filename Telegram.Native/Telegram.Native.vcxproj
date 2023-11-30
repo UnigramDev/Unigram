@@ -357,6 +357,10 @@
     <ClInclude Include="libyuv\include\libyuv\scale_uv.h" />
     <ClInclude Include="libyuv\include\libyuv\version.h" />
     <ClInclude Include="libyuv\include\libyuv\video_common.h" />
+    <ClInclude Include="LokiRng.h">
+      <DependentUpon>LokiRng.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="NativeUtils.h">
       <DependentUpon>NativeUtils.idl</DependentUpon>
     </ClInclude>
@@ -914,6 +918,10 @@
     </ClCompile>
     <ClCompile Include="Highlight\SyntaxToken.cpp" />
     <ClCompile Include="Highlight\TextToken.cpp" />
+    <ClCompile Include="LokiRng.cpp">
+      <DependentUpon>LokiRng.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="VideoAnimationStreamSource.cpp">
       <DependentUpon>VideoAnimationStreamSource.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1158,6 +1166,9 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="LanguageIdentification.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="LokiRng.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="NativeUtils.idl" />
