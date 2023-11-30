@@ -10,7 +10,8 @@
                        mc:Ignorable="d"
                        Background="Black"
                        VerticalContentAlignment="Stretch"
-                       Padding="0,24,0,0">
+                       Padding="0,24,0,0"
+                       Closing="OnClosing">
 
     <ContentDialog.Resources>
         <ResourceDictionary>
@@ -606,6 +607,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="0" />
             </Grid.RowDefinitions>
 
@@ -613,7 +615,8 @@
                 <StackPanel Padding="0,2"
                             VerticalAlignment="Bottom">
                     <messages:MessageService Margin="0,8,0,4">
-                        <TextBlock Text="{CustomResource MessageScheduleToday}"
+                        <TextBlock x:Name="Service1"
+                                   Text="{CustomResource MessageScheduleToday}"
                                    Foreground="White"
                                    TextAlignment="Center"
                                    Style="{StaticResource CaptionTextBlockStyle}" />
@@ -712,10 +715,11 @@
 
             <Grid x:Name="ColorPanel"
                   Background="{ThemeResource PopupAcrylicBackground}"
-                  Margin="0,0,0,-92"
-                  Padding="0,0,0,92"
-                  Height="312"
-                  Grid.Row="5">
+                  Margin="0,0,0,-88"
+                  Padding="0,0,0,88"
+                  CornerRadius="0,0,8,8"
+                  Height="308"
+                  Grid.Row="6">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="48" />
                     <RowDefinition />
@@ -817,10 +821,11 @@
 
             <Grid x:Name="PatternPanel"
                   Background="{ThemeResource PopupAcrylicBackground}"
-                  Margin="0,0,0,-92"
-                  Padding="0,0,0,92"
-                  Height="312"
-                  Grid.Row="5">
+                  Margin="0,0,0,-88"
+                  Padding="0,0,0,88"
+                  CornerRadius="0,0,8,8"
+                  Height="308"
+                  Grid.Row="6">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="48" />
                     <RowDefinition Height="Auto" />
@@ -869,8 +874,8 @@
                          Visibility="Collapsed"
                          Grid.Row="3" />
 
-            <messages:MessageService Content="{x:Bind ViewModel.PrimaryButtonText}"
-                                     Click="Done_Click"
+            <messages:MessageService x:Name="PrimaryButton"
+                                     Click="Primary_Click"
                                      Foreground="#FFFFFF"
                                      Padding="{ThemeResource ButtonPadding}"
                                      BorderBrush="{ThemeResource ButtonBorderBrush}"
@@ -878,9 +883,23 @@
                                      CornerRadius="{ThemeResource ControlCornerRadius}"
                                      HorizontalAlignment="Stretch"
                                      HorizontalContentAlignment="Center"
-                                     Height="36"
-                                     Margin="24,8,24,24"
+                                     Height="32"
+                                     Margin="24,8,24,0"
                                      Grid.Row="4" />
+
+            <messages:MessageService x:Name="SecondaryButton"
+                                     Click="Secondary_Click"
+                                     Foreground="#FFFFFF"
+                                     FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
+                                     Padding="{ThemeResource ButtonPadding}"
+                                     BorderBrush="{ThemeResource ButtonBorderBrush}"
+                                     BorderThickness="{ThemeResource ButtonBorderThemeThickness}"
+                                     CornerRadius="{ThemeResource ControlCornerRadius}"
+                                     HorizontalAlignment="Stretch"
+                                     HorizontalContentAlignment="Center"
+                                     Height="32"
+                                     Margin="24,8,24,24"
+                                     Grid.Row="5" />
 
         </Grid>
 
@@ -891,7 +910,7 @@
                                  HorizontalAlignment="Right"
                                  HorizontalContentAlignment="Center"
                                  VerticalAlignment="Top"
-                                 Margin="24,-8,24,0"
+                                 Margin="24,-12,16,0"
                                  Grid.Row="1" />
     </Grid>
 </controls:ContentPopup>

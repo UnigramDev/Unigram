@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Chats;
@@ -22,6 +23,15 @@ namespace Telegram.Views.Popups
     {
         public BackgroundViewModel ViewModel => DataContext as BackgroundViewModel;
 
+        private readonly TaskCompletionSource<object> _task;
+        private bool _ignoreClosing;
+
+        public BackgroundPopup(TaskCompletionSource<object> task)
+            : this()
+        {
+            _task = task;
+        }
+
         public BackgroundPopup()
         {
             InitializeComponent();
@@ -34,7 +44,7 @@ namespace Telegram.Views.Popups
 
         private void Color_Click(object sender, RoutedEventArgs e)
         {
-            Grid.SetRow(ColorPanel, ColorRadio.IsChecked == true ? 2 : 5);
+            Grid.SetRow(ColorPanel, ColorRadio.IsChecked == true ? 2 : 6);
 
             if (ColorRadio.IsChecked == true)
             {
@@ -46,7 +56,7 @@ namespace Telegram.Views.Popups
 
         private void Pattern_Click(object sender, RoutedEventArgs e)
         {
-            Grid.SetRow(PatternPanel, PatternRadio.IsChecked == true ? 2 : 5);
+            Grid.SetRow(PatternPanel, PatternRadio.IsChecked == true ? 2 : 6);
 
             if (PatternRadio.IsChecked == true)
             {
@@ -63,13 +73,67 @@ namespace Telegram.Views.Popups
                 return;
             }
 
+            var chat = ViewModel.ClientService.GetChat(ViewModel.ChatId);
+            var user = ViewModel.ClientService.GetUser(chat);
+
+            var line1 = chat != null
+                ? Strings.BackgroundColorSinglePreviewLine3
+                : null;
+
+            Service1.Text = user != null
+                ? string.Format(Strings.ChatBackgroundHint, user.FirstName)
+                : Strings.MessageScheduleToday;
+
+            if (user != null && ViewModel.IsPremiumAvailable)
+            {
+                PrimaryButton.Margin = new Thickness(24, 8, 24, 0);
+                PrimaryButton.Content = Strings.ApplyWallpaperForMe;
+
+                var secondary = string.Format(Strings.ApplyWallpaperForMeAndPeer, user.FirstName);
+
+                if ( ViewModel.IsPremium is false)
+                {
+                    secondary += Icons.Spacing + Icons.LockClosedFilled14;
+                }
+
+                SecondaryButton.Visibility = Visibility.Visible;
+                SecondaryButton.Content = secondary;
+
+                ColorPanel.Margin =
+                    PatternPanel.Margin = new Thickness(0, 0, 0, -105);
+
+                ColorPanel.Padding =
+                    PatternPanel.Padding = new Thickness(0, 0, 0, 105);
+
+                ColorPanel.Height =
+                    PatternPanel.Height = 312;
+            }
+            else
+            {
+                PrimaryButton.Margin = new Thickness(24, 8, 24, 24);
+                PrimaryButton.Content = user != null
+                    ? Strings.ApplyBackgroundForThisChat
+                    : Strings.ApplyBackgroundForAllChats;
+
+                SecondaryButton.Visibility = Visibility.Collapsed;
+
+                ColorPanel.Margin =
+                    PatternPanel.Margin = new Thickness(0, 0, 0, -65);
+
+                ColorPanel.Padding =
+                    PatternPanel.Padding = new Thickness(0, 0, 0, 65);
+
+                ColorPanel.Height =
+                    PatternPanel.Height = 272;
+            }
+
             //Header.CommandVisibility = wallpaper.Id != Constants.WallpaperLocalId ? Visibility.Visible : Visibility.Collapsed;
 
             if (wallpaper.Type is BackgroundTypeWallpaper)
             {
                 Blur.Visibility = Visibility.Visible;
 
-                Message1.Mockup(Strings.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
+                Message1.Mockup(line1 ?? Strings.BackgroundPreviewLine1, false, DateTime.Now.AddSeconds(-25));
                 Message2.Mockup(Strings.BackgroundPreviewLine2, true, DateTime.Now);
             }
             else
@@ -82,7 +146,7 @@ namespace Telegram.Views.Popups
                     Color.Visibility = Visibility.Visible;
                 }
 
-                Message1.Mockup(Strings.BackgroundColorSinglePreviewLine1, false, DateTime.Now.AddSeconds(-25));
+                Message1.Mockup(line1 ?? Strings.BackgroundColorSinglePreviewLine1, false, DateTime.Now.AddSeconds(-25));
                 Message2.Mockup(Strings.BackgroundColorSinglePreviewLine2, true, DateTime.Now);
             }
         }
@@ -276,10 +340,47 @@ namespace Telegram.Views.Popups
             Hide(ContentDialogResult.Secondary);
         }
 
-        private void Done_Click(object sender, RoutedEventArgs e)
+        private void Primary_Click(object sender, RoutedEventArgs e)
         {
+            _task?.TrySetResult(true);
+
             Hide(ContentDialogResult.Primary);
-            ViewModel.Done();
+            ViewModel.Done(true);
+        }
+
+        private async void Secondary_Click(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.IsPremium is false && ViewModel.IsPremiumAvailable)
+            {
+                await ShowPromoAsync();
+                return;
+            }
+
+            _task?.TrySetResult(true);
+
+            Hide(ContentDialogResult.Primary);
+            ViewModel.Done(false);
+        }
+
+        private async Task ShowPromoAsync()
+        {
+            _ignoreClosing = true;
+            Hide();
+
+            _ignoreClosing = false;
+
+            await ViewModel.NavigationService.ShowPromoAsync(new PremiumSourceFeature(new PremiumFeatureBackgroundForBoth()));
+            await this.ShowQueuedAsync();
+        }
+
+        private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
+        {
+            if (_ignoreClosing)
+            {
+                return;
+            }
+
+            _task?.TrySetResult(false);
         }
     }
 }

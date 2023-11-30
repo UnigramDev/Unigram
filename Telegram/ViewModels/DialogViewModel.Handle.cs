@@ -255,7 +255,7 @@ namespace Telegram.ViewModels
         {
             if (update.ChatId == _chat?.Id)
             {
-                BeginOnUIThread(() => Delegate?.UpdateChatTheme(_chat));
+                BeginOnUIThread(() => Delegate?.UpdateChatBackground(_chat));
             }
         }
 

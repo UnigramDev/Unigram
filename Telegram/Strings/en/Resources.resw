@@ -561,8 +561,14 @@ to: {1}</value>
   <data name="ActionSetWallpaperForThisChat" xml:space="preserve">
     <value>{0} set a new wallpaper for this chat.</value>
   </data>
+  <data name="ActionSetWallpaperForThisChatBoth" xml:space="preserve">
+    <value>{0} set a new wallpaper for this chat.</value>
+  </data>
   <data name="ActionSetWallpaperForThisChatSelf" xml:space="preserve">
     <value>You set a new wallpaper for this chat.</value>
+  </data>
+  <data name="ActionSetWallpaperForThisChatSelfBoth" xml:space="preserve">
+    <value>You set a new wallpaper for {0} and you.</value>
   </data>
   <data name="ActionSkip" xml:space="preserve">
     <value>Skip</value>
@@ -848,6 +854,12 @@ to: {1}</value>
   </data>
   <data name="ApplyTheme" xml:space="preserve">
     <value>Apply</value>
+  </data>
+  <data name="ApplyWallpaperForMe" xml:space="preserve">
+    <value>Apply for Me</value>
+  </data>
+  <data name="ApplyWallpaperForMeAndPeer" xml:space="preserve">
+    <value>Apply for Me and {0}</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Telegram</value>
@@ -1326,6 +1338,9 @@ Please enable Unigram in the Startup Apps Settings.</value>
   </data>
   <data name="BackgroundColorSinglePreviewLine2" xml:space="preserve">
     <value>Looks good</value>
+  </data>
+  <data name="BackgroundColorSinglePreviewLine3" xml:space="preserve">
+    <value>Apply the wallpaper in this chat</value>
   </data>
   <data name="BackgroundIntensity" xml:space="preserve">
     <value>Intensity</value>
@@ -2285,6 +2300,9 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="ChatBackground" xml:space="preserve">
     <value>Chat Wallpaper</value>
+  </data>
+  <data name="ChatBackgroundHint" xml:space="preserve">
+    <value>{0} will be able to apply this wallpaper</value>
   </data>
   <data name="ChatCamera" xml:space="preserve">
     <value>Camera</value>
@@ -6315,6 +6333,15 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="RemoveQuote" xml:space="preserve">
     <value>Remove Quote</value>
+  </data>
+  <data name="RemoveWallpaperAction" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RemoveWallpaperMessage" xml:space="preserve">
+    <value>Are you sure you want to reset wallpaper back?</value>
+  </data>
+  <data name="RemoveWallpaperTitle" xml:space="preserve">
+    <value>Remove wallpaper</value>
   </data>
   <data name="Rename" xml:space="preserve">
     <value>Rename</value>

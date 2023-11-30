@@ -66,17 +66,20 @@
                 MinWidth="180"
                 Grid.Row="2" />
 
-        <HyperlinkButton x:Name="WallpaperButton"
-                         Click="Wallpaper_Click"
-                         HorizontalAlignment="Center"
-                         Grid.Row="2" />
+        <Button x:Name="WallpaperButton"
+                Click="Wallpaper_Click"
+                Style="{StaticResource AccentTextButtonStyle}"
+                HorizontalAlignment="Center"
+                Height="32"
+                Grid.Row="2" />
 
-        <HyperlinkButton x:Name="RemoveButton"
-                         Click="Remove_Click"
-                         Content="{CustomResource RestToDefaultBackground}"
-                         Foreground="{ThemeResource DangerButtonBackground}"
-                         HorizontalAlignment="Center"
-                         Margin="0,0,0,8"
-                         Grid.Row="3" />
+        <Button x:Name="RemoveButton"
+                Click="Remove_Click"
+                Content="{CustomResource RestToDefaultBackground}"
+                Style="{StaticResource DangerTextButtonStyle}"
+                HorizontalAlignment="Center"
+                Height="32"
+                Margin="0,0,0,8"
+                Grid.Row="3" />
     </Grid>
 </UserControl>

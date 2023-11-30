@@ -3591,6 +3591,22 @@ namespace Telegram.Views
             UpdateChatTheme(ViewModel.ClientService.GetChatTheme(chat.ThemeName));
         }
 
+        public void UpdateChatBackground(Chat chat)
+        {
+            UpdateChatTheme(chat);
+
+            foreach (var item in _messageIdToSelector)
+            {
+                if (_viewModel.Items.TryGetValue(item.Key, out MessageViewModel message) && message.Content is MessageChatSetBackground)
+                {
+                    if (item.Value.ContentTemplateRoot is MessageService service)
+                    {
+                        service.UpdateMessage(message);
+                    }
+                }
+            }
+        }
+
         private async void UpdateChatTheme(ChatTheme theme)
         {
             if (Theme.Current.Update(ActualTheme, theme, _viewModel.Chat.Background))

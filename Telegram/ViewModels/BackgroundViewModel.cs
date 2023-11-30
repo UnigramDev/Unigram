@@ -217,9 +217,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public string PrimaryButtonText => _chatId.HasValue
-            ? Strings.ApplyBackgroundForThisChat
-            : Strings.ApplyBackgroundForAllChats;
+        public long ChatId => _chatId ?? 0;
 
         public MvxObservableCollection<PatternInfo> Patterns { get; private set; }
 
@@ -475,7 +473,7 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void Done()
+        public async void Done(bool onlySelf)
         {
             var background = await GetBackgroundAsync();
             if (background != null)
@@ -484,11 +482,11 @@ namespace Telegram.ViewModels
                 {
                     if (_messageId is long messageId && background.Type.GetType() == _background?.Type.GetType())
                     {
-                        ClientService.Send(new SetChatBackground(chatId, new InputBackgroundPrevious(messageId), background.Type, 30, true));
+                        ClientService.Send(new SetChatBackground(chatId, new InputBackgroundPrevious(messageId), background.Type, 30, onlySelf));
                     }
                     else
                     {
-                        ClientService.Send(new SetChatBackground(chatId, background.Background, background.Type, 30, true));
+                        ClientService.Send(new SetChatBackground(chatId, background.Background, background.Type, 30, onlySelf));
                     }
                 }
                 else

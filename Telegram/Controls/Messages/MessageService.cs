@@ -198,16 +198,33 @@ namespace Telegram.Controls.Messages
                 var photo = FindName("Photo") as ChatBackgroundPresenter;
                 var view = FindName("View") as Border;
 
-                photo?.UpdateSource(message.ClientService, chatSetBackground.Background.Background, true);
-
-                if (view != null)
+                if (photo == null)
                 {
-                    view.Visibility = message.IsOutgoing
-                        ? Visibility.Collapsed
-                        : Visibility.Visible;
+                    return;
+                }
+
+                photo.UpdateSource(message.ClientService, chatSetBackground.Background.Background, true);
+                view.Visibility = message.IsOutgoing
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+
+                if (message.IsOutgoing || view.Child is not TextBlock label)
+                {
+                    return;
+                }
+
+                var userFull = message.ClientService.GetUserFull(message.Chat);
+                var sameBackground = chatSetBackground.Background.Background.Id == message.Chat.Background?.Background.Id;
+
+                if (sameBackground && (userFull == null || userFull.SetChatBackground))
+                {
+                    label.Text = Strings.RemoveWallpaperAction;
+                }
+                else
+                {
+                    label.Text = Strings.ViewWallpaperAction;
                 }
             }
-
         }
 
         public static string GetText(MessageViewModel message)
@@ -1340,11 +1357,20 @@ namespace Telegram.Controls.Messages
             }
             else if (message.IsOutgoing)
             {
-                content = Strings.ActionSetWallpaperForThisChatSelf;
+                if (chatSetBackground.OnlyForSelf)
+                {
+                    content = Strings.ActionSetWallpaperForThisChatSelf;
+                }
+                else if (message.ClientService.TryGetUser(message.Chat, out User user))
+                {
+                    content = string.Format(Strings.ActionSetWallpaperForThisChatSelfBoth, user.FirstName);
+                }
             }
             else if (message.ClientService.TryGetUser(message.SenderId, out User user))
             {
-                content = string.Format(Strings.ActionSetWallpaperForThisChat, user.FirstName);
+                content = chatSetBackground.OnlyForSelf
+                    ? string.Format(Strings.ActionSetWallpaperForThisChat, user.FirstName)
+                    : string.Format(Strings.ActionSetWallpaperForThisChatBoth, user.FirstName);
             }
 
             return (content, entities);

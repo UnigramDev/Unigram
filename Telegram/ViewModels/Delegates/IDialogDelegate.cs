@@ -20,6 +20,7 @@ namespace Telegram.ViewModels.Delegates
         void UpdateChatActions(Chat chat, IDictionary<MessageSender, ChatAction> actions);
 
         void UpdateChatTheme(Chat chat);
+        void UpdateChatBackground(Chat chat);
         void UpdateChatPermissions(Chat chat);
         void UpdateChatActionBar(Chat chat);
         void UpdateChatHasScheduledMessages(Chat chat);

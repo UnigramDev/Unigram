@@ -1557,11 +1557,20 @@ namespace Telegram.ViewModels
                 }
                 else
                 {
-                    var confirm = await ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(chatSetBackground.Background.Background, message.ChatId, message.Id));
-                    if (confirm == ContentDialogResult.Primary)
+                    var userFull = message.ClientService.GetUserFull(message.Chat);
+                    var sameBackground = chatSetBackground.Background.Background.Id == message.Chat.Background?.Background.Id;
+
+                    if (sameBackground && (userFull == null || userFull.SetChatBackground))
                     {
-                        // TODO:
-                        //ClientService.Send(new SetChatBackground(Chat.Id, ))
+                        var confirm = await ShowPopupAsync(Strings.RemoveWallpaperMessage, Strings.RemoveWallpaperTitle, Strings.RemoveWallpaperAction, Strings.Cancel, true);
+                        if (confirm == ContentDialogResult.Primary)
+                        {
+                            ClientService.Send(new RevertChatBackground(message.ChatId));
+                        }
+                    }
+                    else
+                    {
+                        await ShowPopupAsync(typeof(BackgroundPopup), new BackgroundParameters(chatSetBackground.Background.Background, message.ChatId, message.Id));
                     }
                 }
             }
