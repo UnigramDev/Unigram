@@ -57,7 +57,7 @@ namespace Telegram.Controls.Stories
         {
             if (ViewModel.Items.Count > 0)
             {
-                if (ViewModel.Items[0].IsMyStory)
+                if (ViewModel.Items[0].IsMyStory && ViewModel.Items.Count > 1)
                 {
                     _first = 1;
                 }
