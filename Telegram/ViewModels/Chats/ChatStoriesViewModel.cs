@@ -159,7 +159,7 @@ namespace Telegram.ViewModels.Chats
             viewModel.NavigationService = NavigationService;
 
             var window = new StoriesWindow();
-            window.Update(viewModel, activeStories, StoryOrigin.Card, origin, closing);
+            window.Update(viewModel, activeStories, StoryOpenOrigin.Card, origin, closing);
             _ = window.ShowAsync();
         }
 

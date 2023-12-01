@@ -991,7 +991,7 @@ namespace Telegram.Controls.Stories
             }
         }
 
-        internal void TryStart(StoryOrigin ciccio, Windows.Foundation.Rect origin, bool show = true)
+        internal void TryStart(StoryOpenOrigin ciccio, Windows.Foundation.Rect origin, bool show = true)
         {
             var transform = TransformToVisual(Window.Current.Content);
             var point = transform.TransformPoint(new Windows.Foundation.Point()).ToVector2();
@@ -1013,7 +1013,7 @@ namespace Telegram.Controls.Stories
             ElementCompositionPreview.SetIsTranslationEnabled(Caption.Parent as UIElement, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Content, true);
 
-            if (ciccio == StoryOrigin.ProfilePhoto)
+            if (ciccio == StoryOpenOrigin.ProfilePhoto)
             {
                 visual.Properties.InsertVector3("Translation", new Vector3(relativeX, relativeY, 0));
                 //layout.CenterPoint = new Vector3(8 + 16, 18 + 16, 0);
@@ -1086,7 +1086,7 @@ namespace Telegram.Controls.Stories
                 var rect = compositor.CreateRoundedRectangleGeometry();
                 rect.Size = new Vector2(resize.X, resize.Y);
                 rect.Offset = (ActualSize - rect.Size) / 2;
-                rect.CornerRadius = ciccio == StoryOrigin.Mention ? resize / 2 : new Vector2(4, 4);
+                rect.CornerRadius = ciccio == StoryOpenOrigin.Mention ? resize / 2 : new Vector2(4, 4);
 
                 visual.Clip = compositor.CreateGeometricClip(rect);
 
@@ -1101,7 +1101,7 @@ namespace Telegram.Controls.Stories
                 //offset.Duration = TimeSpan.FromSeconds(5);
 
                 var cornerRadius = compositor.CreateVector2KeyFrameAnimation();
-                cornerRadius.InsertKeyFrame(show ? 0 : 1, ciccio == StoryOrigin.Mention ? resize / 2 : new Vector2(4, 4));
+                cornerRadius.InsertKeyFrame(show ? 0 : 1, ciccio == StoryOpenOrigin.Mention ? resize / 2 : new Vector2(4, 4));
                 cornerRadius.InsertKeyFrame(show ? 1 : 0, new Vector2(8, 8));
                 //cornerRadius.Duration = TimeSpan.FromSeconds(5);
 

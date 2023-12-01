@@ -25,7 +25,7 @@ using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Controls.Stories
 {
-    public enum StoryOrigin
+    public enum StoryOpenOrigin
     {
         ProfilePhoto,
         Mention,
@@ -277,10 +277,10 @@ namespace Telegram.Controls.Stories
         public StoryListViewModel ViewModel => _viewModel ??= DataContext as StoryListViewModel;
 
         private Windows.Foundation.Rect _origin;
-        private StoryOrigin _ciccio;
+        private StoryOpenOrigin _ciccio;
         private Func<ActiveStoriesViewModel, Rect> _closing;
 
-        public void Update(StoryListViewModel viewModel, ActiveStoriesViewModel activeStories, StoryOrigin origin, Rect point, Func<ActiveStoriesViewModel, Rect> closing)
+        public void Update(StoryListViewModel viewModel, ActiveStoriesViewModel activeStories, StoryOpenOrigin origin, Rect point, Func<ActiveStoriesViewModel, Rect> closing)
         {
             _ciccio = origin;
             _origin = point;

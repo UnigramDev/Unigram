@@ -606,7 +606,7 @@ namespace Telegram.Common
                     viewModel.NavigationService = navigation;
 
                     var window = new StoriesWindow();
-                    window.Update(viewModel, activeStories, StoryOrigin.Card, Rect.Empty, null);
+                    window.Update(viewModel, activeStories, StoryOpenOrigin.Card, Rect.Empty, null);
                     _ = window.ShowAsync();
                 }
                 else

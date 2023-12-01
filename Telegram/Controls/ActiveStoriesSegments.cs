@@ -73,7 +73,7 @@ namespace Telegram.Controls
                 viewModel.NavigationService = navigationService;
 
                 var window = new StoriesWindow();
-                window.Update(viewModel, activeStories, StoryOrigin.ProfilePhoto, pointz, origin);
+                window.Update(viewModel, activeStories, StoryOpenOrigin.ProfilePhoto, pointz, origin);
                 _ = window.ShowAsync();
             }
 

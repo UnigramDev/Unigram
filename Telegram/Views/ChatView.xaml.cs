@@ -3359,7 +3359,7 @@ namespace Telegram.Views
                     viewModel.NavigationService = _viewModel.NavigationService;
 
                     var window = new StoriesWindow();
-                    window.Update(viewModel, activeStories, StoryOrigin.Mention, origin, _ =>
+                    window.Update(viewModel, activeStories, StoryOpenOrigin.Mention, origin, _ =>
                     {
                         var transform = segments.TransformToVisual(Window.Current.Content);
                         var point = transform.TransformPoint(new Windows.Foundation.Point());
