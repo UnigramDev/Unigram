@@ -687,7 +687,7 @@ namespace Telegram.Controls
                     e.Handled = true;
 
                     var text = await MessageHelper.PasteTextAsync(package);
-                    InsertText(text.Text, text.Entities);
+                    SetText(text.Text, text.Entities, true);
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.Text) /*&& package.Contains("Rich Text Format")*/)
                 {
@@ -700,7 +700,7 @@ namespace Telegram.Controls
                     if (length > 0 && text.IsValidUrl())
                     {
                         Document.Selection.GetText(TextGetOptions.NoHidden, out string value);
-                        InsertText(value, new[] { new TextEntity(0, value.Length, new TextEntityTypeTextUrl(text)) });
+                        SetText(value, new[] { new TextEntity(0, value.Length, new TextEntityTypeTextUrl(text)) }, true);
                     }
                     else
                     {
@@ -1139,6 +1139,11 @@ namespace Telegram.Controls
 
         public void SetText(string text, IList<TextEntity> entities)
         {
+            SetText(text, entities, false);
+        }
+
+        public void SetText(string text, IList<TextEntity> entities, bool updateSelection = false)
+        {
             try
             {
                 _updateLocked = true;
@@ -1146,7 +1151,7 @@ namespace Telegram.Controls
                 Document.BeginUndoGroup();
                 Document.BatchDisplayUpdates();
 
-                SetTextImpl(text, entities);
+                SetTextImpl(text, entities, updateSelection);
             }
             catch
             {
@@ -1161,20 +1166,31 @@ namespace Telegram.Controls
             }
         }
 
-        private void SetTextImpl(string text, IList<TextEntity> entities)
+        private void SetTextImpl(string text, IList<TextEntity> entities, bool updateSelection)
         {
-            OnSettingText();
-            Document.Clear();
+            if (updateSelection is false)
+            {
+                OnSettingText();
+                Document.Clear();
+            }
 
             if (!string.IsNullOrEmpty(text))
             {
-                Document.SetText(TextSetOptions.None, text);
+                if (updateSelection)
+                {
+                    Document.Selection.SetText(TextSetOptions.None, text);
+                }
+                else
+                {
+                    Document.SetText(TextSetOptions.None, text);
+                }
 
                 if (entities != null && entities.Count > 0)
                 {
                     // We apply entities in two passes, before we apply appearance only
                     // And then we apply the entities that affect text length.
 
+                    var index = updateSelection ? Document.Selection.StartPosition : 0;
                     var affecting = default(List<TextEntity>);
 
                     foreach (var entity in entities.Reverse())
@@ -1187,7 +1203,7 @@ namespace Telegram.Controls
                             continue;
                         }
 
-                        var range = Document.GetRange(entity.Offset, entity.Offset + entity.Length);
+                        var range = Document.GetRange(index + entity.Offset, index + entity.Offset + entity.Length);
 
                         if (entity.Type is TextEntityTypeBlockQuote)
                         {
@@ -1219,123 +1235,40 @@ namespace Telegram.Controls
                         }
                     }
 
-                    foreach (var entity in affecting)
+                    if (affecting != null)
                     {
-                        var range = Document.GetRange(entity.Offset, entity.Offset + entity.Length);
+                        foreach (var entity in affecting)
+                        {
+                            var range = Document.GetRange(index + entity.Offset, index + entity.Offset + entity.Length);
 
-                        if (entity.Type is TextEntityTypeTextUrl textUrl && IsSafe(text, entity))
-                        {
-                            range.Link = $"\"{textUrl.Url}\"";
-                        }
-                        else if (entity.Type is TextEntityTypeMentionName mentionName && IsSafe(text, entity))
-                        {
-                            range.Link = $"\"tg-user://{mentionName.UserId}\"";
-                        }
-                        else if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
-                        {
-                            var emoji = text.Substring(entity.Offset, entity.Length);
+                            if (entity.Type is TextEntityTypeTextUrl textUrl && IsSafe(text, entity))
+                            {
+                                range.Link = $"\"{textUrl.Url}\"";
+                            }
+                            else if (entity.Type is TextEntityTypeMentionName mentionName && IsSafe(text, entity))
+                            {
+                                range.Link = $"\"tg-user://{mentionName.UserId}\"";
+                            }
+                            else if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
+                            {
+                                var emoji = text.Substring(entity.Offset, entity.Length);
 
-                            range.SetText(TextSetOptions.None, string.Empty);
-                            InsertEmoji(range, emoji, customEmoji.CustomEmojiId);
+                                range.SetText(TextSetOptions.None, string.Empty);
+                                InsertEmoji(range, emoji, customEmoji.CustomEmojiId);
+                            }
                         }
                     }
                 }
 
-                Document.Selection.SetRange(TextConstants.MaxUnitCount, TextConstants.MaxUnitCount);
-            }
-        }
-
-        public void InsertText(string text, IList<TextEntity> entities)
-        {
-            _updateLocked = true;
-
-            Document.BeginUndoGroup();
-            Document.BatchDisplayUpdates();
-
-            if (!string.IsNullOrEmpty(text))
-            {
-                var index = Math.Min(Document.Selection.StartPosition, Document.Selection.EndPosition);
-
-                Document.Selection.SetText(TextSetOptions.None, text);
-
-                if (entities != null && entities.Count > 0)
+                if (updateSelection)
                 {
-                    // We apply entities in two passes, before we apply appearance only
-                    // And then we apply the entities that affect text length.
-
-                    var affecting = default(List<TextEntity>);
-                    
-                    foreach (var entity in entities.Reverse())
-                    {
-                        if (entity.Type is TextEntityTypeMentionName or TextEntityTypeTextUrl or TextEntityTypeCustomEmoji)
-                        {
-                            affecting ??= new();
-                            affecting.Add(entity);
-
-                            continue;
-                        }
-
-                        var range = Document.GetRange(index + entity.Offset, index + entity.Offset - + entity.Length);
-
-                        if (entity.Type is TextEntityTypeBlockQuote)
-                        {
-                            InsertBlockquote(range, false);
-                        }
-                        else if (entity.Type is TextEntityTypeBold)
-                        {
-                            range.CharacterFormat.Bold = FormatEffect.On;
-                        }
-                        else if (entity.Type is TextEntityTypeItalic)
-                        {
-                            range.CharacterFormat.Italic = FormatEffect.On;
-                        }
-                        else if (entity.Type is TextEntityTypeUnderline)
-                        {
-                            range.CharacterFormat.Underline = UnderlineType.Single;
-                        }
-                        else if (entity.Type is TextEntityTypeStrikethrough)
-                        {
-                            range.CharacterFormat.Strikethrough = FormatEffect.On;
-                        }
-                        else if (entity.Type is TextEntityTypeSpoiler)
-                        {
-                            range.CharacterFormat.BackgroundColor = Colors.Gray;
-                        }
-                        else if (entity.Type is TextEntityTypeCode or TextEntityTypePre or TextEntityTypePreCode)
-                        {
-                            range.CharacterFormat.Name = "Consolas";
-                        }
-                    }
-
-                    foreach (var entity in affecting)
-                    {
-                        var range = Document.GetRange(entity.Offset, entity.Offset + entity.Length);
-
-                        if (entity.Type is TextEntityTypeTextUrl textUrl && IsSafe(text, entity))
-                        {
-                            range.Link = $"\"{textUrl.Url}\"";
-                        }
-                        else if (entity.Type is TextEntityTypeMentionName mentionName && IsSafe(text, entity))
-                        {
-                            range.Link = $"\"tg-user://{mentionName.UserId}\"";
-                        }
-                        else if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
-                        {
-                            var emoji = text.Substring(entity.Offset, entity.Length);
-
-                            range.SetText(TextSetOptions.None, string.Empty);
-                            InsertEmoji(range, emoji, customEmoji.CustomEmojiId);
-                        }
-                    }
+                    Document.Selection.Collapse(false);
                 }
-
-                Document.Selection.SetRange(Document.Selection.EndPosition, Document.Selection.EndPosition);
+                else
+                {
+                    Document.Selection.SetRange(TextConstants.MaxUnitCount, TextConstants.MaxUnitCount);
+                }
             }
-
-            Document.ApplyDisplayUpdates();
-            Document.EndUndoGroup();
-
-            _updateLocked = false;
         }
 
         private static readonly char[] _unsafeChars = new[]
