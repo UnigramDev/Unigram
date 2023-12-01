@@ -704,7 +704,7 @@ namespace Telegram.Controls
                     }
                     else
                     {
-                        Document.Selection.SetText(TextSetOptions.None, text);
+                        Document.Selection.SetText(TextSetOptions.Unhide, text);
                         Document.Selection.SetRange(start + text.Length, start + text.Length);
                     }
                 }
@@ -1088,8 +1088,8 @@ namespace Telegram.Controls
 
         private bool GetIsEmpty()
         {
-            var end = Document.GetRange(int.MaxValue, int.MaxValue);
-            var empty = end.EndPosition == 0;
+            var range = Document.GetRange(0, 2);
+            var empty = range.StoryLength <= 1;
 
             if (empty && !_wasEmpty)
             {
@@ -1172,13 +1172,22 @@ namespace Telegram.Controls
 
                 if (entities != null && entities.Count > 0)
                 {
-                    var hidden = 0;
+                    // We apply entities in two passes, before we apply appearance only
+                    // And then we apply the entities that affect text length.
 
-                    // We want to enumerate entities from last to first to not
-                    // fuck up ranges due to hidden texts when formatting a link
+                    var affecting = default(List<TextEntity>);
+
                     foreach (var entity in entities.Reverse())
                     {
-                        var range = Document.GetRange(entity.Offset - hidden, entity.Offset - hidden + entity.Length);
+                        if (entity.Type is TextEntityTypeMentionName or TextEntityTypeTextUrl or TextEntityTypeCustomEmoji)
+                        {
+                            affecting ??= new();
+                            affecting.Add(entity);
+
+                            continue;
+                        }
+
+                        var range = Document.GetRange(entity.Offset, entity.Offset + entity.Length);
 
                         if (entity.Type is TextEntityTypeBlockQuote)
                         {
@@ -1208,7 +1217,13 @@ namespace Telegram.Controls
                         {
                             range.CharacterFormat.Name = "Consolas";
                         }
-                        else if (entity.Type is TextEntityTypeTextUrl textUrl && IsSafe(text, entity))
+                    }
+
+                    foreach (var entity in affecting)
+                    {
+                        var range = Document.GetRange(entity.Offset, entity.Offset + entity.Length);
+
+                        if (entity.Type is TextEntityTypeTextUrl textUrl && IsSafe(text, entity))
                         {
                             range.Link = $"\"{textUrl.Url}\"";
                         }
@@ -1222,8 +1237,6 @@ namespace Telegram.Controls
 
                             range.SetText(TextSetOptions.None, string.Empty);
                             InsertEmoji(range, emoji, customEmoji.CustomEmojiId);
-
-                            hidden += emoji.Length - 1;
                         }
                     }
                 }
@@ -1247,13 +1260,22 @@ namespace Telegram.Controls
 
                 if (entities != null && entities.Count > 0)
                 {
-                    var hidden = 0;
+                    // We apply entities in two passes, before we apply appearance only
+                    // And then we apply the entities that affect text length.
 
-                    // We want to enumerate entities from last to first to not
-                    // fuck up ranges due to hidden texts when formatting a link
+                    var affecting = default(List<TextEntity>);
+                    
                     foreach (var entity in entities.Reverse())
                     {
-                        var range = Document.GetRange(index + entity.Offset - hidden, index + entity.Offset - hidden + entity.Length);
+                        if (entity.Type is TextEntityTypeMentionName or TextEntityTypeTextUrl or TextEntityTypeCustomEmoji)
+                        {
+                            affecting ??= new();
+                            affecting.Add(entity);
+
+                            continue;
+                        }
+
+                        var range = Document.GetRange(index + entity.Offset, index + entity.Offset - + entity.Length);
 
                         if (entity.Type is TextEntityTypeBlockQuote)
                         {
@@ -1283,7 +1305,13 @@ namespace Telegram.Controls
                         {
                             range.CharacterFormat.Name = "Consolas";
                         }
-                        else if (entity.Type is TextEntityTypeTextUrl textUrl && IsSafe(text, entity))
+                    }
+
+                    foreach (var entity in affecting)
+                    {
+                        var range = Document.GetRange(entity.Offset, entity.Offset + entity.Length);
+
+                        if (entity.Type is TextEntityTypeTextUrl textUrl && IsSafe(text, entity))
                         {
                             range.Link = $"\"{textUrl.Url}\"";
                         }
@@ -1297,8 +1325,6 @@ namespace Telegram.Controls
 
                             range.SetText(TextSetOptions.None, string.Empty);
                             InsertEmoji(range, emoji, customEmoji.CustomEmojiId);
-
-                            hidden += emoji.Length - 1;
                         }
                     }
                 }
