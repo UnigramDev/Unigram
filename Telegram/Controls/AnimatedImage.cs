@@ -132,7 +132,7 @@ namespace Telegram.Controls
                 if (_state != PlayingState.Playing)
                 {
                     _state = PlayingState.Playing;
-                    _presenter.Play();
+                    _presenter.Play(this);
                 }
             }
             else
@@ -192,7 +192,7 @@ namespace Telegram.Controls
 
         private void OnEffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
         {
-            var within = args.BringIntoViewDistanceX == 0 && args.BringIntoViewDistanceY == 0;
+            var within = args.BringIntoViewDistanceX < sender.ActualWidth && args.BringIntoViewDistanceY < sender.ActualHeight;
             if (within && !_withinViewport)
             {
                 _withinViewport = true;
@@ -712,9 +712,8 @@ namespace Telegram.Controls
         public void Load(AnimatedImage canvas)
         {
             _images.Add(canvas);
-            canvas.Invalidate(_foregroundPrev?.Source);
-
             _workerQueue.Run(PrepareImpl);
+            canvas.Invalidate(_foregroundPrev?.Source);
         }
 
         public void Unload(AnimatedImage canvas, bool playing)
@@ -812,9 +811,10 @@ namespace Telegram.Controls
             }
         }
 
-        public void Play()
+        public void Play(AnimatedImage canvas)
         {
             _workerQueue.Run(PlayImpl);
+            canvas.Invalidate(_foregroundPrev?.Source);
         }
 
         public void Pause()

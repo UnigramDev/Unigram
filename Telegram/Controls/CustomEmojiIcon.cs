@@ -51,7 +51,7 @@ namespace Telegram.Controls
 
         private void OnEffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
         {
-            var within = args.BringIntoViewDistanceX == 0 && args.BringIntoViewDistanceY == 0;
+            var within = args.BringIntoViewDistanceX < sender.ActualWidth && args.BringIntoViewDistanceY < sender.ActualHeight;
             if (within && !_withinViewport)
             {
                 // TODO: performance here is a little concerning.
