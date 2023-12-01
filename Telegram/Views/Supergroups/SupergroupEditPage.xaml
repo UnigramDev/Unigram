@@ -114,7 +114,7 @@
                                           Glyph="&#xE2B1;"
                                           IsChevronVisible="True">
                         <controls:BadgeButton.Badge>
-                            <controls:BadgeControl x:Name="ChannelColorBadge" />
+                            <controls:ProfileColorBadge x:Name="ProfileColor" />
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
 

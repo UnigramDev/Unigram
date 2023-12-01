@@ -62,7 +62,11 @@ namespace Telegram.Services
         IDictionary<int, NameColor> AccentColors { get; }
         IList<int> AvailableAccentColors { get; }
 
+        IDictionary<int, ProfileColor> ProfileColors { get; }
+        IList<int> AvailableProfileColors { get; }
+
         NameColor GetAccentColor(int id);
+        bool TryGetProfileColor(int id, out ProfileColor color);
 
         ReactionType DefaultReaction { get; }
 
@@ -552,6 +556,9 @@ namespace Telegram.Services
         public IDictionary<int, NameColor> AccentColors { get; private set; }
         public IList<int> AvailableAccentColors { get; private set; }
 
+        public IDictionary<int, ProfileColor> ProfileColors { get; private set; }
+        public IList<int> AvailableProfileColors { get; private set; }
+
         public NameColor GetAccentColor(int id)
         {
             if (AccentColors != null && AccentColors.TryGetValue(id, out var accentColor))
@@ -560,6 +567,17 @@ namespace Telegram.Services
             }
 
             return new NameColor(id);
+        }
+
+        public bool TryGetProfileColor(int id, out ProfileColor color)
+        {
+            if (ProfileColors != null && ProfileColors.TryGetValue(id, out color))
+            {
+                return true;
+            }
+
+            color = null;
+            return false;
         }
 
         private void UpdateVersion()
@@ -2153,6 +2171,18 @@ namespace Telegram.Services
 
                 AvailableAccentColors = updateAccentColors.AvailableAccentColorIds.ToList();
                 AccentColors = colors;
+            }
+            else if (update is UpdateProfileAccentColors updateProfileAccentColors)
+            {
+                var colors = new Dictionary<int, ProfileColor>();
+
+                foreach (var color in updateProfileAccentColors.Colors)
+                {
+                    colors[color.Id] = new ProfileColor(color);
+                }
+
+                AvailableProfileColors = updateProfileAccentColors.AvailableAccentColorIds.ToList();
+                ProfileColors = colors;
             }
 
             _aggregator.Publish(update);

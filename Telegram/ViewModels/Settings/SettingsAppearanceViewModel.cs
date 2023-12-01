@@ -318,7 +318,7 @@ namespace Telegram.ViewModels.Settings
             NavigationService.Navigate(typeof(SettingsBackgroundsPage));
         }
 
-        public async void OpenProfileColor()
+        public async void ChangeProfileColor()
         {
             await ShowPopupAsync(new ChooseNameColorPopup(ClientService, new MessageSenderUser(ClientService.Options.MyId)));
         }

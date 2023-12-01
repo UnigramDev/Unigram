@@ -225,6 +225,9 @@
     <Compile Include="Controls\Chats\ChatTranslateBar.xaml.cs">
       <DependentUpon>ChatTranslateBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ProfileColorBadge.xaml.cs">
+      <DependentUpon>ProfileColorBadge.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Services\Settings\TranslateSettings.cs" />
     <Compile Include="Td\Api\MinithumbnailId.cs" />
     <Compile Include="Controls\Cells\StoryCell.xaml.cs">
@@ -297,6 +300,7 @@
     <Compile Include="Streams\RemoteFileSource.cs" />
     <Compile Include="Td\Api\MessageAsyncStory.cs" />
     <Compile Include="Td\Api\NameColor.cs" />
+    <Compile Include="Td\Api\ProfileColor.cs" />
     <Compile Include="Td\Api\UpdateChatSwitchInlineQuery.cs" />
     <Compile Include="Td\Api\UpdateMessageTranslatedText.cs" />
     <Compile Include="Videolan\Platforms\Windows\InitializedEventArgs.cs" />
@@ -2232,6 +2236,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Stories\StoriesStrip.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\ProfileColorBadge.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

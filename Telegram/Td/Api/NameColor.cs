@@ -10,27 +10,28 @@ namespace Telegram.Td.Api
     {
         public NameColor(AccentColor accent)
         {
-            DarkThemeColors = accent.DarkThemeColors.Count > 0
-                ? new List<Color>()
-                : Array.Empty<Color>();
-
-            LightThemeColors = accent.LightThemeColors.Count > 0
-                ? new List<Color>()
-                : Array.Empty<Color>();
-
-            Populate(accent.DarkThemeColors, DarkThemeColors);
-            Populate(accent.LightThemeColors, LightThemeColors);
+            DarkThemeColors = Populate(accent.DarkThemeColors);
+            LightThemeColors = Populate(accent.LightThemeColors);
 
             BuiltInAccentColorId = accent.BuiltInAccentColorId;
             Id = accent.Id;
         }
 
-        private void Populate(IList<int> source, IList<Color> destination)
+        private IList<Color> Populate(IList<int> source)
         {
-            foreach (var item in source)
+            if (source.Count > 0)
             {
-                destination.Add(item.ToColor());
+                var destination = new List<Color>();
+
+                foreach (var item in source)
+                {
+                    destination.Add(item.ToColor());
+                }
+
+                return destination;
             }
+
+            return Array.Empty<Color>();
         }
 
         public NameColor(int builtInAccentColorId)
@@ -69,5 +70,4 @@ namespace Telegram.Td.Api
         public int Id { get; }
 
     }
-
 }

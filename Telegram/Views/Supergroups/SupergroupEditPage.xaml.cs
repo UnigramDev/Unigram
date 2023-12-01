@@ -12,7 +12,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Supergroups;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Supergroups
 {
@@ -119,13 +118,7 @@ namespace Telegram.Views.Supergroups
                 ChannelColor.Visibility = Visibility.Visible;
                 ChannelSignMessages.Visibility = Visibility.Visible;
 
-                var accent = ViewModel.ClientService.GetAccentColor(chat.AccentColorId);
-                if (accent != null)
-                {
-                    ChannelColorBadge.Background = new SolidColorBrush(accent.LightThemeColors[0]) { Opacity = 0.1 };
-                    ChannelColorBadge.Foreground = new SolidColorBrush(accent.LightThemeColors[0]);
-                    ChannelColorBadge.Text = chat.Title;
-                }
+                ProfileColor.SetChat(ViewModel.ClientService, chat);
             }
             else
             {

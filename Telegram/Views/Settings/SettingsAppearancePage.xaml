@@ -88,11 +88,11 @@
 
                     <controls:BadgeButton Content="{CustomResource YourNameColor}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Click="{x:Bind ViewModel.OpenProfileColor}"
+                                          Click="{x:Bind ViewModel.ChangeProfileColor}"
                                           Glyph="&#xE2B1;"
                                           IsChevronVisible="True">
                         <controls:BadgeButton.Badge>
-                            <controls:BadgeControl x:Name="NameColorBadge" />
+                            <controls:ProfileColorBadge x:Name="ProfileColor" />
                         </controls:BadgeButton.Badge>
                     </controls:BadgeButton>
                 </controls:HeaderedControl>

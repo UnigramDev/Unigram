@@ -102,6 +102,14 @@
                                           Content="{CustomResource Username}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
                                           Glyph="&#xE168;" />
+                    <controls:BadgeButton Content="{CustomResource YourNameColor}"
+                                          Style="{StaticResource GlyphBadgeButtonStyle}"
+                                          Click="{x:Bind ViewModel.ChangeProfileColor}"
+                                          Glyph="&#xE2B1;">
+                        <controls:BadgeButton.Badge>
+                            <controls:ProfileColorBadge x:Name="ProfileColor" />
+                        </controls:BadgeButton.Badge>
+                    </controls:BadgeButton>
                 </controls:HeaderedControl>
 
                 <controls:HeaderedControl>

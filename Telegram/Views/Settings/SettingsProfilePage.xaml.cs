@@ -51,6 +51,8 @@ namespace Telegram.Views.Settings
             {
                 Username.Badge = Strings.UsernameEmpty;
             }
+
+            ProfileColor.SetUser(ViewModel.ClientService, user);
         }
 
         public void UpdateUserFullInfo(Chat chat, User user, UserFullInfo fullInfo, bool secret, bool accessToken)
