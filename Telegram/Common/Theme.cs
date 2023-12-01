@@ -302,7 +302,8 @@ namespace Telegram.Common
                     { "AccentButtonBackground", 0 },
                     { "AccentButtonForeground", 0 },
                     { "SystemControlDisabledChromeDisabledLowBrush", 0 },
-                    { "HyperlinkForeground", 0 }
+                    { "HyperlinkForeground", 0 },
+                    { "DangerButtonBackground", 0xD13438 }
                 };
 
                 Color GetShade(AccentShade shade)
@@ -397,7 +398,13 @@ namespace Telegram.Common
                     ButtonColor = themeParameters["AccentButtonBackground"],
                     ButtonTextColor = themeParameters["AccentButtonForeground"],
                     HintColor = themeParameters["SystemControlDisabledChromeDisabledLowBrush"],
-                    LinkColor = themeParameters["HyperlinkForeground"]
+                    LinkColor = themeParameters["HyperlinkForeground"],
+                    AccentTextColor = themeParameters["AccentButtonBackground"],
+                    DestructiveTextColor = themeParameters["DangerButtonBackground"],
+                    HeaderBackgroundColor = themeParameters["ContentDialogBackground"],
+                    SectionBackgroundColor = themeParameters["ContentDialogBackground"],
+                    SectionHeaderTextColor = themeParameters["ContentDialogForeground"],
+                    SubtitleTextColor = themeParameters["SystemControlDisabledChromeDisabledLowBrush"],
                 };
             }
             catch (UnauthorizedAccessException)
