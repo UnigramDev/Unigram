@@ -223,9 +223,15 @@ postEvent: function(eventType, eventData) {
 }
 }");
 
+            View.CoreWebView2.Settings.IsStatusBarEnabled = false;
+
+#if DEBUG
+            View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
+            View.CoreWebView2.Settings.AreDevToolsEnabled = true;
+#else
             View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
             View.CoreWebView2.Settings.AreDevToolsEnabled = false;
-            View.CoreWebView2.Settings.IsStatusBarEnabled = false;
+#endif
 
             _templatedApplied.TrySetResult(true);
         }
