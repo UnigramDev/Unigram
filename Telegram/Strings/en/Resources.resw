@@ -7707,6 +7707,30 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="TotalNetworkUsage" xml:space="preserve">
     <value>Total network usage</value>
   </data>
+  <data name="TranscriptionTrialEnd_one" xml:space="preserve">
+    <value>You have used your **{0}** free transcription this week.</value>
+  </data>
+  <data name="TranscriptionTrialEnd_other" xml:space="preserve">
+    <value>You have used your **{0}** free transcriptions this week.</value>
+  </data>
+  <data name="TranscriptionTrialEndBuy" xml:space="preserve">
+    <value>Subscribe to **Telegram Premium** to unlock unlimited transcription.</value>
+  </data>
+  <data name="TranscriptionTrialEndWaitOrBuy" xml:space="preserve">
+    <value>Wait until {0} or subscribe to **Telegram Premium** now.</value>
+  </data>
+  <data name="TranscriptionTrialLeft_one" xml:space="preserve">
+    <value>You have **{0}** free voice transcription left.</value>
+  </data>
+  <data name="TranscriptionTrialLeft_other" xml:space="preserve">
+    <value>You have **{0}** free voice transcriptions left.</value>
+  </data>
+  <data name="TranscriptionTrialLeftUntil_one" xml:space="preserve">
+    <value>You have **{0}** free voice transcription left until {1}.</value>
+  </data>
+  <data name="TranscriptionTrialLeftUntil_other" xml:space="preserve">
+    <value>You have **{0}** free voice transcriptions left until {1}.</value>
+  </data>
   <data name="TranslateMessage" xml:space="preserve">
     <value>Translate</value>
   </data>

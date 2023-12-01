@@ -69,8 +69,10 @@ namespace Telegram.Controls.Messages.Content
             Button = GetTemplateChild(nameof(Button)) as FileButton;
             Progress = GetTemplateChild(nameof(Progress)) as ProgressVoice;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
+            Recognize = GetTemplateChild(nameof(Recognize)) as ToggleButton;
 
             Button.Click += Button_Click;
+            Recognize.Click += Recognize_Click;
 
             _templateApplied = true;
 
@@ -98,17 +100,13 @@ namespace Telegram.Controls.Messages.Content
 
             Progress.UpdateWaveform(voiceNote);
 
-            if (message.ClientService.IsPremium && message.SchedulingState == null)
+            if (message.ClientService.IsPremium || (message.ClientService.IsPremiumAvailable && !message.IsOutgoing))
             {
-                if (Recognize == null)
-                {
-                    Recognize = GetTemplateChild(nameof(Recognize)) as ToggleButton;
-                    Recognize.Click += Recognize_Click;
-                }
-
-                Recognize.Visibility = Visibility.Visible;
+                Recognize.Visibility = message.SchedulingState == null
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
             }
-            else if (Recognize != null)
+            else
             {
                 Recognize.Visibility = Visibility.Collapsed;
             }
@@ -121,7 +119,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void UpdateRecognitionResult(SpeechRecognitionResult result)
         {
-            if (result != null)
+            if (result != null && Recognize.IsChecked is true)
             {
                 RecognizedText ??= GetTemplateChild(nameof(RecognizedText)) as RichTextBlock;
                 RecognizedSpan ??= GetTemplateChild(nameof(RecognizedSpan)) as Run;
@@ -491,7 +489,7 @@ namespace Telegram.Controls.Messages.Content
 
         private void Recognize_Click(object sender, RoutedEventArgs e)
         {
-            if (Recognize.IsChecked == true)
+            if (Recognize.IsChecked is false)
             {
                 var voiceNote = GetContent(_message);
                 if (voiceNote == null)
@@ -501,16 +499,18 @@ namespace Telegram.Controls.Messages.Content
 
                 if (voiceNote.SpeechRecognitionResult == null)
                 {
-                    _message.ClientService.Send(new RecognizeSpeech(_message.ChatId, _message.Id));
+                    Recognize.IsChecked = _message.Delegate.RecognizeSpeech(_message);
                 }
                 else
                 {
+                    Recognize.IsChecked = true;
                     UpdateRecognitionResult(voiceNote.SpeechRecognitionResult);
                 }
             }
             else if (RecognizedText != null)
             {
-                RecognizedText.Visibility = Visibility.Collapsed;
+                Recognize.IsChecked = false;
+                UpdateRecognitionResult(null);
             }
         }
     }

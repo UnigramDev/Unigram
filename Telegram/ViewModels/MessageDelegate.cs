@@ -368,7 +368,10 @@ namespace Telegram.ViewModels
         /// </summary>
         public virtual void PlayMessage(MessageViewModel message) { }
 
-
+        /// <summary>
+        /// Only available when created through DialogViewModel
+        /// </summary>
+        public virtual bool RecognizeSpeech(MessageViewModel message) { return false; }
 
         /// <summary>
         /// Only available when created through DialogViewModel
@@ -478,6 +481,8 @@ namespace Telegram.ViewModels
         public override void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0) => _viewModel.OpenMedia(message, target, timestamp);
 
         public override void PlayMessage(MessageViewModel message) => _viewModel.PlayMessage(message);
+
+        public override bool RecognizeSpeech(MessageViewModel message) => _viewModel.RecognizeSpeech(message);
 
 
 

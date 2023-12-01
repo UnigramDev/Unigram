@@ -6,8 +6,10 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Telegram.Common;
 using Telegram.Controls.Gallery;
+using Telegram.Converters;
 using Telegram.Services.Updates;
 using Telegram.Streams;
 using Telegram.Td.Api;
@@ -360,7 +362,76 @@ namespace Telegram.ViewModels
             _playbackService.Play(message, ThreadId);
         }
 
+        public bool RecognizeSpeech(MessageViewModel message)
+        {
+            if (ClientService.IsPremium)
+            {
+                _needsUpdateSpeechRecognitionTrial = false;
+                ClientService.Send(new RecognizeSpeech(message.ChatId, message.Id));
 
+                return true;
+            }
+            else if (ClientService.SpeechRecognitionTrial.LeftCount > 0)
+            {
+                _needsUpdateSpeechRecognitionTrial = true;
+                ClientService.Send(new RecognizeSpeech(message.ChatId, message.Id));
+
+                return true;
+            }
+            else if (ClientService.SpeechRecognitionTrial.WeeklyCount > 0)
+            {
+                ShowSpeechRecognitionTrial(3);
+            }
+            else
+            {
+                ShowSpeechRecognitionTrial(0);
+            }
+
+            return false;
+        }
+
+        private void ShowSpeechRecognitionTrial(int type)
+        {
+            _needsUpdateSpeechRecognitionTrial = false;
+
+            var trial = ClientService.SpeechRecognitionTrial;
+            var builder = new StringBuilder();
+
+            if (type == 0)
+            {
+                // TODO: generic error
+            }
+            else if (type == 1)
+            {
+                if (trial.NextResetDate > 0)
+                {
+                    builder.Append(Locale.Declension(Strings.R.TranscriptionTrialLeftUntil, trial.LeftCount, Formatter.DateAt(trial.NextResetDate)));
+                }
+                else
+                {
+                    builder.Append(Locale.Declension(Strings.R.TranscriptionTrialLeft, trial.LeftCount));
+                }
+            }
+            else if (type == 2 || type == 3)
+            {
+                builder.Append(Locale.Declension(Strings.R.TranscriptionTrialEnd, trial.WeeklyCount));
+
+                if (type == 2)
+                {
+                    builder.Append(" ");
+                    builder.Append(Strings.TranscriptionTrialEndBuy);
+                }
+                else if (trial.NextResetDate > 0)
+                {
+                    builder.Append(" ");
+                    builder.Append(string.Format(Strings.TranscriptionTrialEndWaitOrBuy, Formatter.DateAt(trial.NextResetDate)));
+                }
+
+                var text = Extensions.ReplacePremiumLink(builder.ToString());
+
+                Window.Current.ShowToast(text, new LocalFileSource("ms-appx:///Assets/Toasts/Transcribe.tgs"));
+            }
+        }
 
         public async void SendBotCommand(string command)
         {

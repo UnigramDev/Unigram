@@ -46,6 +46,7 @@ namespace Telegram.ViewModels.Delegates
         void OpenInlineButton(MessageViewModel message, InlineKeyboardButton button);
         void OpenMedia(MessageViewModel message, FrameworkElement target, int timestamp = 0);
         void PlayMessage(MessageViewModel message);
+        bool RecognizeSpeech(MessageViewModel message);
 
         void Call(MessageViewModel message, bool video);
 

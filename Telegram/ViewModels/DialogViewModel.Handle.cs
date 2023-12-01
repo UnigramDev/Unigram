@@ -68,7 +68,17 @@ namespace Telegram.ViewModels
                 .Subscribe<UpdateChatBackground>(Handle)
                 .Subscribe<UpdateChatNotificationSettings>(Handle)
                 .Subscribe<UpdateChatOnlineMemberCount>(Handle)
-                .Subscribe<UpdateGroupCall>(Handle);
+                .Subscribe<UpdateGroupCall>(Handle)
+                .Subscribe<UpdateSpeechRecognitionTrial>(Handle);
+        }
+
+        public void Handle(UpdateSpeechRecognitionTrial update)
+        {
+            if (_needsUpdateSpeechRecognitionTrial)
+            {
+                _needsUpdateSpeechRecognitionTrial = false;
+                BeginOnUIThread(() => ShowSpeechRecognitionTrial(update.LeftCount > 0 ? 1 : 2));
+            }
         }
 
         public void Handle(UpdateChatAction update)

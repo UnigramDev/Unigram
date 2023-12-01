@@ -317,6 +317,8 @@ namespace Telegram.ViewModels
             }
         }
 
+        private bool _needsUpdateSpeechRecognitionTrial;
+
         private bool _hasLoadedLastPinnedMessage = false;
 
         public long LockedPinnedMessageId { get; set; }

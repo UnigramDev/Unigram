@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Telegram.Services.Updates;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -77,6 +76,8 @@ namespace Telegram.Services
 
         IList<string> AnimationSearchEmojis { get; }
         string AnimationSearchProvider { get; }
+
+        UpdateSpeechRecognitionTrial SpeechRecognitionTrial { get; }
 
         Background GetSelectedBackground(bool darkTheme);
         Background SelectedBackground { get; }
@@ -253,6 +254,8 @@ namespace Telegram.Services
         private IList<string> _reactions = Array.Empty<string>();
 
         private IList<AttachmentMenuBot> _attachmentMenuBots = Array.Empty<AttachmentMenuBot>();
+
+        private UpdateSpeechRecognitionTrial _speechRecognitionTrial;
 
         private UpdateAnimationSearchParameters _animationSearchParameters;
 
@@ -878,6 +881,8 @@ namespace Telegram.Services
 
             return (IList<AttachmentMenuBot>)bots ?? Array.Empty<AttachmentMenuBot>();
         }
+
+        public UpdateSpeechRecognitionTrial SpeechRecognitionTrial => _speechRecognitionTrial ??= new();
 
         public IList<string> AnimationSearchEmojis => _animationSearchParameters?.Emojis ?? Array.Empty<string>();
 
@@ -2092,6 +2097,10 @@ namespace Telegram.Services
                 {
                     _selectedBackground = updateSelectedBackground.Background;
                 }
+            }
+            else if (update is UpdateSpeechRecognitionTrial updateSpeechRecognitionTrial)
+            {
+                _speechRecognitionTrial = updateSpeechRecognitionTrial;
             }
             else if (update is UpdateStoryStealthMode updateStoryStealthMode)
             {
