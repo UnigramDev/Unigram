@@ -302,7 +302,8 @@ namespace Telegram.Views
                 && sourcePageType != typeof(ChatEventLogPage)
                 && sourcePageType != typeof(ChatPinnedPage)
                 && sourcePageType != typeof(ChatScheduledPage)
-                && sourcePageType != typeof(ChatThreadPage);
+                && sourcePageType != typeof(ChatThreadPage)
+                && sourcePageType != typeof(ProfilePage);
 
             if (unallowed && Theme.Current.Update(ActualTheme, null, null))
             {
