@@ -78,6 +78,8 @@ namespace Telegram.Services
         IList<AttachmentMenuBot> GetBotsForChat(long chatId);
         IList<AttachmentMenuBot> GetBotsForMenu(out long hash);
 
+        IList<string> ActiveReactions { get; }
+
         IList<string> AnimationSearchEmojis { get; }
         string AnimationSearchProvider { get; }
 
@@ -255,7 +257,7 @@ namespace Telegram.Services
         private IList<ChatFolderInfo> _chatFolders = Array.Empty<ChatFolderInfo>();
         private int _mainChatListPosition = 0;
 
-        private IList<string> _reactions = Array.Empty<string>();
+        private IList<string> _activeReactions = Array.Empty<string>();
 
         private IList<AttachmentMenuBot> _attachmentMenuBots = Array.Empty<AttachmentMenuBot>();
 
@@ -553,6 +555,8 @@ namespace Telegram.Services
             }
         }
 
+        public IList<string> ActiveReactions => _activeReactions;
+
         public IDictionary<int, NameColor> AccentColors { get; private set; }
         public IList<int> AvailableAccentColors { get; private set; }
 
@@ -594,7 +598,7 @@ namespace Telegram.Services
 
             _files.Clear();
 
-            _reactions = Array.Empty<string>();
+            _activeReactions = Array.Empty<string>();
 
             _chats.Clear();
             _chatActions.Clear();
@@ -995,7 +999,7 @@ namespace Telegram.Services
         {
             var result = new Dictionary<string, EmojiReaction>();
 
-            foreach (var emoji in _reactions)
+            foreach (var emoji in _activeReactions)
             {
                 var response = await SendAsync(new GetEmojiReaction(emoji));
                 if (response is EmojiReaction reaction)
@@ -2080,7 +2084,7 @@ namespace Telegram.Services
             }
             else if (update is UpdateActiveEmojiReactions updateReactions)
             {
-                _reactions = updateReactions.Emojis;
+                _activeReactions = updateReactions.Emojis;
             }
             else if (update is UpdateRecentStickers updateRecentStickers)
             {

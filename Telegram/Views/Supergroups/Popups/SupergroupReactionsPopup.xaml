@@ -4,125 +4,95 @@
                        xmlns:local="using:Telegram.Views"
                        xmlns:common="using:Telegram.Common"
                        xmlns:controls="using:Telegram.Controls"
+                       xmlns:drawers="using:Telegram.Controls.Drawers"
+                       xmlns:messages="using:Telegram.Controls.Messages"
                        xmlns:viewModels="using:Telegram.ViewModels.Supergroups"
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        ContentMaxHeight="500"
                        mc:Ignorable="d"
-                       Padding="0,24,0,0"
+                       Padding="0,24"
                        PrimaryButtonClick="OnPrimaryButtonClick">
 
     <Grid>
-        <GridView x:Name="ScrollingHost"
-                  ItemsSource="{x:Bind ViewModel.Items}"
-                  IsItemClickEnabled="False"
-                  SelectionMode="Multiple"
-                  ContainerContentChanging="OnContainerContentChanged"
-                  Padding="0,0,0,24"
-                  common:FluidGridView.OrientationOnly="False">
-            <common:FluidGridView.Triggers>
-                <common:FluidGridViewTrigger RowsOrColumns="8" />
-            </common:FluidGridView.Triggers>
-            <common:SelectedItemsBinder.Attached>
-                <common:SelectedItemsBinder SelectedItems="{x:Bind ViewModel.SelectedItems}" />
-            </common:SelectedItemsBinder.Attached>
-            <GridView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <ItemsWrapGrid Orientation="Horizontal"
-                                   ItemWidth="39.5"
-                                   ItemHeight="39.5" />
-                </ItemsPanelTemplate>
-            </GridView.ItemsPanel>
-            <GridView.ItemContainerStyle>
-                <Style TargetType="GridViewItem"
-                       BasedOn="{StaticResource DefaultGridViewItemStyle}">
-                    <Setter Property="MinWidth"
-                            Value="0" />
-                    <Setter Property="MinHeight"
-                            Value="0" />
-                    <Setter Property="Margin"
-                            Value="0" />
-                    <Setter Property="HorizontalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="VerticalContentAlignment"
-                            Value="Stretch" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="GridViewItem">
-                                <Border x:Name="LayoutRoot"
-                                        Margin="2"
-                                        CornerRadius="4">
-                                    <VisualStateManager.VisualStateGroups>
-                                        <VisualStateGroup x:Name="CommonStates">
-                                            <VisualState x:Name="Normal" />
-                                            <VisualState x:Name="PointerOver" />
-                                            <VisualState x:Name="Pressed" />
-                                            <VisualState x:Name="Selected">
-                                                <VisualState.Setters>
-                                                    <Setter Target="LayoutRoot.Background"
-                                                            Value="{ThemeResource NavigationViewItemBackgroundSelected}" />
-                                                </VisualState.Setters>
-                                            </VisualState>
-                                            <VisualState x:Name="PointerOverSelected">
-                                                <VisualState.Setters>
-                                                    <Setter Target="LayoutRoot.Background"
-                                                            Value="{ThemeResource NavigationViewItemBackgroundSelectedPointerOver}" />
-                                                </VisualState.Setters>
-                                            </VisualState>
-                                            <VisualState x:Name="PressedSelected" />
-                                        </VisualStateGroup>
-                                    </VisualStateManager.VisualStateGroups>
+        <StackPanel Margin="24,0">
+            <StackPanel x:Name="Group"
+                        x:Load="{x:Bind ConvertType(ViewModel.Chat.Type, x:False)}">
+                <RadioButton IsChecked="{x:Bind ViewModel.IsAllSelected, Mode=TwoWay}"
+                             Content="{CustomResource AllReactions}" />
+                <RadioButton IsChecked="{x:Bind ViewModel.IsSomeSelected, Mode=TwoWay}"
+                             Content="{CustomResource SomeReactions}" />
+                <RadioButton IsChecked="{x:Bind ViewModel.IsNoneSelected, Mode=TwoWay}"
+                             Content="{CustomResource NoReactions}" />
 
-                                    <ContentPresenter />
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </GridView.ItemContainerStyle>
-            <GridView.Header>
-                <StackPanel Margin="24,0">
-                    <StackPanel x:Name="Group"
-                                x:Load="{x:Bind ConvertType(ViewModel.Chat.Type, x:False)}">
-                        <RadioButton IsChecked="{x:Bind ViewModel.IsAllSelected, Mode=TwoWay}"
-                                     Content="{CustomResource AllReactions}" />
-                        <RadioButton IsChecked="{x:Bind ViewModel.IsSomeSelected, Mode=TwoWay}"
-                                     Content="{CustomResource SomeReactions}" />
-                        <RadioButton IsChecked="{x:Bind ViewModel.IsNoneSelected, Mode=TwoWay}"
-                                     Content="{CustomResource NoReactions}" />
+                <TextBlock Text="{x:Bind ConvertFooter(ViewModel.Available), Mode=OneWay}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="0,4,0,16" />
+            </StackPanel>
 
-                        <TextBlock Text="{x:Bind ConvertFooter(ViewModel.Available), Mode=OneWay}"
-                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                   Margin="0,4,0,16" />
-                    </StackPanel>
+            <StackPanel x:Name="Channel"
+                        x:Load="{x:Bind ConvertType(ViewModel.Chat.Type, x:True)}">
+                <CheckBox IsChecked="{x:Bind ConvertAvailable(ViewModel.Available), BindBack=ConvertAvailableBack, Mode=TwoWay}"
+                          Content="{CustomResource EnableReactions}" />
 
-                    <StackPanel x:Name="Channel"
-                                x:Load="{x:Bind ConvertType(ViewModel.Chat.Type, x:True)}">
-                        <CheckBox IsChecked="{x:Bind ConvertAvailable(ViewModel.Available), BindBack=ConvertAvailableBack, Mode=TwoWay}"
-                                  Content="{CustomResource EnableReactions}" />
+                <TextBlock Text="{CustomResource EnableReactionsChannelInfo}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="0,4,0,16" />
+            </StackPanel>
 
-                        <TextBlock Text="{CustomResource EnableReactionsChannelInfo}"
-                                   Style="{StaticResource InfoCaptionTextBlockStyle}"
-                                   Margin="0,4,0,16" />
-                    </StackPanel>
-                </StackPanel>
-            </GridView.Header>
-            <GridView.ItemTemplate>
-                <DataTemplate>
-                    <controls:AnimatedImage x:Name="Player"
-                                            AutoPlay="False"
-                                            LimitFps="True"
-                                            LoopCount="1"
-                                            FrameSize="48,48"
-                                            DecodeFrameType="Logical"
-                                            PointerEntered="OnPointerEntered"
-                                            SizeChanged="OnSizeChanged"
-                                            Margin="-2" />
-                </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
 
-        <controls:ScrollViewerScrim ScrollingHost="{x:Bind ScrollingHost}"
-                                    Background="{ThemeResource ContentDialogBackground}" />
+            <StackPanel x:Name="CaptionPanel"
+                        Visibility="{x:Bind ViewModel.IsSomeSelected, Mode=OneWay}">
+                
+                <TextBlock Text="{x:Bind ConvertHeader(ViewModel.Chat.Type)}"
+                           Style="{StaticResource BaseTextBlockStyle}"
+                           Margin="0,16,0,8" />
+
+                <Grid>
+                    <controls:FormattedTextBox x:Name="CaptionInput"
+                                               InputScope="Chat"
+                                               IsFormattingEnabled="False"
+                                               FontFamily="{ThemeResource EmojiThemeFontFamily}"
+                                               PlaceholderText="{CustomResource AddCaption}"
+                                               TextChangedForRealNoCap="CaptionInput_TextChanged"
+                                               Padding="10,6,36,5"
+                                               Grid.Row="1">
+                        <FlyoutBase.AttachedFlyout>
+                            <Flyout x:Name="EmojiFlyout"
+                                    Placement="Top"
+                                    ShowMode="Transient">
+                                <Flyout.FlyoutPresenterStyle>
+                                    <Style TargetType="FlyoutPresenter">
+                                        <Setter Property="Padding"
+                                                Value="0" />
+                                    </Style>
+                                </Flyout.FlyoutPresenterStyle>
+                                <drawers:EmojiDrawer x:Name="EmojiPanel"
+                                                     ItemClick="Emoji_ItemClick"
+                                                     Width="300"
+                                                     Height="360" />
+                            </Flyout>
+                        </FlyoutBase.AttachedFlyout>
+                    </controls:FormattedTextBox>
+
+                    <messages:CustomEmojiCanvas x:Name="CustomEmoji"
+                                                IsHitTestVisible="False"
+                                                Margin="10,4,-2,-2" />
+
+                    <controls:GlyphButton Click="Emoji_Click"
+                                          Glyph="&#xF164;"
+                                          AllowFocusOnInteraction="False"
+                                          HorizontalAlignment="Right"
+                                          VerticalAlignment="Bottom"
+                                          Width="36"
+                                          Height="32" />
+                </Grid>
+
+                <TextBlock x:Name="ChannelFooter"
+                           x:Load="False"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}"
+                           Margin="0,4,0,0" />
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </controls:ContentPopup>

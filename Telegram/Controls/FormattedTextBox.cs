@@ -39,6 +39,7 @@ namespace Telegram.Controls
 
         private bool _updateLocked;
         private bool _fromTextChanging;
+        private bool _isContentChanging;
         private bool _undoGroup;
 
         private int _selectionIndex;
@@ -59,8 +60,10 @@ namespace Telegram.Controls
             Paste += OnPaste;
             PreviewKeyDown += OnPreviewKeyDown;
 
-            _proofingFlyout = new MenuFlyoutSubItem();
-            _proofingFlyout.Text = Strings.Spelling;
+            _proofingFlyout = new MenuFlyoutSubItem
+            {
+                Text = Strings.Spelling
+            };
 
             SelectionFlyout = new Flyout
             {
@@ -123,6 +126,7 @@ namespace Telegram.Controls
 
         private void OnTextChanging(RichEditBox sender, RichEditBoxTextChangingEventArgs args)
         {
+            _isContentChanging = args.IsContentChanging;
             _fromTextChanging = true;
             _isEmpty = null;
 
@@ -141,6 +145,13 @@ namespace Telegram.Controls
         {
             UpdateCustomEmoji();
             UpdateBlocks();
+
+            if (_updateLocked || !_isContentChanging)
+            {
+                return;
+            }
+
+            TextChangedForRealNoCap?.Invoke(this, EventArgs.Empty);
         }
 
         private void OnSelectionChanged(object sender, RoutedEventArgs e)
@@ -214,6 +225,8 @@ namespace Telegram.Controls
         {
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
         }
+
+        public bool IsFormattingEnabled { get; set; } = true;
 
         public bool IsReplaceEmojiEnabled { get; set; } = true;
 
@@ -336,6 +349,8 @@ namespace Telegram.Controls
             Accept?.Invoke(this, EventArgs.Empty);
         }
 
+        public event EventHandler TextChangedForRealNoCap;
+
         public event TypedEventHandler<FormattedTextBox, EventArgs> Accept;
 
         #region Context menu
@@ -361,24 +376,6 @@ namespace Telegram.Controls
             clone.StartOf(TextRangeUnit.Link, true);
             var mention = TryGetUserId(clone, out long userId);
 
-            var formatting = new MenuFlyoutSubItem
-            {
-                Text = Strings.Formatting,
-                Icon = MenuFlyoutHelper.CreateIcon(Icons.TextFont)
-            };
-
-            formatting.CreateFlyoutItem(length, ToggleQuote, Strings.Quote, Icons.QuoteBlock);
-            formatting.CreateFlyoutItem(length, ToggleBold, Strings.Bold, Icons.TextBold, VirtualKey.B);
-            formatting.CreateFlyoutItem(length, ToggleItalic, Strings.Italic, Icons.TextItalic, VirtualKey.I);
-            formatting.CreateFlyoutItem(length, ToggleUnderline, Strings.Underline, Icons.TextUnderline, VirtualKey.U);
-            formatting.CreateFlyoutItem(length, ToggleStrikethrough, Strings.Strike, Icons.TextStrikethrough, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            formatting.CreateFlyoutItem(length && format.Name != "Consolas", ToggleMonospace, Strings.Mono, Icons.Code, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            formatting.CreateFlyoutItem(length, ToggleSpoiler, Strings.Spoiler, Icons.TabInPrivate, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-            formatting.CreateFlyoutSeparator();
-            formatting.CreateFlyoutItem(!mention, CreateLink, clone.Link.Length > 0 ? Strings.EditLink : Strings.CreateLink, Icons.Link, VirtualKey.K);
-            formatting.CreateFlyoutSeparator();
-            formatting.CreateFlyoutItem(length && !IsDefault(format), ToggleRegular, Strings.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
-
             flyout.CreateFlyoutItem(Document.CanUndo(), ContextUndo_Click, Strings.Undo, Icons.ArrowUndo, VirtualKey.Z);
             flyout.CreateFlyoutItem(Document.CanRedo(), ContextRedo_Click, Strings.Redo, Icons.ArrowRedo, VirtualKey.Y);
             flyout.CreateFlyoutSeparator();
@@ -387,7 +384,30 @@ namespace Telegram.Controls
             flyout.CreateFlyoutItem(Document.CanPaste(), ContextPaste_Click, Strings.Paste, Icons.ClipboardPaste, VirtualKey.V);
             flyout.CreateFlyoutItem(length, ContextDelete_Click, Strings.Delete);
             flyout.CreateFlyoutSeparator();
-            flyout.Items.Add(formatting);
+
+            if (IsFormattingEnabled)
+            {
+                var formatting = new MenuFlyoutSubItem
+                {
+                    Text = Strings.Formatting,
+                    Icon = MenuFlyoutHelper.CreateIcon(Icons.TextFont)
+                };
+
+                formatting.CreateFlyoutItem(length, ToggleQuote, Strings.Quote, Icons.QuoteBlock);
+                formatting.CreateFlyoutItem(length, ToggleBold, Strings.Bold, Icons.TextBold, VirtualKey.B);
+                formatting.CreateFlyoutItem(length, ToggleItalic, Strings.Italic, Icons.TextItalic, VirtualKey.I);
+                formatting.CreateFlyoutItem(length, ToggleUnderline, Strings.Underline, Icons.TextUnderline, VirtualKey.U);
+                formatting.CreateFlyoutItem(length, ToggleStrikethrough, Strings.Strike, Icons.TextStrikethrough, VirtualKey.X, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+                formatting.CreateFlyoutItem(length && format.Name != "Consolas", ToggleMonospace, Strings.Mono, Icons.Code, VirtualKey.M, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+                formatting.CreateFlyoutItem(length, ToggleSpoiler, Strings.Spoiler, Icons.TabInPrivate, VirtualKey.P, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+                formatting.CreateFlyoutSeparator();
+                formatting.CreateFlyoutItem(!mention, CreateLink, clone.Link.Length > 0 ? Strings.EditLink : Strings.CreateLink, Icons.Link, VirtualKey.K);
+                formatting.CreateFlyoutSeparator();
+                formatting.CreateFlyoutItem(length && !IsDefault(format), ToggleRegular, Strings.Regular, null, VirtualKey.N, VirtualKeyModifiers.Control | VirtualKeyModifiers.Shift);
+
+                flyout.Items.Add(formatting);
+            }
+
             flyout.CreateFlyoutSeparator();
             flyout.CreateFlyoutItem(!IsEmpty, ContextSelectAll_Click, Strings.SelectAll, null, VirtualKey.A);
 
@@ -1163,6 +1183,7 @@ namespace Telegram.Controls
                 Document.EndUndoGroup();
 
                 _updateLocked = false;
+                TextChangedForRealNoCap?.Invoke(this, EventArgs.Empty);
             }
         }
 

@@ -376,7 +376,7 @@ namespace Telegram.ViewModels.Drawers
             return Array.Empty<StickerSetViewModel>();
         }
 
-        public async Task<List<(AvailableReaction, Sticker)>> UpdateReactions(AvailableReactions available, IList<AvailableReaction> visible)
+        public async Task<List<(AvailableReaction, Sticker)>> UpdateReactions(AvailableReactions available, IList<AvailableReaction> visible = null)
         {
             if (available == null)
             {

@@ -29,8 +29,7 @@ namespace Telegram.ViewModels.Supergroups
         public SupergroupReactionsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            Items = new MvxObservableCollection<EmojiReaction>();
-            SelectedItems = new MvxObservableCollection<EmojiReaction>();
+            Items = new MvxObservableCollection<ReactionType>();
         }
 
         protected Chat _chat;
@@ -39,6 +38,10 @@ namespace Telegram.ViewModels.Supergroups
             get => _chat;
             set => Set(ref _chat, value);
         }
+
+        public bool AllowCustomEmoji { get; private set; }
+
+        public int BoostLevel { get; private set; }
 
         private SupergroupAvailableReactions _available;
         public SupergroupAvailableReactions Available
@@ -49,23 +52,8 @@ namespace Telegram.ViewModels.Supergroups
 
         private void SetAvailable(SupergroupAvailableReactions value)
         {
-            if (_available == SupergroupAvailableReactions.Some)
-            {
-                _selected = SelectedItems.Select(x => x.Emoji).ToList();
-            }
-
             if (Set(ref _available, value, nameof(Available)))
             {
-                if (value == SupergroupAvailableReactions.Some)
-                {
-                    Items.ReplaceWith(_items);
-                    SelectedItems.ReplaceWith(_items.Where(x => _selected.Contains(x.Emoji)));
-                }
-                else
-                {
-                    Items.Clear();
-                }
-
                 RaisePropertyChanged(nameof(IsAllSelected));
                 RaisePropertyChanged(nameof(IsSomeSelected));
                 RaisePropertyChanged(nameof(IsNoneSelected));
@@ -90,11 +78,7 @@ namespace Telegram.ViewModels.Supergroups
             set => SetAvailable(SupergroupAvailableReactions.None);
         }
 
-        private List<EmojiReaction> _items;
-        private List<string> _selected;
-        public MvxObservableCollection<EmojiReaction> Items { get; private set; }
-
-        public MvxObservableCollection<EmojiReaction> SelectedItems { get; private set; }
+        public MvxObservableCollection<ReactionType> Items { get; private set; }
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
@@ -108,24 +92,32 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            var reactions = await ClientService.GetAllReactionsAsync();
-            if (reactions == null)
-            {
-                return;
-            }
+            AllowCustomEmoji = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
 
-            var items = reactions.Where(x => x.Value.IsActive).Select(x => x.Value).ToList();
-            var selected = items.Where(x => chat.AvailableReactions.Contains(x.Emoji)).Select(x => x.Emoji);
+            IList<ReactionType> items = chat.AvailableReactions switch
+            {
+                ChatAvailableReactionsSome some => some.Reactions,
+                ChatAvailableReactionsAll all => ClientService.ActiveReactions.Select(x => new ReactionTypeEmoji(x)).ToList<ReactionType>(),
+                _ => Array.Empty<ReactionType>()
+            };
 
             var available = chat.AvailableReactions is ChatAvailableReactionsAll
                 ? SupergroupAvailableReactions.All
-                : selected.Any()
+                : items.Any()
                 ? SupergroupAvailableReactions.Some
                 : SupergroupAvailableReactions.None;
 
-            _items = items;
-            _selected = selected.ToList();
+            Items.ReplaceWith(items);
             Available = available;
+
+            if (AllowCustomEmoji)
+            {
+                var response = await ClientService.SendAsync(new GetChatBoostStatus(chat.Id));
+                if (response is ChatBoostStatus status)
+                {
+                    BoostLevel = status.Level;
+                }
+            }
         }
 
         public void Execute()
@@ -135,19 +127,18 @@ namespace Telegram.ViewModels.Supergroups
                 return;
             }
 
-            var items = SelectedItems.Select(x => new ReactionTypeEmoji(x.Emoji)).ToList<ReactionType>();
-            var available = _available;
-
-            if (supergroup.IsChannel && items.Count == _items.Count)
+            var count = Items.Count(x => x is ReactionTypeCustomEmoji);
+            if (count > BoostLevel)
             {
-                available = SupergroupAvailableReactions.All;
+                // TODO: show boost popup
+                return;
             }
 
             ChatAvailableReactions value = _available switch
             {
                 SupergroupAvailableReactions.All => new ChatAvailableReactionsAll(),
                 SupergroupAvailableReactions.None => new ChatAvailableReactionsSome(Array.Empty<ReactionType>()),
-                SupergroupAvailableReactions.Some => new ChatAvailableReactionsSome(items),
+                SupergroupAvailableReactions.Some => new ChatAvailableReactionsSome(Items),
                 _ => null
             };
 

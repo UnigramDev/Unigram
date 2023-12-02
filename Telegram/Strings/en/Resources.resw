@@ -5390,6 +5390,9 @@ Stories</value>
   <data name="OnlineCount_other" xml:space="preserve">
     <value>{0} online</value>
   </data>
+  <data name="OnlyAllowThisReactions" xml:space="preserve">
+    <value>Only allow these reactions</value>
+  </data>
   <data name="Open" xml:space="preserve">
     <value>Open</value>
   </data>
@@ -6278,6 +6281,15 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="Reacted_other" xml:space="preserve">
     <value>{0} Reacted</value>
+  </data>
+  <data name="ReactionCreateOwnPack" xml:space="preserve">
+    <value>You can also **create your own** emoji packs and use them.</value>
+  </data>
+  <data name="ReactionReachLvlForReactionShort_one" xml:space="preserve">
+    <value>Your channel needs to reach Level **{1}** to add **{0}** custom emoji as reactions.</value>
+  </data>
+  <data name="ReactionReachLvlForReactionShort_other" xml:space="preserve">
+    <value>Your channel needs to reach Level **{1}** to add **{0}** custom emoji as reactions.</value>
   </data>
   <data name="Reactions" xml:space="preserve">
     <value>Reactions</value>
