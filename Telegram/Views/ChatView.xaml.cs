@@ -2241,7 +2241,7 @@ namespace Telegram.Views
                 if (quote != null)
                 {
                     // TODO: copy selection
-                    flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.CopyMessage, quote, Strings.CopySelectedText, Icons.DocumentCopy);
+                    flyout.CreateFlyoutItem(MessageCopy_Loaded, ViewModel.CopyMessage, quote, Strings.Copy, Icons.DocumentCopy);
                 }
                 else
                 {
@@ -2251,7 +2251,14 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(MessageCopyLink_Loaded, ViewModel.CopyMessageLink, message, Strings.CopyLink, Icons.Link);
                 flyout.CreateFlyoutItem(MessageCopyMedia_Loaded, ViewModel.CopyMessageMedia, message, Strings.CopyImage, Icons.Image);
 
-                flyout.CreateFlyoutItem(MessageTranslate_Loaded, ViewModel.TranslateMessage, message, Strings.TranslateMessage, Icons.Translate);
+                if (quote != null)
+                {
+                    flyout.CreateFlyoutItem(MessageTranslate_Loaded, ViewModel.TranslateMessage, quote, Strings.TranslateMessage, Icons.Translate);
+                }
+                else
+                {
+                    flyout.CreateFlyoutItem(MessageTranslate_Loaded, ViewModel.TranslateMessage, message, Strings.TranslateMessage, Icons.Translate);
+                }
 
                 flyout.CreateFlyoutSeparator();
 
@@ -2775,6 +2782,11 @@ namespace Telegram.Views
             }
 
             return message.Content.HasCaption();
+        }
+
+        private bool MessageTranslate_Loaded(MessageQuote message)
+        {
+            return ViewModel.TranslateService.CanTranslateText(message.Quote.Text);
         }
 
         private bool MessageTranslate_Loaded(MessageViewModel message)

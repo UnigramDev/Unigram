@@ -933,6 +933,15 @@ namespace Telegram.ViewModels
 
         #region Translate
 
+        public async void TranslateMessage(MessageQuote message)
+        {
+            string text = message.Quote.Text;
+
+            var language = LanguageIdentification.IdentifyLanguage(text);
+            var popup = new TranslatePopup(_translateService, text, language, LocaleService.Current.Id, !message.Message.CanBeSaved);
+            await ShowPopupAsync(popup);
+        }
+
         public async void TranslateMessage(MessageViewModel message)
         {
             string text;
