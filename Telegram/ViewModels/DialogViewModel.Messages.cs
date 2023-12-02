@@ -1574,7 +1574,7 @@ namespace Telegram.ViewModels
                         var confirm = await ShowPopupAsync(Strings.RemoveWallpaperMessage, Strings.RemoveWallpaperTitle, Strings.RemoveWallpaperAction, Strings.Cancel, true);
                         if (confirm == ContentDialogResult.Primary)
                         {
-                            ClientService.Send(new RevertChatBackground(message.ChatId));
+                            ClientService.Send(new DeleteChatBackground(message.ChatId, true));
                         }
                     }
                     else

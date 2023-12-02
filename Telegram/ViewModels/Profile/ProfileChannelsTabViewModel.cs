@@ -77,7 +77,7 @@ namespace Telegram.ViewModels.Profile
         {
             var total = 0u;
 
-            var response = await ClientService.SendAsync(new GetSimilarChats(_chatId));
+            var response = await ClientService.SendAsync(new GetChatSimilarChats(_chatId));
             if (response is Telegram.Td.Api.Chats chats)
             {
                 CanUnlockMore = chats.TotalCount > chats.ChatIds.Count;
