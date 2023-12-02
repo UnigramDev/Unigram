@@ -437,8 +437,8 @@ namespace Telegram.Views
         {
             this.BeginOnUIThread(() =>
             {
-                ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFolders.Count > 0);
                 ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFolders.Count > 0);
+                ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFolders.Count > 0);
                 ShowHideArchive(ViewModel.SelectedFolder?.ChatList is ChatListMain or null);
 
                 UpdatePaneToggleButtonVisibility();
@@ -638,6 +638,17 @@ namespace Telegram.Views
 
             _tabsTopCollapsed = !show;
             FindName(nameof(ChatTabs));
+
+            if (TopicListPresenter != null)
+            {
+                var padding = ChatTabs != null
+                    ? _tabsTopCollapsed ? -74 : -78
+                    : -12;
+
+                TopicListPresenter.Margin = new Thickness(68, padding, 0, 0);
+            }
+
+            Stories.ControlledList = ChatsList;
 
             void ShowHideTopTabsCompleted()
             {
@@ -3261,6 +3272,12 @@ namespace Telegram.Views
             {
                 Stories.Collapse();
             }
+
+            var padding = ChatTabs != null
+                ? _tabsTopCollapsed ? -74 : -78
+                : -12;
+
+            TopicListPresenter.Margin = new Thickness(68, padding, 0, 0);
 
             void ShowHideTopicListCompleted()
             {
