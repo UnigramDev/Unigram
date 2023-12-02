@@ -134,11 +134,6 @@ namespace Telegram.Controls
             {
                 UpdateFormat();
             }
-            else if (_undoGroup)
-            {
-                _undoGroup = false;
-                Document.EndUndoGroup();
-            }
         }
 
         private void OnTextChanged(object sender, RoutedEventArgs e)
@@ -251,13 +246,13 @@ namespace Telegram.Controls
                 var emoticon = matches.FirstOrDefault(x => value.EndsWith(x));
                 if (emoticon != null)
                 {
-                    Document.BeginUndoGroup();
+                    BeginUndoGroup();
                     range.SetRange(range.EndPosition - emoticon.Length, range.EndPosition);
-                    range.SetText(TextSetOptions.None, Emoticon.Data[emoticon]);
-                    range.SetRange(range.EndPosition, range.EndPosition);
                     range.SetText(TextSetOptions.None, emoticon);
                     range.CharacterFormat.Hidden = FormatEffect.On;
-                    Document.EndUndoGroup();
+                    range.SetRange(range.EndPosition, range.EndPosition);
+                    range.SetText(TextSetOptions.None, Emoticon.Data[emoticon]);
+                    EndUndoGroup();
 
                     Document.Selection.SetRange(range.EndPosition, range.EndPosition);
                     args.Handled = true;
@@ -273,23 +268,20 @@ namespace Telegram.Controls
             //    Height = double.NaN;
             //}
 
-            if (e.Key == VirtualKey.Back && IsReplaceEmojiEnabled)
+            if (e.Key is VirtualKey.Back or VirtualKey.Delete && IsReplaceEmojiEnabled)
             {
-                Document.GetText(TextGetOptions.None, out _);
+                BeginUndoGroup();
 
-                var range = Document.Selection.GetClone();
-                if (range.Expand(TextRangeUnit.Hidden) != 0 && Emoticon.Data.TryGetValue(range.Text, out string emoji))
+                base.OnKeyDown(e);
+
+                if (Document.Selection.Expand(TextRangeUnit.Hidden) != 0 && Emoticon.Data.ContainsKey(Document.Selection.Text))
                 {
-                    var emoticon = range.Text;
-
-                    Document.BeginUndoGroup();
-                    range.SetRange(range.StartPosition - emoji.Length, range.EndPosition);
-                    range.SetText(TextSetOptions.Unhide, emoticon);
-                    Document.EndUndoGroup();
-
-                    Document.Selection.SetRange(range.EndPosition, range.EndPosition);
-                    return;
+                    Document.Selection.CharacterFormat.Hidden = FormatEffect.Off;
+                    Document.Selection.Collapse(e.Key is VirtualKey.Delete);
                 }
+
+                EndUndoGroup();
+                return;
             }
             else if (e.Key == VirtualKey.Enter)
             {
@@ -861,9 +853,11 @@ namespace Telegram.Controls
                 {
                     if (range.CharacterFormat.Hidden == FormatEffect.On)
                     {
-                        builder.Remove(i - hidden, 1);
+                        range.Expand(TextRangeUnit.Hidden);
+                        builder.Remove(i - hidden, range.Length);
 
-                        hidden++;
+                        hidden += range.Length;
+                        i += range.Length - 1;
                         continue;
                     }
 
@@ -1142,6 +1136,27 @@ namespace Telegram.Controls
             }
         }
 
+        private void BeginUndoGroup()
+        {
+            if (_undoGroup)
+            {
+                return;
+            }
+
+            _undoGroup = true;
+            Document.BeginUndoGroup();
+        }
+
+        private void EndUndoGroup()
+        {
+            if (_undoGroup)
+            {
+                Document.EndUndoGroup();
+            }
+
+            _undoGroup = false;
+        }
+
         public void SetText(FormattedText formattedText)
         {
             if (formattedText != null)
@@ -1168,7 +1183,7 @@ namespace Telegram.Controls
             {
                 _updateLocked = true;
 
-                Document.BeginUndoGroup();
+                BeginUndoGroup();
                 Document.BatchDisplayUpdates();
 
                 SetTextImpl(text, entities, updateSelection);
@@ -1180,7 +1195,7 @@ namespace Telegram.Controls
             finally
             {
                 Document.ApplyDisplayUpdates();
-                Document.EndUndoGroup();
+                EndUndoGroup();
 
                 _updateLocked = false;
                 TextChangedForRealNoCap?.Invoke(this, EventArgs.Empty);
@@ -1339,8 +1354,8 @@ namespace Telegram.Controls
 
             try
             {
-                Document.Selection.SetText(TextSetOptions.None, block);
-                Document.Selection.StartPosition = Document.Selection.EndPosition;
+                Document.Selection.SetText(TextSetOptions.Unhide, block);
+                Document.Selection.Collapse(false);
             }
             catch
             {
@@ -1360,7 +1375,7 @@ namespace Telegram.Controls
 
         public void InsertEmoji(ITextRange range, string emoji, long customEmojiId)
         {
-            Document.BeginUndoGroup();
+            BeginUndoGroup();
 
             range.SetText(TextSetOptions.None, $"{emoji};{customEmojiId}");
             range.CharacterFormat.Hidden = FormatEffect.On;
@@ -1370,7 +1385,7 @@ namespace Telegram.Controls
             end.SetText(TextSetOptions.None, "\uEA4F");
             end.Gravity = RangeGravity.Backward;
 
-            Document.EndUndoGroup();
+            EndUndoGroup();
         }
 
         public void InsertBlockquote(string quote)
@@ -1386,7 +1401,7 @@ namespace Telegram.Controls
 
             if (batch)
             {
-                Document.BeginUndoGroup();
+                BeginUndoGroup();
                 //Document.BatchDisplayUpdates();
             }
 
@@ -1442,7 +1457,7 @@ namespace Telegram.Controls
                 Document.Selection.SetRange(end, end);
 
                 //Document.ApplyDisplayUpdates();
-                Document.EndUndoGroup();
+                EndUndoGroup();
             }
         }
 
@@ -1546,7 +1561,8 @@ namespace Telegram.Controls
                         range.Delete(TextRangeUnit.Hidden, 1);
                     }
                 }
-                else if (range.ParagraphFormat.SpaceAfter != 0 && range.CharacterFormat.Size != 9)
+
+                if (range.ParagraphFormat.SpaceAfter != 0 && range.CharacterFormat.Size != 9)
                 {
                     range.CharacterFormat.Size = 9;
                 }
@@ -1556,11 +1572,7 @@ namespace Telegram.Controls
                 }
             } while (range.MoveStart(TextRangeUnit.CharacterFormat, 1) > 0);
 
-            if (_undoGroup)
-            {
-                _undoGroup = false;
-                Document.EndUndoGroup();
-            }
+            //EndUndoGroup();
         }
 
         private void UpdateBlocks()
@@ -1661,6 +1673,8 @@ namespace Telegram.Controls
 
         private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
+            BeginUndoGroup();
+
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
                 //e.Handled = true;
@@ -1676,9 +1690,6 @@ namespace Telegram.Controls
                 {
                     e.Handled = true;
 
-                    _undoGroup = true;
-                    Document.BeginUndoGroup();
-
                     range.SetText(TextSetOptions.None, "\r");
                     range.SetRange(range.StartPosition + 1, range.StartPosition + 1);
                     range.ParagraphFormat = Document.GetDefaultParagraphFormat();
@@ -1692,8 +1703,7 @@ namespace Telegram.Controls
                 var start = range.StartOf(TextRangeUnit.Line, true);
                 if (start == 0 && range.ParagraphFormat.SpaceAfter != 0)
                 {
-                    //_undoGroup = true;
-                    //Document.BeginUndoGroup();
+                    //BeginUndoGroup();
 
                     //range.EndOf(TextRangeUnit.Line, true);
                     //range.SetRange(range.EndPosition - 1, range.EndPosition);
@@ -1706,9 +1716,6 @@ namespace Telegram.Controls
                     {
                         if (range.Character == '\v')
                         {
-                            _undoGroup = true;
-                            Document.BeginUndoGroup();
-
                             range.Character = '\r';
                         }
                     }
@@ -1721,21 +1728,10 @@ namespace Telegram.Controls
 
                     if (range.Character == '\v')
                     {
-                        _undoGroup = true;
-                        Document.BeginUndoGroup();
-
                         range.Character = '\r';
                     }
                 }
             }
-
-            if (_undoGroup)
-            {
-                return;
-            }
-
-            _undoGroup = true;
-            Document.BeginUndoGroup();
         }
     }
 }
