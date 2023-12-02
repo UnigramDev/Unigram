@@ -123,6 +123,12 @@ namespace winrt::Telegram::Native::Highlight::implementation
         return languages;
     }
 
+    hstring SyntaxToken::GetLanguageName(hstring languageCode)
+    {
+        Initialize();
+        return winrt::to_hstring(m_highlighter->languageName(winrt::to_string(languageCode)));
+    }
+
     winrt::Telegram::Native::Highlight::SyntaxToken SyntaxToken::Tokenize(hstring language, hstring coddiri)
     {
         Initialize();

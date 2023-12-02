@@ -26,6 +26,8 @@ namespace winrt::Telegram::Native::Highlight::implementation
 
         static IVector<hstring> Languages();
 
+        static hstring GetLanguageName(hstring languageCode);
+
         static winrt::Telegram::Native::Highlight::SyntaxToken Tokenize(hstring language, hstring coddiri);
         static IAsyncOperation<winrt::Telegram::Native::Highlight::SyntaxToken> TokenizeAsync(hstring language, hstring coddiri);
 

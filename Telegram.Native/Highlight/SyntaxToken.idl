@@ -16,5 +16,7 @@ namespace Telegram.Native.Highlight
 
         static SyntaxToken Tokenize(String language, String coddiri);
         static Windows.Foundation.IAsyncOperation<SyntaxToken> TokenizeAsync(String language, String coddiri);
+
+        static String GetLanguageName(String languageCode);
     }
 }

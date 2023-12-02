@@ -85,6 +85,55 @@
         </Setter>
     </Style>
 
+    <Style TargetType="local:BlockCode">
+        <Setter Property="Foreground"
+                Value="{ThemeResource MessageHeaderForegroundBrush}" />
+        <Setter Property="BorderBrush"
+                Value="{ThemeResource MessageHeaderBorderBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:BlockCode">
+                    <Grid CornerRadius="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Rectangle x:Name="Overlay"
+                                   Fill="{TemplateBinding BorderBrush}"
+                                   Opacity="0.1"
+                                   Grid.ColumnSpan="2" />
+                        <Rectangle x:Name="Pill"
+                                   Fill="{TemplateBinding BorderBrush}"
+                                   HorizontalAlignment="Left"
+                                   Width="3" />
+
+                        <Grid VerticalAlignment="Top"
+                              Grid.Column="1">
+                            <Rectangle Fill="{TemplateBinding BorderBrush}"
+                                       Opacity="0.1"
+                                       Grid.ColumnSpan="3" />
+                            <TextBlock Text="{TemplateBinding LanguageName}"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       Style="{StaticResource CaptionTextBlockStyle}"
+                                       FontWeight="SemiBold"
+                                       Margin="8,2,0,4"/>
+                        </Grid>
+
+
+                        <TextBlock Text="&#xEA3D;"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="16"
+                                   Foreground="{TemplateBinding BorderBrush}"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Top"
+                                   Margin="4"
+                                   Grid.Column="1" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style TargetType="local:MasterDetailView">
         <Setter Property="IsTabStop"
                 Value="False" />

@@ -433,6 +433,10 @@ namespace Telegram.Common
                     {
                         last += text[i];
                     }
+                    else if (i + 1 < text.Length && text[i + 1] == 0x200D)
+                    {
+                        last += text[i];
+                    }
                     else
                     {
                         yield return text[i].ToString();

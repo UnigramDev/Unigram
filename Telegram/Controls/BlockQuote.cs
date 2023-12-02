@@ -23,4 +23,25 @@ namespace Telegram.Controls
 
         #endregion
     }
+
+    public class BlockCode : Control
+    {
+        public BlockCode()
+        {
+            DefaultStyleKey = typeof(BlockCode);
+        }
+
+        #region LanguageName
+
+        public string LanguageName
+        {
+            get { return (string)GetValue(LanguageNameProperty); }
+            set { SetValue(LanguageNameProperty, value); }
+        }
+
+        public static readonly DependencyProperty LanguageNameProperty =
+            DependencyProperty.Register("LanguageName", typeof(string), typeof(BlockCode), new PropertyMetadata(null));
+
+        #endregion
+    }
 }
