@@ -568,6 +568,12 @@ namespace Telegram.Common
 
     public class StyledParagraph
     {
+        public StyledParagraph(string text, IList<TextEntity> entities)
+            : this(text, 0, text.Length, entities)
+        {
+
+        }
+
         public StyledParagraph(string text, int offset, int length, IList<TextEntity> entities, TextDirectionality? direction = null)
         {
             Offset = offset;

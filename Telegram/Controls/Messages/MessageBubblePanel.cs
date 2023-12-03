@@ -9,7 +9,6 @@ using System.Numerics;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Navigation;
-using Telegram.Td.Api;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -19,7 +18,7 @@ namespace Telegram.Controls.Messages
     public class MessageBubblePanel : Panel
     {
         // Needed for Text CanvasTextLayout
-        public MessageContent Content { get; set; }
+        public bool ForceNewLine { get; set; }
 
         // Needed for Text CanvasTextLayout
         public StyledText Text { get; set; }
@@ -169,7 +168,7 @@ namespace Telegram.Controls.Messages
                 var maxWidth = availableWidth;
                 var footerWidth = footer.DesiredSize.Width + footer.Margin.Left + footer.Margin.Right;
 
-                if (Content is MessageBigEmoji)
+                if (ForceNewLine)
                 {
                     return new Size(Math.Max(0, footerWidth - 16), 0);
                 }
@@ -197,18 +196,19 @@ namespace Telegram.Controls.Messages
         private Vector2 ContentEnd(double availableWidth)
         {
             var caption = Text;
-            if (string.IsNullOrEmpty(caption?.Text))
+            if (caption.Paragraphs.Count == 0 || string.IsNullOrEmpty(caption?.Text))
             {
                 return Vector2.Zero;
             }
 
-            var entities = caption.Paragraphs.Count > 0
-                ? caption.Paragraphs[^1].Entities
-                : Array.Empty<TextEntity>();
+            var paragraph = caption.Paragraphs[^1];
 
-            var text = Children[0] as FormattedTextBlock;
+            var text = caption.Text.Substring(paragraph.Offset, paragraph.Length);
+            var entities = paragraph.Entities;
+
+            var block = Children[0] as FormattedTextBlock;
             var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor;
-            var width = availableWidth - text.Margin.Left - text.Margin.Right;
+            var width = availableWidth - block.Margin.Left - block.Margin.Right;
 
             if (width <= 0)
             {
@@ -217,8 +217,8 @@ namespace Telegram.Controls.Messages
 
             try
             {
-                var bounds = PlaceholderImageHelper.Current.ContentEnd(caption.Text, entities, fontSize, width);
-                if (bounds.Y < text.DesiredSize.Height)
+                var bounds = PlaceholderImageHelper.Current.ContentEnd(text, entities, fontSize, width);
+                if (bounds.Y < block.DesiredSize.Height)
                 {
                     return bounds;
                 }

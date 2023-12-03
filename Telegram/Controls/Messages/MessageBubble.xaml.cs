@@ -1445,7 +1445,7 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            Panel.Content = message?.GeneratedContent ?? message?.Content;
+            Panel.ForceNewLine = message?.GeneratedContent is MessageBigEmoji;
 
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageText text)
@@ -2697,8 +2697,8 @@ namespace Telegram.Controls.Messages
             Header.Visibility = Visibility.Collapsed;
 
             Footer.Mockup(outgoing, date);
-            Panel.Content = new MessageText { Text = new FormattedText(message, Array.Empty<TextEntity>()) };
-            Panel.Text = Panel.Content.GetText();
+            Panel.ForceNewLine = false;
+            Panel.Text = new StyledText(message, new[] { new StyledParagraph(message, Array.Empty<TextEntity>()) });
 
             Media.Margin = new Thickness(0);
             FooterToNormal();
@@ -2730,8 +2730,8 @@ namespace Telegram.Controls.Messages
             Header.Visibility = Visibility.Collapsed;
 
             Footer.Mockup(outgoing, date);
-            Panel.Content = new MessageText { Text = new FormattedText(message, Array.Empty<TextEntity>()) };
-            Panel.Text = Panel.Content.GetText();
+            Panel.ForceNewLine = false;
+            Panel.Text = new StyledText(message, new[] { new StyledParagraph(message, Array.Empty<TextEntity>()) });
 
             Media.Margin = new Thickness(0);
             FooterToNormal();
@@ -2801,8 +2801,8 @@ namespace Telegram.Controls.Messages
             }
 
             Footer.Mockup(outgoing, date);
-            Panel.Content = new MessageText { Text = new FormattedText(message, Array.Empty<TextEntity>()) };
-            Panel.Text = Panel.Content.GetText();
+            Panel.ForceNewLine = false;
+            Panel.Text = new StyledText(message, new[] { new StyledParagraph(message, Array.Empty<TextEntity>()) });
 
             Media.Margin = new Thickness(0);
             FooterToNormal();
@@ -2892,8 +2892,8 @@ namespace Telegram.Controls.Messages
             }
 
             Footer.Mockup(outgoing, date);
-            Panel.Content = new MessageText { Text = new FormattedText(message, Array.Empty<TextEntity>()) };
-            Panel.Text = Panel.Content.GetText();
+            Panel.ForceNewLine = false;
+            Panel.Text = new StyledText(message, new[] { new StyledParagraph(message, Array.Empty<TextEntity>()) });
 
             ContentPanel.Padding = new Thickness(0, 4, 0, 0);
             Media.Margin = new Thickness(10, -6, 10, 0);
@@ -2961,7 +2961,7 @@ namespace Telegram.Controls.Messages
             Message.Visibility = Visibility.Collapsed;
 
             Footer.Mockup(outgoing, date);
-            Panel.Content = content;
+            Panel.ForceNewLine = content is MessageBigEmoji;
             Panel.Text = content.GetText();
 
             Media.Margin = new Thickness(10, 4, 10, 8);
@@ -3021,7 +3021,7 @@ namespace Telegram.Controls.Messages
             Header.Visibility = Visibility.Collapsed;
 
             Footer.Mockup(outgoing, date);
-            Panel.Content = content;
+            Panel.ForceNewLine = content is MessageBigEmoji;
             Panel.Text = content.GetText();
 
             Media.Margin = new Thickness(0, 0, 0, 4);
