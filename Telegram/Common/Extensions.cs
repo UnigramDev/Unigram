@@ -230,6 +230,11 @@ namespace Telegram.Common
             {
                 foreach (var block in textBlock.Blocks)
                 {
+                    if (textBlock == pointer.Parent && block.ElementStart.Offset == pointer.Offset)
+                    {
+                        break;
+                    }
+
                     index++;
 
                     if (block == pointer.Parent && block.ContentStart.Offset == pointer.Offset)
@@ -243,6 +248,17 @@ namespace Telegram.Common
 
                     // Consequence of the ZWJ workaround
                     index++;
+
+                    if (block == pointer.Parent && block.ContentEnd.Offset == pointer.Offset)
+                    {
+                        break;
+                    }
+                    else if (textBlock == pointer.Parent && block.ElementEnd.Offset == pointer.Offset)
+                    {                              
+                        // Consequence of the ZWJ workaround
+                        index++;
+                        break;
+                    }
                 }
             }
 
