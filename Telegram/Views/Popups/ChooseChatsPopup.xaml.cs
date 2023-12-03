@@ -339,7 +339,7 @@ namespace Telegram.Views.Popups
         {
             if (ViewModel != null)
             {
-                OnNavigatedTo();
+                IsPrimaryButtonSplit = ViewModel.IsSendAsCopyEnabled;
             }
 
             var button = GetTemplateChild("PrimarySplitButton") as Button;
