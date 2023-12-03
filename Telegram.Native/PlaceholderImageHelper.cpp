@@ -653,25 +653,25 @@ namespace winrt::Telegram::Native::implementation
         {
             UINT32 startPosition = entity.Offset();
             UINT32 length = entity.Length();
-            auto type = entity.Type();
+            auto name = winrt::get_class_name(entity.Type());
 
-            if (type.try_as<TextEntityTypeBold>())
+            if (name == L"Telegram.Td.Api.TextEntityTypeBold")
             {
                 textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length });
             }
-            else if (type.try_as<TextEntityTypeItalic>())
+            else if (name == L"Telegram.Td.Api.TextEntityTypeItalic")
             {
                 textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length });
             }
-            else if (type.try_as<TextEntityTypeStrikethrough>())
+            else if (name == L"Telegram.Td.Api.TextEntityTypeStrikethrough")
             {
                 textLayout->SetStrikethrough(TRUE, { startPosition, length });
             }
-            else if (type.try_as<TextEntityTypeUnderline>())
+            else if (name == L"Telegram.Td.Api.TextEntityTypeUnderline")
             {
                 textLayout->SetUnderline(TRUE, { startPosition, length });
             }
-            else if (type.try_as<TextEntityTypeCode>())
+            else if (name == L"Telegram.Td.Api.TextEntityTypeCode")
             {
                 textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length });
                 textLayout->SetFontFamilyName(L"Consolas", { startPosition, length });
