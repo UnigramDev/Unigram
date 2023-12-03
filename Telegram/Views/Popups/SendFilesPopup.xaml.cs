@@ -262,7 +262,6 @@ namespace Telegram.Views.Popups
                 {
                     var start = CaptionInput.Document.Selection.StartPosition - 1 - result.Length + 1;
                     var range = CaptionInput.Document.GetRange(CaptionInput.Document.Selection.StartPosition - 1 - result.Length, CaptionInput.Document.Selection.StartPosition);
-                    range.SetText(TextSetOptions.None, string.Empty);
 
                     CaptionInput.InsertEmoji(range, sticker.Emoji, customEmoji.CustomEmojiId);
                     CaptionInput.Document.Selection.StartPosition = range.EndPosition + 1;

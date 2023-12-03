@@ -3201,7 +3201,6 @@ namespace Telegram.Views
                 if (sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
                 {
                     var range = TextField.Document.GetRange(index, TextField.Document.Selection.StartPosition);
-                    range.SetText(TextSetOptions.None, string.Empty);
 
                     TextField.InsertEmoji(range, sticker.Emoji, customEmoji.CustomEmojiId);
                     TextField.Document.Selection.StartPosition = range.EndPosition + 1;

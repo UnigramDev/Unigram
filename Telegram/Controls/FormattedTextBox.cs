@@ -1288,8 +1288,6 @@ namespace Telegram.Controls
                             else if (entity.Type is TextEntityTypeCustomEmoji customEmoji)
                             {
                                 var emoji = text.Substring(entity.Offset, entity.Length);
-
-                                range.SetText(TextSetOptions.None, string.Empty);
                                 InsertEmoji(range, emoji, customEmoji.CustomEmojiId);
                             }
                         }
@@ -1377,7 +1375,9 @@ namespace Telegram.Controls
         {
             BeginUndoGroup();
 
-            range.SetText(TextSetOptions.None, $"{emoji};{customEmojiId}");
+            range.SetText(TextSetOptions.None, string.Empty);
+            range.Expand(TextRangeUnit.Hidden);
+            range.SetText(TextSetOptions.Unhide, $"{emoji};{customEmojiId}");
             range.CharacterFormat.Hidden = FormatEffect.On;
             range.Gravity = RangeGravity.Forward;
 
