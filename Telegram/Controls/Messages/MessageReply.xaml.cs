@@ -362,6 +362,7 @@ namespace Telegram.Controls.Messages
                             }
 
                             var player = new CustomEmojiIcon();
+                            player.LoopCount = 0;
                             player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
                             player.Style = BootStrapper.Current.Resources["MessageCustomEmojiStyle"] as Style;
 
@@ -369,7 +370,7 @@ namespace Telegram.Controls.Messages
                             inline.Child = new CustomEmojiContainer(Label, player, 14);
 
                             MessageLabel.Inlines.Add(inline);
-                            MessageLabel.Inlines.Add(Icons.ZWJ);
+                            MessageLabel.Inlines.Add(Icons.ZWNJ);
 
                             previous = entity.Offset + entity.Length;
                         }

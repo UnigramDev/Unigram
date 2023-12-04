@@ -1075,6 +1075,7 @@ namespace Telegram.Controls.Cells
                         }
 
                         var player = new CustomEmojiIcon();
+                        player.LoopCount = 0;
                         player.Source = new CustomEmojiFileSource(_clientService, customEmoji.CustomEmojiId);
                         player.Style = BootStrapper.Current.Resources["InfoCustomEmojiStyle"] as Style;
 
@@ -1082,7 +1083,7 @@ namespace Telegram.Controls.Cells
                         inline.Child = new CustomEmojiContainer(BriefText, player);
 
                         BriefLabel.Inlines.Add(inline);
-                        BriefLabel.Inlines.Add(Icons.ZWJ);
+                        BriefLabel.Inlines.Add(Icons.ZWNJ);
 
                         previous = entity.Offset + entity.Length;
                         hasCustomEmoji = true;

@@ -17,6 +17,8 @@ namespace Telegram.Controls
         {
             DefaultStyleKey = typeof(CustomEmojiIcon);
         }
+
+        public string Emoji { get; set; }
     }
 
     public class CustomEmojiContainer : Grid

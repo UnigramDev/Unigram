@@ -514,10 +514,10 @@ namespace Telegram.Controls
 
                         if (entity.Type is TextEntityTypeCustomEmoji customEmoji && ((_ignoreSpoilers && entity.HasFlag(Common.TextStyle.Spoiler)) || !entity.HasFlag(Common.TextStyle.Spoiler)))
                         {
-                            //direction ??= NativeUtils.GetDirectionality(text);
+                            var data = text.Substring(entity.Offset, entity.Length);
 
-                            //var right = direction == TextDirectionality.RightToLeft /*&& entity.Offset > 0 && entity.End < text.Length*/;
                             var player = new CustomEmojiIcon();
+                            player.LoopCount = 0;
                             player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
                             player.HorizontalAlignment = HorizontalAlignment.Left;
                             player.FlowDirection = FlowDirection.LeftToRight;
@@ -525,13 +525,14 @@ namespace Telegram.Controls
                             player.Style = EmojiStyle;
                             player.IsHitTestVisible = false;
                             player.IsEnabled = false;
+                            player.Emoji = data;
 
                             var inline = new InlineUIContainer();
                             inline.Child = player;
 
                             // TODO: see if there's a better way
                             direct.AddToCollection(inlines, direct.GetXamlDirectObject(inline));
-                            direct.AddToCollection(inlines, CreateDirectRun(direct, Icons.ZWJ));
+                            direct.AddToCollection(inlines, CreateDirectRun(direct, Icons.ZWNJ));
 
                             workaround++;
                         }

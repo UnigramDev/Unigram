@@ -39,6 +39,7 @@ namespace Telegram.Controls.Messages
                     if (player == null)
                     {
                         player = new CustomEmojiIcon();
+                        player.LoopCount = 0;
                         player.IsHitTestVisible = false;
 
                         Children.Add(player);

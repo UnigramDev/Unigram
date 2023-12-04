@@ -18,6 +18,8 @@
 
 #include <BufferSurface.h>
 
+#define IFACEMETHODIMP2        __override COM_DECLSPEC_NOTHROW HRESULT STDMETHODCALLTYPE
+
 using namespace D2D1;
 using namespace winrt::Windows::ApplicationModel;
 
@@ -25,6 +27,51 @@ namespace winrt::Telegram::Native::implementation
 {
     winrt::slim_mutex PlaceholderImageHelper::s_criticalSection;
     winrt::com_ptr<PlaceholderImageHelper> PlaceholderImageHelper::s_current{ nullptr };
+
+    class CustomEmojiInlineObject
+        : public winrt::implements<CustomEmojiInlineObject, IDWriteInlineObject>
+    {
+        IFACEMETHODIMP2 Draw(
+            _In_opt_ void* clientDrawingContext,
+            _In_ IDWriteTextRenderer* renderer,
+            FLOAT originX,
+            FLOAT originY,
+            BOOL isSideways,
+            BOOL isRightToLeft,
+            _In_opt_ IUnknown* clientDrawingEffect
+        ) override
+        {
+            return S_OK;
+        }
+
+        IFACEMETHODIMP2 GetMetrics(_Out_ DWRITE_INLINE_OBJECT_METRICS* metrics) override
+        {
+            DWRITE_INLINE_OBJECT_METRICS inlineMetrics = {};
+            inlineMetrics.width = 20;
+            inlineMetrics.height = 20;
+            inlineMetrics.baseline = 20;
+            *metrics = inlineMetrics;
+            return S_OK;
+        }
+
+        IFACEMETHODIMP2 GetOverhangMetrics(_Out_ DWRITE_OVERHANG_METRICS* overhangs) override
+        {
+            DWRITE_OVERHANG_METRICS inlineOverhangs = {};
+            inlineOverhangs.left = 0;
+            inlineOverhangs.top = -2;
+            inlineOverhangs.right = 0;
+            inlineOverhangs.bottom = -6;
+            *overhangs = inlineOverhangs;
+            return S_OK;
+        }
+
+        IFACEMETHODIMP2 GetBreakConditions(_Out_ DWRITE_BREAK_CONDITION* breakConditionBefore, _Out_ DWRITE_BREAK_CONDITION* breakConditionAfter) override
+        {
+            *breakConditionBefore = DWRITE_BREAK_CONDITION_CAN_BREAK;
+            *breakConditionAfter = DWRITE_BREAK_CONDITION_MAY_NOT_BREAK;
+            return S_OK;
+        }
+    };
 
     class CustomFontFileEnumerator
         : public winrt::implements<CustomFontFileEnumerator, IDWriteFontFileEnumerator>
@@ -45,7 +92,7 @@ namespace winrt::Telegram::Native::implementation
             m_factory.copy_from(factory);
         }
 
-        IFACEMETHODIMP MoveNext(BOOL* hasCurrentFile) override
+        IFACEMETHODIMP2 MoveNext(BOOL* hasCurrentFile) override
         {
             if (m_index == m_filenames.size())
             {
@@ -63,7 +110,7 @@ namespace winrt::Telegram::Native::implementation
             return S_OK;
         }
 
-        IFACEMETHODIMP GetCurrentFontFile(IDWriteFontFile** fontFile) override
+        IFACEMETHODIMP2 GetCurrentFontFile(IDWriteFontFile** fontFile) override
         {
             m_theFile.copy_to(fontFile);
             return S_OK;
@@ -76,7 +123,7 @@ namespace winrt::Telegram::Native::implementation
         : public winrt::implements<CustomFontLoader, IDWriteFontCollectionLoader>
     {
     public:
-        IFACEMETHODIMP CreateEnumeratorFromKey(
+        IFACEMETHODIMP2 CreateEnumeratorFromKey(
             IDWriteFactory* factory,
             void const* collectionKey,
             uint32_t collectionKeySize,
@@ -476,7 +523,7 @@ namespace winrt::Telegram::Native::implementation
         ReturnIfFailed(result, CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_wicFactory)));
         ReturnIfFailed(result, DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)m_dwriteFactory.put()));
 
-
+        m_customEmoji = winrt::make_self<CustomEmojiInlineObject>();
 
         hstring path1 = Package::Current().InstalledLocation().Path() + L"\\Assets\\Fonts\\Telegram.ttf";
         hstring path2 = Package::Current().InstalledLocation().Path() + L"\\Assets\\Emoji\\apple.ttf";
@@ -489,7 +536,6 @@ namespace winrt::Telegram::Native::implementation
         };
 
         m_customLoader = winrt::make_self<CustomFontLoader>();
-
         ReturnIfFailed(result, m_dwriteFactory->RegisterFontCollectionLoader(m_customLoader.get()));
         ReturnIfFailed(result, m_dwriteFactory->CreateCustomFontCollection(m_customLoader.get(), keys, keySize, m_fontCollection.put()));
         ReturnIfFailed(result, m_dwriteFactory->GetSystemFontCollection(m_systemCollection.put()));
@@ -603,6 +649,10 @@ namespace winrt::Telegram::Native::implementation
             {
                 textLayout->SetUnderline(TRUE, { startPosition, length });
             }
+            //else if (name == L"Telegram.Td.Api.TextEntityTypeCustomEmoji")
+            //{
+            //    textLayout->SetInlineObject(m_customEmoji.get(), { startPosition, length });
+            //}
             else if (name == L"Telegram.Td.Api.TextEntityTypeCode")
             {
                 textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length });
@@ -671,6 +721,10 @@ namespace winrt::Telegram::Native::implementation
             {
                 textLayout->SetUnderline(TRUE, { startPosition, length });
             }
+            //else if (name == L"Telegram.Td.Api.TextEntityTypeCustomEmoji")
+            //{
+            //    textLayout->SetInlineObject(m_customEmoji.get(), { startPosition, length });
+            //}
             else if (name == L"Telegram.Td.Api.TextEntityTypeCode")
             {
                 textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length });
@@ -684,7 +738,15 @@ namespace winrt::Telegram::Native::implementation
         UINT32 maxHitTestMetricsCount = metrics.lineCount * metrics.maxBidiReorderingDepth;
         UINT32 actualTestsCount;
         DWRITE_HIT_TEST_METRICS* ranges = new DWRITE_HIT_TEST_METRICS[maxHitTestMetricsCount];
-        winrt::check_hresult(textLayout->HitTestTextRange(offset, length, 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount));
+        HRESULT result = textLayout->HitTestTextRange(offset, length, 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount);
+
+        if (result == E_NOT_SUFFICIENT_BUFFER)
+        {
+            DWRITE_HIT_TEST_METRICS* ranges = new DWRITE_HIT_TEST_METRICS[actualTestsCount];
+            HRESULT result = textLayout->HitTestTextRange(offset, length, 0, 0, ranges, actualTestsCount, &actualTestsCount);
+        }
+
+        winrt::check_hresult(result);
 
         std::vector<Windows::Foundation::Rect> rects;
 

@@ -99,6 +99,7 @@ namespace winrt::Telegram::Native::implementation
         winrt::com_ptr<IDWriteFontCollectionLoader> m_customLoader;
         winrt::com_ptr<IDWriteFontCollection> m_fontCollection;
         winrt::com_ptr<IDWriteFontCollection> m_systemCollection;
+        winrt::com_ptr<IDWriteInlineObject> m_customEmoji;
         winrt::com_ptr<IDWriteTextFormat> m_appleFormat;
         winrt::com_ptr<ID2D1Effect> m_gaussianBlurEffect;
         winrt::slim_mutex m_criticalSection;

@@ -201,9 +201,9 @@ namespace Telegram.Common
 
                     index++;
 
-                    if (element is InlineUIContainer)
+                    if (element is InlineUIContainer container && container.Child is CustomEmojiIcon icon)
                     {
-                        index -= 2;
+                        index -= icon.Emoji.Length /*- 1*/;
                         emoji = true;
                     }
                     else if (element is Run run && emoji)

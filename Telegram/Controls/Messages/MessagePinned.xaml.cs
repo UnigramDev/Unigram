@@ -387,6 +387,7 @@ namespace Telegram.Controls.Messages
                         //MessageLabel.Inlines.Add(new Run { Text = clean.Substring(entity.Offset, entity.Length), FontFamily = BootStrapper.Current.Resources["SpoilerFontFamily"] as FontFamily });
 
                         var player = new CustomEmojiIcon();
+                        player.LoopCount = 0;
                         player.Source = new CustomEmojiFileSource(clientService, customEmoji.CustomEmojiId);
                         player.Style = BootStrapper.Current.Resources["MessageCustomEmojiStyle"] as Style;
 
@@ -394,7 +395,7 @@ namespace Telegram.Controls.Messages
                         inline.Child = new CustomEmojiContainer(labelShow, player, -2);
 
                         messageShow.Inlines.Add(inline);
-                        messageShow.Inlines.Add(Icons.ZWJ);
+                        messageShow.Inlines.Add(Icons.ZWNJ);
 
                         previous = entity.Offset + entity.Length;
                     }
