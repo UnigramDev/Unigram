@@ -196,8 +196,7 @@ namespace Telegram
             }
 
             var context = WindowContext.Current.Dispatcher;
-            _ = Task.Run(() => OnStartSync(context));
-            //return Task.CompletedTask;
+            _ = Task.Run(() => OnStartSync(startKind, context));
 
             if (startKind != StartKind.Launch)
             {
@@ -248,7 +247,7 @@ namespace Telegram
             return new TLNavigationService(TypeResolver.Current.Resolve<IClientService>(session), TypeResolver.Current.Resolve<IViewService>(session), frame, session, id);
         }
 
-        private async void OnStartSync(IDispatcherContext context)
+        private async void OnStartSync(StartKind startKind, IDispatcherContext context)
         {
             await RequestExtendedExecutionSessionAsync();
             await Toast.RegisterBackgroundTasks();
@@ -266,7 +265,7 @@ namespace Telegram
             catch { }
 
 #if !DEBUG
-            if (await CloudUpdateService.LaunchAsync(context))
+            if (startKind == StartKind.Launch && await CloudUpdateService.LaunchAsync(context))
             {
                 return;
             }
@@ -334,7 +333,7 @@ namespace Telegram
             // #2034: Will this work? No one knows.
             SettingsService.Current.Appearance.UpdateNightMode(null);
 
-            OnStartSync(WindowContext.Current.Dispatcher);
+            OnStartSync(StartKind.Activate, WindowContext.Current.Dispatcher);
         }
 
         public override Task OnSuspendingAsync(object s, SuspendingEventArgs e)
