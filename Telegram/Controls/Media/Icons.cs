@@ -33,6 +33,7 @@ namespace Telegram.Controls.Media
         public const string PersonFilled16 = "\uEA48";
         public const string MegaphoneFilled16 = "\uEA47";
 
+        public const string CodeFilled16 = "\uEA5A";
         public const string CodeBlockFilled16 = "\uEA3D";
         public const string QuoteBlockFilled16 = "\uEA01";
         public const string QuoteBlock = "\uEA3E";

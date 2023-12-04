@@ -2425,8 +2425,19 @@ namespace Telegram.Controls.Messages
                         var transform = Message.TransformToVisual(ContentPanel);
                         var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
+                        var inset = 0;
+                        if (j == 0)
+                        {
+                            inset = styled.Type switch
+                            {
+                                Common.ParagraphStyle.Quote => 6,
+                                Common.ParagraphStyle.Monospace => 6 + (entities[0].Type is TextEntityTypePreCode { Language.Length: > 0 } ? 22 : 0),
+                                _ => 0
+                            };
+                        }
+
                         var point = transform.TransformPoint(new Windows.Foundation.Point());
-                        point = new Windows.Foundation.Point(paragraph.Margin.Left + point.X, relative.Y + point.Y);
+                        point = new Windows.Foundation.Point(paragraph.Margin.Left + point.X, relative.Y + point.Y + inset);
 
                         CanvasGeometry result;
                         using (var builder = new CanvasPathBuilder(null))

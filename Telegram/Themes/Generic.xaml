@@ -57,6 +57,8 @@
            BasedOn="{StaticResource DefaultComboBoxStyle}" />
 
     <Style TargetType="local:BlockQuote">
+        <Setter Property="Foreground"
+                Value="{ThemeResource MessageHeaderForegroundBrush}" />
         <Setter Property="BorderBrush"
                 Value="{ThemeResource MessageHeaderBorderBrush}" />
         <Setter Property="Template">
@@ -75,7 +77,7 @@
                         <TextBlock Text="{TemplateBinding Glyph}"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    FontSize="16"
-                                   Foreground="{TemplateBinding BorderBrush}"
+                                   Foreground="{TemplateBinding Foreground}"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
                                    Margin="4" />
@@ -120,10 +122,10 @@
                         </Grid>
 
 
-                        <TextBlock Text="&#xEA3D;"
+                        <TextBlock Text="&#xEA5A;"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                    FontSize="16"
-                                   Foreground="{TemplateBinding BorderBrush}"
+                                   Foreground="{TemplateBinding Foreground}"
                                    HorizontalAlignment="Right"
                                    VerticalAlignment="Top"
                                    Margin="4"
