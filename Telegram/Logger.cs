@@ -92,7 +92,7 @@ namespace Telegram
                 _lastCalls.RemoveAt(0);
             }
 
-            if (SettingsService.Current.Diagnostics.LoggerSink && (level != LogLevel.Debug || message != null))
+            if (SettingsService.Current.WriteLogs && (level != LogLevel.Debug || message != null))
             {
                 Client.Execute(new AddLogMessage(2, string.Format("[{0}:{1}][{2}] {3}", Path.GetFileName(filePath), line, member, message)));
             }

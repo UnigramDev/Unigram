@@ -264,7 +264,7 @@ namespace Telegram.Services
 
             var oldVersion = new Version((int)oldMajor, (int)oldMinor, (int)oldRevision);
             var newVersion = new Version((int)newMajor, (int)newMinor, (int)newRevision);
-            return newVersion > oldVersion; 
+            return newVersion > oldVersion;
         }
 
         #endregion
@@ -314,11 +314,45 @@ namespace Telegram.Services
         public int VerbosityLevel
         {
 #if DEBUG
-            get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", 5);
+            get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", 4);
 #else
             get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", 2);
 #endif
-            set => AddOrUpdateValue(ref _verbosityLevel, _local, "VerbosityLevel", value);
+            set
+            {
+                AddOrUpdateValue(ref _verbosityLevel, _local, "VerbosityLevel", value);
+                UpdateWriteLogs();
+            }
+        }
+
+        private WriteLogsMode? _writeLogsMode;
+        public WriteLogsMode WriteLogsMode
+        {
+            get => _writeLogsMode ??= (WriteLogsMode)GetValueOrDefault("WriteLogsMode", (int)WriteLogsMode.Auto);
+            set
+            {
+                AddOrUpdateValue("WriteLogsMode", (int)(_writeLogsMode = value));
+                UpdateWriteLogs();
+            }
+        }
+
+        private bool? _writeLogs;
+        public bool WriteLogs
+        {
+            get
+            {
+                if (_writeLogs == null)
+                {
+                    UpdateWriteLogs();
+                }
+
+                return _writeLogs ?? false;
+            }
+        }
+
+        private void UpdateWriteLogs()
+        {
+            _writeLogs = WriteLogsMode == WriteLogsMode.Enabled || (WriteLogsMode == WriteLogsMode.Auto && VerbosityLevel >= 5);
         }
 
         private bool? _useTestDC;
@@ -797,5 +831,12 @@ namespace Telegram.Services
         Pixel,
         ReadInboxMaxId,
         IsTranslating
+    }
+
+    public enum WriteLogsMode
+    {
+        Auto,
+        Enabled,
+        Disabled
     }
 }

@@ -163,16 +163,6 @@ namespace Telegram.ViewModels
 
         public bool IsDatabaseDisabled => Settings.Diagnostics.DisableDatabase;
 
-        public bool LoggerSink
-        {
-            get => SettingsService.Current.Diagnostics.LoggerSink;
-            set
-            {
-                SettingsService.Current.Diagnostics.LoggerSink = value;
-                RaisePropertyChanged();
-            }
-        }
-
         public bool UseTestDC
         {
             get => Settings.UseTestDC;
@@ -210,6 +200,22 @@ namespace Telegram.ViewModels
         {
             get => _logOldSize;
             set => Set(ref _logOldSize, value);
+        }
+
+        public bool? WriteLogs
+        {
+            get => SettingsService.Current.WriteLogsMode switch
+            {
+                WriteLogsMode.Enabled => true,
+                WriteLogsMode.Disabled => false,
+                _ => null
+            };
+            set => SettingsService.Current.WriteLogsMode = value switch
+            {
+                true => WriteLogsMode.Enabled,
+                false => WriteLogsMode.Disabled,
+                _ => WriteLogsMode.Auto
+            };
         }
 
         public int Verbosity
