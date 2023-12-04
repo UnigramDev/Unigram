@@ -20,7 +20,6 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
@@ -37,7 +36,7 @@ namespace Telegram.Controls
 
     }
 
-    public class AnimatedImage : Control, IPlayerView
+    public class AnimatedImage : ControlEx, IPlayerView
     {
         enum PlayingState
         {
@@ -47,7 +46,6 @@ namespace Telegram.Controls
         }
 
         private bool _templateApplied;
-        private int _loaded;
 
         private PlayingState _state;
         private bool _delayedPlay;
@@ -65,8 +63,8 @@ namespace Telegram.Controls
         {
             DefaultStyleKey = typeof(AnimatedImage);
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
         }
 
         public event EventHandler Ready;
@@ -97,28 +95,18 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _loaded++;
-            Changed();
+            Load();
+
+            XamlRoot.Changed += OnRasterizationScaleChanged;
+            ReplacementColor?.RegisterColorChanged(ref _replacementColorToken, OnReplacementColorChanged);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            _loaded--;
-            Changed();
-        }
+            Unload();
 
-        private void Changed()
-        {
-            if (_loaded == 1)
-            {
-                Load();
-                XamlRoot.Changed += OnRasterizationScaleChanged;
-            }
-            else if (_loaded == 0)
-            {
-                Unload();
-                XamlRoot.Changed -= OnRasterizationScaleChanged;
-            }
+            XamlRoot.Changed -= OnRasterizationScaleChanged;
+            ReplacementColor?.UnregisterColorChanged(ref _replacementColorToken);
         }
 
         public bool IsPlaying => _delayedPlay || _state == PlayingState.Playing;
@@ -348,7 +336,7 @@ namespace Telegram.Controls
                 return;
             }
 
-            if (_templateApplied && _loaded > 0)
+            if (_templateApplied && IsConnected)
             {
                 var presentation = GetPresentation();
                 if (presentation != _presenter?.Presentation)
@@ -401,7 +389,7 @@ namespace Telegram.Controls
 
         private void Unload()
         {
-            if (_presenter != null && _loaded <= 0)
+            if (_presenter != null && !IsConnected)
             {
                 _presenter.Unload(this, _state == PlayingState.Playing);
                 _presenter.LoopCompleted -= LoopCompleted;

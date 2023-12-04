@@ -226,6 +226,7 @@
     <Compile Include="Controls\Chats\ChatTranslateBar.xaml.cs">
       <DependentUpon>ChatTranslateBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\FrameworkElementEx.cs" />
     <Compile Include="Controls\ProfileColorBadge.xaml.cs">
       <DependentUpon>ProfileColorBadge.xaml</DependentUpon>
     </Compile>

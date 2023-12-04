@@ -34,7 +34,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed class ForumTopicCell : Control, IMultipleElement
+    public sealed class ForumTopicCell : ControlEx, IMultipleElement
     {
         private bool _selected;
 
@@ -59,8 +59,8 @@ namespace Telegram.Controls.Cells
         {
             DefaultStyleKey = typeof(ForumTopicCell);
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

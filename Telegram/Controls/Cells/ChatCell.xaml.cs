@@ -46,7 +46,7 @@ namespace Telegram.Controls.Cells
         Read
     }
 
-    public sealed class ChatCell : Control, IMultipleElement
+    public sealed class ChatCell : ControlEx, IMultipleElement
     {
         private bool _selected;
 
@@ -81,8 +81,8 @@ namespace Telegram.Controls.Cells
         {
             DefaultStyleKey = typeof(ChatCell);
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
         }
 
         public event EventHandler<Chat> StoryClick;

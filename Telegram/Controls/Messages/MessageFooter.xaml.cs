@@ -20,7 +20,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
-    public sealed class MessageFooter : Control
+    public sealed class MessageFooter : ControlEx
     {
         private MessageTicksState _ticksState;
         private long _ticksHash;
@@ -39,8 +39,8 @@ namespace Telegram.Controls.Messages
         {
             DefaultStyleKey = typeof(MessageFooter);
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

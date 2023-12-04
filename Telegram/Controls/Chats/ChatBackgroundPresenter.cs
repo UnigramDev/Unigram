@@ -15,14 +15,13 @@ using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatBackgroundPresenter : Control
+    public class ChatBackgroundPresenter : ControlEx
     {
         private readonly ChatBackgroundFreeform _freeform = new();
         private readonly DispatcherTimer _freeformTimer;
@@ -47,8 +46,8 @@ namespace Telegram.Controls.Chats
         public ChatBackgroundPresenter()
         {
             DefaultStyleKey = typeof(ChatBackgroundPresenter);
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
 
             _freeformTimer = new DispatcherTimer();
             _freeformTimer.Interval = TimeSpan.FromMilliseconds(500 / 30d);
