@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Telegram.Common;
 using Telegram.Controls;
 using Windows.UI;
+using Windows.UI.Xaml;
 
 namespace Telegram.Td.Api
 {
@@ -44,6 +45,16 @@ namespace Telegram.Td.Api
 
             BuiltInAccentColorId = builtInAccentColorId;
             Id = builtInAccentColorId;
+        }
+
+        public IList<Color> ForTheme(ElementTheme theme)
+        {
+            if (theme == ElementTheme.Dark && DarkThemeColors.Count > 0)
+            {
+                return DarkThemeColors;
+            }
+
+            return LightThemeColors;
         }
 
         /// <summary>

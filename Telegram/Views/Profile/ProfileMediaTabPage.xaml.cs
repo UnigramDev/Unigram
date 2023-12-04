@@ -68,8 +68,6 @@ namespace Telegram.Views.Profile
             }
         }
 
-        public override float TopPadding => 0;
-
         private async void Photo_Click(object sender, RoutedEventArgs e)
         {
             var element = sender as FrameworkElement;

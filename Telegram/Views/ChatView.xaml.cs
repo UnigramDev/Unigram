@@ -4458,7 +4458,7 @@ namespace Telegram.Views
             btnVoiceMessage.IsRestricted = fullInfo.HasRestrictedVoiceAndVideoNoteMessages
                 && user.Id != ViewModel.ClientService.Options.MyId;
 
-            Call.Glyph = Icons.Phone;
+            Call.Glyph = Icons.Call;
             Call.Visibility = /*!secret &&*/ fullInfo.CanBeCalled ? Visibility.Visible : Visibility.Collapsed;
             VideoCall.Visibility = /*!secret &&*/ fullInfo.CanBeCalled && fullInfo.SupportsVideoCalls ? Visibility.Visible : Visibility.Collapsed;
         }

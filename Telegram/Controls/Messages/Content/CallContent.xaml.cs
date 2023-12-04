@@ -71,7 +71,7 @@ namespace Telegram.Controls.Messages.Content
             var outgoing = message.IsOutgoing;
             var missed = call.DiscardReason is CallDiscardReasonMissed or CallDiscardReasonDeclined;
 
-            Button.Glyph = call.IsVideo ? Icons.VideoFilled24 : Icons.PhoneFilled24;
+            Button.Glyph = call.IsVideo ? Icons.VideoFilled24 : Icons.CallFilled24;
             //Button.FontSize = call.IsVideo ? 24 : 20;
 
             TitleLabel.Text = call.ToOutcomeText(message.IsOutgoing);

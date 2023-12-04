@@ -232,7 +232,7 @@ namespace Telegram.Controls
                     BorderPart.Visibility = show != BackgroundKind.None ? Visibility.Visible : Visibility.Collapsed;
                     MaterialPart.Visibility = show == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
                     DetailHeaderPresenter.Visibility = show == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
-                    BackButton.Visibility = show == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
+                    BackButton.Visibility = show == BackgroundKind.Material && _showDetailHeader ? Visibility.Visible : Visibility.Collapsed;
                 };
 
                 var fadeOut = visual.Compositor.CreateScalarKeyFrameAnimation();
@@ -330,7 +330,7 @@ namespace Telegram.Controls
             BorderPart.Visibility = _backgroundType != BackgroundKind.None ? Visibility.Visible : Visibility.Collapsed;
             MaterialPart.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
             DetailHeaderPresenter.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
-            BackButton.Visibility = _backgroundType == BackgroundKind.Material ? Visibility.Visible : Visibility.Collapsed;
+            BackButton.Visibility = _backgroundType == BackgroundKind.Material && _showDetailHeader ? Visibility.Visible : Visibility.Collapsed;
 
             ElementCompositionPreview.SetIsTranslationEnabled(DetailAction, true);
             ElementCompositionPreview.SetIsTranslationEnabled(BackButton, true);
@@ -469,6 +469,8 @@ namespace Telegram.Controls
             OnViewStateChanged();
         }
 
+        private bool _showDetailHeader = true;
+
         private void ShowHideDetailHeader(bool show)
         {
             var detailVisual = ElementCompositionPreview.GetElementVisual(DetailPresenter);
@@ -478,6 +480,12 @@ namespace Telegram.Controls
             {
                 clip.TopInset = show ? 2 : 0;
             }
+
+            _showDetailHeader = show;
+
+            BackButton.Visibility = show
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
             DetailHeaderBackground.Visibility = show
                 ? Visibility.Visible

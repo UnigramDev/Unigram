@@ -37,7 +37,8 @@
                                 Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                                 BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                                 BorderThickness="0,0,0,1"
-                                BackgroundSizing="InnerBorderEdge" />
+                                BackgroundSizing="OuterBorderEdge"
+                                Height="48" />
 
                         <Grid CornerRadius="8,8,0,0"
                               MaxWidth="1000"
@@ -53,7 +54,7 @@
                                                  SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                                                  DisplayMemberPath="Text"
                                                  Height="40"
-                                                 Margin="0,4" />
+                                                 Margin="16,4" />
                         </Grid>
                         <messages:MessageService x:Name="DateHeader"
                                                  Visibility="Collapsed"
@@ -73,5 +74,15 @@
                        Navigated="OnNavigated" />
             </Grid>
         </ScrollViewer>
+
+        <Grid MaxWidth="1000"
+              Margin="24,0">
+            <controls:BackButton x:Name="BackButton"
+                                 Margin="-4,18,0,0"
+                                 CornerRadius="20"
+                                 Glyph="&#xE93E;"
+                                 Width="48"
+                                 Height="48" />
+        </Grid>
     </Grid>
 </local:HostedPage>

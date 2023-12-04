@@ -838,9 +838,10 @@
                                    AutomationProperties.AccessibilityView="Raw"
                                    Text="{TemplateBinding Glyph}"
                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                   Margin="8" />
+                                   Margin="8,8,8,4" />
 
                         <ContentPresenter x:Name="ContentPresenter"
+                                          FontSize="12"
                                           FontFamily="{TemplateBinding FontFamily}"
                                           AutomationProperties.AccessibilityView="Raw"
                                           ContentTemplate="{TemplateBinding ContentTemplate}"

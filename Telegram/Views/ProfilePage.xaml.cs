@@ -61,8 +61,6 @@ namespace Telegram.Views
 
             _properties = visual.Compositor.CreatePropertySet();
             _properties.InsertScalar("ActualHeight", ProfileHeader.ActualSize.Y + 16);
-            _properties.InsertScalar("TopPadding", 48);
-            //_properties.InsertScalar("TopPadding", TopPadding);
 
             var translation = visual.Compositor.CreateExpressionAnimation(
                 "properties.ActualHeight > 16 ? scrollViewer.Translation.Y > -properties.ActualHeight ? 0 : -scrollViewer.Translation.Y - properties.ActualHeight : -scrollViewer.Translation.Y");
@@ -83,6 +81,27 @@ namespace Telegram.Views
 
             border.StartAnimation("Opacity", fadeOut);
             clipper.StartAnimation("Opacity", fadeIn);
+
+
+
+            var visual4 = ElementCompositionPreview.GetElementVisual(BackButton);
+            visual4.CenterPoint = new System.Numerics.Vector3(24, 16, 0);
+            ElementCompositionPreview.SetIsTranslationEnabled(BackButton, true);
+
+            var expOut2 = "clamp(1 - ((-(scrollViewer.Translation.Y + 164) / 32) * 0.2), 0.8, 1)";
+            var slideOut2 = properties.Compositor.CreateExpressionAnimation($"vector3({expOut2}, {expOut2}, 1)");
+            slideOut2.SetReferenceParameter("scrollViewer", properties);
+
+            var expOut3y = "-clamp(((-(scrollViewer.Translation.Y + 164) / 32) * 16), 0, 16)";
+            var expOut3x = "-clamp(((-(scrollViewer.Translation.Y + properties.ActualHeight - 32) / 32) * 12), 0, 12)";
+            var slideOut3 = properties.Compositor.CreateExpressionAnimation($"vector3({expOut3x}, {expOut3y}, 0)");
+            slideOut3.SetReferenceParameter("scrollViewer", properties);
+            slideOut3.SetReferenceParameter("properties", _properties);
+
+            visual4.StartAnimation("Scale", slideOut2);
+            visual4.StartAnimation("Translation", slideOut3);
+
+            ProfileHeader.InitializeScrolling(properties);
         }
 
         public void OnBackRequested(BackRequestedRoutedEventArgs args)
@@ -96,6 +115,11 @@ namespace Telegram.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             ViewModel.PropertyChanged += OnPropertyChanged;
+
+            if (ViewModel.SelectedItem is ProfileTabItem tab)
+            {
+                MediaFrame.Navigate(tab.Type, null, new SuppressNavigationTransitionInfo());
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -261,8 +285,6 @@ namespace Telegram.Views
             {
                 _itemsSourceToken = tabPage.ScrollingHost.RegisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, OnItemsSourceChanged);
             }
-
-            _properties?.InsertScalar("TopPadding", tabPage.TopPadding);
         }
 
         private void OnItemsSourceChanged(DependencyObject sender, DependencyProperty dp)
@@ -296,6 +318,12 @@ namespace Telegram.Views
 
         private void OnViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
+            BackButton.RequestedTheme = ScrollingHost.VerticalOffset < ProfileHeader.ActualHeight
+                ? ProfileHeader.HeaderTheme
+                : ElementTheme.Default;
+
+            ProfileHeader.ViewChanged(ScrollingHost.VerticalOffset);
+
             if (MediaFrame.Content is not ProfileTabPage tabPage || tabPage.ScrollingHost is not ListViewBase scrollingHost)
             {
                 return;

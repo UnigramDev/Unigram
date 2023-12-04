@@ -57,9 +57,7 @@ namespace Telegram.Controls
 
             if (clientService.TryGetProfileColor(profileId, out ProfileColor profile))
             {
-                var colors = theme == ElementTheme.Light
-                    ? profile.LightThemeColors
-                    : profile.DarkThemeColors;
+                var colors = profile.ForTheme(theme);
 
                 ProfilePrimary.Background = new SolidColorBrush(colors.PaletteColors[0]);
                 ProfileSecondary.Fill = colors.PaletteColors.Count > 1
@@ -82,9 +80,7 @@ namespace Telegram.Controls
             }
 
             var name = clientService.GetAccentColor(nameId);
-            var color = theme == ElementTheme.Light
-                ? name.LightThemeColors
-                : name.DarkThemeColors;
+            var color = name.ForTheme(theme);
 
             NamePrimary.Background = new SolidColorBrush(color[0]);
             NameSecondary.Fill = color.Count > 1

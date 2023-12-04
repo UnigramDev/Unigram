@@ -19,8 +19,6 @@ namespace Telegram.Views.Profile
             InitializeComponent();
         }
 
-        public override float TopPadding => 0;
-
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is Chat chat)
@@ -35,9 +33,8 @@ namespace Telegram.Views.Profile
             {
                 args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = ScrollingHost.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = ScrollingHost.ItemTemplate;
             }
-
-            args.ItemContainer.ContentTemplate = ScrollingHost.ItemTemplate;
 
             args.IsContainerPrepared = true;
         }

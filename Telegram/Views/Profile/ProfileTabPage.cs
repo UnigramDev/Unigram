@@ -251,7 +251,5 @@ namespace Telegram.Views.Profile
 
         private Grid _managePanel;
         public Grid ManagePanel => _managePanel ??= FindName(nameof(ManagePanel)) as Grid;
-
-        public virtual float TopPadding => 48;
     }
 }

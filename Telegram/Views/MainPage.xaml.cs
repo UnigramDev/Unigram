@@ -3521,7 +3521,7 @@ namespace Telegram.Views
 
     public class HostedPage : Page
     {
-        #region HasHeader
+        #region ShowHeader
 
         public bool ShowHeader
         {

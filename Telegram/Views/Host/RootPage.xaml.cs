@@ -574,7 +574,7 @@ namespace Telegram.Views.Host
                         break;
                     case RootDestination.Calls:
                         content.Text = Strings.Calls;
-                        content.Glyph = Icons.Phone;
+                        content.Glyph = Icons.Call;
                         break;
                     case RootDestination.Settings:
                         content.Text = Strings.Settings;

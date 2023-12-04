@@ -530,6 +530,7 @@
                     <Grid>
                         <local:CustomEmojiIcon x:Name="Status"
                                                x:Load="False"
+                                               ReplacementColor="{TemplateBinding Foreground}"
                                                VerticalAlignment="Bottom"
                                                Margin="0,-2,0,-2" />
                         <FontIcon x:Name="Icon"

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Telegram.Common;
 using Windows.UI;
+using Windows.UI.Xaml;
 
 namespace Telegram.Td.Api
 {
@@ -13,6 +14,16 @@ namespace Telegram.Td.Api
             LightThemeColors = new ProfileColors(accent.LightThemeColors);
 
             Id = accent.Id;
+        }
+
+        public ProfileColors ForTheme(ElementTheme theme)
+        {
+            if (theme == ElementTheme.Dark)
+            {
+                return DarkThemeColors;
+            }
+
+            return LightThemeColors;
         }
 
         /// <summary>
