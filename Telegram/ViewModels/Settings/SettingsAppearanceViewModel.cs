@@ -320,7 +320,7 @@ namespace Telegram.ViewModels.Settings
 
         public async void ChangeProfileColor()
         {
-            await ShowPopupAsync(new ChooseNameColorPopup(ClientService, new MessageSenderUser(ClientService.Options.MyId)));
+            await ShowPopupAsync(new ChooseProfileColorPopup(ClientService, new MessageSenderUser(ClientService.Options.MyId)));
         }
 
         public void OpenNightMode()

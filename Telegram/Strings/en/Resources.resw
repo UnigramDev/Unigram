@@ -8064,6 +8064,12 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="UserColorPreviewTitle" xml:space="preserve">
     <value>Color Preview</value>
   </data>
+  <data name="UserColorTabName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="UserColorTabProfile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
   <data name="UserColorTitle" xml:space="preserve">
     <value>Your Name Color</value>
   </data>
@@ -8142,6 +8148,15 @@ However, it is currently available for purchase. **Learn more…**</value>
   </data>
   <data name="UsernamesProfileHelp" xml:space="preserve">
     <value>Drag and drop links to change the order in which they will be displayed on your info page.</value>
+  </data>
+  <data name="UserProfileColorReset" xml:space="preserve">
+    <value>Reset Profile Color</value>
+  </data>
+  <data name="UserProfileHint" xml:space="preserve">
+    <value>Choose a color and a logo for your profile</value>
+  </data>
+  <data name="UserProfileIcon" xml:space="preserve">
+    <value>Add Icons to Profile</value>
   </data>
   <data name="UserReplyIcon" xml:space="preserve">
     <value>Add Icons to Replies</value>

@@ -905,6 +905,15 @@
     <Compile Include="Views\Popups\ChatNotificationsPopup.xaml.cs">
       <DependentUpon>ChatNotificationsPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Popups\ChooseNameColorView.xaml.cs">
+      <DependentUpon>ChooseNameColorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ChooseProfileColorView.xaml.cs">
+      <DependentUpon>ChooseProfileColorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popups\ChooseProfileColorPopup.xaml.cs">
+      <DependentUpon>ChooseProfileColorPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Popups\ChooseStatusDurationPopup.xaml.cs">
       <DependentUpon>ChooseStatusDurationPopup.xaml</DependentUpon>
     </Compile>
@@ -2377,6 +2386,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ChatNotificationsPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ChooseNameColorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ChooseProfileColorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Popups\ChooseProfileColorPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

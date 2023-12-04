@@ -7,8 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Telegram.Common;
-using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Controls.Messages;
 using Telegram.Services;
@@ -23,15 +21,20 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Views.Popups
 {
-    // TODO: remove in 10.4.0
-    public sealed partial class ChooseNameColorPopup : ContentPopup
+    public sealed partial class ChooseNameColorView : UserControl
     {
-        private readonly IClientService _clientService;
-        private readonly MessageSender _sender;
+        private IClientService _clientService;
+        private MessageSender _sender;
 
-        public ChooseNameColorPopup(IClientService clientService, MessageSender sender)
+        public ChooseNameColorView()
         {
             InitializeComponent();
+        }
+
+        public string PrimaryButtonText { get; private set; }
+
+        public void Initialize(IClientService clientService, MessageSender sender)
+        {
             //Title = Strings.UserColorTitle;
 
             _clientService = clientService;
@@ -78,10 +81,8 @@ namespace Telegram.Views.Popups
                 Message1.Mockup(clientService, Strings.UserColorPreview, sender, Strings.UserColorPreviewReply, webPage, false, DateTime.Now);
 
                 Badge.Content = Strings.UserReplyIcon;
-
                 ColorHint.Text = Strings.UserColorHint;
-
-                PurchaseCommand.Content = Strings.UserColorApplyIcon;
+                PrimaryButtonText = Strings.UserColorApplyIcon;
             }
             else if (clientService.TryGetChat(sender, out Chat chat))
             {
@@ -98,10 +99,8 @@ namespace Telegram.Views.Popups
                 Message1.Mockup(clientService, Strings.ChannelColorPreview, sender, Strings.ChannelColorPreviewReply, webPage, false, DateTime.Now);
 
                 Badge.Content = Strings.ChannelReplyIcon;
-
                 ColorHint.Text = Strings.ChannelColorHint;
-
-                PurchaseCommand.Content = Strings.ChannelColorApply;
+                PrimaryButtonText = Strings.ChannelColorApply;
             }
 
             var accent = colors.FirstOrDefault(x => x.Id == accentColorId);
@@ -124,7 +123,7 @@ namespace Telegram.Views.Popups
                 Animated.ReplacementColor = null;
             }
 
-            _customEmojiId = customEmojiId;
+            CustomEmojiId = customEmojiId;
             List.SelectedItem = accent;
 
             BackgroundControl.Update(clientService, null);
@@ -168,9 +167,9 @@ namespace Telegram.Views.Popups
 
         #endregion
 
-        private long _customEmojiId;
+        public long CustomEmojiId { get; set; }
 
-        private int IndexToId
+        public int ColorId
         {
             get
             {
@@ -185,7 +184,7 @@ namespace Telegram.Views.Popups
 
         private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Message1.UpdateMockup(_clientService, _customEmojiId, IndexToId);
+            Message1.UpdateMockup(_clientService, CustomEmojiId, ColorId);
 
             if (List.SelectedItem is NameColor accent)
             {
@@ -195,49 +194,16 @@ namespace Telegram.Views.Popups
 
         private void Badge_Click(object sender, RoutedEventArgs e)
         {
-            var flyout = EmojiMenuFlyout.ShowAt(_clientService, EmojiDrawerMode.Background, Animated, EmojiFlyoutAlignment.TopLeft);
+            var flyout = EmojiMenuFlyout.ShowAt(_clientService, EmojiDrawerMode.Background, Animated, EmojiFlyoutAlignment.TopRight);
             flyout.EmojiSelected += Flyout_EmojiSelected;
         }
 
         private void Flyout_EmojiSelected(object sender, EmojiSelectedEventArgs e)
         {
-            _customEmojiId = e.CustomEmojiId;
+            CustomEmojiId = e.CustomEmojiId;
 
-            Message1.UpdateMockup(_clientService, _customEmojiId, IndexToId);
-            Animated.Source = new CustomEmojiFileSource(_clientService, _customEmojiId);
-        }
-
-        private async void PurchaseCommand_Click(object sender, RoutedEventArgs e)
-        {
-            if (_sender is MessageSenderChat chat)
-            {
-                var response = await _clientService.SendAsync(new GetChatBoostStatus(chat.ChatId));
-                if (response is ChatBoostStatus status && status.Level >= _clientService.Options.ChannelCustomAccentColorBoostLevelMin)
-                {
-                    _clientService.Send(new SetChatAccentColor(chat.ChatId, IndexToId, _customEmojiId));
-                    Window.Current.ShowToast(Strings.ChannelColorApplied, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
-
-                    Hide();
-                }
-                else
-                {
-                    // TODO: show boost needed
-                }
-            }
-            else
-            {
-                if (_clientService.IsPremium)
-                {
-                    _clientService.Send(new SetAccentColor(IndexToId, _customEmojiId));
-                    Window.Current.ShowToast(Strings.UserColorApplied, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
-
-                    Hide();
-                }
-                else
-                {
-                    Window.Current.ShowToast(new PremiumFeatureAccentColor());
-                }
-            }
+            Message1.UpdateMockup(_clientService, CustomEmojiId, ColorId);
+            Animated.Source = new CustomEmojiFileSource(_clientService, CustomEmojiId);
         }
 
         private void NameColor_SizeChanged(object sender, SizeChangedEventArgs e)
