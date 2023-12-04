@@ -16,12 +16,14 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
+using Windows.Devices.Input;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
@@ -71,6 +73,8 @@ namespace Telegram.Controls
 
         private bool _isHighlighted;
         private bool _ignoreSpoilers = false;
+
+        private long _expandSelectionDeadline;
 
         private readonly List<FormattedParagraph> _codeBlocks = new();
 
@@ -145,6 +149,9 @@ namespace Telegram.Controls
             TextBlock.SizeChanged += OnSizeChanged;
             TextBlock.ContextMenuOpening += _contextMenuOpening;
 
+            TextBlock.AddHandler(DoubleTappedEvent, new DoubleTappedEventHandler(OnDoubleTapped), true);
+            TextBlock.AddHandler(TappedEvent, new TappedEventHandler(OnTapped), true);
+
             _templateApplied = true;
 
             if (_clientService != null && _text != null)
@@ -161,6 +168,48 @@ namespace Telegram.Controls
         private void OnLostFocus(object sender, RoutedEventArgs e)
         {
             TextBlock.Select(TextBlock.ContentStart, TextBlock.ContentStart);
+        }
+
+        private void OnDoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            if (e.PointerDeviceType == PointerDeviceType.Mouse)
+            {
+                _expandSelectionDeadline = Environment.TickCount + BootStrapper.Current.UISettings.DoubleClickTime;
+            }
+        }
+
+        private void OnTapped(object sender, TappedRoutedEventArgs e)
+        {
+            // If a double tap is followed by a single tap, then it's a triple tap (duh)
+            if (e.PointerDeviceType == PointerDeviceType.Mouse && Environment.TickCount < _expandSelectionDeadline)
+            {
+                _expandSelectionDeadline = Environment.TickCount + BootStrapper.Current.UISettings.DoubleClickTime;
+                VisualUtilities.QueueCallbackForCompositionRendering(ExpandSelection);
+            }
+        }
+
+        private void ExpandSelection()
+        {
+            if (TextBlock.SelectionStart != null && TextBlock.SelectionEnd != null)
+            {
+                static Paragraph FindParagraph(TextElement element)
+                {
+                    if (element is Paragraph paragraph)
+                    {
+                        return paragraph;
+                    }
+
+                    return FindParagraph(element.ElementStart.Parent as TextElement);
+                }
+
+                var startBlock = FindParagraph(TextBlock.SelectionStart.Parent as TextElement);
+                var endBlock = FindParagraph(TextBlock.SelectionEnd.Parent as TextElement);
+
+                if (startBlock == endBlock)
+                {
+                    TextBlock.Select(startBlock.ContentStart, startBlock.ContentEnd);
+                }
+            }
         }
 
         public void Clear()
