@@ -705,7 +705,8 @@ namespace Telegram.Views.Popups
 
         private void MenuItemOpenBot()
         {
-
+            _navigationService.NavigateToUser(_botUser.Id);
+            Hide();
         }
 
         private void MenuItemReloadPage()
