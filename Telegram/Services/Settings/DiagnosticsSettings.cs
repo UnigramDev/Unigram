@@ -70,6 +70,17 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _lastUpdateTime, "LastUpdateTime", value);
         }
 
+        private bool? _enableWebViewDevTools;
+        public bool EnableWebViewDevTools
+        {
+#if DEBUG
+            get => _enableWebViewDevTools ??= GetValueOrDefault("EnableWebViewDevTools", true);
+#else
+            get => _enableWebViewDevTools ??= GetValueOrDefault("EnableWebViewDevTools", false);
+#endif
+            set => AddOrUpdateValue(ref _enableWebViewDevTools, "EnableWebViewDevTools", value);
+        }
+
         private long? _storageMaxTimeFromLastAccess;
         public long StorageMaxTimeFromLastAccess
         {

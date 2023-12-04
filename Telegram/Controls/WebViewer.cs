@@ -3,6 +3,7 @@ using Microsoft.Web.WebView2.Core;
 using System;
 using System.Threading.Tasks;
 using Telegram.Native;
+using Telegram.Services;
 using Windows.Data.Json;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -224,14 +225,8 @@ postEvent: function(eventType, eventData) {
 }");
 
             View.CoreWebView2.Settings.IsStatusBarEnabled = false;
-
-#if DEBUG
-            View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = true;
-            View.CoreWebView2.Settings.AreDevToolsEnabled = true;
-#else
-            View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
-            View.CoreWebView2.Settings.AreDevToolsEnabled = false;
-#endif
+            View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
+            View.CoreWebView2.Settings.AreDevToolsEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
 
             _templatedApplied.TrySetResult(true);
         }
