@@ -6,6 +6,7 @@
 //
 using System;
 using System.ComponentModel;
+using System.Numerics;
 using Telegram.Collections;
 using Telegram.Converters;
 using Telegram.Navigation;
@@ -58,6 +59,7 @@ namespace Telegram.Views
             var clipper = ElementCompositionPreview.GetElementVisual(ClipperBackground);
 
             ElementCompositionPreview.SetIsTranslationEnabled(HeaderPanel, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(BackButton, true);
 
             _properties = visual.Compositor.CreatePropertySet();
             _properties.InsertScalar("ActualHeight", ProfileHeader.ActualSize.Y + 16);
@@ -81,27 +83,6 @@ namespace Telegram.Views
 
             border.StartAnimation("Opacity", fadeOut);
             clipper.StartAnimation("Opacity", fadeIn);
-
-
-
-            var visual4 = ElementCompositionPreview.GetElementVisual(BackButton);
-            visual4.CenterPoint = new System.Numerics.Vector3(24, 16, 0);
-            ElementCompositionPreview.SetIsTranslationEnabled(BackButton, true);
-
-            var expOut2 = "clamp(1 - ((-(scrollViewer.Translation.Y + 164) / 32) * 0.2), 0.8, 1)";
-            var slideOut2 = properties.Compositor.CreateExpressionAnimation($"vector3({expOut2}, {expOut2}, 1)");
-            slideOut2.SetReferenceParameter("scrollViewer", properties);
-
-            var expOut3y = "-clamp(((-(scrollViewer.Translation.Y + 164) / 32) * 16), 0, 16)";
-            var expOut3x = "-clamp(((-(scrollViewer.Translation.Y + properties.ActualHeight - 32) / 32) * 12), 0, 12)";
-            var slideOut3 = properties.Compositor.CreateExpressionAnimation($"vector3({expOut3x}, {expOut3y}, 0)");
-            slideOut3.SetReferenceParameter("scrollViewer", properties);
-            slideOut3.SetReferenceParameter("properties", _properties);
-
-            visual4.StartAnimation("Scale", slideOut2);
-            visual4.StartAnimation("Translation", slideOut3);
-
-            ProfileHeader.InitializeScrolling(properties);
         }
 
         public void OnBackRequested(BackRequestedRoutedEventArgs args)
@@ -119,6 +100,34 @@ namespace Telegram.Views
             if (ViewModel.SelectedItem is ProfileTabItem tab)
             {
                 MediaFrame.Navigate(tab.Type, null, new SuppressNavigationTransitionInfo());
+            }
+
+            var visual4 = ElementCompositionPreview.GetElementVisual(BackButton);
+            visual4.CenterPoint = new Vector3(24, 16, 0);
+
+            if (ProfileHeader.Visibility == Visibility.Visible)
+            {
+                var properties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(ScrollingHost);
+
+                var expOut2 = "clamp(1 - ((-(scrollViewer.Translation.Y + 164) / 32) * 0.2), 0.8, 1)";
+                var slideOut2 = properties.Compositor.CreateExpressionAnimation($"vector3({expOut2}, {expOut2}, 1)");
+                slideOut2.SetReferenceParameter("scrollViewer", properties);
+
+                var expOut3y = "-clamp(((-(scrollViewer.Translation.Y + 164) / 32) * 16), 0, 16)";
+                var expOut3x = "-clamp(((-(scrollViewer.Translation.Y + properties.ActualHeight - 32) / 32) * 12), 0, 12)";
+                var slideOut3 = properties.Compositor.CreateExpressionAnimation($"vector3({expOut3x}, {expOut3y}, 0)");
+                slideOut3.SetReferenceParameter("scrollViewer", properties);
+                slideOut3.SetReferenceParameter("properties", _properties);
+
+                visual4.StartAnimation("Scale", slideOut2);
+                visual4.StartAnimation("Translation", slideOut3);
+
+                ProfileHeader.InitializeScrolling(properties);
+            }
+            else
+            {
+                visual4.Scale = new Vector3(0.8f);
+                visual4.Properties.InsertVector3("Translation", new Vector3(-12, -16, 0));
             }
         }
 
@@ -322,7 +331,10 @@ namespace Telegram.Views
                 ? ProfileHeader.HeaderTheme
                 : ElementTheme.Default;
 
-            ProfileHeader.ViewChanged(ScrollingHost.VerticalOffset);
+            if (ProfileHeader.Visibility == Visibility.Visible)
+            {
+                ProfileHeader.ViewChanged(ScrollingHost.VerticalOffset);
+            }
 
             if (MediaFrame.Content is not ProfileTabPage tabPage || tabPage.ScrollingHost is not ListViewBase scrollingHost)
             {
