@@ -479,7 +479,7 @@ namespace Telegram.ViewModels.Settings
             NavigationService.Navigate(typeof(SettingsPrivacyAllowChatInvitesPage));
         }
 
-        public async void OpenVoiceMessages()
+        public void OpenVoiceMessages()
         {
             if (ClientService.IsPremium)
             {
@@ -487,11 +487,7 @@ namespace Telegram.ViewModels.Settings
             }
             else if (ClientService.IsPremiumAvailable)
             {
-                var confirm = await ShowPopupAsync(Strings.PrivacyVoiceMessagesPremiumOnly, Strings.PrivacyVoiceMessages, Strings.OK, Strings.Cancel);
-                if (confirm == ContentDialogResult.Primary)
-                {
-                    NavigationService.ShowPromo(/*new PremiumSourceFeature(new PremiumFeaturePrivateVoiceAndVideoMessages)*/);
-                }
+                Window.Current.ShowToast(new PremiumFeatureVoiceRecognition());
             }
         }
 

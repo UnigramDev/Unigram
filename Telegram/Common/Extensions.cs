@@ -359,12 +359,13 @@ namespace Telegram.Common
         {
             var text = source switch
             {
+                PremiumFeatureVoiceRecognition => Strings.PrivacyVoiceMessagesPremiumOnly.Replace(" *Telegram Premium* ", " **Telegram Premium** "),
                 PremiumFeatureAccentColor => Strings.UserColorApplyPremium,
                 PremiumFeatureRealTimeChatTranslation => Strings.ShowTranslateChatButtonLocked,
                 _ => Strings.UnlockPremium
             };
 
-            return ShowToast(app, ReplacePremiumLink(text));
+            return ShowToast(app, ReplacePremiumLink(text), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
         }
 
         public static TeachingTip ShowToast(this Window app, string text, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
