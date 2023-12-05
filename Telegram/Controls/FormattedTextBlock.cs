@@ -192,22 +192,33 @@ namespace Telegram.Controls
         {
             if (TextBlock.SelectionStart != null && TextBlock.SelectionEnd != null)
             {
-                static Paragraph FindParagraph(TextElement element)
+                static DependencyObject FindParent(DependencyObject obj)
                 {
-                    if (element is Paragraph paragraph)
+                    if (obj is RichTextBlock or Paragraph)
                     {
-                        return paragraph;
+                        return obj;
+                    }
+                    else if (obj is TextElement element)
+                    {
+                        return FindParent(element.ElementStart.Parent);
                     }
 
-                    return FindParagraph(element.ElementStart.Parent as TextElement);
+                    return null;
                 }
 
-                var startBlock = FindParagraph(TextBlock.SelectionStart.Parent as TextElement);
-                var endBlock = FindParagraph(TextBlock.SelectionEnd.Parent as TextElement);
+                var startBlock = FindParent(TextBlock.SelectionStart.Parent);
+                var endBlock = FindParent(TextBlock.SelectionEnd.Parent);
 
                 if (startBlock == endBlock)
                 {
-                    TextBlock.Select(startBlock.ContentStart, startBlock.ContentEnd);
+                    if (startBlock is TextElement element)
+                    {
+                        TextBlock.Select(element.ContentStart, element.ContentEnd);
+                    }
+                    else if (startBlock is RichTextBlock block)
+                    {
+                        TextBlock.Select(block.ContentStart, block.ContentEnd);
+                    }
                 }
             }
         }
