@@ -91,9 +91,13 @@ namespace Telegram.Controls
                 Title = title ?? Strings.AppName,
                 Message = message,
                 PrimaryButtonText = primary ?? Strings.OK,
-                SecondaryButtonText = secondary ?? string.Empty,
-                RequestedTheme = requestedTheme
+                SecondaryButtonText = secondary ?? string.Empty
             };
+
+            if (requestedTheme != ElementTheme.Default)
+            {
+                popup.RequestedTheme = requestedTheme;
+            }
 
             if (destructive)
             {
@@ -111,9 +115,13 @@ namespace Telegram.Controls
                 Title = title ?? Strings.AppName,
                 FormattedMessage = message,
                 PrimaryButtonText = primary ?? Strings.OK,
-                SecondaryButtonText = secondary ?? string.Empty,
-                RequestedTheme = requestedTheme
+                SecondaryButtonText = secondary ?? string.Empty
             };
+
+            if (requestedTheme != ElementTheme.Default)
+            {
+                popup.RequestedTheme = requestedTheme;
+            }
 
             if (destructive)
             {
