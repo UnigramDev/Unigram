@@ -472,7 +472,7 @@ namespace winrt::Telegram::Native::implementation
         //}
 
         //OutputDebugStringFormat(L"decoded frame with w = %d, h = %d, format = %d", frame->width, frame->height, frame->format);
-        if (frame->format == AV_PIX_FMT_YUV420P || frame->format == AV_PIX_FMT_YUVA420P || frame->format == AV_PIX_FMT_BGRA || frame->format == AV_PIX_FMT_YUVJ420P)
+        if (frame->format == AV_PIX_FMT_YUV420P || frame->format == AV_PIX_FMT_YUVA420P || frame->format == AV_PIX_FMT_BGRA || frame->format == AV_PIX_FMT_YUVJ420P || frame->format == AV_PIX_FMT_YUV444P)
         {
             if (sws_ctx == nullptr && ((intptr_t)pixels) % 16 == 0)
             {
@@ -488,7 +488,15 @@ namespace winrt::Telegram::Native::implementation
 
             if (sws_ctx == nullptr)
             {
-                if (frame->format == AV_PIX_FMT_YUV420P || frame->format == AV_PIX_FMT_YUVA420P || frame->format == AV_PIX_FMT_YUVJ420P)
+                if (frame->format == AV_PIX_FMT_YUVA420P)
+                {
+                    libyuv::I420AlphaToARGBMatrix(frame->data[0], frame->linesize[0], frame->data[2], frame->linesize[2], frame->data[1], frame->linesize[1], frame->data[3], frame->linesize[3], (uint8_t*)pixels, width * 4, &libyuv::kYvuI601Constants, width, height, 1);
+                }
+                else if (frame->format == AV_PIX_FMT_YUV444P)
+                {
+                    libyuv::H444ToARGB(frame->data[0], frame->linesize[0], frame->data[2], frame->linesize[2], frame->data[1], frame->linesize[1], (uint8_t*)pixels, width * 4, width, height);
+                }
+                else if (frame->format == AV_PIX_FMT_YUV420P || frame->format == AV_PIX_FMT_YUVJ420P)
                 {
                     if (frame->colorspace == AVColorSpace::AVCOL_SPC_BT709)
                     {
@@ -536,18 +544,16 @@ namespace winrt::Telegram::Native::implementation
                 //    sws_scale(sws_ctx, frame->data, frame->linesize, 0, frame->height, &dst_data, &linesize);
                 //    memcpy(pixels, dst_data, linesize * height);
                 //}
-            }
 
-            // This is fine enough to premultiply straight alpha pixels
-            // but we use I420AlphaToARGBMatrix to do everything in a single pass.
-            if (frame->format == AV_PIX_FMT_YUVA420P)
-            {
-                for (int i = 0; i < width * height * 4; i += 4)
+                if (frame->format == AV_PIX_FMT_YUVA420P)
                 {
-                    auto alpha = pixels[i + 3];
-                    pixels[i + 0] = FAST_DIV255(pixels[i + 0] * alpha);
-                    pixels[i + 1] = FAST_DIV255(pixels[i + 1] * alpha);
-                    pixels[i + 2] = FAST_DIV255(pixels[i + 2] * alpha);
+                    for (int i = 0; i < width * height * 4; i += 4)
+                    {
+                        auto alpha = pixels[i + 3];
+                        pixels[i + 0] = FAST_DIV255(pixels[i + 0] * alpha);
+                        pixels[i + 1] = FAST_DIV255(pixels[i + 1] * alpha);
+                        pixels[i + 2] = FAST_DIV255(pixels[i + 2] * alpha);
+                    }
                 }
             }
 

@@ -1524,13 +1524,13 @@ namespace Telegram.Controls
                         {
                             LoadLottie(work, local);
                         }
-                        else if (string.Equals(extension, ".webm", StringComparison.OrdinalIgnoreCase) || string.Equals(extension, ".mp4", StringComparison.OrdinalIgnoreCase))
-                        {
-                            LoadCachedVideo(work);
-                        }
                         else if (string.Equals(extension, ".webp", StringComparison.OrdinalIgnoreCase))
                         {
                             LoadWebP(work, local);
+                        }
+                        else
+                        {
+                            LoadCachedVideo(work);
                         }
                     }
                     else
