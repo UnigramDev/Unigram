@@ -495,15 +495,8 @@ namespace Telegram.Controls
 
         private void OnReplacementColorChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            if (oldValue != null && _replacementColorToken != 0)
-            {
-                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _replacementColorToken);
-            }
-
-            if (newValue != null)
-            {
-                _replacementColorToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnReplacementColorChanged);
-            }
+            oldValue?.UnregisterColorChanged(ref _replacementColorToken);
+            newValue?.RegisterColorChanged(ref _replacementColorToken, OnReplacementColorChanged);
 
             ReplacementColorChanged();
         }
