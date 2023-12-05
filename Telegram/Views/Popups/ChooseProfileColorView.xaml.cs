@@ -74,8 +74,8 @@ namespace Telegram.Views.Popups
 
             if (clientService.TryGetUser(sender, out User user))
             {
-                customEmojiId = user.BackgroundCustomEmojiId;
-                accentColorId = user.AccentColorId;
+                customEmojiId = user.ProfileBackgroundCustomEmojiId;
+                accentColorId = user.ProfileAccentColorId;
 
                 Segments.UpdateSegments(140, false, true);
                 Photo.SetUser(clientService, user, 140);
