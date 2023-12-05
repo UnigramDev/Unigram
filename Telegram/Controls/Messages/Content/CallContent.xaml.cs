@@ -77,7 +77,7 @@ namespace Telegram.Controls.Messages.Content
             TitleLabel.Text = call.ToOutcomeText(message.IsOutgoing);
             IconLabel.Text = outgoing ? Icons.ArrowUpRight16 : Icons.ArrowDownLeft16;
 
-            var date = Formatter.Date(message.Date);
+            var date = Formatter.Time(message.Date);
 
             if (call.Duration > 0 && !missed)
             {

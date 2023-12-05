@@ -23,6 +23,8 @@ namespace Telegram.Views.Popups
 
             _completion = completion;
 
+            Title = Strings.Sound;
+
             PrimaryButtonText = Strings.OK;
             SecondaryButtonText = Strings.Cancel;
         }

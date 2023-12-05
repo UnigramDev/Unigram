@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -105,6 +106,22 @@ namespace Telegram.ViewModels
 
             _notificationSound = notificationSound;
             _isSelected = selected;
+
+            Sound = notificationSound.Sound;
+            Data = notificationSound.Data;
+
+            if (notificationSound.Title.Length > 0)
+            {
+                Title = notificationSound.Title;
+            }
+            else
+            {
+                Title = string.Format(Strings.SoundNameEmpty, Formatter.Date(notificationSound.Date));
+            }
+
+            Date = notificationSound.Date;
+            Duration = notificationSound.Duration;
+            Id = notificationSound.Id;
         }
 
         public NotificationSound Get()
@@ -155,32 +172,32 @@ namespace Telegram.ViewModels
         /// <summary>
         /// File containing the sound.
         /// </summary>
-        public File Sound => _notificationSound.Sound;
+        public File Sound { get; }
 
         /// <summary>
         /// Arbitrary data, defined while the sound was uploaded.
         /// </summary>
-        public string Data => _notificationSound.Data;
+        public string Data { get; }
 
         /// <summary>
         /// Title of the notification sound.
         /// </summary>
-        public string Title => _notificationSound.Title;
+        public string Title { get; }
 
         /// <summary>
         /// Point in time (Unix timestamp) when the sound was created.
         /// </summary>
-        public int Date => _notificationSound.Date;
+        public int Date { get; }
 
         /// <summary>
         /// Duration of the sound, in seconds.
         /// </summary>
-        public int Duration => _notificationSound.Duration;
+        public int Duration { get; }
 
         /// <summary>
         /// Unique identifier of the notification sound.
         /// </summary>
-        public long Id => _notificationSound.Id;
+        public long Id { get; }
     }
 
     public class NotificationSoundDiffHandler : IDiffHandler<NotificationSoundViewModel>

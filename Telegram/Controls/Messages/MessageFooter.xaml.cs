@@ -131,7 +131,7 @@ namespace Telegram.Controls.Messages
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
             {
-                _dateLabel = Formatter.Date(sendAtDate.SendDate);
+                _dateLabel = Formatter.Time(sendAtDate.SendDate);
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
@@ -143,11 +143,11 @@ namespace Telegram.Controls.Messages
                 var date = Formatter.ShortDate.Format(original);
                 var time = Formatter.ShortTime.Format(original);
 
-                _dateLabel = string.Format("{0}, {1} {2} {3}", date, time, "Imported", Formatter.Date(message.Date));
+                _dateLabel = string.Format("{0}, {1} {2} {3}", date, time, "Imported", Formatter.Time(message.Date));
             }
             else if (message.Date > 0)
             {
-                _dateLabel = Formatter.Date(message.Date);
+                _dateLabel = Formatter.Time(message.Date);
             }
             else
             {

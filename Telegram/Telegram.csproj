@@ -1836,6 +1836,7 @@
     <Content Include="Assets\Toasts\AutoNightOff.tgs" />
     <Content Include="Assets\Toasts\Translate.tgs" />
     <Content Include="Assets\Toasts\Transcribe.tgs" />
+    <Content Include="Assets\Toasts\SoundDownload.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>

@@ -20,6 +20,8 @@ using Telegram.Converters;
 using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Services;
+using Telegram.Streams;
+using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.Views.Chats;
@@ -1405,6 +1407,14 @@ namespace Telegram.ViewModels
                     ClientService.Send(new AddSavedNotificationSound(new InputFileId(text.WebPage.VoiceNote.Voice.Id)));
                 }
             }
+
+            var title = Strings.SoundAdded + Environment.NewLine + Strings.SoundAddedSubtitle;
+            var entity = new TextEntity(0, Strings.SoundAdded.Length, new TextEntityTypeBold());
+
+            var temp = new FormattedText(title, new[] { entity });
+            var markdown = ClientEx.ParseMarkdown(temp);
+
+            Window.Current.ShowToast(markdown, new LocalFileSource("ms-appx:///Assets/Toasts/SoundDownload.tgs"));
         }
 
         #endregion

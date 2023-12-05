@@ -297,9 +297,14 @@ namespace Telegram.Converters
             return ShortDate.Format(dateTime);
         }
 
-        public static string Date(int value)
+        public static string Time(int value)
         {
             return ShortTime.Format(ToLocalTime(value));
+        }
+
+        public static string Date(int value)
+        {
+            return ShortDate.Format(ToLocalTime(value));
         }
 
         public static DateTime ToLocalTime(long value)

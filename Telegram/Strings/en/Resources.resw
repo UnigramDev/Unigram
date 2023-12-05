@@ -7124,8 +7124,17 @@ The channel &quot;**{1}**&quot; will become private.</value>
   <data name="Sound" xml:space="preserve">
     <value>Sound</value>
   </data>
+  <data name="SoundAdded" xml:space="preserve">
+    <value>Sound added</value>
+  </data>
+  <data name="SoundAddedSubtitle" xml:space="preserve">
+    <value>You can use this sound as a notification tone in your **custom notification settings**.</value>
+  </data>
   <data name="SoundDefault" xml:space="preserve">
     <value>Default</value>
+  </data>
+  <data name="SoundNameEmpty" xml:space="preserve">
+    <value>Message dated {0}</value>
   </data>
   <data name="SoundOff" xml:space="preserve">
     <value>Disable sound</value>
