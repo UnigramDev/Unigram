@@ -653,7 +653,7 @@ namespace winrt::Telegram::Native::implementation
             //{
             //    textLayout->SetInlineObject(m_customEmoji.get(), { startPosition, length });
             //}
-            else if (name == L"Telegram.Td.Api.TextEntityTypeCode")
+            else if (name == L"Telegram.Td.Api.TextEntityTypeCode" || name == L"Telegram.Td.Api.TextEntityTypePre" || name == L"Telegram.Td.Api.TextEntityTypePreCode")
             {
                 textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length });
                 textLayout->SetFontFamilyName(L"Consolas", { startPosition, length });
@@ -725,7 +725,7 @@ namespace winrt::Telegram::Native::implementation
             //{
             //    textLayout->SetInlineObject(m_customEmoji.get(), { startPosition, length });
             //}
-            else if (name == L"Telegram.Td.Api.TextEntityTypeCode")
+            else if (name == L"Telegram.Td.Api.TextEntityTypeCode" || name == L"Telegram.Td.Api.TextEntityTypePre" || name == L"Telegram.Td.Api.TextEntityTypePreCode")
             {
                 textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length });
                 textLayout->SetFontFamilyName(L"Consolas", { startPosition, length });
