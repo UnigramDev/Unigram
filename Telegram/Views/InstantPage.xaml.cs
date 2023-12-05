@@ -91,7 +91,7 @@ namespace Telegram.Views
             _anchors.Clear();
 
             var url = e.Parameter as string;
-            if (url == null)
+            if (url == null || !Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
             {
                 return;
             }
@@ -101,19 +101,21 @@ namespace Telegram.Views
             var response = await ViewModel.ClientService.SendAsync(new GetWebPageInstantView(url, true));
             if (response is WebPageInstantView instantView)
             {
-                if (Uri.TryCreate(url, UriKind.Absolute, out Uri uri))
-                {
-                    ViewModel.ShareLink = uri;
-                    ViewModel.ShareTitle = url;
-
-                    //if (uri.Fragment.Length > 0 && _anchors.TryGetValue(uri.Fragment.Substring(1), out Border anchor))
-                    //{
-                    //    await ScrollingHost.ScrollToItem(anchor, SnapPointsAlignment.Near, false);
-                    //}
-                }
+                ViewModel.ShareLink = uri;
+                ViewModel.ShareTitle = url;
 
                 UpdateView(instantView);
                 ViewModel.IsLoading = false;
+
+                //if (uri.Fragment.Length > 0 && _anchors.TryGetValue(uri.Fragment.Substring(1), out Border anchor))
+                //{
+                //    await ScrollingHost.ScrollToItem(anchor, SnapPointsAlignment.Near, false);
+                //}
+            }
+            else
+            {
+                await Launcher.LaunchUriAsync(uri);
+                Frame.GoBack();
             }
 
             base.OnNavigatedTo(e);
