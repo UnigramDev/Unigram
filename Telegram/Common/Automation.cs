@@ -272,6 +272,11 @@ namespace Telegram.Common
                 if (details)
                 {
                     result += voiceNote.VoiceNote.GetDuration() + ", ";
+
+                    if (voiceNote.VoiceNote.SpeechRecognitionResult is SpeechRecognitionResultText recognitionResultText)
+                    {
+                        result += recognitionResultText.Text + ", ";
+                    }
                 }
 
                 return result;

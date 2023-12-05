@@ -15,6 +15,7 @@ using Telegram.ViewModels;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Documents;
@@ -73,6 +74,8 @@ namespace Telegram.Controls.Messages.Content
 
             Button.Click += Button_Click;
             Recognize.Click += Recognize_Click;
+            Recognize.Checked += Recognize_Checked;
+            Recognize.Unchecked += Recognize_Checked;
 
             _templateApplied = true;
 
@@ -512,6 +515,13 @@ namespace Telegram.Controls.Messages.Content
                 Recognize.IsChecked = false;
                 UpdateRecognitionResult(null);
             }
+        }
+
+        private void Recognize_Checked(object sender, RoutedEventArgs e)
+        {
+            AutomationProperties.SetName(Recognize, Recognize.IsChecked is true
+                ? Strings.AccActionCloseTranscription
+                : Strings.AccActionOpenTranscription);
         }
     }
 }

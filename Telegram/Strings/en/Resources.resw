@@ -73,11 +73,17 @@
   <data name="AccActionCancelDownload" xml:space="preserve">
     <value>Cancel download</value>
   </data>
+  <data name="AccActionCloseTranscription" xml:space="preserve">
+    <value>Close Transcription</value>
+  </data>
   <data name="AccActionDownload" xml:space="preserve">
     <value>Download</value>
   </data>
   <data name="AccActionOpenFile" xml:space="preserve">
     <value>Open file</value>
+  </data>
+  <data name="AccActionOpenTranscription" xml:space="preserve">
+    <value>Open Voice Transcription</value>
   </data>
   <data name="AccActionPause" xml:space="preserve">
     <value>Pause</value>

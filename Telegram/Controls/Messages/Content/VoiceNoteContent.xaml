@@ -235,6 +235,7 @@
                         </StackPanel>
 
                         <controls:AnimatedIconToggleButton x:Name="Recognize"
+                                                           AutomationProperties.Name="{CustomResource AccActionOpenTranscription}"
                                                            Style="{StaticResource RecognizeButtonStyle}"
                                                            Foreground="{ThemeResource MessageMediaBackgroundBrush}"
                                                            CheckedGlyph="&#xE90B;"
