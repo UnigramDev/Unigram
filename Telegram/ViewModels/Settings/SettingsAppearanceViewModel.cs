@@ -14,9 +14,11 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Services.Settings;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -166,13 +168,22 @@ namespace Telegram.ViewModels.Settings
             get => Settings.Appearance.ForceNightMode || Settings.Appearance.IsDarkTheme();
             set
             {
+                // TODO: this should be probably unified with the code in RootPage and might need some changes.
+                if (Settings.Appearance.NightMode != NightMode.Disabled)
+                {
+                    Settings.Appearance.NightMode = NightMode.Disabled;
+                    Window.Current.ShowToast(Strings.AutoNightModeOff, new LocalFileSource("ms-appx:///Assets/Toasts/AutoNightOff.tgs"));
+                }
+
                 Settings.Appearance.ForceNightMode = value;
                 Settings.Appearance.RequestedTheme = value
                     ? TelegramTheme.Dark
                     : TelegramTheme.Light;
 
                 Settings.Appearance.UpdateNightMode();
+
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(NightMode));
             }
         }
 
