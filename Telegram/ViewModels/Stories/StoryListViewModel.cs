@@ -147,7 +147,7 @@ namespace Telegram.ViewModels.Stories
         public Task TranslateStoryAsync(StoryViewModel story)
         {
             var language = LanguageIdentification.IdentifyLanguage(story.Caption.Text);
-            var popup = new TranslatePopup(_translateService, story.Caption.Text, language, LocaleService.Current.Id, !story.CanBeForwarded)
+            var popup = new TranslatePopup(_translateService, story.Caption.Text, language, Settings.Translate.To, !story.CanBeForwarded)
             {
                 RequestedTheme = ElementTheme.Dark
             };

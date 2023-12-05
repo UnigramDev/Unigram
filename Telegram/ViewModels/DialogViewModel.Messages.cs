@@ -938,7 +938,7 @@ namespace Telegram.ViewModels
             string text = message.Quote.Text;
 
             var language = LanguageIdentification.IdentifyLanguage(text);
-            var popup = new TranslatePopup(_translateService, text, language, LocaleService.Current.Id, !message.Message.CanBeSaved);
+            var popup = new TranslatePopup(_translateService, text, language, Settings.Translate.To, !message.Message.CanBeSaved);
             await ShowPopupAsync(popup);
         }
 
@@ -976,7 +976,7 @@ namespace Telegram.ViewModels
             }
 
             var language = LanguageIdentification.IdentifyLanguage(text);
-            var popup = new TranslatePopup(_translateService, chatId, messageId, text, language, LocaleService.Current.Id, !message.CanBeSaved);
+            var popup = new TranslatePopup(_translateService, chatId, messageId, text, language, Settings.Translate.To, !message.CanBeSaved);
             await ShowPopupAsync(popup);
         }
 

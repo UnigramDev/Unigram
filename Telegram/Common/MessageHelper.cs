@@ -1386,7 +1386,7 @@ namespace Telegram.Common
             var service = tuple.Item1;
 
             var language = LanguageIdentification.IdentifyLanguage(entity);
-            var popup = new TranslatePopup(service, entity, language, LocaleService.Current.Id, true);
+            var popup = new TranslatePopup(service, entity, language, SettingsService.Current.Translate.To, true);
             await popup.ShowQueuedAsync();
         }
 
