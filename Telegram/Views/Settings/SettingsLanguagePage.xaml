@@ -24,25 +24,40 @@
                                 IsItemClickEnabled="True"
                                 SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=OneWay}">
             <ListView.Header>
-                <controls:HeaderedControl Header="{CustomResource TranslateMessages}"
-                                          Footer="{x:Bind ConvertTranslateInfo(ViewModel.TranslateMessages), Mode=OneWay}"
-                                          Margin="0,64,0,0">
-                    <CheckBox IsChecked="{x:Bind ViewModel.TranslateMessages, Mode=TwoWay}"
-                              Content="{CustomResource ShowTranslateButton}"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
+                <controls:SettingsPanel IsHeader="True"
+                                        Margin="0,0,0,-32">
+                    <controls:HeaderedControl Header="{CustomResource TranslateMessages}"
+                                              Footer="{x:Bind ConvertTranslateInfo(ViewModel.TranslateMessages), Mode=OneWay}">
+                        <CheckBox IsChecked="{x:Bind ViewModel.TranslateMessages, Mode=TwoWay}"
+                                  Content="{CustomResource ShowTranslateButton}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
 
-                    <controls:FauxCheckBox Click="{x:Bind ViewModel.ChangeTranslateChat}"
-                                           IsChecked="{x:Bind ViewModel.TranslateChats, Mode=OneWay}"
-                                           Content="{CustomResource ShowTranslateChatButton}"
-                                           Style="{StaticResource SettingsCheckBoxStyle}" />
+                        <Grid BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                            <TextBlock x:Name="TranslateChatsLock"
+                                       x:Load="{x:Bind ViewModel.IsPremium, Mode=OneWay, Converter={StaticResource BooleanNegationConverter}}"
+                                       Text="&#xE9BE;"
+                                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                       FontSize="16"
+                                       Padding="22,14,0,0" />
+                            <controls:FauxCheckBox Click="{x:Bind ViewModel.ChangeTranslateChat}"
+                                                   IsChecked="{x:Bind ViewModel.TranslateChats, Mode=OneWay}"
+                                                   Content="{CustomResource ShowTranslateChatButton}"
+                                                   Style="{StaticResource SettingsCheckBoxStyle}" />
+                        </Grid>
 
-                    <controls:BadgeButton Content="{CustomResource DoNotTranslate}"
-                                          Badge="{x:Bind ViewModel.DoNotTranslate, Mode=OneWay}"
-                                          Click="{x:Bind ViewModel.ChangeDoNotTranslate}"
-                                          Visibility="{x:Bind ConvertDoNotTranslate(ViewModel.TranslateMessages, ViewModel.TranslateChats), Mode=OneWay}"
-                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xE98B;" />
-                </controls:HeaderedControl>
+                        <controls:BadgeButton Content="{CustomResource DoNotTranslate}"
+                                              Badge="{x:Bind ViewModel.DoNotTranslate, Mode=OneWay}"
+                                              Click="{x:Bind ViewModel.ChangeDoNotTranslate}"
+                                              Visibility="{x:Bind ConvertDoNotTranslate(ViewModel.TranslateMessages, ViewModel.TranslateChats), Mode=OneWay}"
+                                              Style="{StaticResource GlyphBadgeButtonStyle}"
+                                              Glyph="&#xE98B;" />
+                    </controls:HeaderedControl>
+
+                    <TextBlock Text="{CustomResource Language}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="24,16,24,8" />
+                </controls:SettingsPanel>
             </ListView.Header>
             <ListView.GroupStyle>
                 <GroupStyle>
