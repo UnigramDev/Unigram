@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Telegram.Controls;
+using Telegram.Controls.Media;
 using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Navigation;
@@ -176,93 +177,85 @@ namespace Telegram.Common
             return new Version(version.Major, version.Minor, version.Build, Constants.BuildNumber);
         }
 
-        public static int Shift(this TextPointer pointer)
+        public static int OffsetToIndex(this TextPointer pointer, StyledText text)
         {
-            var index = 0;
-            var emoji = false;
-
-            bool Inside(InlineCollection inlines)
+            if (pointer.VisualParent is not RichTextBlock textBlock || text == null)
             {
-                foreach (var element in inlines)
-                {
-                    if (element.ElementStart.Offset <= pointer.Offset && element.ElementEnd.Offset > pointer.Offset)
-                    {
-                        if (element.ElementStart.Offset < pointer.Offset && element.ContentEnd.Offset > element.ContentStart.Offset)
-                        {
-                            index++;
-                        }
-                        else if (element.ContentEnd.Offset <= pointer.Offset)
-                        {
-                            index--;
-                        }
-
-                        return true;
-                    }
-
-                    index++;
-
-                    if (element is InlineUIContainer container && container.Child is CustomEmojiIcon icon)
-                    {
-                        index -= icon.Emoji.Length /*- 1*/;
-                        emoji = true;
-                    }
-                    else if (element is Run run && emoji)
-                    {
-                        index++;
-                        emoji = false;
-                    }
-
-                    if (element is Span span1)
-                    {
-                        if (Inside(span1.Inlines))
-                        {
-                            return true;
-                        }
-                    }
-
-                    index++;
-                }
-
-                return false;
+                return -1;
             }
 
-            if (pointer.VisualParent is RichTextBlock textBlock)
+            var index = 0;
+
+            for (int i = 0; i < textBlock.Blocks.Count; i++)
             {
-                foreach (var block in textBlock.Blocks)
+                var block = textBlock.Blocks[i] as Paragraph;
+                var paragraph = text.Paragraphs[i];
+
+                if (pointer.Offset == block.ElementStart.Offset)
                 {
-                    if (textBlock == pointer.Parent && block.ElementStart.Offset == pointer.Offset)
-                    {
-                        break;
-                    }
-
-                    index++;
-
-                    if (block == pointer.Parent && block.ContentStart.Offset == pointer.Offset)
-                    {
-                        break;
-                    }
-                    else if (block is Paragraph paragraph && Inside(paragraph.Inlines))
-                    {
-                        break;
-                    }
-
-                    // Consequence of the ZWJ workaround
-                    index++;
-
-                    if (block == pointer.Parent && block.ContentEnd.Offset == pointer.Offset)
-                    {
-                        break;
-                    }
-                    else if (textBlock == pointer.Parent && block.ElementEnd.Offset == pointer.Offset)
-                    {                              
-                        // Consequence of the ZWJ workaround
-                        index++;
-                        break;
-                    }
+                    break;
                 }
+
+                // Element start
+                index++;
+
+                if (OffsetToIndex(block.Inlines, pointer, ref index))
+                {
+                    break;
+                }
+
+                if (pointer.Offset < block.ElementEnd.Offset)
+                {
+                    if (pointer.Offset == block.ContentEnd.Offset)
+                    {
+                        index += paragraph.Padding;
+                    }
+
+                    break;
+                }
+
+                // Element end
+                index += paragraph.Padding;
             }
 
             return pointer.Offset - index;
+        }
+
+        private static bool OffsetToIndex(InlineCollection inlines, TextPointer pointer, ref int index)
+        {
+            foreach (var element in inlines)
+            {
+                if (pointer.Offset == element.ElementStart.Offset)
+                {
+                    return true;
+                }
+
+                // Element start
+                index++;
+
+                if (element is Span span && OffsetToIndex(span.Inlines, pointer, ref index))
+                {
+                    return true;
+                }
+                if (element is Run { Text: Icons.ZWNJ })
+                {
+                    index++;
+                }
+                else if (element is InlineUIContainer container && container.Child is CustomEmojiIcon icon)
+                {
+                    index -= icon.Emoji.Length;
+                }
+
+                if (pointer.Offset < element.ElementEnd.Offset)
+                {
+                    return true;
+                }
+
+                // Element end
+                index++;
+            }
+
+            return false;
         }
 
         public static void Prepend(this StringBuilder builder, string text, string prefix)

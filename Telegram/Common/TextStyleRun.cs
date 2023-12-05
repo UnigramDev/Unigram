@@ -465,13 +465,13 @@ namespace Telegram.Common
                 // District is used to avoid that, but it would be better to fix the algorithm.
                 foreach (var index in indexes.DistinctBy(x => x.Offset).OrderBy(x => x.Offset))
                 {
-                    list.Add(Split(text, entities, prev, index.Offset - prev, index.Direction));
+                    list.Add(Split(text, entities, prev, index.Offset - prev, index.Direction, index.Length));
                     prev = index.Offset + index.Length;
                 }
 
                 if (text.Length > prev)
                 {
-                    list.Add(Split(text, entities, prev, text.Length - prev, null));
+                    list.Add(Split(text, entities, prev, text.Length - prev, null, 0));
                 }
 
                 return list;
@@ -483,7 +483,7 @@ namespace Telegram.Common
             };
         }
 
-        private static StyledParagraph Split(string text, IList<TextEntity> entities, int startIndex, int length, TextDirectionality? direction)
+        private static StyledParagraph Split(string text, IList<TextEntity> entities, int startIndex, int length, TextDirectionality? direction, int padding)
         {
             if (length <= 0)
             {
@@ -507,7 +507,7 @@ namespace Telegram.Common
                 }
             }
 
-            return new StyledParagraph(message, startIndex, message.Length, sub, direction);
+            return new StyledParagraph(message, startIndex, message.Length, sub, direction, padding);
         }
 
         public static bool GetRelativeRange(int offset, int length, int relativeOffset, int relativeLength, out int newOffset, out int newLength)
@@ -574,13 +574,14 @@ namespace Telegram.Common
 
         }
 
-        public StyledParagraph(string text, int offset, int length, IList<TextEntity> entities, TextDirectionality? direction = null)
+        public StyledParagraph(string text, int offset, int length, IList<TextEntity> entities, TextDirectionality? direction = null, int padding = 0)
         {
             Offset = offset;
             Length = length;
             Entities = entities ?? Array.Empty<TextEntity>();
             Runs = TextStyleRun.GetRuns(text, entities);
             Direction = direction ?? NativeUtils.GetDirectionality(text);
+            Padding = padding;
 
             if (entities?.Count > 0)
             {
@@ -602,6 +603,8 @@ namespace Telegram.Common
         public IList<TextStyleRun> Runs { get; }
 
         public TextDirectionality Direction { get; }
+
+        public int Padding { get; }
 
         public ParagraphStyle Type { get; }
     }

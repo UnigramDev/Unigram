@@ -925,8 +925,8 @@ namespace Telegram.Views
                         var message = textBlock.Ancestors<MessageSelector>().FirstOrDefault()?.Message;
                         if (message != null)
                         {
-                            var selectionStart = textBlock.SelectionStart.Shift();
-                            var selectionEnd = textBlock.SelectionEnd.Shift();
+                            var selectionStart = textBlock.SelectionStart.OffsetToIndex(message.Text);
+                            var selectionEnd = textBlock.SelectionEnd.OffsetToIndex(message.Text);
 
                             if (selectionEnd - selectionStart > 0)
                             {
@@ -2087,8 +2087,8 @@ namespace Telegram.Views
                 var textBlock = children.FirstOrDefault() as RichTextBlock;
                 if (textBlock?.SelectionStart != null && textBlock?.SelectionEnd != null)
                 {
-                    selectionStart = textBlock.SelectionStart.Shift();
-                    selectionEnd = textBlock.SelectionEnd.Shift();
+                    selectionStart = textBlock.SelectionStart.OffsetToIndex(message.Text);
+                    selectionEnd = textBlock.SelectionEnd.OffsetToIndex(message.Text);
 
                     if (selectionEnd - selectionStart <= 0)
                     {

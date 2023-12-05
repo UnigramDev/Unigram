@@ -804,6 +804,7 @@ namespace Telegram.Controls
 
             inlines.Clear();
             ProcessCodeBlock(inlines, tokens.Children);
+            inlines.Add(Icons.ZWJ);
         }
 
         private void ProcessCodeBlock(InlineCollection inlines, IList<Token> tokens)
