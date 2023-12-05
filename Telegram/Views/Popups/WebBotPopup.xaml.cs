@@ -215,31 +215,44 @@ namespace Telegram.Views.Popups
                 var colorValue = eventData.GetNamedString("color");
                 var color = ParseColor(colorValue);
 
-                if (color is Color c)
-                {
-                    var luminance = 0.2126 * (c.R / 255d) + 0.7152 * (c.G / 255d) + 0.0722 * (c.B / 255d);
-                    var foreground = luminance > 0.5 ? Colors.Black : Colors.White;
-
-                    var brush = new SolidColorBrush(foreground);
-
-                    TitlePanel.Background = new SolidColorBrush(c);
-                    Title.Foreground = brush;
-                    BackButton.Foreground = brush;
-                    MoreButton.Foreground = brush;
-                    HideButton.Foreground = brush;
-                }
-                else
-                {
-                    TitlePanel.ClearValue(Panel.BackgroundProperty);
-                    Title.ClearValue(TextBlock.ForegroundProperty);
-                    BackButton.ClearValue(ForegroundProperty);
-                    MoreButton.ClearValue(ForegroundProperty);
-                    HideButton.ClearValue(ForegroundProperty);
-                }
+                ProcessHeaderColor(color);
             }
             else if (eventData.ContainsKey("color_key"))
             {
                 var colorKey = eventData.GetNamedString("color_key");
+                var color = colorKey switch
+                {
+                    "secondary_bg_color" => Theme.Current.Parameters.SecondaryBackgroundColor.ToColor(),
+                    _ => new Color?(),
+                };
+
+                ProcessHeaderColor(color);
+            }
+        }
+
+        private void ProcessHeaderColor(Color? color)
+        {
+            if (color is Color c)
+            {
+                var luminance = 0.2126 * (c.R / 255d) + 0.7152 * (c.G / 255d) + 0.0722 * (c.B / 255d);
+                var foreground = luminance > 0.5 ? Colors.Black : Colors.White;
+
+                var brush = new SolidColorBrush(foreground);
+                var theme = luminance > 0.5 ? ElementTheme.Light : ElementTheme.Dark;
+
+                TitlePanel.Background = new SolidColorBrush(c);
+                Title.Foreground = brush;
+                BackButton.RequestedTheme = theme;
+                MoreButton.RequestedTheme = theme;
+                HideButton.RequestedTheme = theme;
+            }
+            else
+            {
+                TitlePanel.ClearValue(Panel.BackgroundProperty);
+                Title.ClearValue(TextBlock.ForegroundProperty);
+                BackButton.RequestedTheme = ElementTheme.Default;
+                MoreButton.RequestedTheme = ElementTheme.Default;
+                HideButton.RequestedTheme = ElementTheme.Default;
             }
         }
 

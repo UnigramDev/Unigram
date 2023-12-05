@@ -13,7 +13,7 @@
                        VerticalContentAlignment="Stretch"
                        Closing="OnClosing">
 
-    <Grid>
+    <Grid CornerRadius="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
