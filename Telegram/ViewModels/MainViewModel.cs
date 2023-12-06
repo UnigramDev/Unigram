@@ -552,8 +552,12 @@ namespace Telegram.ViewModels
         {
             var viewModel = TypeResolver.Current.Resolve<FolderViewModel>();
             await viewModel.NavigatedToAsync(folder.ChatFolderId, NavigationMode.New, null);
-            await viewModel.AddIncludeAsync();
-            await viewModel.SendAsync();
+
+            if (viewModel.Folder != null)
+            {
+                await viewModel.AddIncludeAsync();
+                await viewModel.SendAsync();
+            }
         }
 
         public async void MarkFolderAsRead(ChatFolderViewModel folder)

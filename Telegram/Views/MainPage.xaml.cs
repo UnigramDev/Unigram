@@ -2919,7 +2919,16 @@ namespace Telegram.Views
 
             if (viewModel.Items.ChatList is ChatListFolder chatListFolder)
             {
-                flyout.CreateFlyoutItem(viewModel.RemoveFromFolder, (chatListFolder.ChatFolderId, chat), Strings.FilterRemoveFrom, Icons.FolderMove);
+                var response = await ViewModel.ClientService.SendAsync(new GetChatFolder(chatListFolder.ChatFolderId)) as ChatFolder;
+                if (response != null)
+                {
+                    response.IncludedChatIds.Remove(chat.Id);
+
+                    if (response.Any())
+                    {
+                        flyout.CreateFlyoutItem(viewModel.RemoveFromFolder, (chatListFolder.ChatFolderId, chat), Strings.FilterRemoveFrom, Icons.FolderMove);
+                    }
+                }
             }
             else
             {

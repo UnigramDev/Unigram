@@ -1782,6 +1782,26 @@ namespace Telegram.Td.Api
             return photo.Sizes.LastOrDefault(x => x.Photo.Local.IsDownloadingCompleted || x.Photo.Local.CanBeDownloaded);
         }
 
+        public static bool Empty(this ChatFolder folder)
+        {
+            return folder.IncludedChatIds.Empty() &&
+                !folder.IncludeBots &&
+                !folder.IncludeGroups &&
+                !folder.IncludeContacts &&
+                !folder.IncludeNonContacts &&
+                !folder.IncludeChannels;
+        }
+
+        public static bool Any(this ChatFolder folder)
+        {
+            return folder.IncludedChatIds.Any() ||
+                folder.IncludeBots ||
+                folder.IncludeGroups ||
+                folder.IncludeContacts ||
+                folder.IncludeNonContacts ||
+                folder.IncludeChannels;
+        }
+
         public static StickerSetInfo ToInfo(this StickerSet set)
         {
             return new StickerSetInfo(set.Id, set.Title, set.Name, set.Thumbnail, set.ThumbnailOutline, set.IsInstalled, set.IsArchived, set.IsOfficial, set.StickerFormat, set.StickerType, set.NeedsRepainting, set.IsViewed, set.Stickers.Count, set.Stickers);

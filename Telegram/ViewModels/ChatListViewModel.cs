@@ -537,21 +537,34 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            var total = folder.ExcludedChatIds.Count + 1;
-            if (total > 99)
+            if (folder.IsShareable)
             {
-                await ShowPopupAsync(Strings.FilterRemoveFromAlertFullText, Strings.AppName, Strings.OK);
-                return;
+                folder.IncludedChatIds.Remove(data.Chat.Id);
+            }
+            else
+            {
+                var total = folder.ExcludedChatIds.Count + 1;
+                if (total > 99)
+                {
+                    await ShowPopupAsync(Strings.FilterRemoveFromAlertFullText, Strings.AppName, Strings.OK);
+                    return;
+                }
+
+                if (folder.ExcludedChatIds.Contains(data.Chat.Id))
+                {
+                    // TODO: Warn user about chat being already in the folder?
+                    return;
+                }
+
+                folder.IncludedChatIds.Remove(data.Chat.Id);
+                folder.ExcludedChatIds.Add(data.Chat.Id);
             }
 
-            if (folder.ExcludedChatIds.Contains(data.Chat.Id))
+            if (folder.Empty())
             {
-                // Warn user about chat being already in the folder?
+                // TODO: Warn user about chat being already in the folder?
                 return;
             }
-
-            folder.IncludedChatIds.Remove(data.Chat.Id);
-            folder.ExcludedChatIds.Add(data.Chat.Id);
 
             ClientService.Send(new EditChatFolder(data.ChatFolderId, folder));
         }
