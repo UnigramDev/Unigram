@@ -14,7 +14,6 @@ using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -274,7 +273,7 @@ namespace Telegram.Controls.Messages.Content
                     }
                     else
                     {
-                        source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                        source = UriEx.ToBitmap(file.Local.Path);
                     }
                 }
                 else

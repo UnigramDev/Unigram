@@ -1131,18 +1131,22 @@ namespace Telegram.Common
 
     public static class UriEx
     {
-        public static BitmapImage ToBitmap(string path, int width, int height)
+        public static BitmapImage ToBitmap(string path, int width = 0, int height = 0)
         {
             return new BitmapImage(ToLocal(path))
             {
                 DecodePixelWidth = width,
                 DecodePixelHeight = height,
-                DecodePixelType = DecodePixelType.Logical
+                DecodePixelType = width > 0 || height > 0
+                    ? DecodePixelType.Logical
+                    : DecodePixelType.Logical
             };
         }
 
         public static Uri ToLocal(string path)
         {
+            return new Uri(path);
+
             string directory;
             string file;
 

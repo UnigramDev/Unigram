@@ -272,7 +272,7 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    return new BitmapImage(UriEx.ToLocal(path));
+                    return UriEx.ToBitmap(path);
                 }
             }
             catch { }
@@ -299,7 +299,7 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    return new BitmapImage(UriEx.ToLocal(path));
+                    return UriEx.ToBitmap(path);
                 }
             }
             catch { }

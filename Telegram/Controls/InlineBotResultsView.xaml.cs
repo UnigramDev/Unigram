@@ -83,7 +83,7 @@ namespace Telegram.Controls
             {
                 if (content.Children[0] is Image image)
                 {
-                    image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                    image.Source = UriEx.ToBitmap(file.Local.Path);
                 }
             }
         }
@@ -98,7 +98,7 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                    image.Source = UriEx.ToBitmap(file.Local.Path);
                 }
             }
         }
@@ -206,7 +206,7 @@ namespace Telegram.Controls
 
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        image.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                        image.Source = UriEx.ToBitmap(file.Local.Path);
                     }
                     else
                     {
@@ -345,7 +345,7 @@ namespace Telegram.Controls
                 {
                     if (file.Local.IsDownloadingCompleted)
                     {
-                        thumb.Source = new BitmapImage(UriEx.ToLocal(file.Local.Path));
+                        thumb.Source = UriEx.ToBitmap(file.Local.Path);
                     }
                     else
                     {

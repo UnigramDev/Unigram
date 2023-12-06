@@ -44,7 +44,7 @@ namespace Telegram.Controls.Messages.Content
         #region InitializeComponent
 
         private AspectView LayoutRoot;
-        private Image Texture;
+        private ImageBrush Texture;
         private Border Overlay;
         private TextBlock Subtitle;
         private FileButton Button;
@@ -54,7 +54,7 @@ namespace Telegram.Controls.Messages.Content
         protected override void OnApplyTemplate()
         {
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
-            Texture = GetTemplateChild(nameof(Texture)) as Image;
+            Texture = GetTemplateChild(nameof(Texture)) as ImageBrush;
             Overlay = GetTemplateChild(nameof(Overlay)) as Border;
             Subtitle = GetTemplateChild(nameof(Subtitle)) as TextBlock;
             Button = GetTemplateChild(nameof(Button)) as FileButton;
@@ -90,7 +90,7 @@ namespace Telegram.Controls.Messages.Content
 
             LayoutRoot.Constraint = message;
             LayoutRoot.Background = null;
-            Texture.Source = null;
+            Texture.ImageSource = null;
             Texture.Stretch = _album
                 ? Stretch.UniformToFill
                 : Stretch.Uniform;
@@ -124,7 +124,7 @@ namespace Telegram.Controls.Messages.Content
 
             LayoutRoot.Constraint = photo;
             LayoutRoot.Background = null;
-            Texture.Source = new BitmapImage(new Uri(big.Photo.Local.Path));
+            Texture.ImageSource = new BitmapImage(new Uri(big.Photo.Local.Path));
 
             Overlay.Opacity = 0;
             Button.Opacity = 0;
@@ -189,7 +189,7 @@ namespace Telegram.Controls.Messages.Content
 
                 if (isSecret)
                 {
-                    Texture.Source = null;
+                    Texture.ImageSource = null;
                 }
                 else
                 {
@@ -221,7 +221,7 @@ namespace Telegram.Controls.Messages.Content
                     Button.Opacity = 1;
                     Overlay.Opacity = 1;
 
-                    Texture.Source = null;
+                    Texture.ImageSource = null;
 
                     if (message.SelfDestructType is MessageSelfDestructTypeTimer selfDestructTypeTimer)
                     {
@@ -251,7 +251,7 @@ namespace Telegram.Controls.Messages.Content
 
                     if (hasSpoiler && _hidden)
                     {
-                        Texture.Source = null;
+                        Texture.ImageSource = null;
                     }
                     else
                     {
@@ -276,7 +276,7 @@ namespace Telegram.Controls.Messages.Content
                 height = (int)(big.Height * ratio);
             }
 
-            Texture.Source = UriEx.ToBitmap(file.Local.Path, width, height);
+            Texture.ImageSource = UriEx.ToBitmap(file.Local.Path, width, height);
         }
 
         private void UpdateThumbnail(object target, File file)
