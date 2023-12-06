@@ -38,11 +38,6 @@ namespace Telegram.Views
             Title = title;
         }
 
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            View.OnNavigatingFrom(e.SourcePageType);
-        }
-
         public void OnBackRequested(BackRequestedRoutedEventArgs args)
         {
             View.OnBackRequested(args);

@@ -296,24 +296,6 @@ namespace Telegram.Views
             });
         }
 
-        public void OnNavigatingFrom(Type sourcePageType)
-        {
-            var unallowed = sourcePageType != typeof(ChatPage)
-                && sourcePageType != typeof(ChatEventLogPage)
-                && sourcePageType != typeof(ChatPinnedPage)
-                && sourcePageType != typeof(ChatScheduledPage)
-                && sourcePageType != typeof(ChatThreadPage)
-                && sourcePageType != typeof(ProfilePage);
-
-            if (unallowed && Theme.Current.Update(ActualTheme, null, null))
-            {
-                var background = ViewModel.ClientService.GetSelectedBackground(ActualTheme == ElementTheme.Dark);
-
-                _backgroundControl ??= FindBackgroundControl();
-                _backgroundControl?.Update(background, ActualTheme == ElementTheme.Dark);
-            }
-        }
-
         private ChatBackgroundControl FindBackgroundControl()
         {
             if (BackgroundControl != null)

@@ -341,6 +341,10 @@ namespace Telegram.Navigation.Services
                 {
                     cleanup.Activate(SessionId);
                 }
+                else if (page is BlankPage blank)
+                {
+                    blank.Activate(SessionId);
+                }
 
                 //if (mode == NavigationMode.New)
                 //{
@@ -391,6 +395,7 @@ namespace Telegram.Navigation.Services
                     void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
                     {
                         viewModel.NavigatedFrom(null, false);
+                        popup.OnNavigatedFrom();
                         popup.Closed -= OnClosed;
                     }
 
