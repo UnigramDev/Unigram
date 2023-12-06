@@ -187,7 +187,7 @@ namespace Telegram.Controls.Messages.Content
                 Button.Opacity = 1;
                 //Overlay.Opacity = 0;
 
-                if (isSecret)
+                if (isSecret || string.IsNullOrEmpty(file.Local.Path))
                 {
                     Texture.ImageSource = null;
                 }
