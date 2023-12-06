@@ -23,19 +23,26 @@ namespace Telegram.Common
         {
             try
             {
-                AutomationProperties.SetName(element, text);
+                AutomationProperties.SetName(element, text ?? string.Empty);
 
-                var tooltip = ToolTipService.GetToolTip(element) as ToolTip;
-                if (tooltip == null)
+                if (text == null)
                 {
-                    ToolTipService.SetToolTip(element, new ToolTip
-                    {
-                        Content = text
-                    });
+                    ToolTipService.SetToolTip(element, null);
                 }
                 else
                 {
-                    tooltip.Content = text;
+                    var tooltip = ToolTipService.GetToolTip(element) as ToolTip;
+                    if (tooltip == null)
+                    {
+                        ToolTipService.SetToolTip(element, new ToolTip
+                        {
+                            Content = text
+                        });
+                    }
+                    else
+                    {
+                        tooltip.Content = text;
+                    }
                 }
             }
             catch

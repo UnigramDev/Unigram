@@ -3298,8 +3298,43 @@ namespace Telegram.Views
             }
         }
 
+        private bool _compactCollapsed;
+
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
+            if (_compactCollapsed == (e.NewSize.Width < 500))
+            {
+                return;
+            }
+
+            _compactCollapsed = e.NewSize.Width < 500;
+
+            if (_compactCollapsed)
+            {
+                SecondaryOptions.Visibility = Visibility.Collapsed;
+
+                ButtonForward.Padding =
+                    ButtonDelete.Padding = new Thickness(0);
+
+                ButtonForward.Content = null;
+                ButtonDelete.Content = null;
+
+                Automation.SetToolTip(ButtonForward, Strings.Forward);
+                Automation.SetToolTip(ButtonDelete, Strings.Delete);
+            }
+            else
+            {
+                SecondaryOptions.Visibility = Visibility.Visible;
+
+                ButtonForward.Padding =
+                    ButtonDelete.Padding = new Thickness(2, -2, 12, 2);
+
+                ButtonForward.Content = Strings.Forward;
+                ButtonDelete.Content = Strings.Delete;
+
+                Automation.SetToolTip(ButtonForward, null);
+                Automation.SetToolTip(ButtonDelete, null);
+            }
         }
 
         private void ContentPanel_SizeChanged(object sender, SizeChangedEventArgs e)

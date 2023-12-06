@@ -576,39 +576,44 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <controls:GlyphButton x:Name="VideoCall"
-                                          Visibility="Collapsed"
-                                          Click="{x:Bind ViewModel.VideoCall}"
-                                          Style="{StaticResource HeaderGlyphButtonStyle}"
-                                          Glyph="&#xE714;"
-                                          FontSize="20"
-                                          AutomationProperties.Name="{CustomResource VideoCall}"
-                                          ToolTipService.ToolTip="{CustomResource VideoCall}"
-                                          Margin="0,0,-4,0" />
+                    <Grid x:Name="SecondaryOptions">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <controls:GlyphButton x:Name="VideoCall"
+                                              Visibility="Collapsed"
+                                              Click="{x:Bind ViewModel.VideoCall}"
+                                              Style="{StaticResource HeaderGlyphButtonStyle}"
+                                              Glyph="&#xE714;"
+                                              FontSize="20"
+                                              AutomationProperties.Name="{CustomResource VideoCall}"
+                                              ToolTipService.ToolTip="{CustomResource VideoCall}"
+                                              Margin="0,0,-4,0" />
 
-                    <controls:GlyphButton x:Name="Call"
-                                          Visibility="Collapsed"
-                                          Click="{x:Bind ViewModel.VoiceCall}"
-                                          Style="{StaticResource HeaderGlyphButtonStyle}"
-                                          Glyph="&#xE717;"
-                                          AutomationProperties.Name="{CustomResource Call}"
-                                          ToolTipService.ToolTip="{CustomResource Call}"
-                                          Margin="0,0,-4,0"
-                                          Grid.Column="1" />
+                        <controls:GlyphButton x:Name="Call"
+                                              Visibility="Collapsed"
+                                              Click="{x:Bind ViewModel.VoiceCall}"
+                                              Style="{StaticResource HeaderGlyphButtonStyle}"
+                                              Glyph="&#xE717;"
+                                              AutomationProperties.Name="{CustomResource Call}"
+                                              ToolTipService.ToolTip="{CustomResource Call}"
+                                              Margin="0,0,-4,0"
+                                              Grid.Column="1" />
 
-                    <controls:GlyphButton Click="{x:Bind Search}"
-                                          Style="{StaticResource HeaderGlyphButtonStyle}"
-                                          Glyph="&#xE721;"
-                                          AutomationProperties.Name="{CustomResource Search}"
-                                          ToolTipService.ToolTip="{CustomResource Search}"
-                                          Margin="0,0,-4,0"
-                                          Grid.Column="2" />
+                        <controls:GlyphButton Click="{x:Bind Search}"
+                                              Style="{StaticResource HeaderGlyphButtonStyle}"
+                                              Glyph="&#xE721;"
+                                              AutomationProperties.Name="{CustomResource Search}"
+                                              ToolTipService.ToolTip="{CustomResource Search}"
+                                              Margin="0,0,-4,0"
+                                              Grid.Column="2" />
 
+                    </Grid>
                     <controls:MoreButton Click="Menu_ContextRequested"
-                                         Grid.Column="3" />
+                                         Grid.Column="1" />
                 </Grid>
             </Grid>
             <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
