@@ -185,7 +185,7 @@ namespace Telegram.Controls.Messages
                     }
                     else
                     {
-                        marginBottom = 18;
+                        marginBottom = 16;
                     }
                 }
             }
@@ -196,7 +196,7 @@ namespace Telegram.Controls.Messages
         private Vector2 ContentEnd(double availableWidth)
         {
             var caption = Text;
-            if (caption.Paragraphs.Count == 0 || string.IsNullOrEmpty(caption?.Text))
+            if (caption?.Paragraphs.Count == 0 || string.IsNullOrEmpty(caption?.Text))
             {
                 return Vector2.Zero;
             }

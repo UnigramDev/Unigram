@@ -3155,6 +3155,7 @@ namespace Telegram.Controls.Messages
             var availableHeight = Math.Min(availableSize.Height, Math.Min(double.IsNaN(Height) ? double.PositiveInfinity : Height, 420));
 
             var ttl = false;
+            var caption = false;
             var width = 0.0;
             var height = 0.0;
 
@@ -3173,6 +3174,7 @@ namespace Telegram.Controls.Messages
             if (constraint is MessageAnimation animationMessage)
             {
                 ttl = animationMessage.IsSecret;
+                caption = animationMessage.Caption?.Text.Length > 0;
                 constraint = animationMessage.Animation;
             }
             else if (constraint is MessageInvoice invoiceMessage)
@@ -3204,6 +3206,7 @@ namespace Telegram.Controls.Messages
             else if (constraint is MessagePhoto photoMessage)
             {
                 ttl = photoMessage.IsSecret;
+                caption = photoMessage.Caption?.Text.Length > 0;
                 constraint = photoMessage.Photo;
             }
             else if (constraint is MessageSticker stickerMessage)
@@ -3224,6 +3227,7 @@ namespace Telegram.Controls.Messages
             else if (constraint is MessageVideo videoMessage)
             {
                 ttl = videoMessage.IsSecret;
+                caption = videoMessage.Caption?.Text.Length > 0;
                 constraint = videoMessage.Video;
             }
             else if (constraint is MessageVideoNote videoNoteMessage)
@@ -3353,6 +3357,7 @@ namespace Telegram.Controls.Messages
             }
 
             var additional = 0d;
+            var minWidth = caption ? 240 : 96;
 
             if (PhotoColumn.Width.IsAbsolute)
             {
@@ -3364,7 +3369,7 @@ namespace Telegram.Controls.Messages
                 additional += 38;
             }
 
-            width = Math.Max(Footer.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, 96));
+            width = Math.Max(Footer.DesiredSize.Width + /*margin left*/ 8 + /*padding right*/ 6 + /*margin right*/ 6, Math.Max(width, minWidth));
 
             if (width > availableWidth + additional || height > availableHeight)
             {
@@ -3372,11 +3377,11 @@ namespace Telegram.Controls.Messages
                 var ratioY = availableHeight / height;
                 var ratio = Math.Min(ratioX, ratioY);
 
-                return base.MeasureOverride(new Size(Math.Max(96, width * ratio) + additional, availableSize.Height));
+                return base.MeasureOverride(new Size(Math.Max(minWidth, width * ratio) + additional, availableSize.Height));
             }
             else
             {
-                return base.MeasureOverride(new Size(Math.Max(96, width) + additional, availableSize.Height));
+                return base.MeasureOverride(new Size(Math.Max(minWidth, width) + additional, availableSize.Height));
             }
         }
 
