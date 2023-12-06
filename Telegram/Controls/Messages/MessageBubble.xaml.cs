@@ -2393,6 +2393,7 @@ namespace Telegram.Controls.Messages
                     var quoteSize = (Theme.Current.MessageFontSize - 2) * BootStrapper.Current.UISettings.TextScaleFactor;
 
                     var width = Math.Ceiling(rich.ActualWidth + 1); //Panel.MeasuredWidth; //Message.ActualWidth;
+                    var inset = 0;
 
                     var minX = double.MaxValue;
                     var minY = double.MaxValue;
@@ -2416,7 +2417,7 @@ namespace Telegram.Controls.Messages
                         var partial = message.Text.Text.Substring(styled.Offset, styled.Length);
                         var entities = styled.Entities ?? Array.Empty<TextEntity>();
 
-                        var size = styled.Runs.Count > 0 && styled.Runs[0].HasFlag(TextStyle.Quote)
+                        var size = styled.Type == Common.ParagraphStyle.Quote
                             ? quoteSize
                             : fontSize;
 
@@ -2425,7 +2426,6 @@ namespace Telegram.Controls.Messages
                         var transform = Message.TransformToVisual(ContentPanel);
                         var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
 
-                        var inset = 0;
                         if (j == 0)
                         {
                             inset = styled.Type switch
