@@ -284,6 +284,10 @@ namespace Telegram.Common
                     {
                         result += recognitionResultText.Text + ", ";
                     }
+                    else if (voiceNote.VoiceNote.SpeechRecognitionResult is SpeechRecognitionResultError)
+                    {
+                        result += Strings.NoWordsRecognized + ", ";
+                    }
                 }
 
                 return result;
