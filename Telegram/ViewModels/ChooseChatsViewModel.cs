@@ -256,6 +256,8 @@ namespace Telegram.ViewModels
             if (response is Telegram.Td.Api.Chats chats)
             {
                 var list = ClientService.GetChats(chats.ChatIds).ToList();
+                var preIndex = 0;
+
                 Items.Clear();
 
                 if (chatList is ChatListMain && Options.AllowSelf && (Options.AllowAll || Options.CanPostMessages))
@@ -266,6 +268,8 @@ namespace Telegram.ViewModels
 
                     if (self != null)
                     {
+                        preIndex = 1;
+
                         list.Remove(self);
                         list.Insert(0, self);
                     }
@@ -304,12 +308,12 @@ namespace Telegram.ViewModels
                         if (index > 0)
                         {
                             items.Remove(chat);
-                            items.Insert(1, chat);
+                            items.Insert(preIndex, chat);
                         }
                     }
                     else if (items.Count > 0)
                     {
-                        items.Insert(1, chat);
+                        items.Insert(preIndex, chat);
                     }
                 }
 

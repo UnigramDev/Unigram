@@ -323,8 +323,17 @@ namespace Telegram.Views.Popups
             DataContext = TypeResolver.Current.Resolve<ChooseChatsViewModel>();
         }
 
+        private bool _legacyNavigated;
+
         public override void OnNavigatedTo()
         {
+            if (_legacyNavigated)
+            {
+                return;
+            }
+
+            _legacyNavigated = true;
+
             IsPrimaryButtonSplit = ViewModel.IsSendAsCopyEnabled;
             EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
             ViewModel.PropertyChanged += OnPropertyChanged;
@@ -339,7 +348,7 @@ namespace Telegram.Views.Popups
         {
             if (ViewModel != null)
             {
-                IsPrimaryButtonSplit = ViewModel.IsSendAsCopyEnabled;
+                OnNavigatedTo();
             }
 
             var button = GetTemplateChild("PrimarySplitButton") as Button;
@@ -477,6 +486,7 @@ namespace Telegram.Views.Popups
                 header.ItemsSource = flags;
                 header.ItemTemplate = BootStrapper.Current.Resources["FolderPickerTemplate"] as DataTemplate;
                 header.ContainerContentChanging += Header_ContainerContentChanging;
+                header.Padding = new Thickness(12, 0, 12, 0);
                 header.ItemContainerTransitions = new Windows.UI.Xaml.Media.Animation.TransitionCollection();
 
                 foreach (var folder in target.OfType<FolderFlag>())
@@ -494,7 +504,7 @@ namespace Telegram.Views.Popups
                     Child = new TextBlock
                     {
                         Text = Strings.FilterChatTypes,
-                        Padding = new Thickness(12, 16, 0, 8),
+                        Padding = new Thickness(24, 8, 0, 4),
                         Style = BootStrapper.Current.Resources["BaseTextBlockStyle"] as Style
                     }
                 });
@@ -504,7 +514,7 @@ namespace Telegram.Views.Popups
                     Child = new TextBlock
                     {
                         Text = Strings.FilterChats,
-                        Padding = new Thickness(12, 16, 0, 8),
+                        Padding = new Thickness(24, 16, 0, 4),
                         Style = BootStrapper.Current.Resources["BaseTextBlockStyle"] as Style
                     }
                 });
@@ -513,6 +523,7 @@ namespace Telegram.Views.Popups
                 popup.Legacy();
                 popup.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
                 popup.ViewModel.AllowEmptySelection = true;
+                popup.ViewModel.Folders.Clear();
                 popup.Header = panel;
                 popup.PrimaryButtonText = Strings.OK;
                 popup.IsPrimaryButtonEnabled = true;
@@ -548,6 +559,7 @@ namespace Telegram.Views.Popups
                 popup.Legacy();
                 popup.ViewModel.Title = include ? Strings.FilterAlwaysShow : Strings.FilterNeverShow;
                 popup.ViewModel.AllowEmptySelection = true;
+                popup.ViewModel.Folders.Clear();
                 popup.PrimaryButtonText = Strings.OK;
                 popup.IsPrimaryButtonEnabled = true;
 
