@@ -103,9 +103,16 @@ namespace Telegram.Controls.Messages.Content
 
             Progress.UpdateWaveform(voiceNote);
 
-            if (message.ClientService.IsPremium || (message.ClientService.IsPremiumAvailable && !message.IsOutgoing))
+            if (message.ClientService.IsPremium && message.SchedulingState == null)
             {
-                Recognize.Visibility = message.SchedulingState == null
+                Recognize.Visibility = Visibility.Visible;
+            }
+            else if (message.ClientService.IsPremiumAvailable && message.SchedulingState == null)
+            {
+                var duration = voiceNote.Duration <= message.ClientService.SpeechRecognitionTrial.MaxMediaDuration;
+                var received = message.IsSaved || !message.IsOutgoing;
+
+                Recognize.Visibility = duration && received
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }
