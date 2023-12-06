@@ -39,7 +39,8 @@
                 </ControlTemplate>
             </ListView.Template>
             <ListView.Header>
-                <Border Height="{x:Bind ViewModel.HeaderHeight, Mode=OneWay}" />
+                <Border Height="{x:Bind ViewModel.HeaderHeight, Mode=OneWay}"
+                        Margin="0,0,0,2" />
             </ListView.Header>
             <ListView.Footer>
                 <Border Height="60" />

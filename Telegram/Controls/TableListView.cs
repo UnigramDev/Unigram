@@ -55,7 +55,7 @@ namespace Telegram.Controls
                 // TODO: some day would be great to get rid of this
                 content.CornerRadius = new CornerRadius(4);
                 content.BorderThickness = new Thickness(1);
-                content.Background = null;
+                //content.Background = null;
             }
         }
 

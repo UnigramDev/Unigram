@@ -23,7 +23,7 @@
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ItemClick="List_ItemClick"
                                 IsItemClickEnabled="True"
-                                SelectionMode="Single"
+                                SelectionMode="None"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 VerticalContentAlignment="Top">
             <common:SelectedItemsBinder.Attached>
@@ -49,7 +49,8 @@
                                               Glyph="&#xE710;" />
                     </controls:HeaderedControl>
 
-                    <TextBlock Text="{CustomResource ProxyConnections}"
+                    <TextBlock Visibility="{x:Bind ViewModel.Items.Count, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                               Text="{CustomResource ProxyConnections}"
                                Style="{StaticResource BaseTextBlockStyle}"
                                Margin="24,16,24,6" />
                 </controls:SettingsPanel>

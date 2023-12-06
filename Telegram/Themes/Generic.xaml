@@ -1445,9 +1445,9 @@
                     <Setter Property="HorizontalContentAlignment"
                             Value="Stretch" />
                     <Setter Property="CornerRadius"
-                            Value="0" />
-                    <Setter Property="Background"
-                            Value="{ThemeResource SettingsItemBackground}" />
+                            Value="4" />
+                    <!--<Setter Property="Background"
+                            Value="{ThemeResource SettingsItemBackground}" />-->
                     <Setter Property="Padding"
                             Value="4,2" />
                     <Setter Property="Margin"
@@ -1465,7 +1465,7 @@
                             BorderThickness="{TemplateBinding BorderThickness}">
                         <Border.Resources>
                             <x:Boolean x:Key="ListViewBaseItemRoundedChromeEnabled">False</x:Boolean>
-                            <CornerRadius x:Key="ListViewItemCornerRadius">0</CornerRadius>
+                            <CornerRadius x:Key="ListViewItemCornerRadius">4</CornerRadius>
                             <StaticResource x:Key="ListViewItemBackgroundPointerOver"
                                             ResourceKey="SettingsItemBackgroundPointerOver" />
                             <StaticResource x:Key="ListViewItemBackgroundPressed"
