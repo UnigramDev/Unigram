@@ -3123,6 +3123,11 @@ namespace Telegram.Views
                 if (string.IsNullOrEmpty(username))
                 {
                     insert = string.IsNullOrEmpty(user.FirstName) ? user.LastName : user.FirstName;
+
+                    if (FormattedTextBox.IsUnsafe(insert))
+                    {
+                        insert = Strings.Username;
+                    }
                 }
                 else
                 {

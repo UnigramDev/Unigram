@@ -1326,7 +1326,12 @@ namespace Telegram.Controls
             '\ufdee', '\ufdef', '\ufeff', '\ufff9', '\ufffa', '\ufffb', '\ufffc', '\ufffe'
         };
 
-        private static bool IsSafe(string text, TextEntity entity = null)
+        public static bool IsUnsafe(string text)
+        {
+            return !IsSafe(text);
+        }
+
+        public static bool IsSafe(string text, TextEntity entity = null)
         {
             if (entity != null)
             {
