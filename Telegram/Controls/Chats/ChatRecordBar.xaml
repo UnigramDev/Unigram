@@ -57,13 +57,15 @@
             </StackPanel>
         </Border>
 
-        <HyperlinkButton x:Name="ButtonCancelRecording"
-                         Click="ButtonCancelRecording_Click"
-                         Content="{CustomResource Cancel}"
-                         HorizontalAlignment="Center"
-                         Visibility="Collapsed"
-                         Grid.ColumnSpan="4"
-                         Grid.Row="1" />
+        <Button x:Name="ButtonCancelRecording"
+                Click="ButtonCancelRecording_Click"
+                Content="{CustomResource Cancel}"
+                Style="{StaticResource AccentTextButtonStyle}"
+                HorizontalAlignment="Center"
+                Visibility="Collapsed"
+                Height="32"
+                Grid.ColumnSpan="4"
+                Grid.Row="1" />
 
         <controls:ProgressVoice x:Name="Poggers"
                                 x:Load="False"

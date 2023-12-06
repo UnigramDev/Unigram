@@ -44,6 +44,7 @@
                               ItemsSource="{x:Bind ViewModel.ChatThemes}"
                               SelectedItem="{x:Bind ViewModel.SelectedChatTheme, Mode=TwoWay}"
                               SelectionMode="Single"
+                              SingleSelectionFollowsFocus="False"
                               ChoosingItemContainer="OnChoosingItemContainer"
                               ContainerContentChanging="OnContainerContentChanging"
                               ScrollViewer.HorizontalScrollBarVisibility="Auto"

@@ -117,7 +117,7 @@
                                           Content="{CustomResource LogOutTitle}"
                                           Foreground="{ThemeResource DangerButtonBackground}"
                                           Style="{StaticResource GlyphBadgeButtonStyle}"
-                                          Glyph="&#xF3B1;" />
+                                          Glyph="&#xE999;" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>
         </ScrollViewer>
