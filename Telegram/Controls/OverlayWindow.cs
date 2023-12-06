@@ -15,6 +15,7 @@ using Windows.Devices.Input;
 using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.Core.Preview;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -167,12 +168,22 @@ namespace Telegram.Controls
             _applicationView = ApplicationView.GetForCurrentView();
             OnVisibleBoundsChanged(_applicationView, null);
 
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested += OnCloseRequested;
+
             Padding = new Thickness(0, 40, 0, 0);
 
             _closing = false;
             _popupHost.IsOpen = true;
 
             return await _callback.Task;
+        }
+
+        private void OnCloseRequested(object sender, SystemNavigationCloseRequestedPreviewEventArgs e)
+        {
+            var args = new BackRequestedRoutedEventArgs();
+            OnBackRequested(args);
+
+            e.Handled = args.Handled;
         }
 
         private void DisplayRegion_Changed(Rect sender, object args)
@@ -232,6 +243,8 @@ namespace Telegram.Controls
             {
                 _applicationView.VisibleBoundsChanged -= OnVisibleBoundsChanged;
             }
+
+            SystemNavigationManagerPreview.GetForCurrentView().CloseRequested -= OnCloseRequested;
         }
 
         public void OnBackRequested(BackRequestedRoutedEventArgs e)
