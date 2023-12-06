@@ -412,10 +412,11 @@ namespace Telegram.Views.Popups
             return clientService.GetUser(await PickChatAsync(title, ChooseChatsOptions.ContactsOnly));
         }
 
-        public static async Task<IList<Chat>> PickChatsAsync(string title, long[] selected, ChooseChatsOptions options)
+        public static async Task<IList<Chat>> PickChatsAsync(string title, long[] selected, ChooseChatsOptions options, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)
         {
             var popup = new ChooseChatsPopup();
             popup.Legacy();
+            popup.ViewModel.SelectionMode = selectionMode;
             popup.ViewModel.Title = title;
             popup.PrimaryButtonText = Strings.OK;
 
@@ -428,9 +429,9 @@ namespace Telegram.Views.Popups
             return popup.ViewModel.SelectedItems.ToList();
         }
 
-        public static async Task<IList<User>> PickUsersAsync(IClientService clientService, string title)
+        public static async Task<IList<User>> PickUsersAsync(IClientService clientService, string title, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)
         {
-            return (await PickChatsAsync(title, Array.Empty<long>(), ChooseChatsOptions.InviteUsers))?.Select(x => clientService.GetUser(x)).Where(x => x != null).ToList();
+            return (await PickChatsAsync(title, Array.Empty<long>(), ChooseChatsOptions.InviteUsers, selectionMode))?.Select(x => clientService.GetUser(x)).Where(x => x != null).ToList();
         }
 
         public Task<ContentDialogResult> PickAsync(IList<long> selectedItems, ChooseChatsOptions options, ListViewSelectionMode selectionMode = ListViewSelectionMode.Multiple)

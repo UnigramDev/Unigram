@@ -637,7 +637,11 @@ namespace Telegram.ViewModels
                     ? Strings.AddSubscriber
                     : Strings.AddMember;
 
-                var selected = await ChooseChatsPopup.PickUsersAsync(ClientService, header);
+                var selectionMode = chat.Type is ChatTypeBasicGroup
+                    ? ListViewSelectionMode.Single
+                    : ListViewSelectionMode.Multiple;
+
+                var selected = await ChooseChatsPopup.PickUsersAsync(ClientService, header, selectionMode);
                 if (selected == null || selected.Count == 0)
                 {
                     return;
@@ -662,10 +666,21 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                var response = await ClientService.SendAsync(new AddChatMembers(chat.Id, selected.Select(x => x.Id).ToArray()));
-                if (response is Error error)
+                if (chat.Type is ChatTypeBasicGroup)
                 {
-
+                    var response = await ClientService.SendAsync(new AddChatMember(chat.Id, selected[0].Id, 100));
+                    if (response is Error error)
+                    {
+                        ShowPopup(error.Message, Strings.AppName);
+                    }
+                }
+                else
+                {
+                    var response = await ClientService.SendAsync(new AddChatMembers(chat.Id, selected.Select(x => x.Id).ToArray()));
+                    if (response is Error error)
+                    {
+                        ShowPopup(error.Message, Strings.AppName);
+                    }
                 }
             }
         }
