@@ -655,9 +655,13 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Grid Margin="0,-4">
-                            <Image x:Name="Presenter"
-                                   Width="32"
-                                   Height="32" />
+                            <local:AnimatedImage x:Name="Presenter"
+                                                 Width="32"
+                                                 Height="32"
+                                                 FrameSize="32,32"
+                                                 DecodeFrameType="Logical"
+                                                 AutoPlay="False"
+                                                 LoopCount="1" />
                             <local:CustomEmojiIcon x:Name="Icon"
                                                    x:Load="False" />
                             <Popup x:Name="Overlay"
