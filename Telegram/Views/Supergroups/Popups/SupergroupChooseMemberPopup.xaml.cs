@@ -77,41 +77,57 @@ namespace Telegram.Views.Supergroups.Popups
 
         private void ListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var chat = ViewModel.Chat;
-            if (chat == null)
-            {
-                return;
-            }
-
             Hide();
 
-            var sourcePopupType = ViewModel.Mode switch
-            {
-                SupergroupChooseMemberMode.Promote => typeof(SupergroupEditAdministratorPopup),
-                SupergroupChooseMemberMode.Restrict => typeof(SupergroupEditRestrictedPopup),
-                _ => null
-            };
+            var chat = ViewModel.Chat;
+            var messageSender = GetSender(e.ClickedItem);
 
-            if (sourcePopupType == null)
+            if (chat == null || messageSender == null)
             {
                 return;
             }
 
-            if (e.ClickedItem is ChatMember member)
+            if (ViewModel.Mode == SupergroupChooseMemberMode.Block)
             {
-                ViewModel.NavigationService.ShowPopupAsync(sourcePopupType, new SupergroupEditMemberArgs(chat.Id, member.MemberId));
+                ViewModel.ClientService.Send(new SetChatMemberStatus(chat.Id, messageSender, new ChatMemberStatusBanned()));
             }
-            else if (e.ClickedItem is SearchResult result)
+            else
+            {
+                var sourcePopupType = ViewModel.Mode switch
+                {
+                    SupergroupChooseMemberMode.Promote => typeof(SupergroupEditAdministratorPopup),
+                    SupergroupChooseMemberMode.Restrict => typeof(SupergroupEditRestrictedPopup),
+                    _ => null
+                };
+
+                if (sourcePopupType == null)
+                {
+                    return;
+                }
+
+                ViewModel.NavigationService.ShowPopupAsync(sourcePopupType, new SupergroupEditMemberArgs(chat.Id, messageSender));
+            }
+        }
+
+        private MessageSender GetSender(object item)
+        {
+            if (item is ChatMember member)
+            {
+                return member.MemberId;
+            }
+            else if (item is SearchResult result)
             {
                 if (result.User is User user)
                 {
-                    ViewModel.NavigationService.ShowPopupAsync(sourcePopupType, new SupergroupEditMemberArgs(chat.Id, new MessageSenderUser(user.Id)));
+                    return new MessageSenderUser(user.Id);
                 }
                 else if (result.Chat is Chat temp && temp.Type is ChatTypePrivate privata)
                 {
-                    ViewModel.NavigationService.ShowPopupAsync(sourcePopupType, new SupergroupEditMemberArgs(chat.Id, new MessageSenderUser(privata.UserId)));
+                    return new MessageSenderUser(privata.UserId);
                 }
             }
+
+            return null;
         }
 
         #region Recycle
