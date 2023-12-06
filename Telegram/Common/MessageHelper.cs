@@ -910,13 +910,7 @@ namespace Telegram.Common
             var confirm = await MessagePopup.ShowAsync($"{Strings.EnableProxyAlert}\n\n{Strings.UseProxyAddress}: {server}\n{Strings.UseProxyPort}: {port}\n{userText}{passText}{secretText}\n{Strings.EnableProxyAlert2}{secretInfo}", Strings.Proxy, Strings.ConnectingConnectProxy, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                var enable = true;
-
-#if DEBUG
-                enable = false;
-#endif
-
-                clientService.Send(new AddProxy(server ?? string.Empty, port, enable, type));
+                clientService.Send(new AddProxy(server ?? string.Empty, port, Constants.RELEASE, type));
             }
         }
 

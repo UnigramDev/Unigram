@@ -9,6 +9,7 @@ using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Converters;
 using Telegram.Native;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td;
 using Windows.ApplicationModel;
@@ -56,11 +57,7 @@ namespace Telegram
 
     public class WatchDog
     {
-#if DEBUG
-        private static readonly bool _disabled = true;
-#else
-        private static readonly bool _disabled = false;
-#endif
+        private static readonly bool _disabled = Constants.DEBUG;
 
         private static readonly string _crashLog;
         private static readonly string _reports;
@@ -225,7 +222,18 @@ namespace Telegram
                 $"Memory usage level: {MemoryManager.AppMemoryUsageLevel}\n" +
                 $"Memory usage limit: {memoryUsageLimit}\n" +
                 $"Time since last update: {next - prev}s\n" +
-                $"Update count: {count}\n\n";
+                $"Update count: {count}\n";
+
+            if (WindowContext.Current != null)
+            {
+                var scaling = (WindowContext.Current.RasterizationScale * 100).ToString("N0");
+                var size = WindowContext.Current.Size;
+
+                info += $"Screen scaling: {scaling}%\n" +
+                    $"Window size: {size.Width}x{size.Height}\n";
+            }
+
+            info += "\n";
 
             var dump = Logger.Dump();
             var payload = info + dump;

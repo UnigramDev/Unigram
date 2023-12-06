@@ -264,12 +264,13 @@ namespace Telegram
             }
             catch { }
 
-#if !DEBUG
-            if (startKind == StartKind.Launch && await CloudUpdateService.LaunchAsync(context))
+            if (Constants.RELEASE && startKind == StartKind.Launch)
             {
-                return;
+                if (await CloudUpdateService.LaunchAsync(context, true))
+                {
+                    return;
+                }
             }
-#endif
 
             if (SettingsService.Current.IsTrayVisible)
             {

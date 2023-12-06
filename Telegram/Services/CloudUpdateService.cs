@@ -33,6 +33,7 @@ namespace Telegram.Services
         private readonly IEventAggregator _aggregator;
 
         private static readonly SemaphoreSlim _updateLock = new(1, 1);
+        private static readonly bool _disabled = Constants.DEBUG;
 
         private long _fileToken;
 
@@ -55,13 +56,9 @@ namespace Telegram.Services
             await UpdateAsync(false);
         }
 
-        public static async Task<bool> LaunchAsync(IDispatcherContext context)
+        public static async Task<bool> LaunchAsync(IDispatcherContext context, bool checkAvailability)
         {
-#if DEBUG
-            return false;
-#endif
-
-            if (ApiInfo.IsStoreRelease || !_updateLock.Wait(0))
+            if (ApiInfo.IsStoreRelease || _disabled || !_updateLock.Wait(0))
             {
                 return false;
             }
@@ -98,7 +95,10 @@ namespace Telegram.Services
                     await context.DispatchAsync(async () =>
                     {
                         // But only if App Installer is available
-                        var result = await Launcher.QueryFileSupportAsync(update.File);
+                        var result = checkAvailability
+                            ? await Launcher.QueryFileSupportAsync(update.File)
+                            : LaunchQuerySupportStatus.Available;
+
                         if (result == LaunchQuerySupportStatus.Available)
                         {
                             await SystemTray.ExitAsync();
@@ -107,7 +107,7 @@ namespace Telegram.Services
                         }
                     });
 
-                    // This line will never be reached
+                    _updateLock.Release();
                     return true;
                 }
             }
@@ -122,11 +122,7 @@ namespace Telegram.Services
 
         public async Task UpdateAsync(bool force)
         {
-#if DEBUG
-            return;
-#endif
-
-            if (ApiInfo.IsStoreRelease || !_updateLock.Wait(0))
+            if (ApiInfo.IsStoreRelease || _disabled || !_updateLock.Wait(0))
             {
                 return;
             }

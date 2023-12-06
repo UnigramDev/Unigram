@@ -70,5 +70,13 @@ namespace Telegram
         public static TimeSpan FastAnimation = TimeSpan.FromMilliseconds(167);
         public static TimeSpan SoftAnimation = TimeSpan.FromMilliseconds(333);
 #endif
+
+#if DEBUG
+        public static bool DEBUG = true;
+        public static bool RELEASE = false;
+#else
+        public static bool RELEASE = true;
+        public static bool DEBUG = false;
+#endif
     }
 }

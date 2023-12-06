@@ -495,7 +495,7 @@ namespace Telegram.ViewModels
 
         public async void UpdateApp()
         {
-            await CloudUpdateService.LaunchAsync(Dispatcher);
+            await CloudUpdateService.LaunchAsync(Dispatcher, false);
         }
 
         public async void CreateSecretChat()

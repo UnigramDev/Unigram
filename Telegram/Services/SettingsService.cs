@@ -314,11 +314,7 @@ namespace Telegram.Services
         private int? _verbosityLevel;
         public int VerbosityLevel
         {
-#if DEBUG
-            get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", 4);
-#else
-            get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", 2);
-#endif
+            get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", Constants.DEBUG ? 4 : 2);
             set
             {
                 AddOrUpdateValue(ref _verbosityLevel, _local, "VerbosityLevel", value);
@@ -427,12 +423,7 @@ namespace Telegram.Services
         private static bool? _isTrayVisible;
         public bool IsTrayVisible
         {
-            get => _isTrayVisible ??= GetValueOrDefault(_local, "IsTrayVisible",
-#if DEBUG
-                false);
-#else
-                true);
-#endif
+            get => _isTrayVisible ??= GetValueOrDefault(_local, "IsTrayVisible", Constants.RELEASE);
             set => AddOrUpdateValue(ref _isTrayVisible, _local, "IsTrayVisible", value);
         }
 
