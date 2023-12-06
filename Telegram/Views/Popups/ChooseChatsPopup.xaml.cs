@@ -216,13 +216,16 @@ namespace Telegram.Views.Popups
 
     public class ChooseChatsConfigurationShareMessage : ChooseChatsConfiguration
     {
-        public ChooseChatsConfigurationShareMessage(Message message, bool withMyScore = false)
+        public ChooseChatsConfigurationShareMessage(long chatId, long messageId, bool withMyScore = false)
         {
-            Message = message;
+            ChatId = chatId;
+            MessageId = messageId;
             WithMyScore = withMyScore;
         }
 
-        public Message Message { get; }
+        public long ChatId { get; }
+
+        public long MessageId { get; }
 
         public bool WithMyScore { get; }
     }
@@ -255,12 +258,15 @@ namespace Telegram.Views.Popups
 
     public class ChooseChatsConfigurationShareMessages : ChooseChatsConfiguration
     {
-        public ChooseChatsConfigurationShareMessages(IList<Message> messages)
+        public ChooseChatsConfigurationShareMessages(long chatId, IEnumerable<long> messageIds)
         {
-            Messages = messages;
+            ChatId = chatId;
+            MessageIds = messageIds.ToArray();
         }
 
-        public IList<Message> Messages { get; }
+        public long ChatId { get; }
+
+        public IList<long> MessageIds { get; }
     }
 
     public class ChooseChatsConfigurationPostLink : ChooseChatsConfiguration

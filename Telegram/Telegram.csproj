@@ -1837,6 +1837,8 @@
     <Content Include="Assets\Toasts\Translate.tgs" />
     <Content Include="Assets\Toasts\Transcribe.tgs" />
     <Content Include="Assets\Toasts\SoundDownload.tgs" />
+    <Content Include="Assets\Toasts\SavedMessages.tgs" />
+    <Content Include="Assets\Toasts\Forward.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>

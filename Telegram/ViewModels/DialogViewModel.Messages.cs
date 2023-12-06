@@ -266,11 +266,11 @@ namespace Telegram.ViewModels
 
             if (message.Content is MessageAlbum album)
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(album.Messages.Select(x => x.Get()).ToList()));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(message.ChatId, album.Messages.Select(x => x.Id)));
             }
             else
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(message.Get()));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(message.ChatId, message.Id));
             }
 
             TextField?.Focus(FocusState.Programmatic);
@@ -307,12 +307,12 @@ namespace Telegram.ViewModels
 
         public async void ForwardSelectedMessages()
         {
-            var messages = SelectedItems.Values.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).Select(x => x.Get()).ToList();
+            var messages = SelectedItems.Values.Where(x => x.CanBeForwarded).OrderBy(x => x.Id).ToList();
             if (messages.Count > 0)
             {
                 IsSelectionEnabled = false;
 
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(messages));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessages(messages[0].ChatId, messages.Select(x => x.Id)));
                 TextField?.Focus(FocusState.Programmatic);
             }
         }

@@ -273,6 +273,49 @@ namespace Telegram.Td.Api
             return false;
         }
 
+        public static bool IsUser(this Chat chat, out long userId)
+        {
+            if (chat.Type is ChatTypePrivate privata)
+            {
+                userId = privata.UserId;
+                return true;
+            }
+            else if (chat.Type is ChatTypeSecret secret)
+            {
+                userId = secret.UserId;
+                return true;
+            }
+
+            userId = 0;
+            return false;
+        }
+
+        public static bool IsBasicGroup(this Chat chat, out long basicGroupId)
+        {
+            if (chat.Type is ChatTypeBasicGroup basicGroup)
+            {
+                basicGroupId = basicGroup.BasicGroupId;
+                return true;
+            }
+
+            basicGroupId = 0;
+            return false;
+        }
+
+        public static bool IsSupergroup(this Chat chat, out long supergroupId, out bool isChannel)
+        {
+            if (chat.Type is ChatTypeSupergroup supergroup)
+            {
+                supergroupId = supergroup.SupergroupId;
+                isChannel = supergroup.IsChannel;
+                return true;
+            }
+
+            supergroupId = 0;
+            isChannel = false;
+            return false;
+        }
+
         public static int ToId(this ChatList chatList)
         {
             if (chatList is ChatListMain or null)

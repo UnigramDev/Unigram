@@ -215,7 +215,7 @@ namespace Telegram.ViewModels.Gallery
         {
             if (_selectedItem is GalleryMessage message)
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(message.Message));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationShareMessage(message.ChatId, message.Id));
             }
             else
             {

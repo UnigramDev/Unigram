@@ -4071,6 +4071,42 @@ Duration: {1}</value>
   <data name="FromYou" xml:space="preserve">
     <value>You</value>
   </data>
+  <data name="FwdMessagesToChats" xml:space="preserve">
+    <value>Messages forwarded to **{0}**.</value>
+  </data>
+  <data name="FwdMessagesToGroup" xml:space="preserve">
+    <value>Messages forwarded to **{0}**.</value>
+  </data>
+  <data name="FwdMessagesToManyChats_one" xml:space="preserve">
+    <value>Messages forwarded to **a chat**.</value>
+  </data>
+  <data name="FwdMessagesToManyChats_other" xml:space="preserve">
+    <value>Messages forwarded to **{0} chats**.</value>
+  </data>
+  <data name="FwdMessagesToSavedMessages" xml:space="preserve">
+    <value>Messages forwarded to **Saved Messages**.</value>
+  </data>
+  <data name="FwdMessagesToUser" xml:space="preserve">
+    <value>Messages forwarded to **{0}**.</value>
+  </data>
+  <data name="FwdMessageToChats" xml:space="preserve">
+    <value>Message forwarded to **{0}**.</value>
+  </data>
+  <data name="FwdMessageToGroup" xml:space="preserve">
+    <value>Message forwarded to **{0}**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_one" xml:space="preserve">
+    <value>Message forwarded to **a chat**.</value>
+  </data>
+  <data name="FwdMessageToManyChats_other" xml:space="preserve">
+    <value>Message forwarded to **{0} chats**.</value>
+  </data>
+  <data name="FwdMessageToSavedMessages" xml:space="preserve">
+    <value>Message forwarded to **Saved Messages**.</value>
+  </data>
+  <data name="FwdMessageToUser" xml:space="preserve">
+    <value>Message forwarded to **{0}**.</value>
+  </data>
   <data name="Gallery" xml:space="preserve">
     <value>Gallery</value>
   </data>
@@ -7367,6 +7403,18 @@ and enter your phone number.</value>
   </data>
   <data name="StorySelectedContactsHintSelf" xml:space="preserve">
     <value>Only some users you selected can view this story.</value>
+  </data>
+  <data name="StorySharedTo" xml:space="preserve">
+    <value>Story forwarded to **{0}**.</value>
+  </data>
+  <data name="StorySharedToManyChats_one" xml:space="preserve">
+    <value>Story forwarded to **a chat**.</value>
+  </data>
+  <data name="StorySharedToManyChats_other" xml:space="preserve">
+    <value>Story forwarded to **{0} chats**.</value>
+  </data>
+  <data name="StorySharedToSavedMessages" xml:space="preserve">
+    <value>Story forwarded to **Saved Messages**</value>
   </data>
   <data name="StoryShownHint" xml:space="preserve">
     <value>**{0}** will be able to see your stories again.</value>
