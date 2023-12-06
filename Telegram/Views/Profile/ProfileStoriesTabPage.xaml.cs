@@ -1,8 +1,10 @@
-﻿using Telegram.Common;
+﻿using System.Numerics;
+using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
 using Telegram.ViewModels.Stories;
 using Windows.Foundation;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -138,5 +140,52 @@ namespace Telegram.Views.Profile
 
         #endregion
 
+
+        #region Selection
+
+        private void OnSelectionModeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            ShowHideManagePanel(ScrollingHost.SelectionMode == ListViewSelectionMode.Multiple);
+        }
+
+        private bool _manageCollapsed = true;
+
+        private void ShowHideManagePanel(bool show)
+        {
+            if (_manageCollapsed != show)
+            {
+                return;
+            }
+
+            _manageCollapsed = !show;
+            ManagePanel.Visibility = Visibility.Visible;
+
+            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            ElementCompositionPreview.SetIsTranslationEnabled(ManagePanel, true);
+            manage.Opacity = show ? 0 : 1;
+
+            var batch = manage.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                ManagePanel.Visibility = _manageCollapsed
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+            };
+
+            var offset1 = manage.Compositor.CreateVector3KeyFrameAnimation();
+            offset1.InsertKeyFrame(show ? 0 : 1, new Vector3(0, 48, 0));
+            offset1.InsertKeyFrame(show ? 1 : 0, new Vector3(0, 0, 0));
+
+            var opacity1 = manage.Compositor.CreateScalarKeyFrameAnimation();
+            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
+
+            manage.StartAnimation("Translation", offset1);
+            manage.StartAnimation("Opacity", opacity1);
+
+            batch.End();
+        }
+
+        #endregion
     }
 }

@@ -40,14 +40,14 @@
                                 BackgroundSizing="OuterBorderEdge"
                                 Height="48" />
 
-                        <Grid CornerRadius="8,8,0,0"
+                        <Grid CornerRadius="4,4,0,0"
                               MaxWidth="1000"
                               Margin="24,0">
                             <Border x:Name="CardBackground"
                                     Background="{ThemeResource SettingsItemBackground}"
                                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                     BorderThickness="1"
-                                    CornerRadius="8,8,0,0" />
+                                    CornerRadius="4,4,0,0" />
                             <controls:TopNavView IsItemClickEnabled="True"
                                                  ItemClick="Header_ItemClick"
                                                  ItemsSource="{x:Bind ViewModel.Items}"
@@ -83,6 +83,57 @@
                                  Glyph="&#xE93E;"
                                  Width="48"
                                  Height="48" />
+        </Grid>
+
+
+        <Grid x:Name="ManagePanel"
+              Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
+              VerticalAlignment="Bottom"
+              Visibility="Collapsed"
+              Margin="24,0,24,8"
+              CornerRadius="15"
+              Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Border BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="15"
+                    Grid.ColumnSpan="5" />
+
+            <controls:GlyphButton x:Name="ButtonManage"
+                                  Glyph="&#xE711;"
+                                  Click="{x:Bind ViewModel.UnselectMessages}"
+                                  CornerRadius="13,4,4,13" />
+
+            <controls:AnimatedTextBlock x:Name="ManageCount"
+                                        Text="{x:Bind ConvertSelection(ViewModel.SelectedItems.Count), Mode=OneWay}"
+                                        TextStyle="{StaticResource BaseTextBlockStyle}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,-2,0,0"
+                                        Grid.Column="1" />
+
+            <controls:GlyphButton x:Name="ButtonForward"
+                                  Glyph="&#xE72D;"
+                                  Content="{CustomResource Forward}"
+                                  Click="{x:Bind ViewModel.ForwardSelectedMessages}"
+                                  IsEnabled="{x:Bind ViewModel.CanForwardSelectedMessages, Mode=OneWay}"
+                                  Style="{StaticResource GlyphButtonWithLabelStyle}"
+                                  Grid.Column="3" />
+
+            <controls:GlyphButton x:Name="ButtonDelete"
+                                  Glyph="&#xE74D;"
+                                  Content="{CustomResource Delete}"
+                                  Foreground="#df3f40"
+                                  Click="{x:Bind ViewModel.DeleteSelectedMessages}"
+                                  IsEnabled="{x:Bind ViewModel.CanDeleteSelectedMessages, Mode=OneWay}"
+                                  Style="{StaticResource GlyphButtonWithLabelStyle}"
+                                  CornerRadius="4,13,13,4"
+                                  Grid.Column="4" />
         </Grid>
     </Grid>
 </local:HostedPage>

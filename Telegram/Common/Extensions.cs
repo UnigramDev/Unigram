@@ -177,7 +177,7 @@ namespace Telegram.Common
             return new Version(version.Major, version.Minor, version.Build, Constants.BuildNumber);
         }
 
-        public static void RegisterColorChanged(this Brush brush, ref long token, DependencyPropertyChangedCallback callback)
+        public static void RegisterColorChangedCallback(this Brush brush, DependencyPropertyChangedCallback callback, ref long token)
         {
             if (brush is SolidColorBrush solidColorBrush && token == 0)
             {
@@ -185,11 +185,28 @@ namespace Telegram.Common
             }
         }
 
-        public static void UnregisterColorChanged(this Brush brush, ref long token)
+        public static void UnregisterColorChangedCallback(this Brush brush, ref long token)
         {
             if (brush is SolidColorBrush solidColorBrush && token != 0)
             {
                 solidColorBrush.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, token);
+                token = 0;
+            }
+        }
+
+        public static void RegisterPropertyChangedCallback(this DependencyObject obj, DependencyProperty property, DependencyPropertyChangedCallback callback, ref long token)
+        {
+            if (obj is not null && token == 0)
+            {
+                token = obj.RegisterPropertyChangedCallback(property, callback);
+            }
+        }
+
+        public static void UnregisterPropertyChangedCallback(this DependencyObject obj, DependencyProperty property, ref long token)
+        {
+            if (obj is not null && token != 0)
+            {
+                obj.UnregisterPropertyChangedCallback(property, token);
                 token = 0;
             }
         }

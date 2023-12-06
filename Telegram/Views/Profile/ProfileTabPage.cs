@@ -4,17 +4,14 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Profile
@@ -162,59 +159,6 @@ namespace Telegram.Views.Profile
 
         #endregion
 
-        #region Selection
-
-        protected string ConvertSelection(int count)
-        {
-            return Locale.Declension(Strings.R.messages, count);
-        }
-
-        protected void OnSelectionModeChanged(DependencyObject sender, DependencyProperty dp)
-        {
-            ShowHideManagePanel(ScrollingHost.SelectionMode == ListViewSelectionMode.Multiple);
-        }
-
-        private bool _manageCollapsed = true;
-
-        private void ShowHideManagePanel(bool show)
-        {
-            if (_manageCollapsed != show)
-            {
-                return;
-            }
-
-            _manageCollapsed = !show;
-            ManagePanel.Visibility = Visibility.Visible;
-
-            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
-            ElementCompositionPreview.SetIsTranslationEnabled(ManagePanel, true);
-            manage.Opacity = show ? 0 : 1;
-
-            var batch = manage.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-            batch.Completed += (s, args) =>
-            {
-                manage.Opacity = show ? 1 : 0;
-                ManagePanel.Visibility = show
-                    ? Visibility.Visible
-                    : Visibility.Collapsed;
-            };
-
-            var offset1 = manage.Compositor.CreateVector3KeyFrameAnimation();
-            offset1.InsertKeyFrame(show ? 0 : 1, new Vector3(0, 48, 0));
-            offset1.InsertKeyFrame(show ? 1 : 0, new Vector3(0, 0, 0));
-
-            var opacity1 = manage.Compositor.CreateScalarKeyFrameAnimation();
-            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
-            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
-
-            manage.StartAnimation("Translation", offset1);
-            manage.StartAnimation("Opacity", opacity1);
-
-            batch.End();
-        }
-
-        #endregion
-
         protected virtual void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
         {
             if (args.ItemContainer == null)
@@ -245,11 +189,5 @@ namespace Telegram.Views.Profile
 
         private ListViewBase _scrollingHost;
         public ListViewBase ScrollingHost => _scrollingHost ??= FindName(nameof(ScrollingHost)) as ListViewBase;
-
-        private Border _headerPlaceholder;
-        public Border HeaderPlaceholder => _headerPlaceholder ??= FindName(nameof(HeaderPlaceholder)) as Border;
-
-        private Grid _managePanel;
-        public Grid ManagePanel => _managePanel ??= FindName(nameof(ManagePanel)) as Grid;
     }
 }

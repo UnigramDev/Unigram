@@ -21,7 +21,6 @@ namespace Telegram.Views.Profile
         public ProfileMediaTabPage()
         {
             InitializeComponent();
-            ScrollingHost.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, OnSelectionModeChanged);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

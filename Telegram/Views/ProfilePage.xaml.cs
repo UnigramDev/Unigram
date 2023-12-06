@@ -8,6 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Numerics;
 using Telegram.Collections;
+using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Td.Api;
@@ -268,14 +269,15 @@ namespace Telegram.Views
 
         #endregion
 
-        private long? _itemsSourceToken;
+        private long _itemsSourceToken;
+        private long _selectionModeToken;
 
         private void OnNavigating(object sender, NavigatingCancelEventArgs e)
         {
-            if (MediaFrame.Content is ProfileTabPage tabPage && _itemsSourceToken is long token)
+            if (MediaFrame.Content is ProfileTabPage tabPage)
             {
-                _itemsSourceToken = null;
-                tabPage.ScrollingHost.UnregisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, token);
+                tabPage.ScrollingHost.UnregisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, ref _itemsSourceToken);
+                tabPage.ScrollingHost.UnregisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, ref _selectionModeToken);
             }
         }
 
@@ -292,8 +294,10 @@ namespace Telegram.Views
             }
             else
             {
-                _itemsSourceToken = tabPage.ScrollingHost.RegisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, OnItemsSourceChanged);
+                tabPage.ScrollingHost.RegisterPropertyChangedCallback(ItemsControl.ItemsSourceProperty, OnItemsSourceChanged, ref _itemsSourceToken);
             }
+
+            tabPage.ScrollingHost.RegisterPropertyChangedCallback(ListViewBase.SelectionModeProperty, OnSelectionModeChanged, ref _selectionModeToken);
         }
 
         private void OnItemsSourceChanged(DependencyObject sender, DependencyProperty dp)
@@ -414,5 +418,60 @@ namespace Telegram.Views
                 MediaFrame.Navigate(page.Type, null, new SuppressNavigationTransitionInfo());
             }
         }
+
+        #region Selection
+
+        private string ConvertSelection(int count)
+        {
+            return Locale.Declension(Strings.R.messages, count);
+        }
+
+        private void OnSelectionModeChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (sender is ListViewBase selector)
+            {
+                ShowHideManagePanel(selector.SelectionMode == ListViewSelectionMode.Multiple);
+            }
+        }
+
+        private bool _manageCollapsed = true;
+
+        private void ShowHideManagePanel(bool show)
+        {
+            if (_manageCollapsed != show)
+            {
+                return;
+            }
+
+            _manageCollapsed = !show;
+            ManagePanel.Visibility = Visibility.Visible;
+
+            var manage = ElementCompositionPreview.GetElementVisual(ManagePanel);
+            ElementCompositionPreview.SetIsTranslationEnabled(ManagePanel, true);
+            manage.Opacity = show ? 0 : 1;
+
+            var batch = manage.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
+            {
+                ManagePanel.Visibility = _manageCollapsed
+                    ? Visibility.Collapsed
+                    : Visibility.Visible;
+            };
+
+            var offset1 = manage.Compositor.CreateVector3KeyFrameAnimation();
+            offset1.InsertKeyFrame(show ? 0 : 1, new Vector3(0, 48, 0));
+            offset1.InsertKeyFrame(show ? 1 : 0, new Vector3(0, 0, 0));
+
+            var opacity1 = manage.Compositor.CreateScalarKeyFrameAnimation();
+            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
+            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
+
+            manage.StartAnimation("Translation", offset1);
+            manage.StartAnimation("Opacity", opacity1);
+
+            batch.End();
+        }
+
+        #endregion
     }
 }

@@ -98,7 +98,7 @@ namespace Telegram.Controls
             Load();
 
             XamlRoot.Changed += OnRasterizationScaleChanged;
-            ReplacementColor?.RegisterColorChanged(ref _replacementColorToken, OnReplacementColorChanged);
+            ReplacementColor?.RegisterColorChangedCallback(OnReplacementColorChanged, ref _replacementColorToken);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
@@ -106,7 +106,7 @@ namespace Telegram.Controls
             Unload();
 
             XamlRoot.Changed -= OnRasterizationScaleChanged;
-            ReplacementColor?.UnregisterColorChanged(ref _replacementColorToken);
+            ReplacementColor?.UnregisterColorChangedCallback(ref _replacementColorToken);
         }
 
         public bool IsPlaying => _delayedPlay || _state == PlayingState.Playing;
@@ -495,8 +495,8 @@ namespace Telegram.Controls
 
         private void OnReplacementColorChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            oldValue?.UnregisterColorChanged(ref _replacementColorToken);
-            newValue?.RegisterColorChanged(ref _replacementColorToken, OnReplacementColorChanged);
+            oldValue?.UnregisterColorChangedCallback(ref _replacementColorToken);
+            newValue?.RegisterColorChangedCallback(OnReplacementColorChanged, ref _replacementColorToken);
 
             ReplacementColorChanged();
         }
