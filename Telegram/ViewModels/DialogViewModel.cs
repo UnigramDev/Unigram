@@ -2497,31 +2497,39 @@ namespace Telegram.ViewModels
             }
             else
             {
-                Function function;
-                if (editing.Content is MessageText or MessageAnimatedEmoji or MessageBigEmoji)
+                if (string.IsNullOrEmpty(formattedText.Text))
                 {
-                    function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(formattedText, disablePreview, true));
+                    ShowDraftMessage(chat);
+                    DeleteMessage(editing);
                 }
                 else
                 {
-                    function = new EditMessageCaption(chat.Id, editing.Id, null, formattedText);
-                }
-
-                var response = await ClientService.SendAsync(function);
-                if (response is Message message)
-                {
-                    ShowDraftMessage(chat);
-                    Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
-                }
-                else if (response is Error error)
-                {
-                    if (error.MessageEquals(ErrorType.MESSAGE_NOT_MODIFIED))
+                    Function function;
+                    if (editing.Content is MessageText or MessageAnimatedEmoji or MessageBigEmoji)
                     {
-                        ShowDraftMessage(chat);
+                        function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(formattedText, disablePreview, true));
                     }
                     else
                     {
-                        // TODO: ...
+                        function = new EditMessageCaption(chat.Id, editing.Id, null, formattedText);
+                    }
+
+                    var response = await ClientService.SendAsync(function);
+                    if (response is Message message)
+                    {
+                        ShowDraftMessage(chat);
+                        Aggregator.Publish(new UpdateMessageSendSucceeded(message, editing.Id));
+                    }
+                    else if (response is Error error)
+                    {
+                        if (error.MessageEquals(ErrorType.MESSAGE_NOT_MODIFIED))
+                        {
+                            ShowDraftMessage(chat);
+                        }
+                        else
+                        {
+                            // TODO: ...
+                        }
                     }
                 }
             }
