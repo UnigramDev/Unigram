@@ -1117,7 +1117,7 @@ Please take a look at the &lt;a href=&quot;https://telegram.org/faq#general-ques
     <value>Photo</value>
   </data>
   <data name="AttachPhotoExpired" xml:space="preserve">
-    <value>Photo has expired</value>
+    <value>Expired photo</value>
   </data>
   <data name="AttachRound" xml:space="preserve">
     <value>Video message</value>
@@ -1135,7 +1135,7 @@ Please take a look at the &lt;a href=&quot;https://telegram.org/faq#general-ques
     <value>Video</value>
   </data>
   <data name="AttachVideoExpired" xml:space="preserve">
-    <value>Video has expired</value>
+    <value>Expired video</value>
   </data>
   <data name="AudioAutodownload" xml:space="preserve">
     <value>Voice messages</value>
@@ -2095,7 +2095,7 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
     <value>The name of the channel and replies to its message will be shown in the selected color.</value>
   </data>
   <data name="ChannelColorPreviewLinkDescription" xml:space="preserve">
-    <value>Your selected color will also tint the link preview.</value>
+    <value>Previews of links you send will also use this color.</value>
   </data>
   <data name="ChannelColorPreviewLinkTitle" xml:space="preserve">
     <value>Link Preview</value>
@@ -2233,7 +2233,7 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
     <value>Add Icons to Replies</value>
   </data>
   <data name="ChannelReplyIconHint" xml:space="preserve">
-    <value>Make replies to your messages stand out by adding custom icons to them.</value>
+    <value>Select an icon to create a custom pattern for replies to your messages.</value>
   </data>
   <data name="Channels_one" xml:space="preserve">
     <value>{0} channel</value>
@@ -4780,7 +4780,7 @@ Upgrade to **Telegram Premium** to increase this limit to **{1}**.</value>
     <value>Other files</value>
   </data>
   <data name="LocalDatabase" xml:space="preserve">
-    <value>Clear Local Database</value>
+    <value>Local Database</value>
   </data>
   <data name="LocalDocumentCache" xml:space="preserve">
     <value>Documents</value>
@@ -6472,7 +6472,7 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
     <value>Reply in Another Chat</value>
   </data>
   <data name="ReplyToQuote" xml:space="preserve">
-    <value>Reply to quote by {0}</value>
+    <value>Reply to quote from {0}</value>
   </data>
   <data name="ReportChat" xml:space="preserve">
     <value>Report</value>
@@ -6993,7 +6993,7 @@ The channel &quot;**{1}**&quot; will become private.</value>
     <value>Do you want to set this photo for **{0}**? It will replace any photo {1} sets – only you will see it.</value>
   </data>
   <data name="SetWallpapers" xml:space="preserve">
-    <value>Set Wallpaper</value>
+    <value>Change Wallpaper</value>
   </data>
   <data name="ShareComment" xml:space="preserve">
     <value>Write a comment...</value>
@@ -8128,7 +8128,7 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
     <value>Your name and replies to your messages will be shown in the selected color.</value>
   </data>
   <data name="UserColorPreviewLinkDescription" xml:space="preserve">
-    <value>Your selected color will also tint the link preview.</value>
+    <value>Previews of links you send will also use this color.</value>
   </data>
   <data name="UserColorPreviewLinkTitle" xml:space="preserve">
     <value>Link Preview</value>
