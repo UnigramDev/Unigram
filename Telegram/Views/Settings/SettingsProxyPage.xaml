@@ -23,21 +23,25 @@
                                 ItemsSource="{x:Bind ViewModel.Items}"
                                 ItemClick="List_ItemClick"
                                 IsItemClickEnabled="True"
-                                SelectionMode="{x:Bind ViewModel.SelectionMode, Mode=OneWay}"
-                                SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
+                                SelectionMode="Single"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 VerticalContentAlignment="Top">
             <common:SelectedItemsBinder.Attached>
-                <common:SelectedItemsBinder SelectedItems="{x:Bind ViewModel.SelectedItems}" />
+                <common:SelectedItemsBinder SelectedItems="{x:Bind ViewModel.SelectedItems}"
+                                            SelectionMode="Auto" />
             </common:SelectedItemsBinder.Attached>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="controls:MultipleListViewItem">
-                    <Setter Property="Padding"
-                            Value="0" />
-                </Style>
-            </ListView.ItemContainerStyle>
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
+                    <controls:HeaderedControl>
+                        <CheckBox IsChecked="{x:Bind ViewModel.UseProxy, Mode=TwoWay}"
+                                  Content="{CustomResource UseProxySettings}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                        <CheckBox IsChecked="{x:Bind ViewModel.UseSystemProxy, Mode=TwoWay}"
+                                  IsEnabled="{x:Bind ViewModel.UseProxy, Mode=OneWay}"
+                                  Content="{CustomResource UseSystemProxySettings}"
+                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                    </controls:HeaderedControl>
+
                     <controls:HeaderedControl>
                         <controls:BadgeButton Content="{CustomResource AddProxy}"
                                               Click="{x:Bind ViewModel.Add}"
@@ -47,27 +51,15 @@
 
                     <TextBlock Text="{CustomResource ProxyConnections}"
                                Style="{StaticResource BaseTextBlockStyle}"
-                               Margin="24,16,24,8" />
+                               Margin="24,16,24,6" />
                 </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>
-                <DataTemplate x:DataType="viewModels:ConnectionViewModel">
-                    <!--<Grid Padding="12,12"
-                          Background="{ThemeResource SettingsItemBackground}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <TextBlock Text="{x:Bind DisplayName}"
-                                   VerticalAlignment="Bottom"
-                                   Style="{StaticResource BaseTextBlockStyle}"
-                                   TextWrapping="NoWrap"
-                                   TextTrimming="CharacterEllipsis" />
-                    </Grid>-->
+                <DataTemplate x:DataType="viewModels:ProxyViewModel">
                     <cells:ProxyCell DisplayName="{x:Bind DisplayName}"
+                                     IsEnabled="{x:Bind IsEnabled, Mode=OneWay}"
                                      Status="{x:Bind Status, Mode=OneWay}"
-                                     Padding="12,12"
+                                     Padding="12,6"
                                      Background="{ThemeResource SettingsItemBackground}"
                                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
                 </DataTemplate>

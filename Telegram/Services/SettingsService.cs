@@ -75,6 +75,7 @@ namespace Telegram.Services
         bool AreMaterialsEnabled { get; set; }
 
         bool UseSystemProxy { get; set; }
+        int LastProxyId { get; set; }
 
         int[] AccountsSelectorOrder { get; set; }
 
@@ -495,6 +496,13 @@ namespace Telegram.Services
         {
             get => _useSystemProxy ??= GetValueOrDefault(_own, "UseSystemProxy", false);
             set => AddOrUpdateValue(ref _useSystemProxy, _own, "UseSystemProxy", value);
+        }
+
+        private static int? _lastProxyId;
+        public int LastProxyId
+        {
+            get => _lastProxyId ??= GetValueOrDefault(_own, "LastProxyId", -1);
+            set => AddOrUpdateValue(ref _lastProxyId, _own, "LastProxyId", value);
         }
 
         private static bool? _isLeftTabsEnabled;

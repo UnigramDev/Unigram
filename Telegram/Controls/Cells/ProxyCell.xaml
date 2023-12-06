@@ -15,12 +15,16 @@
                     <VisualState x:Name="Connected" />
                     <VisualState x:Name="Available">
                         <VisualState.Setters>
+                            <Setter Target="EnabledLabel.Foreground"
+                                    Value="{ThemeResource MessageCallForegroundBrush}" />
                             <Setter Target="StatusLabel.Foreground"
                                     Value="{ThemeResource MessageCallForegroundBrush}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Unavailable">
                         <VisualState.Setters>
+                            <Setter Target="EnabledLabel.Foreground"
+                                    Value="{ThemeResource MessageCallMissedForegroundBrush}" />
                             <Setter Target="StatusLabel.Foreground"
                                     Value="{ThemeResource MessageCallMissedForegroundBrush}" />
                         </VisualState.Setters>
@@ -28,26 +32,30 @@
                 </VisualStateGroup>
             </VisualStateManager.VisualStateGroups>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="44" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <CheckBox x:Name="Test"
-                      Visibility="Collapsed"
-                      Margin="8,-4,0,0"
-                      VerticalAlignment="Top"
-                      Grid.ColumnSpan="2"
-                      Grid.RowSpan="2" />
 
             <TextBlock x:Name="DisplayNameLabel"
                        VerticalAlignment="Bottom"
                        Style="{StaticResource BaseTextBlockStyle}"
                        TextWrapping="NoWrap"
                        TextTrimming="CharacterEllipsis"
-                       Grid.Column="1" />
+                       Grid.ColumnSpan="2" />
+
+            <TextBlock x:Name="EnabledLabel"
+                       Visibility="Collapsed"
+                       Text="&#xEA20;"
+                       FontSize="16"
+                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                       Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                       VerticalAlignment="Bottom"
+                       Margin="0,0,4,0"
+                       Grid.Row="1" />
 
             <TextBlock x:Name="StatusLabel"
                        TextWrapping="NoWrap"

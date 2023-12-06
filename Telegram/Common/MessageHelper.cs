@@ -910,7 +910,13 @@ namespace Telegram.Common
             var confirm = await MessagePopup.ShowAsync($"{Strings.EnableProxyAlert}\n\n{Strings.UseProxyAddress}: {server}\n{Strings.UseProxyPort}: {port}\n{userText}{passText}{secretText}\n{Strings.EnableProxyAlert2}{secretInfo}", Strings.Proxy, Strings.ConnectingConnectProxy, Strings.Cancel);
             if (confirm == ContentDialogResult.Primary)
             {
-                clientService.Send(new AddProxy(server ?? string.Empty, port, true, type));
+                var enable = true;
+
+#if DEBUG
+                enable = false;
+#endif
+
+                clientService.Send(new AddProxy(server ?? string.Empty, port, enable, type));
             }
         }
 
@@ -1007,7 +1013,7 @@ namespace Telegram.Common
             }
         }
 
-        public static async void NavigateToUsername(IClientService clientService, INavigationService navigation, string username, string videoChat, string game)
+        public static async void NavigateToUsername(IClientService clientService, INavigationService navigation, string username, string videoChat = null, string game = null)
         {
             var response = await clientService.SendAsync(new SearchPublicChat(username));
             if (response is Chat chat)

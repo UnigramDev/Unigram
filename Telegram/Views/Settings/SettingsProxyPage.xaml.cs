@@ -7,6 +7,7 @@
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
+using Telegram.Navigation;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
@@ -15,7 +16,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Views.Settings
 {
-    public sealed partial class SettingsProxyPage : HostedPage
+    public sealed partial class SettingsProxyPage : HostedPage, INavigablePage
     {
         public SettingsProxyViewModel ViewModel => DataContext as SettingsProxyViewModel;
 
@@ -25,9 +26,18 @@ namespace Telegram.Views.Settings
             Title = Strings.ProxySettings;
         }
 
+        public void OnBackRequested(BackRequestedRoutedEventArgs args)
+        {
+            if (ViewModel.SelectedItems.Count > 0)
+            {
+                ViewModel.SelectedItems.Clear();
+                args.Handled = true;
+            }
+        }
+
         private void List_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.Enable(e.ClickedItem as ConnectionViewModel);
+            ViewModel.Enable(e.ClickedItem as ProxyViewModel);
         }
 
         #region Context menu
@@ -37,23 +47,30 @@ namespace Telegram.Views.Settings
             var flyout = new MenuFlyout();
             var element = sender as FrameworkElement;
 
-            var proxy = ScrollingHost.ItemFromContainer(element) as ProxyViewModel;
-            if (proxy is null or SystemProxyViewModel)
+            if (ViewModel.SelectedItems.Count > 1)
             {
-                return;
+                flyout.CreateFlyoutItem(ViewModel.DeleteSelected, Strings.DeleteSelected, Icons.Delete, destructive: true);
             }
-
-            if (proxy.Type is ProxyTypeMtproto or ProxyTypeSocks5)
+            else
             {
-                flyout.CreateFlyoutItem(ViewModel.Share, proxy, Strings.ShareFile, Icons.Share);
+                var proxy = ScrollingHost.ItemFromContainer(element) as ProxyViewModel;
+                if (proxy is null)
+                {
+                    return;
+                }
+
+                if (proxy.Type is ProxyTypeMtproto or ProxyTypeSocks5)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.Share, proxy, Strings.ShareFile, Icons.Share);
+                }
+
+                flyout.CreateFlyoutItem(ViewModel.Edit, proxy, Strings.Edit, Icons.Edit);
+                flyout.CreateFlyoutItem(ViewModel.Delete, proxy, Strings.Delete, Icons.Delete, destructive: true);
+
+                flyout.CreateFlyoutSeparator();
+
+                flyout.CreateFlyoutItem(ViewModel.Select, proxy, Strings.Select, Icons.CheckmarkCircle);
             }
-
-            flyout.CreateFlyoutItem(ViewModel.Edit, proxy, Strings.Edit, Icons.Edit);
-            flyout.CreateFlyoutItem(ViewModel.Remove, proxy, Strings.Delete, Icons.Delete, destructive: true);
-
-            flyout.CreateFlyoutSeparator();
-
-            flyout.CreateFlyoutItem(ViewModel.Select, proxy, Strings.Select, Icons.CheckmarkCircle);
 
             args.ShowAt(flyout, element);
         }
@@ -66,7 +83,7 @@ namespace Telegram.Views.Settings
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new MultipleListViewItem(sender, false);
+                args.ItemContainer = new TableListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Proxy_ContextRequested;

@@ -2880,6 +2880,15 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DeleteProxy" xml:space="preserve">
     <value>Delete Proxy?</value>
   </data>
+  <data name="DeleteProxyConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete this proxy?</value>
+  </data>
+  <data name="DeleteProxyMultiConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete these proxies?</value>
+  </data>
+  <data name="DeleteProxyTitle" xml:space="preserve">
+    <value>Delete Proxy</value>
+  </data>
   <data name="DeleteReportSpam" xml:space="preserve">
     <value>Report spam</value>
   </data>
@@ -8073,6 +8082,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="UseProxySecret" xml:space="preserve">
     <value>Secret</value>
   </data>
+  <data name="UseProxySettings" xml:space="preserve">
+    <value>Use Proxy</value>
+  </data>
   <data name="UseProxySocks5" xml:space="preserve">
     <value>SOCKS5 Proxy</value>
   </data>
@@ -8298,6 +8310,9 @@ However, it is currently available for purchase. **Learn more…**</value>
   </data>
   <data name="Users_other" xml:space="preserve">
     <value>{0} users</value>
+  </data>
+  <data name="UseSystemProxySettings" xml:space="preserve">
+    <value>Use System Proxy Settings</value>
   </data>
   <data name="UseSystemSpellChecker" xml:space="preserve">
     <value>Use System Spell Checker</value>
