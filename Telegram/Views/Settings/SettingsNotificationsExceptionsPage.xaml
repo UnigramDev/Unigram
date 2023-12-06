@@ -52,7 +52,7 @@
                     <TextBlock x:Name="HeaderLabel"
                                Text="{CustomResource NotificationsExceptions}"
                                Style="{StaticResource BaseTextBlockStyle}"
-                               Margin="24,16,24,8" />
+                               Margin="24,16,24,4" />
                 </controls:SettingsPanel>
             </ListView.Header>
             <ListView.ItemTemplate>

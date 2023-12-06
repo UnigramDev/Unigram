@@ -87,6 +87,11 @@
                                        TextWrapping="NoWrap"
                                        Typography.NumeralAlignment="Tabular" />
                         </Border>
+
+                        <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="2">
+                        </Border>
                     </Grid>
                 </DataTemplate>
             </GridView.ItemTemplate>

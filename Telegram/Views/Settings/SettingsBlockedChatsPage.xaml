@@ -26,11 +26,11 @@
                                 CornerRadius="0,0,4,4"
                                 SelectionMode="None">
             <ListView.Header>
-                <controls:SettingsPanel IsHeader="True">
+                <controls:SettingsPanel IsHeader="True"
+                                        Margin="0,0,0,2">
                     <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/BlockedChats.tgs" />
 
-                    <controls:HeaderedControl CornerRadius="4,4,0,0"
-                                              BorderThickness="1,1,1,0">
+                    <controls:HeaderedControl>
                         <controls:BadgeButton Content="{CustomResource BlockUser}"
                                               Click="{x:Bind ViewModel.Block}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
@@ -47,7 +47,7 @@
             </ListView.ItemTemplate>
             <ListView.Footer>
                 <controls:SettingsFooter Text="{CustomResource UnblockText}"
-                                         Margin="24,8,24,32" />
+                                         Margin="24,6,24,32" />
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

@@ -263,7 +263,6 @@ namespace Telegram.Views.Supergroups
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
             Title = group.IsChannel ? Strings.ChannelSubscribers : Strings.ChannelMembers;
-            SearchField.PlaceholderText = group.IsChannel ? Strings.ChannelSubscribers : Strings.ChannelMembers;
 
             AddNew.Content = group.IsChannel ? Strings.AddSubscriber : Strings.AddMember;
             AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
@@ -273,8 +272,6 @@ namespace Telegram.Views.Supergroups
 
         public void UpdateBasicGroup(Chat chat, BasicGroup group)
         {
-            SearchField.PlaceholderText = Strings.ChannelMembers;
-
             AddNew.Content = Strings.AddMember;
             AddNewPanel.Visibility = group.CanInviteUsers() ? Visibility.Visible : Visibility.Collapsed;
 

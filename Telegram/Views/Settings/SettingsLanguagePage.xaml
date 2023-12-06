@@ -56,7 +56,7 @@
 
                     <TextBlock Text="{CustomResource Language}"
                                Style="{StaticResource BaseTextBlockStyle}"
-                               Margin="24,16,24,8" />
+                               Margin="24,16,24,6" />
                 </controls:SettingsPanel>
             </ListView.Header>
             <ListView.GroupStyle>

@@ -23,12 +23,13 @@
                                 IsItemClickEnabled="True"
                                 ChoosingItemContainer="OnChoosingItemContainer"
                                 ContainerContentChanging="OnContainerContentChanging"
-                                SelectionMode="None">
+                                SelectionMode="None"
+                                VerticalContentAlignment="Top">
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl x:Name="HeaderPanel"
                                               Footer="{CustomResource ChannelAntiSpamInfo}"
-                                              Margin="0,0,0,16">
+                                              Margin="0,0,0,32">
                         <controls:BadgeButton x:Name="EventLog"
                                               Content="{CustomResource EventLog}"
                                               Click="{x:Bind ViewModel.EventLog}"
@@ -58,7 +59,7 @@
             </ListView.ItemTemplate>
             <ListView.Footer>
                 <controls:SettingsFooter x:Name="Footer"
-                                         Margin="24,8,24,32" />
+                                         Margin="24,6,24,32" />
             </ListView.Footer>
         </controls:TableListView>
     </Grid>

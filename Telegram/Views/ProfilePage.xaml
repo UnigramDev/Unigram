@@ -40,14 +40,14 @@
                                 BackgroundSizing="OuterBorderEdge"
                                 Height="48" />
 
-                        <Grid CornerRadius="4,4,0,0"
+                        <Grid CornerRadius="4"
                               MaxWidth="1000"
                               Margin="24,0">
                             <Border x:Name="CardBackground"
                                     Background="{ThemeResource SettingsItemBackground}"
                                     BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                     BorderThickness="1"
-                                    CornerRadius="4,4,0,0" />
+                                    CornerRadius="4" />
                             <controls:TopNavView IsItemClickEnabled="True"
                                                  ItemClick="Header_ItemClick"
                                                  ItemsSource="{x:Bind ViewModel.Items}"

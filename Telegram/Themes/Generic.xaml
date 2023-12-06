@@ -1442,12 +1442,14 @@
                             Value="Stretch" />
                     <Setter Property="CornerRadius"
                             Value="0" />
+                    <Setter Property="Background"
+                            Value="{ThemeResource SettingsItemBackground}" />
                     <Setter Property="Padding"
-                            Value="0,0,0,0" />
+                            Value="4,2" />
                     <Setter Property="Margin"
-                            Value="0,0,0,0" />
+                            Value="-4,0" />
                     <Setter Property="MaxWidth"
-                            Value="1000" />
+                            Value="1008" />
                 </Style>
             </Setter.Value>
         </Setter>
@@ -1460,6 +1462,10 @@
                         <Border.Resources>
                             <x:Boolean x:Key="ListViewBaseItemRoundedChromeEnabled">False</x:Boolean>
                             <CornerRadius x:Key="ListViewItemCornerRadius">0</CornerRadius>
+                            <StaticResource x:Key="ListViewItemBackgroundPointerOver"
+                                            ResourceKey="SettingsItemBackgroundPointerOver" />
+                            <StaticResource x:Key="ListViewItemBackgroundPressed"
+                                            ResourceKey="SettingsItemBackgroundPressed" />
                         </Border.Resources>
                         <ScrollViewer x:Name="ScrollViewer"
                                       TabNavigation="{TemplateBinding TabNavigation}"
