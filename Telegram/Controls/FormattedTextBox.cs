@@ -1678,8 +1678,6 @@ namespace Telegram.Controls
 
         private void OnPreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            BeginUndoGroup();
-
             if (e.Key == Windows.System.VirtualKey.Enter)
             {
                 //e.Handled = true;
@@ -1694,6 +1692,8 @@ namespace Telegram.Controls
                 if (start == 0)
                 {
                     e.Handled = true;
+
+                    BeginUndoGroup();
 
                     range.SetText(TextSetOptions.None, "\r");
                     range.SetRange(range.StartPosition + 1, range.StartPosition + 1);
@@ -1721,6 +1721,7 @@ namespace Telegram.Controls
                     {
                         if (range.Character == '\v')
                         {
+                            BeginUndoGroup();
                             range.Character = '\r';
                         }
                     }
@@ -1733,6 +1734,7 @@ namespace Telegram.Controls
 
                     if (range.Character == '\v')
                     {
+                        BeginUndoGroup();
                         range.Character = '\r';
                     }
                 }
