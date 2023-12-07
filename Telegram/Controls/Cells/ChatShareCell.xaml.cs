@@ -7,6 +7,7 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Services;
@@ -23,7 +24,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class ChatShareCell : Grid, IMultipleElement
+    public sealed partial class ChatShareCell : GridEx, IMultipleElement
     {
         private bool _selected;
 
@@ -31,8 +32,8 @@ namespace Telegram.Controls.Cells
         {
             InitializeComponent();
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
 
             _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
             _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
@@ -43,30 +44,21 @@ namespace Telegram.Controls.Cells
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken == 0 && _visual != null)
+            if (_visual != null)
             {
-                _strokeToken = stroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+                Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
             }
 
-            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken == 0 && _visual != null)
+            if (_stroke != null)
             {
-                _selectionStrokeToken = selectionStroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
+                SelectionStroke?.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken != 0)
-            {
-                stroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
-                _strokeToken = 0;
-            }
-
-            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken != 0)
-            {
-                selectionStroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
-                _selectionStrokeToken = 0;
-            }
+            Stroke?.UnregisterColorChangedCallback(ref _strokeToken);
+            SelectionStroke?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
         }
 
         public void UpdateChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)

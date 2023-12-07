@@ -7,17 +7,17 @@
 using Microsoft.Graphics.Canvas.Geometry;
 using System;
 using System.Numerics;
+using Telegram.Common;
 using Telegram.Td.Api;
 using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class VenueCell : Grid, IMultipleElement
+    public sealed partial class VenueCell : GridEx, IMultipleElement
     {
         private bool _selected;
 
@@ -25,8 +25,8 @@ namespace Telegram.Controls.Cells
         {
             InitializeComponent();
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Connected += OnUnloaded;
 
             _selectionPhoto = ElementCompositionPreview.GetElementVisual(Photo);
             _selectionOutline = ElementCompositionPreview.GetElementVisual(SelectionOutline);
@@ -37,19 +37,15 @@ namespace Telegram.Controls.Cells
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken == 0 && _visual != null)
+            if (_visual != null)
             {
-                _selectionStrokeToken = selectionStroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
+                SelectionStroke?.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken != 0)
-            {
-                selectionStroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
-                _selectionStrokeToken = 0;
-            }
+            SelectionStroke?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
         }
 
         public string Glyph

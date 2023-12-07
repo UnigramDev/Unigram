@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatBackgroundControl : Grid
+    public class ChatBackgroundControl : GridEx
     {
         private IClientService _clientService;
         private IEventAggregator _aggregator;
@@ -44,8 +44,8 @@ namespace Telegram.Controls.Chats
 
             Children.Add(_presenter);
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
