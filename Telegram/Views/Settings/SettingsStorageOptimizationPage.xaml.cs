@@ -28,7 +28,9 @@ namespace Telegram.Views.Settings
 
             var chat = clientService.GetChat(statistics.ChatId);
 
-            Title = chat == null ? "Other Chats" : clientService.GetTitle(chat);
+            Title = chat == null
+                ? Strings.ClearMediaCache
+                : clientService.GetTitle(chat);
 
             StorageChartItem photo = null;
             StorageChartItem video = null;
