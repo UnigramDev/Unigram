@@ -6,6 +6,7 @@
 //
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,6 +58,7 @@ namespace Telegram.Views.Host
 
         public RootPage(NavigationService service)
         {
+            UseLayoutRounding = SettingsService.Current.Diagnostics.UseLayoutRounding;
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
 
@@ -120,6 +122,7 @@ namespace Telegram.Views.Host
         {
             if (_navigationService?.Frame != null)
             {
+                _navigationService.Frame.Resources.Remove("TeachingTip");
                 _navigationService.Frame.Resources.Add("TeachingTip", toast);
             }
         }
@@ -191,7 +194,7 @@ namespace Telegram.Views.Host
             var service = WindowContext.Current.NavigationServices.GetByFrameId($"{session.Id}") as NavigationService;
             if (service == null)
             {
-                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, BootStrapper.ExistingContent.Exclude, new Frame { CacheSize = 0 }, session.Id, $"{session.Id}", true) as NavigationService;
+                service = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Attach, new Frame { CacheSize = 0 }, session.Id, $"{session.Id}", true) as NavigationService;
                 service.Frame.Navigating += OnNavigating;
                 service.Frame.Navigated += OnNavigated;
 

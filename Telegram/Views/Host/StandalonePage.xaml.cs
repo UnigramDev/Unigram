@@ -35,6 +35,7 @@ namespace Telegram.Views.Host
 
         public StandalonePage(INavigationService navigationService)
         {
+            UseLayoutRounding = SettingsService.Current.Diagnostics.UseLayoutRounding;
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedElementTheme();
             InitializeComponent();
 
@@ -71,6 +72,7 @@ namespace Telegram.Views.Host
         {
             if (_navigationService?.Frame != null)
             {
+                _navigationService.Frame.Resources.Remove("TeachingTip");
                 _navigationService.Frame.Resources.Add("TeachingTip", toast);
             }
         }
