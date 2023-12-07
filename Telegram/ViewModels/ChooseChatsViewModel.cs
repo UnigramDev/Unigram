@@ -497,7 +497,7 @@ namespace Telegram.ViewModels
 
                 foreach (var chat in chats)
                 {
-                    ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageForwarded(shareMessage.ChatId, shareMessage.MessageId, shareMessage.WithMyScore, new MessageCopyOptions(false, false, null))));
+                    ClientService.Send(new SendMessage(chat.Id, 0, null, null, null, new InputMessageForwarded(shareMessage.ChatId, shareMessage.MessageId, shareMessage.WithMyScore, new MessageCopyOptions(_sendAsCopy || _removeCaptions, _removeCaptions, null))));
                 }
             }
             else if (_configuration is ChooseChatsConfigurationShareStory shareStory)
