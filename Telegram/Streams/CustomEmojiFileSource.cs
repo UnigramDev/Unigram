@@ -20,6 +20,8 @@ namespace Telegram.Streams
         {
             _clientService = clientService;
             _customEmojiId = customEmojiId;
+
+            DownloadFile(null, null);
         }
 
         public override long Id => _customEmojiId;
@@ -28,7 +30,7 @@ namespace Telegram.Streams
         {
             if (_file != null && _file.Local.IsDownloadingCompleted)
             {
-                handler(sender, _file);
+                handler?.Invoke(sender, _file);
             }
             else
             {
@@ -56,13 +58,16 @@ namespace Telegram.Streams
                 }
                 else if (_file.Local.IsDownloadingCompleted)
                 {
-                    handler(sender, _file);
+                    handler?.Invoke(sender, _file);
                     return;
                 }
 
-                UpdateManager.Subscribe(sender, _clientService, _file, ref _fileToken, handler, true);
+                if (handler != null)
+                {
+                    UpdateManager.Subscribe(sender, _clientService, _file, ref _fileToken, handler, true);
+                }
 
-                if (_file.Local.CanBeDownloaded && !_file.Local.IsDownloadingActive)
+                if (_file.Local.CanBeDownloaded /*&& !_file.Local.IsDownloadingActive*/)
                 {
                     _clientService.DownloadFile(_file.Id, 16);
                 }

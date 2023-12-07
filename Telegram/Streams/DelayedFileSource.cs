@@ -22,6 +22,11 @@ namespace Telegram.Streams
         {
             _clientService = clientService;
             _file = file;
+
+            if (file != null)
+            {
+                DownloadFile(null, null);
+            }
         }
 
         public DelayedFileSource(IClientService clientService, Sticker sticker)
@@ -42,13 +47,16 @@ namespace Telegram.Streams
         {
             if (_file.Local.IsDownloadingCompleted)
             {
-                handler(sender, _file);
+                handler?.Invoke(sender, _file);
             }
             else
             {
-                UpdateManager.Subscribe(sender, _clientService, _file, ref _fileToken, handler, true);
+                if (handler != null)
+                {
+                    UpdateManager.Subscribe(sender, _clientService, _file, ref _fileToken, handler, true);
+                }
 
-                if (_file.Local.CanBeDownloaded && !_file.Local.IsDownloadingActive)
+                if (_file.Local.CanBeDownloaded /*&& !_file.Local.IsDownloadingActive*/)
                 {
                     _clientService.DownloadFile(_file.Id, 16);
                 }
