@@ -51,15 +51,12 @@ namespace Telegram.Controls
     {
         public Paragraph Paragraph { get; }
 
-        public Common.ParagraphStyle Style { get; }
+        public TextParagraphType Type { get; }
 
-        public string LanguageCode { get; }
-
-        public FormattedParagraph(Paragraph paragraph, Common.ParagraphStyle style, string languageCode)
+        public FormattedParagraph(Paragraph paragraph, TextParagraphType type)
         {
             Paragraph = paragraph;
-            Style = style;
-            LanguageCode = languageCode;
+            Type = type;
         }
     }
 
@@ -405,8 +402,8 @@ namespace Telegram.Controls
             TextHighlighter spoiler = null;
 
             var preformatted = false;
-            var lastType = Common.ParagraphStyle.None;
-            var firstType = Common.ParagraphStyle.None;
+            TextParagraphType lastType = null;
+            TextParagraphType firstType = null;
 
             var text = styled.Text;
             var workaround = 0;
@@ -428,14 +425,14 @@ namespace Telegram.Controls
                     direct.SetDoubleProperty(paragraph, XamlPropertyIndex.TextElement_FontSize, Theme.Current.MessageFontSize);
                 }
 
-                if (part.Type == Common.ParagraphStyle.Quote)
+                if (part.Type is TextParagraphTypeQuote)
                 {
                     var last = part == styled.Paragraphs[^1];
                     var temp = direct.GetObject(paragraph) as Paragraph;
                     temp.Margin = new Thickness(11, 6, 24, last ? 0 : 8);
                     temp.FontSize = Theme.Current.MessageFontSize - 2;
 
-                    _codeBlocks.Add(new FormattedParagraph(temp, part.Type, string.Empty));
+                    _codeBlocks.Add(new FormattedParagraph(temp, part.Type));
                 }
 
                 foreach (var entity in runs)
@@ -480,15 +477,12 @@ namespace Telegram.Controls
 
                             if (entity.Type is TextEntityTypePreCode preCode && preCode.Language.Length > 0)
                             {
-                                _codeBlocks.Add(new FormattedParagraph(temp, part.Type, preCode.Language));
-                                type = Common.ParagraphStyle.Monospace;
-
+                                _codeBlocks.Add(new FormattedParagraph(temp, part.Type));
                                 ProcessCodeBlock(temp.Inlines, data, preCode.Language);
                             }
                             else
                             {
-                                _codeBlocks.Add(new FormattedParagraph(temp, part.Type, string.Empty));
-                                type = Common.ParagraphStyle.Quote;
+                                _codeBlocks.Add(new FormattedParagraph(temp, part.Type));
                             }
                         }
                     }
@@ -669,12 +663,12 @@ namespace Telegram.Controls
                 _spoiler = null;
             }
 
-            if (firstType == Common.ParagraphStyle.Monospace)
+            if (firstType is TextParagraphTypeMonospace { Language.Length: > 0 })
             {
                 Below.Margin = new Thickness(0, 22 + 6, 0, 0);
                 TextBlock.Margin = new Thickness(0, 22 + 6, 0, 0);
             }
-            else if (firstType == Common.ParagraphStyle.Quote)
+            else if (firstType is not null)
             {
                 Below.Margin = new Thickness(0, 6, 0, 0);
                 TextBlock.Margin = new Thickness(0, 6, 0, 0);
@@ -704,7 +698,7 @@ namespace Telegram.Controls
                 {
                     TextBlock.FlowDirection = LocaleService.Current.FlowDirection;
 
-                    if (lastType != Common.ParagraphStyle.None)
+                    if (lastType is not null)
                     {
                         Adjust();
                     }
@@ -725,12 +719,12 @@ namespace Telegram.Controls
                 var startY = Math.Round(start.Y);
                 var endBottom = Math.Round(end.Bottom);
 
-                if (paragraph.LanguageCode.Length > 0)
+                if (paragraph.Type is TextParagraphTypeMonospace monospace && monospace.Language.Length > 0)
                 {
                     var rect = new BlockCode();
                     rect.Width = e.NewSize.Width;
                     rect.Height = Math.Max(endBottom - startY + 6 + 22, 0);
-                    rect.LanguageName = paragraph.LanguageCode;
+                    rect.LanguageName = monospace.Language;
                     Canvas.SetTop(rect, startY - 2 - 22);
 
                     Below.Children.Add(rect);

@@ -2409,6 +2409,16 @@ namespace Telegram.Controls.Messages
                         StyledParagraph styled = message.Text.Paragraphs[j];
                         Paragraph paragraph = rich.Blocks[j] as Paragraph;
 
+                        if (j == 0)
+                        {
+                            inset = styled.Type switch
+                            {
+                                TextParagraphTypeMonospace { Language.Length: > 0 } => 22 + 6,
+                                not null => 6,
+                                _ => 0
+                            };
+                        }
+
                         if (!TextStyleRun.GetRelativeRange(index, options.Quote.Text.Text.Length, styled.Offset, styled.Length, out int xoffset, out int xlength))
                         {
                             continue;
@@ -2417,7 +2427,7 @@ namespace Telegram.Controls.Messages
                         var partial = message.Text.Text.Substring(styled.Offset, styled.Length);
                         var entities = styled.Entities ?? Array.Empty<TextEntity>();
 
-                        var size = styled.Type == Common.ParagraphStyle.Quote
+                        var size = styled.Type is TextParagraphTypeQuote
                             ? quoteSize
                             : fontSize;
 
@@ -2425,16 +2435,6 @@ namespace Telegram.Controls.Messages
 
                         var transform = Message.TransformToVisual(ContentPanel);
                         var relative = paragraph.ContentStart.GetCharacterRect(paragraph.ContentStart.LogicalDirection);
-
-                        if (j == 0)
-                        {
-                            inset = styled.Type switch
-                            {
-                                Common.ParagraphStyle.Quote => 6,
-                                Common.ParagraphStyle.Monospace => 6 + (entities[0].Type is TextEntityTypePreCode { Language.Length: > 0 } ? 22 : 0),
-                                _ => 0
-                            };
-                        }
 
                         var point = transform.TransformPoint(new Windows.Foundation.Point());
                         point = new Windows.Foundation.Point(paragraph.Margin.Left + point.X, relative.Y + point.Y + inset);

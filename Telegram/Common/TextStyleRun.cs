@@ -587,9 +587,10 @@ namespace Telegram.Common
             {
                 Type = entities[0].Type switch
                 {
-                    TextEntityTypePre or TextEntityTypePreCode => ParagraphStyle.Monospace,
-                    TextEntityTypeBlockQuote => ParagraphStyle.Quote,
-                    _ => ParagraphStyle.None
+                    TextEntityTypePreCode preCode => new TextParagraphTypeMonospace(preCode.Language),
+                    TextEntityTypePre => new TextParagraphTypeMonospace(),
+                    TextEntityTypeBlockQuote => new TextParagraphTypeQuote(),
+                    _ => null
                 };
             }
         }
@@ -606,13 +607,31 @@ namespace Telegram.Common
 
         public int Padding { get; }
 
-        public ParagraphStyle Type { get; }
+        public TextParagraphType Type { get; }
     }
 
-    public enum ParagraphStyle
+    public interface TextParagraphType
     {
-        None,
-        Monospace,
-        Quote,
+
+    }
+
+    public class TextParagraphTypeQuote : TextParagraphType
+    {
+
+    }
+
+    public class TextParagraphTypeMonospace : TextParagraphType
+    {
+        public TextParagraphTypeMonospace(string language)
+        {
+            Language = language;
+        }
+
+        public TextParagraphTypeMonospace()
+        {
+            Language = string.Empty;
+        }
+
+        public string Language { get; }
     }
 }
