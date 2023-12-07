@@ -11,12 +11,12 @@ using Telegram.Common;
 using Telegram.Converters;
 using Telegram.Native;
 using Telegram.Navigation;
+using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -36,13 +36,8 @@ namespace Telegram.Controls.Messages
         public ReactionButton()
         {
             DefaultStyleKey = typeof(ReactionButton);
-            Click += OnClick;
-            Unloaded += OnUnloaded;
-        }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            UpdateManager.Unsubscribe(this, ref _fileToken, true);
+            Click += OnClick;
         }
 
         private MessageViewModel _message;
@@ -50,8 +45,6 @@ namespace Telegram.Controls.Messages
         private EmojiReaction _reaction;
         private Sticker _sticker;
         private UnreadReaction _unread;
-
-        private long _fileToken;
 
         public MessageReaction Reaction => _interaction;
         public EmojiReaction EmojiReaction => _reaction;
@@ -108,21 +101,12 @@ namespace Telegram.Controls.Messages
             }
 
             _presenterId = center.Id;
+            Presenter.Source = null;
 
-            if (center.Local.IsDownloadingCompleted)
+            var bitmap = await GetLottieFrame(_message.ClientService, center, 0, 32, 32);
+            if (center.Id == _presenterId)
             {
-                Presenter.Source = await GetLottieFrame(center.Local.Path, 0, 32, 32);
-            }
-            else
-            {
-                Presenter.Source = null;
-
-                UpdateManager.Subscribe(this, _message, center, ref _fileToken, UpdateFile, true);
-
-                if (center.Local.CanBeDownloaded && !center.Local.IsDownloadingActive)
-                {
-                    _message.ClientService.DownloadFile(center.Id, 32);
-                }
+                Presenter.Source = bitmap;
             }
         }
 
@@ -199,11 +183,6 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private async void UpdateFile(object target, File file)
-        {
-            Presenter.Source = await GetLottieFrame(file.Local.Path, 0, 32, 32);
-        }
-
         private RecentUserHeads GetRecentChoosers()
         {
             RecentChoosers ??= GetTemplateChild(nameof(RecentChoosers)) as RecentUserHeads;
@@ -228,27 +207,38 @@ namespace Telegram.Controls.Messages
             }
         }
 
-        private static async Task<ImageSource> GetLottieFrame(string path, int frame, int width, int height)
+        private static async Task<ImageSource> GetLottieFrame(IClientService clientService, File file, int frame, int width, int height)
         {
-            var dpi = WindowContext.Current.RasterizationScale;
-
-            width = (int)(width * dpi);
-            height = (int)(height * dpi);
-
-            var bitmap = new WriteableBitmap(width, height);
-            var buffer = new PixelBuffer(bitmap);
-
-            await Task.Run(() =>
+            if (file.Local.IsDownloadingCompleted is false)
             {
-                var animation = LottieAnimation.LoadFromFile(path, width, height, false, null);
-                if (animation != null)
-                {
-                    animation.RenderSync(buffer, frame);
-                    animation.Dispose();
-                }
-            });
+                // TODO: if the download doesn't complete, this control will leak
+                file = await clientService.DownloadFileAsync(file, 32);
+            }
 
-            return bitmap;
+            if (file.Local.IsDownloadingCompleted)
+            {
+                var dpi = WindowContext.Current.RasterizationScale;
+
+                width = (int)(width * dpi);
+                height = (int)(height * dpi);
+
+                var bitmap = new WriteableBitmap(width, height);
+                var buffer = new PixelBuffer(bitmap);
+
+                await Task.Run(() =>
+                {
+                    var animation = LottieAnimation.LoadFromFile(file.Local.Path, width, height, false, null);
+                    if (animation != null)
+                    {
+                        animation.RenderSync(buffer, frame);
+                        animation.Dispose();
+                    }
+                });
+
+                return bitmap;
+            }
+
+            return null;
         }
 
         protected override void OnApplyTemplate()
