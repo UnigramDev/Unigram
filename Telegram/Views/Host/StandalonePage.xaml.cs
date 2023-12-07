@@ -4,6 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using Microsoft.UI.Xaml.Controls;
 using System;
 using Telegram.Common;
 using Telegram.Controls;
@@ -27,7 +28,7 @@ namespace Telegram.Views.Host
         }
     }
 
-    public sealed partial class StandalonePage : Page
+    public sealed partial class StandalonePage : Page, IToastHost
     {
         private readonly INavigationService _navigationService;
         private readonly IShortcutsService _shortcutsService;
@@ -64,6 +65,22 @@ namespace Telegram.Views.Host
             {
                 SourcePageType = MasterDetail.NavigationService.CurrentPageType
             });
+        }
+
+        public void Connect(TeachingTip toast)
+        {
+            if (_navigationService?.Frame != null)
+            {
+                _navigationService.Frame.Resources.Add("TeachingTip", toast);
+            }
+        }
+
+        public void Disconnect(TeachingTip toast)
+        {
+            if (_navigationService?.Frame != null)
+            {
+                _navigationService.Frame.Resources.Remove("TeachingTip");
+            }
         }
 
         private void OnNavigating(object sender, NavigatingEventArgs e)

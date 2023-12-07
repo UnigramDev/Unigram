@@ -26,6 +26,7 @@ using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Telegram.Views.Host;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Calls;
@@ -439,19 +440,6 @@ namespace Telegram.Common
 
         public static TeachingTip ShowToast(this Window app, FrameworkElement target, FormattedText text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
         {
-            var label = new TextBlock
-            {
-                TextWrapping = TextWrapping.Wrap
-            };
-
-            TextBlockHelper.SetFormattedText(label, text);
-            Grid.SetColumn(label, 1);
-
-            var content = new Grid();
-            content.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-            content.ColumnDefinitions.Add(new ColumnDefinition());
-            content.Children.Add(label);
-
             AnimatedImage animated = null;
             if (icon != null)
             {
@@ -467,8 +455,29 @@ namespace Telegram.Common
                     DecodeFrameType = DecodePixelType.Logical,
                     Margin = new Thickness(-4, -12, 8, -12)
                 };
+            }
 
-                content.Children.Add(animated);
+            return ShowToastImpl(app, target, text, animated, placement, requestedTheme, autoDismiss);
+        }
+
+        public static TeachingTip ShowToastImpl(this Window app, FrameworkElement target, FormattedText text, FrameworkElement icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
+        {
+            var label = new TextBlock
+            {
+                TextWrapping = TextWrapping.Wrap
+            };
+
+            TextBlockHelper.SetFormattedText(label, text);
+            Grid.SetColumn(label, 1);
+
+            var content = new Grid();
+            content.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            content.ColumnDefinitions.Add(new ColumnDefinition());
+            content.Children.Add(label);
+
+            if (icon != null)
+            {
+                content.Children.Add(icon);
             }
 
             var tip = new TeachingTip
@@ -487,9 +496,16 @@ namespace Telegram.Common
                 tip.RequestedTheme = requestedTheme;
             }
 
-            if (app.Content is FrameworkElement element)
+            if (app.Content is IToastHost host)
             {
-                element.Resources["TeachingTip"] = tip;
+                void handler (object sender, object e)
+                {
+                    host.Disconnect(tip);
+                    tip.Closed -= handler;
+                }
+
+                host.Connect(tip);
+                tip.Closed += handler;
             }
 
             if (target == null || autoDismiss == true)

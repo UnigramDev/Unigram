@@ -39,7 +39,13 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Host
 {
-    public sealed partial class RootPage : Page
+    public interface IToastHost
+    {
+        void Connect(TeachingTip toast);
+        void Disconnect(TeachingTip toast);
+    }
+
+    public sealed partial class RootPage : Page, IToastHost
     {
         private readonly ILifetimeService _lifetime;
         private NavigationService _navigationService;
@@ -107,6 +113,22 @@ namespace Telegram.Views.Host
             if (_navigationService.Frame.Content is IRootContentPage content)
             {
                 content.PopupClosed();
+            }
+        }
+
+        public void Connect(TeachingTip toast)
+        {
+            if (_navigationService?.Frame != null)
+            {
+                _navigationService.Frame.Resources.Add("TeachingTip", toast);
+            }
+        }
+
+        public void Disconnect(TeachingTip toast)
+        {
+            if (_navigationService?.Frame != null)
+            {
+                _navigationService.Frame.Resources.Remove("TeachingTip");
             }
         }
 
