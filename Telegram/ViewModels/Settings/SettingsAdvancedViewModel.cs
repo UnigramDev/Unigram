@@ -36,7 +36,7 @@ namespace Telegram.ViewModels.Settings
         protected override Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
             _update = _cloudUpdateService.NextUpdate;
-            Update();
+            UpdateImpl(false);
 
             return base.OnNavigatedToAsync(parameter, mode, state);
         }
@@ -60,7 +60,7 @@ namespace Telegram.ViewModels.Settings
             {
                 Settings.InstallBetaUpdates = value;
                 RaisePropertyChanged();
-                Update();
+                UpdateImpl(false);
             }
         }
 
@@ -141,7 +141,12 @@ namespace Telegram.ViewModels.Settings
             }
         }
 
-        public async void Update()
+        public void Update()
+        {
+            UpdateImpl(true);
+        }
+
+        private async void UpdateImpl(bool launch)
         {
             var update = _update;
             if (update == null)
@@ -162,11 +167,9 @@ namespace Telegram.ViewModels.Settings
                     await Task.Delay(2000 - diff);
                 }
             }
-            else if (update.File != null)
+            else if (update.File != null && launch && Constants.RELEASE)
             {
-#if !DEBUG
-                await CloudUpdateService.LaunchAsync(Dispatcher);
-#endif
+                await CloudUpdateService.LaunchAsync(Dispatcher, false);
             }
 
             UpdateFile(update, update?.Document, true);
