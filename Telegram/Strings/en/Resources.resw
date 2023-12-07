@@ -2973,6 +2973,9 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="DisablePhotoSpoiler" xml:space="preserve">
     <value>Remove spoiler</value>
   </data>
+  <data name="DisableProxy" xml:space="preserve">
+    <value>Disable Proxy</value>
+  </data>
   <data name="DisableReactionsInfo" xml:space="preserve">
     <value>Members of the group can’t add any reactions to messages.</value>
   </data>
@@ -8055,6 +8058,9 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   <data name="URL" xml:space="preserve">
     <value>URL</value>
   </data>
+  <data name="UseCustomProxy" xml:space="preserve">
+    <value>Use Custom Proxy</value>
+  </data>
   <data name="UseEmoji" xml:space="preserve">
     <value>Use an emoji</value>
   </data>
@@ -8081,9 +8087,6 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="UseProxySecret" xml:space="preserve">
     <value>Secret</value>
-  </data>
-  <data name="UseProxySettings" xml:space="preserve">
-    <value>Use Proxy</value>
   </data>
   <data name="UseProxySocks5" xml:space="preserve">
     <value>SOCKS5 Proxy</value>

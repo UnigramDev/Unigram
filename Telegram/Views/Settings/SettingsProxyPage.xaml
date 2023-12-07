@@ -33,13 +33,15 @@
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
                     <controls:HeaderedControl>
-                        <CheckBox IsChecked="{x:Bind ViewModel.UseProxy, Mode=TwoWay}"
-                                  Content="{CustomResource UseProxySettings}"
-                                  Style="{StaticResource SettingsCheckBoxStyle}" />
-                        <CheckBox IsChecked="{x:Bind ViewModel.UseSystemProxy, Mode=TwoWay}"
-                                  IsEnabled="{x:Bind ViewModel.UseProxy, Mode=OneWay}"
-                                  Content="{CustomResource UseSystemProxySettings}"
-                                  Style="{StaticResource SettingsCheckBoxStyle}" />
+                        <RadioButton IsChecked="{x:Bind ViewModel.IsDisabled, Mode=TwoWay}"
+                                     Content="{CustomResource DisableProxy}"
+                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                        <RadioButton IsChecked="{x:Bind ViewModel.IsSystem, Mode=TwoWay}"
+                                     Content="{CustomResource UseSystemProxySettings}"
+                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                        <RadioButton IsChecked="{x:Bind ViewModel.IsCustom, Mode=TwoWay}"
+                                     Content="{CustomResource UseCustomProxy}"
+                                     Style="{StaticResource SettingsRadioButtonStyle}" />
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl>
