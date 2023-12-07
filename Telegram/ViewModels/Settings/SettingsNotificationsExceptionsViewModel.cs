@@ -53,7 +53,12 @@ namespace Telegram.ViewModels.Settings
                 Children.Add(Scope);
             }
 
-            return base.OnNavigatedToAsync(parameter, mode, state);
+            if (Scope != null)
+            {
+                return Scope.NavigatedToAsync(parameter, mode, state);
+            }
+
+            return Task.CompletedTask;
         }
 
         public SettingsNotificationsScope Scope { get; private set; }
