@@ -145,7 +145,7 @@ namespace Telegram.ViewModels
             }
             else
             {
-                MessageHelper.OpenUrl(ClientService, NavigationService, webPage.Url, !webPage.SkipConfirmation);
+                MessageHelper.OpenUrl(ClientService, NavigationService, webPage.Url, !webPage.SkipConfirmation, new OpenUrlSourceChat(_chat.Id));
             }
         }
 
