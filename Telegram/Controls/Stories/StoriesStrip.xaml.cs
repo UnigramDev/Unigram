@@ -82,6 +82,19 @@ namespace Telegram.Controls.Stories
 
                 ForEach(_progress, _progressAnimation);
             }
+
+            var count = _last - _first + 1;
+            if (count > 0 && _collapsed)
+            {
+                Show.Width = count * 24 - 16;
+                Show.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                Show.Visibility = Visibility.Collapsed;
+            }
+
+            ScrollingHost.IsHitTestVisible = !_collapsed;
         }
 
         private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
@@ -186,6 +199,11 @@ namespace Telegram.Controls.Stories
                     }
                 }
             }
+        }
+
+        private void Show_Click(object sender, RoutedEventArgs e)
+        {
+            Expand();
         }
 
         private void ScrollingHost_ItemClick(object sender, ItemClickEventArgs e)
@@ -576,6 +594,7 @@ namespace Telegram.Controls.Stories
             _scrollViewer.SetVerticalPadding(0);
 
             UpdateMinHeight();
+            UpdateIndexes();
 
             if (animated)
             {
@@ -628,6 +647,7 @@ namespace Telegram.Controls.Stories
             _scrollViewer.SetVerticalPadding(88);
 
             UpdateMinHeight();
+            UpdateIndexes();
 
             if (animated)
             {

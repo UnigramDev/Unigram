@@ -46,5 +46,13 @@
                 </TransitionCollection>
             </ListView.ItemContainerTransitions>
         </ListView>
+
+        <HyperlinkButton x:Name="Show"
+                         Click="Show_Click"
+                         Height="32"
+                         Margin="10,18,0,0"
+                         CornerRadius="16"
+                         VerticalAlignment="Top"
+                         HorizontalAlignment="Left" />
     </Grid>
 </UserControl>
