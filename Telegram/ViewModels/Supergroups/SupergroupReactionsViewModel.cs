@@ -63,19 +63,37 @@ namespace Telegram.ViewModels.Supergroups
         public bool IsAllSelected
         {
             get => _available == SupergroupAvailableReactions.All;
-            set => SetAvailable(SupergroupAvailableReactions.All);
+            set
+            {
+                if (value)
+                {
+                    SetAvailable(SupergroupAvailableReactions.All);
+                }
+            }
         }
 
         public bool IsSomeSelected
         {
             get => _available == SupergroupAvailableReactions.Some;
-            set => SetAvailable(SupergroupAvailableReactions.Some);
+            set
+            {
+                if (value)
+                {
+                    SetAvailable(SupergroupAvailableReactions.Some);
+                }
+            }
         }
 
         public bool IsNoneSelected
         {
             get => _available == SupergroupAvailableReactions.None;
-            set => SetAvailable(SupergroupAvailableReactions.None);
+            set
+            {
+                if (value)
+                {
+                    SetAvailable(SupergroupAvailableReactions.None);
+                }
+            }
         }
 
         public MvxObservableCollection<ReactionType> Items { get; private set; }

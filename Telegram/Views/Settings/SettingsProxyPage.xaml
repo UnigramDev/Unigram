@@ -35,13 +35,16 @@
                     <controls:HeaderedControl>
                         <RadioButton IsChecked="{x:Bind ViewModel.IsDisabled, Mode=TwoWay}"
                                      Content="{CustomResource DisableProxy}"
-                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                                     Style="{StaticResource SettingsRadioButtonStyle}"
+                                     GroupName="ProxyType" />
                         <RadioButton IsChecked="{x:Bind ViewModel.IsSystem, Mode=TwoWay}"
                                      Content="{CustomResource UseSystemProxySettings}"
-                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                                     Style="{StaticResource SettingsRadioButtonStyle}"
+                                     GroupName="ProxyType" />
                         <RadioButton IsChecked="{x:Bind ViewModel.IsCustom, Mode=TwoWay}"
                                      Content="{CustomResource UseCustomProxy}"
-                                     Style="{StaticResource SettingsRadioButtonStyle}" />
+                                     Style="{StaticResource SettingsRadioButtonStyle}"
+                                     GroupName="ProxyType" />
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl>

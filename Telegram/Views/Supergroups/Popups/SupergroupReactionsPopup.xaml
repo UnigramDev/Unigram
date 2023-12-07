@@ -19,11 +19,14 @@
             <StackPanel x:Name="Group"
                         x:Load="{x:Bind ConvertType(ViewModel.Chat.Type, x:False)}">
                 <RadioButton IsChecked="{x:Bind ViewModel.IsAllSelected, Mode=TwoWay}"
-                             Content="{CustomResource AllReactions}" />
+                             Content="{CustomResource AllReactions}"
+                             GroupName="AvailableReactions" />
                 <RadioButton IsChecked="{x:Bind ViewModel.IsSomeSelected, Mode=TwoWay}"
-                             Content="{CustomResource SomeReactions}" />
+                             Content="{CustomResource SomeReactions}"
+                             GroupName="AvailableReactions" />
                 <RadioButton IsChecked="{x:Bind ViewModel.IsNoneSelected, Mode=TwoWay}"
-                             Content="{CustomResource NoReactions}" />
+                             Content="{CustomResource NoReactions}"
+                             GroupName="AvailableReactions" />
 
                 <TextBlock Text="{x:Bind ConvertFooter(ViewModel.Available), Mode=OneWay}"
                            Style="{StaticResource InfoCaptionTextBlockStyle}"

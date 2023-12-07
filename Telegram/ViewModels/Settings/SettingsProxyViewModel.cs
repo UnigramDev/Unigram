@@ -245,19 +245,37 @@ namespace Telegram.ViewModels.Settings
         public bool IsDisabled
         {
             get => _type == SettingsProxyType.Disabled;
-            set => SetType(SettingsProxyType.Disabled);
+            set
+            {
+                if (value)
+                {
+                    SetType(SettingsProxyType.Disabled);
+                }
+            }
         }
 
         public bool IsSystem
         {
             get => _type == SettingsProxyType.System;
-            set => SetType(SettingsProxyType.System);
+            set
+            {
+                if (value)
+                {
+                    SetType(SettingsProxyType.System);
+                }
+            }
         }
 
         public bool IsCustom
         {
             get => _type == SettingsProxyType.Custom;
-            set => SetType(SettingsProxyType.Custom);
+            set
+            {
+                if (value)
+                {
+                    SetType(SettingsProxyType.Custom);
+                }
+            }
         }
 
         public MvxObservableCollection<ProxyViewModel> Items { get; private set; }
