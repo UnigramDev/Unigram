@@ -5,7 +5,9 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
+using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
@@ -118,14 +120,25 @@ namespace Telegram.Common
         #endregion
 
 
-
+        static class DelegateKeeper
+        {
+            private static ConditionalWeakTable<object, List<Delegate>> cwt = new();
+            public static void KeepAlive(Delegate d) => cwt.GetOrCreateValue(d?.Target ?? throw new ArgumentNullException(nameof(d))).Add(d);
+        }
 
         public static void QueueCallbackForCompositionRendering(Action callback)
         {
+            DelegateKeeper.KeepAlive(callback);
+
+            var weak = new WeakReference(callback);
             void handler(object sender, object e)
             {
                 CompositionTarget.Rendering -= handler;
-                callback();
+
+                if (weak.Target is Action callback)
+                {
+                    callback();
+                }
             }
 
             try
