@@ -213,6 +213,16 @@ namespace Telegram.ViewModels.Settings
 
         private async void SetType(SettingsProxyType value, bool update = true)
         {
+            if (value == SettingsProxyType.Custom && Items.Empty())
+            {
+                Add();
+                RaisePropertyChanged(nameof(IsDisabled));
+                RaisePropertyChanged(nameof(IsSystem));
+                RaisePropertyChanged(nameof(IsCustom));
+
+                return;
+            }
+
             if (Set(ref _type, value, nameof(Type)))
             {
                 RaisePropertyChanged(nameof(IsDisabled));
@@ -289,18 +299,20 @@ namespace Telegram.ViewModels.Settings
 
         public async void Add()
         {
-            var dialog = new ProxyPopup();
-            var confirm = await ShowPopupAsync(dialog);
+            var popup = new ProxyPopup();
+            var confirm = await ShowPopupAsync(popup);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var response = await ClientService.SendAsync(new AddProxy(dialog.Server, dialog.Port, false, dialog.Type));
+            var response = await ClientService.SendAsync(new AddProxy(popup.Server, popup.Port, false, popup.Type));
             if (response is Proxy proxy)
             {
                 var connection = new ProxyViewModel(proxy);
                 Items.Add(connection);
+                Enable(connection);
+
                 await UpdateAsync(connection);
             }
         }
@@ -323,14 +335,14 @@ namespace Telegram.ViewModels.Settings
         {
             SelectedItems.Clear();
 
-            var dialog = new ProxyPopup(connection);
-            var confirm = await ShowPopupAsync(dialog);
+            var popup = new ProxyPopup(connection);
+            var confirm = await ShowPopupAsync(popup);
             if (confirm != ContentDialogResult.Primary)
             {
                 return;
             }
 
-            var response = await ClientService.SendAsync(new EditProxy(connection.Id, dialog.Server, dialog.Port, false, dialog.Type));
+            var response = await ClientService.SendAsync(new EditProxy(connection.Id, popup.Server, popup.Port, false, popup.Type));
             if (response is Proxy proxy)
             {
                 var index = Items.IndexOf(connection);
