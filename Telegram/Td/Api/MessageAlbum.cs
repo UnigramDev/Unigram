@@ -46,23 +46,27 @@ namespace Telegram.Td.Api
             for (int i = 0; i < rects.Length; i++)
             {
                 var rect = positions.Item1[i].Item1;
+                var x = Sanitize(rect.X * ratio);
+                var y = Sanitize(rect.Y * ratio);
+                var width = Sanitize(rect.Width * ratio);
+                var height = Sanitize(rect.Height * ratio);
 
-                var width = Math.Max(0, rect.Width * ratio);
-                var height = Math.Max(0, rect.Height * ratio);
-
-                width = double.IsNaN(width) ? 0 : width;
-                height = double.IsNaN(height) ? 0 : height;
-
-                rects[i] = new Rect(rect.X * ratio, rect.Y * ratio, width, height);
+                rects[i] = new Rect(x, y, width, height);
             }
 
-            var finalWidth = Math.Max(0, positions.Item2.Width * ratio);
-            var finalHeight = Math.Max(0, positions.Item2.Height * ratio);
-
-            finalWidth = double.IsNaN(finalWidth) ? 0 : finalWidth;
-            finalHeight = double.IsNaN(finalHeight) ? 0 : finalHeight;
+            var finalWidth = Sanitize(positions.Item2.Width * ratio);
+            var finalHeight = Sanitize(positions.Item2.Height * ratio);
 
             return (rects, new Size(finalWidth, finalHeight));
+        }
+
+        private double Sanitize(double value)
+        {
+            value = Math.Max(0, value);
+            value = double.IsNaN(value) ? 0 : value;
+            value = double.IsInfinity(value) ? 0 : value;
+
+            return value;
         }
 
         private IEnumerable<Size> GetSizes()

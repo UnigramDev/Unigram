@@ -53,9 +53,10 @@ namespace Telegram.Controls.Messages.Content
 
                 for (int i = 0; i < Children.Count; i++)
                 {
-                    Children[i].Measure(availableSize);
-                    width = Math.Max(Children[i].DesiredSize.Width, width);
-                    height += Children[i].DesiredSize.Height;
+                    var child = Children[i];
+                    child.Measure(availableSize);
+                    width = Math.Max(child.DesiredSize.Width, width);
+                    height += child.DesiredSize.Height;
                 }
 
                 return new Size(width, height);
@@ -86,9 +87,10 @@ namespace Telegram.Controls.Messages.Content
 
                 for (int i = 0; i < Children.Count; i++)
                 {
-                    Children[i].Arrange(new Rect(0, height, Children[i].DesiredSize.Width, Children[i].DesiredSize.Height));
-                    width = Math.Max(Children[i].DesiredSize.Width, width);
-                    height += Children[i].DesiredSize.Height;
+                    var child = Children[i];
+                    child.Arrange(new Rect(0, height, child.DesiredSize.Width, child.DesiredSize.Height));
+                    width = Math.Max(child.DesiredSize.Width, width);
+                    height += child.DesiredSize.Height;
                 }
 
                 return finalSize;
