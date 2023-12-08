@@ -1176,8 +1176,6 @@ namespace Telegram.ViewModels
 
             if (response is Messages messages)
             {
-                _groupedMessages.Clear();
-
                 var firstVisibleIndex = -1;
                 var firstVisibleItem = default(Message);
 

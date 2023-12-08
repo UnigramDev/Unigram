@@ -178,7 +178,7 @@ namespace Telegram.ViewModels.Supergroups
         private async void LinkExecute(Chat linkedChat)
         {
             var chat = _chat;
-            if (chat == null)
+            if (chat == null || linkedChat == null)
             {
                 return;
             }

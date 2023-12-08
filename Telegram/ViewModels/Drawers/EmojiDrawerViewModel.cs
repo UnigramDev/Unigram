@@ -401,7 +401,9 @@ namespace Telegram.ViewModels.Drawers
                 assets = stickers.StickersValue.ToDictionary(x => x.FullType is StickerFullTypeCustomEmoji customEmoji ? customEmoji.CustomEmojiId : 0);
             }
 
-            var reactions = await ClientService.GetReactionsAsync(missingReactions);
+            var reactions = missingReactions != null
+                ? await ClientService.GetReactionsAsync(missingReactions)
+                : await ClientService.GetAllReactionsAsync();
 
             var items = new List<Sticker>();
             var top = new List<Sticker>();
