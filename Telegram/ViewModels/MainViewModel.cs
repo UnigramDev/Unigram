@@ -385,6 +385,8 @@ namespace Telegram.ViewModels
                     return;
                 }
 
+                Logger.Info();
+
                 Chats.SetFolder(value.ChatList);
                 RaisePropertyChanged();
             }

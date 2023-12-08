@@ -153,6 +153,14 @@ namespace Telegram.Common
 
         public async void NavigateToChat(Chat chat, long? message = null, long? thread = null, string accessToken = null, NavigationState state = null, bool scheduled = false, bool force = true, bool createNewWindow = false)
         {
+            if (Dispatcher.HasThreadAccess is false)
+            {
+                Logger.Info(Environment.StackTrace);
+
+                // Throwing here should get the exception to AppCenter early enough to actually have a stack trace.
+                throw new InvalidOperationException();
+            }
+
             if (chat == null)
             {
                 return;
