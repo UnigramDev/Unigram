@@ -11,43 +11,84 @@
                   NavigationMode="Root">
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <muxc:ItemsRepeaterScrollHost>
-            <ScrollViewer x:Name="ScrollingHost"
-                          VerticalScrollBarVisibility="Auto"
-                          VerticalScrollMode="Auto">
-                <controls:SettingsPanel>
+        <controls:TableListView x:Name="ScrollingHost"
+                                ItemsSource="{x:Bind ViewModel.Items}"
+                                ItemClick="OnItemClick"
+                                IsItemClickEnabled="True"
+                                SelectionMode="None"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging">
+            <ListView.Header>
+                <controls:SettingsPanel IsHeader="True">
                     <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"
                                                Text="{CustomResource CreateNewFilterInfo}" />
 
-                    <controls:HeaderedControl Header="{CustomResource Filters}">
-                        <controls:HeaderedControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel />
-                            </ItemsPanelTemplate>
-                        </controls:HeaderedControl.ItemsPanel>
-                        <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
-                                            ItemsSource="{x:Bind ViewModel.Items}"
-                                            ElementPrepared="Items_ElementPrepared">
-                            <muxc:ItemsRepeater.ItemTemplate>
-                                <DataTemplate>
-                                    <controls:BadgeButton FontFamily="{ThemeResource EmojiThemeFontFamily}"
-                                                          Style="{StaticResource GlyphBadgeButtonStyle}"
-                                                          IsChevronVisible="True"
-                                                          ContextRequested="Item_ContextRequested"
-                                                          Click="Edit_Click">
-                                        <controls:BadgeButton.Badge>
-                                            <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                       FontSize="20" />
-                                        </controls:BadgeButton.Badge>
-                                    </controls:BadgeButton>
-                                </DataTemplate>
-                            </muxc:ItemsRepeater.ItemTemplate>
-                        </muxc:ItemsRepeater>
+                    <TextBlock Text="{CustomResource Filters}"
+                               Style="{StaticResource BaseTextBlockStyle}"
+                               Margin="24,16,24,6" />
+                </controls:SettingsPanel>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="56" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontSize="{StaticResource GlyphMediumFontSize}"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Center"
+                                   Margin="20,0,0,0"
+                                   AutomationProperties.AccessibilityView="Raw"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}" />
+
+                        <ContentPresenter x:Name="ContentPresenter"
+                                          AutomationProperties.AccessibilityView="Raw"
+                                          HorizontalContentAlignment="Left"
+                                          Padding="0,11,12,12"
+                                          VerticalContentAlignment="Center"
+                                          Grid.Column="1" />
+                        <ContentControl x:Name="BadgePresenter"
+                                        FontSize="20"
+                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                        Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
+                                        Height="44"
+                                        Padding="12,0,12,0"
+                                        HorizontalContentAlignment="Right"
+                                        VerticalContentAlignment="Center"
+                                        IsTabStop="False"
+                                        Grid.Column="1">
+                            <ContentControl.ContentTransitions>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition />
+                                </TransitionCollection>
+                            </ContentControl.ContentTransitions>
+                            <ContentControl.Clip>
+                                <RectangleGeometry Rect="0,0,3600,44" />
+                            </ContentControl.Clip>
+                        </ContentControl>
+
+                        <TextBlock x:Name="Chevron"
+                                   Text="&#xE0E3;"
+                                   FontSize="20"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   Margin="-6,0,6,0"
+                                   Grid.Column="3" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Footer>
+                <controls:SettingsPanel IsFooter="True">
+                    <controls:HeaderedControl Margin="0,-14,0,0">
                         <controls:BadgeButton Content="{CustomResource CreateNewFilter}"
                                               Click="{x:Bind ViewModel.Create}"
                                               Visibility="{x:Bind ViewModel.CanCreateNew, Mode=OneWay}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              BorderThickness="0,1,0,0"
                                               IsChevronVisible="True"
                                               Glyph="&#xE98A;" />
                     </controls:HeaderedControl>
@@ -85,6 +126,7 @@
                                         Orientation="Horizontal">
                                 <StackPanel Margin="0,12,12,12">
                                     <RadioButton IsChecked="{x:Bind ViewModel.UseTopLayout, Mode=TwoWay}"
+                                                 AutomationProperties.Name="{CustomResource TabsViewOnTop}"
                                                  GroupName="Layout"
                                                  Height="121"
                                                  Style="{StaticResource ChatListRadioButtonStyle}">
@@ -196,6 +238,7 @@
 
                                 <StackPanel Margin="0,12,0,12">
                                     <RadioButton IsChecked="{x:Bind ViewModel.UseLeftLayout, Mode=TwoWay}"
+                                                 AutomationProperties.Name="{CustomResource TabsViewOnLeft}"
                                                  GroupName="Layout"
                                                  Height="121"
                                                  Style="{StaticResource ChatListRadioButtonStyle}">
@@ -351,7 +394,7 @@
                         </ScrollViewer>
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
-            </ScrollViewer>
-        </muxc:ItemsRepeaterScrollHost>
+            </ListView.Footer>
+        </controls:TableListView>
     </Grid>
 </local:HostedPage>
