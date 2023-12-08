@@ -62,7 +62,7 @@ namespace Telegram.ViewModels
 
             foreach (var paragraph in message.Text.Paragraphs)
             {
-                if (paragraph.Type != Common.ParagraphStyle.Monospace)
+                if (paragraph.Type is not TextParagraphTypeMonospace)
                 {
                     _languageBuilder.Prepend(message.Text.Text.Substring(paragraph.Offset, paragraph.Length), "\n");
                 }
