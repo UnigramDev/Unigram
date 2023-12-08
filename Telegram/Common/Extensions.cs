@@ -215,7 +215,7 @@ namespace Telegram.Common
 
         public static int OffsetToIndex(this TextPointer pointer, StyledText text)
         {
-            if (pointer.VisualParent is not RichTextBlock textBlock || text == null)
+            if (pointer.VisualParent is not RichTextBlock textBlock || text == null || textBlock.Blocks.Count != text.Paragraphs.Count)
             {
                 return -1;
             }
