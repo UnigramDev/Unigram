@@ -805,7 +805,7 @@ namespace Telegram.Controls
 
         private async void ProcessCodeBlock(InlineCollection inlines, string text, string language)
         {
-            var tokens = await SyntaxToken.TokenizeAsync(language, text);
+            var tokens = await SyntaxToken.TokenizeAsync(language.ToLowerInvariant(), text);
 
             inlines.Clear();
             ProcessCodeBlock(inlines, tokens.Children);
