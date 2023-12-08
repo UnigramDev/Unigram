@@ -396,6 +396,7 @@
                 <ResourceDictionary Source="ms-appx:///Themes/RadioButton_themeresources.xaml" />
                 <!--<ResourceDictionary Source="ms-appx:///Themes/ScrollBar_themeresources.xaml" />-->
                 <ResourceDictionary Source="ms-appx:///Themes/BadgeButton_themeresources.xaml" />
+                <ResourceDictionary Source="ms-appx:///Themes/TextBox_themeresources.xaml" />
                 <themes:Messages />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
