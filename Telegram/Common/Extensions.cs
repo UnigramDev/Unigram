@@ -1167,6 +1167,11 @@ namespace Telegram.Common
     {
         public static BitmapImage ToBitmap(string path, int width = 0, int height = 0)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                return null;
+            }
+
             return new BitmapImage(ToLocal(path))
             {
                 DecodePixelWidth = width,
