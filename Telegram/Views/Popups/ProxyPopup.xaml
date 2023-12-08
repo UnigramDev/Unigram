@@ -10,7 +10,8 @@
                        PrimaryButtonText="OK"
                        SecondaryButtonText="Cancel"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+                       SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+                       Padding="0,24,0,0">
 
     <ContentDialog.Title>
         <Grid>
@@ -31,55 +32,64 @@
         </Grid>
     </ContentDialog.Title>
 
-    <StackPanel>
-        <RadioButton x:Name="TypeSocks"
-                     Content="{CustomResource UseProxySocks5}"
-                     Checked="Type_Toggled"
-                     Unchecked="Type_Toggled"
-                     IsChecked="True" />
+    <Grid>
+        <ScrollViewer x:Name="ScrollingHost"
+                      VerticalScrollBarVisibility="Auto"
+                      VerticalScrollMode="Auto">
+            <StackPanel Margin="24,0,24,24">
+                <RadioButton x:Name="TypeSocks"
+                             Content="{CustomResource UseProxySocks5}"
+                             Checked="Type_Toggled"
+                             Unchecked="Type_Toggled"
+                             IsChecked="True" />
 
-        <RadioButton x:Name="TypeHttp"
-                     Content="HTTP"
-                     Checked="Type_Toggled"
-                     Unchecked="Type_Toggled" />
+                <RadioButton x:Name="TypeHttp"
+                             Content="HTTP"
+                             Checked="Type_Toggled"
+                             Unchecked="Type_Toggled" />
 
-        <RadioButton x:Name="TypeProto"
-                     Content="{CustomResource UseProxyTelegram}"
-                     Checked="Type_Toggled"
-                     Unchecked="Type_Toggled" />
+                <RadioButton x:Name="TypeProto"
+                             Content="{CustomResource UseProxyTelegram}"
+                             Checked="Type_Toggled"
+                             Unchecked="Type_Toggled" />
 
-        <TextBox x:Name="FieldServer"
-                 PlaceholderText="{CustomResource UseProxyAddress}"
-                 Margin="0,8" />
-        <TextBox x:Name="FieldPort"
-                 PlaceholderText="{CustomResource UseProxyPort}"
-                 InputScope="Number"
-                 Margin="0,0,0,8" />
-        <StackPanel x:Name="TypeSocksPanel">
-            <TextBox x:Name="FieldUsername"
-                     PlaceholderText="{CustomResource UseProxyUsername}"
-                     Header="{CustomResource ProxyCredentialsOptional}"
-                     Margin="0,4,0,8" />
-            <PasswordBox x:Name="FieldPassword"
-                         PlaceholderText="{CustomResource UseProxyPassword}"
+                <TextBox x:Name="FieldServer"
+                         PlaceholderText="{CustomResource UseProxyAddress}"
+                         Margin="0,8" />
+                <TextBox x:Name="FieldPort"
+                         PlaceholderText="{CustomResource UseProxyPort}"
+                         InputScope="Number"
                          Margin="0,0,0,8" />
-        </StackPanel>
-        <StackPanel x:Name="TypeProtoPanel"
-                    Visibility="Collapsed">
-            <TextBox x:Name="FieldSecret"
-                     PlaceholderText="{CustomResource UseProxySecret}"
-                     Header="{CustomResource ProxyCredentials}"
-                     Margin="0,4,0,8" />
-        </StackPanel>
-        <StackPanel x:Name="TypeHttpPanel"
-                    Visibility="Collapsed">
-            <CheckBox x:Name="FieldTransparent"
-                      Content="{CustomResource TransparentTcpConnection}"
-                      Margin="0,0,0,8" />
-        </StackPanel>
+                <StackPanel x:Name="TypeSocksPanel">
+                    <TextBox x:Name="FieldUsername"
+                             PlaceholderText="{CustomResource UseProxyUsername}"
+                             Header="{CustomResource ProxyCredentialsOptional}"
+                             Margin="0,4,0,8" />
+                    <PasswordBox x:Name="FieldPassword"
+                                 PlaceholderText="{CustomResource UseProxyPassword}"
+                                 Margin="0,0,0,8" />
+                </StackPanel>
+                <StackPanel x:Name="TypeProtoPanel"
+                            Visibility="Collapsed">
+                    <TextBox x:Name="FieldSecret"
+                             PlaceholderText="{CustomResource UseProxySecret}"
+                             Header="{CustomResource ProxyCredentials}"
+                             Margin="0,4,0,8" />
+                </StackPanel>
+                <StackPanel x:Name="TypeHttpPanel"
+                            Visibility="Collapsed">
+                    <CheckBox x:Name="FieldTransparent"
+                              Content="{CustomResource TransparentTcpConnection}"
+                              Margin="0,0,0,8" />
+                </StackPanel>
 
-        <TextBlock x:Name="FieldPanel"
-                   Text="{CustomResource UseProxyInfo}"
-                   Style="{StaticResource InfoCaptionTextBlockStyle}" />
-    </StackPanel>
+                <TextBlock x:Name="FieldPanel"
+                           Text="{CustomResource UseProxyInfo}"
+                           Style="{StaticResource InfoCaptionTextBlockStyle}" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
+                                    ScrollingHost="{x:Bind ScrollingHost}" />
+    </Grid>
 </controls:ContentPopup>
