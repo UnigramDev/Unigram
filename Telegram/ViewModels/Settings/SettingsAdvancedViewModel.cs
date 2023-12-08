@@ -177,6 +177,17 @@ namespace Telegram.ViewModels.Settings
 
         #endregion
 
+        public bool UseLayoutRounding
+        {
+            get => Settings.Diagnostics.UseLayoutRounding;
+            set
+            {
+                Settings.Diagnostics.UseLayoutRounding = value;
+                RaisePropertyChanged();
+                WindowContext.ForEach(x => x.Content.UseLayoutRounding = value);
+            }
+        }
+
         public bool IsTrayVisible
         {
             get => Settings.IsTrayVisible;

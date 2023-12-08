@@ -21,6 +21,10 @@
                               Content="Use Test DC"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox IsChecked="{x:Bind ViewModel.UseLayoutRounding, Mode=TwoWay}"
+                              Content="Use Layout Rounding"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.AllowRightToLeft, Mode=TwoWay}"
                               Content="Allow Right to Left"
                               Style="{StaticResource SettingsCheckBoxStyle}" />

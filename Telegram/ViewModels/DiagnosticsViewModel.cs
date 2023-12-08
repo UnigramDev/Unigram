@@ -149,6 +149,17 @@ namespace Telegram.ViewModels
             }
         }
 
+        public bool UseLayoutRounding
+        {
+            get => Settings.Diagnostics.UseLayoutRounding;
+            set
+            {
+                Settings.Diagnostics.UseLayoutRounding = value;
+                RaisePropertyChanged();
+                WindowContext.ForEach(x => x.Content.UseLayoutRounding = value);
+            }
+        }
+
         public bool PreferIpv6
         {
             get => ClientService.Options.PreferIpv6;

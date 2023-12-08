@@ -24,6 +24,7 @@ using Telegram.ViewModels.Stories;
 using Telegram.Views;
 using Telegram.Views.Folders;
 using Telegram.Views.Popups;
+using Telegram.Views.Settings;
 using Telegram.Views.Settings.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -425,10 +426,24 @@ namespace Telegram.ViewModels
             {
                 _shown = true;
 
-                var confirm = await ShowPopupAsync("It seems that the app terminated unexpectedly. Do you want to report this problem?", "Something went wrong", "OK", "Cancel");
-                if (confirm == ContentDialogResult.Primary)
+                var layoutCycle = SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle;
+                SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = false;
+
+                if (layoutCycle)
                 {
-                    MessageHelper.NavigateToUsername(ClientService, NavigationService, "unigraminsiders", null, null);
+                    var confirm = await ShowPopupAsync("The app terminated unexpectedly due to a layout cycle, because of this some layout optimizations have been disabled. You can re-enable layout optimizations at any time from Settings > Advanced > Use Layout Rounding.", "Something went wrong", "OK", "Show me");
+                    if (confirm == ContentDialogResult.Secondary)
+                    {
+                        NavigationService.Navigate(typeof(SettingsAdvancedPage));
+                    }
+                }
+                else
+                {
+                    var confirm = await ShowPopupAsync("It seems that the app terminated unexpectedly. Do you want to report this problem?", "Something went wrong", "OK", "Cancel");
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+                        MessageHelper.NavigateToUsername(ClientService, NavigationService, "unigraminsiders", null, null);
+                    }
                 }
             }
 

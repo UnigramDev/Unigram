@@ -40,7 +40,14 @@
                 <controls:HeaderedControl Header="{CustomResource ExperimentalSettings}"
                                           Footer="{CustomResource ExperimentalSettingsHint}">
                     <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.ShowIds, Mode=TwoWay}"
-                              Content="Show Peer IDs"
+                              Content="{CustomResource DiagnosticsShowPeerIds}"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
+                    <!-- Show the option here only if it was already disabled in the past -->
+                    <CheckBox x:Name="Rounding"
+                              x:Load="{x:Bind ViewModel.UseLayoutRounding, Converter={StaticResource BooleanNegationConverter}}"
+                              IsChecked="{x:Bind ViewModel.UseLayoutRounding, Mode=TwoWay}"
+                              Content="{CustomResource DiagnosticsUseLayoutRounding}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
                 </controls:HeaderedControl>
             </controls:SettingsPanel>

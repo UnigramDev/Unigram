@@ -91,6 +91,12 @@ namespace Telegram
 
             UnhandledException += (s, args) =>
             {
+                if (args.Exception is LayoutCycleException && ApiInfo.IsPackagedRelease)
+                {
+                    SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
+                    SettingsService.Current.Diagnostics.UseLayoutRounding = false;
+                }
+
                 args.Handled = args.Exception is not LayoutCycleException;
             };
         }

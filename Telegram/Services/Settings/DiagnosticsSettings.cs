@@ -91,6 +91,20 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _useStorageOptimizer, "UseStorageOptimizer", value);
         }
 
+        private bool? _useLayoutRounding;
+        public bool UseLayoutRounding
+        {
+            get => _useLayoutRounding ??= GetValueOrDefault("UseLayoutRounding", true);
+            set => AddOrUpdateValue(ref _useLayoutRounding, "UseLayoutRounding", value);
+        }
+
+        private bool? _lastCrashWasLayoutCycle;
+        public bool LastCrashWasLayoutCycle
+        {
+            get => _lastCrashWasLayoutCycle ??= GetValueOrDefault("LastCrashWasLayoutCycle", false);
+            set => AddOrUpdateValue(ref _lastCrashWasLayoutCycle, "LastCrashWasLayoutCycle", value);
+        }
+
         private bool? _hidePhoneNumber;
         public bool HidePhoneNumber
         {

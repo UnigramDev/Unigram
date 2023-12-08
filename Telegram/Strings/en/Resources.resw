@@ -2949,6 +2949,12 @@ You can always switch back to the default Telegram theme here.</value>
   <data name="Devices" xml:space="preserve">
     <value>Devices</value>
   </data>
+  <data name="DiagnosticsShowPeerIds" xml:space="preserve">
+    <value>Show Peer IDs</value>
+  </data>
+  <data name="DiagnosticsUseLayoutRounding" xml:space="preserve">
+    <value>Use Layout Rounding</value>
+  </data>
   <data name="DiceEmojiInfo" xml:space="preserve">
     <value>Send a {0} emoji to try your luck.</value>
   </data>
