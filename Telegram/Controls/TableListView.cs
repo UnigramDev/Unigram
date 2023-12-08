@@ -67,5 +67,9 @@ namespace Telegram.Controls
 
     public class TableListViewItem : TextListViewItem
     {
+        public TableListViewItem()
+        {
+            DefaultStyleKey = typeof(TableListViewItem);
+        }
     }
 }
