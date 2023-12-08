@@ -22,6 +22,7 @@ namespace Telegram.Controls.Gallery
         private long _videoToken;
 
         private bool _loopingEnabled;
+        private bool _playing;
 
         public GalleryTransportControls()
         {
@@ -128,7 +129,7 @@ namespace Telegram.Controls.Gallery
         private void Slider_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             _scrubbing = true;
-            _mediaPlayer?.SetPause(true);
+            PauseBeforeScrubbing();
         }
 
         private void Slider_PointerReleased(object sender, PointerRoutedEventArgs e)
@@ -139,19 +140,19 @@ namespace Telegram.Controls.Gallery
             }
 
             _scrubbing = false;
-            _mediaPlayer?.SetPause(false);
+            PlayAfterScrubbing();
         }
 
         private void Slider_PointerCanceled(object sender, PointerRoutedEventArgs e)
         {
             _scrubbing = false;
-            _mediaPlayer?.SetPause(false);
+            PlayAfterScrubbing();
         }
 
         private void Slider_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
         {
             _scrubbing = false;
-            _mediaPlayer?.SetPause(false);
+            PlayAfterScrubbing();
         }
 
         #endregion
@@ -494,6 +495,39 @@ namespace Telegram.Controls.Gallery
                     _mediaPlayer.Pause();
                     break;
             }
+        }
+
+        private void PlayAfterScrubbing()
+        {
+            if (_mediaPlayer == null || !_playing)
+            {
+                return;
+            }
+
+            _playing = false;
+
+            switch (_mediaPlayer.State)
+            {
+                case VLCState.Ended:
+                    _mediaPlayer.Stop();
+                    goto case VLCState.Stopped;
+                case VLCState.Paused:
+                case VLCState.Stopped:
+                case VLCState.Error:
+                    _mediaPlayer.Play();
+                    break;
+            }
+        }
+
+        private void PauseBeforeScrubbing()
+        {
+            if (_mediaPlayer == null || !_mediaPlayer.IsPlaying)
+            {
+                return;
+            }
+
+            _playing = true;
+            _mediaPlayer.Pause();
         }
 
         public void Stop()
