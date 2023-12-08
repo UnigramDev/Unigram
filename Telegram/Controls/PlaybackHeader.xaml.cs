@@ -188,7 +188,7 @@ namespace Telegram.Controls
 
                 UpdateSpeed(int.MaxValue);
 
-                ViewButton.Padding = new Thickness(48 + 6, 0, 40 * 2 + 48 + 12, 0);
+                ViewButton.Padding = new Thickness(48, 0, 40 * 2 + 48 + 12, 0);
             }
             else if (message.Content is MessageAudio || webPage?.Audio != null)
             {
@@ -216,7 +216,7 @@ namespace Telegram.Controls
                 UpdateSpeed(audio.Duration);
                 UpdateRepeat();
 
-                ViewButton.Padding = new Thickness(40 * 3 + 12, 0, 40 * 2 + 48 + 12, 0);
+                ViewButton.Padding = new Thickness(40 * 3 + 8, 0, 40 * 4 + 8, 0);
             }
         }
 

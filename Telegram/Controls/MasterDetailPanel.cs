@@ -90,7 +90,7 @@ namespace Telegram.Controls
             // Single column mode
             if (availableSize.Width < columnMinimalWidthLeft + columnMinimalWidthMain || !HasMaster)
             {
-                banner.Measure(availableSize);
+                banner.Measure(CreateSize(availableSize.Width - 16, availableSize.Height));
 
                 master.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height)));
                 detail.Measure(CreateSize(availableSize.Width, Math.Max(0, availableSize.Height - banner.DesiredSize.Height)));
@@ -132,7 +132,7 @@ namespace Telegram.Controls
             {
                 CurrentState = MasterDetailState.Minimal;
 
-                banner.Arrange(CreateRect(12, 0, finalSize.Width - 12, banner.DesiredSize.Height));
+                banner.Arrange(CreateRect(12, 0, finalSize.Width - 16, banner.DesiredSize.Height));
 
                 master.Arrange(CreateRect(0, banner.DesiredSize.Height, finalSize.Width, finalSize.Height - banner.DesiredSize.Height));
                 detail.Arrange(CreateRect(0, banner.DesiredSize.Height, finalSize.Width, finalSize.Height - banner.DesiredSize.Height));
