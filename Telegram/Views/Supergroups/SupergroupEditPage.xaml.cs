@@ -83,7 +83,7 @@ namespace Telegram.Views.Supergroups
             DeletePanel.Footer = group.IsChannel ? Strings.ChannelDeleteInfo : Strings.MegaDeleteInfo;
 
             Members.Content = group.IsChannel ? Strings.ChannelSubscribers : Strings.ChannelMembers;
-            Members.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
+            //Members.Visibility = group.IsChannel ? Visibility.Visible : Visibility.Collapsed;
 
             EventLog.Visibility = Visibility.Visible;
 

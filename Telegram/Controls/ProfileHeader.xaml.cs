@@ -1178,11 +1178,7 @@ namespace Telegram.Controls
                     flyout.CreateFlyoutItem(ViewModel.OpenArchivedStories, Strings.ArchivedStories, Icons.Archive);
                 }
 
-                if (!super.IsChannel)
-                {
-                    flyout.CreateFlyoutItem(ViewModel.OpenMembers, Strings.SearchMembers, Icons.Search);
-                }
-                else if (supergroup.HasLinkedChat)
+                if (super.IsChannel && supergroup.HasLinkedChat)
                 {
                     flyout.CreateFlyoutItem(ViewModel.Discuss, Strings.ViewDiscussion, Icons.ChatEmpty);
                 }
