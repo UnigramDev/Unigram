@@ -636,6 +636,9 @@ namespace Telegram.Controls
         private int _playing;
         private bool _idle = true;
 
+        // TODO: move this to PixelBuffer
+        private bool _dirty;
+
         private bool _activated;
 
         private int _loopCount;
@@ -694,7 +697,11 @@ namespace Telegram.Controls
         {
             _images.Add(canvas);
             _workerQueue.Run(PrepareImpl);
-            canvas.Invalidate(_foregroundPrev?.Source);
+
+            if (_dirty)
+            {
+                canvas.Invalidate(_foregroundPrev?.Source);
+            }
         }
 
         public void Unload(AnimatedImage canvas, bool playing)
@@ -795,7 +802,11 @@ namespace Telegram.Controls
         public void Play(AnimatedImage canvas)
         {
             _workerQueue.Run(PlayImpl);
-            canvas.Invalidate(_foregroundPrev?.Source);
+
+            if (_dirty)
+            {
+                canvas.Invalidate(_foregroundPrev?.Source);
+            }
         }
 
         public void Pause()
@@ -1164,6 +1175,9 @@ namespace Telegram.Controls
 
         private void DrawFrame()
         {
+            // TODO: there is a chance that, if the animation has a single frame this will
+            // pick the empty frame instead of the drawn one and thus the control will be blank
+
             var next = Interlocked.Exchange(ref _foregroundNext, null);
             if (next != null)
             {
@@ -1172,6 +1186,7 @@ namespace Telegram.Controls
                     Interlocked.Exchange(ref _backgroundNext, _foregroundPrev);
                 }
 
+                _dirty = true;
                 _foregroundPrev = next;
                 next.Source.Invalidate();
 
