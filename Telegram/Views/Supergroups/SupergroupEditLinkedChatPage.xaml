@@ -27,41 +27,49 @@
     </Page.Transitions>
 
     <Grid Background="{ThemeResource SettingsPageBackground}">
-        <muxc:ItemsRepeaterScrollHost>
-            <ScrollViewer x:Name="ScrollingHost"
-                          VerticalScrollBarVisibility="Auto"
-                          VerticalScrollMode="Auto">
-                <controls:SettingsPanel>
+        <controls:TableListView x:Name="ScrollingHost"
+                                ChoosingItemContainer="OnChoosingItemContainer"
+                                ContainerContentChanging="OnContainerContentChanging"
+                                SelectionMode="None"
+                                IsItemClickEnabled="True"
+                                ItemClick="OnItemClick"
+                                ItemsSource="{x:Bind ViewModel.Items}"
+                                VerticalContentAlignment="Top">
+            <ListView.Header>
+                <controls:SettingsPanel IsHeader="True">
                     <controls:SettingsHeadline x:Name="Headline"
                                                Source="ms-appx:///Assets/Animations/DiscussionGroupSetup.tgs"
                                                Text="{CustomResource DiscussionChannelGroupSetHelp}" />
 
-                    <controls:HeaderedControl x:Name="LayoutRoot"
-                                              Footer="{CustomResource DiscussionChannelHelp2}">
-                        <controls:HeaderedControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel />
-                            </ItemsPanelTemplate>
-                        </controls:HeaderedControl.ItemsPanel>
-
-                        <controls:BadgeButton x:Name="Create"
-                                              Content="{CustomResource DiscussionCreateGroup}"
+                    <controls:HeaderedControl x:Name="Create"
+                                              Margin="0,0,0,2">
+                        <controls:BadgeButton Content="{CustomResource DiscussionCreateGroup}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
                                               Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                               Glyph="&#xE716;" />
+                    </controls:HeaderedControl>
+                </controls:SettingsPanel>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <cells:ProfileCell Background="{ThemeResource SettingsItemBackground}"
+                                       BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.Footer>
+                <controls:SettingsPanel IsFooter="True">
+                    <controls:SettingsFooter x:Name="Footer"
+                                             Text="{CustomResource DiscussionChannelHelp2}"
+                                             Margin="24,6,24,32" />
 
-                        <muxc:ItemsRepeater Layout="{StaticResource ThreadStackLayout}"
-                                            ItemsSource="{x:Bind ViewModel.Items}"
-                                            ItemTemplate="{StaticResource ChatTemplate}"
-                                            ElementPrepared="OnElementPrepared" />
-
+                    <controls:HeaderedControl x:Name="LayoutRoot"
+                                              Footer="{CustomResource DiscussionChannelHelp2}"
+                                              Margin="0,-14,0,0">
                         <controls:BadgeButton x:Name="Unlink"
                                               Content="{CustomResource DiscussionUnlinkGroup}"
                                               Click="{x:Bind ViewModel.Unlink}"
                                               Style="{StaticResource GlyphBadgeButtonStyle}"
-                                              BorderThickness="0,1,0,0"
                                               Glyph="&#xF166;" />
-
                     </controls:HeaderedControl>
 
                     <controls:HeaderedControl x:Name="JoinToSendMessages"
@@ -77,7 +85,7 @@
                                   Style="{StaticResource SettingsCheckBoxStyle}" />
                     </controls:HeaderedControl>
                 </controls:SettingsPanel>
-            </ScrollViewer>
-        </muxc:ItemsRepeaterScrollHost>
+            </ListView.Footer>
+        </controls:TableListView>
     </Grid>
 </local:HostedPage>

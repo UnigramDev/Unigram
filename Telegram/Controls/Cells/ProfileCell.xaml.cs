@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Text;
 using Telegram.Common;
@@ -866,6 +865,41 @@ namespace Telegram.Controls.Cells
             }
         }
 
+        public void UpdateLinkedChat(IClientService clientService, ContainerContentChangingEventArgs args, TypedEventHandler<ListViewBase, ContainerContentChangingEventArgs> callback)
+        {
+            var chat = args.Item as Chat;
+
+            if (args.Phase == 0)
+            {
+                TitleLabel.Text = chat.Title;
+            }
+            else if (args.Phase == 1)
+            {
+                if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
+                {
+                    if (supergroup.HasActiveUsername(out string username))
+                    {
+                        SubtitleLabel.Text = $"@{username}";
+                    }
+                    else
+                    {
+                        SubtitleLabel.Text = Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroup.MemberCount);
+                    }
+                }
+            }
+            else if (args.Phase == 2)
+            {
+                Photo.SetChat(clientService, chat, 36);
+                Identity.SetStatus(clientService, chat);
+            }
+
+            if (args.Phase < 2)
+            {
+                args.RegisterUpdateCallback(callback);
+            }
+
+            args.Handled = true;
+        }
 
         private void UpdateStyleNoSubtitle()
         {
@@ -875,35 +909,5 @@ namespace Telegram.Controls.Cells
 
             SetRowSpan(TitlePanel, 2);
         }
-
-
-
-
-        #region Repeater :(
-
-        public void UpdateLinkedChat(IClientService clientService, ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
-        {
-            var button = args.Element as Button;
-            var chat = button.DataContext as Chat;
-
-            TitleLabel.Text = clientService.GetTitle(chat);
-
-            if (clientService.TryGetSupergroup(chat, out Supergroup supergroup))
-            {
-                if (supergroup.HasActiveUsername(out string username))
-                {
-                    SubtitleLabel.Text = $"@{username}";
-                }
-                else
-                {
-                    SubtitleLabel.Text = Locale.Declension(supergroup.IsChannel ? Strings.R.Subscribers : Strings.R.Members, supergroup.MemberCount);
-                }
-            }
-
-            Photo.SetChat(clientService, chat, 36);
-            Identity.SetStatus(clientService, chat);
-        }
-
-        #endregion
     }
 }

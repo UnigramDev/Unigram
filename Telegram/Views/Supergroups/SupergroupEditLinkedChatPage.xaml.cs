@@ -4,7 +4,7 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using Microsoft.UI.Xaml.Controls;
+using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
@@ -25,27 +25,50 @@ namespace Telegram.Views.Supergroups
             Title = Strings.Discussion;
         }
 
-        private void OnElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
+        private void OnItemClick(object sender, ItemClickEventArgs e)
         {
-            var button = args.Element as Button;
-            var content = button.Content as ProfileCell;
-
-            var chat = button.DataContext as Chat;
-
-            content.UpdateLinkedChat(ViewModel.ClientService, sender, args);
-
-            button.CommandParameter = chat;
-            button.Command = ViewModel.LinkCommand;
+            ViewModel.Link(e.ClickedItem as Chat);
         }
+
+        #region Recycle
+
+        private void OnChoosingItemContainer(ListViewBase sender, ChoosingItemContainerEventArgs args)
+        {
+            if (args.ItemContainer == null)
+            {
+                args.ItemContainer = new TableListViewItem();
+                args.ItemContainer.Style = sender.ItemContainerStyle;
+                args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+            }
+
+            args.IsContainerPrepared = true;
+        }
+
+        private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+            {
+                return;
+            }
+            else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
+            {
+                content.UpdateLinkedChat(ViewModel.ClientService, args, OnContainerContentChanging);
+            }
+        }
+
+        #endregion
 
         #region Delegate
 
         public void UpdateSupergroup(Chat chat, Supergroup group)
         {
             Headline.Text = string.Format(Strings.DiscussionChannelGroupSetHelp2, chat.Title);
+            Headline.Margin = new Thickness(0, 0, 0, group.HasLinkedChat ? 32 : 0);
 
             Create.Visibility = group.HasLinkedChat ? Visibility.Collapsed : Visibility.Visible;
-            Unlink.Visibility = group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
+            Footer.Visibility = group.HasLinkedChat ? Visibility.Collapsed : Visibility.Visible;
+
+            LayoutRoot.Visibility = group.HasLinkedChat ? Visibility.Visible : Visibility.Collapsed;
             Unlink.Content = group.IsChannel ? Strings.DiscussionUnlinkGroup : Strings.DiscussionUnlinkChannel;
         }
 
