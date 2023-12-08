@@ -826,8 +826,24 @@ namespace Telegram.Controls
                 _playing++;
                 _idle = false;
 
-                if (_task != null && _playing == 1 && !_ticking && _loopCount >= 0)
+                if (_playing == 1 && !_ticking && _loopCount >= 0)
                 {
+                    if (_task == null)
+                    {
+                        if (_presentation.Source is DelayedFileSource delayed && !delayed.IsDownloadingCompleted)
+                        {
+                            //Logger.Debug("Loaded, delayed");
+                            delayed.DownloadFile(this, UpdateFile);
+                        }
+                        else
+                        {
+                            //Logger.Debug("Loaded, requesting");
+                            _loader.Load(this);
+                        }
+
+                        return;
+                    }
+
                     if (_nextMarker != null)
                     {
                         _task.Seek(_nextMarker);
@@ -1483,6 +1499,11 @@ namespace Telegram.Controls
 
         public void Load(AnimatedImagePresenter sender)
         {
+            if (sender.CorrelationId != 0)
+            {
+                _delegates.TryRemove(sender.CorrelationId, out _);
+            }
+
             //Logger.Debug();
             var correlationId = ++_indexer;
 
@@ -1632,7 +1653,7 @@ namespace Telegram.Controls
         class WorkQueue
         {
             private readonly object _workAvailable = new();
-            private readonly Queue<WorkItem> _work = new();
+            private readonly Stack<WorkItem> _work = new();
 
             public void Push(WorkItem item)
             {
@@ -1640,7 +1661,7 @@ namespace Telegram.Controls
                 {
                     var was_empty = _work.Count == 0;
 
-                    _work.Enqueue(item);
+                    _work.Push(item);
 
                     if (was_empty)
                     {
@@ -1662,7 +1683,7 @@ namespace Telegram.Controls
                         }
                     }
 
-                    return _work.Dequeue();
+                    return _work.Pop();
                 }
             }
         }
