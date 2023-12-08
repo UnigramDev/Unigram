@@ -23,7 +23,8 @@
                     <controls:AspectView x:Name="LayoutRoot">
                         <controls:AnimatedImage x:Name="Player"
                                                 AutoPlay="False"
-                                                DecodeFrameType="Logical" />
+                                                DecodeFrameType="Logical"
+                                                ReplacementColor="{ThemeResource MessageForegroundBrush}" />
                     </controls:AspectView>
                 </ControlTemplate>
             </Setter.Value>

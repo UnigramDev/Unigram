@@ -26,7 +26,8 @@
                                                 FrameSize="180,180"
                                                 DecodeFrameType="Logical"
                                                 Width="180"
-                                                Height="180" />
+                                                Height="180"
+                                                ReplacementColor="{ThemeResource MessageForegroundBrush}" />
 
                         <Popup x:Name="InteractionsPopup"
                                x:Load="False">
