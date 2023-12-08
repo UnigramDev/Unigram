@@ -112,22 +112,6 @@ namespace Telegram.Controls
 
         #endregion
 
-        private void AnimateSelectionChanged()
-        {
-            AnimateSelectionChanged(SelectedItem);
-
-            if (FocusFollowsSingleSelection)
-            {
-                // TODO: would be cool to do this only on programmatic changes, but I'm afraid it's not possible.
-                _ = this.ScrollToItem2(SelectedItem, VerticalAlignment.Center);
-            }
-        }
-
-        private void ClearSelectionChanged()
-        {
-            AnimateSelectionChanged(null);
-        }
-
         private void AnimateSelectionChanged(object nextItem, bool retry = true)
         {
             var prevIndicator = _activeIndicator;

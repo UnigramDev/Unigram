@@ -107,7 +107,7 @@ namespace Telegram.Common
                 PersistentId = "Payments",
                 Content = control =>
                 {
-                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, SessionId, "Payments" + Guid.NewGuid(), false);
+                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
                     nav.Navigate(typeof(PaymentFormPage), new InputInvoiceMessage(message.ChatId, message.Id));
 
                     return BootStrapper.Current.CreateRootElement(nav);
@@ -128,7 +128,7 @@ namespace Telegram.Common
                 PersistentId = "Payments",
                 Content = control =>
                 {
-                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, BootStrapper.ExistingContent.Exclude, SessionId, "Payments" + Guid.NewGuid(), false);
+                    var nav = BootStrapper.Current.NavigationServiceFactory(BootStrapper.BackButton.Ignore, SessionId, "Payments" + Guid.NewGuid(), false);
                     nav.Navigate(typeof(PaymentFormPage), inputInvoice);
 
                     return BootStrapper.Current.CreateRootElement(nav);

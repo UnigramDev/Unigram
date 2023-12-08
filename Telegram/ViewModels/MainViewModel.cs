@@ -471,7 +471,7 @@ namespace Telegram.ViewModels
         public SettingsViewModel Settings { get; }
 
 
-        
+
         public void ConfirmSession()
         {
             var session = ClientService.UnconfirmedSession;

@@ -268,11 +268,15 @@ namespace Telegram.Controls.Chats
                 {
                     s.LoadCompleted -= handler;
 
-                    if (_backgroundId == file.Id)
+                    if (_backgroundId == file.Id /*&& IsConnected*/)
                     {
                         BorderBrush = null;
                         UpdatePattern();
                     }
+                    //else
+                    //{
+                    //    s.Dispose();
+                    //}
                 }
 
                 if (_pattern != null)

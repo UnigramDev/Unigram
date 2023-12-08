@@ -40,9 +40,6 @@ namespace Telegram.Controls.Stories
         public StoriesWindow()
         {
             InitializeComponent();
-
-            Loaded += StoriesWindow_Loaded;
-
             InitializeStickers();
 
             _stealthTimer = new DispatcherTimer();
@@ -774,6 +771,8 @@ namespace Telegram.Controls.Stories
         {
             WindowContext.Current.Activated += OnActivated;
             WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
+
+            StoriesWindow_Loaded(sender, e);
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)

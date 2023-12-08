@@ -225,14 +225,14 @@ namespace Telegram
             if (e is ContactPanelActivatedEventArgs /*|| (e is ProtocolActivatedEventArgs protocol && protocol.Uri.PathAndQuery.Contains("domain=telegrampassport", StringComparison.OrdinalIgnoreCase))*/)
             {
                 var navigationFrame = new Frame { FlowDirection = LocaleService.Current.FlowDirection };
-                var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
+                var navigationService = NavigationServiceFactory(BackButton.Ignore, navigationFrame, sessionId, $"Main{sessionId}", false) as NavigationService;
 
                 return navigationFrame;
             }
             else
             {
                 var navigationFrame = new Frame();
-                var navigationService = NavigationServiceFactory(BackButton.Ignore, ExistingContent.Include, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
+                var navigationService = NavigationServiceFactory(BackButton.Ignore, navigationFrame, sessionId, $"{sessionId}", true) as NavigationService;
 
                 return new RootPage(navigationService) { FlowDirection = LocaleService.Current.FlowDirection };
             }

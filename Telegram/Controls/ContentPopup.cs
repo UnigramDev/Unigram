@@ -134,6 +134,11 @@ namespace Telegram.Controls
 
         }
 
+        public virtual void OnNavigatedFrom()
+        {
+
+        }
+
         private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
             if (Window.Current.Content is RootPage root)

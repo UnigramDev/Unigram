@@ -802,15 +802,15 @@ namespace Telegram.Views
                 return;
             }
 
-//            if (fast)
-//            {
-//                if (CanFocusText(state))
-//                {
-//                    _focusState.Value = state;
-//                    FocusText(state);
-//                }
-//            }
-//            else
+            //if (fast)
+            //{
+            //    if (CanFocusText(state))
+            //    {
+            //        _focusState.Value = state;
+            //        FocusText(state);
+            //    }
+            //}
+            //else
             {
                 _focusState.Set(state);
             }
@@ -3500,7 +3500,7 @@ namespace Telegram.Views
             else if (args.Item is Sticker sticker)
             {
                 var content = args.ItemContainer.ContentTemplateRoot as Grid;
-                
+
                 var animated = content.Children[0] as AnimatedImage;
                 animated.Source = new DelayedFileSource(_viewModel.ClientService, sticker);
             }

@@ -2078,7 +2078,7 @@ namespace Telegram.Views
                 return;
             }
 
-            string GetPath(SettingsSearchEntry item)
+            static string GetPath(SettingsSearchEntry item)
             {
                 if (item.Parent != null)
                 {

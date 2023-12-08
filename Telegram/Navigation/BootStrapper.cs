@@ -517,11 +517,11 @@ namespace Telegram.Navigation
         /// A developer should call this when creating a new/secondary frame.
         /// The shell back button should only be setup one time.
         /// </summary>
-        public INavigationService NavigationServiceFactory(BackButton backButton, ExistingContent existingContent, int session, string id, bool root)
+        public INavigationService NavigationServiceFactory(BackButton backButton, int session, string id, bool root)
         {
-            Logger.Info($"{nameof(backButton)}:{backButton} {nameof(ExistingContent)}:{existingContent}");
+            Logger.Info($"{nameof(backButton)}:{backButton}");
 
-            return NavigationServiceFactory(backButton, existingContent, new Frame(), session, id, root);
+            return NavigationServiceFactory(backButton, new Frame(), session, id, root);
         }
 
         /// <summary>
@@ -541,11 +541,11 @@ namespace Telegram.Navigation
         /// A developer should call this when creating a new/secondary frame.
         /// The shell back button should only be setup one time.
         /// </summary>
-        public INavigationService NavigationServiceFactory(BackButton backButton, ExistingContent existingContent, Frame frame, int session, string id, bool root)
+        public INavigationService NavigationServiceFactory(BackButton backButton, Frame frame, int session, string id, bool root)
         {
-            Logger.Info($"{nameof(backButton)}:{backButton} {nameof(existingContent)}:{existingContent} {nameof(frame)}:{frame}");
+            Logger.Info($"{nameof(backButton)}:{backButton} {nameof(frame)}:{frame}");
 
-            frame.Content = (existingContent == ExistingContent.Include) ? Window.Current.Content : null;
+            frame.Content = null;
 
             // if the service already exists for this frame, use the existing one.
             foreach (var nav in WindowContext.All.SelectMany(x => x.NavigationServices))
@@ -731,8 +731,6 @@ namespace Telegram.Navigation
         #endregion
 
         public enum BackButton { Attach, Ignore }
-
-        public enum ExistingContent { Include, Exclude }
 
         public const string DefaultTileID = "App";
 
