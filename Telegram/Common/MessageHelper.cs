@@ -1195,7 +1195,8 @@ namespace Telegram.Common
         {
             if (TryCreateUri(url, out Uri uri))
             {
-                if (clientService != null && navigationService != null && IsTelegramUrl(uri))
+                var telegramUrl = IsTelegramUrl(uri);
+                if (telegramUrl && clientService != null && navigationService != null)
                 {
                     OpenTelegramUrl(clientService, navigationService, uri, source);
                 }
@@ -1212,7 +1213,12 @@ namespace Telegram.Common
 
                     try
                     {
-                        await Launcher.LaunchUriAsync(uri);
+                        var options = new LauncherOptions
+                        {
+                            IgnoreAppUriHandlers = telegramUrl
+                        };
+
+                        await Launcher.LaunchUriAsync(uri, options);
                     }
                     catch { }
                 }
