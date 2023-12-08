@@ -19,7 +19,6 @@ using Telegram.Services.Settings;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Gallery;
-using Telegram.Views;
 using Telegram.Views.Popups;
 using Windows.UI.Xaml;
 
@@ -157,49 +156,14 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void OpenUsername(string username)
+        public void OpenUsername(string username)
         {
-            var response = await ClientService.SendAsync(new SearchPublicChat(username));
-            if (response is Chat chat)
-            {
-                if (chat.Type is ChatTypePrivate privata)
-                {
-                    var user = ClientService.GetUser(privata.UserId);
-                    if (user?.Type is UserTypeBot)
-                    {
-                        NavigationService.NavigateToChat(chat);
-                    }
-                    else
-                    {
-                        NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                    }
-                }
-                else
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
-            }
-            else
-            {
-                await ShowPopupAsync(Strings.NoUsernameFound, Strings.AppName, Strings.OK);
-            }
+            MessageHelper.NavigateToUsername(ClientService, NavigationService, username);
         }
 
-        public async void OpenUser(long userId)
+        public void OpenUser(long userId)
         {
-            var response = await ClientService.SendAsync(new CreatePrivateChat(userId, false));
-            if (response is Chat chat)
-            {
-                var user = ClientService.GetUser(userId);
-                if (user?.Type is UserTypeBot)
-                {
-                    NavigationService.NavigateToChat(chat);
-                }
-                else
-                {
-                    NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                }
-            }
+            NavigationService.NavigateToUser(userId);
         }
 
         public void OpenUrl(string url, bool untrust)

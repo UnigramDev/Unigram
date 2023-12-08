@@ -4,10 +4,13 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Text.RegularExpressions;
+using Telegram.Navigation.Services;
+using Telegram.Services;
 using Telegram.Td;
 using Telegram.Td.Api;
+using Telegram.Views;
+using Telegram.Views.Host;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -89,16 +92,15 @@ namespace Telegram.Common
                 else if (entity.Type is TextEntityTypeTextUrl textUrl)
                 {
                     var hyperlink = new Hyperlink();
-                    hyperlink.NavigateUri = new Uri(textUrl.Url);
                     hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                    hyperlink.Click += (s, args) => Hyperlink_Click(entity.Type, textUrl.Url);
                     sender.Inlines.Add(hyperlink);
                 }
                 else if (entity.Type is TextEntityTypeMention)
                 {
-                    // TODO: this is wrong!
                     var hyperlink = new Hyperlink();
-                    hyperlink.NavigateUri = new Uri("https://t.me/" + text.Substring(entity.Offset, entity.Length));
                     hyperlink.Inlines.Add(new Run { Text = text.Substring(entity.Offset, entity.Length) });
+                    hyperlink.Click += (s, args) => Hyperlink_Click(entity.Type, text.Substring(entity.Offset, entity.Length));
                     sender.Inlines.Add(hyperlink);
                 }
                 else
@@ -199,13 +201,8 @@ namespace Telegram.Common
 
                     if (entity.Type is TextEntityTypeTextUrl textUrl)
                     {
-                        var hyperlink = new Hyperlink { NavigateUri = new Uri(textUrl.Url) };
-                        span.Inlines.Add(hyperlink);
-                        local = hyperlink;
-                    }
-                    else if (entity.Type is TextEntityTypeUrl url && Uri.TryCreate(substring, UriKind.Absolute, out Uri uri))
-                    {
-                        var hyperlink = new Hyperlink { NavigateUri = uri };
+                        var hyperlink = new Hyperlink();
+                        hyperlink.Click += (s, args) => Hyperlink_Click(entity.Type, textUrl.Url);
                         span.Inlines.Add(hyperlink);
                         local = hyperlink;
                     }
@@ -325,21 +322,24 @@ namespace Telegram.Common
 
                     if (entity.Type is TextEntityTypeTextUrl textUrl)
                     {
-                        var hyperlink = new Hyperlink { NavigateUri = new Uri(textUrl.Url) };
+                        var hyperlink = new Hyperlink();
+                        hyperlink.Click += (s, args) => Hyperlink_Click(entity.Type, textUrl.Url);
                         span.Inlines.Add(hyperlink);
                         local = hyperlink;
                     }
                     else if (entity.Type is TextEntityTypeUrl url)
                     {
                         var data = text.Substring(entity.Offset, entity.Length);
-                        var hyperlink = new Hyperlink { NavigateUri = new Uri(data) };
+                        var hyperlink = new Hyperlink();
+                        hyperlink.Click += (s, args) => Hyperlink_Click(entity.Type, data);
                         span.Inlines.Add(hyperlink);
                         local = hyperlink;
                     }
                     else if (entity.Type is TextEntityTypeMention mention)
                     {
                         var data = text.Substring(entity.Offset + 1, entity.Length - 1);
-                        var hyperlink = new Hyperlink { NavigateUri = new Uri("https://t.me/" + data) };
+                        var hyperlink = new Hyperlink();
+                        hyperlink.Click += (s, args) => Hyperlink_Click(entity.Type, data);
                         span.Inlines.Add(hyperlink);
                         local = hyperlink;
                     }
@@ -400,5 +400,34 @@ namespace Telegram.Common
 
         #endregion
 
+        private static void Hyperlink_Click(TextEntityType type, string data)
+        {
+            IClientService clientService = null;
+            INavigationService navigationService = null;
+
+            // TODO: move the code to resolve the current session from Window to TypeResolver
+            if (Window.Current.Content is RootPage rootPage && rootPage.NavigationService != null)
+            {
+                navigationService = rootPage.NavigationService;
+                clientService = TypeResolver.Current.Resolve<IClientService>(navigationService.SessionId);
+            }
+            else if (Window.Current.Content is StandalonePage standalonePage && standalonePage.NavigationService != null)
+            {
+                navigationService = standalonePage.NavigationService;
+                clientService = TypeResolver.Current.Resolve<IClientService>(navigationService.SessionId);
+            }
+
+            if (clientService != null && navigationService != null)
+            {
+                if (type is TextEntityTypeTextUrl)
+                {
+                    MessageHelper.OpenUrl(clientService, navigationService, data);
+                }
+                else if (type is TextEntityTypeMention)
+                {
+                    MessageHelper.NavigateToUsername(clientService, navigationService, data.TrimStart('@'));
+                }
+            }
+        }
     }
 }

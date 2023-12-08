@@ -381,14 +381,30 @@ namespace Telegram.Common
         {
             if (_clientService.TryGetChatFromUser(userId, out Chat chat))
             {
-                Navigate(typeof(ProfilePage), chat.Id);
+                var user = ClientService.GetUser(userId);
+                if (user?.Type is UserTypeBot)
+                {
+                    NavigateToChat(chat);
+                }
+                else
+                {
+                    Navigate(typeof(ProfilePage), chat.Id);
+                }
             }
             else
             {
                 var response = await _clientService.SendAsync(new CreatePrivateChat(userId, false));
                 if (response is Chat created)
                 {
-                    Navigate(typeof(ProfilePage), created.Id);
+                    var user = ClientService.GetUser(userId);
+                    if (user?.Type is UserTypeBot)
+                    {
+                        NavigateToChat(created);
+                    }
+                    else
+                    {
+                        Navigate(typeof(ProfilePage), created.Id);
+                    }
                 }
             }
         }

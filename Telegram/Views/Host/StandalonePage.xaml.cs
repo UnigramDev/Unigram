@@ -68,6 +68,8 @@ namespace Telegram.Views.Host
             });
         }
 
+        public INavigationService NavigationService => _navigationService;
+
         public void Connect(TeachingTip toast)
         {
             if (_navigationService?.Frame != null)

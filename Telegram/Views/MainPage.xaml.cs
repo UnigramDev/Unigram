@@ -131,6 +131,8 @@ namespace Telegram.Views
             }
         }
 
+        public INavigationService NavigationService => MasterDetail.NavigationService;
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             Initialize();

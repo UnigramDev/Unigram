@@ -102,6 +102,19 @@ namespace Telegram.Views.Host
             DropShadowEx.Attach(ThemeShadow);
         }
 
+        public INavigationService NavigationService
+        {
+            get
+            {
+                if (_navigationService?.Frame.Content is MainPage mainPage)
+                {
+                    return mainPage.NavigationService;
+                }
+
+                return null;
+            }
+        }
+
         public void PopupOpened()
         {
             if (_navigationService.Frame.Content is IRootContentPage content)
