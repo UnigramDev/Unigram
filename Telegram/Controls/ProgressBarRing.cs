@@ -6,6 +6,7 @@
 //
 using System;
 using System.Numerics;
+using Telegram.Common;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -16,6 +17,8 @@ namespace Telegram.Controls
 {
     public class ProgressBarRing : ProgressBar
     {
+        private readonly FrameworkElementState _manager;
+
         private readonly ShapeVisual _visual;
         private readonly CompositionSpriteShape _shape;
         private readonly CompositionEllipseGeometry _ellipse;
@@ -83,8 +86,9 @@ namespace Telegram.Controls
             ElementCompositionPreview.SetElementChildVisual(this, visual);
             RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            _manager = new FrameworkElementState(this);
+            _manager.Loaded += OnLoaded;
+            _manager.Unloaded += OnUnloaded;
         }
 
         public double Radius { get; set; } = 21;

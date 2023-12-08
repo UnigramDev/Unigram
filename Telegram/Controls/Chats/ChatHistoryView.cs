@@ -44,6 +44,8 @@ namespace Telegram.Controls.Chats
             }
         }
 
+        private readonly FrameworkElementState _manager;
+
         private readonly DisposableMutex _loadMoreLock = new();
         private int _loadMoreCount = 0;
 
@@ -59,8 +61,9 @@ namespace Telegram.Controls.Chats
             _recognizer.GestureSettings = GestureSettings.DoubleTap;
             _recognizer.Tapped += Recognizer_Tapped;
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            _manager = new FrameworkElementState(this);
+            _manager.Loaded += OnLoaded;
+            _manager.Unloaded += OnUnloaded;
         }
 
         private bool _raiseViewChanged;

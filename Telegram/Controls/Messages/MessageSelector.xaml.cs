@@ -26,6 +26,8 @@ namespace Telegram.Controls.Messages
 {
     public sealed partial class MessageSelector : CheckBox
     {
+        private readonly FrameworkElementState _manager;
+
         private Border Icon;
         private ContentPresenter Presenter;
 
@@ -39,7 +41,9 @@ namespace Telegram.Controls.Messages
         public MessageSelector()
         {
             DefaultStyleKey = typeof(MessageSelector);
-            Unloaded += OnUnloaded;
+
+            _manager = new FrameworkElementState(this);
+            _manager.Unloaded += OnUnloaded;
         }
 
         public MessageSelector(MessageViewModel message, UIElement child)
