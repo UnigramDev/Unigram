@@ -150,11 +150,11 @@ namespace Telegram.Controls
             {
                 if (sender.ItemsPanel == VerticalStack)
                 {
-                    args.ItemContainer = new ListViewItem();
+                    args.ItemContainer = new TextListViewItem();
                 }
                 else
                 {
-                    args.ItemContainer = new GridViewItem
+                    args.ItemContainer = new TextGridViewItem
                     {
                         Margin = new Thickness(2)
                     };
