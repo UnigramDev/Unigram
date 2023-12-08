@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using Telegram.Common;
 using Telegram.Navigation;
 using Windows.UI.Xaml;
@@ -110,12 +111,39 @@ namespace Telegram.Services
 
                 foreach (var value in _delegates)
                 {
-                    value.Value.DynamicInvoke(message);
+                    DynamicInvoke(value.Value, message);
                     count++;
                 }
 
                 _count = count;
                 return count == 0;
+            }
+
+            protected bool DynamicInvoke(Delegate delegato, object message, object subscriber = null)
+            {
+                try
+                {
+                    if (subscriber != null)
+                    {
+                        delegato.DynamicInvoke(subscriber, message);
+                    }
+                    else
+                    {
+                        delegato.DynamicInvoke(message);
+                    }
+                    return true;
+                }
+                catch (InvalidComObjectException)
+                {
+                    // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
+                    // TODO: would be great to remove the subscriber from the delegates here.
+                    Unsubscribe(subscriber);
+                    return false;
+                }
+                catch
+                {
+                    return true;
+                }
             }
 
             public void Subscribe(object subscriber, Delegate handler)
@@ -210,34 +238,17 @@ namespace Telegram.Services
 
                 foreach (var value in _delegates)
                 {
-                    var subscriber = value.Key;
-                    var delegato = value.Value;
-
-                    void DynamicInvoke(Delegate delegato, object subscriber, object message)
-                    {
-                        try
-                        {
-                            delegato.DynamicInvoke(subscriber, message);
-                        }
-                        catch
-                        {
-                            // Most likely Excep_InvalidComObject_NoRCW_Wrapper, so we can just ignore it
-                            // TODO: would be great to remove the subscriber from the delegates here.
-                            Unsubscribe(subscriber);
-                        }
-                    }
-
                     if (value.Key is FrameworkElement element)
                     {
-                        element.BeginOnUIThread(() => DynamicInvoke(delegato, subscriber, message));
+                        element.BeginOnUIThread(() => DynamicInvoke(value.Value, message, value.Key));
                     }
                     else if (value.Key is ViewModelBase navigable && navigable.Dispatcher != null)
                     {
-                        navigable.BeginOnUIThread(() => DynamicInvoke(delegato, subscriber, message));
+                        navigable.BeginOnUIThread(() => DynamicInvoke(value.Value, message, value.Key));
                     }
                     else
                     {
-                        DynamicInvoke(delegato, subscriber, message);
+                        DynamicInvoke(value.Value, message, value.Key);
                     }
 
                     count++;
