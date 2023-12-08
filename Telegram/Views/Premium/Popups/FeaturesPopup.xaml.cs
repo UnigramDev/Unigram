@@ -30,7 +30,7 @@ namespace Telegram.Views.Premium.Popups
             _animations = animations;
             _stickers = stickers;
 
-            var items = features.Where(x => x is not PremiumFeatureIncreasedLimits).ToArray();
+            var items = features.Where(x => x is not PremiumFeatureIncreasedLimits and not PremiumFeatureUpgradedStories).ToArray();
 
             Pager.NumberOfPages = items.Length;
 
