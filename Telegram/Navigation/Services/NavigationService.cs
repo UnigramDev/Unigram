@@ -203,7 +203,7 @@ namespace Telegram.Navigation.Services
                     {
                         if (page is HostedPage hosted)
                         {
-                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, hosted.Title, hosted.NavigationMode));
+                            BackStack.Add(new NavigationStackItem(CurrentPageType, CurrentPageParam, hosted.GetTitle(), hosted.NavigationMode));
                         }
                         else
                         {

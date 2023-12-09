@@ -60,13 +60,10 @@ using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Views
 {
-    public sealed partial class ChatView : UserControl, INavigablePage, ISearchablePage, IDialogDelegate, IActivablePage
+    public sealed partial class ChatView : UserControl, INavigablePage, ISearchablePage, IDialogDelegate
     {
         private DialogViewModel _viewModel;
         public DialogViewModel ViewModel => _viewModel ??= DataContext as DialogViewModel;
-
-        private readonly Func<IDialogDelegate, int, DialogViewModel> _getViewModel;
-        private readonly Action<string> _setTitle;
 
         private readonly bool _myPeople;
 
@@ -93,12 +90,9 @@ namespace Telegram.Views
 
         private bool _needActivation = true;
 
-        public ChatView(Func<IDialogDelegate, int, DialogViewModel> getViewModel, Action<string> setTitle)
+        public ChatView()
         {
             InitializeComponent();
-
-            _getViewModel = getViewModel;
-            _setTitle = setTitle;
 
             // TODO: this might need to change depending on context
             _autocompleteHandler = new AnimatedListHandler(ListAutocomplete, AnimatedListType.Stickers);
@@ -386,12 +380,12 @@ namespace Telegram.Views
             Cleanup(ref _cleanup);
         }
 
-        public void Activate(int sessionId)
+        public void Activate(DialogViewModel viewModel)
         {
             Logger.Info($"ItemsPanelRoot.Children.Count: {Messages.ItemsPanelRoot?.Children.Count}");
             Logger.Info($"Items.Count: {Messages.Items.Count}");
 
-            DataContext = _viewModel = _getViewModel(this, sessionId);
+            DataContext = _viewModel = viewModel;
 
             _updateThemeTask = new TaskCompletionSource<bool>();
             ViewModel.MessageSliceLoaded += OnMessageSliceLoaded;
@@ -3722,8 +3716,10 @@ namespace Telegram.Views
                 Title.Text = ViewModel.ClientService.GetTitle(chat);
             }
 
-            _setTitle(Title.Text);
+            ChatTitle = Title.Text;
         }
+
+        public string ChatTitle { get; private set; }
 
         public void UpdateChatPhoto(Chat chat)
         {

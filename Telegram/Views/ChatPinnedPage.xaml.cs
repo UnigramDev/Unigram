@@ -15,27 +15,15 @@ namespace Telegram.Views
     {
         public DialogPinnedViewModel ViewModel => DataContext as DialogPinnedViewModel;
 
-        public ChatView View => Content as ChatView;
-
         public ChatPinnedPage()
         {
             InitializeComponent();
-
-            Content = new ChatView(CreateViewModel, SetTitle);
             NavigationCacheMode = NavigationCacheMode.Required;
         }
 
-        private DialogViewModel CreateViewModel(IDialogDelegate delegato, int sessionId)
+        public override string GetTitle()
         {
-            var viewModel = TypeResolver.Current.Resolve<DialogPinnedViewModel, IDialogDelegate>(delegato, sessionId);
-            DataContext = viewModel;
-
-            return viewModel;
-        }
-
-        private void SetTitle(string title)
-        {
-            Title = title;
+            return View.ChatTitle;
         }
 
         public void OnBackRequested(BackRequestedRoutedEventArgs args)
@@ -62,7 +50,9 @@ namespace Telegram.Views
 
         public void Activate(int sessionId)
         {
-            View.Activate(sessionId);
+            var viewModel = TypeResolver.Current.Resolve<DialogPinnedViewModel, IDialogDelegate>(View, sessionId);
+            DataContext = viewModel;
+            View.Activate(viewModel);
         }
 
         public void PopupOpened()

@@ -3569,6 +3569,11 @@ namespace Telegram.Views
         public static readonly DependencyProperty TitleProperty =
             DependencyProperty.Register("Title", typeof(string), typeof(HostedPage), new PropertyMetadata(null));
 
+        public virtual string GetTitle()
+        {
+            return Title;
+        }
+
         #endregion
 
         #region NavigationMode
