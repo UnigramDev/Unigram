@@ -20,7 +20,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Telegram.ViewModels.Gallery;
-using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.System;
 using Windows.UI;
@@ -44,17 +43,11 @@ namespace Telegram.Views
 
         public IEventAggregator Aggregator => ViewModel.Aggregator;
 
-        private readonly string _injectedJs;
-        private readonly ScrollViewer _scrollingHost;
-
         private readonly List<IPlayerView> _animations = new List<IPlayerView>();
 
         public InstantPage()
         {
             InitializeComponent();
-
-            var jsPath = System.IO.Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Webviews", "injected.js");
-            _injectedJs = System.IO.File.ReadAllText(jsPath);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

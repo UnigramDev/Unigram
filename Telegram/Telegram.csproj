@@ -1864,7 +1864,6 @@
     <Content Include="Assets\Logos\StoreLogo.scale-150.png" />
     <Content Include="Assets\Logos\StoreLogo.scale-200.png" />
     <Content Include="Assets\Logos\StoreLogo.scale-400.png" />
-    <Content Include="Assets\Webviews\injected.js" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
