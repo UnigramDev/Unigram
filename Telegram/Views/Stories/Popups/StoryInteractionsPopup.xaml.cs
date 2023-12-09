@@ -29,24 +29,29 @@ namespace Telegram.Views.Stories.Popups
             SecondaryButtonText = Strings.Close;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
             ShowHideSkeleton();
 
             if (ScrollingHost.ItemsPanelRoot != null)
             {
-                ScrollingHost.ItemsPanelRoot.MinHeight = ScrollingHost.ActualHeight;
+                ScrollingHost.ItemsPanelRoot.MinHeight = ScrollingHost.ActualHeight - 24;
             }
         }
 
         public override void OnNavigatedTo()
         {
             var story = ViewModel.Story;
-            if (story?.InteractionInfo != null && story.CanGetViewers && (story.ClientService.IsPremium || !story.HasExpiredViewers))
+            if (story?.InteractionInfo != null && story.CanGetViewers && (story.ClientService.IsPremium || story.InteractionInfo.ReactionCount > 0))
             {
                 ViewModel.Items.CollectionChanged += OnCollectionChanged;
 
-                if (story.InteractionInfo.ViewCount >= 9)
+                var premium = story.ClientService.IsPremium;
+                var count = story.HasExpiredViewers
+                    ? story.InteractionInfo.ReactionCount 
+                    : story.InteractionInfo.ViewCount;
+
+                if (count >= 9)
                 {
                     VerticalContentAlignment = VerticalAlignment.Stretch;
                     ScrollingHost.Height = double.NaN;
@@ -54,30 +59,32 @@ namespace Telegram.Views.Stories.Popups
                 else
                 {
                     VerticalContentAlignment = VerticalAlignment.Center;
-                    ScrollingHost.Height = story.InteractionInfo.ViewCount * 48;
+                    ScrollingHost.Height = count * 48 + 24;
                 }
 
                 PrimaryButtonText = string.Empty;
 
-                SearchField.Visibility = story.InteractionInfo.ViewCount >= 15
+                SearchField.Visibility = premium && story.InteractionInfo.ViewCount >= 15
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
-                SortBy.Visibility = story.InteractionInfo.ReactionCount >= 10
+                SortBy.Visibility =  premium && story.InteractionInfo.ReactionCount >= 10
                     ? Visibility.Visible
                     : Visibility.Collapsed;
 
-                Navigation.Visibility = story.PrivacySettings is not StoryPrivacySettingsEveryone || story.InteractionInfo.ViewCount < 20
-                    ? Visibility.Collapsed
-                    : Visibility.Visible;
-
-                if (story.PrivacySettings is not StoryPrivacySettingsEveryone || story.InteractionInfo.ViewCount < 20)
+                if (story.PrivacySettings is not StoryPrivacySettingsEveryone || story.InteractionInfo.ViewCount < 20 || !premium)
                 {
                     Navigation.Visibility = Visibility.Collapsed;
-                    Title = Locale.Declension(Strings.R.Views, story.InteractionInfo.ViewCount);
+                    Title = premium
+                        ? Locale.Declension(Strings.R.Views, story.InteractionInfo.ViewCount)
+                        : Locale.Declension(Strings.R.Likes, story.InteractionInfo.ReactionCount);
 
                     Padding = new Thickness(0, 24, 0, 0);
                     SortBy.Margin = new Thickness(0, -36, 24, 12);
+
+                    ExpiredFooter.Visibility = count < story.InteractionInfo.ViewCount
+                        ? Visibility.Visible
+                        : Visibility.Collapsed;
                 }
                 else
                 {
@@ -86,6 +93,8 @@ namespace Telegram.Views.Stories.Popups
 
                     Padding = new Thickness(0);
                     SortBy.Margin = new Thickness(0, 0, 24, 0);
+
+                    ExpiredFooter.Visibility = Visibility.Collapsed;
                 }
             }
             else
@@ -111,6 +120,8 @@ namespace Telegram.Views.Stories.Popups
                     : Strings.StatisticViews;
 
                 Padding = new Thickness(0);
+
+                ExpiredFooter.Visibility = Visibility.Collapsed;
             }
         }
 
@@ -251,6 +262,11 @@ namespace Telegram.Views.Stories.Popups
 
         private void ShowSkeleton()
         {
+            if (ViewModel?.Story?.InteractionInfo == null)
+            {
+                return;
+            }
+
             var size = ScrollingHost.ActualSize;
             var itemHeight = 6 + 36 + 6;
 

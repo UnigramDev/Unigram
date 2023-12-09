@@ -12,7 +12,7 @@
                        d:DesignWidth="400"
                        VerticalContentAlignment="Stretch"
                        Padding="0"
-                       Loaded="OnLoaded">
+                       Opened="OnOpened">
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
@@ -141,6 +141,14 @@
                 <Style TargetType="ListViewItem"
                        BasedOn="{StaticResource DefaultListViewItemStyle}" />
             </ListView.ItemContainerStyle>
+            <ListView.Footer>
+                <Border>
+                    <TextBlock x:Name="ExpiredFooter"
+                               common:TextBlockHelper.Markdown="{CustomResource ExpiredViewsStubPremiumDescription}"
+                               Style="{StaticResource InfoCaptionTextBlockStyle}"
+                               Margin="12,8,12,0" />
+                </Border>
+            </ListView.Footer>
             <ListView.ItemContainerTransitions>
                 <TransitionCollection />
             </ListView.ItemContainerTransitions>
