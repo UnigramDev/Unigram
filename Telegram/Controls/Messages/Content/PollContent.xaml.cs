@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class PollContent : Control, IContent
+    public sealed class PollContent : ControlEx, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -30,7 +30,7 @@ namespace Telegram.Controls.Messages.Content
 
             DefaultStyleKey = typeof(PollContent);
 
-            Unloaded += OnUnloaded;
+            Disconnected += OnUnloaded;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)

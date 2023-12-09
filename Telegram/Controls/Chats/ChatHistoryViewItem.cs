@@ -24,7 +24,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatHistoryViewItem : ListViewItem, IInteractionTrackerOwner
+    public class ChatHistoryViewItem : ListViewItemEx, IInteractionTrackerOwner
     {
         private readonly ChatHistoryView _owner;
         private readonly string _typeName;
@@ -50,6 +50,9 @@ namespace Telegram.Controls.Chats
             _owner = owner;
             _typeName = typeName;
 
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
+
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);
         }
 
@@ -74,9 +77,6 @@ namespace Telegram.Controls.Chats
                 _requiresArrange = true;
                 _presenter = GetTemplateChild("ContentBorder") as FrameworkElement;
             }
-
-            DetachEventHandlers();
-            AttachEventHandlers();
         }
 
         protected override Size ArrangeOverride(Size finalSize)
@@ -88,16 +88,6 @@ namespace Telegram.Controls.Chats
             }
 
             return base.ArrangeOverride(finalSize);
-        }
-
-        private void AttachEventHandlers()
-        {
-            Loaded += OnLoaded;
-        }
-
-        private void DetachEventHandlers()
-        {
-            Loaded -= OnLoaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -129,6 +119,20 @@ namespace Telegram.Controls.Chats
             }
 
             _hasInitialLoadedEventFired = true;
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            if (_hasInitialLoadedEventFired)
+            {
+                _tracker.Dispose();
+                _tracker = null;
+
+                _interactionSource.Dispose();
+                _interactionSource = null;
+            }
+
+            _hasInitialLoadedEventFired = false;
         }
 
         private void ConfigureInteractionTracker()

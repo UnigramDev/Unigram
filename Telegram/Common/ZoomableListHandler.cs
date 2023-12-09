@@ -22,6 +22,7 @@ namespace Telegram.Common
     public class ZoomableListHandler
     {
         private readonly ListViewBase _listView;
+        private readonly FrameworkElementState _manager;
         private readonly DispatcherTimer _throttler;
 
         private Control _element;
@@ -34,8 +35,10 @@ namespace Telegram.Common
         public ZoomableListHandler(ListViewBase listView)
         {
             _listView = listView;
-            _listView.Loaded += OnLoaded;
-            _listView.Unloaded += OnUnloaded;
+
+            _manager = new FrameworkElementState(listView);
+            _manager.Loaded += OnLoaded;
+            _manager.Unloaded += OnUnloaded;
 
             _popupHost = new Popup();
             _popupHost.IsHitTestVisible = false;

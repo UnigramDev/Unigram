@@ -13,15 +13,6 @@ namespace Telegram.Common
             element.Unloaded += OnUnloaded;
         }
 
-        public FrameworkElementState(FrameworkElement element, RoutedEventHandler loaded, RoutedEventHandler unloaded)
-        {
-            element.Loaded += OnLoaded;
-            element.Unloaded += OnUnloaded;
-
-            Loaded += loaded;
-            Unloaded += unloaded;
-        }
-
         ~FrameworkElementState()
         {
             Debug.WriteLine("~LifecycleManager");

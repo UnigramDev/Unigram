@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls
 {
-    public class TopNavView : ListView
+    public class TopNavView : ListViewEx
     {
         private readonly Vector2 c_frame1point1 = new(0.9f, 0.1f);
         private readonly Vector2 c_frame1point2 = new(1.0f, 0.2f);

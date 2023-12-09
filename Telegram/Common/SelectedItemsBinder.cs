@@ -103,12 +103,15 @@ namespace Telegram.Common
         #endregion
 
         private ListViewBase _listView;
+        private FrameworkElementState _manager;
 
         private void Attach(ListViewBase view)
         {
             _listView = view;
-            _listView.Loaded += OnLoaded;
-            _listView.Unloaded += OnUnloaded;
+
+            _manager = new FrameworkElementState(view);
+            _manager.Loaded += OnLoaded;
+            _manager.Unloaded += OnUnloaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

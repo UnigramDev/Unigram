@@ -11,11 +11,10 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace Telegram.Controls.Cells
 {
-    public sealed partial class SharedVoiceCell : Grid
+    public sealed partial class SharedVoiceCell : GridEx
     {
         private IPlaybackService _playbackService;
         private MessageWithOwner _message;

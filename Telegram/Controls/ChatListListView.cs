@@ -44,8 +44,8 @@ namespace Telegram.Controls
         {
             DefaultStyleKey = typeof(ListView);
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
             ContainerContentChanging += OnContainerContentChanging;
 
             AddHandler(PointerPressedEvent, new PointerEventHandler(OnPointerPressed), true);

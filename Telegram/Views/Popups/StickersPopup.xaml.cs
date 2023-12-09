@@ -46,14 +46,6 @@ namespace Telegram.Views.Popups
             SecondaryButtonText = Strings.Close;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
         {
             _handler.UnloadItems();

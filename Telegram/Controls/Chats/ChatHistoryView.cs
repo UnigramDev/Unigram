@@ -24,7 +24,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Chats
 {
-    public class ChatHistoryView : ListView
+    public class ChatHistoryView : ListViewEx
     {
         public DialogViewModel ViewModel => DataContext as DialogViewModel;
         public IDialogDelegate Delegate { get; set; }
@@ -44,8 +44,6 @@ namespace Telegram.Controls.Chats
             }
         }
 
-        private readonly FrameworkElementState _manager;
-
         private readonly DisposableMutex _loadMoreLock = new();
         private int _loadMoreCount = 0;
 
@@ -61,9 +59,8 @@ namespace Telegram.Controls.Chats
             _recognizer.GestureSettings = GestureSettings.DoubleTap;
             _recognizer.Tapped += Recognizer_Tapped;
 
-            _manager = new FrameworkElementState(this);
-            _manager.Loaded += OnLoaded;
-            _manager.Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
         }
 
         private bool _raiseViewChanged;

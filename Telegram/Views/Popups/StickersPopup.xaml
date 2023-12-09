@@ -14,9 +14,7 @@
                        VerticalContentAlignment="Stretch"
                        ContentMaxHeight="500"
                        Padding="0,10,0,0"
-                       Closing="OnClosing"
-                       Loaded="OnLoaded"
-                       Unloaded="OnUnloaded">
+                       Closing="OnClosing">
 
     <Grid>
         <Grid.RowDefinitions>

@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Views.Popups
 {
-    public sealed partial class ZoomableMediaPopup : Grid
+    public sealed partial class ZoomableMediaPopup : GridEx
     {
         private ApplicationView _applicationView;
 
@@ -30,8 +30,8 @@ namespace Telegram.Views.Popups
         {
             InitializeComponent();
 
-            Loaded += OnLoaded;
-            Unloaded += OnUnloaded;
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

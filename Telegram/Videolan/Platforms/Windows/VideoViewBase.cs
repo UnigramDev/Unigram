@@ -5,6 +5,7 @@ using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Mathematics.Interop;
+using Telegram.Controls;
 
 #if WINUI
 using Microsoft.UI.Xaml;
@@ -21,7 +22,7 @@ namespace LibVLCSharp.Platforms.Windows
     /// VideoView base class for the UWP platform
     /// </summary>
     [TemplatePart(Name = PartSwapChainPanelName, Type = typeof(SwapChainPanel))]
-    public abstract class VideoViewBase : Control, IVideoView
+    public abstract class VideoViewBase : ControlEx, IVideoView
     {
         private const string PartSwapChainPanelName = "SwapChainPanel";
 
@@ -40,7 +41,7 @@ namespace LibVLCSharp.Platforms.Windows
         {
             DefaultStyleKey = typeof(VideoViewBase);
 
-            Unloaded += (s, e) => DestroySwapChain();
+            Disconnected += (s, e) => DestroySwapChain();
 #if !WINUI
             if (!DesignMode.DesignModeEnabled)
             {

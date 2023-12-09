@@ -89,30 +89,21 @@ namespace Telegram.Controls.Cells
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken == 0 && (_container != null || _visual != null))
+            if (_container != null || _visual != null)
             {
-                _strokeToken = stroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+                Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
             }
 
-            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken == 0 && _visual != null)
+            if (_visual != null)
             {
-                _selectionStrokeToken = selectionStroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
+                SelectionStroke?.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken != 0)
-            {
-                stroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
-                _strokeToken = 0;
-            }
-
-            if (SelectionStroke is SolidColorBrush selectionStroke && _selectionStrokeToken != 0)
-            {
-                selectionStroke.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
-                _selectionStrokeToken = 0;
-            }
+            Stroke?.UnregisterColorChangedCallback(ref _strokeToken);
+            SelectionStroke?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
         }
 
         #region InitializeComponent

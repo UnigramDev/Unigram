@@ -17,7 +17,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class AudioContent : Control, IContent
+    public sealed class AudioContent : ControlEx, IContent
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -30,7 +30,7 @@ namespace Telegram.Controls.Messages.Content
             _message = message;
 
             DefaultStyleKey = typeof(AudioContent);
-            Unloaded += OnUnloaded;
+            Disconnected += OnUnloaded;
         }
 
         public AudioContent()

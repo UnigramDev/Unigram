@@ -23,7 +23,7 @@ using Windows.UI.Xaml.Hosting;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class VoiceNoteContent : Control, IContentWithFile
+    public sealed class VoiceNoteContent : ControlEx, IContentWithFile
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -36,7 +36,7 @@ namespace Telegram.Controls.Messages.Content
 
             DefaultStyleKey = typeof(VoiceNoteContent);
 
-            Unloaded += OnUnloaded;
+            Disconnected += OnUnloaded;
         }
 
         public VoiceNoteContent()
