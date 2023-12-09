@@ -149,7 +149,6 @@ namespace Telegram.Views
             try
             {
                 Bindings.StopTracking();
-                DataContext = null;
 
                 var viewModel = _viewModel;
                 if (viewModel != null)
@@ -168,13 +167,13 @@ namespace Telegram.Views
                 MasterDetail.Dispose();
                 SettingsView?.Dispose();
 
-                _viewModel = null;
-
                 if (_memoryUsageTimer != null)
                 {
                     _memoryUsageTimer.Tick -= MemoryUsageTimer_Tick;
                     _memoryUsageTimer.Stop();
                 }
+
+                FocusManager.GettingFocus -= OnGettingFocus;
             }
             catch { }
         }
