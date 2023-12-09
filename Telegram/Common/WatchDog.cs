@@ -17,6 +17,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using Windows.System;
 using Windows.System.Profile;
+using Windows.UI.Xaml;
 using File = System.IO.File;
 
 namespace Telegram
@@ -79,11 +80,18 @@ namespace Telegram
         {
             NativeUtils.SetFatalErrorCallback(FatalErrorCallback);
 
-#if DEBUG
-            Client.SetLogMessageCallback(5, FatalErrorCallback);
-#else
-            Client.SetLogMessageCallback(0, FatalErrorCallback);
-#endif
+            Client.SetLogMessageCallback(Constants.DEBUG ? 5 : 0, FatalErrorCallback);
+
+            BootStrapper.Current.UnhandledException += (s, args) =>
+            {
+                if (args.Exception is LayoutCycleException && ApiInfo.IsPackagedRelease)
+                {
+                    SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
+                    SettingsService.Current.Diagnostics.UseLayoutRounding = false;
+                }
+
+                args.Handled = args.Exception is not LayoutCycleException;
+            };
 
             if (_disabled)
             {
@@ -222,7 +230,8 @@ namespace Telegram
                 $"Memory usage level: {MemoryManager.AppMemoryUsageLevel}\n" +
                 $"Memory usage limit: {memoryUsageLimit}\n" +
                 $"Time since last update: {next - prev}s\n" +
-                $"Update count: {count}\n";
+                $"Update count: {count}\n" + 
+                $"Layout rounding: {SettingsService.Current.Diagnostics.UseLayoutRounding}\n";
 
             if (WindowContext.Current != null)
             {
@@ -234,6 +243,7 @@ namespace Telegram
             }
 
             info += "\n";
+            info += Environment.StackTrace + "\n\n";
 
             var dump = Logger.Dump();
             var payload = info + dump;

@@ -88,17 +88,6 @@ namespace Telegram
 
             RequestedTheme = SettingsService.Current.Appearance.GetCalculatedApplicationTheme();
             InitializeComponent();
-
-            UnhandledException += (s, args) =>
-            {
-                if (args.Exception is LayoutCycleException && ApiInfo.IsPackagedRelease)
-                {
-                    SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
-                    SettingsService.Current.Diagnostics.UseLayoutRounding = false;
-                }
-
-                args.Handled = args.Exception is not LayoutCycleException;
-            };
         }
 
         protected override void OnWindowActivated(bool active)

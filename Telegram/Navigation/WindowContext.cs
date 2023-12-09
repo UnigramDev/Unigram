@@ -385,6 +385,7 @@ namespace Telegram.Navigation
 
             if (args is ShareTargetActivatedEventArgs share)
             {
+                WatchDog.TrackEvent("ShareTarget");
                 var package = new DataPackage();
 
                 try
