@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -10,7 +9,6 @@ using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
-using Telegram.Views;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -210,32 +208,16 @@ namespace Telegram.ViewModels
 
         public bool HasMoreItems { get; private set; } = true;
 
-        public async void OpenChat(object clickedItem)
+        public void OpenChat(object clickedItem)
         {
             if (clickedItem is AddedReaction addedReaction)
             {
-                if (addedReaction.SenderId is MessageSenderChat senderChat)
-                {
-                    NavigationService.Navigate(typeof(ProfilePage), senderChat.ChatId);
-                }
-                else if (addedReaction.SenderId is MessageSenderUser senderUser)
-                {
-                    var response = await ClientService.SendAsync(new CreatePrivateChat(senderUser.UserId, true));
-                    if (response is Chat chat)
-                    {
-                        NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                    }
-                }
+                NavigationService.NavigateToSender(addedReaction.SenderId);
             }
             else if (clickedItem is MessageViewer messageViewer)
             {
-                var response = await ClientService.SendAsync(new CreatePrivateChat(messageViewer.UserId, true));
-                if (response is Chat chat)
-                {
-                    NavigationService.Navigate(typeof(ProfilePage), chat.Id);
-                }
+                NavigationService.NavigateToUser(messageViewer.UserId);
             }
         }
     }
-
 }

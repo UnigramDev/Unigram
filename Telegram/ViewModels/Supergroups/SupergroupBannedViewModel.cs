@@ -6,9 +6,9 @@
 //
 using System;
 using System.Threading.Tasks;
+using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
-using Telegram.Views;
 using Telegram.Views.Supergroups.Popups;
 
 namespace Telegram.ViewModels.Supergroups
@@ -35,14 +35,7 @@ namespace Telegram.ViewModels.Supergroups
 
         public void OpenMember(ChatMember member)
         {
-            if (member?.MemberId is MessageSenderChat senderChat)
-            {
-                NavigationService.Navigate(typeof(ProfilePage), senderChat.ChatId);
-            }
-            else if (member?.MemberId is MessageSenderUser senderUser)
-            {
-                NavigationService.Navigate(typeof(ProfilePage), senderUser.UserId);
-            }
+            NavigationService.NavigateToSender(member.MemberId);
         }
 
         public async void AddMember(ChatMember member)
