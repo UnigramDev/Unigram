@@ -173,7 +173,9 @@ namespace Telegram.Views
                     _memoryUsageTimer.Stop();
                 }
 
+#if DEBUG
                 FocusManager.GettingFocus -= OnGettingFocus;
+#endif
             }
             catch { }
         }
