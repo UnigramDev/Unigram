@@ -154,7 +154,7 @@ namespace Telegram.Services.ViewService
 
                 foreach (var service in window.NavigationServices)
                 {
-                    if (parameter is long chatId && service.IsChatOpen(chatId))
+                    if (parameter is long chatId && service.IsChatOpen(chatId, true))
                     {
                         oldControl = ViewLifetimeControl.GetForCurrentView();
                         return Task.CompletedTask;

@@ -331,7 +331,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (NavigationService.IsChatOpen(chat.Id, true))
+            if (NavigationService.IsChatOpen(chat.Id))
             {
                 NavigationService.GoBack();
             }
@@ -726,7 +726,7 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (NavigationService.IsChatOpen(chat.Id, true))
+            if (NavigationService.IsChatOpen(chat.Id))
             {
                 NavigationService.GoBack(new NavigationState { { "search", query } });
             }
