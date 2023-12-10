@@ -81,9 +81,12 @@ namespace Telegram.Views.Host
 
         public void Disconnect(TeachingTip toast)
         {
-            if (_navigationService?.Frame != null)
+            if (_navigationService?.Frame != null && _navigationService.Frame.Resources.TryGetValue("TeachingTip", out object cached))
             {
-                _navigationService.Frame.Resources.Remove("TeachingTip");
+                if (cached == toast)
+                {
+                    _navigationService.Frame.Resources.Remove("TeachingTip");
+                }
             }
         }
 

@@ -142,9 +142,12 @@ namespace Telegram.Views.Host
 
         public void Disconnect(TeachingTip toast)
         {
-            if (_navigationService?.Frame != null)
+            if (_navigationService?.Frame != null && _navigationService.Frame.Resources.TryGetValue("TeachingTip", out object cached))
             {
-                _navigationService.Frame.Resources.Remove("TeachingTip");
+                if (cached == toast)
+                {
+                    _navigationService.Frame.Resources.Remove("TeachingTip");
+                }
             }
         }
 
@@ -421,7 +424,7 @@ namespace Telegram.Views.Host
                     _navigationViewItems.Insert(1, RootDestination.AddAccount);
                 }
 
-                if (items.Count > 1)
+                if (items.Count > 0)
                 {
                     foreach (var item in items.OrderByDescending(x => { int index = Array.IndexOf(SettingsService.Current.AccountsSelectorOrder, x.Id); return index < 0 ? x.Id : index; }))
                     {
@@ -692,7 +695,7 @@ namespace Telegram.Views.Host
             swit.Content = "SW";
             swit.Click += async (s, args) =>
             {
-                for (int i = 0; i < 100; i++)
+                for (int i = 0; i < 10; i++)
                 {
                     Switch(_lifetime.ActiveItem);
                     await Task.Delay(2000);
@@ -701,11 +704,39 @@ namespace Telegram.Views.Host
                 TestDestroy();
             };
 
+            var clin = new Button();
+            clin.HorizontalAlignment = HorizontalAlignment.Center;
+            clin.Content = "CL";
+            clin.Click += (s, args) =>
+            {
+                var butt = new RepeatButton();
+                butt.HorizontalAlignment = HorizontalAlignment.Center;
+                butt.Content = "GC";
+                butt.Click += (s, args) =>
+                {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                    GC.Collect();
+                };
+
+                Window.Current.Content = butt;
+            };
+
+            var rest = new Button();
+            rest.HorizontalAlignment = HorizontalAlignment.Center;
+            rest.Content = "RE";
+            rest.Click += (s, args) =>
+            {
+                Switch(_lifetime.ActiveItem);
+            };
+
             var panel = new StackPanel();
             panel.VerticalAlignment = VerticalAlignment.Center;
             panel.HorizontalAlignment = HorizontalAlignment.Center;
             panel.Children.Add(butt);
             panel.Children.Add(swit);
+            panel.Children.Add(clin);
+            panel.Children.Add(rest);
 
             Navigation.Content = panel;
             _navigationService = null;
