@@ -713,11 +713,7 @@ namespace Telegram.Controls.Drawers
             }
 
             var animated = content.Children[0] as AnimatedImage;
-            animated.Source = new DelayedFileSource(ViewModel.ClientService, sticker)
-            {
-                NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji customEmoji
-                    && customEmoji.NeedsRepainting
-            };
+            animated.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
 
             //if (toolbar)
             //{

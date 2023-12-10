@@ -47,8 +47,7 @@ namespace Telegram.Streams
                         //Width = sticker.Width;
                         //Height = sticker.Height;
                         //Outline = sticker.Outline;
-                        NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji customEmoji
-                            && customEmoji.NeedsRepainting;
+                        NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
                     }
                 }
 

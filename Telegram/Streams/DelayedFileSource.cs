@@ -35,7 +35,7 @@ namespace Telegram.Streams
             Width = sticker.Width;
             Height = sticker.Height;
             Outline = sticker.Outline;
-            NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji;
+            NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
         }
 
         public override string FilePath => _file?.Local.Path;
