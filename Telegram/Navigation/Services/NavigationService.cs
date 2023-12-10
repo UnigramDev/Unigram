@@ -278,9 +278,9 @@ namespace Telegram.Navigation.Services
             }
         }
 
-        private INavigable ViewModelForPage(Page page)
+        private INavigable ViewModelForPage(Page page, bool allowCreate = false)
         {
-            if (page.DataContext is not INavigable or null)
+            if (page.DataContext is not INavigable or null && allowCreate)
             {
                 // to support dependency injection, but keeping it optional.
                 var viewModel = BootStrapper.Current.ViewModelForPage(page, SessionId);
@@ -352,7 +352,7 @@ namespace Telegram.Navigation.Services
                 //    pageState?.Clear();
                 //}
 
-                var dataContext = ViewModelForPage(page);
+                var dataContext = ViewModelForPage(page, true);
                 if (dataContext != null)
                 {
                     // prepare for state load
