@@ -1392,7 +1392,7 @@
            BasedOn="{StaticResource DefaultTableListViewItemStyle}" />
 
     <windows10:Style x:Key="DefaultTableListViewItemStyle"
-                     TargetType="local:TableListViewItem"
+                     TargetType="ListViewItem"
                      BasedOn="{StaticResource DefaultListViewItemStyle}">
         <Setter Property="CornerRadius"
                 Value="4" />
@@ -1406,7 +1406,7 @@
                 Value="1000" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:TableListViewItem">
+                <ControlTemplate TargetType="ListViewItem">
                     <ListViewItemPresenter ContentTransitions="{TemplateBinding ContentTransitions}"
                                            Control.IsTemplateFocusTarget="True"
                                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
@@ -1443,7 +1443,7 @@
     </windows10:Style>
 
     <windows11:Style x:Key="DefaultTableListViewItemStyle"
-                     TargetType="local:TableListViewItem"
+                     TargetType="ListViewItem"
                      BasedOn="{StaticResource DefaultListViewItemStyle}">
         <Setter Property="CornerRadius"
                 Value="4" />
@@ -1546,6 +1546,8 @@
                 Value="Stretch" />
         <Setter Property="UseSystemFocusVisuals"
                 Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="ItemContainerStyle"
+                Value="{StaticResource DefaultTableListViewItemStyle}" />
         <Setter Property="ItemContainerTransitions">
             <Setter.Value>
                 <TransitionCollection>
