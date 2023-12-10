@@ -49,6 +49,7 @@
 
         <HyperlinkButton x:Name="Show"
                          Click="Show_Click"
+                         IsTabStop="False"
                          Height="32"
                          Margin="10,18,0,0"
                          CornerRadius="16"
