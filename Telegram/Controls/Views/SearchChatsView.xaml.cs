@@ -78,7 +78,7 @@ namespace Telegram.Controls.Views
                     ? Visibility.Visible
                     : Visibility.Collapsed;
             }
-            if (args.Item is SearchResult result)
+            else if (args.Item is SearchResult result)
             {
                 var content = args.ItemContainer.ContentTemplateRoot as ProfileCell;
                 if (content == null)

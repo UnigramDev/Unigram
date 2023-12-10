@@ -174,6 +174,8 @@ namespace Telegram.Views.Premium.Popups
             icon.Text = iconValue;
             iconPanel.Background = new SolidColorBrush(_gradient[index]);
             badgeControl.Visibility = badge ? Windows.UI.Xaml.Visibility.Visible : Windows.UI.Xaml.Visibility.Collapsed;
+
+            args.Handled = true;
         }
 
         public string ConvertTitle(bool premium, bool title)

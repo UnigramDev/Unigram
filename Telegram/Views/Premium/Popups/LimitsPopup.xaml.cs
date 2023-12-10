@@ -124,6 +124,8 @@ namespace Telegram.Views.Premium.Popups
             prevLimit.Text = limit.DefaultValue.ToString();
             nextLimit.Text = limit.PremiumValue.ToString();
             nextPanel.Background = new SolidColorBrush(_gradient[Math.Min(args.ItemIndex, _gradient.Length - 1)]);
+
+            args.Handled = true;
         }
 
         private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)

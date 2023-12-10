@@ -1763,7 +1763,7 @@ namespace Telegram.Views
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var call = element.Tag as TLCallGroup;
+            var call = CallsList.ItemFromContainer(element) as TLCallGroup;
 
             flyout.CreateFlyoutItem(ViewModel.Calls.DeleteCall, call, Strings.Delete, Icons.Delete, destructive: true);
 
@@ -2122,14 +2122,11 @@ namespace Telegram.Views
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as CallCell;
-            var call = args.Item as TLCallGroup;
-
-            args.ItemContainer.Tag = call;
-            content.Tag = call;
-
-            content.UpdateCall(ViewModel.ClientService, call);
+            else if (args.ItemContainer.ContentTemplateRoot is CallCell content && args.Item is TLCallGroup call)
+            {
+                content.UpdateCall(ViewModel.ClientService, call);
+                args.Handled = true;
+            }
         }
 
         private void SetPivotIndex(int index)
@@ -3240,6 +3237,7 @@ namespace Telegram.Views
             var cell = args.ItemContainer.ContentTemplateRoot as ForumTopicCell;
 
             cell.UpdateForumTopic(_clientService, topic, ViewModel.Topics.Chat);
+            args.Handled = true;
         }
 
         private void ShowTopicList(Chat chat)

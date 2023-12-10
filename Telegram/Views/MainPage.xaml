@@ -1035,7 +1035,8 @@
                         <Grid x:Name="CallsRoot"
                               x:Load="False"
                               Margin="0,80,0,0">
-                            <ListView ItemsSource="{x:Bind ViewModel.Calls.Items}"
+                            <ListView x:Name="CallsList"
+                                      ItemsSource="{x:Bind ViewModel.Calls.Items}"
                                       ItemContainerStyle="{StaticResource DefaultListViewItemStyle}"
                                       ItemClick="ListView_ItemClick"
                                       IsItemClickEnabled="True"

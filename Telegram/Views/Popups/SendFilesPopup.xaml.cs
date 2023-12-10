@@ -301,6 +301,8 @@ namespace Telegram.Views.Popups
 
                 photo.SetUser(ViewModel.ClientService, user, 32);
             }
+
+            args.Handled = true;
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

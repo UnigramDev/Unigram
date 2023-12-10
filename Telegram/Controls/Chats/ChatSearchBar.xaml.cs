@@ -158,6 +158,8 @@ namespace Telegram.Controls.Chats
                     glyph.FontFamily = BootStrapper.Current.Resources["SymbolThemeFontFamily"] as FontFamily;
                 }
             }
+
+            args.Handled = true;
         }
 
         #endregion

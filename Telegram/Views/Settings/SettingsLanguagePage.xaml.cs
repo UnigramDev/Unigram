@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Linq;
 using Telegram.Common;
 using Telegram.Controls;
 using Telegram.Controls.Media;
@@ -13,9 +12,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Settings
 {
@@ -77,28 +74,7 @@ namespace Telegram.Views.Settings
                 return;
             }
 
-            // Table layout
-            var first = false;
-            var last = false;
-
-            if (args.Item is LanguagePackInfo info)
-            {
-                var list = info.IsInstalled ? ViewModel.Items.FirstOrDefault() : ViewModel.Items.LastOrDefault();
-                if (list == null)
-                {
-                    return;
-                }
-
-                var index = list.IndexOf(info);
-                first = index == 0;
-                last = index == list.Count - 1;
-            }
-
-            var presenter = VisualTreeHelper.GetChild(args.ItemContainer, 0) as ListViewItemPresenter;
-            if (presenter != null)
-            {
-                presenter.CornerRadius = new CornerRadius(first ? 8 : 0, first ? 8 : 0, last ? 8 : 0, last ? 8 : 0);
-            }
+            // TODO: no x:Bind
         }
 
         #endregion

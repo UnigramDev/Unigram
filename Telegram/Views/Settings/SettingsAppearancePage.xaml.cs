@@ -128,6 +128,7 @@ namespace Telegram.Views.Settings
             else if (args.ItemContainer.ContentTemplateRoot is ChatThemeCell content && args.Item is ChatThemeViewModel theme)
             {
                 content.Update(theme);
+                args.Handled = true;
             }
         }
 

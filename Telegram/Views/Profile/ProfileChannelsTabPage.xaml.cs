@@ -47,7 +47,7 @@ namespace Telegram.Views.Profile
             }
             else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
             {
-                content?.UpdateSimilarChannel(ViewModel.ClientService, args, OnContainerContentChanging);
+                content.UpdateSimilarChannel(ViewModel.ClientService, args, OnContainerContentChanging);
             }
         }
 

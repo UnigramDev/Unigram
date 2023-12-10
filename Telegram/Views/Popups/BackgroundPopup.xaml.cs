@@ -267,13 +267,13 @@ namespace Telegram.Views.Popups
             {
                 return;
             }
+            else if (args.ItemContainer.ContentTemplateRoot is ChatBackgroundPresenter content && args.Item is PatternInfo pattern)
+            {
+                var background = ViewModel.GetPattern(pattern?.Document);
 
-            var pattern = args.Item as PatternInfo;
-            var content = args.ItemContainer.ContentTemplateRoot as ChatBackgroundPresenter;
-
-            var background = ViewModel.GetPattern(pattern?.Document);
-
-            content.UpdateSource(ViewModel.ClientService, background, true);
+                content.UpdateSource(ViewModel.ClientService, background, true);
+                args.Handled = true;
+            }
         }
 
         private void TextColor_ColorChanged(ColorTextBox sender, Controls.ColorChangedEventArgs args)

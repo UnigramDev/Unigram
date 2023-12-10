@@ -598,12 +598,13 @@ namespace Telegram.Views.Popups
             {
                 return;
             }
+            else if (args.ItemContainer.ContentTemplateRoot is ChatShareCell content && args.Item is FolderFlag folder)
+            {
+                content.UpdateState(args.ItemContainer.IsSelected, false, true);
+                content.UpdateChatFolder(folder);
 
-            var folder = args.Item as FolderFlag;
-            var content = args.ItemContainer.ContentTemplateRoot as ChatShareCell;
-
-            content.UpdateState(args.ItemContainer.IsSelected, false, true);
-            content.UpdateChatFolder(folder);
+                args.Handled = true;
+            }
         }
 
         #endregion

@@ -160,7 +160,7 @@ namespace Telegram.Views.Profile
             }
             else if (args.ItemContainer.ContentTemplateRoot is ProfileCell content)
             {
-                content?.UpdateChatSharedMembers(ViewModel.ClientService, args, OnContainerContentChanging);
+                content.UpdateChatSharedMembers(ViewModel.ClientService, args, OnContainerContentChanging);
             }
         }
 

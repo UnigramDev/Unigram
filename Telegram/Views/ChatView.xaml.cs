@@ -3498,6 +3498,8 @@ namespace Telegram.Views
                 var animated = content.Children[0] as AnimatedImage;
                 animated.Source = new DelayedFileSource(_viewModel.ClientService, sticker);
             }
+
+            args.Handled = true;
         }
 
         private bool? _replyEnabled = null;

@@ -471,12 +471,12 @@ namespace Telegram.Controls
             {
                 return;
             }
-
-            if (args.Item is PlaybackItem item && args.ItemContainer.ContentTemplateRoot is SharedAudioCell cell)
+            else if (args.Item is PlaybackItem item && args.ItemContainer.ContentTemplateRoot is SharedAudioCell cell)
             {
                 AutomationProperties.SetName(args.ItemContainer, Automation.GetSummary(item.Message, true, false));
 
                 cell.UpdateMessage(_playbackService, item.Message);
+                args.Handled = true;
             }
         }
 

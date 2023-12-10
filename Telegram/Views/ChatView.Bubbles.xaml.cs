@@ -625,6 +625,7 @@ namespace Telegram.Views
         private void RegisterEvents(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             args.ItemContainer.SizeChanged += _sizeChangedHandler ??= new SizeChangedEventHandler(Item_SizeChanged);
+            args.Handled = true;
 
             if (args.ItemContainer.ContentTemplateRoot is MessageSelector selector && selector.Content is MessageBubble bubble)
             {

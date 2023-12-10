@@ -66,6 +66,8 @@ namespace Telegram.Views.Chats
             border.Children.Clear();
             border.Constraint = data;
 
+            args.Handled = true;
+
             if (args.Phase < 2)
             {
                 args.RegisterUpdateCallback(2, OnContainerContentChanging);

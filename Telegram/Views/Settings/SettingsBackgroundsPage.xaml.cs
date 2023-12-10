@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Chats;
 using Telegram.Controls.Media;
 using Telegram.Td.Api;
@@ -62,15 +63,19 @@ namespace Telegram.Views.Settings
             {
                 return;
             }
+            else if (args.ItemContainer.ContentTemplateRoot is AspectView content && args.Item is Background background)
+            {
+                var preview = content.Children[0] as ChatBackgroundPresenter;
+                var check = content.Children[1];
 
-            var background = args.Item as Background;
-            var root = args.ItemContainer.ContentTemplateRoot as Grid;
+                preview.UpdateSource(ViewModel.ClientService, background, true);
+                content.Constraint = background;
+                check.Visibility = background == ViewModel.SelectedItem
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
 
-            var preview = root.Children[0] as ChatBackgroundPresenter;
-            var check = root.Children[1];
-
-            preview.UpdateSource(ViewModel.ClientService, background, true);
-            check.Visibility = background == ViewModel.SelectedItem ? Visibility.Visible : Visibility.Collapsed;
+                args.Handled = true;
+            }
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)

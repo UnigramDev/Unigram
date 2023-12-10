@@ -47,11 +47,11 @@ namespace Telegram.Views.Popups
             {
                 return;
             }
-
-            var wallpaper = args.Item as Background;
-            var content = args.ItemContainer.ContentTemplateRoot as ChatBackgroundPresenter;
-
-            content.UpdateSource(ViewModel.ClientService, wallpaper, true);
+            else if (args.ItemContainer.ContentTemplateRoot is ChatBackgroundPresenter content && args.Item is Background background)
+            {
+                content.UpdateSource(ViewModel.ClientService, background, true);
+                args.Handled = true;
+            }
         }
 
         private void Emojis_ItemClick(object sender, ItemClickEventArgs e)

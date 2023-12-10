@@ -211,13 +211,14 @@ namespace Telegram.Views.Popups
             {
                 return;
             }
+            else if (args.ItemContainer.ContentTemplateRoot is VenueCell content && args.Item is Venue venue)
+            {
+                content.UpdateVenue(venue);
+                content.UpdateState(sender.SelectionMode == ListViewSelectionMode.Multiple
+                    && args.ItemContainer.IsSelected, false, true);
 
-            var content = args.ItemContainer.ContentTemplateRoot as VenueCell;
-            var venue = args.Item as Venue;
-
-            content.UpdateVenue(venue);
-            content.UpdateState(sender.SelectionMode == ListViewSelectionMode.Multiple
-                && args.ItemContainer.IsSelected, false, true);
+                args.Handled = true;
+            }
         }
 
         #endregion

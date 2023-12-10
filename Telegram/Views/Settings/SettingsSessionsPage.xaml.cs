@@ -4,14 +4,10 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System.Linq;
 using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Settings;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Views.Settings
 {
@@ -40,29 +36,7 @@ namespace Telegram.Views.Settings
             if (args.ItemContainer.ContentTemplateRoot is SessionCell cell)
             {
                 cell.UpdateSession(args.Item as Session);
-            }
-
-            // Table layout
-            var first = false;
-            var last = false;
-
-            if (args.Item is Session session)
-            {
-                var list = session.IsPasswordPending ? ViewModel.Items.FirstOrDefault() : ViewModel.Items.LastOrDefault();
-                if (list == null)
-                {
-                    return;
-                }
-
-                var index = list.IndexOf(session);
-                first = index == 0;
-                last = index == list.Count - 1;
-            }
-
-            var presenter = VisualTreeHelper.GetChild(args.ItemContainer, 0) as ListViewItemPresenter;
-            if (presenter != null)
-            {
-                presenter.CornerRadius = new CornerRadius(first ? 8 : 0, first ? 8 : 0, last ? 8 : 0, last ? 8 : 0);
+                args.Handled = true;
             }
         }
     }

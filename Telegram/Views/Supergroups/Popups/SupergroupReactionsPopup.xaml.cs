@@ -136,48 +136,6 @@ namespace Telegram.Views.Supergroups.Popups
             CaptionInput.SetText(text.ToString(), entities);
         }
 
-        private void OnContainerContentChanged(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-            {
-                return;
-            }
-
-            var animated = args.ItemContainer.ContentTemplateRoot as AnimatedImage;
-            var reaction = args.Item as EmojiReaction;
-
-            if (animated != null)
-            {
-                var file = reaction.CenterAnimation.StickerValue;
-                animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
-
-                if (file.Local.IsDownloadingCompleted)
-                {
-                }
-                else
-                {
-                }
-            }
-
-            Automation.SetToolTip(args.ItemContainer, reaction.Title);
-        }
-
-        private void OnPointerEntered(object sender, PointerRoutedEventArgs e)
-        {
-            if (sender is AnimatedImage player)
-            {
-                player.Play();
-            }
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            if (sender is AnimatedImage player)
-            {
-                player.FrameSize = e.NewSize;
-            }
-        }
-
         #region Binding
 
         private bool ConvertType(ChatType type, bool channel)

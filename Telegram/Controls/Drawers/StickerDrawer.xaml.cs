@@ -288,8 +288,7 @@ namespace Telegram.Controls.Drawers
             {
                 return;
             }
-
-            if (args.Item is SupergroupStickerSetViewModel supergroup)
+            else if (args.Item is SupergroupStickerSetViewModel supergroup)
             {
                 Automation.SetToolTip(args.ItemContainer, supergroup.Title);
 
@@ -306,6 +305,7 @@ namespace Telegram.Controls.Drawers
                 }
 
                 photo.SetChat(ViewModel.ClientService, chat, 24);
+                args.Handled = true;
             }
             else if (args.Item is StickerSetViewModel sticker)
             {
@@ -325,6 +325,7 @@ namespace Telegram.Controls.Drawers
                 }
 
                 UpdateContainerContent(cover, content);
+                args.Handled = true;
             }
         }
 

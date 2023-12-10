@@ -51,7 +51,8 @@
                                 Grid.Row="1" />
 
 
-        <ListView ItemsSource="{x:Bind ViewModel.Items}"
+        <ListView x:Name="ScrollingHost"
+                  ItemsSource="{x:Bind ViewModel.Items}"
                   SelectionMode="None"
                   ChoosingItemContainer="OnChoosingItemContainer"
                   ContainerContentChanging="OnContainerContentChanging"

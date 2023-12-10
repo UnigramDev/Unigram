@@ -25,22 +25,13 @@ namespace Telegram.Views.Profile
             {
                 return;
             }
-
-            args.ItemContainer.Tag = args.Item;
-
-            var message = args.Item as MessageWithOwner;
-            if (message == null)
+            else if (args.ItemContainer.ContentTemplateRoot is SharedVoiceCell voiceCell && args.Item is MessageWithOwner message)
             {
-                return;
-            }
+                AutomationProperties.SetName(args.ItemContainer,
+                    Automation.GetSummary(message, true));
 
-            AutomationProperties.SetName(args.ItemContainer,
-                Automation.GetSummary(message, true));
-
-            if (args.ItemContainer.ContentTemplateRoot is SharedVoiceCell voiceCell)
-            {
                 voiceCell.UpdateMessage(ViewModel.PlaybackService, message);
-                voiceCell.Tag = message;
+                args.Handled = true;
             }
         }
     }

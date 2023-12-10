@@ -114,6 +114,7 @@ namespace Telegram.Controls
 
             _itemToSelector[chat.Id] = args.ItemContainer;
             args.ItemContainer.Tag = args.Item;
+            args.Handled = true;
 
             if (args.Phase == 0)
             {
@@ -132,7 +133,6 @@ namespace Telegram.Controls
                 content.UpdateViewState(chat, _viewState == MasterDetailState.Compact, false);
                 content.UpdateChat(ViewModel.ClientService, chat, ViewModel.Items.ChatList);
                 content.Opacity = 1;
-                args.Handled = true;
             }
 
             VisualStateManager.GoToState(args.ItemContainer, "DataAvailable", false);

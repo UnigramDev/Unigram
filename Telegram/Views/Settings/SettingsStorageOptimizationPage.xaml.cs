@@ -108,30 +108,27 @@ namespace Telegram.Views.Settings
             {
                 return;
             }
-
-            var check = args.ItemContainer.ContentTemplateRoot as CheckBox;
-            var item = args.Item as StorageChartItem;
-
-            if (item == null)
+            else if (args.ItemContainer.ContentTemplateRoot is CheckBox check && args.Item is StorageChartItem item)
             {
-                return;
+                var content = check.Content as StackPanel;
+
+                var title = content.Children[0] as TextBlock;
+                var subtitle = content.Children[1] as TextBlock;
+
+                check.Click -= CheckBox_Click;
+                check.Click += CheckBox_Click;
+
+                check.Background = new SolidColorBrush(item.Stroke);
+                check.IsChecked = item.IsVisible;
+
+                // Justified because used in CheckBox_Click
+                check.Tag = item;
+
+                title.Text = item.Name;
+                subtitle.Text = FileSizeConverter.Convert(item.Size, true);
+
+                args.Handled = true;
             }
-
-            var content = check.Content as StackPanel;
-
-            var title = content.Children[0] as TextBlock;
-            var subtitle = content.Children[1] as TextBlock;
-
-            check.Click -= CheckBox_Click;
-            check.Click += CheckBox_Click;
-
-            check.Background = new SolidColorBrush(item.Stroke);
-            check.IsChecked = item.IsVisible;
-
-            check.Tag = item;
-
-            title.Text = item.Name;
-            subtitle.Text = FileSizeConverter.Convert(item.Size, true);
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

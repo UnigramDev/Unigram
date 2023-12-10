@@ -649,12 +649,7 @@ namespace Telegram.Controls.Drawers
 
                 return;
             }
-            else if (sticker == null)
-            {
-                return;
-            }
-
-            if (sticker != null)
+            else if (sticker != null)
             {
                 _itemIdToContent[sticker] = content;
 
@@ -742,8 +737,7 @@ namespace Telegram.Controls.Drawers
             {
                 return;
             }
-
-            if (args.Item is StickerSetViewModel sticker)
+            else if (args.Item is StickerSetViewModel sticker)
             {
                 Automation.SetToolTip(args.ItemContainer, sticker.Title);
 
@@ -761,6 +755,7 @@ namespace Telegram.Controls.Drawers
                 }
 
                 UpdateContainerContent(cover, content, true);
+                args.Handled = true;
             }
         }
 

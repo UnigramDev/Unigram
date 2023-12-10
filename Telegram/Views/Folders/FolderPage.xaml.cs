@@ -101,10 +101,10 @@ namespace Telegram.Views.Folders
             {
                 return;
             }
-
-            if (args.ItemContainer.ContentTemplateRoot is FontIcon textBlock && args.Item is ChatFolderIcon2 icon)
+            else if (args.ItemContainer.ContentTemplateRoot is FontIcon textBlock && args.Item is ChatFolderIcon2 icon)
             {
                 textBlock.Glyph = Icons.FolderToGlyph(icon).Item1;
+                args.Handled = true;
             }
         }
 

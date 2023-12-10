@@ -157,6 +157,8 @@ namespace Telegram.Views.Premium.Popups
             subtitle.Text = subtitleValue;
             icon.Text = iconValue;
             icon.Foreground = new SolidColorBrush(_gradient[index]);
+
+            args.Handled = true;
         }
 
         private void PurchaseShadow_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)

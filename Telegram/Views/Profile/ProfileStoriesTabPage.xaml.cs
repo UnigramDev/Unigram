@@ -74,11 +74,11 @@ namespace Telegram.Views.Profile
             {
                 return;
             }
-
-            var story = args.Item as StoryViewModel;
-            var content = args.ItemContainer.ContentTemplateRoot as StoryCell;
-
-            content.Update(story);
+            else if (args.ItemContainer.ContentTemplateRoot is StoryCell content && args.Item is StoryViewModel story)
+            {
+                content.Update(story);
+                args.Handled = true;
+            }
         }
 
         private void List_ItemClick(object sender, ItemClickEventArgs e)

@@ -367,6 +367,8 @@ namespace Telegram.Controls
                     thumb.Source = PlaceholderImage.GetNameForChat(title.Text, title.Text.GetHashCode());
                 }
             }
+
+            args.Handled = true;
         }
 
         private async void ItemsWrapGrid_Loading(FrameworkElement sender, object args)

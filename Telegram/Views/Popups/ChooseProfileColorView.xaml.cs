@@ -153,6 +153,8 @@ namespace Telegram.Views.Popups
                     : null;
 
                 rectangle.Fill = null;
+
+                args.Handled = true;
             }
         }
 

@@ -162,6 +162,8 @@ namespace Telegram.Views.Popups
                 rectangle.Fill = colors.LightThemeColors.Count > 2
                     ? new SolidColorBrush(colors.LightThemeColors[2])
                     : null;
+
+                args.Handled = true;
             }
         }
 

@@ -59,6 +59,8 @@ namespace Telegram.Views.Folders.Popups
 
                 content.UpdateState(args.ItemContainer.IsSelected, false, true);
                 content.UpdateSharedChat(ViewModel.ClientService, args, OnContainerContentChanging);
+
+                args.Handled = true;
             }
         }
 

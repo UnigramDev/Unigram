@@ -127,6 +127,8 @@ namespace Telegram.Views.Stories.Popups
             title.Text = titleValue;
             TextBlockHelper.SetMarkdown(subtitle, subtitleValue);
             icon.Text = iconValue;
+
+            args.Handled = true;
         }
 
         private void PurchaseCommand_Click(object sender, RoutedEventArgs e)

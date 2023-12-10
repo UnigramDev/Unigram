@@ -43,6 +43,8 @@ namespace Telegram.Views.Popups
                     cell.UpdateMessageViewer(ViewModel.ClientService, args, OnContainerContentChanging);
                     animated.Source = null;
                 }
+
+                args.Handled = true;
             }
         }
 

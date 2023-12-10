@@ -818,6 +818,8 @@ namespace Telegram.Controls.Cells
             {
                 args.RegisterUpdateCallback(callback);
             }
+
+            args.Handled = true;
         }
 
         public void UpdateChatFolder(IClientService clientService, ChatFolderElement element)

@@ -454,13 +454,13 @@
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.ItemTemplate>
                         <selectors:StickerSetTemplateSelector.GroupTemplate>
-                            <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                            <DataTemplate>
                                 <controls:ProfilePicture Margin="6"
                                                          IsEnabled="False" />
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.GroupTemplate>
                         <selectors:StickerSetTemplateSelector.RecentsTemplate>
-                            <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                            <DataTemplate>
                                 <Border Background="Transparent">
                                     <FontIcon Glyph="&#xE911;"
                                               FontFamily="{StaticResource TelegramThemeFontFamily}" />
@@ -468,7 +468,7 @@
                             </DataTemplate>
                         </selectors:StickerSetTemplateSelector.RecentsTemplate>
                         <selectors:StickerSetTemplateSelector.FavedTemplate>
-                            <DataTemplate x:DataType="viewModels:StickerSetViewModel">
+                            <DataTemplate>
                                 <Border Background="Transparent">
                                     <FontIcon Glyph="&#xE734;"
                                               Style="{StaticResource DefaultFontIconStyle}" />

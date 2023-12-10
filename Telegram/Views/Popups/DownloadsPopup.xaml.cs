@@ -100,18 +100,16 @@ namespace Telegram.Views.Popups
             {
                 return;
             }
-
-            var content = args.ItemContainer.ContentTemplateRoot as FileDownloadCell;
-            var file = args.Item as FileDownloadViewModel;
-
-            content.UpdateFileDownload(ViewModel, file);
-            args.ItemContainer.Tag = file;
+            else if (args.ItemContainer.ContentTemplateRoot is FileDownloadCell content && args.Item is FileDownloadViewModel file)
+            {
+                content.UpdateFileDownload(ViewModel, file);
+            }
         }
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var element = sender as FrameworkElement;
-            var fileDownload = element.Tag as FileDownloadViewModel;
+            var fileDownload = ScrollingHost.ItemFromContainer(element) as FileDownloadViewModel;
 
             var flyout = new MenuFlyout();
 

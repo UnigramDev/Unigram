@@ -164,6 +164,8 @@ namespace Telegram.Controls.Drawers
 
             var animated = content.Child as AnimatedImage;
             animated.Source = new DelayedFileSource(ViewModel.ClientService, file);
+
+            args.Handled = true;
         }
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)

@@ -104,6 +104,8 @@ namespace Telegram.Views.Folders
                 badge.Content = args.ItemIndex >= ViewModel.ClientService.Options.ChatFolderCountMax
                     ? Icons.LockClosed 
                     : folder.HasMyInviteLinks ? Icons.Link : string.Empty;
+
+                args.Handled = true;
             }
         }
 

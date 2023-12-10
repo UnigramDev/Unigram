@@ -40,7 +40,7 @@ namespace Telegram.Views.Profile
             var flyout = new MenuFlyout();
 
             var element = sender as FrameworkElement;
-            var message = element.Tag as MessageWithOwner;
+            var message = ScrollingHost.ItemFromContainer(element) as MessageWithOwner;
 
             var selected = ViewModel.SelectedItems;
             if (selected.Count > 0)
