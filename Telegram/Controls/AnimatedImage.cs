@@ -1075,7 +1075,8 @@ namespace Telegram.Controls
 
         private void NextFrame()
         {
-            if (TryDequeueOrExchange(out PixelBuffer frame))
+            var frame = Interlocked.Exchange(ref _backgroundNext, null);
+            if (frame != null)
             {
                 if (NextFrame(frame))
                 {
@@ -1122,15 +1123,6 @@ namespace Telegram.Controls
             }
 
             return state != AnimatedImageTaskState.Skip;
-        }
-
-        private bool TryDequeueOrExchange(out PixelBuffer frame)
-        {
-            frame = Interlocked.Exchange(ref _backgroundNext, null);
-
-            // TODO: this looks quite dangerous...
-            frame ??= Interlocked.Exchange(ref _foregroundNext, null);
-            return frame != null;
         }
 
         #endregion
