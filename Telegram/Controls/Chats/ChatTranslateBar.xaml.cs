@@ -133,6 +133,11 @@ namespace Telegram.Controls.Chats
             ShowHideOriginal(ViewModel.TranslateChat());
         }
 
+        private void Hide_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.HideTranslate();
+        }
+
         private bool _showOriginal = false;
 
         private async void ShowHideOriginal(bool show, bool animate = true)

@@ -55,7 +55,7 @@
 
         <controls:GlyphButton x:Name="HideButton"
                               Visibility="Collapsed"
-                              Click="{x:Bind ViewModel.HideTranslate}"
+                              Click="Hide_Click"
                               Glyph="&#xE711;"
                               Height="32"
                               Grid.Column="1" />

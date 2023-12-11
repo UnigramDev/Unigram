@@ -23,7 +23,7 @@
 
         </Grid>
 
-        <controls:GlyphButton Click="{x:Bind ViewModel.RemoveActionBar}"
+        <controls:GlyphButton Click="Remove_Click"
                               Glyph="&#xE711;"
                               Height="32"
                               Grid.Column="1" />

@@ -160,6 +160,10 @@ namespace Telegram.Controls.Chats
             return button;
         }
 
+        private void Remove_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.RemoveActionBar();
+        }
 
         private bool _collapsed = true;
 
