@@ -66,6 +66,11 @@ namespace Telegram.ViewModels.Settings
                         Location = new Location();
                         Town = null;
                     }
+                    else if (Settings.Appearance.ForceNightMode)
+                    {
+                        Settings.Appearance.ForceNightMode = false;
+                        Settings.Appearance.RequestedTheme = TelegramTheme.Light;
+                    }
 
                     Settings.Appearance.NightMode = value;
                     RaisePropertyChanged();
