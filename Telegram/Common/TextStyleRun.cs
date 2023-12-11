@@ -581,7 +581,7 @@ namespace Telegram.Common
             Entities = entities ?? Array.Empty<TextEntity>();
             Runs = TextStyleRun.GetRuns(text, entities);
             Direction = direction ?? NativeUtils.GetDirectionality(text);
-            Padding = padding;
+            Padding = length > 0 ? padding : 1;
 
             if (entities?.Count > 0)
             {

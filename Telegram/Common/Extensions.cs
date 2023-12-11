@@ -244,7 +244,15 @@ namespace Telegram.Common
                 {
                     if (pointer.Offset == block.ContentEnd.Offset)
                     {
-                        index += paragraph.Padding;
+                        if (i == textBlock.Blocks.Count - 1)
+                        {
+                            // Always close when ending on the last paragraph
+                            index++;
+                        }
+                        else
+                        {
+                            index += paragraph.Padding;
+                        }
                     }
 
                     break;
