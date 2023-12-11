@@ -5,12 +5,10 @@ namespace Telegram.Common
 {
     public class FrameworkElementState
     {
-        private bool _loaded;
-
         public FrameworkElementState(FrameworkElement element)
         {
-            element.Loaded += OnLoaded;
-            element.Unloaded += OnUnloaded;
+            element.Loaded += OnChanged;
+            element.Unloaded += OnChanged;
         }
 
         ~FrameworkElementState()
@@ -18,29 +16,33 @@ namespace Telegram.Common
             Debug.WriteLine("~LifecycleManager");
         }
 
+        private bool _loaded;
+        private bool _unloaded;
+
+        public bool IsLoaded => _loaded;
+        public bool IsUnloaded => _unloaded;
+
         public event RoutedEventHandler Loaded;
         public event RoutedEventHandler Unloaded;
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnChanged(object sender, RoutedEventArgs e)
         {
-            Changed(sender as FrameworkElement, e);
-        }
+            // TODO: unfortunately FrameworkElement.Parent returns null
+            // whenever the control is a DataTemplate root or similar,
+            // hence we're forced to use VisualTreeHelper here, but I'm quite sure it's slower.
+            var element = sender as FrameworkElement;
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            Changed(sender as FrameworkElement, e);
-        }
-
-        private void Changed(FrameworkElement sender, RoutedEventArgs e)
-        {
-            if (sender.Parent != null && !_loaded)
+            var parent = element.Parent ?? Windows.UI.Xaml.Media.VisualTreeHelper.GetParent(element);
+            if (parent != null && !_loaded)
             {
                 _loaded = true;
-                Loaded?.Invoke(sender, e);
+                _unloaded = false;
+                Loaded?.Invoke(this, e);
             }
-            else if (sender.Parent == null && _loaded)
+            else if (parent == null && _loaded)
             {
                 _loaded = false;
+                _unloaded = true;
                 Unloaded?.Invoke(sender, e);
             }
         }

@@ -3529,7 +3529,7 @@ namespace Telegram.Views
         RootWhenParameterless,
     }
 
-    public class HostedPage : Page
+    public class HostedPage : PageEx
     {
         #region ShowHeader
 

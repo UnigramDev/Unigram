@@ -322,6 +322,7 @@ namespace Telegram.Common
                         await chatPage.ViewModel.NavigatedToAsync(chat.Id, Windows.UI.Xaml.Navigation.NavigationMode.New, state);
 
                         FrameFacade.RaiseNavigated(chat.Id);
+                        Frame.ForwardStack.Clear();
 
                         OverlayWindow.Current?.TryHide(ContentDialogResult.None);
                     }

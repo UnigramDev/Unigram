@@ -1,19 +1,19 @@
-<UserControl x:Class="Telegram.Views.ChatView"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:local="using:Telegram.Views"
-             xmlns:icons="using:Telegram.Assets.Icons"
-             xmlns:common="using:Telegram.Common"
-             xmlns:controls="using:Telegram.Controls"
-             xmlns:chats="using:Telegram.Controls.Chats"
-             xmlns:messages="using:Telegram.Controls.Messages"
-             xmlns:selectors="using:Telegram.Selectors"
-             mc:Ignorable="d"
-             Loaded="OnLoaded"
-             Unloaded="OnUnloaded"
-             SizeChanged="OnSizeChanged">
+<controls:UserControlEx x:Class="Telegram.Views.ChatView"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:local="using:Telegram.Views"
+                        xmlns:icons="using:Telegram.Assets.Icons"
+                        xmlns:common="using:Telegram.Common"
+                        xmlns:controls="using:Telegram.Controls"
+                        xmlns:chats="using:Telegram.Controls.Chats"
+                        xmlns:messages="using:Telegram.Controls.Messages"
+                        xmlns:selectors="using:Telegram.Selectors"
+                        mc:Ignorable="d"
+                        Connected="OnLoaded"
+                        Disconnected="OnUnloaded"
+                        SizeChanged="OnSizeChanged">
 
     <!--<Page.Transitions>
         <TransitionCollection>
@@ -1060,13 +1060,6 @@
                                               Grid.Column="2" />
                     </Grid>
 
-                    <Border Grid.ColumnSpan="5"
-                            Grid.Row="2">
-                        <Border x:Name="TextBackground"
-                                Background="{ThemeResource PageBackgroundDarkBrush}"
-                                Visibility="Collapsed" />
-                    </Border>
-
                     <controls:MenuButton x:Name="ButtonMore"
                                          Checked="ButtonMore_Checked"
                                          AutomationProperties.Name="{CustomResource AccDescrBotCommands}"
@@ -1328,4 +1321,4 @@
 
         <!--<controls:UndoView x:Name="Undo" VerticalAlignment="Bottom" Margin="0,0,0,-48" Grid.RowSpan="4"/>-->
     </Grid>
-</UserControl>
+</controls:UserControlEx>

@@ -60,7 +60,7 @@ using VirtualKey = Windows.System.VirtualKey;
 
 namespace Telegram.Views
 {
-    public sealed partial class ChatView : UserControl, INavigablePage, ISearchablePage, IDialogDelegate
+    public sealed partial class ChatView : UserControlEx, INavigablePage, ISearchablePage, IDialogDelegate
     {
         private DialogViewModel _viewModel;
         public DialogViewModel ViewModel => _viewModel ??= DataContext as DialogViewModel;
@@ -306,28 +306,8 @@ namespace Telegram.Views
             return null;
         }
 
-        private MessageCollection _cleanup;
-
-        private void Cleanup(ref MessageCollection cache)
-        {
-            cache = null;
-
-            if (cache != null)
-            {
-                //foreach (var message in cache)
-                //{
-                //    message.Cleanup();
-                //}
-
-                cache.Clear();
-                cache = null;
-            }
-        }
-
         public void Deactivate(bool navigation)
         {
-            Cleanup(ref _cleanup);
-
             if (ViewModel != null)
             {
                 ViewModel.Dispose();
@@ -347,12 +327,8 @@ namespace Telegram.Views
 
                 Messages.Suspend();
 
-                _cleanup = ViewModel.Items;
-
                 if (navigation is false)
                 {
-                    Cleanup(ref _cleanup);
-
                     _albumIdToSelector.Clear();
                     _messageIdToSelector.Clear();
                     _messageIdToMessageIds.Clear();
@@ -377,7 +353,6 @@ namespace Telegram.Views
             }
 
             Bindings.Update();
-            Cleanup(ref _cleanup);
         }
 
         public void Activate(DialogViewModel viewModel)
@@ -753,7 +728,7 @@ namespace Telegram.Views
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            //Bindings.StopTracking();
+            Bindings.StopTracking();
 
             UnloadVisibleMessages();
 
@@ -762,6 +737,9 @@ namespace Telegram.Views
 
             Window.Current.CoreWindow.CharacterReceived -= OnCharacterReceived;
             WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
+
+            _loadedThemeTask?.TrySetResult(true);
+            _updateThemeTask?.TrySetResult(true);
         }
 
         private void Window_Activated(object sender, WindowActivatedEventArgs e)

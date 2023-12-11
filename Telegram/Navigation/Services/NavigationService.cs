@@ -232,7 +232,7 @@ namespace Telegram.Navigation.Services
 
                     if (page is IActivablePage cleanup)
                     {
-                        cleanup.Deactivate(e.SourcePageType != e.TargetPageType);
+                        cleanup.Deactivate(e.SourcePageType != page.GetType());
                     }
                 }
             };
