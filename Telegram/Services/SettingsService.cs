@@ -733,7 +733,7 @@ namespace Telegram.Services
         public bool InstallBetaUpdates
         {
             get => _installBetaUpdates ??= GetValueOrDefault("InstallBetaUpdates", true);
-            set => AddOrUpdateValue(ref _installBetaUpdates, "InstallBetaUpdates", value);
+            set => AddOrUpdateValue(ref _installBetaUpdates, _local, "InstallBetaUpdates", value);
         }
 
         private int? _useLessData;
