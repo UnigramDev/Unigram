@@ -1026,8 +1026,8 @@ namespace Telegram.Controls.Gallery
                 height *= ratio;
             }
 
-            var aggregator = TypeResolver.Current.Resolve<IEventAggregator>();
-            var viewService = TypeResolver.Current.Resolve<IViewService>();
+            var aggregator = TypeResolver.Current.Resolve<IEventAggregator>(viewModel.SessionId);
+            var viewService = TypeResolver.Current.Resolve<IViewService>(viewModel.SessionId);
 
             //var mediaPlayer = _mediaPlayer;
             //var fileStream = _fileStream;

@@ -567,7 +567,7 @@ namespace Telegram.ViewModels
 
         public async void AddToFolder(ChatFolderViewModel folder)
         {
-            var viewModel = TypeResolver.Current.Resolve<FolderViewModel>();
+            var viewModel = TypeResolver.Current.Resolve<FolderViewModel>(SessionId);
             await viewModel.NavigatedToAsync(folder.ChatFolderId, NavigationMode.New, null);
 
             if (viewModel.Folder != null)

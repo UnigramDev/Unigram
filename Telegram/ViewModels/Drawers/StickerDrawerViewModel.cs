@@ -104,7 +104,7 @@ namespace Telegram.ViewModels.Drawers
                 _windowContext[id] = new Dictionary<int, StickerDrawerViewModel>();
             }
 
-            var context = TypeResolver.Current.Resolve<StickerDrawerViewModel>();
+            var context = TypeResolver.Current.Resolve<StickerDrawerViewModel>(sessionId);
             _windowContext[id][sessionId] = context;
 
             return context;
