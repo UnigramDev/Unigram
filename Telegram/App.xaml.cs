@@ -110,11 +110,11 @@ namespace Telegram
 
             if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails appService && string.Equals(appService.CallerPackageFamilyName, Package.Current.Id.FamilyName))
             {
-                SystemTray.Connect(appService.AppServiceConnection, args.TaskInstance.GetDeferral());
+                NotifyIcon.Connect(appService.AppServiceConnection, args.TaskInstance.GetDeferral());
 
                 args.TaskInstance.Canceled += (s, e) =>
                 {
-                    SystemTray.Cancel();
+                    NotifyIcon.Cancel();
                 };
             }
             else
@@ -269,7 +269,7 @@ namespace Telegram
 
             if (SettingsService.Current.IsTrayVisible)
             {
-                await SystemTray.LaunchAsync();
+                await NotifyIcon.LaunchAsync();
             }
 
             Windows.ApplicationModel.Core.CoreApplication.EnablePrelaunch(true);

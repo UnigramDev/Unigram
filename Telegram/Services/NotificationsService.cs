@@ -263,7 +263,7 @@ namespace Telegram.Services
                     _unreadCount.Set(update.UnreadUnmutedCount);
                 }
 
-                SystemTray.SendUnreadCount(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
+                NotifyIcon.SendUnreadCount(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
             }
         }
 
@@ -285,7 +285,7 @@ namespace Telegram.Services
                     _unreadCount.Set(update.UnreadUnmutedCount);
                 }
 
-                SystemTray.SendUnreadCount(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
+                NotifyIcon.SendUnreadCount(_settings.Notifications.IncludeMutedChats ? update.UnreadCount : 0, update.UnreadUnmutedCount);
             }
         }
 

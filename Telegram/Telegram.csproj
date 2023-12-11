@@ -205,7 +205,7 @@
     <Compile Include="Collections\FlatteningCollection.cs" />
     <Compile Include="Collections\Handlers\ChatDiffHandler.cs" />
     <Compile Include="Common\ListViewExtensions.cs" />
-    <Compile Include="Common\SystemTray.cs" />
+    <Compile Include="Common\NotifyIcon.cs" />
     <Compile Include="Common\TypeLocator.cs" />
     <Compile Include="Common\TypeResolver.cs" />
     <Compile Include="Controls\ActiveStoriesSegments.cs" />

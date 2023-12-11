@@ -101,8 +101,9 @@ namespace Telegram.Services
 
                         if (result == LaunchQuerySupportStatus.Available)
                         {
-                            await SystemTray.ExitAsync();
                             await Launcher.LaunchFileAsync(update.File);
+                            
+                            await NotifyIcon.ExitAsync();
                             await BootStrapper.ConsolidateAsync();
                         }
                     });

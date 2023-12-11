@@ -41,7 +41,7 @@ namespace Telegram.ViewModels.Settings
 
         protected override async Task OnNavigatedToAsync(object parameter, NavigationMode mode, NavigationState state)
         {
-            SystemTray.LoopbackExempt(true);
+            NotifyIcon.LoopbackExempt(true);
 
             var systemId = _systemProxyId = await _networkService.GetSystemProxyId();
 
