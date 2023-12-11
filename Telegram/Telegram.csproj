@@ -192,6 +192,7 @@
     <Compile Include="Charts\LookupTableInterpolator.cs" />
     <Compile Include="Collections\SynchronizedList.cs" />
     <Compile Include="Common\BezierPoint.cs" />
+    <Compile Include="Controls\Media\BlobDrawable.cs" />
     <Compile Include="Common\FrameworkElementState.cs" />
     <Compile Include="Common\MathEx.cs" />
     <Compile Include="Common\MathFEx.cs" />
@@ -228,6 +229,7 @@
       <DependentUpon>ChatTranslateBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\FrameworkElementEx.cs" />
+    <Compile Include="Controls\Media\WaveDrawable.cs" />
     <Compile Include="Controls\ProfileColorBadge.xaml.cs">
       <DependentUpon>ProfileColorBadge.xaml</DependentUpon>
     </Compile>

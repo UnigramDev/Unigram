@@ -27,7 +27,6 @@ using Windows.System.Display;
 using Windows.System.Profile;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
@@ -85,9 +84,7 @@ namespace Telegram.Controls.Chats
             set
             {
                 IsChecked = value == ChatRecordMode.Video;
-
-                AutomationProperties.SetName(this, value == ChatRecordMode.Video ? Strings.AccDescrVideoMessage : Strings.AccDescrVoiceMessage);
-                ToolTipService.SetToolTip(this, value == ChatRecordMode.Video ? Strings.AccDescrVideoMessage : Strings.AccDescrVoiceMessage);
+                Automation.SetToolTip(this, value == ChatRecordMode.Video ? Strings.AccDescrVideoMessage : Strings.AccDescrVoiceMessage);
             }
         }
 
@@ -121,6 +118,7 @@ namespace Telegram.Controls.Chats
             Icon = GetTemplateChild(nameof(Icon)) as AnimatedIcon;
             Icon.PointerReleased += OnPointerReleased;
             Icon.PointerCanceled += OnPointerCanceled;
+            Icon.PointerCaptureLost += OnPointerCaptureLost;
 
             _icon = ElementCompositionPreview.GetElementVisual(Icon);
             _icon.Opacity = IsRestricted ? 0.2f : 1;
@@ -148,7 +146,6 @@ namespace Telegram.Controls.Chats
 
         protected override void OnPointerPressed(PointerRoutedEventArgs e)
         {
-            Icon.PointerCaptureLost += OnPointerCaptureLost;
             Icon.CapturePointer(e.Pointer);
             base.OnPointerPressed(e);
         }
@@ -157,9 +154,7 @@ namespace Telegram.Controls.Chats
         {
             Logger.Debug("OnPointerReleased");
 
-            Icon.PointerCaptureLost -= OnPointerCaptureLost;
             Icon.ReleasePointerCapture(e.Pointer);
-
             OnRelease();
         }
 
@@ -167,9 +162,7 @@ namespace Telegram.Controls.Chats
         {
             Logger.Debug("OnPointerCanceled");
 
-            Icon.PointerCaptureLost -= OnPointerCaptureLost;
             Icon.ReleasePointerCapture(e.Pointer);
-
             OnRelease();
         }
 
@@ -281,6 +274,8 @@ namespace Telegram.Controls.Chats
                     ClickMode = ClickMode.Release;
                     RecordingStarted?.Invoke(this, EventArgs.Empty);
 
+                    Automation.SetToolTip(this, null);
+
                     try
                     {
                         if (_request == null)
@@ -309,6 +304,8 @@ namespace Telegram.Controls.Chats
 
                     ClickMode = ClickMode.Press;
                     RecordingStopped?.Invoke(this, EventArgs.Empty);
+
+                    Automation.SetToolTip(this, Mode == ChatRecordMode.Video ? Strings.AccDescrVideoMessage : Strings.AccDescrVoiceMessage);
 
                     if (_request != null)
                     {
