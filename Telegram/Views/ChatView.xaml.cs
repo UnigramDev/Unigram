@@ -1858,6 +1858,19 @@ namespace Telegram.Views
 
             flyout.CreateFlyoutItem(Search, Strings.Search, Icons.Search, VirtualKey.F);
 
+            if (_compactCollapsed && user != null && user.Id != ViewModel.ClientService.Options.MyId && ViewModel.ClientService.TryGetUserFull(user.Id, out UserFullInfo userFull))
+            {
+                if (userFull.CanBeCalled)
+                {
+                    flyout.CreateFlyoutItem(ViewModel.VoiceCall, Strings.Call, Icons.Call);
+                    flyout.CreateFlyoutItem(ViewModel.VideoCall, Strings.VideoCall, Icons.Video);
+                }
+            }
+            else if (_compactCollapsed && chat.VideoChat?.GroupCallId != 0)
+            {
+                flyout.CreateFlyoutItem(ViewModel.VoiceCall, Strings.VoipGroupJoinCall, Icons.VideoChat);
+            }
+
             if (ViewModel.TranslateService.CanTranslate(ViewModel.DetectedLanguage, true) && !chat.IsTranslatable)
             {
                 flyout.CreateFlyoutItem(ViewModel.ShowTranslate, Strings.TranslateMessage, Icons.Translate);
