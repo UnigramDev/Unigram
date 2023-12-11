@@ -604,9 +604,13 @@ namespace Telegram.Services
 
         public string GetLaunch(Chat chat, Message message)
         {
-            var launch = string.Format(CultureInfo.InvariantCulture, "msg_id={0}", message.Id);
-            launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;chat_id={1}", launch, chat.Id);
+            var launch = string.Format(CultureInfo.InvariantCulture, "chat_id={0}", chat.Id);
             launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _clientService.SessionId);
+
+            if (chat.Type is not ChatTypePrivate and not ChatTypeSecret)
+            {
+                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;msg_id={1}", launch, message.Id);
+            }
 
             return launch;
         }

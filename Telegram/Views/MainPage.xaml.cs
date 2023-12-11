@@ -1356,29 +1356,9 @@ namespace Telegram.Views
             else
             {
                 var data = Toast.SplitArguments(parameter);
-                if (data.ContainsKey("from_id") && int.TryParse(data["from_id"], out int from_id))
+                if (data.ContainsKey("chat_id") && long.TryParse(data["chat_id"], out long chatId))
                 {
-                    var response = await ViewModel.ClientService.SendAsync(new CreatePrivateChat(from_id, false));
-                    if (response is Chat chat)
-                    {
-                        MasterDetail.NavigationService.NavigateToChat(chat, force: false);
-                    }
-                }
-                else if (data.ContainsKey("chat_id") && int.TryParse(data["chat_id"], out int chat_id))
-                {
-                    var response = await ViewModel.ClientService.SendAsync(new CreateBasicGroupChat(chat_id, false));
-                    if (response is Chat chat)
-                    {
-                        MasterDetail.NavigationService.NavigateToChat(chat, force: false);
-                    }
-                }
-                else if (data.ContainsKey("channel_id") && int.TryParse(data["channel_id"], out int channel_id))
-                {
-                    var response = await ViewModel.ClientService.SendAsync(new CreateSupergroupChat(channel_id, false));
-                    if (response is Chat chat)
-                    {
-                        MasterDetail.NavigationService.NavigateToChat(chat, force: false);
-                    }
+                    MasterDetail.NavigationService.NavigateToChat(chatId, force: false);
                 }
             }
 
