@@ -605,25 +605,10 @@ namespace Telegram.Services
         public string GetLaunch(Chat chat, Message message)
         {
             var launch = string.Format(CultureInfo.InvariantCulture, "msg_id={0}", message.Id);
+            launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;chat_id={1}", launch, chat.Id);
+            launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _clientService.SessionId);
 
-            if (chat.Type is ChatTypePrivate privata)
-            {
-                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;from_id={1}", launch, privata.UserId);
-            }
-            else if (chat.Type is ChatTypeSecret secret)
-            {
-                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;secret_id={1}", launch, secret.SecretChatId);
-            }
-            else if (chat.Type is ChatTypeSupergroup supergroup)
-            {
-                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;channel_id={1}", launch, supergroup.SupergroupId);
-            }
-            else if (chat.Type is ChatTypeBasicGroup basicGroup)
-            {
-                launch = string.Format(CultureInfo.InvariantCulture, "{0}&amp;chat_id={1}", launch, basicGroup.BasicGroupId);
-            }
-
-            return string.Format(CultureInfo.InvariantCulture, "{0}&amp;session={1}", launch, _clientService.SessionId);
+            return launch;
         }
 
         private async void CreateToastCollection(User user)
@@ -683,17 +668,16 @@ namespace Telegram.Services
             if (data.TryGetValue("action", out string action))
             {
                 var chat = default(Chat);
-                if (data.TryGetValue("from_id", out string from_id) && int.TryParse(from_id, out int fromId))
+                if (data.TryGetValue("chat_id", out string chat_id) && long.TryParse(chat_id, out long chatId))
                 {
-                    chat = await _clientService.SendAsync(new CreatePrivateChat(fromId, false)) as Chat;
-                }
-                else if (data.TryGetValue("channel_id", out string channel_id) && int.TryParse(channel_id, out int channelId))
-                {
-                    chat = await _clientService.SendAsync(new CreateSupergroupChat(channelId, false)) as Chat;
-                }
-                else if (data.TryGetValue("chat_id", out string chat_id) && int.TryParse(chat_id, out int chatId))
-                {
-                    chat = await _clientService.SendAsync(new CreateBasicGroupChat(chatId, false)) as Chat;
+                    if (_clientService.TryGetChat(chatId, out chat))
+                    {
+
+                    }
+                    else
+                    {
+                        chat = await _clientService.SendAsync(new GetChat(chatId)) as Chat;
+                    }
                 }
 
                 if (chat == null)
