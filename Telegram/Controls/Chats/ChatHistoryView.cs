@@ -6,6 +6,7 @@
 //
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
@@ -45,7 +46,7 @@ namespace Telegram.Controls.Chats
         }
 
         private readonly DisposableMutex _loadMoreLock = new();
-        private int _loadMoreCount = 0;
+        private readonly SemaphoreSlim _loadMoreSemaphore = new(2, 2);
 
         private TaskCompletionSource<bool> _waitItemsPanelRoot = new();
 
@@ -166,15 +167,19 @@ namespace Telegram.Controls.Chats
         {
             ScrollingDirection = direction;
 
-            if (ScrollingHost == null || ItemsPanelRoot is not ItemsStackPanel panel || ViewModel == null)
+            if (ScrollingHost == null || ItemsPanelRoot is not ItemsStackPanel panel || ViewModel == null || !_loadMoreSemaphore.Wait(0))
             {
                 return;
             }
 
-            _loadMoreCount++;
-
             using (await _loadMoreLock.WaitAsync())
             {
+                if (IsDisconnected)
+                {
+                    _loadMoreSemaphore.Release();
+                    return;
+                }
+
                 var lastSlice = ViewModel.IsLastSliceLoaded != true;
                 var firstSlice = ViewModel.IsFirstSliceLoaded != true;
 
@@ -203,16 +208,9 @@ namespace Telegram.Controls.Chats
                         await LoadPreviousSliceAsync(direction, firstSlice);
                     }
                 }
-
-                _loadMoreCount--;
-
-                // This is just not to get too many calls stuck queued
-                if (_loadMoreCount < 3)
-                {
-                    // Not sure if this is extremely effective, but we try
-                    await Task.WhenAny(this.UpdateLayoutAsync(), Task.Delay(100));
-                }
             }
+
+            _loadMoreSemaphore.Release();
         }
 
         private Task LoadPreviousSliceAsync(PanelScrollingDirection direction, bool firstSlice)
