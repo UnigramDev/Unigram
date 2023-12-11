@@ -158,7 +158,7 @@ namespace Telegram.Controls
         private float animateAmplitudeDiff2;
         private float animateToAmplitude;
         WeavingState currentState;
-        private long lastUpdateTime;
+        private ulong lastUpdateTime;
         readonly LineBlobDrawable lineBlobDrawable = new LineBlobDrawable(5);
         readonly LineBlobDrawable lineBlobDrawable1 = new LineBlobDrawable(7);
         readonly LineBlobDrawable lineBlobDrawable2 = new LineBlobDrawable(8);
@@ -197,11 +197,11 @@ namespace Telegram.Controls
             }
             //if (f2 <= f4)
             {
-                long j = 0;
+                ulong j = 0;
                 if (z)
                 {
-                    long elapsedRealtime = Environment.TickCount;
-                    long j2 = elapsedRealtime - lastUpdateTime;
+                    ulong elapsedRealtime = Logger.TickCount;
+                    ulong j2 = elapsedRealtime - lastUpdateTime;
                     lastUpdateTime = elapsedRealtime;
                     j = j2 > 20 ? 17 : j2;
                     float f7 = animateToAmplitude;
@@ -256,7 +256,7 @@ namespace Telegram.Controls
                         //view.Invalidate();
                     }
                 }
-                long j3 = j;
+                ulong j3 = j;
                 int i2 = 0;
                 while (i2 < 2)
                 {
@@ -465,7 +465,7 @@ namespace Telegram.Controls
                 //this.shader = new RadialGradient(200.0f, 200.0f, 200.0f, new int[] { color4, color5 }, (float[])null, Shader.TileMode.CLAMP);
             }
 
-            public void update(int i, int i2, long j, float f)
+            public void update(int i, int i2, ulong j, float f)
             {
                 float f2 = duration;
                 if (f2 == 0.0f || time >= f2)

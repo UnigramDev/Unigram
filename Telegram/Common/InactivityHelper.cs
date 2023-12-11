@@ -15,7 +15,7 @@ namespace Telegram.Common
         private static Timer _timer;
         private static int _timeout = 60 * 1000;
 
-        private static int _lastTime;
+        private static int _lastTime = int.MinValue;
 
         public static void Initialize(int timeout)
         {
@@ -46,6 +46,7 @@ namespace Telegram.Common
         {
             var lastInput = NativeUtils.GetLastInputTime();
             var idleTime = Environment.TickCount - lastInput;
+            
             if (idleTime >= _timeout && _lastTime < lastInput)
             {
                 _lastTime = lastInput;
@@ -61,6 +62,7 @@ namespace Telegram.Common
             {
                 var lastInput = NativeUtils.GetLastInputTime();
                 var idleTime = Environment.TickCount - lastInput;
+                
                 if (idleTime >= 60 * 1000)
                 {
                     return false;

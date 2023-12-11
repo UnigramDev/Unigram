@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Threading.Tasks;
 using Telegram.Controls;
 using Telegram.Services;
@@ -85,7 +84,7 @@ namespace Telegram.Views.Popups
 
             _loadingMore = true;
 
-            var ticks = Environment.TickCount;
+            var ticks = Logger.TickCount;
 
             Task<object> task;
             if (_chatId != 0 && _messageId != 0)
@@ -100,7 +99,7 @@ namespace Telegram.Views.Popups
             var response = await task;
             if (response is FormattedText translation)
             {
-                var diff = Environment.TickCount - ticks;
+                var diff = (int)(Logger.TickCount - ticks);
                 if (diff < 1000)
                 {
                     await Task.Delay(1000 - diff);

@@ -71,7 +71,7 @@ namespace Telegram.Controls
         private bool _isHighlighted;
         private bool _ignoreSpoilers = false;
 
-        private long _expandSelectionDeadline;
+        private ulong _expandSelectionDeadline;
 
         private readonly List<FormattedParagraph> _codeBlocks = new();
 
@@ -171,16 +171,16 @@ namespace Telegram.Controls
         {
             if (e.PointerDeviceType == PointerDeviceType.Mouse)
             {
-                _expandSelectionDeadline = Environment.TickCount + BootStrapper.Current.UISettings.DoubleClickTime;
+                _expandSelectionDeadline = Logger.TickCount + BootStrapper.Current.UISettings.DoubleClickTime;
             }
         }
 
         private void OnTapped(object sender, TappedRoutedEventArgs e)
         {
             // If a double tap is followed by a single tap, then it's a triple tap (duh)
-            if (e.PointerDeviceType == PointerDeviceType.Mouse && Environment.TickCount < _expandSelectionDeadline)
+            if (e.PointerDeviceType == PointerDeviceType.Mouse && Logger.TickCount < _expandSelectionDeadline)
             {
-                _expandSelectionDeadline = Environment.TickCount + BootStrapper.Current.UISettings.DoubleClickTime;
+                _expandSelectionDeadline = Logger.TickCount + BootStrapper.Current.UISettings.DoubleClickTime;
                 VisualUtilities.QueueCallbackForCompositionRendering(ExpandSelection);
             }
         }

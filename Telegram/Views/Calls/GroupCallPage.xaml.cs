@@ -668,7 +668,7 @@ namespace Telegram.Views.Calls
         }
 
         private string _selectedEndpointId;
-        private int _selectedTimestamp;
+        private ulong _selectedTimestamp;
 
         private void Resize_Click(object sender, RoutedEventArgs e)
         {
@@ -1025,7 +1025,7 @@ namespace Telegram.Views.Calls
 
                         if (value > speakingLevelThreshold && level.IsSpeaking)
                         {
-                            _selectedTimestamp = Environment.TickCount;
+                            _selectedTimestamp = Logger.TickCount;
                         }
                     }
                 }
@@ -2490,7 +2490,7 @@ namespace Telegram.Views.Calls
             _layerGradient = null;
         }
 
-        private int _lastUpdateTime;
+        private ulong _lastUpdateTime;
 
         private CanvasRenderTarget _target;
         private CanvasImageBrush _layer;
@@ -2499,14 +2499,14 @@ namespace Telegram.Views.Calls
 
         public void Draw(CanvasControl view, CanvasDrawingSession canvas)
         {
-            int elapsedRealtime = Environment.TickCount;
-            int access = elapsedRealtime - _lastUpdateTime;
-            int unused = _lastUpdateTime = elapsedRealtime;
+            ulong elapsedRealtime = Logger.TickCount;
+            ulong access = elapsedRealtime - _lastUpdateTime;
+            ulong unused = _lastUpdateTime = elapsedRealtime;
             if (access > 20)
             {
                 access = 17;
             }
-            long j = access;
+            ulong j = access;
 
             //this.tinyWaveDrawable.minRadius = 62.0f;
             //this.tinyWaveDrawable.maxRadius = 62.0f + (20.0f * BlobDrawable.FORM_SMALL_MAX);

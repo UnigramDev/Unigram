@@ -4,7 +4,6 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using System;
 using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Controls;
@@ -156,12 +155,12 @@ namespace Telegram.ViewModels.Settings
                 UpdateGlyph = Icons.ArrowSync;
                 UpdateText = Strings.RetrievingInformation;
 
-                var ticks = Environment.TickCount;
+                var ticks = Logger.TickCount;
 
                 await _cloudUpdateService.UpdateAsync(true);
                 update = _update = _cloudUpdateService.NextUpdate;
 
-                var diff = Environment.TickCount - ticks;
+                var diff = (int)(Logger.TickCount - ticks);
                 if (diff < 2000)
                 {
                     await Task.Delay(2000 - diff);

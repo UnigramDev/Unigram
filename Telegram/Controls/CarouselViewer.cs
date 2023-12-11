@@ -53,7 +53,7 @@ namespace Telegram.Controls
     public class CarouselViewer : Grid, IInteractionTrackerOwner
     {
         private bool _requiresArrange;
-        private long _scrolling;
+        private ulong _scrolling;
 
         public CarouselViewer()
         {
@@ -231,7 +231,7 @@ namespace Telegram.Controls
             }
         }
 
-        public bool IsScrolling => Environment.TickCount - _scrolling < 100;
+        public bool IsScrolling => Logger.TickCount - _scrolling < 100;
 
         public FrameworkElement CurrentElement => _elements[1];
 
@@ -263,7 +263,7 @@ namespace Telegram.Controls
 
         public void ChangeView(CarouselDirection direction)
         {
-            _scrolling = Environment.TickCount;
+            _scrolling = Logger.TickCount;
 
             var position = direction == CarouselDirection.Previous
                 ? _tracker.MinPosition

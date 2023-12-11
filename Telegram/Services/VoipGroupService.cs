@@ -783,10 +783,10 @@ namespace Telegram.Services
 
         private readonly struct SpeakingParticipant
         {
-            public readonly int Timestamp;
+            public readonly ulong Timestamp;
             public readonly float Level;
 
-            public SpeakingParticipant(int timestamp, float level)
+            public SpeakingParticipant(ulong timestamp, float level)
             {
                 Timestamp = timestamp;
                 Level = level;
@@ -805,7 +805,7 @@ namespace Telegram.Services
             const int cutoffTimeout = 3000;
             const int silentTimeout = 2000;
 
-            var timestamp = Environment.TickCount;
+            var timestamp = Logger.TickCount;
 
             Dictionary<int, SpeakingParticipant> validSpeakers = null;
             HashSet<int> silentParticipants = new();

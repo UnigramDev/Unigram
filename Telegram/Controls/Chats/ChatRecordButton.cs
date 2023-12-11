@@ -743,7 +743,7 @@ namespace Telegram.Controls.Chats
             private float _micLevelPeak = 0;
             private int _micLevelPeakCount = 0;
 
-            private int _lastUpdateTime;
+            private ulong _lastUpdateTime;
 
             [ComImport]
             [Guid("5B0D3235-4DBA-4D44-865E-8F1D0E4FD04D")]
@@ -761,12 +761,12 @@ namespace Telegram.Controls.Chats
                     return;
                 }
 
-                if (Environment.TickCount - _lastUpdateTime < 64)
+                if (Logger.TickCount - _lastUpdateTime < 64)
                 {
                     return;
                 }
 
-                _lastUpdateTime = Environment.TickCount;
+                _lastUpdateTime = Logger.TickCount;
 
                 using var frame = reference.AudioMediaFrame.GetAudioFrame();
 

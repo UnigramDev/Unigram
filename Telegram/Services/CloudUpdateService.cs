@@ -40,7 +40,7 @@ namespace Telegram.Services
         private long? _chatId;
         private CloudUpdate _nextUpdate;
 
-        private long _lastCheck;
+        private ulong _lastCheck;
 
         public CloudUpdateService(IClientService clientService, INetworkService networkService, IEventAggregator aggregator)
         {
@@ -127,7 +127,7 @@ namespace Telegram.Services
                 return;
             }
 
-            var diff = Environment.TickCount - _lastCheck;
+            var diff = Logger.TickCount - _lastCheck;
             var skip = diff < 5 * 60 * 1000;
 
             if (skip && !force)
