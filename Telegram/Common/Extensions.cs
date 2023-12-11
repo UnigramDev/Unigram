@@ -650,30 +650,30 @@ namespace Telegram.Common
 
         public static bool TryGet<T>(this IDictionary<object, object> dict, object key, out T value)
         {
-            bool success;
-            if (success = dict.TryGetValue(key, out object tryGetValue))
+            if (dict.TryGetValue(key, out object tryGetValue) && tryGetValue is T tryGet)
             {
-                value = (T)tryGetValue;
+                value = tryGet;
+                return true;
             }
             else
             {
                 value = default;
+                return false;
             }
-            return success;
         }
 
         public static bool TryGet<T>(this IDictionary<string, object> dict, string key, out T value)
         {
-            bool success;
-            if (success = dict.TryGetValue(key, out object tryGetValue))
+            if (dict.TryGetValue(key, out object tryGetValue) && tryGetValue is T tryGet)
             {
-                value = (T)tryGetValue;
+                value = tryGet;
+                return true;
             }
             else
             {
                 value = default;
+                return false;
             }
-            return success;
         }
 
         public static void Put<T>(this IList<T> source, bool begin, T item)

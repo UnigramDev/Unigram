@@ -15,6 +15,8 @@ namespace Telegram.Common
         private static AppServiceConnection _connection;
         private static BackgroundTaskDeferral _deferral;
 
+        private static TaskCompletionSource<bool> _pendingExit;
+
         public static async Task LaunchAsync()
         {
             if (ApiInformation.IsTypePresent("Windows.ApplicationModel.FullTrustProcessLauncher"))
@@ -32,7 +34,7 @@ namespace Telegram.Common
 
         public static bool IsConnected => _connection != null;
 
-        public static void Connect(AppServiceConnection connection, BackgroundTaskDeferral deferral)
+        public static async void Connect(AppServiceConnection connection, BackgroundTaskDeferral deferral)
         {
             _connection = connection;
             _connection.RequestReceived += OnRequestReceived;
@@ -40,7 +42,30 @@ namespace Telegram.Common
 
             _deferral = deferral;
 
-            _ = _connection.SendMessageAsync(new ValueSet { { "ProcessId", Process.GetCurrentProcess().Id } });
+            var values = new ValueSet
+            {
+                { "ProcessId", Process.GetCurrentProcess().Id },
+                { "OpenText", Strings.NotifyIconOpen },
+                { "ExitText", Strings.NotifyIconExit }
+            };
+
+            if (_pendingExit != null)
+            {
+                values.Add("Exit", true);
+            }
+
+            await _connection.SendMessageAsync(values);
+
+            _pendingExit?.TrySetResult(true);
+            _pendingExit = null;
+        }
+
+        public static Task EnqueueExitAsync()
+        {
+            _pendingExit = new TaskCompletionSource<bool>();
+            Cancel();
+
+            return _pendingExit.Task;
         }
 
         public static async Task ExitAsync()
@@ -49,7 +74,13 @@ namespace Telegram.Common
             {
                 try
                 {
-                    await _connection.SendMessageAsync("Exit");
+                    var task = _connection.SendMessageAsync("Exit").AsTask();
+                    var result = await Task.WhenAny(task, Task.Delay(200));
+
+                    if (task != result)
+                    {
+                        await EnqueueExitAsync();
+                    }
                 }
                 catch
                 {
@@ -58,13 +89,13 @@ namespace Telegram.Common
             }
         }
 
-        public static async Task CloseRequestedAsync()
+        public static async Task DebugAsync(string value)
         {
             if (_connection != null)
             {
                 try
                 {
-                    await _connection.SendMessageAsync("CloseRequested");
+                    await _connection.SendMessageAsync("Debug", value);
                 }
                 catch
                 {
