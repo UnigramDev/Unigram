@@ -218,7 +218,7 @@
         </Grid>
 
         <StackPanel x:Name="ControlsRoot">
-            <controls:HeaderedControl>
+            <controls:HeaderedControl x:Name="InfoPanel">
                 <controls:BadgeButton x:Name="Description"
                                       Visibility="Collapsed"
                                       Style="{StaticResource GlyphSubtitleBadgeButtonStyle}"

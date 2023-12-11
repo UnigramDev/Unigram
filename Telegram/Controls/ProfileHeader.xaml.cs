@@ -806,7 +806,6 @@ namespace Telegram.Controls
 
             OpenChat.Content = Strings.VoipGroupOpenGroup;
 
-            // Unused:
             if (chat.VideoChat.GroupCallId != 0 || group.CanManageVideoChats())
             {
                 VideoChat.Visibility = Visibility.Visible;
@@ -820,8 +819,8 @@ namespace Telegram.Controls
                 Grid.SetColumn(Search, 1);
             }
 
+            // Unused:
             Call.Visibility = Visibility.Collapsed;
-            VideoChat.Visibility = Visibility.Collapsed;
             VideoCall.Visibility = Visibility.Collapsed;
 
             AnonymousNumber.Visibility = Visibility.Collapsed;
@@ -831,7 +830,14 @@ namespace Telegram.Controls
         public void UpdateBasicGroupFullInfo(Chat chat, BasicGroup group, BasicGroupFullInfo fullInfo)
         {
             GetEntities(fullInfo.Description);
-            Description.Visibility = string.IsNullOrEmpty(fullInfo.Description) ? Visibility.Collapsed : Visibility.Visible;
+
+            Description.Visibility = string.IsNullOrEmpty(fullInfo.Description)
+                ? Visibility.Collapsed
+                : Visibility.Visible;
+
+            InfoPanel.Visibility = Description.Visibility == Visibility.Visible || ChatId.Visibility == Visibility.Visible
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
 
