@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Graphics.Canvas.UI.Xaml;
+using System;
 using System.Numerics;
 using Telegram.Common;
 using Telegram.Controls.Media;
@@ -6,13 +7,12 @@ using Telegram.Td.Api;
 using Telegram.Views;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 
 namespace Telegram.Controls.Chats
 {
-    public sealed partial class ChatRecordBar : Grid
+    public sealed partial class ChatRecordBar : GridEx
     {
         private readonly DispatcherTimer _elapsedTimer;
         private readonly Visual _ellipseVisual;
@@ -22,6 +22,8 @@ namespace Telegram.Controls.Chats
         private readonly Visual _rootVisual;
 
         private AvatarWavesDrawable _drawable;
+
+        private CanvasControl ChatRecordCanvas;
 
         public ChatRecordBar()
         {
@@ -47,6 +49,29 @@ namespace Telegram.Controls.Chats
 
             _drawable = new AvatarWavesDrawable(true, true);
             _drawable.Update(Theme.Accent, true);
+
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            // TODO: lazy load on start recording?
+            ChatRecordCanvas = new CanvasControl
+            {
+                Width = 120,
+                Height = 120
+            };
+
+            ChatRecordCanvas.Draw += ChatRecordCanvas_Draw;
+            Ellipse.Children.Insert(0, ChatRecordCanvas);
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            ChatRecordCanvas.Draw -= ChatRecordCanvas_Draw;
+            ChatRecordCanvas.RemoveFromVisualTree();
+            ChatRecordCanvas = null;
         }
 
         private void ElapsedPanel_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -317,7 +342,7 @@ namespace Telegram.Controls.Chats
             _ellipseVisual.StopAnimation("Scale");
         }
 
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             _rootVisual.Size = e.NewSize.ToVector2();
         }

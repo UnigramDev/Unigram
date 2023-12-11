@@ -1,16 +1,14 @@
-﻿<Grid x:Class="Telegram.Controls.Chats.ChatRecordBar"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:Telegram.Controls.Chats"
-      xmlns:controls="using:Telegram.Controls"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
-      mc:Ignorable="d"
-      d:DesignHeight="300"
-      d:DesignWidth="400"
-      SizeChanged="UserControl_SizeChanged"
-      Background="{ThemeResource PageSubHeaderBackgroundBrush2}">
+﻿<controls:GridEx x:Class="Telegram.Controls.Chats.ChatRecordBar"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:controls="using:Telegram.Controls"
+                 mc:Ignorable="d"
+                 d:DesignHeight="300"
+                 d:DesignWidth="400"
+                 SizeChanged="OnSizeChanged"
+                 Background="{ThemeResource PageSubHeaderBackgroundBrush2}">
 
     <Grid VerticalAlignment="Bottom"
           Height="{StaticResource TelegramToolBarHeight}">
@@ -129,10 +127,6 @@
                       Width="120"
                       Height="120"
                       VerticalAlignment="Bottom">
-                    <xaml:CanvasControl x:Name="ChatRecordCanvas"
-                                        Draw="ChatRecordCanvas_Draw"
-                                        Width="120"
-                                        Height="120" />
                     <Grid CornerRadius="40"
                           Width="80"
                           Height="80">
@@ -150,4 +144,4 @@
             </Border>
         </Popup>
     </Border>
-</Grid>
+</controls:GridEx>
