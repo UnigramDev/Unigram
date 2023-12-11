@@ -427,7 +427,7 @@ namespace Telegram.Controls.Messages
         }
     }
 
-    public class MessagePinnedLine : Control
+    public class MessagePinnedLine : ControlEx
     {
         private readonly CompositionSpriteShape _back;
         private readonly CompositionSpriteShape _fore;
@@ -473,6 +473,22 @@ namespace Telegram.Controls.Messages
             _maskPath = mask;
 
             ElementCompositionPreview.SetElementChildVisual(this, visual);
+
+            Connected += OnLoaded;
+            Disconnected += OnUnloaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_fore != null)
+            {
+                Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            Stroke?.UnregisterColorChangedCallback(ref _strokeToken);
         }
 
         #region Stroke
@@ -491,20 +507,27 @@ namespace Telegram.Controls.Messages
         private static void OnStrokeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as MessagePinnedLine;
-            var solid = e.NewValue as SolidColorBrush;
+            var prev = e.OldValue as SolidColorBrush;
+            var next = e.NewValue as SolidColorBrush;
 
-            if (e.OldValue is SolidColorBrush old && sender._strokeToken != 0)
-            {
-                old.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender._strokeToken);
-            }
+            sender.OnStrokeChanged(prev, next);
+        }
 
-            if (solid == null || sender._fore == null)
+        private void OnStrokeChanged(SolidColorBrush oldValue, SolidColorBrush newValue)
+        {
+            oldValue?.UnregisterColorChangedCallback(ref _strokeToken);
+
+            if (newValue == null || _fore == null)
             {
                 return;
             }
 
-            sender._fore.FillBrush = Window.Current.Compositor.CreateColorBrush(solid.Color);
-            sender._strokeToken = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, sender.OnStrokeChanged);
+            _fore.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
+
+            if (IsConnected)
+            {
+                newValue.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
+            }
         }
 
         private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)

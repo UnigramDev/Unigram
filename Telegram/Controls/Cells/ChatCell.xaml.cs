@@ -1793,11 +1793,7 @@ namespace Telegram.Controls.Cells
 
         private void OnSelectionStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            if (oldValue != null && _selectionStrokeToken != 0)
-            {
-                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _selectionStrokeToken);
-                _selectionStrokeToken = 0;
-            }
+            oldValue?.UnregisterColorChangedCallback(ref _selectionStrokeToken);
 
             if (newValue == null || _stroke == null)
             {
@@ -1805,7 +1801,11 @@ namespace Telegram.Controls.Cells
             }
 
             _stroke.FillBrush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
-            _selectionStrokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnSelectionStrokeChanged);
+
+            if (IsConnected)
+            {
+                newValue.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
+            }
         }
 
         private void OnSelectionStrokeChanged(DependencyObject sender, DependencyProperty dp)
@@ -1990,11 +1990,7 @@ namespace Telegram.Controls.Cells
 
         private void OnStrokeChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
-            if (oldValue != null && _strokeToken != 0)
-            {
-                oldValue.UnregisterPropertyChangedCallback(SolidColorBrush.ColorProperty, _strokeToken);
-                _strokeToken = 0;
-            }
+            oldValue?.UnregisterColorChangedCallback(ref _strokeToken);
 
             if (newValue == null || _container == null || _ellipse == null)
             {
@@ -2009,7 +2005,11 @@ namespace Telegram.Controls.Cells
             }
 
             _ellipse.FillBrush = brush;
-            _strokeToken = newValue.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+
+            if (IsConnected)
+            {
+                newValue.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
+            }
         }
 
         private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
@@ -2037,9 +2037,9 @@ namespace Telegram.Controls.Cells
             var value = GetValue(dp);
             if (value is SolidColorBrush solid)
             {
-                if (token == 0)
+                if (IsConnected)
                 {
-                    token = solid.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, callback);
+                    solid.RegisterColorChangedCallback(callback, ref token);
                 }
 
                 return Window.Current.Compositor.CreateColorBrush(solid.Color);
