@@ -57,7 +57,6 @@ namespace Telegram.Controls.Chats
 
             _recognizer = new GestureRecognizer();
             _recognizer.GestureSettings = GestureSettings.DoubleTap;
-            _recognizer.Tapped += Recognizer_Tapped;
 
             Connected += OnLoaded;
             Disconnected += OnUnloaded;
@@ -83,6 +82,8 @@ namespace Telegram.Controls.Chats
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            _recognizer.Tapped += Recognizer_Tapped;
+
             if (ItemsPanelRoot != null)
             {
                 ItemsPanelRoot.SizeChanged += OnSizeChanged;
@@ -98,6 +99,8 @@ namespace Telegram.Controls.Chats
         {
             Logger.Info($"ItemsPanelRoot.Children.Count: {ItemsPanelRoot?.Children.Count}");
             Logger.Info($"Items.Count: {Items.Count}");
+
+            _recognizer.Tapped -= Recognizer_Tapped;
 
             if (ItemsPanelRoot != null)
             {
