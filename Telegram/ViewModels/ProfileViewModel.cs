@@ -233,7 +233,11 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypeBasicGroup basic && basic.BasicGroupId == update.BasicGroup.Id)
             {
-                BeginOnUIThread(() => Delegate?.UpdateBasicGroup(chat, update.BasicGroup));
+                BeginOnUIThread(() =>
+                {
+                    MembersTab.UpdateMembers();
+                    Delegate?.UpdateBasicGroup(chat, update.BasicGroup);
+                });
             }
         }
 
@@ -247,7 +251,11 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypeBasicGroup basic && basic.BasicGroupId == update.BasicGroupId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateBasicGroupFullInfo(chat, ClientService.GetBasicGroup(update.BasicGroupId), update.BasicGroupFullInfo));
+                BeginOnUIThread(() =>
+                {
+                    MembersTab.UpdateMembers();
+                    Delegate?.UpdateBasicGroupFullInfo(chat, ClientService.GetBasicGroup(update.BasicGroupId), update.BasicGroupFullInfo);
+                });
             }
         }
 
@@ -263,7 +271,11 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypeSupergroup super && super.SupergroupId == update.Supergroup.Id)
             {
-                BeginOnUIThread(() => Delegate?.UpdateSupergroup(chat, update.Supergroup));
+                BeginOnUIThread(() =>
+                {
+                    MembersTab.UpdateMembers();
+                    Delegate?.UpdateSupergroup(chat, update.Supergroup);
+                });
             }
         }
 
@@ -277,7 +289,11 @@ namespace Telegram.ViewModels
 
             if (chat.Type is ChatTypeSupergroup super && super.SupergroupId == update.SupergroupId)
             {
-                BeginOnUIThread(() => Delegate?.UpdateSupergroupFullInfo(chat, ClientService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo));
+                BeginOnUIThread(() =>
+                {
+                    MembersTab.UpdateMembers();
+                    Delegate?.UpdateSupergroupFullInfo(chat, ClientService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo);
+                });
             }
         }
 
@@ -633,55 +649,7 @@ namespace Telegram.ViewModels
             }
             else
             {
-                var header = chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
-                    ? Strings.AddSubscriber
-                    : Strings.AddMember;
-
-                var selectionMode = chat.Type is ChatTypeBasicGroup
-                    ? ListViewSelectionMode.Single
-                    : ListViewSelectionMode.Multiple;
-
-                var selected = await ChooseChatsPopup.PickUsersAsync(ClientService, header, selectionMode);
-                if (selected == null || selected.Count == 0)
-                {
-                    return;
-                }
-
-                string title = Locale.Declension(Strings.R.AddManyMembersAlertTitle, selected.Count);
-                string message;
-
-                if (selected.Count <= 5)
-                {
-                    var names = string.Join(", ", selected.Select(x => x.FullName()));
-                    message = string.Format(Strings.AddMembersAlertNamesText, names, chat.Title);
-                }
-                else
-                {
-                    message = Locale.Declension(Strings.R.AddManyMembersAlertNamesText, selected.Count, chat.Title);
-                }
-
-                var confirm = await ShowPopupAsync(message, title, Strings.Add, Strings.Cancel);
-                if (confirm != ContentDialogResult.Primary)
-                {
-                    return;
-                }
-
-                if (chat.Type is ChatTypeBasicGroup)
-                {
-                    var response = await ClientService.SendAsync(new AddChatMember(chat.Id, selected[0].Id, 100));
-                    if (response is Error error)
-                    {
-                        ShowPopup(error.Message, Strings.AppName);
-                    }
-                }
-                else
-                {
-                    var response = await ClientService.SendAsync(new AddChatMembers(chat.Id, selected.Select(x => x.Id).ToArray()));
-                    if (response is Error error)
-                    {
-                        ShowPopup(error.Message, Strings.AppName);
-                    }
-                }
+                MembersTab.Add();
             }
         }
 

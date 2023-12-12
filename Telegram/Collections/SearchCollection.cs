@@ -52,6 +52,12 @@ namespace Telegram.Collections
 
         public TSource Source => _source;
 
+        public void Reload()
+        {
+            Update(_factory(_sender ?? this, _query.Value));
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Query)));
+        }
+
         public void UpdateQuery(string value)
         {
             _query.Value = value;

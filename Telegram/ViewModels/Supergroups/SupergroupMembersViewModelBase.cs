@@ -22,6 +22,8 @@ namespace Telegram.ViewModels.Supergroups
         private readonly SupergroupMembersFilter _filter;
         private readonly Func<string, SupergroupMembersFilter> _find;
 
+        private int _memberCount;
+
         public ISupergroupDelegate Delegate { get; set; }
 
         public SupergroupMembersViewModelBase(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, SupergroupMembersFilter filter, Func<string, SupergroupMembersFilter> search)
@@ -73,17 +75,20 @@ namespace Telegram.ViewModels.Supergroups
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
 
+                _memberCount = cache?.MemberCount ?? item.MemberCount;
                 Members.UpdateQuery(string.Empty);
             }
             else if (chat.Type is ChatTypeBasicGroup basicGroup)
             {
                 var item = ClientService.GetBasicGroup(basicGroup.BasicGroupId);
+                var cache = ClientService.GetBasicGroupFull(basicGroup.BasicGroupId);
 
                 if (Delegate is IBasicGroupDelegate basicDelegate)
                 {
                     basicDelegate.UpdateBasicGroup(chat, item);
                 }
 
+                _memberCount = cache?.Members.Count ?? item.MemberCount;
                 Members.UpdateQuery(string.Empty);
             }
 
@@ -105,6 +110,34 @@ namespace Telegram.ViewModels.Supergroups
         }
 
         public SearchCollection<ChatMember, ChatMemberCollection> Members { get; private set; }
+
+        public void UpdateMembers()
+        {
+            var memberCount = 0;
+
+            if (ClientService.TryGetSupergroupFull(_chat, out SupergroupFullInfo supergroupFullInfo))
+            {
+                memberCount = supergroupFullInfo.MemberCount;
+            }
+            else if (ClientService.TryGetBasicGroupFull(_chat, out BasicGroupFullInfo basicGroupFullInfo))
+            {
+                memberCount = basicGroupFullInfo.Members.Count;
+            }
+            else if (ClientService.TryGetSupergroup(_chat, out Supergroup supergroup))
+            {
+                memberCount = supergroup.MemberCount;
+            }
+            else if (ClientService.TryGetBasicGroup(_chat, out BasicGroup basicGroup))
+            {
+                memberCount = basicGroup.MemberCount;
+            }
+
+            if (_memberCount != memberCount && memberCount > 0 && memberCount <= 200)
+            {
+                _memberCount = memberCount;
+                Members.Reload();
+            }
+        }
 
         private ChatMemberCollection SetItems(object sender, string query)
         {
@@ -133,7 +166,12 @@ namespace Telegram.ViewModels.Supergroups
         {
             public bool CompareItems(ChatMember oldItem, ChatMember newItem)
             {
-                return oldItem?.MemberId == newItem?.MemberId;
+                if (oldItem != null && newItem != null)
+                {
+                    return oldItem.MemberId.AreTheSame(newItem.MemberId);
+                }
+
+                return false;
             }
 
             public void UpdateItem(ChatMember oldItem, ChatMember newItem) { }
