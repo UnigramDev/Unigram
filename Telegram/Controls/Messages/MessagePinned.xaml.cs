@@ -480,9 +480,10 @@ namespace Telegram.Controls.Messages
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_fore != null)
+            if (_strokeToken == 0 && _fore != null)
             {
                 Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
+                OnStrokeChanged(Stroke, SolidColorBrush.ColorProperty);
             }
         }
 

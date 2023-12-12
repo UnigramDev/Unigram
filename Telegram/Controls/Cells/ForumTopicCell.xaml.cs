@@ -65,14 +65,16 @@ namespace Telegram.Controls.Cells
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_container != null || _visual != null)
+            if (_strokeToken == 0 && (_shapes != null || _ellipse != null))
             {
                 Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
+                OnStrokeChanged(Stroke, SolidColorBrush.ColorProperty);
             }
 
-            if (_visual != null)
+            if (_selectionStrokeToken == 0 && _stroke != null)
             {
                 SelectionStroke?.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
+                OnSelectionStrokeChanged(SelectionStroke, SolidColorBrush.ColorProperty);
             }
         }
 
@@ -1137,19 +1139,25 @@ namespace Telegram.Controls.Cells
         {
             oldValue?.UnregisterColorChangedCallback(ref _strokeToken);
 
-            if (newValue == null || _container == null || _ellipse == null)
+            if (newValue == null || (_shapes == null && _ellipse == null))
             {
                 return;
             }
 
             var brush = Window.Current.Compositor.CreateColorBrush(newValue.Color);
 
-            foreach (var shape in _shapes)
+            if (_shapes != null)
             {
-                shape.StrokeBrush = brush;
+                foreach (var shape in _shapes)
+                {
+                    shape.StrokeBrush = brush;
+                }
             }
 
-            _ellipse.FillBrush = brush;
+            if (_ellipse != null)
+            {
+                _ellipse.FillBrush = brush;
+            }
 
             if (IsConnected)
             {
@@ -1160,19 +1168,25 @@ namespace Telegram.Controls.Cells
         private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
         {
             var solid = sender as SolidColorBrush;
-            if (solid == null || _container == null || _ellipse == null)
+            if (solid == null || (_shapes == null && _ellipse == null))
             {
                 return;
             }
 
             var brush = Window.Current.Compositor.CreateColorBrush(solid.Color);
 
-            foreach (var shape in _shapes)
+            if (_shapes != null)
             {
-                shape.StrokeBrush = brush;
+                foreach (var shape in _shapes)
+                {
+                    shape.StrokeBrush = brush;
+                }
             }
 
-            _ellipse.FillBrush = brush;
+            if (_ellipse != null)
+            {
+                _ellipse.FillBrush = brush;
+            }
         }
 
         #endregion

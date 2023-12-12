@@ -37,9 +37,10 @@ namespace Telegram.Controls.Cells
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_visual != null)
+            if (_selectionStrokeToken == 0 && _stroke != null)
             {
                 SelectionStroke?.RegisterColorChangedCallback(OnSelectionStrokeChanged, ref _selectionStrokeToken);
+                OnSelectionStrokeChanged(SelectionStroke, SolidColorBrush.ColorProperty);
             }
         }
 

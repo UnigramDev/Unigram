@@ -46,16 +46,10 @@ namespace Telegram.Controls.Messages
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (Stroke is SolidColorBrush stroke && _strokeToken == 0 && _container != null)
+            if (_strokeToken == 0 && _shapes != null)
             {
-                var brush = Window.Current.Compositor.CreateColorBrush(stroke.Color);
-
-                foreach (var shape in _shapes)
-                {
-                    shape.StrokeBrush = brush;
-                }
-
-                _strokeToken = stroke.RegisterPropertyChangedCallback(SolidColorBrush.ColorProperty, OnStrokeChanged);
+                Stroke?.RegisterColorChangedCallback(OnStrokeChanged, ref _strokeToken);
+                OnStrokeChanged(Stroke, SolidColorBrush.ColorProperty);
             }
         }
 
@@ -461,7 +455,7 @@ namespace Telegram.Controls.Messages
         private void OnStrokeChanged(DependencyObject sender, DependencyProperty dp)
         {
             var solid = sender as SolidColorBrush;
-            if (solid == null || _container == null)
+            if (solid == null || _shapes == null)
             {
                 return;
             }
