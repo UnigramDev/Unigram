@@ -169,7 +169,15 @@ namespace Telegram.Navigation
         public UIElement Content
         {
             get => _window.Content;
-            set => _window.Content = value;
+            set
+            {
+                _window.Content = value;
+
+                if (value != null && _locked != null)
+                {
+                    value.Visibility = Visibility.Collapsed;
+                }
+            }
         }
 
         public Size Size { get; set; }
@@ -286,24 +294,20 @@ namespace Telegram.Navigation
                 return;
             }
 
-            // This is a rare case, but it can happen.
-            var content = Window.Current.Content;
-            if (content != null)
+            if (_window.Content != null)
             {
-                content.Visibility = Visibility.Collapsed;
+                _window.Content.Visibility = Visibility.Collapsed;
             }
 
             _locked = new PasscodePage(biometrics);
 
-            static void handler(ContentDialog s, ContentDialogClosingEventArgs args)
+            void handler(ContentDialog s, ContentDialogClosingEventArgs args)
             {
                 s.Closing -= handler;
 
-                // This is a rare case, but it can happen.
-                var content = Window.Current.Content;
-                if (content != null)
+                if (_window.Content != null)
                 {
-                    content.Visibility = Visibility.Visible;
+                    _window.Content.Visibility = Visibility.Visible;
                 }
             }
 
@@ -316,7 +320,6 @@ namespace Telegram.Navigation
         public void Unlock()
         {
             _locked?.Update();
-            _locked = null;
         }
 
         #endregion

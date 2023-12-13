@@ -8,8 +8,7 @@
                        mc:Ignorable="d"
                        TitleTemplate="{x:Null}"
                        IsFullWindow="True"
-                       Loaded="OnLoaded"
-                       Unloaded="OnUnloaded"
+                       Opened="OnOpened"
                        Closing="OnClosing">
 
     <ContentDialog.Style>
@@ -113,6 +112,7 @@
                                           AutomationProperties.Name="{CustomResource UnlockWindowsHello}"
                                           ToolTipService.ToolTip="{CustomResource UnlockWindowsHello}"
                                           Style="{StaticResource RoundGlyphButtonStyle}"
+                                          AllowFocusOnInteraction="False"
                                           Foreground="#FFFFFF"
                                           Width="32"
                                           Height="32"
@@ -125,7 +125,6 @@
                              InputScope="NumericPin"
                              PasswordChanged="Field_TextChanged"
                              KeyDown="Field_KeyDown"
-                             LosingFocus="Field_LosingFocus"
                              Grid.Column="1" />
 
                 <Border Background="{ThemeResource TinyButtonBackgroundBrush}"
@@ -139,6 +138,7 @@
                                           AutomationProperties.Name="{CustomResource AccDescrPasscodeUnlock}"
                                           ToolTipService.ToolTip="{CustomResource AccDescrPasscodeUnlock}"
                                           Style="{StaticResource RoundGlyphButtonStyle}"
+                                          AllowFocusOnInteraction="False"
                                           Foreground="#FFFFFF"
                                           Width="32"
                                           Height="32"
