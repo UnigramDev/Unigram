@@ -1311,8 +1311,8 @@ namespace Telegram.Td.Api
         {
             if (text.Entities?.Count > 0)
             {
-                var rep = new StringBuilder(text.Text);
-                var ent = text.Entities.ToList();
+                StringBuilder rep = null;
+                List<TextEntity> ent = null;
 
                 var chars = "⠁⠂⠄⠈⠐⠠⡀⢀⠃⠅⠆⠉⠊⠌⠑⠒⠔⠘⠡⠢⠤⠨⠰⡁⡂⡄⡈⡐⡠⢁⢂⢄⢈⢐⢠⣀⠇⠋⠍⠎⠓⠕⠖⠙⠚⠜⠣⠥⠦⠩⠪⠬⠱⠲⠴⠸⡃⡅⡆⡉⡊⡌⡑⡒⡔⡘⡡⡢⡤⡨⡰⢃⢅⢆⢉⢊⢌⢑⢒⢔⢘⢡⢢⢤⢨⢰⣁⣂⣄⣈⣐⣠⠏⠗⠛⠝⠞⠧⠫⠭⠮⠳⠵⠶⠹⠺⠼⡇⡋⡍⡎⡓⡕⡖⡙⡚⡜⡣⡥⡦⡩⡪⡬⡱⡲⡴⡸⢇⢋⢍⢎⢓⢕⢖⢙⢚⢜⢣⢥⢦⢩⢪⢬⢱⢲⢴⢸⣃⣅⣆⣉⣊⣌⣑⣒⣔⣘⣡⣢⣤⣨⣰⠟⠯⠷⠻⠽⠾⡏⡗⡛⡝⡞⡧⡫⡭⡮⡳⡵⡶⡹⡺⡼⢏⢗⢛⢝⢞⢧⢫⢭⢮⢳⢵⢶⢹⢺⢼⣇⣋⣍⣎⣓⣕⣖⣙⣚⣜⣣⣥⣦⣩⣪⣬⣱⣲⣴⣸⠿⡟⡯⡷⡻⡽⡾⢟⢯⢷⢻⢽⢾⣏⣗⣛⣝⣞⣧⣫⣭⣮⣳⣵⣶⣹⣺⣼⡿⢿⣟⣯⣷⣻⣽⣾⣿";
 
@@ -1320,6 +1320,9 @@ namespace Telegram.Td.Api
                 {
                     if (entity.Type is TextEntityTypeSpoiler)
                     {
+                        rep ??= new StringBuilder(text.Text);
+                        ent ??= text.Entities.ToList();
+
                         for (int i = 0; i < entity.Length; i++)
                         {
                             rep[entity.Offset + i] = chars[text.Text[entity.Offset + i] % chars.Length];
@@ -1329,17 +1332,20 @@ namespace Telegram.Td.Api
                     }
                 }
 
-                if (singleLine)
+                if (rep != null && ent != null)
                 {
-                    return new FormattedText(rep.Replace('\n', ' ').ToString(), ent);
-                }
+                    if (singleLine)
+                    {
+                        return new FormattedText(rep.Replace('\n', ' ').ToString(), ent);
+                    }
 
-                return new FormattedText(rep.ToString(), ent);
+                    return new FormattedText(rep.ToString(), ent);
+                }
             }
 
             if (singleLine)
             {
-                return new FormattedText(text.Text.Replace('\n', ' ').ToString(), text.Entities);
+                return new FormattedText(text.Text.Replace('\n', ' '), text.Entities);
             }
 
             return text;
