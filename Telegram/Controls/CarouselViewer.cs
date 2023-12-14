@@ -361,14 +361,24 @@ namespace Telegram.Controls
 
             _restingValue = restingValue;
 
-            (Visual Visual, Vector2 Size)
-                visual2 = (_visuals[0], _elements[0].ActualSize);
+            static Vector2 GetSize(FrameworkElement element)
+            {
+                if (element is AspectView { RotationAngle: RotationAngle.Angle90 or RotationAngle.Angle270 })
+                {
+                    return new Vector2(element.ActualSize.Y, element.ActualSize.X);
+                }
+
+                return element.ActualSize;
+            }
 
             (Visual Visual, Vector2 Size)
-                visual0 = (_visuals[1], _elements[1].ActualSize);
+                visual2 = (_visuals[0], GetSize(_elements[0]));
 
             (Visual Visual, Vector2 Size)
-                visual1 = (_visuals[2], _elements[2].ActualSize);
+                visual0 = (_visuals[1], GetSize(_elements[1]));
+
+            (Visual Visual, Vector2 Size)
+                visual1 = (_visuals[2], GetSize(_elements[2]));
 
             var current2 = GetElementPosition(visual2.Size, 0);
             var future20 = GetElementPosition(visual2.Size, 1);

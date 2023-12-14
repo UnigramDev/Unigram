@@ -32,12 +32,19 @@ namespace Telegram.Controls.Gallery
         private IGalleryDelegate _delegate;
         private GalleryMedia _item;
 
+        private int _itemId;
+
         public GalleryMedia Item => _item;
 
         private long _fileToken;
         private long _thumbnailToken;
 
-        private Stretch _lastStretch;
+        private int _appliedId;
+
+        private Stretch _appliedStretch;
+        private int _appliedRotation;
+
+        private bool _fromSizeChanged;
 
         public bool IsEnabled
         {
@@ -54,34 +61,82 @@ namespace Telegram.Controls.Gallery
 
             _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
             _playbackQueue = new LifoActionWorker();
+
+            RotationAngleChanged += OnRotationAngleChanged;
+            SizeChanged += OnSizeChanged;
         }
 
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        private void OnRotationAngleChanged(object sender, RoutedEventArgs e)
         {
-            if (_lastStretch == Stretch)
+            if (_fromSizeChanged)
             {
                 return;
             }
 
-            _lastStretch = Stretch;
+            OnSizeChanged(sender, null);
+        }
 
-            var prev = e.PreviousSize.ToVector2();
-            var next = e.NewSize.ToVector2();
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_item == null || _itemId != _appliedId)
+            {
+                _appliedId = _itemId;
+                return;
+            }
 
-            var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
-            anim.InsertKeyFrame(1, Vector3.One);
+            _appliedId = _itemId;
 
-            var panel = ElementCompositionPreview.GetElementVisual(this);
-            panel.CenterPoint = new Vector3(next.X / 2, next.Y / 2, 0);
-            panel.StartAnimation("Scale", anim);
+            var angle = RotationAngle switch
+            {
+                RotationAngle.Angle90 => 90,
+                RotationAngle.Angle180 => 180,
+                RotationAngle.Angle270 => 270,
+                _ => 0
+            };
 
-            var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
-            factor.SetReferenceParameter("content", panel);
+            var visual = ElementCompositionPreview.GetElementVisual(this);
+            visual.CenterPoint = new Vector3(ActualSize / 2, 0);
+            visual.Clip ??= visual.Compositor.CreateInsetClip();
 
-            var button = ElementCompositionPreview.GetElementVisual(Button);
-            button.CenterPoint = new Vector3(Button.ActualSize.X / 2, Button.ActualSize.Y / 2, 0);
-            button.StartAnimation("Scale", factor);
+            if (_appliedStretch == Stretch && _appliedRotation == angle)
+            {
+                visual.RotationAngleInDegrees = angle;
+                return;
+            }
+
+            _appliedStretch = Stretch;
+            _fromSizeChanged = e != null;
+
+            if (e != null)
+            {
+                var prev = e.PreviousSize.ToVector2();
+                var next = e.NewSize.ToVector2();
+
+                var anim = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+                anim.InsertKeyFrame(0, new Vector3(prev / next, 1));
+                anim.InsertKeyFrame(1, Vector3.One);
+
+                var panel = ElementCompositionPreview.GetElementVisual(Children[0]);
+                panel.CenterPoint = new Vector3(next.X / 2, next.Y / 2, 0);
+                panel.StartAnimation("Scale", anim);
+
+                var factor = Window.Current.Compositor.CreateExpressionAnimation("Vector3(1 / content.Scale.X, 1 / content.Scale.Y, 1)");
+                factor.SetReferenceParameter("content", panel);
+
+                var button = ElementCompositionPreview.GetElementVisual(Button);
+                button.CenterPoint = new Vector3(Button.ActualSize.X / 2, Button.ActualSize.Y / 2, 0);
+                button.StartAnimation("Scale", factor);
+            }
+
+            if (_appliedRotation != angle)
+            {
+                var animation = visual.Compositor.CreateScalarKeyFrameAnimation();
+                animation.InsertKeyFrame(0, angle > _appliedRotation ? 360 : _appliedRotation);
+                animation.InsertKeyFrame(1, angle);
+
+                _appliedRotation = angle;
+                visual.StartAnimation("RotationAngleInDegrees", animation);
+            }
         }
 
         public void UpdateItem(IGalleryDelegate delegato, GalleryMedia item)
@@ -89,8 +144,10 @@ namespace Telegram.Controls.Gallery
             _delegate = delegato;
             _item = item;
 
-            Tag = item;
+            _appliedRotation = 0;
 
+            Tag = item;
+            RotationAngle = RotationAngle.Angle0;
             Background = null;
             Texture.Source = null;
 
@@ -101,6 +158,8 @@ namespace Telegram.Controls.Gallery
             {
                 return;
             }
+
+            _itemId = file.Id;
 
             if (item.IsVideoNote)
             {

@@ -119,23 +119,26 @@
             <StackPanel Orientation="Horizontal">
                 <controls:GlyphButton Click="{x:Bind ViewModel.OpenStickers}"
                                       Visibility="{x:Bind (Visibility)ViewModel.SelectedItem.HasStickers, Mode=OneWay}"
-                                      Height="{ThemeResource AppBarThemeCompactHeight}"
                                       Glyph="&#xF4AA;"
                                       FontSize="{StaticResource GlyphMediumFontSize}" />
 
                 <controls:GlyphButton x:Name="ZoomOut"
                                       Click="ZoomOut_Click"
-                                      Height="{ThemeResource AppBarThemeCompactHeight}"
                                       AutomationProperties.Name="{CustomResource MediaZoomOut}"
                                       ToolTipService.ToolTip="{CustomResource MediaZoomOut}"
                                       Glyph="&#xE96A;" />
 
                 <controls:GlyphButton x:Name="ZoomIn"
                                       Click="ZoomIn_Click"
-                                      Height="{ThemeResource AppBarThemeCompactHeight}"
                                       AutomationProperties.Name="{CustomResource MediaZoomIn}"
                                       ToolTipService.ToolTip="{CustomResource MediaZoomIn}"
                                       Glyph="&#xE969;" />
+
+                <controls:GlyphButton x:Name="Rotate"
+                                      Click="Rotate_Click"
+                                      AutomationProperties.Name="{CustomResource AccDescrRotate}"
+                                      ToolTipService.ToolTip="{CustomResource AccDescrRotate}"
+                                      Glyph="&#xEA5B;" />
 
                 <controls:MoreButton Click="Menu_ContextRequested"
                                      HorizontalAlignment="Right" />

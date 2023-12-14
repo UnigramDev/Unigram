@@ -6,6 +6,7 @@
 //
 using System;
 using System.Linq;
+using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
@@ -15,6 +16,14 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls
 {
+    public enum RotationAngle
+    {
+        Angle0,
+        Angle90,
+        Angle180,
+        Angle270
+    }
+
     public class AspectView : Grid
     {
         #region Constraint
@@ -29,6 +38,24 @@ namespace Telegram.Controls
             DependencyProperty.Register("Constraint", typeof(object), typeof(AspectView), new PropertyMetadata(null, OnConstraintChanged));
 
         private static void OnConstraintChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((AspectView)d).InvalidateMeasure();
+        }
+
+        #endregion
+
+        #region Rotate
+
+        public RotationAngle RotationAngle
+        {
+            get => (RotationAngle)GetValue(RotationAngleProperty);
+            set => SetValue(RotationAngleProperty, value);
+        }
+
+        public static readonly DependencyProperty RotationAngleProperty =
+            DependencyProperty.Register("RotationAngle", typeof(RotationAngle), typeof(AspectView), new PropertyMetadata(RotationAngle.Angle0, OnRotationAngleChanged));
+
+        private static void OnRotationAngleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((AspectView)d).InvalidateMeasure();
         }
@@ -327,27 +354,63 @@ namespace Telegram.Controls
                 height = int.MaxValue;
             }
 
-        Calculate:
-            if (width > availableWidth || height > availableHeight || Constraint is Size || Stretch == Stretch.UniformToFill)
+            var rotate = RotationAngle
+                is RotationAngle.Angle90
+                or RotationAngle.Angle270;
+
+            var cw = rotate ? height : width;
+            var ch = rotate ? width : height;
+
+            if (cw > availableWidth || ch > availableHeight || Constraint is Size || Stretch == Stretch.UniformToFill)
             {
-                var ratioX = availableWidth / width;
-                var ratioY = availableHeight / height;
+                var ratioX = availableWidth / cw;
+                var ratioY = availableHeight / ch;
                 var ratio = Math.Min(ratioX, ratioY);
 
-                //if (Holder != null)
-                //{
-                //    Holder.Width = width * ratio;
-                //    Holder.Height = height * ratio;
-                //}
+                cw *= ratio;
+                ch *= ratio;
+            }
 
-                base.MeasureOverride(new Size(width * ratio, height * ratio));
-                return new Size(width * ratio, height * ratio);
-            }
-            else
+            width = rotate ? ch : cw;
+            height = rotate ? cw : ch;
+
+            base.MeasureOverride(new Size(width, height));
+            return new Size(width, height);
+        }
+
+        private bool _applyingRotation;
+        private RotationAngle _appliedRotation;
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            ApplyRotation();
+            return base.ArrangeOverride(finalSize);
+        }
+
+        private void ApplyRotation()
+        {
+            if (_applyingRotation || _appliedRotation == RotationAngle)
             {
-                base.MeasureOverride(new Size(width, height));
-                return new Size(width, height);
+                return;
             }
+
+            _applyingRotation = true;
+            VisualUtilities.QueueCallbackForCompositionRendering(ApplyRotationImpl);
+        }
+
+        public event RoutedEventHandler RotationAngleChanged;
+
+        private void ApplyRotationImpl()
+        {
+            _applyingRotation = false;
+
+            if (_appliedRotation == RotationAngle)
+            {
+                return;
+            }
+
+            _appliedRotation = RotationAngle;
+            RotationAngleChanged?.Invoke(this, new RoutedEventArgs());
         }
     }
 }

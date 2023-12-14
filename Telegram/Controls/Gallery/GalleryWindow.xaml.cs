@@ -722,6 +722,11 @@ namespace Telegram.Controls.Gallery
                 ChangeView(CarouselDirection.Next, false);
                 args.Handled = true;
             }
+            else if (args.VirtualKey is VirtualKey.R && args.OnlyControl)
+            {
+                Rotate_Click(null, null);
+                args.Handled = true;
+            }
             else if (args.VirtualKey is VirtualKey.C && args.OnlyControl)
             {
                 ViewModel?.Copy();
@@ -778,18 +783,20 @@ namespace Telegram.Controls.Gallery
             LayoutRoot.Width = finalSize.Width;
             LayoutRoot.Height = finalSize.Height - Padding.Top;
 
-            static void Apply(AspectView element, Size size)
-            {
-                if (element.Constraint is not Size)
-                {
-                    element.MaxWidth = size.Width;
-                    element.MaxHeight = size.Height;
-                }
-            }
+            // TODO: setting a max width/height to the element causes a weird clipping effect if
+            // the final calculated size is actually larger than that to accomodate for rotation
+            //static void Apply(AspectView element, Size size)
+            //{
+            //    if (element.Constraint is not Size)
+            //    {
+            //        element.MaxWidth = size.Width;
+            //        element.MaxHeight = size.Height;
+            //    }
+            //}
 
-            Apply(Element2, finalSize);
-            Apply(Element0, finalSize);
-            Apply(Element1, finalSize);
+            //Apply(Element2, finalSize);
+            //Apply(Element0, finalSize);
+            //Apply(Element1, finalSize);
 
             if (_layout != null)
             {
@@ -1080,6 +1087,20 @@ namespace Telegram.Controls.Gallery
         private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
             ScrollingHost.Zoom(false);
+        }
+
+        private void Rotate_Click(object sender, RoutedEventArgs e)
+        {
+            if (LayoutRoot.CurrentElement is AspectView view)
+            {
+                view.RotationAngle = view.RotationAngle switch
+                {
+                    RotationAngle.Angle0 => RotationAngle.Angle270,
+                    RotationAngle.Angle270 => RotationAngle.Angle180,
+                    RotationAngle.Angle180 => RotationAngle.Angle90,
+                    _ => RotationAngle.Angle0
+                };
+            }
         }
 
         private bool _areInteractionsEnabled = true;
