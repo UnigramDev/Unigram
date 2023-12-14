@@ -41,13 +41,26 @@ namespace LibVLCSharp.Platforms.Windows
         {
             DefaultStyleKey = typeof(VideoViewBase);
 
-            Disconnected += (s, e) => DestroySwapChain();
-#if !WINUI
-            if (!DesignMode.DesignModeEnabled)
-            {
-                Application.Current.Suspending += (s, e) => { Trim(); };
-            }
-#endif
+            Connected += OnConnected;
+            Disconnected += OnDisconnected;
+        }
+
+        private void OnConnected(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Suspending += OnSuspending;
+        }
+
+        private void OnDisconnected(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Suspending -= OnSuspending;
+
+            DestroySwapChain();
+        }
+
+        private void OnSuspending(object sender, SuspendingEventArgs e)
+        {
+            // When the app is suspended, UWP apps should call Trim so that the DirectX data is cleaned.
+            _device3?.Trim();
         }
 
         /// <summary>
@@ -66,26 +79,28 @@ namespace LibVLCSharp.Platforms.Windows
 #endif
             DestroySwapChain();
 
-            _panel.SizeChanged += (s, eventArgs) =>
-            {
-                if (_loaded)
-                {
-                    UpdateSize();
-                }
-                else
-                {
-                    CreateSwapChain();
-                }
-            };
+            _panel.SizeChanged += OnSizeChanged;
+            _panel.CompositionScaleChanged += OnCompositionScaleChanged;
+        }
 
-            _panel.CompositionScaleChanged += (s, eventArgs) =>
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (_loaded)
             {
-                if (_loaded)
-                {
-                    UpdateScale();
-                }
-            };
+                UpdateSize();
+            }
+            else
+            {
+                CreateSwapChain();
+            }
+        }
 
+        private void OnCompositionScaleChanged(SwapChainPanel sender, object args)
+        {
+            if (_loaded)
+            {
+                UpdateScale();
+            }
         }
 
         public void Clear()
@@ -352,14 +367,6 @@ namespace LibVLCSharp.Platforms.Windows
                 M11 = 1.0f / (float)XamlRoot.RasterizationScale, //_panel.CompositionScaleX,
                 M22 = 1.0f / (float)XamlRoot.RasterizationScale //_panel.CompositionScaleY
             };
-        }
-
-        /// <summary>
-        /// When the app is suspended, UWP apps should call Trim so that the DirectX data is cleaned.
-        /// </summary>
-        void Trim()
-        {
-            _device3?.Trim();
         }
 
         /// <summary>

@@ -358,8 +358,14 @@ namespace Telegram.Controls.Gallery
 
             Task.Run(() =>
             {
-                _mediaPlayer?.Stop();
-                _mediaPlayer?.Dispose();
+                if (_mediaPlayer != null)
+                {
+                    _mediaPlayer.Stopped -= OnStopped;
+
+                    _mediaPlayer.Stop();
+                    _mediaPlayer.Dispose();
+                }
+
                 _mediaPlayer = null;
 
                 _library?.Dispose();
