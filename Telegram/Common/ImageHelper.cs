@@ -110,7 +110,7 @@ namespace Telegram.Common
         /// <param name="requestedMinSide">Max width/height of the output image</param>
         /// <param name="quality">JPEG compression quality (0.77 for pictures, 0.87 for thumbnails)</param>
         /// <returns></returns>
-        public static async Task<StorageFile> ScaleJpegAsync(StorageFile sourceFile, StorageFile resizedImageFile, int requestedMinSide = 1280, double quality = 0.77)
+        public static async Task<StorageFile> ScaleAsync(Guid encoderId, StorageFile sourceFile, StorageFile resizedImageFile, int requestedMinSide = 1280, bool bestQuality = false)
         {
             using (var source = await sourceFile.OpenReadAsync())
             {
@@ -127,7 +127,7 @@ namespace Telegram.Common
                 {
                     BitmapTransform transform;
 
-                    if (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide)
+                    if (requestedMinSide > 0 && (decoder.PixelWidth > requestedMinSide || decoder.PixelHeight > requestedMinSide))
                     {
                         double ratioX = (double)requestedMinSide / originalPixelWidth;
                         double ratioY = (double)requestedMinSide / originalPixelHeight;
@@ -140,7 +140,9 @@ namespace Telegram.Common
                         {
                             ScaledWidth = width,
                             ScaledHeight = height,
-                            InterpolationMode = quality == 1 ? BitmapInterpolationMode.Fant : BitmapInterpolationMode.Linear
+                            InterpolationMode = bestQuality
+                                ? BitmapInterpolationMode.Fant
+                                : BitmapInterpolationMode.Linear
                         };
                     }
                     else
@@ -155,7 +157,7 @@ namespace Telegram.Common
                     //var qualityValue = new BitmapTypedValue(quality, Windows.Foundation.PropertyType.Single);
                     //propertySet.Add("ImageQuality", qualityValue);
 
-                    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, resizedStream/*, propertySet*/);
+                    var encoder = await BitmapEncoder.CreateAsync(encoderId, resizedStream/*, propertySet*/);
                     encoder.SetSoftwareBitmap(pixelData);
                     await encoder.FlushAsync();
                 }

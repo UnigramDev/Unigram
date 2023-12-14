@@ -354,18 +354,22 @@ namespace Telegram.ViewModels
 
         public async void SendFileExecute(IReadOnlyList<StorageFile> files, FormattedText caption = null, bool media = true)
         {
-            if (Chat is not Chat chat)
+            var items = await StorageMedia.CreateAsync(files);
+            if (items.Count > 0)
+            {
+                SendFileExecute(items, caption, media);
+            }
+        }
+
+
+        public async void SendFileExecute(IList<StorageMedia> items, FormattedText caption = null, bool media = true)
+        {
+            if (Chat is not Chat chat || items.Empty())
             {
                 return;
             }
 
             var permissions = GetPermissions(chat, out bool restricted);
-
-            var items = await StorageMedia.CreateAsync(files);
-            if (items.Empty())
-            {
-                return;
-            }
 
             foreach (var item in items)
             {
@@ -492,23 +496,23 @@ namespace Telegram.ViewModels
 
         private async Task SendStorageMediaAsync(StorageMedia storage, InputMessageReplyTo reply, FormattedText caption, bool asFile, MessageSendOptions options)
         {
-            if (storage is StorageDocument or StorageAudio)
+            if (storage is StorageDocument or StorageAudio || asFile)
             {
-                await SendDocumentAsync(storage.File, reply, caption, options);
+                await SendDocumentAsync(storage.File, reply, caption, storage.IsScreenshot, options);
             }
             else if (storage is StoragePhoto)
             {
-                await SendPhotoAsync(storage.File, reply, caption, asFile, storage.HasSpoiler, storage.Ttl, storage.IsEdited ? storage.EditState : null, options);
+                await SendPhotoAsync(storage.File, reply, caption, storage.HasSpoiler, storage.Ttl, storage.IsEdited ? storage.EditState : null, options);
             }
             else if (storage is StorageVideo video)
             {
-                await SendVideoAsync(storage.File, reply, caption, video.IsMuted, asFile, storage.HasSpoiler, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform(), options);
+                await SendVideoAsync(storage.File, reply, caption, video.IsMuted, storage.HasSpoiler, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform(), options);
             }
         }
 
-        private async Task SendDocumentAsync(StorageFile file, InputMessageReplyTo reply, FormattedText caption = null, MessageSendOptions options = null)
+        private async Task SendDocumentAsync(StorageFile file, InputMessageReplyTo reply, FormattedText caption = null, bool asScreenshot = false, MessageSendOptions options = null)
         {
-            var factory = await MessageFactory.CreateDocumentAsync(file, false);
+            var factory = await MessageFactory.CreateDocumentAsync(file, false, asScreenshot);
             if (factory != null)
             {
                 //var reply = GetReply(true);
@@ -518,9 +522,9 @@ namespace Telegram.ViewModels
             }
         }
 
-        private async Task SendPhotoAsync(StorageFile file, InputMessageReplyTo reply, FormattedText caption, bool asFile, bool spoiler = false, MessageSelfDestructType ttl = null, BitmapEditState editState = null, MessageSendOptions options = null)
+        private async Task SendPhotoAsync(StorageFile file, InputMessageReplyTo reply, FormattedText caption, bool spoiler = false, MessageSelfDestructType ttl = null, BitmapEditState editState = null, MessageSendOptions options = null)
         {
-            var factory = await MessageFactory.CreatePhotoAsync(file, asFile, spoiler, ttl, editState);
+            var factory = await MessageFactory.CreatePhotoAsync(file, spoiler, ttl, editState);
             if (factory != null)
             {
                 //var reply = GetReply(true);
@@ -530,9 +534,9 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async Task SendVideoAsync(StorageFile file, InputMessageReplyTo reply, FormattedText caption, bool animated, bool asFile, bool spoiler = false, MessageSelfDestructType ttl = null, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null, MessageSendOptions options = null)
+        public async Task SendVideoAsync(StorageFile file, InputMessageReplyTo reply, FormattedText caption, bool animated, bool spoiler = false, MessageSelfDestructType ttl = null, MediaEncodingProfile profile = null, VideoTransformEffectDefinition transform = null, MessageSendOptions options = null)
         {
-            var factory = await MessageFactory.CreateVideoAsync(file, animated, asFile, spoiler, ttl, profile, transform);
+            var factory = await MessageFactory.CreateVideoAsync(file, animated, spoiler, ttl, profile, transform);
             if (factory != null)
             {
                 //var reply = GetReply(true);
@@ -772,7 +776,7 @@ namespace Telegram.ViewModels
                         firstCaption = caption;
                     }
 
-                    var factory = await MessageFactory.CreateDocumentAsync(item.File, !audio);
+                    var factory = await MessageFactory.CreateDocumentAsync(item.File, !audio, item.IsScreenshot);
                     if (factory != null)
                     {
                         var input = factory.Delegate(factory.InputFile, firstCaption);
@@ -783,7 +787,7 @@ namespace Telegram.ViewModels
                 }
                 else if (item is StoragePhoto photo)
                 {
-                    var factory = await MessageFactory.CreatePhotoAsync(photo.File, asFile, photo.HasSpoiler, photo.Ttl, photo.IsEdited ? photo.EditState : null);
+                    var factory = await MessageFactory.CreatePhotoAsync(photo.File, photo.HasSpoiler, photo.Ttl, photo.IsEdited ? photo.EditState : null);
                     if (factory != null)
                     {
                         var input = factory.Delegate(factory.InputFile, firstCaption);
@@ -794,7 +798,7 @@ namespace Telegram.ViewModels
                 }
                 else if (item is StorageVideo video)
                 {
-                    var factory = await MessageFactory.CreateVideoAsync(video.File, video.IsMuted, asFile, video.HasSpoiler, video.Ttl, await video.GetEncodingAsync(), video.GetTransform());
+                    var factory = await MessageFactory.CreateVideoAsync(video.File, video.IsMuted, video.HasSpoiler, video.Ttl, await video.GetEncodingAsync(), video.GetTransform());
                     if (factory != null)
                     {
                         var input = factory.Delegate(factory.InputFile, firstCaption);

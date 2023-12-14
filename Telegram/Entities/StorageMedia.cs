@@ -98,6 +98,8 @@ namespace Telegram.Entities
 
         public bool IsSecret => _ttl != null;
 
+        public bool IsScreenshot { get; set; }
+
         public virtual uint Width { get; }
         public virtual uint Height { get; }
 

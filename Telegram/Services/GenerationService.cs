@@ -35,6 +35,7 @@ namespace Telegram.Services
     {
         Copy,
         Compress,
+        Screenshot,
         Opus,
         Transcode,
         TranscodeThumbnail,
@@ -90,6 +91,10 @@ namespace Telegram.Services
                     else if (conversion == ConversionType.Compress)
                     {
                         await CompressAsync(update, args);
+                    }
+                    else if (conversion == ConversionType.Screenshot)
+                    {
+                        await ScreenshotAsync(update, args);
                     }
                     else if (conversion == ConversionType.Opus)
                     {
@@ -241,8 +246,32 @@ namespace Telegram.Services
                 }
                 else
                 {
-                    await ImageHelper.ScaleJpegAsync(file, temp, 1280, 1);
+                    await ImageHelper.ScaleAsync(BitmapEncoder.JpegEncoderId, file, temp, 1280, true);
                 }
+
+                _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
+
+                if (IsTemporary(file))
+                {
+                    await file.DeleteAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                _clientService.Send(new FinishFileGeneration(update.GenerationId, new Error(500, "FILE_GENERATE_LOCATION_INVALID " + ex.ToString())));
+            }
+
+            //StorageApplicationPermissions.FutureAccessList.Remove(args[0]);
+        }
+
+        private async Task ScreenshotAsync(UpdateFileGenerationStart update, string[] args)
+        {
+            try
+            {
+                var file = await StorageApplicationPermissions.FutureAccessList.GetFileAsync(args[0]);
+                var temp = await StorageFile.GetFileFromPathAsync(update.DestinationPath);
+
+                await ImageHelper.ScaleAsync(BitmapEncoder.PngEncoderId, file, temp, 0, true);
 
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, null));
 
@@ -273,7 +302,7 @@ namespace Telegram.Services
                 }
                 else
                 {
-                    await ImageHelper.ScaleJpegAsync(file, temp, 90, 0.77);
+                    await ImageHelper.ScaleAsync(BitmapEncoder.JpegEncoderId, file, temp, 90, false);
                 }
 
                 _clientService.Send(new FinishFileGeneration(update.GenerationId, null));

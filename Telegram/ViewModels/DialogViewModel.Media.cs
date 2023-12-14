@@ -127,7 +127,7 @@ namespace Telegram.ViewModels
                     var bitmap = await package.GetBitmapAsync();
                     var media = new List<StorageFile>();
 
-                    var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.bmp", DateTime.Now);
+                    var fileName = string.Format("image_{0:yyyy}-{0:MM}-{0:dd}_{0:HH}-{0:mm}-{0:ss}.png", DateTime.Now);
                     var cache = await ApplicationData.Current.TemporaryFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
 
                     using (var source = await bitmap.OpenReadAsync())
@@ -156,7 +156,13 @@ namespace Telegram.ViewModels
                             .Substring(0, ClientService.Options.MessageCaptionLengthMax);
                     }
 
-                    SendFileExecute(media, caption);
+                    var items = await StorageMedia.CreateAsync(media);
+                    if (items.Count > 0)
+                    {
+                        items[0].IsScreenshot = true;
+                    }
+
+                    SendFileExecute(items, caption);
                 }
                 else if (package.AvailableFormats.Contains(StandardDataFormats.WebLink))
                 {
@@ -242,7 +248,7 @@ namespace Telegram.ViewModels
                     return;
                 }
 
-                var factory = await MessageFactory.CreateDocumentAsync(file, false);
+                var factory = await MessageFactory.CreateDocumentAsync(file, false, false);
                 if (factory != null)
                 {
                     header.EditingMessageMedia = factory;
@@ -335,13 +341,17 @@ namespace Telegram.ViewModels
             TextField?.SetText(popup.Caption);
 
             Task<InputMessageFactory> request = null;
-            if (storage is StoragePhoto)
+            if (popup.IsFilesSelected)
             {
-                request = MessageFactory.CreatePhotoAsync(storage.File, popup.IsFilesSelected, storage.HasSpoiler, storage.Ttl, storage.IsEdited ? storage.EditState : null);
+                request = MessageFactory.CreateDocumentAsync(storage.File, false, storage.IsScreenshot);
+            }
+            else if (storage is StoragePhoto)
+            {
+                request = MessageFactory.CreatePhotoAsync(storage.File, storage.HasSpoiler, storage.Ttl, storage.IsEdited ? storage.EditState : null);
             }
             else if (storage is StorageVideo video)
             {
-                request = MessageFactory.CreateVideoAsync(storage.File, video.IsMuted, popup.IsFilesSelected, storage.HasSpoiler, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform());
+                request = MessageFactory.CreateVideoAsync(storage.File, video.IsMuted, storage.HasSpoiler, storage.Ttl, await video.GetEncodingAsync(), video.GetTransform());
             }
 
             if (request == null)
