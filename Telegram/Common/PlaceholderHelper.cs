@@ -197,25 +197,8 @@ namespace Telegram.Common
             return text;
         }
 
-        public static ImageSource GetBlurred(string path, float amount = 3)
+        public static async void GetBlurred(BitmapImage bitmap, string path, float amount = 3)
         {
-            var bitmap = new BitmapImage();
-            using (var stream = new InMemoryRandomAccessStream())
-            {
-                try
-                {
-                    PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(path, amount, stream);
-                    bitmap.SetSource(stream);
-                }
-                catch { }
-            }
-
-            return bitmap;
-        }
-
-        public static async Task<ImageSource> GetBlurredAsync(string path, float amount = 3)
-        {
-            var bitmap = new BitmapImage();
             using (var stream = new InMemoryRandomAccessStream())
             {
                 try
@@ -225,8 +208,6 @@ namespace Telegram.Common
                 }
                 catch { }
             }
-
-            return bitmap;
         }
 
         public static async void GetBlurred(BitmapImage bitmap, IList<byte> bytes, float amount = 3)
@@ -240,22 +221,6 @@ namespace Telegram.Common
                 }
                 catch { }
             }
-        }
-
-        public static async Task<ImageSource> GetBlurredAsync(IList<byte> bytes, float amount = 3)
-        {
-            var bitmap = new BitmapImage();
-            using (var stream = new InMemoryRandomAccessStream())
-            {
-                try
-                {
-                    await Task.Run(() => PlaceholderImageHelper.Current.DrawThumbnailPlaceholder(bytes, amount, stream));
-                    await bitmap.SetSourceAsync(stream);
-                }
-                catch { }
-            }
-
-            return bitmap;
         }
 
         public static ImageSource GetWebPFrame(string path, double maxWidth = 512)

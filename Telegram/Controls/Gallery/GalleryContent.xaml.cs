@@ -23,6 +23,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Gallery
 {
@@ -195,8 +196,15 @@ namespace Telegram.Controls.Gallery
         {
             if (file.Local.IsDownloadingCompleted)
             {
+                var source = new BitmapImage();
+                PlaceholderHelper.GetBlurred(source, file.Local.Path);
+
                 //Texture.Source = new BitmapImage(UriEx.GetLocal(file.Local.Path));
-                Background = new ImageBrush { ImageSource = PlaceholderHelper.GetBlurred(file.Local.Path), Stretch = Stretch.UniformToFill };
+                Background = new ImageBrush
+                {
+                    ImageSource = source,
+                    Stretch = Stretch.UniformToFill
+                };
             }
             else if (download)
             {

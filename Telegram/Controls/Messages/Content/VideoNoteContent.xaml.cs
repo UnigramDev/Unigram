@@ -13,6 +13,7 @@ using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Shapes;
 
 namespace Telegram.Controls.Messages.Content
@@ -182,16 +183,17 @@ namespace Telegram.Controls.Messages.Content
             UpdateThumbnail(_message, videoNote, file, false, isSecret);
         }
 
-        private async void UpdateThumbnail(MessageViewModel message, VideoNote videoNote, File file, bool download, bool isSecret)
+        private void UpdateThumbnail(MessageViewModel message, VideoNote videoNote, File file, bool download, bool isSecret)
         {
-            ImageSource source = null;
+            BitmapImage source = null;
             ImageBrush brush = Texture;
 
             if (videoNote.Thumbnail != null && videoNote.Thumbnail.Format is ThumbnailFormatJpeg)
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, isSecret ? 15 : 3);
+                    source = new BitmapImage();
+                    PlaceholderHelper.GetBlurred(source, file.Local.Path, isSecret ? 15 : 3);
                 }
                 else if (download)
                 {
@@ -199,7 +201,8 @@ namespace Telegram.Controls.Messages.Content
                     {
                         if (videoNote.Minithumbnail != null)
                         {
-                            source = await PlaceholderHelper.GetBlurredAsync(videoNote.Minithumbnail.Data, isSecret ? 15 : 3);
+                            source = new BitmapImage();
+                            PlaceholderHelper.GetBlurred(source, videoNote.Minithumbnail.Data, isSecret ? 15 : 3);
                         }
 
                         message.ClientService.DownloadFile(file.Id, 1);
@@ -210,7 +213,8 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (videoNote.Minithumbnail != null)
             {
-                source = await PlaceholderHelper.GetBlurredAsync(videoNote.Minithumbnail.Data, isSecret ? 15 : 3);
+                source = new BitmapImage();
+                PlaceholderHelper.GetBlurred(source, videoNote.Minithumbnail.Data, isSecret ? 15 : 3);
             }
 
             brush.ImageSource = source;

@@ -13,7 +13,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -258,9 +258,9 @@ namespace Telegram.Controls.Messages.Content
             UpdateThumbnail(_message, video, file, false, isSecret);
         }
 
-        private async void UpdateThumbnail(MessageViewModel message, Video video, File file, bool download, bool isSecret)
+        private void UpdateThumbnail(MessageViewModel message, Video video, File file, bool download, bool isSecret)
         {
-            ImageSource source = null;
+            BitmapImage source = null;
             Image brush = Texture;
 
             if (video.Thumbnail != null && video.Thumbnail.Format is ThumbnailFormatJpeg)
@@ -269,7 +269,8 @@ namespace Telegram.Controls.Messages.Content
                 {
                     if (isSecret)
                     {
-                        source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, 15);
+                        source = new BitmapImage();
+                        PlaceholderHelper.GetBlurred(source, file.Local.Path, 15);
                     }
                     else
                     {
@@ -290,13 +291,15 @@ namespace Telegram.Controls.Messages.Content
 
                     if (video.Minithumbnail != null)
                     {
-                        source = await PlaceholderHelper.GetBlurredAsync(video.Minithumbnail.Data, isSecret ? 15 : 3);
+                        source = new BitmapImage();
+                        PlaceholderHelper.GetBlurred(source, video.Minithumbnail.Data, isSecret ? 15 : 3);
                     }
                 }
             }
             else if (video.Minithumbnail != null)
             {
-                source = await PlaceholderHelper.GetBlurredAsync(video.Minithumbnail.Data, isSecret ? 15 : 3);
+                source = new BitmapImage();
+                PlaceholderHelper.GetBlurred(source, video.Minithumbnail.Data, isSecret ? 15 : 3);
             }
 
             brush.Source = source;

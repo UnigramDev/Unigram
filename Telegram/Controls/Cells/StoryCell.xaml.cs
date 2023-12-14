@@ -5,6 +5,7 @@ using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Cells
 {
@@ -67,9 +68,9 @@ namespace Telegram.Controls.Cells
             UpdateFile(_viewModel, file, false);
         }
 
-        private async void UpdateThumbnail(StoryViewModel story, File file, Minithumbnail minithumbnail, bool download)
+        private void UpdateThumbnail(StoryViewModel story, File file, Minithumbnail minithumbnail, bool download)
         {
-            ImageSource source = null;
+            BitmapImage source = null;
             ImageBrush brush;
 
             if (LayoutRoot.Background is ImageBrush existing)
@@ -92,7 +93,8 @@ namespace Telegram.Controls.Cells
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, 3);
+                    source = new BitmapImage();
+                    PlaceholderHelper.GetBlurred(source, file.Local.Path, 3);
                 }
                 else
                 {
@@ -108,13 +110,15 @@ namespace Telegram.Controls.Cells
 
                     if (minithumbnail != null)
                     {
-                        source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, 3);
+                        source = new BitmapImage();
+                        PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
                     }
                 }
             }
             else if (minithumbnail != null)
             {
-                source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, 3);
+                source = new BitmapImage();
+                PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
             }
 
             brush.ImageSource = source;

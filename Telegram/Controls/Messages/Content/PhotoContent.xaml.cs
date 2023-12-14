@@ -290,9 +290,9 @@ namespace Telegram.Controls.Messages.Content
             UpdateThumbnail(_message, file, photo.Minithumbnail, false, isSecret);
         }
 
-        private async void UpdateThumbnail(MessageViewModel message, File file, Minithumbnail minithumbnail, bool download, bool isSecret)
+        private void UpdateThumbnail(MessageViewModel message, File file, Minithumbnail minithumbnail, bool download, bool isSecret)
         {
-            ImageSource source = null;
+            BitmapImage source = null;
             ImageBrush brush;
 
             if (LayoutRoot.Background is ImageBrush existing)
@@ -315,7 +315,8 @@ namespace Telegram.Controls.Messages.Content
             {
                 if (file.Local.IsDownloadingCompleted)
                 {
-                    source = await PlaceholderHelper.GetBlurredAsync(file.Local.Path, isSecret ? 15 : 3);
+                    source = new BitmapImage();
+                    PlaceholderHelper.GetBlurred(source, file.Local.Path, isSecret ? 15 : 3);
                 }
                 else
                 {
@@ -331,13 +332,15 @@ namespace Telegram.Controls.Messages.Content
 
                     if (minithumbnail != null)
                     {
-                        source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, isSecret ? 15 : 3);
+                        source = new BitmapImage();
+                        PlaceholderHelper.GetBlurred(source, minithumbnail.Data, isSecret ? 15 : 3);
                     }
                 }
             }
             else if (minithumbnail != null)
             {
-                source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, isSecret ? 15 : 3);
+                source = new BitmapImage();
+                PlaceholderHelper.GetBlurred(source, minithumbnail.Data, isSecret ? 15 : 3);
             }
 
             brush.ImageSource = source;

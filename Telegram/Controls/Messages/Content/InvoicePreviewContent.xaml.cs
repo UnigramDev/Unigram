@@ -10,6 +10,7 @@ using Telegram.ViewModels;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace Telegram.Controls.Messages.Content
 {
@@ -91,9 +92,9 @@ namespace Telegram.Controls.Messages.Content
             UpdateThumbnail(message, preview.Minithumbnail);
         }
 
-        private async void UpdateThumbnail(MessageViewModel message, Minithumbnail minithumbnail)
+        private void UpdateThumbnail(MessageViewModel message, Minithumbnail minithumbnail)
         {
-            ImageSource source = null;
+            BitmapImage source = null;
             ImageBrush brush;
 
             if (LayoutRoot.Background is ImageBrush existing)
@@ -114,7 +115,8 @@ namespace Telegram.Controls.Messages.Content
 
             if (minithumbnail != null)
             {
-                source = await PlaceholderHelper.GetBlurredAsync(minithumbnail.Data, 3);
+                source = new BitmapImage();
+                PlaceholderHelper.GetBlurred(source, minithumbnail.Data, 3);
             }
 
             brush.ImageSource = source;
