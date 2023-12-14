@@ -648,6 +648,14 @@ namespace Telegram.Common
             return new Size(rectangle.Width, rectangle.Height);
         }
 
+        public static bool IntersectsWith(this Rect a, Rect b)
+        {
+            return (b.X <= a.X + a.Width) &&
+                (a.X <= b.X + b.Width) &&
+                (b.Y <= a.Y + a.Height) &&
+                (a.Y <= b.Y + b.Height);
+        }
+
         public static bool TryGet<T>(this IDictionary<object, object> dict, object key, out T value)
         {
             if (dict.TryGetValue(key, out object tryGetValue) && tryGetValue is T tryGet)
