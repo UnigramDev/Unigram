@@ -213,7 +213,7 @@ namespace Telegram.ViewModels.Settings
 
         private async void SetType(SettingsProxyType value, bool update = true)
         {
-            if (value == SettingsProxyType.Custom && Items.Empty())
+            if (value == SettingsProxyType.Custom && update && Items.Empty())
             {
                 Add();
                 RaisePropertyChanged(nameof(IsDisabled));
