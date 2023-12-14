@@ -13,9 +13,8 @@ namespace Telegram.Views.Settings.Popups
     {
         public SettingsPasscodePopup()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            Title = Strings.Passcode;
             PrimaryButtonText = Strings.Enable;
             SecondaryButtonText = Strings.Cancel;
         }

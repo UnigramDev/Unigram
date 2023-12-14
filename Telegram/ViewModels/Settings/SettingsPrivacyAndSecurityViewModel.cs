@@ -17,6 +17,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Settings.Privacy;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
+using Telegram.Views.Settings.LoginEmail;
 using Telegram.Views.Settings.Password;
 using Telegram.Views.Settings.Popups;
 using Telegram.Views.Settings.Privacy;
@@ -340,6 +341,16 @@ namespace Telegram.ViewModels.Settings
             if (response is PasswordState passwordState)
             {
                 var confirm = await ShowPopupAsync(Strings.EmailLoginChangeMessage, passwordState.LoginEmailAddressPattern, Strings.ChangeEmail, Strings.Cancel);
+                if (confirm == ContentDialogResult.Primary)
+                {
+                    var address = new SettingsLoginEmailAddressPopup(ClientService);
+
+                    var coconfirm = await ShowPopupAsync(address);
+                    if (coconfirm == ContentDialogResult.Primary)
+                    {
+                        await ShowPopupAsync(new SettingsLoginEmailCodePopup(ClientService, address.CodeInfo));
+                    }
+                }
             }
         }
 

@@ -2471,6 +2471,12 @@ Minimum length is 5 characters.</value>
   <data name="CheckYourEmailSubtitle" xml:space="preserve">
     <value>Please enter the code we have sent to your email {0}.</value>
   </data>
+  <data name="CheckYourNewEmail" xml:space="preserve">
+    <value>Check Your New Email</value>
+  </data>
+  <data name="CheckYourNewEmailSubtitle" xml:space="preserve">
+    <value>Please enter the code we have sent to your new email {0}.</value>
+  </data>
   <data name="ChooseANewWallpaper" xml:space="preserve">
     <value>Choose a New Wallpaper</value>
   </data>
@@ -3372,6 +3378,9 @@ Learn more at telegram.org</value>
   </data>
   <data name="EnterGroupNamePlaceholder" xml:space="preserve">
     <value>Enter group name</value>
+  </data>
+  <data name="EnterNewEmail" xml:space="preserve">
+    <value>Enter New Email</value>
   </data>
   <data name="EnterNewFirstPasscode" xml:space="preserve">
     <value>Enter a passcode</value>
@@ -8818,6 +8827,9 @@ If you forget your password, you will lose access to your Telegram account. Ther
   </data>
   <data name="YourNameColor" xml:space="preserve">
     <value>Your Name Color</value>
+  </data>
+  <data name="YourNewEmail" xml:space="preserve">
+    <value>Your new email</value>
   </data>
   <data name="YourPhone" xml:space="preserve">
     <value>Your Phone</value>

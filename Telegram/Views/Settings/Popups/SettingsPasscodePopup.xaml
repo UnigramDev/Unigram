@@ -6,7 +6,6 @@
                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        mc:Ignorable="d"
-                       Title="TITLE"
                        PrimaryButtonText="Button1"
                        SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
@@ -22,7 +21,17 @@
                                 Height="140"
                                 Margin="0,0,0,12" />
 
+        <TextBlock Text="{CustomResource Passcode}"
+                   FontSize="20"
+                   FontFamily="XamlAutoFontFamily"
+                   FontWeight="SemiBold"
+                   TextAlignment="Center"
+                   VerticalAlignment="Top"
+                   Margin="0,0,0,8"
+                   Grid.Row="1" />
+
         <TextBlock Text="{CustomResource ChangePasscodeInfo}"
-                   Style="{StaticResource BodyTextBlockStyle}" />
+                   Style="{StaticResource BodyTextBlockStyle}"
+                   TextAlignment="Center"/>
     </StackPanel>
 </controls:ContentPopup>

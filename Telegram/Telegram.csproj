@@ -1327,6 +1327,12 @@
     <Compile Include="Views\Popups\ChooseNameColorPopup.xaml.cs">
       <DependentUpon>ChooseNameColorPopup.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\LoginEmail\SettingsLoginEmailCodePopup.xaml.cs">
+      <DependentUpon>SettingsLoginEmailCodePopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\LoginEmail\SettingsLoginEmailAddressPopup.xaml.cs">
+      <DependentUpon>SettingsLoginEmailAddressPopup.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Stories\Popups\StoryInteractionsPopup.xaml.cs">
       <DependentUpon>StoryInteractionsPopup.xaml</DependentUpon>
     </Compile>
@@ -2740,6 +2746,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Popups\ChooseNameColorPopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\LoginEmail\SettingsLoginEmailCodePopup.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\LoginEmail\SettingsLoginEmailAddressPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
