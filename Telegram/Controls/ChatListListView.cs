@@ -7,9 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls.Cells;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
+using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Composition.Interactions;
 using Windows.UI.Xaml;
@@ -40,9 +43,12 @@ namespace Telegram.Controls
 
         private readonly Dictionary<long, SelectorItem> _itemToSelector = new();
 
+        private ScrollViewer ScrollViewer;
+        private Border Ghost;
+
         public ChatListListView()
         {
-            DefaultStyleKey = typeof(ListView);
+            DefaultStyleKey = typeof(ChatListListView);
 
             Connected += OnLoaded;
             Disconnected += OnUnloaded;
@@ -52,20 +58,28 @@ namespace Telegram.Controls
             RegisterPropertyChangedCallback(SelectionModeProperty, OnSelectionModeChanged);
         }
 
+        protected override void OnApplyTemplate()
+        {
+            ScrollViewer = GetTemplateChild(nameof(ScrollViewer)) as ScrollViewer;
+            Ghost = GetTemplateChild(nameof(Ghost)) as Border;
+
+            base.OnApplyTemplate();
+        }
+
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _itemToSelector.Clear();
 
             if (_hasInitialLoadedEventFired)
             {
-                _tracker.Dispose();
-                _tracker = null;
+                _hasInitialLoadedEventFired = false;
 
                 _interactionSource.Dispose();
                 _interactionSource = null;
-            }
 
-            _hasInitialLoadedEventFired = false;
+                _tracker.Dispose();
+                _tracker = null;
+            }
         }
 
         public bool TryGetChatAndCell(long chatId, out Chat chat, out ChatCell cell)
@@ -166,6 +180,60 @@ namespace Telegram.Controls
             return new ChatListListViewItem(this);
         }
 
+        private bool _changingView;
+        private bool _fromAnimation;
+
+        public async void ChangeView(CarouselDirection direction, Action continuation)
+        {
+            void Continue(bool restore)
+            {
+                if (restore)
+                {
+                    _tracker.TryUpdatePosition(Vector3.Zero);
+                }
+
+                if (continuation != null)
+                {
+                    continuation();
+                }
+                else
+                {
+                    Swiped?.Invoke(this, new ChatListSwipedEventArgs(direction));
+                }
+            }
+
+            if (_changingView || !PowerSavingPolicy.AreSmoothTransitionsEnabled)
+            {
+                Continue(true);
+                return;
+            }
+
+            _changingView = true;
+
+            var child = VisualTreeHelper.GetChild(ScrollViewer, 0) as UIElement;
+            var visual = Window.Current.Compositor.CreateRedirectBrush(child, Vector2.Zero, child.ActualSize, true);
+
+            await VisualUtilities.WaitForCompositionRenderedAsync();
+
+            Continue(false);
+            ConfigureAnimations(false);
+
+            var position = ActualSize.X * (ActualSize.X / (ActualSize.X - 72));
+
+            var w = continuation != null ? position : ActualSize.X;
+            var x = direction == CarouselDirection.Previous ? w : -w;
+
+            var translate = _tracker.Compositor.CreateVector3KeyFrameAnimation();
+            translate.InsertKeyFrame(0, new Vector3(x, 0, 0));
+            translate.InsertKeyFrame(1, new Vector3(0));
+
+            _tracker.Properties.InsertBoolean("FromAnimation", _fromAnimation = true);
+            _tracker.TryUpdatePositionWithAnimation(translate);
+
+            _changingView = false;
+            _redirect.Brush = visual;
+        }
+
         #region Swipe
 
         public bool CanGoNext { get; set; }
@@ -176,6 +244,7 @@ namespace Telegram.Controls
         private SpriteVisual _hitTest;
         private ContainerVisual _container;
         private Visual _visual;
+        private SpriteVisual _redirect;
         private ContainerVisual _indicator;
 
         private bool _hasInitialLoadedEventFired;
@@ -186,28 +255,25 @@ namespace Telegram.Controls
         {
             if (!_hasInitialLoadedEventFired)
             {
-                var root = VisualTreeHelper.GetChild(this, 0) as UIElement;
-                if (root == null)
-                {
-                    return;
-                }
+                _hasInitialLoadedEventFired = true;
 
-                _visual = ElementCompositionPreview.GetElementVisual(root);
+                _visual = ElementCompositionPreview.GetElementVisual(ScrollViewer);
+
+                _redirect = _visual.Compositor.CreateSpriteVisual();
+                _redirect.RelativeSizeAdjustment = Vector2.One;
 
                 _hitTest = _visual.Compositor.CreateSpriteVisual();
-                _hitTest.Brush = _visual.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
+                _hitTest.Brush = _visual.Compositor.CreateColorBrush(Colors.Transparent);
                 _hitTest.RelativeSizeAdjustment = Vector2.One;
 
                 _container = _visual.Compositor.CreateContainerVisual();
                 _container.Children.InsertAtBottom(_hitTest);
                 _container.RelativeSizeAdjustment = Vector2.One;
 
+                ElementCompositionPreview.SetElementChildVisual(Ghost, _redirect);
                 ElementCompositionPreview.SetElementChildVisual(this, _container);
-
                 ConfigureInteractionTracker();
             }
-
-            _hasInitialLoadedEventFired = true;
         }
 
         private void ConfigureInteractionTracker()
@@ -227,6 +293,7 @@ namespace Telegram.Controls
             _tracker.MaxPosition = new Vector3(72);
             _tracker.MinPosition = new Vector3(-72);
 
+            _tracker.Properties.InsertBoolean("FromAnimation", false);
             _tracker.Properties.InsertBoolean("CanGoNext", CanGoNext);
             _tracker.Properties.InsertBoolean("CanGoPrev", CanGoPrev);
 
@@ -243,16 +310,29 @@ namespace Telegram.Controls
             _tracker.ConfigurePositionXInertiaModifiers(new InteractionTrackerInertiaModifier[] { neutralX });
         }
 
-        private void ConfigureAnimations(Visual visual)
+        private void ConfigureAnimations(bool interacting)
         {
+            if (interacting)
+            {
+                _redirect.Brush = _tracker.Compositor.CreateColorBrush(Colors.Transparent);
+                _tracker.Properties.InsertBoolean("FromAnimation", _fromAnimation = false);
+            }
+
             _tracker.Properties.InsertBoolean("CanGoNext", CanGoNext);
             _tracker.Properties.InsertBoolean("CanGoPrev", CanGoPrev);
             _tracker.MaxPosition = new Vector3(CanGoNext ? 72 : 0);
             _tracker.MinPosition = new Vector3(CanGoPrev ? -72 : 0);
 
-            var offsetExp = _visual.Compositor.CreateExpressionAnimation("(tracker.Position.X > 0 && !tracker.CanGoNext) || (tracker.Position.X <= 0 && !tracker.CanGoPrev) ? 0 : -tracker.Position.X");
+            // This should be enough: tracker.FromAnimation ? -tracker.Position.X : Clamp(-tracker.Position.X, -72, 72)
+            var offsetExp = _visual.Compositor.CreateExpressionAnimation("tracker.FromAnimation || Abs(tracker.Position.X) >= this.Target.Size.X ? -tracker.Position.X : Clamp(-tracker.Position.X, -72, 72)");
             offsetExp.SetReferenceParameter("tracker", _tracker);
-            visual.StartAnimation("Offset.X", offsetExp);
+
+            var offsetExp2 = _visual.Compositor.CreateExpressionAnimation("tracker.Position.X < 0 ? Min(-tracker.Position.X / (source.Size.X) * (source.Size.X - 72), source.Size.X) - source.Size.X : tracker.Position.X >= 0 ? Min(-tracker.Position.X / (source.Size.X) * (source.Size.X - 72), source.Size.X) + source.Size.X : 0");
+            offsetExp2.SetReferenceParameter("tracker", _tracker);
+            offsetExp2.SetReferenceParameter("source", _visual);
+
+            _visual.StartAnimation("Offset.X", offsetExp);
+            _redirect.StartAnimation("Offset.X", offsetExp2);
         }
 
         private void OnPointerPressed(object sender, PointerRoutedEventArgs e)
@@ -275,7 +355,7 @@ namespace Telegram.Controls
                 sprite.Size = new Vector2(30, 30);
                 sprite.CenterPoint = new Vector3(15);
 
-                var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/Reply.png"));
+                var surface = LoadedImageSurface.StartLoadFromUri(new Uri("ms-appx:///Assets/Images/ArrowLeft.png"));
                 void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
                 {
                     s.LoadCompleted -= handler;
@@ -305,10 +385,10 @@ namespace Telegram.Controls
                 _container.Children.InsertAtTop(_indicator);
             }
 
-            var offset = (_tracker.Position.X > 0 && !CanGoNext) || (_tracker.Position.X <= 0 && !CanGoPrev) ? 0 : Math.Max(0, Math.Min(72, Math.Abs(_tracker.Position.X)));
+            var offset = (_tracker.Position.X > 0 && !CanGoNext) || (_tracker.Position.X <= 0 && !CanGoPrev) ? 0 : Math.Clamp(Math.Abs(_tracker.Position.X), 0, 72);
 
             var abs = Math.Abs(offset);
-            var percent = abs / 72f;
+            var percent = _fromAnimation ? 0 : abs / 72f;
 
             var width = ActualSize.X;
             var height = ActualSize.Y;
@@ -326,43 +406,24 @@ namespace Telegram.Controls
             var position = _tracker.Position;
             if (position.X >= 72 && CanGoNext || position.X <= -72 && CanGoPrev)
             {
-                var offset = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                var opacity = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                sender.TryUpdatePosition(sender.Position);
 
-                if (position.X >= 72 && CanGoNext)
-                {
-                    offset.InsertKeyFrame(0, new Vector3(-72, 0, 0));
-                    offset.InsertKeyFrame(1, new Vector3(0));
+                var direction = position.X <= -72 && CanGoPrev
+                    ? CarouselDirection.Previous
+                    : CarouselDirection.Next;
 
-                    Swiped?.Invoke(this, new ChatListSwipedEventArgs(CarouselDirection.Next));
-                }
-                else if (position.X <= -72 && CanGoPrev)
-                {
-                    offset.InsertKeyFrame(0, new Vector3(72, 0, 0));
-                    offset.InsertKeyFrame(1, new Vector3(0));
-
-                    Swiped?.Invoke(this, new ChatListSwipedEventArgs(CarouselDirection.Previous));
-                }
-
-                offset.Duration = TimeSpan.FromMilliseconds(250);
-                sender.TryUpdatePositionWithAnimation(offset);
-
-                opacity.InsertKeyFrame(0, 0);
-                opacity.InsertKeyFrame(1, 1);
-                opacity.Duration = TimeSpan.FromMilliseconds(250);
-
-                _visual.StartAnimation("Opacity", opacity);
+                ChangeView(direction, null);
             }
         }
 
         public void IdleStateEntered(InteractionTracker sender, InteractionTrackerIdleStateEnteredArgs args)
         {
-            ConfigureAnimations(_visual);
+            ConfigureAnimations(false);
         }
 
         public void InteractingStateEntered(InteractionTracker sender, InteractionTrackerInteractingStateEnteredArgs args)
         {
-            ConfigureAnimations(_visual);
+            ConfigureAnimations(true);
         }
 
         public void RequestIgnored(InteractionTracker sender, InteractionTrackerRequestIgnoredArgs args)
@@ -372,7 +433,7 @@ namespace Telegram.Controls
 
         public void CustomAnimationStateEntered(InteractionTracker sender, InteractionTrackerCustomAnimationStateEnteredArgs args)
         {
-
+            _tracker.Properties.InsertBoolean("FromAnimation", _fromAnimation = true);
         }
 
         #endregion
@@ -481,7 +542,7 @@ namespace Telegram.Controls
                 _ => null
             };
 
-            return name?? base.GetNameCore();
+            return name ?? base.GetNameCore();
         }
     }
 }

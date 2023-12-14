@@ -55,6 +55,10 @@ namespace Telegram.Controls.Cells
 
                 iconUnselected.StopAnimation("Opacity");
                 iconUnselected.Opacity = 1;
+
+                iconSelected.StopAnimation("Translation");
+                iconSelected.StopAnimation("Opacity");
+                iconSelected.Opacity = 0;
             }
             else if (next == "Pressed")
             {

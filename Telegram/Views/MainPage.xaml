@@ -166,9 +166,8 @@
               Grid.Row="1">
             <controls:TopNavView x:Name="ChatFoldersSide"
                                  ItemsSource="{x:Bind NavigationResults.View}"
-                                 SelectedItem="{x:Bind ConvertFolder(ViewModel.SelectedFolder), Mode=TwoWay, BindBack=ConvertFolderBack}"
-                                 IsItemClickEnabled="True"
-                                 ItemClick="ChatFolders_ItemClick"
+                                 SelectedItem="{x:Bind ViewModel.SelectedFolder, Mode=OneWay}"
+                                 SelectionChanged="ChatFolders_SelectionChanged"
                                  ItemContextRequested="ChatFolder_ContextRequested"
                                  ChoosingGroupHeaderContainer="ChatFolders_ChoosingGroupHeaderContainer"
                                  Orientation="Vertical"
@@ -208,6 +207,8 @@
                                 Value="True" />
                         <Setter Property="Margin"
                                 Value="0,0,0,4" />
+                        <Setter Property="CornerRadius"
+                                Value="4" />
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="controls:TopNavViewItem">
@@ -290,6 +291,8 @@
                             <Style TargetType="ListViewHeaderItem">
                                 <Setter Property="MinHeight"
                                         Value="0" />
+                                <Setter Property="IsTabStop"
+                                        Value="False" />
                                 <Setter Property="Template">
                                     <Setter.Value>
                                         <ControlTemplate>
@@ -619,9 +622,8 @@
                                             <Grid x:Name="ChatTabsView">
                                                 <controls:TopNavView x:Name="ChatFolders"
                                                                      ItemsSource="{x:Bind ViewModel.Folders}"
-                                                                     SelectedItem="{x:Bind ConvertFolder(ViewModel.SelectedFolder), Mode=TwoWay, BindBack=ConvertFolderBack}"
-                                                                     IsItemClickEnabled="True"
-                                                                     ItemClick="ChatFolders_ItemClick"
+                                                                     SelectedItem="{x:Bind ViewModel.SelectedFolder, Mode=OneWay}"
+                                                                     SelectionChanged="ChatFolders_SelectionChanged"
                                                                      ItemContextRequested="ChatFolder_ContextRequested"
                                                                      AllowDrop="True"
                                                                      CanDragItems="True"

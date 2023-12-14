@@ -154,7 +154,67 @@ namespace Telegram.Common
         public static Task WaitForCompositionRenderingAsync()
         {
             var tsc = new TaskCompletionSource<bool>();
-            QueueCallbackForCompositionRendering(() => tsc.SetResult(true));
+            void handler(object sender, object e)
+            {
+                CompositionTarget.Rendering -= handler;
+                tsc.SetResult(true);
+            }
+
+            try
+            {
+                CompositionTarget.Rendering += handler;
+            }
+            catch
+            {
+                // Bla bla
+            }
+
+            return tsc.Task;
+        }
+
+        public static void QueueCallbackForCompositionRendered(Action callback)
+        {
+            DelegateKeeper.KeepAlive(callback);
+
+            var weak = new WeakReference(callback);
+            void handler(object sender, object e)
+            {
+                CompositionTarget.Rendered -= handler;
+
+                if (weak.Target is Action callback)
+                {
+                    callback();
+                }
+            }
+
+            try
+            {
+                CompositionTarget.Rendered += handler;
+            }
+            catch
+            {
+                // Bla bla
+            }
+        }
+
+        public static Task WaitForCompositionRenderedAsync()
+        {
+            var tsc = new TaskCompletionSource<bool>();
+            void handler(object sender, object e)
+            {
+                CompositionTarget.Rendered -= handler;
+                tsc.SetResult(true);
+            }
+
+            try
+            {
+                CompositionTarget.Rendered += handler;
+            }
+            catch
+            {
+                // Bla bla
+            }
+
             return tsc.Task;
         }
     }

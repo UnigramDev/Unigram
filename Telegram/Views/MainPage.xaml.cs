@@ -13,6 +13,7 @@ using System.Linq;
 using System.Numerics;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Controls;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Gallery;
@@ -82,6 +83,8 @@ namespace Telegram.Views
             InitializeTitleBar();
             InitializeSearch();
             InitializeLock();
+
+            UpdateChatFolders();
 
             DropShadowEx.Attach(UpdateShadow);
 
@@ -1302,7 +1305,7 @@ namespace Telegram.Views
 
             if (index >= 0 && index < ViewModel.Folders.Count)
             {
-                UpdateFolder(ViewModel.Folders[index], false);
+                UpdateFolder(ViewModel.Folders[index], true);
             }
         }
 
@@ -2183,6 +2186,11 @@ namespace Telegram.Views
             MasterDetail.NavigationService.Navigate(typeof(ChatsNearbyPage));
         }
 
+        public void UpdateChatFolders()
+        {
+            ConvertFolder(ViewModel.SelectedFolder);
+        }
+
         private ChatFolderViewModel ConvertFolder(ChatFolderViewModel folder)
         {
             ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Folders.Count > 0 && folder.ChatList is not ChatListArchive);
@@ -2202,9 +2210,9 @@ namespace Telegram.Views
             return folder;
         }
 
-        private void ConvertFolderBack(object obj)
+        private void ChatFolders_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (obj is ChatFolderViewModel folder && !folder.IsNavigationItem && ViewModel.Chats.Items.ChatList is not ChatListArchive)
+            if (sender is ListViewBase listView && listView.SelectedItem is ChatFolderViewModel folder && !folder.IsNavigationItem && ViewModel.Chats.Items.ChatList is not ChatListArchive)
             {
                 UpdateFolder(folder);
             }
@@ -2441,16 +2449,43 @@ namespace Telegram.Views
 
         private void UpdateFolder(ChatFolderViewModel folder, bool update = true)
         {
-            ViewModel.SelectedFolder = folder;
+            CarouselDirection direction;
+            if (folder.ChatList is ChatListArchive)
+            {
+                direction = CarouselDirection.Next;
+            }
+            else if (ViewModel.Chats.Items.ChatList is ChatListArchive)
+            {
+                direction = CarouselDirection.Previous;
+            }
+            else
+            {
+                var nextIndex = ViewModel.Folders.IndexOf(folder);
+                var prevIndex = ViewModel.Folders.IndexOf(ViewModel.SelectedFolder);
+
+                if (nextIndex == prevIndex)
+                {
+                    return;
+                }
+
+                direction = nextIndex <= prevIndex
+                    ? CarouselDirection.Previous
+                    : CarouselDirection.Next;
+            }
+
+            ChatsList.ChangeView(direction, () =>
+            {
+                ViewModel.SelectedFolder = folder;
+
+                if (update)
+                {
+                    ConvertFolder(folder);
+                }
+            });
 
             if (folder.ChatList is ChatListArchive)
             {
                 _shouldGoBackWithDetail = false;
-            }
-
-            if (update)
-            {
-                ConvertFolder(folder);
             }
 
             Search_LostFocus(null, null);
@@ -3294,7 +3329,6 @@ namespace Telegram.Views
 
             var redirect = compositor.CreateRedirectVisual(scrollingHost, sourceOffset, sourceSize);
             redirect.Offset = new Vector3(sourceOffset, 0);
-            redirect.Size = sourceSize;
             redirect.Clip = compositor.CreateInsetClip();
 
             ElementCompositionPreview.SetElementChildVisual(ChatsList, redirect);

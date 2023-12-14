@@ -94,6 +94,7 @@ namespace Telegram.ViewModels
             Children.Add(Topics);
             Children.Add(Stories);
 
+            UpdateChatFolders(ClientService.ChatFolders, ClientService.MainChatListPosition);
             Subscribe();
         }
 
@@ -260,7 +261,7 @@ namespace Telegram.ViewModels
 
                 Merge(Folders, folders, selected, out bool updateSelection);
 
-                if (updateSelection || (Chats.Items.ChatList is ChatListFolder already && already.ChatFolderId != selected))
+                if (SelectedFolder == null || updateSelection || (Chats.Items.ChatList is ChatListFolder already && already.ChatFolderId != selected))
                 {
                     SelectedFolder = Folders[0];
                 }
@@ -290,6 +291,8 @@ namespace Telegram.ViewModels
                 Folders.Clear();
                 SelectedFolder = ChatFolderViewModel.Main;
             }
+
+            Chats.Delegate?.UpdateChatFolders();
         }
 
         private void Merge(IList<ChatFolderViewModel> destination, IList<ChatFolderInfo> origin, int selectedFolderId, out bool updateSelection)
@@ -367,28 +370,17 @@ namespace Telegram.ViewModels
 
         public List<IEnumerable<ChatFolderViewModel>> NavigationItems { get; private set; }
 
+        private ChatFolderViewModel _selectedFolder;
         public ChatFolderViewModel SelectedFolder
         {
-            get
-            {
-                if (Chats.Items.ChatList is ChatListFolder folder && _folders != null)
-                {
-                    return _folders.FirstOrDefault(x => x.ChatFolderId == folder.ChatFolderId);
-                }
-
-                return _folders?.FirstOrDefault(x => x.ChatList is ChatListMain);
-            }
+            get => _selectedFolder;
             set
             {
-                if (Chats.Items.ChatList.ListEquals(value.ChatList))
+                if (Set(ref _selectedFolder, value))
                 {
-                    return;
+                    Logger.Info();
+                    Chats.SetFolder(value.ChatList);
                 }
-
-                Logger.Info();
-
-                Chats.SetFolder(value.ChatList);
-                RaisePropertyChanged();
             }
         }
 
@@ -616,13 +608,13 @@ namespace Telegram.ViewModels
 
     public class ChatFolderViewModel : BindableBase
     {
-        public static ChatFolderViewModel Main => new ChatFolderViewModel(new ChatListMain())
+        public static ChatFolderViewModel Main => new(new ChatListMain())
         {
             ChatFolderId = Constants.ChatListMain,
             Title = Strings.FilterAllChats
         };
 
-        public static ChatFolderViewModel Archive => new ChatFolderViewModel(new ChatListArchive())
+        public static ChatFolderViewModel Archive => new(new ChatListArchive())
         {
             ChatFolderId = Constants.ChatListArchive,
             Title = Strings.ArchivedChats

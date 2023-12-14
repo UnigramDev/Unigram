@@ -7,6 +7,7 @@
 using System.Numerics;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Views.Host;
@@ -90,7 +91,6 @@ namespace Telegram.Controls
             content.Clip = clip;
 
             var redirect = compositor.CreateRedirectVisual(CommandSpace, Vector2.Zero, CommandSpace.ActualSize);
-            redirect.Size = CommandSpace.ActualSize;
             redirect.Offset = new Vector3(point.X, 0, 0);
 
             var translate = compositor.CreateScalarKeyFrameAnimation();

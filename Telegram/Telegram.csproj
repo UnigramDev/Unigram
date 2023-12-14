@@ -192,6 +192,8 @@
     <Compile Include="Charts\LookupTableInterpolator.cs" />
     <Compile Include="Collections\SynchronizedList.cs" />
     <Compile Include="Common\BezierPoint.cs" />
+    <Compile Include="Composition\Extensions.cs" />
+    <Compile Include="Composition\Interop.cs" />
     <Compile Include="Controls\Media\BlobDrawable.cs" />
     <Compile Include="Common\FrameworkElementState.cs" />
     <Compile Include="Common\MathEx.cs" />
@@ -1668,6 +1670,11 @@
     <Content Include="Assets\Animations\AuthorizationStateWaitPassword.tgs" />
     <Content Include="Assets\Animations\MyStories.tgs" />
     <Content Include="Assets\Animations\Expired.tgs" />
+    <Content Include="Assets\Images\ArrowLeft.scale-100.png" />
+    <Content Include="Assets\Images\ArrowLeft.scale-125.png" />
+    <Content Include="Assets\Images\ArrowLeft.scale-150.png" />
+    <Content Include="Assets\Images\ArrowLeft.scale-200.png" />
+    <Content Include="Assets\Images\ArrowLeft.scale-400.png" />
     <Content Include="Assets\Toasts\ExpiredStory.tgs" />
     <Content Include="Assets\Toasts\Info.tgs" />
     <Content Include="Assets\Toasts\LinkCopied.tgs" />
