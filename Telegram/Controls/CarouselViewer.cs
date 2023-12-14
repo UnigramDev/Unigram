@@ -68,6 +68,8 @@ namespace Telegram.Controls
         {
             if (!_hasInitialLoadedEventFired)
             {
+                _hasInitialLoadedEventFired = true;
+
                 _hitTest = Window.Current.Compositor.CreateSpriteVisual();
                 _hitTest.Brush = Window.Current.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
 
@@ -85,22 +87,20 @@ namespace Telegram.Controls
                 ElementCompositionPreview.SetElementChildVisual(this, _hitTest);
                 ConfigureInteractionTracker();
             }
-
-            _hasInitialLoadedEventFired = true;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             if (_hasInitialLoadedEventFired)
             {
-                _tracker.Dispose();
-                _tracker = null;
+                _hasInitialLoadedEventFired = false;
 
                 _interactionSource.Dispose();
                 _interactionSource = null;
-            }
 
-            _hasInitialLoadedEventFired = false;
+                _tracker.Dispose();
+                _tracker = null;
+            }
         }
 
         private void OnPointerWheelChanged(object sender, PointerRoutedEventArgs e)
@@ -295,6 +295,8 @@ namespace Telegram.Controls
         private InteractionTracker _tracker;
         private VisualInteractionSource _interactionSource;
 
+        private CompositionPropertySet _progress;
+
         private float _restingValue;
 
         private bool _canGoPrev;
@@ -319,6 +321,9 @@ namespace Telegram.Controls
             _tracker.Properties.InsertScalar("RestingValue", _restingValue);
             _tracker.Properties.InsertBoolean("CanGoNext", _canGoNext);
             _tracker.Properties.InsertBoolean("CanGoPrev", _canGoPrev);
+
+            _progress = _tracker.Compositor.CreatePropertySet();
+            _progress.InsertScalar("Progress", 0);
 
             ConfigureAnimations();
             ConfigureRestingPoints();
@@ -389,24 +394,23 @@ namespace Telegram.Controls
             progress.SetReferenceParameter("tracker", _tracker);
             progress.SetScalarParameter("restingValue", restingValue);
 
-            var properties = _tracker.Compositor.CreatePropertySet();
-            properties.InsertScalar("Progress", 0);
-            properties.StartAnimation("Progress", progress);
+            _progress.InsertScalar("Progress", 0);
+            _progress.StartAnimation("Progress", progress);
 
             var offset2 = _tracker.Compositor.CreateExpressionAnimation("Floor(value + (_.Progress < 0 ? _.Progress * (maxValue - value) * -1 : 0)) - 2");
-            offset2.SetReferenceParameter("_", properties);
+            offset2.SetReferenceParameter("_", _progress);
             offset2.SetScalarParameter("value", current2);
             offset2.SetScalarParameter("maxValue", future20);
 
             var offset0 = _tracker.Compositor.CreateExpressionAnimation("_.Progress > 0 " +
                 "? _.Progress * maxValue * -1" +
                 ": _.Progress * minValue");
-            offset0.SetReferenceParameter("_", properties);
+            offset0.SetReferenceParameter("_", _progress);
             offset0.SetScalarParameter("minValue", future02);
             offset0.SetScalarParameter("maxValue", future01);
 
             var offset1 = _tracker.Compositor.CreateExpressionAnimation("Ceil(value + (_.Progress > 0 ? _.Progress * (value - maxValue) * -1 : 0)) + 2");
-            offset1.SetReferenceParameter("_", properties);
+            offset1.SetReferenceParameter("_", _progress);
             offset1.SetScalarParameter("value", current1);
             offset1.SetScalarParameter("maxValue", future10);
 
