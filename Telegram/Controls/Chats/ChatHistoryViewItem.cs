@@ -29,9 +29,10 @@ namespace Telegram.Controls.Chats
         private readonly ChatHistoryView _owner;
         private readonly string _typeName;
 
-        private SpriteVisual _hitTest;
-        private ContainerVisual _container;
+        private Visual _hitTest;
         private Visual _visual;
+        private Compositor _compositor;
+        private ContainerVisual _container;
         private ContainerVisual _indicator;
 
         private bool _hasInitialLoadedEventFired;
@@ -70,7 +71,7 @@ namespace Telegram.Controls.Chats
             if (ApiInfo.IsWindows11)
             {
                 _requiresArrange = false;
-                _presenter = VisualTreeHelper.GetChild(this, 0) as FrameworkElement;
+                _presenter = GetTemplateChild("Root") as FrameworkElement;
             }
             else
             {
@@ -81,9 +82,8 @@ namespace Telegram.Controls.Chats
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            if (_hitTest != null && _requiresArrange)
+            if (_container != null && _requiresArrange)
             {
-                _hitTest.Size = finalSize.ToVector2();
                 _container.Size = finalSize.ToVector2();
             }
 
@@ -94,45 +94,40 @@ namespace Telegram.Controls.Chats
         {
             if (!_hasInitialLoadedEventFired && _presenter != null && (SettingsService.Current.SwipeToReply || SettingsService.Current.SwipeToShare))
             {
+                _hasInitialLoadedEventFired = true;
+
+                _hitTest = ElementCompositionPreview.GetElementVisual(this);
                 _visual = ElementCompositionPreview.GetElementVisual(_presenter);
 
-                _hitTest = _visual.Compositor.CreateSpriteVisual();
-                _hitTest.Brush = _visual.Compositor.CreateColorBrush(Windows.UI.Colors.Transparent);
-
-                _container = _visual.Compositor.CreateContainerVisual();
-                _container.Children.InsertAtBottom(_hitTest);
+                _compositor = _hitTest.Compositor;
+                _container = _compositor.CreateContainerVisual();
 
                 if (_requiresArrange)
                 {
-                    _hitTest.Size = ActualSize;
                     _container.Size = ActualSize;
                 }
                 else
                 {
-                    _hitTest.RelativeSizeAdjustment = Vector2.One;
                     _container.RelativeSizeAdjustment = Vector2.One;
                 }
 
                 ElementCompositionPreview.SetElementChildVisual(this, _container);
-
                 ConfigureInteractionTracker();
             }
-
-            _hasInitialLoadedEventFired = true;
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             if (_hasInitialLoadedEventFired)
             {
-                _tracker.Dispose();
-                _tracker = null;
+                _hasInitialLoadedEventFired = false;
 
                 _interactionSource.Dispose();
                 _interactionSource = null;
-            }
 
-            _hasInitialLoadedEventFired = false;
+                _tracker.Dispose();
+                _tracker = null;
+            }
         }
 
         private void ConfigureInteractionTracker()
@@ -146,7 +141,7 @@ namespace Telegram.Controls.Chats
             _interactionSource.IsPositionXRailsEnabled = true;
 
             //Create tracker and associate interaction source
-            _tracker = InteractionTracker.CreateWithOwner(_visual.Compositor, this);
+            _tracker = InteractionTracker.CreateWithOwner(_compositor, this);
             _tracker.InteractionSources.Add(_interactionSource);
 
             _tracker.MaxPosition = new Vector3(_reply ? 72 : 0);
@@ -161,9 +156,9 @@ namespace Telegram.Controls.Chats
 
         private void ConfigureRestingPoints()
         {
-            var neutralX = InteractionTrackerInertiaRestingValue.Create(_visual.Compositor);
-            neutralX.Condition = _visual.Compositor.CreateExpressionAnimation("true");
-            neutralX.RestingValue = _visual.Compositor.CreateExpressionAnimation("0");
+            var neutralX = InteractionTrackerInertiaRestingValue.Create(_compositor);
+            neutralX.Condition = _compositor.CreateExpressionAnimation("true");
+            neutralX.RestingValue = _compositor.CreateExpressionAnimation("0");
 
             _tracker.ConfigurePositionXInertiaModifiers(new InteractionTrackerInertiaModifier[] { neutralX });
         }
@@ -171,7 +166,7 @@ namespace Telegram.Controls.Chats
         private void ConfigureAnimations(Visual visual, Visual indicator)
         {
             // Create an animation that changes the offset of the photoVisual and shadowVisual based on the manipulation progress
-            var offsetExp = _visual.Compositor.CreateExpressionAnimation("(tracker.Position.X > 0 && !tracker.CanReply) || (tracker.Position.X <= 0 && !tracker.CanShare) ? 0 : -tracker.Position.X");
+            var offsetExp = _compositor.CreateExpressionAnimation("(tracker.Position.X > 0 && !tracker.CanReply) || (tracker.Position.X <= 0 && !tracker.CanShare) ? 0 : -tracker.Position.X");
             //var photoOffsetExp = _visual.Compositor.CreateExpressionAnimation("tracker.Position.X > 0 && !tracker.CanReply || tracker.Position.X <= 0 && !tracker.CanShare ? 0 : Max(-72, Min(72, -tracker.Position.X))");
             //var photoOffsetExp = _visual.Compositor.CreateExpressionAnimation("-tracker.Position.X");
             offsetExp.SetReferenceParameter("tracker", _tracker);
@@ -254,7 +249,7 @@ namespace Telegram.Controls.Chats
         {
             if (_indicator == null && (_tracker.Position.X > 0.0001f || _tracker.Position.X < -0.0001f) /*&& Math.Abs(e.Cumulative.Translation.X) >= 45*/)
             {
-                var sprite = _visual.Compositor.CreateSpriteVisual();
+                var sprite = _compositor.CreateSpriteVisual();
                 sprite.Size = new Vector2(30, 30);
                 sprite.CenterPoint = new Vector3(15);
 
@@ -262,23 +257,23 @@ namespace Telegram.Controls.Chats
                 void handler(LoadedImageSurface s, LoadedImageSourceLoadCompletedEventArgs args)
                 {
                     s.LoadCompleted -= handler;
-                    sprite.Brush = _visual.Compositor.CreateSurfaceBrush(s);
+                    sprite.Brush = _compositor.CreateSurfaceBrush(s);
                 }
 
                 surface.LoadCompleted += handler;
 
-                var ellipse = _visual.Compositor.CreateEllipseGeometry();
+                var ellipse = _compositor.CreateEllipseGeometry();
                 ellipse.Radius = new Vector2(15);
 
-                var ellipseShape = _visual.Compositor.CreateSpriteShape(ellipse);
-                ellipseShape.FillBrush = _visual.Compositor.CreateColorBrush((Windows.UI.Color)Navigation.BootStrapper.Current.Resources["MessageServiceBackgroundColor"]);
+                var ellipseShape = _compositor.CreateSpriteShape(ellipse);
+                ellipseShape.FillBrush = _compositor.CreateColorBrush((Windows.UI.Color)Navigation.BootStrapper.Current.Resources["MessageServiceBackgroundColor"]);
                 ellipseShape.Offset = new Vector2(15);
 
-                var shape = _visual.Compositor.CreateShapeVisual();
+                var shape = _compositor.CreateShapeVisual();
                 shape.Shapes.Add(ellipseShape);
                 shape.Size = new Vector2(30, 30);
 
-                _indicator = _visual.Compositor.CreateContainerVisual();
+                _indicator = _compositor.CreateContainerVisual();
                 _indicator.Children.InsertAtBottom(shape);
                 _indicator.Children.InsertAtTop(sprite);
                 _indicator.Size = new Vector2(30, 30);
