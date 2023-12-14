@@ -853,18 +853,16 @@ namespace Telegram.ViewModels
                 return;
             }
 
-            if (direction == PanelScrollingDirection.Backward)
+            if (direction == PanelScrollingDirection.Backward && PinnedMessages.Count > 0)
             {
-                var first = PinnedMessages.FirstOrDefault();
-                if (first?.Id < maxId)
+                if (PinnedMessages[0].Id < maxId)
                 {
                     return;
                 }
             }
-            else if (direction == PanelScrollingDirection.Forward)
+            else if (direction == PanelScrollingDirection.Forward && PinnedMessages.Count > 0)
             {
-                var last = PinnedMessages.LastOrDefault();
-                if (last?.Id > maxId)
+                if (PinnedMessages[^1].Id > maxId)
                 {
                     return;
                 }
@@ -908,17 +906,32 @@ namespace Telegram.ViewModels
                 limit = 100;
             }
 
-            var response = await ClientService.SendAsync(new SearchChatMessages(chat.Id, string.Empty, null, maxId, offset, limit, new SearchMessagesFilterPinned(), 0));
-            if (response is FoundChatMessages messages)
+            var func = new SearchChatMessages(chat.Id, string.Empty, null, maxId, offset, limit, new SearchMessagesFilterPinned(), 0);
+
+            var tsc = new TaskCompletionSource<List<MessageViewModel>>();
+            void handler(BaseObject result)
+            {
+                if (result is FoundChatMessages foundChatMessages)
+                {
+                    tsc.SetResult(foundChatMessages.Messages.OrderByDescending(x => x.Id).Select(x => CreateMessage(x)).ToList());
+                }
+                else
+                {
+                    tsc.SetResult(null);
+                }
+            }
+
+            ClientService.Send(func, handler);
+
+            var response = await tsc.Task;
+            if (response is List<MessageViewModel> messages)
             {
                 if (direction == PanelScrollingDirection.None)
                 {
                     PinnedMessages.Clear();
                 }
 
-                var replied = messages.Messages.OrderByDescending(x => x.Id).Select(x => CreateMessage(x)).ToList();
-
-                foreach (var message in replied)
+                foreach (var message in messages)
                 {
                     if (direction == PanelScrollingDirection.Forward)
                     {
