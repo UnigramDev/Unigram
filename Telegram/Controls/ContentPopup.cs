@@ -32,6 +32,7 @@ namespace Telegram.Controls
 
         private Border AnimationElement;
         private Border BackgroundElement;
+        private Border BorderElement;
         private Border ContentElement;
         private Grid CommandSpace;
 
@@ -68,6 +69,9 @@ namespace Telegram.Controls
             BackgroundElement.Width = e.NewSize.Width;
             BackgroundElement.Height = e.NewSize.Height;
 
+            BorderElement.Width = e.NewSize.Width;
+            BorderElement.Height = e.NewSize.Height;
+
             AnimationElement.Width = e.NewSize.Width;
             AnimationElement.Height = e.NewSize.Height;
 
@@ -86,6 +90,7 @@ namespace Telegram.Controls
             var visual = ElementCompositionPreview.GetElementVisual(this);
             var content = ElementCompositionPreview.GetElementVisual(ContentElement);
             var background = ElementCompositionPreview.GetElementVisual(BackgroundElement);
+            var border = ElementCompositionPreview.GetElementVisual(BorderElement);
 
             var clip = compositor.CreateInsetClip();
             content.Clip = clip;
@@ -114,6 +119,7 @@ namespace Telegram.Controls
 
             visual.StartAnimation("Translation.Y", translate);
             background.StartAnimation("Scale.Y", scale);
+            border.StartAnimation("Scale.Y", scale);
             redirect.StartAnimation("Offset.Y", offset);
             clip.StartAnimation("BottomInset", inset);
 
@@ -236,6 +242,7 @@ namespace Telegram.Controls
             CommandSpace = GetTemplateChild(nameof(CommandSpace)) as Grid;
             AnimationElement = GetTemplateChild(nameof(AnimationElement)) as Border;
             BackgroundElement = GetTemplateChild(nameof(BackgroundElement)) as Border;
+            BorderElement = GetTemplateChild(nameof(BorderElement)) as Border;
 
             ContentElement = GetTemplateChild(nameof(ContentElement)) as Border;
 

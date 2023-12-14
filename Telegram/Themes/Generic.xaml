@@ -2718,9 +2718,6 @@
                             </Grid.ColumnDefinitions>
                             <Border x:Name="BackgroundElement"
                                     Background="{TemplateBinding Background}"
-                                    FlowDirection="{TemplateBinding FlowDirection}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
                                     CornerRadius="{TemplateBinding CornerRadius}"
                                     MaxWidth="{TemplateBinding ContentMaxWidth}"
                                     MaxHeight="{TemplateBinding ContentMaxHeight}"
@@ -2884,6 +2881,18 @@
                                     </Grid>
                                 </Grid>
                             </Border>
+
+                            <Border x:Name="BorderElement"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    CornerRadius="{TemplateBinding CornerRadius}"
+                                    MaxWidth="{TemplateBinding ContentMaxWidth}"
+                                    MaxHeight="{TemplateBinding ContentMaxHeight}"
+                                    MinWidth="320"
+                                    MinHeight="{ThemeResource ContentDialogMinHeight}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Grid.Column="1" />
 
                             <Border x:Name="AnimationElement"
                                     HorizontalAlignment="Center"
