@@ -64,8 +64,6 @@ namespace Telegram.Views
 
         private readonly IClientService _clientService;
 
-        private readonly AnimatedListHandler _handler;
-
         private readonly DispatcherTimer _memoryUsageTimer;
         private double _memoryUsage;
 
@@ -77,8 +75,6 @@ namespace Telegram.Views
             DataContext = TypeResolver.Current.Resolve<MainViewModel>();
 
             _clientService = ViewModel.ClientService;
-
-            _handler = new AnimatedListHandler(ChatsList, AnimatedListType.Other);
 
             ViewModel.Chats.Delegate = this;
             ViewModel.PlaybackService.SourceChanged += OnPlaybackSourceChanged;

@@ -113,11 +113,11 @@ namespace Telegram.Controls
             }
 
             _itemToSelector[chat.Id] = args.ItemContainer;
-            args.ItemContainer.Tag = args.Item;
             args.Handled = true;
 
             if (args.Phase == 0)
             {
+                args.ItemContainer.Tag = args.Item;
                 VisualStateManager.GoToState(args.ItemContainer, "DataPlaceholder", false);
             }
 

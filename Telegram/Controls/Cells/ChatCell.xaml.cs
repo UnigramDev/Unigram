@@ -67,6 +67,7 @@ namespace Telegram.Controls.Cells
         private bool _onlineCall;
 
         private bool _compact;
+        private bool _draft;
 
         // Used only to prevent garbage collection
         private CompositionAnimation _size1;
@@ -234,7 +235,7 @@ namespace Telegram.Controls.Cells
             UnreadMentionsBadge.Visibility = Visibility.Collapsed;
 
             FromLabel.Text = UpdateFromLabel(clientService, chat, message);
-            _dateLabel = UpdateTimeLabel(message);
+            _dateLabel = Formatter.DateExtended(message.Date);
             _stateLabel = UpdateStateIcon(chat.LastReadOutboxMessageId, chat, null, message, message.SendingState);
 
             TimeLabel.Text = _stateLabel + "\u00A0" + _dateLabel;
@@ -503,12 +504,14 @@ namespace Telegram.Controls.Cells
 
             FromLabel.Text = UpdateFromLabel(chat, position, out bool draft);
 
-            if (draft)
+            if (draft && !_draft)
             {
+                _draft = true;
                 FromLabel.Foreground = BootStrapper.Current.Resources["DangerButtonBackground"] as Brush;
             }
-            else
+            else if (_draft && !draft)
             {
+                _draft = false;
                 FromLabel.ClearValue(TextBlock.ForegroundProperty);
             }
 
@@ -530,8 +533,17 @@ namespace Telegram.Controls.Cells
             position ??= chat.GetPosition(_chatList);
 
             PinnedIcon.Visibility = chat.UnreadCount == 0 && !chat.IsMarkedAsUnread && (position?.IsPinned ?? false) ? Visibility.Visible : Visibility.Collapsed;
-            UnreadBadge.Visibility = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
-            UnreadBadge.Text = chat.UnreadCount > 0 ? chat.UnreadCount.ToString() : string.Empty;
+
+            var unread = (chat.UnreadCount > 0 || chat.IsMarkedAsUnread) ? chat.UnreadMentionCount == 1 && chat.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
+            if (unread == Visibility.Visible)
+            {
+                UnreadBadge.Visibility = Visibility.Visible;
+                UnreadBadge.Text = chat.UnreadCount > 0 ? chat.UnreadCount.ToString() : string.Empty;
+            }
+            else
+            {
+                UnreadBadge.Visibility = Visibility.Collapsed;
+            }
 
             if (CompactBadge != null)
             {
@@ -566,8 +578,17 @@ namespace Telegram.Controls.Cells
             }
 
             UpdateChatReadInbox(chat, position);
-            UnreadMentionsBadge.Visibility = chat.UnreadMentionCount > 0 || chat.UnreadReactionCount > 0 ? Visibility.Visible : Visibility.Collapsed;
-            UnreadMentionsLabel.Text = chat.UnreadMentionCount > 0 ? Icons.Mention16 : Icons.HeartFilled12;
+
+            var unread = chat.UnreadMentionCount > 0 || chat.UnreadReactionCount > 0 ? Visibility.Visible : Visibility.Collapsed;
+            if (unread == Visibility.Visible)
+            {
+                UnreadMentionsBadge.Visibility = Visibility.Visible;
+                UnreadMentionsLabel.Text = chat.UnreadMentionCount > 0 ? Icons.Mention16 : Icons.HeartFilled12;
+            }
+            else
+            {
+                UnreadMentionsBadge.Visibility = Visibility.Collapsed;
+            }
         }
 
         public void UpdateNotificationSettings(Chat chat)
@@ -1515,15 +1536,10 @@ namespace Telegram.Controls.Cells
             var lastMessage = chat.LastMessage;
             if (lastMessage != null)
             {
-                return UpdateTimeLabel(lastMessage);
+                return Formatter.DateExtended(lastMessage.Date);
             }
 
             return string.Empty;
-        }
-
-        private string UpdateTimeLabel(Message message)
-        {
-            return Formatter.DateExtended(message.Date);
         }
 
         private void ToolTip_Opened(object sender, RoutedEventArgs e)
