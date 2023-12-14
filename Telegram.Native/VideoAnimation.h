@@ -155,9 +155,7 @@ namespace winrt::Telegram::Native::implementation
         }
 
     private:
-        int decode_packet(AVCodecContext* avctx, AVFrame* frame, int* got_frame, const AVPacket* pkt);
-        int decode_packet(int* got_frame);
-        void decode_frame(uint8_t* pixels, int32_t width, int32_t height, int32_t& seconds, bool& completed);
+        void decode_frame(uint8_t* pixels, int32_t width, int32_t height);
         static void requestFd(VideoAnimation* info);
         static int readCallback(void* opaque, uint8_t* buf, int buf_size);
         static int64_t seekCallback(void* opaque, int64_t offset, int whence);
@@ -191,12 +189,7 @@ namespace winrt::Telegram::Native::implementation
         //int64_t last_seek_p = 0;
 
         bool limitFps;
-        const int64_t limitedDuration = 1000 / 30;
-
-        int64_t prevFrame = 0;
-        int64_t prevDuration = 0;
-
-        int64_t nextFrame = 0;
+        double prevFrame = -1;
 
         int32_t pixelWidth = 0;
         int32_t pixelHeight = 0;

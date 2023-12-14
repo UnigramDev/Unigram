@@ -368,12 +368,6 @@ namespace winrt::Telegram::Native::implementation
         //int64_t time = ConnectionsManager::getInstance(0).getCurrentTimeMonotonicMillis();
         completed = false;
 
-        if (limitFps && nextFrame && nextFrame < prevFrame + prevDuration + limitedDuration)
-        {
-            nextFrame += limitedDuration;
-            return 0;
-        }
-
         int ret = 0;
         int32_t triesCount = preview ? 50 : 6;
         //has_decoded_frames = false;
@@ -408,8 +402,16 @@ namespace winrt::Telegram::Native::implementation
                 ret = avcodec_receive_frame(video_dec_ctx, frame);
                 if (ret >= 0)
                 {
-                    decode_frame(pixels, width, height, seconds, completed);
-                    return 1;
+                    double nextFrame = frame->best_effort_timestamp * av_q2d(video_stream->time_base);
+
+                    if (nextFrame >= prevFrame + 1.0 / 30 || framerate < 60)
+                    {
+                        seconds = static_cast<int32_t>(nextFrame);
+                        prevFrame = nextFrame;
+
+                        decode_frame(pixels, width, height);
+                        return 1;
+                    }
                 }
                 else
                 {
@@ -421,12 +423,13 @@ namespace winrt::Telegram::Native::implementation
             if (ret == AVERROR_EOF && has_decoded_frames && !preview)
             {
                 completed = true;
+                prevFrame = -1;
 
                 ret = av_seek_frame(fmt_ctx, video_stream_idx, 0, AVSEEK_FLAG_BACKWARD | AVSEEK_FLAG_FRAME);
                 if (ret < 0)
                 {
                     //OutputDebugStringFormat(L"can't seek to begin of file %s, %s", src, av_err2str(ret));
-                    goto cleanup;
+                    goto Cleanup;
                 }
 
                 avcodec_flush_buffers(video_dec_ctx);
@@ -434,7 +437,9 @@ namespace winrt::Telegram::Native::implementation
             else if (ret < 0 && ret != AVERROR(EAGAIN))
             {
                 completed = true;
-                goto cleanup;
+                prevFrame = -1;
+
+                goto Cleanup;
             }
 
             if (!has_decoded_frames)
@@ -443,7 +448,7 @@ namespace winrt::Telegram::Native::implementation
             }
         }
 
-    cleanup:
+    Cleanup:
         av_packet_unref(pkt);
         return 0;
     }
@@ -459,18 +464,8 @@ namespace winrt::Telegram::Native::implementation
         return (((x)+(a)-1) & ~((a)-1));
     }
 
-    void VideoAnimation::decode_frame(uint8_t* pixels, int32_t width, int32_t height, int32_t& seconds, bool& completed)
+    void VideoAnimation::decode_frame(uint8_t* pixels, int32_t width, int32_t height)
     {
-        auto timestamp = (1000 * frame->best_effort_timestamp * av_q2d(video_stream->time_base));
-
-        //if (limitFps && timestamp < nextFrame)
-        //{
-        //    has_decoded_frames = true;
-        //    av_frame_unref(frame);
-
-        //    continue;
-        //}
-
         //OutputDebugStringFormat(L"decoded frame with w = %d, h = %d, format = %d", frame->width, frame->height, frame->format);
         if (frame->format == AV_PIX_FMT_YUV420P || frame->format == AV_PIX_FMT_YUVA420P || frame->format == AV_PIX_FMT_BGRA || frame->format == AV_PIX_FMT_YUVJ420P || frame->format == AV_PIX_FMT_YUV444P)
         {
@@ -556,13 +551,6 @@ namespace winrt::Telegram::Native::implementation
                     }
                 }
             }
-
-            seconds = frame->best_effort_timestamp * av_q2d(video_stream->time_base);
-
-            prevFrame = timestamp;
-            prevDuration = (1000 * frame->pkt_duration * av_q2d(video_stream->time_base));
-
-            nextFrame = timestamp + limitedDuration;
 
             has_decoded_frames = true;
             av_packet_unref(pkt);
