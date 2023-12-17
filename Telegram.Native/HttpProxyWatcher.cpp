@@ -93,5 +93,7 @@ namespace winrt::Telegram::Native::implementation
             m_isEnabled = enable;
             m_changed(*this, enable);
         }
+
+        delete[] proxyServer;
     }
 }

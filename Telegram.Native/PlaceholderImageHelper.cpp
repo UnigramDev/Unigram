@@ -742,6 +742,8 @@ namespace winrt::Telegram::Native::implementation
 
         if (result == E_NOT_SUFFICIENT_BUFFER)
         {
+            delete[] ranges;
+
             DWRITE_HIT_TEST_METRICS* ranges = new DWRITE_HIT_TEST_METRICS[actualTestsCount];
             HRESULT result = textLayout->HitTestTextRange(offset, length, 0, 0, ranges, actualTestsCount, &actualTestsCount);
         }
@@ -760,6 +762,7 @@ namespace winrt::Telegram::Native::implementation
             rects.push_back({ left, top, right - left, bottom - top });
         }
 
+        delete[] ranges;
         return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(rects));
     }
 

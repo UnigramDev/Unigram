@@ -190,10 +190,6 @@ namespace winrt::Telegram::Native::implementation
 
     winrt::Telegram::Native::TextDirectionality NativeUtils::GetDirectionality(hstring value, int32_t offset, int32_t length)
     {
-        WORD* type;
-        type = new WORD[length];
-        GetStringTypeEx(LOCALE_USER_DEFAULT, CT_CTYPE2, value.data() + offset, length, type);
-
         for (int i = 0; i < length; i++)
         {
             if (IS_HIGH_SURROGATE(value[offset + i]) || IS_LOW_SURROGATE(value[offset + i]))
@@ -201,11 +197,14 @@ namespace winrt::Telegram::Native::implementation
                 continue;
             }
 
-            if (type[i] == C2_LEFTTORIGHT)
+            WORD type;
+            GetStringTypeEx(LOCALE_USER_DEFAULT, CT_CTYPE2, value.data() + offset + 1, 1, &type);
+
+            if (type == C2_LEFTTORIGHT)
             {
                 return winrt::Telegram::Native::TextDirectionality::LeftToRight;
             }
-            else if (type[i] == C2_RIGHTTOLEFT)
+            else if (type == C2_RIGHTTOLEFT)
             {
                 return winrt::Telegram::Native::TextDirectionality::RightToLeft;
             }
