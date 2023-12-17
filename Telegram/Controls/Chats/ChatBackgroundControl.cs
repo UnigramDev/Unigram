@@ -164,9 +164,9 @@ namespace Telegram.Controls.Chats
 
         public static bool BackgroundEquals(Background prev, Background next, bool fast = false)
         {
-            if (prev == null)
+            if (prev == null || next == null)
             {
-                return next == null;
+                return prev == next;
             }
 
             if (fast && prev.Id != next.Id)
