@@ -98,7 +98,7 @@ namespace Telegram.Controls.Cells
         private TextBlock TypingLabel;
         private Border PinnedIcon;
         private Border UnreadMentionsBadge;
-        private InfoBadge UnreadBadge;
+        private BadgeControl UnreadBadge;
         private Rectangle DropVisual;
         private TextBlock FailedLabel;
         private TextBlock UnreadMentionsLabel;
@@ -125,7 +125,7 @@ namespace Telegram.Controls.Cells
             TypingLabel = GetTemplateChild(nameof(TypingLabel)) as TextBlock;
             PinnedIcon = GetTemplateChild(nameof(PinnedIcon)) as Border;
             UnreadMentionsBadge = GetTemplateChild(nameof(UnreadMentionsBadge)) as Border;
-            UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as InfoBadge;
+            UnreadBadge = GetTemplateChild(nameof(UnreadBadge)) as BadgeControl;
             DropVisual = GetTemplateChild(nameof(DropVisual)) as Rectangle;
             FailedLabel = GetTemplateChild(nameof(FailedLabel)) as TextBlock;
             UnreadMentionsLabel = GetTemplateChild(nameof(UnreadMentionsLabel)) as TextBlock;
@@ -272,7 +272,7 @@ namespace Telegram.Controls.Cells
 
             PinnedIcon.Visibility = topic.UnreadCount == 0 && topic.IsPinned ? Visibility.Visible : Visibility.Collapsed;
             UnreadBadge.Visibility = topic.UnreadCount > 0 ? topic.UnreadMentionCount == 1 && topic.UnreadCount == 1 ? Visibility.Collapsed : Visibility.Visible : Visibility.Collapsed;
-            UnreadBadge.Value = topic.UnreadCount;
+            UnreadBadge.Text = topic.UnreadCount.ToString();
 
             //UpdateAutomation(_clientService, topic, topic.LastMessage);
         }

@@ -197,15 +197,13 @@
                                        VerticalAlignment="Center"
                                        TextAlignment="Center" />
                         </Border>
-                        <muxc:InfoBadge x:Name="UnreadBadge"
-                                        Background="{ThemeResource ChatUnreadBadgeBrush}"
-                                        Foreground="{ThemeResource ChatUnreadLabelBrush}"
-                                        VerticalAlignment="Bottom"
-                                        HorizontalAlignment="Right"
-                                        Margin="8,0,0,0"
-                                        Visibility="Collapsed"
-                                        Grid.Column="5"
-                                        Grid.Row="1" />
+                        <controls:BadgeControl x:Name="UnreadBadge"
+                                               VerticalAlignment="Bottom"
+                                               HorizontalAlignment="Right"
+                                               Margin="8,0,0,0"
+                                               Visibility="Collapsed"
+                                               Grid.Column="5"
+                                               Grid.Row="1" />
 
                         <Rectangle x:Name="DropVisual"
                                    x:Load="False"
