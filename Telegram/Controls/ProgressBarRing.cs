@@ -124,16 +124,19 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_foreverAnimation != null)
+            if (_foreverAnimation != null && !_spinning && Value is > 0 and < 1)
             {
+                _spinning = true;
+                _visual.RotationAngleInDegrees = 230; // 202
                 _visual.StartAnimation("RotationAngleInDegrees", _foreverAnimation);
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (_foreverAnimation != null)
+            if (_foreverAnimation != null && _spinning)
             {
+                _spinning = false;
                 _visual.StopAnimation("RotationAngleInDegrees");
             }
         }
@@ -154,22 +157,11 @@ namespace Telegram.Controls
                 newValue = 0.05;
             }
 
-            if (_foreverAnimation != null)
+            if (_foreverAnimation != null && !_spinning && newValue is > 0 and < 1)
             {
-                if (newValue > 0 && newValue < 1)
-                {
-                    if (!_spinning)
-                    {
-                        _spinning = true;
-                        _visual.RotationAngleInDegrees = 230; // 202
-                        _visual.StartAnimation("RotationAngleInDegrees", _foreverAnimation);
-                    }
-                }
-                //else if (_spinning)
-                //{
-                //    _spinning = false;
-                //    _visual.StopAnimation("RotationAngleInDegrees");
-                //}
+                _spinning = true;
+                _visual.RotationAngleInDegrees = 230; // 202
+                _visual.StartAnimation("RotationAngleInDegrees", _foreverAnimation);
             }
 
             if (_ellipse != null)
@@ -186,7 +178,7 @@ namespace Telegram.Controls
                     var trimStart = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
                     var trimEnd = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
 
-                    if (newValue < 1)
+                    if (newValue > 0 && newValue < 1)
                     {
                         //_ellipse.TrimStart = 0;
                         //_ellipse.TrimEnd = MathF.Max(0, MathF.Min(1, (float)newValue));
