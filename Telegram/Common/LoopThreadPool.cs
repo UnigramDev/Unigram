@@ -6,6 +6,7 @@
 //
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Telegram.Common
 {
@@ -13,7 +14,70 @@ namespace Telegram.Common
     {
         private static readonly ConcurrentDictionary<TimeSpan, LoopThread> _specificFrameRate = new();
 
-        public static LoopThread Get(TimeSpan frameRate)
+        private static readonly MultiValueDictionary<TimeSpan, LoopThread> _test = new();
+        private static readonly object _lock = new();
+
+        public static LoopThread Rent(TimeSpan frameRate)
+        {
+            LoopThread target = null;
+
+            lock (_lock)
+            {
+                _test.TryGetValue(frameRate, out var threads);
+                _test[frameRate] = threads ??= new List<LoopThread>();
+
+                for (int i = 0; i < threads.Count; i++)
+                {
+                    var thread = threads[i];
+                    if (thread.Count == 0)
+                    {
+                        if (target == null)
+                        {
+                            target = thread;
+                        }
+                        else
+                        {
+                            threads.RemoveAt(i);
+                            i--;
+                        }
+                    }
+                    else if (thread.HasMoreResources)
+                    {
+                        target = thread;
+                    }
+                }
+
+                if (target == null)
+                {
+                    target = new LoopThread(frameRate);
+                    threads.Add(target);
+                }
+
+                target.Rent();
+            }
+
+            return target;
+        }
+
+        public static void Release(LoopThread target)
+        {
+            if (target == null)
+            {
+                return;
+            }
+
+            lock (_lock)
+            {
+                target.Release();
+
+                if (target.Count == 0 && _test.TryGetValue(target.Interval, out var threads))
+                {
+                    threads.Remove(target);
+                }
+            }
+        }
+
+        public static LoopThread Get2(TimeSpan frameRate)
         {
             if (_specificFrameRate.TryGetValue(frameRate, out LoopThread thread))
             {

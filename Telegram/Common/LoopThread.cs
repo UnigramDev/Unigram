@@ -45,7 +45,20 @@ namespace Telegram.Common
             _tick?.Invoke(this, EventArgs.Empty);
         }
 
+        public void Rent()
+        {
+            _count++;
+        }
+
+        public void Release()
+        {
+            _count--;
+        }
+
         private int _count;
+        public int Count => _count;
+
+        public bool HasMoreResources => _count < 120;
 
         private event EventHandler _tick;
         public event EventHandler Tick
@@ -56,14 +69,12 @@ namespace Telegram.Common
                 {
                     if (_tick == null) _timer.Change(TimeSpan.Zero, _interval);
                     _tick += value;
-                    _count++;
                 }
             }
             remove
             {
                 lock (_timerLock)
                 {
-                    _count--;
                     _tick -= value;
                     if (_tick == null) _timer.Change(Timeout.Infinite, Timeout.Infinite);
                 }

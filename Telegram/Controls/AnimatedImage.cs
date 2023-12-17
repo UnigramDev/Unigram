@@ -887,7 +887,7 @@ namespace Telegram.Controls
 
                 if (_loaded > 0)
                 {
-                    _timer = LoopThreadPool.Get(task.Interval);
+                    _timer = LoopThreadPool.Rent(task.Interval);
                     _task = task;
 
                     _rendering = true;
@@ -1117,6 +1117,7 @@ namespace Telegram.Controls
             //Debug.Assert(_images.Count == 0);
 
             _dispatcherQueue.TryEnqueue(UnregisterEvents);
+            LoopThreadPool.Release(_timer);
 
             _task = null;
             _timer = null;
