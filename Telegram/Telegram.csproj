@@ -1855,6 +1855,7 @@
     <Content Include="Assets\Toasts\SoundDownload.tgs" />
     <Content Include="Assets\Toasts\SavedMessages.tgs" />
     <Content Include="Assets\Toasts\Forward.tgs" />
+    <Content Include="Assets\Toasts\Error.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>

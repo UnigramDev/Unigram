@@ -434,6 +434,10 @@ namespace Telegram.Common
             {
                 NavigateToProxy(clientService, proxy.Server, proxy.Port, proxy.Type);
             }
+            else if (internalLink is InternalLinkTypeUnsupportedProxy)
+            {
+                Window.Current.ShowToast(Strings.ProxyLinkUnsupported, new LocalFileSource("ms-appx:///Assets/Toasts/Error.tgs"));
+            }
             else if (internalLink is InternalLinkTypePublicChat publicChat)
             {
                 NavigateToUsername(clientService, navigation, publicChat.ChatUsername, null, null);
