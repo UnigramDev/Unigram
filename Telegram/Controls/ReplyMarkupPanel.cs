@@ -42,7 +42,7 @@ namespace Telegram.Controls
     {
         private readonly double _keyboardHeight = 260;
 
-        private bool _empty;
+        private bool _empty = true;
         private bool _oneTime;
 
         private void UpdateSize(ReplyMarkup markup, bool inline)

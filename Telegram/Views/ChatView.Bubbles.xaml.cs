@@ -75,7 +75,7 @@ namespace Telegram.Views
         public void ViewVisibleMessages(bool intermediate)
         {
             var chat = ViewModel.Chat;
-            if (chat == null)
+            if (chat == null || IsDisconnected)
             {
                 return;
             }

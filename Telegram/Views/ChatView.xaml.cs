@@ -1280,14 +1280,36 @@ namespace Telegram.Views
                 return;
             }
 
-            var text = viewModel.GetText(TextGetOptions.None);
+            var text = TextField.Text;
             var embedded = viewModel.ComposerHeader;
+
+            if (string.IsNullOrEmpty(text))
+            {
+                if (embedded != null)
+                {
+                    if (embedded.IsEmpty)
+                    {
+                        viewModel.ComposerHeader = null;
+                    }
+                    else if (embedded.WebPagePreview != null)
+                    {
+                        viewModel.ComposerHeader = new MessageComposerHeader(viewModel.ClientService)
+                        {
+                            EditingMessage = embedded.EditingMessage,
+                            ReplyToMessage = embedded.ReplyToMessage,
+                            ReplyToQuote = embedded?.ReplyToQuote,
+                        };
+                    }
+                }
+
+                return;
+            }
 
             TryGetWebPagePreview(viewModel.ClientService, viewModel.Chat, text, result =>
             {
                 this.BeginOnUIThread(() =>
                 {
-                    if (!string.Equals(text, viewModel.GetText(TextGetOptions.None)))
+                    if (!string.Equals(text, TextField.Text))
                     {
                         return;
                     }
@@ -3667,7 +3689,7 @@ namespace Telegram.Views
             {
                 if (ViewModel.Topic != null)
                 {
-                    Title.Text = ViewModel.Topic.Info.Name;
+                    ChatTitle = ViewModel.Topic.Info.Name;
                 }
                 else
                 {
@@ -3681,33 +3703,33 @@ namespace Telegram.Views
                     {
                         if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
                         {
-                            Title.Text = Locale.Declension(Strings.R.Comments, message.InteractionInfo.ReplyInfo.ReplyCount);
+                            ChatTitle = Locale.Declension(Strings.R.Comments, message.InteractionInfo.ReplyInfo.ReplyCount);
                         }
                         else
                         {
-                            Title.Text = Locale.Declension(Strings.R.Replies, message.InteractionInfo.ReplyInfo.ReplyCount);
+                            ChatTitle = Locale.Declension(Strings.R.Replies, message.InteractionInfo.ReplyInfo.ReplyCount);
                         }
                     }
                     else
                     {
-                        Title.Text = Locale.Declension(Strings.R.Replies, message.InteractionInfo.ReplyInfo.ReplyCount);
+                        ChatTitle = Locale.Declension(Strings.R.Replies, message.InteractionInfo.ReplyInfo.ReplyCount);
                     }
                 }
             }
             else if (ViewModel.Type == DialogType.ScheduledMessages)
             {
-                Title.Text = ViewModel.ClientService.IsSavedMessages(chat) ? Strings.Reminders : Strings.ScheduledMessages;
+                ChatTitle = ViewModel.ClientService.IsSavedMessages(chat) ? Strings.Reminders : Strings.ScheduledMessages;
             }
             else if (chat.Type is ChatTypeSecret)
             {
-                Title.Text = Icons.LockClosedFilled14 + "\u00A0" + ViewModel.ClientService.GetTitle(chat);
+                ChatTitle = Icons.LockClosedFilled14 + "\u00A0" + ViewModel.ClientService.GetTitle(chat);
             }
             else
             {
-                Title.Text = ViewModel.ClientService.GetTitle(chat);
+                ChatTitle = ViewModel.ClientService.GetTitle(chat);
             }
 
-            ChatTitle = Title.Text;
+            Title.Text = ChatTitle;
         }
 
         public string ChatTitle { get; private set; }
@@ -4215,11 +4237,7 @@ namespace Telegram.Views
                 field.Properties.InsertVector3("Translation", Vector3.Zero);
                 attach.Properties.InsertVector3("Translation", Vector3.Zero);
 
-                if (show)
-                {
-                    _botCommandsCollapsed = false;
-                }
-                else
+                if (_botCommandsCollapsed)
                 {
                     ButtonMore.IsChecked = false;
                     ButtonMore.Visibility = Visibility.Collapsed;

@@ -413,18 +413,6 @@ namespace Telegram.ViewModels
             field.SetScrollingMode(mode, force);
         }
 
-        public string GetText(TextGetOptions options = TextGetOptions.NoHidden)
-        {
-            var field = TextField;
-            if (field == null)
-            {
-                return null;
-            }
-
-            field.Document.GetText(options, out string text);
-            return text;
-        }
-
         public override FormattedText GetFormattedText(bool clear = false)
         {
             var field = TextField;
@@ -1612,12 +1600,6 @@ namespace Telegram.ViewModels
                     groups[groupedId] = Tuple.Create(group, group.Id);
 
                     album.Messages.Add(message);
-
-                    var first = album.Messages.FirstOrDefault();
-                    if (first != null)
-                    {
-                        group.UpdateWith(first);
-                    }
                 }
             }
 
@@ -1628,6 +1610,12 @@ namespace Telegram.ViewModels
                     if (group.Item1.Content is MessageAlbum album)
                     {
                         album.Invalidate();
+
+                        var first = album.Messages.FirstOrDefault();
+                        if (first != null)
+                        {
+                            group.Item1.UpdateWith(first);
+                        }
                     }
 
                     if (newGroups != null && newGroups.ContainsKey(group.Item1.MediaAlbumId))
@@ -1789,6 +1777,7 @@ namespace Telegram.ViewModels
             }
             else if (state.TryGet("message_id", out long navigation))
             {
+                Settings.Chats.Clear(chat.Id, ThreadId);
                 Logger.Debug(string.Format("{0} - Loading messages from specific id", chat.Id));
 
                 state.Remove("message_id");
@@ -1980,9 +1969,6 @@ namespace Telegram.ViewModels
 
         protected override void OnNavigatedFrom(NavigationState suspensionState, bool suspending)
         {
-            // Explicit unsubscribe because NavigatedFrom
-            // is not invoked when switching between chats.
-            Aggregator.Unsubscribe(this);
             WindowContext.Current.EnableScreenCapture(GetHashCode());
 
             var chat = _chat;
@@ -2011,10 +1997,7 @@ namespace Telegram.ViewModels
 
             void Remove(string reason)
             {
-                Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.ReadInboxMaxId, out long _);
-                Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Index, out long _);
-                Settings.Chats.TryRemove(chat.Id, ThreadId, ChatSetting.Pixel, out double _);
-
+                Settings.Chats.Clear(chat.Id, ThreadId);
                 Logger.Debug(string.Format("{0} - Removing scrolling position, {1}", chat.Id, reason));
             }
 
@@ -2023,7 +2006,7 @@ namespace Telegram.ViewModels
                 var field = HistoryField;
                 if (field != null && TryGetLastVisibleMessageId(out long lastVisibleId, out int lastVisibleIndex))
                 {
-                    var firstNonVisibleId = lastVisibleIndex < Items.Count - 2
+                    var firstNonVisibleId = lastVisibleIndex < Items.Count - 1
                         ? Items[lastVisibleIndex + 1].Id
                         : lastVisibleId;
 

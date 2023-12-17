@@ -787,6 +787,20 @@ namespace Telegram.Controls
 
         #endregion
 
+        public string Text
+        {
+            get
+            {
+                if (IsEmpty)
+                {
+                    return string.Empty;
+                }
+
+                Document.GetText(TextGetOptions.None, out string text);
+                return text;
+            }
+        }
+
         public FormattedText GetFormattedText(bool clear = false)
         {
             OnGettingFormattedText();

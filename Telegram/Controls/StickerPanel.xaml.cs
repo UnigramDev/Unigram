@@ -276,23 +276,39 @@ namespace Telegram.Controls
             }
         }
 
+        private bool _emojisRights;
+        private bool _stickersRights;
+        private bool _animationsRights;
+
         public void UpdateChatPermissions(IClientService clientService, Chat chat)
         {
             var emojisRights = DialogViewModel.VerifyRights(clientService, chat, x => x.CanSendBasicMessages, Strings.GlobalSendMessageRestricted, Strings.SendMessageRestrictedForever, Strings.SendMessageRestricted, out string emojisLabel);
             var stickersRights = DialogViewModel.VerifyRights(clientService, chat, x => x.CanSendOtherMessages, Strings.GlobalAttachStickersRestricted, Strings.AttachStickersRestrictedForever, Strings.AttachStickersRestricted, out string stickersLabel);
             var animationsRights = DialogViewModel.VerifyRights(clientService, chat, x => x.CanSendOtherMessages, Strings.GlobalAttachGifRestricted, Strings.AttachGifRestrictedForever, Strings.AttachGifRestricted, out string animationsLabel);
 
-            EmojisPanel.Visibility = emojisRights ? Visibility.Collapsed : Visibility.Visible;
-            EmojisPermission.Visibility = emojisRights ? Visibility.Visible : Visibility.Collapsed;
-            EmojisPermission.Text = emojisLabel ?? string.Empty;
+            if (_emojisRights != emojisRights || emojisRights)
+            {
+                _emojisRights = emojisRights;
+                EmojisPanel.Visibility = emojisRights ? Visibility.Collapsed : Visibility.Visible;
+                EmojisPermission.Visibility = emojisRights ? Visibility.Visible : Visibility.Collapsed;
+                EmojisPermission.Text = emojisLabel ?? string.Empty;
+            }
 
-            StickersPanel.Visibility = stickersRights ? Visibility.Collapsed : Visibility.Visible;
-            StickersPermission.Visibility = stickersRights ? Visibility.Visible : Visibility.Collapsed;
-            StickersPermission.Text = stickersLabel ?? string.Empty;
+            if (_stickersRights != stickersRights || stickersRights)
+            {
+                _stickersRights = stickersRights;
+                StickersPanel.Visibility = stickersRights ? Visibility.Collapsed : Visibility.Visible;
+                StickersPermission.Visibility = stickersRights ? Visibility.Visible : Visibility.Collapsed;
+                StickersPermission.Text = stickersLabel ?? string.Empty;
+            }
 
-            AnimationsPanel.Visibility = animationsRights ? Visibility.Collapsed : Visibility.Visible;
-            AnimationsPermission.Visibility = animationsRights ? Visibility.Visible : Visibility.Collapsed;
-            AnimationsPermission.Text = animationsLabel ?? string.Empty;
+            if (_animationsRights != animationsRights || animationsRights)
+            {
+                _animationsRights = animationsRights;
+                AnimationsPanel.Visibility = animationsRights ? Visibility.Collapsed : Visibility.Visible;
+                AnimationsPermission.Visibility = animationsRights ? Visibility.Visible : Visibility.Collapsed;
+                AnimationsPermission.Text = animationsLabel ?? string.Empty;
+            }
         }
 
         public void Activate()

@@ -813,6 +813,17 @@ namespace Telegram.Services
             return defaultValue;
         }
 
+        public void Clear(long chatId, long threadId)
+        {
+            var setting1 = ConvertToKey(chatId, threadId, ChatSetting.ReadInboxMaxId);
+            var setting2 = ConvertToKey(chatId, threadId, ChatSetting.Index);
+            var setting3 = ConvertToKey(chatId, threadId, ChatSetting.Pixel);
+
+            _container.Values.Remove(setting1);
+            _container.Values.Remove(setting2);
+            _container.Values.Remove(setting3);
+        }
+
         private string ConvertToKey(long chatId, long threadId, ChatSetting setting)
         {
             if (threadId != 0)

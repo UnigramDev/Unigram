@@ -42,6 +42,13 @@ namespace Telegram.Controls.Chats
 
         public void Update(ChatSearchViewModel viewModel)
         {
+            if (_empty == (viewModel == null))
+            {
+                return;
+            }
+
+            _empty = viewModel == null;
+
             DataContext = viewModel;
             Bindings.Update();
 
@@ -62,6 +69,7 @@ namespace Telegram.Controls.Chats
         }
 
         private bool _collapsed = true;
+        private bool _empty = true;
 
         private void ShowHide(bool show)
         {
