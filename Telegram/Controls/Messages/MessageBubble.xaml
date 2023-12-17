@@ -224,7 +224,11 @@
                                                FontFamily="{ThemeResource EmojiThemeFontFamily}"
                                                TextTrimming="CharacterEllipsis"
                                                TextWrapping="NoWrap"
-                                               FontWeight="SemiBold" />
+                                               FontWeight="SemiBold">
+                                        <Hyperlink UnderlineStyle="None">
+                                            <Run />
+                                        </Hyperlink>
+                                    </TextBlock>
                                     <controls:IdentityIcon x:Name="Identity"
                                                            VerticalAlignment="Bottom"
                                                            Margin="4,0,0,0"
@@ -248,9 +252,13 @@
                                            FontFamily="{ThemeResource EmojiThemeFontFamilyWithSymbols}"
                                            TextTrimming="CharacterEllipsis"
                                            TextWrapping="NoWrap"
-                                           FontWeight="SemiBold"
                                            Visibility="Collapsed"
-                                           Grid.Row="1" />
+                                           Grid.Row="1">
+                                    <Run />
+                                    <Hyperlink UnderlineStyle="None">
+                                        <Run FontWeight="SemiBold" />
+                                    </Hyperlink>
+                                </TextBlock>
 
                                 <controls:GlyphButton x:Name="PsaInfo"
                                                       x:Load="False"

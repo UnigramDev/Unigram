@@ -129,8 +129,13 @@ namespace Telegram.Controls.Messages
 
         private Grid HeaderPanel;
         private TextBlock HeaderLabel;
+        private Hyperlink HeaderLink;
+        private Run HeaderLinkRun;
         private TextBlock AdminLabel;
         private TextBlock ForwardLabel;
+        private Run ForwardRun;
+        private Hyperlink ForwardLink;
+        private Run ForwardLinkRun;
         private IdentityIcon Identity;
         private GlyphButton PsaInfo;
 
@@ -800,9 +805,6 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            HeaderLabel?.Inlines.Clear();
-            ForwardLabel?.Inlines.Clear();
-
             var content = message.GeneratedContent ?? message.Content;
             var light = content is MessageSticker
                 or MessageDice
@@ -811,103 +813,10 @@ namespace Telegram.Controls.Messages
                 or MessageAnimatedEmoji;
 
             var shown = false;
+            var header = false;
+            var forward = false;
 
-            if (!light && message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
-            {
-                if (message.IsSaved)
-                {
-                    var title = string.Empty;
-                    var foreground = default(SolidColorBrush);
-
-                    if (message.ForwardInfo?.Origin is MessageOriginUser fromUser && message.ClientService.TryGetUser(fromUser.SenderUserId, out User fromUserUser))
-                    {
-                        title = fromUserUser.FullName();
-                        foreground = message.ClientService.GetAccentBrush(fromUserUser.AccentColorId);
-                    }
-                    else if (message.ForwardInfo?.Origin is MessageOriginChat fromChat && message.ClientService.TryGetChat(fromChat.SenderChatId, out Chat fromChatChat))
-                    {
-                        title = message.ClientService.GetTitle(fromChatChat);
-                        foreground = message.ClientService.GetAccentBrush(fromChatChat.AccentColorId);
-                    }
-                    else if (message.ForwardInfo?.Origin is MessageOriginChannel fromChannel && message.ClientService.TryGetChat(fromChannel.ChatId, out Chat fromChannelChat))
-                    {
-                        title = message.ClientService.GetTitle(fromChannelChat);
-                        foreground = message.ClientService.GetAccentBrush(fromChannelChat.AccentColorId);
-                    }
-                    else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser fromHiddenUser)
-                    {
-                        title = fromHiddenUser.SenderName;
-                    }
-                    else if (message.ImportInfo != null)
-                    {
-                        title = message.ImportInfo.SenderName;
-                    }
-
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(CreateRun(title ?? string.Empty));
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Click += FwdFrom_Click;
-
-                    if (foreground != null)
-                    {
-                        hyperlink.Foreground = foreground;
-                    }
-
-                    LoadHeaderLabel();
-
-                    HeaderLabel.Inlines.Add(hyperlink);
-                    Identity.ClearStatus();
-
-                    shown = true;
-                }
-                else if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
-                {
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(CreateRun(senderUser.FullName()));
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = message.ClientService.GetAccentBrush(senderUser.AccentColorId);
-                    hyperlink.Click += From_Click;
-
-                    LoadHeaderLabel();
-
-                    HeaderLabel.Inlines.Add(hyperlink);
-                    Identity.Foreground = hyperlink.Foreground.WithOpacity(0.6);
-                    Identity.SetStatus(message.ClientService, senderUser);
-
-                    shown = true;
-                }
-                else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
-                {
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(CreateRun(senderChat.Title));
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = message.ClientService.GetAccentBrush(senderChat.AccentColorId);
-                    hyperlink.Click += From_Click;
-
-                    LoadHeaderLabel();
-
-                    HeaderLabel.Inlines.Add(hyperlink);
-                    Identity.ClearStatus();
-
-                    shown = true;
-                }
-            }
-            else if (!light && message.IsChannelPost && chat.Type is ChatTypeSupergroup && string.IsNullOrEmpty(message.ForwardInfo?.PublicServiceAnnouncementType))
-            {
-                var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(CreateRun(message.ClientService.GetTitle(chat)));
-                hyperlink.UnderlineStyle = UnderlineStyle.None;
-                //hyperlink.Foreground = Convert.Bubble(message.ChatId);
-                hyperlink.Click += From_Click;
-
-                LoadHeaderLabel();
-
-                HeaderLabel.Inlines.Add(hyperlink);
-                Identity.ClearStatus();
-
-                shown = true;
-            }
-            else if (!light && message.IsFirst && message.IsSaved)
+            if (!light && message.IsFirst && message.IsSaved)
             {
                 var title = string.Empty;
                 var foreground = default(SolidColorBrush);
@@ -936,69 +845,111 @@ namespace Telegram.Controls.Messages
                     title = message.ImportInfo.SenderName;
                 }
 
-                var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(CreateRun(title ?? string.Empty));
-                hyperlink.UnderlineStyle = UnderlineStyle.None;
-                hyperlink.Click += FwdFrom_Click;
+                LoadHeaderLabel();
+                header = true;
+                shown = true;
 
                 if (foreground != null)
                 {
-                    hyperlink.Foreground = foreground;
+                    HeaderLink.Foreground = foreground;
+                }
+                else
+                {
+                    HeaderLink.ClearValue(TextElement.ForegroundProperty);
                 }
 
-                LoadHeaderLabel();
-
-                HeaderLabel.Inlines.Add(hyperlink);
+                HeaderLinkRun.Text = title;
                 Identity.ClearStatus();
+            }
+            else if (!light && message.IsFirst && !message.IsOutgoing && !message.IsChannelPost && (chat.Type is ChatTypeBasicGroup || chat.Type is ChatTypeSupergroup))
+            {
+                if (message.ClientService.TryGetUser(message.SenderId, out User senderUser))
+                {
+                    LoadHeaderLabel();
+                    header = true;
+                    shown = true;
 
+                    var foreground = message.ClientService.GetAccentBrush(senderUser.AccentColorId);
+                    var title = senderUser.FullName();
+
+                    HeaderLink.Foreground = foreground;
+                    HeaderLinkRun.Text = title;
+                    Identity.Foreground = foreground.WithOpacity(0.6);
+                    Identity.SetStatus(message.ClientService, senderUser);
+                }
+                else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
+                {
+                    LoadHeaderLabel();
+                    header = true;
+                    shown = true;
+
+                    var foreground = message.ClientService.GetAccentBrush(senderUser.AccentColorId);
+                    var title = senderChat.Title;
+
+                    HeaderLink.Foreground = foreground;
+                    HeaderLinkRun.Text = title;
+                    Identity.Foreground = foreground.WithOpacity(0.6);
+                    Identity.SetStatus(message.ClientService, senderChat);
+                }
+            }
+            else if (!light && message.IsChannelPost && chat.Type is ChatTypeSupergroup && string.IsNullOrEmpty(message.ForwardInfo?.PublicServiceAnnouncementType))
+            {
+                LoadHeaderLabel();
+                header = true;
                 shown = true;
+
+                HeaderLink.Foreground = message.ClientService.GetAccentBrush(chat.AccentColorId);
+                HeaderLinkRun.Text = chat.Title;
+                Identity.ClearStatus();
+            }
+            else if (HeaderLabel != null)
+            {
+                HeaderLinkRun.Text = string.Empty;
             }
 
             if (message.Content is MessageAsyncStory story)
             {
-                LoadObject(ref ForwardLabel, nameof(ForwardLabel));
+                LoadForwardLabel();
+                forward = true;
 
                 if (story.State == MessageStoryState.Expired)
                 {
-                    ForwardLabel.Inlines.Add(CreateRun(Icons.ExpiredStory + "\u00A0" + Strings.ExpiredStory, FontWeights.Normal));
+                    ForwardRun.Text = string.Format("{0}\u00A0{1}\n{2}", Icons.ExpiredStory, Strings.ExpiredStory, Strings.From);
                 }
                 else
                 {
-                    ForwardLabel.Inlines.Add(CreateRun(Strings.ForwardedStory, FontWeights.Normal));
+                    ForwardRun.Text = string.Format("{0}\n{1}", Strings.ForwardedStory, Strings.From);
                 }
-
-                ForwardLabel.Inlines.Add(new LineBreak());
-                ForwardLabel.Inlines.Add(CreateRun($"{Strings.From} ", FontWeights.Normal));
 
                 if (message.ClientService.TryGetChat(story.StorySenderChatId, out Chat storyChat))
                 {
-                    var hyperlink = new Hyperlink();
-                    hyperlink.Inlines.Add(CreateRun(storyChat.Title, FontWeights.SemiBold));
-                    hyperlink.UnderlineStyle = UnderlineStyle.None;
-                    hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
-                    hyperlink.Click += FwdFrom_Click;
+                    var brush = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
 
-                    ForwardLabel.Foreground = hyperlink.Foreground;
-
-                    ForwardLabel.Inlines.Add(hyperlink);
+                    ForwardLabel.Foreground = brush;
+                    ForwardLink.Foreground = brush;
+                    ForwardLinkRun.Text = storyChat.Title;
+                    ForwardLinkRun.FontWeight = FontWeights.SemiBold;
                     ForwardLabel.Visibility = Visibility.Visible;
                 }
             }
             else if (message.ForwardInfo != null && !message.IsSaved)
             {
-                LoadObject(ref ForwardLabel, nameof(ForwardLabel));
+                LoadForwardLabel();
+                forward = true;
 
                 if (message.ForwardInfo.PublicServiceAnnouncementType.Length > 0)
                 {
                     var type = LocaleService.Current.GetString("PsaMessage_" + message.ForwardInfo.PublicServiceAnnouncementType);
                     if (type.Length > 0)
                     {
-                        ForwardLabel.Inlines.Add(CreateRun(type, FontWeights.Normal));
+                        ForwardRun.Text = string.Format("{0}\n{1}", type, Strings.From);
                     }
                     else
                     {
-                        ForwardLabel.Inlines.Add(CreateRun(Strings.PsaMessageDefault, FontWeights.Normal));
+                        ForwardRun.Text = string.Format("{0}\n{1}", Strings.PsaMessageDefault, Strings.From);
                     }
+
+                    ForwardLinkRun.Text = string.Empty;
 
                     if (PsaInfo == null)
                     {
@@ -1010,16 +961,13 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    ForwardLabel.Inlines.Add(CreateRun(Strings.ForwardedMessage, FontWeights.Normal));
+                    ForwardRun.Text = string.Format("{0}\n{1}", Strings.ForwardedMessage, Strings.From);
 
                     if (PsaInfo != null)
                     {
                         PsaInfo.Visibility = Visibility.Collapsed;
                     }
                 }
-
-                ForwardLabel.Inlines.Add(new LineBreak());
-                ForwardLabel.Inlines.Add(CreateRun($"{Strings.From} ", FontWeights.Normal));
 
                 var title = string.Empty;
                 var bold = true;
@@ -1046,15 +994,12 @@ namespace Telegram.Controls.Messages
                     title = message.ImportInfo.SenderName;
                 }
 
-                var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(CreateRun(title, bold ? FontWeights.SemiBold : FontWeights.Normal));
-                hyperlink.UnderlineStyle = UnderlineStyle.None;
-                hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
-                hyperlink.Click += FwdFrom_Click;
+                var brush = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
 
-                ForwardLabel.Foreground = hyperlink.Foreground;
-
-                ForwardLabel.Inlines.Add(hyperlink);
+                ForwardLabel.Foreground = brush;
+                ForwardLink.Foreground = brush;
+                ForwardLinkRun.Text = title;
+                ForwardLinkRun.FontWeight = bold ? FontWeights.SemiBold : FontWeights.Normal;
                 ForwardLabel.Visibility = Visibility.Visible;
             }
             else
@@ -1074,18 +1019,29 @@ namespace Telegram.Controls.Messages
             if (viaBot != null && viaBot.HasActiveUsername(out string viaBotUsername))
             {
                 LoadHeaderLabel();
+                shown = true;
 
+                var text = string.Format(header ? " {0} @" : "{0} @", Strings.ViaBot);
                 var hyperlink = new Hyperlink();
-                hyperlink.Inlines.Add(CreateRun(HeaderLabel.Inlines.Count > 0 ? $" {Strings.ViaBot} @" : $"{Strings.ViaBot} @", FontWeights.Normal));
+                hyperlink.Inlines.Add(CreateRun(text, FontWeights.Normal));
                 hyperlink.Inlines.Add(CreateRun(viaBotUsername));
                 hyperlink.UnderlineStyle = UnderlineStyle.None;
                 hyperlink.Foreground = light ? new SolidColorBrush(Colors.White) : GetBrush("MessageHeaderForegroundBrush");
                 hyperlink.Click += ViaBot_Click;
 
+                if (HeaderLabel.Inlines.Count > 1)
+                {
+                    HeaderLabel.Inlines.RemoveAt(1);
+                }
+
                 HeaderLabel.Inlines.Add(hyperlink);
             }
+            else if (header && HeaderLabel?.Inlines.Count > 1)
+            {
+                HeaderLabel.Inlines.RemoveAt(1);
+            }
 
-            if (HeaderLabel?.Inlines.Count > 0)
+            if (shown)
             {
                 var title = message.Delegate.GetAdminTitle(message);
                 if (shown && !message.IsOutgoing && !string.IsNullOrEmpty(title))
@@ -1103,7 +1059,7 @@ namespace Telegram.Controls.Messages
                     UnloadObject(ref AdminLabel);
                 }
 
-                if (shown is false)
+                if (header is false)
                 {
                     Identity?.ClearStatus();
                 }
@@ -1134,7 +1090,7 @@ namespace Telegram.Controls.Messages
                     Identity.ClearStatus();
                 }
 
-                Header.Visibility = (message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden) || ForwardLabel?.Inlines.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
+                Header.Visibility = (message.ReplyTo != null && message.ReplyToState != MessageReplyToState.Hidden) || forward ? Visibility.Visible : Visibility.Collapsed;
 
                 if (ForwardLabel != null)
                 {
@@ -1150,9 +1106,28 @@ namespace Telegram.Controls.Messages
                 HeaderPanel = GetTemplateChild(nameof(HeaderPanel)) as Grid;
                 HeaderLabel = GetTemplateChild(nameof(HeaderLabel)) as TextBlock;
                 Identity = GetTemplateChild(nameof(Identity)) as IdentityIcon;
+
+                HeaderLink = HeaderLabel.Inlines[0] as Hyperlink;
+                HeaderLinkRun = HeaderLink.Inlines[0] as Run;
+
+                HeaderLink.Click += From_Click;
             }
 
             return HeaderLabel;
+        }
+
+        private void LoadForwardLabel()
+        {
+            if (ForwardLabel == null)
+            {
+                ForwardLabel = GetTemplateChild(nameof(ForwardLabel)) as TextBlock;
+                
+                ForwardRun = ForwardLabel.Inlines[0] as Run;
+                ForwardLink = ForwardLabel.Inlines[1] as Hyperlink;
+                ForwardLinkRun = ForwardLink.Inlines[0] as Run;
+
+                ForwardLink.Click += FwdFrom_Click;
+            }
         }
 
         private void ViaBot_Click(Hyperlink sender, HyperlinkClickEventArgs args)
@@ -1201,7 +1176,11 @@ namespace Telegram.Controls.Messages
                 return;
             }
 
-            if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
+            if (message.IsSaved)
+            {
+                FwdFrom_Click(sender, args);
+            }
+            else if (message.ClientService.TryGetChat(message.SenderId, out Chat senderChat))
             {
                 if (senderChat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel)
                 {
