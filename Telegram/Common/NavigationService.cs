@@ -152,11 +152,11 @@ namespace Telegram.Common
             }
         }
 
-        public static void NavigateToUser(this INavigationService service, long userId)
+        public static void NavigateToUser(this INavigationService service, long userId, bool toChat = false)
         {
             if (service is TLNavigationService serviceEx)
             {
-                serviceEx.NavigateToUser(userId);
+                serviceEx.NavigateToUser(userId, toChat);
             }
         }
 

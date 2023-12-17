@@ -2026,6 +2026,7 @@ namespace Telegram.Views
                 args.ItemContainer = new TextListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
+                args.ItemContainer.ContextRequested += UsersListView_ContextRequested;
             }
 
             args.IsContainerPrepared = true;
@@ -2883,6 +2884,26 @@ namespace Telegram.Views
 
         #region Context menu
 
+        private void UsersListView_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            var viewModel = ViewModel.Chats;
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            var flyout = new MenuFlyout();
+
+            var element = sender as FrameworkElement;
+            var user = UsersListView.ItemFromContainer(sender) as User;
+
+            flyout.CreateFlyoutItem(ViewModel.Contacts.SendMessage, user, Strings.SendMessage, Icons.ChatEmpty);
+            flyout.CreateFlyoutItem(ViewModel.Contacts.CreateSecretChat, user, Strings.StartEncryptedChat, Icons.Timer);
+            flyout.CreateFlyoutItem(ViewModel.Contacts.VoiceCall, user, Strings.Call, Icons.Call);
+            flyout.CreateFlyoutItem(ViewModel.Contacts.VideoCall, user, Strings.VideoCall, Icons.Video);
+
+            args.ShowAt(flyout, element);
+        }
 
         private void DialogsSearchPanel_ItemContextRequested(UIElement sender, ItemContextRequestedEventArgs args)
         {
@@ -2898,7 +2919,7 @@ namespace Telegram.Views
         private void Chat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var element = sender as FrameworkElement;
-            var chat = element.Tag as Chat;
+            var chat = ChatsList.ItemFromContainer(element) as Chat;
 
             Chat_ContextRequested(chat, sender, args, true);
         }

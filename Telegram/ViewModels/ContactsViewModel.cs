@@ -12,17 +12,22 @@ using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels
 {
     public class ContactsViewModel : MultiViewModelBase, IChildViewModel
     {
+        private readonly IVoipService _voipService;
+
         private readonly DisposableMutex _loadMoreLock;
         private readonly UserComparer _comparer;
 
-        public ContactsViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
+        public ContactsViewModel(IClientService clientService, ISettingsService settingsService, IVoipService voipService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
+            _voipService = voipService;
+
             _loadMoreLock = new DisposableMutex();
             _comparer = new UserComparer(Settings.IsContactsSortedByEpoch);
 
@@ -147,6 +152,47 @@ namespace Telegram.ViewModels
         #endregion
 
         public SortedObservableCollection<User> Items { get; }
+
+        #region Context menu
+
+        public void SendMessage(User user)
+        {
+            NavigationService.NavigateToUser(user.Id, true);
+        }
+
+        public void VoiceCall(User user)
+        {
+            Call(user, false);
+        }
+
+        public void VideoCall(User user)
+        {
+            Call(user, true);
+        }
+
+        private void Call(User user, bool video)
+        {
+            _voipService.StartWithUser(user.Id, video);
+        }
+
+        public async void CreateSecretChat(User user)
+        {
+            var confirm = await ShowPopupAsync(Strings.AreYouSureSecretChat, Strings.AreYouSureSecretChatTitle, Strings.Start, Strings.Cancel);
+            if (confirm != ContentDialogResult.Primary)
+            {
+                return;
+            }
+
+            var response = await ClientService.SendAsync(new CreateNewSecretChat(user.Id));
+            if (response is Chat result)
+            {
+                NavigationService.NavigateToChat(result);
+            }
+        }
+
+        #endregion
+
+
     }
 
     public class UserComparer : IComparer<User>

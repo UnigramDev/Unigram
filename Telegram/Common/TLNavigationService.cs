@@ -143,7 +143,7 @@ namespace Telegram.Common
         {
             if (sender is MessageSenderUser user)
             {
-                NavigateToUser(user.UserId);
+                NavigateToUser(user.UserId, false);
             }
             else if (sender is MessageSenderChat chat)
             {
@@ -378,12 +378,12 @@ namespace Telegram.Common
             NavigateToChat(chat, message, thread, accessToken, state, scheduled, force, createNewWindow);
         }
 
-        public async void NavigateToUser(long userId)
+        public async void NavigateToUser(long userId, bool toChat = false)
         {
             if (_clientService.TryGetChatFromUser(userId, out Chat chat))
             {
                 var user = ClientService.GetUser(userId);
-                if (user?.Type is UserTypeBot)
+                if (user?.Type is UserTypeBot || toChat)
                 {
                     NavigateToChat(chat);
                 }
@@ -398,7 +398,7 @@ namespace Telegram.Common
                 if (response is Chat created)
                 {
                     var user = ClientService.GetUser(userId);
-                    if (user?.Type is UserTypeBot)
+                    if (user?.Type is UserTypeBot || toChat)
                     {
                         NavigateToChat(created);
                     }

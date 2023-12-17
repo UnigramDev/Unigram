@@ -79,7 +79,7 @@ namespace Telegram.ViewModels
             SearchChats = new SearchChatsViewModel(clientService, settingsService, aggregator);
             Stories = new StoryListViewModel(clientService, settingsService, aggregator, new StoryListMain());
             Topics = new TopicListViewModel(clientService, settingsService, aggregator, pushService, 0);
-            Contacts = new ContactsViewModel(clientService, settingsService, aggregator);
+            Contacts = new ContactsViewModel(clientService, settingsService, voipService, aggregator);
             Calls = new CallsViewModel(clientService, settingsService, aggregator);
             Settings = new SettingsViewModel(clientService, settingsService, storageService, aggregator, settingsSearchService);
 
