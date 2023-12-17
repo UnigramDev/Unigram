@@ -73,6 +73,11 @@ namespace Telegram.Controls.Messages
 
             if (reactions != null)
             {
+                if (reactions.Footer != footer.DesiredSize)
+                {
+                    reactions.InvalidateMeasure();
+                }
+
                 reactions.Footer = footer.DesiredSize;
                 reactions.Measure(availableSize);
             }
