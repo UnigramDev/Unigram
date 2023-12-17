@@ -627,8 +627,7 @@ namespace Telegram.Controls
 
         private int _loaded;
 
-        private int _tracker;
-        private readonly object _trackerLock = new();
+        private long _tracker;
 
         private int _playing;
         private bool _idle = true;
@@ -673,12 +672,9 @@ namespace Telegram.Controls
             Increment();
         }
 
-        public void Increment()
+        public bool Increment()
         {
-            lock (_trackerLock)
-            {
-                _tracker++;
-            }
+            return Interlocked.Increment(ref _tracker) > 1;
         }
 
         public event EventHandler<AnimatedImagePositionChangedEventArgs> PositionChanged;
@@ -703,11 +699,6 @@ namespace Telegram.Controls
 
         public void Unload(AnimatedImage canvas, bool playing)
         {
-            lock (_trackerLock)
-            {
-                _tracker--;
-            }
-
             _images.Remove(canvas);
             canvas.Invalidate(null);
 
@@ -760,12 +751,10 @@ namespace Telegram.Controls
                     _playing--;
                 }
 
-                Monitor.Enter(_trackerLock);
+                var tracker = Interlocked.Decrement(ref _tracker);
 
-                if (_loaded <= 0 && _tracker == 0)
+                if (_loaded <= 0 && tracker == 0)
                 {
-                    Monitor.Exit(_trackerLock);
-
                     if (_task != null)
                     {
                         if (_ticking)
@@ -788,10 +777,6 @@ namespace Telegram.Controls
                     {
                         delayed.Complete();
                     }
-                }
-                else
-                {
-                    Monitor.Exit(_trackerLock);
                 }
             }
         }
@@ -898,6 +883,8 @@ namespace Telegram.Controls
 
             lock (_lock)
             {
+                var tracker = Interlocked.Read(ref _tracker);
+
                 if (_loaded > 0)
                 {
                     _timer = LoopThreadPool.Get(task.Interval);
@@ -917,7 +904,7 @@ namespace Telegram.Controls
                         _timer.Tick += OnTick;
                     }
                 }
-                else if (_task != null)
+                else if (_task != null && tracker == 0)
                 {
                     if (_ticking)
                     {
@@ -1460,9 +1447,8 @@ namespace Telegram.Controls
         {
             lock (_presentersLock)
             {
-                if (_presenters.TryGetValue(configuration, out var presenter))
+                if (_presenters.TryGetValue(configuration, out var presenter) && presenter.Increment())
                 {
-                    presenter.Increment();
                     return presenter;
                 }
 
