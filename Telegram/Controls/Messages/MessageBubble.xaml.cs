@@ -883,7 +883,7 @@ namespace Telegram.Controls.Messages
                     header = true;
                     shown = true;
 
-                    var foreground = message.ClientService.GetAccentBrush(senderUser.AccentColorId);
+                    var foreground = message.ClientService.GetAccentBrush(senderChat.AccentColorId);
                     var title = senderChat.Title;
 
                     HeaderLink.Foreground = foreground;
@@ -898,9 +898,13 @@ namespace Telegram.Controls.Messages
                 header = true;
                 shown = true;
 
-                HeaderLink.Foreground = message.ClientService.GetAccentBrush(chat.AccentColorId);
-                HeaderLinkRun.Text = chat.Title;
-                Identity.ClearStatus();
+                var foreground = message.ClientService.GetAccentBrush(chat.AccentColorId);
+                var title = chat.Title;
+
+                HeaderLink.Foreground = foreground;
+                HeaderLinkRun.Text = title;
+                Identity.Foreground = foreground.WithOpacity(0.6);
+                Identity.SetStatus(message.ClientService, chat);
             }
             else if (HeaderLabel != null)
             {
@@ -1123,7 +1127,7 @@ namespace Telegram.Controls.Messages
                 ForwardLabel = GetTemplateChild(nameof(ForwardLabel)) as TextBlock;
                 
                 ForwardRun = ForwardLabel.Inlines[0] as Run;
-                ForwardLink = ForwardLabel.Inlines[1] as Hyperlink;
+                ForwardLink = ForwardLabel.Inlines[2] as Hyperlink;
                 ForwardLinkRun = ForwardLink.Inlines[0] as Run;
 
                 ForwardLink.Click += FwdFrom_Click;
