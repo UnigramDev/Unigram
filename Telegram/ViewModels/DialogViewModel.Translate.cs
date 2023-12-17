@@ -113,12 +113,16 @@ namespace Telegram.ViewModels
 
             foreach (var message in Items)
             {
+                var changed = message.TranslatedText == null;
                 if (translating)
                 {
                     _translateService.Translate(message, translateTo);
                 }
 
-                Delegate?.UpdateBubbleWithMessageId(message.Id, bubble => bubble.UpdateMessageText(message));
+                if (changed != (message.TranslatedText == null))
+                {
+                    Delegate?.UpdateBubbleWithMessageId(message.Id, bubble => bubble.UpdateMessageText(message));
+                }
             }
         }
 
