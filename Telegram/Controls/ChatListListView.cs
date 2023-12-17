@@ -189,7 +189,7 @@ namespace Telegram.Controls
             {
                 if (restore)
                 {
-                    _tracker.TryUpdatePosition(Vector3.Zero);
+                    _tracker?.TryUpdatePosition(Vector3.Zero);
                 }
 
                 if (continuation != null)
@@ -202,7 +202,7 @@ namespace Telegram.Controls
                 }
             }
 
-            if (_changingView || !PowerSavingPolicy.AreSmoothTransitionsEnabled)
+            if (_changingView || direction == CarouselDirection.None || !IsConnected || !PowerSavingPolicy.AreSmoothTransitionsEnabled)
             {
                 Continue(true);
                 return;
@@ -314,9 +314,10 @@ namespace Telegram.Controls
         {
             if (interacting)
             {
-                _redirect.Brush = _tracker.Compositor.CreateColorBrush(Colors.Transparent);
                 _tracker.Properties.InsertBoolean("FromAnimation", _fromAnimation = false);
             }
+
+            _redirect.Brush = _tracker.Compositor.CreateColorBrush(Colors.Transparent);
 
             _tracker.Properties.InsertBoolean("CanGoNext", CanGoNext);
             _tracker.Properties.InsertBoolean("CanGoPrev", CanGoPrev);

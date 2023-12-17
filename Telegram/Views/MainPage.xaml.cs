@@ -441,7 +441,7 @@ namespace Telegram.Views
             {
                 ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFolders.Count > 0);
                 ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFolders.Count > 0);
-                ShowHideArchive(ViewModel.SelectedFolder?.ChatList is ChatListMain or null);
+                ShowHideArchive(ViewModel.SelectedFolder?.ChatList is ChatListMain or null, true);
 
                 UpdatePaneToggleButtonVisibility();
             });
@@ -884,6 +884,7 @@ namespace Telegram.Views
             }
 
             Handle(new UpdateUnconfirmedSession(ViewModel.ClientService.UnconfirmedSession));
+            Handle(new UpdateChatFolders(ViewModel.ClientService.ChatFolders, ViewModel.ClientService.MainChatListPosition));
 
             if (_unloaded)
             {
@@ -2195,7 +2196,7 @@ namespace Telegram.Views
         {
             ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Folders.Count > 0 && folder.ChatList is not ChatListArchive);
             ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Folders.Count > 0);
-            ShowHideArchive(folder?.ChatList is ChatListMain or null && ViewModel.Chats.Items.ChatList is not ChatListArchive);
+            ShowHideArchive(folder?.ChatList is ChatListMain or null && ViewModel.Chats.Items.ChatList is not ChatListArchive, folder.ChatList is ChatListArchive || ViewModel.Chats.Items.ChatList is ChatListArchive);
 
             UpdatePaneToggleButtonVisibility();
 
@@ -2212,9 +2213,34 @@ namespace Telegram.Views
 
         private void ChatFolders_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is ListViewBase listView && listView.SelectedItem is ChatFolderViewModel folder && !folder.IsNavigationItem && ViewModel.Chats.Items.ChatList is not ChatListArchive)
+            if (sender is ListViewBase listView && listView.SelectedItem is ChatFolderViewModel folder)
             {
-                UpdateFolder(folder);
+                var index = int.MaxValue - folder.ChatFolderId;
+                if (index >= 0 && index <= 3)
+                {
+                    SetPivotIndex(index);
+                }
+                else
+                {
+                    SetPivotIndex(0);
+                }
+
+                if (ViewModel.Chats.Items.ChatList is not ChatListArchive)
+                {
+                    UpdateFolder(folder);
+                }
+
+                if (MasterDetail.CurrentState == MasterDetailState.Minimal && MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage))
+                {
+                    MasterDetail.NavigationService.GoBackAt(0);
+                }
+                else
+                {
+                    var scrollingHost = ChatsList.GetScrollViewer();
+                    scrollingHost?.ChangeView(null, 0, null);
+                }
+
+                HideTopicList();
             }
         }
 
@@ -2379,7 +2405,7 @@ namespace Telegram.Views
 
         private bool _archiveCollapsed;
 
-        private async void ShowHideArchive(bool show)
+        private async void ShowHideArchive(bool show, bool animate)
         {
             if (_archiveCollapsed != show)
             {
@@ -2389,17 +2415,21 @@ namespace Telegram.Views
             _archiveCollapsed = !show;
             ArchivedChatsPresenter.Visibility = Visibility.Visible;
 
-            await ArchivedChatsPanel.UpdateLayoutAsync();
+            if (ArchivedChatsPanel.ActualWidth == 0)
+            {
+                await ArchivedChatsPanel.UpdateLayoutAsync();
+            }
 
             void ShowHideArchiveCompleted()
             {
+                ChatsList.Margin = new Thickness(0, Stories.TopPadding, 0, 0);
                 ArchivedChatsPresenter.Visibility = _archiveCollapsed
                     ? Visibility.Collapsed
                     : Visibility.Visible;
             }
 
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
-            if (element == null)
+            if (element == null || !animate)
             {
                 ShowHideArchiveCompleted();
                 return;
@@ -2415,8 +2445,6 @@ namespace Telegram.Views
             batch.Completed += (s, args) =>
             {
                 chats.Offset = new Vector3();
-                ChatsList.Margin = new Thickness(0, Stories.TopPadding, 0, 0);
-
                 ShowHideArchiveCompleted();
             };
 
@@ -2743,35 +2771,6 @@ namespace Telegram.Views
                     ViewModel.ClientService.Send(new ReorderChatFolders(folders, main));
                 }
             }
-        }
-
-        private void ChatFolders_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            if (e.ClickedItem is ChatFolderViewModel folder)
-            {
-                var index = int.MaxValue - folder.ChatFolderId;
-                if (index >= 0 && index <= 3)
-                {
-                    SetPivotIndex(index);
-                }
-                else
-                {
-                    SetPivotIndex(0);
-                }
-            }
-
-            if (MasterDetail.CurrentState == MasterDetailState.Minimal &&
-                MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage))
-            {
-                MasterDetail.NavigationService.GoBackAt(0);
-            }
-            else
-            {
-                var scrollingHost = ChatsList.GetScrollViewer();
-                scrollingHost?.ChangeView(null, 0, null);
-            }
-
-            HideTopicList();
         }
 
         private void ArchivedChats_ActualThemeChanged(FrameworkElement sender, object args)
@@ -3260,7 +3259,6 @@ namespace Telegram.Views
         {
             var chatId = ViewModel.Topics.Chat?.Id;
 
-            ViewModel.Topics.SetFilter(null);
             ShowHideTopicList(false);
 
             if (ViewModel.Chats.SelectedItem == chatId)
@@ -3291,6 +3289,10 @@ namespace Telegram.Views
             if (show)
             {
                 Stories.Collapse();
+            }
+            else
+            {
+                ViewModel.Topics.SetFilter(null);
             }
 
             var padding = ChatTabs != null
