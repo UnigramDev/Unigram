@@ -194,9 +194,16 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
+            var canBeDownloaded = file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted;
+
             var size = Math.Max(file.Size, file.ExpectedSize);
-            if (file.Local.IsDownloadingActive)
+            if (file.Local.IsDownloadingActive || (canBeDownloaded && message.Delegate.CanBeDownloaded(audio, file)))
             {
+                if (canBeDownloaded)
+                {
+                    _message.ClientService.DownloadFile(file.Id, 32);
+                }
+
                 FileButton target;
                 if (SettingsService.Current.IsStreamingEnabled)
                 {
@@ -223,7 +230,7 @@ namespace Telegram.Controls.Messages.Content
 
                 Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            else if (canBeDownloaded)
             {
                 FileButton target;
                 if (SettingsService.Current.IsStreamingEnabled)
@@ -241,11 +248,6 @@ namespace Telegram.Controls.Messages.Content
                 target.Progress = 0;
 
                 Subtitle.Text = audio.GetDuration() + " - " + FileSizeConverter.Convert(size);
-
-                if (message.Delegate.CanBeDownloaded(audio, file))
-                {
-                    _message.ClientService.DownloadFile(file.Id, 32);
-                }
             }
             else
             {

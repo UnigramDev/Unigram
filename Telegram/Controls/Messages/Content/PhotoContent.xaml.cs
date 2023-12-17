@@ -168,9 +168,16 @@ namespace Telegram.Controls.Messages.Content
                 Overlay.Opacity = 0;
             }
 
+            var canBeDownloaded = file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted;
+
             var size = Math.Max(file.Size, file.ExpectedSize);
-            if (file.Local.IsDownloadingActive)
+            if (file.Local.IsDownloadingActive || (canBeDownloaded && message.Delegate.CanBeDownloaded(photo, file)))
             {
+                if (canBeDownloaded)
+                {
+                    _message.ClientService.DownloadFile(file.Id, 32);
+                }
+
                 //Button.Glyph = Icons.Cancel;
                 Button.SetGlyph(file.Id, MessageContentState.Downloading);
                 Button.Progress = (double)file.Local.DownloadedSize / size;
@@ -196,7 +203,7 @@ namespace Telegram.Controls.Messages.Content
                     UpdateTexture(message, big, file);
                 }
             }
-            else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+            else if (canBeDownloaded)
             {
                 //Button.Glyph = Icons.Download;
                 Button.SetGlyph(file.Id, MessageContentState.Download);
@@ -204,11 +211,6 @@ namespace Telegram.Controls.Messages.Content
 
                 Button.Opacity = 1;
                 //Overlay.Opacity = 0;
-
-                if (message.Delegate.CanBeDownloaded(photo, file))
-                {
-                    _message.ClientService.DownloadFile(file.Id, 32);
-                }
             }
             else
             {

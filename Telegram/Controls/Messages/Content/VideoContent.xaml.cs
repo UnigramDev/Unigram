@@ -115,9 +115,16 @@ namespace Telegram.Controls.Messages.Content
             {
                 Overlay.ProgressVisibility = Visibility.Collapsed;
 
+                var canBeDownloaded = file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted;
+
                 var size = Math.Max(file.Size, file.ExpectedSize);
-                if (file.Local.IsDownloadingActive)
+                if (file.Local.IsDownloadingActive || (canBeDownloaded && message.Delegate.CanBeDownloaded(video, file)))
                 {
+                    if (canBeDownloaded)
+                    {
+                        _message.ClientService.DownloadFile(file.Id, 32);
+                    }
+
                     Button.SetGlyph(file.Id, MessageContentState.Downloading);
                     Button.Progress = (double)file.Local.DownloadedSize / size;
 
@@ -139,7 +146,7 @@ namespace Telegram.Controls.Messages.Content
                         Subtitle.Text = string.Format("{0} / {1}", FileSizeConverter.Convert(file.Remote.UploadedSize, size), FileSizeConverter.Convert(size));
                     }
                 }
-                else if (file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted)
+                else if (canBeDownloaded)
                 {
                     Button.SetGlyph(file.Id, MessageContentState.Download);
                     Button.Progress = 0;
@@ -151,11 +158,6 @@ namespace Telegram.Controls.Messages.Content
                     else
                     {
                         Subtitle.Text = Icons.ArrowClockwiseFilled12 + "\u2004\u200A1";
-                    }
-
-                    if (message.Delegate.CanBeDownloaded(video, file))
-                    {
-                        _message.ClientService.DownloadFile(file.Id, 32);
                     }
                 }
                 else
