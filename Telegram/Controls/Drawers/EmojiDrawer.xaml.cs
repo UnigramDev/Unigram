@@ -30,7 +30,7 @@ namespace Telegram.Controls.Drawers
     public class TopicsEmojiDrawer : EmojiDrawer
     {
         public TopicsEmojiDrawer()
-            : base(EmojiDrawerMode.CustomEmojis)
+            : base(EmojiDrawerMode.EmojiStatus)
         {
 
         }
@@ -153,22 +153,11 @@ namespace Telegram.Controls.Drawers
             {
                 EmojiDrawerMode.ChatPhoto => EmojiSearchType.ChatPhoto,
                 EmojiDrawerMode.UserPhoto => EmojiSearchType.ChatPhoto,
-                EmojiDrawerMode.CustomEmojis => EmojiSearchType.EmojiStatus,
+                EmojiDrawerMode.EmojiStatus => EmojiSearchType.EmojiStatus,
                 _ => EmojiSearchType.Default
             });
 
-            if (_mode == EmojiDrawerMode.ChatPhoto)
-            {
-                ViewModel.UpdateChatPhoto();
-            }
-            else if (_mode == EmojiDrawerMode.Background)
-            {
-                ViewModel.UpdateBackground();
-            }
-            else
-            {
-                ViewModel.Update();
-            }
+            ViewModel.Update();
         }
 
         public void Deactivate()
@@ -330,17 +319,13 @@ namespace Telegram.Controls.Drawers
                         {
                             group.Update(full, false);
 
-                            //return;
-
                             foreach (var item in group.Stickers)
                             {
-                                var container = List?.ContainerFromItem(item) as SelectorItem;
-                                if (container == null)
+                                if (_itemIdToContent.TryGetValue(item, out Grid content))
                                 {
-                                    continue;
+                                    var animation = content.Children[0] as AnimatedImage;
+                                    animation.Source = new DelayedFileSource(ViewModel.ClientService, item);
                                 }
-
-                                UpdateContainerContent(sticker, container.ContentTemplateRoot as Grid, false);
                             }
                         }
                     }
@@ -615,13 +600,12 @@ namespace Telegram.Controls.Drawers
                 {
                     group.Update(full, false);
 
-                    //return;
-
                     foreach (var sticker in group.Stickers)
                     {
                         if (_itemIdToContent.TryGetValue(sticker, out Grid content))
                         {
-                            UpdateContainerContent(sticker, content, false);
+                            var animation = content.Children[0] as AnimatedImage;
+                            animation.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
                         }
                     }
                 }
@@ -659,7 +643,16 @@ namespace Telegram.Controls.Drawers
                 }
                 else
                 {
-                    UpdateContainerContent(sticker, content, false);
+                    if (sticker?.StickerValue != null)
+                    {
+                        var animation = content.Children[0] as AnimatedImage;
+                        animation.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
+                    }
+                    else
+                    {
+                        var animation = content.Children[0] as AnimatedImage;
+                        animation.Source = null;
+                    }
 
                     if (_mode == EmojiDrawerMode.Reactions && args.ItemIndex > 5 && args.ItemIndex < 8 * 6)
                     {
@@ -704,27 +697,6 @@ namespace Telegram.Controls.Drawers
             }
         }
 
-        private void UpdateContainerContent(Sticker sticker, Grid content, bool toolbar)
-        {
-            var file = sticker?.StickerValue;
-            if (file == null)
-            {
-                return;
-            }
-
-            var animated = content.Children[0] as AnimatedImage;
-            animated.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
-
-            //if (toolbar)
-            //{
-            //    content.Padding = new Thickness(4);
-            //}
-            //else
-            //{
-            //    content.Padding = new Thickness(_mode == EmojiDrawerMode.Reactions ? 0 : 8);
-            //}
-        }
-
         #endregion
 
         private void Toolbar_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -745,12 +717,17 @@ namespace Telegram.Controls.Drawers
                 }
 
                 var cover = sticker.GetThumbnail();
-                if (cover == null)
+                if (cover != null)
                 {
-                    return;
+                    var animation = content.Children[0] as AnimatedImage;
+                    animation.Source = new DelayedFileSource(ViewModel.ClientService, cover);
+                }
+                else
+                {
+                    var animation = content.Children[0] as AnimatedImage;
+                    animation.Source = null;
                 }
 
-                UpdateContainerContent(cover, content, true);
                 args.Handled = true;
             }
         }

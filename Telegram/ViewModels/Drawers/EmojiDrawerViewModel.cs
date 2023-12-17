@@ -6,7 +6,6 @@
 //
 using Rg.DiffUtils;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,8 +15,6 @@ using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 
 namespace Telegram.ViewModels.Drawers
 {
@@ -25,10 +22,11 @@ namespace Telegram.ViewModels.Drawers
     {
         Chat,
         Reactions,
-        CustomEmojis,
+        EmojiStatus,
         ChatPhoto,
         UserPhoto,
-        Background
+        Background,
+        Topics
     }
 
     public class EmojiDrawerViewModel : ViewModelBase
@@ -66,44 +64,10 @@ namespace Telegram.ViewModels.Drawers
             Aggregator.Subscribe<UpdateInstalledStickerSets>(this, Handle);
         }
 
-        public static void Remove(int windowId)
+        public static EmojiDrawerViewModel Create(int sessionId, EmojiDrawerMode mode = EmojiDrawerMode.Chat)
         {
-            _windowContext.TryRemove(windowId, out _);
-        }
-
-        private static readonly ConcurrentDictionary<int, Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>>> _windowContext = new();
-        public static EmojiDrawerViewModel GetForCurrentView(int sessionId, EmojiDrawerMode mode = EmojiDrawerMode.Chat)
-        {
-            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>> reference))
-            {
-                if (reference.TryGetValue(sessionId, out Dictionary<EmojiDrawerMode, EmojiDrawerViewModel> value))
-                {
-                    if (value.TryGetValue(mode, out EmojiDrawerViewModel viewModel))
-                    {
-                        return viewModel;
-                    }
-                    else
-                    {
-                        var context2 = TypeResolver.Current.Resolve<EmojiDrawerViewModel>(sessionId);
-                        value[mode] = context2;
-
-                        context2.Mode = mode;
-                        return context2;
-                    }
-                }
-            }
-            else
-            {
-                _windowContext[id] = new Dictionary<int, Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>>();
-            }
-
             var context = TypeResolver.Current.Resolve<EmojiDrawerViewModel>(sessionId);
-            _windowContext[id][sessionId] = new Dictionary<EmojiDrawerMode, EmojiDrawerViewModel>
-            {
-                { mode, context }
-            };
-
+            context.Dispatcher = WindowContext.Current.Dispatcher;
             context.Mode = mode;
             return context;
         }
@@ -217,11 +181,6 @@ namespace Telegram.ViewModels.Drawers
 
         public async void Update()
         {
-            _ = UpdateAsync();
-        }
-
-        public async Task UpdateAsync()
-        {
             if (_updated && _mode == EmojiDrawerMode.Chat)
             {
                 return;
@@ -302,20 +261,34 @@ namespace Telegram.ViewModels.Drawers
 
             if (_mode != EmojiDrawerMode.Chat)
             {
-                _reactionRecentSet.Update(_recentStickers);
-                _reactionTopSet.Update(_topStickers);
-
-                if (_reactionRecentSet.Stickers.Count > 0)
+                if (_mode == EmojiDrawerMode.Reactions)
                 {
-                    sets.Insert(0, _reactionRecentSet);
-                    installedSets.Insert(0, _reactionRecentSet);
+                    _reactionRecentSet.Update(_recentStickers);
+                    _reactionTopSet.Update(_topStickers);
+
+                    if (_reactionRecentSet.Stickers.Count > 0)
+                    {
+                        sets.Insert(0, _reactionRecentSet);
+                        installedSets.Insert(0, _reactionRecentSet);
+                    }
+
+                    sets.Insert(0, _reactionTopSet);
+
+                    if (_mode is EmojiDrawerMode.EmojiStatus or EmojiDrawerMode.ChatPhoto or EmojiDrawerMode.UserPhoto or EmojiDrawerMode.EmojiStatus or EmojiDrawerMode.Topics)
+                    {
+                        installedSets.Insert(0, _reactionTopSet);
+                    }
                 }
-
-                sets.Insert(0, _reactionTopSet);
-
-                if (_mode is EmojiDrawerMode.CustomEmojis or EmojiDrawerMode.ChatPhoto or EmojiDrawerMode.UserPhoto)
+                else
                 {
-                    installedSets.Insert(0, _reactionTopSet);
+                    var response = await GetDefaultStickersAsync(_mode);
+                    if (response is Stickers defaultStickers)
+                    {
+                        _reactionTopSet.Update(defaultStickers.StickersValue);
+
+                        sets.Insert(0, _reactionTopSet);
+                        installedSets.Insert(0, _reactionTopSet);
+                    }
                 }
             }
 
@@ -323,6 +296,64 @@ namespace Telegram.ViewModels.Drawers
             Items.ReplaceWith(stickers);
 
             InstalledSets.ReplaceWith(installedSets);
+        }
+
+        private Task<BaseObject> GetDefaultStickersAsync(EmojiDrawerMode mode)
+        {
+            if (mode == EmojiDrawerMode.EmojiStatus)
+            {
+                return GetDefaultStatusAsync();
+            }
+
+            Function func = _mode switch
+            {
+                EmojiDrawerMode.ChatPhoto => new GetDefaultChatPhotoCustomEmojiStickers(),
+                EmojiDrawerMode.UserPhoto => new GetDefaultChatPhotoCustomEmojiStickers(),
+                EmojiDrawerMode.Background => new GetDefaultBackgroundCustomEmojiStickers(),
+                EmojiDrawerMode.Topics => new GetForumTopicDefaultIcons(),
+                _ => null
+            };
+
+            if (func != null)
+            {
+                return ClientService.SendAsync(func);
+            }
+
+            return Task.FromResult<BaseObject>(null);
+        }
+
+        private async Task<BaseObject> GetDefaultStatusAsync()
+        {
+            var themedResponse = await ClientService.SendAsync(new GetThemedEmojiStatuses()) as EmojiStatuses;
+            var recentResponse = await ClientService.SendAsync(new GetRecentEmojiStatuses()) as EmojiStatuses;
+            var defaulResponse = await ClientService.SendAsync(new GetDefaultEmojiStatuses()) as EmojiStatuses;
+
+            var themed = themedResponse?.CustomEmojiIds ?? Array.Empty<long>();
+            var recent = recentResponse?.CustomEmojiIds ?? Array.Empty<long>();
+            var defaul = defaulResponse?.CustomEmojiIds ?? Array.Empty<long>();
+
+            var emoji = new List<long>();
+            var delay = new List<long>();
+
+            foreach (var status in themed.Union(recent.Union(defaul)))
+            {
+                if (emoji.Count < 8 * 5 - 1 && !emoji.Contains(status))
+                {
+                    emoji.Add(status);
+                }
+                else if (!delay.Contains(status))
+                {
+                    delay.Add(status);
+                }
+            }
+
+            // TODO: why the order by???
+            //if (response is Stickers stickers)
+            //{
+            //    _reactionTopSet.Update(stickers.StickersValue.OrderBy(x => emoji.IndexOf(x.FullType is StickerFullTypeCustomEmoji customEmoji ? customEmoji.CustomEmojiId : 0)), true);
+            //}
+
+            return await ClientService.SendAsync(new GetCustomEmojiStickers(emoji));
         }
 
         private async Task<IEnumerable<StickerSetViewModel>> GetInstalledSets()
@@ -376,16 +407,51 @@ namespace Telegram.ViewModels.Drawers
             return Array.Empty<StickerSetViewModel>();
         }
 
-        public async Task<List<(AvailableReaction, Sticker)>> UpdateReactions(AvailableReactions available, IList<AvailableReaction> visible = null)
+        public async Task<List<(AvailableReaction, Sticker)>> UpdateReactions(AvailableReactions available)
         {
             if (available == null)
             {
                 return null;
             }
 
-            available.TopReactions
-                .Union(available.PopularReactions)
-                .Union(available.RecentReactions)
+            IList<AvailableReaction> source = available.TopReactions.Take(6).ToList();
+            IList<AvailableReaction> additional = available.RecentReactions.Count > 0
+                ? available.RecentReactions
+                : available.PopularReactions;
+
+            if (source.Count < 6)
+            {
+                available.TopReactions
+                    .Select(x => x.Type)
+                    .Discern(out var emoji, out var customEmoji);
+
+                foreach (var item in additional)
+                {
+                    if (item.Type is ReactionTypeEmoji emojii
+                        && emoji != null
+                        && emoji.Contains(emojii.Emoji))
+                    {
+                        continue;
+                    }
+                    else if (item.Type is ReactionTypeCustomEmoji customEmojii
+                        && customEmoji != null
+                        && customEmoji.Contains(customEmojii.CustomEmojiId))
+                    {
+                        continue;
+                    }
+
+                    source.Add(item);
+
+                    if (source.Count == 6)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            ContinueReactions(available, available.TopReactions, additional);
+
+            source
                 .Select(x => x.Type)
                 .Discern(out var missingReactions, out var missingEmoji);
 
@@ -403,9 +469,62 @@ namespace Telegram.ViewModels.Drawers
 
             var reactions = missingReactions != null
                 ? await ClientService.GetReactionsAsync(missingReactions)
+                : null;
+
+            var visible = new List<(AvailableReaction, Sticker)>();
+
+            void Populate(IList<AvailableReaction> source, List<(AvailableReaction, Sticker)> target)
+            {
+                foreach (var item in source)
+                {
+                    if (item.Type is ReactionTypeEmoji emoji && reactions.TryGetValue(emoji.Emoji, out EmojiReaction reaction))
+                    {
+                        // Some times the sticker has a different emoji
+                        // and in that case reaction won't work
+                        reaction.ActivateAnimation.Emoji = emoji.Emoji;
+
+                        target.Add((item, reaction.ActivateAnimation));
+                    }
+                    else if (item.Type is ReactionTypeCustomEmoji customEmoji && assets.TryGetValue(customEmoji.CustomEmojiId, out Sticker sticker))
+                    {
+                        target.Add((item, sticker));
+                    }
+                }
+            }
+
+            Populate(source, visible);
+            return visible;
+        }
+
+        private async void ContinueReactions(AvailableReactions available, IList<AvailableReaction> source, IList<AvailableReaction> sourceRecent)
+        {
+            if (available == null)
+            {
+                return;
+            }
+
+            available.TopReactions
+                .Union(available.PopularReactions)
+                .Union(available.RecentReactions)
+                .Select(x => x.Type)
+                .Discern(out var missingReactions, out var missingEmoji);
+
+            IDictionary<long, Sticker> assets = null;
+            if (missingEmoji != null)
+            {
+                var response = await ClientService.SendAsync(new GetCustomEmojiStickers(missingEmoji.ToArray()));
+                if (response is not Stickers stickers)
+                {
+                    return;
+                }
+
+                assets = stickers.StickersValue.ToDictionary(x => x.FullType is StickerFullTypeCustomEmoji customEmoji ? customEmoji.CustomEmojiId : 0);
+            }
+
+            var reactions = missingReactions != null
+                ? await ClientService.GetReactionsAsync(missingReactions)
                 : await ClientService.GetAllReactionsAsync();
 
-            var items = new List<Sticker>();
             var top = new List<Sticker>();
             var recent = new List<Sticker>();
 
@@ -428,69 +547,16 @@ namespace Telegram.ViewModels.Drawers
                 }
             }
 
-            IList<AvailableReaction> source;
-            if (available.AllowCustomEmoji)
-            {
-                source = available.TopReactions;
-                Populate(available.TopReactions, top);
-
-                if (available.PopularReactions.Count > 0)
-                {
-                    Populate(available.PopularReactions, recent);
-                }
-                else
-                {
-                    Populate(available.RecentReactions, recent);
-                }
-            }
-            else
-            {
-                source = available.TopReactions.ToList();
-                var additional = available.RecentReactions.Count > 0
-                    ? available.RecentReactions
-                    : available.PopularReactions;
-
-                available.TopReactions
-                    .Select(x => x.Type)
-                    .Discern(out var emoji, out var customEmoji);
-
-                foreach (var item in additional)
-                {
-                    if (item.Type is ReactionTypeEmoji emojii
-                        && emoji != null
-                        && emoji.Contains(emojii.Emoji))
-                    {
-                        continue;
-                    }
-                    else if (item.Type is ReactionTypeCustomEmoji customEmojii
-                        && customEmoji != null
-                        && customEmoji.Contains(customEmojii.CustomEmojiId))
-                    {
-                        continue;
-                    }
-
-                    source.Add(item);
-                }
-
-                Populate(source, top);
-            }
+            Populate(source, top);
+            Populate(sourceRecent, recent);
 
             _allowCustomEmoji = available.AllowCustomEmoji;
-            _reactionTopSet.Update(items);
+            _reactionTopSet.Update(Enumerable.Empty<Sticker>());
 
             _topStickers = top;
             _recentStickers = recent;
 
-            _ = UpdateAsync();
-
-            var test = new List<(AvailableReaction, Sticker)>();
-
-            for (int i = 0; i < Math.Min(top.Count, 6); i++)
-            {
-                test.Add((source[i], top[i]));
-            }
-
-            return test;
+            Update();
         }
 
         private bool _allowCustomEmoji;
@@ -504,88 +570,6 @@ namespace Telegram.ViewModels.Drawers
         public bool TryGetInstalledSet(long id, out StickerSetViewModel value)
         {
             return _installedSets.TryGetValue(id, out value);
-        }
-
-        public async void UpdateStatuses()
-        {
-            _ = UpdateAsync();
-
-            var themedResponse = await ClientService.SendAsync(new GetThemedEmojiStatuses()) as EmojiStatuses;
-            var recentResponse = await ClientService.SendAsync(new GetRecentEmojiStatuses()) as EmojiStatuses;
-            var defaulResponse = await ClientService.SendAsync(new GetDefaultEmojiStatuses()) as EmojiStatuses;
-
-            var themed = themedResponse?.CustomEmojiIds ?? Array.Empty<long>();
-            var recent = recentResponse?.CustomEmojiIds ?? Array.Empty<long>();
-            var defaul = defaulResponse?.CustomEmojiIds ?? Array.Empty<long>();
-
-            var emoji = new List<long>();
-            var delay = new List<long>();
-
-            var i = 0;
-
-            foreach (var status in themed.Union(recent.Union(defaul)))
-            {
-                if (emoji.Count < 8 * 5 - 1 && !emoji.Contains(status))
-                {
-                    emoji.Add(status);
-                }
-                else if (!delay.Contains(status))
-                {
-                    delay.Add(status);
-                }
-
-                i++;
-            }
-
-            var response = await ClientService.SendAsync(new GetCustomEmojiStickers(emoji));
-            if (response is Stickers stickers)
-            {
-                _reactionTopSet.Update(stickers.StickersValue.OrderBy(x => emoji.IndexOf(x.FullType is StickerFullTypeCustomEmoji customEmoji ? customEmoji.CustomEmojiId : 0)), true);
-            }
-        }
-
-        public async void UpdateTopics()
-        {
-            _ = UpdateAsync();
-
-            var response = await ClientService.SendAsync(new GetForumTopicDefaultIcons()) as Stickers;
-            if (response is Stickers stickers)
-            {
-                _reactionTopSet.Update(stickers.StickersValue, true);
-            }
-        }
-
-        public async void UpdateChatPhoto()
-        {
-            _ = UpdateAsync();
-
-            var response = await ClientService.SendAsync(new GetDefaultChatPhotoCustomEmojiStickers()) as Stickers;
-            if (response is Stickers stickers)
-            {
-                _reactionTopSet.Update(stickers.StickersValue, true);
-            }
-        }
-
-        public async void UpdateUserPhoto()
-        {
-            _ = UpdateAsync();
-
-            var response = await ClientService.SendAsync(new GetDefaultChatPhotoCustomEmojiStickers()) as Stickers;
-            if (response is Stickers stickers)
-            {
-                _reactionTopSet.Update(stickers.StickersValue, true);
-            }
-        }
-
-        public async void UpdateBackground()
-        {
-            _ = UpdateAsync();
-
-            var response = await ClientService.SendAsync(new GetDefaultBackgroundCustomEmojiStickers()) as Stickers;
-            if (response is Stickers stickers)
-            {
-                _reactionTopSet.Update(stickers.StickersValue, true);
-            }
         }
 
         private int _featuredUnreadCount;

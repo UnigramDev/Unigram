@@ -7,6 +7,7 @@
 using Telegram.Common;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.ViewModels.Drawers;
 
 namespace Telegram.Streams
 {
@@ -30,6 +31,15 @@ namespace Telegram.Streams
         }
 
         public DelayedFileSource(IClientService clientService, Sticker sticker)
+            : this(clientService, sticker.StickerValue)
+        {
+            Width = sticker.Width;
+            Height = sticker.Height;
+            Outline = sticker.Outline;
+            NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
+        }
+
+        public DelayedFileSource(IClientService clientService, StickerViewModel sticker)
             : this(clientService, sticker.StickerValue)
         {
             Width = sticker.Width;

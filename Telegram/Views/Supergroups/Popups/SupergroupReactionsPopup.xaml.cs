@@ -59,7 +59,7 @@ namespace Telegram.Views.Supergroups.Popups
 
         public override void OnNavigatedTo()
         {
-            EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId, EmojiDrawerMode.Reactions);
+            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.SessionId, EmojiDrawerMode.Reactions);
             CaptionInput.CustomEmoji = CustomEmoji;
 
             if (ViewModel.AllowCustomEmoji)

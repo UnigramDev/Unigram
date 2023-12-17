@@ -122,7 +122,7 @@ namespace Telegram.Controls
                 {
                     FindName(nameof(EmojisRoot));
                     EmojisRoot.LayoutUpdated += EmojisRoot_LayoutUpdated;
-                    EmojisRoot.DataContext = EmojiDrawerViewModel.GetForCurrentView(SessionId);
+                    EmojisRoot.DataContext = EmojiDrawerViewModel.Create(SessionId);
                 }
                 else
                 {
@@ -155,7 +155,7 @@ namespace Telegram.Controls
                 {
                     FindName(nameof(AnimationsRoot));
                     AnimationsRoot.LayoutUpdated += AnimationsRoot_LayoutUpdated;
-                    AnimationsRoot.DataContext = AnimationDrawerViewModel.GetForCurrentView(SessionId);
+                    AnimationsRoot.DataContext = AnimationDrawerViewModel.Create(SessionId);
                     AnimationsRoot.ItemClick = Animations_ItemClick;
                     AnimationsRoot.ItemContextRequested += AnimationContextRequested;
                 }
@@ -190,7 +190,7 @@ namespace Telegram.Controls
                 {
                     FindName(nameof(StickersRoot));
                     StickersRoot.LayoutUpdated += StickersRoot_LayoutUpdated;
-                    StickersRoot.DataContext = StickerDrawerViewModel.GetForCurrentView(SessionId);
+                    StickersRoot.DataContext = StickerDrawerViewModel.Create(SessionId);
                     StickersRoot.ItemClick = Stickers_ItemClick;
                     StickersRoot.ItemContextRequested += StickerContextRequested;
                     StickersRoot.ChoosingItem += ChoosingSticker;

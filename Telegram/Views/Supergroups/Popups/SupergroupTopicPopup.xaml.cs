@@ -29,10 +29,7 @@ namespace Telegram.Views.Supergroups.Popups
             NameLabel.Text = topic?.Name ?? string.Empty;
             Identity.SetStatus(clientService, topic.Icon);
 
-            var viewModel = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId, EmojiDrawerMode.CustomEmojis);
-            viewModel.UpdateTopics();
-
-            Emoji.DataContext = viewModel;
+            Emoji.DataContext = EmojiDrawerViewModel.Create(clientService.SessionId, EmojiDrawerMode.Topics);
             Emoji.ItemClick += OnItemClick;
 
             SelectedEmojiId = topic?.Icon.CustomEmojiId ?? 0;

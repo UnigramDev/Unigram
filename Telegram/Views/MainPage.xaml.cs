@@ -3144,7 +3144,7 @@ namespace Telegram.Views
         {
             if (ViewModel.IsPremium)
             {
-                EmojiMenuFlyout.ShowAt(ViewModel.ClientService, EmojiDrawerMode.CustomEmojis, TitleBarLogo, EmojiFlyoutAlignment.TopLeft);
+                EmojiMenuFlyout.ShowAt(ViewModel.ClientService, EmojiDrawerMode.EmojiStatus, TitleBarLogo, EmojiFlyoutAlignment.TopLeft);
             }
         }
 

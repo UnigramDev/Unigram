@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -16,8 +15,6 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.Views;
 using Windows.Foundation;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels.Drawers
@@ -42,35 +39,15 @@ namespace Telegram.ViewModels.Drawers
             Subscribe();
         }
 
-        public static void Remove(int windowId)
-        {
-            _windowContext.TryRemove(windowId, out _);
-        }
-
         public override void Subscribe()
         {
             Aggregator.Subscribe<UpdateSavedAnimations>(this, Handle);
         }
 
-        private static readonly ConcurrentDictionary<int, Dictionary<int, AnimationDrawerViewModel>> _windowContext = new();
-        public static AnimationDrawerViewModel GetForCurrentView(int sessionId)
+        public static AnimationDrawerViewModel Create(int sessionId)
         {
-            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out Dictionary<int, AnimationDrawerViewModel> reference))
-            {
-                if (reference.TryGetValue(sessionId, out AnimationDrawerViewModel value))
-                {
-                    return value;
-                }
-            }
-            else
-            {
-                _windowContext[id] = new Dictionary<int, AnimationDrawerViewModel>();
-            }
-
             var context = TypeResolver.Current.Resolve<AnimationDrawerViewModel>(sessionId);
-            _windowContext[id][sessionId] = context;
-
+            context.Dispatcher = WindowContext.Current.Dispatcher;
             return context;
         }
 

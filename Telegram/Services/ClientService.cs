@@ -258,6 +258,7 @@ namespace Telegram.Services
         private int _mainChatListPosition = 0;
 
         private IList<string> _activeReactions = Array.Empty<string>();
+        private Dictionary<string, EmojiReaction> _cachedReactions = new();
 
         private IList<AttachmentMenuBot> _attachmentMenuBots = Array.Empty<AttachmentMenuBot>();
 
@@ -991,8 +992,7 @@ namespace Telegram.Services
 
         public bool TryGetCachedReaction(string emoji, out EmojiReaction value)
         {
-            value = null;
-            return false;
+            return _cachedReactions.TryGetValue(emoji, out value);
         }
 
         public async Task<IDictionary<string, EmojiReaction>> GetAllReactionsAsync()
@@ -1001,10 +1001,18 @@ namespace Telegram.Services
 
             foreach (var emoji in _activeReactions)
             {
-                var response = await SendAsync(new GetEmojiReaction(emoji));
-                if (response is EmojiReaction reaction)
+                if (_cachedReactions.TryGetValue(emoji, out EmojiReaction cached))
                 {
-                    result[emoji] = reaction;
+                    result[emoji] = cached;
+                }
+                else
+                {
+                    var response = await SendAsync(new GetEmojiReaction(emoji));
+                    if (response is EmojiReaction reaction)
+                    {
+                        _cachedReactions[emoji] = reaction;
+                        result[emoji] = reaction;
+                    }
                 }
             }
 
@@ -1017,10 +1025,18 @@ namespace Telegram.Services
 
             foreach (var emoji in reactions)
             {
-                var response = await SendAsync(new GetEmojiReaction(emoji));
-                if (response is EmojiReaction reaction)
+                if (_cachedReactions.TryGetValue(emoji, out EmojiReaction cached))
                 {
-                    result[emoji] = reaction;
+                    result[emoji] = cached;
+                }
+                else
+                {
+                    var response = await SendAsync(new GetEmojiReaction(emoji));
+                    if (response is EmojiReaction reaction)
+                    {
+                        _cachedReactions[emoji] = reaction;
+                        result[emoji] = reaction;
+                    }
                 }
             }
 

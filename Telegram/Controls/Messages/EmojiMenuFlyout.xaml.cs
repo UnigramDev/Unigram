@@ -61,11 +61,12 @@ namespace Telegram.Controls.Messages
         public event EventHandler<EmojiSelectedEventArgs> EmojiSelected;
 
         public static EmojiMenuFlyout ShowAt(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions)
+        public static EmojiMenuFlyout ShowAt(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
         {
-            return new EmojiMenuFlyout(element, message, bubble, reactions);
+            return new EmojiMenuFlyout(element, message, bubble, reactions, viewModel);
         }
 
-        private EmojiMenuFlyout(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions)
+        private EmojiMenuFlyout(FrameworkElement element, MessageViewModel message, MessageBubble bubble, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
         {
             InitializeComponent();
 
@@ -76,7 +77,7 @@ namespace Telegram.Controls.Messages
 
             _popup = new Popup();
 
-            Initialize(message.ClientService, element, EmojiFlyoutAlignment.Center);
+            Initialize(message.ClientService, element, EmojiFlyoutAlignment.Center, viewModel);
         }
 
         public static EmojiMenuFlyout ShowAt(IClientService clientService, EmojiDrawerMode mode, FrameworkElement element, EmojiFlyoutAlignment alignment)
@@ -96,12 +97,12 @@ namespace Telegram.Controls.Messages
             Initialize(clientService, element, alignment);
         }
 
-        public static EmojiMenuFlyout ShowAt(FrameworkElement element, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions)
+        public static EmojiMenuFlyout ShowAt(FrameworkElement element, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
         {
-            return new EmojiMenuFlyout(element, story, reserved, reactions);
+            return new EmojiMenuFlyout(element, story, reserved, reactions, viewModel);
         }
 
-        private EmojiMenuFlyout(FrameworkElement element, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions)
+        private EmojiMenuFlyout(FrameworkElement element, StoryViewModel story, FrameworkElement reserved, AvailableReactions reactions, EmojiDrawerViewModel viewModel)
         {
             InitializeComponent();
 
@@ -112,10 +113,10 @@ namespace Telegram.Controls.Messages
 
             _popup = new Popup();
 
-            Initialize(story.ClientService, element, EmojiFlyoutAlignment.Center);
+            Initialize(story.ClientService, element, EmojiFlyoutAlignment.Center, viewModel);
         }
 
-        private void Initialize(IClientService clientService, FrameworkElement element, EmojiFlyoutAlignment alignment)
+        private void Initialize(IClientService clientService, FrameworkElement element, EmojiFlyoutAlignment alignment, EmojiDrawerViewModel viewModel = null)
         {
             var transform = element.TransformToVisual(Window.Current.Content);
             var position = transform.TransformPoint(new Point());
@@ -138,7 +139,11 @@ namespace Telegram.Controls.Messages
 
             var padding = actualWidth - width;
 
-            var viewModel = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId, _mode);
+            if (viewModel == null)
+            {
+                viewModel = EmojiDrawerViewModel.Create(clientService.SessionId, _mode);
+            }
+
             var view = new EmojiDrawer(_mode);
             view.DataContext = viewModel;
             view.VerticalAlignment = VerticalAlignment.Top;
@@ -146,25 +151,20 @@ namespace Telegram.Controls.Messages
             view.Height = height;
             view.ItemClick += OnStatusClick;
 
-            if (_mode == EmojiDrawerMode.CustomEmojis)
+            if (_mode == EmojiDrawerMode.EmojiStatus)
             {
                 view.ItemContextRequested += OnStatusContextRequested;
             }
 
             Presenter.Children.Add(view);
 
-            if (_mode == EmojiDrawerMode.CustomEmojis)
+            if (_mode == EmojiDrawerMode.EmojiStatus)
             {
                 view.Activate(null, EmojiSearchType.EmojiStatus);
-                viewModel.UpdateStatuses();
             }
-            else if (_mode == EmojiDrawerMode.Background)
+            else
             {
-                viewModel.UpdateBackground();
-            }
-            else if (_mode == EmojiDrawerMode.Reactions)
-            {
-                //_ = viewModel.UpdateReactions(reactions, null);
+                viewModel.Update();
             }
 
             Shadow.Width = width;
@@ -488,7 +488,7 @@ namespace Telegram.Controls.Messages
                 {
                     MessageToggleReaction(sticker.ToReactionType());
                 }
-                else if (_mode == EmojiDrawerMode.CustomEmojis && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+                else if (_mode == EmojiDrawerMode.EmojiStatus && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
                 {
                     _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId, 0)));
                 }
@@ -501,7 +501,7 @@ namespace Telegram.Controls.Messages
 
         private void SetStatus((Sticker Sticker, int Duration) item)
         {
-            if (_mode == EmojiDrawerMode.CustomEmojis && item.Sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+            if (_mode == EmojiDrawerMode.EmojiStatus && item.Sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
             {
                 _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId, item.Duration)));
             }
@@ -512,7 +512,7 @@ namespace Telegram.Controls.Messages
             var popup = new ChooseStatusDurationPopup();
 
             var confirm = await popup.ShowQueuedAsync();
-            if (confirm == ContentDialogResult.Primary && _mode == EmojiDrawerMode.CustomEmojis && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
+            if (confirm == ContentDialogResult.Primary && _mode == EmojiDrawerMode.EmojiStatus && sticker.FullType is StickerFullTypeCustomEmoji customEmoji)
             {
                 _clientService.Send(new SetEmojiStatus(new EmojiStatus(customEmoji.CustomEmojiId, popup.Value)));
             }

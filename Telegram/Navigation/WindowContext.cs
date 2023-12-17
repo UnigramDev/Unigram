@@ -17,7 +17,6 @@ using Telegram.Services;
 using Telegram.Services.Keyboard;
 using Telegram.Services.ViewService;
 using Telegram.Td.Api;
-using Telegram.ViewModels.Drawers;
 using Telegram.Views;
 using Telegram.Views.Authorization;
 using Telegram.Views.Popups;
@@ -153,10 +152,6 @@ namespace Telegram.Navigation
 
             NavigationServices.ForEach(x => x.Suspend());
             NavigationServices.Clear();
-
-            AnimationDrawerViewModel.Remove(Id);
-            EmojiDrawerViewModel.Remove(Id);
-            StickerDrawerViewModel.Remove(Id);
 
             _window.Activated -= OnActivated;
             _window.Closed -= OnClosed;

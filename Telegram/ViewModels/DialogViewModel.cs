@@ -26,7 +26,6 @@ using Telegram.Td;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Chats;
 using Telegram.ViewModels.Delegates;
-using Telegram.ViewModels.Drawers;
 using Telegram.Views;
 using Telegram.Views.Popups;
 using Telegram.Views.Premium.Popups;
@@ -65,10 +64,6 @@ namespace Telegram.ViewModels
         protected static readonly Dictionary<MessageId, MessageContent> _contentOverrides = new();
 
         protected readonly DisposableMutex _loadMoreLock = new();
-
-        protected readonly EmojiDrawerViewModel _emoji;
-        protected readonly StickerDrawerViewModel _stickers;
-        protected readonly AnimationDrawerViewModel _animations;
 
         protected readonly IMessageDelegate _messageDelegate;
 
@@ -109,11 +104,6 @@ namespace Telegram.ViewModels
             _translateService = translateService;
             _messageFactory = messageFactory;
 
-            //_stickers = new DialogStickersViewModel(clientService, settingsService, aggregator);
-            _emoji = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId);
-            _stickers = StickerDrawerViewModel.GetForCurrentView(clientService.SessionId);
-            _animations = AnimationDrawerViewModel.GetForCurrentView(clientService.SessionId);
-
             _messageDelegate = new DialogMessageDelegate(this);
 
             _mentions = new DialogUnreadMessagesViewModel(this, new SearchMessagesFilterUnreadMention());
@@ -141,18 +131,6 @@ namespace Telegram.ViewModels
         }
 
         public Action<Sticker> Sticker_Click;
-
-        public override IDispatcherContext Dispatcher
-        {
-            get => base.Dispatcher;
-            set
-            {
-                base.Dispatcher = value;
-
-                _stickers.Dispatcher = value;
-                _animations.Dispatcher = value;
-            }
-        }
 
         protected Chat _linkedChat;
         public Chat LinkedChat
@@ -1926,7 +1904,6 @@ namespace Telegram.ViewModels
                 var item = ClientService.GetUser(privata.UserId);
                 var cache = ClientService.GetUserFull(privata.UserId);
 
-                _stickers?.UpdateSupergroupFullInfo(chat, null, null);
                 Delegate?.UpdateUser(chat, item, false);
 
                 if (cache != null)
@@ -1942,7 +1919,6 @@ namespace Telegram.ViewModels
                 var item = ClientService.GetUser(secretType.UserId);
                 var cache = ClientService.GetUserFull(secretType.UserId);
 
-                _stickers?.UpdateSupergroupFullInfo(chat, null, null);
                 Delegate?.UpdateSecretChat(chat, secret);
                 Delegate?.UpdateUser(chat, item, true);
 
@@ -1958,7 +1934,6 @@ namespace Telegram.ViewModels
                 var item = ClientService.GetBasicGroup(basic.BasicGroupId);
                 var cache = ClientService.GetBasicGroupFull(basic.BasicGroupId);
 
-                _stickers?.UpdateSupergroupFullInfo(chat, null, null);
                 Delegate?.UpdateBasicGroup(chat, item);
 
                 if (cache != null)
@@ -1978,7 +1953,6 @@ namespace Telegram.ViewModels
 
                 if (cache != null)
                 {
-                    _stickers?.UpdateSupergroupFullInfo(chat, item, cache);
                     Delegate?.UpdateSupergroupFullInfo(chat, item, cache);
                 }
 

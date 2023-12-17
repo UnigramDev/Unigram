@@ -36,12 +36,13 @@ namespace Telegram.Streams
             {
                 if (_file == null)
                 {
+                    Sticker sticker = null;
                     if (_reaction is ReactionTypeEmoji emoji)
                     {
                         var response = await _clientService.SendAsync(new GetEmojiReaction(emoji.Emoji));
                         if (response is EmojiReaction reaction)
                         {
-                            _file = reaction.ActivateAnimation.StickerValue;
+                            sticker = reaction.ActivateAnimation;
                         }
                     }
                     else if (_reaction is ReactionTypeCustomEmoji customEmoji)
@@ -49,8 +50,17 @@ namespace Telegram.Streams
                         var response = await _clientService.SendAsync(new GetCustomEmojiStickers(new[] { customEmoji.CustomEmojiId }));
                         if (response is Stickers stickers && stickers.StickersValue.Count == 1)
                         {
-                            _file = stickers.StickersValue[0].StickerValue;
+                            sticker = stickers.StickersValue[0];
                         }
+                    }
+
+                    if (sticker != null)
+                    {
+                        _file = sticker.StickerValue;
+                        Width = sticker.Width;
+                        Height = sticker.Height;
+                        Outline = sticker.Outline;
+                        NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
                     }
                 }
 

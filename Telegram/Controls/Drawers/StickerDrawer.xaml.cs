@@ -225,7 +225,8 @@ namespace Telegram.Controls.Drawers
                     {
                         if (_itemIdToContent.TryGetValue(sticker, out Grid content))
                         {
-                            UpdateContainerContent(sticker, content);
+                            var animation = content.Children[0] as AnimatedImage;
+                            animation.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
                         }
                     }
                 }
@@ -264,20 +265,19 @@ namespace Telegram.Controls.Drawers
             }
 
             _itemIdToContent[sticker] = content;
-            UpdateContainerContent(sticker, content);
-            args.Handled = true;
-        }
 
-        private void UpdateContainerContent(Sticker sticker, Grid content)
-        {
-            var file = sticker?.StickerValue;
-            if (file == null)
+            if (sticker?.StickerValue != null)
             {
-                return;
+                var animation = content.Children[0] as AnimatedImage;
+                animation.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
+            }
+            else
+            {
+                var animation = content.Children[0] as AnimatedImage;
+                animation.Source = null;
             }
 
-            var animation = content.Children[0] as AnimatedImage;
-            animation.Source = new DelayedFileSource(ViewModel.ClientService, sticker);
+            args.Handled = true;
         }
 
         private void Toolbar_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -317,12 +317,17 @@ namespace Telegram.Controls.Drawers
                 }
 
                 var cover = sticker.GetThumbnail();
-                if (cover == null)
+                if (cover != null)
                 {
-                    return;
+                    var animation = content.Children[0] as AnimatedImage;
+                    animation.Source = new DelayedFileSource(ViewModel.ClientService, cover);
+                }
+                else
+                {
+                    var animation = content.Children[0] as AnimatedImage;
+                    animation.Source = null;
                 }
 
-                UpdateContainerContent(cover, content);
                 args.Handled = true;
             }
         }

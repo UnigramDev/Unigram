@@ -173,7 +173,7 @@ namespace Telegram.Views.Popups
             IsMediaSelected = media && mediaAllowed && Items.All(x => x is StoragePhoto or StorageVideo);
             IsFilesSelected = !IsMediaSelected;
 
-            EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(viewModel.SessionId);
+            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(viewModel.SessionId);
             CaptionInput.CustomEmoji = CustomEmoji;
             CaptionInput.ViewModel = viewModel;
 

@@ -33,6 +33,7 @@ namespace Telegram.Controls.Messages
     public sealed partial class ReactionsMenuFlyout : UserControl
     {
         private readonly AvailableReactions _reactions;
+        private readonly EmojiDrawerViewModel _viewModel;
 
         private readonly MessageViewModel _message;
         private readonly MessageBubble _bubble;
@@ -57,6 +58,8 @@ namespace Telegram.Controls.Messages
             _bubble = bubble;
             _flyout = flyout;
 
+            _viewModel = EmojiDrawerViewModel.Create(message.ClientService.SessionId, EmojiDrawerMode.Reactions);
+
             InitializeComponent();
             Initialize(reactions, message.ClientService, flyout);
         }
@@ -72,6 +75,8 @@ namespace Telegram.Controls.Messages
             _story = story;
             _reserved = reserved;
             _flyout = flyout;
+
+            _viewModel = EmojiDrawerViewModel.Create(story.ClientService.SessionId, EmojiDrawerMode.Reactions);
 
             InitializeComponent();
             Initialize(reactions, story.ClientService, flyout);
@@ -269,10 +274,10 @@ namespace Telegram.Controls.Messages
             batch.End();
 
 
-            var viewModel = EmojiDrawerViewModel.GetForCurrentView(clientService.SessionId, EmojiDrawerMode.Reactions);
-            var yolo = await viewModel.UpdateReactions(available, null);
+            var viewModel = _viewModel;
+            var items = await viewModel.UpdateReactions(available);
 
-            foreach (var item in yolo)
+            foreach (var item in items)
             {
                 static AnimatedImage Create(double size, bool auto)
                 {

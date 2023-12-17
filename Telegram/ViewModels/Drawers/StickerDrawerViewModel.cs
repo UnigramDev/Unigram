@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -19,8 +18,6 @@ using Telegram.Td.Api;
 using Telegram.Views;
 using Windows.Foundation;
 using Windows.Storage;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
 namespace Telegram.ViewModels.Drawers
@@ -34,11 +31,6 @@ namespace Telegram.ViewModels.Drawers
         private readonly SupergroupStickerSetViewModel _groupSet;
 
         private Dictionary<long, StickerSetViewModel> _installedSets;
-
-        public bool TryGetInstalledSet(long id, out StickerSetViewModel value)
-        {
-            return _installedSets.TryGetValue(id, out value);
-        }
 
         private long _groupSetId;
         private long _groupSetChatId;
@@ -76,11 +68,6 @@ namespace Telegram.ViewModels.Drawers
             Subscribe();
         }
 
-        public static void Remove(int windowId)
-        {
-            _windowContext.TryRemove(windowId, out _);
-        }
-
         public override void Subscribe()
         {
             Aggregator.Subscribe<UpdateRecentStickers>(this, Handle)
@@ -88,25 +75,10 @@ namespace Telegram.ViewModels.Drawers
                 .Subscribe<UpdateInstalledStickerSets>(Handle);
         }
 
-        private static readonly ConcurrentDictionary<int, Dictionary<int, StickerDrawerViewModel>> _windowContext = new();
-        public static StickerDrawerViewModel GetForCurrentView(int sessionId)
+        public static StickerDrawerViewModel Create(int sessionId)
         {
-            var id = ApplicationView.GetApplicationViewIdForWindow(Window.Current.CoreWindow);
-            if (_windowContext.TryGetValue(id, out Dictionary<int, StickerDrawerViewModel> reference))
-            {
-                if (reference.TryGetValue(sessionId, out StickerDrawerViewModel value))
-                {
-                    return value;
-                }
-            }
-            else
-            {
-                _windowContext[id] = new Dictionary<int, StickerDrawerViewModel>();
-            }
-
             var context = TypeResolver.Current.Resolve<StickerDrawerViewModel>(sessionId);
-            _windowContext[id][sessionId] = context;
-
+            context.Dispatcher = WindowContext.Current.Dispatcher;
             return context;
         }
 
@@ -582,9 +554,10 @@ namespace Telegram.ViewModels.Drawers
 
         public int Size => Covers.Count;
 
+        private Sticker _thumbnail;
         public Sticker GetThumbnail()
         {
-            return _info?.GetThumbnail();
+            return _thumbnail ??= _info?.GetThumbnail();
         }
 
         public override string ToString()
@@ -596,7 +569,6 @@ namespace Telegram.ViewModels.Drawers
     public class StickerViewModel
     {
         private readonly IClientService _clientService;
-        private Sticker _sticker;
 
         public StickerViewModel(IClientService clientService, long setId, StickerFormat format)
         {
@@ -614,8 +586,9 @@ namespace Telegram.ViewModels.Drawers
 
         public void Update(Sticker sticker)
         {
-            _sticker = sticker;
+            Id = sticker.Id;
             StickerValue = sticker.StickerValue;
+            Thumbnail = sticker.Thumbnail;
             Outline = sticker.Outline;
             FullType = sticker.FullType;
             Format = sticker.Format;
@@ -629,10 +602,12 @@ namespace Telegram.ViewModels.Drawers
 
         public static implicit operator Sticker(StickerViewModel viewModel)
         {
-            return viewModel._sticker;
+            return new Sticker(viewModel.Id, viewModel.SetId, viewModel.Width, viewModel.Height, viewModel.Emoji ?? string.Empty, viewModel.Format, viewModel.FullType, viewModel.Outline, viewModel.Thumbnail, viewModel.StickerValue); //viewModel._sticker;
         }
 
+        public long Id { get; private set; }
         public File StickerValue { get; private set; }
+        public Thumbnail Thumbnail { get; private set; }
         public IList<ClosedVectorPath> Outline { get; private set; }
         public StickerFullType FullType { get; private set; }
         public StickerFormat Format { get; private set; }

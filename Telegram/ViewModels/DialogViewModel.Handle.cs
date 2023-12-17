@@ -199,7 +199,6 @@ namespace Telegram.ViewModels
             {
                 BeginOnUIThread(() =>
                 {
-                    _stickers?.UpdateSupergroupFullInfo(chat, ClientService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo);
                     Delegate?.UpdateSupergroupFullInfo(chat, ClientService.GetSupergroup(update.SupergroupId), update.SupergroupFullInfo);
                 });
             }

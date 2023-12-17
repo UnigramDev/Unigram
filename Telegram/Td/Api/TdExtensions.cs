@@ -1529,10 +1529,9 @@ namespace Telegram.Td.Api
                 return new Sticker(stickerSet.Id, stickerSet.Id, stickerSet.Thumbnail.Width, stickerSet.Thumbnail.Height, "\U0001F4A9", format, fullType, stickerSet.ThumbnailOutline, stickerSet.Thumbnail, stickerSet.Thumbnail.File);
             }
 
-            var cover = stickerSet.Covers?.FirstOrDefault();
-            if (cover != null)
+            if (stickerSet.Covers?.Count > 0)
             {
-                return cover;
+                return stickerSet.Covers[0];
             }
 
             return null;

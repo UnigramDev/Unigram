@@ -341,7 +341,7 @@ namespace Telegram.Views.Popups
             _legacyNavigated = true;
 
             IsPrimaryButtonSplit = ViewModel.IsSendAsCopyEnabled;
-            EmojiPanel.DataContext = EmojiDrawerViewModel.GetForCurrentView(ViewModel.SessionId);
+            EmojiPanel.DataContext = EmojiDrawerViewModel.Create(ViewModel.SessionId);
             ViewModel.PropertyChanged += OnPropertyChanged;
 
             if (ViewModel.SelectionMode == ListViewSelectionMode.None)
