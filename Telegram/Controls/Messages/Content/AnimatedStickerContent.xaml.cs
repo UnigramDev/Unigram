@@ -430,32 +430,37 @@ namespace Telegram.Controls.Messages.Content
 
         public int LoopCount => Player?.LoopCount ?? 1;
 
-        public bool Play()
-        {
-            // TODO: return value is not used
+        private bool _withinViewport;
 
+        public void ViewportChanged(bool within)
+        {
+            if (within && !_withinViewport)
+            {
+                _withinViewport = true;
+                Play();
+            }
+            else if (_withinViewport && !within)
+            {
+                _withinViewport = false;
+                Pause();
+            }
+        }
+
+        public void Play()
+        {
             if (_isEmoji && PowerSavingPolicy.AutoPlayEmojiInChats)
             {
                 Player?.Play();
-                return true;
             }
             else if (PowerSavingPolicy.AutoPlayStickersInChats)
             {
                 Player?.Play();
-                return true;
             }
-
-            return false;
         }
 
         public void Pause()
         {
             Player?.Pause();
-        }
-
-        public void Unload()
-        {
-            // TODO: this is not used
         }
 
         #endregion

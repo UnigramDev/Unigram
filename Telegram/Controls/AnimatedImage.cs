@@ -193,6 +193,20 @@ namespace Telegram.Controls
             }
         }
 
+        public void ViewportChanged(bool within)
+        {
+            if (within && !_withinViewport)
+            {
+                _withinViewport = true;
+                Play();
+            }
+            else if (_withinViewport && !within)
+            {
+                _withinViewport = false;
+                Pause();
+            }
+        }
+
         #endregion
 
 
@@ -453,23 +467,6 @@ namespace Telegram.Controls
                 Load();
             }
         }
-
-        #region Legacy
-
-        public bool IsLoopingEnabled => LoopCount == 0;
-
-        bool IPlayerView.Play()
-        {
-            Play();
-            return true;
-        }
-
-        void IPlayerView.Unload()
-        {
-            Pause();
-        }
-
-        #endregion
 
         #region ReplacementColor
 

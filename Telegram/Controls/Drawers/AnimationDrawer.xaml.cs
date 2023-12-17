@@ -114,7 +114,7 @@ namespace Telegram.Controls.Drawers
         {
             if (_isActive)
             {
-                _handler.LoadVisibleItems(false);
+                _handler.LoadVisibleItems();
             }
         }
 

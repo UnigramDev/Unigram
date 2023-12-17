@@ -54,8 +54,6 @@ namespace Telegram.Controls.Drawers
             _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
             _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
 
-            //_toolbarHandler = new AnimatedStickerHandler<StickerSetViewModel>(Toolbar);
-
             var header = DropShadowEx.Attach(Separator);
             header.Clip = header.Compositor.CreateInsetClip(0, 40, 0, -40);
 
@@ -109,8 +107,8 @@ namespace Telegram.Controls.Drawers
         {
             if (_isActive)
             {
-                _handler.LoadVisibleItems(false);
-                _toolbarHandler.LoadVisibleItems(false);
+                _handler.LoadVisibleItems();
+                _toolbarHandler.LoadVisibleItems();
             }
         }
 

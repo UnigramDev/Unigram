@@ -65,7 +65,7 @@ namespace Telegram.Views
             {
                 try
                 {
-                    animation?.Pause();
+                    animation?.ViewportChanged(false);
                 }
                 catch { }
             }

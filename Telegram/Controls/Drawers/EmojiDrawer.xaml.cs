@@ -188,8 +188,8 @@ namespace Telegram.Controls.Drawers
         {
             if (_isActive)
             {
-                _handler.LoadVisibleItems(false);
-                _toolbarHandler.LoadVisibleItems(false);
+                _handler.LoadVisibleItems();
+                _toolbarHandler.LoadVisibleItems();
             }
         }
 

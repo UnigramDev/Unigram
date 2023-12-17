@@ -472,7 +472,7 @@ namespace Telegram.Views
                     var presenter = _prev[item].Target as IPlayerView;
                     if (presenter != null && presenter.LoopCount == 0)
                     {
-                        presenter.Pause();
+                        presenter.ViewportChanged(false);
                     }
 
                     _prev.Remove(item);
@@ -484,7 +484,7 @@ namespace Telegram.Views
                 foreach (var item in next)
                 {
                     _prev[item.Key] = new WeakReference(item.Value);
-                    item.Value.Play();
+                    item.Value.ViewportChanged(true);
                 }
             }
         }

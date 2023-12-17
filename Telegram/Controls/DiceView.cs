@@ -496,7 +496,23 @@ namespace Telegram.Controls
             }
         }
 
-        public bool Play()
+        private bool _withinViewport;
+
+        public void ViewportChanged(bool within)
+        {
+            if (within && !_withinViewport)
+            {
+                _withinViewport = true;
+                Play();
+            }
+            else if (_withinViewport && !within)
+            {
+                _withinViewport = false;
+                Pause();
+            }
+        }
+
+        public void Play()
         {
             Load();
 
@@ -504,26 +520,25 @@ namespace Telegram.Controls
             if (canvas == null)
             {
                 _shouldPlay = true;
-                return false;
+                return;
             }
 
             var animations = _animations;
             if (animations == null)
             {
                 _shouldPlay = true;
-                return false;
+                return;
             }
 
             _shouldPlay = false;
 
             if (_subscribed)
             {
-                return false;
+                return;
             }
 
             //canvas.Paused = false;
             Subscribe(true);
-            return true;
             //OnInvalidate();
         }
 

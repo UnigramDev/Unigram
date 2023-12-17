@@ -9,10 +9,7 @@ namespace Telegram.Controls
 {
     public interface IPlayerView
     {
-        bool Play();
-        void Pause();
-
-        void Unload();
+        void ViewportChanged(bool within);
 
         int LoopCount { get; }
     }
