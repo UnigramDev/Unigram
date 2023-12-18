@@ -17,40 +17,6 @@
                              Stroke="{ThemeResource ChatLastMessageStateBrush}" />
     </DataTemplate>
 
-    <DataTemplate x:Key="StickerSetItemTemplate"
-                  x:DataType="td:StickerSetInfo">
-        <Grid Padding="12,6"
-              Background="{ThemeResource SettingsItemBackground}"
-              BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <Image Width="48"
-                   Height="48"
-                   Margin="0,0,12,0"
-                   VerticalAlignment="Top"
-                   Grid.RowSpan="2" />
-
-            <TextBlock VerticalAlignment="Bottom"
-                       Style="{StaticResource BaseTextBlockStyle}"
-                       TextWrapping="NoWrap"
-                       TextTrimming="CharacterEllipsis"
-                       Grid.Column="1" />
-            <TextBlock Foreground="{ThemeResource SystemControlDisabledChromeDisabledLowBrush}"
-                       VerticalAlignment="Top"
-                       TextWrapping="NoWrap"
-                       TextTrimming="CharacterEllipsis"
-                       Grid.Column="1"
-                       Grid.Row="1" />
-        </Grid>
-    </DataTemplate>
-
     <selectors:AutocompleteTemplateSelector x:Name="AutocompleteTemplate">
         <selectors:AutocompleteTemplateSelector.MentionTemplate>
             <DataTemplate>

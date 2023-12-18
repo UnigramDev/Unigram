@@ -25,7 +25,6 @@
     <Grid Background="{ThemeResource SettingsPageBackground}">
         <controls:TableListView x:Name="ScrollingHost"
                                 ItemsSource="{x:Bind ViewModel.Items}"
-                                ItemTemplate="{StaticResource StickerSetItemTemplate}"
                                 SelectedItem="{x:Bind ViewModel.ListSelectedItem, Mode=TwoWay}"
                                 ContainerContentChanging="OnContainerContentChanging"
                                 SelectionMode="Single">
@@ -179,9 +178,56 @@
 
                     <TextBlock Text="{CustomResource ChooseFromYourStickers}"
                                Style="{StaticResource BaseTextBlockStyle}"
-                               Margin="24,16,24,8" />
+                               Margin="24,16,24,6" />
                 </controls:SettingsPanel>
             </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="12,6"
+                          Background="{ThemeResource SettingsItemBackground}"
+                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <controls:AnimatedImage x:Name="Player"
+                                                AutoPlay="False"
+                                                LimitFps="True"
+                                                FrameSize="36,36"
+                                                DecodeFrameType="Logical"
+                                                Width="36"
+                                                Height="36"
+                                                Margin="0,0,8,0"
+                                                VerticalAlignment="Top"
+                                                Grid.RowSpan="2" />
+
+                        <TextBlock VerticalAlignment="Bottom"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   Grid.Column="1" />
+                        <TextBlock Style="{StaticResource InfoCaptionTextBlockStyle}"
+                                   VerticalAlignment="Top"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis"
+                                   Grid.Column="1"
+                                   Grid.Row="1" />
+
+                        <TextBlock Text="&#xE9F6;"
+                                   VerticalAlignment="Center"
+                                   FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                   FontSize="16"
+                                   Grid.Column="2"
+                                   Grid.RowSpan="2" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
         </controls:TableListView>
     </Grid>
 </local:HostedPage>
