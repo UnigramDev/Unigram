@@ -263,9 +263,6 @@ namespace Telegram.ViewModels.Drawers
             {
                 if (_mode == EmojiDrawerMode.Reactions)
                 {
-                    _reactionRecentSet.Update(_recentStickers);
-                    _reactionTopSet.Update(_topStickers);
-
                     if (_reactionRecentSet.Stickers.Count > 0)
                     {
                         sets.Insert(0, _reactionRecentSet);
@@ -273,11 +270,6 @@ namespace Telegram.ViewModels.Drawers
                     }
 
                     sets.Insert(0, _reactionTopSet);
-
-                    if (_mode is EmojiDrawerMode.EmojiStatus or EmojiDrawerMode.ChatPhoto or EmojiDrawerMode.UserPhoto or EmojiDrawerMode.EmojiStatus or EmojiDrawerMode.Topics)
-                    {
-                        installedSets.Insert(0, _reactionTopSet);
-                    }
                 }
                 else
                 {
@@ -551,18 +543,13 @@ namespace Telegram.ViewModels.Drawers
             Populate(sourceRecent, recent);
 
             _allowCustomEmoji = available.AllowCustomEmoji;
-            _reactionTopSet.Update(Enumerable.Empty<Sticker>());
-
-            _topStickers = top;
-            _recentStickers = recent;
+            _reactionTopSet.Update(top);
+            _reactionRecentSet.Update(recent);
 
             Update();
         }
 
         private bool _allowCustomEmoji;
-
-        private List<Sticker> _topStickers;
-        private List<Sticker> _recentStickers;
 
         //private List<StickerSetViewModel> _installedSets;
         private Dictionary<long, StickerSetViewModel> _installedSets;
