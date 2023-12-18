@@ -27,7 +27,7 @@ namespace Telegram.Controls.Chats
 {
     public class ChatHistoryView : ListViewEx
     {
-        public DialogViewModel ViewModel => DataContext as DialogViewModel;
+        public DialogViewModel ViewModel { get; set; }
         public IDialogDelegate Delegate { get; set; }
 
         public ScrollViewer ScrollingHost { get; private set; }
@@ -413,6 +413,7 @@ namespace Telegram.Controls.Chats
 
             if (panel == null || index >= panel.FirstCacheIndex && index <= panel.LastCacheIndex)
             {
+                Logger.Info("Skipping because " + (panel == null ? "null" : "cached"));
                 return;
             }
 

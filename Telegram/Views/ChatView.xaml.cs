@@ -359,6 +359,7 @@ namespace Telegram.Views
             Logger.Info($"Items.Count: {Messages.Items.Count}");
 
             DataContext = _viewModel = viewModel;
+            Messages.ViewModel = viewModel;
 
             _updateThemeTask = new TaskCompletionSource<bool>();
             ViewModel.MessageSliceLoaded += OnMessageSliceLoaded;
