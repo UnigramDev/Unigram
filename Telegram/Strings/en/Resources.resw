@@ -774,6 +774,9 @@ to: {1}</value>
   <data name="AddToContacts" xml:space="preserve">
     <value>Add to contacts</value>
   </data>
+  <data name="AddToEmoji" xml:space="preserve">
+    <value>Add to Emoji</value>
+  </data>
   <data name="AddToFavorites" xml:space="preserve">
     <value>Add to Favorites</value>
   </data>

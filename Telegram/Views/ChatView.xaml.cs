@@ -2250,6 +2250,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutSeparator();
 
                 // Stickers
+                flyout.CreateFlyoutItem(MessageAddEmoji_Loaded, ViewModel.ShowMessageEmoji, message, Strings.AddToEmoji, Icons.Emoji);
                 flyout.CreateFlyoutItem(MessageAddSticker_Loaded, ViewModel.AddStickerFromMessage, message, Strings.AddToStickers, Icons.Sticker);
                 flyout.CreateFlyoutItem(MessageFaveSticker_Loaded, ViewModel.AddFavoriteSticker, message, Strings.AddToFavorites, Icons.Star);
                 flyout.CreateFlyoutItem(MessageUnfaveSticker_Loaded, ViewModel.RemoveFavoriteSticker, message, Strings.DeleteFromFavorites, Icons.StarOff);
@@ -2273,7 +2274,7 @@ namespace Telegram.Views
 
 #if DEBUG
                 var file = message.GetFile();
-                if (file != null)
+                if (file != null && (file.Local.IsDownloadingActive || file.Local.IsDownloadingCompleted))
                 {
                     flyout.CreateFlyoutItem(x =>
                     {
@@ -2288,11 +2289,6 @@ namespace Telegram.Views
                     }, message, "Delete from disk", Icons.Delete);
                 }
 #endif
-
-                if (CanGetMessageEmojis(chat, message, out var emoji))
-                {
-                    LoadMessageEmojis(message, emoji, flyout);
-                }
 
                 if (message.CanBeSaved is false && flyout.Items.Count > 0 && ViewModel.Chat.HasProtectedContent)
                 {
@@ -2333,65 +2329,6 @@ namespace Telegram.Views
             }
 
             args.ShowAt(flyout, sender as FrameworkElement, selectionEnd - selectionStart > 0 ? FlyoutShowMode.Transient : FlyoutShowMode.Auto);
-        }
-
-        private bool CanGetMessageEmojis(Chat chat, MessageViewModel message, out HashSet<long> emoji)
-        {
-            var caption = message.GetCaption();
-            if (caption?.Entities == null)
-            {
-                emoji = null;
-                return false;
-            }
-
-            emoji = new HashSet<long>();
-
-            foreach (var item in caption.Entities)
-            {
-                if (item.Type is TextEntityTypeCustomEmoji customEmoji)
-                {
-                    emoji.Add(customEmoji.CustomEmojiId);
-                }
-            }
-
-            return emoji.Count > 0;
-        }
-
-        private async void LoadMessageEmojis(MessageViewModel message, HashSet<long> emoji, MenuFlyout flyout)
-        {
-            var separator = flyout.CreateFlyoutSeparator();
-            var placeholder = flyout.CreateFlyoutItem(ViewModel.ShowMessageEmoji, message, "...");
-
-            // Width must be fixed because emojis are loaded asynchronously
-            placeholder.Width = 240;
-
-            var response = await message.ClientService.SendAsync(new GetCustomEmojiStickers(emoji.ToArray()));
-            if (response is Stickers stickers && stickers.StickersValue.Count > 0)
-            {
-                var sets = new HashSet<long>();
-
-                foreach (var sticker in stickers.StickersValue)
-                {
-                    sets.Add(sticker.SetId);
-                }
-
-                if (sets.Count > 1)
-                {
-                    placeholder.Text = Locale.Declension(Strings.R.MessageContainsEmojiPacks, sets.Count);
-                }
-                else if (sets.Count > 0)
-                {
-                    var response2 = await message.ClientService.SendAsync(new GetStickerSet(sets.First()));
-                    if (response2 is StickerSet set)
-                    {
-                        placeholder.Text = string.Format(Strings.MessageContainsEmojiPack, set.Title);
-                    }
-                }
-            }
-            else
-            {
-                placeholder.Text = Strings.NobodyViewed;
-            }
         }
 
         private static bool CanGetMessageViewers(MessageViewModel message, bool reactions = true)
@@ -2861,6 +2798,25 @@ namespace Telegram.Views
             else if (message.Content is MessageText text && text.WebPage?.Sticker != null && text.WebPage.Sticker.SetId != 0)
             {
                 return !ViewModel.ClientService.IsStickerSetInstalled(text.WebPage.Sticker.SetId);
+            }
+
+            return false;
+        }
+
+        private bool MessageAddEmoji_Loaded(MessageViewModel message)
+        {
+            var caption = message.GetCaption();
+            if (caption?.Entities == null)
+            {
+                return false;
+            }
+
+            foreach (var item in caption.Entities)
+            {
+                if (item.Type is TextEntityTypeCustomEmoji customEmoji)
+                {
+                    return true;
+                }
             }
 
             return false;
