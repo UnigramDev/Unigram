@@ -180,35 +180,35 @@ namespace Telegram.Common
                 if (container != null)
                 {
                     var content = ItemFromContainer(container);
-                    if (content is StickerViewModel stickerViewModel)
+                    if (content == _popupContent)
                     {
-                        content = (Sticker)stickerViewModel;
-                    }
-
-                    if (content is Sticker sticker && _popupContent != content)
-                    {
-                        _popupPanel.SetSticker(sticker);
-                    }
-                    else if (content is Animation animation && _popupContent != content)
-                    {
-                        _popupPanel.SetAnimation(animation);
+                        return;
                     }
 
                     _popupContent = content;
+
+                    if (content is StickerViewModel stickerViewModel)
+                    {
+                        _popupPanel.SetSticker(stickerViewModel);
+                    }
+                    else if (content is Sticker sticker)
+                    {
+                        _popupPanel.SetSticker(sticker);
+                    }
+                    else if (content is Animation animation)
+                    {
+                        _popupPanel.SetAnimation(animation);
+                    }
                 }
             }
         }
 
         private object ItemFromContainer(FrameworkElement container)
         {
-            return GetContent(_listView.ItemFromContainer(container));
-        }
-
-        private object GetContent(object content)
-        {
+            var content = _listView.ItemFromContainer(container);
             if (content is StickerViewModel stickerViewModel)
             {
-                return (Sticker)stickerViewModel;
+                return stickerViewModel;
             }
             else if (content is InlineQueryResultAnimation resultAnimation)
             {

@@ -135,38 +135,16 @@ namespace Telegram.Views.Popups
             {
                 UpdateManager.Unsubscribe(this, ref _fileToken, true);
 
-                if (sticker.Format is StickerFormatTgs)
+                Thumbnail.Opacity = 0;
+                Texture.Source = null;
+                Container.Child = new AnimatedImage
                 {
-                    Thumbnail.Opacity = 0;
-                    Texture.Source = null;
-                    Container.Child = new AnimatedImage
-                    {
-                        AutoPlay = true,
-                        FrameSize = new Size(180, 180),
-                        DecodeFrameType = DecodePixelType.Logical,
-                        IsCachingEnabled = true,
-                        Source = new LocalFileSource(file)
-                    };
-                }
-                else if (sticker.Format is StickerFormatWebm)
-                {
-                    Thumbnail.Opacity = 0;
-                    Texture.Source = null;
-                    Container.Child = new AnimatedImage
-                    {
-                        AutoPlay = true,
-                        FrameSize = new Size(0, 0),
-                        DecodeFrameType = DecodePixelType.Physical,
-                        IsCachingEnabled = false,
-                        Source = new LocalFileSource(file)
-                    };
-                }
-                else
-                {
-                    Thumbnail.Opacity = 0;
-                    Texture.Source = PlaceholderHelper.GetWebPFrame(file.Local.Path);
-                    Container.Child = new Border();
-                }
+                    AutoPlay = true,
+                    FrameSize = new Size(180, 180),
+                    DecodeFrameType = DecodePixelType.Logical,
+                    IsCachingEnabled = true,
+                    Source = new LocalFileSource(sticker)
+                };
             }
             else
             {

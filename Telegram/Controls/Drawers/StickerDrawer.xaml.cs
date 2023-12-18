@@ -49,8 +49,8 @@ namespace Telegram.Controls.Drawers
             _toolbarHandler = new AnimatedListHandler(Toolbar, AnimatedListType.Stickers);
 
             _zoomer = new ZoomableListHandler(List);
-            _zoomer.Opening = _handler.UnloadVisibleItems;
-            _zoomer.Closing = _handler.ThrottleVisibleItems;
+            _zoomer.Opening = UnloadVisibleItems;
+            _zoomer.Closing = ThrottleVisibleItems;
             _zoomer.DownloadFile = fileId => ViewModel.ClientService.DownloadFile(fileId, 32);
             _zoomer.SessionId = () => ViewModel.ClientService.SessionId;
 
@@ -109,6 +109,15 @@ namespace Telegram.Controls.Drawers
             {
                 _handler.LoadVisibleItems();
                 _toolbarHandler.LoadVisibleItems();
+            }
+        }
+
+        public void ThrottleVisibleItems()
+        {
+            if (_isActive)
+            {
+                _handler.ThrottleVisibleItems();
+                _toolbarHandler.ThrottleVisibleItems();
             }
         }
 
