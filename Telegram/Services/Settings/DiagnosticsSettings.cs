@@ -5,6 +5,8 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 
+using Telegram.Common;
+
 namespace Telegram.Services.Settings
 {
     public class DiagnosticsSettings : SettingsServiceBase
@@ -131,6 +133,13 @@ namespace Telegram.Services.Settings
         {
             get => _forceRawAudio ??= GetValueOrDefault("ForceRawAudio", false);
             set => AddOrUpdateValue(ref _forceRawAudio, "ForceRawAudio", value);
+        }
+
+        private bool? _nativeTimeFormatter;
+        public bool NativeTimeFormatter
+        {
+            get => _nativeTimeFormatter ??= GetValueOrDefault("NativeTimeFormatter", ApiInfo.IsPackagedRelease);
+            set => AddOrUpdateValue(ref _nativeTimeFormatter, "NativeTimeFormatter", value);
         }
 
         public bool IsLastErrorDiskFull { get; set; }

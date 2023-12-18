@@ -267,6 +267,46 @@ namespace winrt::Telegram::Native::implementation
         return L"en-US";
     }
 
+    hstring NativeUtils::FormatTime(int value)
+    {
+        FILETIME fileTime;
+        ULARGE_INTEGER uli;
+        uli.QuadPart = (static_cast<ULONGLONG>(value) + 11644473600LL) * 10000000LL;
+        fileTime.dwLowDateTime = uli.LowPart;
+        fileTime.dwHighDateTime = uli.HighPart;
+
+        FILETIME localFileTime;
+        if (FileTimeToLocalFileTime(&fileTime, &localFileTime))
+        {
+            SYSTEMTIME systemTime;
+            if (FileTimeToSystemTime(&localFileTime, &systemTime))
+            {
+                TCHAR timeString[128];
+                int result = GetTimeFormatEx(LOCALE_NAME_USER_DEFAULT, TIME_NOSECONDS, &systemTime, nullptr, timeString, 128);
+                if (result == 0)
+                {
+                    switch (GetLastError())
+                    {
+                    case ERROR_INSUFFICIENT_BUFFER:
+                        return L"E_INSUFFICIENT_BUFFER";
+                    case ERROR_INVALID_FLAGS:
+                        return L"E_INVALID_FLAGS";
+                    case ERROR_INVALID_PARAMETER:
+                        return L"E_INVALID_PARAMETER";
+                    case ERROR_OUTOFMEMORY:
+                        return L"E_OUTOFMEMORY";
+                    default:
+                        return L"E_UNKNOWN";
+                    }
+                }
+
+                return hstring(timeString);
+            }
+        }
+
+        return hstring();
+    }
+
     bool NativeUtils::IsFileReadable(hstring path)
     {
         return IsFileReadableInternal(path, NULL, NULL);

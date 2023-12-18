@@ -299,6 +299,11 @@ namespace Telegram.Converters
 
         public static string Time(int value)
         {
+            if (SettingsService.Current.Diagnostics.NativeTimeFormatter)
+            {
+                return NativeUtils.FormatTime(value);
+            }
+
             return ShortTime.Format(ToLocalTime(value));
         }
 

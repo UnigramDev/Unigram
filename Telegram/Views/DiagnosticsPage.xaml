@@ -45,6 +45,10 @@
                               Content="Force Raw Audio"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.NativeTimeFormatter, Mode=TwoWay}"
+                              Content="Native Time Formatter"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.EnableWebViewDevTools, Mode=TwoWay}"
                               Content="Enable WebView DevTools"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
