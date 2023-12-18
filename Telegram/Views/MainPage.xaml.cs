@@ -435,18 +435,6 @@ namespace Telegram.Views
             });
         }
 
-        public void Handle(UpdateChatFolders update)
-        {
-            this.BeginOnUIThread(() =>
-            {
-                ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFolders.Count > 0);
-                ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && update.ChatFolders.Count > 0);
-                ShowHideArchive(ViewModel.SelectedFolder?.ChatList is ChatListMain or null, true);
-
-                UpdatePaneToggleButtonVisibility();
-            });
-        }
-
         public void Handle(UpdatePasscodeLock update)
         {
             this.BeginOnUIThread(() =>
@@ -614,11 +602,7 @@ namespace Telegram.Views
 
         public void Handle(UpdateChatFoldersLayout update)
         {
-            this.BeginOnUIThread(() =>
-            {
-                ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Folders.Count > 0);
-                ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Folders.Count > 0);
-            });
+            this.BeginOnUIThread(UpdateChatFolders);
         }
 
         #endregion
@@ -650,11 +634,13 @@ namespace Telegram.Views
                 TopicListPresenter.Margin = new Thickness(68, padding, 0, 0);
             }
 
+            Stories.TabsTopCollapsed = !show;
             Stories.ControlledList = ChatsList;
 
             void ShowHideTopTabsCompleted()
             {
                 DialogsPanel.Margin = new Thickness();
+                ChatsList.Margin = new Thickness(0, Stories.TopPadding, 0, 0);
                 ChatTabs.Visibility = _tabsTopCollapsed
                     ? Visibility.Collapsed
                     : Visibility.Visible;
@@ -667,11 +653,15 @@ namespace Telegram.Views
                 return;
             }
 
+            var topPadding = Stories.GetTopPadding(false);
+
             ChatTabs.Visibility = Visibility.Visible;
+            ChatsList.Margin = new Thickness(0, topPadding, 0, 0);
             DialogsPanel.Margin = new Thickness(0, 0, 0, -40);
 
             var visual = ElementCompositionPreview.GetElementVisual(DialogsPanel);
             var header = ElementCompositionPreview.GetElementVisual(ChatTabsView);
+            header.Clip = visual.Compositor.CreateInsetClip();
 
             var batch = visual.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
@@ -682,23 +672,18 @@ namespace Telegram.Views
                 ShowHideTopTabsCompleted();
             };
 
-            var offset = visual.Compositor.CreateVector3KeyFrameAnimation();
-            offset.InsertKeyFrame(show ? 0 : 1, new Vector3(0, -32, 0));
-            offset.InsertKeyFrame(show ? 1 : 0, new Vector3());
+            var offset1 = visual.Compositor.CreateScalarKeyFrameAnimation();
+            offset1.InsertKeyFrame(show ? 0 : 1, -36);
+            offset1.InsertKeyFrame(show ? 1 : 0, 0);
             //offset.Duration = Constants.FastAnimation;
 
-            var opacity1 = visual.Compositor.CreateScalarKeyFrameAnimation();
-            opacity1.InsertKeyFrame(show ? 0 : 1, 0);
-            opacity1.InsertKeyFrame(show ? 1 : 0, 1);
-            opacity1.Duration /= 2;
+            var offset2 = visual.Compositor.CreateScalarKeyFrameAnimation();
+            offset2.InsertKeyFrame(show ? 0 : 1, 36);
+            offset2.InsertKeyFrame(show ? 1 : 0, 0);
+            //offset.Duration = Constants.FastAnimation;
 
-            var opacity2 = visual.Compositor.CreateScalarKeyFrameAnimation();
-            opacity2.InsertKeyFrame(show ? 0 : 1, 1);
-            opacity2.InsertKeyFrame(show ? 1 : 0, 0);
-            opacity2.Duration /= 2;
-
-            header.StartAnimation("Offset", offset);
-            visual.StartAnimation("Offset", offset);
+            header.Clip.StartAnimation("TopInset", offset2);
+            visual.StartAnimation("Offset.Y", offset1);
 
             batch.End();
         }
@@ -884,7 +869,7 @@ namespace Telegram.Views
             }
 
             Handle(new UpdateUnconfirmedSession(ViewModel.ClientService.UnconfirmedSession));
-            Handle(new UpdateChatFolders(ViewModel.ClientService.ChatFolders, ViewModel.ClientService.MainChatListPosition));
+            UpdateChatFolders();
 
             if (_unloaded)
             {
@@ -930,7 +915,6 @@ namespace Telegram.Views
                 .Subscribe<UpdateForumTopicInfo>(Handle)
                 //.Subscribe<UpdateMessageContent>(Handle)
                 .Subscribe<UpdateSecretChat>(Handle)
-                .Subscribe<UpdateChatFolders>(Handle)
                 .Subscribe<UpdateChatNotificationSettings>(Handle)
                 .Subscribe<UpdatePasscodeLock>(Handle)
                 .Subscribe<UpdateUnconfirmedSession>(Handle)
@@ -2195,10 +2179,10 @@ namespace Telegram.Views
 
         private ChatFolderViewModel ConvertFolder(ChatFolderViewModel folder)
         {
+            ShowHideArchive(folder?.ChatList is ChatListMain or null && ViewModel.Chats.Items.ChatList is not ChatListArchive, folder.ChatList is ChatListArchive || ViewModel.Chats.Items.ChatList is ChatListArchive);
             ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Folders.Count > 0 && folder.ChatList is not ChatListArchive);
             ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Folders.Count > 0);
-            ShowHideArchive(folder?.ChatList is ChatListMain or null && ViewModel.Chats.Items.ChatList is not ChatListArchive, folder.ChatList is ChatListArchive || ViewModel.Chats.Items.ChatList is ChatListArchive);
-
+            
             UpdatePaneToggleButtonVisibility();
 
             if (rpMasterTitlebar.SelectedIndex != 0)
@@ -2416,11 +2400,6 @@ namespace Telegram.Views
             _archiveCollapsed = !show;
             ArchivedChatsPresenter.Visibility = Visibility.Visible;
 
-            if (ArchivedChatsPanel.ActualWidth == 0)
-            {
-                await ArchivedChatsPanel.UpdateLayoutAsync();
-            }
-
             void ShowHideArchiveCompleted()
             {
                 ChatsList.Margin = new Thickness(0, Stories.TopPadding, 0, 0);
@@ -2430,10 +2409,15 @@ namespace Telegram.Views
             }
 
             var element = VisualTreeHelper.GetChild(ChatsList, 0) as UIElement;
-            if (element == null || !animate)
+            if (element == null || !animate || ((ViewModelBase)ViewModel).Settings.HideArchivedChats)
             {
                 ShowHideArchiveCompleted();
                 return;
+            }
+
+            if (ArchivedChatsPanel.ActualWidth == 0)
+            {
+                await ArchivedChatsPanel.UpdateLayoutAsync();
             }
 
             var parent = ElementCompositionPreview.GetElementVisual(ChatsList);
@@ -3416,10 +3400,6 @@ namespace Telegram.Views
         private void Banner_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             MasterDetail.BackgroundMargin = new Thickness(0, -e.NewSize.Height, 0, 0);
-        }
-
-        private void ChatListHeader_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
         }
 
         private void Stories_Expanding(object sender, EventArgs e)

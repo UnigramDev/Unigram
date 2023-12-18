@@ -611,7 +611,6 @@
                                         <RowDefinition />
                                     </Grid.RowDefinitions>
                                     <StackPanel x:Name="ChatListHeader"
-                                                SizeChanged="ChatListHeader_SizeChanged"
                                                 VerticalAlignment="Top"
                                                 Spacing="60"
                                                 Canvas.ZIndex="1">
