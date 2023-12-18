@@ -57,6 +57,7 @@ namespace Telegram.Services
         void Show();
 
         void Start(long chatId, bool video);
+        void StartWithUser(long userId, bool video);
 
         Task DiscardAsync();
 
@@ -254,6 +255,66 @@ namespace Telegram.Services
             }
 
             var user = ClientService.GetUser(chat);
+            if (user == null)
+            {
+                return;
+            }
+
+            var call = Call;
+            if (call != null)
+            {
+                var callUser = ClientService.GetUser(call.UserId);
+                if (callUser != null && callUser.Id != user.Id)
+                {
+                    var confirm = await MessagePopup.ShowAsync(string.Format(Strings.VoipOngoingAlert, callUser.FullName(), user.FullName()), Strings.VoipOngoingAlertTitle, Strings.OK, Strings.Cancel);
+                    if (confirm == ContentDialogResult.Primary)
+                    {
+
+                    }
+                }
+                else
+                {
+                    Show();
+                }
+
+                return;
+            }
+
+            var fullInfo = ClientService.GetUserFull(user.Id);
+            if (fullInfo != null && fullInfo.HasPrivateCalls)
+            {
+                await MessagePopup.ShowAsync(string.Format(Strings.CallNotAvailable, user.FirstName), Strings.VoipFailed, Strings.OK);
+                return;
+            }
+
+            var permissions = await MediaDeviceWatcher.CheckAccessAsync(video, false);
+            if (permissions == false)
+            {
+                return;
+            }
+
+            var protocol = VoipManager.Protocol;
+
+            var response = await ClientService.SendAsync(new CreateCall(user.Id, protocol, video));
+            if (response is Error error)
+            {
+                if (error.Code == 400 && error.Message.Equals("PARTICIPANT_VERSION_OUTDATED"))
+                {
+                    var message = video
+                        ? Strings.VoipPeerVideoOutdated
+                        : Strings.VoipPeerOutdated;
+                    await MessagePopup.ShowAsync(string.Format(message, user.FirstName), Strings.AppName, Strings.OK);
+                }
+                else if (error.Code == 400 && error.Message.Equals("USER_PRIVACY_RESTRICTED"))
+                {
+                    await MessagePopup.ShowAsync(string.Format(Strings.CallNotAvailable, user.FullName()), Strings.AppName, Strings.OK);
+                }
+            }
+        }
+
+        public async void StartWithUser(long userId, bool video)
+        {
+            var user = ClientService.GetUser(userId);
             if (user == null)
             {
                 return;
