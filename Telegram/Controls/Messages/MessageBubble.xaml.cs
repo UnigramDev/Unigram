@@ -2249,7 +2249,7 @@ namespace Telegram.Controls.Messages
             UpdateClip();
 
             var message = _message;
-            if (message == null || e.PreviousSize.Width < 1 || e.PreviousSize.Height < 1 || _ignoreSizeChanged)
+            if (message == null || _ignoreSizeChanged || e.PreviousSize.Width < 1 || e.PreviousSize.Height < 1)
             {
                 return;
             }
@@ -3302,8 +3302,9 @@ namespace Telegram.Controls.Messages
                 }
                 else if (photo.Sizes.Count > 0)
                 {
-                    width = photo.Sizes[photo.Sizes.Count - 1].Width;
-                    height = photo.Sizes[photo.Sizes.Count - 1].Height;
+                    var size = photo.Sizes[^1];
+                    width = size.Width;
+                    height = size.Height;
                 }
 
                 goto Calculate;

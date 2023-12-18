@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Linq;
 using Telegram.Common;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -289,12 +288,22 @@ namespace Telegram.Controls
                 }
                 else
                 {
-                    constraint = photo.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
+                    var size = photo.Sizes.Count > 0 ? photo.Sizes[^1] : null;
+                    if (size != null)
+                    {
+                        width = size.Width;
+                        height = size.Height;
+                    }
                 }
             }
             else if (constraint is ChatPhoto chatPhoto)
             {
-                constraint = chatPhoto.Sizes.OrderByDescending(x => x.Width).FirstOrDefault();
+                var size = chatPhoto.Sizes.Count > 0 ? chatPhoto.Sizes[^1] : null;
+                if (size != null)
+                {
+                    width = size.Width;
+                    height = size.Height;
+                }
             }
             else if (constraint is Sticker sticker)
             {
@@ -373,6 +382,9 @@ namespace Telegram.Controls
 
             width = rotate ? ch : cw;
             height = rotate ? cw : ch;
+
+            width = Math.Max(width, MinWidth);
+            height = Math.Max(height, MinHeight);
 
             base.MeasureOverride(new Size(width, height));
             return new Size(width, height);
