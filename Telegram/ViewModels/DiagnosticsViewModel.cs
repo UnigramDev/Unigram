@@ -213,22 +213,6 @@ namespace Telegram.ViewModels
             set => Set(ref _logOldSize, value);
         }
 
-        public bool? WriteLogs
-        {
-            get => SettingsService.Current.WriteLogsMode switch
-            {
-                WriteLogsMode.Enabled => true,
-                WriteLogsMode.Disabled => false,
-                _ => null
-            };
-            set => SettingsService.Current.WriteLogsMode = value switch
-            {
-                true => WriteLogsMode.Enabled,
-                false => WriteLogsMode.Disabled,
-                _ => WriteLogsMode.Auto
-            };
-        }
-
         public int Verbosity
         {
             get => Array.IndexOf(_verbosityIndexer, Settings.VerbosityLevel);

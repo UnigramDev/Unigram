@@ -20,16 +20,16 @@ namespace Telegram
     {
         public enum LogLevel
         {
-            Debug,
-            Info,
-            Warning,
+            Assert,
             Error,
-            Critical
+            Warning,
+            Info,
+            Debug,
         }
 
-        public static void Critical(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
+        public static void Assert(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
         {
-            Log(LogLevel.Critical, message, member, filePath, line);
+            Log(LogLevel.Assert, message, member, filePath, line);
         }
 
         public static void Debug(object message = null, [CallerMemberName] string member = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int line = 0)
@@ -98,7 +98,7 @@ namespace Telegram
                 _lastCalls.RemoveAt(0);
             }
 
-            if (SettingsService.Current.WriteLogs && (level != LogLevel.Debug || message != null))
+            if ((int)level <= SettingsService.Current.VerbosityLevel && (level != LogLevel.Debug || message != null))
             {
                 Client.Execute(new AddLogMessage(2, string.Format("[{0}:{1}][{2}] {3}", Path.GetFileName(filePath), line, member, message)));
             }

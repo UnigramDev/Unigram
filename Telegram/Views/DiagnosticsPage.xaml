@@ -81,10 +81,6 @@
 
                 <controls:HeaderedControl Header="TDLib Logs"
                                           Footer="**Warning**: TDLib Logs will contain **private data** if Verbosity Level was ever set to VERBOSE or higher value.&#x0a;&#x0a;Using high Verbosity Level will dramatically slow down the app as well.">
-                    <CheckBox IsChecked="{x:Bind ViewModel.WriteLogs, Mode=TwoWay}"
-                              IsThreeState="True"
-                              Content="Write App Logs to tdlib_log.txt"
-                              Style="{StaticResource SettingsCheckBoxStyle}" />
                     <controls:BadgeButton Content="Verbosity Level">
                         <controls:BadgeButton.Badge>
                             <controls:SettingsComboBox ItemsSource="{x:Bind ViewModel.VerbosityOptions}"

@@ -315,41 +315,7 @@ namespace Telegram.Services
         public int VerbosityLevel
         {
             get => _verbosityLevel ??= GetValueOrDefault(_local, "VerbosityLevel", Constants.DEBUG ? 4 : 2);
-            set
-            {
-                AddOrUpdateValue(ref _verbosityLevel, _local, "VerbosityLevel", value);
-                UpdateWriteLogs();
-            }
-        }
-
-        private WriteLogsMode? _writeLogsMode;
-        public WriteLogsMode WriteLogsMode
-        {
-            get => _writeLogsMode ??= (WriteLogsMode)GetValueOrDefault("WriteLogsMode", (int)WriteLogsMode.Auto);
-            set
-            {
-                AddOrUpdateValue("WriteLogsMode", (int)(_writeLogsMode = value));
-                UpdateWriteLogs();
-            }
-        }
-
-        private bool? _writeLogs;
-        public bool WriteLogs
-        {
-            get
-            {
-                if (_writeLogs == null)
-                {
-                    UpdateWriteLogs();
-                }
-
-                return _writeLogs ?? false;
-            }
-        }
-
-        private void UpdateWriteLogs()
-        {
-            _writeLogs = WriteLogsMode == WriteLogsMode.Enabled || (WriteLogsMode == WriteLogsMode.Auto && VerbosityLevel >= 5);
+            set => AddOrUpdateValue(ref _verbosityLevel, _local, "VerbosityLevel", value);
         }
 
         private bool? _useTestDC;
@@ -841,12 +807,5 @@ namespace Telegram.Services
         Pixel,
         ReadInboxMaxId,
         IsTranslating
-    }
-
-    public enum WriteLogsMode
-    {
-        Auto,
-        Enabled,
-        Disabled
     }
 }
