@@ -43,11 +43,21 @@ namespace Telegram.Navigation
         private UISettings _uiSettings;
         public UISettings UISettings => _uiSettings ??= new UISettings();
 
+        public double TextScaleFactor { get; private set; }
+
         public BootStrapper()
         {
             Current = this;
             Resuming += OnResuming;
             Suspending += OnSuspending;
+
+            UISettings.TextScaleFactorChanged += OnTextScaleFactorChanged;
+            TextScaleFactor = UISettings.TextScaleFactor;
+        }
+
+        private void OnTextScaleFactorChanged(UISettings sender, object args)
+        {
+            TextScaleFactor = sender.TextScaleFactor;
         }
 
         public static Task ConsolidateAsync()
@@ -385,8 +395,11 @@ namespace Telegram.Navigation
                 }
                 else if (key == VirtualKey.Escape)
                 {
-                    handled = args.Handled = true;
-                    return;
+                    if (popup.Child is not Grid)
+                    {
+                        handled = args.Handled = true;
+                        return;
+                    }
                 }
             }
 

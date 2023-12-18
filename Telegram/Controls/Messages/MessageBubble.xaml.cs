@@ -2372,8 +2372,8 @@ namespace Telegram.Controls.Messages
                 {
                     var rich = Message.Descendants<RichTextBlock>().FirstOrDefault();
 
-                    var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor;
-                    var quoteSize = (Theme.Current.MessageFontSize - 2) * BootStrapper.Current.UISettings.TextScaleFactor;
+                    var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.TextScaleFactor;
+                    var quoteSize = (Theme.Current.MessageFontSize - 2) * BootStrapper.Current.TextScaleFactor;
 
                     var width = Math.Ceiling(rich.ActualWidth + 1); //Panel.MeasuredWidth; //Message.ActualWidth;
                     var inset = 0;

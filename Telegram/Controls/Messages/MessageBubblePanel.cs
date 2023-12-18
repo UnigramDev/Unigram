@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using System;
-using System.Numerics;
 using Telegram.Common;
 using Telegram.Native;
 using Telegram.Navigation;
@@ -179,12 +178,12 @@ namespace Telegram.Controls.Messages
                 }
 
                 var width = text.DesiredSize.Width;
-                var rect = ContentEnd(availableWidth);
+                var bounds = ContentEnd(availableWidth);
 
-                var diff = width - rect.X;
+                var diff = width - bounds;
                 if (diff < footerWidth /*|| _placeholderVertical*/)
                 {
-                    if (rect.X + footerWidth < maxWidth /*&& !_placeholderVertical*/)
+                    if (bounds + footerWidth < maxWidth /*&& !_placeholderVertical*/)
                     {
                         marginLeft = footerWidth - diff;
                     }
@@ -198,12 +197,12 @@ namespace Telegram.Controls.Messages
             return new Size(marginLeft, marginBottom);
         }
 
-        private Vector2 ContentEnd(double availableWidth)
+        private float ContentEnd(double availableWidth)
         {
             var caption = Text;
             if (caption?.Paragraphs.Count == 0 || string.IsNullOrEmpty(caption?.Text))
             {
-                return Vector2.Zero;
+                return 0;
             }
 
             var paragraph = caption.Paragraphs[^1];
@@ -212,25 +211,27 @@ namespace Telegram.Controls.Messages
             var entities = paragraph.Entities;
 
             var block = Children[0] as FormattedTextBlock;
-            var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.UISettings.TextScaleFactor;
+            var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.TextScaleFactor;
             var width = availableWidth - block.Margin.Left - block.Margin.Right;
 
             if (width <= 0)
             {
-                return Vector2.Zero;
+                return 0;
             }
 
             try
             {
+                // TODO: this condition will be true whenever the message has more than a paragraph.
+
                 var bounds = PlaceholderImageHelper.Current.ContentEnd(text, entities, fontSize, width);
                 if (bounds.Y < block.DesiredSize.Height)
                 {
-                    return bounds;
+                    return bounds.X;
                 }
             }
             catch { }
 
-            return new Vector2(int.MaxValue, 0);
+            return int.MaxValue;
         }
     }
 }
