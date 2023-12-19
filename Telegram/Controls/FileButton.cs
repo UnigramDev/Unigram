@@ -40,12 +40,7 @@ namespace Telegram.Controls
 
         private TextBlock _label1;
         private TextBlock _label2;
-
-        private Visual _visual1;
-        private Visual _visual2;
-
         private TextBlock _label;
-        private Visual _visual;
 
         private ContainerVisual _container;
 
@@ -70,33 +65,13 @@ namespace Telegram.Controls
             _label1 = _label = GetTemplateChild("ContentPresenter1") as TextBlock;
             _label2 = GetTemplateChild("ContentPresenter2") as TextBlock;
 
-            _visual1 = _visual = ElementCompositionPreview.GetElementVisual(_label1);
-            _visual2 = ElementCompositionPreview.GetElementVisual(_label2);
-
-            _label2.Text = string.Empty;
-
-            _visual2.Opacity = 0;
-            _visual2.Scale = new Vector3();
-            _visual2.CenterPoint = new Vector3(10);
-
             _label1.Text = Glyph ?? string.Empty;
-
-            _visual1.Opacity = 1;
-            _visual1.Scale = new Vector3(1);
-            _visual1.CenterPoint = new Vector3(10);
-
-            _container = Window.Current.Compositor.CreateContainerVisual();
-            _container.Size = new Vector2(48, 48);
-            _container.CenterPoint = new Vector3(24, 24, 0);
+            _label2.Text = string.Empty;
 
             if (_state == MessageContentState.Download && !IsSmall)
             {
                 SetDownloadGlyph(false, false);
             }
-
-            ElementCompositionPreview.SetElementChildVisual(_root, _container);
-
-            base.OnApplyTemplate();
         }
 
         #region Progress
@@ -229,61 +204,52 @@ namespace Telegram.Controls
             Glyph = newValue;
             AutomationProperties.SetName(this, automation);
 
-            if (_visual == null || _label == null)
+            if (_label == null)
             {
                 return;
             }
 
-            var visualShow = _visual == _visual1 ? _visual2 : _visual1;
-            var visualHide = _visual == _visual1 ? _visual1 : _visual2;
-
-            var labelShow = _visual == _visual1 ? _label2 : _label1;
-            var labelHide = _visual == _visual1 ? _label1 : _label2;
-
             if (animate)
             {
-                var hide1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
-                hide1.InsertKeyFrame(0, new Vector3(1));
-                hide1.InsertKeyFrame(1, new Vector3(0));
+                var labelShow = _label == _label1 ? _label2 : _label1;
+                var labelHide = _label == _label1 ? _label1 : _label2;
 
-                var hide2 = _visual.Compositor.CreateScalarKeyFrameAnimation();
+                var visualShow = ElementCompositionPreview.GetElementVisual(labelShow);
+                var visualHide = ElementCompositionPreview.GetElementVisual(labelHide);
+
+                var compositor = visualShow.Compositor;
+
+                visualShow.CenterPoint = new Vector3(10);
+                visualHide.CenterPoint = new Vector3(10);
+
+                var hide1 = compositor.CreateVector3KeyFrameAnimation();
+                hide1.InsertKeyFrame(0, Vector3.One);
+                hide1.InsertKeyFrame(1, Vector3.Zero);
+
+                var hide2 = compositor.CreateScalarKeyFrameAnimation();
                 hide2.InsertKeyFrame(0, 1);
                 hide2.InsertKeyFrame(1, 0);
 
                 visualHide.StartAnimation("Scale", hide1);
                 visualHide.StartAnimation("Opacity", hide2);
-            }
-            else
-            {
-                visualHide.Scale = new Vector3(0);
-                visualHide.Opacity = 0;
-            }
 
-            labelShow.Text = newValue;
+                var show1 = compositor.CreateVector3KeyFrameAnimation();
+                show1.InsertKeyFrame(1, Vector3.One);
+                show1.InsertKeyFrame(0, Vector3.Zero);
 
-            if (animate)
-            {
-                var show1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
-                show1.InsertKeyFrame(1, new Vector3(1));
-                show1.InsertKeyFrame(0, new Vector3(0));
-
-                var show2 = _visual.Compositor.CreateScalarKeyFrameAnimation();
+                var show2 = compositor.CreateScalarKeyFrameAnimation();
                 show2.InsertKeyFrame(1, 1);
                 show2.InsertKeyFrame(0, 0);
 
                 visualShow.StartAnimation("Scale", show1);
                 visualShow.StartAnimation("Opacity", show2);
-            }
-            else
-            {
-                visualShow.Scale = new Vector3(1);
-                visualShow.Opacity = 1;
+
+                _label = labelShow;
             }
 
-            _visual = visualShow;
-            _label = labelShow;
+            _label.Text = newValue;
 
-            if (clearContainer || !animate)
+            if (_container != null && (clearContainer || !animate))
             {
                 _container.Children.RemoveAll();
             }
@@ -305,9 +271,17 @@ namespace Telegram.Controls
 
         private void SetDownloadGlyphInternal(bool downloading, bool animate)
         {
-            if (_container == null)
+            if (_root == null)
             {
                 return;
+            }
+            else if (_container == null)
+            {
+                _container = Window.Current.Compositor.CreateContainerVisual();
+                _container.Size = new Vector2(48, 48);
+                _container.CenterPoint = new Vector3(24, 24, 0);
+
+                ElementCompositionPreview.SetElementChildVisual(_root, _container);
             }
 
             var compositor = Window.Current.Compositor;
@@ -449,11 +423,11 @@ namespace Telegram.Controls
             }
             else if (animate)
             {
-                var show1 = _visual.Compositor.CreateVector3KeyFrameAnimation();
-                show1.InsertKeyFrame(1, new Vector3(1));
-                show1.InsertKeyFrame(0, new Vector3(0));
+                var show1 = compositor.CreateVector3KeyFrameAnimation();
+                show1.InsertKeyFrame(1, Vector3.One);
+                show1.InsertKeyFrame(0, Vector3.Zero);
 
-                var show2 = _visual.Compositor.CreateScalarKeyFrameAnimation();
+                var show2 = compositor.CreateScalarKeyFrameAnimation();
                 show2.InsertKeyFrame(1, 1);
                 show2.InsertKeyFrame(0, 0);
 
