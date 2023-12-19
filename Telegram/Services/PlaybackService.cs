@@ -420,9 +420,47 @@ namespace Telegram.Services
             });
         }
 
+        private void Run<T>(Action<MediaPlayer, T> action, T arg)
+        {
+            Task.Run(() =>
+            {
+                lock (_mediaPlayerLock)
+                {
+                    if (_mediaPlayer != null)
+                    {
+                        action(_mediaPlayer, arg);
+                    }
+                }
+            });
+        }
+
         public void Seek(TimeSpan span)
         {
-            Run(player => player.SeekTo(span));
+            Run(SeekImpl, span);
+        }
+
+        private void SeekImpl(MediaPlayer player, TimeSpan span)
+        {
+            // Workaround for OGG files. It's unclear why this is needed,
+            // but it's likely caused by our LibVLC build configuration,
+            // as it doesn't happen with standalone VLC.
+            if (span.TotalMilliseconds < player.Time)
+            {
+                var playing = player.IsPlaying;
+
+                player.Stop();
+                player.Play();
+
+                if (playing is false)
+                {
+                    player.SetPause(true);
+                }
+            }
+
+            player.SeekTo(span);
+
+            _positionChanged.Position = span;
+            PositionChanged?.Invoke(this, _positionChanged);
         }
 
         public void MoveNext()
@@ -717,7 +755,8 @@ namespace Telegram.Services
         {
             if (_mediaPlayer == null)
             {
-                _library = new LibVLC();
+                // Generating plugins cache requires a breakpoint in bank.c#662
+                _library = new LibVLC(); //"--quiet", "--reset-plugins-cache");
                 //_library.Log += _library_Log;
 
                 _mediaPlayer = new MediaPlayer(_library);
