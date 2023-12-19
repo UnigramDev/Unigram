@@ -165,6 +165,7 @@
               x:Name="ChatTabsLeft"
               Grid.Row="1">
             <controls:TopNavView x:Name="ChatFoldersSide"
+                                 AutomationProperties.Name="{CustomResource Filters}"
                                  ItemsSource="{x:Bind NavigationResults.View}"
                                  SelectedItem="{x:Bind ViewModel.SelectedFolder, Mode=OneWay}"
                                  SelectionChanged="ChatFolders_SelectionChanged"
@@ -620,6 +621,7 @@
                                                 x:Load="False">
                                             <Grid x:Name="ChatTabsView">
                                                 <controls:TopNavView x:Name="ChatFolders"
+                                                                     AutomationProperties.Name="{CustomResource Filters}"
                                                                      ItemsSource="{x:Bind ViewModel.Folders}"
                                                                      SelectedItem="{x:Bind ViewModel.SelectedFolder, Mode=OneWay}"
                                                                      SelectionChanged="ChatFolders_SelectionChanged"

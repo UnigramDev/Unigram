@@ -1790,6 +1790,15 @@ namespace Telegram.Views
             if (rpMasterTitlebar.SelectedIndex != 0)
             {
                 Stories.Collapse();
+
+                if (ChatFoldersSide != null)
+                {
+                    ChatFoldersSide.SelectedIndex = ViewModel.Folders.Count + rpMasterTitlebar.SelectedIndex - 1;
+                }
+            }
+            else if (ChatFoldersSide != null)
+            {
+                ViewModel.RaisePropertyChanged(nameof(ViewModel.SelectedFolder));
             }
 
             _shouldGoBackWithDetail = false;
@@ -2179,10 +2188,10 @@ namespace Telegram.Views
 
         private ChatFolderViewModel ConvertFolder(ChatFolderViewModel folder)
         {
-            ShowHideArchive(folder?.ChatList is ChatListMain or null && ViewModel.Chats.Items.ChatList is not ChatListArchive, folder.ChatList is ChatListArchive || ViewModel.Chats.Items.ChatList is ChatListArchive);
+            ShowHideArchive(folder?.ChatList is ChatListMain or null && ViewModel.Chats.Items.ChatList is not ChatListArchive, false);
             ShowHideTopTabs(!ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Folders.Count > 0 && folder.ChatList is not ChatListArchive);
             ShowHideLeftTabs(ViewModel.Chats.Settings.IsLeftTabsEnabled && ViewModel.Folders.Count > 0);
-            
+
             UpdatePaneToggleButtonVisibility();
 
             if (rpMasterTitlebar.SelectedIndex != 0)
@@ -2208,11 +2217,11 @@ namespace Telegram.Views
                 else
                 {
                     SetPivotIndex(0);
-                }
 
-                if (ViewModel.Chats.Items.ChatList is not ChatListArchive)
-                {
-                    UpdateFolder(folder);
+                    if (ViewModel.Chats.Items.ChatList is not ChatListArchive)
+                    {
+                        UpdateFolder(folder);
+                    }
                 }
 
                 if (MasterDetail.CurrentState == MasterDetailState.Minimal && MasterDetail.NavigationService.CurrentPageType != typeof(BlankPage))
