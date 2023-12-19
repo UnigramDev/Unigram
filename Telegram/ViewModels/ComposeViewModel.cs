@@ -877,13 +877,13 @@ namespace Telegram.ViewModels
                     foreach (var split in formattedText.Split(ClientService.Options.MessageTextLengthMax))
                     {
                         var input = new InputMessageText(split, disablePreview, true);
-                        response ??= await SendMessageAsync(reply, input, options);
+                        response = await SendMessageAsync(reply, input, options);
                     }
                 }
                 else if (text.Length > 0)
                 {
                     var input = new InputMessageText(formattedText, disablePreview, true);
-                    response ??= await SendMessageAsync(reply, input, options);
+                    response = await SendMessageAsync(reply, input, options);
                 }
                 else
                 {
