@@ -179,13 +179,13 @@ namespace Telegram.Controls.Messages
         private Run ServiceLabel;
         private Span MessageLabel;
         private DashPath AccentDash;
+        private MessageReplyPattern Pattern;
         private TextBlock Quote;
 
         // Lazy loaded
         private Border ThumbRoot;
         private Border ThumbEllipse;
         private ImageBrush ThumbImage;
-        private MessageReplyPattern Pattern;
 
         protected override void OnApplyTemplate()
         {
@@ -196,8 +196,8 @@ namespace Telegram.Controls.Messages
             ServiceLabel = GetTemplateChild(nameof(ServiceLabel)) as Run;
             MessageLabel = GetTemplateChild(nameof(MessageLabel)) as Span;
             AccentDash = GetTemplateChild(nameof(AccentDash)) as DashPath;
-            Quote = GetTemplateChild(nameof(Quote)) as TextBlock;
             Pattern = GetTemplateChild(nameof(Pattern)) as MessageReplyPattern;
+            Quote = GetTemplateChild(nameof(Quote)) as TextBlock;
 
             BackgroundOverlay.Margin = new Thickness(0, 0, -Padding.Right, 0);
 
@@ -287,15 +287,6 @@ namespace Telegram.Controls.Messages
                     _ => 0
                 };
 
-                if (customEmojiId != 0)
-                {
-                    Pattern.Source = new CustomEmojiFileSource(clientService, customEmojiId);
-                }
-                else
-                {
-                    Pattern.Source = null;
-                }
-
                 if (white && !_light)
                 {
                     Foreground =
@@ -335,6 +326,15 @@ namespace Telegram.Controls.Messages
                     }
 
                     Margin = new Thickness(0, 4, 0, 4);
+                }
+
+                if (customEmojiId != 0)
+                {
+                    Pattern.Source = new CustomEmojiFileSource(clientService, customEmojiId);
+                }
+                else
+                {
+                    Pattern.Source = null;
                 }
 
                 _accent = white ? null : accent;

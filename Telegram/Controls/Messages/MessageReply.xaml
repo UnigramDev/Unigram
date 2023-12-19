@@ -5,7 +5,6 @@
                     xmlns:controls="using:Telegram.Controls"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                    d:DesignHeight="36"
                     mc:Ignorable="d">
 
     <Style TargetType="local:MessageReplyPattern">
@@ -19,7 +18,7 @@
                                                 DecodeFrameType="Logical"
                                                 AutoPlay="False"
                                                 IsViewportAware="False"
-                                                ReplacementColor="{TemplateBinding Foreground}"
+                                                ReplacementColor="{TemplateBinding BorderBrush}"
                                                 Source="{TemplateBinding Source}"
                                                 HorizontalAlignment="Left"
                                                 VerticalAlignment="Top"
@@ -111,7 +110,7 @@
                                                    Grid.Column="2"
                                                    HorizontalAlignment="Right"
                                                    VerticalAlignment="Stretch"
-                                                   Foreground="{TemplateBinding BorderBrush}"
+                                                   BorderBrush="{TemplateBinding BorderBrush}"
                                                    IsTabStop="False"
                                                    Margin="0,-3,7,0" />
 

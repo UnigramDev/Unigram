@@ -2,9 +2,36 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="using:Telegram.Controls.Messages.Content"
                     xmlns:controls="using:Telegram.Controls"
+                    xmlns:messages="using:Telegram.Controls.Messages"
                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     mc:Ignorable="d">
+
+    <Style TargetType="messages:MessageReplyPattern">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="messages:MessageReplyPattern">
+                    <Grid Width="122">
+                        <Border x:Name="LayoutRoot" />
+                        <controls:AnimatedImage x:Name="Animated"
+                                                FrameSize="20,20"
+                                                DecodeFrameType="Logical"
+                                                AutoPlay="False"
+                                                IsViewportAware="False"
+                                                ReplacementColor="{TemplateBinding BorderBrush}"
+                                                Source="{TemplateBinding Source}"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Top"
+                                                Width="20"
+                                                Height="20"
+                                                Margin="9,5,0,0"
+                                                Opacity="0.1"
+                                                IsTabStop="False" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style TargetType="local:WebPageContent">
         <Setter Property="HeaderBrush"
@@ -48,6 +75,14 @@
                                    HorizontalAlignment="Left"
                                    Width="3" />
                         <controls:DashPath x:Name="AccentDash" />
+
+                        <messages:MessageReplyPattern x:Name="Pattern"
+                                                      Grid.Column="2"
+                                                      HorizontalAlignment="Right"
+                                                      VerticalAlignment="Stretch"
+                                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                                      IsTabStop="False"
+                                                      Margin="0,-3,7,0" />
 
                         <Grid Padding="8,0,8,0"
                               Grid.Column="1">

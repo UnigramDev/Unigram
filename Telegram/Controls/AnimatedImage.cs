@@ -427,8 +427,10 @@ namespace Telegram.Controls
             {
                 _clean = false;
 
-                Ready?.Invoke(this, EventArgs.Empty);
+                _shimmer = null;
                 ElementCompositionPreview.SetElementChildVisual(LayoutRoot, null);
+
+                Ready?.Invoke(this, EventArgs.Empty);
 
                 if (ReplacementColor != null)
                 {
@@ -473,7 +475,7 @@ namespace Telegram.Controls
         private bool _needsBrushUpdate;
         private Color _replacementColor;
         private long _replacementColorToken;
-        private CompositionEffectFactory _effectFactory;
+        private CompositionEffectBrush _effectBrush;
 
         // Implemented as Brush so that we can receive Color changed updates
         public Brush ReplacementColor
@@ -493,9 +495,12 @@ namespace Telegram.Controls
         private void OnReplacementColorChanged(SolidColorBrush newValue, SolidColorBrush oldValue)
         {
             oldValue?.UnregisterColorChangedCallback(ref _replacementColorToken);
-            newValue?.RegisterColorChangedCallback(OnReplacementColorChanged, ref _replacementColorToken);
 
-            ReplacementColorChanged();
+            if (IsConnected)
+            {
+                newValue?.RegisterColorChangedCallback(OnReplacementColorChanged, ref _replacementColorToken);
+                ReplacementColorChanged();
+            }
         }
 
         private void OnReplacementColorChanged(DependencyObject sender, DependencyProperty dp)
@@ -527,54 +532,56 @@ namespace Telegram.Controls
             {
                 return;
             }
-            
+
             if (ReplacementColor is not SolidColorBrush replacement || _presenter?.Presentation.Source.NeedsRepainting is not true)
             {
-                if (_effectFactory != null)
+                if (_effectBrush != null)
                 {
                     LayoutRoot.Opacity = 1;
                     ElementCompositionPreview.SetElementChildVisual(this, null);
                 }
 
-                _effectFactory = null;
+                _effectBrush = null;
                 return;
             }
 
             // This code mostly comes from MonochromaticOverlayPresenter
 
-            if (replacement.Color != _replacementColor)
+            _replacementColor = replacement.Color;
+
+            if (_effectBrush != null)
             {
-                _replacementColor = replacement.Color;
-                _effectFactory = null;
+                _effectBrush.Properties.InsertColor("Tint.Color", replacement.Color);
+                return;
             }
 
             var compositor = Window.Current.Compositor;
 
-            if (_effectFactory == null)
+            // Build an effect that takes the source image and uses the alpha channel and replaces all other channels with
+            // the ReplacementColor's RGB.
+            var colorMatrixEffect = new ColorMatrixEffect();
+            colorMatrixEffect.Source = new CompositionEffectSourceParameter("Source");
+            var colorMatrix = new Matrix5x4();
+
+            // If the ReplacementColor is not transparent then use the RGB values as the new color. Otherwise
+            // just show the target by using an Identity colorMatrix.
+            if (_replacementColor.A != 0)
             {
-                // Build an effect that takes the source image and uses the alpha channel and replaces all other channels with
-                // the ReplacementColor's RGB.
-                var colorMatrixEffect = new ColorMatrixEffect();
-                colorMatrixEffect.Source = new CompositionEffectSourceParameter("source");
-                var colorMatrix = new Matrix5x4();
-
-                // If the ReplacementColor is not transparent then use the RGB values as the new color. Otherwise
-                // just show the target by using an Identity colorMatrix.
-                if (_replacementColor.A != 0)
-                {
-                    colorMatrix.M51 = (float)(_replacementColor.R / 255.0);
-                    colorMatrix.M52 = (float)(_replacementColor.G / 255.0);
-                    colorMatrix.M53 = (float)(_replacementColor.B / 255.0);
-                    colorMatrix.M44 = 1;
-                }
-                else
-                {
-                    colorMatrix.M11 = colorMatrix.M22 = colorMatrix.M33 = colorMatrix.M44 = 1;
-                }
-                colorMatrixEffect.ColorMatrix = colorMatrix;
-
-                _effectFactory = compositor.CreateEffectFactory(colorMatrixEffect);
+                colorMatrix.M51 = colorMatrix.M52 = colorMatrix.M53 = colorMatrix.M44 = 1;
             }
+            else
+            {
+                colorMatrix.M11 = colorMatrix.M22 = colorMatrix.M33 = colorMatrix.M44 = 1;
+            }
+
+            colorMatrixEffect.ColorMatrix = colorMatrix;
+
+            var tintEffect = new TintEffect();
+            tintEffect.Name = "Tint";
+            tintEffect.Source = colorMatrixEffect;
+            tintEffect.Color = _replacementColor;
+
+            var effectFactory = compositor.CreateEffectFactory(tintEffect, new[] { "Tint.Color" });
 
             var actualSize = FrameSize.ToVector2();
             var offset = Vector2.Zero;
@@ -591,12 +598,13 @@ namespace Telegram.Controls
             surface.SourceSize = actualSize;
             surfaceBrush.Surface = surface;
             surfaceBrush.Stretch = CompositionStretch.None;
-            var compBrush = _effectFactory.CreateBrush();
-            compBrush.SetSourceParameter("source", surfaceBrush);
+
+            _effectBrush = effectFactory.CreateBrush();
+            _effectBrush.SetSourceParameter("Source", surfaceBrush);
 
             var visual = compositor.CreateSpriteVisual();
             visual.Size = actualSize;
-            visual.Brush = compBrush;
+            visual.Brush = _effectBrush;
 
             LayoutRoot.Opacity = 0;
             ElementCompositionPreview.SetElementChildVisual(this, visual);
