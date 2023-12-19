@@ -429,9 +429,7 @@ namespace Telegram.Controls
                     else
                     {
                         _currentPage.Title = hosted.Title;
-
                         _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && e.Parameter == null)));
-                        _backStack.Add(_currentPage);
                     }
 
                     var scrollingHost = hosted.FindName("ScrollingHost");
@@ -567,9 +565,7 @@ namespace Telegram.Controls
                 else
                 {
                     _currentPage.Title = hosted.Title;
-
                     _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && NavigationService.CurrentPageParam == null)));
-                    _backStack.Add(_currentPage);
                 }
             }
         }
@@ -579,7 +575,6 @@ namespace Telegram.Controls
             if (DetailFrame.Content is HostedPage hosted)
             {
                 _backStack.ReplaceWith(BuildBackStack(hosted.NavigationMode == HostedNavigationMode.Root || (hosted.NavigationMode == HostedNavigationMode.RootWhenParameterless && NavigationService.CurrentPageParam == null)));
-                _backStack.Add(_currentPage);
             }
             else if (_backStack.Count > 0)
             {
@@ -591,6 +586,7 @@ namespace Telegram.Controls
         {
             if (root)
             {
+                yield return _currentPage;
                 yield break;
             }
 
@@ -605,6 +601,8 @@ namespace Telegram.Controls
                     yield return item;
                 }
             }
+
+            yield return _currentPage;
         }
 
         private void OnViewStateChanged(object sender, EventArgs e)

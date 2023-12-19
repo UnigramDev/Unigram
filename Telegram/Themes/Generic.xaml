@@ -274,7 +274,7 @@
                                   Canvas.ZIndex="1">
                                 <muxc:BreadcrumbBar x:Name="DetailHeaderPresenter"
                                                     Visibility="Collapsed"
-                                                    Margin="28,20,0,0"
+                                                    Margin="28,20,-24,0"
                                                     VerticalAlignment="Top"
                                                     TabIndex="1">
                                     <muxc:BreadcrumbBar.ItemTemplate>
