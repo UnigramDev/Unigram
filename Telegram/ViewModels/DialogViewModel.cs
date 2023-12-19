@@ -772,7 +772,7 @@ namespace Telegram.ViewModels
             if (field != null)
             {
                 var panel = field.ItemsPanelRoot as ItemsStackPanel;
-                if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < Items.Count - 1 && Items.Count > 0)
+                if (panel != null && panel.LastVisibleIndex >= 0 && panel.LastVisibleIndex < Items.Count && Items.Count > 0)
                 {
                     id = Items[panel.LastVisibleIndex].Id;
                     index = panel.LastVisibleIndex;
@@ -3613,13 +3613,11 @@ namespace Telegram.ViewModels
 
             for (int i = 0; i < source.Count; i++)
             {
-                if (filter)
+                var message = source[i];
+
+                if (filter && message.Id != 0)
                 {
-                    if (source[i].Id != 0 && _messages.ContainsKey(source[i].Id))
-                    {
-                        continue;
-                    }
-                    else if (source[i].Id < _last)
+                    if (message.Id < _last || _messages.ContainsKey(message.Id))
                     {
                         continue;
                     }
@@ -3628,12 +3626,12 @@ namespace Telegram.ViewModels
                 _suppressOperations = i > 0;
                 _suppressNext = !_suppressOperations;
 
-                Add(source[i]);
+                Add(message);
                 empty = false;
 
                 if (i == source.Count - 1)
                 {
-                    _last = source[i].Id;
+                    _last = message.Id;
                 }
             }
 
@@ -3646,13 +3644,11 @@ namespace Telegram.ViewModels
 
             for (int i = source.Count - 1; i >= 0; i--)
             {
-                if (filter)
+                var message = source[i];
+
+                if (filter && message.Id != 0)
                 {
-                    if (source[i].Id != 0 && _messages.ContainsKey(source[i].Id))
-                    {
-                        continue;
-                    }
-                    else if (source[i].Id > _first)
+                    if (message.Id > _first || _messages.ContainsKey(message.Id))
                     {
                         continue;
                     }
@@ -3661,12 +3657,12 @@ namespace Telegram.ViewModels
                 _suppressOperations = i < source.Count - 1;
                 _suppressPrev = !_suppressOperations;
 
-                Insert(0, source[i]);
+                Insert(0, message);
                 empty = false;
 
                 if (i == 0)
                 {
-                    _first = source[i].Id;
+                    _first = message.Id;
                 }
             }
 
