@@ -1,13 +1,14 @@
-﻿<UserControl x:Class="Telegram.Controls.Stories.StoriesStrip"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:cells="using:Telegram.Controls.Cells"
-             xmlns:viewModels="using:Telegram.ViewModels.Stories"
-             mc:Ignorable="d"
-             d:DesignHeight="300"
-             d:DesignWidth="400">
+﻿<controls:UserControlEx x:Class="Telegram.Controls.Stories.StoriesStrip"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:cells="using:Telegram.Controls.Cells"
+                        xmlns:controls="using:Telegram.Controls"
+                        xmlns:viewModels="using:Telegram.ViewModels.Stories"
+                        mc:Ignorable="d"
+                        d:DesignHeight="300"
+                        d:DesignWidth="400">
 
     <Grid>
         <ListView x:Name="ScrollingHost"
@@ -51,9 +52,9 @@
                          Click="Show_Click"
                          IsTabStop="False"
                          Height="32"
-                         Margin="10,18,0,0"
+                         Margin="-22,18,0,0"
                          CornerRadius="16"
                          VerticalAlignment="Top"
                          HorizontalAlignment="Left" />
     </Grid>
-</UserControl>
+</controls:UserControlEx>

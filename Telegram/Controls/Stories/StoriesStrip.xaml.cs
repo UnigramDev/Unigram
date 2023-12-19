@@ -20,7 +20,7 @@ using Point = Windows.Foundation.Point;
 
 namespace Telegram.Controls.Stories
 {
-    public sealed partial class StoriesStrip : UserControl
+    public sealed partial class StoriesStrip : UserControlEx
     {
         public StoryListViewModel ViewModel => DataContext as StoryListViewModel;
 
@@ -28,9 +28,24 @@ namespace Telegram.Controls.Stories
         {
             InitializeComponent();
 
+            _scrollDebouncer = new EventDebouncer<NotifyCollectionChangedEventArgs>(100, handler => ViewModel.Items.CollectionChanged += new NotifyCollectionChangedEventHandler(handler));
+
             _scrollTracker = new DispatcherTimer();
             _scrollTracker.Interval = TimeSpan.FromMilliseconds(33);
             _scrollTracker.Tick += OnTick;
+
+            Connected += OnConnected;
+            Disconnected += OnDisconnected;
+        }
+
+        private void OnConnected(object sender, RoutedEventArgs e)
+        {
+            _scrollDebouncer.Invoked += OnCollectionChanged;
+        }
+
+        private void OnDisconnected(object sender, RoutedEventArgs e)
+        {
+            _scrollDebouncer.Invoked -= OnCollectionChanged;
         }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -47,7 +62,7 @@ namespace Telegram.Controls.Stories
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            _scrollDebouncer?.Invoke();
+            _scrollDebouncer.Invoke();
         }
 
         private int _first = 0;
@@ -86,7 +101,7 @@ namespace Telegram.Controls.Stories
             var count = _last - _first + 1;
             if (count > 0 && _collapsed)
             {
-                Show.Width = count * 24 - 16;
+                Show.Width = Math.Max(32, count * 24 - 16);
                 Show.Visibility = Visibility.Visible;
             }
             else
@@ -269,9 +284,6 @@ namespace Telegram.Controls.Stories
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            _scrollDebouncer = new EventDebouncer<NotifyCollectionChangedEventArgs>(100, handler => ViewModel.Items.CollectionChanged += new NotifyCollectionChangedEventHandler(handler));
-            _scrollDebouncer.Invoked += OnCollectionChanged;
-
             if (_controlledList != null && _scrollViewer == null)
             {
                 SetControlledList(_controlledList);
@@ -311,6 +323,8 @@ namespace Telegram.Controls.Stories
             }
         }
 
+        public bool TabsTopCollapsed { get; set; } = true;
+
         private ListView _controlledList;
         public ListView ControlledList
         {
@@ -324,12 +338,23 @@ namespace Telegram.Controls.Stories
             {
                 var title = 40;
                 var search = 32;
-                var padding = 4 + (ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || !TabsLeftCollapsed ? 0 : 36);
+                var padding = 4 + (TabsTopCollapsed || !TabsLeftCollapsed ? 0 : 36);
                 //var padding = 8 + (ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || !TabsLeftCollapsed ? 0 : 32);
                 //var padding = ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || !TabsLeftCollapsed ? 0 : 40;
 
                 return title + search + padding;
             }
+        }
+
+        public double GetTopPadding(bool collapsed)
+        {
+            var title = 40;
+            var search = 32;
+            var padding = 4 + (collapsed || !TabsLeftCollapsed ? 0 : 36);
+            //var padding = 8 + (ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || !TabsLeftCollapsed ? 0 : 32);
+            //var padding = ChatTabs == null || ChatTabs.Visibility == Visibility.Collapsed || !TabsLeftCollapsed ? 0 : 40;
+
+            return title + search + padding;
         }
 
         private void SetControlledList(FrameworkElement value)
@@ -404,6 +429,7 @@ namespace Telegram.Controls.Stories
             var titleVisual = ElementCompositionPreview.GetElementVisual(TitleBarrr);
             var storiesVisual = ElementCompositionPreview.GetElementVisual(this);
             var headerVisual = ElementCompositionPreview.GetElementVisual(Header);
+            var showVisual = ElementCompositionPreview.GetElementVisual(Show);
 
             storiesVisual.Clip = clip;
 
@@ -414,9 +440,11 @@ namespace Telegram.Controls.Stories
             ElementCompositionPreview.SetIsTranslationEnabled(TitleBarrr, true);
             ElementCompositionPreview.SetIsTranslationEnabled(this, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Header, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(Show, true);
 
             titleVisual.StartAnimation("Translation.X", titleVisualOffsetAnimation);
             storiesVisual.StartAnimation("Translation.X", storiesVisualOffsetAnimationX);
+            showVisual.StartAnimation("Translation.X", storiesVisualOffsetAnimationX);
             clip.StartAnimation("RightInset", storiesVisualOffsetAnimationX);
             storiesVisual.StartAnimation("Translation.Y", storiesVisualOffsetAnimation);
             headerVisual.StartAnimation("Translation.Y", headerVisualOffsetAnimation);
