@@ -114,7 +114,7 @@ namespace Telegram.ViewModels
 
             if (ShouldReplyInAnotherChat(message))
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message.Get(), null));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message, null));
             }
             else
             {
@@ -144,7 +144,7 @@ namespace Telegram.ViewModels
 
             if (ShouldReplyInAnotherChat(message))
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message.Get(), quote.ToInput()));
+                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message, quote.ToInput()));
             }
             else
             {

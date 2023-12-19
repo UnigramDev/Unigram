@@ -26,6 +26,11 @@ namespace Telegram.ViewModels.Gallery
             }
         }
 
+        public GalleryMessage(IClientService clientService, MessageWithOwner message)
+            : this(clientService, message.Get())
+        {
+        }
+
         public Message Message => _message;
 
         public long ChatId => _message.ChatId;

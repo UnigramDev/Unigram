@@ -232,9 +232,9 @@ namespace Telegram.Views.Popups
 
     public class ChooseChatsConfigurationReplyToMessage : ChooseChatsConfiguration
     {
-        public ChooseChatsConfigurationReplyToMessage(Message message, InputTextQuote quote)
+        public ChooseChatsConfigurationReplyToMessage(MessageViewModel message, InputTextQuote quote)
         {
-            Message = message;
+            Message = message.Get();
             Quote = quote;
         }
 

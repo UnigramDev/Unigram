@@ -26,7 +26,7 @@ namespace Telegram.ViewModels.Chats
 
         private readonly MvxObservableCollection<GalleryMedia> _group;
 
-        public ChatGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, long chatId, long threadId, Message selected, bool mirrored = false)
+        public ChatGalleryViewModel(IClientService clientService, IStorageService storageService, IEventAggregator aggregator, long chatId, long threadId, MessageWithOwner selected, bool mirrored = false)
             : base(clientService, storageService, aggregator)
         {
             _isMirrored = mirrored;
