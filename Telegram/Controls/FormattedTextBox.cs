@@ -1395,13 +1395,12 @@ namespace Telegram.Controls
             BeginUndoGroup();
 
             range.SetText(TextSetOptions.None, string.Empty);
-            range.Expand(TextRangeUnit.Hidden);
-            range.SetText(TextSetOptions.Unhide, $"{emoji};{customEmojiId}");
+            range.SetText(TextSetOptions.None, $"{emoji};{customEmojiId}");
             range.CharacterFormat.Hidden = FormatEffect.On;
             range.Gravity = RangeGravity.Forward;
 
             var end = Document.GetRange(range.EndPosition, range.EndPosition);
-            end.SetText(TextSetOptions.None, "\uEA4F");
+            end.SetText(TextSetOptions.Unhide, "\uEA4F");
             end.Gravity = RangeGravity.Backward;
 
             EndUndoGroup();

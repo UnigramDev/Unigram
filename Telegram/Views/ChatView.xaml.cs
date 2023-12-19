@@ -3153,6 +3153,24 @@ namespace Telegram.Views
 
                     TextField.InsertEmoji(range, sticker.Emoji, customEmoji.CustomEmojiId);
                     TextField.Document.Selection.StartPosition = range.EndPosition + 1;
+
+                    var precedingRange = TextField.Document.GetRange(index, index);
+                    var offset = index;
+
+                    // Let's see if the current emoji is preceded by the same emoji and replace all the occurences
+                    while (AutocompleteEntityFinder.TrySearch(precedingRange, out AutocompleteEntity precedingEntity, out string precedingResult, out int precedingIndex))
+                    {
+                        if (precedingEntity != entity || precedingResult != result)
+                        {
+                            break;
+                        }
+
+                        precedingRange = TextField.Document.GetRange(precedingIndex, offset);
+                        TextField.InsertEmoji(precedingRange, sticker.Emoji, customEmoji.CustomEmojiId);
+
+                        precedingRange = TextField.Document.GetRange(precedingIndex, precedingIndex);
+                        offset = precedingIndex;
+                    }
                 }
                 else
                 {
