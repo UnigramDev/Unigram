@@ -17,7 +17,8 @@
                                 IsItemClickEnabled="True"
                                 SelectionMode="None"
                                 ChoosingItemContainer="OnChoosingItemContainer"
-                                ContainerContentChanging="OnContainerContentChanging">
+                                ContainerContentChanging="OnContainerContentChanging"
+                                VerticalContentAlignment="Top">
             <ListView.Header>
                 <controls:SettingsPanel IsHeader="True">
                     <controls:SettingsHeadline Source="ms-appx:///Assets/Animations/ChatListFolders.tgs"

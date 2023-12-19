@@ -74,7 +74,7 @@ namespace Telegram.Views.Folders
         {
             if (args.ItemContainer == null)
             {
-                args.ItemContainer = new TableListViewItem();
+                args.ItemContainer = new ListViewItem();
                 args.ItemContainer.Style = sender.ItemContainerStyle;
                 args.ItemContainer.ContentTemplate = sender.ItemTemplate;
                 args.ItemContainer.ContextRequested += Item_ContextRequested;
