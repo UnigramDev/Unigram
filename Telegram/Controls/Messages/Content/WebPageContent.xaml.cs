@@ -11,6 +11,7 @@ using System.Threading;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Services;
+using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.UI;
@@ -80,6 +81,7 @@ namespace Telegram.Controls.Messages.Content
         #region InitializeComponent
 
         private DashPath AccentDash;
+        private MessageReplyPattern Pattern;
         private RichTextBlock Label;
         private RichTextBlockOverflow OverflowArea;
         private Run TitleLabel;
@@ -98,6 +100,7 @@ namespace Telegram.Controls.Messages.Content
         protected override void OnApplyTemplate()
         {
             AccentDash = GetTemplateChild(nameof(AccentDash)) as DashPath;
+            Pattern = GetTemplateChild(nameof(Pattern)) as MessageReplyPattern;
             Label = GetTemplateChild(nameof(Label)) as RichTextBlock;
             OverflowArea = GetTemplateChild(nameof(OverflowArea)) as RichTextBlockOverflow;
             TitleLabel = GetTemplateChild(nameof(TitleLabel)) as Run;
@@ -189,13 +192,20 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var outgoing = message.IsOutgoing && !message.IsChannelPost;
-            var sender = message.GetSender();
 
+            var sender = message.GetSender();
             var accent = outgoing ? null : sender switch
             {
                 User user => message.ClientService.GetAccentColor(user.AccentColorId),
                 Chat chat => message.ClientService.GetAccentColor(chat.AccentColorId),
                 _ => null
+            };
+
+            var customEmojiId = sender switch
+            {
+                User user2 => user2.BackgroundCustomEmojiId,
+                Chat chat2 => chat2.BackgroundCustomEmojiId,
+                _ => 0
             };
 
             if (accent != null)
@@ -217,6 +227,15 @@ namespace Telegram.Controls.Messages.Content
 
                 AccentDash.Stripe1 = null;
                 AccentDash.Stripe2 = null;
+            }
+
+            if (customEmojiId != 0)
+            {
+                Pattern.Source = new CustomEmojiFileSource(message.ClientService, customEmojiId);
+            }
+            else
+            {
+                Pattern.Source = null;
             }
         }
 
@@ -309,18 +328,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (webPage.Sticker != null)
             {
-                if (webPage.Sticker.Format is StickerFormatTgs)
-                {
-                    Media.Child = new AnimatedStickerContent(message);
-                }
-                else if (webPage.Sticker.Format is StickerFormatWebm)
-                {
-                    Media.Child = new VideoStickerContent(message);
-                }
-                else
-                {
-                    Media.Child = new StickerContent(message);
-                }
+                Media.Child = new AnimatedStickerContent(message);
             }
             else if (webPage.Video != null)
             {
@@ -371,7 +379,7 @@ namespace Telegram.Controls.Messages.Content
 
         private MessageText GetContent(MessageViewModel message)
         {
-            var content = message.GeneratedContent ?? message.Content;
+            var content = message?.GeneratedContent ?? message?.Content;
             if (content is MessageText text)
             {
                 return text;
@@ -422,8 +430,13 @@ namespace Telegram.Controls.Messages.Content
             ButtonLine.Visibility = Visibility.Collapsed;
         }
 
-        public void UpdateMockup(IClientService clientService, int color)
+        public void UpdateMockup(IClientService clientService, long customEmojiId, int color)
         {
+            if (Pattern != null)
+            {
+                Pattern.Source = new CustomEmojiFileSource(clientService, customEmojiId);
+            }
+
             var accent = clientService.GetAccentColor(color);
 
             HeaderBrush =
