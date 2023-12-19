@@ -2389,10 +2389,6 @@ namespace Telegram.Views
             placeholder.Width = 200;
             placeholder.Style = BootStrapper.Current.Resources["MessageSeenMenuFlyoutItemStyle"] as Style;
 
-            var final = new MenuFlyoutSubItem();
-            final.Visibility = Visibility.Collapsed;
-            flyout.Items.Insert(0, final);
-
             var viewers = await GetMessageViewersAsync(message);
             if (viewers.Count > 0 || reacted > 0)
             {
