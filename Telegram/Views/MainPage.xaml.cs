@@ -3330,7 +3330,7 @@ namespace Telegram.Views
                 return;
             }
 
-            var scrollingHost = VisualTreeHelper.GetChild(element, 0) as UIElement;
+            var scrollingHost = VisualTreeHelper.GetChild(element, 1) as UIElement;
 
             var chats = ElementCompositionPreview.GetElementVisual(element);
             var panel = ElementCompositionPreview.GetElementVisual(TopicListPresenter);
