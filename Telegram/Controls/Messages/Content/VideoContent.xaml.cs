@@ -247,6 +247,8 @@ namespace Telegram.Controls.Messages.Content
                     Subtitle.Text = video.GetDuration();
                 }
             }
+
+            Button.Opacity = Player.Source == null ? 1 : 0;
         }
 
         private void UpdateThumbnail(object target, File file)

@@ -30,14 +30,12 @@
                         <controls:FileButton x:Name="Button"
                                              Style="{StaticResource ImmersiveFileButtonStyle}" />
 
-                        <Border>
-                            <controls:AnimatedImage x:Name="Player"
-                                                    AutoPlay="False"
-                                                    FrameSize="0,0"
-                                                    IsCachingEnabled="False"
-                                                    Stretch="UniformToFill"
-                                                    IsHitTestVisible="False" />
-                        </Border>
+                        <controls:AnimatedImage x:Name="Player"
+                                                AutoPlay="False"
+                                                FrameSize="0,0"
+                                                IsCachingEnabled="False"
+                                                Stretch="UniformToFill"
+                                                IsHitTestVisible="False" />
 
                         <controls:FileButton x:Name="Overlay"
                                              Padding="8,4,8,4"

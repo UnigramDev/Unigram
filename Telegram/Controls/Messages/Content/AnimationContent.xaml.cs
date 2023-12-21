@@ -170,6 +170,8 @@ namespace Telegram.Controls.Messages.Content
                     message.Delegate.ViewVisibleMessages();
                 }
             }
+
+            Button.Opacity = Player.Source == null ? 0 : 1;
         }
 
         private void UpdateThumbnail(object target, File file)
