@@ -118,6 +118,10 @@ namespace Telegram.ViewModels
                 {
                     _translateService.Translate(message, translateTo);
                 }
+                else
+                {
+                    message.TranslatedText = null;
+                }
 
                 if (changed != (message.TranslatedText == null))
                 {
