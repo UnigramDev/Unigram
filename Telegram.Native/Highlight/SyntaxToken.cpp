@@ -133,6 +133,8 @@ namespace winrt::Telegram::Native::Highlight::implementation
     {
         Initialize();
 
+        std::lock_guard const guard(m_initializeLock);
+
         std::string hcode = winrt::to_string(coddiri);
         std::string hlanguage = winrt::to_string(language);
 
