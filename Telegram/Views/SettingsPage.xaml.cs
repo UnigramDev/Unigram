@@ -138,22 +138,22 @@ namespace Telegram.Views
 
         private void Appearance_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsAppearancePage));
+            Navigate(typeof(SettingsAppearancePage));
         }
 
         private void Sessions_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsSessionsPage));
+            Navigate(typeof(SettingsSessionsPage));
         }
 
         private void Language_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
+            Navigate(typeof(SettingsLanguagePage));
         }
 
         private void Advanced_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsAdvancedPage));
+            Navigate(typeof(SettingsAdvancedPage));
         }
 
         private void Questions_Click(object sender, RoutedEventArgs e)
