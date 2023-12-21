@@ -835,10 +835,6 @@
                                                           Height="36" />
                                 </Grid>
 
-                                <controls:UndoView x:Name="Undo"
-                                                   VerticalAlignment="Bottom"
-                                                   Grid.Row="1" />
-
                                 <Grid x:Name="ManagePanel"
                                       Background="{ThemeResource PageSubHeaderBackgroundBrush2}"
                                       VerticalAlignment="Bottom"

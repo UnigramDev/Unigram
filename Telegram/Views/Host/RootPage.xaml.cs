@@ -945,7 +945,7 @@ namespace Telegram.Views.Host
             if (SettingsService.Current.Appearance.NightMode != NightMode.Disabled)
             {
                 SettingsService.Current.Appearance.NightMode = NightMode.Disabled;
-                Window.Current.ShowToast(Strings.AutoNightModeOff, new LocalFileSource("ms-appx:///Assets/Toasts/AutoNightOff.tgs"));
+                ToastPopup.Show(Strings.AutoNightModeOff, new LocalFileSource("ms-appx:///Assets/Toasts/AutoNightOff.tgs"));
             }
 
             SettingsService.Current.Appearance.ForceNightMode = ActualTheme != ElementTheme.Dark;

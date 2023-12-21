@@ -607,11 +607,6 @@ namespace Telegram.Views
 
         #endregion
 
-        public void ShowChatsUndo(IList<Chat> chats, UndoType type, Action<IList<Chat>> undo, Action<IList<Chat>> action = null)
-        {
-            Undo.Show(chats, type, undo, action);
-        }
-
         private bool _tabsTopCollapsed = true;
         private bool _tabsLeftCollapsed = true;
 
@@ -2329,7 +2324,7 @@ namespace Telegram.Views
 
                 if (((ViewModelBase)ViewModel).Settings.HideArchivedChats)
                 {
-                    Window.Current.ShowToast(Photo, Strings.ArchiveMoveToMainMenuInfo, TeachingTipPlacementMode.BottomRight);
+                    ToastPopup.Show(Photo, Strings.ArchiveMoveToMainMenuInfo, TeachingTipPlacementMode.BottomRight);
                 }
             }
 

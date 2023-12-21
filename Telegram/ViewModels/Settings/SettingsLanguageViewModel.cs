@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -128,7 +129,7 @@ namespace Telegram.ViewModels.Settings
             }
             else
             {
-                Window.Current.ShowToast(new PremiumFeatureRealTimeChatTranslation());
+                ToastPopup.Show(new PremiumFeatureRealTimeChatTranslation());
             }
         }
 

@@ -2573,10 +2573,10 @@ namespace Telegram.ViewModels
 
                     var text = new FormattedText(message, new[] { entity });
 
-                    Window.Current.ShowToast(text, new LocalFileSource("ms-appx:///Assets/Toasts/JoinRequested.tgs"));
+                    ToastPopup.Show(text, new LocalFileSource("ms-appx:///Assets/Toasts/JoinRequested.tgs"));
+                }
                 }
             }
-        }
 
         #endregion
 

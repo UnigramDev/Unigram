@@ -75,7 +75,7 @@ namespace Telegram.Common
             dataPackage.SetText(link);
             ClipboardEx.TrySetContent(dataPackage);
 
-            Window.Current.ShowToast(publiz ? Strings.LinkCopied : Strings.LinkCopiedPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/LinkCopied.tgs"));
+            ToastPopup.Show(publiz ? Strings.LinkCopied : Strings.LinkCopiedPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/LinkCopied.tgs"));
         }
 
         public static void CopyText(string text)
@@ -84,7 +84,7 @@ namespace Telegram.Common
             dataPackage.SetText(text);
             ClipboardEx.TrySetContent(dataPackage);
 
-            Window.Current.ShowToast(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+            ToastPopup.Show(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
         }
 
         public static async void CopyText(FormattedText text, bool showToast = true)
@@ -166,7 +166,7 @@ namespace Telegram.Common
 
             if (showToast)
             {
-                Window.Current.ShowToast(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
+                ToastPopup.Show(Strings.TextCopied, new LocalFileSource("ms-appx:///Assets/Toasts/Copied.tgs"));
             }
         }
 
@@ -436,7 +436,7 @@ namespace Telegram.Common
             }
             else if (internalLink is InternalLinkTypeUnsupportedProxy)
             {
-                Window.Current.ShowToast(Strings.ProxyLinkUnsupported, new LocalFileSource("ms-appx:///Assets/Toasts/Error.tgs"));
+                ToastPopup.Show(Strings.ProxyLinkUnsupported, new LocalFileSource("ms-appx:///Assets/Toasts/Error.tgs"));
             }
             else if (internalLink is InternalLinkTypePublicChat publicChat)
             {
@@ -578,7 +578,7 @@ namespace Telegram.Common
             {
                 if (linkInfo.ChatId == 0 || !clientService.TryGetChat(linkInfo.ChatId, out Chat chat))
                 {
-                    Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                     return;
                 }
 
@@ -615,12 +615,12 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    Window.Current.ShowToast(Strings.StoryNotFound, new LocalFileSource("ms-appx:///Assets/Toasts/ExpiredStory.tgs"));
+                    ToastPopup.Show(Strings.StoryNotFound, new LocalFileSource("ms-appx:///Assets/Toasts/ExpiredStory.tgs"));
                 }
             }
             else
             {
-                Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -690,7 +690,7 @@ namespace Telegram.Common
             }
             else
             {
-                Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -977,12 +977,12 @@ namespace Telegram.Common
                 }
                 else
                 {
-                    Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                    ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                 }
             }
             else
             {
-                Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -1007,7 +1007,7 @@ namespace Telegram.Common
             }
             else
             {
-                Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -1042,7 +1042,7 @@ namespace Telegram.Common
             }
             else
             {
-                Window.Current.ShowToast(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
+                ToastPopup.Show(Strings.NoUsernameFound, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
             }
         }
 
@@ -1082,7 +1082,7 @@ namespace Telegram.Common
 
                             var text = new FormattedText(message, new[] { entity });
 
-                            Window.Current.ShowToast(text, new LocalFileSource("ms-appx:///Assets/Toasts/JoinRequested.tgs"));
+                            ToastPopup.Show(text, new LocalFileSource("ms-appx:///Assets/Toasts/JoinRequested.tgs"));
                         }
                         else if (error.MessageEquals(ErrorType.FLOOD_WAIT))
                         {

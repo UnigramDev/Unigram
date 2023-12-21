@@ -385,7 +385,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            Window.Current.ShowToast(Explanation, quiz.Explanation, TeachingTipPlacementMode.TopLeft);
+            ToastPopup.Show(Explanation, quiz.Explanation, TeachingTipPlacementMode.TopLeft);
         }
     }
 }

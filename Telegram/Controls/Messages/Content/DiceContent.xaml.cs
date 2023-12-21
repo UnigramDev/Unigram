@@ -247,7 +247,7 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var formatted = ClientEx.ParseMarkdown(text);
-            Window.Current.ShowToast(this, formatted, _message.IsOutgoing && !_message.IsChannelPost ? TeachingTipPlacementMode.TopLeft : TeachingTipPlacementMode.TopRight);
+            ToastPopup.Show(this, formatted, _message.IsOutgoing && !_message.IsChannelPost ? TeachingTipPlacementMode.TopLeft : TeachingTipPlacementMode.TopRight);
         }
 
         #region IPlaybackView

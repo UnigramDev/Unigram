@@ -498,7 +498,7 @@ namespace Telegram.ViewModels.Settings
             }
             else if (ClientService.IsPremiumAvailable)
             {
-                Window.Current.ShowToast(new PremiumFeatureVoiceRecognition());
+                ToastPopup.Show(new PremiumFeatureVoiceRecognition());
             }
         }
 

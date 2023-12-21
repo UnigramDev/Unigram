@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Stories;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -12,7 +13,6 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Telegram.Views.Chats;
 using Windows.Foundation;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Navigation;
@@ -88,7 +88,7 @@ namespace Telegram.ViewModels.Chats
                 Items.Remove(story);
             }
 
-            Window.Current.ShowToast(IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
+            ToastPopup.Show(IsPinned ? Strings.StoryRemovedFromProfile : Strings.StorySavedToProfile);
         }
 
         public void ToggleSelectedStories()
@@ -105,7 +105,7 @@ namespace Telegram.ViewModels.Chats
                 }
             }
 
-            Window.Current.ShowToast(Locale.Declension(IsPinned ? Strings.R.StoriesRemovedFromProfile : Strings.R.StoriesSavedToProfile, selection.Length));
+            ToastPopup.Show(Locale.Declension(IsPinned ? Strings.R.StoriesRemovedFromProfile : Strings.R.StoriesSavedToProfile, selection.Length));
             UnselectStories();
         }
 

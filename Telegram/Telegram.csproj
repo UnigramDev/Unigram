@@ -115,7 +115,6 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\Animations\ChatArchivedAnimation.cs" />
     <Compile Include="Assets\Icons\ActionFile.cs" />
     <Compile Include="Assets\Icons\ActionGame.cs" />
     <Compile Include="Assets\Icons\ActionSticker.cs" />
@@ -235,6 +234,7 @@
     <Compile Include="Controls\ProfileColorBadge.xaml.cs">
       <DependentUpon>ProfileColorBadge.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ToastPopup.cs" />
     <Compile Include="Services\Settings\TranslateSettings.cs" />
     <Compile Include="Td\Api\MinithumbnailId.cs" />
     <Compile Include="Controls\Cells\StoryCell.xaml.cs">
@@ -742,9 +742,6 @@
     <Compile Include="Controls\TableListView.cs" />
     <Compile Include="Controls\TextListViewItem.cs" />
     <Compile Include="Controls\TopNavView.cs" />
-    <Compile Include="Controls\UndoView.xaml.cs">
-      <DependentUpon>UndoView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\VideoRangeSlider.cs" />
     <Compile Include="Controls\RatingBar.cs" />
     <Compile Include="Controls\WalkthroughControl.cs" />
@@ -1856,6 +1853,7 @@
     <Content Include="Assets\Toasts\SavedMessages.tgs" />
     <Content Include="Assets\Toasts\Forward.tgs" />
     <Content Include="Assets\Toasts\Error.tgs" />
+    <Content Include="Assets\Toasts\Archived.tgs" />
     <None Include="Telegram_StoreKey.pfx" />
     <None Include="Telegram_TemporaryKey.pfx" />
   </ItemGroup>
@@ -2250,10 +2248,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\UnconfirmedSessionCard.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Controls\UndoView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Gallery;
 using Telegram.Converters;
 using Telegram.Services.Updates;
@@ -58,13 +59,13 @@ namespace Telegram.ViewModels
                             {
                                 if (supergroup.IsChannel)
                                 {
-                                    Window.Current.ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                                    ToastPopup.Show(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivateChannel
                                         : Strings.ReplyPrivateChannel, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                                 }
                                 else
                                 {
-                                    Window.Current.ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                                    ToastPopup.Show(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivateGroup
                                         : Strings.ReplyPrivateGroup, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                                 }
@@ -74,7 +75,7 @@ namespace Telegram.ViewModels
                         }
                         else if (replyToMessage.MessageId == 0)
                         {
-                            Window.Current.ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                            ToastPopup.Show(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivate
                                         : Strings.ReplyPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                             return;
@@ -84,7 +85,7 @@ namespace Telegram.ViewModels
                     }
                     else if (replyToMessage.Origin != null && replyToMessage.MessageId == 0)
                     {
-                        Window.Current.ShowToast(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
+                        ToastPopup.Show(replyToMessage.Quote != null && replyToMessage.Quote.IsManual
                                         ? Strings.QuotePrivate
                                         : Strings.ReplyPrivate, new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
                     }
@@ -429,7 +430,7 @@ namespace Telegram.ViewModels
 
                 var text = Extensions.ReplacePremiumLink(builder.ToString());
 
-                Window.Current.ShowToast(text, new LocalFileSource("ms-appx:///Assets/Toasts/Transcribe.tgs"));
+                ToastPopup.Show(text, new LocalFileSource("ms-appx:///Assets/Toasts/Transcribe.tgs"));
             }
         }
 

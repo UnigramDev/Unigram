@@ -5,7 +5,6 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using LinqToVisualTree;
-using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,11 +20,8 @@ using Telegram.Entities;
 using Telegram.Native;
 using Telegram.Navigation;
 using Telegram.Services;
-using Telegram.Streams;
 using Telegram.Td;
 using Telegram.Td.Api;
-using Telegram.ViewModels;
-using Telegram.Views.Host;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.AppService;
 using Windows.ApplicationModel.Calls;
@@ -374,143 +370,6 @@ namespace Telegram.Common
             }
 
             return markdown;
-        }
-
-        public static TeachingTip ShowToast(this Window app, PremiumFeature source)
-        {
-            var text = source switch
-            {
-                PremiumFeatureVoiceRecognition => Strings.PrivacyVoiceMessagesPremiumOnly.Replace(" *Telegram Premium* ", " **Telegram Premium** "),
-                PremiumFeatureAccentColor => Strings.UserColorApplyPremium,
-                PremiumFeatureRealTimeChatTranslation => Strings.ShowTranslateChatButtonLocked,
-                _ => Strings.UnlockPremium
-            };
-
-            return ShowToast(app, ReplacePremiumLink(text), new LocalFileSource("ms-appx:///Assets/Toasts/Info.tgs"));
-        }
-
-        public static TeachingTip ShowToast(this Window app, string text, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            return ShowToast(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowToast(this Window app, string text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            return ShowToast(app, null, ComposeViewModel.GetFormattedText(text), icon, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowToast(this Window app, FormattedText text, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            return ShowToast(app, null, text, null, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowToast(this Window app, FormattedText text, AnimatedImageSource icon, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            return ShowToast(app, null, text, icon, TeachingTipPlacementMode.Center, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowToast(this Window app, FrameworkElement target, string text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            return ShowToast(app, target, text, null, placement, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowToast(this Window app, FrameworkElement target, string text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            return ShowToast(app, target, ComposeViewModel.GetFormattedText(text), icon, placement, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowToast(this Window app, FrameworkElement target, FormattedText text, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            return ShowToast(app, target, text, null, placement, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowToast(this Window app, FrameworkElement target, FormattedText text, AnimatedImageSource icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            AnimatedImage animated = null;
-            if (icon != null)
-            {
-                animated = new AnimatedImage
-                {
-                    Source = icon,
-                    Width = 32,
-                    Height = 32,
-                    AutoPlay = true,
-                    LoopCount = 1,
-                    IsCachingEnabled = false,
-                    FrameSize = new Size(32, 32),
-                    DecodeFrameType = DecodePixelType.Logical,
-                    Margin = new Thickness(-4, -12, 8, -12)
-                };
-            }
-
-            return ShowToastImpl(app, target, text, animated, placement, requestedTheme, autoDismiss);
-        }
-
-        public static TeachingTip ShowToastImpl(this Window app, FrameworkElement target, FormattedText text, FrameworkElement icon, TeachingTipPlacementMode placement = TeachingTipPlacementMode.TopRight, ElementTheme requestedTheme = ElementTheme.Dark, bool? autoDismiss = null)
-        {
-            var label = new TextBlock
-            {
-                TextWrapping = TextWrapping.Wrap
-            };
-
-            TextBlockHelper.SetFormattedText(label, text);
-            Grid.SetColumn(label, 1);
-
-            var content = new Grid();
-            content.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-            content.ColumnDefinitions.Add(new ColumnDefinition());
-            content.Children.Add(label);
-
-            if (icon != null)
-            {
-                content.Children.Add(icon);
-            }
-
-            var tip = new TeachingTip
-            {
-                Target = target,
-                PreferredPlacement = placement,
-                IsLightDismissEnabled = target != null && autoDismiss is not true,
-                Content = content,
-                HorizontalContentAlignment = HorizontalAlignment.Stretch,
-                VerticalContentAlignment = VerticalAlignment.Stretch,
-                MinWidth = 0,
-            };
-
-            if (requestedTheme != ElementTheme.Default)
-            {
-                tip.RequestedTheme = requestedTheme;
-            }
-
-            if (app.Content is IToastHost host)
-            {
-                void handler(object sender, object e)
-                {
-                    host.Disconnect(tip);
-                    tip.Closed -= handler;
-                }
-
-                host.Connect(tip);
-                tip.Closed += handler;
-            }
-
-            if (target == null || autoDismiss == true)
-            {
-                var timer = new DispatcherTimer();
-                timer.Interval = TimeSpan.FromSeconds(3);
-
-                void handler(object sender, object e)
-                {
-                    timer.Tick -= handler;
-                    tip.IsOpen = false;
-                }
-
-                timer.Tick += handler;
-                timer.Start();
-            }
-
-            tip.IsOpen = true;
-            return tip;
         }
 
         public static Color ToColor(this int color, bool alpha = false)

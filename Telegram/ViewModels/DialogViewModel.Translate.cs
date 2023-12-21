@@ -2,12 +2,12 @@
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Native;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels
@@ -145,7 +145,7 @@ namespace Telegram.ViewModels
             };
 
             // TODO: add undo button
-            Window.Current.ShowToast(toast, new LocalFileSource("ms-appx:///Assets/Toasts/Translate.tgs"));
+            ToastPopup.Show(toast, new LocalFileSource("ms-appx:///Assets/Toasts/Translate.tgs"));
         }
 
         public async void ShowTranslate()
@@ -189,7 +189,7 @@ namespace Telegram.ViewModels
             var toast = string.Format(Strings.AddedToDoNotTranslate, languageName);
 
             // TODO: add undo button
-            Window.Current.ShowToast(toast, new LocalFileSource("ms-appx:///Assets/Toasts/Translate.tgs"));
+            ToastPopup.Show(toast, new LocalFileSource("ms-appx:///Assets/Toasts/Translate.tgs"));
 
             var languages = Settings.Translate.DoNot;
             languages.Add(DetectedLanguage);

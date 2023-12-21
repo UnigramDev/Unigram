@@ -2147,7 +2147,7 @@ namespace Telegram.Controls.Messages
                     }
                 }
 
-                var formatted = DialogViewModel.GetFormattedText(content);
+                var formatted = ClientEx.ParseMarkdown(content);
                 return (formatted.Text, formatted.Entities);
             }
 

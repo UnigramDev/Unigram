@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Controls.Media;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
@@ -26,7 +27,6 @@ using Telegram.Views.Folders;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Popups;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
@@ -484,7 +484,7 @@ namespace Telegram.ViewModels
             var markdown = new FormattedText(message, new[] { entity });
             var text = ClientEx.ParseMarkdown(markdown);
 
-            Window.Current.ShowToast(text, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
+            ToastPopup.Show(text, new LocalFileSource("ms-appx:///Assets/Toasts/Success.tgs"));
         }
 
         public async void DenySession()

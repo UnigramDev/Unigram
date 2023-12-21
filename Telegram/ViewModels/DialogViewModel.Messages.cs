@@ -1414,7 +1414,7 @@ namespace Telegram.ViewModels
             var temp = new FormattedText(title, new[] { entity });
             var markdown = ClientEx.ParseMarkdown(temp);
 
-            Window.Current.ShowToast(markdown, new LocalFileSource("ms-appx:///Assets/Toasts/SoundDownload.tgs"));
+            ToastPopup.Show(markdown, new LocalFileSource("ms-appx:///Assets/Toasts/SoundDownload.tgs"));
         }
 
         #endregion

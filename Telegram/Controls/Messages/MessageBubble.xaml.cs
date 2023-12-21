@@ -641,7 +641,7 @@ namespace Telegram.Controls.Messages
                 }
                 else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
                 {
-                    Window.Current.ShowToast(Strings.HidAccount);
+                    ToastPopup.Show(Strings.HidAccount);
                     //await MessagePopup.ShowAsync(Strings.HidAccount, Strings.AppName, Strings.OK);
                 }
             }
@@ -1165,7 +1165,7 @@ namespace Telegram.Controls.Messages
             }
             else if (message.ForwardInfo?.Origin is MessageOriginHiddenUser)
             {
-                Window.Current.ShowToast(Strings.HidAccount);
+                ToastPopup.Show(Strings.HidAccount);
             }
             else if (message.Content is MessageAsyncStory asyncStory)
             {
@@ -2622,7 +2622,7 @@ namespace Telegram.Controls.Messages
             }
 
             var entities = Client.Execute(new GetTextEntities(type)) as TextEntities;
-            Window.Current.ShowToast(PsaInfo, new FormattedText(type, entities.Entities), TeachingTipPlacementMode.TopLeft);
+            ToastPopup.Show(PsaInfo, new FormattedText(type, entities.Entities), TeachingTipPlacementMode.TopLeft);
         }
 
         private void Thread_Click(object sender, RoutedEventArgs e)
@@ -2648,7 +2648,7 @@ namespace Telegram.Controls.Messages
             {
                 if (message.ReplyToState == MessageReplyToState.Deleted)
                 {
-                    Window.Current.ShowToast(Strings.StoryNotFound, new LocalFileSource("ms-appx:///Assets/Toasts/ExpiredStory.tgs"));
+                    ToastPopup.Show(Strings.StoryNotFound, new LocalFileSource("ms-appx:///Assets/Toasts/ExpiredStory.tgs"));
                 }
                 else if (message.ReplyToItem is Story item)
                 {

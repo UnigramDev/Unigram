@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
@@ -18,7 +19,6 @@ using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.Views.Popups;
 using Telegram.Views.Settings;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Settings
@@ -172,7 +172,7 @@ namespace Telegram.ViewModels.Settings
                 if (Settings.Appearance.NightMode != NightMode.Disabled)
                 {
                     Settings.Appearance.NightMode = NightMode.Disabled;
-                    Window.Current.ShowToast(Strings.AutoNightModeOff, new LocalFileSource("ms-appx:///Assets/Toasts/AutoNightOff.tgs"));
+                    ToastPopup.Show(Strings.AutoNightModeOff, new LocalFileSource("ms-appx:///Assets/Toasts/AutoNightOff.tgs"));
                 }
 
                 Settings.Appearance.ForceNightMode = value;

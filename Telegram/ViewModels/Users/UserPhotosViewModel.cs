@@ -7,10 +7,10 @@
 using System;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Users
@@ -130,7 +130,7 @@ namespace Telegram.ViewModels.Users
             }
 
             ClientService.Send(new SetProfilePhoto(new InputChatPhotoPrevious(item.Id), false));
-            Window.Current.ShowToast(item.IsVideo ? Strings.MainProfileVideoSetHint : Strings.MainProfilePhotoSetHint);
+            ToastPopup.Show(item.IsVideo ? Strings.MainProfileVideoSetHint : Strings.MainProfilePhotoSetHint);
         }
     }
 }

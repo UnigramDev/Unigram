@@ -7,10 +7,10 @@
 using System.Linq;
 using Telegram.Collections;
 using Telegram.Common;
+using Telegram.Controls;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Gallery;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace Telegram.ViewModels.Chats
@@ -221,7 +221,7 @@ namespace Telegram.ViewModels.Chats
             }
 
             ClientService.Send(new SetChatPhoto(_chat.Id, new InputChatPhotoPrevious(item.Id)));
-            Window.Current.ShowToast(_chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
+            ToastPopup.Show(_chat.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel
                 ? item.IsVideo ? Strings.MainChannelProfileVideoSetHint : Strings.MainChannelProfilePhotoSetHint
                 : item.IsVideo ? Strings.MainGroupProfileVideoSetHint : Strings.MainGroupProfilePhotoSetHint);
         }
