@@ -10,164 +10,148 @@
              mc:Ignorable="d"
              Padding="0">
 
-    <Grid>
-        <ScrollViewer x:Name="ScrollingHost"
-                      Margin="0,0,0,24">
-            <Grid Margin="0,0,0,56">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid x:Name="Preview">
-                    <chats:ChatBackgroundControl x:Name="BackgroundControl" />
-                    <StackPanel Padding="0,10">
-                        <messages:MessageBubble x:Name="Message1"
-                                                HorizontalAlignment="Stretch"
-                                                Margin="8,0,12,0" />
-                    </StackPanel>
+    <StackPanel>
+        <controls:HeaderedControl>
+            <Grid x:Name="Preview">
+                <chats:ChatBackgroundControl x:Name="BackgroundControl" />
+                <StackPanel Padding="0,10">
+                    <messages:MessageBubble x:Name="Message1"
+                                            HorizontalAlignment="Left"
+                                            Margin="8,0,12,0" />
+                </StackPanel>
 
-                    <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="0,1" />
-                </Grid>
-
-                <GridView x:Name="List"
-                          Background="{ThemeResource SettingsItemBackground}"
-                          BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                          BorderThickness="0,0,0,1"
-                          SelectionMode="Single"
-                          SelectionChanged="OnSelectionChanged"
-                          ChoosingItemContainer="OnChoosingItemContainer"
-                          ContainerContentChanging="OnContainerContentChanging"
-                          ItemContainerTransitions="{x:Null}"
-                          Padding="10,10,0,10"
-                          common:FluidGridView.OrientationOnly="False"
-                          common:FluidGridView.Padding="0,0,10,0"
-                          Grid.Row="1">
-                    <common:FluidGridView.Triggers>
-                        <common:FluidGridViewTrigger RowsOrColumns="7" />
-                    </common:FluidGridView.Triggers>
-                    <GridView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid SizeChanged="NameColor_SizeChanged"
-                                  Background="Blue"
-                                  CornerRadius="20">
-                                <Polygon Points="40,0 40,40 0,40" />
-
-                                <Rectangle Width="16"
-                                           Height="16"
-                                           RadiusX="2"
-                                           RadiusY="2"
-                                           RenderTransformOrigin="0.5,0.5">
-                                    <Rectangle.RenderTransform>
-                                        <RotateTransform Angle="45" />
-                                    </Rectangle.RenderTransform>
-                                </Rectangle>
-                            </Grid>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
-                    <GridView.ItemContainerStyle>
-                        <Style TargetType="GridViewItem"
-                               BasedOn="{StaticResource DefaultGridViewItemStyle}">
-                            <Setter Property="HorizontalContentAlignment"
-                                    Value="Stretch" />
-                            <Setter Property="Margin"
-                                    Value="2" />
-                            <Setter Property="Padding"
-                                    Value="0" />
-                            <Setter Property="MinWidth"
-                                    Value="0" />
-                            <Setter Property="MinHeight"
-                                    Value="0" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="GridViewItem">
-                                        <Grid x:Name="LayoutRoot">
-                                            <VisualStateManager.VisualStateGroups>
-                                                <VisualStateGroup x:Name="CommonStates">
-                                                    <VisualState x:Name="Normal" />
-                                                    <VisualState x:Name="PointerOver">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="SelectionIndicatorBorder.Opacity"
-                                                                    Value="0.8" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
-                                                    <VisualState x:Name="Pressed">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="SelectionIndicatorBorder.Opacity"
-                                                                    Value="0.6" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
-                                                    <VisualState x:Name="Selected">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="SelectionIndicatorBorder.Opacity"
-                                                                    Value="1" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
-                                                    <VisualState x:Name="PointerOverSelected">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="SelectionIndicatorBorder.Opacity"
-                                                                    Value="1" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
-                                                    <VisualState x:Name="PressedSelected">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="SelectionIndicatorBorder.Opacity"
-                                                                    Value="1" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
-                                                </VisualStateGroup>
-                                            </VisualStateManager.VisualStateGroups>
-
-                                            <ContentPresenter />
-
-                                            <Ellipse x:Name="SelectionIndicatorBorder"
-                                                     Stroke="{ThemeResource ContentDialogBackground}"
-                                                     StrokeThickness="2"
-                                                     Margin="2"
-                                                     Opacity="0" />
-                                        </Grid>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GridView.ItemContainerStyle>
-                    <GridView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsWrapGrid Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </GridView.ItemsPanel>
-                    <GridView.Footer>
-                        <Border Width="12" />
-                    </GridView.Footer>
-                </GridView>
-
-                <Grid Grid.Row="2">
-                    <controls:BadgeButton x:Name="Badge"
-                                          Click="Badge_Click"
-                                          BorderThickness="0,0,0,1" />
-                    <controls:AnimatedImage x:Name="Animated"
-                                            FrameSize="20,20"
-                                            DecodeFrameType="Logical"
-                                            Width="20"
-                                            Height="20"
-                                            HorizontalAlignment="Right"
-                                            Margin="0,0,16,0"
-                                            IsHitTestVisible="False" />
-                </Grid>
-
-                <TextBlock x:Name="ColorHint"
-                           Style="{StaticResource InfoCaptionTextBlockStyle}"
-                           Margin="24,8,12,0"
-                           Grid.Row="3" />
+                <Border BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="0,1" />
             </Grid>
-        </ScrollViewer>
 
-        <controls:ScrollViewerScrim Background="{ThemeResource ContentDialogBackground}"
-                                    ScrollingHost="{x:Bind ScrollingHost}"
-                                    BottomInset="56"
-                                    TopInset="0"
-                                    Margin="0,0,0,24" />
-    </Grid>
+            <GridView x:Name="List"
+                      Background="{ThemeResource SettingsItemBackground}"
+                      BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                      BorderThickness="0,0,0,1"
+                      SelectionMode="Single"
+                      SelectionChanged="OnSelectionChanged"
+                      ChoosingItemContainer="OnChoosingItemContainer"
+                      ContainerContentChanging="OnContainerContentChanging"
+                      ItemContainerTransitions="{x:Null}"
+                      Padding="10,10,0,10"
+                      common:FluidGridView.OrientationOnly="False"
+                      common:FluidGridView.Padding="0,0,10,0"
+                      Grid.Row="1">
+                <common:FluidGridView.Triggers>
+                    <common:LengthGridViewTrigger ItemLength="40" />
+                </common:FluidGridView.Triggers>
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid SizeChanged="NameColor_SizeChanged"
+                              Background="Blue"
+                              CornerRadius="20">
+                            <Polygon Points="40,0 40,40 0,40" />
+
+                            <Rectangle Width="16"
+                                       Height="16"
+                                       RadiusX="2"
+                                       RadiusY="2"
+                                       RenderTransformOrigin="0.5,0.5">
+                                <Rectangle.RenderTransform>
+                                    <RotateTransform Angle="45" />
+                                </Rectangle.RenderTransform>
+                            </Rectangle>
+                        </Grid>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+                <GridView.ItemContainerStyle>
+                    <Style TargetType="GridViewItem"
+                           BasedOn="{StaticResource DefaultGridViewItemStyle}">
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Stretch" />
+                        <Setter Property="Margin"
+                                Value="2" />
+                        <Setter Property="Padding"
+                                Value="0" />
+                        <Setter Property="MinWidth"
+                                Value="0" />
+                        <Setter Property="MinHeight"
+                                Value="0" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="GridViewItem">
+                                    <Grid x:Name="LayoutRoot">
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal" />
+                                                <VisualState x:Name="PointerOver">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="SelectionIndicatorBorder.Opacity"
+                                                                Value="0.8" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="Pressed">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="SelectionIndicatorBorder.Opacity"
+                                                                Value="0.6" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="Selected">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="SelectionIndicatorBorder.Opacity"
+                                                                Value="1" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="PointerOverSelected">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="SelectionIndicatorBorder.Opacity"
+                                                                Value="1" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                                <VisualState x:Name="PressedSelected">
+                                                    <VisualState.Setters>
+                                                        <Setter Target="SelectionIndicatorBorder.Opacity"
+                                                                Value="1" />
+                                                    </VisualState.Setters>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+
+                                        <ContentPresenter />
+
+                                        <Ellipse x:Name="SelectionIndicatorBorder"
+                                                 Stroke="{ThemeResource ContentDialogBackground}"
+                                                 StrokeThickness="2"
+                                                 Margin="2"
+                                                 Opacity="0" />
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </GridView.ItemContainerStyle>
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+                <GridView.Footer>
+                    <Border Width="12" />
+                </GridView.Footer>
+            </GridView>
+
+            <Grid Grid.Row="2">
+                <controls:BadgeButton x:Name="Badge"
+                                      Click="Badge_Click" />
+                <controls:AnimatedImage x:Name="Animated"
+                                        FrameSize="20,20"
+                                        DecodeFrameType="Logical"
+                                        Width="20"
+                                        Height="20"
+                                        HorizontalAlignment="Right"
+                                        Margin="0,0,16,0"
+                                        IsHitTestVisible="False" />
+            </Grid>
+        </controls:HeaderedControl>
+
+        <TextBlock x:Name="ColorHint"
+                   Style="{StaticResource InfoCaptionTextBlockStyle}"
+                   Margin="24,8,12,0"
+                   Grid.Row="3" />
+    </StackPanel>
 </UserControl>

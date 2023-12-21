@@ -18,6 +18,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
+using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Popups
 {
@@ -212,13 +213,17 @@ namespace Telegram.Views.Popups
         {
             if (sender is Grid content && content.Children[0] is Polygon polygon)
             {
-                content.CornerRadius = new CornerRadius(e.NewSize.Width / 2);
+                var width = e.NewSize.Width;
 
+                content.Width = width;
+                content.Height = width;
+
+                content.CornerRadius = new CornerRadius(width / 2);
                 polygon.Points = new PointCollection
                 {
-                    new Windows.Foundation.Point(e.NewSize.Width, 0),
-                    new Windows.Foundation.Point(e.NewSize.Width, e.NewSize.Height),
-                    new Windows.Foundation.Point(0, e.NewSize.Height)
+                    new Point(width, 0),
+                    new Point(width, width),
+                    new Point(0, width)
                 };
             }
         }

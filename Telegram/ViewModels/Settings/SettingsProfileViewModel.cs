@@ -11,7 +11,6 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
-using Telegram.Views.Popups;
 using Telegram.Views.Settings;
 using Telegram.Views.Settings.Popups;
 using Windows.UI.Xaml.Navigation;
@@ -197,9 +196,9 @@ namespace Telegram.ViewModels.Settings
             await ShowPopupAsync(typeof(SettingsUsernamePopup));
         }
 
-        public async void ChangeProfileColor()
+        public void ChangeProfileColor()
         {
-            await ShowPopupAsync(new ChooseProfileColorPopup(ClientService, new MessageSenderUser(ClientService.Options.MyId)));
+            NavigationService.Navigate(typeof(SettingsProfileColorPage));
         }
     }
 }

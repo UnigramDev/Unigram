@@ -784,6 +784,7 @@
     <Compile Include="ViewModels\Settings\Password\SettingsPasswordIntroViewModel.cs" />
     <Compile Include="ViewModels\Settings\Privacy\SettingsPrivacyShowBioViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsPowerSavingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsProfileColorViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsProxyViewModel.cs" />
     <Compile Include="ViewModels\Stories\ActiveStoriesViewModel.cs" />
     <Compile Include="ViewModels\Stories\StoryListViewModel.cs" />
@@ -908,8 +909,8 @@
     <Compile Include="Views\Popups\ChooseProfileColorView.xaml.cs">
       <DependentUpon>ChooseProfileColorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Popups\ChooseProfileColorPopup.xaml.cs">
-      <DependentUpon>ChooseProfileColorPopup.xaml</DependentUpon>
+    <Compile Include="Views\Settings\SettingsProfileColorPage.xaml.cs">
+      <DependentUpon>SettingsProfileColorPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Popups\ChooseStatusDurationPopup.xaml.cs">
       <DependentUpon>ChooseStatusDurationPopup.xaml</DependentUpon>
@@ -2401,7 +2402,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Popups\ChooseProfileColorPopup.xaml">
+    <Page Include="Views\Settings\SettingsProfileColorPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -412,6 +412,7 @@ namespace Telegram
                 SettingsSessionsPage => TypeResolver.Current.Resolve<SettingsSessionsViewModel>(sessionId),
                 SettingsStoragePage => TypeResolver.Current.Resolve<SettingsStorageViewModel>(sessionId),
                 SettingsProfilePage settingsProfilePage => TypeResolver.Current.Resolve<SettingsProfileViewModel, IUserDelegate>(settingsProfilePage, sessionId),
+                SettingsProfileColorPage => TypeResolver.Current.Resolve<SettingsProfileColorViewModel>(sessionId),
                 SettingsQuickReactionPage => TypeResolver.Current.Resolve<SettingsQuickReactionViewModel>(sessionId),
                 SettingsPowerSavingPage => TypeResolver.Current.Resolve<SettingsPowerSavingViewModel>(sessionId),
                 SettingsPrivacyAllowCallsPage => TypeResolver.Current.Resolve<SettingsPrivacyAllowCallsViewModel>(sessionId),

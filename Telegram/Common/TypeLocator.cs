@@ -645,6 +645,11 @@ namespace Telegram.Views
                         _settingsService,
                         _eventAggregator,
                         _profilePhotoService ??= new Telegram.Services.ProfilePhotoService(_clientService));
+                case nameof(Telegram.ViewModels.Settings.SettingsProfileColorViewModel):
+                    return (T)(object)new Telegram.ViewModels.Settings.SettingsProfileColorViewModel(
+                        _clientService,
+                        _settingsService,
+                        _eventAggregator);
                 case nameof(Telegram.ViewModels.Settings.SettingsPasswordViewModel):
                     return (T)(object)new Telegram.ViewModels.Settings.SettingsPasswordViewModel(
                         _clientService,
