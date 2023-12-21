@@ -231,6 +231,9 @@
     </Compile>
     <Compile Include="Controls\FrameworkElementEx.cs" />
     <Compile Include="Controls\Media\WaveDrawable.cs" />
+    <Compile Include="Controls\Messages\Content\StickerContent.xaml.cs">
+      <DependentUpon>StickerContent.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ProfileColorBadge.xaml.cs">
       <DependentUpon>ProfileColorBadge.xaml</DependentUpon>
     </Compile>
@@ -607,9 +610,6 @@
       <DependentUpon>MessagePopup.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\Messages\Content\AlbumContent.cs" />
-    <Compile Include="Controls\Messages\Content\AnimatedStickerContent.xaml.cs">
-      <DependentUpon>AnimatedStickerContent.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\Messages\Content\AudioContent.xaml.cs">
       <DependentUpon>AudioContent.xaml</DependentUpon>
     </Compile>
@@ -2085,6 +2085,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\Messages\Content\StickerContent.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Controls\Messages\Content\UnsupportedContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -2092,10 +2096,6 @@
     <Page Include="Controls\Messages\Content\PremiumGiveawayContent.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Controls\Messages\Content\AnimatedStickerContent.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\Messages\Content\AudioContent.xaml">
       <SubType>Designer</SubType>

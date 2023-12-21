@@ -19,7 +19,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages.Content
 {
-    public sealed class AnimatedStickerContent : HyperlinkButton, IContent, IPlayerView
+    public sealed class StickerContent : HyperlinkButton, IContent, IPlayerView
     {
         private MessageViewModel _message;
         public MessageViewModel Message => _message;
@@ -29,11 +29,11 @@ namespace Telegram.Controls.Messages.Content
 
         private bool _isEmoji;
 
-        public AnimatedStickerContent(MessageViewModel message)
+        public StickerContent(MessageViewModel message)
         {
             _message = message;
 
-            DefaultStyleKey = typeof(AnimatedStickerContent);
+            DefaultStyleKey = typeof(StickerContent);
             Click += Button_Click;
         }
 

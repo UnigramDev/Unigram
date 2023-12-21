@@ -6,7 +6,7 @@
                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                     mc:Ignorable="d">
 
-    <Style TargetType="local:AnimatedStickerContent">
+    <Style TargetType="local:StickerContent">
         <Setter Property="MaxWidth"
                 Value="180" />
         <Setter Property="MaxHeight"
@@ -19,7 +19,7 @@
                 Value="Stretch" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="local:AnimatedStickerContent">
+                <ControlTemplate TargetType="local:StickerContent">
                     <controls:AspectView x:Name="LayoutRoot">
                         <controls:AnimatedImage x:Name="Player"
                                                 AutoPlay="False"

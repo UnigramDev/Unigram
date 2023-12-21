@@ -328,7 +328,7 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (webPage.Sticker != null)
             {
-                Media.Child = new AnimatedStickerContent(message);
+                Media.Child = new StickerContent(message);
             }
             else if (webPage.Video != null)
             {

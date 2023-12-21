@@ -1585,7 +1585,7 @@ namespace Telegram.Controls.Messages
                 }
             }
 
-            if (Media.Child is AnimatedStickerContent or VideoNoteContent)
+            if (Media.Child is StickerContent or VideoNoteContent)
             {
                 UpdateAttach(message);
             }
@@ -1663,7 +1663,7 @@ namespace Telegram.Controls.Messages
             }
             else if (content is MessageSticker)
             {
-                    Media.Child = new AnimatedStickerContent(message);
+                Media.Child = new StickerContent(message);
                 }
             else if (content is MessageVenue)
             {
