@@ -42,12 +42,12 @@ namespace Telegram.Streams
                         var sticker = stickers.StickersValue[0];
 
                         _file = sticker.StickerValue;
-
-                        // TODO: implement outline lazy loading
-                        //Width = sticker.Width;
-                        //Height = sticker.Height;
-                        //Outline = sticker.Outline;
+                        Width = sticker.Width;
+                        Height = sticker.Height;
+                        Outline = sticker.Outline;
                         NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
+
+                        OnOutlineChanged();
                     }
                 }
 

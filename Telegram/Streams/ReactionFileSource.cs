@@ -61,6 +61,8 @@ namespace Telegram.Streams
                         Height = sticker.Height;
                         Outline = sticker.Outline;
                         NeedsRepainting = sticker.FullType is StickerFullTypeCustomEmoji { NeedsRepainting: true };
+
+                        OnOutlineChanged();
                     }
                 }
 

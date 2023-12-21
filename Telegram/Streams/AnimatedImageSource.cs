@@ -5,6 +5,7 @@
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
 using RLottie;
+using System;
 using System.Collections.Generic;
 using Telegram.Native;
 using Telegram.Td.Api;
@@ -26,6 +27,13 @@ namespace Telegram.Streams
 
         // Needed for Outline
         public int Height { get; set; }
+
+        public event EventHandler OutlineChanged;
+
+        protected void OnOutlineChanged()
+        {
+            OutlineChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         #endregion
 
