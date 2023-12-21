@@ -20,6 +20,13 @@ using namespace Microsoft::WRL::Wrappers;
 #define _STRINGIFY_W(x) __STRINGIFY_W(x)
 #endif
 
+#define CleanupIfFailed(result, method) \
+	if(FAILED(result = method)) \
+	{ \
+		OutputDebugStringFormat(_STRINGIFY_W("HRESULT 0x%08X at " __FUNCTION__  ", line " _STRINGIFY(__LINE__) ", file " _STRINGIFY(__FILE__) "\n"), result); \
+		goto Cleanup; \
+	}
+
 #define ReturnIfFailed(result, method) \
 	if(FAILED(result = method)) \
 	{ \
@@ -39,6 +46,12 @@ using namespace Microsoft::WRL::Wrappers;
 	if(FAILED(result = method)) \
 	{ \
 		return result; \
+	}
+
+#define CleanupIfFailed(result, method) \
+	if(FAILED(result = method)) \
+	{ \
+		goto Cleanup; \
 	}
 
 #define BreakIfFailed(result, method) \

@@ -1,3 +1,5 @@
+import "SurfaceImage.idl";
+
 namespace Telegram.Native
 {
 	[default_interface]
@@ -16,6 +18,10 @@ namespace Telegram.Native
 		[default_overload]
 		void DrawThumbnailPlaceholder(String fileName, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
 		void DrawThumbnailPlaceholder(Windows.Foundation.Collections.IVector<byte> bytes, Single blurAmount, Windows.Storage.Streams.IRandomAccessStream randomAccessStream);
+		void DrawThumbnailPlaceholder(Windows.Foundation.Collections.IVector<byte> bytes, Single blurAmount, Windows.Storage.Streams.IBuffer randomAccessStream);
+
+		SurfaceImage Create(Int32 pixelWidth, Int32 pixelHeight);
+		void Invalidate(SurfaceImage imageSource, Windows.Storage.Streams.IBuffer buffer);
 
 		Windows.Foundation.Numerics.Vector2 ContentEnd(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width);
 		Windows.Foundation.Collections.IVector<Windows.Foundation.Rect> LineMetrics(String text, Windows.Foundation.Collections.IVector<Telegram.Td.Api.TextEntity> entities, Double fontSize, Double width, Boolean rtl);

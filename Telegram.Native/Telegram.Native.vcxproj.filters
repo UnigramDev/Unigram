@@ -1196,5 +1196,6 @@
     </Midl>
     <Midl Include="FileStreamFromApp.idl" />
     <Midl Include="LokiRng.idl" />
+    <Midl Include="SurfaceImage.idl" />
   </ItemGroup>
 </Project>

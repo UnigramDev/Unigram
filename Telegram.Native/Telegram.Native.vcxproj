@@ -386,6 +386,10 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="StringUtils.h" />
+    <ClInclude Include="SurfaceImage.h">
+      <DependentUpon>SurfaceImage.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="SVG\nanosvg.h" />
     <ClInclude Include="Helpers\MathHelper.h" />
     <ClInclude Include="pch.h" />
@@ -922,6 +926,10 @@
       <DependentUpon>LokiRng.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="SurfaceImage.cpp">
+      <DependentUpon>SurfaceImage.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="VideoAnimationStreamSource.cpp">
       <DependentUpon>VideoAnimationStreamSource.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1181,6 +1189,9 @@
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="ScreenshotManager.idl">
+      <SubType>Designer</SubType>
+    </Midl>
+    <Midl Include="SurfaceImage.idl">
       <SubType>Designer</SubType>
     </Midl>
     <Midl Include="TelegramWebviewProxy.idl" />

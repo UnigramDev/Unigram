@@ -15,6 +15,8 @@
 
 #include <winrt/Windows.ApplicationModel.h>
 #include <winrt/Windows.Foundation.Collections.h>
+#include <winrt/Windows.UI.Xaml.Media.Imaging.h>
+#include <windows.ui.xaml.media.dxinterop.h>
 
 #include <BufferSurface.h>
 
@@ -22,6 +24,7 @@
 
 using namespace D2D1;
 using namespace winrt::Windows::ApplicationModel;
+using namespace winrt::Windows::UI::Xaml::Media::Imaging;
 
 namespace winrt::Telegram::Native::implementation
 {
@@ -251,31 +254,60 @@ namespace winrt::Telegram::Native::implementation
         co_await winrt::resume_background();
 
         Windows::Foundation::Size size;
-        winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, dpi, size));
+        DrawSvg(path, foreground, randomAccessStream, dpi, size);
         randomAccessStream.Seek(0);
 
         co_await ui_thread;
     }
 
-    void PlaceholderImageHelper::DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size)
-    {
-        winrt::check_hresult(InternalDrawSvg(path, foreground, randomAccessStream, dpi, size));
-    }
-
-    void PlaceholderImageHelper::DrawThumbnailPlaceholder(hstring fileName, float blurAmount, IRandomAccessStream randomAccessStream)
-    {
-        winrt::check_hresult(InternalDrawThumbnailPlaceholder(fileName, blurAmount, randomAccessStream));
-    }
-
-    void PlaceholderImageHelper::DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IRandomAccessStream randomAccessStream)
-    {
-        winrt::check_hresult(InternalDrawThumbnailPlaceholder(bytes, blurAmount, randomAccessStream));
-    }
-
-    HRESULT PlaceholderImageHelper::InternalDrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size)
+    winrt::Telegram::Native::SurfaceImage PlaceholderImageHelper::Create(int32_t pixelWidth, int32_t pixelHeight)
     {
         slim_lock_guard const guard(m_criticalSection);
 
+        auto surface = winrt::make_self<SurfaceImage>(m_d2dDevice.get(), pixelWidth, pixelHeight);
+        return surface.as<winrt::Telegram::Native::SurfaceImage>();
+    }
+
+    HRESULT PlaceholderImageHelper::Invalidate(winrt::Telegram::Native::SurfaceImage imageSource, IBuffer buffer)
+    {
+        slim_lock_guard const guard(m_criticalSection);
+        HRESULT result;
+
+        com_ptr<SurfaceImage> source = imageSource.as<SurfaceImage>();
+        int32_t pixelWidth = source->m_pixelWidth;
+        int32_t pixelHeight = source->m_pixelHeight;
+        winrt::com_ptr<ISurfaceImageSourceNativeWithD2D> native = source->m_native;
+
+        D2D1_SIZE_U size{ pixelWidth, pixelHeight };
+        D2D1_RECT_U rect{ 0, 0, pixelWidth, pixelHeight };
+        RECT updateRect{ 0, 0, pixelWidth, pixelHeight };
+        POINT offset{ 0, 0 };
+
+        com_ptr<ID2D1DeviceContext> d2d1DeviceContext;
+        result = native->BeginDraw(updateRect, __uuidof(ID2D1DeviceContext), d2d1DeviceContext.put_void(), &offset);
+
+        if (result == DXGI_ERROR_DEVICE_REMOVED || result == DXGI_ERROR_DEVICE_RESET)
+        {
+            ReturnIfFailed(result, CreateDeviceResources());
+            ReturnIfFailed(result, source->CreateDeviceResources(m_d2dDevice.get()));
+            return Invalidate(imageSource, buffer);
+        }
+
+        com_ptr<ID2D1Bitmap1> bitmap;
+        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_NONE, 0 };
+        CleanupIfFailed(result, d2d1DeviceContext->CreateBitmap(size, buffer.data(), pixelWidth * 4, &properties, bitmap.put()));
+
+        d2d1DeviceContext->SetTransform(D2D1::Matrix3x2F::Translation(offset.x, offset.y));
+        d2d1DeviceContext->Clear(D2D1::ColorF(0, 0, 0, 0));
+        d2d1DeviceContext->DrawBitmap(bitmap.get());
+
+    Cleanup:
+        return native->EndDraw();
+    }
+
+    HRESULT PlaceholderImageHelper::DrawSvg(hstring path, Color foreground, IRandomAccessStream randomAccessStream, double dpi, Windows::Foundation::Size& size)
+    {
+        slim_lock_guard const guard(m_criticalSection);
         HRESULT result;
 
         auto data = winrt::to_string(path);
@@ -397,15 +429,16 @@ namespace winrt::Telegram::Native::implementation
         if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
         {
             ReturnIfFailed(result, CreateDeviceResources());
-            return InternalDrawSvg(path, foreground, randomAccessStream, dpi, size);
+            return DrawSvg(path, foreground, randomAccessStream, dpi, size);
         }
 
         return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
     }
 
-    HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(hstring fileName, float blurAmount, IRandomAccessStream randomAccessStream)
+    HRESULT PlaceholderImageHelper::DrawThumbnailPlaceholder(hstring fileName, float blurAmount, IRandomAccessStream randomAccessStream)
     {
         slim_lock_guard const guard(m_criticalSection);
+        HRESULT result;
 
         HANDLE file = CreateFile2FromAppW(fileName.data(), GENERIC_READ, FILE_SHARE_READ, OPEN_EXISTING, nullptr);
 
@@ -414,7 +447,6 @@ namespace winrt::Telegram::Native::implementation
             return ERROR_FILE_NOT_FOUND;
         }
 
-        HRESULT result;
         winrt::com_ptr<IWICBitmapDecoder> wicBitmapDecoder;
         //ReturnIfFailed(result, m_wicFactory->CreateDecoderFromFilename(fileName->Data(), nullptr, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &wicBitmapDecoder));
         ReturnIfFailed(result, m_wicFactory->CreateDecoderFromFileHandle(reinterpret_cast<ULONG_PTR>(file), nullptr, WICDecodeMetadataCacheOnLoad, wicBitmapDecoder.put()));
@@ -433,11 +465,38 @@ namespace winrt::Telegram::Native::implementation
         return result;
     }
 
-    HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IRandomAccessStream randomAccessStream)
+    HRESULT PlaceholderImageHelper::DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IRandomAccessStream randomAccessStream)
     {
         slim_lock_guard const guard(m_criticalSection);
-
         HRESULT result;
+
+        winrt::com_ptr<IStream> stream;
+        ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
+
+        auto yolo = std::vector<byte>(bytes.begin(), bytes.end());
+
+        ReturnIfFailed(result, stream->Write(yolo.data(), bytes.Size(), nullptr));
+        ReturnIfFailed(result, stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr));
+
+        winrt::com_ptr<IWICBitmapDecoder> wicBitmapDecoder;
+        ReturnIfFailed(result, m_wicFactory->CreateDecoderFromStream(stream.get(), nullptr, WICDecodeMetadataCacheOnLoad, wicBitmapDecoder.put()));
+
+        winrt::com_ptr<IWICBitmapFrameDecode> wicFrameDecode;
+        ReturnIfFailed(result, wicBitmapDecoder->GetFrame(0, wicFrameDecode.put()));
+
+        winrt::com_ptr<IWICFormatConverter> wicFormatConverter;
+        ReturnIfFailed(result, m_wicFactory->CreateFormatConverter(wicFormatConverter.put()));
+        ReturnIfFailed(result, wicFormatConverter->Initialize(wicFrameDecode.get(), GUID_WICPixelFormat32bppPBGRA, WICBitmapDitherTypeNone, nullptr, 0.f, WICBitmapPaletteTypeCustom));
+
+        ReturnIfFailed(result, InternalDrawThumbnailPlaceholder(wicFormatConverter.get(), blurAmount, randomAccessStream, true));
+
+        return result;
+    }
+    HRESULT PlaceholderImageHelper::DrawThumbnailPlaceholder(IVector<uint8_t> bytes, float blurAmount, IBuffer randomAccessStream)
+    {
+        slim_lock_guard const guard(m_criticalSection);
+        HRESULT result;
+
         winrt::com_ptr<IStream> stream;
         ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
 
@@ -461,6 +520,7 @@ namespace winrt::Telegram::Native::implementation
         return result;
     }
 
+
     HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IRandomAccessStream randomAccessStream, bool minithumbnail)
     {
         HRESULT result;
@@ -476,7 +536,7 @@ namespace winrt::Telegram::Native::implementation
         //}
 
         winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
-        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
+        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_IGNORE }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
         ReturnIfFailed(result, m_d2dContext->CreateBitmap(size, nullptr, 0, &properties, targetBitmap.put()));
 
         //winrt::com_ptr<ID2D1Effect> scaleEffect;
@@ -509,6 +569,67 @@ namespace winrt::Telegram::Native::implementation
         return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
     }
 
+    HRESULT PlaceholderImageHelper::InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IBuffer randomAccessStream, bool minithumbnail)
+    {
+        HRESULT result;
+        winrt::com_ptr<ID2D1ImageSourceFromWic> imageSource;
+        ReturnIfFailed(result, m_d2dContext->CreateImageSourceFromWic(wicBitmapSource, imageSource.put()));
+
+        D2D1_SIZE_U size;
+        ReturnIfFailed(result, wicBitmapSource->GetSize(&size.width, &size.height));
+
+        //if (minithumbnail) {
+        //	size.width *= 2;
+        //	size.height *= 2;
+        //}
+
+        winrt::com_ptr<ID2D1Bitmap1> targetBitmap;
+        D2D1_BITMAP_PROPERTIES1 properties = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_IGNORE }, 96, 96, D2D1_BITMAP_OPTIONS_TARGET, 0 };
+        ReturnIfFailed(result, m_d2dContext->CreateBitmap(size, nullptr, 0, &properties, targetBitmap.put()));
+
+        //winrt::com_ptr<ID2D1Effect> scaleEffect;
+        //ReturnIfFailed(result, m_d2dContext->CreateEffect(CLSID_D2D1Scale, scaleEffect.put()));
+        //ReturnIfFailed(result, scaleEffect->SetValue(D2D1_SCALE_PROP_SCALE, D2D1_VECTOR_2F({ 2, 2 })));
+        //ReturnIfFailed(result, scaleEffect->SetValue(D2D1_SCALE_PROP_INTERPOLATION_MODE, D2D1_SCALE_INTERPOLATION_MODE_NEAREST_NEIGHBOR));
+        //scaleEffect->SetInput(0, imageSource.get());
+
+        //winrt::com_ptr<ID2D1Image> test;
+        //scaleEffect->SetInput(0, imageSource.get());
+        //scaleEffect->GetOutput(test.put());
+
+        ReturnIfFailed(result, m_gaussianBlurEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, blurAmount));
+
+        //m_gaussianBlurEffect->SetInput(0, test.get());
+        m_gaussianBlurEffect->SetInput(0, imageSource.get());
+
+        m_d2dContext->SetTarget(targetBitmap.get());
+        m_d2dContext->BeginDraw();
+        //m_d2dContext->SetTransform(D2D1::Matrix3x2F::Identity());
+        m_d2dContext->Clear(D2D1::ColorF(ColorF::Black, 0.0f));
+        m_d2dContext->DrawImage(m_gaussianBlurEffect.get());
+
+        if ((result = m_d2dContext->EndDraw()) == D2DERR_RECREATE_TARGET)
+        {
+            ReturnIfFailed(result, CreateDeviceResources());
+            return InternalDrawThumbnailPlaceholder(wicBitmapSource, blurAmount, randomAccessStream, minithumbnail);
+        }
+
+        winrt::com_ptr<ID2D1Bitmap1> readBitmap;
+        D2D1_BITMAP_PROPERTIES1 properties2 = { { DXGI_FORMAT_R8G8B8A8_UNORM, D2D1_ALPHA_MODE_IGNORE }, 96, 96, D2D1_BITMAP_OPTIONS_CPU_READ | D2D1_BITMAP_OPTIONS_CANNOT_DRAW, 0 };
+        ReturnIfFailed(result, m_d2dContext->CreateBitmap(size, nullptr, 0, &properties2, readBitmap.put()));
+
+        D2D1_POINT_2U origin{ 0, 0 };
+        D2D1_RECT_U source{ 0, 0, size.width, size.height };
+        D2D1_MAPPED_RECT map;
+        ReturnIfFailed(result, readBitmap->CopyFromBitmap(&origin, targetBitmap.get(), &source));
+        ReturnIfFailed(result, readBitmap->Map(D2D1_MAP_OPTIONS_READ, &map));
+
+        memcpy(randomAccessStream.data(), map.bits, randomAccessStream.Length());
+
+        return readBitmap->Unmap();
+        //return SaveImageToStream(targetBitmap.get(), GUID_ContainerFormatPng, randomAccessStream);
+    }
+
     PlaceholderImageHelper::PlaceholderImageHelper()
     {
         winrt::check_hresult(CreateDeviceIndependentResources());
@@ -519,7 +640,7 @@ namespace winrt::Telegram::Native::implementation
     {
         HRESULT result;
         D2D1_FACTORY_OPTIONS options = {};
-        ReturnIfFailed(result, D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, __uuidof(ID2D1Factory1), &options, m_d2dFactory.put_void()));
+        ReturnIfFailed(result, D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, __uuidof(ID2D1Factory1), &options, m_d2dFactory.put_void()));
         ReturnIfFailed(result, CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&m_wicFactory)));
         ReturnIfFailed(result, DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)m_dwriteFactory.put()));
 
@@ -675,6 +796,9 @@ namespace winrt::Telegram::Native::implementation
 
     IVector<Windows::Foundation::Rect> PlaceholderImageHelper::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl)
     {
+        slim_lock_guard const guard(m_criticalSection);
+        HRESULT result;
+
         winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
             L"Segoe UI Emoji",						// font family name
             m_fontCollection.get(),		            // system font collection
@@ -738,14 +862,14 @@ namespace winrt::Telegram::Native::implementation
         UINT32 maxHitTestMetricsCount = metrics.lineCount * metrics.maxBidiReorderingDepth;
         UINT32 actualTestsCount;
         DWRITE_HIT_TEST_METRICS* ranges = new DWRITE_HIT_TEST_METRICS[maxHitTestMetricsCount];
-        HRESULT result = textLayout->HitTestTextRange(offset, length, 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount);
+        result = textLayout->HitTestTextRange(offset, length, 0, 0, ranges, maxHitTestMetricsCount, &actualTestsCount);
 
         if (result == E_NOT_SUFFICIENT_BUFFER)
         {
             delete[] ranges;
 
-            DWRITE_HIT_TEST_METRICS* ranges = new DWRITE_HIT_TEST_METRICS[actualTestsCount];
-            HRESULT result = textLayout->HitTestTextRange(offset, length, 0, 0, ranges, actualTestsCount, &actualTestsCount);
+            ranges = new DWRITE_HIT_TEST_METRICS[actualTestsCount];
+            result = textLayout->HitTestTextRange(offset, length, 0, 0, ranges, actualTestsCount, &actualTestsCount);
         }
 
         winrt::check_hresult(result);
@@ -820,15 +944,16 @@ namespace winrt::Telegram::Native::implementation
     //	return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(rects));
     //}
 
-    void PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept
+    HRESULT PlaceholderImageHelper::WriteBytes(IVector<byte> hash, IRandomAccessStream randomAccessStream) noexcept
     {
+        HRESULT result;
         winrt::com_ptr<IStream> stream;
-        winrt::check_hresult(CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
+        ReturnIfFailed(result, CreateStreamOverRandomAccessStream(winrt::get_unknown(randomAccessStream), IID_PPV_ARGS(&stream)));
 
         auto yolo = std::vector<byte>(hash.begin(), hash.end());
 
-        winrt::check_hresult(stream->Write(yolo.data(), hash.Size(), nullptr));
-        winrt::check_hresult(stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr));
+        ReturnIfFailed(result, stream->Write(yolo.data(), hash.Size(), nullptr));
+        ReturnIfFailed(result, stream->Seek({ 0 }, STREAM_SEEK_SET, nullptr));
     }
 
     HRESULT PlaceholderImageHelper::Encode(IBuffer source, IRandomAccessStream destination, int32_t width, int32_t height)
