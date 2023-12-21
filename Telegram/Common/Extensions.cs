@@ -169,7 +169,7 @@ namespace Telegram.Common
 
         public static Version ToVersion(this PackageVersion version)
         {
-            return new Version(version.Major, version.Minor, version.Build, Constants.BuildNumber);
+            return new Version(version.Major, version.Minor, version.Build, version.Revision);
         }
 
         public static void RegisterColorChangedCallback(this Brush brush, DependencyPropertyChangedCallback callback, ref long token)

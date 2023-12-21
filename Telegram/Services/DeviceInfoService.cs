@@ -82,10 +82,10 @@ namespace Telegram.Services
 
                 if (version.Build > 0)
                 {
-                    return string.Format("{0}.{1}.{2} ({3})", version.Major, version.Minor, version.Build, Constants.BuildNumber);
+                    return string.Format("{0}.{1}.{2} ({3})", version.Major, version.Minor, version.Build, version.Revision);
                 }
 
-                return string.Format("{0}.{1} ({2})", version.Major, version.Minor, Constants.BuildNumber);
+                return string.Format("{0}.{1} ({2})", version.Major, version.Minor, version.Revision);
             }
         }
 

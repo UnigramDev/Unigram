@@ -60,6 +60,7 @@ namespace Telegram.Services
         {
             if (ApiInfo.IsStoreRelease || _disabled || !_updateLock.Wait(0))
             {
+                Logger.Info("Can't aquire semaphore");
                 return false;
             }
 
@@ -71,6 +72,8 @@ namespace Telegram.Services
                 var current = Package.Current.Id.Version.ToVersion();
                 var versions = new List<(Version Version, StorageFile File)>();
 
+                Logger.Info($"Found {files.Count} files");
+
                 foreach (var file in files)
                 {
                     var split = System.IO.Path.GetFileNameWithoutExtension(file.Name);
@@ -80,6 +83,8 @@ namespace Telegram.Services
                     }
                 }
 
+                Logger.Info($"Found {versions.Count} versions");
+
                 var latest = versions.Max(x => x.Version);
 
                 foreach (var update in versions)
@@ -87,9 +92,13 @@ namespace Telegram.Services
                     // If this isn't the most recent version and it isn't in use, just delete it
                     if (update.Version <= current || update.Version < latest)
                     {
+                        Logger.Info($"{update.Version} is outdated, deleting");
+
                         await update.File.DeleteAsync();
                         continue;
                     }
+
+                    Logger.Info($"Dispatching for version {update.Version}");
 
                     // As soon as we find a valid update, we launch it
                     await context.DispatchAsync(async () =>
@@ -98,6 +107,8 @@ namespace Telegram.Services
                         var result = checkAvailability
                             ? await Launcher.QueryFileSupportAsync(update.File)
                             : LaunchQuerySupportStatus.Available;
+
+                        Logger.Info($"QueryFileSupportAsync: {result}");
 
                         if (result == LaunchQuerySupportStatus.Available)
                         {
@@ -125,6 +136,7 @@ namespace Telegram.Services
         {
             if (ApiInfo.IsStoreRelease || _disabled || !_updateLock.Wait(0))
             {
+                Logger.Info("Can't acquire lock");
                 return;
             }
 
