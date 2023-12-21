@@ -17,7 +17,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels;
 using Windows.Foundation;
 using Windows.System;
-using Windows.UI.Xaml.Automation;
+using Windows.UI.Xaml.Automation.Peers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
@@ -38,6 +38,28 @@ namespace Telegram.Controls.Messages
             DefaultStyleKey = typeof(ReactionButton);
 
             Click += OnClick;
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ReactionButtonAutomationPeer(this);
+        }
+
+        public string GetAutomationName()
+        {
+            if (_interaction is MessageReaction interaction)
+            {
+                if (interaction.Type is ReactionTypeEmoji emoji)
+                {
+                    return Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, emoji.Emoji);
+                }
+                else if (_sticker is Sticker sticker)
+                {
+                    return Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, sticker.Emoji);
+                }
+            }
+
+            return null;
         }
 
         private MessageViewModel _message;
@@ -144,7 +166,6 @@ namespace Telegram.Controls.Messages
         private void UpdateInteraction(MessageViewModel message, MessageReaction interaction, bool recycled)
         {
             IsChecked = interaction.IsChosen;
-            AutomationProperties.SetName(this, Locale.Declension(Strings.R.AccDescrNumberOfPeopleReactions, interaction.TotalCount, interaction.Type));
 
             if (interaction.TotalCount > interaction.RecentSenderIds.Count)
             {
@@ -449,6 +470,22 @@ namespace Telegram.Controls.Messages
 
             popup.IsOpen = false;
             popup.Child = null;
+        }
+    }
+
+    public class ReactionButtonAutomationPeer : ToggleButtonAutomationPeer
+    {
+        private readonly ReactionButton _owner;
+
+        public ReactionButtonAutomationPeer(ReactionButton owner)
+            : base(owner)
+        {
+            _owner = owner;
+        }
+
+        protected override string GetNameCore()
+        {
+            return _owner.GetAutomationName() ?? base.GetNameCore();
         }
     }
 }

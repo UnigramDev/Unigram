@@ -4921,6 +4921,12 @@ namespace Telegram.Views
 
         protected override string GetNameCore()
         {
+            // GetFullDescriptionCore doesn't seem to work :(
+            //    return Strings.AccDescrChatInfo;
+            //}
+
+            //protected override string GetFullDescriptionCore()
+            //{
             var view = _owner.Ancestors<ChatView>().FirstOrDefault();
             if (view != null)
             {

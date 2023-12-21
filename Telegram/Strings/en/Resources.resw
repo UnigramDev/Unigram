@@ -178,6 +178,9 @@
   <data name="AccDescrMoreOptions" xml:space="preserve">
     <value>More options</value>
   </data>
+  <data name="AccDescrMoreReactions" xml:space="preserve">
+    <value>More reactions</value>
+  </data>
   <data name="AccDescrMsgNotPlayed" xml:space="preserve">
     <value>Not played</value>
   </data>

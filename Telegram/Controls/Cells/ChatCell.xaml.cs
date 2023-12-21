@@ -407,6 +407,12 @@ namespace Telegram.Controls.Cells
                         builder.Append(Strings.AccDescrVerified);
                         builder.Append(", ");
                     }
+
+                    if (user.Type is UserTypeRegular && user.Status is UserStatusOnline && user.Id != clientService.Options.MyId)
+                    {
+                        builder.Append(Strings.Online);
+                        builder.Append(", ");
+                    }
                 }
             }
             else
