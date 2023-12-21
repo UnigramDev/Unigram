@@ -22,13 +22,20 @@ using Windows.UI.Xaml.Navigation;
 
 namespace Telegram.ViewModels.Folders
 {
+    public enum FoldersPlacement
+    {
+        Top,
+        Left
+    }
+
     public class FoldersViewModel : ViewModelBase, IHandle
     {
         public FoldersViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(clientService, settingsService, aggregator)
         {
-            UseLeftLayout = settingsService.IsLeftTabsEnabled;
-            UseTopLayout = !settingsService.IsLeftTabsEnabled;
+            _placement = Settings.IsLeftTabsEnabled
+                ? FoldersPlacement.Left
+                : FoldersPlacement.Top;
 
             Items = new MvxObservableCollection<ChatFolderInfo>();
             Recommended = new MvxObservableCollection<RecommendedChatFolder>();
@@ -70,33 +77,57 @@ namespace Telegram.ViewModels.Folders
             {
                 Recommended.Clear();
             }
+        }
 
+        public override void Subscribe()
+        {
             Aggregator.Subscribe<UpdateChatFolders>(this, Handle);
         }
 
-        private bool _useLeftLayout;
-        public bool UseLeftLayout
+        private FoldersPlacement _placement;
+        public FoldersPlacement Placement
         {
-            get => _useLeftLayout;
-            set
+            get => _placement;
+            set => SetPlacement(value);
+        }
+
+        private void SetPlacement(FoldersPlacement value, bool update = true)
+        {
+            if (Set(ref _placement, value, nameof(Placement)))
             {
-                if (_useLeftLayout != value)
+                RaisePropertyChanged(nameof(UseTopLayout));
+                RaisePropertyChanged(nameof(UseLeftLayout));
+
+                if (update)
                 {
-                    _useLeftLayout = value;
-                    Settings.IsLeftTabsEnabled = value;
-
-                    RaisePropertyChanged(nameof(UseLeftLayout));
-
+                    Settings.IsLeftTabsEnabled = value == FoldersPlacement.Left;
                     Aggregator.Publish(new UpdateChatFoldersLayout());
                 }
             }
         }
 
-        private bool _useTopLayout;
         public bool UseTopLayout
         {
-            get => _useTopLayout;
-            set => Set(ref _useTopLayout, value);
+            get => _placement == FoldersPlacement.Top;
+            set
+            {
+                if (value)
+                {
+                    SetPlacement(FoldersPlacement.Top);
+                }
+            }
+        }
+
+        public bool UseLeftLayout
+        {
+            get => _placement == FoldersPlacement.Left;
+            set
+            {
+                if (value)
+                {
+                    SetPlacement(FoldersPlacement.Left);
+                }
+            }
         }
 
         public void Handle(UpdateChatFolders update)
