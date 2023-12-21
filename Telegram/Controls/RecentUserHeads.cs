@@ -303,16 +303,12 @@ namespace Telegram.Controls
             var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
             batch.Completed += (s, args) =>
             {
-                lock (_toBeRemoved)
+                foreach (var element in _toBeRemoved)
                 {
-                    foreach (var element in _toBeRemoved)
-                    {
-                        _layoutRoot.Children.Remove(element);
-                    }
-
-                    _toBeRemoved.Clear();
+                    _layoutRoot.Children.Remove(element);
                 }
 
+                _toBeRemoved.Clear();
                 InvalidateMeasure();
             };
 

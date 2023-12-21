@@ -243,7 +243,6 @@ namespace Telegram
             }
 
             info += "\n";
-            info += Environment.StackTrace + "\n\n";
 
             var dump = Logger.Dump();
             var payload = info + dump;

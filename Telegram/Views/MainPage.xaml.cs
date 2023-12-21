@@ -1675,7 +1675,18 @@ namespace Telegram.Views
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            UpdateManage();
+            if (ViewModel.Chats.SelectedItems.Count > 0)
+            {
+                var muted = ViewModel.Chats.SelectedItems.Any(x => ViewModel.ClientService.Notifications.GetMutedFor(x) > 0);
+                ManageMute.Glyph = muted ? Icons.Alert : Icons.AlertOff;
+                Automation.SetToolTip(ManageMute, muted ? Strings.UnmuteNotifications : Strings.MuteNotifications);
+
+                var unread = ViewModel.Chats.SelectedItems.Any(x => x.IsUnread());
+                ManageMark.Icon = MenuFlyoutHelper.CreateIcon(unread ? Icons.MarkAsRead : Icons.MarkAsUnread);
+                ManageMark.Text = unread ? Strings.MarkAsRead : Strings.MarkAsUnread;
+
+                ManageClear.IsEnabled = ViewModel.Chats.SelectedItems.All(x => DialogClear_Loaded(x));
+            }
         }
 
         private void InitializeSearch()
@@ -2636,22 +2647,6 @@ namespace Telegram.Views
                         ChatsList.SelectedItems.Remove(item);
                     }
                 }
-            }
-        }
-
-        private void UpdateManage()
-        {
-            if (ViewModel.Chats.SelectedItems.Count > 0)
-            {
-                var muted = ViewModel.Chats.SelectedItems.Any(x => ViewModel.ClientService.Notifications.GetMutedFor(x) > 0);
-                ManageMute.Glyph = muted ? Icons.Alert : Icons.AlertOff;
-                Automation.SetToolTip(ManageMute, muted ? Strings.UnmuteNotifications : Strings.MuteNotifications);
-
-                var unread = ViewModel.Chats.SelectedItems.Any(x => x.IsUnread());
-                ManageMark.Icon = MenuFlyoutHelper.CreateIcon(unread ? Icons.MarkAsRead : Icons.MarkAsUnread);
-                ManageMark.Text = unread ? Strings.MarkAsRead : Strings.MarkAsUnread;
-
-                ManageClear.IsEnabled = ViewModel.Chats.SelectedItems.All(x => DialogClear_Loaded(x));
             }
         }
 

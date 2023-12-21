@@ -367,6 +367,8 @@
     </Style>
 
     <Style TargetType="local:ActiveStoriesSegments">
+        <Setter Property="IsEnabled"
+                Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ActiveStoriesSegments">
@@ -1219,6 +1221,12 @@
     </Style>
 
     <Style TargetType="chats:ChatBackgroundPresenter">
+        <Setter Property="Background"
+                Value="Transparent" />
+        <Setter Property="BorderBrush"
+                Value="Transparent" />
+        <Setter Property="Foreground"
+                Value="Transparent" />
         <Setter Property="IsTabStop"
                 Value="False" />
         <Setter Property="Template">

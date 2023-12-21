@@ -530,6 +530,7 @@ namespace Telegram.Controls
                                 hyperlink.Foreground = HyperlinkForeground ?? GetBrush("MessageForegroundLinkBrush");
                                 hyperlink.UnderlineStyle = HyperlinkStyle;
                                 hyperlink.FontWeight = HyperlinkFontWeight;
+                                hyperlink.UnderlineStyle = UnderlineStyle.None;
 
                                 var temp = direct.GetXamlDirectObject(hyperlink);
 

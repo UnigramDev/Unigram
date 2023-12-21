@@ -77,6 +77,7 @@ namespace Telegram.Common
                 if (_invoked == null)
                 {
                     _unsubscription?.Invoke(OnInvoked);
+                    Cancel();
                 }
             }
         }

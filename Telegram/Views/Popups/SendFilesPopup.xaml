@@ -56,9 +56,13 @@
                       x:DataType="entities:StorageMedia">
             <controls:AspectView MinHeight="48"
                                  MaxHeight="294">
-                <Image x:Name="Preview"
-                       Source="{x:Bind Preview, Mode=OneWay}"
-                       Stretch="UniformToFill" />
+                <Grid.Background>
+                    <ImageBrush x:Name="Preview"
+                                ImageSource="{x:Bind Preview, Mode=OneWay}"
+                                Stretch="UniformToFill"
+                                AlignmentX="Center"
+                                AlignmentY="Center"/>
+                </Grid.Background>
 
                 <Border x:Name="Overlay"
                         Loaded="Grid_Loaded"

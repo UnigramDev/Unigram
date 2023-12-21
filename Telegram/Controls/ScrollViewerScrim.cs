@@ -120,11 +120,11 @@ namespace Telegram.Controls
             var bottom = ElementCompositionPreview.GetElementVisual(_bottomScrim);
             var props = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(scrollViewer);
 
-            var topAnimation = Window.Current.Compositor.CreateExpressionAnimation("Max(Min(-(Scroll.Translation.Y / Props.TopInset), 1), 0)");
+            var topAnimation = Window.Current.Compositor.CreateExpressionAnimation("Clamp(-(Scroll.Translation.Y / Props.TopInset), 0, 1)");
             topAnimation.SetReferenceParameter("Scroll", props);
             topAnimation.SetReferenceParameter("Props", _propertySet);
 
-            var bottomAnimation = Window.Current.Compositor.CreateExpressionAnimation("Max(Min((Props.ScrollableHeight + Scroll.Translation.Y) / Props.BottomInset, 1), 0)");
+            var bottomAnimation = Window.Current.Compositor.CreateExpressionAnimation("Clamp((Props.ScrollableHeight + Scroll.Translation.Y) / Props.BottomInset, 0, 1)");
             bottomAnimation.SetReferenceParameter("Scroll", props);
             bottomAnimation.SetReferenceParameter("Props", _propertySet);
 

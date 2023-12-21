@@ -1012,9 +1012,9 @@ namespace Telegram.Controls.Stories
 
             var photo = ElementCompositionPreview.GetElementVisual(Photo);
             var layout = ElementCompositionPreview.GetElementVisual(LayoutRoot);
-            var caption = ElementCompositionPreview.GetElementVisual(Caption.Parent as UIElement);
+            var caption = ElementCompositionPreview.GetElementVisual(CaptionPanel);
             var visual = ElementCompositionPreview.GetElementVisual(Content);
-            ElementCompositionPreview.SetIsTranslationEnabled(Caption.Parent as UIElement, true);
+            ElementCompositionPreview.SetIsTranslationEnabled(CaptionPanel, true);
             ElementCompositionPreview.SetIsTranslationEnabled(Content, true);
 
             if (ciccio == StoryOpenOrigin.ProfilePhoto)

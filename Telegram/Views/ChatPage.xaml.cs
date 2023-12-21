@@ -18,7 +18,9 @@ namespace Telegram.Views
         public ChatPage()
         {
             InitializeComponent();
-            NavigationCacheMode = NavigationCacheMode.Required;
+            NavigationCacheMode = Constants.DEBUG
+                ? NavigationCacheMode.Disabled
+                : NavigationCacheMode.Required;
         }
 
         public override string GetTitle()

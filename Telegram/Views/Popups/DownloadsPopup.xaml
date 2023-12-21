@@ -22,7 +22,7 @@
             <TextBlock Text="{CustomResource DownloadsTabs}"
                        TextTrimming="CharacterEllipsis" />
             <controls:MoreButton Click="Menu_ContextRequested"
-                                 Margin="0,-8,-12,-24"
+                                 Margin="0,-8,12,-24"
                                  Grid.Column="1" />
         </Grid>
     </ContentDialog.Title>

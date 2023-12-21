@@ -11,8 +11,8 @@
                        SecondaryButtonText="Button2"
                        PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
                        SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-                       Loaded="OnLoaded"
-                       Unloaded="OnUnloaded">
+                       Opened="OnOpened"
+                       Closed="OnClosed">
 
     <Grid Background="{ThemeResource PageBackgroundDarkBrush}"
           Padding="0,0,0,16">

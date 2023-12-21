@@ -34,12 +34,12 @@ namespace Telegram.Views.Popups
 
         public Shortcut Shortcut { get; private set; }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        private void OnOpened(ContentDialog sender, ContentDialogOpenedEventArgs args)
         {
             WindowContext.Current.InputListener.KeyDown += OnAcceleratorKeyActivated;
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
+        private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
             WindowContext.Current.InputListener.KeyDown -= OnAcceleratorKeyActivated;
         }
