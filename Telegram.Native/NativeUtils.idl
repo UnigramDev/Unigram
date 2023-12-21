@@ -31,6 +31,7 @@ namespace Telegram.Native
         static String GetKeyboardCulture();
 
         static String FormatTime(Int32 value);
+        static String FormatDate(Int32 value);
 
         [default_overload]
         static Boolean IsFileReadable(String path);

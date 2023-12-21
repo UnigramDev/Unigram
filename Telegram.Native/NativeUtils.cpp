@@ -282,25 +282,73 @@ namespace winrt::Telegram::Native::implementation
             if (FileTimeToSystemTime(&localFileTime, &systemTime))
             {
                 TCHAR timeString[128];
-                int result = GetTimeFormatEx(LOCALE_NAME_USER_DEFAULT, TIME_NOSECONDS, &systemTime, nullptr, timeString, 128);
-                if (result == 0)
+                if (GetTimeFormatEx(LOCALE_NAME_USER_DEFAULT, TIME_NOSECONDS, &systemTime, nullptr, timeString, 128))
                 {
-                    switch (GetLastError())
-                    {
-                    case ERROR_INSUFFICIENT_BUFFER:
-                        return L"E_INSUFFICIENT_BUFFER";
-                    case ERROR_INVALID_FLAGS:
-                        return L"E_INVALID_FLAGS";
-                    case ERROR_INVALID_PARAMETER:
-                        return L"E_INVALID_PARAMETER";
-                    case ERROR_OUTOFMEMORY:
-                        return L"E_OUTOFMEMORY";
-                    default:
-                        return L"E_UNKNOWN";
-                    }
+                    return hstring(timeString);
                 }
 
-                return hstring(timeString);
+                switch (GetLastError())
+                {
+                case ERROR_INSUFFICIENT_BUFFER:
+                    return L"E_INSUFFICIENT_BUFFER";
+                case ERROR_INVALID_FLAGS:
+                    return L"E_INVALID_FLAGS";
+                case ERROR_INVALID_PARAMETER:
+                    return L"E_INVALID_PARAMETER";
+                case ERROR_OUTOFMEMORY:
+                    return L"E_OUTOFMEMORY";
+                default:
+                    return L"E_UNKNOWN";
+                }
+            }
+        }
+
+        return hstring();
+    }
+
+    hstring NativeUtils::FormatDate(int value)
+    {
+        // TODO: DATE_MONTHDAY doesn't seem to work, so we're not using this method.
+
+        FILETIME fileTime;
+        ULARGE_INTEGER uli;
+        uli.QuadPart = (static_cast<ULONGLONG>(value) + 11644473600LL) * 10000000LL;
+        fileTime.dwLowDateTime = uli.LowPart;
+        fileTime.dwHighDateTime = uli.HighPart;
+
+        FILETIME localFileTime;
+        if (FileTimeToLocalFileTime(&fileTime, &localFileTime))
+        {
+            SYSTEMTIME systemTime;
+            if (FileTimeToSystemTime(&localFileTime, &systemTime))
+            {
+                SYSTEMTIME todayTime;
+                GetSystemTime(&todayTime);
+
+                int difference = abs(systemTime.wMonth - todayTime.wMonth + 12 * (systemTime.wYear - todayTime.wYear));
+                DWORD flags = difference >= 11
+                    ? DATE_LONGDATE
+                    : DATE_MONTHDAY;
+
+                TCHAR dateString[256];
+                if (GetDateFormatEx(LOCALE_NAME_USER_DEFAULT, flags, &systemTime, nullptr, dateString, 256, nullptr))
+                {
+                    return hstring(dateString);
+                }
+
+                switch (GetLastError())
+                {
+                case ERROR_INSUFFICIENT_BUFFER:
+                    return L"E_INSUFFICIENT_BUFFER";
+                case ERROR_INVALID_FLAGS:
+                    return L"E_INVALID_FLAGS";
+                case ERROR_INVALID_PARAMETER:
+                    return L"E_INVALID_PARAMETER";
+                case ERROR_OUTOFMEMORY:
+                    return L"E_OUTOFMEMORY";
+                default:
+                    return L"E_UNKNOWN";
+                }
             }
         }
 

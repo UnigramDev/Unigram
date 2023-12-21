@@ -329,14 +329,14 @@ namespace Telegram.Controls.Messages
         {
             if (message.SchedulingState is MessageSchedulingStateSendAtDate sendAtDate)
             {
-                return (string.Format(Strings.MessageScheduledOn, Formatter.DayGrouping(Formatter.ToLocalTime(sendAtDate.SendDate))), null);
+                return (string.Format(Strings.MessageScheduledOn, Formatter.DayGrouping(sendAtDate.SendDate)), null);
             }
             else if (message.SchedulingState is MessageSchedulingStateSendWhenOnline)
             {
                 return (Strings.MessageScheduledUntilOnline, null);
             }
 
-            return (Formatter.DayGrouping(Formatter.ToLocalTime(message.Date)), null);
+            return (Formatter.DayGrouping(message.Date), null);
         }
 
         #endregion

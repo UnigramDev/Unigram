@@ -59,8 +59,9 @@ namespace Telegram.Converters
             DayOfWeekAbbreviated = new DateTimeFormatter("dayofweek.abbreviated", languages, region, calendar, clock);
         }
 
-        public static string MonthGrouping(DateTime date)
+        public static string MonthGrouping(int value)
         {
+            var date = ToLocalTime(value);
             var now = DateTime.Now;
 
             var difference = Math.Abs(date.Month - now.Month + 12 * (date.Year - now.Year));
@@ -72,8 +73,14 @@ namespace Telegram.Converters
             return MonthFull.Format(date);
         }
 
-        public static string DayGrouping(DateTime date)
+        public static string DayGrouping(int value)
         {
+            //if (SettingsService.Current.Diagnostics.NativeTimeFormatter)
+            //{
+            //    return NativeUtils.FormatDate(value);
+            //}
+
+            var date = ToLocalTime(value);
             var now = DateTime.Now;
 
             var difference = Math.Abs(date.Month - now.Month + 12 * (date.Year - now.Year));

@@ -33,6 +33,7 @@ namespace winrt::Telegram::Native::implementation
         static hstring GetKeyboardCulture();
 
         static hstring FormatTime(int value);
+        static hstring FormatDate(int value);
 
         static bool IsFileReadable(hstring path);
         static bool IsFileReadable(hstring path, int64_t& fileSize, int64_t& fileTime);
