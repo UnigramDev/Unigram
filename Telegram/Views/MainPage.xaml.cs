@@ -1310,7 +1310,7 @@ namespace Telegram.Views
             ArchivedChats.UpdateStoryList(ViewModel.ClientService, new StoryListArchive());
         }
 
-        public async void Activate(string parameter)
+        public void Activate(string parameter)
         {
             Initialize();
 

@@ -98,76 +98,72 @@ namespace Telegram.Views
             Navigation.SelectedItem = FindRoot();
         }
 
+        private void Navigate(Type type)
+        {
+            if (MasterDetail.NavigationService.Navigate(type))
+            {
+                UpdateSelection();
+            }
+        }
+
         private void Profile_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsProfilePage));
-            UpdateSelection();
+            Navigate(typeof(SettingsProfilePage));
         }
 
         private void Privacy_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsPrivacyAndSecurityPage));
-            UpdateSelection();
+            Navigate(typeof(SettingsPrivacyAndSecurityPage));
         }
 
         private void PowerSaving_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsPowerSavingPage));
-            UpdateSelection();
+            Navigate(typeof(SettingsPowerSavingPage));
         }
 
         private void Data_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsDataAndStoragePage));
-            UpdateSelection();
+            Navigate(typeof(SettingsDataAndStoragePage));
         }
 
         private void Folders_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(FoldersPage));
-            UpdateSelection();
+            Navigate(typeof(FoldersPage));
         }
 
         private void Notifications_Click(object sender, RoutedEventArgs e)
         {
-            MasterDetail.NavigationService.Navigate(typeof(SettingsNotificationsPage));
-            UpdateSelection();
+            Navigate(typeof(SettingsNotificationsPage));
         }
 
         private void Appearance_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsAppearancePage));
-            UpdateSelection();
         }
 
         private void Sessions_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsSessionsPage));
-            UpdateSelection();
         }
 
         private void Language_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsLanguagePage));
-            UpdateSelection();
         }
 
         private void Advanced_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.Navigate(typeof(SettingsAdvancedPage));
-            UpdateSelection();
         }
 
         private void Questions_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.NavigateToInstant(Strings.TelegramFaqUrl);
-            UpdateSelection();
         }
 
         private void PrivacyPolicy_Click(object sender, RoutedEventArgs e)
         {
             MasterDetail.NavigationService.NavigateToInstant(Strings.PrivacyPolicyUrl);
-            UpdateSelection();
         }
 
         private void Premium_Click(object sender, RoutedEventArgs e)

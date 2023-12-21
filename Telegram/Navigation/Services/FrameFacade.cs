@@ -296,7 +296,6 @@ namespace Telegram.Navigation.Services
         private void FacadeNavigatedEventHandler(object sender, NavigationEventArgs e)
         {
             Logger.Info();
-            FrameworkElementState.Monitor(e.Content);
 
             CurrentPageType = e.SourcePageType;
             CurrentPageParam = e.Parameter;
