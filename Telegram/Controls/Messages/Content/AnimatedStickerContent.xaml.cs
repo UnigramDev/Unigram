@@ -39,6 +39,7 @@ namespace Telegram.Controls.Messages.Content
 
         #region InitializeComponent
 
+        private AspectView LayoutRoot;
         private AnimatedImage Player;
         private Popup InteractionsPopup;
         private Grid Interactions;
@@ -46,6 +47,7 @@ namespace Telegram.Controls.Messages.Content
 
         protected override void OnApplyTemplate()
         {
+            LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as AspectView;
             Player = GetTemplateChild(nameof(Player)) as AnimatedImage;
             Player.Ready += Player_Ready;
 
@@ -63,6 +65,8 @@ namespace Telegram.Controls.Messages.Content
         {
             _message = message;
 
+            LayoutRoot.Constraint = message;
+
             var sticker = GetContent(message, out bool premium);
             if (sticker == null || !_templateApplied)
             {
@@ -70,13 +74,11 @@ namespace Telegram.Controls.Messages.Content
             }
 
             var flip = false;
+            var maxSize = 180d;
 
             if (message.Content is MessageAnimatedEmoji animatedEmoji)
             {
-                Width = Player.Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                Height = Player.Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-
-                Player.RenderTransform = null;
+                maxSize = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
 
                 var sound = animatedEmoji.AnimatedEmoji.Sound;
                 if (sound != null && sound.Local.CanBeDownloaded && !sound.Local.IsDownloadingActive)
@@ -86,19 +88,18 @@ namespace Telegram.Controls.Messages.Content
             }
             else if (message.Content is MessageText)
             {
-                Width = Player.Width = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-                Height = Player.Height = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
-
-                Player.RenderTransform = null;
+                maxSize = 180 * message.ClientService.Config.GetNamedNumber("emojies_animated_zoom", 0.625f);
             }
             else
             {
                 var premiumAnimation = sticker.FullType is StickerFullTypeRegular regular && regular.PremiumAnimation != null;
-                Width = Player.Width = premiumAnimation ? 180 : 180;
-                Height = Player.Height = 180;
-
                 flip = premium && premiumAnimation && (message.IsChannelPost || !message.IsOutgoing);
+
+                maxSize = 180;
             }
+
+            MaxWidth = maxSize;
+            MaxHeight = maxSize;
 
             if (flip)
             {
@@ -146,9 +147,12 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
+            var autoPlayStickers = message.Content is MessageSticker && PowerSavingPolicy.AutoPlayStickersInChats;
+            var autoPlayEmojis = message.Content is MessageAnimatedEmoji && PowerSavingPolicy.AutoPlayStickersInChats;
+
             using (Player.BeginBatchUpdate())
             {
-                Player.LoopCount = message.Content is MessageSticker && PowerSavingPolicy.AutoPlayStickersInChats ? 0 : 1;
+                Player.LoopCount = autoPlayStickers || autoPlayEmojis ? 0 : 1;
                 Player.Source = new DelayedFileSource(_message.ClientService, sticker)
                 {
                     FitzModifier = message.Content is MessageAnimatedEmoji animatedEmoji ? animatedEmoji.AnimatedEmoji.FitzpatrickType switch
@@ -195,13 +199,13 @@ namespace Telegram.Controls.Messages.Content
 
         public bool IsValid(MessageContent content, bool primary)
         {
-            if (content is MessageSticker sticker)
+            if (content is MessageSticker)
             {
-                return sticker.Sticker.Format is StickerFormatTgs;
+                return true;
             }
             else if (content is MessageText text && text.WebPage != null && !primary)
             {
-                return text.WebPage.Sticker != null && text.WebPage.Sticker.Format is StickerFormatTgs;
+                return text.WebPage.Sticker != null;
             }
 
             return false;

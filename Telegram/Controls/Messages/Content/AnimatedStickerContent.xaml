@@ -7,10 +7,10 @@
                     mc:Ignorable="d">
 
     <Style TargetType="local:AnimatedStickerContent">
-        <Setter Property="Width"
-                Value="200" />
-        <Setter Property="Height"
-                Value="200" />
+        <Setter Property="MaxWidth"
+                Value="180" />
+        <Setter Property="MaxHeight"
+                Value="180" />
         <Setter Property="Padding"
                 Value="0" />
         <Setter Property="HorizontalContentAlignment"
@@ -20,20 +20,18 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:AnimatedStickerContent">
-                    <Grid x:Name="LayoutRoot">
+                    <controls:AspectView x:Name="LayoutRoot">
                         <controls:AnimatedImage x:Name="Player"
                                                 AutoPlay="False"
                                                 FrameSize="180,180"
                                                 DecodeFrameType="Logical"
-                                                Width="180"
-                                                Height="180"
                                                 ReplacementColor="{ThemeResource MessageForegroundBrush}" />
 
                         <Popup x:Name="InteractionsPopup"
                                x:Load="False">
                             <Grid x:Name="Interactions" />
                         </Popup>
-                    </Grid>
+                    </controls:AspectView>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

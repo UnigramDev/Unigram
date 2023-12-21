@@ -1585,7 +1585,7 @@ namespace Telegram.Controls.Messages
                 }
             }
 
-            if (Media.Child is StickerContent or AnimatedStickerContent or VideoStickerContent or VideoNoteContent)
+            if (Media.Child is AnimatedStickerContent or VideoNoteContent)
             {
                 UpdateAttach(message);
             }
@@ -1661,21 +1661,10 @@ namespace Telegram.Controls.Messages
             {
                 Media.Child = new PollContent(message);
             }
-            else if (content is MessageSticker sticker)
+            else if (content is MessageSticker)
             {
-                if (sticker.Sticker.Format is StickerFormatTgs)
-                {
                     Media.Child = new AnimatedStickerContent(message);
                 }
-                else if (sticker.Sticker.Format is StickerFormatWebm)
-                {
-                    Media.Child = new VideoStickerContent(message);
-                }
-                else
-                {
-                    Media.Child = new StickerContent(message);
-                }
-            }
             else if (content is MessageVenue)
             {
                 Media.Child = new VenueContent(message);

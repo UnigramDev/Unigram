@@ -846,7 +846,7 @@ namespace Telegram.ViewModels
             {
                 Handle(update.MessageId, null, (bubble, message) =>
                 {
-                    if (bubble.MediaTemplateRoot is AnimatedStickerContent content && message.Content is MessageText text)
+                    if (bubble.MediaTemplateRoot is StickerContent content && message.Content is MessageText text)
                     {
                         ChatActionManager.SetTyping(new ChatActionWatchingAnimations(text.Text.Text));
                         content.PlayInteraction(message, update.Sticker);
