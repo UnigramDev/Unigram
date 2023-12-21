@@ -486,6 +486,7 @@
                         <controls:SuggestTextBox x:Name="SearchField"
                                                  PlaceholderText="{CustomResource Search}"
                                                  BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                                                 Style="{StaticResource NoDeleteTextBoxStyle}"
                                                  AutomationProperties.LandmarkType="Search"
                                                  StartingIndex="1"
                                                  VerticalAlignment="Center"
