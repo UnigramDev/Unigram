@@ -14,6 +14,8 @@ using Telegram.Services;
 using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.Views;
+using Telegram.Views.Popups;
+using Telegram.Views.Premium.Popups;
 using Telegram.Views.Settings;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -152,6 +154,23 @@ namespace Telegram.ViewModels
                     }
                 }
             }
+        }
+
+        public async void PremiumGifting()
+        {
+            var user = await ChooseChatsPopup.PickUserAsync(ClientService, Strings.SelectContact, false);
+            if (user == null)
+            {
+                return;
+            }
+
+            var userFull = await ClientService.SendAsync(new GetUserFullInfo(user.Id)) as UserFullInfo;
+            if (userFull == null)
+            {
+                return;
+            }
+
+            await ShowPopupAsync(new GiftPopup(ClientService, NavigationService, user, userFull.PremiumGiftOptions));
         }
 
         public void Search(string query)

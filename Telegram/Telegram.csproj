@@ -147,6 +147,7 @@
     <Compile Include="Assets\Icons\Phone.cs" />
     <Compile Include="Assets\Icons\PowerSaving.cs" />
     <Compile Include="Assets\Icons\Premium.cs" />
+    <Compile Include="Assets\Icons\PremiumGifting.cs" />
     <Compile Include="Assets\Icons\Privacy.cs" />
     <Compile Include="Assets\Icons\PrivacyPolicy.cs" />
     <Compile Include="Assets\Icons\ReactionsMore.cs" />
