@@ -118,6 +118,9 @@
   <data name="AccDescrChanSilentOn" xml:space="preserve">
     <value>Send silently</value>
   </data>
+  <data name="AccDescrChatInfo" xml:space="preserve">
+    <value>Chat info</value>
+  </data>
   <data name="AccDescrClosePlayer" xml:space="preserve">
     <value>Close audio player</value>
   </data>
@@ -2112,6 +2115,12 @@ Note: if you forget your passcode, you&apos;ll need to log out or reinstall the 
   <data name="ChannelColorTitle" xml:space="preserve">
     <value>Your Channel Color</value>
   </data>
+  <data name="ChannelColorUnsaved" xml:space="preserve">
+    <value>Unsaved Changes</value>
+  </data>
+  <data name="ChannelColorUnsavedMessage" xml:space="preserve">
+    <value>You have changed your color or icon settings. Apply changes?</value>
+  </data>
   <data name="ChannelCreator" xml:space="preserve">
     <value>Owner</value>
   </data>
@@ -2434,6 +2443,12 @@ Minimum length is 5 characters.</value>
   </data>
   <data name="ChatThemes" xml:space="preserve">
     <value>Chat Themes</value>
+  </data>
+  <data name="ChatThemeSaveDialogApply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="ChatThemeSaveDialogDiscard" xml:space="preserve">
+    <value>Discard</value>
   </data>
   <data name="ChatVideo" xml:space="preserve">
     <value>Video</value>
@@ -3233,7 +3248,7 @@ Anyone from the channel will be able to see messages in this group.</value>
     <value>edited</value>
   </data>
   <data name="EditInformation" xml:space="preserve">
-    <value>Edit information</value>
+    <value>Edit Information</value>
   </data>
   <data name="EditLink" xml:space="preserve">
     <value>Edit link</value>
@@ -4600,6 +4615,12 @@ You can change your language back at any time in Settings.</value>
   <data name="LeaveMegaMenu" xml:space="preserve">
     <value>Leave group</value>
   </data>
+  <data name="Likes_one" xml:space="preserve">
+    <value>{0} like</value>
+  </data>
+  <data name="Likes_other" xml:space="preserve">
+    <value>{0} likes</value>
+  </data>
   <data name="LimitFree" xml:space="preserve">
     <value>Free</value>
   </data>
@@ -5434,6 +5455,12 @@ Stories</value>
   </data>
   <data name="NotificationsStoryUnmutedHint" xml:space="preserve">
     <value>You will receive a notification whenever **{0}** posts a new story.</value>
+  </data>
+  <data name="NotifyIconExit" xml:space="preserve">
+    <value>Quit Unigram</value>
+  </data>
+  <data name="NotifyIconOpen" xml:space="preserve">
+    <value>Open Unigram</value>
   </data>
   <data name="NoUsernameFound" xml:space="preserve">
     <value>Username not found.</value>
@@ -6273,6 +6300,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ProxyDetails" xml:space="preserve">
     <value>Proxy Details</value>
   </data>
+  <data name="ProxyLinkUnsupported" xml:space="preserve">
+    <value>Proxy is unsupported or link is invalid.</value>
+  </data>
   <data name="ProxySettings" xml:space="preserve">
     <value>Proxy Settings</value>
   </data>
@@ -6360,6 +6390,12 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   <data name="ReactionCreateOwnPack" xml:space="preserve">
     <value>You can also **create your own** emoji packs and use them.</value>
   </data>
+  <data name="ReactionLevelRequiredBtn_one" xml:space="preserve">
+    <value>Level {0} Required</value>
+  </data>
+  <data name="ReactionLevelRequiredBtn_other" xml:space="preserve">
+    <value>Level {0} Required</value>
+  </data>
   <data name="ReactionReachLvlForReactionShort_one" xml:space="preserve">
     <value>Your channel needs to reach Level **{1}** to add **{0}** custom emoji as reactions.</value>
   </data>
@@ -6383,6 +6419,9 @@ Payments will go directly to the developer of {0}. Telegram cannot provide any g
   </data>
   <data name="ReactionsPerPost" xml:space="preserve">
     <value>Reactions Per Post</value>
+  </data>
+  <data name="ReactionUpdateReactionsBtn" xml:space="preserve">
+    <value>Update Reactions</value>
   </data>
   <data name="Recent" xml:space="preserve">
     <value>Recent</value>
@@ -7636,6 +7675,9 @@ Here’s what is now unlocked.</value>
   <data name="TermsOfUse" xml:space="preserve">
     <value>Terms of Use</value>
   </data>
+  <data name="Text" xml:space="preserve">
+    <value>Text</value>
+  </data>
   <data name="TextCopied" xml:space="preserve">
     <value>Text copied to clipboard.</value>
   </data>
@@ -8171,6 +8213,12 @@ If you are not comfortable with Telegram&apos;s modest needs, it won&apos;t be p
   </data>
   <data name="UserColorTitle" xml:space="preserve">
     <value>Your Name Color</value>
+  </data>
+  <data name="UserColorUnsaved" xml:space="preserve">
+    <value>Unsaved Changes</value>
+  </data>
+  <data name="UserColorUnsavedMessage" xml:space="preserve">
+    <value>You have changed your color or icon settings. Apply changes?</value>
   </data>
   <data name="Username" xml:space="preserve">
     <value>Username</value>
