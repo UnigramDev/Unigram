@@ -823,7 +823,7 @@ namespace Telegram.Views
                     return;
                 }
 
-                _focusState.Set(FocusState.Keyboard);
+                TextField.Focus(FocusState.Keyboard);
 
                 // For some reason, this is paste
                 if (character == "\u0016")
