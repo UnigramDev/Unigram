@@ -190,6 +190,7 @@ namespace winrt::Telegram::Native::implementation
 
     winrt::Telegram::Native::TextDirectionality NativeUtils::GetDirectionality(hstring value, int32_t offset, int32_t length)
     {
+        DWORD prev = C2_OTHERNEUTRAL;
         for (int i = 0; i < length; i++)
         {
             if (IS_HIGH_SURROGATE(value[offset + i]) || IS_LOW_SURROGATE(value[offset + i]))
@@ -198,16 +199,22 @@ namespace winrt::Telegram::Native::implementation
             }
 
             WORD type;
-            GetStringTypeEx(LOCALE_USER_DEFAULT, CT_CTYPE2, value.data() + offset + 1, 1, &type);
+            GetStringTypeEx(LOCALE_USER_DEFAULT, CT_CTYPE2, value.data() + offset + i, 1, &type);
 
-            if (type == C2_LEFTTORIGHT)
+            // We use the first strong character after a neutral character.
+            if (prev >= C2_BLOCKSEPARATOR && prev <= C2_OTHERNEUTRAL)
             {
-                return winrt::Telegram::Native::TextDirectionality::LeftToRight;
+                if (type == C2_LEFTTORIGHT)
+                {
+                    return winrt::Telegram::Native::TextDirectionality::LeftToRight;
+                }
+                else if (type == C2_RIGHTTOLEFT)
+                {
+                    return winrt::Telegram::Native::TextDirectionality::RightToLeft;
+                }
             }
-            else if (type == C2_RIGHTTOLEFT)
-            {
-                return winrt::Telegram::Native::TextDirectionality::RightToLeft;
-            }
+
+            prev = type;
         }
 
         return winrt::Telegram::Native::TextDirectionality::Neutral;
