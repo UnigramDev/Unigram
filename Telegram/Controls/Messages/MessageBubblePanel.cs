@@ -72,7 +72,7 @@ namespace Telegram.Controls.Messages
 
             if (reactions != null)
             {
-                if (reactions.Footer != footer.DesiredSize)
+                if (reactions.Footer != footer.DesiredSize && reactions.Children.Count > 0)
                 {
                     reactions.InvalidateMeasure();
                 }
@@ -177,8 +177,10 @@ namespace Telegram.Controls.Messages
                     return new Size(Math.Max(0, footerWidth - 16), 0);
                 }
 
+                var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.TextScaleFactor;
+
                 var width = text.DesiredSize.Width;
-                var bounds = ContentEnd(availableWidth);
+                var bounds = ContentEnd(availableWidth, fontSize);
 
                 var diff = width - bounds;
                 if (diff < footerWidth /*|| _placeholderVertical*/)
@@ -189,7 +191,7 @@ namespace Telegram.Controls.Messages
                     }
                     else
                     {
-                        marginBottom = 16;
+                        marginBottom = fontSize * 1.33; //18.62;
                     }
                 }
             }
@@ -197,7 +199,7 @@ namespace Telegram.Controls.Messages
             return new Size(marginLeft, marginBottom);
         }
 
-        private float ContentEnd(double availableWidth)
+        private float ContentEnd(double availableWidth, double fontSize)
         {
             var caption = Text;
             if (caption?.Paragraphs.Count == 0 || string.IsNullOrEmpty(caption?.Text))
@@ -211,7 +213,6 @@ namespace Telegram.Controls.Messages
             var entities = paragraph.Entities;
 
             var block = Children[0] as FormattedTextBlock;
-            var fontSize = Theme.Current.MessageFontSize * BootStrapper.Current.TextScaleFactor;
             var width = availableWidth - block.Margin.Left - block.Margin.Right;
 
             if (width <= 0)

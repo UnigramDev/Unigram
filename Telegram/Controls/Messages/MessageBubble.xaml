@@ -68,6 +68,11 @@
                                                 Value="Right" />
                                         <Setter Target="Panel.(Grid.Column)"
                                                 Value="2" />
+
+                                        <Setter Target="MediaReactions.(Grid.Column)"
+                                                Value="0" />
+                                        <Setter Target="MediaReactions.(Grid.ColumnSpan)"
+                                                Value="2" />
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="LightState">
@@ -109,6 +114,11 @@
                                                 Value="Left" />
                                         <Setter Target="Panel.(Grid.Column)"
                                                 Value="0" />
+
+                                        <Setter Target="MediaReactions.(Grid.Column)"
+                                                Value="1" />
+                                        <Setter Target="MediaReactions.(Grid.ColumnSpan)"
+                                                Value="2" />
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="MediaState">
@@ -183,7 +193,6 @@
                                         Grid.Row="3" />
 
                                 <local:ReactionsPanel x:Name="Reactions"
-                                                      x:Load="False"
                                                       HorizontalAlignment="Stretch"
                                                       VerticalAlignment="Bottom"
                                                       Padding="4,0,4,4" />
@@ -317,9 +326,11 @@
                                                    Grid.Column="1"
                                                    Grid.Row="1" />
 
+                        
+                        <!-- TODO: find a way to get rid of this -->
                         <local:ReactionsPanel x:Name="MediaReactions"
-                                              x:Load="False"
-                                              HorizontalAlignment="Stretch"
+                                              MaxWidth="{StaticResource MessageMaxWidth}"
+                                              HorizontalAlignment="Left"
                                               Padding="0,2,0,0"
                                               Grid.Column="1"
                                               Grid.Row="2" />

@@ -1379,7 +1379,7 @@ namespace Telegram.Controls.Messages
             var content = message.GeneratedContent ?? message.Content;
             if (content is MessageSticker or MessageDice or MessageVideoNote or MessageBigEmoji || (media == footer && IsFullMedia(content)))
             {
-                UnloadObject(ref Reactions);
+                Reactions?.UpdateMessageReactions(null);
 
                 if (message.InteractionInfo?.Reactions.Count > 0)
                 {
@@ -1388,12 +1388,12 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    UnloadObject(ref MediaReactions);
+                    MediaReactions?.UpdateMessageReactions(null);
                 }
             }
             else
             {
-                UnloadObject(ref MediaReactions);
+                MediaReactions?.UpdateMessageReactions(null);
 
                 if (message.InteractionInfo?.Reactions.Count > 0)
                 {
@@ -1402,7 +1402,7 @@ namespace Telegram.Controls.Messages
                 }
                 else
                 {
-                    UnloadObject(ref Reactions);
+                    Reactions?.UpdateMessageReactions(null);
                 }
             }
         }
@@ -2887,11 +2887,11 @@ namespace Telegram.Controls.Messages
 
                     if (obj is User user)
                     {
-                        presenter.UpdateMockup(clientService, user.AccentColorId);
+                        presenter.UpdateMockup(clientService, user.BackgroundCustomEmojiId, user.AccentColorId);
                     }
                     else if (obj is Chat chat)
                     {
-                        presenter.UpdateMockup(clientService, chat.AccentColorId);
+                        presenter.UpdateMockup(clientService, chat.BackgroundCustomEmojiId, chat.AccentColorId);
                     }
                 }
 
@@ -2915,13 +2915,9 @@ namespace Telegram.Controls.Messages
             LoadObject(ref HeaderPanel, nameof(HeaderPanel));
             LoadObject(ref HeaderLabel, nameof(HeaderLabel));
 
-            var hyperlink = new Hyperlink();
-            hyperlink.Inlines.Add(new Run { Text = title });
-            hyperlink.UnderlineStyle = UnderlineStyle.None;
-            hyperlink.Foreground = GetBrush("MessageHeaderForegroundBrush");
-            //hyperlink.Click += (s, args) => FwdFrom_Click(message);
-
-            HeaderLabel.Inlines.Add(hyperlink);
+            var hyperlink = HeaderLabel.Inlines[0] as Hyperlink;
+            var run = hyperlink.Inlines[0] as Run;
+            run.Text = title;
 
             Header.Visibility = Visibility.Visible;
             HeaderPanel.Visibility = Visibility.Visible;
@@ -3079,7 +3075,7 @@ namespace Telegram.Controls.Messages
 
             if (Media.Child is WebPageContent webPageContent)
             {
-                webPageContent.UpdateMockup(clientService, color);
+                webPageContent.UpdateMockup(clientService, customEmojiId, color);
             }
 
             Reply?.UpdateMockup(clientService, customEmojiId, color);
