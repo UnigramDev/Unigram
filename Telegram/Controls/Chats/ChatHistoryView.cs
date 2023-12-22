@@ -71,6 +71,8 @@ namespace Telegram.Controls.Chats
             ScrollingHost?.ChangeView(null, ScrollingHost.ScrollableHeight, null);
         }
 
+        public bool IsSuspended => !_raiseViewChanged;
+
         public void Suspend()
         {
             _raiseViewChanged = false;
@@ -109,6 +111,7 @@ namespace Telegram.Controls.Chats
             }
 
             _waitItemsPanelRoot = new();
+            _raiseViewChanged = false;
 
             // Note, this is done because of the following:
             // In some conditions (always?) ListView starts to store
@@ -280,7 +283,7 @@ namespace Telegram.Controls.Chats
 
         public async Task ScrollToItem(MessageViewModel item, VerticalAlignment alignment, MessageBubbleHighlightOptions options, double? pixel = null, ScrollIntoViewAlignment direction = ScrollIntoViewAlignment.Leading, bool? disableAnimation = null)
         {
-            _raiseViewChanged = false;
+            Suspend();
 
             var scrollViewer = ScrollingHost;
             var handler = Delegate;

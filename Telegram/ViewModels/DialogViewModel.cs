@@ -2004,7 +2004,7 @@ namespace Telegram.ViewModels
             try
             {
                 var field = HistoryField;
-                if (field != null && TryGetLastVisibleMessageId(out long lastVisibleId, out int lastVisibleIndex))
+                if (field != null && !field.IsSuspended && TryGetLastVisibleMessageId(out long lastVisibleId, out int lastVisibleIndex))
                 {
                     var firstNonVisibleId = lastVisibleIndex < Items.Count - 1
                         ? Items[lastVisibleIndex + 1].Id
@@ -2057,11 +2057,7 @@ namespace Telegram.ViewModels
                         Remove("as last item is chat.LastMessage");
                     }
                 }
-                else
-                {
-                    Remove("generic reason");
                 }
-            }
             catch
             {
                 Remove("exception");
