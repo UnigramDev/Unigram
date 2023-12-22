@@ -2461,7 +2461,8 @@ namespace Telegram.ViewModels
             }
             else
             {
-                if (string.IsNullOrEmpty(formattedText.Text))
+                var textContent = editing.Content is MessageText or MessageAnimatedEmoji or MessageBigEmoji;
+                if (textContent && string.IsNullOrEmpty(formattedText.Text))
                 {
                     ShowDraftMessage(chat);
                     DeleteMessage(editing);
@@ -2469,7 +2470,7 @@ namespace Telegram.ViewModels
                 else
                 {
                     Function function;
-                    if (editing.Content is MessageText or MessageAnimatedEmoji or MessageBigEmoji)
+                    if (textContent)
                     {
                         function = new EditMessageText(chat.Id, editing.Id, null, new InputMessageText(formattedText, disablePreview, true));
                     }
