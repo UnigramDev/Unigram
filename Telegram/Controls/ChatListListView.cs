@@ -469,6 +469,13 @@ namespace Telegram.Controls
             }
         }
 
+        protected override void OnLostFocus(RoutedEventArgs e)
+        {
+            // Reactivate focus visuals that may have been deactivated by ChatListListView.OnGettingFocus.
+            UseSystemFocusVisuals = true;
+
+            base.OnLostFocus(e);
+        }
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {

@@ -116,7 +116,10 @@ namespace Telegram.Views
 #if DEBUG
         private void OnGettingFocus(object sender, GettingFocusEventArgs args)
         {
-            Logger.Info(string.Format("New: {0}, Old: {1}, {2}, {3}", args.NewFocusedElement?.GetType().Name ?? "null", args.OldFocusedElement?.GetType().Name ?? "null", args.Direction, args.InputDevice));
+            Logger.Info(string.Format("New: {0}, Old: {1}, {2}, {3} ~> {4}",
+                args.NewFocusedElement?.GetType().Name ?? "null",
+                args.OldFocusedElement?.GetType().Name ?? "null",
+                args.Direction, args.InputDevice, args.FocusState));
         }
 #endif
 
@@ -2802,13 +2805,24 @@ namespace Telegram.Views
             {
                 if (ChatsList.TryGetContainer(ViewModel?.Chats.LastSelectedItem ?? 0, out SelectorItem container))
                 {
-                    args.TrySetNewFocusedElement(container);
-                    args.Handled = true;
+                    if (args.TrySetNewFocusedElement(container))
+                    {
+                        args.Handled = true;
+                    }
                 }
                 else if (sender != ChatsList)
                 {
-                    args.TrySetNewFocusedElement(ChatsList);
-                    args.Handled = true;
+                    if (args.TrySetNewFocusedElement(ChatsList))
+                    {
+                        args.Handled = true;
+                    }
+                }
+                
+                if (args.NewFocusedElement is ChatListListViewItem item)
+                {
+                    // Let's disable the awkward focus rect that would appear on activation.
+                    // ChatListListViewItem.OnLostFocus takes care of reenabling it.
+                    item.UseSystemFocusVisuals = false;
                 }
             }
         }
