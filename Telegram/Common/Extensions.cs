@@ -295,14 +295,14 @@ namespace Telegram.Common
             return false;
         }
 
-        public static void Prepend(this StringBuilder builder, string text, string prefix)
+        public static StringBuilder Prepend(this StringBuilder builder, string text, string prefix)
         {
             if (builder.Length > 0)
             {
                 builder.Append(prefix);
             }
 
-            builder.Append(text);
+            return builder.Append(text);
         }
 
         public static IAsyncOperation<AppServiceResponse> SendMessageAsync(this AppServiceConnection connection, string message, object parameter = null)

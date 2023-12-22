@@ -7,10 +7,13 @@
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Text;
+using Telegram.Converters;
 using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Services.Settings;
 using Telegram.Td.Api;
+using Windows.Globalization.Fonts;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -56,23 +59,45 @@ namespace Telegram.Common
 
         public void UpdateEmojiSet()
         {
-            var vazir = "ms-appx:///Assets/Fonts/Vazirmatn-UI-NL-Regular.ttf#Vazirmatn UI NL";
-            var symbols = "ms-appx:///Assets/Fonts/Telegram.ttf#Telegram";
+            var xamlAutoFontFamily = new StringBuilder();
+            var comma = ", ";
 
-            var auto = FontFamily.XamlAutoFontFamily.Source;
-            if (auto == "Segoe UI Variable")
+            foreach (var language in Formatter.Languages)
             {
-                auto = "Segoe UI";
+                // We copy XAML behavior, only resolve for Japanese and Korean
+                if (language == "ja" || language == "ko" || language == "ja-JP" || language == "ko-KR")
+                {
+                    try
+                    {
+                        var recommendedFonts = new LanguageFontGroup(language);
+                        var family = recommendedFonts.UITextFont.FontFamily;
+
+                        xamlAutoFontFamily.Prepend(family, comma);
+                    }
+                    catch
+            {
+                        // All the remote procedure calls must be wrapped in a try-catch block
+            }
+                }
             }
 
-            var emoji = SettingsService.Current.Appearance.EmojiSet switch
-            {
-                "microsoft" => FontFamily.XamlAutoFontFamily.Source + ", ms-appx:///Assets/Emoji/microsoft.ttf#Segoe UI Emoji",
-                _ => $"ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji, {auto}"
-            };
+            xamlAutoFontFamily.Prepend("Segoe UI", comma);
 
-            this["EmojiThemeFontFamily"] = new FontFamily(/*$"{vazir}, {emoji}"*/ emoji);
-            this["EmojiThemeFontFamilyWithSymbols"] = new FontFamily(/*$"{vazir}, {emoji}, {symbols}"*/ $"{emoji}, {symbols}");
+            switch (SettingsService.Current.Appearance.EmojiSet)
+            {
+                case "microsoft":
+                    xamlAutoFontFamily.Prepend("ms-appx:///Assets/Emoji/microsoft.ttf#Segoe UI Emoji", comma);
+                    break;
+                default:
+                    xamlAutoFontFamily.Prepend("ms-appx:///Assets/Emoji/apple.ttf#Segoe UI Emoji", comma);
+                    break;
+            }
+
+            this["EmojiThemeFontFamily"] = new FontFamily(xamlAutoFontFamily.ToString());
+
+            xamlAutoFontFamily.Prepend("ms-appx:///Assets/Fonts/Telegram.ttf#Telegram", comma);
+
+            this["EmojiThemeFontFamilyWithSymbols"] = new FontFamily(xamlAutoFontFamily.ToString());
         }
 
         private bool _legacyScrollBars;
