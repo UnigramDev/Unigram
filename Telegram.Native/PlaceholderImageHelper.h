@@ -73,22 +73,20 @@ namespace winrt::Telegram::Native::implementation
         IVector<Windows::Foundation::Rect> RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl);
         //IVector<Windows::Foundation::Rect> EntityMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl);
 
-    //internal:
-    //	PlaceholderImageHelper();
-
     private:
-        //PlaceholderImageHelper();
+        HRESULT CreateDeviceIndependentResources();
+        HRESULT CreateDeviceResources();
+        HRESULT CreateTextFormat(double fontSize);
 
         HRESULT InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IRandomAccessStream randomAccessStream, bool minithumbnail);
         HRESULT InternalDrawThumbnailPlaceholder(IWICBitmapSource* wicBitmapSource, float blurAmount, IBuffer randomAccessStream, bool minithumbnail);
         HRESULT SaveImageToStream(ID2D1Image* image, REFGUID wicFormat, IRandomAccessStream randomAccessStream);
-        HRESULT MeasureText(const wchar_t* text, IDWriteTextFormat* format, DWRITE_TEXT_METRICS* textMetrics);
-        HRESULT CreateDeviceIndependentResources();
-        HRESULT CreateDeviceResources();
+
+        HRESULT ContentEndImpl(hstring text, IVector<TextEntity> entities, double fontSize, double width, float2& offset);
+        HRESULT RangeMetricsImpl(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl, IVector<Windows::Foundation::Rect>& rects);
+
 
     private:
-        //static std::map<int, WeakReference> s_windowContext;
-
         static winrt::slim_mutex s_criticalSection;
         static winrt::com_ptr<PlaceholderImageHelper> s_current;
 

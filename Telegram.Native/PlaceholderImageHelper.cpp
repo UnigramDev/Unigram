@@ -707,25 +707,15 @@ namespace winrt::Telegram::Native::implementation
         return m_wicFactory->CreateImageEncoder(m_d2dDevice.get(), m_imageEncoder.put());
     }
 
-    HRESULT PlaceholderImageHelper::MeasureText(const wchar_t* text, IDWriteTextFormat* format, DWRITE_TEXT_METRICS* textMetrics)
+    HRESULT PlaceholderImageHelper::CreateTextFormat(double fontSize)
     {
+        if (m_appleFormat != nullptr && fontSize == m_appleFormat->GetFontSize())
+        {
+            return S_OK;
+        }
+
         HRESULT result;
-        winrt::com_ptr<IDWriteTextLayout> textLayout;
-        ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
-            text,							// The string to be laid out and formatted.
-            wcslen(text),					// The length of the string.
-            format,							// The text format to apply to the string (contains font information, etc).
-            192.0f,							// The width of the layout box.
-            192.0f,							// The height of the layout box.
-            textLayout.put()				// The IDWriteTextLayout interface pointer.
-        ));
-
-        return textLayout->GetMetrics(textMetrics);
-    }
-
-    float2 PlaceholderImageHelper::ContentEnd(hstring text, IVector<TextEntity> entities, double fontSize, double width)
-    {
-        winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextFormat(
             L"Segoe UI Emoji",						// font family name
             m_fontCollection.get(),			        // system font collection
             DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
@@ -735,11 +725,27 @@ namespace winrt::Telegram::Native::implementation
             L"",									// locale name
             m_appleFormat.put()
         ));
-        winrt::check_hresult(m_appleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
-        winrt::check_hresult(m_appleFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+        ReturnIfFailed(result, m_appleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
+        ReturnIfFailed(result, m_appleFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
+        return result;
+    }
+
+    float2 PlaceholderImageHelper::ContentEnd(hstring text, IVector<TextEntity> entities, double fontSize, double width)
+    {
+        float2 offset;
+        ContentEndImpl(text, entities, fontSize, width, offset);
+        return offset;
+    }
+
+    HRESULT PlaceholderImageHelper::ContentEndImpl(hstring text, IVector<TextEntity> entities, double fontSize, double width, float2& offset)
+    {
+        slim_lock_guard const guard(m_criticalSection);
+        HRESULT result;
+
+        ReturnIfFailed(result, CreateTextFormat(fontSize));
 
         winrt::com_ptr<IDWriteTextLayout> textLayout;
-        winrt::check_hresult(m_dwriteFactory->CreateTextLayout(
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
             text.data(),					// The string to be laid out and formatted.
             wcslen(text.data()),			// The length of the string.
             m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
@@ -756,19 +762,19 @@ namespace winrt::Telegram::Native::implementation
 
             if (name == L"Telegram.Td.Api.TextEntityTypeBold")
             {
-                textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length });
+                ReturnIfFailed(result, textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length }));
             }
             else if (name == L"Telegram.Td.Api.TextEntityTypeItalic")
             {
-                textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length });
+                ReturnIfFailed(result, textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length }));
             }
             else if (name == L"Telegram.Td.Api.TextEntityTypeStrikethrough")
             {
-                textLayout->SetStrikethrough(TRUE, { startPosition, length });
+                ReturnIfFailed(result, textLayout->SetStrikethrough(TRUE, { startPosition, length }));
             }
             else if (name == L"Telegram.Td.Api.TextEntityTypeUnderline")
             {
-                textLayout->SetUnderline(TRUE, { startPosition, length });
+                ReturnIfFailed(result, textLayout->SetUnderline(TRUE, { startPosition, length }));
             }
             //else if (name == L"Telegram.Td.Api.TextEntityTypeCustomEmoji")
             //{
@@ -776,45 +782,44 @@ namespace winrt::Telegram::Native::implementation
             //}
             else if (name == L"Telegram.Td.Api.TextEntityTypeCode" || name == L"Telegram.Td.Api.TextEntityTypePre" || name == L"Telegram.Td.Api.TextEntityTypePreCode")
             {
-                textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length });
-                textLayout->SetFontFamilyName(L"Consolas", { startPosition, length });
+                ReturnIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
+                ReturnIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));
             }
         }
 
         FLOAT x;
         FLOAT y;
         DWRITE_HIT_TEST_METRICS metrics;
-        textLayout->HitTestTextPosition(text.size() - 1, false, &x, &y, &metrics);
+        ReturnIfFailed(result, textLayout->HitTestTextPosition(text.size() - 1, false, &x, &y, &metrics));
 
-        return float2(metrics.left + metrics.width, metrics.top + metrics.height);
+        offset = float2(metrics.left + metrics.width, metrics.top + metrics.height);
+        return result;
     }
 
     IVector<Windows::Foundation::Rect> PlaceholderImageHelper::LineMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl)
     {
-        return RangeMetrics(text, 0, text.size(), entities, fontSize, width, rtl);
+        IVector<Windows::Foundation::Rect> rects;
+        RangeMetricsImpl(text, 0, text.size(), entities, fontSize, width, rtl, rects);
+        return rects;
     }
 
     IVector<Windows::Foundation::Rect> PlaceholderImageHelper::RangeMetrics(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl)
     {
+        IVector<Windows::Foundation::Rect> rects;
+        RangeMetricsImpl(text, offset, length, entities, fontSize, width, rtl, rects);
+        return rects;
+    }
+
+    HRESULT PlaceholderImageHelper::RangeMetricsImpl(hstring text, int32_t offset, int32_t length, IVector<TextEntity> entities, double fontSize, double width, bool rtl, IVector<Windows::Foundation::Rect>& rects)
+    {
         slim_lock_guard const guard(m_criticalSection);
         HRESULT result;
 
-        winrt::check_hresult(m_dwriteFactory->CreateTextFormat(
-            L"Segoe UI Emoji",						// font family name
-            m_fontCollection.get(),		            // system font collection
-            DWRITE_FONT_WEIGHT_NORMAL,				// font weight 
-            DWRITE_FONT_STYLE_NORMAL,				// font style
-            DWRITE_FONT_STRETCH_NORMAL,				// default font stretch
-            fontSize,								// font size
-            L"",									// locale name
-            m_appleFormat.put()
-        ));
-        winrt::check_hresult(m_appleFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING));
-        winrt::check_hresult(m_appleFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR));
-        winrt::check_hresult(m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
+        ReturnIfFailed(result, CreateTextFormat(fontSize));
+        ReturnIfFailed(result, m_appleFormat->SetReadingDirection(rtl ? DWRITE_READING_DIRECTION_RIGHT_TO_LEFT : DWRITE_READING_DIRECTION_LEFT_TO_RIGHT));
 
         winrt::com_ptr<IDWriteTextLayout> textLayout;
-        winrt::check_hresult(m_dwriteFactory->CreateTextLayout(
+        ReturnIfFailed(result, m_dwriteFactory->CreateTextLayout(
             text.data(),					// The string to be laid out and formatted.
             wcslen(text.data()),			// The length of the string.
             m_appleFormat.get(),			// The text format to apply to the string (contains font information, etc).
@@ -831,19 +836,19 @@ namespace winrt::Telegram::Native::implementation
 
             if (name == L"Telegram.Td.Api.TextEntityTypeBold")
             {
-                textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length });
+                ReturnIfFailed(result, textLayout->SetFontWeight(DWRITE_FONT_WEIGHT_SEMI_BOLD, { startPosition, length }));
             }
             else if (name == L"Telegram.Td.Api.TextEntityTypeItalic")
             {
-                textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length });
+                ReturnIfFailed(result, textLayout->SetFontStyle(DWRITE_FONT_STYLE_ITALIC, { startPosition, length }));
             }
             else if (name == L"Telegram.Td.Api.TextEntityTypeStrikethrough")
             {
-                textLayout->SetStrikethrough(TRUE, { startPosition, length });
+                ReturnIfFailed(result, textLayout->SetStrikethrough(TRUE, { startPosition, length }));
             }
             else if (name == L"Telegram.Td.Api.TextEntityTypeUnderline")
             {
-                textLayout->SetUnderline(TRUE, { startPosition, length });
+                ReturnIfFailed(result, textLayout->SetUnderline(TRUE, { startPosition, length }));
             }
             //else if (name == L"Telegram.Td.Api.TextEntityTypeCustomEmoji")
             //{
@@ -851,13 +856,13 @@ namespace winrt::Telegram::Native::implementation
             //}
             else if (name == L"Telegram.Td.Api.TextEntityTypeCode" || name == L"Telegram.Td.Api.TextEntityTypePre" || name == L"Telegram.Td.Api.TextEntityTypePreCode")
             {
-                textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length });
-                textLayout->SetFontFamilyName(L"Consolas", { startPosition, length });
+                ReturnIfFailed(result, textLayout->SetFontCollection(m_systemCollection.get(), { startPosition, length }));
+                ReturnIfFailed(result, textLayout->SetFontFamilyName(L"Consolas", { startPosition, length }));
             }
         }
 
         DWRITE_TEXT_METRICS metrics;
-        winrt::check_hresult(textLayout->GetMetrics(&metrics));
+        ReturnIfFailed(result, textLayout->GetMetrics(&metrics));
 
         UINT32 maxHitTestMetricsCount = metrics.lineCount * metrics.maxBidiReorderingDepth;
         UINT32 actualTestsCount;
@@ -872,9 +877,9 @@ namespace winrt::Telegram::Native::implementation
             result = textLayout->HitTestTextRange(offset, length, 0, 0, ranges, actualTestsCount, &actualTestsCount);
         }
 
-        winrt::check_hresult(result);
+        ReturnIfFailed(result, result);
 
-        std::vector<Windows::Foundation::Rect> rects;
+        std::vector<Windows::Foundation::Rect> vector;
 
         for (int i = 0; i < actualTestsCount; i++)
         {
@@ -883,11 +888,11 @@ namespace winrt::Telegram::Native::implementation
             float right = ranges[i].left + ranges[i].width;
             float bottom = ranges[i].top + ranges[i].height;
 
-            rects.push_back({ left, top, right - left, bottom - top });
+            vector.push_back({ left, top, right - left, bottom - top });
         }
 
         delete[] ranges;
-        return winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(rects));
+        rects = winrt::single_threaded_vector<Windows::Foundation::Rect>(std::move(vector));
     }
 
     //IVector<Windows::Foundation::Rect> PlaceholderImageHelper::EntityMetrics(hstring text, IVector<TextEntity> entities, double fontSize, double width, bool rtl)
