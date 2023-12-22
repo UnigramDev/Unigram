@@ -30,11 +30,17 @@ namespace Telegram.ViewModels.Settings
     {
         private readonly INetworkService _networkService;
         private int _systemProxyId;
+        private bool _ready;
 
         public SettingsProxyViewModel(IClientService clientService, ISettingsService settingsService, IEventAggregator aggregator, INetworkService networkService)
             : base(clientService, settingsService, aggregator)
         {
             _networkService = networkService;
+            _type = ClientService.Options.EnabledProxyId != 0
+                ? _networkService.UseSystemProxy
+                ? SettingsProxyType.System
+                : SettingsProxyType.Custom
+                : SettingsProxyType.Disabled;
 
             Items = new MvxObservableCollection<ProxyViewModel>();
         }
@@ -44,19 +50,6 @@ namespace Telegram.ViewModels.Settings
             NotifyIcon.LoopbackExempt(true);
 
             var systemId = _systemProxyId = await _networkService.GetSystemProxyId();
-
-            if (ClientService.Options.EnabledProxyId == 0)
-            {
-                SetType(SettingsProxyType.Disabled, false);
-            }
-            else if (ClientService.Options.EnabledProxyId == systemId)
-            {
-                SetType(SettingsProxyType.System, false);
-            }
-            else
-            {
-                SetType(SettingsProxyType.Custom, false);
-            }
 
             var response = await ClientService.SendAsync(new GetProxies());
             if (response is Proxies proxies)
@@ -71,6 +64,7 @@ namespace Telegram.ViewModels.Settings
                 _networkService.ProxyChanged += OnSystemProxyChanged;
             }
 
+            _ready = true;
             Handle(ClientService.ConnectionState, ClientService.Options.EnabledProxyId);
         }
 
@@ -213,6 +207,11 @@ namespace Telegram.ViewModels.Settings
 
         private async void SetType(SettingsProxyType value, bool update = true)
         {
+            if (_ready is false)
+            {
+                return;
+            }
+
             if (value == SettingsProxyType.Custom && update && Items.Empty())
             {
                 Add();
