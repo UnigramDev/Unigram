@@ -171,7 +171,7 @@ namespace Telegram.Controls.Messages.Content
                 }
             }
 
-            Button.Opacity = Player.Source == null ? 0 : 1;
+            Button.Opacity = Player.Source == null ? 1 : 0;
         }
 
         private void UpdateThumbnail(object target, File file)
