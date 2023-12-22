@@ -7,6 +7,7 @@
 using Microsoft.UI.Xaml.Controls;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Views.Host;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
 
@@ -92,18 +93,21 @@ namespace Telegram.Views.Popups
 
         public Task<bool> ShowQueuedAsync()
         {
+            if (Window.Current.Content is not IToastHost host)
+            {
+                return Task.FromResult(false);
+            }
+
             var tsc = new TaskCompletionSource<bool>();
             void handler(TeachingTip sender, TeachingTipClosedEventArgs args)
             {
-                Closed -= handler;
+                sender.Closed -= handler;
+
+                host.Disconnect(sender);
                 tsc.SetResult(IsValid);
             }
 
-            if (Window.Current.Content is FrameworkElement element)
-            {
-                element.Resources["TeachingTip"] = this;
-            }
-
+            host.Connect(this);
             Closed += handler;
             IsOpen = true;
 

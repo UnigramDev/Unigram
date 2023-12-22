@@ -16,6 +16,7 @@ using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
+using Telegram.Views.Host;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -336,13 +337,16 @@ namespace Telegram.Views.Premium.Popups
                 }
             };
 
-            if (Window.Current.Content is FrameworkElement element)
+            if (Window.Current.Content is IToastHost host)
             {
-                element.Resources["TeachingTip"] = popup;
-            }
-            else
-            {
-                container.Resources["TeachingTip"] = popup;
+                void handler(object sender, object e)
+                {
+                    host.Disconnect(popup);
+                    popup.Closed -= handler;
+                }
+
+                host.Connect(popup);
+                popup.Closed += handler;
             }
 
             popup.IsOpen = true;

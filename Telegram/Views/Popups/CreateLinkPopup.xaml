@@ -8,6 +8,7 @@
                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                   mc:Ignorable="d"
                   Title="CreateLink"
+                  Style="{StaticResource DefaultTeachingTipStyle}"
                   ActionButtonStyle="{StaticResource AccentButtonStyle}"
                   ActionButtonClick="TeachingTip_ActionButtonClick">
 
@@ -15,7 +16,7 @@
         <TextBox x:Name="TextField"
                  FontFamily="{ThemeResource EmojiThemeFontFamily}"
                  PlaceholderText="{CustomResource Text}"
-                 Margin="0,12,0,12"
+                 Margin="0,0,0,12"
                  KeyDown="TextField_KeyDown"
                  Loaded="TextField_Loaded" />
         <TextBox x:Name="LinkField"

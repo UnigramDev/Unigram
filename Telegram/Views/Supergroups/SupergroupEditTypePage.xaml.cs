@@ -12,6 +12,7 @@ using Telegram.Td.Api;
 using Telegram.ViewModels.Delegates;
 using Telegram.ViewModels.Settings;
 using Telegram.ViewModels.Supergroups;
+using Telegram.Views.Host;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -65,13 +66,16 @@ namespace Telegram.Views.Supergroups
                 ViewModel.ToggleUsername(username);
             };
 
-            if (Window.Current.Content is FrameworkElement element)
+            if (Window.Current.Content is IToastHost host)
             {
-                element.Resources["TeachingTip"] = popup;
-            }
-            else
-            {
-                container.Resources["TeachingTip"] = popup;
+                void handler(object sender, object e)
+                {
+                    host.Disconnect(popup);
+                    popup.Closed -= handler;
+                }
+
+                host.Connect(popup);
+                popup.Closed += handler;
             }
 
             popup.IsOpen = true;

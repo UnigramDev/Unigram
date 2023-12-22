@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Navigation;
 using Telegram.Td.Api;
+using Telegram.Views.Host;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -134,6 +135,11 @@ namespace Telegram.Controls
 
         public static Task<ContentDialogResult> ShowAsync(FrameworkElement target, string message, string title = null, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
+            if (Window.Current.Content is not IToastHost host)
+            {
+                return Task.FromResult(ContentDialogResult.None);
+            }
+
             var tsc = new TaskCompletionSource<ContentDialogResult>();
             var popup = new TeachingTip
             {
@@ -161,20 +167,22 @@ namespace Telegram.Controls
 
             popup.Closed += (s, args) =>
             {
+                host.Disconnect(s);
                 tsc.TrySetResult(ContentDialogResult.Secondary);
             };
 
-            if (Window.Current.Content is FrameworkElement element)
-            {
-                element.Resources["TeachingTip"] = popup;
-            }
-
+            host.Disconnect(popup);
             popup.IsOpen = true;
             return tsc.Task;
         }
 
         public static Task<ContentDialogResult> ShowAsync(FrameworkElement target, FrameworkElement content, string primary = null, string secondary = null, bool destructive = false, ElementTheme requestedTheme = ElementTheme.Default)
         {
+            if (Window.Current.Content is not IToastHost host)
+            {
+                return Task.FromResult(ContentDialogResult.None);
+            }
+
             var tsc = new TaskCompletionSource<ContentDialogResult>();
             var popup = new TeachingTip
             {
@@ -201,14 +209,11 @@ namespace Telegram.Controls
 
             popup.Closed += (s, args) =>
             {
+                host.Disconnect(s);
                 tsc.TrySetResult(ContentDialogResult.Secondary);
             };
 
-            if (Window.Current.Content is FrameworkElement element)
-            {
-                element.Resources["TeachingTip"] = popup;
-            }
-
+            host.Disconnect(popup);
             popup.IsOpen = true;
             return tsc.Task;
         }

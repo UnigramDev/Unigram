@@ -15,6 +15,7 @@ using Telegram.Navigation;
 using Telegram.Navigation.Services;
 using Telegram.Services;
 using Telegram.Td.Api;
+using Telegram.Views.Host;
 using Windows.Data.Json;
 using Windows.UI;
 using Windows.UI.Composition;
@@ -360,12 +361,12 @@ namespace Telegram.Views.Popups
                 ShouldConstrainToRootBounds = true,
             };
 
-            void handler(object sender, RoutedEventArgs e)
+            void click(object sender, RoutedEventArgs e)
             {
                 if (sender is Button button && button.CommandParameter is string id)
                 {
                     PostEvent("popup_closed", "{ button_id: \"" + id + "\" }");
-                    button.Click -= handler;
+                    button.Click -= click;
                 }
 
                 popup.IsOpen = false;
@@ -386,7 +387,7 @@ namespace Telegram.Views.Popups
                     HorizontalAlignment = HorizontalAlignment.Stretch
                 };
 
-                action.Click += handler;
+                action.Click += click;
 
                 switch (type)
                 {
@@ -421,9 +422,16 @@ namespace Telegram.Views.Popups
                 panel.Children.Add(action);
             }
 
-            if (Window.Current.Content is FrameworkElement element)
+            if (Window.Current.Content is IToastHost host)
             {
-                element.Resources["TeachingTip"] = popup;
+                void handler(object sender, object e)
+                {
+                    host.Disconnect(popup);
+                    popup.Closed -= handler;
+                }
+
+                host.Connect(popup);
+                popup.Closed += handler;
             }
 
             popup.IsOpen = true;
