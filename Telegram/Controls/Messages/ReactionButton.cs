@@ -4,14 +4,9 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
-using RLottie;
 using System;
-using System.Threading.Tasks;
 using Telegram.Common;
 using Telegram.Converters;
-using Telegram.Native;
-using Telegram.Navigation;
-using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Telegram.ViewModels;
@@ -125,7 +120,7 @@ namespace Telegram.Controls.Messages
             _presenterId = center.Id;
             Presenter.Source = null;
 
-            var bitmap = await GetLottieFrame(_message.ClientService, center, 0, 32, 32);
+            var bitmap = await EmojiCache.GetLottieFrameAsync(_message.ClientService, center, 32, 32);
             if (center.Id == _presenterId)
             {
                 Presenter.Source = bitmap;
@@ -226,40 +221,6 @@ namespace Telegram.Controls.Messages
             {
                 photo.Clear();
             }
-        }
-
-        private static async Task<ImageSource> GetLottieFrame(IClientService clientService, File file, int frame, int width, int height)
-        {
-            if (file.Local.IsDownloadingCompleted is false)
-            {
-                // TODO: if the download doesn't complete, this control will leak
-                file = await clientService.DownloadFileAsync(file, 32);
-            }
-
-            if (file.Local.IsDownloadingCompleted)
-            {
-                var dpi = WindowContext.Current.RasterizationScale;
-
-                width = (int)(width * dpi);
-                height = (int)(height * dpi);
-
-                var bitmap = new WriteableBitmap(width, height);
-                var buffer = new PixelBuffer(bitmap);
-
-                await Task.Run(() =>
-                {
-                    var animation = LottieAnimation.LoadFromFile(file.Local.Path, width, height, false, null);
-                    if (animation != null)
-                    {
-                        animation.RenderSync(buffer, frame);
-                        animation.Dispose();
-                    }
-                });
-
-                return bitmap;
-            }
-
-            return null;
         }
 
         protected override void OnApplyTemplate()

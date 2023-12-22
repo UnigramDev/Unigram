@@ -4,14 +4,19 @@
 // Distributed under the GNU General Public License v3.0. (See accompanying
 // file LICENSE or copy at https://www.gnu.org/licenses/gpl-3.0.txt)
 //
+using RLottie;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Telegram.Common;
+using Telegram.Native;
+using Telegram.Navigation;
 using Telegram.Services;
 using Telegram.Streams;
 using Telegram.Td.Api;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace Telegram.Controls.Messages
 {
@@ -106,6 +111,70 @@ namespace Telegram.Controls.Messages
                 }
             }
 
+            return null;
+        }
+
+
+
+
+        [ThreadStatic]
+        private static Dictionary<GetLottieFrameOp, Task<ImageSource>> _operations;
+        private static Dictionary<GetLottieFrameOp, Task<ImageSource>> Operations => _operations ??= new();
+
+        private record GetLottieFrameOp(int SessionId, File File, int Width, int Height);
+
+        public static Task<ImageSource> GetLottieFrameAsync(IClientService clientService, File file, int width, int height)
+        {
+            var dpi = WindowContext.Current.RasterizationScale;
+
+            width = (int)(width * dpi);
+            height = (int)(height * dpi);
+
+            var op = new GetLottieFrameOp(clientService.SessionId, file, width, height);
+
+            if (Operations.TryGetValue(op, out var task))
+            {
+                if (task.IsCompleted)
+                {
+                    Operations.Remove(op);
+                }
+
+                return task;
+            }
+
+            return Operations[op] = GetLottieFrame(op, clientService, file, 0, width, height);
+        }
+
+        private static async Task<ImageSource> GetLottieFrame(GetLottieFrameOp op, IClientService clientService, File file, int frame, int width, int height)
+        {
+            if (file.Local.IsDownloadingCompleted is false)
+            {
+                // TODO: if the download doesn't complete, this control will leak
+                file = await clientService.DownloadFileAsync(file, 32);
+            }
+
+            if (file.Local.IsDownloadingCompleted)
+            {
+                var path = file.Local.Path + $".{width}x{height}.static.cache";
+
+                if (!NativeUtils.FileExists(path))
+                {
+                    await Task.Run(() =>
+                    {
+                        var animation = LottieAnimation.LoadFromFile(file.Local.Path, width, height, false, null);
+                        if (animation != null)
+                        {
+                            animation.RenderSync(path, frame);
+                            animation.Dispose();
+                        }
+                    });
+                }
+
+                Operations.Remove(op);
+                return UriEx.ToBitmap(path);
+            }
+
+            Operations.Remove(op);
             return null;
         }
     }
