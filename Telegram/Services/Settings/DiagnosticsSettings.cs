@@ -135,6 +135,13 @@ namespace Telegram.Services.Settings
             set => AddOrUpdateValue(ref _forceRawAudio, "ForceRawAudio", value);
         }
 
+        private bool? _forceEdgeHtml;
+        public bool ForceEdgeHtml
+        {
+            get => _forceEdgeHtml ??= GetValueOrDefault("ForceEdgeHtml", false);
+            set => AddOrUpdateValue(ref _forceEdgeHtml, "ForceEdgeHtml", value);
+        }
+
         private bool? _nativeTimeFormatter;
         public bool NativeTimeFormatter
         {

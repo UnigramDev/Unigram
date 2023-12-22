@@ -198,6 +198,11 @@ namespace Telegram.Controls
         {
             try
             {
+                if (SettingsService.Current.Diagnostics.ForceEdgeHtml)
+                {
+                    return false;
+                }
+
                 return !string.IsNullOrEmpty(CoreWebView2Environment.GetAvailableBrowserVersionString());
             }
             catch
@@ -211,11 +216,15 @@ namespace Telegram.Controls
             base.OnApplyTemplate();
 
             View = GetTemplateChild(nameof(View)) as WebView2;
+            View.CoreWebView2Initialized += OnCoreWebView2Initialized;
             View.WebMessageReceived += OnWebMessageReceived;
 
             await View.EnsureCoreWebView2Async();
-            await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"window.external={invoke:s=>window.chrome.webview.postMessage(s)}");
-            await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
+
+            if (View.CoreWebView2 != null)
+            {
+                await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"window.external={invoke:s=>window.chrome.webview.postMessage(s)}");
+                await View.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(@"
 window.TelegramWebviewProxy = {
 postEvent: function(eventType, eventData) {
 	if (window.external && window.external.invoke) {
@@ -224,11 +233,17 @@ postEvent: function(eventType, eventData) {
 }
 }");
 
-            View.CoreWebView2.Settings.IsStatusBarEnabled = false;
-            View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
-            View.CoreWebView2.Settings.AreDevToolsEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
+                View.CoreWebView2.Settings.IsStatusBarEnabled = false;
+                View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
+                View.CoreWebView2.Settings.AreDevToolsEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
+            }
 
             _templatedApplied.TrySetResult(true);
+        }
+
+        private void OnCoreWebView2Initialized(WebView2 sender, CoreWebView2InitializedEventArgs args)
+        {
+            Logger.Error(args.Exception);
         }
 
         private void OnWebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)

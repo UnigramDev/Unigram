@@ -53,6 +53,10 @@
                               Content="Enable WebView DevTools"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
 
+                    <CheckBox IsChecked="{x:Bind services:SettingsService.Current.Diagnostics.ForceEdgeHtml, Mode=TwoWay}"
+                              Content="Force EdgeHTML"
+                              Style="{StaticResource SettingsCheckBoxStyle}" />
+
                     <CheckBox IsChecked="{x:Bind ViewModel.PreferIpv6, Mode=TwoWay}"
                               Content="{CustomResource ConnectWithIPv6}"
                               Style="{StaticResource SettingsCheckBoxStyle}" />
