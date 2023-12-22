@@ -30,9 +30,6 @@ namespace Telegram.Views.Settings
 
             var preview = ElementCompositionPreview.GetElementVisual(Preview);
             preview.Clip = preview.Compositor.CreateInsetClip();
-
-            Message1.Mockup(Strings.FontSizePreviewLine1, Strings.FontSizePreviewName, Strings.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
-            Message2.Mockup(Strings.FontSizePreviewLine2, true, DateTime.Now);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -44,6 +41,9 @@ namespace Telegram.Views.Settings
             if (ViewModel.ClientService.TryGetUser(ViewModel.ClientService.Options.MyId, out User user))
             {
                 ProfileColor.SetUser(ViewModel.ClientService, user);
+
+                Message1.Mockup(ViewModel.ClientService, Strings.FontSizePreviewLine1, user, Strings.FontSizePreviewReply, false, DateTime.Now.AddSeconds(-25));
+                Message2.Mockup(Strings.FontSizePreviewLine2, true, DateTime.Now);
             }
         }
 

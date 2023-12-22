@@ -2823,6 +2823,83 @@ namespace Telegram.Controls.Messages
             UpdateMockup();
         }
 
+        public void Mockup(IClientService clientService, string message, object sender, string reply, bool outgoing, DateTime date, bool first = true, bool last = true)
+        {
+            if (!_templateApplied)
+            {
+                void loaded(object o, RoutedEventArgs e)
+                {
+                    Loaded -= loaded;
+                    Mockup(clientService, message, sender, reply, outgoing, date, first, last);
+                }
+
+                Loaded += loaded;
+                return;
+            }
+
+            UpdateMockup(outgoing, first, last);
+
+            Header.Visibility = Visibility.Visible;
+
+            var title = sender switch
+            {
+                User u => u.FullName(),
+                Chat c => c.Title,
+                _ => null
+            };
+
+            if (Reply == null)
+            {
+                void layoutUpdated(object o, object e)
+                {
+                    Reply.LayoutUpdated -= layoutUpdated;
+                    Reply.Mockup(title, reply);
+
+                    if (sender is User user)
+                    {
+                        Reply.UpdateMockup(clientService, user.BackgroundCustomEmojiId, user.AccentColorId);
+                    }
+                    else if (sender is Chat chat)
+                    {
+                        Reply.UpdateMockup(clientService, chat.BackgroundCustomEmojiId, chat.AccentColorId);
+                    }
+                }
+
+                Reply = GetTemplateChild(nameof(Reply)) as MessageReply;
+                Reply.LayoutUpdated += layoutUpdated;
+
+                Panel.Reply = Reply;
+            }
+            else
+            {
+                Reply.Visibility = Visibility.Visible;
+                Reply.Mockup(title, reply);
+
+                if (sender is User user)
+                {
+                    Reply.UpdateMockup(clientService, user.BackgroundCustomEmojiId, user.AccentColorId);
+                }
+                else if (sender is Chat chat)
+                {
+                    Reply.UpdateMockup(clientService, chat.BackgroundCustomEmojiId, chat.AccentColorId);
+                }
+            }
+
+            Footer.Mockup(outgoing, date);
+            Panel.ForceNewLine = false;
+            Panel.Text = new StyledText(message, new[] { new StyledParagraph(message, Array.Empty<TextEntity>()) });
+
+            Media.Margin = new Thickness(0);
+            FooterToNormal();
+            Grid.SetRow(Footer, 2);
+            Grid.SetRow(Message, 2);
+            Panel.Placeholder = true;
+
+            Message.SetText(null, message, Array.Empty<TextEntity>());
+
+            UpdateMockup();
+        }
+
         public void Mockup(IClientService clientService, string message, MessageSender sender, string reply, WebPage webPage, bool outgoing, DateTime date, bool first = true, bool last = true)
         {
             if (!_templateApplied)
