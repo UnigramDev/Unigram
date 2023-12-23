@@ -36,13 +36,13 @@ namespace Telegram.Controls
 
     public class FileButton : GlyphHyperlinkButton
     {
-        private Grid _root;
+        private Grid RootGrid;
 
-        private TextBlock _label1;
-        private TextBlock _label2;
+        private TextBlock ContentPresenter1;
+        private TextBlock ContentPresenter2;
         private TextBlock _label;
 
-        private ContainerVisual _container;
+        private bool _hasContainer;
 
         private long _fileId;
         private MessageContentState _state;
@@ -60,18 +60,15 @@ namespace Telegram.Controls
 
         protected override void OnApplyTemplate()
         {
-            _root = GetTemplateChild("RootGrid") as Grid;
+            RootGrid = GetTemplateChild(nameof(RootGrid)) as Grid;
 
-            _label1 = _label = GetTemplateChild("ContentPresenter1") as TextBlock;
-            _label2 = GetTemplateChild("ContentPresenter2") as TextBlock;
+            ContentPresenter1 = GetTemplateChild(nameof(ContentPresenter1)) as TextBlock;
+            ContentPresenter2 = GetTemplateChild(nameof(ContentPresenter2)) as TextBlock;
 
-            _label1.Text = Glyph ?? string.Empty;
-            _label2.Text = string.Empty;
+            ContentPresenter1.Text = Glyph ?? string.Empty;
+            ContentPresenter2.Text = string.Empty;
 
-            if (_state == MessageContentState.Download && !IsSmall)
-            {
-                SetDownloadGlyph(false, false);
-            }
+            _label = ContentPresenter1;
         }
 
         #region Progress
@@ -100,11 +97,6 @@ namespace Telegram.Controls
 
         #endregion
 
-
-        //public void SetGlyph(string glyph, bool animate)
-        //{
-        //    OnGlyphChanged(glyph, Glyph, animate);
-        //}
         public double Progress
         {
             set
@@ -134,14 +126,7 @@ namespace Telegram.Controls
             switch (state)
             {
                 case MessageContentState.Download:
-                    if (IsSmall)
-                    {
-                        OnGlyphChanged(IsSmall ? Icons.DownloadSmall : Icons.ArrowDownload, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionDownload);
-                    }
-                    else
-                    {
-                        SetDownloadGlyph(false, _state != state && _state != MessageContentState.None);
-                    }
+                    OnGlyphChanged(IsSmall ? Icons.DownloadSmall : Icons.ArrowDownloadFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionDownload);
                     break;
                 case MessageContentState.Downloading:
                     if (IsSmall || (_state != MessageContentState.Download && _state != MessageContentState.Downloading))
@@ -150,7 +135,7 @@ namespace Telegram.Controls
                     }
                     else if (_state != MessageContentState.Downloading)
                     {
-                        SetDownloadGlyph(true, false);
+                        SetDownloadGlyph(_state != MessageContentState.Download);
                     }
                     break;
                 case MessageContentState.Uploading:
@@ -191,11 +176,6 @@ namespace Telegram.Controls
 
         private void OnGlyphChanged(string newValue, string oldValue, bool animate, string automation, bool clearContainer = true)
         {
-            //if (string.IsNullOrEmpty(oldValue) || string.IsNullOrEmpty(newValue))
-            //{
-            //    return;
-            //}
-
             if (string.Equals(newValue, oldValue, StringComparison.OrdinalIgnoreCase))
             {
                 return;
@@ -211,8 +191,8 @@ namespace Telegram.Controls
 
             if (animate)
             {
-                var labelShow = _label == _label1 ? _label2 : _label1;
-                var labelHide = _label == _label1 ? _label1 : _label2;
+                var labelShow = _label == ContentPresenter1 ? ContentPresenter2 : ContentPresenter1;
+                var labelHide = _label == ContentPresenter1 ? ContentPresenter1 : ContentPresenter2;
 
                 var visualShow = ElementCompositionPreview.GetElementVisual(labelShow);
                 var visualHide = ElementCompositionPreview.GetElementVisual(labelHide);
@@ -249,52 +229,41 @@ namespace Telegram.Controls
 
             _label.Text = newValue;
 
-            if (_container != null && (clearContainer || !animate))
+            if (_hasContainer && (clearContainer || !animate))
             {
-                _container.Children.RemoveAll();
+                _hasContainer = false;
+                ElementCompositionPreview.SetElementChildVisual(RootGrid, null);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void SetDownloadGlyph(bool downloading, bool animate)
+        private void SetDownloadGlyph(bool animate)
         {
             try
             {
-                SetDownloadGlyphInternal(downloading, animate);
+                SetDownloadGlyphImpl(animate);
             }
             catch
             {
                 // Compositor.CreateSpriteShape can throw InvalidCastException
-                // TODO: fallback to glyph icon?
+                OnGlyphChanged(Icons.DismissFilled24, Glyph, animate, Strings.AccActionCancelDownload, false);
             }
         }
 
-        private void SetDownloadGlyphInternal(bool downloading, bool animate)
+        private void SetDownloadGlyphImpl(bool animate)
         {
-            if (_root == null)
+            if (RootGrid == null)
             {
                 return;
             }
-            else if (_container == null)
-            {
-                _container = Window.Current.Compositor.CreateContainerVisual();
-                _container.Size = new Vector2(48, 48);
-                _container.CenterPoint = new Vector3(24, 24, 0);
 
-                ElementCompositionPreview.SetElementChildVisual(_root, _container);
-            }
+            OnGlyphChanged(string.Empty, Glyph, animate, Strings.AccActionCancelDownload, false);
 
             var compositor = Window.Current.Compositor;
             var diameter = 48f; // min(bounds.size.width, bounds.size.height)
             var factor = diameter / 48f;
 
-
             var lineWidth = 2; //MathF.Max(1.6f, 2.25f * factor);
-
-            //self.leftLine.lineWidth = lineWidth
-            //self.rightLine.lineWidth = lineWidth
-            //self.arrowBody.lineWidth = lineWidth
-
 
             var arrowHeadSize = 15.0f * factor;
             var arrowLength = 18.0f * factor;
@@ -338,108 +307,62 @@ namespace Telegram.Controls
             visual1.Size = new Vector2(48, 48);
 
             var visual3 = compositor.CreateShapeVisual();
-            var visual2 = compositor.CreateShapeVisual();
             visual3.Shapes.Add(arrowShape);
             visual3.Size = new Vector2(48, 48);
-            //visual.Offset = new Vector3((48 - 20) / 2 + 4.5f, (48 - 20) / 2, 0);
 
-            //_visual1.Opacity = 0;
-            //_visual2.Opacity = 0;
+            var container = Window.Current.Compositor.CreateContainerVisual();
+            container.Children.InsertAtTop(visual1);
+            container.Children.InsertAtTop(visual3);
+            container.Size = new Vector2(48, 48);
 
-            _container.Children.RemoveAll();
-            _container.Children.InsertAtTop(visual1);
-            _container.Children.InsertAtTop(visual2);
-            _container.Children.InsertAtTop(visual3);
+            _hasContainer = true;
+            ElementCompositionPreview.SetElementChildVisual(RootGrid, container);
 
+            _shouldEnqueueProgress = true;
 
-            //var anim11 = compositor.CreatePathKeyFrameAnimation();
-            //anim11.InsertKeyFrame(1, GetLine(new Vector2(1, 18), new Vector2(1, 2)));
-            //anim11.InsertKeyFrame(0, GetLine(new Vector2(1, 2), new Vector2(10, 2)));
-            OnGlyphChanged(string.Empty, Glyph, true, Strings.AccActionDownload, false);
-
-            if (downloading)
+            var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+            batch.Completed += (s, args) =>
             {
-                _shouldEnqueueProgress = true;
-
-                _container.Opacity = 1;
-                _container.Scale = Vector3.One;
-
-                var batch = compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-                batch.Completed += (s, args) =>
+                if (_state == MessageContentState.Downloading)
                 {
-                    if (_state == MessageContentState.Downloading)
-                    {
-                        OnGlyphChanged(Icons.Cancel, Icons.ArrowDownload, true, Strings.AccActionCancelDownload, false);
-                        InternalProgress = _enqueuedProgress;
-                    }
-
-                    _shouldEnqueueProgress = false;
-                    //_container.Children.RemoveAll();
-                };
-
-                var animLeft = compositor.CreateScalarKeyFrameAnimation();
-                animLeft.InsertKeyFrame(0, 1);
-                animLeft.InsertKeyFrame(1, 0);
-                animLeft.Duration = TimeSpan.FromMilliseconds(200);
-
-                leftLine.StartAnimation("TrimEnd", animLeft);
-                rightLine.StartAnimation("TrimEnd", animLeft);
-
-                var opacityLeft = compositor.CreateScalarKeyFrameAnimation();
-                opacityLeft.InsertKeyFrame(0, 1);
-                opacityLeft.InsertKeyFrame(1, 0);
-                opacityLeft.Duration = TimeSpan.FromSeconds(0.10);
-                opacityLeft.DelayTime = TimeSpan.FromSeconds(0.06);
-
-                var opacityRight = compositor.CreateScalarKeyFrameAnimation();
-                opacityRight.InsertKeyFrame(0, 1);
-                opacityRight.InsertKeyFrame(1, 0);
-                opacityRight.Duration = TimeSpan.FromMilliseconds(300);
-
-                visual1.StartAnimation("Opacity", opacityLeft);
-                visual2.StartAnimation("Opacity", opacityRight);
-
-                batch.End();
-
-                var animBody = compositor.CreateScalarKeyFrameAnimation();
-                animBody.InsertKeyFrame(0, 0.65f);
-                animBody.InsertKeyFrame(1, 0, compositor.CreateLinearEasingFunction());
-                animBody.Duration = TimeSpan.FromMilliseconds(400);
-
-                var animBodyEnd = compositor.CreateScalarKeyFrameAnimation();
-                animBodyEnd.InsertKeyFrame(0, 1);
-                animBodyEnd.InsertKeyFrame(1, 0, compositor.CreateLinearEasingFunction());
-                animBodyEnd.Duration = TimeSpan.FromMilliseconds(400);
-
-                var animBodyAlpha = compositor.CreateScalarKeyFrameAnimation();
-                animBodyAlpha.InsertKeyFrame(0, 1);
-                animBodyAlpha.InsertKeyFrame(1, 0);
-                animBodyAlpha.Duration = TimeSpan.FromSeconds(0.3);
-                animBodyAlpha.DelayTime = TimeSpan.FromMilliseconds(200);
-
-                arrowPath.StartAnimation("TrimStart", animBody);
-                arrowPath.StartAnimation("TrimEnd", animBodyEnd);
-                //visual3.StartAnimation("Opacity", animBodyAlpha);
-            }
-            else if (animate)
-            {
-                var show1 = compositor.CreateVector3KeyFrameAnimation();
-                show1.InsertKeyFrame(1, Vector3.One);
-                show1.InsertKeyFrame(0, Vector3.Zero);
-
-                var show2 = compositor.CreateScalarKeyFrameAnimation();
-                show2.InsertKeyFrame(1, 1);
-                show2.InsertKeyFrame(0, 0);
-
-                _container.StartAnimation("Scale", show1);
-                _container.StartAnimation("Opacity", show2);
+                    OnGlyphChanged(Icons.Cancel, Icons.ArrowDownload, true, Strings.AccActionCancelDownload, false);
+                    InternalProgress = _enqueuedProgress;
+                }
 
                 _shouldEnqueueProgress = false;
-            }
-            else
-            {
-                _shouldEnqueueProgress = false;
-            }
+                //_container.Children.RemoveAll();
+            };
+
+            var animLeft = compositor.CreateScalarKeyFrameAnimation();
+            animLeft.InsertKeyFrame(0, 1);
+            animLeft.InsertKeyFrame(1, 0);
+            animLeft.Duration = TimeSpan.FromMilliseconds(200);
+
+            leftLine.StartAnimation("TrimEnd", animLeft);
+            rightLine.StartAnimation("TrimEnd", animLeft);
+
+            var opacityLeft = compositor.CreateScalarKeyFrameAnimation();
+            opacityLeft.InsertKeyFrame(0, 1);
+            opacityLeft.InsertKeyFrame(1, 0);
+            opacityLeft.Duration = TimeSpan.FromSeconds(0.10);
+            opacityLeft.DelayTime = TimeSpan.FromSeconds(0.06);
+
+            visual1.StartAnimation("Opacity", opacityLeft);
+
+            batch.End();
+
+            var animBody = compositor.CreateScalarKeyFrameAnimation();
+            animBody.InsertKeyFrame(0, 0.65f);
+            animBody.InsertKeyFrame(1, 0, compositor.CreateLinearEasingFunction());
+            animBody.Duration = TimeSpan.FromMilliseconds(400);
+
+            var animBodyEnd = compositor.CreateScalarKeyFrameAnimation();
+            animBodyEnd.InsertKeyFrame(0, 1);
+            animBodyEnd.InsertKeyFrame(1, 0, compositor.CreateLinearEasingFunction());
+            animBodyEnd.Duration = TimeSpan.FromMilliseconds(400);
+
+            arrowPath.StartAnimation("TrimStart", animBody);
+            arrowPath.StartAnimation("TrimEnd", animBodyEnd);
         }
 
         private CompositionPath GetArrowShape()

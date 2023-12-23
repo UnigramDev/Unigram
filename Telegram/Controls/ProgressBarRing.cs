@@ -30,6 +30,10 @@ namespace Telegram.Controls
         {
             DefaultStyleKey = typeof(ProgressBarRing);
 
+            _manager = new FrameworkElementState(this);
+            _manager.Loaded += OnLoaded;
+            _manager.Unloaded += OnUnloaded;
+
             var ellipse = Window.Current.Compositor.CreateEllipseGeometry();
             ellipse.Radius = new Vector2((float)Radius);
             ellipse.Center = new Vector2((float)Center);
@@ -51,44 +55,21 @@ namespace Telegram.Controls
             visual.Size = new Vector2((float)Center * 2);
             visual.CenterPoint = new Vector3((float)Center);
 
-            var trimStart = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            trimStart.Target = nameof(CompositionGeometry.TrimStart);
-            trimStart.InsertExpressionKeyFrame(1.0f, "this.FinalValue", Window.Current.Compositor.CreateLinearEasingFunction());
-
-            var trimEnd = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            trimEnd.Target = nameof(CompositionGeometry.TrimEnd);
-            trimEnd.InsertExpressionKeyFrame(1.0f, "this.FinalValue", Window.Current.Compositor.CreateLinearEasingFunction());
-
-            var visibility = Window.Current.Compositor.CreateExpressionAnimation("target.TrimEnd > 0 && target.TrimEnd < 1");
-            visibility.SetReferenceParameter("target", ellipse);
-
-            var animations = Window.Current.Compositor.CreateImplicitAnimationCollection();
-            animations[nameof(CompositionGeometry.TrimStart)] = trimStart;
-            animations[nameof(CompositionGeometry.TrimEnd)] = trimEnd;
-
-            //ellipse.ImplicitAnimations = animations;
-            //visual.StartAnimation("IsVisible", visibility);
-            //visual.StartAnimation("RotationAngleInDegrees", forever);
+            var easing = Window.Current.Compositor.CreateLinearEasingFunction();
+            var forever = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            forever.InsertKeyFrame(0, 220, easing);
+            forever.InsertKeyFrame(1, 599, easing);
+            forever.IterationBehavior = AnimationIterationBehavior.Forever;
+            forever.Duration = TimeSpan.FromSeconds(3);
 
             _visual = visual;
             _shape = shape;
             _ellipse = ellipse;
 
-            var easing = Window.Current.Compositor.CreateLinearEasingFunction();
-            var forever = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            forever.InsertKeyFrame(0, 240, easing);
-            forever.InsertKeyFrame(1, 599, easing);
-            forever.IterationBehavior = AnimationIterationBehavior.Forever;
-            forever.Duration = TimeSpan.FromSeconds(3);
-
             _foreverAnimation = forever;
 
             ElementCompositionPreview.SetElementChildVisual(this, visual);
             RegisterPropertyChangedCallback(ForegroundProperty, OnForegroundChanged);
-
-            _manager = new FrameworkElementState(this);
-            _manager.Loaded += OnLoaded;
-            _manager.Unloaded += OnUnloaded;
         }
 
         public double Radius { get; set; } = 21;
@@ -124,17 +105,16 @@ namespace Telegram.Controls
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_foreverAnimation != null && !_spinning && Value is > 0 and < 1)
+            if (_spinning is false && Value is > 0 and < 1)
             {
                 _spinning = true;
-                _visual.RotationAngleInDegrees = 230; // 202
                 _visual.StartAnimation("RotationAngleInDegrees", _foreverAnimation);
             }
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            if (_foreverAnimation != null && _spinning)
+            if (_spinning)
             {
                 _spinning = false;
                 _visual.StopAnimation("RotationAngleInDegrees");
@@ -143,88 +123,100 @@ namespace Telegram.Controls
 
         protected override void OnValueChanged(double oldValue, double newValue)
         {
-            //if (newValue > 0)
-            //{
-            //    newValue = Math.Max(newValue, 0.0001);
-            //}
+            Logger.Info(newValue);
+
             if (double.IsNaN(newValue))
             {
                 newValue = 0;
             }
 
-            if (newValue > 0 && newValue < 0.05)
+            if (newValue > 0)
             {
-                newValue = 0.05;
+                newValue = Math.Clamp(newValue, 0.05, 1);
+            }
+            else
+            {
+                newValue = Math.Clamp(newValue, 0, 1);
             }
 
-            if (_foreverAnimation != null && !_spinning && newValue is > 0 and < 1)
+            OnValueChanged((float)oldValue, (float)newValue);
+        }
+
+        private void OnValueChanged(float oldValue, float newValue)
+        {
+            if (_spinning is false && newValue is > 0 and < 1)
             {
                 _spinning = true;
-                _visual.RotationAngleInDegrees = 230; // 202
                 _visual.StartAnimation("RotationAngleInDegrees", _foreverAnimation);
             }
 
-            if (_ellipse != null)
+            var diff = Math.Abs(oldValue - newValue);
+            if (diff < 0.10 && newValue < 1 && oldValue != 0 && newValue > 0.10)
             {
-                var diff = Math.Abs(oldValue - newValue);
-                if (diff < 0.10 && newValue < 1)
+                if (newValue > 0 && newValue < 1)
                 {
                     _ellipse.TrimStart = 0;
-                    _ellipse.TrimEnd = MathF.Max(0, MathF.Min(1, (float)newValue));
+                    _ellipse.TrimEnd = newValue;
                 }
                 else
                 {
-                    var linear = Window.Current.Compositor.CreateLinearEasingFunction();
-                    var trimStart = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-                    var trimEnd = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                    _ellipse.TrimStart = 0;
+                    _ellipse.TrimEnd = 0;
 
-                    if (newValue > 0 && newValue < 1)
+                    if (_spinning)
                     {
-                        //_ellipse.TrimStart = 0;
-                        //_ellipse.TrimEnd = MathF.Max(0, MathF.Min(1, (float)newValue));
-
-                        trimStart.InsertKeyFrame(1, 0, linear);
-                        trimEnd.InsertKeyFrame(1, MathF.Max(0, MathF.Min(1, (float)newValue)), linear);
-
-                        _ellipse.StartAnimation("TrimStart", trimStart);
-                        _ellipse.StartAnimation("TrimEnd", trimEnd);
+                        _spinning = false;
+                        _visual.StopAnimation("RotationAngleInDegrees");
                     }
-                    else
-                    {
-                        //_ellipse.TrimStart = 1;
-                        //_ellipse.TrimEnd = 1;
 
-                        trimStart.InsertKeyFrame(1, ShrinkOut ? 1 : 0, linear);
-                        trimEnd.InsertKeyFrame(1, 1, linear);
-
-                        var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
-                        batch.Completed += (s, args) =>
-                        {
-                            if (_foreverAnimation != null && _spinning)
-                            {
-                                _spinning = false;
-                                _visual.StopAnimation("RotationAngleInDegrees");
-                            }
-
-                            Completed?.Invoke(this, EventArgs.Empty);
-                        };
-
-                        _ellipse.StartAnimation("TrimStart", trimStart);
-                        _ellipse.StartAnimation("TrimEnd", trimEnd);
-
-                        batch.End();
-                    }
+                    Completed?.Invoke(this, EventArgs.Empty);
                 }
             }
+            else
+            {
+                var linear = Window.Current.Compositor.CreateLinearEasingFunction();
+                var trimStart = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+                var trimEnd = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
 
-            //if (newValue is >= 1.0 or <= 0.0)
-            //{
-            //    Visibility = Visibility.Collapsed;
-            //}
-            //else
-            //{
-            //    Visibility = Visibility.Visible;
-            //}
+                if (oldValue == 0)
+                {
+                    linear = null;
+
+                    trimStart.InsertKeyFrame(0, 0);
+                    trimEnd.InsertKeyFrame(0, 0);
+                }
+
+                if (newValue > 0 && newValue < 1)
+                {
+                    trimStart.InsertKeyFrame(1, 0, linear);
+                    trimEnd.InsertKeyFrame(1, newValue, linear);
+
+                    _ellipse.StartAnimation("TrimStart", trimStart);
+                    _ellipse.StartAnimation("TrimEnd", trimEnd);
+                }
+                else
+                {
+                    trimStart.InsertKeyFrame(1, ShrinkOut ? 1 : 0, linear);
+                    trimEnd.InsertKeyFrame(1, 1, linear);
+
+                    var batch = Window.Current.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation);
+                    batch.Completed += (s, args) =>
+                    {
+                        if (_spinning)
+                        {
+                            _spinning = false;
+                            _visual.StopAnimation("RotationAngleInDegrees");
+                        }
+
+                        Completed?.Invoke(this, EventArgs.Empty);
+                    };
+
+                    _ellipse.StartAnimation("TrimStart", trimStart);
+                    _ellipse.StartAnimation("TrimEnd", trimEnd);
+
+                    batch.End();
+                }
+            }
         }
 
         public event EventHandler Completed;
