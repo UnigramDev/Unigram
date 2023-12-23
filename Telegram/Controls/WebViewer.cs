@@ -26,6 +26,8 @@ namespace Telegram.Controls
     public class WebViewer : ContentControl
     {
         private WebPresenter _presenter;
+        private bool _initialized;
+        private bool _closed;
 
         public WebViewer()
         {
@@ -45,6 +47,37 @@ namespace Telegram.Controls
             Content = _presenter;
         }
 
+        private async Task<bool> EnsureInitializedAsync()
+        {
+            if (_initialized || _closed)
+            {
+                return !_closed;
+            }
+
+            var succeeded = await _presenter.EnsureInitializedAsync();
+            if (succeeded || _closed || _presenter is not ChromiumWebPresenter)
+            {
+                _initialized = true;
+                return !_closed;
+            }
+
+            _presenter.EventReceived -= OnEventReceived;
+
+            _presenter = new EdgeWebPresenter();
+            _presenter.EventReceived += OnEventReceived;
+
+            Content = _presenter;
+
+            _initialized = await _presenter.EnsureInitializedAsync();
+
+            if (_closed)
+            {
+                _presenter.Close();
+            }
+
+            return !_closed;
+        }
+
         private void OnEventReceived(object sender, WebViewerEventReceivedEventArgs e)
         {
             EventReceived?.Invoke(this, e);
@@ -52,18 +85,50 @@ namespace Telegram.Controls
 
         public event EventHandler<WebViewerEventReceivedEventArgs> EventReceived;
 
-        public void Navigate(string uri) => _presenter.Navigate(uri);
+        public async void Navigate(string uri)
+        {
+            if (_initialized || await EnsureInitializedAsync())
+            {
+                _presenter.Navigate(uri);
+            }
+        }
 
-        public void NavigateToString(string htmlContent) => _presenter.NavigateToString(htmlContent);
+        public async void NavigateToString(string htmlContent)
+        {
+            if (_initialized || await EnsureInitializedAsync())
+            {
+                _presenter.NavigateToString(htmlContent);
+            }
+        }
 
-        public void InvokeScript(string javaScript) => _ = _presenter.InvokeScriptAsync(javaScript);
+        public async void InvokeScript(string javaScript)
+        {
+            if (_initialized || await EnsureInitializedAsync())
+            {
+                _ = _presenter.InvokeScriptAsync(javaScript);
+            }
+        }
 
-        public Task InvokeScriptAsync(string javaScript) => _presenter.InvokeScriptAsync(javaScript);
+        public async Task InvokeScriptAsync(string javaScript)
+        {
+            if (_initialized || await EnsureInitializedAsync())
+            {
+                await _presenter.InvokeScriptAsync(javaScript);
+            }
+        }
 
-        public void Reload() => _presenter.Reload();
+        public async void Reload()
+        {
+            if (_initialized || await EnsureInitializedAsync())
+            {
+                _presenter.Reload();
+            }
+        }
 
         public void Close()
         {
+            _closed = true;
+
             _presenter.Close();
             _presenter = null;
 
@@ -73,6 +138,18 @@ namespace Telegram.Controls
 
     public abstract class WebPresenter : Control
     {
+        private readonly TaskCompletionSource<bool> _templatedApplied = new();
+
+        public Task<bool> EnsureInitializedAsync()
+        {
+            return _templatedApplied.Task;
+        }
+
+        protected void Initialize(bool succeeded)
+        {
+            _templatedApplied.TrySetResult(succeeded);
+        }
+
         public event EventHandler<WebViewerEventReceivedEventArgs> EventReceived;
 
         public abstract void Navigate(string uri);
@@ -95,8 +172,6 @@ namespace Telegram.Controls
     {
         private WebView View;
 
-        private readonly TaskCompletionSource<bool> _templatedApplied = new();
-
         public EdgeWebPresenter()
         {
             DefaultStyleKey = typeof(EdgeWebPresenter);
@@ -110,7 +185,7 @@ namespace Telegram.Controls
             View.NavigationStarting += OnNavigationStarting;
             View.Unloaded += OnUnloaded;
 
-            _templatedApplied.TrySetResult(true);
+            Initialize(true);
         }
 
         private void OnNavigationStarting(WebView sender, WebViewNavigationStartingEventArgs args)
@@ -135,59 +210,42 @@ namespace Telegram.Controls
             }
         }
 
-        public override async void Navigate(string uri)
+        public override void Navigate(string uri)
         {
-            if (await _templatedApplied.Task)
-            {
-                View?.Navigate(new Uri(uri));
-            }
+            View?.Navigate(new Uri(uri));
         }
 
-        public override async void NavigateToString(string htmlContent)
+        public override void NavigateToString(string htmlContent)
         {
-            if (await _templatedApplied.Task)
-            {
-                View?.NavigateToString(htmlContent);
-            }
+            View?.NavigateToString(htmlContent);
         }
 
         public override async Task InvokeScriptAsync(string javaScript)
         {
-            if (await _templatedApplied.Task && View != null)
+            try
             {
-                try
-                {
-                    await View.InvokeScriptAsync("eval", new[] { javaScript });
-                }
-                catch
-                {
-                    // This method can throw exceptions if fails to evaluate
-                }
+                await View.InvokeScriptAsync("eval", new[] { javaScript });
+            }
+            catch
+            {
+                // This method can throw exceptions if fails to evaluate
             }
         }
 
-        public override async void Reload()
+        public override void Reload()
         {
-            if (await _templatedApplied.Task)
-            {
-                View?.Refresh();
-            }
+            View?.Refresh();
         }
 
-        public override async void Close()
+        public override void Close()
         {
-            if (await _templatedApplied.Task)
-            {
-                View?.NavigateToString(string.Empty);
-            }
+            View?.NavigateToString(string.Empty);
         }
     }
 
     public class ChromiumWebPresenter : WebPresenter
     {
         private WebView2 View;
-
-        private readonly TaskCompletionSource<bool> _templatedApplied = new();
 
         public ChromiumWebPresenter()
         {
@@ -236,14 +294,21 @@ postEvent: function(eventType, eventData) {
                 View.CoreWebView2.Settings.IsStatusBarEnabled = false;
                 View.CoreWebView2.Settings.AreDefaultContextMenusEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
                 View.CoreWebView2.Settings.AreDevToolsEnabled = SettingsService.Current.Diagnostics.EnableWebViewDevTools;
-            }
 
-            _templatedApplied.TrySetResult(true);
+                Initialize(true);
+            }
+            else
+            {
+                Initialize(false);
+            }
         }
 
         private void OnCoreWebView2Initialized(WebView2 sender, CoreWebView2InitializedEventArgs args)
         {
-            Logger.Error(args.Exception);
+            if (args.Exception != null)
+            {
+                Logger.Error(args.Exception);
+            }
         }
 
         private void OnWebMessageReceived(WebView2 sender, CoreWebView2WebMessageReceivedEventArgs args)
@@ -266,51 +331,36 @@ postEvent: function(eventType, eventData) {
             }
         }
 
-        public override async void Navigate(string uri)
+        public override void Navigate(string uri)
         {
-            if (await _templatedApplied.Task)
-            {
-                View?.CoreWebView2?.Navigate(uri);
-            }
+            View?.CoreWebView2?.Navigate(uri);
         }
 
-        public override async void NavigateToString(string htmlContent)
+        public override void NavigateToString(string htmlContent)
         {
-            if (await _templatedApplied.Task)
-            {
-                View?.CoreWebView2?.NavigateToString(htmlContent);
-            }
+            View?.CoreWebView2?.NavigateToString(htmlContent);
         }
 
         public override async Task InvokeScriptAsync(string javaScript)
         {
-            if (await _templatedApplied.Task && View?.CoreWebView2 != null)
+            try
             {
-                try
-                {
-                    await View.CoreWebView2.ExecuteScriptAsync(javaScript);
-                }
-                catch
-                {
-                    // This method can throw exceptions if fails to evaluate
-                }
+                await View.CoreWebView2.ExecuteScriptAsync(javaScript);
+            }
+            catch
+            {
+                // This method can throw exceptions if fails to evaluate
             }
         }
 
-        public override async void Reload()
+        public override void Reload()
         {
-            if (await _templatedApplied.Task)
-            {
-                View?.Reload();
-            }
+            View?.Reload();
         }
 
-        public override async void Close()
+        public override void Close()
         {
-            if (await _templatedApplied.Task)
-            {
-                View?.Close();
-            }
+            View?.Close();
         }
     }
 }
