@@ -4134,7 +4134,18 @@ namespace Telegram.ViewModels
             }
         }
 
-        public LinkPreviewOptions LinkPreviewOptions { get; set; } = new();
+        private LinkPreviewOptions _linkPreviewOptions = new();
+        public LinkPreviewOptions LinkPreviewOptions
+        {
+            get => _linkPreviewOptions;
+            set
+            {
+                if (value != null)
+                {
+                    _linkPreviewOptions = value;
+                }
+            }
+        }
 
         public bool IsEmpty
         {

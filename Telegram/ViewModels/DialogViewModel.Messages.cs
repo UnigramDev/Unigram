@@ -98,7 +98,17 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void ReplyToMessage(MessageViewModel message)
+        public void ReplyToMessage(MessageViewModel message)
+        {
+            ReplyToMessage(message, false);
+        }
+
+        public void ReplyToMessageInAnotherChat(MessageViewModel message)
+        {
+            ReplyToMessage(message, true);
+        }
+
+        public async void ReplyToMessage(MessageViewModel message, bool inAnotherChat)
         {
             DisposeSearch();
 
@@ -112,9 +122,19 @@ namespace Telegram.ViewModels
                 message = album.Messages.FirstOrDefault();
             }
 
-            if (ShouldReplyInAnotherChat(message))
+            if (inAnotherChat || ShouldReplyInAnotherChat(message))
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message, null));
+                var header = ComposerHeader;
+                var text = GetFormattedText(true);
+
+                GetReply(true);
+
+                var confirm = await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message));
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    ComposerHeader = header;
+                    SetFormattedText(text);
+                }
             }
             else
             {
@@ -127,7 +147,17 @@ namespace Telegram.ViewModels
             }
         }
 
-        public async void QuoteToMessage(MessageQuote quote)
+        public void QuoteToMessage(MessageQuote quote)
+        {
+            QuoteToMessage(quote, false);
+        }
+
+        public void QuoteToMessageInAnotherChat(MessageQuote quote)
+        {
+            QuoteToMessage(quote, true);
+        }
+
+        public async void QuoteToMessage(MessageQuote quote, bool inAnotherChat)
         {
             DisposeSearch();
 
@@ -142,9 +172,19 @@ namespace Telegram.ViewModels
                 message = album.Messages.FirstOrDefault();
             }
 
-            if (ShouldReplyInAnotherChat(message))
+            if (inAnotherChat || ShouldReplyInAnotherChat(message))
             {
-                await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message, quote.ToInput()));
+                var header = ComposerHeader;
+                var text = GetFormattedText(true);
+
+                GetReply(true);
+
+                var confirm = await ShowPopupAsync(typeof(ChooseChatsPopup), new ChooseChatsConfigurationReplyToMessage(message, quote.ToInput()));
+                if (confirm != ContentDialogResult.Primary)
+                {
+                    ComposerHeader = header;
+                    SetFormattedText(text);
+                }
             }
             else
             {

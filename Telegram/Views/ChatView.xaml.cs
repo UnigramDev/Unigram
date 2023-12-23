@@ -2008,23 +2008,52 @@ namespace Telegram.Views
 
         private void Reply_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            return;
-
             var flyout = new MenuFlyout();
 
             var header = ViewModel.ComposerHeader;
-            if (header?.WebPagePreview != null)
+            if (header?.ReplyToMessage != null)
             {
-                flyout.CreateFlyoutItem((web) => { }, header, true ? Strings.LinkBelow : Strings.LinkAbove);
-
-                if (header.WebPagePreview.HasLargeMedia)
+                if (header.ReplyToQuote != null)
                 {
-                    flyout.CreateFlyoutItem((web) => { }, header, header.LinkPreviewOptions.ForceSmallMedia ? Strings.LinkMediaLarger : Strings.LinkMediaSmaller);
+                    var quote = new MessageQuote
+                    {
+                        Message = header.ReplyToMessage,
+                        Quote = header.ReplyToQuote.Text,
+                        Position = header.ReplyToQuote.Position
+                    };
+
+                    flyout.CreateFlyoutItem(ViewModel.QuoteToMessageInAnotherChat, quote, Strings.ReplyToAnotherChat, Icons.ReplyInAnotherChat);
+                }
+                else
+                {
+                    flyout.CreateFlyoutItem(ViewModel.ReplyToMessageInAnotherChat, header.ReplyToMessage, Strings.ReplyToAnotherChat, Icons.ReplyInAnotherChat);
                 }
 
                 flyout.CreateFlyoutSeparator();
+                flyout.CreateFlyoutItem(ViewModel.ClearReply, Strings.DoNotReply, Icons.DismissCircle, destructive: true);
+            }
+            else if (header?.WebPagePreview != null)
+            {
+                static void ChangeShowAbove(MessageComposerHeader header)
+                {
+                    header.LinkPreviewOptions.ShowAboveText = !header.LinkPreviewOptions.ShowAboveText;
+                }
 
-                flyout.CreateFlyoutItem(ViewModel.ClearReply, Strings.DoNotLinkPreview, Icons.Delete, destructive: true);
+                static void ChangeForceMedia(MessageComposerHeader header)
+                {
+                    header.LinkPreviewOptions.ForceSmallMedia = !header.LinkPreviewOptions.ForceSmallMedia;
+                    header.LinkPreviewOptions.ForceLargeMedia = !header.LinkPreviewOptions.ForceSmallMedia;
+                }
+
+                flyout.CreateFlyoutItem(ChangeShowAbove, header, header.LinkPreviewOptions.ShowAboveText ? Strings.LinkBelow : Strings.LinkAbove, header.LinkPreviewOptions.ShowAboveText ? Icons.MoveDown : Icons.MoveUp);
+
+                if (header.WebPagePreview.HasLargeMedia)
+                {
+                    flyout.CreateFlyoutItem(ChangeForceMedia, header, header.LinkPreviewOptions.ForceSmallMedia ? Strings.LinkMediaLarger : Strings.LinkMediaSmaller, header.LinkPreviewOptions.ForceLargeMedia ? Icons.Shrink : Icons.Enlarge);
+                }
+
+                flyout.CreateFlyoutSeparator();
+                flyout.CreateFlyoutItem(ViewModel.ClearReply, Strings.DoNotLinkPreview, Icons.DismissCircle, destructive: true);
             }
 
             args.ShowAt(flyout, sender as FrameworkElement);
