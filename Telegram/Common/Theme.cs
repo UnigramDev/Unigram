@@ -59,29 +59,38 @@ namespace Telegram.Common
 
         public void UpdateEmojiSet()
         {
-            var xamlAutoFontFamily = new StringBuilder();
+            var xamlAutoFontFamilyValue = FontFamily.XamlAutoFontFamily.Source;
+            if (xamlAutoFontFamilyValue == "Segoe UI Variable")
+            {
+                xamlAutoFontFamilyValue = "Segoe UI";
+            }
+
+            var xamlAutoFontFamily = new StringBuilder(xamlAutoFontFamilyValue);
             var comma = ", ";
 
-            foreach (var language in Formatter.Languages)
+            if (false)
             {
-                // We copy XAML behavior, only resolve for Japanese and Korean
-                if (language == "ja" || language == "ko" || language == "ja-JP" || language == "ko-KR")
+                foreach (var language in Formatter.Languages)
                 {
-                    try
+                    // We copy XAML behavior, only resolve for Japanese and Korean
+                    if (language == "ja" || language == "ko" || language == "ja-JP" || language == "ko-KR")
                     {
-                        var recommendedFonts = new LanguageFontGroup(language);
-                        var family = recommendedFonts.UITextFont.FontFamily;
+                        try
+                        {
+                            var recommendedFonts = new LanguageFontGroup(language);
+                            var family = recommendedFonts.UITextFont.FontFamily;
 
-                        xamlAutoFontFamily.Prepend(family, comma);
+                            xamlAutoFontFamily.Prepend(family, comma);
+                        }
+                        catch
+                        {
+                            // All the remote procedure calls must be wrapped in a try-catch block
+                        }
                     }
-                    catch
-            {
-                        // All the remote procedure calls must be wrapped in a try-catch block
-            }
                 }
-            }
 
-            xamlAutoFontFamily.Prepend("Segoe UI", comma);
+                xamlAutoFontFamily.Prepend("Segoe UI", comma);
+            }
 
             switch (SettingsService.Current.Appearance.EmojiSet)
             {
