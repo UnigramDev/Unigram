@@ -393,7 +393,7 @@ namespace Telegram.Views
                 TextField.IsSpellCheckEnabled = _useSystemSpellChecker;
             }
 
-            TrySetFocusState(FocusState.Programmatic, true);
+            TrySetFocusState(FocusState.Programmatic, false);
 
             StickersPanel.MaxWidth = SettingsService.Current.IsAdaptiveWideEnabled ? 1024 : double.PositiveInfinity;
 
@@ -773,15 +773,11 @@ namespace Telegram.Views
                 return;
             }
 
-            //if (fast)
-            //{
-            //    if (CanFocusText(state))
-            //    {
-            //        _focusState.Value = state;
-            //        FocusText(state);
-            //    }
-            //}
-            //else
+            if (fast)
+            {
+                TextField.Focus(state);
+            }
+            else
             {
                 _focusState.Set(state);
             }
@@ -3521,7 +3517,7 @@ namespace Telegram.Views
             ButtonAction.Visibility = Visibility.Collapsed;
             ChatFooter.Visibility = Visibility.Collapsed;
 
-            TrySetFocusState(FocusState.Programmatic, true);
+            TrySetFocusState(FocusState.Programmatic, false);
         }
 
         private void ButtonAction_LosingFocus(UIElement sender, LosingFocusEventArgs args)
