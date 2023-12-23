@@ -240,7 +240,7 @@
                 </controls:BadgeButton>
 
                 <controls:BadgeButton x:Name="PremiumGifting"
-                                      x:Load="{x:Bind ViewModel.IsPremiumAvailable, Mode=OneWay}"
+                                      x:Load="False"
                                       Click="{x:Bind ViewModel.PremiumGifting}"
                                       Content="{CustomResource TelegramPremium}"
                                       Style="{StaticResource IconBadgeButtonStyle}">
