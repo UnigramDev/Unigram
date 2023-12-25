@@ -933,12 +933,12 @@ namespace Telegram.Controls.Stories
 
             flyout.CreateFlyoutItem(ViewModel.ShowProfile, activeStories, archived ? Strings.UnarchiveStories : Strings.ArchivePeerStories, archived ? Icons.Unarchive : Icons.Archive);
 
-            if (story.CanBeForwarded && story.Content is StoryContentPhoto or StoryContentVideo && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
+            if (story.CanBeForwarded && story.Content is StoryContentPhoto or StoryContentVideo && (activeStories.IsMyStory || story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
             {
-                flyout.CreateFlyoutItem(SaveStory, story, story.Content is StoryContentPhoto ? Strings.SavePhoto : Strings.SaveVideo, story.ClientService.IsPremium ? Icons.SaveAs : Icons.SaveAsLocked);
+                flyout.CreateFlyoutItem(SaveStory, story, story.Content is StoryContentPhoto ? Strings.SavePhoto : Strings.SaveVideo, activeStories.IsMyStory || story.ClientService.IsPremium ? Icons.SaveAs : Icons.SaveAsLocked);
             }
 
-            if (story.Chat.Type is ChatTypePrivate && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
+            if (story.Chat.Type is ChatTypePrivate && !activeStories.IsMyStory && (story.ClientService.IsPremium || story.ClientService.IsPremiumAvailable))
             {
                 flyout.CreateFlyoutItem(StealthStory, story, Strings.StealthModeButton, story.ClientService.IsPremium ? Icons.Stealth : Icons.StealthLocked);
             }
