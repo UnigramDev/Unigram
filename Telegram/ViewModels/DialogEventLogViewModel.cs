@@ -284,7 +284,6 @@ namespace Telegram.ViewModels
                     case ChatEventInvitesToggled:
                     case ChatEventIsAllHistoryAvailableToggled:
                     case ChatEventMemberJoinedByInviteLink:
-                    case ChatEventMessageUnpinned:
                     case ChatEventMessageAutoDeleteTimeChanged:
                     case ChatEventLinkedChatChanged:
                     case ChatEventLocationChanged:
@@ -318,6 +317,7 @@ namespace Telegram.ViewModels
                     case ChatEventMessageDeleted:
                     case ChatEventMessageEdited:
                     case ChatEventMessagePinned:
+                    case ChatEventMessageUnpinned:
                     case ChatEventPollStopped:
                         message = GetMessage(_chat.Id, channel, item, true);
                         //message.Content = new MessageChatEvent(item, true);
@@ -833,6 +833,10 @@ namespace Telegram.ViewModels
             else if (item.Action is ChatEventMessagePinned messagePinned)
             {
                 return messagePinned.Message.Content;
+            }
+            else if (item.Action is ChatEventMessageUnpinned messageUnpinned)
+            {
+                return messageUnpinned.Message.Content;
             }
             else if (item.Action is ChatEventPollStopped pollStopped)
             {
