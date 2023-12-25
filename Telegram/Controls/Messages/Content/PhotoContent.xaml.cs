@@ -105,7 +105,7 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            if (!big.Photo.Local.IsDownloadingCompleted || isSecret)
+            if (small.Id != big.Photo.Id && !big.Photo.Local.IsDownloadingCompleted || isSecret)
             {
                 UpdateThumbnail(message, small, photo.Minithumbnail, true, isSecret);
             }
@@ -168,7 +168,9 @@ namespace Telegram.Controls.Messages.Content
                 Overlay.Opacity = 0;
             }
 
-            var canBeDownloaded = file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted;
+            var canBeDownloaded = file.Local.CanBeDownloaded
+                && !file.Local.IsDownloadingCompleted
+                && !file.Local.IsDownloadingActive;
 
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive || (canBeDownloaded && message.Delegate.CanBeDownloaded(photo, file)))
@@ -237,7 +239,7 @@ namespace Telegram.Controls.Messages.Content
                 else
                 {
                     //Button.Glyph = message.SendingState is MessageSendingStatePending ? Icons.Confirm : Icons.Play;
-                    Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Play);
+                    Button.SetGlyph(file.Id, message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0 ? MessageContentState.Confirm : MessageContentState.Photo);
                     Button.Progress = 1;
 
                     if (message.Content is MessageText text && text.WebPage?.EmbedUrl?.Length > 0 || (message.SendingState is MessageSendingStatePending && message.MediaAlbumId != 0))

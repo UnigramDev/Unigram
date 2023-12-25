@@ -115,7 +115,9 @@ namespace Telegram.Controls.Messages.Content
             {
                 Overlay.ProgressVisibility = Visibility.Collapsed;
 
-                var canBeDownloaded = file.Local.CanBeDownloaded && !file.Local.IsDownloadingCompleted;
+                var canBeDownloaded = file.Local.CanBeDownloaded
+                    && !file.Local.IsDownloadingCompleted
+                    && !file.Local.IsDownloadingActive;
 
                 var size = Math.Max(file.Size, file.ExpectedSize);
                 if (file.Local.IsDownloadingActive || (canBeDownloaded && message.Delegate.CanBeDownloaded(video, file)))

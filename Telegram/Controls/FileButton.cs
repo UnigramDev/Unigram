@@ -151,7 +151,7 @@ namespace Telegram.Controls
                     OnGlyphChanged(Icons.Animation, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPlay);
                     break;
                 case MessageContentState.Photo:
-                    OnGlyphChanged(Icons.ImageFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
+                    OnGlyphChanged(string.Empty, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionOpenFile);
                     break;
                 case MessageContentState.Play:
                     OnGlyphChanged(Icons.PlayFilled24, Glyph, _state != state && _state != MessageContentState.None, Strings.AccActionPlay);

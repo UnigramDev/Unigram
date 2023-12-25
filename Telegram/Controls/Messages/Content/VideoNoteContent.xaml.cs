@@ -120,7 +120,9 @@ namespace Telegram.Controls.Messages.Content
                 return;
             }
 
-            var canBeDownloaded = false;
+            var canBeDownloaded = file.Local.CanBeDownloaded
+                && !file.Local.IsDownloadingCompleted
+                && !file.Local.IsDownloadingActive;
 
             var size = Math.Max(file.Size, file.ExpectedSize);
             if (file.Local.IsDownloadingActive || (canBeDownloaded && message.Delegate.CanBeDownloaded(videoNote, file)))
