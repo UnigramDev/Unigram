@@ -4652,7 +4652,11 @@ namespace Telegram.Views
                     }
                     else if (ViewModel.Type == DialogType.Thread)
                     {
-                        if (!chat.Permissions.CanSendBasicMessages)
+                        if (group.JoinToSendMessages)
+                        {
+                            ShowAction(Strings.JoinGroup, true);
+                        }
+                        else if (!chat.Permissions.CanSendBasicMessages)
                         {
                             ShowAction(Strings.GlobalSendMessageRestricted, false);
                         }
