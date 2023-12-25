@@ -2360,6 +2360,12 @@ namespace Telegram.Views
         {
             if (reactions && message.InteractionInfo?.Reactions.Count > 0)
             {
+                // Thread root message is reported as saved.
+                if (message.IsSaved)
+                {
+                    return false;
+                }
+
                 return message.Chat.Type is ChatTypeBasicGroup || message.Chat.Type is ChatTypeSupergroup supergroup && !supergroup.IsChannel;
             }
 
