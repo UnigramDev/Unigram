@@ -184,7 +184,7 @@ namespace Telegram.Controls.Stories
                 flyout.CreateFlyoutItem(ViewModel.HideProfile, activeStories, Strings.ArchivePeerStories, Icons.Archive);
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(element, args);
         }
 
         public void ForEach(CompositionPropertySet tracker, ExpressionAnimation expression)

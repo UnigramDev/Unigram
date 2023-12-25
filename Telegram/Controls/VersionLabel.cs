@@ -53,7 +53,7 @@ namespace Telegram.Controls
 
             flyout.CreateFlyoutItem(CopyVersion, Strings.Copy, Icons.DocumentCopy);
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(element, args);
         }
 
         private void CopyVersion()

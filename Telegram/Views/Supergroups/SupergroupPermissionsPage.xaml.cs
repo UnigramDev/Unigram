@@ -68,15 +68,12 @@ namespace Telegram.Views.Supergroups
 
         private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
             var member = ScrollingHost.ItemFromContainer(sender) as ChatMember;
 
+            var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.EditMember, member, Strings.ChannelEditPermissions, Icons.Key);
             flyout.CreateFlyoutItem(ViewModel.UnbanMember, member, Strings.ChannelDeleteFromList, Icons.Delete, destructive: true);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion

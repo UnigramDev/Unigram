@@ -65,13 +65,11 @@ namespace Telegram.Views.Settings
 
         private void User_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
-            var messageSender = ScrollingHost.ItemFromContainer(element) as MessageSender;
+            var messageSender = ScrollingHost.ItemFromContainer(sender) as MessageSender;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.Unblock, messageSender, Strings.Unblock, Icons.SubtractCircle);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
     }
 }

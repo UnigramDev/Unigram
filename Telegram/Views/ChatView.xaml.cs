@@ -1526,12 +1526,11 @@ namespace Telegram.Views
         private void AttachmentMenuBot_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var item = sender as MenuFlyoutItem;
-
-            var flyout = new MenuFlyout();
             var bot = item.CommandParameter as AttachmentMenuBot;
 
+            var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.RemoveMiniApp, bot, Strings.BotWebViewDeleteBot, Icons.Delete);
-            args.ShowAt(flyout, item);
+            flyout.ShowAt(sender, args);
         }
 
         private void InlineBotResults_ItemClick(object sender, ItemClickEventArgs e)
@@ -2056,7 +2055,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(ViewModel.ClearReply, Strings.DoNotLinkPreview, Icons.DismissCircle, destructive: true);
             }
 
-            args.ShowAt(flyout, sender as FrameworkElement);
+            flyout.ShowAt(sender, args);
         }
 
         private async void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -2354,7 +2353,7 @@ namespace Telegram.Views
                 };
             }
 
-            args.ShowAt(flyout, sender as FrameworkElement, selectionEnd - selectionStart > 0 ? FlyoutShowMode.Transient : FlyoutShowMode.Auto);
+            flyout.ShowAt(sender, args, selectionEnd - selectionStart > 0 ? FlyoutShowMode.Transient : FlyoutShowMode.Auto);
         }
 
         private static bool CanGetMessageViewers(MessageViewModel message, bool reactions = true)

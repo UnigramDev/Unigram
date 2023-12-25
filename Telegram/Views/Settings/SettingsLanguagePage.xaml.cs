@@ -35,19 +35,15 @@ namespace Telegram.Views.Settings
 
         private void Language_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
-            var info = ScrollingHost.ItemFromContainer(element) as LanguagePackInfo;
-
-            if (!info.IsInstalled)
+            var info = ScrollingHost.ItemFromContainer(sender) as LanguagePackInfo;
+            if (info.IsInstalled is false)
             {
                 return;
             }
 
+            var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.Delete, info, Strings.Delete, Icons.Delete, destructive: true);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion

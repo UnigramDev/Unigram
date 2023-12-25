@@ -67,18 +67,15 @@ namespace Telegram.Views.Settings
 
         private void Exception_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
-            var element = sender as FrameworkElement;
-
-            var exception = ScrollingHost.ItemFromContainer(element) as Chat;
+            var exception = ScrollingHost.ItemFromContainer(sender) as Chat;
             if (exception is null)
             {
                 return;
             }
 
+            var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.Remove, exception, Strings.Delete, Icons.Delete, destructive: true);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion

@@ -41,20 +41,16 @@ namespace Telegram.Views.Settings
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
             var background = ScrollingHost.ItemFromContainer(sender) as Background;
-
             if (background == null || background.Id == Constants.WallpaperLocalId)
             {
                 return;
             }
 
             var flyout = new MenuFlyout();
-
             flyout.CreateFlyoutItem(ViewModel.Share, background, Strings.ShareFile, Icons.Share);
             flyout.CreateFlyoutItem(ViewModel.Delete, background, Strings.Delete, Icons.Delete, destructive: true);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

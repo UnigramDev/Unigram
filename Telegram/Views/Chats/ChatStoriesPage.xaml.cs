@@ -70,9 +70,7 @@ namespace Telegram.Views.Chats
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
             var story = ScrollingHost.ItemFromContainer(sender) as StoryViewModel;
-
             if (story == null)
             {
                 return;
@@ -97,7 +95,7 @@ namespace Telegram.Views.Chats
                 flyout.CreateFlyoutItem(ViewModel.SelectStory, story, Strings.Select, Icons.CheckmarkCircle);
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

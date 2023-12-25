@@ -48,14 +48,12 @@ namespace Telegram.Views.Folders
                 return;
             }
 
-            var flyout = new MenuFlyout();
-
             var element = sender as FrameworkElement;
             var chat = element.DataContext as ChatFolderElement;
 
+            var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(viewModel.RemoveIncluded, chat, Strings.StickersRemove, Icons.Delete);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private void Exclude_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
@@ -66,14 +64,12 @@ namespace Telegram.Views.Folders
                 return;
             }
 
-            var flyout = new MenuFlyout();
-
             var element = sender as FrameworkElement;
             var chat = element.DataContext as ChatFolderElement;
 
+            var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(viewModel.RemoveExcluded, chat, Strings.StickersRemove, Icons.Delete);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private void Emoji_Click(object sender, RoutedEventArgs e)

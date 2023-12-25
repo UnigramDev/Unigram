@@ -497,8 +497,7 @@ namespace Telegram.Views.Host
 
                     // TODO: list updates are not handled while the panel is open
                     flyout.CreateFlyoutItem(page.ViewModel.RemoveMiniApp, menuBot, Strings.BotWebViewDeleteBot, Icons.Delete);
-
-                    args.ShowAt(flyout, container);
+                    flyout.ShowAt(sender, args);
                 }
             }
             else if (container.Content is RootDestination.AddAccount)
@@ -510,11 +509,9 @@ namespace Telegram.Views.Host
                 if (alt && !ctrl && shift)
                 {
                     var flyout = new MenuFlyout();
-
                     flyout.CreateFlyoutItem(() => Switch(_lifetime.Create(test: false)), "Production Server", Icons.Globe);
                     flyout.CreateFlyoutItem(() => Switch(_lifetime.Create(test: true)), "Test Server", Icons.Bug);
-
-                    args.ShowAt(flyout, container);
+                    flyout.ShowAt(sender, args);
                 }
             }
             else if (container.Content is RootDestination.ArchivedChats)
@@ -522,11 +519,9 @@ namespace Telegram.Views.Host
                 if (_navigationService.Content is MainPage page)
                 {
                     var flyout = new MenuFlyout();
-
                     flyout.CreateFlyoutItem(ToggleArchive, Strings.ArchiveMoveToChatList, Icons.AddCircle);
                     flyout.CreateFlyoutItem(page.ViewModel.MarkFolderAsRead, ChatFolderViewModel.Archive, Strings.MarkAllAsRead, Icons.MarkAsRead);
-
-                    args.ShowAt(flyout, container);
+                    flyout.ShowAt(sender, args);
                 }
             }
         }

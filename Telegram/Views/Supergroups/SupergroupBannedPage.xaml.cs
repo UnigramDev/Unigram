@@ -43,17 +43,13 @@ namespace Telegram.Views.Supergroups
 
         private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
             var member = ScrollingHost.ItemFromContainer(sender) as ChatMember;
-
             var channel = ViewModel.Chat?.Type is ChatTypeSupergroup supergroup && supergroup.IsChannel;
 
+            var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.AddMember, member, channel ? Strings.ChannelAddToChannel : Strings.ChannelAddToGroup, Icons.PersonAdd);
             flyout.CreateFlyoutItem(ViewModel.UnbanMember, member, Strings.ChannelDeleteFromList, Icons.Delete, destructive: true);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion

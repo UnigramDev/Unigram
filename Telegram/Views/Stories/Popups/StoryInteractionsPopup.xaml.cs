@@ -148,9 +148,7 @@ namespace Telegram.Views.Stories.Popups
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
             var viewer = ScrollingHost.ItemFromContainer(sender) as StoryViewer;
-
             if (viewer == null || !ViewModel.ClientService.TryGetUser(viewer.UserId, out User user))
             {
                 return;
@@ -180,7 +178,7 @@ namespace Telegram.Views.Stories.Popups
                 flyout.CreateFlyoutItem(ViewModel.UnblockUser, viewer, Strings.Unblock, Icons.HandRight);
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

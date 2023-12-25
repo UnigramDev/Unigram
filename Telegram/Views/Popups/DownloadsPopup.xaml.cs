@@ -108,11 +108,9 @@ namespace Telegram.Views.Popups
 
         private void OnContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
-            var fileDownload = ScrollingHost.ItemFromContainer(element) as FileDownloadViewModel;
-
             var flyout = new MenuFlyout();
 
+            var fileDownload = ScrollingHost.ItemFromContainer(sender) as FileDownloadViewModel;
             if (fileDownload.CompleteDate == 0)
             {
                 flyout.CreateFlyoutItem(ViewModel.RemoveFileDownload, fileDownload, Strings.AccActionCancelDownload, Icons.Dismiss);
@@ -129,7 +127,7 @@ namespace Telegram.Views.Popups
                 //flyout.CreateFlyoutItem(_ => { }, fileDownload, Strings.lng_context_select_msg, Icons.CheckmarkCircle);
             }
 
-            args.ShowAt(flyout, sender as FrameworkElement);
+            flyout.ShowAt(sender, args);
         }
     }
 }

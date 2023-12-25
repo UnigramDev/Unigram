@@ -108,15 +108,13 @@ namespace Telegram.Views.Settings
                 return;
             }
 
-            var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
-            var stickerSet = ScrollingHost.ItemFromContainer(element) as StickerSetInfo;
-
+            var stickerSet = ScrollingHost.ItemFromContainer(sender) as StickerSetInfo;
             if (stickerSet == null || stickerSet.Id == 0)
             {
                 return;
             }
+
+            var flyout = new MenuFlyout();
 
             if (stickerSet.IsOfficial)
             {
@@ -130,7 +128,7 @@ namespace Telegram.Views.Settings
                 //CreateFlyoutItem(ref flyout, ViewModel.StickerSetCopyCommand, stickerSet, Strings.StickersCopy);
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion

@@ -58,14 +58,11 @@ namespace Telegram.Views.Folders
 
         private void Item_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
+            var chat = ScrollingHost.ItemFromContainer(sender) as ChatFolderInfo;
+
             var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
-            var chat = ScrollingHost.ItemFromContainer(element) as ChatFolderInfo;
-
             flyout.CreateFlyoutItem(ViewModel.Delete, chat, Strings.FilterDeleteItem, Icons.Delete);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #region Recycle

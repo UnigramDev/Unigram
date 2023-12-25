@@ -160,7 +160,7 @@ namespace Telegram.Controls.Views
                 {
                     var flyout = new MenuFlyout();
                     flyout.CreateFlyoutItem(ViewModel.RemoveRecentChat, result, Strings.DeleteFromRecent, Icons.Delete);
-                    args.ShowAt(flyout, sender as FrameworkElement);
+                    flyout.ShowAt(sender, args);
                 }
                 else
                 {
@@ -172,14 +172,11 @@ namespace Telegram.Controls.Views
 
         private void TopChat_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
             var chat = TopChats.ItemFromContainer(sender) as Chat;
 
+            var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.RemoveTopChat, chat, Strings.Delete, Icons.Delete);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion

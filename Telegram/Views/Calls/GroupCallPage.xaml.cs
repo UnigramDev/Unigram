@@ -2176,7 +2176,7 @@ namespace Telegram.Views.Calls
                 //}
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(element, args);
         }
 
         private ScrollViewer _scrollingHost;

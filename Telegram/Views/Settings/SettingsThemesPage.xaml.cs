@@ -68,7 +68,7 @@ namespace Telegram.Views.Settings
                 flyout.CreateFlyoutItem(ViewModel.DeleteTheme, custom, Strings.Delete, Icons.Delete, destructive: true);
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion

@@ -856,7 +856,7 @@ namespace Telegram.Controls.Stories
 
             PopulateMenuFlyout(flyout, activeStories);
 
-            if (args.ShowAt(flyout, sender as FrameworkElement))
+            if (flyout.ShowAt(sender as FrameworkElement, args))
             {
                 ActiveCard.Suspend(StoryPauseSource.Flyout);
             }

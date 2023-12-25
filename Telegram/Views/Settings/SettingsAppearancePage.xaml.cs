@@ -85,8 +85,7 @@ namespace Telegram.Views.Settings
 
         private void Theme_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var element = sender as FrameworkElement;
-            var theme = List.ItemFromContainer(element) as ChatThemeViewModel;
+            var theme = List.ItemFromContainer(sender) as ChatThemeViewModel;
 
             var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.CreateTheme, theme, Strings.CreateNewThemeMenu, Icons.Color);
@@ -99,7 +98,7 @@ namespace Telegram.Views.Settings
             //    flyout.CreateFlyoutItem(ViewModel.ThemeDeleteCommand, theme, Strings.Delete, Icons.Delete);
             //}
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion

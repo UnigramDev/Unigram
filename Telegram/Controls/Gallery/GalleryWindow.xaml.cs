@@ -952,7 +952,7 @@ namespace Telegram.Controls.Gallery
 
             if (args != null)
             {
-                args.ShowAt(flyout, element);
+                flyout.ShowAt(element, args);
             }
             else
             {

@@ -70,16 +70,15 @@ namespace Telegram.Views.Supergroups
 
         private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
             var member = ScrollingHost.ItemFromContainer(sender) as ChatMember;
-
             var chat = ViewModel.Chat;
+
             if (chat == null || member == null)
             {
                 return;
             }
+
+            var flyout = new MenuFlyout();
 
             ChatMemberStatus status = null;
             if (chat.Type is ChatTypeBasicGroup basic)
@@ -104,7 +103,7 @@ namespace Telegram.Views.Supergroups
 
             flyout.CreateFlyoutItem(MemberRemove_Loaded, ViewModel.RemoveMember, chat.Type, status, member, Strings.KickFromGroup, Icons.Block);
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private bool MemberPromote_Loaded(ChatType chatType, ChatMemberStatus status, ChatMember member)

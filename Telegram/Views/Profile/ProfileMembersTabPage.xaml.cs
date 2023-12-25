@@ -34,16 +34,15 @@ namespace Telegram.Views.Profile
 
         private void Member_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
-            var member = ScrollingHost.ItemFromContainer(element) as ChatMember;
-
             var chat = ViewModel.Chat;
+            var member = ScrollingHost.ItemFromContainer(sender) as ChatMember;
+
             if (chat == null || member == null)
             {
                 return;
             }
+
+            var flyout = new MenuFlyout();
 
             ChatMemberStatus status = null;
             if (chat.Type is ChatTypeBasicGroup basic)
@@ -68,7 +67,7 @@ namespace Telegram.Views.Profile
 
             flyout.CreateFlyoutItem(MemberRemove_Loaded, ViewModel.MembersTab.RemoveMember, chat, status, member, Strings.KickFromGroup, Icons.Block);
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private bool MemberPromote_Loaded(Chat chat, ChatMemberStatus status, ChatMember member)

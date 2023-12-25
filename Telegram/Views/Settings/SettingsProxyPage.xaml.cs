@@ -45,7 +45,6 @@ namespace Telegram.Views.Settings
         private void Proxy_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
             var flyout = new MenuFlyout();
-            var element = sender as FrameworkElement;
 
             if (ViewModel.SelectedItems.Count > 1)
             {
@@ -53,7 +52,7 @@ namespace Telegram.Views.Settings
             }
             else
             {
-                var proxy = ScrollingHost.ItemFromContainer(element) as ProxyViewModel;
+                var proxy = ScrollingHost.ItemFromContainer(sender) as ProxyViewModel;
                 if (proxy is null)
                 {
                     return;
@@ -72,7 +71,7 @@ namespace Telegram.Views.Settings
                 flyout.CreateFlyoutItem(ViewModel.Select, proxy, Strings.Select, Icons.CheckmarkCircle);
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion

@@ -1732,14 +1732,11 @@ namespace Telegram.Views
 
         private void Call_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
+            var call = CallsList.ItemFromContainer(sender) as TLCallGroup;
+
             var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
-            var call = CallsList.ItemFromContainer(element) as TLCallGroup;
-
             flyout.CreateFlyoutItem(ViewModel.Calls.DeleteCall, call, Strings.Delete, Icons.Delete, destructive: true);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         #endregion
@@ -2314,7 +2311,7 @@ namespace Telegram.Views
             flyout.CreateFlyoutItem(ToggleArchive, Strings.ArchiveMoveToMainMenu, Icons.SubtractCircle);
             flyout.CreateFlyoutItem(ViewModel.MarkFolderAsRead, ChatFolderViewModel.Archive, Strings.MarkAllAsRead, Icons.MarkAsRead);
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         public async void ToggleArchive()
@@ -2889,17 +2886,14 @@ namespace Telegram.Views
                 return;
             }
 
-            var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
             var user = UsersListView.ItemFromContainer(sender) as User;
 
+            var flyout = new MenuFlyout();
             flyout.CreateFlyoutItem(ViewModel.Contacts.SendMessage, user, Strings.SendMessage, Icons.ChatEmpty);
             flyout.CreateFlyoutItem(ViewModel.Contacts.CreateSecretChat, user, Strings.StartEncryptedChat, Icons.Timer);
             flyout.CreateFlyoutItem(ViewModel.Contacts.VoiceCall, user, Strings.Call, Icons.Call);
             flyout.CreateFlyoutItem(ViewModel.Contacts.VideoCall, user, Strings.VideoCall, Icons.Video);
-
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private void DialogsSearchPanel_ItemContextRequested(UIElement sender, ItemContextRequestedEventArgs args)
@@ -3042,7 +3036,7 @@ namespace Telegram.Views
                 }
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private bool DialogMark_Loaded(Chat chat)
@@ -3191,9 +3185,7 @@ namespace Telegram.Views
             }
 
             var flyout = new MenuFlyout();
-
-            var element = sender as FrameworkElement;
-            var topic = TopicList.ItemFromContainer(element) as ForumTopic;
+            var topic = TopicList.ItemFromContainer(sender) as ForumTopic;
 
             var canManage = CanManageTopic(chat, supergroup, topic);
 
@@ -3233,7 +3225,7 @@ namespace Telegram.Views
                 flyout.CreateFlyoutItem(viewModel.SelectTopic, topic, Strings.Select, Icons.CheckmarkCircle);
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private bool CanManageTopic(Chat chat, Supergroup supergroup, ForumTopic topic)

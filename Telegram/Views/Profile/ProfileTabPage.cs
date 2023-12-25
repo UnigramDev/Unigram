@@ -37,10 +37,9 @@ namespace Telegram.Views.Profile
 
         private void Message_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            var flyout = new MenuFlyout();
+            var message = ScrollingHost.ItemFromContainer(sender) as MessageWithOwner;
 
-            var element = sender as FrameworkElement;
-            var message = ScrollingHost.ItemFromContainer(element) as MessageWithOwner;
+            var flyout = new MenuFlyout();
 
             var selected = ViewModel.SelectedItems;
             if (selected.Count > 0)
@@ -76,7 +75,7 @@ namespace Telegram.Views.Profile
                 flyout.CreateFlyoutItem(MessageOpenFolder_Loaded, ViewModel.OpenMessageFolder, message, Strings.ShowInFolder, Icons.FolderOpen);
             }
 
-            args.ShowAt(flyout, element);
+            flyout.ShowAt(sender, args);
         }
 
         private bool MessageView_Loaded(MessageWithOwner message)
