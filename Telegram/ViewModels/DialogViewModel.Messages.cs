@@ -767,10 +767,10 @@ namespace Telegram.ViewModels
         {
             if (message.Content is MessageAlbum album)
             {
+                message = null;
+
                 if (album.IsMedia)
                 {
-                    message = null;
-
                     foreach (var child in album.Messages)
                     {
                         var childCaption = child.GetCaption();
