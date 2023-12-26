@@ -670,7 +670,11 @@ namespace Telegram.Controls.Chats
 
                         Logger.Debug("Devices initialized, starting");
 
-                        await InitializeQuantumAsync();
+                        if (PowerSavingPolicy.AreMaterialsEnabled && ApiInfo.CanAnimatePaths)
+                        {
+                            await InitializeQuantumAsync();
+                        }
+
                         await _recorder.StartAsync();
 
                         Logger.Debug("Recording started at " + DateTime.Now);

@@ -129,6 +129,7 @@
                       HorizontalAlignment="Left"
                       VerticalAlignment="Bottom"
                       Margin="-20,0,0,-20">
+                    <Border x:Name="Blob" />
                     <Grid CornerRadius="40"
                           Width="80"
                           Height="80">

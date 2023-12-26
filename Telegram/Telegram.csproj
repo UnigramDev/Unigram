@@ -192,6 +192,8 @@
     <Compile Include="Charts\LookupTableInterpolator.cs" />
     <Compile Include="Collections\SynchronizedList.cs" />
     <Compile Include="Common\BezierPoint.cs" />
+    <Compile Include="Composition\CompositionBlobVisual.cs" />
+    <Compile Include="Composition\CompositionVSync.cs" />
     <Compile Include="Composition\Extensions.cs" />
     <Compile Include="Composition\Interop.cs" />
     <Compile Include="Controls\Media\BlobDrawable.cs" />
