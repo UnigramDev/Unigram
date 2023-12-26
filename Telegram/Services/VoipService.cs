@@ -35,6 +35,8 @@ namespace Telegram.Services
 
     public interface IVoipService
     {
+        IClientService ClientService { get; }
+
         string CurrentAudioInput { get; set; }
         string CurrentAudioOutput { get; set; }
         string CurrentVideoInput { get; set; }
@@ -44,6 +46,7 @@ namespace Telegram.Services
 #if ENABLE_CALLS
         bool IsMuted { get; set; }
         event EventHandler MutedChanged;
+        event EventHandler<float> AudioLevelUpdated;
 
         VoipManager Manager { get; }
         VoipCaptureBase Capturer { get; set; }
@@ -120,7 +123,7 @@ namespace Telegram.Services
 
         public bool IsMuted
         {
-            get => _manager.IsMuted;
+            get => _manager?.IsMuted ?? true;
             set
             {
                 if (_manager != null && _manager.IsMuted != value)
@@ -138,6 +141,7 @@ namespace Telegram.Services
         }
 
         public event EventHandler MutedChanged;
+        public event EventHandler<float> AudioLevelUpdated;
 
         private void SetVideoInputDevice(string id)
         {
@@ -617,6 +621,7 @@ namespace Telegram.Services
                     _manager = new VoipManager(version, descriptor);
                     _manager.StateUpdated += OnStateUpdated;
                     _manager.SignalingDataEmitted += OnSignalingDataEmitted;
+                    _manager.AudioLevelUpdated += OnAudioLevelUpdated;
 
                     _manager.Start();
                     _coordinator?.TryNotifyMutedChanged(_manager.IsMuted);
@@ -684,6 +689,11 @@ namespace Telegram.Services
             Aggregator.Publish(new UpdateCallDialog(_call));
         }
 
+        private void OnAudioLevelUpdated(VoipManager sender, float args)
+        {
+            AudioLevelUpdated?.Invoke(this, args);
+        }
+
         private void OnStateUpdated(VoipManager sender, VoipState args)
         {
             if (args is VoipState.WaitInit or VoipState.WaitInitAck)
@@ -724,6 +734,7 @@ namespace Telegram.Services
             {
                 _manager.StateUpdated -= OnStateUpdated;
                 _manager.SignalingDataEmitted -= OnSignalingDataEmitted;
+                _manager.AudioLevelUpdated -= OnAudioLevelUpdated;
 
                 _manager.SetIncomingVideoOutput(null);
                 _manager.SetVideoCapture(null);

@@ -94,6 +94,7 @@ namespace Telegram.Views.Calls
 
             _service = voipService;
             _service.MutedChanged += OnMutedChanged;
+            _service.AudioLevelsUpdated += OnAudioLevelsUpdated;
             _service.PropertyChanged += OnParticipantsChanged;
 
             if (_service.Participants != null)
@@ -279,13 +280,13 @@ namespace Telegram.Views.Calls
             if (_manager != null)
             {
                 _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
-                _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
                 _manager = null;
             }
 
             if (_service != null)
             {
                 _service.MutedChanged -= OnMutedChanged;
+                _service.AudioLevelsUpdated -= OnAudioLevelsUpdated;
                 _service.PropertyChanged -= OnParticipantsChanged;
                 _service = null;
             }
@@ -332,11 +333,9 @@ namespace Telegram.Views.Calls
             {
                 // Let's avoid duplicated events
                 _manager.NetworkStateUpdated -= OnNetworkStateUpdated;
-                _manager.AudioLevelsUpdated -= OnAudioLevelsUpdated;
             }
 
             controller.NetworkStateUpdated += OnNetworkStateUpdated;
-            controller.AudioLevelsUpdated += OnAudioLevelsUpdated;
 
             _manager = controller;
         }
@@ -989,7 +988,7 @@ namespace Telegram.Views.Calls
             this.BeginOnUIThread(() => UpdateNetworkState(_service.Call, _service.CurrentUser, args.IsConnected));
         }
 
-        private void OnAudioLevelsUpdated(VoipGroupManager sender, IList<VoipGroupParticipant> levels)
+        private void OnAudioLevelsUpdated(object sender, IList<VoipGroupParticipant> levels)
         {
             var participants = _service?.Participants;
             if (participants == null)
@@ -1002,7 +1001,7 @@ namespace Telegram.Views.Calls
             foreach (var level in levels)
             {
                 var value = level.Level;
-                if (level.AudioSource == 0 && sender.IsMuted)
+                if (level.AudioSource == 0 && _service.IsMuted)
                 {
                     value = 0;
                 }

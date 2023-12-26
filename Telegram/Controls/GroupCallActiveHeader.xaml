@@ -13,13 +13,9 @@
           Margin="0,0,8,8"
           CornerRadius="8"
           Height="40">
-        <xaml:CanvasControl x:Name="Canvas"
-                            Draw="CanvasControl_Draw"
-                            Height="88"
-                            VerticalAlignment="Top"
-                            IsHitTestVisible="False" />
-
-        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
+        <Border x:Name="Curve"
+                SizeChanged="Curve_SizeChanged"
+                BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
                 BorderThickness="1"
                 CornerRadius="8" />
 
@@ -43,7 +39,8 @@
                                             Width="48"
                                             Height="40" />
 
-        <controls:GlyphButton Click="Dismiss_Click"
+        <controls:GlyphButton x:Name="Dismiss"
+                              Click="Dismiss_Click"
                               Glyph="&#xE711;"
                               Height="40"
                               Grid.Column="7"

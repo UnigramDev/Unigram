@@ -90,12 +90,78 @@ namespace Telegram.Composition
                     var prev = smoothPoints[i >= 0 ? i : smoothPoints.Count + i];
                     var curr = smoothPoints[i];
                     var next = smoothPoints[(i + 1) % points.Length];
-                    var currSmoothOut = curr.SmoothOut();
-                    var nextSmoothIn = next.SmoothIn();
+                    var currSmoothOut = curr.SmoothOut(0.5f);
+                    var nextSmoothIn = next.SmoothIn(2.0f);
 
                     builder.AddCubicBezier(currSmoothOut, nextSmoothIn, next.Point);
                 }
 
+                builder.EndFigure(CanvasFigureLoop.Closed);
+                result = CanvasGeometry.CreatePath(builder);
+            }
+            return new CompositionPath(result);
+        }
+
+        public static CompositionPath CreateSmoothCurve(this Compositor compositor, Vector2[] points, float length, float smoothness, bool curve = false)
+        {
+            var smoothPoints = new List<SmoothPoint>();
+
+            for (int index = 0; index < points.Length; index++)
+            {
+                var prevIndex = index - 1;
+                var prev = points[prevIndex >= 0 ? prevIndex : points.Length + prevIndex];
+                var curr = points[index];
+                var next = points[(index + 1) % points.Length];
+
+                var dx = next.X - prev.X;
+                var dy = -next.Y + prev.Y;
+                var angle = MathF.Atan2(dy, dx);
+                if (angle < 0)
+                {
+                    angle = MathF.Abs(angle);
+                }
+                else
+                {
+                    angle = 2 * MathF.PI - angle;
+                }
+
+                smoothPoints.Add(
+                    new SmoothPoint(
+                        point: curr,
+                        inAngle: angle + MathF.PI,
+                        inLength: smoothness * Distance(curr, prev),
+                        outAngle: angle,
+                        outLength: smoothness * Distance(curr, next)
+                    )
+                );
+            }
+
+            CanvasGeometry result;
+            using (var builder = new CanvasPathBuilder(null))
+            {
+                if (curve)
+                {
+                    builder.BeginFigure(0, 0);
+                    builder.AddLine(smoothPoints[0].Point);
+                }
+                else
+                {
+                    builder.BeginFigure(smoothPoints[0].Point);
+                }
+
+                var smoothCount = curve ? smoothPoints.Count - 1 : smoothPoints.Count;
+                for (int index = 0; index < smoothCount; index++)
+                {
+                    var curr = smoothPoints[index];
+                    var next = smoothPoints[(index + 1) % points.Length];
+                    var currSmoothOut = curr.SmoothOut();
+                    var nextSmoothIn = next.SmoothIn();
+                    builder.AddCubicBezier(currSmoothOut, nextSmoothIn, next.Point);
+                }
+                if (curve)
+                {
+                    builder.AddLine(length, 0);
+                }
                 builder.EndFigure(CanvasFigureLoop.Closed);
                 result = CanvasGeometry.CreatePath(builder);
             }
@@ -126,16 +192,16 @@ namespace Telegram.Composition
                 _outLength = outLength;
             }
 
-            public readonly Vector2 SmoothIn()
+            public readonly Vector2 SmoothIn(float multiplier = 1)
             {
                 // TODO: * 2.0f is arbitrary
-                return Smooth(_inAngle, _inLength * 2.0f);
+                return Smooth(_inAngle, _inLength * multiplier);
             }
 
-            public readonly Vector2 SmoothOut()
+            public readonly Vector2 SmoothOut(float multiplier = 1)
             {
                 // TODO: * 0.5f is arbistrary
-                return Smooth(_outAngle, _outLength * 0.5f);
+                return Smooth(_outAngle, _outLength * multiplier);
             }
 
             private readonly Vector2 Smooth(float angle, float length)

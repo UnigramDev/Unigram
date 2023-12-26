@@ -46,6 +46,7 @@ namespace Telegram.Services
 #if ENABLE_CALLS
         bool IsMuted { get; set; }
         event EventHandler MutedChanged;
+        event EventHandler<IList<VoipGroupParticipant>> AudioLevelsUpdated;
 
         bool IsNoiseSuppressionEnabled { get; set; }
 
@@ -860,6 +861,8 @@ namespace Telegram.Services
             {
                 _speakingParticipants.Clear();
             }
+
+            AudioLevelsUpdated?.Invoke(this, levels);
         }
 
 #endif
@@ -989,6 +992,7 @@ namespace Telegram.Services
         }
 
         public event EventHandler MutedChanged;
+        public event EventHandler<IList<VoipGroupParticipant>> AudioLevelsUpdated;
 
         public bool IsNoiseSuppressionEnabled
         {

@@ -434,30 +434,8 @@
                     <controls:PlaybackHeader x:Name="Playback"
                                              x:Load="False" />
 
-                    <Grid x:Name="CallBanner"
-                          x:Load="False"
-                          Margin="0,0,8,8"
-                          CornerRadius="8"
-                          Height="40"
-                          Background="{ThemeResource SystemControlHighlightAccentBrush}"
-                          Grid.Row="2">
-                        <Border BorderBrush="{ThemeResource NavigationViewContentGridBorderBrush}"
-                                BorderThickness="1"
-                                CornerRadius="8" />
-
-                        <Button Click="{x:Bind ViewModel.ReturnToCall}"
-                                HorizontalContentAlignment="Center"
-                                VerticalContentAlignment="Center"
-                                Background="Transparent"
-                                Style="{StaticResource EmptyButtonStyle}">
-                            <TextBlock Text="{CustomResource ReturnToCall}"
-                                       Foreground="White"
-                                       Style="{StaticResource CaptionTextBlockStyle}" />
-                        </Button>
-                    </Grid>
-
                     <controls:GroupCallActiveHeader x:Load="False"
-                                                    x:Name="GroupCallBanner" />
+                                                    x:Name="CallBanner" />
                 </Grid>
             </controls:MasterDetailView.Banner>
             <Grid>

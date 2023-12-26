@@ -577,13 +577,15 @@ namespace Telegram.Views
                 {
                     UpdatePlaybackHidden(true);
                     FindName(nameof(CallBanner));
+
+                    CallBanner.Update(ViewModel.VoipService);
                 }
                 else if (update.GroupCall != null && (update.GroupCall.IsJoined || update.GroupCall.NeedRejoin))
                 {
                     UpdatePlaybackHidden(true);
-                    FindName(nameof(GroupCallBanner));
+                    FindName(nameof(CallBanner));
 
-                    GroupCallBanner.Update(ViewModel.VoipGroupService);
+                    CallBanner.Update(ViewModel.VoipGroupService);
                 }
                 else
                 {
@@ -591,13 +593,9 @@ namespace Telegram.Views
 
                     if (CallBanner != null)
                     {
+                        CallBanner.Update(null as IVoipGroupService);
+                        CallBanner.Update(null as IVoipService);
                         UnloadObject(CallBanner);
-                    }
-
-                    if (GroupCallBanner != null)
-                    {
-                        GroupCallBanner.Update(null);
-                        UnloadObject(GroupCallBanner);
                     }
                 }
             });
