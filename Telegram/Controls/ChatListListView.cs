@@ -126,30 +126,27 @@ namespace Telegram.Controls
                 return;
             }
 
-            _itemToSelector[chat.Id] = args.ItemContainer;
-            args.Handled = true;
-
             if (args.Phase == 0)
             {
+                _itemToSelector[chat.Id] = args.ItemContainer;
+
+                args.RegisterUpdateCallback(2, OnContainerContentChanging);
                 args.ItemContainer.Tag = args.Item;
+                args.ItemContainer.ContentTemplateRoot.Opacity = 0;
+
                 VisualStateManager.GoToState(args.ItemContainer, "DataPlaceholder", false);
             }
 
-            if (args.Phase < 2)
-            {
-                args.RegisterUpdateCallback(OnContainerContentChanging);
-                args.ItemContainer.ContentTemplateRoot.Opacity = 0;
-                return;
-            }
-
-            if (args.ItemContainer.ContentTemplateRoot is ChatCell content)
+            else if (args.ItemContainer.ContentTemplateRoot is ChatCell content)
             {
                 content.UpdateViewState(chat, _viewState == MasterDetailState.Compact, false);
                 content.UpdateChat(ViewModel.ClientService, chat, ViewModel.Items.ChatList);
                 content.Opacity = 1;
+
+                VisualStateManager.GoToState(args.ItemContainer, "DataAvailable", false);
             }
 
-            VisualStateManager.GoToState(args.ItemContainer, "DataAvailable", false);
+            args.Handled = true;
         }
 
         private void OnSelectionModeChanged(DependencyObject sender, DependencyProperty dp)
