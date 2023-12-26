@@ -165,6 +165,27 @@ namespace Telegram.Common
             return builder.ToString();
         }
 
+        public static string GetSummaryWithName(MessageWithOwner message, bool details = false, bool addCaption = true)
+        {
+            var summary = GetSummary(message, details, addCaption);
+
+            if (message.ClientService.TryGetUser(message.SenderId, out User user))
+            {
+                if (user.Id == message.ClientService.Options.MyId)
+                {
+                    return $"{Strings.FromYou}: {summary}";
+                }
+
+                return $"{user.FullName()}: {summary}";
+            }
+            else if (message.ClientService.TryGetChat(message.SenderId, out Chat chat))
+            {
+                return $"{chat.Title}: {summary}";
+            }
+
+            return summary;
+        }
+
         public static string GetSummary(MessageWithOwner message, bool details = false, bool addCaption = true)
         {
             var altText = message.TranslatedText is MessageTranslateResultText text ? text.Text.Text : null;

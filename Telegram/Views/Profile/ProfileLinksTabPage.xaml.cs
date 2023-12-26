@@ -27,8 +27,7 @@ namespace Telegram.Views.Profile
             }
             else if (args.ItemContainer.ContentTemplateRoot is SharedLinkCell linkCell && args.Item is MessageWithOwner message)
             {
-                AutomationProperties.SetName(args.ItemContainer,
-                    Automation.GetSummary(message, true));
+                AutomationProperties.SetName(args.ItemContainer, Automation.GetSummaryWithName(message, true));
 
                 linkCell.UpdateMessage(ViewModel.NavigationService, message);
                 args.Handled = true;

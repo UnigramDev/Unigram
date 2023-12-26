@@ -2,14 +2,17 @@
 using Telegram.Common;
 using Telegram.Controls.Cells;
 using Telegram.Controls.Media;
+using Telegram.Td.Api;
 using Telegram.ViewModels.Stories;
 using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Automation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
+using Point = Windows.Foundation.Point;
 
 namespace Telegram.Views.Profile
 {
@@ -74,6 +77,8 @@ namespace Telegram.Views.Profile
             }
             else if (args.ItemContainer.ContentTemplateRoot is StoryCell content && args.Item is StoryViewModel story)
             {
+                AutomationProperties.SetName(args.ItemContainer, story.Content is StoryContentPhoto ? Strings.AttachPhoto : story.Content is StoryContentVideo ? Strings.AttachVideo : Strings.Story);
+
                 content.Update(story);
                 args.Handled = true;
             }

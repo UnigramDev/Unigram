@@ -27,8 +27,7 @@ namespace Telegram.Views.Profile
             }
             else if (args.ItemContainer.ContentTemplateRoot is SharedFileCell fileCell && args.Item is MessageWithOwner message)
             {
-                AutomationProperties.SetName(args.ItemContainer,
-                    Automation.GetSummary(message, true));
+                AutomationProperties.SetName(args.ItemContainer, Automation.GetSummaryWithName(message, true));
 
                 fileCell.UpdateMessage(ViewModel.MessageDelegate, message);
                 args.Handled = true;

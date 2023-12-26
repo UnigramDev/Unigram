@@ -31,8 +31,7 @@ namespace Telegram.Views.Profile
             }
             else if (args.ItemContainer.ContentTemplateRoot is Grid content && args.Item is MessageWithOwner message)
             {
-                AutomationProperties.SetName(args.ItemContainer,
-                    Automation.GetSummary(message, true));
+                AutomationProperties.SetName(args.ItemContainer, Automation.GetSummaryWithName(message, true));
 
                 var photo = content.Children[0] as ImageView;
 

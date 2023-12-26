@@ -27,8 +27,7 @@ namespace Telegram.Views.Profile
             }
             else if (args.ItemContainer.ContentTemplateRoot is SharedVoiceCell voiceCell && args.Item is MessageWithOwner message)
             {
-                AutomationProperties.SetName(args.ItemContainer,
-                    Automation.GetSummary(message, true));
+                AutomationProperties.SetName(args.ItemContainer, Automation.GetSummaryWithName(message, true));
 
                 voiceCell.UpdateMessage(ViewModel.PlaybackService, message);
                 args.Handled = true;
