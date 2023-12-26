@@ -6,19 +6,15 @@
 //
 using System;
 using System.Threading;
-using Windows.UI.Xaml.Media;
 
 namespace Telegram.Common
 {
     public class LoopThread
     {
         private TimeSpan _interval;
-        private TimeSpan _elapsed;
 
         private readonly object _timerLock = new();
         private readonly Timer _timer;
-
-        private bool _dropInvalidate;
 
         public TimeSpan Interval => _interval;
 
@@ -29,20 +25,15 @@ namespace Telegram.Common
         }
 
         [ThreadStatic]
-        private static LoopThread _animations;
-        public static LoopThread Animations => _animations ??= new LoopThread(TimeSpan.FromMilliseconds(1000 / 30));
-
-        [ThreadStatic]
-        private static LoopThread _stickers;
-        public static LoopThread Stickers => _stickers ??= new LoopThread(TimeSpan.FromMilliseconds(1000 / 30));
-
-        [ThreadStatic]
         private static LoopThread _chats;
         public static LoopThread Chats => _chats ??= new LoopThread(TimeSpan.FromMilliseconds(1000 / 60));
 
-        private unsafe void OnTick(object state)
+        private void OnTick(object state)
         {
-            _tick?.Invoke(this, EventArgs.Empty);
+            lock (_timerLock)
+            {
+                _tick.Invoke(this, EventArgs.Empty);
+            }
         }
 
         public void Rent()
@@ -80,49 +71,5 @@ namespace Telegram.Common
                 }
             }
         }
-
-        #region Legacy
-
-        private event EventHandler _invalidate;
-        public event EventHandler Invalidate
-        {
-            add
-            {
-                if (_invalidate == null)
-                {
-                    CompositionTarget.Rendering += OnInvalidate;
-                }
-
-                _invalidate += value;
-            }
-            remove
-            {
-                _invalidate -= value;
-
-                if (_invalidate == null)
-                {
-                    CompositionTarget.Rendering -= OnInvalidate;
-                }
-            }
-        }
-
-        private void OnInvalidate(object sender, object e)
-        {
-            var args = e as RenderingEventArgs;
-            var diff = args.RenderingTime - _elapsed;
-
-            if (_dropInvalidate || diff < _interval)
-            {
-                return;
-            }
-
-            _elapsed = args.RenderingTime;
-
-            _dropInvalidate = true;
-            _invalidate?.Invoke(sender, EventArgs.Empty);
-            _dropInvalidate = false;
-        }
-
-        #endregion
     }
 }

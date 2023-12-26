@@ -17,6 +17,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Common;
+using Telegram.Composition;
 using Telegram.Td.Api;
 using Windows.Data.Json;
 using Windows.Foundation;
@@ -72,7 +73,7 @@ namespace Telegram.Controls
         private SizeInt32 _frameSize = new SizeInt32 { Width = 256, Height = 256 };
 
         private readonly LoopThread _thread;
-        private readonly LoopThread _threadUI;
+        private readonly CompositionVSync _vsync;
         private readonly object _subscribeLock = new object();
         private bool _subscribed;
         private bool _unsubscribe;
@@ -88,7 +89,7 @@ namespace Telegram.Controls
         {
             _limitFps = !fullFps;
             _thread = fullFps ? LoopThread.Chats : LoopThreadPool.Stickers.Get();
-            _threadUI = fullFps ? LoopThread.Chats : LoopThread.Stickers;
+            _vsync = new CompositionVSync(fullFps ? 60 : 30);
 
             DefaultStyleKey = typeof(DiceView);
         }
@@ -567,12 +568,12 @@ namespace Telegram.Controls
 
                 _subscribed = subscribe;
                 _thread.Tick -= OnTick;
-                _threadUI.Invalidate -= OnInvalidate;
+                _vsync.Rendering -= OnInvalidate;
 
                 if (subscribe)
                 {
                     _thread.Tick += OnTick;
-                    _threadUI.Invalidate += OnInvalidate;
+                    _vsync.Rendering += OnInvalidate;
                 }
             }
         }
