@@ -70,8 +70,6 @@ namespace Telegram
         {
             _crashLog = Path.Combine(ApplicationData.Current.LocalFolder.Path, "crash.log");
             _reports = Path.Combine(ApplicationData.Current.LocalFolder.Path, "Reports");
-
-            Directory.CreateDirectory(_reports);
         }
 
         public static bool HasCrashedInLastSession { get; private set; }
@@ -84,10 +82,21 @@ namespace Telegram
 
             BootStrapper.Current.UnhandledException += (s, args) =>
             {
-                if (args.Exception is LayoutCycleException && ApiInfo.IsPackagedRelease)
+                Logger.Error("UnhandledException 0x" + args.Exception.HResult.ToString("X4"));
+
+                if (args.Exception is LayoutCycleException)
                 {
-                    SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
-                    SettingsService.Current.Diagnostics.UseLayoutRounding = false;
+                    Analytics.TrackEvent("LayoutCycleException", new Dictionary<string, string>
+                    {
+                        { "UseLayoutRounding", SettingsService.Current.Diagnostics.UseLayoutRounding.ToString() },
+                        { "TabsAlignedLeft", SettingsService.Current.IsLeftTabsEnabled.ToString() },
+                    });
+
+                    if (ApiInfo.IsPackagedRelease)
+                    {
+                        SettingsService.Current.Diagnostics.LastCrashWasLayoutCycle = true;
+                        SettingsService.Current.Diagnostics.UseLayoutRounding = false;
+                    }
                 }
 
                 args.Handled = args.Exception is not LayoutCycleException;
@@ -108,7 +117,7 @@ namespace Telegram
 
             Crashes.CreatingErrorReport += (s, args) =>
             {
-                Track(args.ReportId, args.Exception is not UnmanagedException);
+                Track(args.ReportId, args.Exception);
             };
 
             Crashes.SentErrorReport += (s, args) =>
@@ -212,7 +221,7 @@ namespace Telegram
                 && previousExecutionState == ApplicationExecutionState.NotRunning;
         }
 
-        private static void Track(string reportId, bool managed)
+        private static void Track(string reportId, Exception exception)
         {
             var version = VersionLabel.GetVersion();
 
@@ -231,7 +240,9 @@ namespace Telegram
                 $"Memory usage limit: {memoryUsageLimit}\n" +
                 $"Time since last update: {next - prev}s\n" +
                 $"Update count: {count}\n" + 
-                $"Layout rounding: {SettingsService.Current.Diagnostics.UseLayoutRounding}\n";
+                $"Layout rounding: {SettingsService.Current.Diagnostics.UseLayoutRounding}\n" +
+                $"Tabs on the left: {SettingsService.Current.IsLeftTabsEnabled}\n" +
+                $"HRESULT: 0x{exception.HResult:X4}\n";
 
             if (WindowContext.Current != null)
             {
@@ -253,6 +264,7 @@ namespace Telegram
 
         private static string GetErrorReportPath(string reportId)
         {
+            Directory.CreateDirectory(_reports);
             return Path.Combine(ApplicationData.Current.LocalFolder.Path, _reports, reportId + ".appcenter");
         }
 
