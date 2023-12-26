@@ -123,8 +123,6 @@ namespace Telegram.Controls
 
         protected override void OnValueChanged(double oldValue, double newValue)
         {
-            Logger.Info(newValue);
-
             if (double.IsNaN(newValue))
             {
                 newValue = 0;
